@@ -507,16 +507,19 @@ def decode_data_from_text(data, encoding):
         raise ValueError, "unknown encoding %s" % encoding
 
 
-def open_temporary_file_fd():
+def open_temporary_file_fd(suffix = None):
     """Create and open a temporary file.
 
+    'suffix' -- The last part of the temporary file name, as for
+    Python's 'mktemp' function.
+    
     The file is open for reading and writing.  The caller is responsible
     for deleting the file when finished with it.
 
     returns -- A pair '(file_name, file_descriptor)' for the temporary
     file."""
 
-    file_name = tempfile.mktemp()
+    file_name = tempfile.mktemp(suffix)
     try:
         # Attempt to open the file.
         fd = os.open(file_name,
@@ -532,14 +535,21 @@ def open_temporary_file_fd():
     return (file_name, fd)
 
 
-def open_temporary_file():
+def open_temporary_file(mode = "w+b", suffix = None):
     """Create and open a temporary file.
 
+    'mode' -- The mode argument to pass to 'fopen'.
+    
+    'suffix' -- The last part of the temporary file name, as for
+    Python's 'mktemp' function.
+    
     Like 'open_temporary_file_fd', except that the second element of the
     return value is a file object."""
 
-    file_name, fd = open_temporary_file_fd()
-    return (file_name, os.fdopen(fd, "w+b"))
+    # This function can just use NamedTemporaryFile when QMTest requires
+    # Python 2.3.
+    file_name, fd = open_temporary_file_fd(suffix)
+    return (file_name, os.fdopen(fd, mode))
 
 
 def close_file_on_exec(fd):

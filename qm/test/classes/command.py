@@ -438,8 +438,15 @@ class ShellScriptTest(ExecTestBase):
         modified by this method to indicate outcomes other than
         'Result.PASS' or to add annotations."""
 
+        # On Windows, batch files must end with a ".bat" suffix or the
+        # command shell will not execute them.
+        if sys.platform == "win32":
+            suffix = ".bat"
+        else:
+            suffix = None
         # Create a temporary file for the script.
-        self.__script_file_name, script_file = qm.open_temporary_file() 
+        self.__script_file_name, script_file \
+            = qm.open_temporary_file("w+", suffix) 
         try:
             # Write the script to the temporary file.
             script_file.write(self.script)

@@ -77,8 +77,13 @@ def get_shell_for_script():
         # Split the configuration value into an argument list.
         return common.split_argument_list(shell)
     else:
-        # Use the default, but copy it so the caller can change it.
-        shell = default_shell[:]
+        # On Windows, add the "/c" switch; that is needed even when
+        # invoking a script.
+        if sys.platform == "win32":
+            shell = default_shell + ["/c"]
+        else:
+            # Use the default, but copy it so the caller can change it.
+            shell = default_shell[:]
     return shell
 
 
