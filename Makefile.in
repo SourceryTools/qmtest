@@ -77,11 +77,11 @@ else
 PYTHONEXE = `@PYTHON@ -c "import sys; print sys.prefix"`\\python
 $(SCRIPTS): 
 	rm -rf $@
-	echo "@echo off" > $@
-	echo "set QM_HOME=$(prefix)" >> $@
-	echo "set QM_BUILD=0" >> $@
-	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\" " >> $@
-	echo "%1 %2 %3 %4 %5 %6 %7 %8 %9" >> $@
+	echo -e "@echo off\r" > $@
+	echo -e "set QM_HOME=$(prefix)\r" >> $@
+	echo -e "set QM_BUILD=0\r" >> $@
+	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\r" " >> $@
+	echo -e "%1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
 endif
 
 clean::
