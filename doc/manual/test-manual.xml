@@ -221,6 +221,14 @@
      such that all of a test's prerequisites are run before the test
      itself is run.  Outside of this condition, the order in which tests
      are run is undefined.</para>
+
+     <para>If &qmtest; is invoked to run tests in parallel or
+     distributed across several hosts, the tests are distributed among
+     threads or hosts as well.  &qmtest; attempts to distribute tests
+     evenly, except that a test's prerequisite will always run in the
+     same thread and on the same host as the test itself.  For groups of
+     tests with many prerequisite relationships among them, this may
+     cause inbalances across threads or hosts.</para>
     </listitem>
 
     <listitem>
@@ -233,6 +241,13 @@
      run after the last test that specifies that action.  &qmtest; also
      attempts to schedule setup methods as late as possible, and
      cleanup methods as early as possible.</para>
+
+     <para>If &qmtest; is invoked to run tests in parallel or
+     distributed across several hosts, actions are computed
+     independently for each thread or host.  If two different tests
+     scheduled for execution in different threads or on different hosts
+     both require the same action, the action will be invoked
+     twice.</para>
     </listitem>
    </orderedlist>
 
