@@ -7,7 +7,7 @@
 # Contents:
 #   ExecutionEngine
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -173,7 +173,7 @@ class ExecutionEngine:
         nondeterminism introduced by running tests in parallel."""
 
         # Create a directed graph where each node is a pair
-        # (descriptor, count).  There is an edge from one node
+        # (count, descriptor).  There is an edge from one node
         # to another if the first node is a prerequisite for the
         # second.  Begin by creating the nodes of the graph.
         for id in self.__test_ids:
@@ -286,7 +286,7 @@ class ExecutionEngine:
             # See if any targets have finished their assignments.  If
             # we did not schedule any additional work during this
             # iteration of the loop, there's no point in continuing
-            # until some target finishes what its doing.
+            # until some target finishes what it's doing.
             self._CheckForResponse(wait=wait)
 
             # Output a trace message.
@@ -467,7 +467,7 @@ class ExecutionEngine:
         self._AddResult(result)
 
 
-    def _Trace(self, message,):
+    def _Trace(self, message):
         """Write a trace 'message'.
 
         'message' -- A string to be output as a trace message."""
