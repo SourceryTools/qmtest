@@ -1,5 +1,8 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (upload): New function.
+	* config.guess: New file.
+
 	* scripts/qm-release (TAG): Initialize it.
 
 	* configure.in: Use version to get the version number.

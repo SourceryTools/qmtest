@@ -31,7 +31,7 @@ error() {
 
 usage() {
 cat <<EOF
-qm-release version [source] [rpm] [binary] [exec]
+qm-release version [-u] [source] [rpm] [binary] [exec] [tag]
 EOF
     exit 1
 }
@@ -147,7 +147,7 @@ build_rpm() {
       error "Could not extract spec file"
     rpm --quiet -ba --rmsource qm.spec || \
       error "Could not create RPM"
-    cp ${RPM_BASE}/RPMS/i386/qm-${QM_VERSION}-0.i386.rpm .
+    cp ${RPM_BASE}/RPMS/i386/qm-${QM_VERSION}-0.i386.rpm ${QM_RPM}
 }
 
 # Build a binary distribution.
@@ -184,6 +184,47 @@ build_exec() {
       /defaultpath="\$programfiles\$\\QM"
 }
 
+# Upload files to the FTP server.
+
+upload() {
+  # Figure out what platform we are on.
+  tar xzf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION}/config.guess || \
+    error "Could not obtain config.guess from source distribution."
+  PLATFORM=`qm-${QM_VERSION}/config.guess`
+  if [ $? -ne 0 ]; then
+    error "Could not obtain platform name."
+  fi
+  PLATFORM_FTP_DIRECTORY="${FTP_DIRECTORY}/${PLATFORM}"
+
+  # Make sure the FTP directory exists.
+  ssh ${FTP_SERVER} mkdir -p ${FTP_DIRECTORY} || \
+    error "Could not create FTP directory."
+
+  # Upload the source distribution.
+  if [ ${SOURCE} -ne 0 ]; then
+    scp ${QM_SOURCE_TAR_GZ} "${FTP_SERVER}:${FTP_DIRECTORY}" || \
+      error "Could not upload source distribution."
+  fi
+  
+  # Upload the RPM distribution.
+  if [ ${RPM} -ne 0 ]; then
+    scp ${QM_RPM} "${FTP_SERVER}:${PLATFORM_FTP_DIRECTORY}" || \
+      error "Could not upload RPM distribution."
+  fi
+
+  # Upload the binary distribution.
+  if [ ${BINARY} -ne 0 ]; then
+    scp ${QM_BINARY_TAR_GZ} "${FTP_SERVER}:${PLATFORM_FTP_DIRECTORY}" || \
+      error "Could not upload binary distribution."
+  fi
+
+  # Upload the self-extracting executable.
+  if [ ${EXEC} -ne 0 ]; then
+    scp ${QM_BINARY_EXE} "${FTP_SERVER}:${FTP_DIRECTORY}/windows" || \
+      error "Could not upload Windows distribution."
+  fi
+}
+
 ########################################################################
 # Initialization
 ########################################################################
@@ -215,6 +256,8 @@ QM_BINARY_TAR_GZ=
 QM_BINARY_ZIP=
 # The executable file.
 QM_BINARY_EXE=
+# The RPM distribution.
+QM_RPM=
 
 # Options to use with tar when creating an archive.
 TAR_OPTS="--owner=root --group=root --mode=u+w,go-w,a+rX,a-st"
@@ -222,19 +265,33 @@ TAR_OPTS="--owner=root --group=root --mode=u+w,go-w,a+rX,a-st"
 # The CVS binary.
 CVS="cvs -f -z9 -Q"
 
+# The FTP server.
+FTP_SERVER="ftp.codesourcery.com"
+# The FTP directory.
+FTP_DIRECTORY="~ftp/pub/qmtest"
+
 # Modes of operation.
 SOURCE=0
 RPM=0
 BINARY=0
 EXEC=0
 TAG=0
+UPLOAD=0
 
 ########################################################################
 # Main Program
 ########################################################################
 
-# Parse the version.
+# Parse options.
+while getopts "u" ARG; do
+    case $ARG in
+    u)  UPLOAD=1;;
+    \?) usage;;
+    esac
+done
+shift `expr ${OPTIND} - 1`
 
+# Parse the version number.
 if [ $# -eq 0 ]; then
   usage
 fi
@@ -255,7 +312,9 @@ QM_SOURCE_TAR_GZ=qm-${QM_VERSION}.tar.gz
 QM_BINARY_TAR_GZ=qm-${QM_VERSION}-binary.tar.gz
 QM_BINARY_ZIP=${QM_RELEASE_DIR}/qm-${QM_VERSION}.zip
 QM_BINARY_EXE=${QM_RELEASE_DIR}/qm-${QM_VERSION}.exe
+QM_RPM=${QM_RELEASE_DIR}/qm-${QM_VERSION}-0.i386.rpm
 QM_INSTALL_DIR=${QM_RELEASE_DIR}/install/qm-${QM_VERSION}
+FTP_DIRECTORY=${FTP_DIRECTORY}/qm-${QM_VERSION}
 QM_RELEASE_TAG="release-`echo $QM_VERSION | sed -e 's|\.|-|g'`"
 
 # Handle the major modes.
@@ -276,24 +335,26 @@ CVSROOT=":${CVS_PROTOCOL}:${CVS_USERNAME}@"
 CVSROOT="${CVSROOT}${CVS_SERVER}:${CVS_REPOSITORY}"
 export CVSROOT
 
-# Build the source distribution.
+if [ ${UPLOAD} -eq 0 ]; then
+    if [ ${TAG} -ne 0 ]; then
+      tag_qm
+    fi
 
-if [ ${TAG} -ne 0 ]; then
-  tag_qm
-fi
+    if [ ${SOURCE} -ne 0 ]; then
+      build_source
+    fi
 
-if [ ${SOURCE} -ne 0 ]; then
-  build_source
-fi
+    if [ ${RPM} -ne 0 ]; then
+      build_rpm
+    fi
 
-if [ ${RPM} -ne 0 ]; then
-  build_rpm
-fi
+    if [ ${BINARY} -ne 0 ]; then
+      build_binary
+    fi
 
-if [ ${BINARY} -ne 0 ]; then
-  build_binary
-fi
-
-if [ ${EXEC} -ne 0 ]; then
-  build_exec
+    if [ ${EXEC} -ne 0 ]; then
+      build_exec
+    fi
+else
+    upload
 fi
