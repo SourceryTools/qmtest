@@ -429,7 +429,8 @@ def setup_idb_for_internal_use():
         name="description",
         title="Description",
         description="A complete description of the issue.",
-        structured="true")
+        structured="true",
+        multiline="true")
     icl.AddField(field)
 
     field = qm.fields.EnumerationField(
@@ -499,7 +500,8 @@ def setup_idb_for_internal_use():
         name="description",
         title="Description",
         description="A complete description of the issue.",
-        structured="true")
+        structured="true",
+        multiline="true")
     icl.AddField(field)
 
     field = qm.fields.EnumerationField(
@@ -568,7 +570,8 @@ def setup_idb_for_test():
         name="description",
         title="Description",
         description="A detailed description of this issue.",
-        structured="true")
+        structured="true",
+        multiline="true")
     icl.AddField(field)
 
     severity_enum = [

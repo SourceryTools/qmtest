@@ -1,5 +1,12 @@
 2001-07-17  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/config.py (setup_idb_for_internal_use): Make
+	description field multiline.
+	(setup_idb_for_internal_use): Likewise.
+	(setup_idb_for_test): Likewise.
+
+2001-07-17  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/config.py (open_idb): Fix IDB check.  Improve
 	diagnostics.
 	* share/diagnostics/track.txt (idb directory missing): New
