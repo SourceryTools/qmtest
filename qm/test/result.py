@@ -274,7 +274,7 @@ class Result:
         keys = self.items()
         keys.sort()
         for key in keys:
-            value = self[value]
+            value = self[key]
             property_element = document.createElement("property")
             # The property name is an attribute.
             property_element.setAttribute("name", str(key))
