@@ -1,3 +1,14 @@
+2003-06-21  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/classes/pickle_result_stream.py: import qm.fields.
+	(PickleResultStream): New variable _max_pinned_results.
+	New argument protocol_version.
+	(PickleResultStream.__init__): Use protocol_version.
+	Initialize count of processed `Result's.
+	(PickleResultStream.WriteResult): Keep count of processed
+	`Result's, and call `clear_memo' every after every
+	_max_pinned_results.
+
 2003-06-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (diagnostic): Do not import it.
