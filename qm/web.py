@@ -45,6 +45,7 @@ import errno
 import htmlentitydefs
 import md5
 import os
+import os.path
 import common
 import qm.platform
 import qm.user
@@ -901,7 +902,7 @@ class WebServer(HTTPServer):
                 # Yes.  First cut off the prefix that matched.
                 sub_path = path[len(url_path):]
                 # Make sure what's left doesn't look like an absolute path.
-                if sub_path[0] == os.sep:
+                if os.path.isabs(sub_path):
                     sub_path = sub_path[1:]
                 # Construct the file system path.
                 return os.path.join(file_path, sub_path)
