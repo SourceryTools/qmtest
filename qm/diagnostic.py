@@ -54,7 +54,7 @@ For example:
     # This line is a comment
 
     @ my first diagnostic
-    The command you entered, '$(command)s', is bogus.
+    The command you entered, '$(command)s', is bogus.  Please try again.
 
     @ my second diagnostic
     The value you specified, '$(value)d', is completely bogus.  Don't

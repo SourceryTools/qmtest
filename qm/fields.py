@@ -77,7 +77,7 @@ class Field:
     hidden -- If true, the field is for internal purposes, and not
     shown in user interfaces."""
 
-    def __init__(self, name, attributes={}):
+    def __init__(self, name, **attributes):
         """Create a new (generic) field.
 
         'name' -- The value of the name attribute.  Must be a valid
@@ -307,7 +307,7 @@ class Field:
 
 class IntegerField(Field):
 
-    def __init__(self, name, default_value=0):
+    def __init__(self, name, default_value=0, **attributes):
         """Create an integer field.
 
         The field must be able to represent a 32-bit signed
@@ -316,7 +316,7 @@ class IntegerField(Field):
         'default_value' -- The default value for the field."""
 
         # Perform base class initialization.
-        Field.__init__(self, name)
+        apply(Field.__init__, (self, name,), attributes)
         # Set the default value.
         self.SetDefaultValue(default_value)
 
@@ -406,11 +406,11 @@ class TextField(Field):
     nonempty -- The value of this field is considered invalid if it
     consists of an empty string (after stripping)."""
 
-    def __init__(self, name, default_value=""):
+    def __init__(self, name, default_value="", **attributes):
         """Create a text field."""
 
         # Perform base class initialization.
-        Field.__init__(self, name)
+        apply(Field.__init__, (self, name,), attributes)
         # Set default attribute values.
         self.SetAttribute("structured", "false")
         self.SetAttribute("verbatim", "false")
@@ -847,13 +847,13 @@ class AttachmentField(Field):
     values as HTML."""
 
 
-    def __init__(self, name):
+    def __init__(self, name, **attributes):
         """Create an attachment field.
 
         Sets the default value of the field to 'None'."""
 
-        # Perform base class initialization.
-        Field.__init__(self, name)
+        # Perform base class initialization. 
+        apply(Field.__init__, (self, name,), attributes)
         # Set the default value of this field.
         self.SetDefaultValue(None)
 
@@ -1091,7 +1091,7 @@ class EnumerationField(IntegerField):
     ordered -- If non-zero, the enumerals are presented to the user
     ordered by value."""
 
-    def __init__(self, name, enumeration, default_value=None):
+    def __init__(self, name, enumeration, default_value=None, **attributes):
         """Create an enumeral field.
 
         'enumeration' -- A mapping from names to integer values.
@@ -1117,7 +1117,7 @@ class EnumerationField(IntegerField):
         if default_value == None:
             default_value = min(self.__enumeration.values())
         # Perform base class initialization.
-        IntegerField.__init__(self, name, default_value)
+        apply(Field.__init__, (self, name, default_value), attributes)
         # Store the enumeration as an attribute.
         self.SetAttribute("enumeration", repr(enumeration))
 
@@ -1265,7 +1265,7 @@ class TimeField(TextField):
     __time_format = "%Y-%m-%d %H:%M"
     """The format, ala the 'time' module, used to represent field values."""
 
-    def __init__(self, name):
+    def __init__(self, name, **attributes):
         """Create a time field.
 
         The field is given a default value for this field is 'None', which
@@ -1273,7 +1273,7 @@ class TimeField(TextField):
         field value is provided."""
 
         # Perform base class initalization.
-        TextField.__init__(self, name, default_value=None)
+        apply(TextField.__init__, (self, name, default_value), attributes)
 
 
     def GetTypeDescription(self):

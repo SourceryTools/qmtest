@@ -231,14 +231,28 @@ def from_dom_node(node):
     interpret the location (if it's specified in the attachment
     element), the caller must provide it directly to the object."""
 
+    # Extract the fixed fields; use a default value for each that is not
+    # present. 
+    if len(node.getElementsByTagName("description")) > 0:
+        description = xmlutil.get_dom_child_text(node, "description")
+    else:
+        description = ""
+    if len(node.getElementsByTagName("mimetype")) > 0:
+        mime_type = xmlutil.get_dom_child_text(node, "mimetype")
+    else:
+        mime_type = "application/octet-stream"
+    if len(node.getElementsByTagName("filename")) > 0:
+        file_name = xmlutil.get_dom_child_text(node, "filename")
+    else:
+        file_name = ""
+
     # We'll construct the argument list to the attachment initializer as
     # a map.
-    arguments = {}
-
-    # Extract the fixed fields.
-    arguments["description"] = xmlutil.get_dom_child_text(node, "description")
-    arguments["mime_type"] = xmlutil.get_dom_child_text(node, "mimetype")
-    arguments["file_name"] = xmlutil.get_dom_child_text(node, "filename")
+    arguments = {
+        "description": description,
+        "mime_type": mime_type,
+        "file_name": file_name,
+        }
 
     # Extract the data or location elements.
     data_nodes = node.getElementsByTagName("data")

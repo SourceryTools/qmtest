@@ -44,7 +44,7 @@ The value "%(value)s" is not an integer.  The contents of an '<integer>'
 node must be an integer.
 
 @ dom wrong tag for field
-A '<%(wrong_tag)s>' element is not allowed for field %(field)s.  Only a
+A '<%(wrong_tag)s>' element is not allowed for field %(name)s.  Only a
 '<%(right_tag)s>' element may be used.
 
 @ missing command
@@ -65,6 +65,12 @@ from that from which the session originated.  A session may only be used
 from a single network address.  
 
 Please log in again to start a new session.
+
+@ temp file error
+An error occured while creating the temporary file '%(file_name)s'.
+Please check that your temporary directory is configured correctly.
+
+'%(exc_class)s: %(exc_arg)s'
 
 @ xml parse error
 The XML parser encountered an error at line %(line)d, character

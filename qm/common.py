@@ -48,6 +48,7 @@ import re
 import socket
 import string
 import sys
+import tempfile
 import time
 import traceback
 import types
@@ -536,15 +537,23 @@ def format_exception(exc_info):
 
     returns -- A string containing a the formatted exception."""
 
-    # FIXME.  We can do better by looking into the traceback ourselves. 
-
     # Break up the exection info tuple.
     type, value, trace = exc_info
-    # Format the traceback, with a newline separating elements.
-    traceback_listing = traceback.format_tb(trace)
-    traceback_listing = string.join(traceback_listing)
     # Generate output.
-    return "Exception '%s : %s'\n%s\n" % (type, value, traceback_listing)
+    traceback_listing = format_traceback(exc_info)
+    return "Exception '%s' : '%s'\n\n%s\n" % (type, value, traceback_listing)
+
+
+def format_traceback(exc_info):
+    """Format an exception traceback as structured text.
+    
+    'exc_info' -- A three-element tuple containing exception info, of
+    the form '(type, value, traceback)'.
+
+    returns -- A string containing a the formatted traceback."""
+
+    # FIXME.  We can do better by looking into the traceback ourselves. 
+    return string.join(traceback.format_tb(exc_info[2]))
 
 
 def format_byte_count(bytes):
@@ -773,7 +782,10 @@ def decode_data_from_text(data, encoding):
 
     returns -- A string containing the decoded data."""
 
-    if encoding == "quoted-printable":
+    if encoding == "none":
+        return data
+
+    elif encoding == "quoted-printable":
         # Decode quoted-printable text.
         input_file = cStringIO.StringIO(data)
         output_file = cStringIO.StringIO()
@@ -790,6 +802,68 @@ def decode_data_from_text(data, encoding):
         # Unknown encoding type.
         raise ValueError, "unknown encoding %s" % encoding
 
+
+def open_temporary_file_fd():
+    """Create and open a temporary file.
+
+    The file is open for reading and writing.  The caller is responsible
+    for deleting the file when finished with it.
+
+    returns -- A pair '(file_name, file_descriptor)' for the temporary
+    file."""
+
+    # FIXME: Security.
+
+    file_name = tempfile.mktemp()
+    try:
+        # Attempt to open the file.
+        fd = os.open(file_name,
+                     os.O_CREAT | os.O_EXCL | os.O_RDWR,
+                     0600)
+    except:
+        exc_info = sys.exc_info()
+        raise RuntimeError, qm.error("temp file error",
+                                     file_name=file_name,
+                                     exc_class=str(exc_info[0]),
+                                     exc_arg=str(exc_info[1]))
+    return (file_name, fd)
+
+
+def open_temporary_file():
+    """Create and open a temporary file.
+
+    Like 'open_temporary_file_fd', except that the second element of the
+    return value is a file object."""
+
+    file_name, fd = open_temporary_file_fd()
+    return (file_name, os.fdopen(fd, "w+b"))
+
+
+def find_program_in_path(program_name, path):
+    """Attempt to locate a program in an execution path.
+
+    'program_name' -- The name of the program to run.
+
+    'path' -- A string encoding a list of directories (in a
+    system-specifiec form) in which to look for the program.
+
+    returns -- The path to the program, or 'None' if it was not
+    found."""
+
+    # Split the path into directories.
+    # FIXME: Do the Windows thing.
+    path_separator = ":"
+    directories = string.split(path, path_separator)
+    # Loop over directories.
+    for directory in directories:
+        program_path = os.path.join(directory, program_name)
+        # Is there such a file, and is it executable?
+        # FIXME: This won't work for Windows.
+        if os.access(program_path, os.X_OK):
+            # Good -- that's the result.
+            return program_path
+    # Couldn't find it.
+    return None
 
 ########################################################################
 # variables

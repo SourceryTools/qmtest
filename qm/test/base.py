@@ -507,7 +507,7 @@ class Context:
         if not isinstance(key, types.StringType):
             raise ValueError, "context key must be a string"
         if not qm.label.is_valid(key, allow_separator=1):
-            raise RuntimeError, \
+            raise ValueError, \
                   qm.error("invalid context key", key=key)
 
 
@@ -626,10 +626,8 @@ class Engine:
                    result = test.Run(context)
                except:
                    # The test raised an exception.  Create a result
-                   # object with the ERROR outcome.
-                   exception = qm.format_exception(sys.exc_info())
-                   result = Result(outcome=Result.ERROR,
-                                   exception=exception)
+                   # object for it.
+                   result = make_result_for_exception(sys.exc_info())
                else:
                    # What did the test return?
                    if isinstance(result, qm.test.base.Result):
@@ -679,6 +677,24 @@ class Engine:
 ########################################################################
 # functions
 ########################################################################
+
+def make_result_for_exception(exc_info, cause=None):
+    """Return a 'Result' object for a test that raised an exception.
+
+    'exc_info' -- The exception triple as returned from 'sys.exc_info'.
+
+    'cause' -- If not 'None', additional clarification to include in the
+    result.
+
+    returns -- A 'Result' object."""
+
+    if cause is None:
+        cause = "An exception occurred."
+    return Result(outcome=Result.ERROR,
+                  cause=cause,
+                  exception="%s: %s" % exc_info[:2],
+                  traceback=qm.format_traceback(exc_info))
+
 
 def get_test_class(test_class_name, extra_paths=[]):
     """Return the test class named 'test_class_name'.

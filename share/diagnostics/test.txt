@@ -39,9 +39,17 @@ The path you specified for the test database, %(path)s, does not exist.
 @ db path exists
 The path you specified for the test database, %(path)s, already exists.
 
+@ invalid context assignment
+The context property "%(argument)s" is not valid.  Specify context
+properties using the syntax KEY=VALUE.
+
 @ invalid context key
 The context key "%(key)s" is not valid.  Context keys may contain
 lower-case letters, digits, underscores, and periods.
+
+@ invalid environment assignment
+The string '%(assignment)s' is not a valid environment element.
+Environment elements must have the form 'variable=value'.
 
 @ invalid result
 The test %(id)s of class %(test_class)s returned an invalid result,
@@ -66,10 +74,10 @@ You must specify one or more test or suite IDs.
 The ID "%(id)s" in suite "%(suite)s" does not exist.
 
 @ xml invalid arg name
-The $(name) is not the name of an argument of this test class.
+%(name)s is not the name of an argument of this test class.
 
 @ xml not int value
-The text "$(value)" is not an integer value.
+The text "%(value)s" is not an integer value.
 
 ########################################################################
 # Local Variables:

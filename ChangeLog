@@ -1,3 +1,37 @@
+2001-03-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (Field.__init__): Make attributes parameter a
+	catch-all for named arguments.
+	(IntegerField.__init__): Add attributes parameter.
+	(TextField.__init__): Likewise.
+	(AttachmentField.__init__): Likewise.
+	(EnumerationField.__init__): Likewise.
+	(TimeField.__init__): Likewise.
+	* qm/common.py (format_exception): Use format_traceback.
+	(format_traceback): New function.
+	(decode_data_from_text): Add none encoding.
+	(open_temporary_file_fd): New function.
+	(open_temporary_file): Likewise.
+	(find_program_in_path): Likewise.
+	* qm/attachment.py (from_dom_node): Make description, mimetype,
+	filename elements optional.
+	* share/xml/test.dtd (attachment): Make subelements optional.
+	(data): New element.
+	* share/diagnostics/common.txt (dom wrong tag for field): Fix.
+	(temp file error): New diagnostic.
+	* share/diagnostics/test.txt (invalid context assignment): Likewise.
+	(invalid environment assignment): Likewise.
+	(xml invalid arg name): Fix.
+	(xml not int value): Likewise.
+	* qm/test/base.py (Context.__ValidateKey): Raise ValueError.
+	(Engine.RunTests): Use make_result_for_exception.
+	(make_result_for_exception): New function.
+	* qm/test/cmdline.py (Command.context_option_spec): New attribute.
+	(Command.commads_spec): Add it to the run command.
+	(Command.MakeContext): New method.
+	(Command.__ExecuteRun): Use it.
+	* qm/test/classes/command.py: New file.
+
 2001-03-26  Alex Samuel  <samuel@codesourcery.com>
 
 	Reorganize data files into share directory.

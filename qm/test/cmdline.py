@@ -108,6 +108,14 @@ class Command:
         "Load expected outcomes from FILE."
         )
 
+    context_option_spec = (
+        "c",
+        "context",
+        "KEY=VALUE",
+        "Add or override a context property.  You may specify this "
+        "option more than once."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -129,7 +137,7 @@ class Command:
          "suite IDs as arguments.",
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
-           outcomes_option_spec )
+           outcomes_option_spec, context_option_spec )
          ),
 
         ]
@@ -227,6 +235,34 @@ class Command:
         return self.__database
 
 
+    def MakeContext(self):
+        """Construct a 'Context' object for running tests."""
+
+        context = base.Context(
+            path=qm.rc.Get("path", os.environ["PATH"])
+            )
+
+        # Look for all occurrences of the '--context' option.
+        for option, argument in self.__command_options:
+            if option == "context":
+                # Make sure the argument is correctly-formatted.
+                if not "=" in argument:
+                    raise qm.cmdline.CommandError, \
+                          qm.error("invalid context assignment",
+                                   argument=argument)
+                # Parse the assignment.
+                name, value = string.split(argument, "=", 1)
+                try:
+                    # Insert it into the context.
+                    context[name] = value
+                except ValueError, msg:
+                    # The format of the context key is invalid, but
+                    # raise a 'CommandError' instead.
+                    raise qm.cmdline.CommandError, msg
+
+        return context
+
+
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""
         
@@ -279,7 +315,7 @@ class Command:
 
             # Set up a test engine for running tests.
             engine = base.Engine(database)
-            context = base.Context()
+            context = self.MakeContext()
             self.__output = output
             if self.__verbose > 0:
                 # If running verbose, specify a callback function to
