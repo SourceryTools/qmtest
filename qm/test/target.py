@@ -21,6 +21,7 @@ import qm
 import qm.extension
 from   qm.test.context import *
 from   qm.test.result import *
+from   qm.test.database import NoSuchResourceError
 import re
 import sys
 
@@ -300,12 +301,17 @@ class Target(qm.extension.Extension):
         # again.
         if rop:
             return rop
-        # Get the resource descriptor.
-        resource = self.GetDatabase().GetResource(resource_name)
-        # Set up the resource.
+        # Set up the context.
         context = ContextWrapper(context)
-        result = Result(Result.RESOURCE, resource.GetId(), context,
+        result = Result(Result.RESOURCE, resource_name, context,
                         Result.PASS, { Result.ACTION : "setup" } )
+        # Get the resource descriptor.
+        try:
+            resource = self.GetDatabase().GetResource(resource_name)
+        except NoSuchResourceError:
+            result.NoteException(cause="Resource is missing from the database.")
+            self._RecordResult(result)
+            return (None, result, None)
         # Set up the resource.
         try:
             resource.SetUp(context, result)

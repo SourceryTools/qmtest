@@ -1,5 +1,10 @@
 2002-08-08  Zack Weinberg  <zack@codesourcery.com>
 
+	* qm/test/target.py: Import NoSuchResourceError from
+	qm.test.database.
+	(Target._SetUpResource): If GetResource throws NoSuchResourceError,
+	note the exception and return.
+
 	* qm/common.py (load_module): If imp.load_module fails,
 	remove the broken object from sys.modules.
 
