@@ -495,7 +495,7 @@ class FileDatabase(Database):
                 and self._IsSuiteFile(entry_path)):
                 labels.extend(self._GetLabels(entry_path,
                                               scan_subdirs,
-                                              qm.label.join(label, root),
+                                              self.JoinLabels(label, root),
                                               predicate))
 
         return labels

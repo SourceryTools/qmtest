@@ -27,9 +27,6 @@
     <td width="100%">
      <h3>
        Directory 
-        <dtml-if expr="path != '.'">
-          <a href="/test/dir"><span class="id">.</span></a>
-        </dtml-if>
         <dtml-var expr="FormatId(path, 'dir', 'navigation')">
      </h3>
     </td>

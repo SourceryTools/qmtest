@@ -1008,44 +1008,6 @@ def format_time(time_secs, local_time_zone=1):
            "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
 
 
-def sequence_difference(seq1, seq2):
-    """Returns a sequence of items in 'seq1' but not in 'seq2'.
-
-    'seq1', 'seq2' -- Sequences."""
-
-    result = []
-    for item in seq1:
-        if item not in seq2:
-            result.append(item)
-    return result
-
-
-def make_map_from_list(list, key_function=str):
-    """Construct a map from a list.
-
-    Each element in 'list' is added to the map.  'key_function' is
-    invoked on each element to construct its key; the value is the
-    element itself.  If more than one element produces a given key, the
-    last one will appear under that key; the others will not appear."""
-
-    map = {}
-    for element in list:
-        map[key_function(element)] = element
-    return map
-
-
-def purge_keys(map, keys):
-    """Remove each entry from 'map' that matches a key in 'keys'.
-
-    'map' -- A map object.
-
-    'keys' -- A sequence of keys."""
-
-    for key in keys:
-        if map.has_key(key):
-            del map[key]
-
-
 def make_unique_tag():
     """Return a unique tag string."""
 
