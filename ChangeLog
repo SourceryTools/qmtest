@@ -1,5 +1,7 @@
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm.spec.in (Release): Reset to zero.
+
 	* scripts/qm-release (build_source): Change destination for
 	PDF manual.
 
