@@ -41,9 +41,38 @@
  <section id="sec-trigger-api">
   <title id="sec-trigger-api-title">Trigger API</title>
 
-  <para>A trigger is simply a callable object.  It is invoked with a
-  two arguments, both <classname>IssueRecord</classname>
-  instances.</para>
+  <para>A trigger is implemented as an instance of a subclass of
+  <classname>Trigger</classname>.  The principal method is
+  <function>Invoke</function>, which is passed two arguments, both
+  <classname>IssueRecord</classname> instances.</para>
+
+  <programlisting>
+<![CDATA[
+class Trigger:
+    """Base class for triggers."""
+
+    def GetName(self):
+        """Return the name of this trigger instance."""
+
+
+    def Invoke(self, issue, previous_issue):
+        """Invoke the trigger.
+
+        'issue' -- An 'IssueRecord' instance.  For a "get" trigger,
+         the issue being retrieved.  For update triggers, the state of
+         the issue as it will be or is after the update.
+
+        'previous_issue' -- An 'IssueRecord' instance.  For a "get"
+        trigger, 'None'.  For update triggers, the state of the issue
+        before the update.
+
+        returns -- A pair '(result, message)'.  The 'result' value
+        evaulates to true if the operation is to continue, false if
+        the operation is to be cancelled; this value is ignored for
+        "postupdate" triggers.  'message' is a short string describing
+        the trigger action, or 'None'.  
+]]>
+  </programlisting>
 
   <para>A trigger is registered with the &idb; for one of three
   trigger types:
@@ -77,22 +106,13 @@
         'type' -- The type is a string indicating the trigger type.
 
            * '"get"' triggers are invoked on issue records that are
-             retrieved or returned as query results.  The first
-             argument to the trigger is the issue being retrieved; the
-             second is 'None'.  If the trigger raises a
-             'TriggerReject' exception, the issue is not returned.
+             retrieved or returned as query results.  
 
            * '"preupdate"' triggers are invoked before an issue is
-             updated.  The first argument to the trigger is the issue
-             before the update; the second is the issue after the
-             update.  If the trigger raises a 'TriggerReject'
-             exception, the update is not performed.
+             updated.  
 
            * '"postupdate"' triggers are invoked after an issue is
-             updated.  The first argument to the trigger is the issue
-             before the update; the second is the issue after the
-             update.  A 'TriggerReject' exception raised by the
-             trigger is ingored.
+             updated.  
 
          'trigger' -- The trigger, a callable object.  The trigger
          takes two arguments, both instances of 'IssueRecord'.
@@ -118,30 +138,36 @@
 
   <para>Triggers are invoked in the order they are registered.</para>
 
-  <para>A trigger may raise an instance of
-  <classname>TriggerReject</classname>.  
+  <para>A trigger returns a boolean value as the first element of its
+  return value (a pair).
    <orderedlist>
     <listitem>
-     <para>For get triggers, this causes the issue to be supressed in
-     the result of the &idb; operation.  If the operation was a query,
-     the issue is ommitted from the results.  If the operation is a
-     single-issue access, the exception object is returned.</para>
+     <para>For "get" triggers, a false result causes the issue to be
+     supressed in the result of the &idb; operation.  If the operation
+     was a query, the issue is omitted from the results.  If the
+     operation is a single-issue access, the exception object is
+     returned.</para>
     </listitem>
 
     <listitem>
-     <para>For preupdate triggers, this causes the update to be
-     cancelled.</para>
+     <para>For "preupdate" triggers, a false result causes the update
+     to be cancelled.</para>
     </listitem>
 
     <listitem>
-     <para>For postupdate triggers, the exception is ignored
+     <para>For "postupdate" triggers, the boolean result is ignored
      silently.</para>
     </listitem>
    </orderedlist>
   </para>
 
   <para>Triggers may perform other actions as side effects.  Note that
-  if multiple preupdate triggers are registered</para>
+  if multiple "preupdate" triggers are registered and the second or a
+  subsequent trigger returns a false result, any side effects from
+  previous triggers have taken effect; no attempt is made to reverse
+  them.  Therefore, it is inadvisable to use preupdate triggers with
+  side effects; side effect should be placed in postupdate triggers
+  instead, to be invoked when the update has been committed.</para>
 
  </section>
 

@@ -1,3 +1,14 @@
+2000-11-29  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtrack/qmtrack.xml: Make acronyms upper-case.
+	(dtd): New entity.
+	(xml): Likewise.
+	Include xml-repr.xml.
+	* doc/design/qmtrack/triggers.xml: Finish.
+	* doc/design/qmtrack/xml-repr.xml: New file.
+	* doc/design/qmtrack/user-interface.xml: Add id's.  Fix some
+	indentation. 
+	
 2000-11-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/design/qmtest/core.xml: Fix DocBook syntax errors.

@@ -22,15 +22,18 @@
   <!-- Commonly-used symbols, terms, and abbreviations specific to
   this document.  -->
 
-  <!ENTITY idb "<acronym>idb</acronym>">
-  <!ENTITY iid "<acronym>iid</acronym>">
-  <!ENTITY qmtrack "qmtrack">
+  <!ENTITY dtd "<acronym>DTD</acronym>">
+  <!ENTITY idb "<acronym>IDB</acronym>">
+  <!ENTITY iid "<acronym>IID</acronym>">
+  <!ENTITY qmtrack "QMTrack">
+  <!ENTITY xml "<acronym>XML</acronym>">
 
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->
 
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
   <!ENTITY concepts.xml SYSTEM "concepts.xml">
+  <!ENTITY xml-repr.xml SYSTEM "xml-repr.xml">
   <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
   <!ENTITY user-api.xml SYSTEM "user-api.xml">
@@ -43,6 +46,10 @@
    <firstname>Alex</firstname>
    <surname>Samuel</surname>
   </author>
+  <author>
+   <firstname>Benjamin</firstname>
+   <surname>Chelf</surname>
+  </author>
  </bookinfo>
 
  <chapter><title>Introduction</title>
@@ -54,6 +61,7 @@
 
  &requirements.xml;
  &concepts.xml;
+ &xml-repr.xml;
  &idb-api.xml;
  &triggers.xml;
  &user-api.xml;

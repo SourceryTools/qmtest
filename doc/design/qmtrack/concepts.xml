@@ -17,7 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>Conceptual Architecture</title>
+<chapter>
+ <title>Conceptual Architecture</title>
 
  <para>This chapter describes the architecture of the core components
  of &qmtrack;.</para>

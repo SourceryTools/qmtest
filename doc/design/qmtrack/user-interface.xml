@@ -208,40 +208,41 @@ $
   </informaltable>
  </section>
 
- <section><title>Email</title>
+ <section id="sec-email">
+  <title id="sec-email-title">Email</title>
 
- <para>To create, edit, and query issues via email, simply construct an
- email with lines similar to headers in an email message and send the
- message to the database. It will respond with the same information that
- would be given on the command line had the request been issued that
- way. The first line of the email should contain the command
- (e.g. <literal>create</literal>, <literal>edit</literal>, or
- <literal>query</literal>). For the creation and editing commands,
- subsequent lines will contain pairs of fields and values separated by a
- colon. For the edit command, one of the fields listed must contain the ID
- of the issue to be edited. For example, an email to edit ID number 2
- would look like the following:
-  <programlisting>
+  <para>To create, edit, and query issues via email, simply construct an
+  email with lines similar to headers in an email message and send the
+  message to the database. It will respond with the same information that
+  would be given on the command line had the request been issued that
+  way. The first line of the email should contain the command
+  (e.g. <literal>create</literal>, <literal>edit</literal>, or
+  <literal>query</literal>). For the creation and editing commands,
+  subsequent lines will contain pairs of fields and values separated by a
+  colon. For the edit command, one of the fields listed must contain the ID
+  of the issue to be edited. For example, an email to edit ID number 2
+  would look like the following:
+   <programlisting>
 <![CDATA[
 edit
 ID:2
 SUMMARY:="New summary"
 CATEGORY:+foo-bar
 ]]>
-  </programlisting>
- Notice how the same three characters, '=', '+', and '-' are used to
- update the fields via email just as they were on the command line.</para>
+   </programlisting>
+  Notice how the same three characters, '=', '+', and '-' are used to
+  update the fields via email just as they were on the command line.</para>
 
- <para>Queries are similar to edits and creates with the exception that
- the field lines must contain additional information to indicate what type
- of query to be performed (e.g. 'contains', 'exact', 'less', 'greater', or
- 'range'). This attribute comes between the field name and the value and
- is separated by a colon. Also, to use the 'and', 'or', and 'not'
- directives, simply place the directive on a line before the one or two
- fields to that argument. For example, to perform a query that finds all
- issues that do not contain the word "foo" in the summary and have "bar"
- as their only category, the email is formed like this:
-  <programlisting>
+  <para>Queries are similar to edits and creates with the exception that
+  the field lines must contain additional information to indicate what type
+  of query to be performed (e.g. 'contains', 'exact', 'less', 'greater', or
+  'range'). This attribute comes between the field name and the value and
+  is separated by a colon. Also, to use the 'and', 'or', and 'not'
+  directives, simply place the directive on a line before the one or two
+  fields to that argument. For example, to perform a query that finds all
+  issues that do not contain the word "foo" in the summary and have "bar"
+  as their only category, the email is formed like this:
+   <programlisting>
 <![CDATA[
 query
 not
@@ -249,9 +250,10 @@ and
 SUMMARY:contains:"foo"
 CATEGORY:exact:"bar"
 ]]>
-  </programlisting>
+   </programlisting>
   </para>
  </section>
+
  <section><title>Web</title>
   <para>To create, edit, and perform queries on the web, the user will be
   presented with a form that has all the fields of an issue. He/she will
