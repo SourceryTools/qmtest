@@ -1,5 +1,7 @@
 2001-12-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/test-manual.xml: Fix typo.
+
 	* PyXML/.cvsignore: New file.
 	* doc/qm-opl.xml: Update copyright date.
 	* doc/manual/common-manual.xml: Tweak language.

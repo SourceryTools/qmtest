@@ -427,7 +427,7 @@
    </orderedlist>
 
    <para>In some cases, a test, resource setup function, or resource
-   cleanup function is not executed:</para
+   cleanup function is not executed:</para>
 
    <itemizedlist>
     <listitem>
