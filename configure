@@ -1052,31 +1052,6 @@ exit 1
 fi
 
 
-ac_safe=`echo "/usr/lib/python1.5/config/Makefile.pre.in" | sed 'y%./+-%__p_%'`
-echo $ac_n "checking for /usr/lib/python1.5/config/Makefile.pre.in""... $ac_c" 1>&6
-echo "configure:1058: checking for /usr/lib/python1.5/config/Makefile.pre.in" >&5
-if eval "test \"`echo '$''{'ac_cv_file_$ac_safe'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  if test "$cross_compiling" = yes; then
-    { echo "configure: error: Cannot check for file existence when cross compiling" 1>&2; exit 1; }
-else
-  if test -r /usr/lib/python1.5/config/Makefile.pre.in; then
-    eval "ac_cv_file_$ac_safe=yes"
-  else
-    eval "ac_cv_file_$ac_safe=no"
-  fi
-fi
-fi
-if eval "test \"`echo '$ac_cv_file_'$ac_safe`\" = yes"; then
-  echo "$ac_t""yes" 1>&6
-  :
-else
-  echo "$ac_t""no" 1>&6
-exit 1
-fi
-
-
 subdirs=""
 
 trap '' 1 2 15
