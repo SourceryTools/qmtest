@@ -1,3 +1,17 @@
+2002-12-18  Vladimir Prus <ghost@cs.msu.su>
+            Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (parse_dom_element): Add attachment_store
+	parameter.
+	* qm/test/classes/xml_database.py: 
+	(XMLDatabase._StoreAttachments): New method
+	(XMLDatabase.WriteTest): Call it.
+	(XMLDatabase.WriteResource): Likewise.
+	(XMLDatabase.__ParseTestDocument): Pass store to parse_dom_element.
+	(AttachmentStore.__init__): Call base class __init__.
+	(AttachmentStore.Store): Correct typo.
+	(AttachmentStore.__MakeDataFilePath): Fix path calculation.
+
 2002-12-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (ChoiceField): New class.

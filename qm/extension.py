@@ -298,7 +298,7 @@ def make_dom_document(extension_class, arguments):
     
         
 
-def parse_dom_element(element, class_loader):
+def parse_dom_element(element, class_loader, attachment_store = None):
     """Parse a DOM node representing an instance of 'Extension'.
 
     'element' -- A DOM node, of the format created by
@@ -307,6 +307,9 @@ def parse_dom_element(element, class_loader):
     'class_loader' -- A callable.  The callable will be passed the
     name of the extension class and must return the actual class
     object.
+
+    'attachment_store' -- The 'AttachmentStore' in which attachments
+    can be found.
 
     returns -- A pair ('extension_class', 'arguments') containing the
     extension class (a class derived from 'Extension') and the
@@ -341,7 +344,7 @@ def parse_dom_element(element, class_loader):
             = filter(lambda e: e.nodeType == xml.dom.Node.ELEMENT_NODE,
                      argument_element.childNodes)[0]
         # Parse the value.
-        value = field.GetValueFromDomNode(value_node, None)
+        value = field.GetValueFromDomNode(value_node, attachment_store)
         # Python does not allow keyword arguments to have Unicode
         # values, so we convert the name to an ordinary string.
         arguments[str(name)] = value
