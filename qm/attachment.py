@@ -191,12 +191,6 @@ class AttachmentStore(object):
 
         pass
 
-
-    def GetIndex(self):
-        """Returns the index associated with this attachment store."""
-
-        return self.__index
-
     
     def GetData(self, location):
         """Return the data for an attachment.

@@ -1243,7 +1243,6 @@ class AttachmentField(Field):
                     value.GetDescription(),
                     value.GetMimeType(),
                     value.GetLocation(),
-                    ("%d" % value.GetStore().GetIndex()),
                     value.GetFileName(),
                     )
                 # Each part is URL-encoded.

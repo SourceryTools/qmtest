@@ -187,9 +187,9 @@ class XMLDatabase(ExtensionDatabase):
         # Is the file name by itself OK in this directory?  It must not
         # have a file extension used by the XML database itself, and
         # there must be no other file with the same name there.
-        if extension not in [self.__database.GetTestExtension(),
-                             self.__database.GetSuiteExtension(),
-                             self.__database.GetResourceExtension()] \
+        if extension not in [self.GetTestExtension(),
+                             self.GetSuiteExtension(),
+                             self.GetResourceExtension()] \
            and not os.path.exists(full_data_file_path):
             return data_file_path
 

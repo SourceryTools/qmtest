@@ -1,5 +1,12 @@
 2003-07-03  Vladimir Prus <ghost@cs.msu.su>
 
+	* qm/attachment.py (AttachmentStore.GetIndex): Remove.
+	* qm/fields.py (SetField.FormatValueAsHtml): Don't use it.
+	* qm/test/clases/xml_database.py
+	(XMLDatabase. __MakeDataFilePath): Fix typos.
+
+2003-07-03  Vladimir Prus <ghost@cs.msu.su>
+
 	* qm/test/web/web.py (ShowItemPage.MakeDeleteScript): Fix typo.
 
 2003-06-27  Nathaniel Smith  <njs@codesourcery.com>
