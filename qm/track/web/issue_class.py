@@ -44,7 +44,6 @@ import qm.common
 import qm.fields
 import qm.label
 import qm.track
-import qm.track.idb
 import qm.track.issue_class
 import qm.web
 import string

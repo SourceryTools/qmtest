@@ -1,3 +1,9 @@
+2001-10-03  Alex Samuel  <samuel@codesourcery.com>
+
+	* README.sources: Clarify blank lines.
+	* qm/track/test.py: Remove.
+	* qm/track/web/issue_class.py: Remove spurious import.
+
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/command.py (ShellCommandTest): Fix typo in comment.

@@ -62,6 +62,9 @@ subject to the following modifications and clarifications:
     Occasionally, source code may extend to column 78, if this
     produces substantially clearer formatting.
 
+  - Leave two blank lines between all functions.  Leave three blank
+    lines after class definitions. 
+
   - All unary operators should be followed by a single space.  All
     binary operators should have a single space on each side.
 
