@@ -318,6 +318,11 @@ def initialize_idb(path, idb_class_name):
         raise qm.ConfigurationError, \
               "directory %s containing IDB path is not accesible" \
               % parent_path
+    # Make sure it doesn't aleady exist.
+    if os.path.exists(path):
+        raise qm.ConfigurationError, \
+              "the IDB path %s already exists" \
+              % path
     # Make the directory.
     os.mkdir(path)
 

@@ -502,6 +502,11 @@ class IssueFieldIid(IssueFieldText):
         return value
 
 
+    def SetDefaultValue(self, value):
+        # An issue ID field never has a default value.
+        pass
+
+
 
 class IssueFieldUid(IssueFieldText):
     """A field containing a user ID."""
