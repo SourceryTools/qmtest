@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest database class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -66,7 +66,6 @@ class ItemDescriptor:
         self.__id = instance_id
         self.__class_name = class_name
         self.__arguments = arguments
-        self.__working_directory = None
         self.__item = None
         
 
@@ -140,23 +139,6 @@ class ItemDescriptor:
         return self.__item
     
         
-    def SetWorkingDirectory(self, directory_path):
-        """Set the directory in which this item will execute.
-
-        'directory_path' -- A path.  When the entity is executed, it
-        will execute in this directory."""
-
-        self.__working_directory = directory_path
-
-
-    def GetWorkingDirectory(self):
-        """Return the directory in which this item will execute.
-
-        returns -- The directory in which this entity will execute, or
-        'None' if it will it execute in the current directory."""
-
-        return self.__working_directory
-
     # Helper functions.
 
     def _Execute(self, context, result, method):
@@ -170,28 +152,13 @@ class ItemDescriptor:
         'method' -- The method name of the method on the entity that
         should be invoked to perform the execution."""
 
-        working_directory = self.GetWorkingDirectory()
-        old_working_directory = None
-        
-        try:
-            if working_directory:
-                # Remember the previous working directory so we can
-                # restore it.
-                old_working_directory = os.getcwd()
-                # Change to the working directory appropriate for this
-                # test.
-                os.chdir(working_directory)
-            # Get the item.
-            item = self.GetItem()
-            # Execute the indicated method.
-            if context:
-                eval("item.%s(context, result)" % method)
-            else:
-                eval("item.%s(result)" % method)
-        finally:
-            # Restore the working directory.
-            if old_working_directory:
-                os.chdir(old_working_directory)
+        # Get the item.
+        item = self.GetItem()
+        # Execute the indicated method.
+        if context:
+            eval("item.%s(context, result)" % method)
+        else:
+            eval("item.%s(result)" % method)
 
 
 

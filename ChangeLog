@@ -1,3 +1,13 @@
+2003-01-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/database.py (ItemDescriptor.__init__): Do not set
+	__working_directory.
+	(ItemDescriptor.SetWorkingDirectory): Remove.
+	(ItemDescriptor.GetWorkingDirectory): Likewise.
+	(ItemDescriptor._Execute): Do not change directories.
+	* qm/test/classes/xml_database.py (XMLDatabase.__LoadItem): Do not
+	use SetWorkingDirectory.
+	
 2003-01-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention --result-format.

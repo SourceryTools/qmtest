@@ -7,7 +7,7 @@
 # Contents:
 #   XML-based test database implementation.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -208,8 +208,6 @@ class XMLDatabase(ExtensionDatabase):
         document = qm.xmlutil.load_xml_file(path)
         # Turn it into an object.
         item = document_parser(item_id, document)
-        # Set its working directory.
-        item.SetWorkingDirectory(os.path.dirname(path))
 
         return item
 
