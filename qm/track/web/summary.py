@@ -179,14 +179,13 @@ class SummaryPageInfo(web.PageInfo):
         # Add a sort specificaiton.
         new_request["sort"] = field_name
         # Generate the new URL.
-        return qm.web.make_url_for_request(new_request)
+        return new_request.AsUrl()
 
 
     def MakeIssueUrl(self, issue):
         """Generate a URL to show an individual issue."""
 
-        request = self.request.copy("show", iid=issue.GetId())
-        return qm.web.make_url_for_request(request)
+        return self.request.copy("show", iid=issue.GetId()).AsUrl()
 
 
 
@@ -253,7 +252,7 @@ class DisplayOptionsPageInfo(web.PageInfo):
         redisplay_request = request.copy()
         if redisplay_request.has_key("fields"):
             del redisplay_request["fields"]
-        self.base_url = qm.web.make_url_for_request(redisplay_request)
+        self.base_url = redisplay_request.AsUrl()
 
 
 

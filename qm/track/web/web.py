@@ -98,8 +98,7 @@ class PageInfo(qm.web.PageInfo):
 
 
     def MakeIndexUrl(self):
-        request = qm.web.WebRequest("index", base=self.request)
-        return qm.web.make_url_for_request(request)
+        return qm.web.WebRequest("index", base=self.request).AsUrl()
 
 
 

@@ -1010,7 +1010,7 @@ class WebServer(HTTPServer):
         session = Session(request, user_id)
         # Redirect to the same page but using the new session ID.
         request.SetSessionId(session.GetId())
-        raise HttpRedirect, make_url_for_request(request)
+        raise HttpRedirect, request.AsUrl()
 
 
 
@@ -1461,21 +1461,6 @@ def format_structured_text(text):
         return structured_text.to_html(text)
 
 
-def make_url_for_request(request):
-    """Generate a URL corresponding to 'request'.
-
-    'request' -- A 'WebRequest' object.
-
-    returns -- A URL string encoding the request."""
-
-    if len(request.keys()) == 0:
-        # No query arguments; just use the script URL.
-        return request.GetUrl()
-    else:
-        # Encode query arguments into the URL.
-        return "%s?%s" % (request.GetUrl(), urllib.urlencode(request))
-    
-
 def make_url(script_name, base_request=None, **fields):
     """Create a request and return a URL for it.
 
@@ -1487,7 +1472,7 @@ def make_url(script_name, base_request=None, **fields):
     'fields' -- Additional fields to include in the request."""
 
     request = apply(WebRequest, (script_name, base_request), fields)
-    return make_url_for_request(request)
+    return request.AsUrl()
 
 
 def make_form_for_request(request, method="get"):
@@ -1532,7 +1517,7 @@ def make_button_for_request(title, request):
     'request' -- A 'WebRequest' object to be invoked when the button is
     clicked."""
 
-    return make_button_for_url(title, make_url_for_request(request))
+    return make_button_for_url(title, request.AsUrl())
 
 
 def make_button_for_url(title, url):
@@ -1617,10 +1602,8 @@ def handle_login(request, default_redirect_url="/"):
         del redirect_request["_redirect_url"]
     # Add the ID of the new session to the request.
     redirect_request.SetSessionId(session_id)
-    # Generate a URL for the redirected page.
-    url = make_url_for_request(redirect_request)
-    # Redirect the client to this URL.
-    raise HttpRedirect, url
+    # Redirect the client to the URL for the redirected page.
+    raise HttpRedirect, redirect_request.AsUrl()
 
 
 def handle_logout(request, default_redirect_url="/"):
@@ -1644,9 +1627,8 @@ def handle_logout(request, default_redirect_url="/"):
     if redirect_request.has_key("_redirect_url"):
         del redirect_request["_redirect_url"]
     del redirect_request[session_id_field]
-    # Redirect to the specified URL.
-    url = make_url_for_request(redirect_request)
-    raise HttpRedirect, url
+    # Redirect to the specified request.
+    raise HttpRedirect, redirect_request.AsUrl()
 
 
 def generate_html_from_dtml(template_name, page_info):

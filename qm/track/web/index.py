@@ -87,8 +87,7 @@ class IndexPageInfo(web.PageInfo):
 
 
     def MakeQueryUrl(self):
-        request = self.request.copy("query")
-        return qm.web.make_url_for_request(request)
+        return self.request.copy("query").AsUrl()
 
 
     def MakeShutdownForm(self):

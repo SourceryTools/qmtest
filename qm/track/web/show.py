@@ -178,7 +178,7 @@ class ShowPageInfo(web.PageInfo):
 
         request = self.request.copy("submit")
         request["class"] = self.issue.GetClass().GetName()
-        return qm.web.make_url_for_request(request)
+        return request.AsUrl()
     
 
     def MakeEditUrl(self):
@@ -191,7 +191,7 @@ class ShowPageInfo(web.PageInfo):
             del request["revision"]
         if request.has_key("history"):
             del request["history"]
-        return qm.web.make_url_for_request(request)
+        return request.AsUrl()
 
 
     def MakeHistoryUrl(self, show=1):
@@ -211,7 +211,7 @@ class ShowPageInfo(web.PageInfo):
                 del request["history"]
             if request.has_key("revision"):
                 del request["revision"]
-        return qm.web.make_url_for_request(request)
+        return request.AsUrl()
 
 
     def MakeShowRevisionUrl(self, revision_number):
@@ -219,7 +219,7 @@ class ShowPageInfo(web.PageInfo):
 
         request = self.request.copy()
         request["revision"] = "%d" % revision_number
-        return qm.web.make_url_for_request(request)
+        return request.AsUrl()
 
 
     def FormatHistory(self):
@@ -446,7 +446,7 @@ def handle_submit(request):
         # That way, if the user reloads the page or backs up to it,
         # the issue form will not be resubmitted.
         request = qm.web.WebRequest("show", base=request, iid=iid)
-        raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
+        raise qm.web.HttpRedirect, request.AsUrl()
 
 
 

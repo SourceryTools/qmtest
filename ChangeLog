@@ -1,5 +1,18 @@
 2001-05-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (make_url_for_request): Remove.
+	Use AsUrl instead of make_url_for_request throughout.
+	* qm/fields.py: Likewise.
+	* qm/test/web/show.py: Likewise.
+	* qm/test/web/suite.py: Likewise.
+	* qm/test/web/web.py: Likewise.
+	* qm/track/web/index.py: Likewise.
+	* qm/track/web/show.py: Likewise.
+	* qm/track/web/summary.py: Likewise.
+	* qm/track/web/web.py: Likewise.
+	
+2001-05-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (WebRequestHandler.__HandlePageCacheRequest): New
 	method. 
 	(WebRequestHandler.__HandleSessionCacheRequest): Likewise.

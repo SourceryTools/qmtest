@@ -163,17 +163,16 @@ class ShowPageInfo(web.PageInfo):
     def MakeShowUrl(self):
         """Return the URL for showing this item."""
 
-        request = qm.web.WebRequest("show-" + self.type,
-                                    base=self.request,
-                                    id=self.item.GetId())
-        return qm.web.make_url_for_request(request)
+        return qm.web.WebRequest("show-" + self.type,
+                                 base=self.request,
+                                 id=self.item.GetId()) \
+               .AsUrl()
 
 
     def MakeSubmitUrl(self):
         """Return the URL for submitting edits."""
 
-        request = self.request.copy("submit-" + self.type)
-        return qm.web.make_url_for_request(request)
+        return self.request.copy("submit-" + self.type).AsUrl()
 
 
     def MakePrerequisitesControl(self):
@@ -335,9 +334,9 @@ class NewItemPageInfo(web.PageInfo):
         The URL is for the script 'create-test' or 'create-action' as
         appropriate."""
 
-        request = qm.web.WebRequest("create-" + self.type,
-                                    base=self.request)
-        return qm.web.make_url_for_request(request)
+        return qm.web.WebRequest("create-" + self.type,
+                                 base=self.request) \
+               .AsUrl()
 
 
 
@@ -644,7 +643,7 @@ def handle_submit(request):
 
     # Redirect to a page that displays the newly-edited item.
     request = qm.web.WebRequest("show-" + type, base=request, id=item_id)
-    raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
+    raise qm.web.HttpRedirect, request.AsUrl()
 
 
 def handle_new_test(request):
@@ -692,7 +691,7 @@ def handle_delete(request):
         raise RuntimeError, "unrecognized script name"
     # Redirect to the main page.
     request = qm.web.WebRequest("dir", base=request)
-    raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
+    raise qm.web.HttpRedirect, request.AsUrl()
 
 
 ########################################################################

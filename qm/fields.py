@@ -932,8 +932,7 @@ class UploadAttachmentPageInfo(web.PageInfo):
     def MakeSubmitUrl(self):
         """Return the URL for submitting this form."""
 
-        request = self.request.copy(attachment.upload_url)
-        return web.make_url_for_request(request)
+        return self.request.copy(attachment.upload_url).AsUrl()
 
 
 

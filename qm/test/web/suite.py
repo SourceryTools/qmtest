@@ -276,7 +276,7 @@ def handle_delete(request):
     database.RemoveSuite(suite_id)
     # Redirect to the main page.
     request = qm.web.WebRequest("dir", base=request)
-    raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
+    raise qm.web.HttpRedirect, request.AsUrl()
 
 
 ########################################################################

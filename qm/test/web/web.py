@@ -57,8 +57,7 @@ class PageInfo(qm.web.PageInfo):
 
 
     def MakeListingUrl(self):
-        dir_request = qm.web.WebRequest("dir", base=self.request)
-        return qm.web.make_url_for_request(dir_request)
+        return qm.web.WebRequest("dir", base=self.request).AsUrl()
 
 
     def GenerateStartBody(self):
@@ -91,9 +90,8 @@ class PageInfo(qm.web.PageInfo):
         request = qm.web.WebRequest("show-test",
                                     base=self.request,
                                     id=absolute_test_id)
-        link_target = qm.web.make_url_for_request(request)
         return '<a href="%s"><span class="test_id">%s</span></a>' \
-               % (link_target, test_id)
+               % (request.AsUrl(), test_id)
 
 
     def FormatActionId(self, action_id, relative_to=None):
@@ -108,9 +106,8 @@ class PageInfo(qm.web.PageInfo):
         request = qm.web.WebRequest("show-action",
                                     base=self.request,
                                     id=absolute_action_id)
-        link_target = qm.web.make_url_for_request(request)
         return '<a href="%s"><span class="action_id">%s</span></a>' \
-               % (link_target, action_id)
+               % (request.AsUrl(), action_id)
 
 
     def FormatSuiteId(self, suite_id):
@@ -119,9 +116,8 @@ class PageInfo(qm.web.PageInfo):
         request = qm.web.WebRequest("show-suite",
                                     base=self.request,
                                     id=suite_id)
-        link_target = qm.web.make_url_for_request(request)
         return '<a href="%s"><span class="suite_id">%s</span></a>' \
-               % (link_target, suite_id)
+               % (request.AsUrl(), suite_id)
     
 
 
