@@ -1,5 +1,7 @@
 2001-04-23  Benjamin Chelf  <chelf@codesourcery.com>
 
+	* qm/Makefile.in: Add CYGWIN to setup_path.py generation.
+
 	* configure.in (AC_CHECK_FILE): Change exit to a warning.
 	* configure: Regenerate.
 
