@@ -101,7 +101,7 @@ check: all
 dist:	$(QM_TAR_GZ)
 
 $(QM_TAR_GZ): release
-	(cd release && rm -rf release/qm-$(QM_VERSION) \
+	(cd release && rm -rf qm-$(QM_VERSION) && \
 	 $(CVS) export -d qm-$(QM_VERSION) \
                 -r release-$(QM_MAJOR_VER)-$(QM_MINOR_VER)-branch qm && \
 	 tar czf ../$@ qm-$(QM_VERSION)) || (rm -f $@ && false)
