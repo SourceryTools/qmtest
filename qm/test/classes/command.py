@@ -364,9 +364,11 @@ class ExecTest(Test):
                     if stdout != expected_stdout:
                         causes.append("standard output")
                         result["ExecTest.stdout"] = stdout
+                        result["ExecTest.expected_stdout"] = expected_stdout
                     if stderr != expected_stderr:
                         causes.append("standard error")
                         result["ExecTest.stderr"] = stderr
+                        result["ExecTest.expected_stderr"] = expected_stderr
                     result.Fail("Unexpected %s." % string.join(causes, ", ")) 
             elif os.WIFSIGNALED(exit_status):
                 # The target program terminated with a signal.  Construe
@@ -415,10 +417,7 @@ class ExecTest(Test):
         if string.strip(self.program) == "":
             annotations[Result.CAUSE] = "No program specified."
             return (Result.ERROR, annotations)
-        # Locate the program executable in the path specified in the
-        # context. 
-        path = context["path"]
-        program = qm.find_program_in_path(self.program, path)
+        program = qm.find_program_in_path(self.program)
         # Did we find it?
         if program is None:
             # No.  That's an error.

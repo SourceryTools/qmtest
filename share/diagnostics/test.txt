@@ -46,10 +46,10 @@ The target concurrency "%(value)s" is not a positive integer.
 The property %(property)s cannot be deleted from this context.
 
 @ db path doesn't exist
-The path you specified for the test database, %(path)s, does not exist. 
+"%(path)s" does not exist. 
 
 @ db path exists
-The path you specified for the test database, %(path)s, already exists.
+"%(path)s" already exists.
 
 @ error loading xml resource
 A problem occurred while loading the XML resource file "%(resource_id)s":
@@ -165,7 +165,7 @@ There is no test with the test ID "%(test_id)s".
 No target which matches the group pattern specified for this test.
 
 @ not test database
-The path you specified, %(path)s, is not a test database.
+"%(path)s" is not a test database.
 
 @ seed not integer
 The random number generator seed you specified, "%(seed)s", is not an

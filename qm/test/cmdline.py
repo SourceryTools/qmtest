@@ -305,15 +305,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
           ) = components
 
 
-    def HasGlobalOption(self, option):
-        """Return true if global 'option' was specified."""
-
-        for opt, opt_arg in self.__global_options:
-            if opt == option:
-                return 1
-        return 0
-
-
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
 
@@ -374,12 +365,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             db_path = os.environ[self.db_path_environment_variable]
         else:
             db_path = "."
-
         # If the path is not already absolute, make it into an
         # absolute path at this point.
         if not os.path.isabs(db_path):
             db_path = os.path.join(os.getcwd(), db_path)
-
+        # Normalize the path so that it is easy for the user to read
+        # if it is emitted in an error message.
+        db_path = os.path.normpath(db_path)
+        
         # Some commands don't require a test database.
         if self.__command == "create-tdb":
             self.__ExecuteCreateTdb(output, db_path)

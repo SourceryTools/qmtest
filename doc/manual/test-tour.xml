@@ -110,6 +110,7 @@
    following command to run all the tests in the database:</para>
 
    <screen>
+&prompt;<userinput>cd $HOME/tdb</userinput>
 &prompt;<userinput>qmtest run</userinput>
    </screen>
 

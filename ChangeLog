@@ -1,3 +1,24 @@
+2001-11-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/test-tour.xml: Clarify command sequence for running
+	tests.
+	* qm/common.py (find_program_in_path): Use the PATH environment
+	variable if no path is specified.
+	* qm/test/cmdline.py (Command.HasGlobalOption): Remove.
+	(Command.Execute): Normalize the database path.
+	* qm/test/database.py (TestDescriptor.__init__): Remove target_group
+	parameter.
+	(TestDescriptor.GetTargetGroup): Reimplement.
+	* qm/test/qmtest.py (print_error_message): Tidy up the message.
+	(program_name): Use only the basename.
+	* qm/test/xmldb.py (Database.__ParseTestDocument): Correct typo.
+	* qm/test/classes/Command.py (ExecTest.Run): Report the expected
+	standard output when a test fails.  Do not use the "path"
+	context variable.
+	* qm/test/web/web.py (QMTestServer.MakeNewTest): Correct typos.
+	(QMTestServer.MakeNewResource): Likewise.
+	* share/diagnostics/test.txt: Reformat some error messages.
+	
 2001-11-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* COPYING: Fix typo.

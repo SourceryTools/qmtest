@@ -375,8 +375,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
                               arguments,
                               prerequisites,
                               categories,
-                              resources,
-                              target_group)
+                              resources)
         return test
         
 

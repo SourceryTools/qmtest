@@ -220,8 +220,7 @@ class TestDescriptor(ItemDescriptor):
                  arguments,
                  prerequisites={},
                  categories=[],
-                 resources=[],
-                 target_group=".*"):
+                 resources=[]):
         """Create a new test instance.
 
         'database' -- The 'Database' containing this test.
@@ -253,7 +252,6 @@ class TestDescriptor(ItemDescriptor):
         self.__prerequisites = prerequisites
         self.__categories = categories
         self.__resources = resources
-        self.__target_group = target_group
         
         # Don't instantiate the test yet.
         self.__test = None
@@ -305,7 +303,7 @@ class TestDescriptor(ItemDescriptor):
         pattern matches a particular group name, the test can be run
         on targets in that group."""
 
-        return self.__target_group
+        return self.GetArguments()["target_group"]
     
         
     def Run(self, context, result):

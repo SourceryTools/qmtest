@@ -895,17 +895,21 @@ def make_temporary_directory():
     return dir_path
 
 
-def find_program_in_path(program_name, path):
+def find_program_in_path(program_name, path=None):
     """Attempt to locate a program in an execution path.
 
     'program_name' -- The name of the program to run.
 
     'path' -- A string encoding a list of directories (in a
-    system-specifiec form) in which to look for the program.
+    system-specifiec form) in which to look for the program.  If
+    'None', the 'PATH' environment variable is used.
 
     returns -- The path to the program, or 'None' if it was not
     found."""
 
+    # If no path was specified, use the PATH environment variable.
+    if path is None:
+        path = os.environ["PATH"]
     # Split the path into directories.
     path_separator = os.pathsep
     directories = string.split(path, path_separator)

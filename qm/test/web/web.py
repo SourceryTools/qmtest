@@ -1618,23 +1618,20 @@ class QMTestServer(qm.web.WebServer):
             categories = request["categories"]
             categories = qm.web.decode_set_control_contents(categories)
 
-            # Extract the target group pattern.
-            target_group = request["target_group"]
-            
             # Create a new test.
             item = TestDescriptor(
+                    self.GetDatabase(),
                     test_id=item_id,
                     test_class_name=item_class_name,
                     arguments=arguments,
                     prerequisites=prerequisites,
                     categories=categories,
-                    resources=resources,
-                    target_group=target_group)
+                    resources=resources)
 
         elif type is "resource":
             # Create a new resource.
-            item = ResourceDescriptor(item_id, item_class_name,
-                                      arguments)
+            item = ResourceDescriptor(self.GetDatabase(),
+                                      item_id, item_class_name, arguments)
 
         # Were there any validation errors?
         if len(field_errors) > 0:
@@ -1759,7 +1756,8 @@ class QMTestServer(qm.web.WebServer):
             value = field.GetDefaultValue()
             arguments[name] = value
         # Construct a default test instance.
-        return TestDescriptor(test_id, test_class_name, arguments, {}, [])
+        return TestDescriptor(self.GetDatabase(), test_id,
+                              test_class_name, arguments)
 
 
     def MakeNewResource(self, resource_class_name, resource_id):
@@ -1784,8 +1782,8 @@ class QMTestServer(qm.web.WebServer):
             value = field.GetDefaultValue()
             arguments[name] = value
         # Construct a default resource instance.
-        return ResourceDescriptor(resource_id, resource_class_name, arguments)
-
+        return ResourceDescriptor(self.GetDatabase(), resource_id,
+                                  resource_class_name, arguments)
 
 ########################################################################
 # initialization

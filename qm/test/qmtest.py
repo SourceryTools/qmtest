@@ -67,7 +67,7 @@ import sys
 
 def print_error_message(message):
     message = qm.structured_text.to_text(str(message))
-    sys.stderr.write("%s: error:\n%s" % (program_name, message))
+    sys.stderr.write("%s: error: %s" % (program_name, message))
 
 ########################################################################
 # script
@@ -86,7 +86,7 @@ qm.diagnostic.help_set.ReadFromFile(help_file)
 # Load RC options.
 qm.rc.Load("test")
                                                        
-program_name = os.path.splitext(sys.argv[0])[0]
+program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
     # Parse the command line.
