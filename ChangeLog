@@ -1,3 +1,7 @@
+2001-06-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/idb.py: Remove obsolete imports.
+
 2001-06-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (make_set_control): Escape text.

@@ -40,8 +40,6 @@ import issue_class
 from   issue_class import TriggerResult
 import os
 import qm
-import qm.code
-from   qm.code import abstract_method
 import qm.common
 import qm.fields
 import qm.track.issue
