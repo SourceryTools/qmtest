@@ -1,3 +1,10 @@
+2004-02-15  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (open_temporary_file_fd): Change default suffix to
+	empty string.
+	(open_temporary_file): Likewise.
+	* qm/test/classes/command.py (ShellScriptTest.Run): Likewise.
+	
 2004-02-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (open_temporary_file_fd): Add suffix parameter.

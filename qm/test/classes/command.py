@@ -443,7 +443,7 @@ class ShellScriptTest(ExecTestBase):
         if sys.platform == "win32":
             suffix = ".bat"
         else:
-            suffix = None
+            suffix = ""
         # Create a temporary file for the script.
         self.__script_file_name, script_file \
             = qm.open_temporary_file("w+", suffix) 
