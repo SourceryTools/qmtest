@@ -1,11 +1,11 @@
 ######################################################### -*-Makefile-*-
 #
-# File:   GNUmakefile
+# File:   Makefile
 # Author: Alex Samuel
 # Date:   2000-10-20
 #
 # Contents:
-#   Makefile for documentation tree.
+#   Makefile for qmtrack design document
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -31,6 +31,8 @@
 #
 ########################################################################
 
-SUBDIRS		= design/qmtrack design/qmtest
+DOCBOOK		= $(wildcard *.xml)
+DOCBOOKMAIN	= qmtrack.xml
 
-include ../standard.mk
+include $(TOPDIR)/standard.mk
+

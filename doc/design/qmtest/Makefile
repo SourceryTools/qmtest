@@ -1,8 +1,8 @@
 ######################################################### -*-Makefile-*-
 #
-# File:   GNUmakefile
+# File:   Makefile
 # Author: Alex Samuel
-# Date:   2000-10-20
+# Date:   2000-11-10
 #
 # Contents:
 #   Makefile for qmtest design document
@@ -31,6 +31,7 @@
 #
 ########################################################################
 
-HTML		= $(subst .xhtml,.html,$(wildcard *.xhtml))
+DOCBOOK		= $(wildcard *.xml)
+DOCBOOKMAIN	= qmtest.xml
 
 include $(TOPDIR)/standard.mk

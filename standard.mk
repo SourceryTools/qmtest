@@ -50,25 +50,70 @@
 TOPDIR		= $(HOME)/qm
 
 TIDY 		= tidy
-TIDYFLAGS	= -wrap 72 -i
+TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
 
-XHTMLPROCESS	= $(TOPDIR)/doc/process-xhtml.py
+# Jade configuration,
+JADE		= jade
+JADEEXTRA	= /usr/doc/jade-1.2.1/pubtext/xml.dcl
+
+# Modular DSSSL stylesheet configuration.  The system identifiers are
+# specified as relative paths, so the base of the stylesheet
+# installation needs to be provided.
+SGMLDIRS        += /usr/lib/sgml/stylesheets/docbook
+
+# qm stylesheets.
+HTMLSS          = $(TOPDIR)/doc/qm-html.dsl
+PRINTSS         = $(TOPDIR)/doc/qm-print.dsl
 
 .PHONY:		all clean doc subdirs
+.PHONY:         doc-html doc-print docbook-html docbook-print 
 .PHONY:		$(SUBDIRS)
 
 ########################################################################
 # Rules
 ########################################################################
 
+NULLSTRING	:=
+SPACE		:= $(NULLSTRING) # Leave this comment here.
+
 all:		subdirs doc
 
-doc:		$(HTML)
+doc:		doc-html doc-print
+
+# Generate html and print documentation from DocBook source, if it was
+# specified. 
+ifneq ($(DOCBOOKMAIN),)
+doc-html:	docbook-html
+doc-print:	docbook-print
+else
+doc-html:	
+doc-print:	
+endif
 
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
 	cd $@ && make TOPDIR=$(TOPDIR)
+
+# The DocBook modular stylesheets generate some sloppy HTML.  Process
+# it with tidy.  Unfortunately, tidy will emit copious warnings;
+# funnel them to /dev/null.  Also tidy returns non-zero indicating
+# warnings; supress this by running true.
+docbook-html:	$(DOCBOOKMAIN) $(DOCBOOK)
+	mkdir -p html
+	$(JADE) \
+            $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	    -t sgml -d $(HTMLSS) $(JADEEXTRA) $<
+	for f in *.htm; do \
+	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
+	    true; \
+	done 
+
+docbook-print:	$(DOCBOOKMAIN) $(DOCBOOK)
+	mkdir -p print
+	$(JADE) \
+            $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	    -t tex -d $(PRINTSS) $(JADEEXTRA) $<
 
 ########################################################################
 # Pattern rules

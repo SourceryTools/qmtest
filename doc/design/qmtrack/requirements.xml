@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   requirements.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Chapter `Requirements' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter><title>Requirements</title>
+
+ <orderedlist>
+  <listitem>
+   <para>Modularity of user interfaces.  All features should be
+   accessible via the web, e-mail, and the commend line.  Creation of
+   other user interfaces should be possible via clear
+   interfaces.</para>
+  </listitem>
+
+  <listitem>
+   <para>Policy-neutrality.  The basic system architecture should make
+   asolutely minimal assumptions about howhow the system will be
+   used.</para>
+  </listitem>
+
+  <listitem>
+   <para>Policy support.  Clear mechanisms will be provided for
+   implementing and enforcing use policies.  Additionally,
+   implementations of common policies will be provided as optional
+   features.</para>
+  </listitem>
+
+  <listitem>
+   <para>Abstracted identity, authentication, and security.  Notions
+   of user identity and mechanisms for authenticating users and
+   securing communications will work through abstract interfaces.
+   Implementations for typical use cases will be provided.</para>
+  </listitem>
+ </orderedlist>
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

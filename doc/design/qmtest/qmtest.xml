@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   index.xhtml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Master file for qmtest design document.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+[
+  <!-- Internal DTD subset.  Only entities should be defined here. -->
+
+  <!-- Commonly-used symbols, terms, and abbreviations specific to
+  this document.  -->
+
+  <!ENTITY qmtest "qmtest">
+
+  <!-- Each chapter is contained in a separate file, and included by
+  entity reference.  -->
+
+  <!ENTITY core.xml SYSTEM "core.xml">
+  <!ENTITY impl.xml SYSTEM "impl.xml">
+]>
+<book>
+ <bookinfo>
+  <title>&qmtest; Design</title>
+  <author>
+   <firstname>Mark</firstname>
+   <surname>Mitchell</surname>
+  </author>
+  <author>
+   <firstname>Greg</firstname>
+   <surname>Wilson</surname>
+  </author>
+  <author>
+   <firstname>Alex</firstname>
+   <surname>Samuel</surname>
+  </author>
+ </bookinfo>
+
+ <chapter><title>Introduction</title>
+
+  <para>Most programmers don't do enough testing today because:
+   <itemizedlist>
+    <listitem>
+     <para>They aren't required to.</para>
+    </listitem>
+
+    <listitem>
+     <para>It's tedious.</para>
+    </listitem>
+
+    <listitem>
+     <para>Existing tools are obscure, hard to use, expensive, don't
+     actually provide much help, or all three.</para>
+    </listitem>
+
+    <listitem>
+     <para>They don't know where to start, when to stop, or how to
+     tell whether the tests they've written are
+     meaningful.</para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+  <para>Software tools alone cannot solve the first problem, but
+  qmtest tries to solve the second by addressing the third and
+  fourth. In particular:
+   <itemizedlist>
+    <listitem>
+     <para>qmtest has a gentle learning curve, especially for
+     developers without software engineering training. qmtest does
+     this by:
+     <itemizedlist>
+     <listitem>
+      <para>being very simple to install and configure;</para>
+     </listitem>
+
+     <listitem>
+      <para>making it very easy for developers to create an empty
+      (skeletal) testsuite for a project;</para>
+     </listitem>
+
+     <listitem>
+      <para>making it equally easy for developers to create the first
+      real test for a project, or to add another test once N tests
+      have been written.</para>
+     </listitem>
+     </itemizedlist>
+     </para>
+    </listitem>
+
+    <listitem>
+     <para>qmtest provides a very simple workflow, so that tests can
+     easily and systematically be added, modified, inspected, and
+     summarized by developers, managers, and other
+     stakeholders.</para>
+    </listitem>
+
+    <listitem>
+     <para>qmtest provides feedback regarding the quality and
+     thoroughness of testing so that developers will be able to tell
+     how much they have done, how much remains to be done, and how
+     well third party modules have been tested.</para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+  <para>Some of the particular scenarios that qmtest handles are:
+   <itemizedlist>
+    <listitem>
+     <para>Static unit testing of functions, classes, and modules in
+     languages such as C, Python, and Java. (These three languages are
+     chosen as examples because they span the range from low-level to
+     high-level.)</para>
+    </listitem>
+
+    <listitem>
+     <para>Customizable reporting of test results, ranging from a
+     single-line command-line summary of the number of tests that
+     passed and failed, through to automatic creation of charts of
+     test statistics over time.</para>
+    </listitem>
+
+    <listitem>
+     <para>Scriptable control of testsuite execution, so that portions
+     can be executed selectively, executed repeatedly under different
+     load conditions, only executed at certain times of day, and so
+     on.</para>
+    </listitem>
+
+    <listitem>
+     <para>Parallel execution of testsuites.</para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+  <para>This document begins by describing <link linkend="story">six
+  typical users</link>, whose testing needs qmtest is designed to
+  address. It then explores their <link
+  linkend="req">requirements</link> in more detail, in order to
+  determine the features that qmtest must have. qmtest's <link
+  linkend="arch">architecture</link> and <link linkend="iface">user
+  interface</link> are described next, along with some details of its
+  <link linkend="impl">implementation</link> . These are followed by a
+  provisional <link linkend="devplan">development plan</link> and an
+  analysis of the <link linkend="risk">risks</link> the project
+  faces. The document closes with pointers to other testing-related
+  resources.</para>
+
+  <section><title>What qmtest is Not</title>
+
+   <para>In order to bound the scope of this project, it is important
+   to be specific about what qmtest will not try to provide.</para>
+
+   <para>
+    <itemizedlist>
+     <listitem>
+      <para>qmtest is not a build system. It will not determine which
+      parts of the programs being tested need to be recompiled, or
+      which test programs need to be re-linked. It
+      <emphasis>may</emphasis> include support for re-running tests
+      whose last recorded result is older than the thing being
+      tested.</para>
+     </listitem>
+
+     <listitem>
+      <para>qmtest is not a version control system, or a relational
+      database. In particular, versioning of tests will be handled by
+      whatever version control system developers are already
+      using. Similarly, qmtest will log the results of tests, but will
+      rely on the capabilities of external systems to maintain
+      historical records. Note, however, that qmtest
+      <emphasis>will</emphasis> be able to retrieve information from
+      those archiving systems in order to create
+      reports.</para>
+     </listitem>
+
+     <listitem>
+      <para>qmtest is not a test creation wizard itself, although
+      tools for creating qmtest-compatible tests will be shipped with
+      it.</para>
+     </listitem>
+
+     <listitem>
+      <para>qmtest is not a general program execution harness. Some
+      users may choose to run their programs via qmtest under non-test
+      circumstances (e.g. in order to obtain logging information), but
+      qmtest is not a replacement for distributed load-balancing
+      software, safe shells, or other tools.</para>
+     </listitem>
+    </itemizedlist>
+   </para>
+
+  </section>
+
+ </chapter>
+
+ &core.xml;
+ &impl.xml;
+
+</book>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  End:
+-->

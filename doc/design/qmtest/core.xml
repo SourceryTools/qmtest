@@ -1,0 +1,372 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   core.xml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Core architecture of qmtest.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter><title>&qmtest Core Concepts</title>
+
+ <para>This section described the core concepts of qmtest.  These
+ include the definition of a test itself, the components of the system
+ that store and execute tests, and the structure of the test
+ results.</para>
+
+ <para>After describing the test, the fundamental unit of behavior in
+ qmtest, we present the concept of test database, the objects in which
+ tests are stored, and the execution engine, the component of the
+ system that selects and runs tests and collects their results.</para>
+
+ <section><title>Tests</title>
+
+  <para>A <firstterm>test</firstterm> is the basic unit of testing in
+  qmtest.  A test consists of the following components:
+   <orderedlist>
+    <listitem>
+     <para>A test id.  This uniquely identifies the test among all the
+     tests in the test database.</para>
+    </listitem>
+
+    <listitem>
+     <para>A reference to a single test class.  The test class
+     contains the mechanism by which the test is actually run.  Each
+     test is considered to be an instance of the test class to which
+     it refers.</para>
+    </listitem>
+
+    <listitem>
+     <para>A set of zero or more arguments, corresponding to
+     parameters of the test class.</para>
+    </listitem>
+
+    <listitem>
+     <para>A set of zero or more categories.  These are used to divide
+     tests into (not necessarily disjoint) sets that make sense to
+     users.</para>
+    </listitem>
+  
+    <listitem>
+     <para>Zero or more preactions and postactions.  These specify
+     actions that need to be taken to set up for this test, and clean
+     up after this test, respectively.</para>
+    </listitem>
+
+    <listitem>
+     <para>Zero or more prerequisites.  These are other tests in the
+     test system that must be run before this test is.  Optionally,
+     each of these may be required to pass or to fail as a
+     precondition.</para>
+    </listitem>
+
+    <listitem>
+     <para>Zero or more design-time arguments which contain
+     meta-information not necessary to run the test, but useful for
+     presenting and interpreting the test in the user
+     interface.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+ </section>
+
+ <section><title>Test ids</title>
+
+  <para>A <firstterm>test id</firstterm> is a text string that
+  identifies a test.  Test ids must be unique within the test database
+  containing the test.</para>
+
+  <para>If the test database presents a tree organization, the test id
+  is a filesystem-style path from the root of the tree to the location
+  of the test it identifies, with path components separated by a
+  period (".").  This character is reserved and may not be used in
+  interior or leaf node names.  No other characters have special
+  interpretation.</para>
+
+ </section>
+
+ <section><title>Test arguments</title>
+
+  <para>The arguments to test classes that are stored in tests are
+  text strings containing Python expressions.  The Python expressions
+  are evaluated at the time the test is executed.  
+  <!-- FIXME: Specify the environment in which the expressions are
+  evaluated. -->
+  </para>
+
+ </section>
+
+ <section><title>Categories</title>
+
+  <para>A <firstterm>category</firstterm> is an implicit subset of
+  tests, grouped according to some property of significance to test
+  users and maintainers.  Each category is named with a text string.
+  Each test includes a set (which may be empty) of category names,
+  specifying the categories to which it belongs.</para>
+
+  <para>Categories are intended to group tests according to intrinsic
+  properties of the tests themselves.  Another mechanism, a testsuite,
+  exists to group tests by extrinsic properties, such as frequency of
+  use.</para>
+
+ </section>
+
+ <section><title>Prerequisites</title>
+
+  <para>A <firstterm>prerequisite</firstterm> of a test is another
+  test that must be run first.  Optionally, a test may specify that
+  the precondition either must pass or must fail before that test is
+  run.  If its prerequisite is not met, the test is not run, and its
+  outcome is set to <literal>NOT_RUN</literal>.  
+  <!-- FIXME: (Fix this when outcome enumerals have been decided.) -->
+  </para>
+
+ </section>
+
+ <section><title>Design-time arguments</title>
+
+  <para>
+  <!-- FIXME: Write stuff here. -->
+  </para>
+
+ </section>
+
+ <section><title>Testsuites</title>
+
+  <para>A testsuite is a set of tests.  A test suite enumerates the
+  test ids of the tests it contains.  A testsuite may also include
+  other testsuites.  When a testsuite is presented to the execution
+  engine to be run, the testsuite is considered to contain the union
+  of the tests it contains directly and those tests contained in its
+  contained testsuites.</para>
+
+ </section>
+
+ <section><title>Actions</title>
+
+  <para>An <firstterm>action</firstterm> has the same elements as a
+  test.  It differs by its intended purpose and interpretation of its
+  outcome.  While a test is a basic unit of testing, an action is
+  invoked for its side effects.  When an action is run, the outcome is
+  not reported to the user as it would be for a test.  Instead, if the
+  action fails, this is considered to be an error.  If the action
+  succeeds, execution simply continues.</para>
+
+  <para>Actions are intended to be used to specify operations that are
+  needed to set up for and clean up after tests.  For instance, an
+  action might create a temporary file that is used as an input by a
+  particular test.  That test would specify the action as a
+  <firstterm>preaction</firstterm>, an action that must taken before
+  the test is run.  If the action fails, the test is not run.
+  Similarly, another action might clean up the temporary file after
+  the test.  The test would specify that action as a
+  <firstterm>postaction</firstterm>, which would be run regardless of
+  the outcome of the test.</para>
+
+  <para>An action has the same elements as a test, so, specifically,
+  an action may have preactions and postactions.  Cycles among
+  preactions and postactions are not allowed.  
+  <!-- FIXME: Need an implementation check for these? -->
+  </para>
+
+  <para>
+  <!-- FIXME: May an action have prerequisites? -->
+  </para> 
+
+ </section>
+
+ <section><title>Test classes</title>
+
+  <para>A <firstterm>test class</firstterm> may be thought of a type
+  of tests.  Test classes incorporate the procedures for actually
+  running the test, so all tests of the same test class share the same
+  running procedure.</para>
+
+  <para>However, test classes may be parameterized.  In this case,
+  each test will supply argument values to satisfy the parameters of
+  its test class.  As with Python functions, a test class may include
+  both mandatory and optional (named) parameters.</para>
+
+ </section>
+
+ <section><title>Test databases</title>
+
+ <para>A <firstterm>test database</firstterm> (or
+ <firstterm>tdb</firstterm>) is the unit of storage of tests.  A test
+ database is able to enumerate the test ids of tests it contains, and
+ to return the test corresponding to one such test id.</para>
+
+ <para>A test database may optionally present a tree arrangement of
+ the tests it contains, in which the leaf nodes are tests.  Each
+ interior and leaf node has a text name.  The test id of each test
+ will specify its position in the tree.</para>
+
+ <para>Test databases may be composed.  
+ <!-- FIXME: How does this work?  Explain the interaction with
+ hierarchical test ids. -->
+ </para>
+
+ </section>
+
+ <section><title>Execution engine</title>
+
+  <para>The <firstterm>execution engine</firstterm> is the component
+  of the system that coordinates the execution of tests and the
+  collection of test results.  The execution engine accepts as input a
+  set of tests and testsuites specifying tests to be run.  It returns
+  a mapping from test ids to test results.</para>
+
+  <para>Results of tests that were not explicitly specified (directly
+  or through a testsuite) to the execution engine are not included in
+  the set of results.  However, the results of tests run as
+  prerequisites and actions run as preactions and postactions are
+  available via the test results of the tests that causes these
+  prerequisite tests and actions to be run.</para>
+
+  <para>The execution engine operates by following this conceptual
+  procedure:
+  <orderedlist>
+    <listitem>
+     <para>The execution engine recursively expands any testsuite it
+     is given as input into the individual test ids it
+     contains.</para>
+    </listitem>
+
+    <listitem>
+     <para>The execution engine obtains the corresponding tests from
+     the test database.</para>
+    </listitem>
+
+    <listitem>
+     <para>The execution engine determines the transitive closure of
+     preactions, postactions, and prerequisites, to obtain a set of
+     all test and actions that need to be run.  At the same time, it
+     constructs a dependency graph reflecting ordering dependencies
+     among these.</para>
+    </listitem>
+
+    <listitem>
+     <para>The execution engine performs a topological sort on the
+     dependency graph, and executes the tests in an acceptable order.
+     <!-- FIXME: The execution engine may parallelize tests if this
+     does not violate dependency relations.-->
+     </para>
+    </listitem>
+
+    <listitem>
+     <para>The execution engine collects the results of each test run.
+     For tests that are not run because of failed prerequisites or
+     preactions, a result is fabricated with an outcome reflecting
+     this.  Links to prerequisite results and preaction and postaction
+     results are linked to the results for each test.  A set of
+     results is constructed for the tests computed in step
+     1.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+ </section>
+
+ <section><title>Test results</title>
+  
+  <para>Each test result contains the following information.
+   <orderedlist>
+    <listitem>
+     <para>The test id of the test that was run.</para>
+    </listitem>
+
+    <listitem>
+     <para>An outcome.</para>
+    </listitem>
+  
+    <listitem>
+     <para>Links to results for preactions, postactions, and
+     prerequisites run because of this test.</para>
+    </listitem>
+
+    <listitem>
+     <para>Arbitrary data specific to the test class containing
+     additional information about the test run and its results.  This
+     data is not interpreted by the execution engine.</para>
+    </listitem>
+
+    <listitem>
+     <para>A block of environmental state specifying information about
+     the test execution environment at the time the test was
+     run.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+ </section>
+
+ <section><title>Outcomes</title>
+
+  <para>Each test is primarily characterized by an
+  <firstterm>outcome</firstterm>.  The outcome is one enumeral from a
+  fixed, non-configurable set of possible outcomes.  Actions also use
+  these outcomes to express success or failure.  The set of enumerals
+  are:
+   <itemizedlist>
+    <listitem>
+     <para><literal>PASS</literal>: The test passed, or the action
+     completed successfully.</para>
+    </listitem>
+
+    <listitem>
+     <para><literal>FAIL</literal>: The test failed, or the action did
+     not complete successfully.  Additional information about the
+     failure may be available in the class-specific data in the test
+     result.</para>
+    </listitem>
+
+    <listitem>
+     <para><literal>FAILED_DEPENDENCY</literal>: The test was not run
+     because a dependency failed---either a preaction did not run
+     successfully, or a prerequisite test produced an unexpected
+     outcome.</para>
+    </listitem>
+
+    <listitem>
+     <para>
+     <!-- FIXME: Correct and complete this list! -->
+     </para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+ </section>
+
+ <section><title>Environmental state</title>
+
+  <para>Each test result includes a block of <firstterm>environmental
+  state</firstterm> information.  For all qmtest implementations, the
+  environmental state includes a wall-clock time stamp of when the
+  test was run.  Implementations may add other data as well, such as
+  the host on which the test was run, and the identity of the user who
+  invoked the test.</para>
+
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtest.xml" "book" "chapter")
+  End:
+-->

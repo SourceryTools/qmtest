@@ -1,12 +1,11 @@
-<?xml version="1.0"?>
 <!--
 
-  File:   Fill me in!
-  Author: Fill me in!
-  Date:   YYYY-MM-DD
+  File:   qm-html.dsl
+  Author: Alex Samuel
+  Date:   2000-11-09
 
   Contents:
-    Fill me in!
+    DSSSL style sheet for generating HTML from DocBook documents.
 
   Copyright (C) 2000 CodeSourcery LLC
 
@@ -31,4 +30,34 @@
   SOFTWARE.
 
 -->
+<!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL Style Sheet//EN" 
+[
+ <!-- This style sheet extends Norman Walsh's Modular DSSSL Docbook
+      Stylesheet for HTML.  -->
 
+ <!ENTITY dbstyle 
+  PUBLIC "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN" 
+  CDATA DSSSL>
+]> 
+
+<style-sheet>
+<style-specification use="docbook">
+<style-specification-body> 
+
+;; Place output in the html/ subdirectory.
+(define use-output-dir #t)
+(define %output-dir% "html")
+
+;; Use the extension .html for output files.
+(define %html-ext% ".html")
+
+;; The main file is named index.
+(define %root-filename% "index")
+
+;; Turn on Cascading Style Sheets markup in the resulting HTML.
+(define %css-decoration% #t)
+
+</style-specification-body>
+</style-specification>
+<external-specification id="docbook" document="dbstyle">
+</style-sheet>

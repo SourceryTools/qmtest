@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   qmtrack.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Master file for qmtrack design document.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+[
+  <!-- Internal DTD subset.  Only entities should be defined here. -->
+
+  <!-- Commonly-used symbols, terms, and abbreviations specific to
+  this document.  -->
+
+  <!ENTITY idb "<acronym>idb</acronym>">
+  <!ENTITY qmtrack "qmtrack">
+
+  <!-- Each chapter is contained in a separate file, and included by
+  entity reference.  -->
+
+  <!ENTITY requirements.xml SYSTEM "requirements.xml">
+  <!ENTITY concepts.xml SYSTEM "concepts.xml">
+  <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
+]>
+<book>
+ <bookinfo>
+  <title>&qmtrack; Design</title>
+  <author>
+   <firstname>Alex</firstname>
+   <surname>Samuel</surname>
+  </author>
+ </bookinfo>
+
+ <chapter><title>Introduction</title>
+
+  <para>.<!-- FIXME: Write the introduction. -->
+  </para>
+
+ </chapter>
+
+ &requirements.xml;
+ &concepts.xml;
+ &idb-api.xml;
+
+</book>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  End:
+-->

@@ -1,3 +1,40 @@
+2000-11-10  Alex Samuel  <samuel@codesourcery.com>
+
+	Conversion to DocBook.
+	
+	* standard.mk (TIDYFLAGS): Use one-space indent.
+	(JADE): New variable.
+	(JADEEXTRA): Likewise.
+	(SGMLDIRS): Likewise.
+	(HTMLSS): Likewise.
+	(PRINTSS): Likewise.
+	(NULLSTIRNG): Likewise.
+	(SPACE): Likewise.
+	(doc): New rule.
+	(doc-html): New rule, conditionally.
+	(doc-print): Likewise.
+	(docbook-html): New rule.
+	(docbook-print): Likewise.
+	* doc/GNUmakefile: Rename to...
+	* doc/Makefile: ... this.
+	
+	* doc/qm-print.dsl: New file.
+	* doc/qm-html.dsl: Likewise.
+	
+	* doc/design/qmtest/GNUmakefile: Rename to...
+	* doc/design/qmtest/Makefile: ... this.
+	* doc/design/qmtest/*.xhtml: Remove.
+	* doc/design/qmtest/*.xml: New files.
+
+	* doc/design/qmtrack/GNUmakefile: Rename to...
+	* doc/design/qmtrack/Makefile: ... this.
+	* doc/design/qmtrack/*.xhtml: Remove.
+	* doc/design/qmtrack/*.xml: New files.
+
+	* templates/docbook: New file.
+	* templates/docbook-chapter: Likewise.
+	* templates/xml: Add XML PI.
+	
 2000-11-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/GNUmakefile (SUBDIRS): Add design/qmtest.

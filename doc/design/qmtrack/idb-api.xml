@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0"?>
 <!--
 
-  File:   idb-api.xhtml
+  File:   idb-api.xml
   Author: Alex Samuel
-  Date:   2000-11-04
+  Date:   2000-11-07
 
   Contents:
-    APIs for accessing the qmtrack issue database (idb).
+    Chapter `Issue Database API' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
 
   Copyright (C) 2000 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -17,38 +17,25 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<html xhtmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Style-Type" content="text/css" />
+<chapter><title>Issue Database API</title>
 
-    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+ <section><title>Issue database</title>
 
-    <title>qmtrack Issue Database APIs</title>
-  </head>
+  <para>The <classname>IdbBase</classname> class is the base class for
+  idb implementations.</para>
 
-  <body>
-    <a name="CHAP-architecture">
-      <h3>Issue Database APIs</h3>
-    </a>
-
-    <h4>Issue database</h4>
-
-    <p>The <span class="Class">IdbBase</span> class is the base class
-    for idb implementations.</p>
-
-    <p>Creation and setup methods.</p>
-
-    <div class="API">
-<pre>
+  <para>Creation and setup methods.
+   <programlisting>
+<![CDATA[
 class IdbBase:
     """Base class for idb implementations."""
-</pre>
-    </div>
+]]>
+   </programlisting>
+  </para>
 
-    <p>Methods for retrieving issues and revisions.</p>
-
-    <div class="API">
-<pre>
+  <para>Methods for retrieving issues and revisions.
+   <programlisting>
+<![CDATA[
     def GetIssue(self, iid):
         """Return the current revision of the issue corresponding to
         iid."""
@@ -64,15 +51,18 @@ class IdbBase:
     def GetCurrentRevisionNumber(self, iid):
         """Return the revision number of the current revision of the
         issue given by iid."""
-</pre>
-    </div>
+]]>
+   </programlisting>
+  </para>
 
-    <h4>File attachements</h4>
+ </section>
 
-    <p>The <span class="ClassDef">Attachment</span> class represents
-    an attachment.</p>
-    <div class="API">
-<pre>
+ <section><title>File attachements</title>
+
+  <para>The <classname>Attachment</classname> class represents an
+  attachment.
+   <programlisting>
+<![CDATA[
 class Attachment:
     """A file attachment to an issue."""
 
@@ -94,16 +84,21 @@ class Attachment:
 
     def GetDescription(self):
         """Return a description of the attachment."""
-</pre>
-    </div>
+]]>
+   </programlisting>
+  </para>
 
-  </body>
-</html>
+ </section>
 
-<!-- 
+</chapter>
+
+<!--
   Local Variables:
-  mode: html
   indent-tabs-mode: nil
-  fill-column:72
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
   End:
 -->

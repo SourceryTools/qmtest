@@ -1,12 +1,11 @@
-<?xml version="1.0"?>
 <!--
 
-  File:   Fill me in!
-  Author: Fill me in!
-  Date:   YYYY-MM-DD
+  File:   qm-print.dsl
+  Author: Alex Samuel
+  Date:   2000-11-10
 
   Contents:
-    Fill me in!
+    DSSSL style sheet for generating hardcopy from DocBook documents.
 
   Copyright (C) 2000 CodeSourcery LLC
 
@@ -31,4 +30,23 @@
   SOFTWARE.
 
 -->
+<!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL Style Sheet//EN" 
+[
+ <!-- This style sheet extends Norman Walsh's Modular DSSSL Docbook
+      Print Stylesheet.  -->
 
+ <!ENTITY dbstyle 
+  PUBLIC "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN" 
+  CDATA DSSSL>
+]> 
+
+<style-sheet>
+<style-specification use="docbook">
+<style-specification-body> 
+
+;; Customizations here.
+
+</style-specification-body>
+</style-specification>
+<external-specification id="docbook" document="dbstyle">
+</style-sheet>
