@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest ResultStream class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -18,12 +18,13 @@
 ########################################################################
 
 import qm
+import qm.extension
 
 ########################################################################
 # classes
 ########################################################################
 
-class ResultStream:
+class ResultStream(qm.extension.Extension):
     """A 'ResultStream' displays test results.
 
     A 'ResultStream' is responsible for displaying test results for
@@ -38,14 +39,6 @@ class ResultStream:
     define your own 'ResultStream'.  A typical reason to extend
     'ResultStream' would be to write out test results in alternative
     file format."""
-
-    def __init__(self):
-        """Construct a 'ResultStream'.
-
-        Derived class '__init__' methods must invoke this method."""
-        
-        pass
-
 
     def WriteResult(self, result):
         """Output a test result.
