@@ -432,6 +432,8 @@ def handle_submit(request):
             else:
                 # Add the new revision.
                 idb.AddRevision(issue)
+        except qm.track.idb.IssueExistsError, exception:
+            errors["iid"] = qm.error("iid already used", iid=iid)
         except qm.track.idb.TriggerRejectError, exception:
             trigger_result = exception.GetResult()
             errors["_issue"] = trigger_result.GetMessage()

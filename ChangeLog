@@ -1,5 +1,11 @@
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/web/show.py (handle_submit): Handle IssueExistsError. 
+	* share/dtml/track/summary.dtml: Top-align issue rows.
+	* share/diagnostics/track.txt (iid already used): New diagnostic.
+
+2001-07-03  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (SetField.__init__): Use contained field property
 	declarations. 
 	(SetField.MakePropertyControls): New method.

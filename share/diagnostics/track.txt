@@ -113,6 +113,9 @@ this command again later.  If you believe the lock file is stale and
 has been left behind by a defuct QMTrack process, delete the directory
 %(lock_path)s and try again.
 
+@ iid already used
+There is already an issue in the IDB with the issue ID "%(iid)s".
+
 @ initialize invalid idb class
 IDB type "%(type)" is invalid.
 
