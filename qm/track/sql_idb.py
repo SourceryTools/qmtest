@@ -7,7 +7,7 @@
 # Contents:
 #   Generic SQL implementation of the IDB.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2000, 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -66,7 +66,7 @@ SQL-based implementation of the issue database.
 
 from   issue import *
 import issue_class
-import idb
+import issue_database
 import parser
 import qm.fields
 import rexec
@@ -78,7 +78,7 @@ import token
 # classes
 ########################################################################
 
-class SqlIdb(idb.IdbBase):
+class SqlIdb(issue_database._IssueDatabase):
     """Generic SQL IDB implementation.
 
     An instance of this class represents a connections to an IDB.  Any
@@ -113,12 +113,12 @@ class SqlIdb(idb.IdbBase):
 
     def __init__(self, path, create_idb):
         # Perform base class initialization.
-        idb.IdbBase.__init__(self, path, create_idb)
+        issue_database._Issue_Database.__init__(self, path, create_idb)
 
 
     def Close(self):
         # Perform base class operation.
-        idb.IdbBase.Close(self)
+        issue_database._Issue_Database.Close(self)
 
 
     def GetIssueClass(self, name):

@@ -511,9 +511,9 @@ def handle_new_class(request):
         return AddClassPage(errors)(request)
     
     # Construct the issue class.
-    issue_class = qm.track.IssueClass(name=class_name,
-                                      title=class_title,
-                                      categories=categories)
+    issue_class = qm.track.issue_class.IssueClass(name=class_name,
+                                                  title=class_title,
+                                                  categories=categories)
     # Add it to the IDB.
     idb = request.GetSession().idb 
     idb.AddIssueClass(issue_class)

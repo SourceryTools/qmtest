@@ -48,15 +48,6 @@ import sys
 import tempfile
 
 ########################################################################
-# constants
-########################################################################
-
-# File descriptor numbers corresponding to standard streams.
-STDIN_FILENO = sys.stdin.fileno()
-STDOUT_FILENO = sys.stdout.fileno()
-STDERR_FILENO = sys.stderr.fileno()
-
-########################################################################
 # functions
 ########################################################################
 
@@ -283,11 +274,11 @@ class ExecTest(Test):
                         # Close the read end of the result pipe.
                         os.close(result_pipe_read)
                         # Redirect stdin from the standard input file.
-                        os.dup2(stdin_fd, STDIN_FILENO)
+                        os.dup2(stdin_fd, sys.stdin.fileno())
                         # Redirect stdout to the standard output file.
-                        os.dup2(stdout_fd, STDOUT_FILENO)
+                        os.dup2(stdout_fd, sys.stdout.fileno())
                         # Redirect stderr to the standard error file.
-                        os.dup2(stderr_fd, STDERR_FILENO)
+                        os.dup2(stderr_fd, sys.stderr.fileno())
                     except:
                         # Perhaps something went wrong while setting up
                         # the standard stream files.

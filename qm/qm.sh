@@ -214,4 +214,4 @@ qm_script="${qm_libdir}/${qm_script_dir}/${qm_script}.py"
 
 # Start the python interpreter, passing it all of the arguments
 # present on our command line.
-exec "${qm_python}" "${qm_script}" "$@"
+exec "${qm_python}" -O "${qm_script}" "$@"

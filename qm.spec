@@ -1,17 +1,16 @@
-Summary: The Software Carpentry QM (Quality Management) tool suite.
+Summary: The CodeSourcery QM (Quality Management) tools.
 Name: qm
 Version: @version@
 Release: @release@
 Copyright: Copyright (C) CodeSourcery LLC.
 Group: Development/Tools
 Source0: qm-@version@.tgz
-Url: http://www.software-carpentry.com
+Url: http://www.codesourcery.com/qm
 Provides: qm
 
 %description
-QM is a suite of support tools for software developers produced by the
-Software Carpentry project.  The suite includes a software testing tool
-(QMTest) and a bug-tracking tool (QMTrack).
+QM contains CodeSourcery's testing tool (QMTest) and 
+bug-tracking tool (QMTrack).
 
 %prep
 %setup

@@ -39,9 +39,7 @@ SUBDIRS		= zope-dtml/ExtensionClass \
 		  qm \
 		  doc
 
-# These are a bloody nuisance to build every time, and there's no good
-# way to do dependency checking.
-# PYTHONDOCDIRS	= qm
+PYTHONDOCDIRS	= qm
 
 include $(TOPDIR)/standard.mk
 
@@ -66,7 +64,7 @@ PyXML:
 # Run the install.py script to install everything.
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
-	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) install.py \
+	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) -O install.py \
 	    $(INSTALLBINDIR) $(INSTALLLIBDIR) \
 	    $(INSTALLSHAREDIR) $(INSTALLDOCDIR)
 	cd $(INSTALLLIBDIR)/gadfly; $(PYTHON) gfinstall.py

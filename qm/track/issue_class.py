@@ -61,17 +61,9 @@ mandatory_field_names = [
     ]
 """Names of mandatory issue class fields."""
 
-# The default categories enumeration to use for a new issue class, if
-# one is not provided.
+# The default categories enumeration to use for a new issue class.
 
-# FIXME: These are bogus test values.  Put something better here.
-
-default_categories = [
-    "crash",
-    "documentation",
-    "improvement",
-]
-
+default_categories = []
 
 # The default set of states to use for a new issue class, if one is
 # not provided.  This variable is initialzed in '_initialze_module',
@@ -504,7 +496,8 @@ class StateModel:
         'initial_state_name' -- The name of the state model's initial
         state.  There must be a state by this name in 'states'.
 
-        'transitions' -- A sequence of 'Transition' objects."""
+        'transitions' -- A sequence of 'Transition' objects.  If 'None',
+        all transitions are allowed."""
         
         # Construct the states map.
         self.__states = {}
@@ -514,8 +507,15 @@ class StateModel:
         self.SetInitialStateName(initial_state_name)
         # Construct the transitions maps.
         self.__transitions = {}
-        for transition in transitions:
-            self.AddTransition(transition)
+        if transitions:
+            for transition in transitions:
+                self.AddTransition(transition)
+        else:
+            for s1 in states:
+                for s2 in states:
+                    if s1 != s2:
+                        self.AddTransition(Transition(s1.GetName(),
+                                                      s2.GetName()))
 
 
     def SetInitialStateName(self, initial_state_name):
@@ -1537,67 +1537,36 @@ def _initialize_module():
     states = [
         State(name="submitted",
               description=
-"""The issue has been submitted, but has not been verified.""",
+              """The issue has been submitted.""",
               open=1
               ),
 
         State(name="active",
               description=
-"""The issue has been verified, and is scheduled for resolution.""",
+              """The issue has been assigned to someone for resolution.""",
               open=1
               ),
 
         State(name="unreproducible",
               description=
-"""The issue could not be reproduced.""",
+              """The problem could not be reproduced.""",
               open=0
               ),
 
         State(name="will_not_fix",
               description=
-"""The issue has been verified, but there are no plans to resolve it.""",
+              """The problem will not be fixed.""",
               open=0
               ),
 
         State(name="resolved",
               description=
-"""The issue has been resolved.""",
-              open=1,
-              ),
-
-        State(name="tested",
-              description=
-"""The resolution of the issue has been tested and verified.""",
-              open=1
-              ),
-
-        State(name="closed",
-              description=
-"""The issue is no longer under consideration.""",
-              open=0
-              ),
+              """The issue has been resolved.""",
+              open=0,
+              )
         ]
 
-    condition = TransitionCondition("must have categories",
-                                    "len(categories) > 0")
-
-    transitions = [
-        Transition("submitted", "active", condition),
-        Transition("submitted", "unreproducible"),
-        Transition("submitted", "will_not_fix"),
-        Transition("active", "submitted"),
-        Transition("active", "resolved"),
-        Transition("resolved", "active"),
-        Transition("resolved", "tested"),
-        Transition("tested", "resolved"),
-        Transition("tested", "closed"),
-        Transition("unreproducible", "submitted"),
-        Transition("unreproducible", "closed"),
-        Transition("will_not_fix", "submitted"),
-        Transition("will_not_fix", "closed"),
-        ]
-
-    default_state_model = StateModel(states, "submitted", transitions)
+    default_state_model = StateModel(states, "submitted", None)
 
 
 _initialize_module()

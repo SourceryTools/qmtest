@@ -1287,7 +1287,7 @@ def run_command(argument_list,
     returns -- An integer exit code."""
 
     # Separate off the script name.
-    script_name = argument_list[0]
+    script_name = os.path.splitext(argument_list[0])[0]
     argument_list = argument_list[1:]
 
     try:

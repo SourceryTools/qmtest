@@ -60,7 +60,7 @@
          bgcolor="#f0f0f0">
    <tbody>
 
-    <dtml-if expr="_.len(GetIssueClasses()) > 0">
+    <dtml-if expr="GetIssueClasses()">
 
      <tr><th>Create a New Issue</th></tr>
      <tr>
@@ -72,7 +72,7 @@
         --></dtml-comment>
         <dtml-if expr="_.len(GetIssueClasses()) > 1">
          <select name="class">
-          <dtml-in name="GetIssueClasses()">
+          <dtml-in expr="GetIssueClasses()">
           <dtml-let issue_class=sequence-item>
            <option 
                    value="<dtml-var expr="issue_class.GetName()">"

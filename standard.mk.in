@@ -152,7 +152,7 @@ subdirs:	$(SUBDIRS)
 $(SUBDIRS):	
 	@cd $@ && make
 
-doc:		doc-python
+doc:		
 ifneq ($(SUBDIRS),)
 	@for subdir in $(SUBDIRS); do \
           (cd $${subdir} && make $@); \
