@@ -1,5 +1,9 @@
 2001-12-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in: Remove divert statements.
+
+2001-12-05  Mark Mitchell  <mark@codesourcery.com>
+
 	* qm/test/classes/command.py (ShellCommandTest): Use
 	ShellCommandTest.command_shell, not just command_shell, as a
 	context variable.

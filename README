@@ -5,18 +5,10 @@
 
 1.  REQUIREMENTS
 
-    Besides Python, various tools are necessary for building QM
-    software and documentation.  See
+    To run QM, you will need a Python 1.5.2 (or greater) distribution.
+    Python 2.1 (or greater) is recommended.
 
-      http://www.software-carpentry.com/dev
-
-    for more information on obtaining the tools.
-
-
-    To run QM, you will need a Python 1.5.2 distribution.  
-
-    Additionally, if you are building QM yourself, you will need the
-    Distutils package.  You can get Distutils from
+    If you are using Python 1.5.2, you must download Distutils from:
 
       http://www.python.org/sigs/distutils-sig/download.html
 

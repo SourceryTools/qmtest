@@ -180,7 +180,7 @@ ifeq ($(DOCUMENTATION),yes)
     doc-print:	
   endif
 
-  docbook-html:	$(HTMLINDEX) $(HTMLTARBALL) 
+  docbook-html:	$(HTMLINDEX)
 
   docbook-print: \
 		$(PRINTDIR)/$(PRINTPDF)
