@@ -37,7 +37,9 @@ SUBDIRS		= zope-dtml/ExtensionClass \
 		  sgmlop \
 		  qm
 
-PYTHONDOCDIRS	= qm
+# These are a bloody nuisance to build every time, and there's no good
+# way to do dependency checking.
+# PYTHONDOCDIRS	= qm
 
 include $(TOPDIR)/standard.mk
 

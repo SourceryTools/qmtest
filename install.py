@@ -69,6 +69,12 @@ scripts = {
 doc_files = [
     "README",
     "COPYING",
+    "doc/manual/print/manual.pdf",
+    ]
+
+# Directories containing DocBook-generated documentation.
+doc_dirs = [
+    "manual/html",
     ]
 
 ########################################################################
@@ -163,6 +169,7 @@ print "generating %s" % setup_path_script_path
 script = open(setup_path_script_template_path, "r").read()
 script = re.sub("@qm_lib_path@", lib_dir, script)
 script = re.sub("@qm_share_path@", share_dir, script)
+script = re.sub("@qm_doc_path@", doc_dir, script)
 open(setup_path_script_path, "w").write(script)
 os.chmod(setup_path_script_path, 0644)
 
@@ -205,7 +212,14 @@ for doc_file in doc_files:
     print "installing %s" % dest
     shutil.copy(doc_file, dest)
     os.chmod(dest, 0644)
-
+for dir in doc_dirs:
+    src = os.path.join("doc", dir)
+    dest = os.path.join(doc_dir, dir)
+    dest_dir = os.path.dirname(dest)
+    if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir, 0755)
+    print "copying %s" % src
+    shutil.copytree(src, dest)
 
 ########################################################################
 # Local Variables:

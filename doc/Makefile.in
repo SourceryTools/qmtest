@@ -33,6 +33,6 @@
 
 TOPDIR		= @top_srcdir@
 
-SUBDIRS		= design/qmtrack design/qmtest manual
+SUBDIRS		= manual
 
 include $(TOPDIR)/standard.mk

@@ -34,6 +34,6 @@
 TOPDIR	        = @top_srcdir@
 
 DOCBOOK		= $(wildcard *.xml)
-DOCBOOKMAIN	= main.xml
+DOCBOOKMAIN	= manual.xml
 
 include $(TOPDIR)/standard.mk

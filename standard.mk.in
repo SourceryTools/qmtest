@@ -135,14 +135,14 @@ INSTALLDOCDIR   = @datadir@/doc/qm
 NULLSTRING	:=
 SPACE		:= $(NULLSTRING) # Leave this comment here.
 
-all:		subdirs
+all:		doc subdirs
 
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
 	cd $@ && make
 
-doc:		doc-html doc-print doc-python
+doc:		doc-html doc-print doc-python 
 
 # Generate html and print documentation from DocBook source, if it was
 # specified. 

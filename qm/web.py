@@ -122,8 +122,6 @@ class PageInfo:
 
     html_stylesheet = "/stylesheets/qm.css"
 
-    html_generator = ""
-
     common_javascript = '''
     <script language="JavaScript">
     function remove_from_set(select, contents)
@@ -168,7 +166,8 @@ class PageInfo:
     {
       if(help_window != null && !help_window.closed)
         help_window.close();
-      help_window = window.open("", "help", "resizeable");
+      help_window = window.open("", "help",
+                                "resizeable,toolbar,scrollbars");
       help_window.document.open("text/html", "replace");
       help_window.document.write(help_page);
       help_window.document.close();
@@ -194,6 +193,12 @@ class PageInfo:
 
         # Remember the request.
         self.request = request
+
+
+    def GetProgramName(self):
+        """Return the name of this application program."""
+
+        return qm.common.program_name
 
 
     def FormatStructuredText(self, text):
@@ -228,7 +233,7 @@ class PageInfo:
        content="%s"/>
  <title>%s</title>
 </head>
-''' % (self.html_stylesheet, self.html_generator, description)
+''' % (self.html_stylesheet, self.GetProgramName(), description)
 
 
     def GenerateStartBody(self):
@@ -1800,19 +1805,9 @@ def make_help_link_html(help_text, label):
     global _help_counter
 
     # Wrap the help text in a complete HTML page.
-    help_page = """
-    <html>
-     <head>
-      <title>Help</title>
-      <meta http-equiv="Content-Style-Type" content="text/css"/>
-      <link rel="stylesheet" type="text/css" href="/stylesheets/qm.css"/>
-     </head>
-     <body class="help">
-      %s
-     </body>
-    </head>
-    </html>
-    """ % help_text
+    page_info = PageInfo(WebRequest(""))
+    page_info.help_text = help_text
+    help_page = generate_html_from_dtml("help.dtml", page_info)
     # Embed the page in a JavaScript string literal.
     help_page = make_javascript_string(help_page)
 

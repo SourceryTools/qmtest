@@ -1,3 +1,27 @@
+2001-04-30  Alex Samuel  <samuel@codesourcery.com>
+
+	* Makefile.in (PYTHONDOCDIRS): Comment out.
+	* install.py (doc_files): Add manual PDF file.
+	(doc_dirs): New variable.
+	Substitute @qm_doc_path2 in setup_path.py.
+	Install documentation directories.
+	* qm/Makefile.in (setup_path.py): Substitute @qm_doc_path@.
+	* qm/setup_path.py.in (__doc_dir): New variable.
+	Set QM_DOC_PATH environment variable.
+	* qm/common.py (get_doc_directory): New function.
+	* qm/test/web/web.py (start_server): Register manual directory.
+	* qm/web.py (PageInfo.html_generator): Remove.
+	(session_id_field): In show_help, open window with toolbar and
+	scrollbars options.
+	(PageInfo.GetProgramName): New method.
+	(PageInfo.GenerateHtmlHeader): Use it.
+	(make_help_link_html): Generate page from DTML.
+	* share/dtml/help.dtml: New file.
+	* doc/Makefile.in (SUBDIRS): Remove design doc directories.
+	* doc/manual/Makefile.in (DOCBOOKMAIN): Change to manual.xml.
+	* doc/manual/main.xml: Rename to...
+	* doc/manual/manual.xml: ... this.
+
 2001-04-29  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/web/web.py (start_server): Register delete-test,

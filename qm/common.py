@@ -484,15 +484,22 @@ class OrderedMap:
 def get_lib_directory(*components):
     """Return the absolute path to the top QM Python directory."""
 
-    lib_path = os.environ["QM_LIB_PATH"]
-    return apply(os.path.join, (lib_path, ) + components)
+    path = os.environ["QM_LIB_PATH"]
+    return apply(os.path.join, (path, ) + components)
 
 
 def get_share_directory(*components):
     """Return the path to the directory containing QM data files."""
 
-    lib_path = os.environ["QM_SHARE_PATH"]
-    return apply(os.path.join, (lib_path, ) + components)
+    path = os.environ["QM_SHARE_PATH"]
+    return apply(os.path.join, (path, ) + components)
+
+
+def get_doc_directory(*components):
+    """Return the path to the directory containing QM documentation files."""
+
+    path = os.environ["QM_DOC_PATH"]
+    return apply(os.path.join, (path, ) + components)
 
 
 __host_name = None

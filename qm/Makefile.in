@@ -43,19 +43,18 @@ include $(TOPDIR)/standard.mk
 
 all:		setup_path.py $(SCRIPTS)
 
-# Generate setup_path.py by replacing the text @qm_top_directory@ with
-# the path to this directory.
+# Generate setup_path.py.
 setup_path.py: 	setup_path.py.in Makefile
 	rm -f $@
 	( echo "# This file is automatically generaged."; \
 	  echo "# Don't edit this file; edit $< instead."; \
 	  sed "s#@qm_lib_path@#$$CYGWIN$$(pwd)/..#" $< \
 	  | sed "s#@qm_share_path@#$$CYGWIN$$(pwd)/../share#" \
+	  | sed "s#@qm_doc_path@#$$(pwd)/../doc#" \
 	) > $@
 	chmod a-w $@
 
-# Generate scripts by replacing the text @qm_setup_path_script@ with
-# the path to the setup_path.py script.
+# Generate executable scripts.
 $(SCRIPTS): \
 %:		%.in Makefile
 	rm -rf $@
