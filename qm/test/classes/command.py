@@ -176,7 +176,16 @@ class ExecTestBase(Test):
         # Construct the environment.
         environment = self.MakeEnvironment(context)
         # Create the executable.
-        e = qm.executable.Filter(self.stdin, self.timeout)
+        if self.timeout >= 0:
+            timeout = self.timeout
+        else:
+            # If no timeout was specified, we sill run this process in a
+            # separate process group and kill the entire process group
+            # when the child is done executing.  That means that
+            # orphaned child processes created by the test will be
+            # cleaned up.
+            timeout = -2
+        e = qm.executable.Filter(self.stdin, timeout)
         # Run it.
         exit_status = e.Run(arguments, environment, path = program)
 

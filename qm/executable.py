@@ -397,18 +397,24 @@ class TimeoutExecutable(Executable):
 
         'timeout' -- The number of seconds that the child is permitted
         to run.  This value may be a floating-point value.  However,
-        the value may be rounded to an integral value on some
-        systems.  If the 'timeout' is negative, this class behaves
-        like 'Executable'."""
+        the value may be rounded to an integral value on some systems.
+        Once the timeout expires, the child and its entire process
+        group is killed.  (The processes in the process group are sent
+        the 'SIGKILL' signal.)  If the 'timeout' is -2, the child is
+        allowed to run forever, but when it terminates the child's
+        process group is killed.
+        
+        If the 'timeout' is -1, this class behaves exactly like
+        'Executable'."""
 
         super(TimeoutExecutable, self).__init__()
         
-        # This functionality is not yet supported under Windows.
-        if timeout >= 0:
-            assert sys.platform != "win32"
-        
         self.__timeout = timeout
 
+        # This functionality is not yet supported under Windows.
+        if self.__UseSeparateProcessGroupForChild():
+            assert sys.platform != "win32"
+        
 
     def _InitializeChild(self):
 
@@ -416,7 +422,7 @@ class TimeoutExecutable(Executable):
         # performed in both the parent and the child; therefore both
         # processes can safely assume that the creation of the process
         # group has taken place.
-        if self.__timeout >= 0:
+        if self.__UseSeparateProcessGroupForChild():
             os.setpgid(0, 0)
 
         super(TimeoutExecutable, self)._InitializeChild()
@@ -426,7 +432,7 @@ class TimeoutExecutable(Executable):
 
         super(TimeoutExecutable, self)._HandleChild()
         
-        if self.__timeout >= 0:
+        if self.__UseSeparateProcessGroupForChild():
             # Put the child into its own process group.  This step is
             # performed in both the parent and the child; therefore both
             # processes can safely assume that the creation of the process
@@ -464,10 +470,14 @@ class TimeoutExecutable(Executable):
                     # point because either (a) we are in the process
                     # group, or (b) the parent has not yet called waitpid.
                     os.setpgid(0, child_pid)
-                    # Give the child time to run.
-                    time.sleep (self.__timeout)
-                    # Kill all processes in the child process group.
-                    os.kill(0, signal.SIGKILL)
+                    if self.__timeout >= 0:
+                        # Give the child time to run.
+                        time.sleep (self.__timeout)
+                        # Kill all processes in the child process group.
+                        os.kill(0, signal.SIGKILL)
+                    else:
+                        # This call to select will never terminate.
+                        select.select ([], [], [])
                 finally:
                     # Exit.  This code is in a finally clause so that
                     # we are guaranteed to get here no matter what.
@@ -485,11 +495,21 @@ class TimeoutExecutable(Executable):
                                                         path)
         finally:
             # Clean up the monitoring program; it is no longer needed.
-            if self.__timeout >= 0:
-                os.kill(self.__monitor_pid, signal.SIGKILL)
+            if self.__UseSeparateProcessGroupForChild():
+                os.kill(-self._GetChildPID(), signal.SIGKILL)
                 os.waitpid(self.__monitor_pid, 0)
                 
         return status
+
+
+    def __UseSeparateProcessGroupForChild(self):
+        """Returns true if the child wil be placed in its own process group.
+
+        returns -- True if the child wil be placed in its own process
+        group.  In that case, a separate monitoring process will also
+        be created."""
+        
+        return self.__timeout >= 0 or self.__timeout == -2
 
 
 
@@ -855,8 +875,7 @@ class Filter(RedirectedExecutable):
         'input' -- The string containing the input to provide to the
         child process.
 
-        'timeout' -- If non-negative, the number of seconds to wait
-        for the child to complete its processing."""
+        'timeout' -- As for 'TimeoutExecutable.__init__'."""
 
         super(Filter, self).__init__(timeout)
         self.__input = input

@@ -1,3 +1,17 @@
+2003-08-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (TimeoutExecutable.__init__): Document -2 value
+	for timeout.
+	(TimeoutExecutable._InitializeChild): Create the monitor pid in
+	the -2 case as well.
+	(TimeoutExectuable.Run): Kill the entire process group, not just
+	the monitor pid.
+	(TimeoutExectuable.__UseSeparateProcessGroupForChild): New
+	method.
+	(Filter.__init__): Adjust documentation of timeout parameter.
+	* qm/test/classes/command.py (ExecTestBase.RunProgram): Pass -2 to
+	Filter when no timeout is specified.
+
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/executable.py (Executable._MakeCloseOnExec): New function.
