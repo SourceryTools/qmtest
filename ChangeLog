@@ -1,3 +1,8 @@
+2005-02-16  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/web.py: Replace deprecated use of whrandom by random.
+	* qm/external/DocumentTemplate/DT_Util.py: Likewise.
+
 2004-05-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/qmtest (check_python_version): Clarify error message.
