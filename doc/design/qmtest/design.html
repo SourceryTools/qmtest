@@ -91,9 +91,10 @@ tool, provisionally named "Qmtest".
 	<li><a href="#req-multi"> Multi-Tests and Reflective Tests </a></li>
 	<li><a href="#req-updown"> Setup and Teardown </a></li>
 	<li><a href="#req-sandbox"> Sandboxing and Throttling </a></li>
-	<li><a href="#req-list"> Requirements Summary </a></li>
+	<li><a href="#req-list"> Summary </a></li>
 	</ul>
 </li>
+<li><a href="#arch"> Architecture </a></li>
 <li><a href="#iface"> Interface </a></li>
 <li><a href="#solve"> User Solutions </a>
 	<ul>
@@ -104,7 +105,6 @@ tool, provisionally named "Qmtest".
 	<li><a href="#solve-tahura"> Tahura Transparency </a></li>
 	</ul>
 </li>
-<li><a href="#arch"> Architecture </a></li>
 <li><a href="#impl"> Implementation </a></li>
 <li><a href="#devplan"> Development Plan </a></li>
 <li><a href="#risks"> Risks </a></li>
@@ -201,7 +201,7 @@ This document begins by describing <a href="#story">six typical
 users</a>, whose testing needs Qmtest is designed to address.  It then
 explores their <a href="#req">requirements</a> in more detail, in
 order to determine the features that Qmtest must have.  Qmtest's <a
-href="#iface">user interface</a> and <a href="#arch">architecture</a>
+href="#arch">architecture</a> and <a href="#iface">user interface</a>
 are described next, along with some details of its <a
 href="#impl">implementation</a>.  These are followed by a provisional
 <a href="#devplan">development plan</a> and an analysis of the <a
@@ -1648,7 +1648,7 @@ linked libraries, and so on.
 </a> <!-- end req-sandbox -->
 
 <a name="req-list">
-<h3>Requirements Summary</h3>
+<h3>Summary</h3>
 
 <ol>
 
@@ -2112,6 +2112,283 @@ build options of all tests.</a>
 
 </a> <!-- end req -->
 
+<a name="arch">
+<h2>Architecture</h2>
+
+<p>
+This section describes Qmtest's architecture and execution model.  The
+two most important aspects of this are how Qmtest decides <a
+href="#arch-visitor"> what tests to visit</a>, and how <a
+href="#arch-callback">callbacks</a> are used to handle a variety of
+test input formats.  Other aspects, such as <a
+href="#arch-input">input</a>, <a href="#arch-output">output</a>, <a
+href="#arch-filter">filtering</a>, and the <a
+href="#arch-database">results database</a>, follow from these.
+</p>
+
+<p>
+This discussion is necessarily detailed; we therefore wish to
+emphasize that almost all of Qmtest's users will be able to work with
+the tool without knowing any of this material.  (For a description of
+what they <em>will</em> need to know, see the <a
+href="#iface">Interface</a> section).
+</p>
+
+<a name="arch-visitor">
+<h3>Visiting Tests</h3>
+
+<p>
+Qmtest uses the <b role="defn">visitor</b> design pattern in order to
+handle cases in which test specifications are stored in many different
+locations (multiple files in multiple directories, multiple test
+database entries, etc.).  Use of the visitor pattern also allows
+Qmtest to support test generators, as discussed below.
+</p>
+
+<p>
+Every test specification (or "test spec") contains one or more test
+suites, each of which contains zero or more tests or sub-suites.  By
+default, Qmtest traverses this tree of tests in depth-first order,
+invoking its built-in functions when each of the following events
+occurs:
+<dl>
+<dt><b><a name="visitor-pretree">PreTree</a></b>:</dt>
+	<dd> before evaluating any nodes in the test tree </dd>
+<dt><b><a name="visitor-presuite">PreSuite</a></b>:</dt>
+	<dd> arrival at a test suite </dd>
+<dt><b><a name="visitor-attest">AtTest</a></b>:</dt>
+	<dd> arrival at an actual test </dd>
+<dt><b><a name="visitor-interchild">InterChild</a></b>:</dt>
+	<dd> between evaluation of a node's children </dd>
+<dt><b><a name="visitor-postsuite">PostSuite</a></b>:</dt>
+	<dd> after evaluating all of a test node's children </dd>
+<dt><b><a name="visitor-pretree">PostTree</a></b>:</dt>
+	<dd> after evaluating the entire test tree </dd>
+</dl>
+<p>
+
+<p>
+This execution model is presented to users as a framework for
+understanding what Qmtest does, in what order, and how its behavior
+may be changed.  Most test authors will only ever need to specify what
+children a node has (the <a href="#visitor-pretree">PreTree</a>
+step), and what is to be done to execute a particular test (the <a
+href="#visitor-attest">AtTest</a> step).  The details of how this is
+done are discussed in the section on <a href="#arch-input">inputting
+test specifications</a>.
+</p>
+
+<p>
+Those advanced users who do need special traversal effects may change
+Qmtest's behavior at any of these points in three ways:
+<dl>
+<dt><b><a name="visitor-passive">Passive</a></b>:</dt>
+	<dd> naming built-in actions in the test specification
+	(e.g. putting Qmtest into verbose mode for a particular test,
+	or for all sub-tests below a test) </dd>
+<dt><b><a name="visitor-callback">Callback</a></b>:</dt>
+	<dd> writing functions to be invoked when events occur </dd>
+<dt><b><a name="visitor-override">Override</a></b>:</dt>
+	<dd> overriding Qmtest's main traversal class to
+	provide fully custom behavior </dd>
+</dl>
+The Passive case is handled by translating the user's request into a
+call to a callback function provided by Qmtest itself.  In version
+1.0, test authors will only be able to write event-handling callbacks
+and specialized traversal classes in Python.  The <a
+href="#arch-callback">callback mechanisms</a> discussed below will
+allow other formats to be added in future versions.
+</p>
+
+<p>
+In order to allow safe combination of independently-authored test
+suites, children cannot be allowed to affect their parents' behavior,
+and siblings cannot affect one another.  This implies that changes in
+behavior only propagate downward (if they propagate at all).
+</p>
+
+<p>
+However, it may be useful for a parent node to alter its own behavior
+based on information generated by its children.  For example, a test
+author may specify that execution of a test suite is to be stopped if
+more than half of the first twenty tests to be run result in error or
+failure.  To support this, Qmtest's databse of results from the
+current test run will be available as tests are being executed.  When
+an event occurs, the handler for that event may query this database to
+determine what to do next.  If a database of results from a previous
+test suite execution exists, Qmtest will also make it available,
+through the same interface.  This will allow tests authors to make
+traversal decisions based on comparison with "standard" results.  The
+details of how this 
+</p>
+
+</a> <!-- end arch-overview -->
+
+<a name="arch-callback">
+<h3>Callbacks</h3>
+
+<p>
+As mentioned above, most Qmtest customization is done using callbacks.
+<a href="#visitor-passive">Passive test and suite specification</a>
+are just special cases of this: when the user names a test to be
+executed, or lists the tests that make up a suite, Qmtest translates
+that specification into invocation of one or more of its built-in
+callbacks.  Users may provide <a href="#visitor-callback">their own
+callbacks</a> as well, to perform operations that are not directly
+supported by the framework.  The only way to step outside the callback
+mechanism is to <a href="#visitor-override">override</a> Qmtest's
+traversal engine.
+</p>
+
+<p>
+One of the most interesting uses of callbacks is to generate content
+which triggers re-execution in the traversal engine, rather than
+direct execution of tests, or recursion into sub-suites.  Examples of
+this are:
+<ol>
+
+<li>
+The legacy tests which <a href="#story-daryl">Daryl Dowhile</a> has
+inherited.  In order to recycle these without re-writing the existing
+test files, Daryl can write a small (Python) callback which is invoked
+to handle each of the input files.  The callback extracts the test
+information embedded in those files and translates each into an
+individual test specification.  These tests are then executed by
+Qmtest.  (Of course, Daryl could also solve his problem by writing a
+one-time filter that was executed outside Qmtest, which extracted test
+information from the legacy input files and created static companion
+test specifications.  The callback mechanism gives him a choice.)
+</li>
+
+<li>
+The exhaustive rectangle intersection tests which <a
+href="#story-ovide">Ovide Overlay</a> has created.  Rather than
+assigning a single pass/fail result to the entire set of 169 tests,
+Ovide may want to have each test recorded as a separate event.  He may
+do this by writing a callback that generates 169 separate invocations
+of his test program.  (He could also do this by <a
+href="#arch-input">describing the generator as a suite</a>, and having
+it <a href="#arch-output">report</a> 169 separate results.)
+</li>
+
+</ol>
+</p>
+
+<p>
+Qmtest uses this callback architecture internally to handle test
+suites.  A suite is a collection of zero or more tests or sub-suites.
+(Empty collections are allowed to allow test authors to create
+placeholders during development.)  Suites are implemented as
+invocations of one of a standard set of callbacks, whose output is an
+expanded set of test specifications.  The simplest of these callbacks
+is a simple iterator, which extracts test specs from the suite, and
+invokes the <a href="#visitor-presuite">PreSuite</a>, <a
+href="#visitor-attest">AtTest</a>, and <a
+href="#visitor-interchild">InterChild</a> methods of the current
+traversal engine as appropriate.
+</p>
+
+<p>
+In order to make Qmtest's callback architecture as open, and as
+secure, as possible, callbacks are indirect, rather than direct.
+Callbacks are not evaluated directly within the test engine.  Instead,
+each callback creates a SOAP specification of a function or method
+call, which the test engine then executes.  <em>This intermediate
+translation is hidden from test authors</em> --- they are not required
+to write or read XML (although they may choose to do so in the future
+as XML authoring tools become more widespread).
+</p>
+
+<p>
+SOAP is used as a data backplane for several reasons:
+<ul>
+
+<li>	Qmtest has to provide some mechanism for test authors to specify
+	what test functions or programs to call, and what arguments to
+	provide.  Re-using SOAP avoids the design, implementation,
+	maintenance, and documentation costs of a custom protocol. </li>
+
+<li>	SOAP supports (or soon will support) many languages of
+	interest, including C/C++, Java, Perl, and Python.  Bindings
+	for Fortran-90 or higher may need to be produced as part of
+	this project. </li>
+
+<li>	Use of SOAP will (greatly) simplify the implementation of
+	remote test execution and error reporting. </li>
+
+<li>	Use of SOAP will automatically provide a language-neutral log of
+	test execution.  This will not be suitable for viewing by
+	users under normal circumstances, but will be a useful
+	debugging aid.  It will also facilitate construction of
+	third-party reporting filters using standard XML manipulation
+	libraries, such as SAX and DOM. </li>
+
+<li>	Use of SOAP will also decouple filtering of test requests from
+	user callbacks from execution of those requests.  If a neutral
+	intermediate format was not used, the filtering logic would
+	either have to be implemented twice (once in each execution
+	engine method, and once for passive test specifications), or
+	calls to engine methods would have to be turned into some
+	passive format which could then be filtered uniformly. </li>
+
+</ul>
+</p>
+
+</a> <!-- end arch-callback -->
+
+<a name="arch-input">
+<h3>Input</h3>
+
+</a> <!-- end arch-input -->
+
+<a name="arch-output">
+<h3>Output</h3>
+
+<p>
+<em> Qmtest maintains a list of event handlers.  Each test is run.  If
+an event occurs (e.g. timeout, memory fault, etc.), the appropriate
+handler is invoked to translate the fault into a test report.  If no
+event occurs, but a handler is associated with the test itself, Qmtest
+runs that handler.  It is responsible for translating the test's exit
+status, output files, stdout, etc., into a test report.  If there is
+no test-specific handler, Qmtest uses the program's stdout (or, if it
+cannot read or parse that, its exit status) to generate a test
+report. </em>
+</p>
+
+<p>
+Standard output comparators are:
+<ul>
+<li>
+No-op (just echo stdout to Qmtest)
+</li>
+<li>
+Compare text (with flags to handle CR/LF, Unicode, and/or sorting)
+</li>
+<li>
+Compare bitwise
+</li>
+<li>
+Compare floating point within tolerance (what to do about large data
+sets, arrays, etc.?)
+</li>
+</ul>
+</p>
+
+</a> <!-- end arch-output -->
+
+<a name="arch-filter">
+<h3>Filtering</h3>
+
+</a> <!-- end arch-filter -->
+
+<a name="arch-database">
+<h3>The Results Database</h3>
+
+</a> <!-- end arch-database -->
+
+</a> <!-- end arch -->
+
 <a name="iface">
 <h2>Interface</h2>
 </a> <!-- end iface -->
@@ -2140,70 +2417,6 @@ build options of all tests.</a>
 </a> <!-- end solve-tahura -->
 
 </a> <!-- end solve -->
-
-<a name="arch">
-<h2>Architecture</h2>
-
-<p>
-Execution: Qmtest uses visitor pattern, calling methods of test
-execution class on the way into suites, between tests in the suite,
-etc.  Users may override the test execution class at any level
-(derivation in Python).
-</p>
-
-<p>
-Input: everything is translated into, or generates, SOAP-like XML,
-which then calls back into Qmtest.  This can cause Qmtest to execute
-tests, to generate new tests, or to execute other test specs
-(e.g. recurse into sub-directories).
-</p>
-
-<p>
-Output: Qmtest maintains a list of event handlers.  Each test is run.
-If an event occurs (e.g. timeout, memory fault, etc.), the appropriate
-handler is invoked to translate the fault into a test report.  If no
-event occurs, but a handler is associated with the test itself, Qmtest
-runs that handler.  It is responsible for translating the test's exit
-status, output files, stdout, etc., into a test report.  If there is
-no test-specific handler, Qmtest uses the program's stdout (or, if it
-cannot read or parse that, its exit status) to generate a test report.
-</p>
-
-<p>
-Standard output comparators are:
-<ul>
-<li>
-No-op (just echo stdout to Qmtest)
-</li>
-<li>
-Compare text (with flags to handle CR/LF, Unicode, and/or sorting)
-</li>
-<li>
-Compare bitwise
-</li>
-<li>
-Compare floating point within tolerance (what to do about large data
-sets, arrays, etc.?)
-</li>
-</ul>
-</p>
-
-<p>
-Recording: how best to record test results?  Persisted Python, XML,
-SQL database?
-</p>
-
-<p>
-Should Qmtest include pre-defined configuration tags?
-</p>
-
-<p>
-How to specify where tests are allowed to run?  Can't use specific
-machine names in test suite itself (reduces portability).  Separate
-list of machines, in separate spec?
-</p>
-
-</a> <!-- end arch -->
 
 <a name="devplan">
 <h2>Development Plan</h2>
@@ -2404,6 +2617,21 @@ and escaped characters are clunkier.
 How does Qmtest tell programs where to put temporary files (for
 comparison)?  Alternatively, how to programs tell Qmtest where they
 have put their results?
+</p>
+
+<p>
+Recording: how best to record test results?  Persisted Python, XML,
+SQL database?
+</p>
+
+<p>
+Should Qmtest include pre-defined configuration tags?
+</p>
+
+<p>
+How to specify where tests are allowed to run?  Can't use specific
+machine names in test suite itself (reduces portability).  Separate
+list of machines, in separate spec?
 </p>
 
 </a> <!-- end questions -->
