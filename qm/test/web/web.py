@@ -1067,7 +1067,8 @@ class ShowItemPage(QMTestPage):
     def MakeSubmitUrl(self):
         """Return the URL for submitting edits."""
 
-        return self.request.copy("submit-" + self.type).AsUrl()
+        return qm.web.WebRequest("submit-" + self.type,
+                                 base=self.request).AsUrl()
 
 
     def MakeDeleteScript(self):

@@ -199,13 +199,13 @@ class ExecTestBase(Test):
                     = str(self.exit_code)
                 result["ExecTest.exit_code"] = str(exit_code)
             # Check to see if the standard output matches.
-            if stdout != self.stdout:
+            if not self.__CompareText(stdout, self.stdout):
                 causes.append("standard output")
                 result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
                 result["ExecTest.expected_stdout"] \
                     = "<pre>" + self.stdout + "</pre>"
             # Check to see that the standard error matches.
-            if stderr != self.stderr:
+            if not self.__CompareText(stderr, self.stderr):
                 causes.append("standard error")
                 result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
                 result["ExecTest.expected_stderr"] \
@@ -229,6 +229,21 @@ class ExecTestBase(Test):
             # The target program terminated abnormally in some other
             # manner.  (This shouldn't normally happen...)
             result.Fail("Program did not terminate normally.")
+
+
+    def __CompareText(self, s1, s2):
+        """Compare 's1' and 's2', ignoring line endings.
+
+        's1' -- A string.
+
+        's2' -- A string.
+
+        returns -- True if 's1' and 's2' are the same, ignoring
+        differences in line endings."""
+
+        # The "splitlines" works independently of the line ending
+        # convention involved.
+        return s1.splitlines() == s2.splitlines()
 
         
     

@@ -1,3 +1,27 @@
+2003-07-30  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Recommend Mozilla, even on Windows.  Mention use of
+	line-ending independent comparisons in "command" test classes.
+	* qm/fields.py (IntegerField.FormatValueAsHtml): Insert space before
+	tag closing.
+	(TextField.FormatValueAsHtml): Likewise.
+	(TextField.ParseFormValue): Correct typo in comment.
+	(TupleField.FormatValueAsHtml): Pretty-print.
+	(SetField.FormatValueAsHtml): Likewise.
+	(AttachmentField.FormatValueAsHtml): Insert space before
+	tag closing.
+	(EnumerationField): Derive from ChoiceField.
+	* qm/web.py (DtmlPage.GenerateXMLHeader): Change encoding field to
+	match that used in generated HTML.
+	(make_select): Remove.
+	* qm/test/classes/command.py (ExecTestBase.Run): Use __CompareText.
+	(ExecTestBase.__CompareText): New method.
+	* qm/test/share/dtml/navigation-bar.dtml: Use "javascript:
+	void(0)" as a go-nowhere URL.
+	* qm/test/share/dtml/show.dtml: Embed the id as a hidden field.
+	* qm/test/web/web.py (ShowItemPage.MakeSubmitUrl): Do not encode
+	the id in the URL.
+
 2003-07-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (RELLIBDIR): Set correctly under Windows.

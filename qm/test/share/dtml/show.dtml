@@ -64,7 +64,10 @@
 
    <input type="hidden" 
           name="class"
-          value="<dtml-var expr="item.GetClassName()">"/>
+          value="<dtml-var expr="item.GetClassName()">" />
+   <input type="hidden" 
+          name="id"
+          value="<dtml-var expr="item.GetId()">" />
   </dtml-if>
 
   <table border="0"

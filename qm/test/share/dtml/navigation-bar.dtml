@@ -37,13 +37,13 @@
              menu="name + '_menu'">
     <td width="20%" class="menu_bar">
      <dtml-if click_menus>
-      <a href=""
+      <a href="javascript: void(0)"
          id="<dtml-var base>"
          onclick="show_menu(event, '<dtml-var menu>'); return false;"
          onmouseout="hide_active_menu(event);"
          class="menu_bar"><dtml-var name capitalize></a>
      <dtml-else>
-      <a href=""
+      <a href="javascript: void(0)"
          id="<dtml-var base>"
          onmouseover="show_menu(event, '<dtml-var menu>');"
          onmouseout="hide_active_menu(event);"

@@ -412,12 +412,12 @@ class IntegerField(Field):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            return '<input type="text" size="8" name="%s" value="%d"/>' \
+            return '<input type="text" size="8" name="%s" value="%d" />' \
                    % (name, value)
         elif style == "full" or style == "brief":
             return '<tt>%d</tt>' % value
         elif style == "hidden":
-            return '<input type="hidden" name="%s" value="%d"/>' \
+            return '<input type="hidden" name="%s" value="%d" />' \
                    % (name, value)            
         else:
             assert None
@@ -554,7 +554,7 @@ class TextField(Field):
                          % (name, web.escape(value))
             else:
                 result = \
-                    '<input type="text" size="40" name="%s" value="%s"/>' \
+                    '<input type="text" size="40" name="%s" value="%s" />' \
                     % (name, web.escape(value))
             # If this is a structured text field, add a note to that
             # effect, so users aren't surprised.
@@ -568,7 +568,7 @@ class TextField(Field):
             return result
 
         elif style == "hidden":
-            return '<input type="hidden" name="%s" value="%s"/>' \
+            return '<input type="hidden" name="%s" value="%s" />' \
                    % (name, web.escape(value))            
 
         elif style == "brief":
@@ -656,7 +656,7 @@ class TextField(Field):
 
     def ParseFormValue(self, request, name, attachment_store):
 
-        # HTTP specifies text encodints are CR/LF delimited; convert to
+        # HTTP specifies text encodings are CR/LF delimited; convert to
         # the One True Text Format (TM).
         return (self.ParseTextValue(qm.convert_from_dos_text(request[name])),
                 0)
@@ -729,14 +729,14 @@ class TupleField(Field):
             name = self.GetHtmlFormFieldName()
             
         # Format the field as a multi-column table.
-        html = '<table border="0" cellpadding="0"><tr>'
+        html = '<table border="0" cellpadding="0">\n <tr>\n'
         for f, v in map(None, self.__fields, value):
             element_name = name + "_" + f.GetName()
-            html += "<td><b>" + f.GetTitle() + "</b>:</td>"
-            html += ("<td>" 
+            html += "  <td><b>" + f.GetTitle() + "</b>:</td>\n"
+            html += ("  <td>\n" 
                      + f.FormatValueAsHtml(server, v, style, element_name)
-                     + "</td>")
-        html += "</tr></table>"
+                     + "  </td>\n")
+        html += " </tr>\n</table>\n"
 
         return html
 
@@ -903,53 +903,52 @@ class SetField(Field):
 
         elif style in ["new", "edit", "hidden"]:
             html = ""
-            # Create a table to represent the set -- but only if the set is
-	    # non-empty.  A table with no body is invalid HTML.
-	    if value:
-		html += '''<table border="0" cellpadding="0" cellspacing="0">
-			    <tbody>\n'''
-		element_number = 0
-		for element in value:
-		    html += "<tr><td>"
-		    element_name = name + "_%d" % element_number
-		    checkbox_name = element_name + "_remove"
-		    if style == "edit":
-			html += \
-			   ('''<input type="checkbox" name="%s" /></td><td>'''
-			    % checkbox_name)
-		    html += contained_field.FormatValueAsHtml(server,
-							      element,
-							      style,
-							      element_name)
-		    html += "</td></tr>\n"
-		    element_number += 1
-		html += "</tbody></table>\n"
-            if style == "edit":
-                # The action field is used to keep track of whether the
-                # "Add" or "Remove" button has been pushed.  It would be
-                # much nice if we could use JavaScript to update the
-                # table, but Netscape 4, and even Mozilla 1.0, do not
-                # permit that.  Therefore, we have to go back to the server.
-                action_field \
-                    = '''<input type="hidden" name="%s" value="" />''' % name
-                count_field \
-                    = ('<input type="hidden" name="%s_count" value="%d" />'
-	               % (name, len(value)))
-                add_button \
-                    = '''<input type="button" value="Add Another"
-                            onclick="%s.value = 'add'; submit();" />''' \
-                      % name
-                remove_button \
-                    = '''<input type="button" value="Remove Selected"
-                            onclick="%s.value = 'remove'; submit();" />''' \
-                      % name
-                button_table \
-                    = ('''<table border="0" cellpadding="0" cellspacing="0">
-                            <tbody>\n'''
-                       + " <tr><td>" + add_button + "</td></tr>\n"
-                       + " <tr><td>" + remove_button + "</td></tr>\n"
-                       + "</tbody></table>")
-                html += action_field + "\n" + count_field + "\n" + button_table
+            if value:
+                # Create a table to represent the set -- but only if the set is
+                # non-empty.  A table with no body is invalid HTML.
+                html += ('<table border="0" cellpadding="0" cellspacing="0">'
+                         "\n <tbody>\n")
+                element_number = 0
+                for element in value:
+                    html += "  <tr>\n   <td>"
+                    element_name = name + "_%d" % element_number
+                    checkbox_name = element_name + "_remove"
+                    if style == "edit":
+                        html += \
+                           ('<input type="checkbox" name="%s" /></td>\n'
+                            '   <td>\n'
+                            % checkbox_name)
+                    html += contained_field.FormatValueAsHtml(server,
+                                                              element,
+                                                              style,
+                                                              element_name)
+                    html += "   </td>\n  </tr>\n"
+                    element_number += 1
+                html += " </tbody>\n</table>\n"
+            # The action field is used to keep track of whether the
+            # "Add" or "Remove" button has been pushed.  It would be
+            # much nice if we could use JavaScript to update the
+            # table, but Netscape 4, and even Mozilla 1.0, do not
+            # permit that.  Therefore, we have to go back to the server.
+            html += '<input type="hidden" name="%s" value="" />' % name
+            html += ('<input type="hidden" name="%s_count" value="%d" />'
+                     % (name, len(value)))
+            if style != "hidden":
+                html += ('<table border="0" cellpadding="0" cellspacing="0">\n'
+                         ' <tbody>\n'
+                         '  <tr>\n'
+                         '   <td><input type="button" name="%s_add" '
+                         'value="Add Another" '
+                         '''onclick="%s.value = 'add'; submit();" />'''
+                         '</td>\n'
+                         '   <td><input type="button" name="%s_remove"'
+                         'value="Remove Selected" '
+                         '''onclick="%s.value = 'remove'; submit();" />'''
+                         '</td>\n'
+                         '  </tr>'
+                         ' </tbody>'
+                         '</table>'
+                         % (name, name, name, name))
             return html
 
 
@@ -1294,7 +1293,7 @@ class AttachmentField(Field):
                    value=" Clear "
                    name="_clear_%s"
                    onclick="document.form.%s.value = 'None';
-                            document.form.%s.value = '';"/>
+                            document.form.%s.value = '';" />
             ''' % (field_name, summary_field_name, name)
             # A hidden control for the encoded attachment value.  The
             # popup upload form fills in this control.
@@ -1379,7 +1378,62 @@ class AttachmentField(Field):
 
 ########################################################################
 
-class EnumerationField(TextField):
+class ChoiceField(TextField):
+    """A 'ChoiceField' allows choosing one of several values.
+
+    The set of acceptable values can be determined when the field is
+    created or dynamically.  The empty string is used as the "no
+    choice" value, and cannot therefore be one of the permitted
+    values."""
+
+    def GetItems(self):
+        """Return the options from which to choose.
+
+        returns -- A sequence of strings, each of which will be
+        presented as a choice for the user."""
+
+        raise NotImplementedError
+
+
+    def FormatValueAsHtml(self, server, value, style, name = None):
+
+        if style not in ("new", "edit"):
+            return qm.fields.TextField.FormatValueAsHtml(self, server,
+                                                         value,
+                                                         style, name)
+
+        # For an editable field, give the user a choice of available
+        # resources.
+        items = self.GetItems()
+        result = "<select"
+        if name:
+            result += ' name="%s"' % name
+        result += ">\n"
+        # HTML does not permit a "select" tag with no contained "option"
+        # tags.  Therefore, we ensure that there is always one option to
+        # choose from.
+        result += ' <option value="">--Select--</option>\n'
+        # Add the choices for the ordinary options.
+        for r in self.GetItems():
+            result += ' <option value="%s"' % r
+            if r == value:
+                result += ' selected="selected"'
+            result += '>%s</option>\n' % r
+        result += "</select>\n"
+
+        return result
+    
+
+    def Validate(self, value):
+
+        value = super(ChoiceField, self).Validate(value)
+        if value == "":
+            raise ValueError, "No choice specified for %s." % self.GetTitle()
+        return value
+
+        
+        
+class EnumerationField(ChoiceField):
     """A field that contains an enumeral value.
 
     The enumeral value is selected from an enumerated set of values.
@@ -1411,26 +1465,23 @@ class EnumerationField(TextField):
         if not default_value in enumerals and len(enumerals) > 0:
             default_value = enumerals[0]
         # Perform base class initialization.
-        apply(TextField.__init__, (self, name, default_value), properties)
+	super(EnumerationField, self).__init__(name, default_value, 
+					       **properties)
         # Remember the enumerals.
-        self.__enumerals = string.join(enumerals, ",")
+        self.__enumerals = enumerals
 
 
-    def GetEnumerals(self):
+    def GetItems(self):
         """Return a sequence of enumerals.
 
         returns -- A sequence consisting of string enumerals objects, in
         the appropriate order."""
 
-        enumerals = self.__enumerals
-        if enumerals == "":
-            return []
-        else:
-            return string.split(enumerals, ",")
+        return self.__enumerals
 
 
     def GetHelp(self):
-        enumerals = self.GetEnumerals()
+        enumerals = self.GetItems()
         help = """
         An enumeration field.  The value of this field must be one of a
         preselected set of enumerals.  The enumerals for this field are,
@@ -1446,58 +1497,15 @@ class EnumerationField(TextField):
 
     ### Output methods.
     
-    def FormatValueAsHtml(self, server, value, style, name=None):
-
-        # Use default value if requested.
-        if value is None:
-            value = self.GetDefaultValue()
-        # Use the default field form field name if requested.
-        if name is None:
-            name = self.GetHtmlFormFieldName()
-
-        if style == "new" or style == "edit":
-            enumerals = self.GetEnumerals()
-            if len(enumerals) == 0:
-                # No available enumerals.  Don't let the user change
-                # anything. 
-                self.FormatValueAsHtml(server, value, "brief", name)
-            else:
-                return qm.web.make_select(name, enumerals, value, str, str)
-
-        elif style == "hidden":
-            return '<input type="hidden" name="%s" value="%s"/>' \
-                   % (name, value) 
-
-        elif style == "full" or style == "brief":
-            return value
-
-        else:
-            raise ValueError, style
-
-
     def MakeDomNodeForValue(self, value, document):
+
         # Store the name of the enumeral.
-        return xmlutil.create_dom_text_element(
-            document, "enumeral", str(value))
+        return xmlutil.create_dom_text_element(document, "enumeral", 
+	                                       str(value))
 
 
     ### Input methods.
     
-    def Validate(self, value):
-
-        super(EnumerationField, self).Validate(value)
-        enumerals = self.GetEnumerals()
-        if value in enumerals:
-            return value
-        else:
-            values = map(lambda (k, v): "%s (%d)" % (k, v), enumerals)
-            raise ValueError, \
-                  qm.error("invalid enum value",
-                           value=value,
-                           field_title=self.GetTitle(),
-                           values=string.join(values, ", "))
-
-
     def GetValueFromDomNode(self, node, attachment_store):
 
         # Make sure 'node' is an '<enumeral>' element.
@@ -1526,60 +1534,6 @@ class BooleanField(EnumerationField):
 
         
 
-class ChoiceField(TextField):
-    """A 'ChoiceField' allows choosing one of several values.
-
-    A 'ChoiceField' is similar to an 'EnumerationField' -- but the
-    choices for an 'ChoiceField' are computed dynamically, rather than
-    chosen statically."""
-
-    def FormatValueAsHtml(self, server, value, style, name = None):
-
-        if style not in ("new", "edit"):
-            return qm.fields.TextField.FormatValueAsHtml(self, server,
-                                                         value,
-                                                         style, name)
-
-        # For an editable field, give the user a choice of available
-        # resources.
-        items = self.GetItems()
-        result = "<select"
-        if name:
-            result += ' name="%s"' % name
-        result += ">"
-        # HTML does not permit a "select" tag with no contained "option"
-        # tags.  Therefore, we ensure that there is always one option to
-        # choose from.
-        result += '<option value="">--Select--</option>'
-        # Add the choices for the ordinary options.
-        for r in self.GetItems():
-            result += '<option value="%s"' % r
-            if r == value:
-                result += ' selected="1"'
-            result += '>%s</option>' % r
-        result += "</select>"
-
-        return result
-    
-
-    def GetItems(self):
-        """Return the options from which to choose.
-
-        returns -- A sequence of strings, each of which will be
-        presented as a choice for the user."""
-
-        raise NotImplementedError
-
-
-    def Validate(self, value):
-
-        value = super(ChoiceField, self).Validate(value)
-        if value == "":
-            raise ValueError, "No choice specified for %s." % self.GetTitle()
-        return value
-
-        
-        
 ########################################################################
 
 class TimeField(IntegerField):
@@ -1642,7 +1596,7 @@ class TimeField(IntegerField):
         value = self.FormatValueAsText(value)
 
         if style == "new" or style == "edit":
-            return '<input type="text" size="8" name="%s" value="%s"/>' \
+            return '<input type="text" size="8" name="%s" value="%s" />' \
                    % (name, value)
         elif style == "full" or style == "brief":
             # The time is formatted in three parts: the date, the time,
@@ -1653,7 +1607,7 @@ class TimeField(IntegerField):
             date, time, time_zone = string.split(value, " ")
             return date + " " + time + "&nbsp;" + time_zone
         elif style == "hidden":
-            return '<input type="hidden" name="%s" value="%s"/>' \
+            return '<input type="hidden" name="%s" value="%s" />' \
                    % (name, value)
         else:
             raise ValueError, style

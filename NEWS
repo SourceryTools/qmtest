@@ -6,15 +6,21 @@ This file describes user visible changes to QM.
 QM 2.1 (Not Yet Released)
 =========================
 
-QM 2.1 requires Python 2.2 or greater.
+QMTest requires Python 2.2 or greater.
+
+On Windows, we recommend that Mozilla be used with QMTest.  Internet
+Explorer appears to handle some forms that QMTest creates incorrectly.
+CodeSourcery has validated the HTML using automated and manual
+methods, and believes that the problems like with Internet Explorer
+and not with QMTest.
 
 There is now a "qmtest create" command-line option that can be used to
 create extension instances (such as tests, resources, or databases)
 programmatically.  The "--class" option to the qmtest create-tdb"
 command now supports the same descriptor syntax as "qmtest create".
 
-There is a new executable.TimeoutExecutable class that can be used to
-run a child process with a timeout.  The "command" test classes now
+There is a new "executable.TimeoutExecutable" class that can be used
+to run a child process with a timeout.  The "command" test classes now
 make use of this functionality to support running child processes with
 a timeout.
 
@@ -26,6 +32,11 @@ summarize" that allows users to specify custom result streams.
 
 A defect that could cause a multi-threaded or multi-process tests run
 to hang if a resource could not be set up has been corrected.
+
+Comparisions between the expected standard output and actual standard
+output done by test classes in the "command" module now ignore line
+endings.  This change facilitates moving tests between operating
+systems.
 
 QM 2.0.4 (Not Yet Released)
 ===========================

@@ -187,7 +187,7 @@ class DtmlPage:
         """Return the XML header for the document."""
 
         return \
-            '''<?xml version="1.0" encoding="UTF-8"?>
+            '''<?xml version="1.0" encoding="iso-8859-1"?>
                <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                <html xmlns="http://www.w3.org/1999/xhtml">'''
@@ -793,7 +793,7 @@ class WebServer(HTTPServer):
 
           web_server.RegisterPathTranslation('/images', '/path/to/pictures')
 
-        the the URL 'http://my.server.com/images/big/tree.gif' will be
+        the URL 'http://my.server.com/images/big/tree.gif' will be
         mapped to the file path '/path/to/pictures/big/tree.gif'."""
 
         self.__translations[url_path] = file_path
@@ -2214,76 +2214,6 @@ def make_popup_page(message, buttons, title=""):
     '''
     return page
 
-
-def make_select(field_name,
-                items,
-                default_value,
-                item_to_text=str,
-                item_to_value=str,
-                form_name="form",
-                update_external_field=0):
-    """Construct HTML controls for selecting an item from a list.
-
-    'field_name' -- The name of the form control which will contain the
-    currently-selected item.  This is a hidden control; the actual HTML
-    select control is given a different name.
-
-    'items' -- A sequence of items.  The items may be of any type.
-
-    'default_value' -- The item which should initially be selected.  The
-    value must appear in 'items'.
-
-    'item_to_text' -- A function that returns the text representation of
-    an item.
-
-    'item_to_value' -- A function that returns the value representation
-    of an item.
-
-    'form_name' -- The name of the form that will contain the returned
-    controls. 
-
-    'update_external_field' -- If true, update a field named
-    'field_name' when the selection changes.  If false, a hidden field
-    named 'field_name' is included, and updated when selection changes.
-
-    returns -- The HTML text for the controls.  
-
-    For each item, 'item_to_text' and 'item_to_value' are used to
-    construct the text and value attributes for the corresponding HTML
-    select option."""
-
-    assert default_value in items
-
-    select_name = "_select_" + field_name
-    # Add a hidden control with the specified field name.  This
-    # input will contain the value of the currently-selected
-    # UID.
-    if update_external_field:
-        result = ''
-    else:
-        result = '<input type="hidden" name="%s" value="%s"/>' \
-                 % (field_name, item_to_value(default_value))
-    # Write the handler to update the hidden control when the
-    # selection changes in the select control.
-    on_change = "update_from_select(document.%s.%s, " \
-                "document.%s.%s)" \
-                % (form_name, select_name, form_name, field_name)
-    # Generate a '<select>' control droplist.
-    result = result + '<select name="%s" onchange="%s">\n' \
-             % (select_name, on_change)
-    # Generate an '<option>' element for each item.
-    for item in items:
-        # Specify the 'select' attribute if this item represents the
-        # default value.
-        if item == default_value:
-            is_selected = 'selected="selected"'
-        else:
-            is_selected = ""
-        result = result + '<option value="%s" %s>%s</option>\n' \
-                 % (item_to_value(item), is_selected, item_to_text(item))
-    result = result + '</select>\n'
-    return result
-    
 
 def make_choose_control(field_name,
                         included_label,
