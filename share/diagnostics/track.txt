@@ -113,12 +113,10 @@ command you specified cannot be performed until the issue database is no
 longer in use.
 
 @ idb locked
-The IDB is currently locked by another QMTrack process.  Please try
-this command again later.  
-
-If you believe the lock file is stale and has been left behind by a
-defuct QMTrack process, delete the directory '%(lock_path)s' and try
-again.
+The issue database at %(idb_path)s is currently locked by another
+QMTrack process.  Please try this command again later.  If you believe
+the lock file is stale and has been left behind by a defuct QMTrack
+process, delete the directory %(lock_path)s and try again.
 
 @ idb parent directory inaccessible
 A parent directory, '%(parent_path)s', of the path you have specified

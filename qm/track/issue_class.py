@@ -969,7 +969,7 @@ class IssueClass:
         field = IidField(
             name="iid",
             title="Issue ID",
-            description="A label that uniquely identifies the issue.",
+            description="The issue's unique identifier.",
             initialize_only="true")
         self.AddField(field)
 
@@ -1005,6 +1005,7 @@ class IssueClass:
             state_model=state_model,
             description=
 """The state of this issue in the issue class's state model.
+
 The state reflects the status of this issue within the set of
 procedures by which an issue is normally resolved.""",
             initialize_to_default="true")
@@ -1028,9 +1029,10 @@ procedures by which an issue is normally resolved.""",
             enumerals=categories,
             title="Categories",
             description=
-"""The names of categories to which this issue belongs.  A category is a
-group of issues that share a similar feature, for instance all bugs in
-the particular component."""
+"""The names of categories to which this issue belongs.
+
+A category is a group of issues that share a similar feature, for
+instance all bugs in the particular component."""
             )
         field = qm.fields.SetField(field)
         self.AddField(field)
@@ -1415,15 +1417,13 @@ def _initialize_module():
     states = [
         State(name="submitted",
               description=
-"""The issue has been submitted, but has
-not been verified.""",
+"""The issue has been submitted, but has not been verified.""",
               open=1
               ),
 
         State(name="active",
               description=
-"""The issue has been verified, and is
-scheduled for resolution.""",
+"""The issue has been verified, and is scheduled for resolution.""",
               open=1
               ),
 
@@ -1435,8 +1435,7 @@ scheduled for resolution.""",
 
         State(name="will_not_fix",
               description=
-"""The issue has been verified, but
-there are no plans to resolve it.""",
+"""The issue has been verified, but there are no plans to resolve it.""",
               open=0
               ),
 
@@ -1448,15 +1447,13 @@ there are no plans to resolve it.""",
 
         State(name="tested",
               description=
-"""The resolution of the issue has been
-tested and verified.""",
+"""The resolution of the issue has been tested and verified.""",
               open=1
               ),
 
         State(name="closed",
               description=
-"""The issue is no longer under
-consideration.""",
+"""The issue is no longer under consideration.""",
               open=0
               ),
         ]

@@ -41,7 +41,6 @@ This form is generated from the DTML template query.dtml."""
 
 import qm.diagnostic
 import qm.track
-import qm.track.sql_idb
 import qm.web
 import web
 

@@ -581,7 +581,7 @@ def open(path):
     # exception.
     # FIXME: Detect and remove stale locks automatically?
     raise IdbError, \
-          qm.error("idb locked", lock_path=lock.GetPath())
+          qm.error("idb locked", idb_path=path, lock_path=lock.GetPath())
 
 
 def destroy(path):
@@ -641,10 +641,12 @@ def setup_for_test(idb):
     field = qm.fields.AttachmentField(
         name="attachments",
         title="File Attachments",
-        description="""
-        Zero or more file attachments that contain information or data
-        relavent to this issue.
-        """)
+        description=
+"""Arbitrary file attachments.
+
+File attachments can contain any information or data relavent to this
+issue."""
+        )
     field = qm.fields.SetField(field)
     icl.AddField(field)
 
@@ -666,9 +668,7 @@ def setup_for_test(idb):
         enumerals=severity_enum,
         default_value="medium",
         title="Severity",
-        description="""
-        An indication of the importance of resolving this issue.
-        """,
+        description="The importance of resolving this issue.",
         ordered="true")
     icl.AddField(field)
 

@@ -67,7 +67,9 @@
   </table>
 
   <dtml-comment><!--
+
     If we're generating a form, start it here.
+
   --></dtml-comment>
   <dtml-if expr="IsForm()">
    <form name="form"
@@ -75,9 +77,11 @@
          action="<dtml-var expr="MakeSubmitUrl()">"
          enctype="multipart/form-data">
    <dtml-comment><!--
+
      In a form, IID and revision may not be represented as form
      controls.  Nevertheless, we need the values of these fields to be
      accessible in a submitted form, so put them in hidden controls.
+
    --></dtml-comment>
    <dtml-if expr="style == 'edit'">
     <input type="hidden" 
@@ -100,7 +104,11 @@
               field_name="field.GetName()">
      <dtml-if expr="IsShowField(field)">
       <dtml-comment><!--
+
         Show a row with the field label and a rendering of its value.
+        If there was a problem with a field value in a previous
+        submission, display the error message for this field.
+
       --></dtml-comment>
       <tr valign="top"
           <dtml-if expr="errors.has_key(field_name)">
@@ -109,16 +117,28 @@
           class="field"
           </dtml-if>
           >
-       <td width="25%">
+       <td
+        <dtml-if expr="IsForm()">
+         width="75%"
+        <dtml-else>
+         width="25%"
+        </dtml-if>
+       >
         <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
+        <dtml-if expr="IsForm()">
+         <dtml-var expr="web.format_structured_text(
+                         field.GetBriefDescription())">
+        </dtml-if>
        </td>
-       <td width="75%">
+       <td>
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
          <tr valign="top"><td width="100%">
           <dtml-var expr="FormatFieldValue(field)">
           <dtml-comment><!--
+
             If there's an error message associated with this issue,
             display it on the next row.
+
           --></dtml-comment>
           <dtml-if expr="errors.has_key(field_name)">
            <br>
@@ -153,6 +173,12 @@
   <dtml-if expr="IsForm()">
    </form>
   </dtml-if>
+
+  <dtml-comment><!--
+
+    Append the revision history, if indicated.
+
+  --></dtml-comment>
 
   <dtml-if name="show_history">
    <br>

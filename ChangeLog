@@ -1,5 +1,21 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/issue_class.py (IssueClass.__init__): Adjust field
+	descriptions. 
+	* qm/track/cmdline.py (Command.GetIdbPath): Fix exception.
+	(run_command): Handle IdbError.
+	* qm/track/qmtrack.in: Load diagnostics.
+	* qm/track/server.py: Remove obsolete import.
+	* qm/track/web/query.py: Likewise.
+	* qm/test/classes/command.py (ExecTest.fields): Fix description of
+	exit_code field. 
+	* share/dtml/track/show.dtml: Show brief field descriptions when
+	editing. 
+	* share/dtml/test/show.dtml: Fix indentation.
+	* share/diagnostics/track.txt (idb locked): Adjust.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/classes/command.py (ExecTest.Run): Open input files for
 	read. 
 

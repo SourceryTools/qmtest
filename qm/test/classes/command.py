@@ -132,9 +132,7 @@ class ExecTest:
             description="""The expected exit code.
 
             Most programs use a zero exit code to indicate success and a
-            non-zero exit code to indicate failure.
-
-            If this field is left blank, the exit code is not checked."""
+            non-zero exit code to indicate failure."""
             ),
 
         qm.fields.TextField(

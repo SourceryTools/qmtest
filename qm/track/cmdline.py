@@ -431,7 +431,8 @@ parent.""",
                 # The environment variable wasn't set, either.  Can't
                 # find the IDB, so give up.
                 raise qm.cmdline.CommandError, \
-                      qm.error("missing idb", envvar=env_var_name)
+                      qm.error("missing idb",
+                               envvar=idb_environment_variable_name)
         return idb_path
 
 
@@ -1322,6 +1323,9 @@ def run_command(argument_list,
                     # Tried to open the IDB, but it's in use.  Luckily,
                     # we can connect to the server that's using it.
                     server_url = str(exception)
+                except issue_database.IdbError, exception:
+                    error_file.write(str(exception) + "\n\n")
+                    return 1
 
         # So, are we using a remote IDB or a local one?
         if server_url is not None and command.RequiresIdb():
