@@ -130,103 +130,6 @@ class PageInfo:
 
     qm_bug_system_url = "http://intranet.codesourcery.com:4242/track/"
 
-    common_javascript = '''
-    <script language="JavaScript">
-    function remove_from_set(select, contents)
-    {
-      if(select.selectedIndex != -1)
-        select.options[select.selectedIndex] = null;
-      update_from_select_list(select, contents);
-      return false;
-    }
-
-    function add_to_set(select, contents, text, value)
-    {
-      var options = select.options;
-      for(var i = 0; i < options.length; ++i)
-        if(options[i].value == value)
-          return false;
-      if(value != "")
-        options[options.length] = new Option(text, value);
-      update_from_select_list(select, contents);
-      return false;
-    }
-
-    function update_from_select_list(select, contents)
-    {
-      var result = "";
-      for(var i = 0; i < select.options.length; ++i) {
-        if(i > 0)
-          result += ",";
-        result += select.options[i].value;
-      }
-      contents.value = result;
-    }
-
-    function update_from_select(select, control)
-    {
-      if(select.selectedIndex != -1)
-        control.value = select.options[select.selectedIndex].value;
-    }
-
-    var help_window = null;
-    function show_help(help_page)
-    {
-      if(help_window != null && !help_window.closed)
-        help_window.close();
-      help_window = window.open("", "help",
-                                "resizeable,toolbar,scrollbars");
-      help_window.document.open("text/html", "replace");
-      help_window.document.write(help_page);
-      help_window.document.close();
-    }
-
-    var debug_window = null;
-    function debug(msg)
-    {
-      if(debug_window == null || debug_window.closed) {
-        debug_window = window.open("", "debug", "resizable");
-        debug_window.document.open("text/plain", "replace");
-      }
-      debug_window.document.writeln(msg);
-    }
-
-    function move_option(src, dst)
-    {
-      if(src.selectedIndex == -1)
-        return;
-      var option = src[src.selectedIndex];
-      dst[dst.length] = new Option(option.text, option.value);
-      src[src.selectedIndex] = null;
-    }
-
-    function swap_option(select, offset)
-    {
-      var index = select.selectedIndex;
-      if(index == -1)
-        return;
-      var new_index = index + offset;
-      if(new_index < 0 || new_index >= select.length)
-        return;
-      
-      var text = select[index].text;
-      var value = select[index].value;
-      select[index].text = select[new_index].text;
-      select[index].value = select[new_index].value;
-      select[new_index].text = text;
-      select[new_index].value = value;
-
-      select.selectedIndex = new_index;
-    }
-
-    function popup_manual()
-    {
-      window.open("/manual/index.html", "manual",
-                  "resizeable,toolbar,scrollbars");
-    }
-    </script>
-    '''
-
     def __init__(self, request=None):
         """Create a new page.
 
@@ -294,13 +197,14 @@ class PageInfo:
     def GenerateEndBody(self):
         """Return markup to end the body of the HTML document."""
 
-        return self.common_javascript + """
+        return """
         <br><br>
         <div align="right"><font size="-1">
          Problems?  Frustrations? <a href="/problems.html">Click here.</a>
         </font></div>
+        <script language="JavaScript">\n%s\n</script>
         </body>
-        """
+        """ % _common_javascript
 
 
     def MakeLoginForm(self, redirect_request=None):
@@ -2516,6 +2420,25 @@ _page_cache_name = "page-cache"
 
 _session_cache_name = "session-cache"
 """The URL prefix for the session page cache."""
+
+_common_javascript = None
+"""Boilerplate JavaScript for web pages."""
+
+########################################################################
+# initialization
+########################################################################
+
+def _initialize_module():
+    # Read in the boilerplate JavaScript.
+    global _common_javascript
+    _common_javascript = open(
+        common.get_share_directory("web", "common.js"), "r").read()
+    # Clean out comments, since we're going to include this text in
+    # every page.
+    _common_javascript = re.sub("//.*\n", "", _common_javascript)
+
+
+_initialize_module()
 
 ########################################################################
 # Local Variables:

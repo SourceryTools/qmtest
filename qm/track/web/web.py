@@ -58,6 +58,7 @@ are,
 import DocumentTemplate
 import os
 import qm.fields
+import qm.track
 import qm.web
 import re
 import string
@@ -80,24 +81,10 @@ class PageInfo(qm.web.PageInfo):
 
 
     def GenerateStartBody(self):
-        return \
-'''
-<body>
-<table width="100%%" border="0" cellspacing="0" cellpadding="0" bgcolor="black">
- <tr bgcolor="black">
-  <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
-  src="/images/sc-logo.png"></a></td>
-  <td align="right">
-   <a href="javascript: popup_manual();"><font
-     color="white">QM Manual</font></a>
-   &nbsp;&nbsp;
-   <a href="%s"><font color="white">%s</font></a>
-   &nbsp;&nbsp;
-  </td>
- </tr>
-</table>
-<br>
-''' % (self.MakeIndexUrl(), "Main Page")
+        page_info = PageInfo()
+        navigation_bar = generate_html_from_dtml("navigation-bar.dtml",
+                                                 page_info)
+        return '<body>%s<br>' % navigation_bar
 
 
     def GetMainPageUrl(self):
@@ -254,7 +241,7 @@ def make_url_for_attachment(field, attachment):
 # initialization
 ########################################################################
 
-def __initialize_module():
+def _initialize_module():
     # The generic 'AttachmentField' implementation needs to know about
     # our URLs for downloading attachments.
     qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
@@ -263,7 +250,7 @@ def __initialize_module():
     qm.web.PageInfo.default_class = PageInfo
 
 
-__initialize_module()
+_initialize_module()
 
 ########################################################################
 # Local Variables:

@@ -1,4 +1,22 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.common_javascript): Remove.
+	(PageInfo.GenerateEndBody): Use _common_javascript.
+	(_common_javascript): New variable.
+	(_initialize_module): New function.
+	Call it.
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Generate from
+	DTML. 
+	(__initialize_module): Rename to...
+	(_initialize_module): ... this.
+	* qm/track/web/summary.py (handle_summary): Process last_query.
+	* share/dtml/track/navigation-bar.dtml: New file.
+	* share/web/common.js: Likewise.
+	* share/web/stylesheets/qm.css (table.navbar): New class.
+	(td.navbar): Likewise.
+	(a.navbar): Likewise.
+	
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 	
 	* share/dtml/user.dtml: New file.
 	

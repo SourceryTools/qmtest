@@ -44,6 +44,9 @@ with a hyphen for reverse sort.
 'query' -- If specified, show the issues matching this query.
 Otherwise, show all issues.
 
+'last_query' -- If this argument is included, use the query expression
+from the last query run by this user.  The argument value is ignored.
+
 'open_only' -- Either 0 or 1, indicating whether only open issues should
 be shown.  If omitted, the value 0 is impled."""
 
@@ -302,15 +305,23 @@ def handle_summary(request):
     user = request.GetSession().GetUser()
 
     idb = qm.track.get_idb()
-    if request.has_key("query"):
+    if request.has_key("query") or request.has_key("last_query"):
         # This page is a response to a query.
-        query = request["query"]
+        use_last_query = int(request.get("last_query", 0))
+        if use_last_query:
+            # Retrieve the last query performed by the user.
+            query = user.GetConfigurationProperty("summary_last_query", "1")
+        else:
+            # Use the query specified in the request.
+            query = request["query"]
 
         try:
             issues = []
             # Query all issue classes successively.
             for issue_class in idb.GetIssueClasses():
                 issues = issues + idb.Query(query, issue_class.GetName())
+            # Store the query so the user can repeat it easily.
+            user.SetConfigurationProperty("summary_last_query", query)
         except NameError, name:
             msg = qm.error("query name error", name=name, query=query)
             return qm.web.generate_error_page(request, msg)

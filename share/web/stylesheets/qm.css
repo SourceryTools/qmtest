@@ -114,3 +114,14 @@ a.help-link {
     color: 402090;
 }
 
+table.navbar {
+    background-color: black;
+}
+
+td.navbar {
+    color: white;
+}
+
+a.navbar {
+    color: white;
+}
