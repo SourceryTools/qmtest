@@ -413,6 +413,7 @@ class NoSuchResourceError(DatabaseError):
 
         self.resource_id = resource_id
 
+
     def __str__(self):
         """Return a string describing this exception."""
 
