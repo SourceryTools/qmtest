@@ -1,5 +1,8 @@
 2002-03-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (build_rpm): Use sudo.
+	(TAR_OPTS): Use "root" rather than "0" in owner options.
+
 	* qm/test/cmdline.py (QMTest.MakeContext): Fix typo.
 	* NEWS: Note fix.
 	

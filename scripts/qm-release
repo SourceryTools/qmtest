@@ -111,14 +111,14 @@ build_source() {
 
 build_rpm() {
     echo "Building RPM distribution..."
-    cp ${QM_SOURCE_TAR_GZ} ${RPM_BASE}/SOURCES || \
+    sudo `which cp` ${QM_SOURCE_TAR_GZ} ${RPM_BASE}/SOURCES || \
       error "Could not install source distribution"
     (tar xzf ${QM_SOURCE_TAR_GZ} -O qm-${QM_VERSION}/qm.spec.in | \
-      sed -e "s|@QM_VERSION@|${QM_VERSION}|g" > \
-      ${RPM_BASE}/SPECS/qm.spec) || \
+      sed -e "s|@QM_VERSION@|${QM_VERSION}|g" > qm.spec) || \
       error "Could not extract spec file"
-    rpm --quiet -ba --rmsource ${RPM_BASE}/SPECS/qm.spec || \
+    sudo `which rpm` --quiet -ba --rmsource qm.spec || \
       error "Could not create RPM"
+    cp ${RPM_BASE}/RPMS/i386/qm-${QM_VERSION}-0.i386.rpm .
 }
 
 # Build a binary distribution.
@@ -188,7 +188,7 @@ QM_BINARY_ZIP=
 QM_BINARY_EXE=
 
 # Options to use with tar when creating an archive.
-TAR_OPTS="--owner=0 --group=0 --mode=u+w,go-w,a+rX,a-st"
+TAR_OPTS="--owner=root --group=root --mode=u+w,go-w,a+rX,a-st"
 
 # Modes of operation.
 SOURCE=0
