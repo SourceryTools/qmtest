@@ -111,7 +111,7 @@ def open_in_browser(url):
     The browser is run in a separate, independent process."""
 
     # Escape single quotes in the URL.
-    url = string.replace(url, "'", r"\'")
+    url = string.replace(url, "'", "%27")
     # Which browser to use?
     browser = common.rc.Get("browser", "netscape", "common")
     # Invoke the browser.

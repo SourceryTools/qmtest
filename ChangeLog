@@ -1,3 +1,8 @@
+2002-06-21  Zack Weinberg  <zack@codesourcery.com>
+
+	* qm/platform_unix.py: Use URL quoting convention (%xx) to escape
+	single quotes.
+
 2002-06-19  Zack Weinberg  <zack@codesourcery.com>
 
 	* qm/xmlutil.py: Use xml.dom.minidom.getDOMImplementation() so
