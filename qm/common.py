@@ -578,7 +578,7 @@ def load_module(name, path=sys.path):
     instance 'package.subpackage.module'.
 
     'path' -- A sequence of directory paths in which to search for the
-    module, analogous to 'PYTHONPATH'.
+    module, analogous to 'sys.path'.
 
     returns -- A module object.
 
@@ -626,7 +626,7 @@ def load_module(name, path=sys.path):
         # same directory, Python can find them.  But remember the old
         # path so we can restore it afterwards.
         old_python_path = sys.path[:]
-        sys.path = sys.path + path
+        sys.path = path + sys.path
         # Load the module.
         module = imp.load_module(name, file, file_name, description)
         # Restore the old path.
