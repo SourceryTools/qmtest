@@ -4,8 +4,7 @@
  <class>python.ExecTest</class>
  <action>tempdir1</action>
  <argument name='source'>
-  <attachment>
-<data>
+  <text>
 import os.path
 
 # The action 'tempdir1' created a temporary directory for us.
@@ -16,8 +15,7 @@ assert os.path.isdir(dir_path)
 
 # The directory should be empty.
 assert len(os.listdir(dir_path)) == 0
-</data>
-  </attachment>
+</text>
  </argument>
 </test>
 <!--

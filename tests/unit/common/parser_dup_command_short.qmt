@@ -3,8 +3,7 @@
 <test>
  <class>python.ExceptionTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.cmdline
 option_d = ('d', 'd_option', None, 'Option D Description')
 option_e = ('d', 'e_option', None, 'Option E Description')
@@ -13,8 +12,7 @@ command_1 = ('create', 'Create an issue', 'name',
              " name of the issue to be created.",
              [option_d, option_e])
 qm.cmdline.CommandParser('qmtrack', [], [command_1])
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='exception_class'>
   <text>ValueError</text>

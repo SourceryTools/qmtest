@@ -1,0 +1,166 @@
+<dtml-comment><!--
+
+  File:   new-test.dtml
+  Author: Alex Samuel
+  Date:   2001-04-18
+
+  Contents:
+    Document template for new test or new action page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader(GetTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3><dtml-var expr="GetTitle()"></h3>
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="MakeSubmitUrl()">"
+       enctype="multipart/form-data"/>
+
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tbody>
+    <dtml-if expr="field_errors != {}">
+     <tr>
+      <td colspan="2">
+       <p>Your issue submission contained errors.  Please correct them
+       and resubmit.</p>
+      </td>
+     </tr>
+    </dtml-if>
+
+    <tr valign="top"
+       <dtml-if expr="field_errors.has_key('_id')">
+        class="field-error"
+       <dtml-else>
+        class="field"
+       </dtml-if>
+        >
+     <td>
+      <dtml-if expr="type == 'test'">
+       <b>Test ID</b>
+       <p>The test ID identifies the test.  The test ID may be composed
+       of lower-case letters, digits, and underscores.  Organize tests
+       in a hierarchy using a period as the path separator.</p>
+      <dtml-else>
+       <b>Action ID</b>
+       <p>The action ID identifies the action.  The action ID may be
+       composed of lower-case letters, digits, and underscores.
+       Organize actions in a hierarchy using a period as the path
+       separator.</p>
+      </dtml-if>
+     </td>
+     <td>
+      <input name="id" 
+             type="text" 
+             size="40" 
+             value="<dtml-var name="item_id">"/>
+      <dtml-if expr="field_errors.has_key('_id')">
+       <br>
+       <span class="error">
+        <dtml-var expr="field_errors['_id']">
+       </span>
+      </dtml-if>
+     </td>
+    </tr>
+
+    <tr valign="top"
+       <dtml-if expr="field_errors.has_key('_class')">
+        class="field-error"
+       <dtml-else>
+        class="field"
+       </dtml-if>
+        >
+     <td>
+      <dtml-if expr="type == 'test'">
+       <b>Test Class</b>
+
+       <p>The test class determines how the test is parameterized, and
+       provides the mechanism by which the test is run.</p>
+
+       <p>Choose a standard test class from the list, or enter the name
+       of a custom test class.</p>
+      <dtml-else>
+       <b>Action Class</b>
+
+       <p>The action class determines how the action is parameterized,
+       and provides the mechanism by which the action is run.</p>
+
+       <p>Choose a standard action class from the list, or enter the
+       name of a custom action class.</p>
+      </dtml-if>
+     </td>
+     <td>
+      Standard Classes:
+      <select name="class_list"
+              onchange="set_class();">
+       <option value=""> </option>
+       <dtml-in name="class_names">
+       <dtml-let class_name=sequence-item>
+        <option value="<dtml-var name="class_name">">
+         <dtml-var name="class_name">
+        </option>
+       </dtml-let>
+       </dtml-in>
+      </select>
+      <input name="class" 
+             type="text" 
+             size="40" 
+             value="<dtml-var name="class_name">"
+             onkeydown="document.form.class_list.selectedIndex = 0;"
+             />
+      <dtml-if expr="field_errors.has_key('_class')">
+       <br>
+       <span class="error">
+        <dtml-var expr="field_errors['_class']">
+       </span>
+      </dtml-if>
+     </td>
+    </tr>
+
+    <tr class="heading">
+     <td colspan="2">
+      <input type="submit" value=" Next > ">
+      <dtml-var expr="MakeButton('Cancel', 'dir')">
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+ </form>
+
+ <script language="JavaScript">
+ function set_class()
+ {
+   var select = document.form.class_list;
+   var index = select.selectedIndex;
+   if(index > 0)
+     // "class" is a reserved word in JavaScript, so access the class 
+     // input by index.
+     document.form[2].value = select[index].value;
+ }
+ </script>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

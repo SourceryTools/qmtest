@@ -4,8 +4,7 @@
  <class>python.ExecTest</class>
  <prerequisite>parser_create</prerequisite>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 command_line = [
     '-b', 
     'foo', 
@@ -17,8 +16,7 @@ command_line = [
     ]
 parser = context["parser_create.parser"]
 parsed_line = parser.ParseCommandLine(command_line)
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='expression'>
   <text>parsed_line[0][0][0] == 'b_option' \

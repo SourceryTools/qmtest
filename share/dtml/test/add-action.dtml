@@ -1,0 +1,105 @@
+<dtml-comment><!--
+
+  File:   add-action.dtml
+  Author: Alex Samuel
+  Date:   2001-04-16
+
+  Contents:
+    Document template for web page to specify an action for a test.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <dtml-var expr="GenerateHtmlHeader('Specify an Action Test')">
+ <dtml-var expr="GenerateStartBody()">
+
+  <h3>Specify an Action</h3>
+
+  <form name="form"
+        onsubmit="add_action();">
+
+   <table border="0"
+          cellpadding="6"
+          cellspacing="4"
+          width="100%"
+          columns="2">
+    <tbody>
+     <tr class="field" valign="top">
+      <td>
+       <b>Action ID</b>
+       <p>Select the action ID from the list of actions in the
+       test database, or enter an action ID below.</p>
+      </td>
+      <td>
+       <select name="action_id_list" 
+               size="8" 
+               width="240"
+               onchange="set_action_id();">
+        <dtml-in expr="action_ids">
+        <dtml-let action_id=sequence-item>
+         <option value="<dtml-var name="action_id">">
+          <dtml-var name="action_id">
+         </option>
+        </dtml-let>
+        </dtml-in>
+       </select>
+       <br>
+       ID: <input type="text" size="32" name="action_id"/>
+      </td>
+     </tr>
+
+     <tr class="field">
+      <td colspan="2">
+       <input type="submit" value="  OK  "/>
+       <input type="button"
+              value=" Cancel "
+              onclick="window.close();"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+
+  </form>
+
+  <script language="JavaScript">
+  function set_action_id()
+  {
+    var select = document.form.action_id_list;
+    var index = select.selectedIndex;
+    if(index != -1)
+      document.form.action_id.value = select[index].value;
+  }
+
+  function add_action()
+  {
+    var action_id = document.form.action_id.value;
+    var select = 
+      window.opener.document.<dtml-var expr="request['select']">;
+    var contents =
+      window.opener.document.<dtml-var expr="request['contents']">;
+    if(action_id != "")
+      window.opener.add_to_set(select, contents, action_id, action_id);
+    window.close();
+    return false;
+  }
+  </script>
+
+  <dtml-var name="html_footer">
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

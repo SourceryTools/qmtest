@@ -675,6 +675,26 @@ def to_text(structured_text, width=78, indent=0):
     return output_string.getvalue()
 
 
+def get_first(structured_text):
+    """Return the first line of 'structured_text'.
+
+    By convention, the first line of a structured text description is a
+    short summary."""
+
+    return string.split(structured_text, "\n", 1)[0]
+
+
+def get_rest(structured_text):
+    """Return the contents of 'structured_text' minus the first line."""
+
+    parts = string.split(structured_text, "\n", 1)
+    # There may not be more than one line; handle this gracefully.
+    if len(parts) > 0:
+        return parts[1]
+    else:
+        return ""
+        
+
 ########################################################################
 # variables
 ########################################################################

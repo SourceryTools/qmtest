@@ -37,6 +37,7 @@
 
 import base
 import os
+import qm.common
 import qm.fields
 import qm.label
 import qm.structured_text
@@ -74,7 +75,7 @@ class UnknownActionClassError(RuntimeError):
 
 
 
-class TestFileError(Exception):
+class TestFileError(RuntimeError):
     """An error in the format or contents of an XML test file."""
 
     pass
@@ -142,30 +143,25 @@ class Database(base.Database):
         return self.__HasItem(test_id, self.__tests, test_file_extension)
 
 
-    def HasAction(self, action_id):
-        """Return true if the database contains an action with 'action_id'."""
-
-        return self.__HasItem(action_id, self.__actions, action_file_extension)
-
-
     def GetTest(self, test_id):
         if not self.HasTest(test_id):
             raise base.NoSuchTestError, test_id
 
-        return self.__GetItem(test_id, self.__tests,
-                              test_file_extension, self.__ParseTestDocument)
-        
-
-    def GetAction(self, action_id):
-        if not self.HasAction(action_id):
-            raise base.NoSuchActionError, action_id
-
-        return self.__GetItem(action_id, self.__actions,
-                              action_file_extension,
-                              self.__ParseActionDocument)
+        try:
+            return self.__GetItem(test_id,
+                                  self.__tests,
+                                  test_file_extension,
+                                  self.__ParseTestDocument)
+        except qm.fields.DomNodeError, message:
+            message = qm.error("error loading xml test",
+                               test_id=test_id,
+                               message=message)
+            raise TestFileError, message
         
 
     def WriteTest(self, test, comments=0):
+        # Invalidate the cache entry.
+        self.__InvalidateItem(test.GetId(), self.__tests)
         # Generate the document and document type for XML test files.
         document = qm.xmlutil.create_dom_document(
             public_id="-//Software Carpentry//QMTest Test V0.1//EN",
@@ -186,6 +182,57 @@ class Database(base.Database):
         test_file = open(test_path, "w")
         qm.xmlutil.write_dom_document(document, test_file)
         test_file.close()
+
+
+    def GetTestIds(self, path="."):
+        dir_path = self.IdToPath(path, absolute=1)
+        return scan_dir_for_labels(dir_path, test_file_extension)
+
+
+    def HasAction(self, action_id):
+        """Return true if the database contains an action with 'action_id'."""
+
+        return self.__HasItem(action_id, self.__actions, action_file_extension)
+
+
+    def GetAction(self, action_id):
+        if not self.HasAction(action_id):
+            raise base.NoSuchActionError, action_id
+
+        return self.__GetItem(action_id, self.__actions,
+                              action_file_extension,
+                              self.__ParseActionDocument)
+        
+
+    def WriteAction(self, action, comments=0):
+        # Invalidate the cache entry.
+        self.__InvalidateItem(action.GetId(), self.__actions)
+        # Generate the document and document type for XML action files.
+        document = qm.xmlutil.create_dom_document(
+            public_id="-//Software Carpentry//QMTest Action V0.1//EN",
+            dtd_file_name="action.dtd",
+            document_element_tag="action"
+            )
+        # Construct the action element node.
+        action_id = action.GetId()
+        self.__MakeDomNodeForAction(document, document.documentElement,
+                                    action, comments)
+        # Find the file system path for the action file.
+        action_path = self.IdToPath(action_id, absolute=1) \
+                      + action_file_extension
+        # If the file is in a new subdirectory, create it.
+        containing_directory = os.path.dirname(action_path)
+        if not os.path.isdir(containing_directory):
+            os.makedirs(containing_directory)
+        # Write out the action.
+        action_file = open(action_path, "w")
+        qm.xmlutil.write_dom_document(document, action_file)
+        action_file.close()
+
+
+    def GetActionIds(self, path="."):
+        dir_path = self.IdToPath(path, absolute=1)
+        return scan_dir_for_labels(dir_path, action_file_extension)
 
 
     def HasSuite(self, suite_id):
@@ -242,6 +289,11 @@ class Database(base.Database):
             return suite
 
 
+    def GetSuiteIds(self, path="."):
+        dir_path = self.IdToPath(path, absolute=1)
+        return scan_dir_for_labels(dir_path, suite_file_extension)
+
+
     def TestIdToPath(self, test_id, absolute=0):
         """Convert a test ID in the database to a path to the test file."""
 
@@ -261,7 +313,43 @@ class Database(base.Database):
         return path
 
 
+    def SetAttachmentData(self, attachment, data, item_id):
+        # Construct the path to the directory in which the test or
+        # action given by 'item_id' is written.  The attachment should
+        # be written to this directory.
+        dir_path = self.IdToPath(qm.label.dirname(item_id), absolute=1)
+        # Construct the file name to which the attachment data is
+        # written.  Try to use the file name associated with the
+        # attachment. 
+        file_name = attachment.file_name
+        path = os.path.join(dir_path, file_name)
+        # If a file by that name already exists, generate a new file
+        # name by appending subsequent integers until we have a file
+        # name that doesn't already exist.
+        count = 0
+        while os.path.exists(path):
+            file_name = "%s.%d" % (attachment.file_name, count)
+            count = count + 1
+            path = os.path.join(dir_path, file_name)
+        # Open the attachment file, and set its permissions.
+        attachment_file = open(path, "wb")
+        os.chmod(path, 0600)
+        # Write the attachment data.
+        attachment_file.write(data)
+        attachment_file.close()
+        # Update the 'Attachment' object to the new location of the
+        # attachment data. 
+        attachment.location = file_name
+
+
     # Helper functions.
+
+    def __InvalidateItem(self, item_id, cache):
+        """Invalidate the cache entry for 'item_id'."""
+
+        if cache.has_key(item_id):
+            del cache[item_id]
+
 
     def __HasItem(self, item_id, cache, file_extension):
         """Return true if an item (a test or action) exits.
@@ -516,8 +604,6 @@ class Database(base.Database):
         'comments' -- If true, add DOM comment nodes."""
 
         test_id = test.GetId()
-        test_class = test.GetClass()
-        test_class_name = test.GetClassName()
 
         # Make an element node unless one was specified.
         if element is None:
@@ -525,16 +611,93 @@ class Database(base.Database):
         else:
             assert element.tagName == "test"
 
+        # Build common stuff.
+        self.__MakeDomNodeForItem(document, element, test, comments)
+
+        # Build and add category elements.
+        for category in test.GetCategories():
+            cat_element = qm.xmlutil.create_dom_text_element(
+                document, "category", category)
+            element.appendChild(cat_element)
+
+        # Build and add prerequisite elements.  First find the ID path
+        # containing this test.
+        containing_id = qm.label.split(test_id)[0]
+        # Prerequisite IDs are stored relative to this.
+        unrel = qm.label.UnmakeRelativeTo(containing_id)
+        # Loop over prerequisites.
+        for prerequisite_id, outcome in test.GetPrerequisites().items():
+            # The relative ID path to the prerequisite test is stored as
+            # the element contents.
+            relative_id = unrel(prerequisite_id)
+            prq_element = qm.xmlutil.create_dom_text_element(
+                document, "prerequisite", relative_id)
+            # The outcome is stored as an attribute.
+            prq_element.setAttribute("outcome", outcome)
+            element.appendChild(prq_element)
+
+        # Build and add action elements.
+        for action in test.GetActions():
+            act_element = qm.xmlutil.create_dom_text_element(
+                document, "action", action)
+            element.appendChild(act_element)
+
+        # All done.
+        return element
+
+
+    def __MakeDomNodeForAction(self, document, element, action, comments=0):
+        """Construct a DOM node for an action.
+
+        'document' -- The DOM document in which the node is being
+        constructed.
+
+        'element' -- A test element DOM node in which the test is
+        assembled.  If 'None', a new test element node is created.
+
+        'action' -- The action to write.
+
+        'comments' -- If true, add DOM comment nodes."""
+
+        # Make an element node unless one was specified.
+        if element is None:
+            element = document.createElement("action")
+        else:
+            assert element.tagName == "action"
+        # Build common stuff.
+        self.__MakeDomNodeForItem(document, element, action, comments)
+        # All done.
+        return element
+
+
+    def __MakeDomNodeForItem(self, document, element, item, comments=0):
+        """Construct common DOM node elements for a test or action.
+
+        'document' -- The DOM document in which the node is being
+        constructed.
+
+        'element' -- An element DOM node in which the test or action is
+        assembled.
+
+        'item' -- The test or action to write.  Only components common
+        to tests and actions are written.
+
+        'comments' -- If true, add DOM comment nodes."""
+
+        item_id = item.GetId()
+        item_class = item.GetClass()
+        item_class_name = item.GetClassName()
+
         # Build and add the class element, which contains the test class
         # name. 
         class_element = document.createElement("class")
-        text = document.createTextNode(test_class_name)
+        text = document.createTextNode(item_class_name)
         class_element.appendChild(text)
         element.appendChild(class_element)
         
         # Build and add argument elements, one for each argument that's
-        # specified for the test.
-        arguments = test.GetArguments()
+        # specified for the item.
+        arguments = item.GetArguments()
         for name, value in arguments.items():
             arg_element = document.createElement("argument")
             # Store the argument name in the name attribute.
@@ -543,7 +706,7 @@ class Database(base.Database):
             # whose name matches this argument.  There should be exactly
             # one. 
             field = filter(lambda f, name=name: f.GetName() == name,
-                           test_class.fields)
+                           item_class.fields)
             assert len(field) == 1
             field = field[0]
             # Add a comment describing the field, if requested.
@@ -563,33 +726,6 @@ class Database(base.Database):
             value_node = field.MakeDomNodeForValue(value, document)
             arg_element.appendChild(value_node)
             element.appendChild(arg_element)
-
-        # Build and add category elements.
-        for category in test.GetCategories():
-            cat_element = qm.xmlutil.create_dom_text_element("category",
-                                                             category)
-            element.appendChild(cat_element)
-
-        # Build and add prerequisite elements.  First find the ID path
-        # containing this test.
-        containing_id = qm.label.split(test_id)[0]
-        # Prerequisite IDs are stored relative to this.
-        unrel = qm.label.UnmakeRelativeTo(containing_id)
-        # Loop over prerequisites.
-        print test.GetPrerequisites()
-        for prerequisite_id, outcome in test.GetPrerequisites().items():
-            # The relative ID path to the prerequisite test is stored as
-            # the element contents.
-            relative_id = unrel(prerequisite_id)
-            prq_element = qm.xmlutil.create_dom_text_element(
-                "prerequisite", relative_id)
-            # The outcome is stored as an attribute.
-            prq_element.setAttribute("outcome", outcome)
-            element.appendChild(prq_element)
-
-        # FIXME: Pre/post actions.
-
-        return element
 
 
 
@@ -630,7 +766,7 @@ class FileSuite(base.Suite):
         for id in content_ids:
             if not qm.label.is_valid(id, allow_separator=1):
                 raise RuntimeError, \
-                      qm.error("invalid test id", id=id)
+                      qm.error("invalid id", id=id)
 
         # The content IDs are relative to the location of the suite.
         # Construct absolute IDs.
@@ -727,6 +863,45 @@ class DirectorySuite(base.Suite):
                     test_id = rel(name)
                     self.__ids.append(test_id)
 
+
+
+########################################################################
+# functions
+########################################################################
+
+def scan_dir_for_labels(dir, extension): 
+    """Return labels for files in and under 'dir' matching 'extension'.
+
+    Recursively searches for files under 'dir' whose names end in
+    'extension'.  Returns a list of corresponding labels, relative to
+    'dir'."""
+
+    results = []
+    # Scan contents of 'dir'.
+    for entry in os.listdir(dir):
+        # Construct the full path to the entry.
+        entry_path = os.path.join(dir, entry)
+        # Is it a subdirectory?
+        if os.path.isdir(entry_path):
+            # Yes.  Call ourselves recursively.
+            sub_results = scan_dir_for_labels(os.path.join(dir, entry),
+                                              extension)
+            # Make the contents of the subdirectory relative to the
+            # top-level 'dir' by prefixing the subdirectory name.
+            rel = qm.label.MakeRelativeTo(entry)
+            sub_results = map(rel, sub_results)
+            # Add to the results.
+            results = results + sub_results
+        else:
+            # Not a directory.  Is it a file ending with the desired
+            # extension? 
+            if os.path.isfile(entry_path):
+                entry_name, entry_extension = os.path.splitext(entry)
+                if extension == entry_extension:
+                    # Yes; keep it.
+                    results.append(entry_name)
+
+    return results
 
 
 ########################################################################

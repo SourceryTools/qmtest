@@ -39,6 +39,7 @@
 
 import BaseHTTPServer
 import cgi
+import diagnostic
 import DocumentTemplate
 import errno
 import htmlentitydefs
@@ -123,6 +124,56 @@ class PageInfo:
 
     html_generator = ""
 
+    common_javascript = '''
+    <script language="JavaScript">
+    function remove_from_set(select, contents)
+    {
+      if(select.selectedIndex != -1)
+        select.options[select.selectedIndex] = null;
+      update_set(select, contents);
+      return false;
+    }
+
+    function add_to_set(select, contents, text, value)
+    {
+      var options = select.options;
+      for(var i = 0; i < options.length; ++i)
+        if(options[i].value == value)
+          return false;
+      if(value != "")
+        options[options.length] = new Option(text, value);
+      update_set(select, contents);
+      return false;
+    }
+
+    function update_set(select, contents)
+    {
+      var result = "";
+      for(var i = 0; i < select.options.length; ++i) {
+        if(i > 0)
+          result += ",";
+        result += select.options[i].value;
+      }
+      contents.value = result;
+    }
+
+    function update_from_select(select, control)
+    {
+      if(select.selectedIndex != -1)
+        control.value = select.options[select.selectedIndex].value;
+    }
+
+    var debug_window = null;
+    function debug(msg)
+    {
+      if(debug_window == null || debug_window.closed) {
+        debug_window = window.open("", "debug", "resizable");
+        debug_window.document.open("text/plain");
+      }
+      debug_window.document.writeln(msg);
+    }
+    </script>
+    '''
 
     def __init__(self, request):
         """Create a new page.
@@ -132,6 +183,12 @@ class PageInfo:
 
         # Remember the request.
         self.request = request
+
+
+    def FormatStructuredText(self, text):
+        """Return 'text' rendered as HTML."""
+
+        return structured_text.to_html(text)
 
 
     def GenerateHtmlHeader(self, description):
@@ -162,7 +219,7 @@ class PageInfo:
     def GenerateEndBody(self):
         """Return markup to end the body of the HTML document."""
 
-        return "</body>"
+        return self.common_javascript + "</body>"
 
 
     def MakeLoginForm(self, redirect_request=None):
@@ -186,12 +243,32 @@ class PageInfo:
 ''' 
 
 
-    def MakeUrlButton(self, *args, **attributes):
-        """Generate HTML for a (non-form) action button.
+    def MakeButton(self, title, script_url, **fields):
+        """Generate HTML for a button to load a URL.
 
-        See 'make_url_button'."""
+        'title' -- The button title.
 
-        return apply(make_url_button, args, attributes)
+        'script_url' -- The URL of the script.
+
+        'fields' -- Additional fields to add to the script request.
+
+        The resulting HTML must be included in a form."""
+
+        request = apply(WebRequest, [script_url, self.request], fields)
+        return make_button_for_request(title, request)
+
+
+    def MakeUrlButton(self, title, url):
+        """Generate HTML for an action button.
+
+        The resulting HTML must be included in a form.  See
+        'make_url_button'."""
+
+        return make_button_for_url(title, url)
+
+
+    def MakeHelpButton(self, tag, label="Help", **substitutions):
+        return apply(make_help_button, (tag, label), substitutions)
 
 
     def MakeImageUrl(self, image):
@@ -572,6 +649,7 @@ class WebServer(HTTPServer):
         self.__xml_rpc_methods = {}
         self.__xml_rpc_path = xml_rpc_path
         self.__shutdown_requested = 0
+
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
@@ -861,6 +939,14 @@ class WebRequest:
         return self.__url
 
     
+    def GetScriptName(self):
+        """Return the name of the script that processes this request.
+
+        The script name is the final element of the full URL path."""
+
+        return string.split(self.__url, "/")[-1]
+
+
     def SetSessionId(self, session_id):
         """Set the session ID for this request to 'session_id'."""
 
@@ -1288,33 +1374,35 @@ def make_form_for_request(request, method="get"):
     return result
 
 
-def make_url_button(url, text=None, on_click=None):
-    """Generate HTML for a (non-form) action button.
+def make_button_for_request(title, request):
+    """Generate HTML for a button.
 
-    'url' -- The URL to link to.  If 'None', fill in a URL that does
-    nothing.
+    Note that the caller is responsible for making sure the resulting
+    button is placed within a form element.
 
-    'text' -- Text to display in this button.
+    'title' -- The button label.
 
-    'on_click' -- If not 'None', the onclick action for this
-    button."""
+    'request' -- A 'WebRequest' object to be invoked when the button is
+    clicked."""
 
-    # If the button doesn't go anywhere, use a do-nothing URL.
-    if url is None:
-        url = "javascript: void(0)"
-    # Generate the onclick attribute to the <a> tag, if required.
-    if on_click is None:
-        on_click = ""
-    else:
-        on_click = ' onclick="%s"' % on_click
-    # Generate an <a> element, formatted appropriately.
+    return make_button_for_url(title, make_url_for_request(request))
+
+
+def make_button_for_url(title, url):
+    """Generate HTML for a button.
+
+    Note that the caller is responsible for making sure the resulting
+    button is placed within a form element.
+
+    'title' -- The button label.
+
+    'url' -- The URL to load when the button is clicked.."""
+
     return '''
-      <table cellpadding="4" cellspacing="0" border="1">
-       <tr>
-        <td><a href="%s" %s><font>%s</font></a></td>
-       </tr>
-      </table>
-      ''' % (url, on_click, text)
+    <input type="button"
+           value=" %s "
+           onclick="location = '%s';"/>
+    ''' % (title, url)
 
 
 def get_session(request, session_id):
@@ -1432,6 +1520,21 @@ def generate_html_from_dtml(template_name, page_info):
     return html_file(page_info)
 
 
+def generate_error_page(request, error_text):
+    """Generate a page to indicate a user error.
+
+    'request' -- The request that was being processed when the error
+    was encountered.
+
+    'error_text' -- A description of the error, as structured text.
+
+    returns -- The generated HTML source for the page."""
+
+    page_info = PageInfo(request)
+    page_info.error_text = qm.web.format_structured_text(error_text)
+    return generate_html_from_dtml("error.dtml", page_info)
+
+
 def generate_login_form(redirect_request, message=None):
     """Show a form for user login.
 
@@ -1440,6 +1543,225 @@ def generate_login_form(redirect_request, message=None):
     page_info = PageInfo.default_class(redirect_request)
     page_info.message = message
     return generate_html_from_dtml("login_form.dtml", page_info)
+
+
+# Used to generate locally unique names.
+__counter = 0
+
+def make_set_control(form_name,
+                     field_name,
+                     select_name=None,
+                     add_request=None,
+                     add_page=None,
+                     initial_elements=[],
+                     rows=6,
+                     width=200,
+                     window_width=480,
+                     window_height=240):
+    """Construct a control for representing a set of items.
+
+    'form_name' -- The name of form in which the control is included.
+
+    'field_name' -- The name of the input control that contains an
+    encoded representation of the set's elements.  See
+    'encode_set_control_contents' and 'decode_set_control_contents'.
+
+    'select_name' -- The name of the select control that displays the
+    elements of the set.  If 'None', a control name is generated
+    automatically. 
+
+    'add_request' -- If not 'None', a 'WebRequest' object which is
+    invoked when the user selects the "Add..." button to add a new
+    element to the set.
+
+    'add_page' -- If not 'None', the HTML source for a popup web page
+    that is displayed in response to the "Add..." button.
+
+    'initial_elements' -- The initial elements of the set.
+
+    'rows' -- The number of rows for the select control.
+
+    'width' -- The width of the select control.
+
+    'window_width', 'window_height' -- The width and height of the popup
+    window for adding a new element.
+
+    Exactly one of 'add_request' and 'add_page' should be specified.
+    """
+
+    # Make sure exactly one of 'add_request' and 'add_page' were specified.
+    assert add_request is None or add_page is None
+    assert not (add_request is None and add_page is None)
+
+    # Generate a name for the select control if none was specified.
+    if select_name is None:
+        select_name = "_set_" + field_name
+
+    # Construct the select control.
+    select = '<select name="%s" size="%d" width="%d">\n' \
+             % (select_name, rows, width)
+    # Add an option for each initial element.
+    for text, value in initial_elements:
+        select = select + \
+                 '<option value="%s">%s</option>\n' % (value, text)
+    select = select + '</select>\n'
+
+    # Construct the hidden control contianing the set's elements.  Its
+    # initial value is the encoding of the initial elements.
+    initial_values = map(lambda x: x[1], initial_elements)
+    initial_value = encode_set_control_contents(initial_values)
+    contents = '<input type="hidden" name="%s" value="%s"/>' \
+               % (field_name, initial_value)
+
+    # Construct a unique name for the JavaScript function for responding
+    # to the "Add..." button.
+    global __counter
+    add_function = "_set_add_%d" % __counter
+    __counter = __counter + 1
+    # Construct the "Add..." button.
+    add_button = '''
+    <input type="button"
+           size="12"
+           value=" Add... "
+           onclick="%s();"
+           />
+    ''' % add_function
+    # Construct the "Remove" button.
+    remove_button = '''
+    <input type="button"
+           size="12"
+           value=" Remove "
+           onclick="remove_from_set(document.%s.%s, document.%s.%s);"
+    />''' % (form_name, select_name, form_name, field_name)
+
+    # Now write the JavaScript function that responds to the "Add..."
+    # button.  
+
+    # Construct the arguments to the JavaScript 'Window.open' function,
+    # which specifies attributes of the popup window.
+    window_args = "'height=%d,width=%d'" % (window_height, window_width)
+    if add_request is not None:
+        # A 'WebRequest' was specified.  Respond by opening a window
+        # displaying the request.
+        add_request["select"] = "%s.%s" % (form_name, select_name)
+        add_request["contents"] = "%s.%s" % (form_name, field_name)
+        add_url = make_url_for_request(add_request)
+        add_script = """
+        <script language="JavaScript">
+        function %s()
+        {
+          window.open('%s', '_setadd', %s);
+        }
+        </script>
+        """ % (add_function, add_url, window_args)
+    else:
+        # HTML source was specified.  Write a function that opens a
+        # popup window and writes the HTML page directly into it.   The
+        # HTML page is encoded as a JavaScript string literal.
+        #
+        # This funcion closes the window and reopens it if it already
+        # exists.  This is necessary to work around bugs in various
+        # browsers. 
+        add_script = """
+        <script language="JavaScript">
+        var popup_window = null;
+
+        function %s()
+        {
+          if(popup_window != null && !popup_window.closed)
+            popup_window.close();
+          popup_window = window.open('', 'popup', %s);
+          popup_window.document.open();
+          popup_window.document.write(%s);
+          popup_window.document.close();
+        }
+        </script>
+        """ % (add_function, window_args, make_javascript_string(add_page))
+
+    # Arrange everything in a table to control the layout.
+    return contents + '''
+    <table border="0" cellpadding="0" cellspacing="0"><tbody>
+     <tr valign="top">
+      <td>
+       %s
+      </td>
+      <td>&nbsp;</td>
+      <td>
+       %s
+       <br>
+       %s
+      </td>
+     </tr>
+    </tbody></table>
+    %s
+    ''' % (select, add_button, remove_button, add_script)
+
+
+def encode_set_control_contents(values):
+    """Encode 'values' for a set control.
+
+    'values' -- A sequence of values of elements of the set.
+
+    returns -- The encoded value for the control field."""
+
+    return string.join(values, ",")
+
+
+def decode_set_control_contents(content_string):
+    """Decode the contents of a set control.
+
+    'content_string' -- The text of the form field containing the
+    encoded set contents.
+
+    returns -- A sequence of the values of the elements of the set."""
+
+    # Oddly, if the set is empty, there are sometimes spurious spaces in
+    # field entry.  This may be browser madness.  Handle it specially.
+    if string.strip(content_string) == "":
+        return []
+    return string.split(content_string, ",")
+
+
+def make_javascript_string(text):
+    """Return 'text' represented as a JavaScript string literal."""
+
+    text = string.replace(text, "\\", r"\\")
+    text = string.replace(text, "'", r"\'")
+    text = string.replace(text, "\"", r'\"')
+    text = string.replace(text, "\n", r"\n")
+    text = string.replace(text, "<", r"\074")
+    return "'" + text + "'"
+
+
+def make_help_button(help_text_tag, label, **substitutions):
+    help_text = apply(diagnostic.help_set.Generate,
+                      (help_text_tag, "help", None),
+                      substitutions)
+    help_text = qm.structured_text.to_html(help_text)
+    help_page = """
+    <html>
+     <head>
+      <title>Help</title>
+      <meta http-equiv="Content-Style-Type" content="text/css"/>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/qm.css"/>
+     </head>
+     <body class="help">%s</body>
+    </head>
+    </html>
+    """ % help_text
+    help_page = make_javascript_string(help_page)
+    # FIXME: Funciton name!
+    return """
+    <a href="javascript: void(0)"
+       onclick="show_help_1();">%s</a>
+    <script language="JavaScript">
+    function show_help_1()
+    {
+      help_window = window.open("", "help", "");
+      help_window.document.write(%s);
+    }
+    </script>
+    """ % (label, help_page)
 
 
 ########################################################################

@@ -37,6 +37,7 @@
 
 import os
 import qm
+import qm.attachment
 import qm.structured_text
 import qm.track.cmdline
 import qm.track.config
@@ -111,6 +112,7 @@ def start_server(port, address="", log_file=None):
                               address,
                               log_file=log_file,
                               xml_rpc_path="/xml-rpc")
+    qm.attachment.register_attachment_upload_script(server)
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
@@ -123,9 +125,7 @@ def start_server(port, address="", log_file=None):
         ( "show", qm.track.web.show.handle_show ),
         ( "shutdown", handle_shutdown ),
         ( "submit", qm.track.web.show.handle_submit ),
-        ( "submit-attachment", qm.track.web.handle_submit_attachment ),
         ( "summary", qm.track.web.summary.handle_summary ),
-        ( "upload-attachment", qm.track.web.handle_upload_attachment ),
         ]:
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(

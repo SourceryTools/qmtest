@@ -62,6 +62,7 @@ import mimetypes
 import qm.fields
 import qm.web
 import string
+import sys
 import urllib
 import web
 
@@ -94,8 +95,8 @@ class ShowPageInfo(web.PageInfo):
         create a new issue, pass a freshly-made 'Issue' instance as
         'issue', and specify the style "new" in 'request'.
 
-        'invalid_fields' -- A mapping from field names to error
-        messages.  If non-empty, the error messages are shown with the
+        'field_errors' -- A mapping from field names to error messages.
+        If non-empty, the error messages are shown with the
         corresponding fields."""
 
         # Initialize the base class.
@@ -235,7 +236,7 @@ def handle_show(request):
     # user probably submitted the form without entering an IID.
     if not request.has_key("iid"):
         msg = "You must specify an issue ID."
-        return web.generate_error_page(request, msg)
+        return qm.web.generate_error_page(request, msg)
 
     # Determine the issue to show.
     iid = request["iid"]
@@ -256,7 +257,7 @@ def handle_show(request):
         The issue database does not contain an issue with the ID you
         specified, "%s".""" \
         % iid
-        return web.generate_error_page(request, msg)
+        return qm.web.generate_error_page(request, msg)
 
     page_info = ShowPageInfo(request, issue)
     # If we're be showing a revision history, we need to provide all
@@ -291,6 +292,24 @@ def handle_new(request):
     return web.generate_html_from_dtml("show.dtml", page_info)
 
 
+def retrieve_attachment_data(attachment):
+    """Retrieve a temporary attachment's data and store it in the IDB."""
+
+    location = attachment.location
+    # Is this attachment in the temporary area?
+    if not qm.attachment.is_temporary_attachment_location(location):
+        # No; skip it.
+        return
+    # Retrieve the attachment data.
+    data = qm.attachment.retrieve_temporary_attachment(location)
+    # Store it in the IDB.
+    idb = qm.track.get_idb()
+    location = idb.GetNewAttachmentLocation()
+    idb.SetAttachmentData(location, data)
+    # Store the new data location (in the IDB) into the attachment.
+    attachment.location = location
+
+
 def handle_submit(request):
     """Process a submission of a new or modified issue."""
 
@@ -319,24 +338,47 @@ def handle_submit(request):
             editing it (or perhaps you submitted the same changes
             twice).  Please reload the issue and resubmit your edits.
             """
-            return web.generate_error_page(request, msg)
+            return qm.web.generate_error_page(request, msg)
 
+    field_errors = {}
+
+    field_prefix = qm.fields.Field.form_field_prefix
     # Loop over query arguments in the submission.
     for name, value in request.items():
-        field_prefix = qm.fields.Field.form_field_prefix
         # Does this look like a form field representing an issue field
         # value? 
-        if string.find(name, field_prefix) == 0:
-            # Yes -- trim off the prefix to obtain the field name.
-            field_name = name[len(field_prefix):]
-        else:
+        if not qm.starts_with(name, field_prefix):
             # No, so skip it.
             continue
+        # Trim off the prefix to obtain the field name.
+        field_name = name[len(field_prefix):]
         # Obtain the corresponding field.
         field = issue_class.GetField(field_name)
         # Interpret the query argument value as the field value.
-        value = field.ParseFormValue(value)
-        issue.SetField(field_name, value)
+        try:
+            value = field.ParseFormValue(value)
+        except:
+            # Something went wrong parsing the value.  Associate an
+            # error message with this field.
+            message = str(sys.exc_info()[1])
+            field_errors[field_name] = message
+        else:
+            # If the field is an attachment field, or a set of
+            # attachments field, we have to process the values.  The
+            # data for each attachment is stored in the temporary
+            # attachment store; we need to copy it from there into the
+            # IDB.  This function does the work.
+            if isinstance(field, qm.fields.AttachmentField):
+                # An attachment field -- process the value.
+                retrieve_attachment_data(value)
+            elif isinstance(field, qm.fields.SetField) \
+                 and isinstance(field.GetContainedField(),
+                                qm.fields.AttachmentField):
+                # An attachment set field -- process each element of the
+                # value.
+                map(retrieve_attachment_data, value)
+
+            issue.SetField(field_name, value)
 
     # Set the user ID in the issue or revision.
     issue.SetField("user", request.GetSession().GetUserId())
@@ -346,10 +388,13 @@ def handle_submit(request):
     if len(invalid_fields) > 0:
         # There are invalid fields.  Instead of putting the submission
         # through, reshow the form, indicating the problems.
-        field_errors = {}
         for field_name, exc_info in invalid_fields.items():
             msg = qm.web.format_structured_text(str(exc_info[1]))
             field_errors[field_name] = msg
+
+    # If there were errors, redisplay the edit form instead of
+    # processing the submission.
+    if len(field_errors) > 0:
         if is_new:
             new_request = qm.web.WebRequest("show",
                                             base=request,

@@ -37,13 +37,15 @@
 
 import attachment
 import common
+import diagnostic
 import label
+import os
 import qm
 import qm.xmlutil
-import diagnostic
 import string
 import time
 import urllib
+import web
 import xml.dom
 import xmlutil
 
@@ -183,6 +185,14 @@ class Field:
         """Set the value of an attribute."""
 
         self.__attributes[attribute_name] = value
+
+
+    def SetAttributes(self, attributes):
+        """Set the value of several attributes.
+
+        'attributes' -- A map from attribute names to values."""
+
+        self.__attributes.update(attributes)
 
 
     def UnsetAttribute(self, attribute_name):
@@ -347,7 +357,10 @@ class IntegerField(Field):
 
 
     def ParseFormValue(self, value):
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError, qm.error("invalid integer field value")
 
 
     def FormEncodeValue(self, value):
@@ -410,7 +423,7 @@ class TextField(Field):
         """Create a text field."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name,), attributes)
+        apply(Field.__init__, (self, name,))
         # Set default attribute values.
         self.SetAttribute("structured", "false")
         self.SetAttribute("verbatim", "false")
@@ -418,6 +431,8 @@ class TextField(Field):
         self.SetAttribute("nonempty", "false")
         # Set the default field value.
         self.SetDefaultValue(default_value)
+        # Set any provided attributes.
+        self.SetAttributes(attributes)
 
 
     def GetTypeDescription(self):
@@ -466,25 +481,25 @@ class TextField(Field):
                 # Replace all whitespace with ordinary space.
                 value = re.replace("\w", " ")
                 # Put it in a <tt> element.
-                return '<tt>%s</tt>' % qm.web.escape_for_html(value)
+                return '<tt>%s</tt>' % web.escape_for_html(value)
             elif self.IsAttribute("structured"):
                 # Use only the first line of text.
                 value = string.split(value, "\n", 1)
-                result = qm.web.format_structured_text(value[0])
+                result = web.format_structured_text(value[0])
                 if len(value) > 1:
                     result = result + "..."
                 return result
             else:
-                return qm.web.escape(value)
+                return web.escape(value)
 
         elif style == "full":
             if self.IsAttribute("verbatim"):
                 # Place verbatim text in a <pre> element.
                 return '<pre>%s</pre>' % value 
             elif self.IsAttribute("structured"):
-                return qm.web.format_structured_text(value)
+                return web.format_structured_text(value)
             else:
-                return qm.web.escape(value)
+                return web.escape(value)
 
         else:
             raise ValueError, style
@@ -523,6 +538,49 @@ class TextField(Field):
 
 
 ########################################################################
+
+class SetPopupPageInfo(web.PageInfo):
+    """DTML context for generating HTML from template set.dtml.
+
+    The template 'set.dtml' is used to generate a popup HTML page for
+    specifying a new element to add to a set field."""
+
+    def __init__(self, set_field, control_name, select_name):
+        """Construct a new context.
+
+        'set_field' -- The 'SetField' instance for which the page is
+        being generated.
+
+        'control_name' -- The name of the hidden HTML input in which the
+        encoded set contents are stored.
+
+        'select_name' -- The name of the user-visible HTML select input
+        displaying the set contents."""
+        
+        # Construct a null 'WebRequest' object, since we don't need it.
+        request = web.WebRequest("")
+        web.PageInfo.__init__(self, request)
+        # Set attributes.
+        self.field = set_field
+        self.field_name = control_name
+        self.select_name = select_name
+
+
+    def MakeElementControl(self):
+        """Make HTML controls for editing a value of the contained field."""
+
+        contained_field = self.field.GetContainedField()
+        default_value = contained_field.GetDefaultValue()
+        return contained_field.FormatValueAsHtml(default_value, "new",
+                                                 name="item")
+
+
+    def MakeTitle(self):
+        """Return the page title."""
+
+        return "Add an Element to %s" % self.field.GetTitle()
+
+
 
 class SetField(Field):
     """A field containing zero or more instances of some other field.
@@ -593,7 +651,7 @@ class SetField(Field):
         if style == "brief" or style == "full":
             if len(value) == 0:
                 # An empty set.
-                return "&nbsp;"
+                return "None"
             formatted = []
             for element in value:
                 # Format each list element in the indicated style.
@@ -608,169 +666,44 @@ class SetField(Field):
             return string.join(formatted, separator)
 
         elif style == "new" or style == "edit":
-            # To edit a set field, we generate form and script elements to
-            # do most of the work on the client side.  We create a
-            # multiline select element to show the contents of the set, a
-            # button to delete the selected element, and another button
-            # and an input field to add elements.  The values of options
-            # in the select element are URL-encoded string representations
-            # of the set elements themselves.
-            #
-            # In addition, we add an extra hidden field, which contains
-            # the complete value of the field.  It is this hidden field
-            # that carries the form field name for this field.  The field
-            # value is updated automatically on the client side whenever
-            # the set list elements are modified.  The value consists of
-            # the URL-encoded elements separated by commas.
-            #
-            # The JavaScript scripts generated here assume the form
-            # elements will be part of a form named "form".
-
             field_name = self.GetName()
-            # Generate a table to arrange the form elements.
-            form = '''
-            <table border="0" cellpadding="0" cellspacing="0">
-            <tr><td>'''
-            # Create the hidden field that will carry the field value. 
-            current_value = self.GenerateFormValue(value)
-            form = form \
-                   + '<input type="hidden" name="%s" value="%s"/>\n' \
-                   % (name, current_value)
-            # Start a select control to show the set elements.
-            form = form + '''
-             <select size="6" name="_list_%s" width="200">
-            ''' % field_name
-            # Add an option element for each element of the set.
-            for item in value:
-                item_text = contained_field.FormatValueAsHtml(item, "brief")
-                item_value = contained_field.FormEncodeValue(item)
-                form = form \
-                       + '<option value="%s">%s</option>\n' \
-                       % (item_value, item_text)
-            # End the select control.  Put everything else next to it.
-            form = form + '''
-             </select>
-            </td><td>
-            '''
-            # Build a button for deleting elements.  It calls a
-            # JavaScript function to do the work.
-            on_click = "_delete_selected_%s();" % field_name
-            form = form \
-                   + qm.web.make_url_button(url=None,
-                                            text="Delete Selected",
-                                            on_click=on_click) \
-                   + "<br>"
-            # Add a field with which the user specifies each new element
-            # to add. 
-            new_item_field_name = "_new_item_%s" % field_name
-            form = form \
-                   + contained_field.FormatValueAsHtml(None, style,
-                                                      name=new_item_field_name)
-            # Build the button that adds the element specified in this
-            # control. 
-            on_click = "_add_%s();" % field_name
-            form = form \
-                   + qm.web.make_url_button(url=None, text="Add",
-                                            on_click=on_click)
-            # All done with the visiual elements.
-            form = form + '''
-            </td></tr>
-            </table>
-            '''
+            select_name = "_set_" + name
+            # Construct a list of (text, value) pairs for the set's
+            # elements. 
+            initial_elements = []
+            for element in value:
+                element_value = contained_field.FormEncodeValue(element)
+                if isinstance(contained_field, AttachmentField):
+                    element_text = "%s (%s; %s)" \
+                                   % (element.description,
+                                      element.file_name,
+                                      element.mime_type)
+                else:
+                    element_text = element_value
+                initial_elements.append((element_text, element_value))
 
-            # Now generate the scripts that make it all happen.
-            form = form + '<script language="JavaScript">\n'
-
-            # The script for removing an element is the same, no matter
-            # what's in the set.
-            form = form + '''
-            function _delete_selected_%s()
-            {
-              var list = document.form._list_%s;
-              if(list.selectedIndex != -1)
-                list.options[list.selectedIndex] = null;
-              _update_%s();
-              return false;
-            }
-            ''' % (field_name, field_name, field_name)
-            # Also a function to update the field that actually contains the
-            # submitted value of the set.  That field contains a
-            # comma-separated list of the values of the set's elements.
-            form = form + '''
-            function _update_%s()
-            {
-              var list = document.form._list_%s;
-              var result = "";
-              for(var i = 0; i < list.options.length; ++i) {
-                if(i > 0)
-                  result += ",";
-                result += list.options[i].value;
-              }
-              document.form.%s.value = result;
-            }
-            ''' % (field_name, field_name, name, )
-
-            # The function that adds an element to the list differs
-            # depending on the set contents, since the values we submit in
-            # the form vary.
-
-            form = form + '''
-            function _add_%s()
-            {
-              var options = document.form._list_%s.options;
-              var text;
-              var value;
-
-              var input = document.form._new_item_%s;
-            ''' % (field_name, field_name, field_name)
-            if isinstance(contained_field, qm.fields.EnumerationField):
-                # The value of an enum field is specified with a set
-                # control.  Use the value of the currently-selected element.
-                form = form + '''
-                  text = input.options[input.selectedIndex].text;
-                  value = input.options[input.selectedIndex].value;
-                '''
-            elif isinstance(contained_field, qm.fields.AttachmentField):
-                # The value for an attachment field is a
-                # semicolon-separated list.  The first element is the
-                # attachment description, URL-encoded; use that as the
-                # text in the list. 
-                form = form + '''
-                  value = input.value;
-                  text = value.slice(0, value.indexOf(";"));
-                  text = unescape(text);
-                '''
+            if isinstance(contained_field, AttachmentField):
+                # Handle attachment fields specially.  For these, go
+                # straight to the upload attachment popup page.
+                page_info = UploadAttachmentPageInfo(
+                    self.GetTitle(), name, select_name, in_set=1)
+                add_page = qm.web.generate_html_from_dtml(
+                    "attachment.dtml", page_info)
             else:
-                # Other fields use text controls.  The contents have to be
-                # URL-encoded to protect them when we roll them into a list
-                # of set items.
-                form = form + '''
-                  text = input.value;
-                  value = escape(input.value);
-                  // Clear the value, to prevent double additions.
-                  input.value = "";
-                '''
-            # Now code that checks for duplicates in the list, adds the
-            # option, and calls the update function to update the master set
-            # value. 
-            form = form + '''
-              // Skip the addition if there is already another element in
-              // the set with the same value.
-              for(var i = 0; i < options.length; ++i)
-                if(options[i].value == value)
-                  return false;
-              if(value != "")
-                options[options.length] = new Option(text, value);
-              // Give focus so that the user can add another element easily.
-              input.focus();
-              // Update the master set field value.
-              _update_%s();
-              return false;
-            }  
-            ''' % field_name
-
-            form = form + '</script>\n'
-
+                # Generate the page to show when the user clicks the
+                # "Add..." button.  Generate a popup page that contains
+                # controls for designating a single value of the
+                # contained field type, which is the element that is
+                # being added to the set.
+                page_info = SetPopupPageInfo(self, name, select_name)
+                add_page = web.generate_html_from_dtml("set.dtml", page_info)
+            
+            # Construct the controls for manipulating the set.
+            form = web.make_set_control("form",
+                                        field_name=name,
+                                        select_name=select_name,
+                                        add_page=add_page,
+                                        initial_elements=initial_elements)
             # All done.
             return form
 
@@ -835,8 +768,56 @@ class SetField(Field):
 
 ########################################################################
 
+class UploadAttachmentPageInfo(web.PageInfo):
+    """DTML context for generating upload-attachment.dtml."""
+
+    __next_temporary_location = 0
+
+    def __init__(self, 
+                 field_name,
+                 encoding_name,
+                 summary_field_name,
+                 in_set=0):
+        """Create a new 'PageInfo' object.
+
+        'field_name' -- The user-visible name of the field for which an
+        attachment is being uploaded.
+
+        'encoding_name' -- The name of the HTML input that should
+        contain the encoded attachment.
+
+        'summary_field_name' -- The name of teh HTML input that should
+        contain the user-visible summary of the attachment.
+
+        'in_set' -- If true, the attachment is being added to an
+        attachment set field."""
+
+        request = web.WebRequest("")
+        web.PageInfo.__init__(self, request)
+        # Use a brand-new location for the attachment data.
+        self.location = attachment.get_temporary_location()
+        # Set up attributes.
+        self.field_name = field_name
+        self.encoding_name = encoding_name
+        self.summary_field_name = summary_field_name
+        self.in_set = in_set
+
+
+    def MakeSubmitUrl(self):
+        """Return the URL for submitting this form."""
+
+        request = self.request.copy(attachment.upload_url)
+        return web.make_url_for_request(request)
+
+
+
 class AttachmentField(Field):
-    """A field containing a file attachment."""
+    """A field containing a file attachment.
+
+    Note that the 'FormatValueAsHtml' method uses a popup upload form
+    for uploading new attachment.  The web server must be configued to
+    handle the attachment submission requests.  See
+    'attachment.register_attachment_upload_script'."""
 
     MakeDownloadUrl = None
     """Function for generating a URL to download this attachment.
@@ -870,8 +851,6 @@ class AttachmentField(Field):
         return value
 
 
-    attachment_summary_prefix = "_attachment"
-
     def FormatValueAsHtml(self, value, style, name=None):
         field_name = self.GetName()
 
@@ -892,7 +871,7 @@ class AttachmentField(Field):
 
         if style == "full" or style == "brief":
             if value is None:
-                return "none"
+                return "None"
             # Link the attachment description to the data itself.
             make_url = self.MakeDownloadUrl
             if make_url is None:
@@ -918,85 +897,94 @@ class AttachmentField(Field):
             # is immediately uploaded to the server.
             #
             # The information that's stored for an attachment is made of
-            # three parts: a description, a MIME type, and the location
-            # of the data itself.  The user enters the description
-            # directly here; the popup form is responsible for obtaining
-            # the location and MIME type.  It fills these two values
-            # into hidden fields on this form.
+            # four parts: a description, a MIME type, the file name, and
+            # the location of the data itself.  The user enters these
+            # values in the popup form, which sets a hidden field on
+            # this form to an encoding of that information.
             #
             # Also, when the popup form is submitted, the attachment
-            # data is uploaded and stored by the IDB.  By the time this
-            # form is submitted, the attachment data should be uploaded
-            # already.
+            # data is uploaded.  By the time this form is submitted, the
+            # attachment data should be uploaded already.  The uploaded
+            # attachment data is stored in the temporary attachment
+            # area; it's copied into the IDB when the issue revision is
+            # submitted. 
 
-            # Generate controls for this form.  These include,
-            #
-            #   - A text control for the description.
-            # 
-            #   - A button to pop up the upload form.  It calls the
-            #     upload_file JavaScript function.
-            #
-            #   - A hidden control for the MIME type, whose value is set
-            #     by the popup form.
-            #
-            #   - A hidden control for the attachment location, whose 
-            #     value is set by the popup form.
-            #
-            #   - A hidden control for the uploaded file name.  This is 
-            #     used to determine the file's MIME type automatically,
-            #     if requested. 
-            #
-
-            summary_field_name = self.attachment_summary_prefix + name
+            summary_field_name = "_attachment" + name
 
             # Fill in the description if there's already an attachment.
-            if value is None:
-                summary_value = ''
-                field_value = ''
-            else:
-                summary_value = 'value="%s"' % self.FormatSummary(value)
-                field_value = 'value="%s"' % self.GenerateFormValue(value)
-            result = '''
+            summary_value = 'value="%s"' % self.FormatSummary(value)
+            field_value = 'value="%s"' % self.GenerateFormValue(value)
+
+            # Generate controls for this form.
+            
+            # A text control for the user-visible summary of the
+            # attachment.  The "readonly" attribute isn't supported in
+            # Netscape, so prevent the user from typing into the form by
+            # forcing focus away from the control.
+            text_control = '''
             <input type="text"
                    readonly
                    size="40"
                    name="%s"
-                   %s>
+                   onfocus="this.blur();"
+                   %s>''' % (summary_field_name, summary_value)
+            # A button to pop up the upload form.  It calls the
+            # upload_file JavaScript function.
+            upload_button = '''
             <input type="button"
                    name="_upload_%s"
                    size="20"
-                   value=" Upload "
+                   value=" Change "
                    onclick="javascript: upload_file_%s()">
+            ''' % (field_name, field_name)
+            # A button to clear the attachment.
+            clear_button = '''
+            <input type="button"
+                   size="20"
+                   value=" Clear "
+                   name="_clear_%s"
+                   onclick="document.form.%s.value = 'None';
+                            document.form.%s.value = '';"/>
+            ''' % (field_name, summary_field_name, name)
+            # A hidden control for the encoded attachment value.  See
+            # 'FormEncodeValue' and 'FormDecodeValue'.  The popup upload
+            # form fills in this control.
+            hidden_control = '''
             <input type="hidden"
                    name="%s"
-                   %s>
-            ''' % (
-                summary_field_name,
-                summary_value,
-                field_name,
-                field_name,
-                name,
-                field_value,
-                )
+                   %s>''' % (name, field_value)
+            # Now assemble the controls with some layout bits.
+            result = '''
+            %s%s<br>
+            %s%s
+            ''' % (text_control, hidden_control, upload_button, clear_button)
 
-            # Now the JavaScript function that's called when the use
+            # Generate the popup upload page.
+            page_info = UploadAttachmentPageInfo(self.GetTitle(), name,
+                                                 summary_field_name)
+            upload_page = qm.web.generate_html_from_dtml("attachment.dtml",
+                                                         page_info)
+            
+            # Now the JavaScript function that's called when the user
             # clicks the Upload button.  It opens a window showing the
             # upload form, and passes in the field names in this form,
-            # which the popup form will fill in.
-            result = result + '''
+            # which the popup form will fill in.  The upload form is
+            # encoded as a JavaScript string literal.
+            result = result + """
             <script language="JavaScript">
+            var upload_window = null;
             function upload_file_%s()
             {
-              var win = window.open("upload-attachment"
-                                    + "?field_name=%s"
-                                    + "&encoding_name=%s"
-                                    + "&summary_field_name=%s",
-                                    "upload_%s",
-                                    "height=240,width=480");
+              if(upload_window != null && !upload_window.closed)
+                upload_window.close();
+              upload_window = window.open('', 'upload',
+                                          'height=320,width=640');
+              upload_window.document.open();
+              upload_window.document.write(%s);
+              upload_window.document.close();
             }
             </script>
-            ''' % (field_name, field_name, name,
-                   summary_field_name, field_name)
+            """ % (field_name, qm.web.make_javascript_string(upload_page))
 
             # Phew!  All done.
             return result
@@ -1010,7 +998,10 @@ class AttachmentField(Field):
 
 
     def GenerateFormValue(self, value):
-        return self.FormEncodeValue(value)
+        if value is None:
+            return ""
+        else:
+            return self.FormEncodeValue(value)
 
 
     def FormEncodeValue(self, value):
@@ -1055,9 +1046,11 @@ class AttachmentField(Field):
         editied."""
 
         if attachment is None:
-            return ""
+            return "None"
         else:
-            return attachment.description
+            return "%s (%s; %s)" \
+                   % (attachment.description, attachment.file_name,
+                      attachment.mime_type)
 
 
     def GetValueFromDomNode(self, node):
@@ -1158,8 +1151,8 @@ class EnumerationField(IntegerField):
         returns -- A sequence consisting of (name, value) pairs, in
         the appropriate order.
 
-        To obtain a map from enumeral name to value, use the
-        enumeration attribute."""
+        To obtain a map from enumeral name to value, use
+        'GetEnumeration'."""
 
         # Obtain a list of (name, value) pairs for enumerals.
         enumerals = self.__enumeration.items()
@@ -1193,15 +1186,24 @@ class EnumerationField(IntegerField):
     def GetEnumeration(self):
         """Get the enumeration mapping from this class.
 
-        XXX: Another shameless hack by Benjamin Chelf.  We need to get
-        the actual mapping (not the string found in the attribute)
-        so we can set enumerals to their integer values.  Better suggestions
-        to do this are appreciated.
-
-        'returns' -- This function returns a mapping from enumerals to
-        their integer values."""
+        returns -- A mapping from enumerals to their integer values."""
 
         return self.__enumeration
+
+
+    def ParseFormValue(self, value):
+        return self.__enumeration[value]
+        
+
+    def FormEncodeValue(self, encoding):
+        if self.__enumeration.has_key(encoding):
+            return encoding
+        else:
+            return self.ValueToName(encoding)
+
+
+    def FormDecodeValue(self, encoding):
+        return encoding
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -1213,8 +1215,20 @@ class EnumerationField(IntegerField):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            # If the field is editable, generate a '<select>' control.
-            result = '<select name="%s">\n' % name
+            select_name = "_enumsel_" + name
+            # Add a hidden control with the specified field name.  This
+            # input will contain the value of the currently-selected
+            # item. 
+            result = '<input type="hidden" name="%s" value="%s"/>' \
+                     % (name, self.FormEncodeValue(value))
+            # Write the handler to update the hidden control when the
+            # selection changes in the select control.
+            on_change = "update_from_select(document.form.%s, " \
+                        "document.form.%s)" \
+                        % (select_name, name)
+            # Generate a '<select>' control droplist.
+            result = result + '<select name="%s" onchange="%s">\n' \
+                     % (select_name, on_change)
             # Generate an '<option>' element for each enumeral.
             for en_name, en_val in self.GetEnumerals():
                 # Specify the 'select' attribute if this enumeral
@@ -1223,8 +1237,8 @@ class EnumerationField(IntegerField):
                     is_selected = "selected"
                 else:
                     is_selected = ""
-                result = result + '<option value="%d" %s>%s</option>\n' \
-                         % (en_val, is_selected, en_name)
+                result = result + '<option value="%s" %s>%s</option>\n' \
+                         % (en_name, is_selected, en_name)
             result = result + '</select>\n'
             return result
 

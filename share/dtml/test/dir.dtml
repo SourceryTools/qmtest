@@ -1,0 +1,80 @@
+<dtml-comment><!--
+
+  File:   dir.dtml
+  Author: Alex Samuel
+  Date:   2001-04-18
+
+  Contents:
+    Document template for displaying test database contents.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Test Database')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <table border="0" width="100%">
+  <tbody>
+   <tr>
+    <td>
+     <h3>
+      <dtml-if expr="path == '.'">
+       Full Test Database Listing
+      <dtml-else>
+       Test Database Listing of <dtml-var name="path">.
+      </dtml-if>
+     </h3>
+    </td>
+    <td align="right">
+     <form>
+      <dtml-var expr="MakeButton('New Test', 'new-test')">
+      <dtml-var expr="MakeButton('New Suite', 'new-suite')">
+      <dtml-var expr="MakeButton('New Action', 'new-action')">
+     </form>
+    </td>
+   </tr>
+  </tbody>
+ </table>
+
+ <table border="0"
+        cellspacing="0"
+        cellpadding="2"
+        width="100%">
+  <tbody>
+   <dtml-in expr="items">
+   <dtml-let item=sequence-item
+             index=sequence-index>
+    <tr>
+     <td align="center">
+      <dtml-if expr="item.type != 'test'">
+       [<dtml-var expr="item.type">]&nbsp;&nbsp;
+      <dtml-else>
+       &nbsp;
+      </dtml-if>
+     </td>
+     <td width="100%">
+      <dtml-var expr="FormatItem(item)">
+     </td>
+    </tr>
+   </dtml-let>
+   </dtml-in>
+  </tbody>
+ </table>
+
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

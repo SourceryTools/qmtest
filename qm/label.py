@@ -118,6 +118,8 @@ class UnmakeRelativeTo:
         function isn't a prefix of 'label'."""
 
         path_len = len(self.__path)
+        if path_len == 0:
+            return label
         if len(label) < path_len + 1 \
            or label[:path_len] != self.__path:
             raise ValueError, \
@@ -203,6 +205,21 @@ def split(label):
         return (label[:last_sep], label[last_sep + 1:])
     else:
         return ("", label)
+
+
+def basename(label):
+    """Return the last component of 'label'."""
+
+    return split(label)[1]
+
+
+def dirname(label):
+    """Return 'label' without its last component."""
+
+    result = split(label)[0]
+    if result == "":
+        result = "."
+    return result
 
 
 __multiple_separators_regex = re.compile("%s+" % re.escape(sep))

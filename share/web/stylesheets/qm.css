@@ -9,30 +9,35 @@ body {
     background: white;
 }
 
+body.help {
+    margin-top: 8;
+    margin-left: 8;
+    margin-right: 8;
+    margin-bottom: 8;
+    color: black;
+    background: #ffffd0;
+}
+
 /* Links.  */
 
-:link {
+a:link {
     color: #500060;
     background-color: white;
-    text-decoration: none;
 }
 
-:visited {
+a:visited {
     color: #500060;
     background-color: white;
-    text-decoration: none;
 }
 
-:active {
+a:active {
     color: #500060;
     background-color: #f4f0ff;
-    text-decoration: none;
 }
 
-:hover {
+a:hover {
     color: #500060;
     background-color: #f4f0ff;
-    text-decoration: none;
 }
 
 table {
@@ -65,6 +70,10 @@ a#colhead {
     background-color: #808080;
 }
 
+a.reverse {
+    color: white;
+    background-color: black;
+}
 
 span.fieldname {
     font-weight: bold;
@@ -85,6 +94,10 @@ tr.field {
 
 tr.field-error {
     background-color: fff0f8;
+}
+
+tr.heading {
+    background-color: e8e8e8;
 }
 
 span.userid {

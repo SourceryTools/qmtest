@@ -3,11 +3,9 @@
 <test>
  <class>python.ExecTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.label
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='expression'>
   <text>qm.label.is_valid(qm.label.thunk("")) \

@@ -21,6 +21,41 @@
  <dtml-var expr="GenerateHtmlHeader('Show Issue')">
  <dtml-var expr="GenerateStartBody()">
 
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <b><font size="+1">
+      <dtml-if expr="style == 'new'">
+       New <dtml-var expr="issue.GetClass().GetTitle()">
+      <dtml-else>
+       Issue <dtml-var expr="issue.GetId()">
+       (<dtml-var expr="issue.GetClass().GetTitle()">)
+      </dtml-if>
+     </font></b>
+     <dtml-if expr="field_errors != {}">
+      <p>Your issue submission contained errors.  Please correct them and
+      resubmit.</p>
+     </dtml-if>
+    </td>
+    <td align="right">
+     <form name="navigation">
+      <dtml-if name="show_history">
+       <dtml-var expr="MakeUrlButton('Hide History', MakeHistoryUrl(show=0))">
+      </dtml-if>
+      <dtml-if expr="style == 'full' and not show_history">
+       <dtml-var expr="MakeUrlButton('Show History', MakeHistoryUrl(show=1))">
+      </dtml-if>
+      <dtml-if expr="style == 'full' or style == 'history'">
+       <dtml-var expr="MakeUrlButton('Edit Issue', MakeEditUrl())">
+      <dtml-else>
+       &nbsp;
+      </dtml-if>
+     </form>
+    </td>
+   </tr>
+   <tr><td colspan="2"><dtml-var expr="MakeSpacer(0, 8)"></td></tr>
+  </table>
+
   <dtml-comment><!--
     If we're generating a form, start it here.
   --></dtml-comment>
@@ -43,33 +78,6 @@
           name="revision" 
           value="<dtml-var expr="issue.GetRevision()">">
   </dtml-if>
-
-  <table border="0" cellpadding="0" cellspacing="0" width="100%">
-   <tr>
-    <td>
-     <b><font size="+1">
-      <dtml-if expr="style == 'new'">
-       New <dtml-var expr="issue.GetClass().GetTitle()">
-      <dtml-else>
-       Issue <dtml-var expr="issue.GetId()">
-       (<dtml-var expr="issue.GetClass().GetTitle()">)
-      </dtml-if>
-     </font></b>
-     <dtml-if expr="field_errors != {}">
-      <p>Your issue submission contained errors.  Please correct them and
-      resubmit.</p>
-     </dtml-if>
-    </td>
-    <td align="right">
-     <dtml-if expr="style == 'full' or style == 'history'">
-      <dtml-var expr="MakeUrlButton(MakeEditUrl(), text='Edit Issue')">
-     <dtml-else>
-      &nbsp;
-     </dtml-if>
-    </td>
-   </tr>
-   <tr><td colspan="2"><dtml-var expr="MakeSpacer(0, 8)"></td></tr>
-  </table>
 
   <table border="0"
          cellpadding="6"
@@ -124,27 +132,8 @@
 
   <dtml-if name="show_history">
    <br>
-   <table border="0" cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-     <td><b>Revision History</b></td>
-     <td align="right">
-      <dtml-var expr="MakeUrlButton(MakeHistoryUrl(show=0), 'Hide History')">
-     </td>
-    </tr>
-   </table>
+   <b>Revision History</b>
    <dtml-var expr="FormatHistory()">
-  </dtml-if>
-
-  <dtml-if expr="style == 'full' and not show_history">
-   <br>
-   <table border="0" cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-     <td>&nbsp;</td>
-     <td align="right">
-      <dtml-var expr="MakeUrlButton(MakeHistoryUrl(show=1), 'Show History')">
-     </td>
-    </tr>
-   </table>
   </dtml-if>
 
   <dtml-var name="html_footer">

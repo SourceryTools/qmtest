@@ -3,8 +3,7 @@
 <test>
  <class>python.ExecTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.graph
 nodes = [1, 2, 4, 5, 6, 7, 8]
 edges = {
@@ -18,8 +17,7 @@ edges = {
     8: [1, 4]
     }
 result = qm.graph.topological_sort(nodes, edges, 0)
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='expression'>
   <text>result == [3, 2, 1, 5, 6, 7, 4, 8]</text>

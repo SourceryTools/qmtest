@@ -40,6 +40,7 @@ execfile("@qm_setup_path_script@")
 
 import qm
 import qm.cmdline
+import qm.structured_text
 import qm.test.cmdline
 import sys
 
@@ -48,7 +49,8 @@ import sys
 ########################################################################
 
 def print_error_message(message):
-    sys.stderr.write("%s: %s\n" % (program_name, message))
+    message = qm.structured_text.to_text(str(message))
+    sys.stderr.write("%s: error:\n%s" % (program_name, message))
 
 
 ########################################################################

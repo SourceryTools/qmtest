@@ -3,8 +3,7 @@
 <test>
  <class>python.ExecTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.cmdline
 
 name = 'qmtrack'
@@ -33,8 +32,7 @@ commands = [ command_1, command_2, command_3 ]
 
 parser = qm.cmdline.CommandParser(name, options, commands)
 context["parser_create.parser"] = parser
-</data>
-  </attachment>
+</text>
  </argument>
 </test>
 <!--

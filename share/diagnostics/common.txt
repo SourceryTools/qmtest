@@ -47,6 +47,13 @@ node must be an integer.
 A '<%(wrong_tag)s>' element is not allowed for field %(name)s.  Only a
 '<%(right_tag)s>' element may be used.
 
+@ invalid enum key
+The string "%(key)s" is not a valid enumeral.  Enumeral names must be
+composed of lower-case letters, digits, and underscores.
+
+@ invalid integer field value
+The value of this field must be an integer.
+
 @ missing command
 You must specify a command.  Use the '--help' option to list commands.
 

@@ -1,3 +1,185 @@
+2001-04-25  Alex Samuel  <samuel@codesourcery.com>
+	
+	* qm/xmlutil.py (write_dom_document): Don't write emacs gunk.
+	* qm/web.py (PageInfo.common_javascript): New attribute.
+	(PageInfo.FormatStructuredText): New method.
+	(PageInfo.GenerateEndBody): Include common JavaScript.
+	(PageInfo.MakeButton): New method.
+	(PageInfo.MakeUrlButton): Reimplement.
+	(PageInfo.MakeHelpButton): New method.
+	(WebRequest.GetScriptName): Likewise.
+	(make_url_button): Remove.
+	(make_button_for_request): New function.
+	(make_button_for_url): Likewise.
+	(generate_error_page): Likewise.
+	(__counter): New variable.
+	(make_set_control): New function.
+	(encode_set_control_contents): Likewise.
+	(decode_set_control_contents): Likewise.
+	(make_javascript_string): Likewise.
+	(make_help_button): Likewise.
+	* qm/label.py (UnmakeRelativeTo.__call__): Handle empty path case.
+	(basename): New function.
+	(dirname): Likewise.
+	* qm/structured_text.py (get_first): Likewise.
+	(get_rest): Likewise.
+	* qm/fields.py (Field.SetAttributes): New method.
+	(IntegerField.ParseFormValue): Catch ValueError.
+	(AttachmentField.__init__): Pass attributes to base __init__.
+	(TextField.__init__): Call SetAttributes.
+	(TextField.FormatValueAsHtml): Replace qm.web with web.
+	(SetPopupPageInfo): New class.
+	(SetField.FormatValueAsHtml): Reimplement editable case.
+	(UploadAttachmentPageInfo): New class.
+	(AttachmentField.attachment_summary_prefix): Remove.
+	(AttachmentField.FormatValueAsHtml): Capitalize None.
+	Reimplement editable case.
+	(AttachmentField.GenerateFormValue): Handle null case.
+	(AttachmentField.FormatSummary): Adjust.
+	(EnumerationField.ParseFormValue): New method.
+	(EnumerationField.FormEncodeValue): Likewise.
+	(EnumerationField.FormDecodeValue): Likewise.
+	(EnumerationField.FormatValueAsHtml): Add a hidden control.
+	* qm/diagnostic.py (help_set): New variable.
+	(__initialize_module): Load common-help.txt.
+	* qm/common.py (convert_from_dos_text): Swap CR LF order.
+	(starts_with): New function.
+	* qm/attachment.py (upload_url): New constant.
+	(temporary_attachment_dir): Likewise.
+	(_temporary_location_prefix): Likewise.
+	(register_attachment_upload_script): New function.
+	(_path_for_temporary_attachment): Likewise.
+	(is_temporary_attachment_location): Likewise.
+	(_next_temporary_location): New variable.
+	(get_temporary_location): New function.
+	(store_temporary_attachment): Likewise.
+	(retrieve_temporary_attachment): Likewise.
+	(handle_attachment_upload): Likewise.
+
+	* qm/track/web/web.py (UploadAttachmentPageInfo): Remove.
+	(handle_upload_attachment): Likewise.
+	(handle_submit_attachment): Likewise.
+	(generate_error_page): Likewise.
+	* qm/track/web/show.py (ShowPageInfo.__init__): Rename
+	invalid_fields to field_errors.
+	(retrieve_attachment_data): New function.
+	(handle_submit): Use it.  Handle exceptions better.
+	* qm/track/server.py (start_server): Call
+	register_attachment_upload_script.  Remove submit-addatchment and
+	upload-attachment scripts.
+
+	* qm/test/classes/temporary.py (TempDirectoryAction.fields): Add
+	default values.
+	(TempDirectoryAction.__init__): Remove default arguments.
+	* qm/test/classes/python.py (ExecTest.fields): Use text fields
+	instead of attachment fields.
+	(ExecTest.__init__): Adjust accordingly.
+	(BaseExceptionTest.fields): Use text fields instead of attachment
+	fields.
+	(BaseExceptionTest.__init__): Adjust accordingly.
+	(ExceptionTest.fields): Adjust.
+	(ExceptionTest.__init__): Remove default arguments.
+	(StringExceptionTest.__init__): Likewise.
+	* qm/test/classes/command.py (CommandTest.__init__): Remove
+	default arguments.  Handle null interpreter.
+	* qm/test/xmldb.py (TestFileError): Derive from RuntimeError.
+	(Database.GetTest): Handle DomNodeError.
+	(Database.GetTestIds): New method.
+	(Database.HasAction): Likewise.
+	(Database.WriteAction): Likewise.
+	(Database.GetActionIds): Likewise.
+	(Database.GetSuiteIds): Likewise.
+	(Database.SetAttachmentData): Likewise.
+	(Database.__InvalidateItem): Likewise.
+	(Database.__MakeDomNodeForTest): Rewrite.
+	(Database.__MakeDomNodeForAction): New method.
+	(Database.__MakeDomNodeForItem): Likewise.
+	(scan_dir_for_labels): New function.
+	* qm/test/qmtest.in (print_error_message): Process structued text. 
+	* qm/test/cmdline.py (Command.port_option_spec): New attribute.
+	(Command.address_option_spec): Likewise.
+	(Command.log_file_option_spec): Likewise.
+	(Command.commands_spec): Add server command.
+	(Command.GetGlobalOption): Add default parameter.
+	(Command.GetCommandOption): Likewise.
+	(Command.Execute): Set global database.  Don't set __database
+	attribute. 
+	(Command.GetDatabase): Use get_database.
+	(Command.__ExecuteServer): New method.
+	(Command.__ExecuteTemplate): Use make_new_test.
+	* qm/test/base.py (standard_test_class_names): New variable.
+	(standard_action_class_names): Likewise.
+	(InstanceBase.__init__): Validate the ID.
+	(Test.GetTest): Use default field values.
+	(Database.GetTestIds): New method.
+	(Database.WriteSuite): Likewise.
+	(Database.GetSuiteIds): Likewise.
+	(Database.HasAction): Likewise.
+	(Database.GetAction): Likewise.
+	(Database.WriteAction): Likewise.
+	(Database.GetActionIds): Likewise.
+	(Database.SetAttachmentData): Likewise.
+	(validate_id): New function.
+	(get_database): Likewise.
+	(get_all_test_ids): Likewise.
+	(make_new_test): Likewise.
+	(make_new_action): Likewise.
+	(_database): New variable.
+
+	* qm/test/web/: New directory.
+	* qm/test/web/__init__.py: New file.
+	* qm/test/web/dir.py: Likewise.
+	* qm/test/web/show.py: Likewise.
+	* qm/test/web/web.py: Likewise.
+
+	* tests/unit/common/graph_complete.qmt: Adjust for test class changes.
+	* tests/unit/common/graph_cycle.qmt: Likewise.
+	* tests/unit/common/graph_pass.qmt: Likewise.
+	* tests/unit/common/label_is_valid.qmt: Likewise.
+	* tests/unit/common/label_thunk.qmt: Likewise.
+	* tests/unit/common/parser_create.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_long.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_short.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_long.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_short.qmt: Likewise.
+	* tests/unit/common/parser_help.qmt: Likewise.
+	* tests/unit/common/parser_no_long.qmt: Likewise.
+	* tests/unit/common/parser_parse.qmt: Likewise.
+	* tests/unit/common/parser_two_char_short.qmt: Likewise.
+	
+	* share/web/stylesheets/qm.css (a:link): Underlinke links.
+	(a:visited): Likewise.
+	(a:active): Likewise.
+	(a:hover): Likewise.
+	(body.help): New class.
+	(a.reverse): Likewise.
+	(tr.heading): Likewise.
+	* share/dtml/attachment.dtml: New file.
+	* share/dtml/error.dtml: Likewise.
+	* share/dtml/set.dtml: Likewise.
+	* share/dtml/test/add-action.dtml: Likewise.
+	* share/dtml/test/add-category.dtml: Likewise.
+	* share/dtml/test/add-prerequisite.dtml: Likewise.
+	* share/dtml/test/dir.dtml: Likewise.
+	* share/dtml/test/new.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.
+	* share/dtml/track/error.dtml: Remove.
+	* share/dtml/track/upload-attachment.dtml: Likewise.
+	* share/dtml/track/show.dtml: Adjust.
+	* share/diagnostics/common.txt (invalid enum key): New diagnostic.
+	(invalid integer field value): Likewise.
+	* share/diagnostics/test.txt (action already exists): Likewise.
+	(class not found): Likewise.
+	(error loading xml test): Likewise.
+	(invalid class name): Likewise.
+	(invalid test id): Likewise.
+	(missing argument): Likewise.
+	(no id for show): Likewise.
+	(no id for submit): Likewise.
+	(no such action): Likewise.
+	(no such test): Likewise.
+	(invalid id): Remove.
+
 2001-04-23  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/Makefile.in: Add CYGWIN to setup_path.py generation.

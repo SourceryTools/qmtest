@@ -41,6 +41,7 @@ import qm
 import qm.fields
 import qm.test.base
 from   qm.test.base import Result
+import string
 import sys
 import types
 
@@ -59,11 +60,13 @@ class ExecTest:
     the Python code raises an uncaught exception)."""
 
     fields = [
-        qm.fields.AttachmentField(
+        qm.fields.TextField(
             name="source",
             title="Python Source Code",
             description="Python source code to execute.  This may "
-            "contain class and function definitions."
+            "contain class and function definitions.",
+            verbatim="true",
+            default_value="pass"
             ),
 
         qm.fields.TextField(
@@ -73,20 +76,19 @@ class ExecTest:
             result.  The expression returns a boolean; true indicates
             PASS.  If omitted, the expression is assumed to return a
             passing value, so the test will always pass unless the code
-            specified for the 'source' parameter raises an exception."""
+            specified for the 'source' parameter raises an exception.""",
+            default_value="1"
             ),
-
+        
         ]
 
 
-    def __init__(self,
-                 source,
-                 expression=None):
+    def __init__(self, source, expression):
         # Store stuff for later.
         if source is None:
             self.__source = ""
         else:
-            self.__source = source.GetData()
+            self.__source = source
         self.__expression = expression
 
 
@@ -138,10 +140,12 @@ class BaseExceptionTest:
     """Base class for tests of exceptions."""
 
     fields = [
-        qm.fields.AttachmentField(
+        qm.fields.TextField(
             name="source",
             title="Python Source Code",
-            description="Python source code to execute."
+            description="Python source code to execute.",
+            verbatim="true",
+            default_value="pass"
             ),
 
         qm.fields.TextField(
@@ -149,20 +153,18 @@ class BaseExceptionTest:
             title="Exception Argument",
             description="""If this parameter is specified, a Python
             expression which evaluates to the expected argument of the
-            raised expression.  If this parameter is omitted, no check
-            is performed of the exception argument."""
+            raised expression.  If this parameter is empty, no check
+            is performed of the exception argument.""",
+            default_value=""
             ),
 
         ]
 
 
-    def __init__(self,
-                 source,
-                 exception_argument=None,
-                 exception_text=None):
+    def __init__(self, source, exception_argument):
         # Store stuff for later.
-        self.__source = source.GetData()
-        if exception_argument is not None:
+        self.__source = source
+        if string.strip(exception_argument) != "":
             self.exception_argument = eval(exception_argument, {}, {})
 
 
@@ -222,7 +224,7 @@ class ExceptionTest(BaseExceptionTest):
     may be specified as well.  If the code does not raise an exception,
     the test fails."""
 
-    fields = BaseExceptionTest.fields + [
+    fields = [
         BaseExceptionTest.fields[0],
 
         qm.fields.TextField(
@@ -230,19 +232,17 @@ class ExceptionTest(BaseExceptionTest):
             title="Exception Argument",
             description="""If this parameter is specified, a Python
             expression which evaluates to the expected argument of the
-            raised expression.  If this parameter is omitted, no check
-            is performed of the exception argument.
+            raised expression.
 
-            A value of "None" or "()" matches any of these three cases:
+            If this parameter is empty, no check is performed of the
+            exception argument.
 
-              * The exception was raised without an argument, as in
-                'raise ValueError'.
-
-              * The exception was raised with the argument 'None', as in
-                'raise ValueError, None'.
-
-              * The exception was raised with an empty tuple as its
-                argument, as in 'raise ValueError, ()'. """
+            A value of "None" or "()" matches an exception raised
+            without an argument, as in 'raise ValueError'; an exception
+            raised with the argument 'None', as in 'raise ValueError,
+            None'; and an exception raised with an empty tuple as its
+            argument, as in 'raise ValueError, ()'.""",
+            default_value=""
             ),
 
         qm.fields.TextField(
@@ -251,16 +251,14 @@ class ExceptionTest(BaseExceptionTest):
             description="""If this parameter is specified, the exception
             is expected to be a class instance.  The value of the
             parameter is the name of Python class of which the exception
-            object is expected to be an instance."""
+            object is expected to be an instance.""",
+            default="Exception"
             ),
 
         ]
 
 
-    def __init__(self,
-                 source,
-                 exception_class,
-                 exception_argument=None):
+    def __init__(self, source, exception_class, exception_argument):
         # Initialize the base class.
         BaseExceptionTest.__init__(self, source, exception_argument)
         # Store stuff for later.
@@ -336,18 +334,14 @@ class StringExceptionTest(BaseExceptionTest):
         qm.fields.TextField(
             name="exception_text",
             title="Exception Text",
-            description="""If this parameter is specified, the exception
-            is expected to be a string.  The value of this parameter is
-            the expected text of the exception string."""
+            description="The expected text of the exception string.",
+            default_value="exception"
             )
 
         ]
 
 
-    def __init__(self,
-                 source,
-                 exception_text,
-                 exception_argument=None):
+    def __init__(self, source, exception_text, exception_argument):
         # Initialize the base class.
         BaseExceptionTest.__init__(self, source, exception_argument)
         # Store stuff for later.

@@ -426,7 +426,7 @@ class CommandTest(ExecTest):
             description="The command interpreter (shell) with which to run "
             "the command.  This value may contain options and/or " 
             "arguments with which to invoke the interpreter; the command "
-            "itself is placed at the end.  If omitted, the system's "
+            "itself is placed at the end.  If empty, the system's "
             "default command shell is used."
             )
 
@@ -435,14 +435,14 @@ class CommandTest(ExecTest):
     
     def __init__(self,
                  command,
-                 interpreter=None,
-                 stdin=None,
-                 environment=[],
-                 exit_code=None,
-                 stdout=None,
-                 stderr=None):
+                 interpreter,
+                 stdin,
+                 environment,
+                 exit_code,
+                 stdout,
+                 stderr):
         self.__command = command
-        if interpreter is not None:
+        if interpreter != "":
             # A custom interpreter.  Break it into an argument list.
             self.__interpreter = string.split(interpreter, " ")
         else:

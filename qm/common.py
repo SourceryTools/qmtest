@@ -617,7 +617,7 @@ def invert_map(m):
 def convert_from_dos_text(text):
     """Replace CRLF with LF in 'text'."""
 
-    return string.replace(text, "\n\r", "\n")
+    return string.replace(text, "\r\n", "\n")
 
 
 def load_module(name, path):
@@ -872,6 +872,13 @@ def is_executable(path):
 
     # FIXME: Windows.
     return os.path.isfile(path) and os.access(path, os.X_OK)
+
+
+def starts_with(text, prefix):
+    """Return true if 'prefix' is a prefix of 'text'."""
+
+    return len(text) >= len(prefix) \
+           and text[:len(prefix)] == prefix
 
 
 ########################################################################

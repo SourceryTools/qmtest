@@ -197,17 +197,6 @@ def write_dom_document(document, stream):
                             stream=stream,
                             indent=" ",
                             encoding="ISO-8859-1")
-    # Write emacs gunk at the end.
-    stream.write(
-"""<!--
-  Local Variables:
-  mode: xml
-  indent-tabs-mode: nil
-  fill-column: 72
-  sgml-indent-step: 1
-  End:
--->
-""")
 
 
 __hyphen_regex = re.compile("(--+)")

@@ -33,6 +33,12 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
+@ action already exists
+There is already an action with ID "%(action_id)s".
+
+@ class not found
+QMTest could not find a class named "%(class_name)s".  
+
 @ context attribute cannot be deleted
 The attribute %(attribute)s cannot be deleted from this context.
 
@@ -41,6 +47,14 @@ The path you specified for the test database, %(path)s, does not exist.
 
 @ db path exists
 The path you specified for the test database, %(path)s, already exists.
+
+@ error loading xml test
+A problem occurred while loading the XML test "%(test_id)s":
+%(message)s.
+
+@ invalid class name
+The class name "%(class_name)s" is invalid.  Specify the class name in
+the form 'module.class'.
 
 @ invalid context assignment
 The context property "%(argument)s" is not valid.  Specify context
@@ -61,12 +75,15 @@ There is no test class "%(class_name)s".
 The test %(id)s of class %(test_class)s returned an invalid result,
 '%(result)s'. 
 
-@ invalid test id
-The test ID "%(id)s" is not valid.  Test IDs may contain lower-case
-letters, digits, and underscores, and periods.
+@ invalid id
+The ID "%(id)s" is not valid.  Test IDs may contain lower-case letters,
+digits, and underscores, and periods.
 
 @ missing arg for template
 Specify the name of the test class and the test ID of the new test.
+
+@ missing argument
+A value for the "%(title)s" parameter is missing.
 
 @ missing test id
 There is no test with ID "%(test_id)s".
@@ -82,8 +99,20 @@ You must specify the location of the test database.
 @ no id for edit
 You must specify the ID of the test to edit.
 
+@ no id for show
+You must specify the ID of the test to show.
+
+@ no id for submit
+You must speicfy the ID of the test to sumit.
+
 @ no ids specified
 You must specify one or more test or suite IDs.
+
+@ no such action
+There is no action with the action ID you specified, "%(action_id)s".
+
+@ no such test
+There is no test with the test ID you specified, "%(test_id)s".
 
 @ test already exists
 There is already a test with ID "%(test_id)s".

@@ -56,8 +56,8 @@ class TempDirectoryAction:
             name="dir_path_property",
             title="Directory Path Property Name",
             description="The name of the context property which is "
-            "set to the path to the temporary directory.  If omitted, "
-            "the property name 'temp_dir_path' is used."
+            "set to the path to the temporary directory.",
+            default_value="temp_dir_path"
             ),
 
         qm.fields.IntegerField(
@@ -65,15 +65,16 @@ class TempDirectoryAction:
             title="Delete Directory Recursively",
             description="If non-zero, the contents of the temporary "
             "directory are deleted recursively during cleanup. "
-            "Otherwise, the directory must be empty on cleanup."
+            "Otherwise, the directory must be empty on cleanup.",
+            default_value=0
             ),
 
         ]
 
 
     def __init__(self,
-                 dir_path_property="temp_dir_path",
-                 delete_recursively=0):
+                 dir_path_property,
+                 delete_recursively):
         self.__dir_path_property = dir_path_property
         self.__delete_recursively = delete_recursively
     

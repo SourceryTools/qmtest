@@ -41,6 +41,7 @@ import qm.cmdline
 import qm.xmlutil
 import string
 import sys
+import web.web
 import xmldb
 
 ########################################################################
@@ -116,6 +117,27 @@ class Command:
         "option more than once."
         )
 
+    port_option_spec = (
+        "P",
+        "port",
+        "PORT",
+        "Server port number."
+        )
+
+    address_option_spec = (
+        "A",
+        "address",
+        "ADDRESS",
+        "Local address."
+        )
+
+    log_file_option_spec = (
+        None,
+        "log-file",
+        "PATH",
+        "Log file name."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -145,6 +167,14 @@ class Command:
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
            outcomes_option_spec, context_option_spec )
+         ),
+
+        ("server",
+         'Start the web GUI server.',
+         '',
+         "Start the QMTest web GUI server.",
+         [ help_option_spec, port_option_spec, address_option_spec,
+           log_file_option_spec ]
          ),
 
         ("template",
@@ -183,22 +213,22 @@ class Command:
           ) = components
 
 
-    def GetGlobalOption(self, option):
-        """Return the value of global 'option', or 'None' it wasn't given."""
+    def GetGlobalOption(self, option, default=None):
+        """Return the value of global 'option', or 'default' if omitted."""
 
         for opt, opt_arg in self.__global_options:
             if opt == option:
                 return opt_arg
-        return None
+        return default
 
 
-    def GetCommandOption(self, option):
-        """Return the value of command 'option', or 'None' it wasn't given."""
+    def GetCommandOption(self, option, default=None):
+        """Return the value of command 'option', or 'default' if ommitted."""
 
         for opt, opt_arg in self.__command_options:
             if opt == option:
                 return opt_arg
-        return None
+        return default
 
 
     def Execute(self, output):
@@ -234,12 +264,13 @@ class Command:
                 raise RuntimeError, \
                       qm.error("no db specified",
                                envvar=self.db_path_environment_variable)
-        self.__database = xmldb.Database(db_path)
+        base._database = xmldb.Database(db_path)
 
         # Dispatch to the appropriate method.
         method = {
             "edit": self.__ExecuteEdit,
             "run" : self.__ExecuteRun,
+            "server": self.__ExecuteServer,
             "template": self.__ExecuteTemplate,
             }[self.__command]
         method(output)
@@ -248,7 +279,7 @@ class Command:
     def GetDatabase(self):
         """Return the test database to use."""
         
-        return self.__database
+        return base.get_database()
 
 
     def MakeContext(self):
@@ -418,6 +449,35 @@ class Command:
         os.system("%s %s" % (editor, test_path))
 
 
+    def __ExecuteServer(self, output):
+        """Process the server command."""
+
+        # Get the port number specified by a command option, if any.
+        # Otherwise use a default value.
+        port_number = self.GetCommandOption("port", default=8000)
+        try:
+            port_number = int(port_number)
+        except ValueError:
+            raise qm.cmdline.CommandError, qm.error("bad port number")
+        # Get the local address specified by a command option, if any.
+        # If not was specified, use the empty string, which corresponds
+        # to all local addresses.
+        address = self.GetCommandOption("address", default="")
+        # Was a log file specified?
+        log_file_path = self.GetCommandOption("log-file")
+        if log_file_path == "-":
+            # A hyphen path name means standard output.
+            log_file = sys.stdout
+        elif log_file_path is None:
+            # No log file.
+            log_file = None
+        else:
+            # Otherwise, it's a file name.  Open it for append.
+            log_file = open(log_file_path, "a+")
+        # Start the server.
+        web.web.start_server(port_number, address, log_file)
+    
+    
     def __ExecuteTemplate(self, output):
         database = self.GetDatabase()
         # Make sure two arguments were specified.  The arguments are the
@@ -426,26 +486,13 @@ class Command:
             raise qm.cmdline.CommandError, qm.error("missing arg for template")
         test_class_name, test_id = self.__arguments
         try:
-            test_class = base.get_class(test_class_name)
+            # Construct an empty test instance.
+            test = base.make_new_test(test_class_name, test_id)
         except ValueError:
             raise RuntimeError, qm.error("test class not fully specified")
         except ImportError:
             raise RuntimeError, qm.error("invalid class",
                                          class_name=test_class_name)
-
-        # Make sure there isn't already such a test.
-        if database.HasTest(test_id):
-            raise RuntimeError, qm.error("test already exists",
-                                         test_id=test_id)
-        # Even though many arguments can be omitted, construct an
-        # argument map with default values for all arguments.
-        arguments = {}
-        for field in test_class.fields:
-            name = field.GetName()
-            value = field.GetDefaultValue()
-            arguments[name] = value
-        # Construct an empty test instance.
-        test = base.Test(test_id, test_class_name, arguments, {}, [])
         # Write it out.
         database.WriteTest(test, comments=1)
         # Let the user edit it immediately.

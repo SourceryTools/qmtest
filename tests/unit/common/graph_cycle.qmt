@@ -3,8 +3,7 @@
 <test>
  <class>python.ExceptionTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.graph
 nodes = [1, 2, 4, 5, 6, 7, 8]
 edges = {
@@ -18,8 +17,7 @@ edges = {
     8: [1, 4]
     }
 qm.graph.topological_sort(nodes, edges, 0)
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='exception_class'>
   <text>ValueError</text>

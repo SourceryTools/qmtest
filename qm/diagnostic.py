@@ -184,6 +184,10 @@ def warning(tag, output=None, **substitutions):
 diagnostic_set = DiagnosticSet()
 """The 'DiagnosticSet' object from which diagnostics are generated."""
 
+help_set = DiagnosticSet()
+"""The 'DiagnosticSet'object from which help text messages are
+generated."""
+
 ########################################################################
 # initialization
 ########################################################################
@@ -192,6 +196,10 @@ def __initialize_module():
     # Load common diagnostics.
     diagnostic_file = common.get_share_directory("diagnostics", "common.txt")
     diagnostic_set.ReadFromFile(diagnostic_file)
+
+    # Load common help messages.
+    help_file = common.get_share_directory("diagnostics", "common-help.txt")
+    help_set.ReadFromFile(help_file)
 
 
 __initialize_module()

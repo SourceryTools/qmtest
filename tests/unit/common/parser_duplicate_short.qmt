@@ -3,14 +3,12 @@
 <test>
  <class>python.ExceptionTest</class>
  <argument name='source'>
-  <attachment>
-   <data>
+  <text>
 import qm.cmdline
 option_a = ('a', 'a_option', None, 'Option A Description')
 option_c = ('a', 'c_option', None, 'Option A Description')    
 qm.cmdline.CommandParser('qmtrack', [option_a, option_c], [])
-</data>
-  </attachment>
+</text>
  </argument>
  <argument name='exception_class'>
   <text>ValueError</text>

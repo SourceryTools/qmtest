@@ -46,6 +46,25 @@ import sys
 import types
 
 ########################################################################
+# constants
+########################################################################
+
+standard_test_class_names = [
+    "command.ExecTest",
+    "command.CommandTest",
+    "command.ScriptTest",
+    "python.ExecTest",
+    "python.ExceptionTest",
+    "python.StringExceptionTest",
+    ]
+"""A list of names of standard test classes."""
+
+standard_action_class_names = [
+    "temporary.TempDirectoryAction",
+    ]
+"""A list of names of standard action classes."""
+
+########################################################################
 # exceptions
 ########################################################################
 
@@ -157,6 +176,7 @@ class InstanceBase:
                  instance_id,
                  class_name,
                  arguments):
+        validate_id(instance_id)
         self.__id = instance_id
         self.__class_name = class_name
         self.__arguments = arguments
@@ -271,9 +291,19 @@ class Test(InstanceBase):
     def GetTest(self):
         """Return the underlying user test object."""
 
+        arguments = self.GetArguments().copy()
+
+        # Use a default value for each field for which an argument was
+        # not specified.
+        test_class = self.GetClass()
+        for field in test_class.fields:
+            field_name = field.GetName()
+            if not arguments.has_key(field_name):
+                arguments[field_name] = field.GetDefaultValue()
+
         # Perform just-in-time instantiation.
         if self.__test is None:
-            self.__test = apply(self.GetClass(), [], self.GetArguments())
+            self.__test = apply(test_class, [], arguments)
 
         return self.__test
 
@@ -450,7 +480,7 @@ class Database:
 
 
     def WriteTest(self, test):
-        """Store a in the database.
+        """Store a test in the database.
 
         'test' -- A test to write.  It may be a new version of an
         existing test, or a new test."""
@@ -458,9 +488,14 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
 
 
+    def GetTestIds(self, path="."):
+        """Return test IDs of all tests relative to 'path'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetTestIds"
+
+
     def HasSuite(self, suite_id):
-        """Return true if the database has a suite with ID
-        'suite_id'."""
+        """Return true if the database has a suite with ID 'suite_id'."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.HasSuite"
 
@@ -473,6 +508,56 @@ class Database:
 
         raise qm.MethodShouldBeOverriddenError, "Database.GetSuite"
 
+
+    def WriteSuite(self, suite):
+        """Store a suite in the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.WriteSuite"
+
+
+    def GetSuiteIds(self, path="."):
+        """Return suite IDs of all test suites relative to 'path'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
+
+
+    def HasAction(self, action_id):
+        """Return true if the database has a action with ID 'action_id'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.HasAction"
+
+
+    def GetAction(self, action_id):
+        """Return a 'Action' instance for action ID 'action_id'.
+
+        raises -- 'NoSuchActionError' if there is no action in the
+        database with ID 'action_id'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetAction"
+
+
+    def WriteAction(self, action):
+        """Store a action in the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.WriteAction"
+
+
+    def GetActionIds(self, path="."):
+        """Return action IDs of all actions relative to 'path'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetActionIds"
+
+
+    def SetAttachmentData(self, attachment, data, item_id):
+        """Store attachment data to the database.
+
+        'attachment' -- An 'Attachment' instance.
+
+        'data' -- The attachment data as a string.
+
+        'item_id' -- A test or action ID associated with this attachment."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.SetAttachmentData"
 
 
 class Result:
@@ -1158,6 +1243,15 @@ class Engine:
 # functions
 ########################################################################
 
+def validate_id(item_id):
+    """Validate a test or action ID.
+
+    raises -- 'RuntimeError' if 'item_id' is not a valid ID."""
+
+    if not qm.label.is_valid(item_id, allow_separator=1):
+        raise RuntimeError, qm.error("invalid id", id=item_id)
+
+
 def make_result_for_exception(exc_info, cause=None, outcome=Result.ERROR):
     """Return a 'Result' object for a test that raised an exception.
 
@@ -1176,6 +1270,13 @@ def make_result_for_exception(exc_info, cause=None, outcome=Result.ERROR):
                   traceback=qm.format_traceback(exc_info))
 
 
+def get_database():
+    """Return the test database object."""
+
+    assert _database is not None
+    return _database
+
+
 def get_class(class_name, extra_paths=[]):
     """Return the test or action class named 'class_name'.
 
@@ -1187,6 +1288,8 @@ def get_class(class_name, extra_paths=[]):
     before the standard testa classes.
 
     returns -- A class object for the requested class.
+
+    raises -- 'ValueError' if 'class_name' is formatted incorrectly.
 
     raises -- 'ImportError' if 'class_name' cannot be loaded."""
 
@@ -1214,6 +1317,14 @@ def get_class(class_name, extra_paths=[]):
     __loaded_classes[class_name] = klass
     # All done.
     return klass
+
+
+def get_all_test_ids(database):
+    """Return a sequence of test IDs of tests in 'database'."""
+
+    test_ids = []
+    expand_and_validate_ids(database, ".", test_ids)
+    return test_ids
 
 
 def expand_and_validate_ids(database, content_ids, id_list):
@@ -1264,6 +1375,58 @@ def expand_and_validate_ids(database, content_ids, id_list):
         else:
             # Can't find a match for the ID.
             raise ValueError, id_
+
+
+def make_new_test(test_class_name, test_id):
+    """Create a new test with default arguments.
+
+    'test_class_name' -- The name of the test class of which to create a
+    new test.
+
+    'test_id' -- The test ID of the new test.
+
+    returns -- A new 'Test' object."""
+
+    test_class = get_class(test_class_name)
+    # Make sure there isn't already such a test.
+    database = get_database()
+    if database.HasTest(test_id):
+        raise RuntimeError, qm.error("test already exists",
+                                     test_id=test_id)
+    # Construct an argument map containing default values.
+    arguments = {}
+    for field in test_class.fields:
+        name = field.GetName()
+        value = field.GetDefaultValue()
+        arguments[name] = value
+    # Construct a default test instance.
+    return Test(test_id, test_class_name, arguments, {}, [])
+
+
+def make_new_action(action_class_name, action_id):
+    """Create a new action with default arguments.
+
+    'action_class_name' -- The name of the action class of which to
+    create a new action.
+
+    'action_id' -- The action ID of the new action.
+
+    returns -- A new 'Action' object."""
+
+    action_class = get_class(action_class_name)
+    # Make sure there isn't already such a action.
+    database = get_database()
+    if database.HasAction(action_id):
+        raise RuntimeError, qm.error("action already exists",
+                                     action_id=action_id)
+    # Construct an argument map containing default values.
+    arguments = {}
+    for field in action_class.fields:
+        name = field.GetName()
+        value = field.GetDefaultValue()
+        arguments[name] = value
+    # Construct a default action instance.
+    return Action(action_id, action_class_name, arguments)
 
 
 def load_outcomes(path):
@@ -1339,6 +1502,11 @@ def __result_from_dom(result_node):
 ########################################################################
 # variables
 ########################################################################
+
+_database = None
+"""The global test database instance.
+
+Use 'get_database' to access the global test database."""
 
 __loaded_classes = {}
 """Cache of loaded test and action classes."""

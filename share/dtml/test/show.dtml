@@ -1,0 +1,278 @@
+<dtml-comment><!--
+
+  File:   show.dtml
+  Author: Alex Samuel
+  Date:   2001-02-08
+
+  Contents:
+    Document template for web page to display or edit a test or action.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <dtml-var expr="GenerateHtmlHeader(GetTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+  <dtml-comment><!--
+
+    First the heading.  Display the item's ID, and if appropriate,
+    controls for manupulating the item.
+
+  --></dtml-comment>
+  <table border="0" width="100%">
+   <tbody>
+    <tr>
+     <td>
+      <h3>
+       <dtml-if expr="new">
+        New
+       </dtml-if>
+       <dtml-var expr="_.string.capwords(type)">
+       <dtml-var expr="item.GetId()">
+      </h3>
+     </td>
+     <td align="right">
+      <dtml-if expr="not edit">
+       <form>
+        <dtml-var expr="MakeButton('Edit', 'edit-' + type, id=item.GetId())">
+        <dtml-comment><!--
+        <dtml-var 
+              expr="MakeButton('Delete', 'delete-' + type, id=item.GetId())">
+        --></dtml-comment>
+       </form>
+      </dtml-if>
+     </td>
+    </tr>
+
+    <dtml-if expr="field_errors != {}">
+     <tr>
+      <td colspan="2">
+       <p>Your issue submission contained errors.  Please correct them
+       and resubmit.</p>
+      </td>
+     </tr>
+    </dtml-if>
+   </tbody>
+  </table>
+  
+  <dtml-comment><!--
+
+    For editing operations, start the form.
+
+  --></dtml-comment>
+  <dtml-if expr="edit">
+   <form name="form"
+         method="post"
+         action="<dtml-var expr="MakeSubmitUrl()">"
+         enctype="multipart/form-data"/>
+
+   <input type="hidden" 
+          name="class"
+          value="<dtml-var expr="item.GetClassName()">"/>
+  </dtml-if>
+
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%"
+         columns="2">
+   <tbody>
+
+    <dtml-comment><!--
+
+      Display the test or action class, and its summary and
+      description. 
+
+    --></dtml-comment>
+    <tr class="heading">
+     <td colspan="2">
+      Class: <b><dtml-var expr="item.GetClassName()"></b>
+     </td>
+    </tr>
+    <tr class="heading">
+     <td colspan="2">
+      <dtml-var expr="GetClassDescription()">
+     </td>
+    </tr>
+
+    <dtml-comment><!--
+
+      Now the test or action arguments (field values).
+
+    --></dtml-comment>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr class="heading">
+     <td colspan="2">
+      Arguments
+     </td>
+    </tr>
+
+    <dtml-in name="fields">
+    <dtml-let field=sequence-item
+              field_name="field.GetName()">
+     <dtml-if expr="IsShowField(field)">
+      <dtml-comment><!--
+
+        Show a row with the field label and a rendering of its value.
+
+      --></dtml-comment>
+      <tr valign="top"
+         <dtml-if expr="field_errors.has_key(field_name)">
+          class="field-error"
+         <dtml-else>
+          class="field"
+         </dtml-if>
+          >
+       <td>
+        <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
+        <dtml-var expr="FormatStructuredText(field.GetDescription())">
+       </td>
+       <td width="25%">
+        <dtml-var expr="FormatFieldValue(field)">
+        <dtml-if expr="field_errors.has_key(field_name)">
+         <br>
+         <span class="error">
+          <dtml-var expr="field_errors[field_name]">
+         </span>
+        </dtml-if>
+       </td>
+      </tr>
+     </dtml-if>
+    </dtml-let>
+    </dtml-in>
+
+    <dtml-comment><!--
+
+      For tests, there's additional information: prerequisite tests,
+      setup/cleanup actions, and categories.
+
+    --></dtml-comment>
+    <dtml-if expr="type is 'test'">
+
+     <tr><td colspan="2">&nbsp;</td></tr>
+
+     <tr class="heading">
+      <td colspan="2">
+       Additional Information
+      </td>
+     </tr>
+
+     <tr class="field" valign="top">
+      <td>
+       <b>Prerequisite Tests</b>
+       <p>A prerequisite test is always run first.  If any prerequisite
+       test produces an outcome different from the expected outcome, this
+       test is not run.</p>
+      </td>
+      <td>
+       <dtml-if expr="edit">
+        <dtml-var expr="MakePrerequisitesControl()">
+       <dtml-else>
+        <dtml-if expr="_.len(prerequisites) > 0">
+         <dtml-in expr="prerequisites.keys()">
+         <dtml-let prerequisite=sequence-item>
+          <dtml-var expr="FormatTestId(prerequisite)"> 
+          (<dtml-var expr="prerequisites[prerequisite]">)
+          <br>
+         </dtml-let>
+         </dtml-in>
+        <dtml-else>
+         None
+        </dtml-if>
+       </dtml-if>
+      </td>
+     </tr>
+
+     <tr class="field" valign="top">
+      <td>
+       <b>Actions</b>
+       <p>An action specifies setup and cleanup operations for the test.</p>
+      </td>
+      <td>
+       <dtml-if expr="edit">
+        <dtml-var expr="MakeActionsControl()">
+       <dtml-else>
+        <dtml-if expr="_.len(actions) > 0">
+         <dtml-in name="actions">
+         <dtml-let action=sequence-item>
+          <dtml-var expr="action"> 
+          <br>
+         </dtml-let>
+         </dtml-in>
+        <dtml-else>
+         None
+        </dtml-if>
+       </dtml-if>
+      </td>
+     </tr>
+
+     <tr class="field" valign="top">
+      <td>
+       <b>Categories</b>
+       <p>A category groups together tests that share a common feature.
+       A test may be in more than one category; specify the names of all
+       categories here.</p>
+      </td>
+      <td>
+       <dtml-if expr="edit">
+        <dtml-var expr="MakeCategoriesControl()">
+       <dtml-else>
+        <dtml-if expr="_.len(categories) > 0">
+         <dtml-in name="categories">
+         <dtml-let category=sequence-item>
+          <dtml-var expr="category"> 
+          <br>
+         </dtml-let>
+         </dtml-in>
+        <dtml-else>
+         None
+        </dtml-if>
+       </dtml-if>
+      </td>
+     </tr>
+
+    </dtml-if>
+
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+    <tr class="heading">
+     <td colspan="2">
+      <dtml-if expr="edit">
+         <input type="submit" value="  OK  "/>
+         <input type="button" 
+                value=" Cancel "
+               <dtml-if expr="new">
+                onclick="location = '<dtml-var expr="MakeListingUrl()">'"
+               <dtml-else>
+                onclick="location = '<dtml-var expr="MakeShowUrl()">'"
+               </dtml-if>
+                />
+      </dtml-if>
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+  <dtml-if expr="edit">
+   </form>
+  </dtml-if>
+
+  <dtml-var name="html_footer">
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

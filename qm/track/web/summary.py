@@ -204,7 +204,7 @@ def handle_summary(request):
 
               '%s'
             """ % (qm.track.get_name(), name, query)
-            return web.generate_error_page(request, msg)
+            return qm.web.generate_error_page(request, msg)
         except SyntaxError:
             msg = """
             %s encountered a syntax error while processing the query
@@ -212,7 +212,7 @@ def handle_summary(request):
 
               '%s'
             """ % (qm.track.get_name(), query)
-            return web.generate_error_page(request, msg)
+            return qm.web.generate_error_page(request, msg)
 
     else:
         # No query was specified; show all issues...
