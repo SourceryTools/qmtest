@@ -1,3 +1,8 @@
+2001-02-27  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/cmdline.py (__Parse): Change formatting to happen from
+	command options.
+
 2001-02-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (get_host_name): Add fallback logic.

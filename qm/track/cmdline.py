@@ -83,7 +83,6 @@ class Command:
                           'Populate IDB with values for testing')
 
     qmtrack_options = [
-        format_option,
         database_option,
         help_option,
         ]
@@ -99,7 +98,7 @@ class Command:
          "class for the field with the" " class flag. You must also "
          "specify the mandatory fields, 'id', 'categories', and " 
          "'summary'.",
-         [ help_option, class_option ]
+         [ help_option, class_option, format_option ]
          ),
         
         ('edit',
@@ -108,7 +107,7 @@ class Command:
          "This command will edit an issue. The 'id' is the issue's "
          "id. The field/value pairs represent the fields you wish to "
          "edit. A new revision of the issue will be created.",
-         [ help_option ]
+         [ help_option, format_option ]
          ),
         
         ('split',
@@ -117,7 +116,7 @@ class Command:
          "This command will split a single issue into two issues. The "
          "new issues will be the children of the original issue and it "
          "will be their parent.",
-         [ help_option ]
+         [ help_option, format_option ]
          ),
         
         ('join',
@@ -126,7 +125,7 @@ class Command:
          "This command will join two issues into a single issue. The "
          "resulting issue will be the child of each of the original "
          "issues and they will be its parent.",
-         [ help_option ]
+         [ help_option, format_option ]
          ),
 
         ('query',
@@ -134,7 +133,7 @@ class Command:
          'expression',
          "This command will query the database to find all issues for "
          "which the query expression evalutes to true.",
-         [ help_option, query_class_option ]
+         [ help_option, query_class_option, format_option ]
          ),
 
         ('server',
@@ -150,7 +149,7 @@ class Command:
          'id',
          "This command displays a single issue.  This command is a "
          "shortcut for 'query iid==value'.",
-         [ help_option ]
+         [ help_option, format_option ]
          ),
 
         ('initialize',
@@ -391,9 +390,9 @@ class Command:
             self.__command_options[flag] = flag_argument
 
         # Did the user specify a format style?
-        if self.__global_options.has_key('format'):
+        if self.__command_options.has_key('format'):
             # Yes, use it.
-            self.format_name = self.__global_options['format']
+            self.format_name = self.__command_options['format']
         else:
             # Choose a default, depending on the command.
             if self.__command_name in ("query", "show"):
