@@ -15,6 +15,13 @@ run tests in parallel on systems that do not support threads.
 QMTest now requires that all extension classes be listed in the
 classes.qmc file in the directory that contains the extension class.
 
+QMTest now uses a uniform XML file format for all extension classes,
+including tests, resources, databases, and targets.  This format will
+remain stable for the forseeable future.  While QMTest 2.0 can read
+the formats created by previous versions of QMTest, it will only write
+files in the new format.  Most users will be unaffected by these
+changes.
+
 New command-line options:
 -------------------------
 

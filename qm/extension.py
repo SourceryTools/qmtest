@@ -319,7 +319,10 @@ def parse_dom_element(element, class_loader):
     # class name in a separate element, so look there for backwards
     # compatbility.
     if not class_name:
-        class_element = element.getElementsByTagName("class")[0]
+        class_elements = element.getElementsByTagName("class")
+        if not class_elements:
+            class_elements = element.getElementsByTagName("class-name")
+        class_element = class_elements[0]
         class_name = qm.xmlutil.get_dom_text(class_element)
     # Load it.
     extension_class = class_loader(class_name)
@@ -339,7 +342,8 @@ def parse_dom_element(element, class_loader):
                      argument_element.childNodes)[0]
         # Parse the value.
         value = field.GetValueFromDomNode(value_node, None)
-        # Remember it.
-        arguments[name] = value
+        # Python does not allow keyword arguments to have Unicode
+        # values, so we convert the name to an ordinary string.
+        arguments[str(name)] = value
     
     return (extension_class, arguments)

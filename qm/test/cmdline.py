@@ -573,7 +573,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         """Return the test database to use."""
 
         if not self.__database:
-            self.__database = base.load_database(self.__db_path)
+            self.__database = database.load_database(self.__db_path)
             
         return self.__database
 
@@ -767,7 +767,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Get the attributes.
         attributes = self.__GetAttributeOptions()
         # Create the test database.
-        base.create_database(db_path, class_name, attributes)
+        database.create_database(db_path, class_name, attributes)
         # Print a helpful message.
         self._stdout.write(qm.message("new db message", path=db_path) + "\n")
 

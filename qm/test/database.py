@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import os.path
 import qm
 from   qm.common import *
@@ -1071,13 +1072,105 @@ class Database(qm.extension.Extension):
 ########################################################################
 
 def get_configuration_directory(path):
-    """Return the configuration directory for the database rooted at 'path'.
+    """Return the configuration directory for the 'Database' rooted at 'path'.
 
     'path' -- The path to the test database.
 
     returns -- The path to the configuration directory."""
 
     return os.path.join(path, "QMTest")
+
+
+def get_configuration_file(path):
+    """Return the configuration file for the 'Database' rooted at 'path'.
+
+    'path' -- The path to the test database.
+
+    returns -- The path to the configuration file."""
+
+    return os.path.join(get_configuration_directory(path),
+                        "configuration")
+
+
+def is_database(db_path):
+    """Returns true if 'db_path' looks like a test database."""
+
+    # A test database is a directory.
+    if not os.path.isdir(db_path):
+        return 0
+    # A test database contains a configuration subdirectory.
+    if not os.path.isdir(get_configuration_directory(db_path)):
+        return 0
+    # It probably is OK.
+    return 1
+
+
+def create_database(db_path, class_name, attributes):
+    """Create a new test database.
+
+    'db_path' -- The path to the test database.
+
+    'class_name' -- The class name of the test database implementation.
+
+    'attributes' -- A dictionary mapping attribute names to values.
+    These attributes will be applied to the database when it is
+    used."""
+
+    # Create the directory if it does not already exists.
+    if not os.path.isdir(db_path):
+        os.mkdir(db_path)
+    # Create the configuration directory.
+    config_dir = get_configuration_directory(db_path)
+    if not os.path.isdir(config_dir):
+        os.mkdir(config_dir)
+
+    # Create the DOM document.
+    database_class = qm.test.base.get_extension_class(class_name,
+                                                      "database",
+                                                      None)
+    attributes = qm.extension.validate_arguments(database_class, attributes)
+    document = qm.extension.make_dom_document(database_class, attributes)
+
+    # Write it out.
+    document.writexml(open(get_configuration_file(db_path), "w"))
+    
+
+def load_database(db_path):
+    """Load the database from 'db_path'.
+
+    'db_path' -- The path to the directory containing the database.
+    
+    returns -- The new 'Database'."""
+
+    # Make sure it is a directory.
+    if not is_database(db_path):
+        raise QMException, \
+              qm.error("not test database", path=db_path)
+
+    # Load the file.
+    config_path = get_configuration_file(db_path)
+    document = qm.xmlutil.load_xml_file(config_path)
+
+    # Parse it.
+    database_class, arguments \
+        = (qm.extension.parse_dom_element
+           (document.documentElement,
+            lambda n: qm.test.base.get_extension_class(n, "database",
+                                                       None, db_path)))
+    # For backwards compatibility with QM 1.1.x, we look for "attribute"
+    # elements.
+    for node in qm.xmlutil.get_children(document.documentElement,
+                                        "attribute"):
+        name = node.getAttribute("name")
+        # These elements were only allowed to contain strings as
+        # values.
+        value = qm.xmlutil.get_dom_text(node)
+        # Python does not allow keyword arguments to have Unicode
+        # values, so we convert the name to an ordinary string.
+        arguments[str(name)] = value
+        
+    return database_class(db_path, arguments)
+    
     
 ########################################################################
 # Local Variables:

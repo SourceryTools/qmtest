@@ -56,120 +56,8 @@ Keys are DTD types ("resource", "result", etc).  Values are the
 corresponding DTD public identifiers."""
 
 ########################################################################
-# functions
+# Functions
 ########################################################################
-
-def _get_db_configuration_path(db_path):
-    """Return the path to a test database's configuration file.
-
-    'db_path' -- The path to the test database."""
-
-    return os.path.join(qm.test.database.get_configuration_directory(db_path),
-                        "configuration")
-
-
-def is_database(db_path):
-    """Returns true if 'db_path' looks like a test database."""
-
-    # A test database is a directory.
-    if not os.path.isdir(db_path):
-        return 0
-    # A test database contains a configuration subdirectory.
-    if not os.path.isdir(qm.test.database.get_configuration_directory
-                         (db_path)):
-        return 0
-    # It probably is OK.
-    return 1
-
-
-def load_database(db_path):
-    """Load the database from 'db_path'.
-
-    'db_path' -- The path to the directory containing the database.
-    
-    returns -- The new 'Database'."""
-
-    # Make sure it is a directory.
-    if not is_database(db_path):
-        raise QMException, \
-              qm.error("not test database", path=db_path)
-
-    # There are no database attributes yet.
-    attributes = {}
-
-    # Figure out which class implements the database.  Start by looking
-    # for a file called 'configuration' in the directory corresponding
-    # to the database.
-    config_path = _get_db_configuration_path(db_path)
-    # Load the configuration file.
-    document = qm.xmlutil.load_xml_file(config_path)
-    # Get the root node in the document.
-    database = document.documentElement
-    # Load the database class name.
-    database_class_name = qm.xmlutil.get_child_text(database,
-                                                    "class-name")
-    # For backwards compatibility with QM 1.1.x, we accept
-    # "xmldb.Database" and "qm.test.xmldb.Database", even though those
-    # to do not name actual database classes any more.
-    if database_class_name in ("xmldb.Database", "qm.test.xmldb.Database"):
-        database_class_name = "xml_database.XMLDatabase"
-    # Get the database class.
-    database_class = get_extension_class(database_class_name,
-                                         "database", None, db_path)
-    # Get attributes to pass to the constructor.
-    for node in qm.xmlutil.get_children(database, "attribute"):
-        name = node.getAttribute("name")
-        value = qm.xmlutil.get_dom_text(node)
-        # Python does not allow keyword arguments to have Unicode
-        # values.  Therefore, convert name to an ordinary string.
-        name = str(name)
-        # Keep track of the new attribute.
-        attributes[str(name)] = value
-    
-    # Create the database.
-    return database_class(db_path, attributes)
-
-
-def create_database(db_path, class_name, attributes={}):
-    """Create a new test database.
-
-    'db_path' -- The path to the test database.
-
-    'class_name' -- The class name of the test database implementation.
-
-    'attributes' -- A dictionary mapping attribute names to values.
-    These attributes will be applied to the database when it is
-    used."""
-
-    # Create the directory if it does not already exists.
-    if not os.path.isdir(db_path):
-        os.mkdir(db_path)
-    # Create the configuration directory.
-    config_dir = qm.test.database.get_configuration_directory(db_path)
-    if not os.path.isdir(config_dir):
-        os.mkdir(config_dir)
-
-    # Now create an XML document for the configuration file.
-    document = qm.xmlutil.create_dom_document(
-        public_id=dtds["tdb-configuration"],
-        dtd_file_name="tdb_configuration.dtd",
-        document_element_tag="tdb-configuration"
-        )
-    # Create an element containing the class name.
-    class_element = qm.xmlutil.create_dom_text_element(
-        document, "class-name", class_name)
-    document.documentElement.appendChild(class_element)
-    # Create elements for the attributes.
-    for name, value in attributes.items():
-        element = qm.xmlutil.create_dom_text_element(document,
-                                                     "attribute",
-                                                     value)
-        element.setAttribute("name", name)
-        document.documentElement.appendChild(element)
-    # Write it.
-    configuration_path = _get_db_configuration_path(db_path)
-    document.writexml(open(configuration_path, "w"))
-
 
 def get_extension_directories(kind, database, database_path = None):
     """Return the directories to search for QMTest extensions.
@@ -372,6 +260,13 @@ def get_extension_class(class_name, kind, database, database_path = None):
     if cache.has_key(class_name):
         return cache[class_name]
 
+    # For backwards compatibility with QM 1.1.x, we accept
+    # "xmldb.Database" and "qm.test.xmldb.Database", even though those
+    # to do not name actual database classes any more.
+    if kind == "database" and class_name in ("xmldb.Database",
+                                             "qm.test.xmldb.Database"):
+        class_name = "xml_database.XMLDatabase"
+        
     # Look for the class in each of the extension directories.
     directories = get_extension_directories(kind, database, database_path)
     directory = None
@@ -476,23 +371,6 @@ def _result_from_dom(node):
         result[name] = value
 
     return result
-
-
-def count_outcomes(results):
-    """Count results by outcome.
-
-    'results' -- A sequence of 'Result' objects.
-
-    returns -- A map from outcomes to counts of results with that
-    outcome.""" 
-
-    counts = {}
-    for outcome in Result.outcomes:
-        counts[outcome] = 0
-    for result in results:
-        outcome = result.GetOutcome()
-        counts[outcome] = counts[outcome] + 1
-    return counts
 
 
 def split_results_by_expected_outcome(results, expected_outcomes):

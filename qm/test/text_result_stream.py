@@ -154,7 +154,7 @@ class TextResultStream(ResultStream):
         if num_tests == 0:
             return
 
-        counts_by_outcome = count_outcomes(results)
+        counts_by_outcome = self._CountOutcomes(results)
         for outcome in Result.outcomes:
             count = counts_by_outcome[outcome]
             if count > 0:
@@ -188,7 +188,7 @@ class TextResultStream(ResultStream):
                              (100. * len(expected)) / num_tests))
         # For results that produced unexpected outcomes, break them down by
         # actual outcome.
-        counts_by_outcome = count_outcomes(unexpected)
+        counts_by_outcome = self._CountOutcomes(unexpected)
         for outcome in Result.outcomes:
             count = counts_by_outcome[outcome]
             if count > 0:
@@ -197,6 +197,23 @@ class TextResultStream(ResultStream):
                                      outcome))
         self.__file.write("\n")
 
+
+    def _CountOutcomes(self, results):
+        """Count results by outcome.
+
+        'results' -- A sequence of 'Result' objects.
+
+        returns -- A map from outcomes to counts of results with that
+        outcome.""" 
+
+        counts = {}
+        for outcome in Result.outcomes:
+            counts[outcome] = 0
+        for result in results:
+            outcome = result.GetOutcome()
+            counts[outcome] = counts[outcome] + 1
+        return counts
+        
         
     def _SummarizeTestSuiteStats(self):
         """Generate statistics showing results by test suite."""

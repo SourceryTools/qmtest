@@ -1,3 +1,26 @@
+2002-11-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention uniform extension file format.
+	* qm/extension.py (parse_dom_element): Extend backwards
+	compatibility tricks.
+	* qm/test/base.py (_get_db_configuration_path): Remove.
+	(is_database): Likewise.
+	(load_database): Likewise.
+	(create_database): Likewise.
+	(count_outcomes): Likewise.
+	* qm/test/cmdline.py (QMTest.GetDatabase): Adjust call to
+	load_database.
+	* qm/test/database.py (get_configuration_file): New function.
+	(is_database): Likewise.
+	(create_database): Likewise.
+	(load_database): Likewise.
+	* qm/test/text_result_stream.py (TextResultStream._CountOutcomes):
+	New method.
+	* qm/test/share/dtds/resource.dtd: Remove.
+	* qm/test/share/dtds/target.dtd: Likewise.
+	* qm/test/share/dtds/test.dtd: Likewise.
+	* qm/test/share/dtds/tdb-configuration.dtd: Likewise.
+	
 2002-11-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention automatic use of context files.
