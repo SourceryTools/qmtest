@@ -80,10 +80,10 @@ $(SCRIPTS):
 	echo -e "@echo off\r" > $@
 	echo -e "set QM_HOME=C:\\progra~1\qm\r" >> $@
 	echo -e "set QM_BUILD=0\r" >> $@
-	echo -n \
-          "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$(basename $@).py\" " \
+	echo -n "$(PYTHONEXE)" \
+                 \"%QM_HOME%\\lib\\qm\\$(subst /,\\,$(basename $@)).py\" \
           >> $@
-	echo -e "%1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
+	echo -e " %1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
 endif
 
 clean::

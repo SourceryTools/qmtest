@@ -1,7 +1,10 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (SCRIPTS): Use backslashes on Windows.
+
 	* Makefile.in (install): Don't depend on install -D.
 	(share-install): Likewise.
+
 	* configure.in (AC_PROG_INSTALL): Remove.
 	* configure: Regenerated.
 	* standard.mk.in (INSTALL): Define explicitly.
