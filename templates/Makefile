@@ -7,7 +7,7 @@
 # Contents:
 #   Fill me in!
 # 
-# Copyright (C) 2000 CodeSourcery LLC
+# Copyright (C) 2001 CodeSourcery LLC
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
