@@ -1,3 +1,7 @@
+2001-04-25  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/Makefile.in: Fix typo.
+
 2001-04-25  Alex Samuel  <samuel@codesourcery.com>
 	
 	* qm/xmlutil.py (write_dom_document): Don't write emacs gunk.
