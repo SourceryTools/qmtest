@@ -15,19 +15,20 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="req"><title>Requirements</title>
+<chapter id="chap-requirements">
+ <title>Requirements</title>
 
  <para>This section lists requirements derived from the use cases
  presented above, and from the discussions on the Software Carpentry
  mailing list.  The four most important requirements (<link
- linkend="req-accuracy">accuracy</link>, <link
- linkend="req-smallscale">usability</link>, <link
- linkend="req-reproducible">reproducibility</link>, and <link
- linkend="req-standards">conservatism</link>) are
+ linkend="sec-req-accuracy">accuracy</link>, <link
+ linkend="sec-req-smallscale">usability</link>, <link
+ linkend="sec-req-reproducible">reproducibility</link>, and <link
+ linkend="sec-req-standards">conservatism</link>) are
  presented first; secondary or derived requirements follow.</para>
 
- <section id="req-accuracy">
-  <title id="req-accuracy-title">Accuracy</title>
+ <section id="sec-req-accuracy">
+  <title id="sec-req-accuracy-title">Accuracy</title>
 
   <para>The most important requirement for &qmtest; is accuracy: it
   must never report that a test has succeeded when in fact it has
@@ -43,8 +44,8 @@
 
  </section>
 
- <section id="req-smallscale">
-  <title id="req-smallscale-title">Small-Scale Usability</title>
+ <section id="sec-req-smallscale">
+  <title id="sec-req-smallscale-title">Small-Scale Usability</title>
 
   <para><phrase id="discuss-small-use">Small-scale testing must be
   easier to do with &qmtest; than by hand</phrase>.  If &qmtest;
@@ -57,8 +58,8 @@
 
  </section>
 
- <section id="req-reproducible">
-  <title id="req-reproducible-title">Reproducibility</title>
+ <section id="sec-req-reproducible">
+  <title id="sec-req-reproducible-title">Reproducibility</title>
 
   <para><phrase id="discuss-reproducible">Test execution must be
   reproducible</phrase>: &qmtest; must be able to recreate the
@@ -74,8 +75,8 @@
 
  </section>
 
- <section id="req-standards">
-  <title id="req-standards-title">Conservatism</title>
+ <section id="sec-req-standards">
+  <title id="sec-req-standards-title">Conservatism</title>
 
   <para>&qmtest; <phrase id="discuss-recycle">must use existing
   standards, syntax, conventions, and tools</phrase> wherever
@@ -137,7 +138,8 @@
 
  </section>
 
- <section><title>Dependent and Independent Tests</title>
+ <section id="sec-req-dependent-tests">
+  <title>Dependent and Independent Tests</title>
 
   <para>&qmtest; must <phrase id="discuss-specify-dependency">allow
   programmers to specify dependencies among tests</phrase>, and must
@@ -148,7 +150,7 @@
   report cyclic dependencies</phrase>.  &qmtest; should try to detect
   and report cyclic dependencies before executing any tests, but is
   not required to do this, since this may not be possible if tests are
-  being <link linkend="req-multi">generated on the fly</link>.</para>
+  being <link linkend="sec-req-multi">generated on the fly</link>.</para>
 
   <para>Finally, it must be possible to <phrase
   id="discuss-separate-prep">separate setup and cleanup from
@@ -170,7 +172,7 @@
 
  </section>
 
- <section id="req-expected">
+ <section id="sec-req-expected">
   <title>Expected and Unexpected Results</title>
 
   <para>There are often periods in a development cycle during which
@@ -194,7 +196,8 @@
 
  </section>
 
- <section><title>Reporting</title>
+ <section id="sec-req-reporting">
+  <title>Reporting</title>
 
   <para>&qmtest; must be able to <phrase
   id="discuss-readable-report">report test results in textual,
@@ -239,7 +242,7 @@
 
  </section>
 
- <section id="req-reference"><title>Regeneration of Reference Results</title>
+ <section id="sec-req-reference"><title>Regeneration of Reference Results</title>
 
   <para>Users are often interested in checking whether or not a
   particular change to a program causes new failures.  Therefore,
@@ -259,7 +262,7 @@
 
  </section>
 
- <section id="req-suites"><title>Test Suites</title>
+ <section id="sec-req-suites"><title>Test Suites</title>
 
   <para>&qmtest; must allow test authors to <phrase
   id="discuss-test-suites">aggregate tests into test suites</phrase>
@@ -279,13 +282,14 @@
   sense in which a suite "passes" or "fails".  There is no unique way
   in which to classify an arbitrary combination of pass, fail, and
   error outcomes into a single result.  However, as discussed below
-  users can use <link linkend="req-summary-reporting">summary
+  users can use <link linkend="sec-req-summary-reporting">summary
   reports</link> to obtain information about the number of tests which
   passed or failed within a particular suite.</para>
 
  </section>
 
- <section><title>Test Identification</title>
+ <section id="sec-req-test-identification">
+  <title>Test Identification</title>
  
   <para>&qmtest; must support the use of human-readable and memorable
   test names so that users can easily recognize failing tests and
@@ -297,8 +301,8 @@
 
  </section>
 
- <section id="req-summary-reporting">
-  <title id="req-summary-reporting-title">Summary Reporting</title>
+ <section id="sec-req-summary-reporting">
+  <title id="sec-req-summary-reporting-title">Summary Reporting</title>
 
   <para>&qmtest; must <phrase id="discuss-summarize-results">summarize
   the outcomes (passes or failures) of the tests executed</phrase> by
@@ -314,8 +318,8 @@
 
  </section>
 
- <section id="req-info">
-  <title id="req-info-title">Extra Information</title>
+ <section id="sec-req-info">
+  <title id="sec-req-info-title">Extra Information</title>
 
   <para>In many cases, it is useful to include more information than
   simply the outcome (pass or fail) of the test.  For example, it may
@@ -335,8 +339,8 @@
 
  </section>
 
- <section id="req-traversal">
-  <title id="req-traversal-title">Selective Execution</title>
+ <section id="sec-req-traversal">
+  <title id="sec-req-traversal-title">Selective Execution</title>
 
   <para>&qmtest; must of course be able to <phrase
   id="discuss-automatic-traversal">automatically execute all the tests
@@ -361,7 +365,8 @@
 
  </section>
 
- <section><title>Test suite Organization</title>
+ <section id="sec-req-test-suite-organization">
+  <title>Test suite Organization</title>
 
   <para>&qmtest; <phrase id="discuss-physical-structure">must not
   dictate the locations of tests (or associated data) in the file
@@ -387,7 +392,8 @@
 
  </section>
 
- <section><title>Controlling Execution</title>
+ <section id="sec-req-controlling-execution">
+  <title>Controlling Execution</title>
 
   <para>The longer a test suite takes to run, the less frequently it
   will be used.  &qmtest; therefore <phrase id="discuss-parallel">must
@@ -406,7 +412,7 @@
 
  </section>
 
- <section id="req-spec">
+ <section id="sec-req-spec">
   <title>Test Specification</title>
 
   <para>&qmtest; must be able to test programs using a variety of
@@ -524,7 +530,7 @@
 
  </section>
 
- <section id="req-multi">
+ <section id="sec-req-multi">
   <title>Programmatically Generated Tests</title>
 
   <para>Users will often want to generate multiple tests
@@ -538,8 +544,8 @@
 
  </section>
 
- <section id="req-updown">
-  <title id="req-updown-title">Setup and Cleanup</title>
+ <section id="sec-req-updown">
+  <title id="sec-req-updown-title">Setup and Cleanup</title>
 
   <para>Individual tests and test suites may require arbitrary setup
   before, and cleanup after, their execution.  In order to simplify
@@ -564,8 +570,8 @@
 
  </section>
 
- <section id="req-sandbox">
-  <title id="req-sandbox-title">Sandboxing and Throttling</title>
+ <section id="sec-req-sandbox">
+  <title id="sec-req-sandbox-title">Sandboxing and Throttling</title>
 
   <para>A <firstterm>sandbox</firstterm> is an environment for program
   execution in which some or all of the facilities the program relies

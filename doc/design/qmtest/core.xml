@@ -309,14 +309,14 @@
   <title>Expected Outcomes</title>
 
   <para>One of the &qmtest; <link
-  linkend="req-expected">requirements</link> section is that users
+  linkend="sec-req-expected">requirements</link> section is that users
   must be able to indicate that a particular test is presently
   expected to fail.  Under most circumstances, that information is
   best kept with the test specification itself.  On the other hand,
   users may sometimes want to use an alternative set of expected
   outcomes.  In particular, allowing the use of an alternative set of
   expected outcomes allows users to use <link
-  linkend="req-reference">reference results</link>.</para>
+  linkend="sec-req-reference">reference results</link>.</para>
 
   <para>Therefore, &qmtest; allows the specification of expected
   outcomes both in the test specification itself, and in an external

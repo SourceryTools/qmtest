@@ -15,7 +15,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="impl"><title>Implementation</title>
+<chapter id="chap-implementation">
+ <title>Implementation</title>
   
  <para>This chapter describes the Python classes that correspond to
  the major &qmtest; <link linkend="chap-concepts">concepts</link>.
@@ -240,7 +241,7 @@ class Context:
 
  </section>
 
- <section id="concept-default-database">
+ <section id="sec-default-database">
   <title>Test Database: Default Implementation</title>
 
   <para>The <link linkend="concept-database">test database</link> is
@@ -414,7 +415,7 @@ int main ()
    suite.</para>
 
    <para>However, test suites do not always naturally form a tree.
-   (See the <xref linkend="req-suites"/>.)  Users may specify suites
+   (See the <xref linkend="sec-req-suites"/>.)  Users may specify suites
    in addition to those provided implicitly by the database.  These
    suites a represented by files with the <filename>.qms</filename>
    extension.  Each such file contains the names of tests, given
@@ -431,7 +432,7 @@ int main ()
   <title>Test Database: Custom Implementation</title>
 
   <para>In this section, we show how &qmtest; meets the <link
-  linkend="req-spec">requirement</link> that users be able to execute
+  linkend="sec-req-spec">requirement</link> that users be able to execute
   tests specified in formats other than &qmtest;'s default &xml;
   format.</para>
 

@@ -31,11 +31,45 @@
   execution engine.</para>
 
   <synopsis>
-   qmtest [ options ] [ suites ]
+   qmtest [ options ] subcommand [ arguments ]
   </synopsis>
 
-  <table id="tab-qmtest-command-line">
-   <title><command>qmtest</command> command-line options</title>
+  <table id="tab-qmtest-commands">
+   <title><command>qmtest</command> subcommands</title>
+   <tgroup cols="2">
+    <colspec colnum="1" colwidth="1*"/>
+    <colspec colnum="2" colwidth="3*"/>
+    <thead>
+     <row>
+      <entry>command</entry>
+      <entry>description</entry>
+     </row>
+    </thead>
+    <tbody>
+     <row>
+      <entry><command>test</command>
+      <replaceable>suites</replaceable></entry>
+      <entry>Run tests.  The <command>test</command>sub command may be
+      omitted; if no other subcommand is recognized,
+      <command>test</command> is assumed.</entry>
+     </row>
+     <row>
+      <entry><command>compare</command>
+      <replaceable>file1</replaceable>
+      <replaceable>file2</replaceable></entry>
+      <entry>Compare two sets of test results.</entry>
+     </row>
+     <row>
+      <entry><command>help</command></entry>
+      <entry>Display a summary of <command>qmtest</command>
+      subcommands.</entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+
+  <table id="tab-qmtest-options">
+   <title><command>qmtest</command> options</title>
    <tgroup cols="3">
     <colspec colnum="1" colwidth="5*"/>
     <colspec colnum="2" colwidth="2*"/>
@@ -48,13 +82,6 @@
      </row>
     </thead>
     <tbody>
-     <row>
-      <entry><option>&dashdash;compare</option>
-      <replaceable>file</replaceable>
-      <replaceable>file</replaceable></entry>
-      <entry><option>-c</option></entry> 
-      <entry>Compare two sets of test results.</entry>
-     </row>
      <row>
       <entry><option>&dashdash;database</option>
       <replaceable>database</replaceable></entry>
@@ -111,7 +138,7 @@
       "<literal>text</literal>" and "<literal>html</literal>".</entry>
      </row>
      <row>
-      <entry><option>&dashdash;test</option>
+      <entry><option>&dashdash;test-id</option>
       <replaceable>test_id</replaceable></entry>
       <entry><option>-t</option></entry>
       <entry>Test IDs of the tests of interest.  This option is

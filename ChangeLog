@@ -1,3 +1,12 @@
+2000-12-13  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtest/iface.xml: Twiddle command-line syntax.
+
+	* doc/design/qmtest/core.xml: Regularize entity ids.
+	* doc/design/qmtest/impl.xml: Likewise.
+	* doc/design/qmtest/qmtest.xml: Likewise.
+	* doc/design/qmtest/req.xml: Likewise.
+
 2000-12-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod (gui): New entity.

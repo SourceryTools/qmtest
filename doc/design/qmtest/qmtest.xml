@@ -120,14 +120,16 @@
 
   <para>This document begins by describing three typical users, whose
   testing needs &qmtest; is designed to address. It then explores
-  their <link linkend="req">requirements</link> in more detail, in
-  order to determine the features that &qmtest; must have. This
-  analysis is followed by a discussion of the <link
+  their <link linkend="chap-requirements">requirements</link> in more
+  detail, in order to determine the features that &qmtest; must
+  have. This analysis is followed by a discussion of the <link
   linkend="chap-concepts">concepts</link> that users will encounter
   when using &qmtest;.  Finally, this document provides a design for
-  &qmtest;'s <link linkend="impl">implementation</link>.</para>
+  &qmtest;'s <link
+  linkend="chap-implementation">implementation</link>.</para>
 
-  <section><title>Acknowledgements</title>
+  <section id="sec-acknowledgements">
+   <title>Acknowledgements</title>
 
    <para>This document has its origins in the submissions to the
    testing category of the Software Carpentry design competition in
@@ -146,7 +148,8 @@
 
   </section>
 
-  <section><title>User Profiles</title>
+  <section id="sec-user-profiles">
+   <title>User Profiles</title>
 
    <para>As a way of delimiting the scope of this project, this
    section describes three typical users whose needs &qmtest; seeks to
