@@ -100,9 +100,6 @@ class Target(qm.extension.Extension):
         
         self.__database = database
 
-        # There are no resources available on this target.
-        self.__resources = {}
-        
 
     def GetName(self):
         """Return the name of the target.
@@ -170,6 +167,8 @@ class Target(qm.extension.Extension):
 
         self.__response_queue = response_queue
         self.__engine = engine
+        # There are no resources available on this target yet.
+        self.__resources = {}
 
         
     def Stop(self):
@@ -185,6 +184,9 @@ class Target(qm.extension.Extension):
         for (name, rop) in self.__resources.items():
             if rop and rop[1] == Result.PASS:
                 self._CleanUpResource(name, rop[0])
+        del self.__response_queue
+        del self.__engine
+        del self.__resources
 
 
     def RunTest(self, descriptor, context):

@@ -1,5 +1,9 @@
 2003-08-29  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/target.py (Target.__init__): Do not set __resources.
+	(Target.Start): Initialize __resources.
+	(Target.Stop): Remove entries created by Target.Start.
+
 	* GNUmakefile.in (check): Remove dependency on check-rsh.
 
 	* README: Mention Win32 extensions and update reference to ZPL.
