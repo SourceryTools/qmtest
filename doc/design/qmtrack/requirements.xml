@@ -60,7 +60,7 @@
   it. This helps support the collection of statistics later. If
   records are never destroyed, there is little danger in providing
   access to a larger community, and logging yields accountability,
-  which may encourage better behaviour.</para>
+  which may encourage better behavior.</para>
 
  </section>
 
@@ -133,7 +133,7 @@
   context, "configuring workflow" means that <phrase
   id="define-states">administrators must be able to define the types,
   states, and state transitions of issues</phrase>, as well as <phrase
-  id="define-roles">define priviles and permissions based on user IDs
+  id="define-roles">define privileges and permissions based on user IDs
   and user roles</phrase>.  For example, a site may want to allow
   developers to mark feature requests as impossible.  In order to do
   this, the &qmtrack; administrator at that site must be able to
@@ -178,8 +178,9 @@
   <para>As &qmtrack; will just be one part of a larger development
   environment, it must be able to interact with a variety of other
   tools.  Given the number and diversity of interfaces those tools may
-  present (shell execution, scripting, COM, CORBA, SOAP, and so on),
-  it is clearly not feasible to provide custom support for them all.
+  present (shell execution, scripting, <acronym>COM</acronym>,
+  <acronym>CORBA</acronym>, <acronym>SOAP</acronym>, and so on), it is
+  clearly not feasible to provide custom support for them all.
   Instead, &qmtrack; <phrase id="triggers">must be able to invoke
   arbitrary external applications or modules when specific state
   transitions occur</phrase>.</para>

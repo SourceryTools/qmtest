@@ -45,7 +45,7 @@
   &qmtrack; to store, retrieve, and query issues.  &qmtrack; accesses
   the &idb; via an abstract interface, which allows multiple
   implementations with varying performance and maintenance attributes.
-  We envision and accomodate implementations based on underlying
+  We envision and accommodate implementations based on underlying
   database technologies such as,
    <itemizedlist>
     <listitem>
@@ -61,7 +61,7 @@
     </listitem>
 
     <listitem>
-     <para>SQL-based relational databases such as Postgres, MySQL,
+     <para>&sql;-based relational databases such as Postgres, MySQL,
      and Oracle</para>
     </listitem>
 
@@ -70,7 +70,7 @@
      servers</para>
     </listitem>
    </itemizedlist>
-  However, all implementations must support the behaviour specified
+  However, all implementations must support the behavior specified
   here.</para>
 
   <para>Issues stored in the &idb; may incorporate different fields.
@@ -127,7 +127,7 @@
 
      <listitem>
       <para><constant>attachment</constant> fields contain an
-      arbitrary file attachment.  The attachment consistes of a (text)
+      arbitrary file attachment.  The attachment consists of a (text)
       &mime; type, a text description, and the binary data of the file
       itself.</para>
      </listitem>
@@ -142,15 +142,15 @@
    <para>The data types listed below are also stored in the &idb;, but
    don't necessarily require additional data type support from the
    underlying database.  The &qmtrack; system will supply an
-   implementation of these data types using the above complusory
+   implementation of these data types using the above compulsory
    types, if required.  However, implementations may override the
    implementation for any or all of these types for space or time
    optimization.
     <orderedlist>
      <listitem>
-      <para><constant>time</constant> fields store a UTC date/time.
-      This type field is based on the <constant>text</constant> field
-      type.</para>
+      <para><constant>time</constant> fields store a
+      <acronym>UTC</acronym> date/time.  This type field is based on
+      the <constant>text</constant> field type.</para>
      </listitem>
 
      <listitem>
@@ -223,8 +223,8 @@
   <section id="sec-categories">
    <title id="sec-categories-title">Categories</title>
 
-   <para>Issue ids are not for organizational purposes; they serve
-   simply to identiy each issue uniquely.  <firstterm
+   <para>Issue IDs are not for organizational purposes; they serve
+   simply to identity each issue uniquely.  <firstterm
    id="def-categories">Categories</firstterm> are used to group
    issues.  A category is simply a group of issues related in some way
    in the users' conceptions.  Membership in a category is recorded in
@@ -232,7 +232,7 @@
    belongs.  An issue may belong to zero, one, or more
    categories.</para>
 
-   <para>The enumeration of categories included in a particualr
+   <para>The enumeration of categories included in a particular
    &qmtrack; deployment is part of the &idb; configuration.</para>
 
   </section>
@@ -253,7 +253,7 @@
    new issue is submitted to the &idb;, a new &iid; is assigned and a
    new row is added to the &idb; with revision number zero.  When this
    issue is subsequently modified, another row is added containing the
-   revised data, and an incremented sequece number.  Previous rows are
+   revised data, and an incremented sequence number.  Previous rows are
    never deleted.  For an issue, the &idb; row with the corresponding
    &iid; and the highest revision number is the <firstterm>current
    revision</firstterm>.  (When we refer to an issue in this document
@@ -268,7 +268,7 @@
    during normal use.  Issues that are no longer relevant and should
    not appear in queries are moved to the "Deleted" state (see <xref
    linkend="sec-state-model"/>).  However, they may be for
-   housecleaning purposes; for instance, older revisions of retired
+   house cleaning purposes; for instance, older revisions of retired
    issues may be removed to reduce the size of the &idb;.  To maintain
    referential integrity in the &idb;, there may be no user-visible
    persistent reference to a particular revision of an issue; users
@@ -305,7 +305,7 @@
       in any particular issue class, but if they are, take a
       particular field type and have standard semantics.  Optional
       &qmtrack; features and modules may rely on standard fields for
-      thier operation.  A component of &qmtrack; or a module which
+      their operation.  A component of &qmtrack; or a module which
       uses a standard field must always check first whether the field
       is present, and degrade gracefully if it is not.</para>
      </listitem>
@@ -508,7 +508,7 @@
     </listitem>
 
     <listitem>
-     <para>Comparison operarators <function>&lt;</function>,
+     <para>Comparison operators <function>&lt;</function>,
      <function>&lt;=</function>, <function>&gt;=</function>, and
      <function>&gt;</function>, taking integer, date, or enumeration
      operands.</para>
@@ -523,7 +523,7 @@
    <itemizedlist>
     <listitem>
      <para>The name of a field in the issue class.  The name is
-     replaced by the field's value.</para>
+     replaced by the fields value.</para>
     </listitem>
 
     <listitem>
@@ -559,7 +559,7 @@
    <title>Query examples</title>
 
    <para>Below are some examples of &qmtrack; issue queries
-   incorporating operations on mandatory and sstandard fields.
+   incorporating operations on mandatory and standard fields.
     <segmentedlist>
      <segtitle>Query</segtitle>
      <segtitle>Interpretation</segtitle>

@@ -72,7 +72,7 @@
    single revision only, namely the latest revision.  In this case,
    the <sgmltag>&lt;issue&gt;</sgmltag> element will contain only a
    single <sgmltag>&lt;field-data&gt;</sgmltag> element, and the the
-   <property>revision</property> attribute is supressed.  For
+   <property>revision</property> attribute is suppressed.  For
    &xml;-based &idb; implementations in which multiple revisions are
    stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
    elements will be included with different
@@ -156,7 +156,7 @@ int foo (char* p) {
    fields, the "bug" issue class includes two other fields
    specifically added for recording information about compiler bugs.
    The "flags" field describes the command-line options that should be
-   specified when inoking the compiler to reproduce the problem.  The
+   specified when invoking the compiler to reproduce the problem.  The
    "input" field contains the input source code.  Since the "input"
    field contains program text that is likely to contain special
    characters, the field contents are placed in a

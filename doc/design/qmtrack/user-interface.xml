@@ -21,7 +21,7 @@
   <title id="sec-ui-title">User Interface</title>
 
   <para>This section describes the different methods the user can use
-  to create issues, edit issues, and query the database. We invision
+  to create issues, edit issues, and query the database. We envision
   three main modes for interaction: command line, e-mail, and
   web. However, based on the &api; specification in <xref
   linkend="chap-implementation"/>, any mode may be added.</para>
@@ -95,7 +95,7 @@
      <title><command>split</command></title>
 
      <para>The <command>split</command> command splits one issue into
-     two.  The issue ids of the two new issues are printed (the old
+     two.  The issue IDs of the two new issues are printed (the old
      issue id is no longer used).  For example,
      <screen>
       &prompt;<userinput>qmtrack split foo</userinput>
@@ -131,7 +131,7 @@
      </screen>
      searches for all issues in the category "front_end" at the
      severity level "serious" or greater.  &qmtrack; responds with the
-     issue ids of matching issues.</para>
+     issue IDs of matching issues.</para>
     </formalpara>
 
    </section>
@@ -162,16 +162,16 @@
        </row>
        <row>
         <entry><literal>iid</literal></entry>
-        <entry>Comma-delimited issue ids (default).</entry>
+        <entry>Comma-delimited issue IDs (default).</entry>
        </row>
        <row>
         <entry><literal>iid-single</literal></entry>
-        <entry>Issue ids, delimited with newlines, useful for shell
+        <entry>Issue IDs, delimited with newlines, useful for shell
         and line-oriented processing.</entry>
        </row>
        <row>
         <entry><literal>summary</literal></entry>
-        <entry>Issue ids and summaries.</entry>
+        <entry>Issue IDs and summaries.</entry>
        </row>
        <row>
         <entry><literal>short</literal></entry>
@@ -402,7 +402,7 @@ query 'bar in categories'
    </para>
 
    <figure id="fig-web-state-model">
-    <title>Web GUI state model schematic</title>
+    <title>Web &gui; state model schematic</title>
 
     <mediaobject>
      <imageobject>
@@ -416,7 +416,7 @@ query 'bar in categories'
    shown in <xref linkend="fig-main1.jpg"/>.
     <footnote>
      <para>The figures shown here and below are still provisional.
-     Layout, labelling, etc. will be refined based on additional GUI
+     Layout, labelling, etc. will be refined based on additional &gui;
      design work and usability testing.</para>
    </footnote>
    This is the control center for the database. From this menu, the user
@@ -491,7 +491,7 @@ query 'bar in categories'
    </figure>
 
    <para>Then the user can then edit the issue on the page. Notice
-   that the fields are displated in their edit form, just as they were
+   that the fields are displayed in their edit form, just as they were
    on the "Create Issue" page. The user then clicks "Edit" to commit
    the changes he/she made. Again, a "View Issue" page will be
    displayed with the issue that was just edited.</para>

@@ -1,5 +1,17 @@
 2000-12-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/qm.mod (gui): New entity.
+	(url): Likewise.
+	* doc/design/qmtrack/concepts.xml: Fix typos.
+	* doc/design/qmtrack/implementation.xml: Likewise.
+	* doc/design/qmtrack/introduction.xml: Likewise.
+	* doc/design/qmtrack/requirements.xml: Likewise.
+	* doc/design/qmtrack/triggers.xml: Likewise.
+	* doc/design/qmtrack/user-interface.xml: Likewise.
+	* doc/design/qmtrack/xml-repr.xml: Likewise.
+	
+2000-12-07  Alex Samuel  <samuel@codesourcery.com>
+
 	Tag "version-0-2" for delivery to LANL.
 	
 	* standard.mk ($(HTMLINDEX)): Process graphics here.

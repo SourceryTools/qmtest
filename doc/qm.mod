@@ -31,10 +31,12 @@
 <!ENTITY dtd "<acronym>DTD</acronym>">
 <!ENTITY dtml "<acronym>DTML</acronym>">
 <!ENTITY faq "<acronym>FAQ</acronym>">
+<!ENTITY gui "<acronym>GUI</acronym>">
 <!ENTITY html "<acronym>HTML</acronym>">
 <!ENTITY mime "<acronym>MIME</acronym>">
 <!ENTITY rdbms "<acronym>RDBMS</acronym>">
 <!ENTITY sql "<acronym>SQL</acronym>">
+<!ENTITY url "<acronym>URL</acronym>">
 <!ENTITY xml "<acronym>XML</acronym>">
 
 <!-- Other commonly-used symbols and phrases.  -->

@@ -84,7 +84,7 @@
    <para>Bug tracking systems typically include the notion of
    <firstterm id="def-state">state</firstterm>.  Most projects and
    organizations have a formal or informal workflow process, which
-   structures the submission, processing, and retirement of isssues.
+   structures the submission, processing, and retirement of issues.
    An issue's state reflects its status or position in this workflow
    process.</para>
 
@@ -128,7 +128,7 @@
    carefully designed by software quality experts, which will be
    appropriate for bug tracking in small and medium-sized projects.
    This will encourage users with little experience of quality
-   managment process to utilize the additional structure of the state
+   management process to utilize the additional structure of the state
    model system.  Advanced users or those using &qmtrack; for other
    purposes will have the opportunity to customize the state model to
    their particular needs and their project's processes.</para>
@@ -217,7 +217,7 @@
       <para>Only administrators may delete an issue.</para>
      </listitem>
     </itemizedlist>
-   Such resrictions represent controls on the workflow in the project
+   Such restrictions represent controls on the workflow in the project
    or organization, and must be enforced by &qmtrack;.</para>
 
    <para>Access control is implemented in &qmtrack; via get and
@@ -226,7 +226,7 @@
    to access.  If the user is authorized to access some but not all
    fields of the issue, the trigger hides the values of those fields
    the user may not access.  The preupdate trigger examines whether
-   the user is authorized to make the particlar update to the issue.
+   the user is authorized to make the particular update to the issue.
    If not, the trigger vetoes the update.</para>
 
    <para>The authorization triggers will be configurable, without any

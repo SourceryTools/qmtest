@@ -169,14 +169,14 @@ class IssueFieldText(IssueField):
     characters that may need to be quoted, for example program source
     code.  An &idb; implementation may choose to quote the entire
     contents, rather than escaping individual punctuation separately.
-    For instance, an XML-based &idb; implementation might store the
+    For instance, an &xml;-based &idb; implementation might store the
     field contents inside a marked CDATA section
     ("<literal>&lt;![CDATA[ ... ]]&gt;</literal>").</para>
 
     <para>The <literal>"big"</literal> attribute flags that the
     contents of the field may be quite large.  An &idb; implementation
     may choose to store the field contents separately from the rest of
-    the issue.  For instance, an RDBMS &idb; implementation might
+    the issue.  For instance, an &rdbms; &idb; implementation might
     store the field contents in a separate text repository instead of
     in the main issue table.</para>
 
@@ -493,7 +493,7 @@ def issue_record_patch(from_record, diff_record):
  </section>
 
  <section id="sec-file-attachments">
-  <title>File attachements</title>
+  <title>File attachments</title>
 
   <para>The <classname>Attachment</classname> class represents an
   attachment.
@@ -618,7 +618,7 @@ class Trigger:
    <orderedlist>
     <listitem>
      <para>For "get" triggers, a false result causes the issue to be
-     supressed in the result of the &idb; operation.  If the operation
+     suppressed in the result of the &idb; operation.  If the operation
      was a query, the issue is omitted from the results.  If the
      operation is a single-issue access, the exception object is
      returned.</para>
@@ -626,7 +626,7 @@ class Trigger:
 
     <listitem>
      <para>For "preupdate" triggers, a false result causes the update
-     to be cancelled.</para>
+     to be canceled.</para>
     </listitem>
 
     <listitem>
@@ -694,11 +694,11 @@ class Trigger:
    <para>However, the burden of installing a full-blown &rdbms; system
    will be too onerous for many potential &qmtrack; users.  Some
    installers will not have the requisite experience and system
-   priviledges to install and configure a database server.
+   privileges to install and configure a database server.
    Nevertheless, &qmtrack; needs to provide out-of-the-box
    functionality for these users, with fully-automated installation.
    For these users, the &qmtrack; distribution will include an
-   in-process &rdbms; as the default issue database.  This sytsem
+   in-process &rdbms; as the default issue database.  This system
    should be adequate for most installations.</para>
 
    <para>The selection of an &rdbms; for inclusion in &qmtrack; is
@@ -715,7 +715,7 @@ class Trigger:
    <para>Each issue class is implemented by a table in the database.
    Table columns correspond to fields in the issue class.  The issue
    ID and revision number fields will jointly comprise the primary key
-   of each table.  Wherever possible, standard &sql; datatypes will be
+   of each table.  Wherever possible, standard &sql; data types will be
    used to represent field types (<type>VARCHAR</type> columns for
    text fields, <type>TIMESTAMP</type> columns for time fields,
    etc.).</para>
@@ -910,11 +910,10 @@ class Trigger:
   <para>&qmtrack; will <firstterm id="def-dtml">&dtml;</firstterm>
   (Document Template Markup Language) to generate web pages in the
   web-based user interface.  &dtml;, developed as part of the <ulink
-  url="http://www.zope.org">Zope project</ulink>, provides a mechaism
+  url="http://www.zope.org">Zope project</ulink>, provides a mechanism
   for server-side generation of web pages from an &html;-like syntax.
   &dtml; can invoke Python functions directly during the generation
-  procedure.  For more information about &dtml; and the
-  <sgmltag>dtml-in</sgmltag> tag, see the <ulink
+  procedure.  For more information about &dtml; see the <ulink
   url="http://www.zope.org/Documentation/Guides/DTML">&dtml;
   Reference</ulink> manual.</para>
 
