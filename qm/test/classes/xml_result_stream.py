@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest XMLResultSream class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -41,7 +41,7 @@ class XMLResultStream(ResultStream):
         caller."""
 
         # Initialize the base class.
-        ResultStream.__init__(self)
+        ResultStream.__init__(self, {})
         
         self.__file = file
         # Create an XML document, since the DOM API requires you

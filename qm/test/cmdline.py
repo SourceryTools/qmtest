@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest command processing
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -27,7 +27,6 @@ import qm.platform
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.text_result_stream import *
-from   qm.test.pickle_result_stream import PickleResultStream
 from   qm.trace import *
 import qm.test.web.web
 import qm.xmlutil
@@ -218,6 +217,13 @@ class QMTest:
         "Specify the summary format."
         )
 
+    result_format_spec = (
+        None,
+        "result-format",
+        "CLASS-NAME",
+        "Specify the results file format."
+        )
+        
     tdb_class_option_spec = (
         "c",
         "class",
@@ -287,6 +293,7 @@ class QMTest:
            no_browser_option_spec,
            pid_file_option_spec,
            port_option_spec,
+           result_format_spec,
            targets_option_spec
            )
          ),
@@ -373,6 +380,7 @@ The summary is written to standard output.
            output_option_spec,
            random_option_spec,
            rerun_option_spec,
+           result_format_spec,
            seed_option_spec,
            targets_option_spec,
            )
@@ -456,7 +464,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # We have not yet loaded the database.
         self.__database = None
-        
+        # The class to use when writing results files has not yet been
+        # determined.
+        self.__result_stream_class = None
         # We have not yet computed the set of available targets.
         self.targets = None
 
@@ -737,6 +747,23 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return version_string
         
 
+    def GetResultStreamClass(self):
+        """Return the class object for the result stream.
+
+        returns -- The extension class (derived from 'ResultStream') to
+        use when reading or writings results files."""
+
+        if not self.__result_stream_class:
+            class_name = self.GetCommandOption("result-format",
+                                               "pickle_result_stream."
+                                                   "PickleResultStream")
+            self.__result_stream_class \
+                = get_extension_class(class_name, "result_stream",
+                                      self.GetDatabase())
+
+        return self.__result_stream_class
+    
+        
     def __GetAttributeOptions(self):
         """Return the attributes specified on the command line.
 
@@ -1200,7 +1227,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 'expected_outcomes' -- A map from test IDs to expected
                 outcomes."""
 
-                ResultStream.__init__(self)
+                ResultStream.__init__(self, {})
 
                 self.__expected_outcomes = expected_outcomes
                 self.__any_unexpected_outcomes = 0
@@ -1228,7 +1255,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         result_streams = []
         if format != "none":
             stream = TextResultStream(self._stdout, format, expectations,
-                                      self.GetDatabase(), test_suites)
+                                      database, test_suites)
             result_streams.append(stream)
 
         # Handle 'result' options.
@@ -1252,7 +1279,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 close_result_file = 1
                 
         if result_file is not None:
-            result_streams.append(PickleResultStream(result_file))
+            result_stream_class = self.GetResultStreamClass()
+            result_streams.append(result_stream_class(result_file))
 
         # Keep track of whether or not any unexpected outcomes have
         # occurred.

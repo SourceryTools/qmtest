@@ -7,7 +7,7 @@
 # Contents:
 #   PickleResultStream
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -33,7 +33,7 @@ class PickleResultStream(ResultStream):
         caller."""
 
         # Initialize the base class.
-        ResultStream.__init__(self)
+        ResultStream.__init__(self, {})
         # Create a pickler.
         self.__pickler = cPickle.Pickler(file, 1)
 

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest TextResultStream class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -55,7 +55,7 @@ class TextResultStream(ResultStream):
         test run."""
 
         # Initialize the base class.
-        ResultStream.__init__(self)
+        ResultStream.__init__(self, {})
         
         self.__file = file
         self.__format = format

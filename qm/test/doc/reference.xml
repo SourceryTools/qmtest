@@ -8,7 +8,7 @@
   Contents:
     Manual for QMTest.
 
-  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002, 2003 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -900,6 +900,16 @@
       </varlistentry>
 
       <varlistentry>
+       <term>
+        <option>&dashdash;result-format <replaceable>class</replaceable></option>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
        <term><option>-T</option> <replaceable>file</replaceable></term>
        <term>
         <option>&dashdash;targets</option> <replaceable>file</replaceable>
@@ -1217,6 +1227,20 @@
        notice failures, you might try to fix those failing tests.
        Then, you can rerun the failing tests to see if you succeeded
        by using the <option>&dashdash;rerun</option> option.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;result-format <replaceable>class</replaceable></option>
+      </term>
+      <listitem>
+       <para>Specify the <replaceable>class</replaceable> to use when
+       generating a results file.  By default, &qmtest; will use
+       <literal>pickle_result_stream.PickleResultStream</literal>
+       which is a binary format.  The
+       <literal>xml_result_stream.XMLResultStream</literal> format is
+       an alternative XML-based format.</para>
       </listitem>
      </varlistentry>
 

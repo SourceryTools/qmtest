@@ -1,3 +1,32 @@
+2003-01-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention --result-format.
+	* qm/test/base.py (extension_kinds): Add result_stream.
+	(__extension_bases): Likewise.
+	* qm/test/cmdline.py (PickleResultStream): Don't import it.
+	(QMTest.result_format_spec): New variable.
+	(QMTest.commands_spec): Use it.
+	(QMTest.__init__): Initialize __result_stream_class.
+	(QMTest.GetResultStreamClass): New method.
+	(QMTest.UnexpectedOutcomesStream.__init__): Adjust call to
+	ResultStream.__init__.
+	(QMTest.__ExecuteRun): Use GetResultStreamClass.
+	* qm/test/pickle_result_stream.py: Remove.
+	* qm/test/result_stream.py (ResultStream): Derive from Extension.
+	* qm/test/text_result_stream.py (TextResultStream.__init__):
+	Adjust call to ResultStream.__init__.
+	* qm/test/xml_result_stream.py: New file.
+	* qm/test/classes/classes.qmc: Add XMLResultStream and
+	PickleResultStream.
+	* qm/test/classes/pickle_result_stream.py: New file.
+	* qm/test/doc/reference.xml: Document --result-format.
+	* qm/test/web/web.py (PickleResultStream): Do not import it.
+	(StorageResultStream.__init__): Adjust call to
+	ResultStream.__init__.
+	(QMTestServer.HandleSaveExpectations): Use
+	QMTest.GetResultStreamClass.
+	(QMTestServer.HandleSaveResults): Likewise.
+	
 2002-12-31  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/common-manual.xml: Document click_menus option.

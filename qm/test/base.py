@@ -7,7 +7,7 @@
 # Contents:
 #   Base interfaces and classes.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -420,6 +420,7 @@ def split_results_by_expected_outcome(results, expected_outcomes):
 extension_kinds = [ 'database',
                     'label',
                     'resource',
+                    'result_stream',
                     'target',
                     'test', ]
 """Names of different kinds of QMTest extension classes."""
@@ -437,6 +438,7 @@ for kind in extension_kinds:
 import qm.test.database
 import qm.label
 import qm.test.resource
+import qm.test.result_stream
 import qm.test.target
 import qm.test.test
 
@@ -444,6 +446,7 @@ __extension_bases = {
     'database' : qm.test.database.Database,
     'label' : qm.label.Label,
     'resource' : qm.test.resource.Resource,
+    'result_stream' : qm.test.result_stream.ResultStream,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test
     }
