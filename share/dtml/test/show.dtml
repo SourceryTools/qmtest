@@ -45,10 +45,7 @@
         <dtml-var expr="MakeButton('Edit', 'edit-' + type, id=item.GetId())">
         <input type="button"
                value=" Delete "
-               onclick="delete_script();"/>
-        <script language="JavaScript">
-         <dtml-var expr="MakeDeleteScript()">
-        </script>
+               onclick="<dtml-var expr="MakeDeleteScript()">"/>
        </form>
       </dtml-if>
      </td>
@@ -193,7 +190,7 @@
         <dtml-if expr="_.len(prerequisites) > 0">
          <dtml-in expr="prerequisites.keys()">
          <dtml-let prerequisite=sequence-item>
-          <dtml-var expr="FormatTestId(prerequisite)"> 
+          <dtml-var expr="FormatTestId(prerequisite, item.GetId())"> 
           (<dtml-var expr="prerequisites[prerequisite]">)
           <br>
          </dtml-let>

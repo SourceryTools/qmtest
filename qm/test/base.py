@@ -337,16 +337,35 @@ class Test(InstanceBase):
         return category in self.__categories
 
 
-    def GetPrerequisites(self):
-        """Return a map from prerequisite test IDs to required outcomes."""
+    def GetPrerequisites(self, absolute=0):
+        """Return a map from prerequisite test IDs to required outcomes.
 
-        return self.__prerequisites
+        'absolute' -- If true, present the prerequisite test IDs as
+        absolute IDs.  Otherwise, the are presented as IDs relative to
+        this test."""
+
+        if absolute:
+            rel = qm.label.MakeRelativeTo(qm.label.dirname(self.GetId()))
+            prerequisites = {}
+            for test_id, outcome in self.__prerequisites.items():
+                prerequisites[rel(test_id)] = outcome
+            return prerequisites
+        else:
+            return self.__prerequisites
 
 
-    def GetActions(self):
-        """Return a sequence of IDs of actions."""
+    def GetActions(self, absolute=0):
+        """Return a sequence of IDs of actions.
 
-        return self.__actions
+        'absolute' -- If true, present the prerequisite test IDs as
+        absolute IDs.  Otherwise, the are presented as IDs relative to
+        this test."""
+
+        if absolute:
+            rel = qm.label.MakeRelativeTo(qm.label.dirname(self.GetId()))
+            return map(rel, self.__actions)
+        else:
+            return self.__actions
 
 
     def Run(self, context):
@@ -1040,7 +1059,7 @@ class PrerequisiteMapAdapter:
         """Return a sequence of IDs of prerequisite tests of 'test_id'."""
 
         test = self.__database.GetTest(test_id)
-        return test.GetPrerequisites().keys()
+        return test.GetPrerequisites(absolute=1).keys()
 
 
 
@@ -1119,7 +1138,7 @@ class Engine:
            # Store it.
            tests[test_id] = test
            # Loop over all the actions it references.
-           for action_id in test.GetActions():
+           for action_id in test.GetActions(absolute=1):
                # The cleanup action should be run after this test.
                # Another, earlier test may have been here, but this test
                # will be run later, so reschedule the cleanup.
@@ -1140,7 +1159,7 @@ class Engine:
        for test_id in test_ids:
            test = tests[test_id]
            result = None
-           action_ids = test.GetActions()
+           action_ids = test.GetActions(absolute=1)
 
            # Prerequisite tests and setup actions may add additional
            # properties to the context which are visible to this test.
@@ -1152,7 +1171,8 @@ class Engine:
            # different outcome, generate an UNTESTED result and stop
            # processing prerequisites.
            
-           for prerequisite_id, outcome in test.GetPrerequisites().items():
+           prerequisites = test.GetPrerequisites(absolute=1)
+           for prerequisite_id, outcome in prerequisites.items():
                # Because of the topological sort, the prerequisite
                # should already have been run.
                assert results.has_key(prerequisite_id)

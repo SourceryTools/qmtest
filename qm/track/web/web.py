@@ -193,7 +193,14 @@ def make_url_for_attachment(field, attachment):
     request = qm.web.WebRequest("download-attachment",
                                 location=attachment.location,
                                 mime_type=attachment.mime_type)
-    return qm.web.make_url_for_request(request)
+    url = request.AsUrl()
+    # Here's a nice hack.  If the user saves the attachment to a file,
+    # browsers (some at least) guess the default file name from the
+    # URL by taking everything following the final slash character.  So,
+    # we add this bogus-looking argument to fool the browser into using
+    # our file name.
+    url = url + "&=/" + urllib.quote_plus(attachment.file_name)
+    return url
 
 
 ########################################################################

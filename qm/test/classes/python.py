@@ -77,6 +77,7 @@ class ExecTest:
             PASS.  If omitted, the expression is assumed to return a
             passing value, so the test will always pass unless the code
             specified for the 'source' parameter raises an exception.""",
+            verbatim="true",
             default_value="1"
             ),
         

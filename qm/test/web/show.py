@@ -179,12 +179,6 @@ class ShowPageInfo(web.PageInfo):
     def MakePrerequisitesControl(self):
         """Make controls for editing test prerequisites."""
 
-        # The "add-prerequisite" script shows the page for specifying a
-        # new test prerequisite.  See 'handle_add_prerequisite'.
-        test_path = qm.label.dirname(self.item.GetId())
-        add_request = qm.web.WebRequest("add-prerequisite",
-                                        base=self.request,
-                                        path=test_path)
         # Encode the current prerequisites.  The first element of each
         # option is user-visible; the second is the option value which
         # we can parse back later.
@@ -192,10 +186,16 @@ class ShowPageInfo(web.PageInfo):
         for test_id, outcome in self.prerequisites.items():
             options.append(("%s (%s)" % (test_id, outcome),
                             "%s;%s" % (test_id, outcome)))
+        # Generate the page for selecting the prerequisite test to add.
+        test_path = qm.label.dirname(self.item.GetId())
+        page_info = AddPrerequisitePageInfo(self.request, test_path)
+        add_page = web.generate_html_from_dtml("add-prerequisite.dtml",
+                                               page_info)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="prerequisites",
-                                       add_request=add_request,
+                                       select_name="_set_prerequisites",
+                                       add_page=add_page,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=480)
@@ -204,18 +204,17 @@ class ShowPageInfo(web.PageInfo):
     def MakeActionsControl(self):
         """Make controls for editing the actions associated with a test."""
 
-        # The 'add-action' script shows the page for specifying a new
-        # action.  See 'handle_add_action'.
-        test_path = qm.label.dirname(self.item.GetId())
-        add_request = qm.web.WebRequest("add-action",
-                                        base=self.request,
-                                        path=test_path)
         # Encode the current action values.
         options = map(lambda ac: (ac, ac), self.actions)
+        # Generate the page for selecting the action to add.
+        test_path = qm.label.dirname(self.item.GetId())
+        page_info = AddActionPageInfo(self.request, test_path)
+        add_page = web.generate_html_from_dtml("add-action.dtml", page_info)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="actions",
-                                       add_request=add_request,
+                                       select_name="_set_actions",
+                                       add_page=add_page,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=360)
@@ -224,17 +223,16 @@ class ShowPageInfo(web.PageInfo):
     def MakeCategoriesControl(self):
         """Make controls for editing a test's categories."""
 
-        # The 'add-category' script shows the page for specifying a new
-        # category.  See 'handle_add_category'.
-        test_path = qm.label.dirname(self.item.GetId())
-        add_request = qm.web.WebRequest("add-category",
-                                        base=self.request)
         # Encode the current categories.
         options = map(lambda cat: (cat, cat), self.categories)
+        # Generate the page for selecting the category to add.
+        page_info = qm.web.PageInfo(self.request)
+        add_page = web.generate_html_from_dtml("add-category.dtml", page_info)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="categories",
-                                       add_request=add_request,
+                                       select_name="_set_categories",
+                                       add_page=add_page,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=240)
@@ -253,8 +251,7 @@ class ShowPageInfo(web.PageInfo):
         message = """
         <p>Are you sure you want to delete the %s %s?</p>
         """ % (self.type, item_id)
-        return qm.web.make_confirmation_dialog_script(
-            "delete_script", message, delete_url)
+        return qm.web.make_confirmation_dialog(message, delete_url)
 
 
 
@@ -265,13 +262,12 @@ class AddPrerequisitePageInfo(qm.web.PageInfo):
     outcomes = qm.test.base.Result.outcomes
     """The list of possible test outcomes."""
 
-    def __init__(self, request):
+    def __init__(self, request, base_path):
         # Initialize the base class.
         qm.web.PageInfo.__init__(self, request)
         # Extract a list of all test IDs in the specified path. 
         db = qm.test.base.get_database()
-        test_path = request["path"]
-        test_ids = db.GetTestIds(test_path)
+        test_ids = db.GetTestIds(base_path)
         test_ids.sort()
         # Store it for the DTML code.
         self.test_ids = test_ids
@@ -281,12 +277,11 @@ class AddPrerequisitePageInfo(qm.web.PageInfo):
 class AddActionPageInfo(qm.web.PageInfo):
     """DTML context for generating DTML template add-action.dtml."""
 
-    def __init__(self, request):
+    def __init__(self, request, action_path):
         # Initialize the base class.
         qm.web.PageInfo.__init__(self, request)
         # Extract a list of all action IDs in the specified path.
         db = qm.test.base.get_database()
-        action_path = request["path"]
         action_ids = db.GetActionIds(action_path)
         action_ids.sort()
         # Store it for the DTML code.
@@ -650,51 +645,6 @@ def handle_submit(request):
     # Redirect to a page that displays the newly-edited item.
     request = qm.web.WebRequest("show-" + type, base=request, id=item_id)
     raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
-
-
-def handle_add_prerequisite(request):
-    """Handle the 'add-prerequisite' script.
-
-    This page is generated in a pop-up window to allow the user to
-    specify a new prerequisite to add to a test.
-
-    'request' has the following fields:
-
-      'path' -- The containing path of the test for which the
-      prerequisite is being specified.  The ID of the prerequisite test
-      is specified relative to this path.
-    """
-
-    page_info = AddPrerequisitePageInfo(request)
-    return web.generate_html_from_dtml("add-prerequisite.dtml",
-                                       page_info)
-
-
-def handle_add_action(request):
-    """Handle the 'add-action' script.
-
-    This page is generated in a pop-up window to allow the user to
-    specify a new action to add to a test.
-
-    'request' has the following fields:
-
-      'path' -- The containing path of the test for which the
-      prerequisite is being specified.  The ID of the prerequisite test
-      is specified relative to this path.
-    """
-
-    page_info = AddActionPageInfo(request)
-    return web.generate_html_from_dtml("add-action.dtml", page_info)
-
-
-def handle_add_category(request):
-    """Handle the 'add-category' script.
-
-    This page is generated in a pop-up window to allow the user to
-    specify a new category to add to a test."""
-
-    page_info = qm.web.PageInfo(request)
-    return web.generate_html_from_dtml("add-category.dtml", page_info)
 
 
 def handle_new_test(request):

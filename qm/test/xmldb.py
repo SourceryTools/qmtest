@@ -643,15 +643,10 @@ class Database(base.Database):
         returns -- A mapping from prerequisite test ID to the outcome
         required for that test."""
         
-        dir_id = qm.label.split(test_id)[0]
-        rel = qm.label.MakeRelativeTo(dir_id)
         # Extract the contents of all prerequisite elements.
         results = {}
         for child_node in test_node.getElementsByTagName("prerequisite"):
             test_id = qm.xmlutil.get_dom_text(child_node)
-            # These test IDs are relative to the path containing this
-            # test.  Make them absolute.
-            test_id = rel(test_id)
             # Get the required outcome.
             outcome = child_node.getAttribute("outcome")
             results[test_id] = outcome
@@ -667,15 +662,10 @@ class Database(base.Database):
 
         returns -- A sequence of action IDs."""
         
-        dir_id = qm.label.split(test_id)[0]
-        rel = qm.label.MakeRelativeTo(dir_id)
         # Extract the contents of all action elements.
         results = []
         for child_node in test_node.getElementsByTagName("action"):
             action_id = qm.xmlutil.get_dom_text(child_node)
-            # These action IDs are relative to the path containing this
-            # test.  Make them absolute.
-            action_id = rel(action_id)
             results.append(action_id)
         return results
 
@@ -713,15 +703,12 @@ class Database(base.Database):
         # Build and add prerequisite elements.  First find the ID path
         # containing this test.
         containing_id = qm.label.split(test_id)[0]
-        # Prerequisite IDs are stored relative to this.
-        unrel = qm.label.UnmakeRelativeTo(containing_id)
         # Loop over prerequisites.
         for prerequisite_id, outcome in test.GetPrerequisites().items():
             # The relative ID path to the prerequisite test is stored as
             # the element contents.
-            relative_id = unrel(prerequisite_id)
             prq_element = qm.xmlutil.create_dom_text_element(
-                document, "prerequisite", relative_id)
+                document, "prerequisite", prerequisite_id)
             # The outcome is stored as an attribute.
             prq_element.setAttribute("outcome", outcome)
             element.appendChild(prq_element)

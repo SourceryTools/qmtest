@@ -85,10 +85,8 @@
   function add_action()
   {
     var action_id = document.form.action_id.value;
-    var select = 
-      window.opener.document.<dtml-var expr="request['select']">;
-    var contents =
-      window.opener.document.<dtml-var expr="request['contents']">;
+    var select = window.opener.document.form._set_actions;
+    var contents = window.opener.document.form.actions;
     if(action_id != "")
       window.opener.add_to_set(select, contents, action_id, action_id);
     window.close();

@@ -941,6 +941,25 @@ def open_temporary_file():
     return (file_name, os.fdopen(fd, "w+b"))
 
 
+def make_temporary_directory():
+    """Create a temporary directory.
+
+    returns -- The path to the temporary directory."""
+
+    # FIXME: Security.
+
+    dir_path = tempfile.mktemp()
+    try:
+        os.mkdir(dir_path, 0700)
+    except:
+        exc_info = sys.exc_info()
+        raise RuntimeError, qm.error("temp dir error",
+                                     dir_path=dir_path,
+                                     exc_class=str(exc_info[0]),
+                                     exc_arg=str(exc_info[1]))
+    return dir_path
+
+
 def find_program_in_path(program_name, path):
     """Attempt to locate a program in an execution path.
 
@@ -982,12 +1001,51 @@ def starts_with(text, prefix):
            and text[:len(prefix)] == prefix
 
 
+def add_exit_function(exit_function):
+    """Register 'exit_function' to be called when the program exits.
+
+    'exit_function' -- A callable that takes no arguments."""
+
+    # Check whether there is already an exit function registered with
+    # the Python interpreter.
+    if hasattr(sys, "exitfunc"):
+        # Yes, there is.
+        exit_function = sys.exitfunc
+        # Is it our exit function dispatcher?
+        if exit_function is not _at_exit:
+            # Something else is there.  Print a warning.
+            sys.stderr.write("Warning: Replacing foreign value of "
+                             "sys.exitfunc.\n")
+            # Replace it.
+            sys.exitfunc = _at_exit
+    else:
+        # Install our exit function dispatcher.
+        sys.exitfunc = _at_exit
+
+    # Add the exit function to the list of things to do at exit.
+    global _exit_functions
+    _exit_functions.append(exit_function)
+
+
+def _at_exit():
+    """Perform cleanup stuff at program termination."""
+
+    global _exit_functions
+    map(lambda fn: fn(), _exit_functions)
+
+
 ########################################################################
 # variables
 ########################################################################
 
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""
+
+_exit_functions = []
+"""Functions that should be called when the program exits.
+
+Each element is a callable that takes no arguments.  The return value is
+ignored."""
 
 ########################################################################
 # Local Variables:

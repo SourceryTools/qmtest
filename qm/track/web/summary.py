@@ -115,14 +115,20 @@ class SummaryPageInfo(web.PageInfo):
         # Generate the HTML page for the popup window for selecting
         # display options.
         display_options_page_info = DisplayOptionsPageInfo(
-            request, self.issue_map.keys(), self.field_names)
+            request,
+            self.issue_map.keys(),
+            self.field_names)
         display_options_page = web.generate_html_from_dtml(
-            "summary-display-options.dtml", display_options_page_info)
+            "summary-display-options.dtml",
+            display_options_page_info)
         # Construct the Display Options button, which pops up a window
         # showing this page.
         self.display_options_button = qm.web.make_button_for_popup(
-            "Change Display Options...", display_options_page,
-            window_width=640, window_height=320)
+            "Change Display Options...",
+            display_options_page,
+            request=self.request,
+            window_width=640,
+            window_height=320)
 
 
     def IsIssueShown(self, issue):

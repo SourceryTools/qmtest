@@ -1,3 +1,73 @@
+2001-05-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (WebRequestHandler.__HandlePageCacheRequest): New
+	method. 
+	(WebRequestHandler.__HandleSessionCacheRequest): Likewise.
+	(WebRequestHandler.__HandleRequest): Call them.
+	(WebRequest.AsUrl): New method.
+	(make_set_control): Adjust for using page cache.
+	(make_popup_dialog_script): Rename to...
+	(make_popup_dialog): ... this and adjust for using page cache.
+	(make_confirmation_dialog_script): Rename to...
+	(make_confirmation_dialog): ... this, and remove function_name
+	parameter. 
+	(Session.make_button_for_popup): Reimplement using page cache.
+	Leave old implementation, but disabled.
+	(cache_page): New function.
+	(get_from_cache): Likewise.
+	(_page_cache_path): New variable.
+	(_page_cache_name): Likewise.
+	(_session_cache_name): Likewise.
+	* qm/platform.py: Adjust formatting.
+	* qm/fields.py (TextField.FormatValueAsHtml): Escape field values.
+	(AttachmentField.FormatValueAsHtml): Use make_button_for_popup.
+	* qm/common.py (make_temporary_directory): New function.
+	(add_exit_function): Likewise.
+	(_at_exit): Likewise.
+	(_exit_functions): New variable.
+	
+	* share/diagnostics/common.txt (temp dir error): New diagnostic.
+	* share/dtml/test/add-prerequisite.dtml: (add_prerequisite):
+	Likewise.
+	* share/dtml/test/add-category.dtml (add_category): Likewise.
+	* share/dtml/test/add-action.dtml (add_action): Hard-code form
+	field names. 
+	* share/dtml/test/suite.dtml: Adjust for MakeDeleteScript.
+	* share/dtml/test/show.dtml: Likewise.
+
+	* qm/track/web/web.py (make_url_for_attachment): Stash attachment
+	file name at end of URL.
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Pass request
+	to make_button_for_popup.
+	* qm/test/web/web.py (PageInfo.FormatTestId): Add relative_to
+	parameter. 
+	(PageInfo.FormatActionId): Likewise.
+	(make_server): Don't register add-action, add-category,
+	add-prerequisite. 
+	* qm/test/web/suite.py (ShowPageInfo.MakeDeleteScript): Adjust for
+	make_confirmation_dialog. 
+	* qm/test/web/show.py (ShowPageInfo.MakePrerequisitesControl):
+	Generate page here for make_set_control.
+	(ShowPageInfo.MakeActionsControl): Likewise.
+	(ShowPageInfo.MakeCategoriesControl): Likewise.
+	(ShowPageInfo.MakeDeleteScript): Adjust for make_confirmation_dialog.
+	(AddPrerequisitePageInfo.__init__): Add base_path parameter.
+	(AddActionPageInfo.__init__): Add action_path parameter.
+	(handle_add_prerequisite): Remove.
+	(handle_add_action): Likewise.
+	(handle_add_category): Likewise.
+	* qm/test/classes/python.py (ExecTest.fields): Set verbatim
+	attribute on expression field.
+	* qm/test/xmldb.py (Database.__GetPrerequisitesFromDomNode): Don't
+	make IDs absolute here.
+	(Database.__GetActionsFromDomNode): Likewise.
+	(Database.__MakeDomNodeForTest): Don't reverse absolute IDs here.
+	(Database.__MakeDomNodeForAction): Likewise.
+	* qm/test/base.py (Test.GetPrerequisites): Add absolue parameter.
+	(Test.GetActions): Likewise.
+	(PrerequisiteMapAdapter.__getitem__): Use absolute IDs. 
+	(Engine.null_function): Likewise, for prerequisites and actions.
+
 2001-05-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/web/summary.py (DisplayOptionsPageInfo.__init__): Don't

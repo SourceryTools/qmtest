@@ -105,6 +105,9 @@
       <input type="button" 
              value=" OK "
              onclick="do_submit();"/>
+      <input type="button" 
+             value=" Cancel "
+             onclick="window.close();"/>
      </td>
     </tr>
    </table>

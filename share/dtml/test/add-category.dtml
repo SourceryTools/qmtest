@@ -65,10 +65,8 @@
   function add_category()
   {
     var category = document.form.category.value;
-    var select = 
-      window.opener.document.<dtml-var expr="request['select']">;
-    var contents =
-      window.opener.document.<dtml-var expr="request['contents']">;
+    var select = window.opener.document.form._set_categories;
+    var contents = window.opener.document.form.categories;
     if(category != "")
       window.opener.add_to_set(select, contents, category, category);
     window.close();

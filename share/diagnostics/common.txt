@@ -79,6 +79,12 @@ from a single network address.
 
 Please log in again to start a new session.
 
+@ temp dir error
+An error occured while creating the temporary directory '%(dir_path)s'.
+Please check that your temporary directory is configured correctly.
+
+'%(exc_class)s: %(exc_arg)s'
+
 @ temp file error
 An error occured while creating the temporary file '%(file_name)s'.
 Please check that your temporary directory is configured correctly.

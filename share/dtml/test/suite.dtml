@@ -40,10 +40,7 @@
        <dtml-var expr="MakeButton('Edit', 'edit-suite', id=suite.GetId())">
        <input type="button"
               value=" Delete "
-              onclick="delete_script();"/>
-       <script language="JavaScript">
-        <dtml-var expr="MakeDeleteScript()">
-       </script>
+              onclick="<dtml-var expr="MakeDeleteScript()">"/>
       </dtml-if>
      </form>
     </td>

@@ -115,8 +115,7 @@ class ShowPageInfo(web.PageInfo):
         message = """
         <p>Are you sure you want to delete the suite %s?</p>
         """ % suite_id
-        return qm.web.make_confirmation_dialog_script(
-            "delete_script", message, delete_url)
+        return qm.web.make_confirmation_dialog(message, delete_url)
 
 
 

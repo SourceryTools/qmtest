@@ -45,7 +45,7 @@ import errno
 import htmlentitydefs
 import md5
 import os
-import qm.common
+import common
 import qm.user
 import re
 import SimpleHTTPServer
@@ -226,7 +226,7 @@ class PageInfo:
     def GetProgramName(self):
         """Return the name of this application program."""
 
-        return qm.common.program_name
+        return common.program_name
 
 
     def FormatStructuredText(self, text):
@@ -563,13 +563,54 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.copyfile(file, self.wfile)
 
 
+    def __HandlePageCacheRequest(self, request):
+        """Process a retrieval request from the global page cache."""
+
+        # Get the page from the cache.
+        page = get_from_cache(request, session_id=None)
+        # Send it.
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Length", str(len(page)))
+        self.send_header("Cache-Control", "public")
+        self.end_headers()
+        self.wfile.write(page)
+        
+
+    def __HandleSessionCacheRequest(self, request):
+        """Process a retrieval request from the session page cache."""
+
+        # Extract the session ID.
+        session_id = request.GetSessionId()
+        if session_id is None:
+            # We should never get request for pages from the session
+            # cache without a session ID.
+            self.send_error(400, "Missing session ID.")
+            return
+        # Get the page from the cache.
+        page = get_from_cache(request, session_id)
+        # Send it.
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Length", str(len(page)))
+        self.send_header("Cache-Control", "private")
+        self.end_headers()
+        self.wfile.write(page)
+        
+
     def __HandleRequest(self, request):
         """Process a request from a GET or POST operation.
 
         'request' -- A 'WebRequest' object."""
 
+        if request.GetScriptName() == _page_cache_name:
+            # It's a request from the global page cache.
+            self.__HandlePageCacheRequest(request)
+        elif request.GetScriptName() == _session_cache_name:
+            # It's a request from the session page cache.
+            self.__HandleSessionCacheRequest(request)
         # Check if this request corresponds to a script.
-        if self.server.IsScript(request):
+        elif self.server.IsScript(request):
             # It is, so run it.
             self.__HandleScriptRequest(request)
         else:
@@ -675,7 +716,24 @@ class WebServer(HTTPServer):
     2. The server checks whether any registered path translation is a
        prefix of the reqest URL.  If it is, the path is translated
        into a file system path, and the corresponding file is
-       returned."""
+       returned.
+
+    The server also provides a rudimentary manual caching mechanism for
+    generated pages.  The application may insert a generated page into
+    the page cache, if it is expected not to change.  The application
+    can use this mechanism:
+
+      - to supress duplicate generation of the same page,
+
+      - or to pre-generate a page that may be requested later.  This is
+        particularly handy if generating the page requires state
+        information that would be difficult to reconstruct later.
+
+    Pages may be shared across sessions, or may be specific to a
+    particular session.
+
+    The page cache is shared among all 'WebServer' instances.  Use the
+    'cache_page' function to insert a page into the cache."""
 
 
     def __init__(self,
@@ -1033,6 +1091,22 @@ class WebRequest:
             raise NoSessionError, qm.error("session required")
         else:
             return get_session(self, session_id)
+
+
+    def AsUrl(self, last_argument=None):
+        """Return the URL representation of this request.
+
+        'fields_at_end' -- If not 'None', the name of the URL query
+        arguments that should be placed last in the list of arugmnets
+        (other than this, the order of query arguments is not
+        defined)."""
+
+        if len(self.keys()) == 0:
+            # No query arguments; just use the script URL.
+            return self.GetUrl()
+        else:
+            # Encode query arguments into the URL.
+            return "%s?%s" % (self.GetUrl(), urllib.urlencode(self))
 
 
     # Methods to emulate a mapping.
@@ -1620,10 +1694,10 @@ def generate_login_form(redirect_request, message=None):
 
 def make_set_control(form_name,
                      field_name,
+                     add_page,
                      select_name=None,
-                     add_request=None,
-                     add_page=None,
                      initial_elements=[],
+                     request=None,
                      rows=6,
                      width=200,
                      window_width=480,
@@ -1659,10 +1733,6 @@ def make_set_control(form_name,
     Exactly one of 'add_request' and 'add_page' should be specified.
     """
 
-    # Make sure exactly one of 'add_request' and 'add_page' were specified.
-    assert add_request is None or add_page is None
-    assert not (add_request is None and add_page is None)
-
     # Generate a name for the select control if none was specified.
     if select_name is None:
         select_name = "_set_" + field_name
@@ -1689,13 +1759,8 @@ def make_set_control(form_name,
     add_function = "_set_add_%d" % _counter
     _counter = _counter + 1
     # Construct the "Add..." button.
-    add_button = '''
-    <input type="button"
-           size="12"
-           value=" Add... "
-           onclick="%s();"
-           />
-    ''' % add_function
+    add_button = make_button_for_popup("Add", add_page, request,
+                                       window_width, window_height)
     # Construct the "Remove" button.
     remove_button = '''
     <input type="button"
@@ -1703,47 +1768,6 @@ def make_set_control(form_name,
            value=" Remove "
            onclick="remove_from_set(document.%s.%s, document.%s.%s);"
     />''' % (form_name, select_name, form_name, field_name)
-
-    # Now write the JavaScript function that responds to the "Add..."
-    # button.  
-
-    # Construct the arguments to the JavaScript 'Window.open' function,
-    # which specifies attributes of the popup window.
-    window_args = "'height=%d,width=%d,resizable'" \
-                  % (window_height, window_width)
-    if add_request is not None:
-        # A 'WebRequest' was specified.  Respond by opening a window
-        # displaying the request.
-        add_request["select"] = "%s.%s" % (form_name, select_name)
-        add_request["contents"] = "%s.%s" % (form_name, field_name)
-        add_url = make_url_for_request(add_request)
-        add_script = """
-        <script language="JavaScript">
-        function %s()
-        {
-          window.open('%s', '_setadd', %s);
-        }
-        </script>
-        """ % (add_function, add_url, window_args)
-    else:
-        # HTML source was specified.  Write a function that opens a
-        # popup window and writes the HTML page directly into it.   The
-        # HTML page is encoded as a JavaScript string literal.
-
-        page_contents_var = "_page_contents_%d" % (_counter - 1)
-        add_script = """
-        <script language="JavaScript">
-        var %s = %s;
-        function %s ()
-        {
-          window.open('javascript: window.opener.%s;', 'popup', %s);
-        }
-        </script>
-        """ % (page_contents_var,
-               make_javascript_string(add_page),
-               add_function,
-               page_contents_var,
-               window_args)
 
     # Arrange everything in a table to control the layout.
     return contents + '''
@@ -1760,8 +1784,7 @@ def make_set_control(form_name,
       </td>
      </tr>
     </tbody></table>
-    %s
-    ''' % (select, add_button, remove_button, add_script)
+    ''' % (select, add_button, remove_button)
 
 
 def encode_set_control_contents(values):
@@ -1853,7 +1876,7 @@ def make_help_link_html(help_text, label):
     ''' % (help_variable_name, label, help_variable_name, help_page)
 
 
-def make_popup_dialog_script(function_name, message, buttons, title=""):
+def make_popup_dialog(message, buttons, title=""):
     """Generate JavaScript to show a popup dialog box.
 
     The popup dialog box displays a message and one or more buttons.
@@ -1861,8 +1884,6 @@ def make_popup_dialog_script(function_name, message, buttons, title=""):
     associated with it; if the button is clicked, the statement is
     invoked.  After any button is clicked, the popup window is closed as
     well.
-
-    'function_name' -- The name of the JavaScript function to generate.
 
     'message' -- HTML source of the message to display in the popup
     window.
@@ -1874,33 +1895,18 @@ def make_popup_dialog_script(function_name, message, buttons, title=""):
 
     'title' -- The popup window title.
 
-    returns -- JavaScript source including the function named in
-    'function_name'.  The JavaScript is not encased in a '<script>'
-    element.
+    returns -- JavaScript statements to show the dialog box, suiteable
+    for use as an event handler."""
 
-    To use the script, create a button which invokes the function named
-    by 'function_name' as its 'onclick' handler."""
-
-    # Construct a name for the JavaScript variable that will hold the
-    # HTML source of the popup page.
-    variable_name = "_page_" + function_name
     # Construct the popup page.
     page = make_popup_page(message, buttons, title)
+    page_url = cache_page(page).AsUrl()
     # Construct the JavaScript variable and function.
-    return """
-    var %s = %s;
-    function %s()
-    {
-      window.open('javascript: window.opener.%s;', 'popup',
-                  'width=480,height=200,resizable');
-    }
-    """ % (variable_name,
-           make_javascript_string(page),
-           function_name,
-           variable_name)
+    return "window.open('%s', 'popup', 'width=480,height=200,resizable')" \
+           % page_url
 
 
-def make_confirmation_dialog_script(function_name, message, url):
+def make_confirmation_dialog(message, url):
     """Generate JavaScript for a confirmation dialog box.
 
     'url' -- The location in the main browser window is set to the URL
@@ -1918,8 +1924,7 @@ def make_confirmation_dialog_script(function_name, message, url):
         ( "Yes", open_script ),
         ( "No", None ),
         ]
-    return make_popup_dialog_script(function_name,
-                                    message, buttons, title="Confirm")
+    return make_popup_dialog(message, buttons, title="Confirm")
 
 
 def make_popup_page(message, buttons, title=""):
@@ -2188,8 +2193,62 @@ def make_choose_control(field_name,
     ''' % locals()
 
 
+_netscape_is_broken = "yea, verily"
+if not _netscape_is_broken:
+
+    # It would be nice to embed the popup window's HTML page directly
+    # into the containing document.  The following is one way this might
+    # be implemented.  Bugs in Netscape prevent this from working
+    # correctly for many popup pages, though, and at the moment we're
+    # not aware of any workarounds for the bugs.
+
+    def make_button_for_popup(label,
+                              html_text,
+                              window_width=480,
+                              window_height=240):
+        """Construct a button for displaying a popup page.
+
+        'label' -- The button label.
+
+        'html_text' -- The HTML source of the popup page.
+
+        'window_width' -- The width, in pixels, of the popup window.
+
+        'window_height' -- The height, in pixels, of the popup window.
+
+        returns -- HTML source for the button.  The button must be placed
+        within a form element."""
+
+        # Construct names for the variable which will contain the HTML text,
+        # and the function for showing the popup window.
+        global _counter
+        variable_name = "_page_%d" % _counter
+        function_name = "_popup_%d" % _counter
+        _counter = _counter + 1
+        # The HTML text is encoded in a JavaScript string literal.
+        html_text_string = make_javascript_string(html_text)
+        # Construct arguments for 'Window.open'.
+        window_args = "resizeable,width=%d,height=%s" \
+                      % (window_width, window_height)
+        # Generate it.
+        return """
+        <input type="button"
+               value=" %(label)s "
+               onclick="%(function_name)s();">
+        <script language="JavaScript">
+        var %(variable_name)s = %(html_text_string)s;
+        function %(function_name)s ()
+        {
+          window.open('javascript: window.opener.%(variable_name)s;',
+                      'popup', '%(window_args)s');
+        }
+        </script>
+        """ % locals()
+
+
 def make_button_for_popup(label,
                           html_text,
+                          request=None,
                           window_width=480,
                           window_height=240):
     """Construct a button for displaying a popup page.
@@ -2205,14 +2264,13 @@ def make_button_for_popup(label,
     returns -- HTML source for the button.  The button must be placed
     within a form element."""
 
-    # Construct names for the variable which will contain the HTML text,
-    # and the function for showing the popup window.
-    global _counter
-    variable_name = "_page_%d" % _counter
-    function_name = "_popup_%d" % _counter
-    _counter = _counter + 1
-    # The HTML text is encoded in a JavaScript string literal.
-    html_text_string = make_javascript_string(html_text)
+    # Place the page in the page cache.
+    if request is None:
+        session_id = None
+    else:
+        session_id = request.GetSessionId()
+    page_url = cache_page(html_text, session_id).AsUrl()
+
     # Construct arguments for 'Window.open'.
     window_args = "resizeable,width=%d,height=%s" \
                   % (window_width, window_height)
@@ -2220,16 +2278,108 @@ def make_button_for_popup(label,
     return """
     <input type="button"
            value=" %(label)s "
-           onclick="%(function_name)s();">
-    <script language="JavaScript">
-    var %(variable_name)s = %(html_text_string)s;
-    function %(function_name)s ()
-    {
-      window.open('javascript: window.opener.%(variable_name)s;',
-                  'popup', '%(window_args)s');
-    }
-    </script>
+           onclick="window.open('%(page_url)s',
+                                'popup',
+                                '%(window_args)s');">
     """ % locals()
+
+
+def cache_page(page_text, session_id=None):
+    """Cache an HTML page.
+
+    'page_text' -- The text of the page.
+
+    'session_id' -- The session ID for this page, or 'None'.
+
+    returns -- A 'WebRequest' object with which the cached page can be
+    retrieved later.
+
+    If 'session_id' is 'None', the page is placed in the global page
+    cache.  Otherwise, it is placed in the session page cache for that
+    session."""
+
+    global _page_cache_path
+    global _counter
+
+    if _page_cache_path is None:
+        # This is the first time we're inserting anything in the cache.
+        # Set it up.
+        _page_cache_path = common.make_temporary_directory()
+        os.mkdir(os.path.join(_page_cache_path, "sessions"), 0700)
+        # Clean up the cache at exit.
+        cleanup_function = lambda path=_page_cache_path: \
+                           common.remove_directory_recursively(path)
+        common.add_exit_function(cleanup_function)
+
+    if session_id is None:
+        # No path was specified.  Place the file in the top directory.
+        dir_path = _page_cache_path
+        script_name = _page_cache_name
+    else:
+        # A session was specified.  Put the file in a subdirectory named
+        # after the session.
+        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
+        script_name = _session_cache_name
+        # Create that directory if it doesn't exist.
+        if not os.path.isdir(dir_path):
+            os.mkdir(dir_path, 0700)
+
+    # Generate a name for the page.
+    page_name = str(_counter)
+    _counter = _counter + 1
+    # Write it.
+    page_file_name = os.path.join(dir_path, page_name)
+    page_file = open(page_file_name, "w", 0600)
+    page_file.write(page_text)
+    page_file.close()
+
+    # Return a request for this page.
+    request = WebRequest(script_name, page=page_name)
+    if session_id is not None:
+        request.SetSessionId(session_id)
+    return request
+
+
+def get_from_cache(request, session_id=None):
+    """Retrieve a page from the page cache.
+
+    'request' -- The URL requesting the page from the cache.
+
+    'session_id' -- The session ID for the request, or 'None'.
+
+    returns -- The cached page, or a placeholder page if the page was
+    not found in the cache.
+
+    If 'session_id' is 'None', the page is retrieved from the global
+    page cache.  Otherwise, it is retrieved from the session page cache
+    for that session."""
+    
+    if session_id is None:
+        dir_path = _page_cache_path
+    else:
+        # Construct the path to the directory containing pages in the
+        # cache for 'session_id'.
+        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
+
+    # Construct the path to the file containing the page.
+    page_name = request["page"]
+    page_file_name = os.path.join(dir_path, page_name)
+    if os.path.isfile(page_file_name):
+        # Return the page.
+        return open(page_file_name, "r").read()
+    else:
+        # Oops, no such page.  Generate a placeholder.
+        return """
+        <html>
+         <body>
+          <h3>Cache Error</h3>
+          <p>You have requested a page that no longer is in the server's
+          cache.  The server may have been restarted, or the page may
+          have expired.  Please start over.</p>
+          <!-- %s -->
+         </body>
+        </html>
+        """ % url
 
 
 ########################################################################
@@ -2240,6 +2390,16 @@ sessions = {}
 """A mapping from session IDs to 'Session' instances."""
 
 _counter = 0
+"""A counter for generating somewhat-unique names."""
+
+_page_cache_path = None
+"""The path to the page cache."""
+
+_page_cache_name = "page-cache"
+"""The URL prefix for the global page cache."""
+
+_session_cache_name = "session-cache"
+"""The URL prefix for the session page cache."""
 
 ########################################################################
 # Local Variables:

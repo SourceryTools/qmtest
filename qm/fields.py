@@ -534,10 +534,10 @@ class TextField(Field):
                or self.IsAttribute("structured"):
                 return '<textarea cols="40" rows="6" name="%s">' \
                        '%s</textarea>' \
-                       % (name, value)
+                       % (name, web.escape(value))
             else:
                 return '<input type="text" size="40" name="%s" value="%s"/>' \
-                       % (name, value)
+                       % (name, web.escape(value))
 
         elif style == "brief":
             if self.IsAttribute("verbatim"):
@@ -547,7 +547,7 @@ class TextField(Field):
                 # Replace all whitespace with ordinary space.
                 value = re.replace("\w", " ")
                 # Put it in a <tt> element.
-                return '<tt>%s</tt>' % web.escape_for_html(value)
+                return '<tt>%s</tt>' % web.escape(value)
             elif self.IsAttribute("structured"):
                 # Use only the first line of text.
                 value = string.split(value, "\n", 1)
@@ -799,8 +799,8 @@ class SetField(Field):
             # Construct the controls for manipulating the set.
             form = web.make_set_control("form",
                                         field_name=name,
-                                        select_name=select_name,
                                         add_page=add_page,
+                                        select_name=select_name,
                                         initial_elements=initial_elements,
                                         window_width=600,
                                         window_height=400)
@@ -1045,6 +1045,12 @@ class AttachmentField(Field):
             summary_value = 'value="%s"' % self.FormatSummary(value)
             field_value = 'value="%s"' % self.GenerateFormValue(value)
 
+            # Generate the popup upload page.
+            page_info = UploadAttachmentPageInfo(self.GetTitle(), name,
+                                                 summary_field_name)
+            upload_page = qm.web.generate_html_from_dtml("attachment.dtml",
+                                                         page_info)
+            
             # Generate controls for this form.
             
             # A text control for the user-visible summary of the
@@ -1058,15 +1064,12 @@ class AttachmentField(Field):
                    name="%s"
                    onfocus="this.blur();"
                    %s>''' % (summary_field_name, summary_value)
-            # A button to pop up the upload form.  It calls the
-            # upload_file JavaScript function.
-            upload_button = '''
-            <input type="button"
-                   name="_upload_%s"
-                   size="20"
-                   value=" Change... "
-                   onclick="javascript: upload_file_%s()">
-            ''' % (field_name, field_name)
+            # A button to pop up the upload form.  It causes the upload
+            # page to appear in a popup window.
+            upload_button = qm.web.make_button_for_popup("Upload",
+                                                         upload_page,
+                                                         window_width=640,
+                                                         window_height=320)
             # A button to clear the attachment.
             clear_button = '''
             <input type="button"
@@ -1088,33 +1091,6 @@ class AttachmentField(Field):
             %s%s<br>
             %s%s
             ''' % (text_control, hidden_control, upload_button, clear_button)
-
-            # Generate the popup upload page.
-            page_info = UploadAttachmentPageInfo(self.GetTitle(), name,
-                                                 summary_field_name)
-            upload_page = qm.web.generate_html_from_dtml("attachment.dtml",
-                                                         page_info)
-            
-            # Now the JavaScript function that's called when the user
-            # clicks the Upload button.  It opens a window showing the
-            # upload form, and passes in the field names in this form,
-            # which the popup form will fill in.  The upload form is
-            # encoded as a JavaScript string literal.
-            result = result + """
-            <script language="JavaScript">
-            var upload_window = null;
-            function upload_file_%s()
-            {
-              if(upload_window != null && !upload_window.closed)
-                upload_window.close();
-              upload_window = window.open('', 'upload',
-                                          'height=320,width=640');
-              upload_window.document.open();
-              upload_window.document.write(%s);
-              upload_window.document.close();
-            }
-            </script>
-            """ % (field_name, qm.web.make_javascript_string(upload_page))
 
             # Phew!  All done.
             return result

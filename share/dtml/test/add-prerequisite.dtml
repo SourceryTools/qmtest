@@ -108,10 +108,8 @@
     outcome = outcome.options[outcome.selectedIndex].value;
     var text = test_id + " (" + outcome + ")";
     var value = test_id + ";" + outcome;
-    var select = 
-      window.opener.document.<dtml-var expr="request['select']">;
-    var contents =
-      window.opener.document.<dtml-var expr="request['contents']">;
+    var select = window.opener.document.form._set_prerequisites;
+    var contents = window.opener.document.form.prerequisites;
     if(test_id != "")
       window.opener.add_to_set(select, contents, text, value);
     window.close();

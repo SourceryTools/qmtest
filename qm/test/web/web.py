@@ -79,23 +79,35 @@ class PageInfo(qm.web.PageInfo):
 ''' % self.MakeListingUrl() 
 
 
-    def FormatTestId(self, test_id):
+    def FormatTestId(self, test_id, relative_to=None):
         """Return markup for 'test_id'."""
+
+        if relative_to is None:
+            absolute_test_id = test_id
+        else:
+            absolute_test_id = qm.label.join(qm.label.dirname(relative_to),
+                                             test_id)
 
         request = qm.web.WebRequest("show-test",
                                     base=self.request,
-                                    id=test_id)
+                                    id=absolute_test_id)
         link_target = qm.web.make_url_for_request(request)
         return '<a href="%s"><span class="test_id">%s</span></a>' \
                % (link_target, test_id)
 
 
-    def FormatActionId(self, action_id):
+    def FormatActionId(self, action_id, relative_to=None):
         """Return markup for 'action_id'."""
+
+        if relative_to is None:
+            absolute_action_id = action_id
+        else:
+            absolute_action_id = qm.label.join(qm.label.dirname(relative_to),
+                                               action_id)
 
         request = qm.web.WebRequest("show-action",
                                     base=self.request,
-                                    id=action_id)
+                                    id=absolute_action_id)
         link_target = qm.web.make_url_for_request(request)
         return '<a href="%s"><span class="action_id">%s</span></a>' \
                % (link_target, action_id)
@@ -157,9 +169,6 @@ def make_server(port, address="", log_file=None):
     qm.attachment.register_attachment_upload_script(server)
     # Register all our web pages.
     for name, function in [
-        ( "add-action", qm.test.web.show.handle_add_action ),
-        ( "add-category", qm.test.web.show.handle_add_category ),
-        ( "add-prerequisite", qm.test.web.show.handle_add_prerequisite ),
         ( "create-action", qm.test.web.show.handle_show ),
         ( "create-suite", qm.test.web.suite.handle_create ),
         ( "create-test", qm.test.web.show.handle_show ),
