@@ -1,5 +1,10 @@
 2003-11-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/qmtest: If SIGINT is received, make sure that our exit
+	code reflects that fact.
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream._FormatStatistics): Robustify.
+
 	* qm/test/classes/text_result_stream.py
 	(TextResultStream.arguments): Add statistics_format.
 	(TextResultStream._DisplayArguments): Do not write out the

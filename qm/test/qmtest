@@ -158,6 +158,7 @@ try:
         sys.stderr.write(qm.common.format_traceback(exc_info))
     except KeyboardInterrupt:
         sys.stderr.write("\nqmtest: Interrupted.\n")
+        raise
     except qm.platform.SignalException, se:
         # SIGTERM indicates a request to shut down.  Other signals
         # should be handled earlier.

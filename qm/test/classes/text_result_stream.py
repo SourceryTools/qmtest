@@ -318,15 +318,24 @@ class TextResultStream(FileResultStream):
         expected = num_tests - unexpected
         values = { "TOTAL" : num_tests,
                    "EXPECTED" : expected,
-                   "EXPECTED_PERCENT" : (100. * expected) / num_tests,
                    "UNEXPECTED" : unexpected }
+        if num_tests:
+            values["EXPECTED_PERCENT"] = (100. * expected) / num_tests
+        else:
+            values["EXPECTED_PERCENT"] = 0.0
         for o in Result.outcomes:
             count = self.__outcome_counts[o]
             values[o] = count
-            values[o + "_PERCENT"] = (100. * count) / num_tests
+            if num_tests:
+                values[o + "_PERCENT"] = (100. * count) / num_tests
+            else:
+                values[o + "_PERCENT"] = 0.0
             count = self.__unexpected_outcome_counts[o]
             values[o + "_UNEXPECTED"] = count
-            values[o + "_UNEXPECTED_PERCENT"] = (100. * count) / num_tests
+            if num_tests:
+                values[o + "_UNEXPECTED_PERCENT"] = (100. * count) / num_tests
+            else:
+                values[o + "_UNEXPECTED_PERCENT"] = 0.0
 
         self.file.write(format % values)
 
