@@ -1,3 +1,13 @@
+2003-02-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.commands_spec): Add -O.
+	(QMTest.__ExecuteServer): Pass expectations to
+	QMTestServer.__init__.
+	* qm/test/web.py (QMTestServer.__init__): Add expectations
+	parameter.
+	* qm/test/doc/reference.xml: Add documentation for -O.
+	* NEWS: Mention new -O option.
+	
 2003-02-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release (build_rpm): Use rpmbuild, rather than rpm,

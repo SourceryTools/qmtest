@@ -871,6 +871,17 @@
       </varlistentry>
 
       <varlistentry>
+       <term><option>-O</option> <replaceable>file</replaceable></term>
+       <term>
+        <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry> 
+
+      <varlistentry>
        <term>
         <option>&dashdash;pid-file <replaceable>path</replaceable></option>
        </term>

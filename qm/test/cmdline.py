@@ -294,6 +294,7 @@ class QMTest:
            pid_file_option_spec,
            port_option_spec,
            result_format_spec,
+           outcomes_option_spec,           
            targets_option_spec
            )
          ),
@@ -1356,9 +1357,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
+        # Get the expected outcomes.
+        expectations = self.__GetExpectedOutcomes()
+        
         # Set up the server.
         server = qm.test.web.web.QMTestServer(database, port_number, address,
-                                              log_file, targets, context)
+                                              log_file, targets, context,
+                                              expectations)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.

@@ -6,6 +6,9 @@ This file describes user visible changes to QM.
 QM 2.1
 ======
 
+There is now a "-O" or "--outcomes" option for setting the expected
+outcomes, even when working within in the GUI.
+
 There is a new "--result-format" option to "qmtest run" and "qmtest
 gui".  This option controls the format of the results file, i.e.,
 whether the binary or XML file format is used.

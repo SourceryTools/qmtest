@@ -1472,7 +1472,7 @@ class QMTestServer(qm.web.WebServer):
     """A 'QMTestServer' is the web GUI interface to QMTest."""
 
     def __init__(self, database, port, address, log_file,
-                 targets, context):
+                 targets, context, expectations):
         """Create and bind an HTTP server.
 
         'database' -- The test database to serve.
@@ -1567,8 +1567,8 @@ class QMTestServer(qm.web.WebServer):
             self.RegisterScript(qm.fields.AttachmentField.download_url,
                                 attachment_store.HandleDownloadRequest)
 
-        # There are no results yet.
-        self.__expected_outcomes = {}
+        self.__expected_outcomes = expectations
+        # There are no results yet.        
         self.__results_stream = StorageResultsStream()
         self.__results_stream.Summarize()
         # There is no execution thread.
