@@ -114,8 +114,8 @@ build_source() {
     rm -rf qm-${QM_VERSION}
     tar xzf ${QM_SOURCE_TAR_GZ} || \
       error "Could not unpack source distribution"
-    cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual/html \
-          qm-${QM_VERSION}/doc/manual/html || \
+    cp -r ${QM_INSTALL_DIR}/share/doc/qm/test/html \
+          qm-${QM_VERSION}/qm/test/doc/html || \
       error "Could not copy HTML manual"
     (mkdir qm-${QM_VERSION}/doc/manual/print && \
      cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual/print/manual.pdf \

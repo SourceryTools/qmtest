@@ -1,5 +1,8 @@
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (build_source): Correct documentation 
+	building.
+
 	* GNUmakefile.in (lib-install): Correct installation location
 	of classes.qmc.
 	* qm/web.py (WebServer.handle_error): New method.
