@@ -139,24 +139,36 @@ AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
 AC_SUBST(DOCBOOK_STYLESHEETS)
 
 dnl ####################################################################
-dnl Allow the user to specify the location of the docbook DTD.
+dnl Allow the user to specify the location of the DocBook DTD.
 dnl ####################################################################
 
-DOCBOOK_DTD=
+DOCBOOK_DTD=no
 AC_ARG_WITH(docbook-dtd, 
             [  --with-docbook-dtd=PATH directory containing the docbook DTD.])
 case $with_docbook_dtd in
     yes) ;;
-    no)  DOCUMENTATION=no ;;
+    no)  DOCBOOK_DTD=no;;
     *)   DOCBOOK_DTD=$with_docbook_dtd;;
 esac
+
+# Look for it in the standard place (for newer Red Hat distributions),
+# if not specified.
+if test -z "$DOCBOOK_DTD"; then
+  AC_MSG_CHECKING(Docbook DTD)
+  if test -d /usr/share/sgml/docbook/xml-dtd-4.1.2 \
+          -a -d /usr/share/sgml/sgml-iso-entities-8879.1986; then
+    DOCBOOK_DTD="/usr/share/sgml/docbook/xml-dtd-4.1.2 /usr/share/sgml/sgml-iso-entities-8879.1986"
+  fi
+  AC_MSG_RESULT($DOCBOOK_DTD)
+fi
+
 AC_SUBST(DOCBOOK_DTD)
 
 dnl ####################################################################
-dnl Warn if we don't have enough to build documentation
+dnl Warn if we do not have enough to build documentation
 dnl ####################################################################
 
-if test "$JADE" = no -o "$XML_DCL" = no; then
+if test "$JADE" = no -o "$XML_DCL" = no -o "$DOCBOOK_DTD" = no; then
   AC_MSG_WARN(Documentation will not be built.)
   DOCUMENTATION=no
 else
