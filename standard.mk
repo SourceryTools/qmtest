@@ -143,7 +143,7 @@ $(HTMLMANIFEST) $(HTMLINDEX): \
 	for gr in $(DOCBITMAPS); \
 	do \
 	    cp $${gr} $(HTMLDIR)/; \
-	    echo $${gr} >> $(HTMLMANIFEST); \
+	    echo $${gr##*/} >> $(HTMLMANIFEST); \
 	done
 
 # Build a tarball containing the whole HTML output.

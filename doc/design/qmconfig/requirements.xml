@@ -370,7 +370,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scalefit="1"
-                  fileref="figures/uc_maint.png"></imagedata>
+                  fileref="uc_maint.png"></imagedata>
       </imageobject>
 
       <textobject>
@@ -666,7 +666,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scalefit="1"
-                  fileref="figures/uc_tailor.png" />
+                  fileref="uc_tailor.png" />
       </imageobject>
 
       <textobject>
@@ -975,7 +975,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scalefit="1"
-                  fileref="figures/uc_softdev.png" />
+                  fileref="uc_softdev.png" />
       </imageobject>
 
       <textobject>
@@ -1171,7 +1171,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scalefit="1"
-                  fileref="figures/uc_kit.png" />
+                  fileref="uc_kit.png" />
       </imageobject>
 
       <textobject>

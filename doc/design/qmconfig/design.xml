@@ -31,7 +31,7 @@
 
     <imageobject>
      <imagedata align="center" width="6in" scalefit="1"
-                fileref="figures/pkg_qmconfig.png"></imagedata>
+                fileref="pkg_qmconfig.png"></imagedata>
     </imageobject>
 
     <textobject>
@@ -96,7 +96,7 @@
 
        <imageobject>
         <imagedata align="center" width="6in" scalefit="1"
-                   fileref="figures/pkg_build.png" />
+                   fileref="pkg_build.png" />
        </imageobject>
 
        <textobject>
@@ -131,7 +131,7 @@
 
        <imageobject>
         <imagedata align="center" width="6in" scalefit="1"
-                   fileref="figures/pkg_bdist.png" />
+                   fileref="pkg_bdist.png" />
        </imageobject>
 
        <textobject>
@@ -155,7 +155,7 @@
 
        <imageobject>
         <imagedata align="center" width="6in" scalefit="1"
-                   fileref="figures/pkg_boot.png" />
+                   fileref="pkg_boot.png" />
        </imageobject>
 
        <textobject>
@@ -197,7 +197,7 @@
 
        <imageobject>
         <imagedata align="center" width="6in" scalefit="1"
-                   fileref="figures/pkg_lang.png" />
+                   fileref="pkg_lang.png" />
        </imageobject>
 
        <textobject>
@@ -312,7 +312,7 @@
 
      <imageobject>
       <imagedata align="center" width="6in" scalefit="1"
-                 fileref="figures/cl_pdd.png" />
+                 fileref="cl_pdd.png" />
      </imageobject>
 
      <textobject>
