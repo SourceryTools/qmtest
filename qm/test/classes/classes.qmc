@@ -21,6 +21,7 @@
 
 <class kind="target">serial_target.SerialTarget</class>
 <class kind="target">thread_target.ThreadTarget</class>
+<class kind="target">process_target.ProcessTarget</class>
 <class kind="target">rsh_target.RSHTarget</class>
 
 <!-- Label classes -->

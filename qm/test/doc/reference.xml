@@ -1488,13 +1488,12 @@
   <name>local</name>
   <class>thread_target.ThreadTarget</class>
   <group>i386-pc-linux-gnu</group>
-  <concurrency>1</concurrency>
+  <concurrency>2</concurrency>
  </target>
  <target>
   <name>remote</name>
   <class>rsh_target.RSHTarget</class>
   <group>sparc-sun-solaris2.5.1</group>
-  <concurrency>2</concurrency>
   <property name="host">sunshine</property>
   <property name="arguments">-l test</property>
  </target>
@@ -1503,12 +1502,12 @@
   </programlisting>
 
   <para>The first target is the <link
-  linkend="sec-subprocess-target">local</link> GNU/Linux computer.  The
-  second target is a remote computer running SPARC Solaris.  &qmtest;
-  invokes tests on the remote target using a <link
-  linkend="sec-remote-shell-target">remote shell</link> invocation.  The
-  remote computer's name is "sunshine", and two tests are run
-  concurrently on that target.</para>
+  linkend="sec-thread-target">local</link> GNU/Linux computer.  Two
+  tests will be run at once on that computer.  The second target is a
+  remote computer running SPARC Solaris.  &qmtest; invokes tests on
+  the remote target using a <link
+  linkend="sec-remote-shell-target">remote shell</link> invocation.
+  The remote computer's name is "sunshine.</para>
 
   </section> <!-- sec-target-files -->
 
@@ -1517,19 +1516,80 @@
 
    <para>&qmtest; includes these target class implementations.</para>
 
-   <section id="sec-subprocess-target">
-    <title>Thread Target</title>
+   <section id="sec-serial-target">
+    <title><classname>SerialTarget</classname></title>
+
+    <para>The <classname>serial_target.SerialTarget</classname> target
+    class runs tests one after the other on the machine running
+    QMTest.  If you use a <classname>SerialTarget</classname>, you
+    should not also use any other targets, including another
+    <classname>SerialTarget</classname> at the same time.</para>
+   </section> <!-- sec-serial-target -->
+
+   <section id="sec-thread-target">
+    <title><classname>ThreadTarget</classname></title>
 
     <para>The <classname>thread_target.ThreadTarget</classname> target
-    class runs tests in one or more threads on the local computer
-    (the computer on which the &qmtest-cmd; command is invoked).  The
-    number of threads is the degree of concurrency specified for
-    the target.</para>
+    class runs tests in one or more threads on the machine running
+    QMTest.  The <classname>ThreadTarget</classname> can be used to
+    run multiple tests at once.</para>
 
-   </section> <!-- sec-subprocess-target -->
+    <para><classname>ThreadTarget</classname> uses the following
+    properties:</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>The <property>concurrency</property> specifies the number
+      of threads to use.  Larger numbers of threads will allow QMTest
+      to run more tests in parallel.  You can experiment with this
+      value to find the setting that allows QMTest to run tests most
+      quickly.</para>
+     </listitem>
+    </itemizedlist>
+
+   </section> <!-- sec-thread-target -->
+
+   <section id="process-target">
+    <title><classname>ProcessTarget</classname></title>
+
+    <para>The <classname>process_target.ProcessTarget</classname>
+    target class run tests in one more processes on the machine running
+    QMTest.  This target class is not available on Windows.  Like
+    <classname>ThreadTarget</classname>,
+    <classname>ProcessTarget</classname> can be used to run multiple
+    tests simultaneously.</para>
+
+    <para>In general, you should use
+    <classname>ThreadTarget</classname> instead of
+    <classname>ProcessTarget</classname> to maximize QMTest
+    performance.  However, on machines that do not have threads,
+    <classname>ProcessTarget</classname> provides an alternative way
+    of running tests in parallel.</para>
+
+    <para><classname>ProcessTarget</classname> uses the following
+    properties:</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>The <property>concurrency</property> specifies the number
+      of processes to use.  Larger numbers of processes will allow
+      QMTest to run more tests in parallel.  You can experiment with
+      this value to find the setting that allows QMTest to run tests
+      most quickly.</para>
+     </listitem>
+
+     <listitem>
+      <para>&qmtest; uses the path given by the
+      <command>qmtest</command> property to create additional QMTest
+      instances.  By default, the path
+      <filename>/usr/local/bin/qmtest</filename> is used.</para>
+     </listitem>
+    </itemizedlist>
+
+   </section> <!-- sec-process-target -->
 
    <section id="sec-remote-shell-target">
-    <title>Remote Shell Target</title>
+    <title><classname>RemoteShellTarget</classname></title>
 
     <para>The <classname>rsh_target.RSHTarget</classname>
     target class runs tests on a remote computer via a remote shell
@@ -1553,12 +1613,10 @@
     <command>ssh-agent</command> program for this.  See the
     corresponding manual pages for details.</para>
 
-    <para>The concurrency value of the target specification controls
-    the number tests that may be run concurrently on the remote
-    host.</para>
-
-    <para>The <classname>RSHTarget</classname> target class
-    takes its configuration from the following target properties:</para>
+    <para><classname>RSHTarget</classname> uses all of the properties
+    given above for <classname>ProcessTarget</classname>.  In
+    addition, <classname>RSHTarget</classname> uses the following
+    properties:</para>
 
     <itemizedlist>
      <listitem>
@@ -1595,15 +1653,6 @@
       using a different user account, specify the <literal>-l
       username</literal> option using the <property>arguments</property>
       property.</para>
-     </listitem>
-
-     <listitem>
-      <para>&qmtest; uses the remote shell to invoke the
-      <command>qmtest_remote</command> program on the remote host.  This
-      program is installed by default in
-      <filename>/usr/local/bin/qmtest</filename>.  You may
-      override this and use a version in a different place by specifying
-      the <property>qmtest_remote</property> property.</para>
      </listitem>
     </itemizedlist>
 

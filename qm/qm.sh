@@ -98,7 +98,7 @@ qm_split_path() {
 # Otherwise, set it to 0.
 
 # Assume that QM is not running out of the build directory.
-QM_BUILD=0
+QM_BUILD=${QM_BUILD:-0}
 
 # Check to see if QM_HOME is set.
 if test x"${QM_HOME}" = x; then

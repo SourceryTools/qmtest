@@ -25,6 +25,7 @@ import qm.test.cmdline
 from   qm.test.context import *
 import qm.xmlutil
 from   result import *
+import select
 import sys
 
 ########################################################################
@@ -75,6 +76,9 @@ class ExecutionEngine:
             self.__result_streams = result_streams
         else:
             self.__result_streams = []
+
+        # There are no input handlers.
+        self.__input_handlers = {}
         
         # All of the targets are idle at first.
         self.__idle_targets = targets[:]
@@ -144,6 +148,19 @@ class ExecutionEngine:
                 rs.Summarize()
 
 
+    def AddInputHandler(self, fd, function):
+        """Add an input handler for 'fd'.
+
+        'fd' -- A file descriptor, open for reading.
+
+        'function' -- A callable object taking a single parameter.
+
+        The execution engine will periodically monitor 'fd'.  When input
+        is available, it will call 'function' passing it 'fd'."""
+
+        self.__input_handlers[fd] = function
+        
+    
     def _RunTests(self):
         """Run all of the tests.
 
@@ -286,35 +303,55 @@ class ExecutionEngine:
     def _CheckForResponse(self, wait):
         """See if any of the targets have completed a task.
 
-        'wait' -- If 1, block until a response is available.  If 0,
-        return immediately if there is no available response.
+        'wait' -- If false, this function returns immediately if there
+        is no available response.  If 'wait' is true, this function
+        continues to wait until a response is available.
 
         returns -- True iff a response was received."""
 
-        # Read a reply from the response_queue.
-        try:
-            result = self.__response_queue.get(wait)
-            # Output a trace message.
-            if __debug__:
-                self._Trace(("Got response for %s from queue."
-                             % result.GetId()))
-            # Handle it.
-            self._AddResult(result)
-            # Output a trace message.
-            if __debug__:
-                self._Trace("Recorded result.")
-            # If this was a test result, there may be other tests that
-            # are now eligible to run.
-            if result.GetKind() == Result.TEST:
-                # Get the descriptor for this test.
-                descriptor = self.__descriptors[result.GetId()]
-                # Iterate through each of the dependent tests.
-                self._UpdateDependentTests(descriptor, result.GetOutcome())
-            return result
-        except qm.queue.Empty:
-            # If wait is zero, and there is nothing in the queue, then
-            # this exception will be thrown.  Just return.
-            return None
+        while 1:
+            try:
+                # Read a reply from the response_queue.
+                if self.__input_handlers:
+                    result = self.__response_queue.get(0)
+                else:
+                    result = self.__response_queue.get(wait)
+                # Output a trace message.
+                if __debug__:
+                    self._Trace(("Got response for %s from queue."
+                                 % result.GetId()))
+                # Handle it.
+                self._AddResult(result)
+                # Output a trace message.
+                if __debug__:
+                    self._Trace("Recorded result.")
+                # If this was a test result, there may be other tests that
+                # are now eligible to run.
+                if result.GetKind() == Result.TEST:
+                    # Get the descriptor for this test.
+                    descriptor = self.__descriptors[result.GetId()]
+                    # Iterate through each of the dependent tests.
+                    self._UpdateDependentTests(descriptor, result.GetOutcome())
+                return result
+            except qm.queue.Empty:
+                # If there is nothing in the queue, then this exception will
+                # be thrown.
+                if not wait:
+                    return None
+                
+                # Give other threads and processes a chance to run.
+                if self.__input_handlers:
+                    # See if there is any input that might indicate that
+                    # work has been done.
+                    fds = self.__input_handlers.keys()
+                    fds = select.select (fds, [], [], 0.1)[0]
+                    for fd in fds:
+                        self.__input_handlers[fd](fd)
+                else:
+                    time.sleep(0.1)
+                
+                # There may be a response now.
+                continue
 
 
     def _UpdateDependentTests(self, descriptor, outcome):

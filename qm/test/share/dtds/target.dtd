@@ -19,7 +19,7 @@
 <!ELEMENT targets (target*)>
 
 <!-- A target for executing tests.  -->
-<!ELEMENT target (name, class, group, concurrency, property*)>
+<!ELEMENT target (name, class, group, property*)>
 
 <!-- The name of a target.  -->
 <!ELEMENT name (#PCDATA)>
@@ -29,9 +29,6 @@
 
 <!-- The name of the Python class representing this target.  -->
 <!ELEMENT class (#PCDATA)>
-
-<!-- The number of tests that may be run simulaneous on this target.  -->
-<!ELEMENT concurrency (#PCDATA)>
 
 <!-- A miscellaneous named property of the target.  -->
 <!ELEMENT property (#PCDATA)>

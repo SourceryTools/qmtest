@@ -47,17 +47,13 @@ class ThreadTarget(Target):
     This target starts one thread for each degree of concurrency.  Each
     thread executes one test or resource function at a time."""
 
-    def __init__(self, name, group, concurrency, properties,
-                 database):
+    def __init__(self, name, group, properties, database):
         """Construct a 'ThreadTarget'.
 
         'name' -- A string giving a name for this target.
 
         'group' -- A string giving a name for the target group
         containing this target.
-
-        'concurrency' -- The amount of parallelism desired.  If 1, the
-        target will execute only a single command at once.
 
         'properties'  -- A dictionary mapping strings (property names)
         to strings (property values).
@@ -66,8 +62,7 @@ class ThreadTarget(Target):
         run."""
 
         # Initialize the base class.
-        Target.__init__(self, name, group, concurrency, properties,
-                        database)
+        Target.__init__(self, name, group, properties, database)
 
         # Create a lock to guard accesses to __ready_threads.
         self.__ready_threads_lock = Lock()
@@ -113,7 +108,7 @@ class ThreadTarget(Target):
         
         # Build the threads.
         self.__threads = []
-        for i in xrange(0, self.GetConcurrency()):
+        for i in xrange(0, int(self.GetProperty("concurrency", "1"))):
             # Create the new thread.
             thread = LocalThread(self)
             # Start the thread.

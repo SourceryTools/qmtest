@@ -15,6 +15,9 @@ The "qmtest run" command now has a "--rerun" option to rerun only
 those tests which had unexpected outcomes when the tests were last
 run.  See the manual for more information.
 
+QMTest now has a "ProcessTarget" target class that can be used to
+run tests in parallel on systems that do not support threads.
+
 QM 1.1.5
 ========
 

@@ -503,15 +503,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                               qm.error("concurrency not integer",
                                        value=concurrency)
                 # Construct the target.
+                properties = {}
                 if concurrency > 1:
                     class_name = "thread_target.ThreadTarget"
+                    properties["concurrency"] = str(concurrency)
                 else:
                     class_name = "serial_target.SerialTarget"
                 target_class \
                     = get_extension_class(class_name,
                                           'target', self.GetDatabase())
-                self.targets = [ target_class("local", "local", concurrency,
-                                              {}, self.GetDatabase()) ]
+                self.targets = [ target_class("local", "local", properties,
+                                              self.GetDatabase()) ]
             else:
                 document = qm.xmlutil.load_xml_file(file_name)
                 targets_element = document.documentElement
@@ -522,9 +524,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                     name = qm.xmlutil.get_child_text(node, "name")
                     class_name = qm.xmlutil.get_child_text(node, "class")
                     group = qm.xmlutil.get_child_text(node, "group")
-                    concurrency = qm.xmlutil.get_child_text(node,
-                                                            "concurrency")
-                    concurrency = int(concurrency)
                     # Extract properties.
                     properties = {}
                     for property_node in node.getElementsByTagName("property"):
@@ -537,8 +536,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                                        'target',
                                                        self.GetDatabase())
                     # Build the target.
-                    target = target_class(name, group, concurrency,
-                                          properties, self.GetDatabase())
+                    target = target_class(name, group, properties,
+                                          self.GetDatabase())
                     # Accumulate targets.
                     self.targets.append(target)
             
@@ -715,7 +714,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         target_class = get_extension_class("serial_target.SerialTarget",
                                            'target', database)
         # Build the target.
-        target = target_class(None, None, 1, {}, database)
+        target = target_class("child", None, {}, database)
 
         # Start the target.
         response_queue = Queue.Queue(0)

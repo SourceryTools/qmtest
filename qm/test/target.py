@@ -47,16 +47,13 @@ class Target:
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version."""
 
-    def __init__(self, name, group, concurrency, properties, database):
+    def __init__(self, name, group, properties, database):
         """Construct a 'Target'.
 
         'name' -- A string giving a name for this target.
 
         'group' -- A string giving a name for the target group
         containing this target.
-
-        'concurrency' -- The amount of parallelism desired.  If 1, the
-        target will execute only a single command at once.
 
         'properties'  -- A dictionary mapping strings (property names)
         to strings (property values).
@@ -66,7 +63,6 @@ class Target:
 
         self.__name = name
         self.__group = group
-        self.__concurrency = concurrency
         self.__properties = properties
         self.__database = database
 
@@ -88,14 +84,6 @@ class Target:
         Derived classes must not override this method."""
 
         return self.__group
-
-
-    def GetConcurrency(self):
-        """Return the number of tests the target may run concurrently.
-
-        Derived classes must not override this method."""
-
-        return self.__concurrency
 
 
     def GetDatabase(self):
@@ -122,7 +110,7 @@ class Target:
         'default' if there is no such value.
 
         Derived classes must not override this method."""
-        
+
         return self.__properties.get(name, default)
 
 

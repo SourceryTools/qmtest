@@ -1,3 +1,23 @@
+2002-07-24  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention ProcessTarget.
+	* qm/qm.sh (QM_BUILD): Do not override an existing value.
+	* qm/test/cmdline.py (QMTest.GetTargets): Adjust handling of
+	concurrency values.
+	(QMTest.__ExecuteRemote): Likewise.
+	* qm/test/execution_engine.py (ExecutionEngine.AddInputHandler):
+	New method.
+	(ExecutionEngine._CheckForResponse): Dispatch to input handlers if
+	appropriate.
+	* qm/test/target.py (Target.__init__): Remove concurrency
+	parameter.
+	(Target.GetConcurrency): Likewise.
+	* qm/test/classes/classes.qmc: Add ProcessTarget..
+	* qm/test/classes/process_taret.py: New file.
+	* qm/test/classes/rsh_target.py: Build atop ProcessTarget
+	* qm/test/doc/reference.xml: Describe ProcessTarget.
+	* qm/test/share/dtds/target.dtd: Remove concurrency field.
+	
 2002-07-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (lib-install): Improve portability.
