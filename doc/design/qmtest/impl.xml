@@ -17,202 +17,198 @@
 -->
 <chapter><title>&qmtest Core Implementation</title>
   
-  <para>This chapter describes the Python implementation of the core
-  qmtest components.  For some components, many implementations are
-  envisioned; the requirements for these implementations are
-  given.</para>
+ <para>This chapter describes the Python implementation of the core
+ qmtest components.  For some components, many implementations are
+ envisioned; the requirements for these implementations are
+ given.</para>
   
-  <section><title>Test implementations</title>
+ <section><title>Test representation</title>
    
-   <section><title>Test class implementations</title>
+  <section><title>Test class implementations</title>
 
-    <para>Each qmtest test class is implemented as a Python class.
-    Though qmtest does not recognize any notion of test class
-    inheritance, this may be produced in effect via Python class
-    inheritance.</para>
+   <para>Each qmtest test class is implemented as a Python class.
+   Though qmtest does not recognize any notion of test class
+   inheritance, this may be produced in effect via Python class
+   inheritance.</para>
 
-    <para>A test class should have the following members:
-     <itemizedlist>
-      <listitem>
-       <para>An initialization method (<function>__init__</function>),
-       that is used to instantiate test instances.  Test instances are
-       Python instances of the Python class corresponding to the test
-       class.  The parameters of the <function>__init__</function>
-       method are the test class parameters.  All parameters must be
-       named; positional parameters are not allowed.  A final
-       <token>**</token> parameter is allowed.</para>
+   <para>A test class should have the following members:
+    <itemizedlist>
+     <listitem>
+      <para>An initialization method (<function>__init__</function>),
+      that is used to instantiate test instances.  Test instances are
+      Python instances of the Python class corresponding to the test
+      class.  The parameters of the <function>__init__</function>
+      method are the test class parameters.  All parameters must be
+      named; positional parameters are not allowed.  A final
+      <token>**</token> parameter is allowed.</para>
 
-       <para>If a new test class is created via inheritance from a
-       previous test class, the derived <function>__init__</function>
-       is expected to invoke the base class
-       <function>__init__</function>, passing unused parameters.</para>
-      </listitem>
+      <para>If a new test class is created via inheritance from a
+      previous test class, the derived <function>__init__</function>
+      is expected to invoke the base class
+      <function>__init__</function>, passing unused parameters.</para>
+     </listitem>
 
-      <listitem>
-       <para>An <function>is_valid</function> method.  This method
-       takes a <classname>Configuration</classname> object and returns
-       as boolean whether the particular test instance is appropriate
-       to run on that configuration.</para>
-      </listitem>
+     <listitem>
+      <para>An <function>is_valid</function> method.  This method
+      takes a <classname>Configuration</classname> object and returns
+      as boolean whether the particular test instance is appropriate
+      to run on that configuration.</para>
+     </listitem>
 
-      <listitem>
-       <para>A <function>run</function> method.  The
-       <function>run</function> method is passed the same
-       configuration that was previously validated by the same test
-       instance's <function>is_valid</function> method.  
-       <!-- FIXME: What are the parameters to the run method? -->
-       </para>
-      </listitem>
-     </itemizedlist>
-    </para>
-
-    <para>After this point, we will use the term test to refer to the
-    corresponding Python class sometimes, when there is no
-    ambiguity.</para>
-
-   </section>
-   
-   <section><title>Finding test classes</title>
-
-    <para>Instantiating a test instance requires locating and
-    instantiating test class.  This is done via these two methods:
-     <orderedlist>
-      <listitem>
-       <para>The test class is located in the Python execution
-       environment in the usual way, using the
-       <envar>PYTHONPATH</envar> mechanism.</para>
-      </listitem>
-
-      <listitem>
-       <para>If the class has not been found, the test is asked to
-       locate the test class.  The test database is provided with the
-       name of the test class and also with the test identifier being
-       instantiated.  (This allows the test database to handle
-       relative paths in its conceptual tree, between the test id and
-       the test class.)</para>
-      </listitem>
-     </orderedlist>
+     <listitem>
+      <para>A <function>run</function> method.  The
+      <function>run</function> method is passed the same configuration
+      that was previously validated by the same test instance's
+      <function>is_valid</function> method.
+      <!-- FIXME: What are the parameters to the run method? -->
+      </para>
+     </listitem>
+    </itemizedlist>
    </para>
 
-   </section>
-   
-   <section><title>Test records</title>
+   <para>After this point, we will use the term test to refer to the
+   corresponding Python class sometimes, when there is no
+   ambiguity.</para>
 
-    <para>Test records are represented by instances of the class
-    <classname>qmtest.TestRecord</classname>.  This class has the
-    following members:</para>
+   <para>Instantiating a test instance requires locating and
+   instantiating test class.  This is done via these two methods:
+    <orderedlist>
+     <listitem>
+      <para>The test class is located in the Python execution
+      environment in the usual way, using the
+      <envar>PYTHONPATH</envar> mechanism.</para>
+     </listitem>
 
-    <para><programlisting>
-<![CDATA[
-class TestRecord:
-    """The canonical representation of a test."""
-
-    def GetId(self):
-        """Return the test id of this test."""
-
-    def GetClassName(self):
-        """Return the name of the test class of which this is an
-        instance."""
-
-    def GetArguments(self):
-        """Returns the arguments to the test class.  Arguments are
-        presented as a mapping from text argument names to argument
-        values.  Argument values are text Python expressions."""
-
-    def GetCategories(self):
-        """Return a sequence of names of categories to which this test
-        belongs."""
-
-    def GetPrerequisites(self):
-        """Return a sequence of pairs representing prerequisite tests
-        for this test.  The first element of the pair is the test id
-        of the prerequisite test.  The second element is the outcome
-        that that test must produce for the prerequisite to be
-        considered met.  If the second element is None, any outcome is
-        considered sufficient."""
-
-    def GetPreactions(self):
-        """Return a sequence of action ids of actions that must be run
-        and produce a successful outcome before this test is run."""
-
-    def GetPostactions(self):
-        """Return a sequence of action ids of actions that must be run
-        after this test is run."""
-
-    def GetDesignTimeArguments(self):
-        """Fix me."""
-]]>
-    </programlisting></para>
-
-    <para>Note that test record objects are not polymorphic,
-    regardless of the test class of the test.</para>
-
-    <para>Test records are the representation of tests that are stored
-    in and returned by test databases.  Most test database
-    implementations will externalize test records to a persistent
-    store.  The preferred text-based format for doing this is
-    XML.</para>
-
-    <para>
-    <!-- FIXME: Present a DTD for test records (and action records) here. -->
-    </para>
-
-    <para>For example, a test record might be stored like this:
-    <programlisting>
-<![CDATA[
-<qmtest.test>
-  <class>compile-link-run</class>
-  <argument>test123.c</argument>
-  <argument name="flags">-O2 -fpic</argument>
-  <category>C</category>
-  <category>back end</category>
-  <category>PIC</category>
-  <category>optimization</category>
-  <prerequisite>torture.link.test123</prerequisite>
-</qmtest.test>
-]]>
-    </programlisting></para>
-
-   </section>
-
-   <section><title>Test instances</title>
-
-    <para>A <firstterm>test instance</firstterm> is an instance of a
-    test classes.  For a test to be run, a test instance must be
-    created.  To do this, the test class is first obtained from the
-    test class name stored in the test record.  The test arguments are
-    extracted from the test record and evaluated in the test-time
-    execution context.  The results are passed to the initialization
-    function of the test class to create the instance.  To run the
-    test, the instance's run method is invoked.</para>
-
-   </section>
-
-   <section><title>Action implementation</title>
-
-    <para>
-    <!-- FIXME: Same as test implementation, except we do somethign
-    different with the outcomes, right?  Or is there a different set
-    of outcomes for actions? -->
-    </para>
-    
-   </section>
-
-   <section><title>Test result implementation</title>
-    
-    <para></para>
-
-   </section>
-
-   <section><title>The execution engine</title>
-    
-    <para></para>
-
-   </section>
+     <listitem>
+      <para>If the class has not been found, the test is asked to
+      locate the test class.  The test database is provided with the
+      name of the test class and also with the test identifier being
+      instantiated.  (This allows the test database to handle relative
+      paths in its conceptual tree, between the test id and the test
+      class.)</para>
+     </listitem>
+    </orderedlist>
+  </para>
 
   </section>
 
- </chapter>
+  <section><title>Test records</title>
+
+   <para>Test records are represented by instances of the class
+   <classname>qmtest.TestRecord</classname>.  This class has the
+   following members:</para>
+
+   <para><programlisting>
+<![CDATA[
+class TestRecord:
+   """The canonical representation of a test."""
+
+   def GetId(self):
+       """Return the test id of this test."""
+
+   def GetClassName(self):
+       """Return the name of the test class of which this is an
+       instance."""
+
+   def GetArguments(self):
+       """Returns the arguments to the test class.  Arguments are
+       presented as a mapping from text argument names to argument
+       values.  Argument values are text Python expressions."""
+
+   def GetCategories(self):
+       """Return a sequence of names of categories to which this test
+       belongs."""
+
+   def GetPrerequisites(self):
+       """Return a sequence of pairs representing prerequisite tests
+       for this test.  The first element of the pair is the test id
+       of the prerequisite test.  The second element is the outcome
+       that that test must produce for the prerequisite to be
+       considered met.  If the second element is None, any outcome is
+       considered sufficient."""
+
+   def GetPreactions(self):
+       """Return a sequence of action ids of actions that must be run
+       and produce a successful outcome before this test is run."""
+
+   def GetPostactions(self):
+       """Return a sequence of action ids of actions that must be run
+       after this test is run."""
+
+   def GetDesignTimeArguments(self):
+       """Fix me."""
+]]>
+   </programlisting></para>
+   
+   <para>Note that test record objects are not polymorphic, regardless
+   of the test class of the test.</para>
+
+   <para>Test records are the representation of tests that are stored
+   in and returned by test databases.  Most test database
+   implementations will externalize test records to a persistent
+   store.  The preferred text-based format for doing this is
+   XML.</para>
+
+   <para>
+   <!-- FIXME: Present a DTD for test records (and action records) here. -->
+   </para>
+
+   <para>For example, a test record might be stored like this:
+   <programlisting>
+<![CDATA[
+<?xml version="1.0"?>
+<qmtest.test>
+ <class>compile_link_run</class>
+ <argument name="inputfile">test123.c</argument>
+ <argument name="flags">-O2 -fpic</argument>
+ <category>C</category>
+ <category>back end</category>
+ <category>PIC</category>
+ <category>optimization</category>
+ <prerequisite>torture.link.test123</prerequisite>
+</qmtest.test>
+]]>
+   </programlisting></para>
+
+  </section>
+
+  <section><title>Test instances</title>
+
+   <para>A <firstterm>test instance</firstterm> is an instance of a
+   test classes.  For a test to be run, a test instance must be
+   created.  To do this, the test class is first obtained from the
+   test class name stored in the test record.  The test arguments are
+   extracted from the test record and evaluated in the test-time
+   execution context.  The results are passed to the initialization
+   function of the test class to create the instance.  To run the
+   test, the instance's run method is invoked.</para>
+   
+  </section>
+
+ </section>
+
+ <section>
+  <title>The test system</title>
+
+  <section><title>Action implementation</title>
+
+   <para>
+   <!-- FIXME: Same as test implementation, except we do somethign
+   different with the outcomes, right?  Or is there a different set
+   of outcomes for actions? -->
+   </para>
+
+  </section>
+
+  <section><title>Test result implementation</title>
+
+   <para></para>
+
+  </section>
+
+ </section>
+
+</chapter>
 
 <!--
   Local Variables:
