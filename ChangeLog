@@ -1,3 +1,8 @@
+2004-12-16  Stefan Seefeld <seefeld@sympatico.ca>
+
+	* qm/test/web/web.py: Replace operator 'is' by '=='
+	in string comparison
+
 2004-10-28  Matthias Klose <doko@cs.tu-berlin.de>
 
 	* qmdist/command/build_doc.py (build_doc.run): Use "openjade" if
