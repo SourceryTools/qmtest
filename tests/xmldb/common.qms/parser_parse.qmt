@@ -31,14 +31,30 @@ commands = [ command_1, command_2, command_3 ]
 
 parser = qm.cmdline.CommandParser(name, options, commands)
 
-parser.GetBasicHelp()
-parser.GetCommandHelp("create")
-parser.GetCommandHelp("edit")
-parser.GetCommandHelp("join")
+command_line = [
+    '-b', 
+    'foo', 
+    '--a_option', 
+    'edit', 
+    '--e_option', 
+    'issue1', 
+    'issue2'
+    ]
+
+parsed_line = parser.ParseCommandLine(command_line)
 </text>
  </argument>
  <argument name='expression'>
-  <text>1</text>
+  <text>parsed_line[0][0][0] == 'b_option' \
+  and parsed_line[0][0][1] == 'foo' \
+  and parsed_line[0][1][0] == 'a_option' \
+  and parsed_line[0][1][1] == '' \
+  and parsed_line[1] == 'edit' \
+  and parsed_line[2][0][0] == 'e_option' \
+  and parsed_line[2][0][1] == '' \
+  and parsed_line[3][0] == 'issue1' \
+  and parsed_line[3][1] == 'issue2'
+</text>
  </argument>
- <prerequisite outcome='PASS'>unit.common.parser_create</prerequisite>
+ <prerequisite outcome='PASS'>common.parser_create</prerequisite>
 </test>

@@ -201,7 +201,8 @@ distclean: clean
 
 # Run tests.
 check: all
-	qm/test/qmtest -D tests run $(QMTESTFLAGS)
+	qm/test/qmtest -D tests run $(QMTESTFLAGS) \
+		-c qmtest_path=qm/test/qmtest
 
 ########################################################################
 # Documentation Rules

@@ -1,5 +1,2 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE tdb-configuration PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "http://www.software-carpentry.com/qm/xml/tdb_configuration.dtd">
-<tdb-configuration>
- <class-name>qm.test.xmldb.Database</class-name>
-</tdb-configuration>
+<?xml version="1.0" ?>
+<tdb-configuration><class-name>selfdb.QMSelftestDatabase</class-name></tdb-configuration>

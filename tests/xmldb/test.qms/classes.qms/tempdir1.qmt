@@ -18,5 +18,5 @@ assert len(os.listdir(dir_path)) == 0
  <argument name='expression'>
   <text>1</text>
  </argument>
- <resource>unit.test.classes.tempdir1</resource>
+ <resource>test.classes.tempdir1</resource>
 </test>
