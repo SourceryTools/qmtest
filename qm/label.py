@@ -193,7 +193,7 @@ def thunk(label):
     # Make sure the label isn't empty.  If it is, concoct something.
     if label == "":
         raise ValueError, "Empty label"
-    return label
+    return normpath(label)
 
 
 def split(label):

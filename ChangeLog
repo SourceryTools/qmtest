@@ -1,3 +1,12 @@
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/label.py (thunk): Call normpath on result.
+	* qm/attachment.py (AttachmentStore): Add to doc string.
+	(_temporary_location_prefix): Change.
+	* qm/test/xmldb.py (AttachmentStore.Adopt): Fix doc string.
+	(AttachmentStore.__MakeDataFilePath): Make safer file names.
+	* qm/test/cmdline.py (Command.__WriteSummary): Bail early if no tests. 
+
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* share/dtml/test/new-suite.dtml: Fix typo.

@@ -642,6 +642,10 @@ class Command:
         num_tests = len(test_results)
         output.write("  %6d        tests total\n\n" % num_tests)
 
+        # No tests?  All done.
+        if num_tests == 0:
+            return
+
         if expected_outcomes is not None:
             output.write("  Test results relative to expected outcomes:\n\n")
             # Initialize a map with which we will count the number of

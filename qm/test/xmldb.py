@@ -919,7 +919,7 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         'file_name' -- The name of the file from which the attachment
         was uploaded.
 
-        'data' -- The attachment data.
+        'path' -- The path to the file containing attachment data.
 
         returns -- An 'Attachment' object, with its location set
         correctly.
@@ -971,12 +971,15 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         # Convert the item's containing suite to a path.
         parent_suite_id = qm.label.split(item_id)[0]
         parent_suite_path = qm.label.to_path(parent_suite_id)
+        # Construct a file name free of suspicious characters.
+        base, extension = os.path.splitext(file_name)
+        safe_file_name = qm.label.thunk(base) + extension
+
+        data_file_path = os.path.join(parent_suite_path, safe_file_name)
+        full_data_file_path = os.path.join(self.__path, data_file_path)
         # Is the file name by itself OK in this directory?  It must not
         # have a file extension used by the XML database itself, and
         # there must be no other file with the same name there.
-        extension = os.path.splitext(file_name)[1]
-        data_file_path = os.path.join(parent_suite_path, file_name)
-        full_data_file_path = os.path.join(self.__path, data_file_path)
         if extension not in [test_file_extension,
                              suite_file_extension,
                              resource_file_extension] \
@@ -987,7 +990,7 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         # incrementally.
         index = 0
         while 1:
-            data_file_path = os.path.join(parent_suite_path, file_name) \
+            data_file_path = os.path.join(parent_suite_path, safe_file_name) \
                              + ".%d" % index
             full_data_file_path = os.path.join(self.__path, data_file_path)
             if os.path.exists(full_data_file_path):

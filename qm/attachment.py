@@ -216,7 +216,11 @@ class AttachmentStore:
     including the attachment's description, file name, or MIME type.
 
     Users of an 'AttachmentStore' reference attachment data by a
-    *location*, which is stored with the attachment."""
+    *location*, which is stored with the attachment.
+
+    Please note that the 'AttachmentStore' interface provides methods
+    for retrieving attachment data only; not for storing it.  The
+    interface for storing may be defined in any way by implementations."""
 
     def GetData(self, location):
         """Return the data for an attachment.
@@ -408,7 +412,7 @@ class AttachmentWrapper(Attachment):
 # functions
 ########################################################################
 
-_temporary_location_prefix = "#temporary"
+_temporary_location_prefix = "_temporary"
 
 def make_temporary_location():
     """Return a unique location for temporary attachment data."""
