@@ -77,7 +77,7 @@ def get_host_name():
 
     # This function caches the result of '_get_host_name' by replacing
     # itself with a lambda that returns the cached value.
-    global get_host_name()
+    global get_host_name
     get_host_name = lambda host_name=_get_host_name(): host_name
 
 

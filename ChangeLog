@@ -1,5 +1,9 @@
 2001-08-22  Alex Samuel  <samuel@indetermi.net>
 
+	* qm/platform_win32.py (get_host_name): Fix syntax error.
+
+2001-08-22  Alex Samuel  <samuel@indetermi.net>
+
 	* qm/test/xmldb.py (DirectorySuite.__ScanDirectory): Construct
 	absolute test IDs.
 	* qm/test/run.py (RemoteShellTarget.__init__): Use arguments
