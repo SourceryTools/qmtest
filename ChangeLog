@@ -1,3 +1,8 @@
+2002-03-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.MakeContext): Fix typo.
+	* NEWS: Note fix.
+	
 2002-03-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (string_types): New variable.

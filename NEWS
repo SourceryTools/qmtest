@@ -3,6 +3,12 @@ NEWS
 
 This file describes user visible changes to QM.
 
+Changes in QM 1.1.3
+===================
+
+The "-c" option to "qmtest run" did not work correctly in QM 1.1.2.
+This problem has been corrected.
+
 Changes in QM 1.1.2
 ===================
 

@@ -524,7 +524,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Look for the '--context' option.
             elif option == "context":
                 # Parse the argument.
-                name, value = qm.common.parse_assignment(assignment)
+                name, value = qm.common.parse_assignment(argument)
             
                 try:
                     # Insert it into the context.
