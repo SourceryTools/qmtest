@@ -122,49 +122,6 @@ class TestResultsPage(web.DtmlPage, ResultStream):
         test_ids.sort()
         return test_ids
 
-
-
-########################################################################
-# functions
-########################################################################
-
-def handle_run_tests(request):
-    """Respond to a request to run tests.
-
-    Runs the tests specified in the request, and returns a page
-    displaying the results of the run.
-
-    These fields in 'request' are used:
-
-      'ids' -- A comma-separated list of test and suite IDs.  These IDs
-      are expanded into the list of IDs of tests to run.
-
-    """
-
-    # Extract and expand the IDs of tests to run.
-    ids = string.split(request["ids"], ",")
-    test_ids, suite_ids = qm.test.base.expand_ids(ids)
-    
-    # FIXME: Put other things in the context?
-    context = qm.test.base.Context()
-    # FIXME: Determine target group.
-    target_specs = [
-        qm.test.run.TargetSpec("local",
-                               "qm.test.run.SubprocessTarget",
-                               "",
-                               1,
-                               {}),
-        ]
-
-    results_page = TestResultsPage()
-    
-    # Run the tests.
-    qm.test.run.test_run(test_ids, context, target_specs, [results_page])
-
-    # Display the results.
-    return results_page(request)
-
-
 ########################################################################
 # Local Variables:
 # mode: python

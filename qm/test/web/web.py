@@ -39,6 +39,7 @@ import os
 import qm
 import qm.attachment
 import qm.web
+import string
 
 ########################################################################
 # classes
@@ -125,101 +126,187 @@ class DtmlPage(DefaultDtmlPage):
 
 
 
-########################################################################
-# functions
-########################################################################
+class ContextPage(DtmlPage):
+    """DTML page for setting the context."""
 
-def make_server(database, port, address, log_file=None):
-    """Create and bind an HTTP server.
+    def __init__(self, server):
+        """Construct a new 'ContextPage'.
 
-    'database' -- The test database to serve.
+        'server' -- The 'QMTestServer' creating this page."""
 
-    'port' -- The port number on which to accept HTTP requests.
-
-    'address' -- The local address to which to bind the server.  An
-    empty string indicates all local addresses.
-
-    'log_file' -- A file object to which the server will log requests.
-    'None' for no logging.
-
-    returns -- A web server.  The server is bound to the specified
-    address.  Call its 'Run' method to start accepting requests."""
-
-    import qm.test.web.dir
-    import qm.test.web.run
-    import qm.test.web.show
-    import qm.test.web.suite
-
-    # Base URL path for QMTest stuff.
-    script_base = "/test/"
-    # Create a new server instance.
-    server = qm.web.WebServer(port,
-                              address,
-                              log_file=log_file)
-    # Register all our web pages.
-    for name, function in [
-        ( "create-resource", qm.test.web.show.handle_show ),
-        ( "create-suite", qm.test.web.suite.handle_create ),
-        ( "create-test", qm.test.web.show.handle_show ),
-        ( "delete-resource", qm.test.web.show.handle_delete ),
-        ( "delete-suite", qm.test.web.suite.handle_delete ),
-        ( "delete-test", qm.test.web.show.handle_delete ),
-        ( "dir", qm.test.web.dir.handle_dir ),
-        ( "edit-resource", qm.test.web.show.handle_show ),
-        ( "edit-suite", qm.test.web.suite.handle_edit ),
-        ( "edit-test", qm.test.web.show.handle_show ),
-        ( "new-resource", qm.test.web.show.handle_new_resource ),
-        ( "new-suite", qm.test.web.suite.handle_new ),
-        ( "new-test", qm.test.web.show.handle_new_test ),
-        ( "run-tests", qm.test.web.run.handle_run_tests ),
-        ( "show-dir", qm.test.web.dir.handle_dir ),
-        ( "show-resource", qm.test.web.show.handle_show ),
-        ( "show-suite", qm.test.web.suite.handle_show ),
-        ( "show-test", qm.test.web.show.handle_show ),
-        ( "shutdown", handle_shutdown ),
-        ( "submit-resource", qm.test.web.show.handle_submit ),
-        ( "submit-suite", qm.test.web.suite.handle_submit ),
-        ( "submit-test", qm.test.web.show.handle_submit ),
-        ]:
-        server.RegisterScript(script_base + name, function)
-    server.RegisterPathTranslation(
-        "/stylesheets", qm.get_share_directory("web", "stylesheets"))
-    server.RegisterPathTranslation(
-        "/images", qm.get_share_directory("web", "images"))
-    server.RegisterPathTranslation(
-        "/static", qm.get_share_directory("web", "static"))
-    # Register the QM manual.
-    server.RegisterPathTranslation(
-        "/manual", qm.get_doc_directory("manual", "html"))
+        DtmlPage.__init__(self, "context.dtml")
+        
+        self.__server = server
+        self.context = server.GetContext()
+        
     
-    # The global temporary attachment store processes attachment data
-    # uploads.
-    temporary_attachment_store = qm.attachment.temporary_store
-    server.RegisterScript(qm.fields.AttachmentField.upload_url,
-                          temporary_attachment_store.HandleUploadRequest)
-    # The DB's attachment store processes download requests for
-    # attachment data.
-    attachment_store = database.GetAttachmentStore()
-    server.RegisterScript(qm.fields.AttachmentField.download_url,
-                          attachment_store.HandleDownloadRequest)
+class QMTestServer(qm.web.WebServer):
+    """A 'QMTestServer' is the web GUI interface to QMTest."""
 
-    # Bind the server to the specified address.
-    try:
-        server.Bind()
-    except qm.web.AddressInUseError, address:
-        raise RuntimeError, qm.error("address in use", address=address)
-    except qm.web.PrivilegedPortError:
-        raise RuntimeError, qm.error("privileged port", port=port)
+    def __init__(self, database, port, address, log_file=None):
+        """Create and bind an HTTP server.
 
-    return server
+        'database' -- The test database to serve.
+
+        'port' -- The port number on which to accept HTTP requests.
+
+        'address' -- The local address to which to bind the server.  An
+        empty string indicates all local addresses.
+
+        'log_file' -- A file object to which the server will log requests.
+        'None' for no logging.
+
+        returns -- A web server.  The server is bound to the specified
+        address.  Call its 'Run' method to start accepting requests."""
+
+        import qm.test.web.dir
+        import qm.test.web.run
+        import qm.test.web.show
+        import qm.test.web.suite
+
+        qm.web.WebServer.__init__(self, port, address, log_file=log_file)
+
+        # Base URL path for QMTest stuff.
+        script_base = "/test/"
+        # Register all our web pages.
+        for name, function in [
+            ( "create-resource", qm.test.web.show.handle_show ),
+            ( "create-suite", qm.test.web.suite.handle_create ),
+            ( "create-test", qm.test.web.show.handle_show ),
+            ( "delete-resource", qm.test.web.show.handle_delete ),
+            ( "delete-suite", qm.test.web.suite.handle_delete ),
+            ( "delete-test", qm.test.web.show.handle_delete ),
+            ( "dir", qm.test.web.dir.handle_dir ),
+            ( "edit-context", self.HandleEditContext ),
+            ( "edit-resource", qm.test.web.show.handle_show ),
+            ( "edit-suite", qm.test.web.suite.handle_edit ),
+            ( "edit-test", qm.test.web.show.handle_show ),
+            ( "new-resource", qm.test.web.show.handle_new_resource ),
+            ( "new-suite", qm.test.web.suite.handle_new ),
+            ( "new-test", qm.test.web.show.handle_new_test ),
+            ( "run-tests", self.HandleRunTests ),
+            ( "show-dir", qm.test.web.dir.handle_dir ),
+            ( "show-resource", qm.test.web.show.handle_show ),
+            ( "show-suite", qm.test.web.suite.handle_show ),
+            ( "show-test", qm.test.web.show.handle_show ),
+            ( "shutdown", self.HandleShutdown ),
+            ( "submit-context", self.HandleSubmitContext ),
+            ( "submit-resource", qm.test.web.show.handle_submit ),
+            ( "submit-suite", qm.test.web.suite.handle_submit ),
+            ( "submit-test", qm.test.web.show.handle_submit ),
+            ]:
+            self.RegisterScript(script_base + name, function)
+        self.RegisterPathTranslation(
+            "/stylesheets", qm.get_share_directory("web", "stylesheets"))
+        self.RegisterPathTranslation(
+            "/images", qm.get_share_directory("web", "images"))
+        self.RegisterPathTranslation(
+            "/static", qm.get_share_directory("web", "static"))
+        # Register the QM manual.
+        self.RegisterPathTranslation(
+            "/manual", qm.get_doc_directory("manual", "html"))
+
+        # The global temporary attachment store processes attachment data
+        # uploads.
+        temporary_attachment_store = qm.attachment.temporary_store
+        self.RegisterScript(qm.fields.AttachmentField.upload_url,
+                            temporary_attachment_store.HandleUploadRequest)
+        # The DB's attachment store processes download requests for
+        # attachment data.
+        attachment_store = database.GetAttachmentStore()
+        self.RegisterScript(qm.fields.AttachmentField.download_url,
+                            attachment_store.HandleDownloadRequest)
+
+        # Create an empty context.
+        self.__context = qm.test.base.Context(a='b', c='d', d='e')
+        
+        # Bind the server to the specified address.
+        try:
+            self.Bind()
+        except qm.web.AddressInUseError, address:
+            raise RuntimeError, qm.error("address in use", address=address)
+        except qm.web.PrivilegedPortError:
+            raise RuntimeError, qm.error("privileged port", port=port)
 
 
-def handle_shutdown(request):
-    """Handle a request to shut down the server."""
+    def GetContext(self):
+        """Return the 'Context' in which tests will be run.
 
-    raise SystemExit, None
+        returns -- The 'Context' in which tests will be run."""
+
+        return self.__context
+
+    
+    def HandleEditContext(self, request):
+        """Handle a request to edit the context.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        context_page = ContextPage(self)
+        return context_page(request)
+        
+        
+    def HandleRunTests(self, request):
+        """Handle a request to run tests.
+
+        'request' -- The 'WebRequest' that caused the event.
+
+        These fields in 'request' are used:
+
+          'ids' -- A comma-separated list of test and suite IDs.  These IDs
+          are expanded into the list of IDs of tests to run.
+
+        """
+        
+        # Extract and expand the IDs of tests to run.
+        ids = string.split(request["ids"], ",")
+        test_ids, suite_ids = qm.test.base.expand_ids(ids)
+
+        context = self.__context
+        # FIXME: Determine target group.
+        target_specs = [
+            qm.test.run.TargetSpec("local",
+                                   "qm.test.run.SubprocessTarget",
+                                   "",
+                                   1,
+                                   {}),
+            ]
+
+        results_page = qm.test.web.run.TestResultsPage()
+
+        # Run the tests.
+        qm.test.run.test_run(test_ids, self.__context,
+                             target_specs, [results_page])
+
+        # Display the results.
+        return results_page(request)
+
+        
+    def HandleShutdown(self, request):
+        """Handle a request to shut down the server.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        raise SystemExit, None
 
 
+    def HandleSubmitContext(self, request):
+        """Handle a context submission.
+
+        'request' -- The 'WebRequest' that caused the event.  The
+        'request' must have a 'context_vars' key, whose value is the
+        the context variables."""
+
+        vars = qm.web.decode_properties(request["context_vars"])
+        self.__context = qm.test.base.Context()
+        for k in vars.keys():
+            self.__context[k] = vars[k]
+
+        # Redirect to the main page.
+        request = qm.web.WebRequest("dir", base=request)
+        raise qm.web.HttpRedirect, request
+
+        
 ########################################################################
 # initialization
 ########################################################################

@@ -80,6 +80,10 @@ class DirPage(web.DtmlPage):
         self.suite_ids = database.GetSuiteIds(path, scan_subdirs=0)
         self.resource_ids = database.GetResourceIds(path, scan_subdirs=0)
 
+        # We include the root testsuite in the root directory, as
+        # a special case.
+        if path == qm.label.sep:
+            self.suite_ids = [ "." ] + self.suite_ids
 
 ########################################################################
 # functions
@@ -105,7 +109,6 @@ def handle_dir(request):
         path = "."
     # Generate HTML.
     return DirPage(path)(request)
-
 
 ########################################################################
 # Local Variables:

@@ -1139,7 +1139,7 @@ class SetField(Field):
         # Masquerade property declarations as for contained field.
         self.property_declarations = contained.property_declarations \
                                      + self.set_property_declarations
-        # Set the default field value to any empty set.
+        # Set the default field value to the empty set.
         self.SetDefaultValue([])
 
 

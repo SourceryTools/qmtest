@@ -1,3 +1,25 @@
+2001-10-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (SetField.__init__): Fix typo in comment.
+
+	* qm/web.py (make_properties_control): Sort the keys.  Pass
+	more information to JavaScript functions.
+	* qm/test/cmdline.py (Command._ExecuteServer): Use QMTestServer,
+	not make_server.
+	* qm/test/web/dir.py (DirPage.__init__): Add the "." suite at
+	the top level.
+	* qm/test/web/run.py (handle_run_tests): Remove.
+	* qm/test/web/web.py (make_server): Turn into ...
+	(QMTestServer): ... new class.
+	(handle_shutdown): Turn into ...
+	(QMTestServer.HandleShutdown): ... this.
+	(ContextPage): New class.
+	* qm/share/dtml/test/context.dtml: New file.
+	* qm/share/dtml/test/dir.dtml: Add "Edit Context" button.
+	* qm/share/web/common.js (property_add_or_change): Clear
+	the name/value fields after an addition.
+	(property_remove): Likewise.
+
 2001-10-16  Mark Mitchell  <mark@codesourcery.com>
 
 	* install.py: Install the class manifest.

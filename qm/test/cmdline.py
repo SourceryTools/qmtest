@@ -673,7 +673,7 @@ The summary is written to standard output.
             log_file = open(log_file_path, "a+")
 
         # Set up the server.
-        server = web.web.make_server(database, port_number, address, log_file)
+        server = web.web.QMTestServer(database, port_number, address, log_file)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.

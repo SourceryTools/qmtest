@@ -194,17 +194,20 @@ function popup_manual()
 // 'contents' -- The hidden input that gets the encoded representation
 // of the properties.
 //
-// 'name' -- The property name.
+// 'name_text' -- The text input that displays the property name.
 //
-// 'value' -- The property value.
+// 'value_text' -- The text input that displays the property value.
 //
 // If there already is a property named 'name', its value is replaced
 // with 'value'.  Otherwise, a new property is added.
 //
 // See 'qm.web.make_properties_control'.
 
-function property_add_or_change(select, contents, name, value)
+function property_add_or_change(select, contents, name_text, value_text)
 {
+  var name = name_text.value
+  var value = value_text.value
+
   // No name?  Bail.
   if(name == "")
     return;
@@ -249,28 +252,12 @@ function property_add_or_change(select, contents, name, value)
   contents.value = encode_select_options(select);
   // Make the new property selected.
   options.selectedIndex = options.length - 1;
+
+  // Clear out the name and value fields.
+  name_text.value = ""
+  value_text.value = ""
+
   return;
-}
-
-
-// Remove the selected property in a property control.
-// 
-// 'select' -- The select input displaying the properties.
-//
-// 'contents' -- The hidden input that gets the encoded representation
-// of the properties.
-//
-// See 'qm.web.make_properties_control'.
-
-function property_remove(select, contents)
-{
-  // Is a property selected?
-  if(select.selectedIndex != -1) {
-    // Yes; remove it.
-    select.options[select.selectedIndex] = null;
-    // Re-encode the properties.
-    contents.value = encode_select_options(select);
-  }
 }
 
 
@@ -303,6 +290,40 @@ function property_update_selection(select, name_text, value_text)
   // Set the text inputs appropriately.
   name_text.value = name;
   value_text.value = value;
+}
+
+
+// Remove the selected property in a property control.
+// 
+// 'select' -- The select input displaying the properties.
+//
+// 'contents' -- The hidden input that gets the encoded representation
+// of the properties.
+//
+// 'name_text' -- The text input that displays the property name.
+//
+// 'value_text' -- The text input that displays the property value.
+//
+// 'button' -- The add/change button.
+//
+// See 'qm.web.make_properties_control'.
+
+function property_remove(select, contents, name_text, value_text, button)
+{
+  // Is a property selected?
+  if(select.selectedIndex != -1) {
+    // Yes; remove it.
+    select.options[select.selectedIndex] = null;
+    // Re-encode the properties.
+    contents.value = encode_select_options(select);
+
+    // Clear out the name and value fields.
+    name_text.value = "";
+    value_text.value = "";
+
+    // Make the button an 'Add' button.
+    button.value = " Add ";
+  }
 }
 
 

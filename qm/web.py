@@ -1877,10 +1877,12 @@ def make_properties_control(form_name,
                 form_name, name_control_name, form_name, value_control_name,
                 form_name, add_change_button_name)
     # Add an option for each initial property.
-    for name, value in properties.items():
+    keys = properties.keys()
+    keys.sort()
+    for k in keys:
         select = select + \
                  '<option value="%s=%s">%s = %s</option>\n' \
-                 % (name, value, name, value)
+                 % (k, properties[k], k, properties[k])
     select = select + '</select>\n'
     
     # Construct the hidden control contianing the set's elements.  Its
@@ -1900,30 +1902,40 @@ def make_properties_control(form_name,
     value_control = '<input type="text" name="%s" size="32"/>' \
                     % value_control_name
 
+    vars = { 'form' : form_name,
+             'button' : add_change_button_name,
+             'select' : select_name,
+             'field' : field_name,
+             'name' : name_control_name,
+             'value' : value_control_name }
+    
     # Construct the "Change" button.  When it's clicked, call
     # 'property_update', passing the select control and the hidden
     # control whose value should be updated with the new encoded
     # property list.
     add_change_button = \
     '''<input type="button"
-              name="%s"
+              name="%(button)s"
               size="12"
               value=" Add "
-              onclick="property_add_or_change(document.%s.%s,
-                                              document.%s.%s,
-                                              document.%s.%s.value,
-                                              document.%s.%s.value);"
-    />''' % (add_change_button_name, form_name, select_name,
-             form_name, field_name, form_name, name_control_name,
-             form_name, value_control_name)
+              onclick="property_add_or_change
+                         (document.%(form)s.%(select)s,
+                          document.%(form)s.%(field)s,
+                          document.%(form)s.%(name)s,
+                          document.%(form)s.%(value)s);"
+    />''' % vars
 
     # Construct the "Remove" button.
     remove_button = \
     '''<input type="button"
            size="12"
            value=" Remove "
-           onclick="property_remove(document.%s.%s, document.%s.%s);"
-    />''' % (form_name, select_name, form_name, field_name)
+           onclick="property_remove(document.%(form)s.%(select)s,
+                                    document.%(form)s.%(field)s,
+                                    document.%(form)s.%(name)s,
+                                    document.%(form)s.%(value)s,
+                                    document.%(form)s.%(button)s);"
+    />''' % vars
 
     # Arrange everything in a table to control the layout.
     return contents + '''
