@@ -610,11 +610,10 @@ def handle_submit(request):
 
     elif type is "resource":
         # Create a new resource.
-        item = qm.test.base.ResourceDescriptor
-            (resource_id=item_id,
-             resource_class_name=item_class_name,
-             arguments=arguments,
-             properties=properties)
+        item = qm.test.base.ResourceDescriptor(item_id,
+                                               item_class_name,
+                                               arguments,
+                                               properties)
 
     # Were there any validation errors?
     if len(field_errors) > 0:

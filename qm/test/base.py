@@ -57,7 +57,7 @@ import types
 
 dtds = {
     "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",
-    "result":       "-//Software Carpentry//QMTest Result V0.2//EN",
+    "result":       "-//Software Carpentry//QMTest Result V0.3//EN",
     "suite":        "-//Software Carpentry//QMTest Suite V0.1//EN",
     "target":       "-//Software Carpentry//QMTest Target V0.1//EN",
     "test":         "-//Software Carpentry//QMTest Test V0.1//EN",
@@ -1106,51 +1106,6 @@ def load_outcomes(path):
     return outcomes
 
 
-def write_results(test_results, resource_results, output):
-    """Write results in XML format.
-
-    'test_results' -- A sequence of 'Result' objects for tests.
-
-    'resource_results' -- A sequence of 'Result' objects for
-    resource functions.
-
-    'output' -- A file object to which to write the results."""
-
-    document = qm.xmlutil.create_dom_document(
-        public_id=dtds["result"],
-        dtd_file_name="result.dtd",
-        document_element_tag="test-run"
-        )
-    # Add an element for grouping test results.
-    test_results_element = document.createElement("test-results")
-    document.documentElement.appendChild(test_results_element)
-    # Add a result element for each test that was run.
-    for result in test_results:
-        result_element = result.MakeDomNode(document)
-        test_results_element.appendChild(result_element)
-    # Add an element for grouping resource function results.
-    resource_results_element = document.createElement("resource-results")
-    document.documentElement.appendChild(resource_results_element)
-    # Add a result element for each resource function that was run.
-    for result in resource_results:
-        result_element = result.MakeDomNode(document)
-        resource_results_element.appendChild(result_element)
-    # Generate output.
-    qm.xmlutil.write_dom_document(document, output)
-    
-
-def save_results(results, path):
-    """Save results to an XML file.
-
-    'results' -- A sequence of 'Result' objects.
-
-    'path' -- The path of the file in which to svae them."""
-    
-    results_file = open(path, "w")
-    write_results(results, results_file)
-    results_file.close()
-
-
 def load_results(path):
     """Read test results from a file.
 
@@ -1159,48 +1114,24 @@ def load_results(path):
     returns -- A pair, '(test_results, resource_results)'.
     'test_results' is map from test IDs to 'Result' objects.
     'resource_results' is a sequence of resource 'Result' objects."""
+
+    test_results = {}
+    resource_results = []
     
     results_document = qm.xmlutil.load_xml_file(path)
     node = results_document.documentElement
-    # Extract the test result elements.
-    test_results_element = qm.xmlutil.get_child(node, "test-results")
-    test_results = _test_results_from_dom(test_results_element)
-    # Extract the resource result elements.
-    resource_results_element = qm.xmlutil.get_child(node, "resource-results")
-    resource_results = _resource_results_from_dom(resource_results_element)
-    # That's it.
+    # Extract the results.
+    results_elements = qm.xmlutil.get_children(node, "result")
+    for re in results_elements:
+        r = _result_from_dom(re)
+        if r.GetKind() == Result.TEST:
+            test_results[r.GetId()] = r
+        elif r.GetKind() == Result.RESOURCE:
+            resource_results.append(r)
+        else:
+            assert 0
+
     return test_results, resource_results
-
-
-def _test_results_from_dom(results_node):
-    """Extract test results from a DOM node.
-
-    'results_node' -- A DOM node for a "test-results" element.
-
-    returns -- A map from test IDs to 'Result' objects."""
-
-    # Extract one result for each result element.
-    results = {}
-    for node in qm.xmlutil.get_children(results_node, "result"):
-        result = _result_from_dom(node)
-        results[result.GetId()] = result
-    return results
-
-
-def _resource_results_from_dom(results_node):
-    """Extract resource results from a DOM node.
-
-    'results_node' -- A DOM node for a "resource-results" element.
-
-    returns -- A sequence of 'Result' objects for resource
-    results."""
-
-    # Extract one result for each result element.
-    results = []
-    for node in qm.xmlutil.get_children(results_node, "result"):
-        result = _result_from_dom(node)
-        results.append(result)
-    return results
 
 
 def _result_from_dom(node):
@@ -1215,10 +1146,11 @@ def _result_from_dom(node):
     outcome = qm.xmlutil.get_child_text(node, "outcome")
     # Extract the test ID.
     test_id = node.getAttribute("id")
+    kind = node.getAttribute("kind")
     # FIXME: Load context?
     context = None
     # Build a Result.
-    result = Result(test_id, context, outcome)
+    result = Result(kind, test_id, context, outcome)
     # Extract properties, one for each property element.
     for property_node in node.getElementsByTagName("property"):
         # The name is stored in an attribute.
@@ -1231,7 +1163,7 @@ def _result_from_dom(node):
     return result
 
 
-def _count_outcomes(results):
+def count_outcomes(results):
     """Count results by outcome.
 
     'results' -- A sequence of 'Result' objects.
@@ -1271,143 +1203,6 @@ def split_results_by_expected_outcome(results, expected_outcomes):
     return expected, unexpected
 
 
-def summarize_test_stats(output, results):
-    """Generate a summary of test result statistics.
-
-    'output' -- A file object to which to write the summary.
-
-    'results' -- A sequece of 'Result' objects."""
-
-    num_tests = len(results)
-    output.write("  %6d        tests total\n" % num_tests)
-
-    # No tests?  Bail.
-    if num_tests == 0:
-        return
-
-    counts_by_outcome = _count_outcomes(results)
-    for outcome in Result.outcomes:
-        count = counts_by_outcome[outcome]
-        if count > 0:
-            output.write("  %6d (%3.0f%%) tests %s\n"
-                         % (count, (100. * count) / num_tests, outcome))
-    output.write("\n")
-
-
-def summarize_relative_test_stats(output,
-                                  results,
-                                  expected_outcomes):
-    """Generate statistics of test results relative to expected outcomes.
-
-    'output' -- A file object to which to write the summary.
-
-    'results' -- A sequence of 'Result' objects.
-
-    'expected_outcomes' -- A map from test ID to corresponding expected
-    outcome."""
-
-    num_tests = len(results)
-    output.write("  %6d        tests total\n" % num_tests)
-
-    # No tests?  Bail.
-    if num_tests == 0:
-        return
-
-    # Split the results into those that produced expected outcomes, and
-    # those that didn't.
-    expected, unexpected = \
-        split_results_by_expected_outcome(results, expected_outcomes)
-    # Report the number that produced expected outcomes.
-    output.write("  %6d (%3.0f%%) tests as expected\n"
-                 % (len(expected), (100. * len(expected)) / num_tests))
-    # For results that produced unexpected outcomes, break them down by
-    # actual outcome.
-    counts_by_outcome = _count_outcomes(unexpected)
-    for outcome in Result.outcomes:
-        count = counts_by_outcome[outcome]
-        if count > 0:
-            output.write("  %6d (%3.0f%%) tests unexpected %s\n"
-                         % (count, (100. * count) / num_tests, outcome))
-    output.write("\n")
-
-
-def summarize_test_suite_stats(output,
-                               results,
-                               suite_ids,
-                               expected_outcomes):
-    """Generate a summary of test results statistics by suite.
-
-    'output' -- A file object to which to write the summary.
-
-    'results' -- A sequence of 'Result' objects.
-
-    'suite_ids' -- A sequence of IDs ot suites by which to group
-    attachments.
-
-    'expected_outcomes' -- A map from ID to expected outcomes, or
-    'None'."""
-
-    database = get_database()
-
-    for suite_id in suite_ids:
-        # Expand the contents of the suite.
-        suite = database.GetSuite(suite_id)
-        ids_in_suite = get_suite_contents_recursively(suite, database)[0]
-        # Determine the results belonging to tests in the suite.
-        results_in_suite = []
-        for result in results:
-            if result.GetId() in ids_in_suite:
-                results_in_suite.append(result)
-        # If there aren't any, skip.
-        if len(results_in_suite) == 0:
-            continue
-
-        output.write("  %s\n" % suite.GetId())
-        if expected_outcomes is None:
-            summarize_test_stats(output, results_in_suite)
-        else:
-            summarize_relative_test_stats(
-                output, results_in_suite, expected_outcomes)
-
-
-def summarize_results(output, format, results, expected_outcomes=None):
-    """Generate a summary of results.
-
-    'output' -- A file object to which to write the summary.
-
-    'format' -- The summary format.  Must be "full" or "brief".
-
-    'results' -- A sequence of 'Result' objects.
-
-    'expected_outcomes' -- A map from ID to expected outcomes, or 'None'."""
-
-    if len(results) == 0:
-        output.write("  None.\n\n")
-        return
-
-    # Generate them.
-    for result in results:
-        id_ = result.GetId()
-        outcome = result.GetOutcome()
-
-        # Print the ID and outcome.
-        if expected_outcomes:
-            # If expected outcomes were specified, print the expected
-            # outcome too.
-            expected_outcome = expected_outcomes.get(id_, Result.PASS)
-            output.write("  %-46s: %-8s, expected %-8s\n"
-                         % (id_, outcome, expected_outcome))
-        else:
-            output.write("  %-63s: %-8s\n" % (id_, outcome))
-
-        # Get a description of the result as structured text.
-        description = result.AsStructuredText(format)
-        # Format it as plain text.
-        description = qm.structured_text.to_text(description, 72, 4)
-        # Write it out.
-        output.write(description)
-        
-
 def run_test(test_id, context):
     """Run a test.
 
@@ -1421,7 +1216,7 @@ def run_test(test_id, context):
 
     test = get_database().GetTest(test_id)
 
-    result = Result(test_id, context)
+    result = Result(Result.TEST, test_id, context)
     
     try:
         # Run the test.
@@ -1447,7 +1242,7 @@ def set_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(resource_id, context)
+    result = Result(Result.RESOURCE, resource_id, context)
 
     # Set up the resoure.
     try:
@@ -1472,7 +1267,7 @@ def clean_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(resource_id, context)
+    result = Result(Result.RESOURCE, resource_id, context)
     
     # Clean up the resource.
     try:

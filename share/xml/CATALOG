@@ -7,7 +7,7 @@ PUBLIC "-//Software Carpentry//QMTrack Issue V0.1//EN" "issue.dtd"
 
 PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "test.dtd"
 PUBLIC "-//Software Carpentry//QMTest Resource V0.1//EN" "resource.dtd"
-PUBLIC "-//Software Carpentry//QMTest Result V0.2//EN" "result.dtd"
+PUBLIC "-//Software Carpentry//QMTest Result V0.3//EN" "result.dtd"
 PUBLIC "-//Software Carpentry//QMTest Suite V0.1//EN" "suite.dtd"
 PUBLIC "-//Software Carpentry//QMTest Target V0.1//EN" "target.dtd"
 PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "tdb-configuration.dtd"

@@ -41,6 +41,7 @@
 
 import qm.test.base
 from   qm.test.result import *
+from   qm.test.result_stream import *
 import qm.test.run
 import qm.web
 import string
@@ -50,25 +51,41 @@ import web
 # classes
 ########################################################################
 
-class TestResultsPage(web.DtmlPage):
+class TestResultsPage(web.DtmlPage, ResultStream):
     """DTML page for displaying test results."""
 
-    def __init__(self, test_results, resource_results):
-        """Construct a new DTML page.
-
-        'test_results' -- A map from test ID to 'Result' objects for
-        tests that were run.
-
-        'resource_results' -- A sequence of 'Result' objects for
-        resource functions that were run."""
+    def __init__(self):
+        """Construct a new 'TestResultsPage'."""
         
-        # Initialize the base class.
+        # Initialize the base classes.
         web.DtmlPage.__init__(self, "results.dtml")
-        # Store attributes.
-        self.test_results = test_results
-        self.resource_results = resource_results
+        ResultStream.__init__(self)
+
+        self.test_results = {}
         
 
+    def WriteResult(self, result):
+        """Output a test result.
+
+        'result' -- A 'Result'."""
+
+        # Record the results as they are received.  Resource results
+        # are ignored.
+        if result.GetKind() == Result.TEST:
+            self.test_results[result.GetId()] = result
+
+        
+    def Summarize(self):
+        """Output summary information about the results.
+
+        When this method is called, the test run is complete.  Summary
+        information should be displayed for the user, if appropriate.
+        Any finalization, such as the closing of open files, should
+        also be performed at this point."""
+
+        pass
+
+      
     def FormatResult(self, result):
          """Return HTML for displaying a test result.
 
@@ -139,12 +156,13 @@ def handle_run_tests(request):
                                {}),
         ]
 
+    results_page = TestResultsPage()
+    
     # Run the tests.
-    test_results, resource_results = \
-        qm.test.run.test_run(test_ids, context, target_specs)
+    qm.test.run.test_run(test_ids, context, target_specs, [results_page])
 
     # Display the results.
-    return TestResultsPage(test_results, resource_results)(request)
+    return results_page(request)
 
 
 ########################################################################

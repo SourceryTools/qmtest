@@ -96,6 +96,11 @@ class Result:
     A 'Result' object is also used to describe the outcome of
     executing either setup or cleanup phase of a 'Resource'."""
 
+    # Constants for result kinds.
+
+    RESOURCE = "resource"
+    TEST = "test"
+    
     # Constants for outcomes.
 
     PASS = "PASS"
@@ -111,31 +116,49 @@ class Result:
     TRACEBACK = "qmtest.traceback"
     
     # Other class variables.
+
+    kinds = [ RESOURCE, TEST ]
+    """A list of the possible kinds."""
     
     outcomes = [ PASS, FAIL, ERROR, UNTESTED ]
     """A list of the possible outcomes."""
 
-    def __init__(self, id, context, outcome=PASS, annotations={}):
+    def __init__(self, kind, id, context, outcome=PASS, annotations={}):
         """Construct a new 'Result'.
 
+        'kind' -- The kind of result.  The value must be one of the
+        'Result.kinds'.
+        
         'id' -- The label for the test or resource to which this
         result corresponds.
 
         'context' -- The 'ContextWrapper' in use when the test (or
         resource) was executed.
 
-        'outcome' -- The outcome associated with the test.
+        'outcome' -- The outcome associated with the test.  The value
+        must be one of the 'Result.outcomes'.
 
         'annotations' -- The annotations associated with the test."""
 
+        assert kind in Result.kinds
         assert outcome in Result.outcomes
 
+        self.__kind = kind
         self.__id = id
         self.__context = context
         self.__outcome = outcome
         self.__annotations = annotations
 
 
+    def GetKind(self):
+        """Return the kind of result this is.
+
+        returns -- The kind of entity ('Result.TEST' or
+        'Result.RESOURCE') to which this result corresponds."""
+
+        return self.__kind
+    
+        
     def GetOutcome(self):
         """Return the outcome associated with the test.
 
@@ -223,6 +246,7 @@ class Result:
         # The node is a result element.
         element = document.createElement("result")
         element.setAttribute("id", self.GetId())
+        element.setAttribute("kind", self.GetKind())
         # Create and add an element for the outcome.
         outcome_element = document.createElement("outcome")
         text = document.createTextNode(str(self.GetOutcome()))

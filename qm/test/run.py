@@ -758,7 +758,7 @@ class TestRun:
                  test_ids,
                  context,
                  targets,
-                 progress_function=None):
+                 result_streams=[]):
         """Set up a test run.
 
         'test_ids' -- A sequence of IDs of tests to run.  Where
@@ -769,14 +769,13 @@ class TestRun:
         'targets' -- A sequence of 'Target' objects, representing
         targets on which tests may be run.
 
-        'progress_function' -- A function which is called with progress
-        messages (as the single argument).  If 'None', it is not
-        called."""
+        'result_streams' -- A sequence of 'ResultStream' objects.  Each
+        stream will be provided with results as they are available."""
 
         self.__test_ids = test_ids
         self.__context = context
         self.__targets = targets
-        self.__progress_function = progress_function
+        self.__result_streams = result_streams
         
         # For each target, construct an initially empty map of resources
         # active for that target.
@@ -955,11 +954,7 @@ class TestRun:
             result[Result.TARGET] = target.GetName()
         # Store the result.
         self.__test_results[result.GetId()] = result
-        # Print a progress message.
-        test_id = result.GetId()
-        outcome = result.GetOutcome()
-        message = "test %-60s: %s\n" % (test_id, outcome)
-        self.__ProgressMessage(message)
+        self.__ReportResult(result)
 
 
     def AddResourceResult(self, result, target):
@@ -1006,14 +1001,7 @@ class TestRun:
             # from the list of active resources for the target.
             del self.__resources[target][resource_id]
 
-        # Print a progress message.
-        resource_id = result.GetId()
-        outcome = result.GetOutcome()
-        if action == "setup":
-            message = "resource setup %-50s: %s\n" % (resource_id, outcome)
-        else:
-            message = "resource clean up %-47s: %s\n" % (resource_id, outcome)
-        self.__ProgressMessage(message)
+        self.__ReportResult(result)
 
 
     def GetTestResults(self):
@@ -1034,11 +1022,16 @@ class TestRun:
 
     # Helper functions.
 
-    def __ProgressMessage(self, message):
-        """Print a progress message, if appropriate."""
+    def __ReportResult(self, result):
+        """Report the 'result'.
 
-        if self.__progress_function is not None:
-            self.__progress_function(message)
+        'result' -- A 'Result' indicating the outcome of a test or
+        resource run.
+
+        The result is provided to all of the 'ResultStream' objects."""
+
+        for rs in self.__result_streams:
+            rs.WriteResult(result)
 
 
     def __TargetIsReady(self, target):
@@ -1189,7 +1182,7 @@ class TestRun:
 def test_run(test_ids,
              context,
              target_specs,
-             message_function=None):
+             result_streams=[]):
     """Perform a test run.
 
     This function coordinates the scheduling of tests and the IPC
@@ -1205,9 +1198,8 @@ def test_run(test_ids,
     'target_specs' -- A sequence of 'TargetSpec' objects representing
     the targets on which to run the tests.
 
-    'message_function' -- A function to receive progress messages.  If
-    not 'None', it is called periodically with a single argument, a
-    string message.
+    'result_streams' -- A sequence of 'ResultStream' objects.  Each
+    stream will be provided with results as they are available.
 
     returns -- A pair '(test_results, resource_results)'.
     'test_results' is a map from test IDs to corresponding 'Result'
@@ -1240,7 +1232,7 @@ def test_run(test_ids,
         targets.append(target)
 
     # Construct the test run.
-    run = TestRun(test_ids, context, targets, message_function)
+    run = TestRun(test_ids, context, targets, result_streams)
 
     # Schedule all the tests and resource functions in the test run.
 
@@ -1293,6 +1285,10 @@ def test_run(test_ids,
     for target in targets:
         target.Stop()
 
+    # Let all of the result streams know that the test run is complete.
+    for rs in result_streams:
+        rs.Summarize()
+        
     # Return the results we've accumulated.
     return run.GetTestResults(), run.GetResourceResults()
 

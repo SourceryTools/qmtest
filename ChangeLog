@@ -1,3 +1,58 @@
+2001-10-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (base.dtds): Change version number for
+	result DTD.
+	(write_results): Remove.
+	(save_results): Likewise.
+	(_test_results_from_dom): Likewise.
+	(_resource_results_from_dom): Likewise.
+	(load_results): Adjust.
+	(_result_from_dom): Likewise.
+	(_count_outcomes): Rename to ...
+	(count_outcomes): ... this.
+	(summarize_test_stats): Remove.
+	(summarize_relative_test_stats): Likewise.
+	(summarize_test_suite_stats): Likewise.
+	(summarize_results): Likewise.
+	(run_test): Indicate that the new result is for a test.
+	(set_up_resource): Indicate that the new result is for a resource.
+	(clean_up_resource): Likewise.
+	* qm/test/cmdline.py (Command.__ExecuteSummarize): Use 
+	TextResultStream.
+	(Command.__ExecuteRun): Likewise.  Use XMLResultStream.
+	(Command.__ProgressCallback): Remove.
+	(Command.__SummarizeResults): Remove.
+	(Command.__WriteResults): Remove.
+	* qm/test/file_database.py: Tweak documentation.
+	* qm/test/result.py (Result.RESOURCE): New constant.
+	(Result.TEST): Likewise.
+	(Result.kinds): New variable.
+	(Result.__init__): Add kind parameter.
+	(Result.GetKind): New method.
+	(Result.MakeDomNode): Write out kind attribute.
+	* qm/test/result_stream.py: New file.
+	* qm/test/run.py (TestRun.__init__): Take result_streams,
+	not progress_function, as a parameter.
+	(TestRun.AddTestResult): Call __ReportResult, not
+	__ProgressMessage.
+	(TestRun.AddResourceResult): Likewise.
+	(TestRun.__ReportResult): New function.
+	(TestRun.__ProgressMessage): Remove.
+	(test_run):  Take result_streams, not message_function, as a
+	parameter.
+	* qm/test/text_result_stream.py: New file.
+	* qm/test/xml_result_stream.py: Likewise.
+	* qm/test/web/run.py (TestResultsPage): Inherit from ResultStream.
+	(TestResultsPage.__init__): Adjust.
+	(TestResultsPage.WriteResult): New method.
+	(TestResultsPage.Summarize): Likewise.
+	(handle_run_tests): Adjust.
+	* qm/test/web/show.py: Fix typo.
+	* qm/test/web/web.py: Likewise.
+	* share/xml/CATALOG: Update result.dtd version.
+	* share/xml/result.dtd: Remove test-results and resource-results
+	elements.
+	
 2001-10-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (InstanceBase): Tweak documentation.

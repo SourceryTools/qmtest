@@ -42,6 +42,8 @@ import profile
 import qm
 import qm.cmdline
 import qm.platform
+from   qm.test.text_result_stream import *
+from   qm.test.xml_result_stream import *
 import qm.xmlutil
 from   result import *
 import run
@@ -488,10 +490,15 @@ The summary is written to standard output.
             # Don't show any results by test suite though.
             suite_ids = []
 
-        # Do it.
-        self.__SummarizeResults(output, format, test_results,
-                                resource_results, suite_ids, outcomes)
-
+        # Simulate the events that would have occurred during an
+        # actual test run.
+        stream = TextResultStream(output, format, outcomes, suite_ids)
+        for r in test_results:
+            stream.WriteResult(r)
+        for r in resource_results:
+            stream.WriteResult(r)
+        stream.Summarize()
+        
 
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""
@@ -550,14 +557,6 @@ The summary is written to standard output.
             raise qm.cmdline.CommandError, \
                   qm.error("no such ID", id=str(exception))
 
-        if qm.common.verbose > 0:
-            # If running verbose, specify a callback function to
-            # display test results while we're running.
-            message_function = self.__ProgressCallback
-        else:
-            # Otherwise no progress messages.
-            message_function = None
-
         target_file_name = self.GetCommandOption("targets", None)
         if target_file_name is None:
             # No target file specified.  We'll use a single
@@ -591,32 +590,15 @@ The summary is written to standard output.
 
         context = self.MakeContext()
 
-        # Randomize the order of the tests.
-        qm.common.shuffle(test_ids, generator=generator)
-
-        # Run the tests.
-        if self.HasCommandOption("profile"):
-            # Profiling was requested.  Run in the profiler.
-            profile_file = self.GetCommandOption("profile")
-            p = profile.Profile()
-            local_vars = locals()
-            p = p.runctx(
-                "results = run.test_run(test_ids, context, "
-                "target_specs, message_function)",
-                globals(), local_vars)
-            results = local_vars["results"]
-            p.dump_stats(profile_file)
-        else:
-            results = run.test_run(test_ids, context, target_specs,
-                                   message_function)
-
-        test_results, resource_results = results
-
-        # Summarize outcomes.
-        self.__SummarizeResults(output, format, test_results.values(),
-                                resource_results, test_suites, outcomes)
+        # Create ResultStreams for textual output and for generating
+        # a results file.
+        result_streams = []
+        if format != "none":
+            result_streams.append(TextResultStream(output, format,
+                                                   outcomes, test_suites))
 
         # Handle 'result' options.
+        close_result_file = 0
         if self.HasCommandOption("no-output"):
             # User specified no output.
             result_file = None
@@ -632,23 +614,33 @@ The summary is written to standard output.
             else:
                 # A named file.  
                 result_file = open(result_file_name, "w")
-
-        # Write out results.
+                close_result_file = 1
+                
         if result_file is not None:
-            self.__WriteResults(test_ids, test_results,
-                                resource_results, result_file)
-            # Close it unless it's standard output.
-            if result_file is not sys.stdout:
-                result_file.close()
+            result_streams.append(XMLResultStream(result_file))
+
+        # Randomize the order of the tests.
+        qm.common.shuffle(test_ids, generator=generator)
+
+        # Run the tests.
+        if self.HasCommandOption("profile"):
+            # Profiling was requested.  Run in the profiler.
+            profile_file = self.GetCommandOption("profile")
+            p = profile.Profile()
+            local_vars = locals()
+            p = p.runctx(
+                "run.test_run(test_ids, context, "
+                "target_specs, result_streams)",
+                globals(), local_vars)
+            results = local_vars["results"]
+            p.dump_stats(profile_file)
+        else:
+            run.test_run(test_ids, context, target_specs, result_streams)
+
+        # Close the result file.
+        if close_result_file:
+            result_file.close()
                                                     
-
-    def __ProgressCallback(self, message):
-        """Display testing progress.
-
-        'message' -- A message indicating testing progress."""
-
-        sys.stderr.write(message)
-
 
     def __ExecuteServer(self, output):
         """Process the server command."""
@@ -700,103 +692,6 @@ The summary is written to standard output.
 
         # Accept requests.
         server.Run()
-    
-    
-    def __SummarizeResults(self,
-                           output,
-                           format,
-                           test_results,
-                           resource_results,
-                           suite_ids,
-                           expected_outcomes):
-        """Write a test result summary.
-
-        'output' -- A file object to which to write the summary.
-
-        'format' -- The summary format.
-
-        'test_results' -- A sequence of 'Result' objects for tests.
-
-        'resource_results' -- A sequence of 'Result' objects for
-        resources.
-
-        'suite_ids' -- IDs of suites to report separately for the run.
-
-        'expected_outcomes' -- A map from test IDs to expected outcomes,
-        or 'None' if there are no expected outcomes."""
-
-        if format == "none":
-            # Nothing to do.
-            return
-
-        database = base.get_database()
-
-        def divider(text):
-            return "--- %s %s\n\n" % (text, "-" * (73 - len(text)))
-
-        # Print statistics, either absolute or relative.
-        output.write("\n")
-        output.write(divider("STATISTICS"))
-        if expected_outcomes is not None:
-            base.summarize_relative_test_stats(
-                output, test_results, expected_outcomes)
-        if expected_outcomes is None or format == "full":
-            base.summarize_test_stats(output, test_results)
-
-        if format in ("full", "stats") and len(suite_ids) > 0:
-            # Print statistics by test suite.
-            output.write(divider("STATISTICS BY TEST SUITE"))
-            base.summarize_test_suite_stats(
-                output, test_results, suite_ids, expected_outcomes)
-
-        if format in ("full", "brief"):
-            compare_ids = lambda r1, r2: cmp(r1.GetId(), r2.GetId())
-
-            # Sort test results by ID.
-            test_results.sort(compare_ids)
-            # Print individual test results.
-            if expected_outcomes is not None:
-                # Show tests that produced unexpected outcomes.
-                bad_results = base.split_results_by_expected_outcome(
-                    test_results, expected_outcomes)[1]
-                output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
-                base.summarize_results(
-                    output, format, bad_results, expected_outcomes)
-            if expected_outcomes is None or format == "full":
-                # No expected outcomes were specified, so show all tests
-                # that did not pass.
-                bad_results = filter(
-                    lambda r: r.GetOutcome() != Result.PASS,
-                    test_results)
-                output.write(divider("NON-PASSING TESTS"))
-                base.summarize_results(
-                    output, format, bad_results, expected_outcomes)
-
-            # Sort resource results by ID.
-            resource_results.sort(compare_ids)
-            bad_results = filter(
-                lambda r: r.GetOutcome() != Result.PASS,
-                resource_results)
-            if len(bad_results) > 0:
-                # Print individual resource results.
-                output.write(divider("NON-PASSING RESOURCES"))
-                base.summarize_results(output, format, bad_results, None)
-
-
-    def __WriteResults(self, test_ids, test_results, resource_results, output):
-        """Generate full test results in XML format.
-
-        'test_ids' -- The test IDs that were requested for the test run.
-
-        'test_results' -- A mapping from test ID to result for tests
-        in the test run.
-
-        'resource_results' -- A sequence of results of resource functions.
-
-        'output' -- A file object to which to write the results."""
-
-        base.write_results(test_results.values(), resource_results, output)
-
 
 
 ########################################################################

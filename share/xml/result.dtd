@@ -32,17 +32,12 @@
 -->
 
 <!-- The results of a test run.  -->
-<!ELEMENT test-run (test-results, resource-results)>
-
-<!-- A set of results of running tests.  -->
-<!ELEMENT test-results (result*)>
-
-<!-- A set of results of running resource functions.  -->
-<!ELEMENT resource-results (result*)>
+<!ELEMENT results (result*)>
 
 <!-- The result of executing a single test or resource function.  -->
 <!ELEMENT result (outcome, property*)>
-<!ATTLIST result id CDATA #REQUIRED>
+<!ATTLIST result id CDATA #REQUIRED
+                 kind (test | resource) #REQUIRED>
 
 <!-- The outcome of a test or resource function.  -->
 <!ELEMENT outcome (#PCDATA)>

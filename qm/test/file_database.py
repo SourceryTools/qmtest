@@ -424,7 +424,7 @@ class FileDatabase(Database):
         'path' -- An absolute path to a test file.  The 'path' satisfies
         '_IsTestFile'.
 
-        returns -- A TestDescriptor corresponding to 'test_id'.
+        returns -- A 'TestDescriptor' corresponding to 'test_id'.
 
         Derived classes must override this method."""
 
@@ -456,7 +456,8 @@ class FileDatabase(Database):
         'path' -- An absolute path to a resource file.  The 'path'
         satisfies '_IsResourceFile'.
 
-        returns -- A ResourceDescriptor corresponding to 'resource_id'.
+        returns -- A 'ResourceDescriptor' corresponding to
+        'resource_id'.
 
         Derived classes must override this method."""
 

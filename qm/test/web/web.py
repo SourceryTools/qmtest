@@ -152,7 +152,7 @@ def make_server(database, port, address, log_file=None):
 
     # Base URL path for QMTest stuff.
     script_base = "/test/"
-    # Create a new server instance.  Enable XML-RPM.
+    # Create a new server instance.
     server = qm.web.WebServer(port,
                               address,
                               log_file=log_file)
