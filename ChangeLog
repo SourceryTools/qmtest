@@ -1,3 +1,46 @@
+2001-07-16  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (escape): New function.
+	(unescape): Likewise.
+	* qm/fields.py (Field.UpdateFromRequest): Remove debugging output.
+	(EnumerationField.__init__): Handle 'None' default.
+	(EnumerationField.CompareValues): Handle values not among
+	enumerals. 
+	(EnumerationField.SetAttribute): Don't muck with the default value.
+	* qm/track/server.py (make_server): Register state-model.
+	* qm/track/qmtrack.in: Handle all other exceptions.
+	* qm/track/issue_class.py (Transition.__init__): Make condition
+	parameter not a list.
+	(Transition.GetConditions): Rename to...
+	(Transition.GetCondition): ... this.
+	(StateField.property_declarations): New attribute.
+	(StateField.__init__): Don't stort state model as object
+	attribute.  Call SetStateModel.
+	(StateField.SetStateModel): New method.
+	(StateField.GetStateModel): Use field attribute.
+	(StateField.GetEnumerals): Use GetStateModel.
+	(StateField.FormatValueAsHtml): Handle value not among enumerals.
+	(StateField.MakePropertyControls): New method.
+	(encode_state_model): New function
+	(encode_state): Likewise.
+	(encode_transition): Likewise.
+	(decode_state_model): Likewise.
+	(decode_state): Likewise.
+	(decode_transition): Likewise.
+	(_initialize_module): Reformat descriptions.
+	* qm/track/config.py (__global_lock): Rename to...
+	(_global_lock): ... this.
+	Adjust accordingly throughout.
+	(open_idb): Improve diagnostic.
+	* qm/track/web/issue_class.py (handle_state_model): New.
+	* qm/track/triggers/state.py (Trigger.Preupdate): Handle old state
+	not in state model.  Adjust for single condition.
+	* share/web/common.js (popup_box): New function.
+	(label_is_valid): Likewise.
+	(select_item): Likewise.
+	(get_selected_value): Likewise.
+	* share/dtml/track/state-model.dtml: New template.
+
 2001-07-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* share/dtml/attachment.dtml: Use file name if description not

@@ -612,7 +612,6 @@ class Field:
         # Set the default value, if specified.
         new_default_value = request.get("_default_value", None)
         if new_default_value is not None:
-            print new_default_value
             new_default_value = self.ParseFormValue(new_default_value)
             if new_default_value != self.GetDefaultValue():
                 self.SetDefaultValue(new_default_value)
@@ -1651,11 +1650,15 @@ class EnumerationField(TextField):
                  **attributes):
         """Create an enumeration field.
 
-        'enumerals' -- A sequence of strings of available enumerals.
+        'enumerals' -- A sequence of strings of available
+        enumerals.
 
         'default_value' -- The default value for this enumeration.  If
         'None', the first enumeral is used."""
 
+        # Make sure the default value is legitimate.
+        if not default_value in enumerals and len(enumerals) > 0:
+            default_value = enumerals[0]
         # Perform base class initialization.
         apply(TextField.__init__, (self, name, default_value), attributes)
         # Set the enumerals.
@@ -1665,6 +1668,8 @@ class EnumerationField(TextField):
     def CompareValues(self, value1, value2):
         # Sort enumerals by position in the enumeration.
         enumerals = self.GetEnumerals()
+        if value1 not in enumerals or value2 not in enumerals:
+            return 1
         return cmp(enumerals.index(value1), enumerals.index(value2))
 
 
@@ -1690,13 +1695,6 @@ class EnumerationField(TextField):
     def SetAttribute(self, enumeral_name, value):
         # Call the base implementation.
         Field.SetAttribute(self, enumeral_name, value)
-        # If the enumeral changed, we may have to update the default
-        # value, too.
-        if enumeral_name == "enumerals":
-            default_value = self.GetDefaultValue()
-            enumerals = self.GetEnumerals()
-            if default_value not in enumerals and len(enumerals) > 0:
-                self.SetDefaultValue(enumerals[0])
             
 
     def SetEnumerals(self, enumerals):
@@ -1801,8 +1799,9 @@ class EnumerationField(TextField):
 
 
     def MakePropertyControls(self):
-        # Start with controls for base class properties.
+        # Start with controls for base-class properties.
         controls = TextField.MakePropertyControls(self)
+        # These text field controls aren't relevant to enumerations.
         controls["structured"] = None
         controls["verbatim"] = None
         controls["not_empty_text"] = None

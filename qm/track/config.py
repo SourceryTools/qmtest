@@ -73,7 +73,7 @@ __configuration = None
 
 # The global mutex on the IDB object.  We hold a lock only when we're
 # in local mode. 
-__gobal_lock = None
+_global_lock = None
 
 # The IDB instance.  Initialized on demand by 'get_idb' when we're in
 # local mode; otherwise always 'None'.
@@ -123,7 +123,7 @@ def get_idb():
         elif mode == "remote":
             raise RuntimeError, "accessing IDB in remote mode"
         # Just in case, make sure we're holding the IDB global lock.
-        assert __global_lock.IsLocked()
+        assert _global_lock.IsLocked()
 
         # Load the IDB.  First, figure out the IDB class.
         idb_class_name = get_configuration()["idb_class"]
@@ -176,7 +176,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     If in remote mode, the server URL has been loaded successfully."""
 
     global __configuration
-    global __global_lock
+    global _global_lock
 
     # Make sure another session isn't open.
     assert state["mode"] == "none"
@@ -194,7 +194,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
               % parent_path
     
     # Set up a mutex instance.
-    __global_lock = get_idb_lock(path)
+    _global_lock = get_idb_lock(path)
 
     # The path to the file that contains the server URL.
     server_url_path = os.path.join(path, "server.url")
@@ -210,7 +210,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
         
         try:
             # Try to take a lock.
-            __global_lock.Lock(0)
+            _global_lock.Lock(0)
 
             # Got it; the IDB is ours.
             try:
@@ -224,7 +224,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
             except:
                 # Oops, a problem loading the configuration or user
                 # database.  Don't hold a lock or leave gunk behind.
-                __global_lock.Unlock()
+                _global_lock.Unlock()
                 __configuration = None
                 raise
 
@@ -269,8 +269,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     # We've exceeded the maximum number of attempts so bail with an
     # exception.
     raise qm.ConfigurationError, \
-          "could not open IDB %s after %d attempts" \
-          % (path, attempts)
+          qm.error("idb locked", lock_path=_global_lock.GetPath())
 
 
 def close_idb():
@@ -281,7 +280,7 @@ def close_idb():
     postcondition -- The system is in none mode."""
 
     global __idb
-    global __global_lock
+    global _global_lock
     global __configuration
 
     mode = state["mode"]
@@ -289,7 +288,7 @@ def close_idb():
         # Write the user database.
         qm.user.database.Write()
         # We should have the global lock.
-        assert __global_lock.IsLocked()
+        assert _global_lock.IsLocked()
         # Close the IDB, if it was ever initialized.
         if __idb is not None:
             __idb.Close()
@@ -298,7 +297,7 @@ def close_idb():
         __configuration.Save()
         __configuration = None
         # Release the lock.
-        __global_lock.Unlock()
+        _global_lock.Unlock()
         # Clean up state.
         del state["server_url_path"]
 

@@ -260,6 +260,13 @@ class NotificationPage(web.DtmlPage):
 # functions
 ########################################################################
 
+# Nothing to do besides generate the page.
+handle_config_idb = ConfigIdbPage()
+handle_add_field = AddFieldPage()
+handle_add_class = AddClassPage()
+handle_state_model = web.DtmlPage("state-model.dtml")
+
+
 def _get_issue_class_for_session(request):
     """Return the issue class object for the session in 'request'."""
 
@@ -352,10 +359,6 @@ def handle_submit_field(request):
     raise qm.web.HttpRedirect, show_field_request.AsUrl()
 
 
-# Nothing to do besides generate the page.
-handle_config_idb = ConfigIdbPage()
-
-
 def handle_submit_class(request):
     """Handle a 'submit-issue-class' request.
 
@@ -410,10 +413,6 @@ def handle_delete_field(request):
     # Redisplay the issue class.
     show_request = qm.web.WebRequest("show-issue-class", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
-
-
-# Nothing to do besides generate the page.
-handle_add_field = AddFieldPage()
 
 
 def handle_new_field(request):
@@ -475,10 +474,6 @@ def handle_new_field(request):
         show_request = qm.web.WebRequest("show-issue-field",
                                          base=request, field=field_name)
         raise qm.web.HttpRedirect, show_request.AsUrl()
-
-
-# Nothing to do besides generate the page.
-handle_add_class = AddClassPage()
 
 
 def handle_new_class(request):

@@ -143,6 +143,7 @@ def make_server(port, address="", log_file=None):
         ( "show-subscription",
               qm.track.web.issue_class.handle_show_subscription ),
         ( "shutdown", handle_shutdown ),
+        ( "state-model", qm.track.web.issue_class.handle_state_model ),
         ( "submit", qm.track.web.show.handle_submit ),
         ( "submit-issue-class", qm.track.web.issue_class.handle_submit_class ),
         ( "submit-issue-field", qm.track.web.issue_class.handle_submit_field ),

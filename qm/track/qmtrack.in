@@ -104,6 +104,11 @@ except qm.platform.SignalException, exception:
     sys.stderr.write("Terminated by %s.\n" % str(exception))
     exit_code = 0
 
+except:
+    # Some other exception.
+    exception = sys.exc_info()[1]
+    sys.stderr.write(qm.structured_text.to_text(str(exception)))
+    exit_code = 1
 
 # End the program.
 sys.exit(exit_code)

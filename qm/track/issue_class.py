@@ -39,6 +39,7 @@ import issue
 import qm
 import qm.fields
 import qm.label
+import qm.web
 import string
 import types
 
@@ -356,7 +357,7 @@ class Transition:
     def __init__(self,
                  starting_state_name,
                  ending_state_name,
-                 conditions=[]):
+                 condition=None):
         """Create a new transition.
 
         'starting_state_name' -- The name of the state from which this
@@ -370,7 +371,7 @@ class Transition:
         
         self.__starting_state_name = starting_state_name
         self.__ending_state_name = ending_state_name
-        self.__conditions = conditions
+        self.__condition = condition
 
 
     def GetStartingStateName(self):
@@ -385,13 +386,12 @@ class Transition:
         return self.__ending_state_name
 
 
-    def GetConditions(self):
-        """Return conditions on this transition.
+    def GetCondition(self):
+        """Return the condition on this transition.
 
-        returns -- A (possibly empty) sequence of
-        'TransitionCondition' objects."""
+        returns -- A 'TransitionCondition' object, or 'None'."""
 
-        return self.__conditions
+        return self.__condition
 
 
 
@@ -628,6 +628,17 @@ class StateField(qm.fields.EnumerationField):
     The integrity of the state model is not enforced in this class.  See
     'triggers.state.Trigger'."""
 
+    property_declarations = \
+        qm.fields.EnumerationField.property_declarations + [
+        qm.fields.FieldPropertyDeclaration(
+            name="state_model",
+            description="""The set of states available for this field,
+            and allowed transitions among them.""",
+            default_value=""),
+
+        ]
+
+
     def __init__(self, name, state_model, **attributes):
         """Construct a new field.
 
@@ -639,7 +650,6 @@ class StateField(qm.fields.EnumerationField):
         postconditions -- The default value of this field is set to the
         state model's initial state."""
 
-        self.__state_model = state_model
         # Construct a starting enumeration consisting of the initial
         # state only.  We need the enumeration to be non-empty, and for
         # the default value (which is the initial state) to be a member
@@ -651,15 +661,23 @@ class StateField(qm.fields.EnumerationField):
               (self, name, initial_state_name, enumerals),
               attributes)
 
+        self.SetStateModel(state_model)
+
         
+    def SetStateModel(self, state_model):
+        """Set the state model for this field."""
+
+        self.SetAttribute("state_model", encode_state_model(state_model))
+
+
     def GetStateModel(self):
         """Return the state model for this field."""
         
-        return self.__state_model
+        return decode_state_model(self.GetAttribute("state_model"))
 
 
     def GetEnumerals(self):
-        return self.__state_model.GetStateNames()
+        return self.GetStateModel().GetStateNames()
 
 
     def GetHelp(self):
@@ -704,6 +722,14 @@ class StateField(qm.fields.EnumerationField):
             # Use a restricted select control showing only values for
             # reachable states.
             enumerals = self._GetAvailableEnumerals(value)
+            # Make sure there are some enumerals.
+            if len(enumerals) == 0:
+                enumerals = self.GetEnumerals()
+            # If the enumeration was changed, 'value' may not be a valid
+            # enumeral anymore.
+            if value not in enumerals:
+                value = self.GetDefaultValue()
+            # Construct the control.
             return qm.web.make_select(name, enumerals, value,
                                       str, self.FormEncodeValue)
         else:
@@ -735,6 +761,40 @@ class StateField(qm.fields.EnumerationField):
         # Return only matching enumerals.
         return filter(filter_function, enumerals)
 
+
+    def MakePropertyControls(self):
+        # Start with controls for base-class properties.
+        controls = qm.fields.EnumerationField.MakePropertyControls(self)
+
+        # Enumerals are specified implicitly by the state model.  Don't
+        # let the user specify them explicitly.
+        controls["enumerals"] = None
+
+        # Construct a control to edit the state model.  Generate the
+        # input name which will contain the string-encoded state mode.
+        input_name = qm.fields.query_field_property_prefix + "state_model"
+        # Get the current encoded state model.
+        encoding = encode_state_model(self.GetStateModel())
+        # Construct a hidden input for the encoded model, and
+        # initialize it with the current value.
+        hidden = '<input type="hidden" name="%s" value="%s" />' \
+                 % (input_name, encoding)
+        # Construct a button that pops up a page for editing the state
+        # model.  The page reads the encoded state model out of the
+        # hidden input, and puts the encoding of the modified model
+        # there afterwards.
+        request = qm.web.WebRequest("state-model", input=input_name)
+        button = '''
+        <input type="button"
+               value=" Edit... "
+               onclick="window.open('%s', 'popup',
+                        'width=480,height=480,resizeable,scrollbars');"
+        />''' % request.AsUrl()
+        # Use these controls for the 'state_model' attribute.
+        controls["state_model"] = hidden + button
+
+        return controls
+    
 
 
 ########################################################################
@@ -1102,6 +1162,139 @@ issues.""",
 
 
 ########################################################################
+# functions
+########################################################################
+
+def encode_state_model(state_model):
+    """Encode a state model as a string.
+
+    'state_model' -- A 'StateModel' instance.
+
+    returns -- A string encoding the state model.
+
+    The encoding scheme is as follows:
+
+      <encoding>    ::= <states> "|" <initial-state-name> "|" <transitions>
+      <states>      ::= <state> ";" <state> ";" ...
+      <state>       ::= <name> "," <description> "," <is-open>
+      <is-open>     ::= "0" | "1"
+      <transitions> ::= <transition> ";" <transition> ";" ...
+      <transition>  ::= <start-state-name> "," <end-state-name> "," <condition>
+
+    The values of <description> and <condition> are URL-escaped (see
+    'qm.web.escape').
+
+    Use 'decode_state_model' to reverse this encoding."""
+
+    # Construct a list of all states.
+    states = state_model._StateModel__states.values()
+    # Encoded states go in a semicolon-separated list.
+    states = string.join(map(encode_state, states), ";")
+      
+    # Obtain the initial state name.
+    initial_state_name = state_model.GetInitialStateName()
+
+    # Construct a flat list of all transitions.
+    transitions = reduce(lambda l, m: l + m.values(),
+                         state_model._StateModel__transitions.values(),
+                         [])
+    # Encoded transitions go in a semicolon-separated list.
+    transitions = string.join(map(encode_transition, transitions), ";")
+
+    # Join the three segments with pipes.
+    return string.join([states, initial_state_name, transitions], "|")
+
+
+def encode_state(state):
+    """Encode a state.
+
+    'state' -- A 'State' instance.
+
+    returns -- A string encoding the state.
+
+    See 'encode_state_model' for a description of the encoding scheme."""
+
+    result = state.GetName() + "," \
+             + qm.web.escape(state.GetDescription()) + "," \
+             + str(state.IsOpen())
+    return result
+
+
+def encode_transition(transition):
+    """Encode a transition.
+
+    'transition' -- A 'Transition' instance.
+
+    returns -- A string encoding the transition.
+
+    See 'encode_state_model' for a description of the encoding scheme."""
+
+    # Encode the start and end states.
+    result = transition.GetStartingStateName() + "," \
+             + transition.GetEndingStateName() + ","
+    # Now encode the condition.
+    condition = transition.GetCondition()
+    if condition is not None:
+        result = result + qm.web.escape(condition.GetExpression())
+    else:
+        # No condition; leave it blank.
+        pass
+    return result
+
+
+def decode_state_model(encoding):
+    """Decode a state model.
+
+    'encoding' -- A string-encoded state model.
+
+    returns -- A 'StateModel' instance.
+
+    See 'encode_state_model' for a description of the encoding scheme."""
+
+    # Split into three major parts.
+    states, initial_state_name, transitions = string.split(encoding, "|")
+    # Split and decode the list of states.
+    states = map(decode_state, string.split(states, ";"))
+    # Split and decode the list of transitions.
+    transitions = map(decode_transition, string.split(transitions, ";"))
+    # Construct the state model.
+    return StateModel(states, initial_state_name, transitions)
+
+
+def decode_state(encoding):
+    """Decode a state.
+
+    'encoding' -- A string-encoded state.
+
+    returns -- A 'State' instance.
+
+    See 'encode_state_model' for a description of the encoding scheme."""
+
+    name, description, is_open = string.split(encoding, ",")
+    return State(name, qm.web.unescape(description), int(is_open))
+
+
+def decode_transition(encoding):
+    """Decode a transition.
+
+    'encoding' -- A string-encoded transition.
+
+    returns -- A 'Transition' instance.
+
+    See 'encode_state_model' for a description of the encoding scheme."""
+
+    start, end, condition = string.split(encoding, ",")
+    condition = string.strip(qm.web.unescape(condition))
+    # Decode the condition.
+    if condition == "":
+        # An empty string signifies no condition.
+        condition = None
+    else:
+        condition = TransitionCondition("", qm.web.unescape(condition))
+    return Transition(start, end, condition)
+    
+
+########################################################################
 # initialization
 ########################################################################
 
@@ -1110,53 +1303,49 @@ def _initialize_module():
 
     states = [
         State(name="submitted",
-              description="""
-              The issue has been submitted, but has not been verified.
-              """,
+              description=
+"""The issue has been submitted, but has
+not been verified.""",
               open=1
               ),
 
         State(name="active",
-              description="""
-              The issue has been verified, and is scheduled for
-              resolution.
-              """,
+              description=
+"""The issue has been verified, and is
+scheduled for resolution.""",
               open=1
               ),
 
         State(name="unreproducible",
-              description="""
-              The issue could not be reproduced.
-              """,
+              description=
+"""The issue could not be reproduced.""",
               open=0
               ),
 
         State(name="will_not_fix",
-              description="""
-              The issue has been verified, but there are no plans to
-              resolve it.
-              """,
+              description=
+"""The issue has been verified, but
+there are no plans to resolve it.""",
               open=0
               ),
 
         State(name="resolved",
-              description="""
-              The issue has been resolved.
-              """,
+              description=
+"""The issue has been resolved.""",
               open=1,
               ),
 
         State(name="tested",
-              description="""
-              The resolution of the issue has been tested and verified.
-              """,
+              description=
+"""The resolution of the issue has been
+tested and verified.""",
               open=1
               ),
 
         State(name="closed",
-              description="""
-              The issue is no longer under consideration.
-              """,
+              description=
+"""The issue is no longer under
+consideration.""",
               open=0
               ),
         ]
@@ -1165,7 +1354,7 @@ def _initialize_module():
                                     "len(categories) > 0")
 
     transitions = [
-        Transition("submitted", "active", [ condition ]),
+        Transition("submitted", "active", condition),
         Transition("submitted", "unreproducible"),
         Transition("submitted", "will_not_fix"),
         Transition("active", "submitted"),

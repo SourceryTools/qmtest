@@ -298,6 +298,76 @@ function property_update_selection(select, name_text, value_text)
   value_text.value = value;
 }
 
+
+// Display a popup message box.
+//
+// 'title' -- The box title.
+//
+// 'message' -- The message to display in the box.
+//
+// The box includes a single "Close" button.
+
+function popup_box(title, message)
+{
+  var popup = window.open("", "popup", "width=480,height=200");
+  popup.document.open("text/html");
+  popup.document.write("<html><head><title>" + title + "</title><body>\n"
+                       + "<table border='0' width='100%' height='100%'>"
+                       + "<tr><td align='center'><h3>" + title 
+                       + "</h3></td></tr>"
+                       + "<tr height='100%'><td align='center'>");
+  popup.document.write(message);
+  popup.document.write("</td></tr><tr><td align='right'><form>"
+                       + "<input type='button' value=' Close ' "
+                       + "onclick='window.close();' /></form>"
+                       + "</tr></td></table></body></html>\n");
+  popup.document.close();
+}
+
+
+// Return true if 'label' is a valid label.
+
+function label_is_valid(label)
+{
+  return label.match(/^[a-z0-9][a-z0-9_]*$/) != null;
+}
+
+
+// Select an item in a select input by option value.
+//
+// 'select' -- The select input.
+//
+// 'value' -- The value of the option to be selected.
+//
+// Selects the first option whose value is 'value'.  If there is none,
+// the selection is not changed.
+
+function select_item(select, value) 
+{
+  var i;
+  for(i = 0; i < select.options.length; ++i)
+    if(select.options[i].value == value) {
+      select.selectedIndex = i;
+      return;
+    }
+}
+
+
+// Return the value of the option selected in a select input.
+//
+// 'select' -- The select input.
+//
+// Returns 'null' if no item is selected.
+
+function get_selected_value(select)
+{
+  if(select.selectedIndex == -1)
+    return null;
+  else
+    return select.options[select.selectedIndex].value;
+}
+
+
 ////////////////////////////////////////////////////////////////////////
 // Local Variables:
 // mode: java

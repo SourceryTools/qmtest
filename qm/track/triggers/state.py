@@ -77,6 +77,9 @@ class Trigger(qm.track.issue_class.Trigger):
                 message = qm.message("not initial state",
                                      initial_state_name=initial_state_name)
                 return TriggerResult(self, TriggerResult.REJECT, message)
+        elif old_state not in state_model.GetStateNames():
+            # The old state wasn't valid.  Allow any transition.
+            pass
         else:
             try:
                 # Get the corresponding transition.
@@ -90,8 +93,9 @@ class Trigger(qm.track.issue_class.Trigger):
                                      ending_state_name=str(new_state))
                 return TriggerResult(self, TriggerResult.REJECT, message)
 
-            # Now test conditions.
-            for condition in transition.GetConditions():
+            # Now test the transition condition.
+            condition = transition.GetCondition()
+            if condition is not None:
                 # Evaluate the condition's expression.
                 expression = condition.GetExpression()
                 result = qm.track.issue.eval_revision_expression(
