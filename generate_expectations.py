@@ -76,7 +76,7 @@ def generate_failure_result(path):
 
     # The last component shoud end in ".C".
     assert components[-1][-2:] == ".C"
-    components[1] = components[-1][:-2]
+    components[-1] = components[-1][:-2]
 
     test_name = string.join(components, ".")
 
