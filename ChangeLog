@@ -1,3 +1,7 @@
+2001-08-27  Alex Samuel  <samuel@indetermi.net>
+
+	* qm/setup_path.py.in (add_to_python_path): Prepend to path.
+
 2001-08-22  Alex Samuel  <samuel@indetermi.net>
 
 	* qm.spec (files): Add qmtest-remote.
