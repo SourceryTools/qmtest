@@ -7,7 +7,7 @@
 # Contents:
 #   Common code for implementing web user interfaces.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1111,7 +1111,24 @@ class WebServer(HTTPServer):
         raise HttpRedirect, WebRequest("/static/index.html")
 
 
+    def handle_error(self, request, client_address):
+        """Handle an error gracefully."""
 
+        # The usual cause of an error is a broken pipe; the user
+        # may have clicked on something else in the browser before
+        # we have time to finish writing the response to the browser.
+        # In that case, we will get EPIPE when trying to write to the
+        # pipe.
+        # 
+        # The default behavior (inherited from BaseHTTPServer)
+        # is to print the traceback to the standard error, which is
+        # definitely not the right behavior for QMTest.  If there
+        # are any errors for which we must take explicit action,
+        # we will have to add logic to handle them here.
+        return
+
+    
+    
 class WebRequest:
     """An object representing a request from the web server.
 

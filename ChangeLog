@@ -1,3 +1,9 @@
+2002-01-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (lib-install): Correct installation location
+	of classes.qmc.
+	* qm/web.py (WebServer.handle_error): New method.
+
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* configure.in: Do not build gadfly if it does not exist.
