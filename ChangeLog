@@ -1,5 +1,14 @@
 2001-03-16  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/Makefile.in (SCRIPTS): New variable.
+	(all): Remove track/qmtrack.  Add $(SCRIPTS).
+	(track/qmtrack): Generalize to...
+	(%: %.in): ... this rule.
+	* qm/test/cmdline.py (Command.__WriteOutcomes): Wrap apply
+	argument in a tuple.
+
+2001-03-16  Alex Samuel  <samuel@codesourcery.com>
+
 	* README: Update requirements.
 	* qm/__init__.py: Import error and warning.
 	* qm/diagnostic.py: Add doc string.  Improve comments.

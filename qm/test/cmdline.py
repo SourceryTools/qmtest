@@ -195,7 +195,7 @@ class Command:
 
     def __WriteOutcomes(self, test_ids, results, output):
         # Find the width of the longest test ID.
-        width = apply(max, map(len, test_ids))
+        width = apply(max, (map(len, test_ids), ))
         # Throttle it.
         width = min(60, width + 1)
         # Generate a format string for printing test outcomes.
