@@ -1,3 +1,11 @@
+2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/executable.py (Executable._MakeCloseOnExec): New function.
+	(Executable.Run): Use it.
+	(RedirectedExecutable._CreatePipe): Use it; document that fds
+	will be closed on exec.
+	(RedirectedExecutable._InitializeChild): Close all pipe fd's.
+
 2003-08-13  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/executable.py (Executable): Typo in docstring.

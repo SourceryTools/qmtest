@@ -232,9 +232,7 @@ class Executable(object):
             exception_pipe = os.pipe()
             # Mark the write end as close-on-exec so that the file
             # descriptor is not passed on to the child.
-            fd = exception_pipe[1]
-            fcntl.fcntl(fd, fcntl.F_SETFD,
-                        fcntl.fcntl(fd, fcntl.F_GETFD) | fcntl.FD_CLOEXEC)
+            self._MakeCloseOnExec(exception_pipe[1])
         else:
             exception_pipe = None
 
@@ -324,6 +322,20 @@ class Executable(object):
         return self.__child
     
         
+    def _MakeCloseOnExec(self, fd):
+        """Prevent 'fd' from being inherited across 'exec'.
+
+        'fd' -- A file descriptor, or object providing a 'fileno()'
+        method.
+
+        UNIX only."""
+
+        assert sys.platform != "win32"
+
+        old_flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        fcntl.fcntl(fd, fcntl.F_SETFD, old_flags | fcntl.FD_CLOEXEC)
+
+
     def __CreateCommandLine(self, arguments):
         """Return a string giving the process command line.
 
@@ -542,14 +554,6 @@ class RedirectedExecutable(TimeoutExecutable):
         # Let the base class do any initialization required.
         super(RedirectedExecutable, self)._InitializeChild()
         
-        # Close the pipe ends that we do not need.
-        if self._stdin_pipe:
-            os.close(self._stdin_pipe[1])
-        if self._stdout_pipe:
-            os.close(self._stdout_pipe[0])
-        if self._stderr_pipe:
-            os.close(self._stderr_pipe[0])
-
         # Redirect the standard I/O streams to the pipes.  Python does
         # not provide STDIN_FILENO, STDOUT_FILENO, and STDERR_FILENO,
         # so we must use the file descriptor numbers directly.
@@ -572,6 +576,19 @@ class RedirectedExecutable(TimeoutExecutable):
             os.dup2(self._stdout_pipe[1], 2)
         else:
             os.close(2)
+
+        # Close the pipe fds.  This should happen automatically when we
+        # exec the new process anyway, but it is polite to close fds as
+        # soon as possible.
+        if self._stdin_pipe:
+                os.close(self._stdin_pipe[0])
+                os.close(self._stdin_pipe[1])
+        if self._stdout_pipe:
+                os.close(self._stdout_pipe[0])
+                os.close(self._stdout_pipe[1])
+        if self._stderr_pipe:
+                os.close(self._stderr_pipe[0])
+                os.close(self._stderr_pipe[1])
 
 
     def _HandleChild(self):
@@ -772,7 +789,8 @@ class RedirectedExecutable(TimeoutExecutable):
         returns -- A tuple (under UNIX) or list (under Windows)
         consisting of the file descriptors (UNIX) or handles (Windows)
         for the read end and write end of a new pipe.  The pipe is
-        inheritable by child processes."""
+        inheritable by child processes.  On UNIX the fds will not be
+        inherited across 'exec'."""
 
         if sys.platform == "win32":
             # Create a security descriptor so that we can mark the handles
@@ -785,8 +803,11 @@ class RedirectedExecutable(TimeoutExecutable):
             r, w = win32pipe.CreatePipe(sa, 0)
             return [r, w]
         else:
-            return os.pipe()
-            
+            pipe = os.pipe()
+            for fd in pipe:
+                self._MakeCloseOnExec(fd)
+            return pipe
+
 
     def __CallUntilNone(self, f, attribute):
         """Call 'f' until 'self.attribute' is 'None'.
