@@ -2610,6 +2610,32 @@ def format_user_id(user_id):
             % (user_page_request.AsUrl(), user_id)
 
 
+def format_color(red, green, blue):
+    """Format an RGB color value for HTML.
+
+    'red', 'green', 'blue' -- Color values for respective channels,
+    between 0.0 and 1.0.  Values outside this range are truncated to
+    this range."""
+
+    # Manual loop unrolling, for efficiency.
+    red = int(256 * red)
+    if red < 0:
+        red = 0
+    if red > 255:
+        red = 255
+    green = int(256 * green)
+    if green < 0:
+        green = 0
+    if green > 255:
+        green = 255
+    blue = int(256 * blue)
+    if blue < 0:
+        blue = 0
+    if blue > 255:
+        blue = 255
+    return "#%02x%02x%02x" % (red, green, blue)
+
+
 ########################################################################
 # variables
 ########################################################################

@@ -365,10 +365,14 @@ class Field:
         raise qm.MethodShouldBeOverriddenError, "Field.Validate"
 
 
-    def ValuesAreEqual(self, value1, value2):
-        """Return true if 'value1' and 'value2' are the same."""
+    def CompareValues(self, value1, value2):
+        """Return a comparison of two values of this field.
 
-        return value1 == value2
+        returns -- A comparison value, with the same interpretation as
+        values of 'cmp'."""
+
+        # In absence of a better comparison, use the Python built-in.
+        return cmp(value1, value2)
 
 
     form_field_prefix = "_field_"
@@ -753,6 +757,11 @@ class TextField(Field):
         apply(Field.__init__, (self, name, default_value), attributes)
 
 
+    def CompareValues(self, value1, value2):
+        # FIXME: Localization?
+        return cmp(string.lower(value1), string.lower(value2))
+
+
     def GetTypeDescription(self):
         return "a string"
     
@@ -829,9 +838,9 @@ class TextField(Field):
                 # Replace all whitespace with ordinary space.
                 value = re.sub(r"\s", " ", value)
 
-            # Truncate to 40 characters, if it's longer.
-            if len(value) > 40:
-                value = value[:40] + "..."
+            # Truncate to 80 characters, if it's longer.
+            if len(value) > 80:
+                value = value[:80] + "..."
 
             if self.IsAttribute("verbatim"):
                 # Put verbatim text in a <tt> element.
@@ -1029,6 +1038,11 @@ class SetField(Field):
         self.property_declarations = contained.property_declarations
         # Set the default field value to any empty set.
         self.SetDefaultValue([])
+
+
+    def CompareValues(self, value1, value2):
+        # Sort set values by length.
+        return cmp(len(value1), len(value2))
 
 
     def GetTypeDescription(self):
@@ -1588,6 +1602,12 @@ class EnumerationField(TextField):
         apply(TextField.__init__, (self, name, default_value), attributes)
         # Set the enumerals.
         self.SetEnumerals(enumerals)
+
+
+    def CompareValues(self, value1, value2):
+        # Sort enumerals by position in the enumeration.
+        enumerals = self.GetEnumerals()
+        return cmp(enumerals.index(value1), enumerals.index(value2))
 
 
     def GetTypeDescription(self):

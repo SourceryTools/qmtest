@@ -54,6 +54,7 @@ be shown.  If omitted, the value 0 is impled."""
 # imports
 ########################################################################
 
+import colorsys
 import qm.web
 import string
 import sys
@@ -74,7 +75,10 @@ class SummaryPage(web.DtmlPage):
                  issues,
                  field_names,
                  sort_order,
-                 open_only=0):
+                 open_only=0,
+                 hue_field_name=None,
+                 lightness_field_name=None,
+                 saturation_field_name=None):
         """Create a new page.
 
         'issues' -- A sequence of issues to summarize.
@@ -91,7 +95,10 @@ class SummaryPage(web.DtmlPage):
         web.DtmlPage.__init__(self,
                               "summary.dtml",
                               field_names=field_names,
-                              open_only=open_only)
+                              open_only=open_only,
+                              hue_field_name=hue_field_name,
+                              lightness_field_name=lightness_field_name,
+                              saturation_field_name=saturation_field_name)
 
         # If requested, limit the issues to open issues only.
         if open_only:
@@ -107,18 +114,22 @@ class SummaryPage(web.DtmlPage):
             else:
                 self.issue_map[issue_class] = [ issue ]
 
-        # If the first character of the sort order is a hyphen, that
-        # indicates a reverse sort.
         if sort_order[0] == "-":
+            # If the first character of the sort order is a hyphen, that
+            # indicates a reverse sort.
             reverse = 1
             # The rest is the field name.
-            sort_field = sort_order[1:]
+            sort_field_name = sort_order[1:]
         else:
+            # Otherwise, just a field name is given.
             reverse = 0
-            sort_field = sort_order
-        sort_predicate = qm.track.IssueSortPredicate(sort_field,
-                                                     reverse)
-        for issue_list in self.issue_map.values():
+            sort_field_name = sort_order
+
+        # Sort the issues in each class.
+        for issue_class, issue_list in self.issue_map.items():
+            sort_field = issue_class.GetField(sort_field_name)
+            sort_predicate = qm.track.IssueSortPredicate(sort_field,
+                                                         reverse)
             issue_list.sort(sort_predicate)
 
         # Extract a list of issue classes we need to show.
@@ -137,7 +148,10 @@ class SummaryPage(web.DtmlPage):
         display_options_page = DisplayOptionsPage(
             self.issue_map.keys(),
             self.field_names,
-            self.open_only)
+            self.open_only,
+            str(self.hue_field_name),
+            str(self.lightness_field_name),
+            str(self.saturation_field_name))
         display_options_page = display_options_page(self.request)
         # Construct the Display Options button, which pops up a window
         # showing this page.
@@ -146,28 +160,42 @@ class SummaryPage(web.DtmlPage):
             display_options_page,
             request=self.request,
             window_width=640,
-            window_height=320)
+            window_height=480)
 
 
-    def IsIssueShown(self, issue):
-        """Return a true value if 'issue' should be displayed."""
+    def MakeColorKeyButton(self):
+        """Construct the button that pops up the color key window."""
 
-        return 1
+        if self.hue_field_name is None \
+           and self.saturation_field_name is None \
+           and self.lightness_field_name is None:
+            return ""
+
+        # FIXME.
+        page = ColorKeyPage(self.issue_classes[0],
+                            self.hue_field_name,
+                            self.lightness_field_name,
+                            self.saturation_field_name)(self.request)
+        return qm.web.make_button_for_popup(
+            "Color Key",
+            page,
+            request=self.request,
+            window_width=480,
+            window_height=480)
 
 
     def GetBackgroundColor(self, issue):
         """Return the color, in HTML syntax, for the row showing 'issue'."""
 
-        return "#e0e0e0"
+        hue, lightness, saturation = _hls_transform(
+            _color_value_for_enum_field(issue, self.hue_field_name),
+            _color_value_for_enum_field(issue, self.lightness_field_name),
+            _color_value_for_enum_field(issue, self.saturation_field_name)
+            )
 
-
-    def GetForegroundColor(self, issue):
-        """Return the text color, in HTML syntax, for displaying 'issue'."""
-
-        if issue.GetField("state") >= 0:
-            return "black"
-        else:
-            return "#808080"
+        # Convert to HTML RGB syntax.
+        rgb = colorsys.hls_to_rgb(hue, lightness, saturation)
+        return apply(qm.web.format_color, rgb)
 
 
     def FormatFieldValue(self, issue, field_name):
@@ -206,12 +234,6 @@ class SummaryPage(web.DtmlPage):
         return new_request.AsUrl()
 
 
-    def MakeIssueUrl(self, issue):
-        """Generate a URL to show an individual issue."""
-
-        return self.request.copy("show", iid=issue.GetId()).AsUrl()
-
-
 
 class DisplayOptionsPage(web.DtmlPage):
     """Popup page for setting summary display options.
@@ -226,7 +248,10 @@ class DisplayOptionsPage(web.DtmlPage):
     def __init__(self,
                  issue_classes,
                  included_field_names,
-                 open_only):
+                 open_only,
+                 hue_field_name,
+                 lightness_field_name,
+                 saturation_field_name):
         """Create a new page info context.
 
         'issue_classes' -- A sequence of all issue classes available in
@@ -241,7 +266,10 @@ class DisplayOptionsPage(web.DtmlPage):
         # Initialize the base class.
         web.DtmlPage.__init__(self,
                               "summary-display-options.dtml",
-                              show_decorations=0)
+                              show_decorations=0,
+                              hue_field_name=hue_field_name,
+                              lightness_field_name=lightness_field_name,
+                              saturation_field_name=saturation_field_name)
 
         # Construct a map from field name to field object for all fields
         # in all issue classes.
@@ -285,6 +313,14 @@ class DisplayOptionsPage(web.DtmlPage):
         else:
             self.open_state_names = []
 
+        # Construct a list of names of fields that can be used for
+        # coloring summary rows.
+        colorable_fields = []
+        for field in issue_classes[0].GetFields():
+            if isinstance(field, qm.fields.EnumerationField):
+                colorable_fields.append(field)
+        self.colorable_fields = colorable_fields
+
 
     def MakeBaseUrl(self):
         """Build the base URL for redisplaying the issue summary.
@@ -294,12 +330,132 @@ class DisplayOptionsPage(web.DtmlPage):
 
         redisplay_request = self.request.copy()
         # Blank out the fields that the form will add.
-        for field_name in ["fields", "open_only"]:
+        for field_name in ["fields", "open_only", "hue", "saturation",
+                           "lightness"]:
             if redisplay_request.has_key(field_name):
                 del redisplay_request[field_name]
         return redisplay_request.AsUrl()
 
 
+    def MakeColorableFieldSelect(self, name, default_field_name):
+        """Build a select input for selecting a field for coloring.
+
+        'name' -- The field name.
+
+        'default_field_name' -- The name of the field which should be
+        the default value in the select control.
+
+        returns -- A select input displaying the titles of fields
+        available for use as a color channel, plus 'None' for no
+        field."""
+        
+        # We'll use an object of this class in place of a field, to
+        # allow the user to choose no field for the color channel.  It
+        # appears as 'None' in the select.
+        class NoneField:
+            def GetName(self):
+                return "None"
+            def GetTitle(self):
+                return "None"
+        # An instance of it.
+        none_field = NoneField()
+
+        if default_field_name == "None":
+            # Default value is no field, so indicate our 'None'
+            # placeholder. 
+            default = none_field
+        else:
+            # Find the field matching this name.
+            default = filter(lambda f, d=default_field_name:
+                             f.GetName() == d,
+                             self.colorable_fields) \
+                             [0]
+
+        # Construct the select control.  The elements are the fields
+        # themselves.  The user-visible text for each option in the
+        # select control is the field title, and the corresponding value
+        # is the field name.
+        return qm.web.make_select(
+            name,
+            [none_field] + self.colorable_fields,
+            default,
+            item_to_text=lambda f: f.GetTitle(),
+            item_to_value=lambda f: f.GetName())
+
+
+
+class ColorKeyPage(web.DtmlPage):
+    """Popup page displaying the color key for the issue summary page."""
+
+    def __init__(self,
+                 issue_class,
+                 hue_field_name,
+                 lightness_field_name,
+                 saturation_field_name):
+        """Create a new page.
+
+        'issue_class' -- The issue class for which field names apply.
+
+        'hue_field_name', 'lightness_field_name', 'saturation_field_name' --
+        Names of fields from which HLS channel values are taken.  These
+        are enumeration fields.  Values may also be 'None', indicating
+        no variation in this channel."""
+
+        # Initialize the base class.
+        web.DtmlPage.__init__(self, "summary-color-key.dtml",
+                              show_decorations=0)
+        # This little class represents one item in a color chart,
+        # composed of an HTML-formatted color value, and its label.
+        class Color:
+            def __init__(self, label, hls_color):
+                self.label = label
+                rgb = apply(colorsys.hls_to_rgb, hls_color)
+                self.color = apply(qm.web.format_color, rgb)
+
+
+        # Construct the color chart for hues, if hues are varied
+        # according to an issue field.
+        if hue_field_name is None:
+            self.hues = None
+        else:
+            self.hues = []
+            field = issue_class.GetField(hue_field_name)
+            enumerals = field.GetEnumerals()
+            for enumeral in enumerals:
+                color = _hls_transform(
+                    hue=_color_value_for_enum(enumeral, enumerals))
+                self.hues.append(Color(enumeral, color))
+            self.hue_field_title = field.GetTitle()
+                
+        # Construct the color chart for lightness values, if lightness
+        # is varied according to an issue field.
+        if lightness_field_name is None:
+            self.lightnesses = None
+        else:
+            self.lightnesses = []
+            field = issue_class.GetField(lightness_field_name)
+            enumerals = field.GetEnumerals()
+            for enumeral in enumerals:
+                color = _hls_transform(
+                    lightness=_color_value_for_enum(enumeral, enumerals))
+                self.lightnesses.append(Color(enumeral, color))
+            self.lightness_field_title = field.GetTitle()
+                
+        # Construct the color chart for saturation values, if saturation
+        # is varied according to an issue field.
+        if saturation_field_name is None:
+            self.saturations = None
+        else:
+            self.saturations = []
+            field = issue_class.GetField(saturation_field_name)
+            enumerals = field.GetEnumerals()
+            for enumeral in enumerals:
+                color = _hls_transform(
+                    saturation=_color_value_for_enum(enumeral, enumerals))
+                self.saturations.append(Color(enumeral, color))
+            self.saturation_field_title = field.GetTitle()
+                
+                
 
 ########################################################################
 # functions
@@ -385,14 +541,122 @@ def handle_summary(request):
         open_only = int(
             user.GetConfigurationProperty("summary_open_only", 0))
 
+    # Extract the name of the field from which the hue channel is
+    # derived.  
+    if request.has_key("hue"):
+        hue_field = request["hue"]
+        user.SetConfigurationProperty("summary_hue_field", hue_field)
+    else:
+        hue_field = user.GetConfigurationProperty("summary_hue_field", "None")
+    # 'None' indicates no variation in background color hue.
+    if hue_field == "None":
+        hue_field = None
+
+    # Extract the name of the field from which the lightness channel is
+    # derived.  
+    if request.has_key("lightness"):
+        lightness_field = request["lightness"]
+        user.SetConfigurationProperty("summary_lightness_field",
+                                      lightness_field)
+    else:
+        lightness_field = user.GetConfigurationProperty(
+            "summary_lightness_field", "None")
+    # 'None' indicates no variation in background color lightness.
+    if lightness_field == "None":
+        lightness_field = None
+
+    # Extract the name of the field from which the saturation channel is
+    # derived.  
+    if request.has_key("saturation"):
+        saturation_field = request["saturation"]
+        user.SetConfigurationProperty("summary_saturation_field",
+                                      saturation_field)
+    else:
+        saturation_field = user.GetConfigurationProperty(
+            "summary_saturation_field", "None")
+    # 'None' indicates no variation in background color saturation.
+    if saturation_field == "None":
+        saturation_field = None
+
     # Split field names into a sequence.
     field_names = string.split(field_names, ",")
     # Make sure the IID field is in there somewhere.
     if not "iid" in field_names:
         field_names.insert(0, "iid")
 
-    page = SummaryPage(issues, field_names, sort_order, open_only)
+    page = SummaryPage(issues, field_names, sort_order, open_only,
+                       hue_field, lightness_field, saturation_field)
     return page(request)
+
+
+def _color_value_for_enum_field(issue, field_name):
+    """Extract a color channel value for the value of a field.
+
+    'issue' -- The issue from which to extract a field value.
+
+    'field_name' -- The name of the enumeration field to use.
+
+    returns -- A single color channel value, between 0.0 and 1.0,
+    representing the value of this field, or 'None' if 'field_name' is
+    'None'."""
+
+    if field_name is None:
+        return None
+
+    issue_class = issue.GetClass()
+    field = issue_class.GetField(field_name)
+    value = issue.GetField(field_name)
+
+    # We determine the color channel value differently for different
+    # types of fields.
+    if isinstance(field, qm.fields.EnumerationField):
+        return _color_value_for_enum(value, field.GetEnumerals())
+    else:
+        return 0.5
+
+
+def _color_value_for_enum(value, enumerals):
+    """Return the color channel value for an enumeral.
+
+    'value' -- The enumeral value for which to generate the channel
+    value.
+
+    'enumerals' -- The full list of enumerals."""
+    
+    # Divide the range [0, 1] into even steps for the enumerals.
+    if len(enumerals) < 2:
+        return 0.5
+    else:
+        return enumerals.index(value) / (len(enumerals) - 1.0)
+
+
+def _hls_transform(hue=None, lightness=None, saturation=None):
+    """Transform HLS color values for an issue.
+
+    'hue', 'lightness', 'saturation' -- HLS channel values.  A default
+    value is used for each that is 'None'.
+
+    returns -- A transformed '(hue, lightness, saturation)' triplet."""
+
+    if hue is None:
+        hue = 0.5
+    # The values 0 and 1 correspond to the same hue, so shrink the range
+    # somewhat.
+    hue = 0.80 * hue
+
+    if lightness is None:
+        lightness = 0.2
+    # Shift the lightness to keep the background colors light, and flip
+    # sign so higher values correspond to darker colors.
+    lightness = 0.85 - lightness * 0.25
+
+    if saturation is None:
+        saturation = 0.0
+    # Shift the saturation range into lower values, to avoid garish
+    # colors in the summary.
+    saturation = 0.25 + saturation * 0.75
+
+    return (hue, lightness, saturation)
 
 
 ########################################################################

@@ -55,6 +55,42 @@ matches all issues for which the last modifying user is "jones" and
 which is in the category "GUI".
 
 
+@ summary display options help
+**Summary Display Options**
+
+The "Summary Display Options" dialog box allows you to control the
+format of the "Issue Summary" page.  
+
+  * With the **Show Fields** control, you may choose which issue fields
+    you wish to display as columns in the "Issue Summary" page.  The
+    fields listed in the "Show Fields" box are the columns in the
+    summary table.  Fields that are not displayed are shown in the
+    "Don't Show Fields" box.
+
+    To add a column to the summary, select it in the "Don't Show Fields"
+    box and click on the "<< Add" button.  To remove a column from the
+    summary, select it in the "Show Fields" box and click on the "Remove
+    >>" button.  To rearrange the order of columns, select a field in
+    the "Show Fields" box and click on the "Move Up" or "Move Down"
+    button.
+
+  * If the **Open Issues** check box is selected, the issue summary
+    shows only open issues.  Issues which are in a "closed" state (as
+    determined in the issue class's state model) are always omitted from
+    the summary.
+
+  * The **Coloring** controls allow you to control how %(program_name)s
+    shades the background colors of rows in the issue summary.  This
+    coloring helps you visually to pick out important issues from the
+    issue summary.
+
+    You may choose an enumeration field for both the hue and the
+    lightness of the background color.  For instance, if you choose the
+    State field for the hue control, %(program_name)s chooses the
+    background color for each issue according to its state.  Choose
+    "None" in both controls to disable background coloring.
+
+
 ########################################################################
 # Local Variables:
 # mode: text

@@ -1,3 +1,43 @@
+2001-07-12  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (Field.ValuesAreEqual): Rename to...
+	(Field.CompareValues): ... this.
+	(TextField.CompareValues): New method.
+	(TextField.FormatValueAsHtml): Truncate to 80 characters.
+	(SetField.CompareValues): New method.
+	(EnumerationField.CompareValues): Likewise.
+	* qm/web.py (format_color): New function.
+	* qm/track/issue.py (IssueSortPredicate.__init__): Take field as
+	parameter. 
+	(IssueSortPredicate.__call__): Use CompareValues.
+	(get_differing_fields): Likewise.
+	(difference_issues): Likewise.
+	* qm/track/web/summary.py (SummaryPage.__init__): Add
+	hue_field_name, lightness_field_name, saturation_field_name
+	parameters.  Pass field to IssueSortPredicate.
+	(SummaryPage.MakeDisplayOptionsButton): Pass coloring fields to
+	display options page.
+	(SummaryPage.IsIssueShown): Remove.
+	(SummaryPage.MakeColorKeyButton): New method.
+	(SummaryPage.GetBackgroundColor): Reimplement.
+	(SummaryPage.GetForegroundColor): Remove.
+	(SummaryPage.MakeIssueUrl): Likewise.
+	(DisplayOptionsPage.__init__): Add hue_field_name,
+	lightness_field_name, saturation_field_name parameters.
+	(DisplayOptionsPage.MakeColorableFieldSelect): New method.
+	(ColorKeyPage): New class.
+	(handle_summary): Set up issue coloring.
+	(_color_value_for_enum_field): New function.
+	(_color_value_for_enum): Likewise.
+	(_hls_transform): Likewise.
+	* share/dtml/track/summary.dtml: Add color key button.  Don't use
+	IsIssueShown, MakeIssueUrl, GetForegroundColor.
+	* share/dtml/track/summary-display-options.dtml: Add heading and
+	help link.  Add controls for coloring.
+	* share/dtml/track/summary-color-key.dtml: New file.
+	* share/diagnostics/track-help.txt (summary display options help):
+	New help message.
+	
 2001-07-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* COPYING: Update year.

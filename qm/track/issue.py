@@ -400,14 +400,15 @@ class Issue:
 class IssueSortPredicate:
     """Predicate function to sort issues by a given field value."""
 
-    def __init__(self, field_name, reverse=0):
+    def __init__(self, field, reverse=0):
         """Initialize a sort predicate.
 
-        'field_name' -- The name of the field to sort by.
+        'field' -- The field to sort by.
 
         'reverse' -- If true, sort in reverse order."""
 
-        self.__field_name = field_name
+        self.__field = field
+        self.__field_name = field.GetName()
         self.__reverse = reverse
 
 
@@ -415,8 +416,10 @@ class IssueSortPredicate:
         """Compare two issues."""
 
         # Use built-in comparison on the field values.
-        result = cmp(iss1.GetField(self.__field_name),
-                     iss2.GetField(self.__field_name))
+        result = self.__field.CompareValues(
+            iss1.GetField(self.__field_name),
+            iss2.GetField(self.__field_name)
+            )
         # If a reverse sort was specified, flip the sense.
         if self.__reverse:
             return -result
@@ -452,7 +455,7 @@ def get_differing_fields(iss1, iss2):
         value1 = iss1.GetField(field_name)
         value2 = iss2.GetField(field_name)
         # Record this field if they're not the same.
-        if not field.ValuesAreEqual(value1, value2):
+        if field.CompareValues(value1, value2) != 0:
             differing_fields.append(field)
     return differing_fields
 
@@ -475,7 +478,7 @@ def difference_issues(iss1, iss2):
         field_name = field.GetName()
         value1 = iss1.GetField(field_name)
         value2 = iss2.GetField(field_name)
-        if not field.ValuesAreEqual(value1, value2):
+        if field.CompareValues(value1, value2) != 0:
             difference.SetField(field_name, value2)
     return difference
 
