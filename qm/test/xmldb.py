@@ -355,7 +355,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
         test_class_name = self.__GetClassNameFromDomNode(test_node)
         # Obtain the test class.
         try:
-            test_class = base.get_test_class(test_class_name)
+            test_class = base.get_test_class(test_class_name, self)
         except ImportError:
             raise UnknownTestClassError, \
                   qm.error("unknown test class",
@@ -368,7 +368,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
         resources = self.__GetResourcesFromDomNode(test_node)
         properties = self.__GetPropertiesFromDomNode(test_node)
         # Construct a test descriptor for it.
-        test = base.TestDescriptor(test_id,
+        test = base.TestDescriptor(self,
+                                   test_id,
                                    test_class_name,
                                    arguments,
                                    prerequisites,
@@ -401,7 +402,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
                                                    resource_class)
         properties = self.__GetPropertiesFromDomNode(resource_node)
         # Construct a ResourceDescriptor for it.
-        return base.ResourceDescriptor(resource_id, resource_class_name,
+        return base.ResourceDescriptor(self, resource_id,
+                                       resource_class_name,
                                        arguments, properties)
 
 
@@ -677,7 +679,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
             if not qm.label.is_valid(id_, allow_separator=1):
                 raise RuntimeError, qm.error("invalid id", id=id_)
         # Construct the suite.
-        return base.Suite(suite_id,
+        return base.Suite(self,
+                          suite_id,
                           implicit=0,
                           test_ids=test_ids,
                           suite_ids=suite_ids)

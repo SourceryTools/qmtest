@@ -101,11 +101,13 @@ class InstanceBase:
     """Common base class for test and resource descriptors."""
 
     def __init__(self,
+                 database,
                  instance_id,
                  class_name,
                  arguments,
                  properties):
         validate_id(instance_id)
+        self.__database = database
         self.__id = instance_id
         self.__class_name = class_name
         self.__arguments = arguments
@@ -129,7 +131,8 @@ class InstanceBase:
         else:
             assert 0
             
-        return get_extension_class(self.GetClassName(), kind)
+        return get_extension_class(self.GetClassName(), kind,
+                                   self.__database)
     
 
     def GetArguments(self):
@@ -205,7 +208,6 @@ class InstanceBase:
         """Construct the underlying user test or resource object."""
 
         arguments = self.GetArguments().copy()
-        attachment_store = get_database().GetAttachmentStore()
 
         # Do some extra processing for test arguments.
         klass = self.GetClass()
@@ -225,6 +227,7 @@ class TestDescriptor(InstanceBase):
     """A test instance."""
 
     def __init__(self,
+                 database,
                  test_id,
                  test_class_name,
                  arguments,
@@ -234,6 +237,8 @@ class TestDescriptor(InstanceBase):
                  properties={}):
         """Create a new test instance.
 
+        'database' -- The 'Database' containing this test.
+        
         'test_id' -- The test ID.
 
         'test_class_name' -- The name of the test class of which this is
@@ -254,7 +259,8 @@ class TestDescriptor(InstanceBase):
         test.  Names must be valid labels, and values must be strings."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, test_id, test_class_name, arguments,
+        InstanceBase.__init__(self, database,
+                              test_id, test_class_name, arguments,
                               properties)
         self.__prerequisites = prerequisites
         self.__categories = categories
@@ -332,12 +338,15 @@ class ResourceDescriptor(InstanceBase):
     """A resource instance."""
 
     def __init__(self,
+                 database,
                  resource_id,
                  resource_class_name,
                  arguments,
                  properties={}):
         """Create a new resource instance.
 
+        'database' -- The 'Database' containing this resource.
+        
         'resource_id' -- The resource ID.
 
         'resource_class_name' -- The name of the resource class of which
@@ -349,8 +358,8 @@ class ResourceDescriptor(InstanceBase):
         resource.  Names must be valid labels, and values must be strings."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, resource_id, resource_class_name,
-                              arguments, properties)
+        InstanceBase.__init__(self, database, resource_id,
+                              resource_class_name, arguments, properties)
         # Don't instantiate the resource yet.
         self.__resource = None
 
@@ -432,16 +441,10 @@ class Suite:
        IDs "X.Y.a" and "X.Y.Z.b".  The latter is contained in an
        implicit suite "X.Y.Z".  This, along with the test "X.Y.a", is
        contained in the implicit suite "X.Y", which is in turn contained
-       in the implicit suite "X".
-
-   Ordinary test suites do not contain resources.  However, implicit
-   test suites do contain resources whose IDs have the suite ID as a
-   prefix.
-
-   Use 'get_suite_contents_recursively' to find the tests, suites, and
-   resources transitively contained in a suite."""
+       in the implicit suite "X"."""
 
    def __init__(self,
+                database,
                 suite_id,
                 implicit=0,
                 test_ids=[],
@@ -449,6 +452,8 @@ class Suite:
                 resource_ids=[]): 
        """Create a new test suite instance.
 
+       'database' -- The database in which this suite is located.
+       
        'suite_id' -- The ID of the new suite.
 
        'implicit' -- If true, this is an implicit suite.  It contains
@@ -462,6 +467,7 @@ class Suite:
        'resource_ids' -- A sequence of IDs of resources contained in the
        suite.  Must be empty unless the suite is implicit."""
 
+       self.__database = database
        self.__id = suite_id
        self.__implicit = implicit
        assert self.__implicit or len(resource_ids) == 0
@@ -470,6 +476,14 @@ class Suite:
        self.__resource_ids = list(resource_ids)
 
 
+   def GetDatabase(self):
+       """Return the 'Database' that contains this suite.
+
+       returns -- The 'Database' that contains this suite."""
+
+       return self.__database
+
+   
    def GetId(self):
        """Return the ID of this test suite."""
 
@@ -506,17 +520,41 @@ class Suite:
        return self.__suite_ids
 
 
-   def GetResourceIds(self):
-       """Return the IDs of resources explicitly part of this suite.
+   def GetAllTestAndSuiteIds(self):
+       """Return the tests/suites contained in this suite and its subsuites.
 
-       Generally, suites do not contain resources explicitly, so this
-       function will usually return an empty sequence.  However,
-       implicit test suites, corresponding for instance to file system
-       directories, may contain resources."""
+       returns -- A pair '(test_ids, suite_ids)'.  The 'test_ids' and
+       'suite_ids' elements are both sequences of labels.  The values
+       returned include all tests and suites that are contained in this
+       suite and its subsuites, recursively."""
 
-       return self.__resource_ids
+       suite = self
+       
+       test_ids = []
+       suite_ids = []
 
+       # Maintain a work list of suites to process.
+       work_list = [suite]
+       # Process until the work list is empty.
+       while len(work_list) > 0:
+           suite = work_list.pop(0)
+           # Accumulate test and resource IDs in the suite.
+           test_ids.extend(suite.GetTestIds())
+           # Find sub suites in the suite.
+           sub_suite_ids = suite.GetSuiteIds()
+           # Accumulate them.
+           suite_ids.extend(sub_suite_ids)
+           # Retrieve the 'Suite' objects.
+           sub_suites = map(self.GetDatabase().GetSuite, sub_suite_ids)
+           # Don't expand ordinary suites contained in implicit suites.
+           if suite.IsImplicit():
+               sub_suites = filter(lambda s: s.IsImplicit(), sub_suites)
+           # Add contained suites to the work list.
+           work_list.extend(sub_suites)
 
+       return test_ids, suite_ids
+       
+       
 class Context:
     """Test-time and local configuration for tests.
 
@@ -736,112 +774,6 @@ def validate_id(item_id):
         raise RuntimeError, qm.error("invalid id", id=item_id)
 
 
-def get_suite_contents_recursively(suite, database):
-    """Determine tests, suites, and resources contained in a suite.
-
-    This function determines the IDs of tests, suites, and resources
-    contained directly or indirecty (i.e. via a contained suite) in
-    'suite'.
-
-    An ordinary suite contained in an implicit suite is not expanded.
-    Thus, implicit suites contain tests, resources, and suites whose IDs
-    have the suite ID as a prefix, and no others.
-
-    'suite' -- A 'Suite' instance.
-
-    'database' -- The database containing 'suite'.
-
-    returns -- A triple 'test_ids, resource_ids, suite_ids'.  Each
-    element is a sequence of IDs."""
-
-    test_ids = []
-    resource_ids = []
-    suite_ids = []
-
-    # Maintain a work list of suites to process.
-    work_list = [suite]
-    # Process until the work list is empty.
-    while len(work_list) > 0:
-        suite = work_list.pop(0)
-        # Accumulate test and resource IDs in the suite.
-        test_ids.extend(suite.GetTestIds())
-        resource_ids.extend(suite.GetResourceIds())
-        # Find sub suites in the suite.
-        sub_suite_ids = suite.GetSuiteIds()
-        # Accumulate them.
-        suite_ids.extend(sub_suite_ids)
-        # Retrieve the 'Suite' objects.
-        sub_suites = map(database.GetSuite, sub_suite_ids)
-        # Don't expand ordinary suites contained in implicit suites.
-        if suite.IsImplicit():
-            sub_suites = filter(lambda s: s.IsImplicit(), sub_suites)
-        # Add contained suites to the work list.
-        work_list.extend(sub_suites)
-
-    return test_ids, resource_ids, suite_ids
-
-
-def expand_ids(ids):
-    """Expand test and suite IDs into test IDs.
-
-    'ids' -- A sequence of IDs of tests and suites, which may be mixed
-    together.
-
-    returns -- A pair 'test_ids, suite_ids'.  'test_ids' is a
-    sequence of test IDs including all test IDs mentioned in 'ids' plus
-    all test IDs obtained from recursively expanding suites included in
-    'ids'.  'suite_ids' is the set of IDs of suites included directly
-    and indirectly in 'ids'.
-
-    raises -- 'ValueError' if an element in 'id' is neither a test or
-    suite ID.  The exception argument is the erroneous element."""
-
-    database = get_database()
-
-    # We'll collect test and suite IDs in maps, to make duplicate checks
-    # efficient.
-    test_ids = {}
-    suite_ids = {}
-    # These function add to the maps.
-    def add_test_id(test_id, test_ids=test_ids):
-        test_ids[test_id] = None
-    def add_suite_id(suite_id, suite_ids=suite_ids):
-        suite_ids[suite_id] = None
-
-    for id in ids:
-        # Skip this ID if we've already seen it.
-        if suite_ids.has_key(id) or test_ids.has_key(id):
-            continue
-        # Is this a suite ID?
-        if database.HasSuite(id):
-            add_suite_id(id)
-            # Yes.  Load the suite.
-            suite = database.GetSuite(id)
-            # Determine all the tests and suites contained directly and
-            # indirectly in this suite.
-            suite_test_ids, suite_resource_ids, sub_suite_ids = \
-                get_suite_contents_recursively(suite, database)
-            # Add them.
-            map(add_test_id, suite_test_ids)
-            map(add_suite_id, sub_suite_ids)
-        # Or is this a test ID?
-        elif database.HasTest(id):
-            # Yes.  Add it.
-            add_test_id(id)
-        else:
-            # It doesn't look like a test or suite ID.
-            raise ValueError, id
-
-    # Convert the maps to sequences.
-    return test_ids.keys(), suite_ids.keys()
-
-
-def get_database():
-    """Return the test database object."""
-
-    assert _database is not None
-    return _database
-
 
 def get_db_configuration_directory(db_path):
     """Return the path to the test database's configuration directory."""
@@ -872,7 +804,9 @@ def is_database(db_path):
 
 
 def load_database(db_path):
-    """Load the database from 'db_path'."""
+    """Load the database from 'db_path'.
+
+    returns -- The new 'Database'."""
 
     # Make sure it is a directory.
     if not is_database(db_path):
@@ -893,7 +827,7 @@ def load_database(db_path):
                                                         "class-name")
         # Get the database class.
         database_class = get_extension_class(database_class_name,
-                                             "database")
+                                             "database", None)
     else:
         # If 'configuration' did not exist, fall back to the 'xmldb'
         # database.
@@ -901,8 +835,7 @@ def load_database(db_path):
         database_class = xmldb.Database
     
     # Create the database.
-    global _database
-    _database = database_class(db_path)
+    return database_class(db_path)
 
 
 def create_database(db_path, class_name):
@@ -937,11 +870,14 @@ def create_database(db_path, class_name):
     qm.xmlutil.write_dom_document(document, open(configuration_path, "w"))
 
 
-def get_extension_directories(kind):
+def get_extension_directories(kind, database):
     """Return the directories to search for QMTest extensions.
 
-    kind -- A string giving kind of extension for which we are looking.
+    'kind' -- A string giving kind of extension for which we are looking.
     This must be of the elements of 'extension_kinds'.
+
+    'database' -- The 'Database' with which the extension class will be
+    used, or 'None' if 'kind' is 'database'.
     
     returns -- A sequence of strings.  Each string is the path to a
     directory that should be searched for QMTest extensions.  The
@@ -966,7 +902,11 @@ def get_extension_directories(kind):
 
     # The kind should be one of the extension_kinds.
     assert kind in extension_kinds
-
+    if kind != 'database':
+        assert database
+    else:
+        assert database is None
+        
     # Start with the directories that the user has specified in the
     # QNTEST_CLASSPATH environment variable.
     if os.environ.has_key('QMTEST_CLASSPATH'):
@@ -978,7 +918,7 @@ def get_extension_directories(kind):
     # searching for a database class, in which case we cannot assume
     # that a database has already been loaded.
     if kind != 'database':
-        dirs = dirs + get_database().GetClassPaths()
+        dirs = dirs + database.GetClassPaths()
 
     # Search the builtin directory, too.
     dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
@@ -1033,29 +973,35 @@ def get_extension_class_names_in_directory(directory):
     return extensions
 
 
-def get_extension_class_names(kind):
+def get_extension_class_names(kind, database):
     """Return the names of extension classes.
 
     'kind' -- The kind of extension class.  This value must be one
     of the 'extension_kinds'.
 
+    'database' -- The 'Database' with which the extension class will be
+    used, or 'None' if 'kind' is 'database'.
+
     returns -- A sequence of strings giving the names of the extension
     classes with the indicated 'kind', in the form 'module.class'."""
 
-    dirs = get_extension_directories(kind)
+    dirs = get_extension_directories(kind, database)
     names = []
     for d in dirs:
         names.extend(get_extension_class_names_in_directory(d)[kind])
     return names
 
 
-def get_extension_class(class_name, kind):
+def get_extension_class(class_name, kind, database):
     """Return the extension class named 'class_name'.
 
     'class_name' -- The name of the class, in the form 'module.class'.
 
     'kind' -- The kind of class to load.  This value must be one
     of the 'extension_kinds'.
+
+    'database' -- The 'Database' with which the extension class will be
+    used, or 'None' if 'kind' is 'database'.
 
     returns -- The class object with the indicated 'class_name'."""
 
@@ -1069,14 +1015,15 @@ def get_extension_class(class_name, kind):
     # Otherwise, load it now.  Get all the extension directories in
     # which this class might be located.
     klass = qm.common.load_class(class_name,
-                                 get_extension_directories(kind))
+                                 get_extension_directories(kind,
+                                                           database))
     # Cache it.
     cache[class_name] = klass
 
     return klass
 
 
-def get_test_class(class_name):
+def get_test_class(class_name, database):
     """Return the test class named 'class_name'.
 
     'class_name' -- The name of the test class, in the form
@@ -1084,10 +1031,10 @@ def get_test_class(class_name):
 
     returns -- The test class object with the indicated 'class_name'."""
     
-    return get_extension_class(class_name, 'test')
+    return get_extension_class(class_name, 'test', database)
 
 
-def get_resource_class(class_name):
+def get_resource_class(class_name, database):
     """Return the resource class named 'class_name'.
 
     'class_name' -- The name of the resource class, in the form
@@ -1096,59 +1043,7 @@ def get_resource_class(class_name):
     returns -- The resource class object with the indicated
     'class_name'."""
     
-    return get_extension_class(class_name, 'resource')
-
-
-def make_new_test(test_class_name, test_id):
-    """Create a new test with default arguments.
-
-    'test_class_name' -- The name of the test class of which to create a
-    new test.
-
-    'test_id' -- The test ID of the new test.
-
-    returns -- A new 'TestDescriptor' object."""
-
-    test_class = get_test_class(test_class_name)
-    # Make sure there isn't already such a test.
-    database = get_database()
-    if database.HasTest(test_id):
-        raise RuntimeError, qm.error("test already exists",
-                                     test_id=test_id)
-    # Construct an argument map containing default values.
-    arguments = {}
-    for field in test_class.arguments:
-        name = field.GetName()
-        value = field.GetDefaultValue()
-        arguments[name] = value
-    # Construct a default test instance.
-    return TestDescriptor(test_id, test_class_name, arguments, {}, [])
-
-
-def make_new_resource(resource_class_name, resource_id):
-    """Create a new resource with default arguments.
-
-    'resource_class_name' -- The name of the resource class of which to
-    create a new resource.
-
-    'resource_id' -- The resource ID of the new resource.
-
-    returns -- A new 'ResourceDescriptor' object."""
-
-    resource_class = get_resource_class(resource_class_name)
-    # Make sure there isn't already such a resource.
-    database = get_database()
-    if database.HasResource(resource_id):
-        raise RuntimeError, qm.error("resource already exists",
-                                     resource_id=resource_id)
-    # Construct an argument map containing default values.
-    arguments = {}
-    for field in resource_class.arguments:
-        name = field.GetName()
-        value = field.GetDefaultValue()
-        arguments[name] = value
-    # Construct a default resource instance.
-    return ResourceDescriptor(resource_id, resource_class_name, arguments)
+    return get_extension_class(class_name, 'resource', database)
 
 
 def load_outcomes(file):
@@ -1257,20 +1152,16 @@ def split_results_by_expected_outcome(results, expected_outcomes):
     return expected, unexpected
 
 
-def run_test(test_id, context):
+def run_test(test, context):
     """Run a test.
 
-    'test_id' -- The ID of the test to run.
+    'test' -- The 'Test' to run.
 
     'context' -- The 'Context' object with which to run it.
 
     returns -- A 'Result' object for the test."""
 
-    context["path"] = qm.rc.Get("path", os.environ["PATH"])
-
-    test = get_database().GetTest(test_id)
-
-    result = Result(Result.TEST, test_id, context)
+    result = Result(Result.TEST, test.GetId(), context)
 
     try:
         # Run the test.
@@ -1285,19 +1176,17 @@ def run_test(test_id, context):
     return result
 
 
-def set_up_resource(resource_id, context):
+def set_up_resource(resource, context):
     """Set up a resource.
 
-    'test_id' -- The ID of the resource to set up.
+    'resource' -- The 'Resource' to set up.
 
     'context' -- The 'Context' object with which to run it.
 
     returns -- A complete 'Result' object for the setup function."""
 
-    resource = get_database().GetResource(resource_id)
-
-    result = Result(Result.RESOURCE, resource_id, context, Result.PASS,
-                    { "action" : "setup" } )
+    result = Result(Result.RESOURCE, resource.GetId(), context,
+                    Result.PASS, { "action" : "setup" } )
 
     # Set up the resoure.
     try:
@@ -1309,19 +1198,17 @@ def set_up_resource(resource_id, context):
     return result
 
 
-def clean_up_resource(resource_id, context):
+def clean_up_resource(resource, context):
     """Clean up a resource.
 
-    'test_id' -- The ID of the resource to clean up.
+    'resource' -- The 'Resource' to clean up.
 
     'context' -- The 'Context' object with which to run it.
 
     returns -- A complete 'Result' object for the cleanup function."""
 
-    resource = get_database().GetResource(resource_id)
-
-    result = Result(Result.RESOURCE, resource_id, context, Result.PASS,
-                    { "action" : "cleanup" } )
+    result = Result(Result.RESOURCE, resource.GetId(), context,
+                    Result.PASS, { "action" : "cleanup" } )
     
     # Clean up the resource.
     try:
@@ -1348,11 +1235,6 @@ is itself a dictionary mapping class names to class objects."""
 # Initialize the caches.
 for kind in extension_kinds:
     __class_caches[kind] = {}
-
-_database = None
-"""The global test database instance.
-
-Use 'get_database' to access the global test database."""
 
 ########################################################################
 # Local Variables:

@@ -50,7 +50,8 @@ class TextResultStream(ResultStream):
     readable form.  This 'ResultStream' is used when QMTest is run
     without a graphical user interface."""
 
-    def __init__(self, file, format, expected_outcomes, suite_ids):
+    def __init__(self, file, format, expected_outcomes, database,
+                 suite_ids):
         """Construct a 'TextResultStream'.
 
         'file' -- The file object to which the results should be
@@ -62,6 +63,9 @@ class TextResultStream(ResultStream):
         'expected_outcomes' -- A map from test IDs to expected outcomes,
         or 'None' if there are no expected outcomes.
 
+        'database' -- The 'Database' out of which the tests will be
+        run.
+        
         'suite_ids' -- The suites that will be executed during the
         test run."""
 
@@ -72,6 +76,7 @@ class TextResultStream(ResultStream):
         self.__format = format
         self.__expected_outcomes = expected_outcomes
         self.__suite_ids = suite_ids
+        self.__database = database
         self.__test_results = []
         self.__resource_results = []
 
@@ -211,13 +216,12 @@ class TextResultStream(ResultStream):
     def _SummarizeTestSuiteStats(self):
         """Generate statistics showing results by test suite."""
 
-        database = get_database()
+        database = self.__database
 
         for suite_id in self.__suite_ids:
             # Expand the contents of the suite.
             suite = database.GetSuite(suite_id)
-            ids_in_suite = get_suite_contents_recursively(suite,
-                                                          database)[0]
+            ids_in_suite = suite.GetAllTestAndSuiteIds()[0]
             # Determine the results belonging to tests in the suite.
             results_in_suite = []
             for result in self.__test_results:

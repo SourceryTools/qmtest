@@ -38,6 +38,8 @@
 import os
 import qm
 import qm.attachment
+import qm.test.base
+from   qm.test.base import TestDescriptor, ResourceDescriptor
 from   qm.test.result import *
 from   qm.test.result_stream import *
 from   qm.test.xml_result_stream import *
@@ -162,13 +164,11 @@ class AddPrerequisitePage(DtmlPage):
     outcomes = Result.outcomes
     """The list of possible test outcomes."""
 
-
-    def __init__(self, base_path):
+    def __init__(self, database, base_path):
         # Initialize the base class.
         DtmlPage.__init__(self, "add-prerequisite.dtml")
         # Extract a list of all test IDs in the specified path. 
-        db = qm.test.base.get_database()
-        test_ids = db.GetTestIds(base_path)
+        test_ids = database.GetTestIds(base_path)
         test_ids.sort()
         # Store it for the DTML code.
         self.test_ids = test_ids
@@ -178,12 +178,17 @@ class AddPrerequisitePage(DtmlPage):
 class AddResourcePage(DtmlPage):
     """Page for specifying an resource to add."""
 
-    def __init__(self, resource_path):
+    def __init__(self, database, resource_path):
+        """Construct a new 'AddResourcePage'.
+
+        'database' -- The 'Database' that is being processed.
+
+        'resource_path' -- The path to search for eligible resources."""
+        
         # Initialize the base class.
         DtmlPage.__init__(self, "add-resource.dtml")
         # Extract a list of all resource IDs in the specified path.
-        db = qm.test.base.get_database()
-        resource_ids = db.GetResourceIds(resource_path)
+        resource_ids = database.GetResourceIds(resource_path)
         resource_ids.sort()
         # Store it for the DTML code.
         self.resource_ids = resource_ids
@@ -224,16 +229,16 @@ class DirPage(DtmlPage):
     'resource_ids' -- A sequence of labels giving the resources in
     this directory."""
 
-    def __init__(self, path):
+    def __init__(self, database, path):
         """Construct a 'DirPage'.
 
+        'database' -- The 'Database' to which the 'path' applies.
+        
         'path' -- The label directory to display."""
         
         # Initialize the base class.
         DtmlPage.__init__(self, "dir.dtml")
         
-        database = qm.test.base.get_database()
-
         self.path = path
         self.subdir_ids = database.GetSubdirectories(path)
         self.subdir_ids = map(qm.label.AsAbsolute(path), self.subdir_ids)
@@ -261,7 +266,7 @@ class ExpectationsPage(DtmlPage):
         self.__server = server
         self.expected_outcomes = server.GetExpectedOutcomes()
         self.outcomes = Result.outcomes
-        self.test_ids = qm.test.base.expand_ids(".")[0]
+        self.test_ids = self.__server.GetDatabase().ExpandIds(".")[0]
         self.test_ids.sort()
 
         
@@ -289,6 +294,7 @@ class NewItemPage(DtmlPage):
     """Page for creating a new test or resource."""
 
     def __init__(self,
+                 database, 
                  type,
                  item_id="",
                  class_name="",
@@ -296,6 +302,9 @@ class NewItemPage(DtmlPage):
         """Create a new DTML context.
 
         'type' -- Either "test" or "resource".
+
+        'database' -- The 'Database' in which the new test or resource
+        will be created.
 
         'item_id' -- The item ID to show.
 
@@ -312,9 +321,9 @@ class NewItemPage(DtmlPage):
         self.item_id = item_id
         self.class_name = class_name
         if type == "test":
-            self.class_names = qm.test.base.get_database().GetTestClasses()
+            self.class_names = database.GetTestClasses()
         elif type == "resource":
-            self.class_names = qm.test.base.get_database().GetResourceClasses()
+            self.class_names = database.GetResourceClasses()
         self.field_errors = field_errors
 
 
@@ -371,11 +380,14 @@ class ResultPage(DtmlPage):
 class ShowItemPage(DtmlPage):
     """DTML page for showing and editing tests and resources."""
 
-    def __init__(self, item, edit, new, type, field_errors={}):
+    def __init__(self, database, item, edit, new, type, field_errors={}):
         """Construct a new DTML context.
         
         These parameters are also available in DTML under the same name:
 
+        'database' -- The 'Database' in which the test or resource is
+        located.
+        
         'item' -- The 'Test' or 'Resource' instance.
 
         'edit' -- True for editing the item; false for displaying it
@@ -393,6 +405,7 @@ class ShowItemPage(DtmlPage):
         # Initialize the base class.
         DtmlPage.__init__(self, "show.dtml")
         # Set up attributes.
+        self.__database = database
         self.item = item
         self.fields = item.GetClass().arguments
         self.edit = edit
@@ -534,7 +547,8 @@ class ShowItemPage(DtmlPage):
                             "%s;%s" % (test_id, outcome)))
         # Generate the page for selecting the prerequisite test to add.
         test_path = qm.label.dirname(self.item.GetId())
-        add_page = AddPrerequisitePage(test_path)(self.request)
+        add_page = AddPrerequisitePage(self.__database,
+                                       test_path)(self.request)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="prerequisites",
@@ -552,7 +566,8 @@ class ShowItemPage(DtmlPage):
         options = map(lambda ac: (ac, ac), self.resources)
         # Generate the page for selecting the resource to add.
         test_path = qm.label.dirname(self.item.GetId())
-        add_page = AddResourcePage(test_path)(self.request)
+        add_page = AddResourcePage(self.__database,
+                                   test_path)(self.request)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="resources",
@@ -601,15 +616,15 @@ class ShowItemPage(DtmlPage):
 class ShowSuitePage(DtmlPage):
     """Page for displaying the contents of a test suite."""
 
-    def __init__(self, suite, edit):
+    def __init__(self, database, suite, edit):
         """Construct a new DTML context.
 
+        'database' -- The 'Database' in which 'suite' is located.
+        
         'suite' -- The 'Suite' instance to display.
 
         'edit' -- If true, display controls for editing the suite."""
         
-        database = qm.test.base.get_database()
-
         # Initialize the base class.
         DtmlPage.__init__(self, "suite.dtml")
         # Set up attributes.
@@ -905,6 +920,8 @@ class QMTestServer(qm.web.WebServer):
 
         qm.web.WebServer.__init__(self, port, address, log_file=log_file)
 
+        self.__database = database
+        
         # Base URL path for QMTest stuff.
         script_base = "/test/"
         # Register all our web pages.
@@ -989,7 +1006,15 @@ class QMTestServer(qm.web.WebServer):
 
         return self.__context
 
+
+    def GetDatabase(self):
+        """Return the 'Database' handled by this server.
+
+        returns -- The 'Database' handled by this server."""
+
+        return self.__database
     
+        
     def GetExpectedOutcomes(self):
         """Return the current expected outcomes for the test database.
 
@@ -1005,7 +1030,7 @@ class QMTestServer(qm.web.WebServer):
         'request' -- A 'WebRequest' object."""
 
         field_errors = {}
-        database = qm.test.base.get_database()
+        database = self.__database
 
         # Extract the suite ID of the new suite from the request.
         suite_id = request["id"]
@@ -1026,10 +1051,10 @@ class QMTestServer(qm.web.WebServer):
             # redisplay the new suite page with error messages.
             return NewSuitePage(suite_id, field_errors)(request)
         else:
-            # Everything looks good.  Make an empty test.
-            suite = qm.test.base.Suite(suite_id)
+            # Everything looks good.  Make an empty suite.
+            suite = qm.test.base.Suite(self.__database, suite_id)
             # Show the editing page.
-            return ShowSuitePage(suite, edit=1)(request)
+            return ShowSuitePage(self.__database, suite, edit=1)(request)
 
 
     def HandleDeleteItem(self, request):
@@ -1043,7 +1068,7 @@ class QMTestServer(qm.web.WebServer):
         The ID of the test or resource to delete is specified in the 'id'
         field of the request."""
 
-        database = qm.test.base.get_database()
+        database = self.__database
         # Extract the item ID.
         item_id = request["id"]
         # The script name determines whether we're deleting a test or an
@@ -1068,7 +1093,7 @@ class QMTestServer(qm.web.WebServer):
         The ID of the suite to delete is specified in the 'id' field of the
         request."""
 
-        database = qm.test.base.get_database()
+        database = self.__database
         # Extract the suite ID.
         suite_id = request["id"]
         database.RemoveSuite(suite_id)
@@ -1089,7 +1114,7 @@ class QMTestServer(qm.web.WebServer):
         contents of the test database are shown."""
 
         path = request.get("id", ".")
-        return DirPage(path)(request)
+        return DirPage(self.__database, path)(request)
 
 
     def HandleEditContext(self, request):
@@ -1136,7 +1161,7 @@ class QMTestServer(qm.web.WebServer):
 
         'request' -- The 'WebRequest' that caused the event."""
 
-        return NewItemPage(type="resource")(request)
+        return NewItemPage(self.__database, "resource")(request)
 
 
     def HandleNewTest(self, request):
@@ -1144,7 +1169,7 @@ class QMTestServer(qm.web.WebServer):
 
         'request' -- The 'WebRequest' that caused the event."""
 
-        return NewItemPage(type="test")(request)
+        return NewItemPage(self.__database, "test")(request)
 
 
     def HandleNewSuite(self, request):
@@ -1172,7 +1197,7 @@ class QMTestServer(qm.web.WebServer):
             ids = string.split(request["ids"], ",")
         else:
             ids = ["."]
-        test_ids, suite_ids = qm.test.base.expand_ids(ids)
+        test_ids, suite_ids = self.GetDatabase().ExpandIds(ids)
 
         context = self.__context
         # Run in a single local subprocess.  As yet, we don't support
@@ -1188,8 +1213,8 @@ class QMTestServer(qm.web.WebServer):
         # Flush existing results.
         self.__results_stream = StorageResultsStream()
         # Run the tests.
-        qm.test.run.test_run(test_ids, self.__context, target_specs,
-                             [self.__results_stream])
+        qm.test.run.test_run(self.__database, test_ids, self.__context,
+                             target_specs, [self.__results_stream])
 
         # Display the results.
         return self.HandleShowResults(request)
@@ -1288,7 +1313,7 @@ class QMTestServer(qm.web.WebServer):
             "create-resource": (1, 1, "resource"),
             }[url]
 
-        database = qm.test.base.get_database()
+        database = self.__database
 
         try:
             # Determine the ID of the item.
@@ -1321,7 +1346,8 @@ class QMTestServer(qm.web.WebServer):
                                                        test_id=item_id)
             # Check that the class exists.
             try:
-                qm.test.base.get_extension_class(class_name, type)
+                qm.test.base.get_extension_class(class_name, type,
+                                                 self.GetDatabase())
             except ValueError:
                 # The class name was incorrectly specified.
                 field_errors["_class"] = qm.error("invalid class name",
@@ -1334,7 +1360,8 @@ class QMTestServer(qm.web.WebServer):
             if len(field_errors) > 0:
                 # Yes.  Instead of showing the edit page, re-show the new
                 # item page.
-                page = NewItemPage(type=type,
+                page = NewItemPage(database=self.__database,
+                                   type=type,
                                    item_id=item_id,
                                    class_name=class_name,
                                    field_errors=field_errors)
@@ -1343,9 +1370,9 @@ class QMTestServer(qm.web.WebServer):
             # Construct an test with default argument values, as the
             # starting point for editing.
             if type is "resource":
-                item = qm.test.base.make_new_resource(class_name, item_id)
+                item = self.MakeNewResource(class_name, item_id)
             elif type is "test":
-                item = qm.test.base.make_new_test(class_name, item_id)
+                item = self.MakeNewTest(class_name, item_id)
         else:
             # We're showing or editing an existing item.
             # Look it up in the database.
@@ -1367,7 +1394,7 @@ class QMTestServer(qm.web.WebServer):
                     return qm.web.generate_error_page(request, message)
 
         # Generate HTML.
-        return ShowItemPage(item, edit, create, type)(request)
+        return ShowItemPage(self.__database, item, edit, create, type)(request)
 
 
     def HandleShowResult(self, request):
@@ -1402,7 +1429,7 @@ class QMTestServer(qm.web.WebServer):
 
           'id' -- The ID of the suite to display or edit."""
 
-        database = qm.test.base.get_database()
+        database = self.__database
 
         try:
             # Determine the suite ID.
@@ -1414,7 +1441,7 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite = database.GetSuite(suite_id)
         # Generate HTML.
-        return ShowSuitePage(suite, edit)(request)
+        return ShowSuitePage(self.__database, suite, edit)(request)
 
 
     def HandleShutdown(self, request):
@@ -1470,7 +1497,7 @@ class QMTestServer(qm.web.WebServer):
         self.__expected_outcomes = {}
         
         # Loop over all the tests.
-        for id in qm.test.base.expand_ids(".")[0]:
+        for id in self.GetDatabase().ExpandIds(".")[0]:
             outcome = request[id]
             if outcome != "None":
                 self.__expected_outcomes[id] = outcome
@@ -1518,10 +1545,12 @@ class QMTestServer(qm.web.WebServer):
             message = qm.error("no id for submit")
             return qm.web.generate_error_page(request, message)
 
-        database = qm.test.base.get_database()
+        database = self.__database
         # Extract the class and field specification.
         item_class_name = request["class"]
-        item_class = qm.test.base.get_extension_class(item_class_name, type)
+        item_class = qm.test.base.get_extension_class(item_class_name,
+                                                      type,
+                                                      self.GetDatabase())
         fields = item_class.arguments
 
         # We'll perform various kinds of validation as we extract form
@@ -1604,7 +1633,8 @@ class QMTestServer(qm.web.WebServer):
             # Yes.  Instead of processing the submission, redisplay the form
             # with error messages.
             request = request.copy(url="edit-" + type)
-            return ShowItemPage(item, 1, 0, type, field_errors)(request)
+            return ShowItemPage(self.__database, item, 1, 0, type,
+                                field_errors)(request)
 
         # Store it in the database.
         if type is "test":
@@ -1674,7 +1704,7 @@ class QMTestServer(qm.web.WebServer):
           include in the suite, relative to the suite's own ID.
         """
 
-        database = qm.test.base.get_database()
+        database = self.__database
         # Extract fields from the request.
         suite_id = request["id"]
         test_ids = request["test_ids"]
@@ -1688,7 +1718,8 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite_ids = string.split(suite_ids, ",")
         # Construct a new suite.
-        suite = qm.test.base.Suite(suite_id,
+        suite = qm.test.base.Suite(self,
+                                   suite_id,
                                    test_ids=test_ids,
                                    suite_ids=suite_ids)
         # Store it.
@@ -1696,6 +1727,56 @@ class QMTestServer(qm.web.WebServer):
         # Redirect to a page that displays the newly-edited item.
         raise qm.web.HttpRedirect, \
               qm.web.WebRequest("show-suite", base=request, id=suite_id)
+
+
+    def MakeNewTest(self, test_class_name, test_id):
+        """Create a new test with default arguments.
+
+        'test_class_name' -- The name of the test class of which to create a
+        new test.
+
+        'test_id' -- The test ID of the new test.
+
+        returns -- A new 'TestDescriptor' object."""
+
+        test_class = qm.test.base.get_test_class(test_class_name, self)
+        # Make sure there isn't already such a test.
+        if self.GetDatabase().HasTest(test_id):
+            raise RuntimeError, qm.error("test already exists",
+                                         test_id=test_id)
+        # Construct an argument map containing default values.
+        arguments = {}
+        for field in test_class.arguments:
+            name = field.GetName()
+            value = field.GetDefaultValue()
+            arguments[name] = value
+        # Construct a default test instance.
+        return TestDescriptor(test_id, test_class_name, arguments, {}, [])
+
+
+    def MakeNewResource(self, resource_class_name, resource_id):
+        """Create a new resource with default arguments.
+
+        'resource_class_name' -- The name of the resource class of which to
+        create a new resource.
+
+        'resource_id' -- The resource ID of the new resource.
+
+        returns -- A new 'ResourceDescriptor' object."""
+
+        resource_class = qm.test.base.get_resource_class(resource_class_name)
+        # Make sure there isn't already such a resource.
+        if self.GetDatabase().HasResource(resource_id):
+            raise RuntimeError, qm.error("resource already exists",
+                                         resource_id=resource_id)
+        # Construct an argument map containing default values.
+        arguments = {}
+        for field in resource_class.arguments:
+            name = field.GetName()
+            value = field.GetDefaultValue()
+            arguments[name] = value
+        # Construct a default resource instance.
+        return ResourceDescriptor(resource_id, resource_class_name, arguments)
 
 
 ########################################################################

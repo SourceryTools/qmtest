@@ -563,7 +563,7 @@ class Database:
         implementation allows all available test classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.get_extension_class_names('test')
+        return qm.test.base.get_extension_class_names('test', self)
 
 
     def GetResourceClasses(self):
@@ -577,8 +577,59 @@ class Database:
         implementation allows all available resource classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.get_extension_class_names('resource')
+        return qm.test.base.get_extension_class_names('resource', self)
 
+
+    def ExpandIds(self, ids):
+        """Expand test and suite IDs into test IDs.
+
+        'ids' -- A sequence of IDs of tests and suites, which may be mixed
+        together.
+
+        returns -- A pair 'test_ids, suite_ids'.  'test_ids' is a
+        sequence of test IDs including all test IDs mentioned in 'ids' plus
+        all test IDs obtained from recursively expanding suites included in
+        'ids'.  'suite_ids' is the set of IDs of suites included directly
+        and indirectly in 'ids'.
+
+        raises -- 'ValueError' if an element in 'id' is neither a test or
+        suite ID.  The exception argument is the erroneous element."""
+
+        # We'll collect test and suite IDs in maps, to make duplicate
+        # checks efficient.
+        test_ids = {}
+        suite_ids = {}
+        # These function add to the maps.
+        def add_test_id(test_id, test_ids=test_ids):
+            test_ids[test_id] = None
+        def add_suite_id(suite_id, suite_ids=suite_ids):
+            suite_ids[suite_id] = None
+
+        for id in ids:
+            # Skip this ID if we've already seen it.
+            if suite_ids.has_key(id) or test_ids.has_key(id):
+                continue
+            # Is this a suite ID?
+            if self.HasSuite(id):
+                add_suite_id(id)
+                # Yes.  Load the suite.
+                suite = self.GetSuite(id)
+                # Determine all the tests and suites contained directly and
+                # indirectly in this suite.
+                suite_test_ids, sub_suite_ids = suite.GetAllTestAndSuiteIds()     
+                # Add them.
+                map(add_test_id, suite_test_ids)
+                map(add_suite_id, sub_suite_ids)
+            # Or is this a test ID?
+            elif self.HasTest(id):
+                # Yes.  Add it.
+                add_test_id(id)
+            else:
+                # It doesn't look like a test or suite ID.
+                raise ValueError, id
+
+        # Convert the maps to sequences.
+        return test_ids.keys(), suite_ids.keys()
 
 ########################################################################
 # Local Variables:

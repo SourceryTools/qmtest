@@ -376,7 +376,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # database first.
             try:
                 # Create the database.
-                base.load_database(db_path)
+                self.__database = base.load_database(db_path)
             except ValueError, exception:
                 raise RuntimeError, str(exception)
 
@@ -392,7 +392,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     def GetDatabase(self):
         """Return the test database to use."""
         
-        return base.get_database()
+        return self.__database
 
 
     def MakeContext(self):
@@ -511,7 +511,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if len(id_arguments) > 0:
             # Expand arguments into test IDs.
             try:
-                test_ids, suite_ids = base.expand_ids(id_arguments)
+                test_ids, suite_ids \
+                          = self.GetDatabase().ExpandIds(id_arguments)
             except (qm.test.database.NoSuchTestError,
                     qm.test.database.NoSuchSuiteError), exception:
                 raise qm.cmdline.CommandError, str(exception)
@@ -530,7 +531,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Simulate the events that would have occurred during an
         # actual test run.
-        stream = TextResultStream(output, format, outcomes, suite_ids)
+        stream = TextResultStream(output, format, outcomes,
+                                  self.GetDatabase(), suite_ids)
         for r in test_results:
             stream.WriteResult(r)
         for r in resource_results:
@@ -587,7 +589,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Expand arguments in test IDs.
         try:
-            test_ids, test_suites = base.expand_ids(self.__arguments)
+            test_ids, test_suites \
+                      = self.GetDatabase().ExpandIds(self.__arguments)
         except (qm.test.database.NoSuchTestError,
                 qm.test.database.NoSuchSuiteError), exception:
             raise qm.cmdline.CommandError, str(exception)
@@ -632,8 +635,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # a results file.
         result_streams = []
         if format != "none":
-            result_streams.append(TextResultStream(output, format,
-                                                   outcomes, test_suites))
+            stream = TextResultStream(output, format, outcomes,
+                                      self.GetDatabase(), test_suites)
+            result_streams.append(stream)
 
         # Handle 'result' options.
         close_result_file = 0
@@ -674,7 +678,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             results = local_vars["results"]
             p.dump_stats(profile_file)
         else:
-            run.test_run(test_ids, context, target_specs, result_streams)
+            run.test_run(database, test_ids, context, target_specs,
+                         result_streams)
 
         # Close the result file.
         if close_result_file:

@@ -1,3 +1,53 @@
+2001-10-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/.cvsignore: Add *.pyo.
+	* qm/test.cvsignore: Likewise.
+	* qm/test/classes/.cvsignore: Likewise.
+	* qm/test/web/.cvsignore: Likewise.
+	* qm/track/.cvsignore: Likewise.
+	* qm/track/triggers/.cvsignore: Likewise.
+	* qm/track/web/.cvsignore: Likewise.
+	
+	* qm/test/base.py (InstanceBase.__init__): Take 'database' as a
+	parameter.
+	(TestDescriptor.__init__): Likewise.
+	(ResourceDescriptor.__init__): Likewise.
+	(Suite.__init__): Likewise.
+	(Suite.GetAllTestAndSuiteIds): New method.
+	(get_suite_contents_recursively): Remove.
+	(expand_ids): Likewise.
+	(get_database): Likewise.
+	(load_database): Return the new database.
+	(get_extension_directories): Take the database as a parameter.
+	(get_extension_class_names): Likewise.
+	(get_test_class): Likewise.
+	(get_resource_class): Likewise.
+	(make_new_test): Remove.
+	(make_new_resource): Likewise.
+	(_database): Remove.
+	* qm/test/cmdline.py (Command.Execute): Remember the newly loaded
+	database.
+	(Command.GetDatabase): Adjust.
+	* qm/test/database.py (Database.GetTestClasses): Adjust
+	call to get_extension_class_names.
+	(Database.GetResourceClasses): Likewise.
+	(Database.ExpandIds): New method.
+	* qm/test/directory_suite.py (DirectorySuite.__init__): Take
+	the database as a parameter.
+	* qm/test/run.py (Target.__init__): Take the database as
+	a parameter.
+	(SubprocessTarget.__init__): Likewise.
+	(RemoteShellTarget.__init__): Likewise.
+	(TestRun.__init__): Likewise.
+	(test_run): Likewise.
+	(_send): Remove.
+	(_receive): Likewise.
+	* qm/test/text_result_stream.py (TextResultStream.__init__): Take
+	the database as a parameter.
+	* qm/test/xmldb.py (Database): Adjust for removal of global
+	database variable.
+	* qm/test/web/web.py: Likewise.
+	
 2001-10-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/manual.xml (track-email): New entity.

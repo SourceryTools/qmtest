@@ -58,7 +58,7 @@ class DirectorySuite(Suite):
         this suite."""
 
         # Construct the base class.
-        Suite.__init__(self, directory, implicit=1)
+        Suite.__init__(self, database, directory, implicit=1)
         # Remember the database.
         self.__database = database
 

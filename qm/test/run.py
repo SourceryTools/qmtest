@@ -254,17 +254,17 @@ class Target:
     method is invoked, and handles incoming communications when the
     'OnReply' method is invoked."""
 
-    def __init__(self, target_spec):
+    def __init__(self, target_spec, database):
         """Instantiate a target.
 
         'target_spec' -- A 'TargetSpec' object describing the target.
 
-        postconditions -- The target, including parallel threads of
-        execution and requisite IPC channels, is set up, and is ready to
-        execute tests."""
+        'database' -- The 'Database' containing the tests that will be
+        run."""
 
         self.__spec = target_spec
-
+        self.__database = database
+        
 
     def GetName(self):
         """Return the name of the target."""
@@ -288,6 +288,15 @@ class Target:
         return self.__spec.properties.get(name, default)
 
 
+    def GetDatabase(self):
+        """Return the 'Database' containing the tests this target will run.
+
+        returns -- The 'Database' containing the tests this target will
+        run."""
+
+        return self.__database
+
+    
     def Stop(self):
         """Stop the target.
 
@@ -408,13 +417,16 @@ class LocalThread(CommandThread):
 		return
 	    elif command_type == "run test":
 		# Run a test.
-		result = base.run_test(id, context)
+                test = self.GetTarget().GetDatabase().GetTest(id)
+		result = base.run_test(test, context)
 	    elif command_type == "set up resource":
 		# Set up a resource.
-		result = base.set_up_resource(id, context)
+                resource = self.GetTarget().GetDatabase().GetResource(id)
+		result = base.set_up_resource(resource, context)
 	    elif command_type == "clean up resource":
 		# Clean up a resource.
-		result = base.clean_up_resource(id, context)
+                resource = self.GetTarget().GetDatabase().GetResource(id)
+		result = base.clean_up_resource(resource, context)
 	    else:
 		raise ProtocolError, "unknown command type %s" % command_type
 
@@ -429,13 +441,16 @@ class SubprocessTarget(Target):
     This target starts one thread for each degree of concurrency.  Each
     child executes one test or resource function at a time."""
 
-    def __init__(self, target_spec, response_queue):
+    def __init__(self, target_spec, database, response_queue):
 	"""Construct a new 'SubprocessTarget'.
 
+        'database' -- The 'Database' containing the tests that will be
+	run.
+        
 	'response_queue' -- The queue on which to write responses."""
 
         # Initialize the base class.
-        Target.__init__(self, target_spec)
+        Target.__init__(self, target_spec, database)
 
         # Build the children.
         self._children = []
@@ -619,11 +634,16 @@ class RemoteShellTarget(Target):
     __push_ahead = 2
 
 
-    def __init__(self, target_spec, response_queue):
-        """Construct a new 'response_queue'."""
+    def __init__(self, target_spec, database, response_queue):
+        """Construct a new 'RemoteShellTarget'.
+
+        'target_spec' -- The specification for the target.
+
+        'database' -- The 'Database' containing the tests that will be
+        run."""
 
         # Initialize the base class.
-        Target.__init__(self, target_spec)
+        Target.__init__(self, target_spec, database)
         # Determine the host name.
         self.__host_name = self.GetProperty("host", None)
         if self.__host_name is None:
@@ -652,7 +672,7 @@ class RemoteShellTarget(Target):
             
             # Determine the test database path to use.
             database_path = self.GetProperty(
-                "database_path", default=base.get_database().GetPath())
+                "database_path", default=database.GetPath())
             # Determine the path to the remote 'qmtest-remote' command.
             qmtest_remote_path = self.GetProperty(
                 "qmtest_remote", "/usr/local/bin/qmtest-remote")
@@ -838,12 +858,16 @@ class TestRun:
 
 
     def __init__(self,
+                 database,
                  test_ids,
                  context,
                  targets,
                  result_streams=[]):
         """Set up a test run.
 
+        'database' -- The 'Database' containing the tests that will be
+        run.
+        
         'test_ids' -- A sequence of IDs of tests to run.  Where
         possible, the tests are started in the order specified.
 
@@ -855,6 +879,7 @@ class TestRun:
         'result_streams' -- A sequence of 'ResultStream' objects.  Each
         stream will be provided with results as they are available."""
 
+        self.__database = database
         self.__test_ids = test_ids
         self.__context = context
         self.__targets = targets
@@ -885,7 +910,7 @@ class TestRun:
         returns -- The number of commands that have been issued to 
 	targets; or zero if no more tests and resource remain."""
 
-        database = base.get_database()
+        database = self.__database
 
         # For each call, we'll maintain a list of targets which are
         # ready to accept more work.
@@ -1260,7 +1285,8 @@ class TestRun:
 # functions
 ########################################################################
 
-def test_run(test_ids,
+def test_run(database,
+             test_ids,
              context,
              target_specs,
              result_streams=[]):
@@ -1270,6 +1296,9 @@ def test_run(test_ids,
     between the main thread of execution (in which this function is
     called) and subthreads (created by targets) which run the tests.
 
+    'datbabase' -- The 'Database' containing the tests that will
+    be run.
+    
     'test_ids' -- The sequence of IDs of tests to include in the test
     run.
 
@@ -1295,12 +1324,12 @@ def test_run(test_ids,
         # Find the target class.
         target_class = qm.common.load_class(target_spec.class_name, sys.path)
         # Build the target.
-        target = target_class(target_spec, response_queue)
+        target = target_class(target_spec, database, response_queue)
         # Accumulate targets.
         targets.append(target)
 
     # Construct the test run.
-    run = TestRun(test_ids, context, targets, result_streams)
+    run = TestRun(database, test_ids, context, targets, result_streams)
 
     # Schedule all the tests and resource functions in the test run.
 
@@ -1351,20 +1380,6 @@ def is_group_match(group_pattern, group):
     'group' -- A target group."""
 
     return re.match(group_pattern, group)
-
-
-def _send(channel, object):
-    """Send an object through a channel."""
-
-    data = cPickle.dumps(object, 1)
-    channel.Write(data)
-
-
-def _receive(channel):
-    """Receive an object from a channel."""
-
-    data = channel.Read()
-    return cPickle.loads(data)
 
 
 def load_target_specs(path):
