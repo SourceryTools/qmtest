@@ -1,3 +1,8 @@
+2003-11-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/doc/reference.xml: Improve documentation for "qmtest
+	create".
+
 2003-11-13  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
 	* qm/test/context.py (Context.GetBoolean): Correctly support the

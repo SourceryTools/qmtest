@@ -630,6 +630,9 @@
       <replaceable>option</replaceable>
      </arg>
      <arg choice="plain">
+      <replaceable>kind</replaceable>
+     </arg>
+     <arg choice="plain">
       <replaceable>descriptor</replaceable>
      </arg>
     </cmdsynopsis>
@@ -639,9 +642,10 @@
     <title>Description</title>
     <para>The <command>&qmtest-cmd; create</command> creates a new
     extension instance.  For example, this command can be used to
-    create a new test or resource.  For a list of the types of
+    create a new test or resource.  For a list of the kinds of
     extensions supported by &qmtest;, run <command>&qmtest-cmd;
-    extensions</command>.</para>
+    extensions</command>.  The <replaceable>kind</replaceable>
+    must be one of these extension kinds.</para>
 
     <para>The descriptor specifies an extension class and (optionally)
     attributes for that extension class.  The form of the descriptor is
@@ -651,15 +655,25 @@
     &quot;<replaceable>val</replaceable>&quot;</command>.  If there
     are no attributes, the parentheses may be omitted.</para>
 
-    <para>If the <replaceable>class</replaceable> names a extension
-    file (such as an existing test or resource file), that file is
-    read.  The extension class used is the one specified in that
-    file.  Any attributes specified in the file are also read.</para>
+    <para>The <replaceable>class</replaceable> may be either the path
+    to an extension file or a QMTest class name in the form
+    <replaceable>module.class</replaceable>.  If the
+    <replaceable>class</replaceable> is the path to an extension file
+    (such as an existing test or resource file), the class name used
+    is the one provided in the file; otherwise the class named used is
+    the name provided on the command line.</para>
 
-    <para>Any attributes specified in the descriptor (including those
-    in the extension file, if <replaceable>class</replaceable>
-    indicates an extension file) override those provided on the
-    command line using the <option>&dashdash;attribute</option> option.</para>
+    <para>The attributes used to construct the extension instance come
+    from three sources: the attributes in the extension file (if the
+    <replaceable>class</replaceable> is the path to an extension
+    file), the <option>&dashdash;attribute</option> options provided
+    on the command line, and the explicit attributes provided in the
+    descriptor.  If multiple values for the the same attribute name
+    are provided, the value used is taken from the first source in the
+    following list for which there is a value: the rightmost attribute
+    provided in the descriptor, the extension file, or the rightmost
+    <option>&dashdash;attribute</option> present on the command
+    line.</para>
 
     <para>The new extension file is written to the file specified with
     the <option>&dashdash;output</option> option, or to the standard
@@ -695,8 +709,21 @@
       </listitem>
      </varlistentry>
     </variablelist>
-
    </section>
+
+   <section>
+    <title>Example</title>
+
+    <para>
+      This command:
+      <screen><userinput><![CDATA[
+  qmtest create -a format=stats -o rs
+         result_stream text_result_stream.TextResultStream(filename="rs")]]></userinput></screen>
+     creates a file called <filename>rs</filename> containing an
+     instance of <classname>TextResultStream</classname>.
+    </para>
+   </section>
+
   </section>
 
   <section id="sec-testcmd-create-target">
