@@ -246,6 +246,11 @@ ifeq ($(DOCUMENTATION),yes)
 
 endif
 
+clean::
+	@for subdir in $(SUBDIRS); do \
+          (cd $${subdir} && make $@); \
+        done
+
 # Run regression tests.  Regression tests are stored in files named
 # test.py.  The file may be present for each package under qm.
 test:

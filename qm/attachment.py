@@ -337,6 +337,7 @@ class Attachment:
         self.__location = location
         self.__store = store
 
+
     def GetMimeType(self):
         """Return the attachment's MIME type."""
 

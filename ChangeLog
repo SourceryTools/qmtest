@@ -1,3 +1,26 @@
+2001-10-04  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (SUBDIRS): Add doc.
+	(install): Change invocation of install.py.
+	(clean): New target.
+	* configure.in (AC_OUTPUT): Add qm/setup_path.py.
+	* configure: Regenerated.
+	* install.py: Rework generation of scripts.
+	* standard.mk.in (.PHONY): Add clean.
+	* doc/manual/Makefile.in (clean::): New rule.
+	* qm/Makefile.in (setup_path.py): Remove rule.
+	(SCRIPTS): Simplify.
+	* qm/attachment.py: Fix formatting.
+	* qm/qm.sh: New file.
+	* qm/test/qmtest-remote.in: Rename to ...
+	* qm/test/qmtest-remote.py: ... this.
+	* qm/test/qmtest.in: Rename to ...
+	* qm/test/qmtest.py: ... this.
+	* qm/track/qmtrack.in: Rename to ...
+	* qm/track/qmtrack.py: ... this.
+	* sgmlop/Makefile.in (clean): Use double-colon rule.
+	* zope-dtml/ExtensionClass/Makefile.in (clean): Likewise.
+	
 2001-10-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Mention test suite.

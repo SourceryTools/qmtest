@@ -32,7 +32,15 @@
 ########################################################################
 
 # Set up the Python module lookup path to find QMTrack.
-execfile("@qm_setup_path_script@")
+
+import os
+import os.path
+
+if os.environ['QM_BUILD'] == '1':
+    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'qm')
+else:
+    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'lib/qm/qm')
+execfile(os.path.join(setup_path_dir, 'setup_path.py'))
 
 try:
 
@@ -40,7 +48,6 @@ try:
 # imports
 ########################################################################
 
-    import os
     import qm.common
     import qm.diagnostic
     import qm.track.cmdline

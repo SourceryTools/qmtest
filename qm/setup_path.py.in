@@ -37,6 +37,15 @@
 # imports
 ########################################################################
 
+# Some of the packages that are used with QM use modules (like regsub)
+# that are not obsolete in Python 2.1.  Prevent Python from warning
+# about these modules.
+try:
+    import warnings
+    warnings.filterwarnings("ignore")
+except:
+    pass
+
 import os.path
 import sys
 
@@ -60,24 +69,24 @@ def add_to_python_path(*components):
         # here.
         sys.path.insert(0, path)
 
-
-def get_python_version():
-    """Return the Python version number, as used by 'distutils'."""
-
-    return sys.version[0:3]
-
-
 ########################################################################
 # script
 ########################################################################
 
-# The path to the directory under which the QM Python files are
-# installed.
-__lib_dir = "@qm_lib_path@"
-__share_dir = "@qm_share_path@"
-__doc_dir = "@qm_doc_path@"
-__python_version = "@python_version@"
-__python_platform = "@python_platform@"
+# The root of the QM installation.
+__home_dir = os.environ['QM_HOME']
+
+if os.environ['QM_BUILD'] == '1':
+    __lib_dir = __home_dir
+    __share_dir = os.path.join(__home_dir, 'share')
+    __doc_dir = os.path.join(__home_dir, 'doc')
+else:
+    __lib_dir = os.path.join(__home_dir, 'lib/qm')
+    __share_dir = os.path.join(__home_dir, 'share/qm')
+    __doc_dir = os.path.join(__home_dir, 'share/doc/qm')
+
+__python_version = "@PYTHON_VERSION@"
+__python_platform = "@PYTHON_PLATFORM@"
 
 # Add things to the Python search path that we'll need.
 add_to_python_path()

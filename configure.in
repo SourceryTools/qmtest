@@ -178,6 +178,7 @@ AC_OUTPUT(
   doc/design/qmtrack/Makefile
   doc/manual/Makefile
   qm/Makefile
+  qm/setup_path.py
   sgmlop/Makefile
   zope-dtml/ExtensionClass/Makefile
 )

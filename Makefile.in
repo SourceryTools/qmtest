@@ -36,7 +36,8 @@ TOPDIR		= @top_srcdir@
 SUBDIRS		= zope-dtml/ExtensionClass \
 		  sgmlop \
 		  PyXML \
-		  qm
+		  qm \
+		  doc
 
 # These are a bloody nuisance to build every time, and there's no good
 # way to do dependency checking.
@@ -52,7 +53,6 @@ include $(TOPDIR)/standard.mk
 doc:
 	cd $@ && make
 
-
 # Build the sgmlop package Makefile.
 sgmlop/Makefile:
 	cd sgmlop; \
@@ -66,7 +66,11 @@ PyXML:
 # Run the install.py script to install everything.
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
-	$(PYTHON) install.py $(INSTALLBINDIR) $(INSTALLLIBDIR) \
+	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) install.py \
+	    $(INSTALLBINDIR) $(INSTALLLIBDIR) \
 	    $(INSTALLSHAREDIR) $(INSTALLDOCDIR)
 	cd $(INSTALLLIBDIR)/gadfly; $(PYTHON) gfinstall.py
 	chmod 0644 $(INSTALLLIBDIR)/gadfly/sql.mar
+
+clean::
+	cd PyXML; $(PYTHON) ./setup.py clean

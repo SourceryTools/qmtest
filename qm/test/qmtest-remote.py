@@ -53,8 +53,16 @@
 # this script is used internally by QMTest to implement remote test
 # execution.
 
-# Set up the Python module lookup path to find QMTrack.
-execfile("@qm_setup_path_script@")
+# Set up the Python module lookup path to find QM.
+
+import os
+import os.path
+
+if os.environ['QM_BUILD'] == '1':
+    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'qm')
+else:
+    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'lib/qm/qm')
+execfile(os.path.join(setup_path_dir, 'setup_path.py'))
 
 ########################################################################
 # imports

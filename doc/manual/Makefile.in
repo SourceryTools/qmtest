@@ -37,3 +37,6 @@ DOCBOOK		= $(wildcard *.xml)
 DOCBOOKMAIN	= manual.xml
 
 include $(TOPDIR)/standard.mk
+
+clean::
+	rm -rf html print
