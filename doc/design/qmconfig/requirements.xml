@@ -373,8 +373,8 @@
      <mediaobject>
 
       <imageobject>
-       <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_maint.png"></imagedata>
+       <imagedata align="center" width="6in" scale="25" scalefit="1"
+                  fileref="uc_maint.png" format="PNG"></imagedata>
       </imageobject>
 
       <textobject>
@@ -669,8 +669,8 @@
      <mediaobject>
 
       <imageobject>
-       <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_tailor.png"></imagedata>
+       <imagedata align="center" width="6in" scale="25" scalefit="1"
+                  fileref="uc_tailor.png" format="PNG"></imagedata>
       </imageobject>
 
       <textobject>
@@ -979,8 +979,8 @@
      <mediaobject>
 
       <imageobject>
-       <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_softdev.png"></imagedata>
+       <imagedata align="center" width="6in" scale="25" scalefit="1"
+                  fileref="uc_softdev.png" format="PNG"></imagedata>
       </imageobject>
 
       <textobject>
@@ -1175,8 +1175,8 @@
      <mediaobject>
 
       <imageobject>
-       <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_kit.png"></imagedata>
+       <imagedata align="center" width="6in" scale="25" scalefit="1"
+                  fileref="uc_kit.png" format="PNG"></imagedata>
       </imageobject>
 
       <textobject>

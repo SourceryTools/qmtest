@@ -44,7 +44,7 @@
  additional symbols will be added to the &M-TD;. This empty &M-TD; is
  distributed as part of the &D-kit;.</para>
 
- <para>At tailoring time, &qmconfig; must make sure that all
+ <para> At tailoring time, &qmconfig; must make sure that all
  &D-dirsyms; have values.  If necessary, probes are executed to get
  values for symbols.  We always prefer values provided by the
  &D-tailor; and we only execute a probe if one of its results does not
@@ -64,214 +64,14 @@
  <emphasis>only</emphasis> support the &Q-XML; local file
  format.</para>
 
- <figure id="fig-cl-tailorsym" float="1">
-  <title>Tailoring Database</title>
-
-  <mediaobject>
-
-   <imageobject>
-    <imagedata align="center" width="6in" scalefit="1"
-               fileref="cl_tailorsym.png"></imagedata>
-   </imageobject>
-   <textobject>
-    <phrase>Tailoring database</phrase>
-   </textobject>
-
-  </mediaobject>
- </figure>
-
- <para>The module <classname role="module">tailor_sym</classname>
- contains the definitions for symbols and symbol types.  The
- <classname>SymbolType</classname> is a base class for types for
- symbols.  Derived types are used to represent boolean, string, and
- integer values.  We will also want to support enumerations, and
- possibly specialized strings like file names.  The
- <classname>Symbol</classname> class represents symbols.  Besides
- having a name and a type, a symbol also has documentation associated
- with it that can be used to assist the &D-tailor;.  <xref
- linkend="fig-cl-tailorsym"></xref> shows the related class diagrams.
-
- <programlisting>
- <![CDATA[
-class SymbolType:
-
-    """Base class for symbol types."""
-
-    def IsValid(self, val):
-
-        """Test if a value is valid for this type.
-
-        'val' -- Value to be tested.
-
-        returns -- 1 if 'val' is valid for this type; 0 otherwise."""
-
-
-class ProbeSource:
-
-    """Symbols whose source is a probe store information about the
-    source probe and parameters in a "ProbeSource" object."""
-
-
-    def __init__(self, probe_name, probe_platform, probe_dp, probe_ap):
-
-        """Create the "ProbeSource" object.
-
-        precondition -- 'probe_platform' is a valid execution platform
-        for this probe.
-
-        precondition -- 'probe_dp' is valid and complete for this
-        probe.
-
-        precondition -- 'probe_ap' is valid and complete for this
-        probe on 'probe_platform', with default values to parameters
-        already assigned.
-
-        'probe_name' -- Name of the probe.
-
-        'probe_platform' -- Name of the probe execution platform.
-
-        'probe_dp' -- Distinguished parameters for this probe.  This
-        is a mapping of parameter names to values.
-
-        'probe_ap' -- Auxiliary parameters for this probe on
-        'probe_platform'.  This is a mapping of parameters names to
-        values."""
-
-
-    def GetProbeName(self):
-
-        """Get the name of the probe.
-
-        returns -- Name of the probe used as a source for this
-        object."""
-
-
-    def GetProbePlatform(self):
-
-        """Get the probe platform for which this probe source is
-        valid.
-
-        returns -- A string representing a probe execution
-        platform."""
-
-
-    def GetDistinguishedParameters(self):
-
-        """Get the distinguished parameters needed to identify and
-        execute this probe.
-
-        returns -- A dictionary mapping parameter names to values
-        (which are strings)."""
-
-
-    def GetAuxiliaryParameters(self):
-
-        """Get the auxiliary parameters needed to execute this probe
-        on its execution platform.
-
-        returns -- A dictionary mapping parameter names to values
-        (which are strings)."""
-
-
-class Symbol:
-
-    """Class representing symbols."""
-
-    def __init__(self, symbol_name, symbol_type, def_val,
-                 short_doc, long_doc):
-
-        """Define a new symbol.
-
-        'symbol_name' -- Name of the new symbol.
-
-        'symbol_type' -- Type of the new symbol.  $$$ What are our
-        types?  Need to be able to include enumerations!
-
-        'def_val' -- Default value for this symbol.
-
-        $$$ Do we want some sort of substitution to take place?  If
-        so, then ideally it is Pythonic.  But some of the most useful
-        substitutions would take place at tailoring time, making it
-        necessary to have Python available then.  Other possibilities
-        are a shell-like format, or different versions for different
-        probe platforms.
-
-        'short_doc' -- Brief description for this symbol.
-
-        'long_doc' -- Longer description for this symbol."""
-
-
-    def AddDescription(self, lang, short_doc, long_doc=None):
-
-        """Add a description for this symbol in some natural language.
-
-        'lang' -- Designator for a natural language.
-
-        'short_doc' -- Short documentation string for this symbol,
-        presumably written in the natural language indicated by
-        'lang'.  (The 'short_doc' string is used when the symbol was
-        created is a fallback description.)
-
-        'long_doc' -- Longer documentation string for the symbol,
-        again presumably written in the natural language indicated by
-        'lang'.  If 'long_doc' is None, then there is no longer
-        documentation string."""
-
-
-    def GetName(self):
-
-        """Get the name of this symbol.
-
-        returns -- The name of the symbol."""
-
-
-    def GetType(self):
-
-        """Get the type of this symbol.
-
-        returns -- The type of this symbol."""
-
-
-    def GetDefault(self):
-
-        """Get the default value for this symbol.
-
-        returns -- The default value for this symbol, or None if there
-        is no default."""
-
-
-    def GetShortDescription(self, lang=None):
-
-        """Get the short documentation string for this symbol for the
-        specified language.  If not found, return the fallback short
-        documentation string.
-
-        'lang' -- Indicate the natural language, or None to get the
-        fallback.
-
-        returns -- The short documentation string."""
-
-
-    def GetLongDescription(self, lang=None):
-
-        """Get the long documentation string for this symbol for the
-        specified language.  If not found, return the fallback long
-        documentation string.
-
-        'lang' -- Indicate the natural language, or None to get the
-        fallback.
-
-        returns -- The long documentation string."""
-]]></programlisting></para>
-
  <figure id="fig-cl-tailor" float="1">
   <title>Tailoring Database</title>
 
   <mediaobject>
 
    <imageobject>
-    <imagedata align="center" width="6in" scale="50" scalefit="1"
-               fileref="cl_tailor.png"></imagedata>
+    <imagedata align="center" scale="40" scalefit="1"
+               fileref="cl_tailor.png" format="PNG"></imagedata>
    </imageobject>
 
    <textobject>
@@ -283,8 +83,22 @@ class Symbol:
 
  <para>The module <classname role="module">tailor_db</classname>
  contains the class definitions for the tailoring database itself,
- illustrated in <xref linkend="fig-cl-tailor"></xref>.
- <programlisting>
+ illustrated in <xref linkend="fig-cl-tailor"></xref>.</para>
+
+ <section>
+  <title><classname>MetaProbeSource</classname> class</title>
+
+  <para>As discussed in <xref
+  linkend="mod.tailor-sym.ProbeSource"></xref>, a
+  <classname>ProbeSource</classname> object represents an invocation
+  of a probe.  This information must be stored in the &M-TD;.  As
+  information is collected during tailoring, additional information
+  must be associated with <classname>ProbeSource</classname> objects,
+  such as whether the probe must actually be executed.  This
+  information is stored in <classname>MetaProbeSource</classname>
+  object.</para>
+
+  <para><programlisting>
 <![CDATA[
 class MetaProbeSource:
 
@@ -328,8 +142,27 @@ class MetaProbeSource:
         those probes are also reset.
 
         return -- None"""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>MetaSymbolCollector</classname> class</title>
 
+  <para>Some symbol values are tailored not by changing source files
+  but by collecting definitions into a common file.  For example,
+  &Qautoconf; can create a <filename
+  class="headerfile">config.h</filename> with manifest constants
+  defined.  Such a file is called a <firstterm id="D-symcoll">symbol
+  collector</firstterm>.</para>
+
+  <para>A <classname>MetaSymbolCollector</classname> object represents
+  a &D-symcoll; file.  It will contain a list of the
+  <classname>Symbol</classname> objects that should be stored in the
+  file.  Note that a symbol may be associated with more than one
+  &D-symcoll;.</para>
+
+  <para><programlisting>
+<![CDATA[
 class MetaSymbolCollector:
 
     """A collector file holds symbol assignments. For example, a
@@ -362,8 +195,21 @@ class MetaSymbolCollector:
 
         return -- A list of "MetaSymbol" objects representing the
         symbols."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>MetaSymbol</classname> class</title>
 
+  <para>The <classname>Symbol</classname> objects, discussed in <xref
+  linkend="mod.tailor-sym.Symbol"></xref>, provide information about
+  tailoring symbols.  In the &M-TD;, values may be associated with
+  these symbols.  A <classname>MetaSymbol</classname> associates a
+  value with a <classname>Symbol</classname> object, as well as other
+  metadata necessary for the operation of &qmconfig;.</para>
+
+  <para><programlisting>
+<![CDATA[
 class MetaSymbol:
 
     """Symbols in a tailoring database may have values and other
@@ -555,8 +401,30 @@ class MetaSymbol:
 
         'msc' -- A "MetaSymbolCollector" with which this symbol will
         be associated."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>TailorDB</classname> class</title>
 
+  <para>A <classname>TailorDB</classname> object is an actual
+  tailoring database.  A &M-TD; may refer to other tailoring
+  databases, both in a hereditary and inclusionary sense.  In the
+  hereditary sense, using the <methodname>DeriveFrom</methodname>
+  method, a <classname>TailorDB</classname> object will retrieve
+  values and other information for undefined symbols from another
+  <classname>TailorDB</classname> object.  This is useful for
+  providing common site-wide, work group, or personal tailoring
+  information; changing the common <classname>TailorDB</classname>
+  object will affect &D-kits; as they are re-tailored and rebuilt.  In
+  the inclusionary sense, using the <methodname>Update</methodname>
+  method, values are directly loaded into one
+  <classname>TailorDB</classname> from another.  We expect this
+  operation to be useful for creating partially tailored
+  &M-TD;'s.</para>
+
+  <para><programlisting>
+<![CDATA[
 class TailorDB:
 
     """Base class for tailoring databases.  Instances of these classes
@@ -765,8 +633,25 @@ class TailorDB:
         this tailoring database.
 
         return -- A list of "MetaSymbolCollector" objects."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title>Miscellaneous classes</title>
 
+  <para>The <classname>TailorDB</classname> class is an abstract base
+  class.  It should be possible to create various repositories for
+  tailoring databases, such as &Q-LDAP; or a <acronym>SQL</acronym>
+  database.  The most useful form will probably be an &Q-XML; database
+  stored in a file, represented by an
+  <classname>TailorDBXMLFile</classname> object.  &D-Kits; will ship
+  with such databases already generated.  It might be possible to read
+  an &Q-XML; tailoring database through some other mechanism, such as
+  <acronym>HTTP</acronym>, so we generalize this with the
+  <classname>TailorDBXML</classname> class.</para>
+
+  <para><programlisting>
+<![CDATA[
 class TailorDBXML(TailorDB):
 
     """Tailoring databases stored as XML."""
@@ -783,6 +668,114 @@ class TailorDBXMLFile(TailorDBXML):
         'file_name' -- Name of a file containing a tailoring
         database."""
 ]]></programlisting></para>
+ </section>
+
+ <section>
+  <title>Command-line interface</title>
+
+  <para>Besides the &Qpython; &api; described above, there is a
+  command-line interface to manage the &M-TD;, using the
+  <command>tailordb</command> command.  This is necessary since probes
+  will need to be able to set values as they execute; the probe
+  scripts may not necessarily be in &Qpython;.</para>
+
+  <para>We intend the <command>tailordb</command> to be implemented in
+  &Qpython;.  We also intend for their to be a simple implementation
+  in C, for use on systems that require bootstrap scripts.</para>
+
+  <synopsis>
+  <command>tailordb</command> <optional>options</optional> <replaceable>subcommand</replaceable> <optional>arguments</optional>
+  </synopsis>
+
+  <para>The <replaceable>subcommand</replaceable> possibilities are:
+   <variablelist>
+
+    <varlistentry>
+     <term><synopsis><command>adapt</command> <replaceable>filename</replaceable></synopsis></term>
+     <listitem>
+      <para>Adapt <replaceable>filename</replaceable> to the tailoring
+      symbols in the tailoring database.  The &Qpython; version of the
+      <command>tailordb</command> will have the full file adapter
+      capabilities described in <xref
+      linkend="sec-design-interfaces-lm"></xref>.  The C version will
+      have a limited set of file adapters.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><synopsis><command>checkprobe</command> <replaceable>probe</replaceable></synopsis></term>
+     <listitem>
+      <para>Check whether or not <replaceable>probe</replaceable>, a
+      probe name with distinguished parameters, needs to be executed.
+      Probes do not need to be executed if all the symbols they define
+      are already defined, or are only needed by other probes that
+      will not be executed.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><synopsis>clear</synopsis></term>
+     <listitem>
+      <para>Clear all values from the tailoring database.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><synopsis><command>get</command> <replaceable>symbol</replaceable></synopsis></term>
+     <listitem>
+      <para>Retrieve the value of <replaceable>symbol</replaceable>,
+      writing it to standard output.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term><synopsis><command>set</command> <replaceable>symbol</replaceable> <replaceable>value</replaceable></synopsis></term>
+     <listitem>
+      <para>Set the value of <replaceable>symbol</replaceable> to
+      <replaceable>value</replaceable>.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </para>
+
+  <para>The C source code for <command>tailordb</command> is
+  distributed with a &D-kit; requiring bootstrapping.  The source is
+  broken up into a few files; one is a small "dispatch table" that may
+  be modified to add additional language adapters, if necessary.  The
+  code is divided this way so that updates to the main version
+  distributed with &qmconfig; can be directly used.</para>
+
+ </section>
+
+ <section>
+  <title>&xml; Representation</title>
+
+  <para>The &Q-XML; representation for a &M-TD; is not yet developed;
+  we do not have a DTD for it.  However, the example shown in <xref
+  linkend="fig-xml-tailordb"></xref> demonstrates the flavor of what
+  we think such a database would look like.</para>
+
+  <para>The C version of the <command>tailordb</command> command is
+  unlikely to have a full validating &Q-XML; parser.  We nee to choose
+  a representation that will be simple and efficient to
+  implement.</para>
+
+  <figure id="fig-xml-tailordb">
+   <title>&xml; representation for a tailoring database</title>
+    <programlisting><![CDATA[
+<?xml version="1.0"?>
+<tailordb>
+ <probesource id="p1" name="function">
+  <dparam name="strerror"/>
+ </probesource>
+ <symbol id="s1" name="has_strerror" type="int" fromprobe="p1">
+  <value>1</value>
+ </symbol>
+</tailordb>
+]]></programlisting>
+  </figure>
+
+ </section>
 
 </section>
 

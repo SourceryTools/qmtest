@@ -28,8 +28,8 @@
   <title>Language Services</title>
   <mediaobject>
    <imageobject>
-    <imagedata align="center" width="6in" scalefit="1"
-               fileref="cl_langserv.png"></imagedata>
+    <imagedata align="center" scale="40" scalefit="1"
+               fileref="cl_langserv.png" format="PNG"></imagedata>
    </imageobject>
    <textobject>
     <phrase>Language Services</phrase>
@@ -37,9 +37,23 @@
   </mediaobject>
  </figure>
 
- <figure id="mod.lang-serv.LangServRegistry">
-  <title>Language Module: LangServRegistry</title>
- <programlisting>
+ <section id="mod.lang-serv.LangServRegistry">
+  <title><classname>LangServRegistry</classname> class</title>
+
+  <para>The <classname>LangServRegistry</classname> class allows
+  language services to be invoked using file names or language
+  names.</para>
+
+  <para>Language service instances are registered using the
+  <methodname>Register</methodname> method. ($$$ We still need to
+  specify this method.  We really want to register a &Qpython;
+  scripts, or something to find such scripts, which will create the
+  <classname>LangServ</classname> instances to be registered, as well
+  as a way to match file names.  Possibly the
+  <classname>LangServ</classname> objects themselves can check the
+  file names...)</para>
+
+  <para><programlisting>
 <![CDATA[
 class LangServRegistry:
 
@@ -106,7 +120,7 @@ class LangServRegistry:
         'file_name' (or the corresponding template) for symbols."""
 
 
-    def SubstituteFile(self, tailor_db, file_name, template_name=None):
+    def AdaptFile(self, tailor_db, file_name, template_name=None):
 
         """Make the needed substitutions to a template file to create
         'file_name'.  If 'file_name' already exists, this should only
@@ -124,26 +138,17 @@ class LangServRegistry:
         raises -- See LangServ.Substitute for details.
 
         returns -- None"""
-]]></programlisting>
- </figure>
+]]></programlisting></para>
+ </section>
 
- <para><xref linkend="mod.lang-serv.LangServRegistry"></xref> shows
- the interface to the <classname>LangServRegistry</classname> class.
- This allows language services to be invoked using file names or
- language names.</para>
+ <section id="mod.lang-serv.LangServ">
+  <title><classname>LangServ</classname> class</title>
 
- <para>Language service instances are registered using the
- <methodname>Register</methodname> method. ($$$ We still need to
- specify this method.  We really want to register a &Qpython; scripts,
- or something to find such scripts, which will create the
- <classname>LangServ</classname> instances to be registered, as well
- as a way to match file names.  Possibly the
- <classname>LangServ</classname> objects themselves can check the file
- names...)</para>
+  <para>The <classname>LangServ</classname> class is an abstract class
+  whose methods should be overridden by classes implemented support
+  for actual languages.</para>
 
- <figure id="mod.lang-serv.LangServ">
-  <title>Language Module: LangServ</title>
-  <programlisting>
+  <para><programlisting>
 <![CDATA[
 class LangServ:
     
@@ -160,7 +165,6 @@ class LangServ:
     def CreateScanner(self, probe_db, file_obj):
 
         """Create a scanner object on 'file_name'.
-
 
         'probe_db' -- A probe database object.  This is used to choose
         symbols, and resolve missing parameters to probes.
@@ -183,6 +187,7 @@ class LangServ:
         returns -- The default name for the corresponding template
         file."""
 
+
     def GetTempName(self, file_name):
 
         """Generate a temporary name for a file containing a proposed
@@ -204,7 +209,7 @@ class LangServ:
         'file_name'."""
 
 
-    def Substitute(self, tailor_db, out_file, template_file):
+    def Adapt(self, tailor_db, out_file, template_file):
 
         """Copy 'template_file' to 'out_file', substituting any
         symbols found in 'template_file' with their corresponding
@@ -212,8 +217,6 @@ class LangServ:
 
         'tailor_db' -- The tailoring database mapping symbol names to
         values.
-
-        $$$ We need to have symbol types in 'tailor_db'.
 
         $$$ We need to be able to coerce a substitution to use a
         particular type.  For instance, in a C program, we may
@@ -246,17 +249,18 @@ class LangServ:
         because tailoring failed).
 
         returns -- None"""
-]]></programlisting>
- </figure>
+]]></programlisting></para>
+ </section>
 
- <para><xref linkend="mod.lang-serv.LangServ"></xref> shows the
- interface to the <classname>LangServ</classname> class.  This is an
- abstract class whose methods should be overridden by classes
- implemented support for actual languages.</para>
 
- <figure id="mod.lang-serv.Scanner">
-  <title>Language Module: Scanner</title>
-  <programlisting>
+ <section id="mod.lang-serv.Scanner">
+  <title><classname>Scanner</classname> class</title>
+
+  <para>A <classname>Scanner</classname> object is used to scan a file
+  object for symbols.  These symbols can be collected and parsed to
+  determine the necessary probes.</para>
+
+  <para><programlisting>
 <![CDATA[
 class Scanner:
     
@@ -269,7 +273,6 @@ class Scanner:
     def __init__(self, probe_db, file_obj):
 
         """Construct a Scanner object.
-
 
         'probe_db' -- A probe database object.  This is used to choose
         symbols, and resolve missing parameters to probes.
@@ -291,18 +294,14 @@ class Scanner:
         returns -- The next symbol in the file, or None if we are
         finished.
 
-        $$$ This is still a bit undetermined...  We need to spec out
-        the ProbeDB class.  For building header files, we do need to
-        have actual symbol names collected.  But a probe may define
-        several symbols, and at another level, we really need to
-        determine probes and parameters.  So a side effect will
-        probably be to assemble a list of probe calls.  Is that in the
-        probe_db, or some other parameter?"""
-]]></programlisting>
- </figure>
-
- <para><xref linkend="mod.lang-serv.Scanner"></xref> shows the
- interface to the <classname>Scanner</classname> class.</para>
+        $$$ This is still a bit undetermined...  For building header
+        files, we do need to have actual symbol names collected.  But
+        a probe may define several symbols, and at another level, we
+        really need to determine probes and parameters.  So a side
+        effect will probably be to assemble a list of probe calls.  Is
+        that in the probe_db, or some other parameter?"""
+]]></programlisting></para>
+ </section>
 
 </section>
 

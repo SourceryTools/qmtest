@@ -1,3 +1,26 @@
+2000-12-28  R. Lindsay Todd  <toddr@rpi.edu>
+
+	* doc/design/qmconfig/design-td.xml: Added new sections and
+	details.
+	
+	* doc/design/qmconfig/design-lm.xml: Break into sections.
+	* doc/design/qmconfig/design-probe.xml: Likewise.
+	* doc/design/qmconfig/design-td.xml: Likewise.
+
+2000-12-27  R. Lindsay Todd  <toddr@rpi.edu>
+
+	* doc/design/qmconfig/biblio.xml: Add an id.
+
+	* doc/design/qmconfig/design-pdd.xml: New file.
+	* doc/design/qmconfig/design-basic.xml: New file.
+
+	* doc/design/qmconfig/figures/pkg_qmconfig.*: Re-scale.
+	* doc/design/qmconfig/design.xml: Add format="PNG" to imagedata's.
+	* doc/design/qmconfig/design-lm.xml: Likewise.
+	* doc/design/qmconfig/design-probe.xml: Likewise.
+	* doc/design/qmconfig/design-td.xml: Likewise.
+	* doc/design/qmconfig/requirements.xml: Likewise.
+
 2000-12-26  R. Lindsay Todd  <toddr@rpi.edu>
 	
 	* standard.mk: Run pdfjadetex thrice, to get all references correct.

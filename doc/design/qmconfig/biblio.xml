@@ -15,7 +15,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<bibliography><title>Bibliography</title>
+<bibliography id="bib">
+ <title>Bibliography</title>
 
  <biblioentry id="bib.iffe">
   <abbrev>iffe</abbrev>

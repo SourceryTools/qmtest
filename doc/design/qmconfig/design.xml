@@ -31,8 +31,8 @@
    <mediaobject>
 
     <imageobject>
-     <imagedata align="center" width="6in" scale="50" scalefit="1"
-                fileref="pkg_qmconfig.png"></imagedata>
+     <imagedata align="center" scale="20" scalefit="1"
+                fileref="pkg_qmconfig.png" format="PNG"></imagedata>
     </imageobject>
 
     <textobject>
@@ -53,7 +53,23 @@
      <para>The &M-GUI; module provides the &Qgui; for the &qmconfig;
      system.  As <xref linkend="fig-pkg-qmconfig"></xref> shows, it
      functions by interacting with the &M-MGR; module.</para>
-     </listitem></varlistentry>
+
+     <para>We expect the &M-GUI; to be implemented using &Qpython;'s
+     <application>Tkinter</application> module, although other &gui;s
+     are possible.  At this time, we have not specified a design for
+     the &M-GUI;; we think that it is important to gain experience
+     with the underlying &qmconfig; system, and make sure the
+     interface is consistent with the other QM tools.  (<xref
+     linkend="instwiz"></xref> describes how we would like the &M-GUI;
+     to behave.)</para>
+
+     <para>We do note that there are a couple alternatives for how
+     this component could be implemented.  One would be as a "front
+     end" to the &qmconfig; command line interface.  Another
+     possibility would be for the &M-GUI; to directly call the same
+     &api; as the &M-MGR;.</para>
+
+    </listitem></varlistentry>
 
    <varlistentry><term>&M-PDD;</term>
     <listitem>
@@ -66,7 +82,6 @@
 
    <varlistentry><term>&M-MGR;</term>
     <listitem>
-
      <para>The &M-MGR; component is the main component.  It interacts
      with the various databases, probes the operating system, modifies
      files, etc.</para>
@@ -78,7 +93,11 @@
      site conventions, etc.  Results of operating system probes and
      options specified by the &D-tailor; are stored in the &M-TD;.
      This module provides an interface to the actual database, which
-     is distributed over several locations.</para>
+     can be distributed over several locations.</para>
+
+     <para>&D-Kits; are shipped with tailoring databases stored in
+     &Q-XML;.</para>
+
     </listitem></varlistentry>
 
    <varlistentry><term>&M-BUILD;</term>
@@ -96,8 +115,8 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                   fileref="pkg_build.png"></imagedata>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_build.png" format="PNG"></imagedata>
        </imageobject>
 
        <textobject>
@@ -131,8 +150,8 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                   fileref="pkg_bdist.png"></imagedata>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_bdist.png" format="PNG"></imagedata>
        </imageobject>
 
        <textobject>
@@ -155,8 +174,8 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                   fileref="pkg_boot.png"></imagedata>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_boot.png" format="PNG"></imagedata>
        </imageobject>
 
        <textobject>
@@ -197,8 +216,8 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                   fileref="pkg_lang.png"></imagedata>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_lang.png" format="PNG"></imagedata>
        </imageobject>
 
        <textobject>
@@ -218,15 +237,46 @@
   <para>How do these modules actually interoperate?  The following
   sections describes a number of operations.</para>
 
-  <section><title>Tailoring</title>
+  <section id="sec-design-tailoring">
+   <title>Creating &D-SrcDists-; and &D-BinDists-;</title>
 
    <para>The &M-PDD;, the &M-PD;, and the &M-TD; form the heart of
    &qmconfig;.  From the &M-PDD;, &qmconfig; determines the source
    files.  The &M-SCAN;, in conjunction with the &M-PD; is used to
    find what symbols or macros are defined are defined in these files.
-   Information about these symbols is stored in the &M-TD;.  From
-   information in the &M-TD; the &M-MGR; module assembles a list of
-   probes and orders their execution.</para>
+   Other symbols may be directly specified in the &M-PDD; as tailoring
+   options.  Data about these symbols, such as types, default values,
+   and descriptions, are stored in the &M-TD;.  An &Q-XML;
+   representation of this database is shipped with the &D-kit;.</para>
+
+   <para>From the &M-PDD;, &M-MGR; can also determine what needs to go
+   into a &D-srcdist;.  &qmconfig; is configured with information
+   about what local distribution builders (tar, zip, etc.) are
+   available.  The &M-MGR; calls upon the &M-DISTRIB; module to
+   actually create the distribution.</para>
+
+   <para>For a &D-bindist;, the &M-MGR; first calls upon the &M-BUILD;
+   module to make sure everything needed is up-to-date.  Then it uses
+   the &M-PDD; to determine what goes into the &D-bindist;.  Finally,
+   the &M-MGR; calls upon the &M-DISTRIB; module to create the
+   &D-bindist;.</para>
+
+   <para>Some &D-kits; may contain the components of multiple
+   distributions.  The &M-PDD; contains everything needed to determine
+   what files go into which distributions.  It also contains
+   information about any prerequisites packages.</para>
+
+   <para>The &M-DISTRIB; module can be extended using &Qpython;
+   modules to support additional distribution builders.</para>
+
+  </section>
+
+  <section><title>Tailoring</title>
+
+   <para>As stated in <xref linkend="sec-design-tailoring"></xref>, a
+   &D-kit; ships with information in an &Q-XML; representation of the
+   &M-TD;. The &M-MGR; module uses this information assembles a list
+   of probes and orders their execution.</para>
 
    <para>The &M-MGR; examines command line switches and options files,
    storing information into the &M-TD;.  Then probes are executed for
@@ -237,7 +287,7 @@
    <para>When probing is completed, the &M-PDD; is scanned for files
    that need to be adapted, and the &M-ADAPT; module actually creates
    the modified files.  Then the &M-BUILD; module is used to create
-   configurations files for the actual build system.  At this point,
+   configuration files for the actual build system.  At this point,
    tailoring is complete.</para>
 
   </section>
@@ -261,7 +311,8 @@
    constructed to carry out these probes.  Inquiries are also made to
    the &M-PDD; module to add commands to the script to build and use a
    simple adapter, written in C, to adapt files when the script is
-   run.</para>
+   run.  The bootstrap script and the simple adapter must ship with
+   the &D-kit;.</para>
 
    <para>When a bootstrap script is run, it checks for command line
    switches or an option file for tailoring information.  Then it
@@ -274,30 +325,6 @@
 
   </section>
 
-  <section><title>Creating &D-SrcDists-; and &D-BinDists-;</title>
-
-   <para>From the &M-PDD;, &M-MGR; can determine what needs to go into
-   a &D-srcdist;.  &qmconfig; is configured with information about
-   what local distribution builders (tar, zip, etc.) are available.
-   The &M-MGR; calls upon the &M-DISTRIB; module to actually create
-   the distribution.</para>
-
-   <para>For a &D-bindist;, the &M-MGR; first calls upon the &M-BUILD;
-   module to make sure everything needed is up-to-date.  Then it uses
-   the &M-PDD; to determine what goes into the &D-bindist;.  Finally,
-   the &M-MGR; calls upon the &M-DISTRIB; module to create the
-   &D-bindist;.</para>
-
-   <para>Some &D-kits; may contain the components of multiple
-   distributions.  The &M-PDD; contains everything needed to determine
-   what files go into which distributions.  It also contains
-   information about any prerequisites packages.</para>
-
-   <para>The &M-DISTRIB; module can be extended using &Qpython;
-   modules to support additional distribution builders.</para>
-
-  </section>
-
  </section>
 
  <section id="sec-design-interfaces">
@@ -306,40 +333,8 @@
   <para>This section describes the interfaces to the various modules
   comprising &qmconfig;.</para>
 
-  <section><title>&M-PDD;</title>
-
-   <figure id="fig-cl-pdd" float="1">
-    <title>Package Description Database</title>
-    <mediaobject>
-
-     <imageobject>
-      <imagedata align="center" width="6in" scale="50" scalefit="1"
-                 fileref="cl_pdd.png"></imagedata>
-     </imageobject>
-
-     <textobject>
-      <phrase>Package description database</phrase>
-     </textobject>
-
-    </mediaobject>
-   </figure>
-
-   <para><xref linkend="fig-cl-pdd"></xref> shows our current thoughts
-   for the &M-PDD;.  It consists of representations of file system
-   objects, both source and constructed.  It also contains some
-   information regarding package options and distribution tags.  Not
-   yet modelled is information for additional probes and
-   platform-specific information.</para>
-
-   <para>We have not settled on a final syntax for the &M-PDD;.  In
-   some ways, this is less important than the object interfaces to
-   this module.  Indeed, there is merit to having several possible
-   syntaxes.  A colleague who promotes &Q-LDAP; observes that &Q-LDAP;
-   would allow the database to be distributed over multiple sites (and
-   probably provide fast access).</para>
-
-  </section>
-
+  &design-basic.xml;
+  &design-pdd.xml;
   &design-td.xml;
   &design-probe.xml;
   &design-lm.xml;
@@ -351,6 +346,20 @@
    &M-MGR;.  However, the only module that depends on it is the
    &M-GUI;, and that dependency will be through the command line
    interface.</para>
+
+   <para>Some aspects of the design will require reconciliation with
+   other tools, in particular, &qmbuild;.  Other aspects may change as
+   requirements change.  In particular, if we were to decide that
+   <xref linkend="ucInstQMCPre" endterm="ucInstQMCPre-f"></xref> need
+   not be supported, we can dispose of all the complexity associated
+   with bootstrap scripts.</para>
+
+   <para>Other parts of the design require more prototyping and study.
+   We also believe that there is potential for refactoring even the
+   components we have already designed.  For instance, a number of
+   classes provide documentation; it would be sensible to create a
+   <classname>Documentation</classname> from which to derive
+   these.</para>
 
   </section>
 

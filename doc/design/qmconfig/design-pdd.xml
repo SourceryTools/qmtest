@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design-pdd.xml
+  Author: R. Lindsay Todd
+  Date:   2000-12-27
+
+  Contents:
+    Fill me in!
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<section id="sec-design-interfaces-pdd">
+ <title>&M-PDD;</title>
+
+ <figure id="fig-cl-pdd" float="1">
+  <title>Package Description Database</title>
+  <mediaobject>
+
+   <imageobject>
+    <imagedata align="center" scale="25" scalefit="1"
+               fileref="cl_pdd.png" format="PNG"></imagedata>
+   </imageobject>
+
+   <textobject>
+    <phrase>Package description database</phrase>
+   </textobject>
+
+  </mediaobject>
+ </figure>
+
+ <para><xref linkend="fig-cl-pdd"></xref> shows our current thoughts
+ for the &M-PDD;.  It consists of representations of file system
+ objects, both source and constructed.  It also contains some
+ information regarding package options and distribution tags.  Not yet
+ modelled is information for additional probes and platform-specific
+ information.</para>
+
+ <para>We have not settled on a final syntax for the &M-PDD;.  In some
+ ways, this is less important than the object interfaces to this
+ module.  Indeed, there is merit to having several possible syntaxes.
+ A colleague who promotes &Q-LDAP; observes that &Q-LDAP; would allow
+ the database to be distributed over multiple sites (and probably
+ provide fast access).</para>
+
+</section>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter" "section")
+  End:
+-->

@@ -123,8 +123,8 @@
   <mediaobject>
 
    <imageobject>
-    <imagedata align="center" width="6in" scale="50" scalefit="1"
-               fileref="cl_probe.png"></imagedata>
+    <imagedata align="center" scale="40" scalefit="1"
+               fileref="cl_probe.png" format="PNG"></imagedata>
    </imageobject>
 
    <textobject>
@@ -134,10 +134,12 @@
   </mediaobject>
  </figure>
 
- <para><xref linkend="fig-cl-probe"></xref> shows the &M-PDD;.  Probes
- can be selected on the basis of symbol names, operating system class,
- and programming language.  (Operating system class is a very general
- category, such as &Qunix;, &Qwindows;, etc.)  The probe contains a
+ <para><xref linkend="fig-cl-probe"></xref> shows the &M-PD;.  The
+ &M-SCAN; module determines the tailoring symbols needed to tailor a
+ &D-kit;; from these, probes are selected by name.  It must be
+ possible to determine the probe name and the &D-disparms; for that
+ probe from the symbol name.  Once a probe has been located, it can be
+ qualified by the &D-probeplat; and parameters.  The probe contains a
  test program to test for some feature.</para>
 
  <para>The difficulty of designing the probe database is that we
@@ -155,7 +157,10 @@
  system wherein the latest available versions of probes are always
  used.</para>
 
- <para><programlisting>
+ <section>
+  <title><classname>QualifiedProbe</classname> class</title>
+
+  <para><programlisting>
 <![CDATA[
 class QualifiedProbe:
 
@@ -218,8 +223,33 @@ class QualifiedProbe:
         $$$ We need to spec out PatternSet objects.  They must allow a
         Scanner to identify symbols, determine the distinguished
         parameters, and determine the probe."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>Probe</classname> class</title>
 
+  <para>The <classname>Probe</classname> class represents an actual,
+  unqualified probe.  A <classname>Probe</classname>, when execute,
+  will supply values to one or more tailoring symbols.  A script tests
+  for a feature; this script may require additional features.  The
+  actual script, as well as the symbols defined and required, can
+  depend on the &D-probeplat;.</para>
+
+  <para>Probes can have documentation associated with them.  It may be
+  useful to associate additional information, such as the patterns to
+  match problematic code in programs that could be fixed by using this
+  probe.<footnote> <para>The <application>CONFBASE</application>
+  proposal associated "causes", or portability problems, with
+  "solutions", or portable code that depended on probe results.  This
+  information could be used to provide tools for the programmer to
+  make his or her code more portable.
+  <application>CONFBASE</application> separated this information from
+  the probes, since a probe might be associated with several
+  solution.</para> </footnote> </para>
+
+  <para><programlisting>
+<![CDATA[
 class Probe:
 
     """Class representing a probe."""
@@ -340,8 +370,20 @@ class Probe:
         raise $$$ -- No script for 'probe_platform'.
 
         returns -- A qualified probe."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>AuxProbe</classname> class</title>
 
+  <para>An <classname>AuxProbe</classname> object provides values for
+  &D-auxparms; for a probe.  An instance of a
+  <classname>AuxProbe</classname> represents a probe, qualified only
+  by its &D-disparms;.  An <classname>AuxProbe</classname> associates
+  &D-auxparms; with &D-probeplats;.</para>
+
+ <para><programlisting>
+<![CDATA[
 class AuxProbe:
 
     """Class for auxiliary probes.  These provide information for
@@ -425,8 +467,21 @@ class AuxProbe:
 
         returns -- A ProbeSource object with the auxiliary parameter
         field filled in."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>AuxProbeDB</classname> class</title>
 
+  <para>An <classname>AuxProbeDB</classname> represents an auxiliary
+  probe database.  This database, separate from the general probe
+  database, is used to provide &D-auxparms; to probe invocations.  We
+  expect &qmconfig; to ship with a substantial auxiliary probe
+  database.  Additional entries can be added to an individual
+  package.</para>
+
+  <para><programlisting>
+<![CDATA[
 class AuxProbeDB:
 
     """Database of auxiliary information for probes.  A probe is
@@ -477,8 +532,20 @@ class AuxProbeDB:
 
         returns -- A ProbeSource object with the auxiliary parameters
         filled in."""
+]]></programlisting></para>
+ </section>
 
+ <section>
+  <title><classname>ProbeDB</classname> class</title>
 
+  <para>The <classname>ProbeDB</classname> class represents an actual
+  probe database.</para>
+
+  <para>The following class definition is not quite complete.  We will
+  need to add methods to iterate over probes.</para>
+
+  <para><programlisting>
+<![CDATA[
 class ProbeDB:
 
     """Base class for probe databases."""
@@ -558,6 +625,7 @@ class ProbeDB:
     # $$$ We also need methods related to PatternSet objects, and
     # probably methods to iterate over the probes.
 ]]></programlisting></para>
+ </section>
 
 </section>
 

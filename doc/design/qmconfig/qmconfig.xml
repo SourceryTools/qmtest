@@ -204,6 +204,10 @@
 
   We use D- as a prefix. -->
 
+  <!ENTITY D-auxparm '<link linkend="D-auxparm">auxiliary parameter</link>'>
+  <!ENTITY D-auxparms '<link linkend="D-auxparm">auxiliary parameters</link>'>
+  <!ENTITY D-Auxparms '<link linkend="D-auxparm">Auxiliary parameters</link>'>
+
   <!ENTITY D-bindist '<link linkend="D-bindist">binary distribution</link>'>
   <!ENTITY D-bindists '<link linkend="D-bindist">binary distributions</link>'>
   <!ENTITY D-Bindists '<link linkend="D-bindist">Binary distributions</link>'>
@@ -217,6 +221,10 @@
   <!ENTITY D-dirsym '<link linkend="D-dirsym">direct symbol</link>'>
   <!ENTITY D-dirsyms '<link linkend="D-dirsym">direct symbols</link>'>
 
+  <!ENTITY D-disparm '<link linkend="D-disparm">distinguished parameter</link>'>
+  <!ENTITY D-disparms '<link linkend="D-disparm">distinguished parameters</link>'>
+  <!ENTITY D-Disparms '<link linkend="D-disparm">Distinguished parameters</link>'>
+
   <!ENTITY D-enduser '<link linkend="D-enduser">end user</link>'>
   <!ENTITY D-endusers '<link linkend="D-enduser">end users</link>'>
 
@@ -229,6 +237,9 @@
   <!ENTITY D-packdevs '<link linkend="D-packdev">package developers</link>'>
   <!ENTITY D-Packdevs '<link linkend="D-packdev">Package developers</link>'>
   <!ENTITY D-PackDevs- 'Package Developers'>
+
+  <!ENTITY D-probeplat '<link linkend="D-probeplat">probe platform</link>'>
+  <!ENTITY D-probeplats '<link linkend="D-probeplat">probe platforms</link>'>
 
   <!ENTITY D-proinst '<link linkend="D-proinst">professional systems administrator</link>'>
   <!ENTITY D-proinsts '<link linkend="D-proinst">professional systems administrators</link>'>
@@ -254,6 +265,8 @@
   <!ENTITY D-sysints '<link linkend="D-sysint">systems integrators</link>'>
   <!ENTITY D-Sysints '<link linkend="D-sysint">Systems integrators</link>'>
   <!ENTITY D-SysInts- 'Systems Integrators'>
+
+  <!ENTITY D-symcoll '<link linkend="D-symcoll">symbol collector</link>'>
 
   <!ENTITY D-tailor '<link linkend="D-tailor">tailor</link>'>
   <!ENTITY D-tailors '<link linkend="D-tailor">tailors</link>'>
@@ -284,9 +297,11 @@
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
   <!ENTITY overview.xml SYSTEM "overview.xml">
   <!ENTITY design.xml SYSTEM "design.xml">
-    <!ENTITY design-lm.xml SYSTEM "design-lm.xml">
-    <!ENTITY design-probe.xml SYSTEM "design-probe.xml">
+    <!ENTITY design-basic.xml SYSTEM "design-basic.xml">
+    <!ENTITY design-pdd.xml SYSTEM "design-pdd.xml">
     <!ENTITY design-td.xml SYSTEM "design-td.xml">
+    <!ENTITY design-probe.xml SYSTEM "design-probe.xml">
+    <!ENTITY design-lm.xml SYSTEM "design-lm.xml">
   <!ENTITY biblio.xml SYSTEM "biblio.xml">
 ]>
 <book>
