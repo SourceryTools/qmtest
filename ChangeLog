@@ -1,3 +1,12 @@
+2001-05-30  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/structured_text.py (html_help_text): New variable.
+	* qm/fields.py (TextField.FormatValueAsHtml): Show indication when
+	editing structured text.
+	(EnumerationField.__GetAvailableEnumerals): Add time zone.
+	* qm/track/web/show.py (ShowPageInfo.FormatFieldValue): Handle
+	user and timezone specially when editing.
+
 2001-05-29  Alex Samuel  <samuel@codesourcery.com>
 
 	* share/diagnostics/track-help.txt: New file.

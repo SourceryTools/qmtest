@@ -50,6 +50,37 @@ import string
 import sys
 
 ########################################################################
+# constants
+########################################################################
+
+html_help_text = '''
+<h4>Structured Text</h4>
+
+<p>Structured text is a simple set of conventions for formatting
+ordinary text.  Usually, you can simply type ordinary text where QM
+expects structured text; the resulting output will be line-wrapped, with
+paragraph breaks indicated by blank lines.</p>
+
+<p>Structured text also provides simple ways of adding elements such as
+bulleted and numbered lists, bold and italics text, monospaced text, and
+hyperlinks to ordinary text.  For example, to obtain bold text, place a
+pair of asterisks on either side of it.  Thus,
+<blockquote><pre>
+**hello, there**
+</pre></blockquote>
+is displayed as
+<blockquote>
+<b>hello, there</b>
+</blockquote>Structured text may be displayed as HTML, as plain text,
+or in other formats.  The exact format of the output will depend on the
+capabilities of the output system.</p>
+
+<p>For a complete description of structured text rules, see the
+<a href="http://www.python.org/sigs/doc-sig/stext.html">Structured Text
+Formatting Rules</a>.</p>
+'''
+
+########################################################################
 # classes
 ########################################################################
 

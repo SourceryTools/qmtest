@@ -50,6 +50,7 @@ file name, the file's MIME type, and a short description.
  3. In the **Description** field, enter a short description of the
     file's contents.
 
+
 ########################################################################
 # Local Variables:
 # mode: text

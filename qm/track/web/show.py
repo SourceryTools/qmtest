@@ -148,10 +148,23 @@ class ShowPageInfo(web.PageInfo):
         """Return an HTML rendering of the value for 'field'."""
 
         style = self.style
+        field_name = field.GetName()
+        value = self.issue.GetField(field_name)
+
+        # If creating or editing an issue, it doesn't make sense to show
+        # the last modifying user and time.
+        if style in ["new", "edit"]:
+            if field_name is "user":
+                # For the user field, show the active user.
+                value = self.request.GetSession().GetUserId()
+            elif field_name is "timestamp":
+                # For the timestamp field, show the current time.
+                value = field.GetCurrentTime()
+
         # If the user shouldn't be allowed to initialize or edit this
         # field, don't render it as editiable.
         if field.IsAttribute("read_only") \
-           and (style == "new" or style == "edit"):
+           and style in ["new", "edit"]:
             style = "full"
         if field.IsAttribute("initialize_only") and style == "edit":
             style = "full"
@@ -159,7 +172,6 @@ class ShowPageInfo(web.PageInfo):
            and style == "new":
             style = "full"
 
-        value = self.issue.GetField(field.GetName())
         result = field.FormatValueAsHtml(value, style)
 
         if field.GetName() == "revision" \

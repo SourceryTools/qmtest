@@ -544,9 +544,19 @@ class TextField(Field):
         if style == "new" or style == "edit":
             if self.IsAttribute("verbatim") \
                or self.IsAttribute("structured"):
-                return '<textarea cols="64" rows="8" name="%s">' \
-                       '%s</textarea>' \
-                       % (name, web.escape(value))
+                result = '<textarea cols="64" rows="8" name="%s">' \
+                         '%s</textarea>' \
+                         % (name, web.escape(value))
+                # If this is a structured text field, add a note to that
+                # effect, so users aren't surprised.
+                if self.IsAttribute("structured"):
+                    result = result \
+                    + '<br><font size="-1">This is a ' \
+                    + qm.web.make_help_link_html(
+                        qm.structured_text.html_help_text,
+                        "structured text") \
+                    + 'field.</font>'
+                return result
             else:
                 return '<input type="text" size="40" name="%s" value="%s"/>' \
                        % (name, web.escape(value))
@@ -1443,7 +1453,7 @@ class EnumerationField(IntegerField):
 class TimeField(TextField):
     """A field containing a date and time."""
 
-    __time_format = "%Y-%m-%d %H:%M"
+    __time_format = "%Y-%m-%d %H:%M %Z"
     """The format, ala the 'time' module, used to represent field values."""
 
     def __init__(self, name, **attributes):
