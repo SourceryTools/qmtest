@@ -11,102 +11,31 @@
 #
 ########################################################################
 
+from   executable import *
 import os
 import os.path
 import StringIO
 import re
 import resource
-import signal
 import sys
-
-########################################################################
-# Functions
-########################################################################
-
-def RunCommand(arguments, timeout=0, environment=None):
-    """Run the command given by 'arguments'.
-
-    'arguments' -- A sequence of strings.  The first argument is
-    the path giving the command to execute.  The system will
-    search the 'PATH' environment variable for the command.
-
-    'timeout' -- The number of seconds for which the child process
-    should be permitted to execute.  If '0', then there is no limit.
-
-    'environment' -- A dictionary mapping environment variable names
-    to the values that they should take in the subprocess.  These
-    variables are added to any environment variables that are already
-    set.  If 'None', the current environment is used.
-    
-    returns -- A tuple '(status, output)' containing the exit status
-    from the command (as returned by 'waitpid') and any output written
-    to the standard output and/or standard error streams."""
-
-    # Create a pipe.  The child will write its output through the
-    # pipe.
-    (r, w) = os.pipe()
-
-    # Fork.
-    child = os.fork()
-    if child == 0:
-        try:
-            # Disable core dumps.
-            resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-            # Set the timeout.
-            if timeout:
-                signal.signal(signal.SIGALRM, signal.SIG_DFL)
-                signal.alarm(timeout)
-            else:
-                assert None
-            # This is the child.  We do not need to read from the
-            # pipe.
-            os.close(r)
-            # Redirect the standard output and standard error to
-            # the write end of the pipe.
-            os.dup2(w, sys.stdout.fileno())
-            os.dup2(w, sys.stderr.fileno())
-            # Close the standard input in case the compiler tries
-            # to read from there.
-            sys.stdin.close()
-            # Compute the environment for the command.
-            if environment:
-                new_environment = os.environ.copy()
-                new_environment.update(environment)
-            else:
-                environment = os.environ
-            # Run the command.
-            os.execvpe(arguments[0], arguments, environment)
-        except:
-            # If we could not spawn the child process, exit
-            # immediately.
-            os._exit(1)
-
-    # This is the parent.  We do not need the write end of the
-    # pipe.
-    os.close(w)
-    # Read the entire contents of the pipe.
-    f = os.fdopen(r)
-    output = f.read()
-    f.close()
-    # Figure out what happened to the child.
-    status = os.waitpid(child, 0)[1]
-
-    return (status, output)
 
 ########################################################################
 # Classes
 ########################################################################
 
-class Compiler:
+class Compiler(RedirectedExecutable):
     """A 'Compiler' compiles and links source files."""
 
     MODE_COMPILE = 'compile'
+    """Compile the source files, but do not assemble them."""
+    
+    MODE_ASSEMBLE = 'assemble'
     """Compile the source files, but do not link them."""
     
     MODE_LINK = 'link'
     """Compile and link the source files."""
     
-    modes = [ MODE_COMPILE, MODE_LINK ]
+    modes = [ MODE_COMPILE, MODE_ASSEMBLE, MODE_LINK ]
     """The available compilation modes."""
 
     def __init__(self, path, options=None):
@@ -115,25 +44,153 @@ class Compiler:
         'path' -- A string giving the location of the compiler
         executable.
 
-        'arguments' -- A list of strings indicating options to the
+        'options' -- A list of strings indicating options to the
         compiler, or 'None' if there are no options."""
 
-        self._path = path
+        Executable.__init__(self, path)
         if options:
             self._options = options
         else:
             self._options = []
             
 
-    def GetPath(self):
-        """Returns the path to this 'Compiler'.
+    def Compile(self, mode, files, options=[], output=None):
+        """Compile the 'files'.
+        
+        'mode' -- The compilation mode (one of the 'Compiler.modes')
+        that should be used to compile the 'files'.
 
-        returns -- A string giving the location of the compiler
-        executable."""
+        'files' -- A sequence of strings giving the names of source
+        files (including, in general, assembly files, object files,
+        and libraries) that should be compiled.
 
-        return self._path
+        'options' -- A sequence of strings indicating additional
+        options that should be provided to the compiler.
+
+        'output' -- The name of the file should be created by the
+        compilation.  If 'None', the compiler will use a default
+        value.
+
+        returns -- A tuple '(status, output, command)'.  The 'status'
+        is the exit status returned by the compiler, as indicated by
+        'waitpid'.  The 'output' is a string containing the standard
+        outpt and standard errror generated by the compiler.  The
+        'command' is a list of strings indicating the command used to
+        perform the compilation."""
+
+        # Get the command to use.
+        command = self.GetCompilationCommand(mode, files, options, output)
+        # Invoke the compiler.
+        status = self.Run(command)
+        # Return all of the information.
+        return (status, self.stdout, command)
+        
+        
+    def GetCompilationCommand(self, mode, files, options=[], output=None):
+        """Return the appropriate command for compiling 'files'.
+
+        'mode' -- The compilation mode (one of the 'Compiler.modes')
+        that should be used to compile the 'files'.
+
+        'files' -- A sequence of strings giving the names of source
+        files (including, in general, assembly files, object files,
+        and libraries) that should be compiled.
+
+        'options' -- A sequence of strings indicating additional
+        options that should be provided to the compiler.
+
+        'output' -- The name of the file should be created by the
+        compilation.  If 'None', the compiler will use a default
+        value.  (In some cases there may be multiple outputs.  For
+        example, when generating multiple object files from multiple
+        source files, the compiler will create a variety of objects.)
+
+        returns -- A sequence of strings indicating the arguments,
+        including 'argv[0]', for the compilation command."""
+
+        # Start with the path to the compiler.
+        command = [self.GetPath()]
+        # Add switches indicating the compilation mode, if appropriate.
+        command += self._GetModeSwitches(mode)
+        # Add the options that should be used with every compilation.
+        command += self._options
+        # Add the options that apply to this compilation.
+        command += options
+        # Set the output file.
+        if output:
+            command += ["-o", output]
+        # Add the input files.
+        command += files
+
+        return command
+        
+
+    def ParseOutput(self, output):
+        """Turn the 'output' into a sqeuence of 'Diagnostic's.
+
+        'output' -- A string containing the compiler's output.
+
+        returns -- A list of 'Diagnostic's corresponding to the
+        messages indicated in 'output', in the order that they were
+        emitted."""
+
+        assert None
+        
+        
+    def _InitializeChild(self):
+        """Initialize the child process.
+
+        After 'fork' is called this method is invoked to give the
+        child a chance to initialize itself.  '_InitializeParent' will
+        already have been called in the parent process."""
+
+        # Disable compiler core dumps.
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+        # Do whatever the base class version would otherwise do.
+        RedirectedExecutable._InitializeChild(self)
 
 
+    def _StdinPipe(self):
+        """Return a pipe to which to redirect the standard input.
+
+        returns -- A pipe, or 'None' if the standard input should be
+        closed in the child."""
+
+        # The compiler should not need the standard input.
+        return None
+
+
+    def _StderrPipe(self):
+        """Return a pipe to which to redirect the standard input.
+
+        returns -- A pipe, or 'None'.  If 'None' is returned, but
+        '_StdoutPipe' returns a pipe, then the standard error and
+        standard input will both be redirected to that pipe.  However,
+        if '_StdoutPipe' also returns 'None', then the standard error
+        will be closed in the child."""
+
+        # The standard output and standard error are combined.
+        return None
+
+
+    def _GetModeSwitches(self, mode):
+        """Return the compilation switches for the compilation 'mode'.
+
+        'mode' -- The compilation mode (one of 'Compiler.modes').
+
+        returns -- A sequence of strings indicating the switches that
+        are used to indicate the compilation mode."""
+
+        # Compilation is indicated by the "-c" option.
+        if mode == self.MODE_COMPILE:
+            return ["-S"]
+        elif mode == self.MODE_ASSEMBLE:
+            return ["-c"]
+            
+        # Other modes require no special option.
+        return []
+            
+        
 
 class SourcePosition:
     """A 'SourcePosition' indicates a location in source code.
@@ -264,10 +321,12 @@ class GPP(Compiler):
 
     _severity_regexps = {
         'warning' :
-          re.compile('^(?P<file>[^:]*):(?P<line>[^:]*):((?P<column>[^:]*):)? '
+          re.compile('^(?P<file>[^:]*):((?P<line>[^:]*):)?'
+                     '(\s*(?P<column>[0-9]+):)? '
                      'warning: (?P<message>.*)$'),
         'error':
-          re.compile('^(?P<file>[^:]*):(?P<line>[^:]*):((?P<column>[^:]*):)? '
+          re.compile('^(?P<file>[^:]*):((?P<line>[^:]*):)?'
+                     '(\s*(?P<column>[0-9]+):)? '
                      '(?P<message>.*)$')
         }
     """A map from severities to compiled regular expressions.  If the
@@ -282,6 +341,7 @@ class GPP(Compiler):
         re.compile('^.*file path prefix .* never used'),
         re.compile('^.*linker input file unused since linking not done'),
         re.compile('^collect: re(compiling|linking)'),
+        re.compile('^collect2: ld returned.*'),
         ]
     
     _internal_error_regexp = re.compile('Internal (compiler )?error')
@@ -289,54 +349,22 @@ class GPP(Compiler):
     by this regular expression, the error message indicates an
     internal error in the compiler."""
 
-    def CompileSourceFiles(self, mode, source_files, timeout):
-        """Compile the 'source_files'.
+    def __init__(self, path, options=None):
+        """Construct a new 'GPP'.
 
-        'mode' -- The compilation mode (one of 'Compiler.modes') in
-        which the 'source_files' should be compiled.
+        'path' -- A string giving the location of the compiler
+        executable.
+
+        'options' -- A list of strings indicating options to the
+        compiler."""
+
+        # Add "-fmessage-length=0" to the list of options to make it
+        # easier to parse the error messages emitted by the compiler.
+        if options is None:
+            options = []
+        options = ['-fmessage-length=0'] + options
         
-        'source_files' -- A sequence of strings giving the names of
-        source files (and/or object files) that should be compiled.
-
-        'timeout' -- The maximum number of seconds that the compiler
-        is permitted to run before being terminated.
-
-        returns -- A tuple '(status, output, command)'.  The 'status'
-        is the exit status returned by the command, as returned by
-        'waitpid'.  The 'output' is a string containing the complete
-        standard output and standard error streams produced by the
-        compiler.  The 'command' is the list of arguments making up
-        the command that was issued to perform the compilation.
-
-        After this method has been called, certain files will be
-        present in the file system.  If 'mode' is 'MODE_COMPILE',
-        there will be an object file corresponding to each of the
-        source files, using the natural extension for the target
-        system.  If 'mode' is 'MODE_LINK', there will be a single
-        executable file with the name given by 'GetExecutableName'."""
-
-        assert mode in Compiler.modes
-        
-        # Create the command invoking the compiler.
-        command = [self._path]
-        # Add the compiler options.
-        command.extend(self._options)
-        # Emit single-line diagnostics to make parsing diagnostics easier.
-        command.append('-fmessage-length=0')
-        # Disable linking, if appropriate.
-        if mode == Compiler.MODE_COMPILE:
-            command.append('-c')
-        elif mode == Compiler.MODE_LINK:
-            command.append('-o')
-            command.append(self.GetExecutableName(source_files))
-
-        # Add the names of the source files.
-        command.extend(source_files)
-
-        # Run the compiler.
-        (status, output) = RunCommand(command, timeout)
-        
-        return (status, output, command)
+        Compiler.__init__(self, path, options)
 
 
     def GetExecutableName(self, source_files):
@@ -364,7 +392,7 @@ class GPP(Compiler):
                    source_files)
             
         
-    def GetDiagnostics(self, output):
+    def ParseOutput(self, output):
         """Return the 'Diagnostic's indicated in the 'output'.
 
         'output' -- A string giving the output from the compiler.
