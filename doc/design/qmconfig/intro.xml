@@ -50,12 +50,13 @@
   is installed,<footnote>
 
     <para>For example, on many &Qunix; systems, programs are installed
-    into the <filename>/usr/local/bin</filename> directory, or some
-    other common location.  But some sites store every program in its
-    own directory.  See, for instance, how &QF-RPI; stores
-    applications individually in its &QFafs; cell in a structure
-    called <ulink
-    url="http://www.rpi.edu/~toddr/Archives/1991/a01g-cfs/"><filename>/campus</filename></ulink>.</para>
+    into the <filename class="directory">/usr/local/bin</filename>
+    directory, or some other common location.  But some sites store
+    every program in its own directory.  See, for instance, how
+    &QF-RPI; stores applications individually in its &QFafs; cell in a
+    structure called <ulink
+    url="http://www.rpi.edu/~toddr/Archives/1991/a01g-cfs/"><filename
+    class="directory">/campus</filename></ulink>.</para>
 
    </footnote>how email is retrieved, which web browser is preferred,
    etc.  Robust portable software must cope with these different site

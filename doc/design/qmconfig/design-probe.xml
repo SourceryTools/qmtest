@@ -68,10 +68,10 @@
     <para>The &Qautoconf; system does this by attempting to compile a
     small program using the header file.  Since some systems use
     precompiled header files, this is superior to simply searching
-    under, say, <filename>/usr/include</filename> on &Qunix;.
-    Furthermore, different compilers or compiler switches may alter
-    where header files are found.  Compiling verifies that a header
-    file is actually available.</para>
+    under, say, <filename class="directory">/usr/include</filename> on
+    &Qunix;.  Furthermore, different compilers or compiler switches
+    may alter where header files are found.  Compiling verifies that a
+    header file is actually available.</para>
 
     <para>It would be good to test the usability of header files,
     including compatibility with other header files.</para>
@@ -100,7 +100,8 @@
     with language dialects.  For instance, does the C compiler provide
     some sort of useful <type>inline</type> keyword?  Most platforms
     now provide ANSI C, but we want to test characteristics of
-    prototypes anyway.  C++ provides even more room for variation.</para>
+    prototypes anyway.  C++ provides even more room for
+    variation.</para>
 
     <para>Some compiler characteristics may seem, at first glance, to
     be system characteristics.  For instance, in C or C++, how big are

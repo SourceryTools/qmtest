@@ -266,9 +266,10 @@
 
    <para>&qmconfig; is not directly responsible for building the
    software in a &D-kit;.  However, it provides a uniform interface to
-   build systems.  This may involve creating <filename>Makefile</filename>s at
-   tailoring time.  The &M-MGR; will use the &M-BUILD; module to
-   configure and run the build system.</para>
+   build systems.  This may involve creating
+   <filename>Makefile</filename>s at tailoring time.  The &M-MGR; will
+   use the &M-BUILD; module to configure and run the build
+   system.</para>
 
   </section>
 
@@ -363,6 +364,7 @@
 
   </section>
 
+  &design-lm.xml;
   &design-probe.xml;
 
   <section><title>&M-TD;</title>

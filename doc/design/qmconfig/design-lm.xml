@@ -1,0 +1,303 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design-lm.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-27
+
+  Contents:
+    Design of qmconfig language module.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<section><title>Language Module</title>
+
+ <para>The language module, <classname
+ role="module">lang_serv</classname>, is responsible for providing
+ services needed by the file scanner and file adapter.</para>
+
+ <figure id="mod.lang-serv.LangServRegistry">
+  <title>Language Module: LangServRegistry</title>
+ <programlisting>
+<![CDATA[
+class LangServRegistry:
+
+    """An instance of this class serves as a registry of 'LangServ'
+    instances.  'LangServ' instances may be selected, 'Scanner'
+    instances created, and files substituted, using an instance of
+    'LangServRegistry'."""
+
+
+    def Register(self, ...):
+
+        """Register new language modules.  We still need to spec this
+        out.  Are we registering Python modules, or are we registering
+        directories with a file indicating language modules, or
+        what?"""
+
+
+    def GetLanguageByFile(self, file_name):
+
+        """Return a 'LangServ' instance suitable for processing
+        'file_name'.
+
+        'file_name' -- The name of a file to be processed.  The may be
+        a real file or a template for a file.
+
+        raises --
+
+        returns -- An instance of 'LangServ' that provides an
+        appropriate 'Scanner' subclass and 'Substitute' method."""
+
+
+    def GetLanguageByName(self, lang_name):
+
+        """Return a 'LangServ' instance suitable for processing the
+        'lang_name' language.
+
+        'lang_name' -- The language for which we need a 'LangServ'
+        instance.
+
+        returns -- A usable 'LangServ' instance, or None if we cannot
+        locate one."""
+
+
+    def CreateScanner(self, probe_db, file_name, ls=None):
+
+        """Create a 'Scanner' object for 'file_name'.  If 'ls' is
+        None, then a 'LangServ' is chosen based on 'file_name'.  If
+        'ls' is a string, then it is a language name.  If 'ls' is a
+        'LangServ' instance, then that language processor is used.
+
+        'probe_db' -- A probe database object.  This is used to choose
+        symbols, and resolve missing parameters to probes.
+
+        'file_name' -- Name of a file to be scanned.  This can be
+        either a real file name or a template for a file.
+
+        'ls' -- Optionally, the 'LangServ' instance to use to get a
+        'Scanner' object.  If not specified, then a 'LangServ'
+        instance is chosen, based on 'file_name'.
+
+        raises --
+
+        returns -- A 'Scanner' subclass instance to use to scan
+        'file_name' (or the corresponding template) for symbols."""
+
+
+    def SubstituteFile(self, tailor_db, file_name, template_name=None):
+
+        """Make the needed substitutions to a template file to create
+        'file_name'.  If 'file_name' already exists, this should only
+        modify the file if its contents truly change.
+
+        'tailor_db' -- The tailoring database used to map symbol names
+        to values.
+
+        'file_name' -- The name of the file to be created by
+        substitution.
+
+        'template_name' -- The name of the template file.  If not
+        specified, a default template name is used.
+
+        raises -- See LangServ.Substitute for details.
+
+        returns -- None"""
+]]></programlisting>
+ </figure>
+
+ <para><xref linkend="mod.lang-serv.LangServRegistry" /> shows the
+ interface to the <classname>LangServRegistry</classname> class.  This
+ allows language services to be invoked using file names or language
+ names.</para>
+
+ <para>Language service instances are registered using the
+ <methodname>Register</methodname> method. ($$$ We still need to
+ specify this method.  We really want to register a &Qpython; scripts,
+ or something to find such scripts, which will create the
+ <classname>LangServ</classname> instances to be registered, as well
+ as a way to match file names.  Possibly the
+ <classname>LangServ</classname> objects themselves can check the file
+ names...)</para>
+
+ <figure id="mod.lang-serv.LangServ">
+  <title>Language Module: LangServ</title>
+  <programlisting>
+<![CDATA[
+class LangServ:
+    
+    """This is an abstract class.  Modules associated with different
+    languages will provide classes based on this class."""
+
+
+    def GetLanguageName(self):
+        """Get the name of the language served by this object.
+
+        returns -- The name of the language."""
+
+
+    def CreateScanner(self, probe_db, file_obj):
+
+        """Create a scanner object on 'file_name'.
+
+
+        'probe_db' -- A probe database object.  This is used to choose
+        symbols, and resolve missing parameters to probes.
+
+        'file_obj' -- A file object, open for reading, containing a
+        source file to be scanned.  See the 'file_obj' parameter to
+        the Scanner contructor for more detail.
+
+        returns -- The new scanner object."""
+
+
+    def GetTemplateName(self, file_name):
+
+        """Generate the default name for a template file for
+        file_name.
+
+        'file_name' -- The name of the file to be created by
+        processing the template.
+
+        returns -- The default name for the corresponding template
+        file."""
+
+    def GetTempName(self, file_name):
+
+        """Generate a temporary name for a file containing a proposed
+        new version of 'file_name'.  Typically, the file adapter will
+        copy a template, with substitutions, into a proposed new file
+        with this temporary name.  Then this proposed new file is
+        compared to any file named 'file_name'.  If they differ, or if
+        the file named 'file_name' did not previously exist, then the
+        the proposed new file replaces 'file_name'.  Otherwise, the
+        proposed new file is destroyed.  This helps the build system
+        avoid unnecessary work.  Having distinct names for each
+        possible 'file_name' allows multiple substitutions to take
+        place in parallel.
+
+        'file_name' -- The name of a file to be created through
+        substitution.
+
+        returns -- The temporary name for a proposed new versions of
+        'file_name'."""
+
+
+    def Substitute(self, tailor_db, out_file, template_file):
+
+        """Copy 'template_file' to 'out_file', substituting any
+        symbols found in 'template_file' with their corresponding
+        values from 'tailor_db'.
+
+        'tailor_db' -- The tailoring database mapping symbol names to
+        values.
+
+        $$$ We need to have symbol types in 'tailor_db'.
+
+        $$$ We need to be able to coerce a substitution to use a
+        particular type.  For instance, in a C program, we may
+        sometimes want an integer as an integer constant, but possible
+        we will want to coerce it to be a string.  This target type
+        could be determined by either context or qualifiers in the
+        symbol name.
+
+        'out_file' -- A file object, opened for writing, to receive
+        the results of the substitution.  Note that this need not be a
+        native Python file object, but it must support the write and
+        writelines methods, and base any exceptions on IOError; if
+        possible, it should also have the name attribute.
+
+        'template_file' -- A file object, opened for reading, from
+        which the template will be read.  Note that this need not be a
+        true native Python file object, but it must support the read,
+        readline, and readlines methods, and base any exceptions on
+        IOError; if possible, it should also have the name
+        attribute.
+
+        raises -- 'IOError' if there is a failure reading from
+        'template_file' or writing to 'out_file'.
+
+        raises -- 'KeyError' if a symbol cannot be located in
+        'tailor_db'.
+
+        $$$ We should use another error.  Probably, this really
+        indicates that we cannot read a tailoring database (maybe
+        because tailoring failed).
+
+        returns -- None"""
+]]></programlisting>
+ </figure>
+
+ <para><xref linkend="mod.lang-serv.LangServ" /> shows the interface
+ to the <classname>LangServ</classname> class.  This is an abstract
+ class whose methods should be overridden by classes implemented
+ support for actual languages.</para>
+
+ <figure id="mod.lang-serv.Scanner">
+  <title>Language Module: Scanner</title>
+  <programlisting>
+<![CDATA[
+class Scanner:
+    
+    """Abstract base class for a language-specific file scanner.
+
+    Scanner objects are used to create the list of portability symbols
+    we will need to for the project."""
+
+
+    def __init__(self, probe_db, file_obj):
+
+        """Construct a Scanner object.
+
+
+        'probe_db' -- A probe database object.  This is used to choose
+        symbols, and resolve missing parameters to probes.
+
+        'file_obj' -- A file object, opened for reading, on the source
+        file to be scanned.  Note that this need not be a true native
+        Python file object, but it must support the read, readline,
+        and readlines methods, and base any exceptions on IOError; if
+        possible, it should also have the name attribute."""
+
+
+    def GetSymbol(self):
+        
+        """Get the next symbol in the file being scanned.
+
+        raises -- 'IOError' if there is a problem reading from the
+        associated file object.
+
+        returns -- The next symbol in the file, or None if we are
+        finished.
+
+        $$$ This is still a bit undetermined...  We need to spec out
+        the ProbeDB class.  For building header files, we do need to
+        have actual symbol names collected.  But a probe may define
+        several symbols, and at another level, we really need to
+        determine probes and parameters.  So a side effect will
+        probably be to assemble a list of probe calls.  Is that in the
+        probe_db, or some other parameter?"""
+]]></programlisting>
+ </figure>
+
+ <para><xref linkend="mod.lang-serv.Scanner" /> shows the interface to
+ the <classname>Scanner</classname> class.</para>
+
+</section>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("design.xml" "book" "section")
+  End:
+-->
