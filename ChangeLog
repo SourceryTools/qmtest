@@ -1,5 +1,12 @@
 2001-06-08  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (WebServer.__init__): Register /.
+	(handle_root): New function.
+	* share/web/static/index.html: New file.
+	* qm.spec (%files): Revert.
+
+2001-06-08  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm.spec (%files): Add /usr/local/share/web/static/*.
 
 2001-06-08  Alex Samuel  <samuel@codesourcery.com>

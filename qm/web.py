@@ -822,6 +822,7 @@ class WebServer(HTTPServer):
         self.__shutdown_requested = 0
 
         self.RegisterScript("/problems.html", handle_problems)
+        self.RegisterScript("/", handle_root)
 
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
@@ -2443,6 +2444,12 @@ def handle_problems(request):
 
     page_info = PageInfo.default_class(request)
     return generate_html_from_dtml("problems.dtml", page_info)
+
+
+def handle_root(requets):
+    """Respond to a request for the root page on this server."""
+
+    raise HttpRedirect, "/static/index.html"
 
 
 ########################################################################
