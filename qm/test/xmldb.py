@@ -36,6 +36,7 @@
 ########################################################################
 
 import base
+import database
 import dircache
 import os
 import qm.common
@@ -84,7 +85,7 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(base.Database, qm.common.MutexMixin):
+class Database(database.Database, qm.common.MutexMixin):
     """A database represnting tests as XML files in a directory tree."""
 
     # When processing the DOM tree for an XML test file, we may
@@ -105,7 +106,7 @@ class Database(base.Database, qm.common.MutexMixin):
         must already exist."""
 
         # Initialize base classes.
-        base.Database.__init__(self, path)
+        database.Database.__init__(self, path)
         # Create a new database, if requested.
         if create:
             if os.path.exists(path):
@@ -147,7 +148,7 @@ class Database(base.Database, qm.common.MutexMixin):
         # Is it there?
         if not os.path.isfile(test_path):
             # No.  The test doesn't exist.
-            raise base.NoSuchTestError, test_id
+            raise database.NoSuchTestError, test_id
 
         # Load the test file.
         lock = self.GetLock()
@@ -222,7 +223,7 @@ class Database(base.Database, qm.common.MutexMixin):
         # Is it there?
         if not os.path.isfile(resource_path):
             # No.  The resource doesn't exist.
-            raise base.NoSuchResourceError, resource_id
+            raise database.NoSuchResourceError, resource_id
 
         # Load the resource file.
         lock = self.GetLock()
@@ -295,14 +296,14 @@ class Database(base.Database, qm.common.MutexMixin):
             else:
                 suite_path = self.IdToPath(suite_id) + suite_file_extension
                 if not os.path.exists(suite_path):
-                    raise base.NoSuchSuiteError, \
+                    raise database.NoSuchSuiteError, \
                           qm.error("no such suite", suite_id=suite_id)
                 if os.path.isdir(suite_path):
                     suite = DirectorySuite(suite_id, suite_path, self)
                 elif os.path.isfile(suite_path):
                     suite = self.__LoadSuiteFile(suite_id, suite_path)
                 else:
-                    raise base.NoSuchSuiteError, \
+                    raise database.NoSuchSuiteError, \
                           qm.error("no such suite", suite_id=suite_id)
             self.__suites[suite_id] = suite
             return suite
@@ -740,7 +741,7 @@ class Database(base.Database, qm.common.MutexMixin):
 
         # Make sure there is a file by that name.
         if not os.path.isfile(path):
-            raise base.NoSuchSuiteError, "no suite file %s" % path
+            raise database.NoSuchSuiteError, "no suite file %s" % path
         # Load and parse the suite file.
         document = qm.xmlutil.load_xml_file(path)
         suite = document.documentElement
@@ -779,7 +780,7 @@ class DirectorySuite(base.Suite):
         'database' -- The database of which this suite is part."""
 
         if not os.path.isdir(path):
-            raise base.NoSuchSuiteError, "no directory at %s" % path
+            raise database.NoSuchSuiteError, "no directory at %s" % path
         # Initialize the base class. 
         base.Suite.__init__(self, suite_id, implicit=1)
         # Store the path to the directory, and the database.

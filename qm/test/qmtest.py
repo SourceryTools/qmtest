@@ -79,7 +79,7 @@ qm.diagnostic.help_set.ReadFromFile(help_file)
 # Load RC options.
 qm.rc.Load("test")
                                                        
-program_name = sys.argv[0]
+program_name = os.path.splitext(sys.argv[0])[0]
 
 try:
     # Parse the command line.

@@ -36,6 +36,7 @@
 ########################################################################
 
 import base
+import database
 import os
 import profile
 import qm
@@ -470,7 +471,8 @@ The summary is written to standard output.
             # Expand arguments into test IDs.
             try:
                 test_ids, suite_ids = base.expand_ids(id_arguments)
-            except (base.NoSuchTestError, base.NoSuchSuiteError), exception:
+            except (qm.test.database.NoSuchTestError,
+                    qm.test.database.NoSuchSuiteError), exception:
                 raise qm.cmdline.CommandError, str(exception)
             except ValueError, exception:
                 raise qm.cmdline.CommandError, \
@@ -540,7 +542,8 @@ The summary is written to standard output.
         # Expand arguments in test IDs.
         try:
             test_ids, test_suites = base.expand_ids(self.__arguments)
-        except (base.NoSuchTestError, base.NoSuchSuiteError), exception:
+        except (qm.test.database.NoSuchTestError,
+                qm.test.database.NoSuchSuiteError), exception:
             raise qm.cmdline.CommandError, str(exception)
         except ValueError, exception:
             raise qm.cmdline.CommandError, \

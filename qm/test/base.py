@@ -86,27 +86,6 @@ corresponding DTD public identifiers."""
 # exceptions
 ########################################################################
 
-class NoSuchTestError(Exception):
-    """The specified test does not exist."""
-
-    pass
-
-
-
-class NoSuchSuiteError(Exception):
-    """The specified suite does not exist."""
-
-    pass
-
-
-
-class NoSuchResourceError(Exception):
-    """The specified resource does not exist."""
-
-    pass
-
-
-
 class CommandFailedError(RuntimeError):
     """A command invocation of 'qmtest' failed."""
 
@@ -126,8 +105,6 @@ class CommandFailedError(RuntimeError):
         self.exit_code = str(exit_code)
         self.stdout = stdout
         self.stderr = stderr
-
-
 
 ########################################################################
 # classes
@@ -370,10 +347,10 @@ class Resource(InstanceBase):
         'resource_class_name' -- The name of the resource class of which
         this is an instance.
 
-        'arguments' -- This test's arguments to the test class.
+        'arguments' -- This resource's arguments to the resource class.
 
         'properties' -- A map of name, value pairs for properties of the
-        test.  Names must be valid labels, and values must be strings."""
+        resource.  Names must be valid labels, and values must be strings."""
 
         # Initialize the base class.
         InstanceBase.__init__(self, resource_id, resource_class_name,
@@ -538,184 +515,6 @@ class Suite:
    
 
 
-class Database:
-    """A database containing tests."""
-
-    def __init__(self, path):
-        """Construct a new database.
-
-        'path' -- The absolute path to the directory that represents
-        the database."""
-
-        self._path = path
-
-        
-    def GetPath(self):
-        """Return the path to the database."""
-
-        return self._path
-    
-
-    def GetClassPaths(self):
-        """Return paths to search for class files.
-
-        returns -- A sequence of paths to add to the classpath when
-        loading test and resource classes."""
-
-        # Specify the '_classes' subdirectory, if it exists.
-        class_dir = os.path.join(self.GetPath(), "_classes")
-        if os.path.isdir(class_dir):
-            return [class_dir]
-        else:
-            return []
-
-
-    def HasTest(self, test_id):
-        """Return true if the database has a test with ID 'test_id'."""
-
-        # The default implementation of this function uses 'GetTest'.
-        try:
-            self.GetTest(test_id)
-        except NoSuchTestError:
-            return 0
-        else:
-            return 1
-
-
-    def GetTest(self, test_id):
-        """Return a 'Test' instance for test ID 'test_id'.
-
-        raises -- 'NoSuchTestError' if there is no test in the database
-        with ID 'test_id'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetTest"
-
-
-    def WriteTest(self, test):
-        """Store a test in the database.
-
-        'test' -- A test to write.  It may be a new version of an
-        existing test, or a new test.  Any attachment fields in the
-        test will be represented by 'Attachment's.  If the store
-        associated with the attachment is not the attachment store
-        associated with the database, the attachment must be copied
-        from its current store to the new store.  The original
-        attachment will be removed from its current store by the
-        caller, if necessary."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
-
-
-    def RemoveTest(self, test_id):
-        """Remove the test with ID 'test_id' from the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveTest"
-
-
-    def GetTestIds(self, path="."):
-        """Return test IDs of all tests relative to 'path'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetTestIds"
-
-
-    def HasSuite(self, suite_id):
-        """Return true if the database has a suite with ID 'suite_id'."""
-
-        # The default implementation of this function uses 'GetSuite'.
-
-        try:
-            self.GetSuite(suite_id)
-        except NoSuchSuiteError:
-            return 0
-        else:
-            return 1
-
-
-    def GetSuite(self, suite_id):
-        """Return a 'Suite' instance for suite ID 'suite_id'.
-
-        raises -- 'NoSuchSuiteError' if there is no suite in the
-        database with ID 'suite_id'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSuite"
-
-
-    def WriteSuite(self, suite):
-        """Store a test suite in the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteSuite"
-
-
-    def RemoveSuite(self, suite_id):
-        """Remove the test suite with ID 'suite_id' from the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveSuite"
-
-
-    def GetSuiteIds(self, path="."):
-        """Return suite IDs of all test suites relative to 'path'.
-
-        'implicit' -- If true, include implicit test suites
-        corresponding to directories in the space of test and suite
-        IDs."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
-
-
-    def HasResource(self, resource_id):
-        """Return true if the database has a resource with 'resource_id'."""
-
-        # The default implementation of this funciton uses 'GetResource'.
-
-        try:
-            self.GetResource(resource_id)
-        except NoSuchResourceError:
-            return 0
-        else:
-            return 1
-
-
-    def GetResource(self, resource_id):
-        """Return a 'Resource' instance for resource ID 'resource_id'.
-
-        raises -- 'NoSuchResourceError' if there is no resource in the
-        database with ID 'resource_id'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetResource"
-
-
-    def WriteResource(self, resource):
-        """Store a resource in the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteResource"
-
-
-    def RemoveResource(self, resource_id):
-        """Remove the resource with ID 'resource_id' from the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveResource"
-
-
-    def GetResourceIds(self, path="."):
-        """Return resource IDs of all resources relative to 'path'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetResourceIds"
-
-
-    def GetAttachmentStore(self):
-        """Return the store for attachment data."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
-
-
-    def GetTestClasses(self):
-        """Return a list of test classes that the database can store.
-
-        Each acceptable test class is returned as a string."""
-
-        return standard_test_class_names
-    
-    
 class Result:
     """The result of running a test.
 

@@ -92,7 +92,7 @@ def print_error_message(message):
 
 # Set the program name.
 qm.common.program_name = "QMTest"
-program_name = sys.argv[0]
+program_name = os.path.splitext(sys.argv[0])[0]
 
 # Load QMTest diagnostics.
 diagnostic_file = qm.get_share_directory("diagnostics", "test.txt")

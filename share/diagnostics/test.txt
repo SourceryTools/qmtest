@@ -149,6 +149,9 @@ There is no action with the action ID "%(action_id)s".
 @ no such ID
 There is no test or suite with ID "%(id)s".
 
+@ no such resource
+There is no resource with the resource ID "%(resource_id)s".
+
 @ no such suite
 There is no suite with the suite ID "%(suite_id)s".
 

@@ -154,7 +154,7 @@ a definition-style list (write the name of the parameter, two dashes
 Doc strings should be used for interface documentation, i.e. the
 information that another programmer needs to know to use the element
 correctly.  Implementation, i.e. how a function actually does its job,
-should be commented using ordinary comments,
+should be commented using ordinary comments.
 
 All source code checked into the Software Carpentry source repository
 should comply with these guidelines.  

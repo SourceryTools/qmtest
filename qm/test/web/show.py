@@ -477,7 +477,7 @@ def handle_show(request):
         if type is "resource":
             try:
                 item = database.GetResource(item_id)
-            except qm.test.base.NoSuchTestError:
+            except qm.test.database.NoSuchTestError:
                 # An test with the specified test ID was not fount.
                 # Show a page indicating the error.
                 message = qm.error("no such test", test_id=item_id)
@@ -485,7 +485,7 @@ def handle_show(request):
         elif type is "test":
             try:
                 item = database.GetTest(item_id)
-            except qm.test.base.NoSuchResourceError:
+            except qm.test.database.NoSuchResourceError:
                 # An test with the specified resource ID was not fount.
                 # Show a page indicating the error.
                 message = qm.error("no such resource", resource_id=item_id)

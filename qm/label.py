@@ -31,33 +31,30 @@
 #
 ########################################################################
 
-"""A "label" is standard tag for identifying entities.
+"""A "label" is an operating-system independent path name.
 
-The intent of using labels is to provide a lowest-common-denominator
-text implementation that can be used throughout QM as a persistent,
-user-visible naming scheme for entities.  By placing strong
-restrinctions on the format of the label, we improve the likelihood that
-it'll be easy to create staightforward, one-to-one mappings from labels
-onto other name spaces (such as file system paths on various platforms,
-URLs, or typographical namespaces consistent with the naming constraints
-of various systems).
+A label names entities in the same way that file names name files, but
+in an operating-system independent way.  For example, while the
+separator character on some systems is '/', and on other systems is
+'\', it is always '.' in QM.  It is easy to convert labels to real
+file names when necessary.
 
-Labels are restricted by these rules:
+QM does not always map labels on to file names.  For example,
+labels are used to name tests in a QMTest test database, but the
+database is free to store the tests however it likes.  It could,
+for example, store them all in a single file.
 
-  - A label consists of one or more characters chosen from lower-case
-    English letters (a-z), digits (0-9), and underscores.
+Labels are strings that follow the following rules:
+
+  - A label consists of one or more characters chosen from [a-z0-9_.].
 
   - Labels that begin with an underscore are considered reserved for
-    internal use.  While they are valid labels, they should be
-    disallowed for user-specified labels.
+    internal use.  While they are valid labels, users are not allowed
+    to create entities with these names.
 
-  - Optionally, labels may be placed in a typographical namespace by
-    using a period (.) as the namespace separator character.  There is
-    no notion of absolute or relative paths in the namespace, nor is
-    their a notation for representing the parent namespace (analogous to
-    .. in filenames).
-
-"""
+The '.' is treated as the separator character.  A label that begins
+with a '.' is called an "absolute label"; one that does not is a
+"relative label"."""
 
 ########################################################################
 # imports
@@ -190,7 +187,7 @@ def thunk(label):
     # Trim leading underscores.
     while len(label) > 0 and label[0] == "_":
         label = label[1:]
-    # Make sure the label isn't empty.  If it is, concoct something.
+    # Make sure the label isn't empty.
     if label == "":
         raise ValueError, "Empty label"
     return normpath(label)
