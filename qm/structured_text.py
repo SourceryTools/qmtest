@@ -8,7 +8,7 @@
 # Contents:
 #   Code for processing structured text.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -105,6 +105,8 @@ class Formatter:
 
       * underlined
 
+      * literal
+
       * verbatim
 
     """
@@ -120,7 +122,8 @@ class TextFormatter(Formatter):
         "emphasized" :          "*",
         "strong" :              "**",
         "underlined" :          "_",
-        "verbatim" :            "'",
+        "literal" :             "'",
+        "verbatim" :            "'''",
         }
 
         
@@ -151,7 +154,7 @@ class TextFormatter(Formatter):
 
         # If there were any hyperlink references placed, we need to list
         # the link targets at the end of the document.
-        if len(self.__link_targets) > 0:
+        if self.__link_targets:
             self.__NextLine()
             for index in range(0, len(self.__link_targets)):
                 # Print the reference number and link target, one to a
@@ -317,6 +320,7 @@ class HtmlFormatter(Formatter):
         "ordered list":         "<ol>\n",
         "paragraph":            "",
         "unordered list":       "<ul>\n",
+        "verbatim":             "",
         }
 
     __end_list_tags = {
@@ -324,6 +328,7 @@ class HtmlFormatter(Formatter):
         "ordered list":         "</ol>\n",
         "paragraph":            "",
         "unordered list":       "</ul>\n",
+        "verbatim":             "",
         }
 
     __start_item_tags = {
@@ -331,6 +336,7 @@ class HtmlFormatter(Formatter):
         "ordered list":         "<li>\n",
         "paragraph":            "<p>",
         "unordered list":       "<li>\n",
+        "verbatim":             "",
         }
 
     __end_item_tags = {
@@ -338,20 +344,23 @@ class HtmlFormatter(Formatter):
         "ordered list":         "</li>\n",
         "paragraph":            "</p>\n",
         "unordered list":       "</li>\n",
+        "verbatim":             "",
         }
 
     __start_style_tags = {
         "emphasized":           "<em>",
         "strong":               "<strong>",
         "underlined":           "<u>",
-        "verbatim":             "<tt>",
+        "literal":              "<tt>",
+        "verbatim":             '<pre>\'<span class="verbatim">',
         }
 
     __end_style_tags = {
         "emphasized":           "</em>",
         "strong":               "</strong>",
         "underlined":           "</u>",
-        "verbatim":             "</tt>",
+        "literal":              "</tt>",
+        "verbatim":             '</span>\'</pre>',
         }
 
 
@@ -362,7 +371,7 @@ class HtmlFormatter(Formatter):
         written."""
 
         self.__output_file = output_file
-
+        
 
     def End(self):
         """End the processed text document."""
@@ -420,7 +429,7 @@ class HtmlFormatter(Formatter):
         """End the text style 'style'."""
 
         self.__Write(self.__end_style_tags[style])
-
+        
 
     def StartLink(self, target):
         """Being a hyperlink to 'target'."""
@@ -463,10 +472,10 @@ class StructuredTextProcessor:
     # Regex matching indentation at the beginning of a line.
     __indent_regex = re.compile("^ *")
 
-    # Regex matching single-quoted verbatim text.  Group 1 is leading
+    # Regex matching single-quoted literal text.  Group 1 is leading
     # spaces; group 2 is the verbatim text; group 3 is trailing spaces
     # and/or punctuation.
-    __verbatim_regex = re.compile("( +|^)'([^']+)'(%s+|$)" % __punctuation)
+    __literal_regex = re.compile("( +|^)'([^']+)'(%s+|$)" % __punctuation)
 
     # Regex matching emphasized text.  Group 1 is leading spaces;
     # group 2 is the verbatim text; group 3 is trailing spaces and/or
@@ -546,6 +555,18 @@ class StructuredTextProcessor:
 
         # Loop over paragraphs.
         for paragraph in paragraphs:
+            # If this is a verbatim paragraph, handle it specially.
+            match = _verbatim_regexp.match(paragraph)
+            if match:
+                if self.__stack:
+                    indentation = self.__stack[-1][1]
+                else:
+                    indentation = 0
+                self.__SetType("verbatim", indentation)
+                self.__formatter.StartStyle("verbatim")
+                self.__formatter.WriteText(match.group(1)[3:-3])
+                self.__formatter.EndStyle("verbatim")
+                continue
             # Extract indentations for all the lines in the paragraph.
             indents = self.__indent_regex.findall(paragraph)
             # The paragraph's indentation is the minimum indentation
@@ -613,7 +634,7 @@ class StructuredTextProcessor:
         """Stop processing text, and do any necessary cleanup."""
 
         # Pop out of any remaining environments.
-        while len(self.__stack) > 0:
+        while self.__stack:
             top_type, top_indentation = self.__stack[-1]
             # End the item.
             self.__formatter.EndItem(top_type)
@@ -708,7 +729,7 @@ class StructuredTextProcessor:
         # Look for various types of markup for special formatting for
         # a range of text.
         for regex, style in [
-            (self.__verbatim_regex, "verbatim"),
+            (self.__literal_regex, "literal"),
             (self.__strong_regex, "strong"),
             (self.__emph_regex, "emphasized"),
             (self.__underline_regex, "underlined"),
@@ -721,9 +742,9 @@ class StructuredTextProcessor:
                 self.__WriteText(text[:match.end(1)])
                 # Start generating text in the indicated style.
                 self.__formatter.StartStyle(style)
-                # If it's a verbatim style, push the verbatim text out
+                # If it's a literal style, push the literal text out
                 # directly.  Otherwise, format it recursively.
-                if style == "verbatim":
+                if style == "literal" or style == "verbatim":
                     self.__formatter.WriteText(match.group(2))
                 else:
                     self.__WriteText(match.group(2))
@@ -760,7 +781,6 @@ class StructuredTextProcessor:
 
         # Nothing special.  Write ordinary text.
         self.__formatter.WriteText(text)
-
 
 
 ########################################################################
@@ -841,7 +861,48 @@ def get_paragraphs(structured_text):
     string, the sequence returned will consist of a single
     paragraph, itself empty."""
 
-    return __paragraph_regex.split(structured_text)
+    # There are no paragraphs yet.
+    paragraphs = []
+    # The first paragraph begins at the first character.
+    begin = 0
+    # We have not yet found the end of the paragraph.
+    end = 0
+    # Keep going until there is no more text.
+    while end < len(structured_text):
+        # If we are at the start of a paragraph, check to see if
+        # we might be looking at a piece of verbatim text.
+        if (len(structured_text) - end >= 6
+            and structured_text[end:end+3] == "'''"):
+            end = string.find(structured_text, "'''", end + 3)
+            if end > 0:
+                end = end + 3
+                # Add the new paragraph to the ist.
+                paragraphs.append(structured_text[begin:end])
+                begin = end
+                continue
+        else:
+            # Loop through the string until we find the end of the
+            # text.
+            while end < len(structured_text):
+                # See if we are at the end of a paragraph.
+                match = __paragraph_regexp.match(structured_text, end)
+                if match:
+                    # Add the new paragraph to the list.
+                    paragraphs.append(structured_text[begin:end])
+                    # The next paragraph begins with the first
+                    # matched character.
+                    begin = match.end()
+                    end = begin
+                    break
+                else:
+                    # Advance to the next character.
+                    end = end + 1
+
+    # We may have stopped in the middle of a paragraph.
+    if begin != end:
+        paragraphs.append(structured_text[begin:end])
+        
+    return paragraphs
 
 
 def get_first_paragraph(structured_text):
@@ -880,7 +941,11 @@ __entity_char_replacement = lambda match, \
                             replacement_map[match.group(0)]
 
 # Regex matching paragraph separators.
-__paragraph_regex = re.compile("(?:\n *)+\n", re.MULTILINE)
+__paragraph_regexp = re.compile("(?:\n *)+\n")
+
+# Regular expression matching verbatim paragraphs and trailing
+# whitespace.
+_verbatim_regexp = re.compile("('''.*''')(?:(?:\n *)+\n|\n?$)", re.DOTALL)
 
 ########################################################################
 # script
