@@ -1,3 +1,8 @@
+2003-09-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/qm.sh (PYTHONPATH): Break "export PTYHONPATH=..." into two
+	statements.
+
 2003-08-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/target.py (Target.__init__): Do not set __resources.

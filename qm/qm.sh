@@ -226,7 +226,8 @@ qm_script=`basename $0`
 
 # Just in case we installed into a weird place:
 qm_python_path_dir=`expr "${qm_libdir}" : '\(.*\)/qm'`
-export PYTHONPATH=${qm_python_path_dir}:$PYTHONPATH
+PYTHONPATH=${qm_python_path_dir}:$PYTHONPATH
+export PYTHONPATH
 
 case ${qm_script} in
     qmtest) qm_script_dir=test;;
