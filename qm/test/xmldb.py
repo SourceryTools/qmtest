@@ -74,7 +74,7 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(FileDatabase, qm.common.MutexMixin):
+class Database(FileDatabase):
     """A database represnting tests as XML files in a directory tree."""
 
     # When processing the DOM tree for an XML test file, we may
@@ -97,30 +97,11 @@ class Database(FileDatabase, qm.common.MutexMixin):
         if not os.path.isdir(path):
             raise ValueError, \
                   qm.error("db path doesn't exist", path=path)
-        # Cache loaded objects in these attributes.
-        self.__tests = {}
-        self.__suites = {}
-        self.__resources = {}
-
-
-    def GetClassPaths(self):
-        lock = self.GetLock()
-        # Use the base class implementation.
-        return FileDatabase.GetClassPaths(self)
 
 
     def _GetTestFromPath(self, test_id, test_path):
-        # Try to use a cached value.
         try:
-            return self.__tests[test_id]
-        except KeyError:
-            # Not in cache; no biggie.
-            pass
-
-        # Load the test file.
-        lock = self.GetLock()
-        try:
-            test = self.__LoadItem(test_id, test_path,
+            return self.__LoadItem(test_id, test_path,
                                    self.__ParseTestDocument)
         except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
                exception:
@@ -129,17 +110,9 @@ class Database(FileDatabase, qm.common.MutexMixin):
                                test_id=test_id,
                                message=str(exception))
             raise TestFileError, message
-        else:
-            # Cache the test for next time.
-            self.__tests[test_id] = test
-            # Return it.
-            return test
         
 
     def WriteTest(self, test, comments=0):
-        lock = self.GetLock()
-        # Invalidate the cache entry.
-        self.__InvalidateItem(test.GetId(), self.__tests)
         # Generate the document and document type for XML test files.
         document = qm.xmlutil.create_dom_document(
             public_id=base.dtds["test"],
@@ -162,28 +135,10 @@ class Database(FileDatabase, qm.common.MutexMixin):
         test_file.close()
 
 
-    def RemoveTest(self, test_id):
-        lock = self.GetLock()
-        # Make sure there is such a test.
-        assert self.HasTest(test_id)
-        # Invalidate the cache entry.
-        self.__InvalidateItem(test_id, self.__tests)
-        # Remove the test file.
-        FileDatabase.RemoveTest(self, test_id)
-
-
     def _GetResourceFromPath(self, resource_id, resource_path):
-        # Try to use a cached value.
         try:
-            return self.__resources[resource_id]
-        except KeyError:
-            pass
-
-        # Load the resource file.
-        lock = self.GetLock()
-        try:
-            resource = self.__LoadItem(resource_id, resource_path,
-                                       self.__ParseResourceDocument)
+            return self.__LoadItem(resource_id, resource_path,
+                                   self.__ParseResourceDocument)
         except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
                exception:
             # Problem while parsing XML.
@@ -191,17 +146,9 @@ class Database(FileDatabase, qm.common.MutexMixin):
                                resource_id=resource_id,
                                message=str(exception))
             raise TestFileError, message
-        else:
-            # Cache the resource for next time.
-            self.__resources[resource_id] = resource
-            # Return it.
-            return resource
         
 
     def WriteResource(self, resource, comments=0):
-        lock = self.GetLock()
-        # Invalidate the cache entry.
-        self.__InvalidateItem(resource.GetId(), self.__resources)
         # Generate the document and document type for XML resource files.
         document = qm.xmlutil.create_dom_document(
             public_id=base.dtds["resource"],
@@ -224,36 +171,12 @@ class Database(FileDatabase, qm.common.MutexMixin):
         resource_file.close()
 
 
-    def RemoveResource(self, resource_id):
-        lock = self.GetLock()
-        # Make sure there is such a resource.
-        assert self.HasResource(resource_id)
-        # Invalidate the cache entry.
-        self.__InvalidateItem(resource_id, self.__resources)
-        FileDatabase.RemoveResource(self, resource_id)
-
-
-    def _GetSuiteFromPath(self, suite_id, suite_path):
-        try:
-            return self.__suites[suite_id]
-        except KeyError:
-            pass
-        
-        lock = self.GetLock()
-        suite = self.__LoadSuiteFile(suite_id, suite_path)
-        self.__suites[suite_id] = suite
-        return suite
-            
-
     def WriteSuite(self, suite):
         """Write 'suite' to the database as a suite file."""
 
         # Don't write directory suites to suite file.
         assert not suite.IsImplicit()
 
-        lock = self.GetLock()
-        # Invalidate the cache entry.
-        self.__InvalidateItem(suite.GetId(), self.__suites)
         # Generate the document and document type for XML suite files.
         document = qm.xmlutil.create_dom_document(
             public_id=base.dtds["suite"],
@@ -284,30 +207,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
         suite_file.close()
 
 
-    def RemoveSuite(self, suite_id):
-        lock = self.GetLock()
-        # Make sure there is such a suite.
-        assert self.HasSuite(suite_id)
-        # Make sure it's not an implicit test suite.
-        suite = self.GetSuite(suite_id)
-        assert not suite.IsImplicit()
-        # Invalidate the cache entry.
-        self.__InvalidateItem(suite_id, self.__suites)
-        FileDatabase.RemoveSuite(self, suite_id)
-
-
     # Helper functions.
-
-    def __InvalidateItem(self, item_id, cache):
-        """Invalidate the cache entry for 'item_id'."""
-
-        if cache.has_key(item_id):
-            del cache[item_id]
-        # Invalidate the suite containing this item.
-        parent_suite_id = qm.label.split(item_id)[0]
-        if self.__suites.has_key(parent_suite_id):
-            del self.__suites[parent_suite_id]
-
 
     def __LoadItem(self, item_id, path, document_parser):
         """Load an item (a test or resource) from an XML file.
@@ -643,7 +543,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
             element.appendChild(arg_element)
 
 
-    def __LoadSuiteFile(self, suite_id, path):
+    def _GetSuiteFromPath(self, suite_id, path):
         """Load the test suite file at 'path' with suite ID 'suite_id'.
 
         returns -- A 'Suite' object."""
