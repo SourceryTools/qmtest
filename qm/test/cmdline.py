@@ -727,11 +727,11 @@ The summary is written to standard output.
         # Print statistics, either absolute or relative.
         output.write("\n")
         output.write(divider("STATISTICS"))
-        if expected_outcomes is None:
-            base.summarize_test_stats(output, test_results)
-        else:
+        if expected_outcomes is not None:
             base.summarize_relative_test_stats(
                 output, test_results, expected_outcomes)
+        if expected_outcomes is None or format == "full":
+            base.summarize_test_stats(output, test_results)
 
         if format in ("full", "stats") and len(suite_ids) > 0:
             # Print statistics by test suite.
@@ -745,21 +745,22 @@ The summary is written to standard output.
             # Sort test results by ID.
             test_results.sort(compare_ids)
             # Print individual test results.
-            if expected_outcomes is None:
+            if expected_outcomes is not None:
+                # Show tests that produced unexpected outcomes.
+                bad_results = base.split_results_by_expected_outcome(
+                    test_results, expected_outcomes)[1]
+                output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
+                base.summarize_results(
+                    output, format, bad_results, expected_outcomes)
+            if expected_outcomes is None or format == "full":
                 # No expected outcomes were specified, so show all tests
                 # that did not pass.
                 bad_results = filter(
                     lambda r: r.GetOutcome() != base.Result.PASS,
                     test_results)
                 output.write(divider("NON-PASSING TESTS"))
-            else:
-                # Show tests that produced unexpected outcomes.
-                bad_results = base.split_results_by_expected_outcome(
-                    test_results, expected_outcomes)[1]
-                output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
-
-            base.summarize_results(
-                output, format, bad_results, expected_outcomes)
+                base.summarize_results(
+                    output, format, bad_results, expected_outcomes)
 
             # Sort resource results by ID.
             resource_results.sort(compare_ids)

@@ -1,5 +1,11 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/cmdline.py (Command.divider): Always show non-relative
+	stats in full format.
+	* tests/unit.qms/track.qms/export.qms/export2.qmt: Fix.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (Field): Rename __attributes to __properties
 	throughout. 
 	(Field.GetAttribute): Rename to...

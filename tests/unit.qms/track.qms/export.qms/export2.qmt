@@ -8,7 +8,7 @@
    <text>&lt;!DOCTYPE [^>]*>;&lt;!DOCTYPE></text>
   </set>
  </argument>
- <argument name='path_attribute'>
+ <argument name='path_property'>
   <text>issue_export_path</text>
  </argument>
  <argument name='expected_contents'>
