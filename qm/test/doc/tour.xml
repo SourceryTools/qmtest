@@ -296,12 +296,8 @@ QMTest running at http://127.0.0.1:1158/test/dir
    field.  This command will produce an output (the word
    <literal>test</literal>), so find the <guilabel>Standard
    Output</guilabel> box and enter <literal>test</literal> in this
-   box.  Make sure to hit the <keycap>Return</keycap> key after you
-   type <literal>test</literal>; the <command>echo</command> command
-   will output a carriage return after it prints the word
-   <literal>test</literal>, so you must indicate that you expect a
-   carriage return.  When you are done, click the
-   <guibutton>OK</guibutton> button at the bottom of the form.</para>
+   box.  When you are done, click the <guibutton>OK</guibutton> button
+   at the bottom of the form.</para>
 
    <para>Now you can select <guibutton>This Test</guibutton> from the
    <guilabel>Run</guilabel> menu to run the test.</para>

@@ -6,6 +6,8 @@
 
 	* qm/test/classes/command.py (ExecTestBase.arguments): Improve
 	documentation for exit_code.
+	* qm/test/doc/tour.xml: Remove discussion of carriage-returns in
+	execution tests.
 	
 	* qm/executable.py (Executable.Kill): New method.
 	(Executable._GetChildPID): Improve documentation.
@@ -60,7 +62,7 @@
 	(QMTest.__ExecuteRegister): Likewise.
 	* qm/test/classes/xml_database.py: Likewise.
 	* qm/test/classes/xml_result_stream.py: Likewise.
-	
+
 2003-09-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (TimeoutExecutable.__init__): Ignore timeouts
