@@ -36,12 +36,20 @@
              base="name + '_base'"
              menu="name + '_menu'">
     <td width="20%" class="menu_bar">
-     <a href=""
-        id="<dtml-var base>"
-        onmouseover="show_menu(event, '<dtml-var menu>');"
-        onmouseout="hide_active_menu(event);"
-        onclick="return false;"
-        class="menu_bar"><dtml-var name capitalize></a>
+     <dtml-if click_menus>
+      <a href=""
+         id="<dtml-var base>"
+         onclick="show_menu(event, '<dtml-var menu>'); return false;"
+         onmouseout="hide_active_menu(event);"
+         class="menu_bar"><dtml-var name capitalize></a>
+     <dtml-else>
+      <a href=""
+         id="<dtml-var base>"
+         onmouseover="show_menu(event, '<dtml-var menu>');"
+         onmouseout="hide_active_menu(event);"
+         onclick="return false;"
+         class="menu_bar"><dtml-var name capitalize></a>
+     </dtml-if>
     </td>
    </dtml-let>
   </dtml-in>

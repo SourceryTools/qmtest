@@ -128,7 +128,7 @@ class PythonException(QMException):
 # classes
 ########################################################################
 
-class RcConfiguration:
+class RcConfiguration(ConfigParser.ConfigParser):
     """Interface object to QM configuration files.
 
     Configuration files are in the format parsed by the standard
@@ -141,16 +141,22 @@ class RcConfiguration:
     def __init__(self):
         """Create a new configuration instance."""
 
-        self.__parser = None
+        ConfigParser.ConfigParser.__init__(self)
+        if os.environ.has_key("HOME"):
+            home_directory = os.environ["HOME"]
+            rc_file = os.path.join(home_directory, self.user_rc_file_name)
+            # Note that it's OK to call 'read' even if the file doesn't
+            # exist.  In that, case the parser simply will not
+            # accumulate any data.
+            self.read(rc_file)
 
 
     def Load(self, section):
         """Load configuration.
 
         'section' -- The configuration section from which subsequent
-        varaibles are loaded."""
+        variables are loaded."""
 
-        self.__parser = self.__Load()
         self.__section = section
 
 
@@ -168,15 +174,6 @@ class RcConfiguration:
 
         precondition -- The RC configuration must be loaded."""
 
-        if self.__parser is None:
-            # No RC file was ever loaded.  Print a warning the first
-            # time. 
-            if not hasattr(self, "no_rc_loaded_warning"):
-                sys.stderr.write("Warning: No RC configuration file loaded.\n")
-                self.no_rc_loaded_warning = 1
-            # Use the default.             
-            return default
-        
         # Use the previously-specified default section, if one wasn't
         # specified explicitly.
         if section is None:
@@ -184,7 +181,7 @@ class RcConfiguration:
 
         try:
             # Try to get the requested option.
-            return self.__parser.get(section, option)
+            return self.get(section, option)
         except ConfigParser.NoSectionError:
             # Couldn't find the section.
             return default
@@ -206,7 +203,7 @@ class RcConfiguration:
         if section is None:
             section = self.__section
         try:
-            options = self.__parser.options(section)
+            options = self.options(section)
         except ConfigParser.NoSectionError:
             # Couldn't find the section.
             return []
@@ -217,29 +214,7 @@ class RcConfiguration:
                 options.remove("__name__")
             return options
 
-
-    def __Load(self):
-        """Load the configuration from the appropriate places."""
-
-	# Create a parser.
-        parser = ConfigParser.ConfigParser()
-
-        # Construct the path to the user's rc file.
-        if os.environ.has_key("HOME"):
-	        home_directory = os.environ["HOME"]
-	        rc_file = os.path.join(home_directory, self.user_rc_file_name)
-	        # Note that it's OK to call 'read' even if the file doesn't
-		# exist.  In that, case the parser simply will not accumulate
-		# any data.
-	        parser.read(rc_file)
-	else:	
-		# If we cannot find the user's home directory, do not
-		# even try to read the configuration.
-		pass
-
-        return parser
-
-
+    
 ########################################################################
 # functions
 ########################################################################

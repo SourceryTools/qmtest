@@ -213,14 +213,25 @@ class QMTestPage(DefaultDtmlPage):
             else:
                 edit_menu_items = self.edit_menu_items
                 run_menu_items = self.run_menu_items
-            # Include the navigation bar.
+
+            # Figure out whether to use click-to-activate menus.
+            click_menus = 0
+            if qm.common.rc.has_option("common", "click_menus"):
+                try:
+                    click_menus = qm.common.rc.getboolean("common",
+                                                          "click_menus")
+                except ValueError:
+                    pass
+                
+            # Generate the navigation bar.
             navigation_bar = \
               DefaultDtmlPage(os.path.join("test", "navigation-bar.dtml"),
                               file_menu_items=self.file_menu_items,
                               edit_menu_items=edit_menu_items,
                               view_menu_items=self.view_menu_items,
                               run_menu_items=run_menu_items,
-                              help_menu_items=self.help_menu_items)
+                              help_menu_items=self.help_menu_items,
+                              click_menus = click_menus)
             return "<body>%s<br />" % navigation_bar(self.request)
         else:
             return "<body>"

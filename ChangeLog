@@ -1,5 +1,15 @@
 2002-12-31  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/manual/common-manual.xml: Document click_menus option.
+	* qm/common.py (RcConfiguration): Derive from ConfigParser.
+	(RcConfiguration.__init__): Load the configuration file.
+	(RcConfiguration.Load): Do not call __Load.
+	(RcConfiguration.Get): Simplify.
+	(RcConfiguration.GetOptions): Likewise.
+	(RcConfiguration.__Load): Remove it.
+	* qm/test/share/dtml/navigation-bar.dtml: Suppose clickable menus.
+	* qm/test/web/web.py (QMTestPage.GenerateStartBody): Likewise.
+
 	* qm/test/doc/reference.xml: Fix typo.
 
 2002-12-23  Mark Mitchell  <mark@codesourcery.com>

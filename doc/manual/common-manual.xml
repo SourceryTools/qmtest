@@ -84,6 +84,36 @@ browser=/usr/local/bin/mozilla
 
    <glossentry>
     <glossterm>
+     <property>click_menus</property>
+    </glossterm>
+    <glossdef>
+     <para>If this option is not present, or has the value
+     <literal>0</literal>, menus in the
+     GUI are activated by moving the mouse over the menu name.
+     </para>
+
+     <para>If this option has the value <literal>1</literal>, the
+     menus are activated by clicking on the menu name.
+     </para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>remote_shell</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The program used for running commands on remote computers.
+     The program must accept the same syntax as the standard
+     <filename>rsh</filename> command, and should be configured to run
+     the command remotely without any additional interaction (such as
+     requesting a password from the TTY).  The default value is
+     <filename>/usr/bin/ssh</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
      <property>script_shell</property>
     </glossterm>
     <glossdef>
@@ -109,20 +139,6 @@ browser=/usr/local/bin/mozilla
      compatible replacement.  This program is used for sending email
      messages.  The default value is
      <filename>/usr/lib/sendmail</filename>.</para>
-    </glossdef>
-   </glossentry>
-
-   <glossentry>
-    <glossterm>
-     <property>remote_shell</property> (UNIX-like platforms only)
-    </glossterm>
-    <glossdef>
-     <para>The program used for running commands on remote computers.
-     The program must accept the same syntax as the standard
-     <filename>rsh</filename> command, and should be configured to run
-     the command remotely without any additional interaction (such as
-     requesting a password from the TTY).  The default value is
-     <filename>/usr/bin/ssh</filename>.</para>
     </glossdef>
    </glossentry>
 
