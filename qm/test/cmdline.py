@@ -73,6 +73,12 @@ class QMTest:
     summary_formats = ("full", "brief", "stats", "none")
     """Valid formats for result summaries."""
 
+    expectations_file_name = "expectations.qmr"
+    """The default name of a file containing expectations."""
+    
+    results_file_name = "results.qmr"
+    """The default name of a file containing results."""
+    
     help_option_spec = (
         "h",
         "help",

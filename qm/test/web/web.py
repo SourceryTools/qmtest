@@ -40,6 +40,7 @@ import qm
 import qm.attachment
 import qm.fields
 import qm.test.base
+from   qm.test.cmdline import *
 from   qm.test.context import *
 from   qm.test.database import *
 from   qm.test.execution_thread import *
@@ -159,9 +160,11 @@ class QMTestPage(DefaultDtmlPage):
             ('New Suite', "location = 'new-suite';"),
             ('New Resource', "location = 'new-resource';"),
             ('Load Results', "load_results();"),
-            ('Save Results', "location = 'save-results';"),
+            ('Save Results',
+             "location = '%s';" % QMTest.results_file_name),
             ('Load Expectations', "load_expected_results();"),
-            ('Save Expectations', "location = 'save-expectations';"),
+            ('Save Expectations',
+             "location = '%s';" % QMTest.expectations_file_name),
             ('Exit', 'shutdown')
             ]
         self.edit_menu_items = [
@@ -179,7 +182,9 @@ class QMTestPage(DefaultDtmlPage):
         DefaultDtmlPage.__init__(self, os.path.join("test", dtml_template))
         # Remember the server.
         self.server = server
-
+        # Make the QMTest object available to the DTML pages.
+        self.qmtest = get_qmtest()
+        
         
     def GetServer(self):
         """Returns the 'QMTestServer' serving this page.
@@ -1085,8 +1090,6 @@ class QMTestServer(qm.web.WebServer):
             ( "new-suite", self.HandleNewSuite ),
             ( "new-test", self.HandleNewTest ),
             ( "run-tests", self.HandleRunTests ),
-            ( "save-expectations", self.HandleSaveExpectations ),
-            ( "save-results", self.HandleSaveResults ),
             ( "show-dir", self.HandleDir ),
             ( "show-resource", self.HandleShowItem ),
             ( "show-result", self.HandleShowResult ),
@@ -1102,6 +1105,8 @@ class QMTestServer(qm.web.WebServer):
             ( "submit-results", self.HandleSubmitResults ),
             ( "submit-suite", self.HandleSubmitSuite ),
             ( "submit-test", self.HandleSubmitItem ),
+            ( QMTest.expectations_file_name, self.HandleSaveExpectations ),
+            ( QMTest.results_file_name, self.HandleSaveResults ),
             ]:
             self.RegisterScript(script_base + name, function)
         self.RegisterPathTranslation(

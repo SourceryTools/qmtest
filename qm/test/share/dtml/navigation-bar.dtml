@@ -7,7 +7,7 @@
   Contents:
     Template for QMTest navigation bar.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -98,13 +98,17 @@
 <dtml-var expr="GenerateStartScript()">
 function handle_menu_select(sel) 
 {
-  value = sel.options[sel.selectedIndex].value;
+  index = sel.selectedIndex;
+  value = sel.options[index].value;
   if (value == "shutdown") {
    <dtml-var expr="web.make_confirmation_dialog(
                    'Are you sure you want to exit?', 'shutdown')">
-  } else if (sel.selectedIndex != 0) {
+  } else if (index != 0) {
     eval(value);
   }
+  // Reset the selected item so that the menu title shows up, rather
+  // than the choice that was just selected.
+  sel.selectedIndex = 0
 }
 
 

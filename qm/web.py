@@ -1056,13 +1056,8 @@ class WebServer(HTTPServer):
 
         preconditions -- The server must be bound."""
 
-        qm.common.print_message(2, "Web server running.\n")
-        try:
-            while not self.__shutdown_requested:
-                self.handle_request()
-        except Exception, exc:
-            raise RuntimeError, str(exc)
-        qm.common.print_message(2, "Web server stopped.\n")
+        while not self.__shutdown_requested:
+            self.handle_request()
 
 
     def RequestShutdown(self):

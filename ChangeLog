@@ -1,3 +1,19 @@
+2002-02-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/web.py (WebServer.Run): Remove exception-handling code.
+	* qm/test/cmdline.py (QMTest.expectations_file_name): New
+	variable.
+	(QMTest.results_file_name): Likewise.
+	* qm/test/share/dtml/load-expected-results.dtml: Use it.
+	* qm/test/share/dtml/load-results.dtml: Likewise.
+	* qm/test/share/dtml/navigation-bar.dtml (handle_menu_select): 
+	Reset menus after use.
+	* qm/test/web/web.py (QMTestPage.__init__): Use
+	QMTest.expectations_file_name and QMTest.results_file_name.  Store
+	the global QMTest object for DTML pages.
+	(QMTestServer.__init__): Use QMTest.expectations_file_name and
+	QMTest.results_file_name.
+
 2002-02-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/command.py (Command.ExecTestBase.RunProgram):

@@ -7,7 +7,7 @@
   Contents:
     Document template for editing the context.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -24,7 +24,9 @@
    <table border="0" cellpadding="4" cellspacing="4" width="100%">
     <tr class="field">
      <td width="75%">Load results from a file.</td>
-     <td><input type="file" name="results"/></td>
+     <td><input type="file" 
+                name="results"
+                value="<dtml-var expr="qmtest.results_file_name">" /></td>
     </tr>
     <tr>
      <td colspan="2" align="right">
