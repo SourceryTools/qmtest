@@ -14,7 +14,7 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 from   __future__ import nested_scopes
@@ -39,14 +39,50 @@ import sys
 import xml.sax
 
 ########################################################################
-# variables
+# Variables
 ########################################################################
 
 _the_qmtest = None
 """The global 'QMTest' object."""
 
 ########################################################################
-# classes
+# Functions
+########################################################################
+
+def _make_comma_separated_string (items, conjunction):
+    """Return a string consisting of the 'items', separated by commas.
+
+    'items' -- A list of strings giving the items in the list.
+
+    'conjunction' -- A string to use before the final item, if there is
+    more than one.
+
+    returns -- A string consisting all of the 'items', separated by
+    commas, and with the 'conjunction' before the final item."""
+    
+    s = ""
+    need_comma = 0
+    # Go through almost all of the items, adding them to the
+    # comma-separated list.
+    for i in items[:-1]:
+        # Add a comma if this isn't the first item in the list.
+        if need_comma:
+            s += ", "
+        else:
+            need_comma = 1
+        # Add this item.
+        s += "'%s'" % i
+    # The last item is special, because we need to include the "or".
+    if items:
+        i = items[-1]
+        if need_comma:
+            s += ", %s " % conjunction
+        s += "'%s'" % i
+
+    return s
+    
+########################################################################
+# Classes
 ########################################################################
 
 class QMTest:
@@ -306,9 +342,8 @@ class QMTest:
 List the available extension classes.
 
 Use the '--kind' option to limit the classes displayed to test classes,
-resource classes, etc.  The parameter to '--kind' can be one of 'test',
-'resource', 'database', or 'target'.
-         """,
+resource classes, etc.  The parameter to '--kind' can be one of """  + \
+         _make_comma_separated_string(base.extension_kinds, "or") + "\n",
          (
            extension_kind_option_spec,
            help_option_spec,
@@ -327,8 +362,8 @@ resource classes, etc.  The parameter to '--kind' can be one of 'test',
          "KIND CLASS",
          """
 Register an extension class with QMTest.  KIND is the kind of extension
-class to register; it must be one of 'test', 'resource', 'database',
-or 'target'.
+class to register; it must be one of """ + \
+         _make_comma_separated_string(base.extension_kinds, "or") + """
 
 The CLASS gives the name of the class in the form 'module.class'.
 
@@ -889,7 +924,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Figure out what kinds of extensions we're going to list.
         kind = self.GetCommandOption("kind")
-        kinds = ['test', 'resource', 'database', 'target']
+        kinds = base.extension_kinds
         if kind:
             if kind not in kinds:
                 raise qm.cmdline.CommandError, \
@@ -932,7 +967,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         class_name = self.__arguments[1]
 
         # Check that the KIND is valid.
-        if kind not in ['test', 'resource', 'database', 'target']:
+        if kind not in base.extension_kinds:
             raise qm.cmdline.CommandError, \
                   qm.error("invalid extension kind",
                            kind = kind)
@@ -1476,7 +1511,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
                        
 ########################################################################
-# functions
+# Functions
 ########################################################################
 
 def get_qmtest():

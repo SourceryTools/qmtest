@@ -1,5 +1,11 @@
 2003-02-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/cmdline.py (_make_comma_separated_string): New
+	function.
+	(QMTest.commands_spec): Use it.
+	(QMTest.__ExecuteExtensions): Use base.extension_kinds.
+	(QMTest.__ExecuteRegister): Likewise.
+
 	* qm/test/cmdline.py (QMTest.commands_spec): Add -O.
 	(QMTest.__ExecuteServer): Pass expectations to
 	QMTestServer.__init__.
