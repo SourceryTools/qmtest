@@ -38,6 +38,7 @@ else:
     import cPickle
     import fcntl
     import select
+    import qm.sigmask
     
 ########################################################################
 # Classes
@@ -328,6 +329,16 @@ class Executable(object):
         This method is not used under Windows."""
 
         assert sys.platform != "win32"
+
+        # The way Python's threading support works, every thread except
+        # the main thread always has all signals blocked.  This is fine
+        # for the threads themselves, but it causes problems if we
+        # 'fork' from a child thread; the new process starts with all
+        # signals blocked, which is probably not what you want!
+        # Arguably this is a bug in Python, but for the meantime, work
+        # around this by setting the new process's signal mask to match
+        # the signal mask that QMTest was started with.
+        qm.sigmask.restore_mask()
 
         if self.__dir:
             os.chdir(self.__dir)

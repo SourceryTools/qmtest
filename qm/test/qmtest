@@ -54,7 +54,11 @@ if qm_home is None:
 
 # Update sys.path so that we can find the rest of QMTest.
 if sys.platform != "win32":
-    rel_libdir = ""
+    # Following logic stolen from distutils.command.build:
+    import distutils.util
+    plat_spec = "lib.%s-%s" % (distutils.util.get_platform(),
+                               sys.version[0:3])
+    rel_libdir = os.path.join("build", plat_spec)
     """The relative path from the prefix to the library directory.
 
     This path gives the relative path from the prefix to the library
@@ -124,6 +128,11 @@ def main():
     
     # Make sure our Python is recent enough.
     check_python_version()
+
+    # Save the initial signal mask, as early as possible.
+    if sys.platform != "win32":
+        import qm.sigmask
+        qm.sigmask.save_mask()
 
     # Parse the command line.
     command = qm.test.cmdline.QMTest(sys.argv[1:], qm_path)

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="command.ShellScriptTest" kind="test"><argument name="stdin"><text/></argument><argument name="stderr"><text/></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="environment"><set/></argument><argument name="script"><text>if ! which cc &gt;/dev/null; then
+    echo &quot;No cc, skipping test&quot;
+    exit 1
+fi
+
+cd $QMV_temp_dir_path
+
+cat &gt;check_sigmask.c &lt;&lt;EOF
+#include &lt;signal.h&gt;
+
+int main(int argc, char** argv)
+{
+    sigset_t s;
+    sigprocmask(SIG_BLOCK, 0, &amp;s);
+    return (sigismember(&amp;s, SIGTERM) || sigismember(&amp;s, SIGXCPU));
+}
+EOF
+
+cc check_sigmask.c -o check_sigmask
+
+if ! ./check_sigmask; then
+    echo &quot;Test failed; some signals are blocked that shouldn't be.&quot;
+    OUTCOME=1
+else
+    OUTCOME=0
+fi
+
+rm -f ./check_sigmask check_sigmask.c
+exit $OUTCOME</text></argument><argument name="arguments"><set/></argument><argument name="timeout"><integer>-1</integer></argument><argument name="resources"><set><text>signals_unblocked_tmpdir</text></set></argument></extension>

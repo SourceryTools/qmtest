@@ -52,6 +52,8 @@ class check(Command):
         self.rsh = 0
         self.all = None
 
+        self.build_scripts = None
+
 
     def finalize_options (self):
         """Compute what tests to execute.
@@ -64,76 +66,88 @@ class check(Command):
             self.threads = 1
             self.processes = 1
             self.rsh = 1
+        # Pick up the build scripts directory from the 'build' command.
+        self.set_undefined_options("build",
+                                   ("build_scripts", "build_scripts"))
 
 
-    qmtest = 'qm/test/qmtest'
-
-    def check_serial(self):
+    def check_serial(self, qmtest, options):
         """Perform serial tests."""
 
-        cmd = [check.qmtest,
-               '-D', 'tests', 'run', '-c',
-               norm('qmtest_path=qm/test/qmtest')]
+        cmd = [qmtest] + options + \
+              ['-D', 'tests', 'run', '-c',
+               norm('qmtest_path=' + qmtest)]
         spawn(cmd)
 
-    def check_threads(self):
+    def check_threads(self, qmtest, options):
         """Perform threaded tests."""
 
         remove_if_exists(norm('tests/QMTest/thread_target'))
-        cmd = [check.qmtest,
+        cmd = [qmtest,
                '-D', 'tests', 'create-target', '-a', 'threads=4',
                '-T', norm('tests/QMTest/thread_target'),
                'thread', 'thread_target.ThreadTarget']
         spawn(cmd)
-        cmd = [check.qmtest,
-               '-D', 'tests', 'run',
+        cmd = [qmtest] + options + \
+              ['-D', 'tests', 'run',
                '-T', norm('tests/QMTest/thread_target'),
-               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest'),
+               '-c', 'qmtest_path=%s' % norm(qmtest),
                '-c', 'qmtest_target=%s'%norm('tests/QMTest/thread_target')]
         spawn(cmd)
 
-    def check_processes(self):
+    def check_processes(self, qmtest, options):
         """Perform sub-processed tests."""
 
         remove_if_exists(norm('tests/QMTest/process_target'))
-        cmd = [check.qmtest,
+        cmd = [qmtest,
                '-D', 'tests', 'create-target', '-a', 'processes=4',
                '-T', norm('tests/QMTest/process_target'),
                'process', 'process_target.ProcessTarget']
         spawn(cmd)
-        cmd = [check.qmtest,
-               '-D', 'tests', 'run',
+        cmd = [qmtest] + options + \
+              ['-D', 'tests', 'run',
                '-T', norm('tests/QMTest/process_target'),
-               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest'),
+               '-c', 'qmtest_path=%s' % norm(qmtest),
                '-c', 'qmtest_target=%s'%norm('tests/QMTest/process_target')]
         spawn(cmd)
 
-    def check_rsh(self):
+    def check_rsh(self, qmtest, options):
         """Perform tests over a remote shell."""
 
         remove_if_exists(norm('tests/QMTest/rsh_target'))
-        cmd = [check.qmtest,
-               '-D', 'tests', 'create-target',
+        cmd = [qmtest,
+              '-D', 'tests', 'create-target',
                '-a', 'host=localhost', '-a', 'remote_shell=ssh',
                '-T', norm('tests/QMTest/rsh_target'),
                'rsh', 'rsh_target.RSHTarget']
         spawn(cmd)
-        cmd = [check.qmtest,
-               '-D', 'tests', 'run',
+        abs_target = os.path.abspath("tests/QMTest/rsh_target")
+        cmd = [qmtest] + options + \
+              ['-D', 'tests', 'run',
                '-T', norm('tests/QMTest/rsh_target'),
-               '-c', 'qmtest_path=%s'%norm('%s/qm/test/qmtest'%os.getcwd()),
-               '-c', 'qmtest_target=%s'%norm('%s/tests/QMTest/rsh_target'%os.getcwd())]
+               '-c', 'qmtest_path=%s' % norm(qmtest),
+               '-c', 'qmtest_target=%s' % norm(abs_target)]
         spawn(cmd)
 
 
     def run(self):
         """Execute the various tests."""
 
+        # Ensure that QMTest is already built.
+        self.run_command("build")
+
+        qmtest = os.path.abspath(os.path.join(self.build_scripts,
+                                              "qmtest"))
+        if os.environ.has_key("QMTESTFLAGS"):
+            options = os.environ["QMTESTFLAGS"].split()
+        else:
+            options = []
+
         if self.serial:
-            self.check_serial()
+            self.check_serial(qmtest, options)
         if self.threads:
-            self.check_threads()
+            self.check_threads(qmtest, options)
         if self.processes:
-            self.check_processes()
+            self.check_processes(qmtest, options)
         if self.rsh:
-            self.check_rsh()
+            self.check_rsh(qmtest, options)

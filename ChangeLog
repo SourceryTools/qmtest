@@ -1,3 +1,22 @@
+2004-05-04  Nathaniel Smith  <njs@codesourcery.com>
+
+	* setup.py: Import 'Extension'.
+	Use it to build qm.sigmask.
+	* qm/sigmask.c: New file.
+	* qm/test/qmtest (main): Import 'qm.sigmask'; call
+	'qm.sigmask.save_mask'.
+	* qm/executable.py: Import 'qm.sigmask'.
+	(Executable._InitializeChild): Call 'qm.sigmask.restore_mask'.
+	
+	* tests/xmldb/signals_unblocked.qmt: New test.
+	* tests/xmldb/signals_unblocked_tmpdir.qma: New resource.
+	
+	* qmdist/command/check.py (check): Overhaul to respect
+	QMTESTFLAGS and use the correct path to the QMTest executable.
+	* GNUmakefile.in: Use "setup.py check" to run tests.
+	* qm/test/qmtest (rel_libdir): When running out of source tree,
+	use built library.
+	
 2004-03-30  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (htmllib): Import it.

@@ -109,38 +109,13 @@ install: all
 check: check-serial check-threads check-processes
 
 check-serial: build
-	qm/test/qmtest -D tests run $(QMTESTFLAGS) \
-		-c qmtest_path=qm/test/qmtest
+	$(PYTHON) setup.py check --serial
 
 check-threads: build
-	rm -f tests/QMTest/thread_target
-	qm/test/qmtest -D tests create-target -a threads=4 \
-		-T tests/QMTest/thread_target \
-		thread thread_target.ThreadTarget
-	qm/test/qmtest -D tests run -T tests/QMTest/thread_target \
-		$(QMTESTFLAGS) \
-		-c qmtest_path=qm/test/qmtest \
-		-c qmtest_target=tests/QMTest/thread_target
+	$(PYTHON) setup.py check --threads
 
 check-processes: build
-	rm -f tests/QMTest/process_target
-	qm/test/qmtest -D tests create-target -a processes=4 \
-		-T tests/QMTest/process_target \
-		process process_target.ProcessTarget
-	qm/test/qmtest -D tests run -T tests/QMTest/process_target \
-		$(QMTESTFLAGS) \
-		-c qmtest_path=qm/test/qmtest \
-		-c qmtest_target=tests/QMTest/process_target
+	$(PYTHON) setup.py check --processes
 
 check-rsh: build
-	rm -f tests/QMTest/rsh_target
-	qm/test/qmtest -D tests create-target \
-                -a host=localhost -a remote_shell=ssh \
-		-T tests/QMTest/rsh_target \
-		rsh rsh_target.RSHTarget
-	qm/test/qmtest -D tests run -T tests/QMTest/rsh_target \
-		$(QMTESTFLAGS) \
-		-c qmtest_path=`pwd`/qm/test/qmtest \
-		-c qmtest_target=`pwd`/tests/QMTest/rsh_target
-
-
+	$(PYTHON) setup.py check --rsh

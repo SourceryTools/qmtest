@@ -17,7 +17,7 @@
 # Imports
 ########################################################################
 
-from   distutils.core import setup
+from   distutils.core import setup, Extension
 import sys
 import os
 import os.path
@@ -94,6 +94,13 @@ qmtest_script = join("qm", "test", "qmtest")
 qmtest_py_script = qmtest_script + ".py"
 shutil.copyfile(qmtest_script, qmtest_py_script)
      
+# We need the sigmask extension on POSIX systems, but don't want it on
+# Win32.
+if sys.platform != "win32":
+    ext_modules = [Extension("qm.sigmask", ["qm/sigmask.c"])]
+else:
+    ext_modules = []
+
 setup(name="qm", 
       version=version,
       author="CodeSourcery, LLC",
@@ -116,6 +123,7 @@ setup(name="qm",
                 'qm/test',
                 'qm/test/classes',
                 'qm/test/web'),
+      ext_modules=ext_modules,
       scripts=[qmtest_script, qmtest_py_script],
       data_files=[('qm/messages/test',
                    prefix(messages, 'qm/test/share/messages')),
