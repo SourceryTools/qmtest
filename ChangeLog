@@ -1,6 +1,10 @@
 2001-04-23  Benjamin Chelf  <chelf@codesourcery.com>
-        * configure.in (AC_CHECK_FILE): Remove Makefile.pre.in.
-        * configure: Regenerate.
+
+	* configure.in (AC_CHECK_FILE): Change exit to a warning.
+	* configure: Regenerate.
+
+	* configure.in (AC_CHECK_FILE): Remove Makefile.pre.in.
+	* configure: Regenerate.
 
 2001-04-18  Benjamin Chelf  <chelf@codesourcery.com>
 
