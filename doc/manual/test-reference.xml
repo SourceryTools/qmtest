@@ -289,12 +289,13 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Standard Input</property> (attachment
+      <glossterm><property>Standard Input</property> (text
       field)</glossterm>
       <glossdef>
        <para>Text or data to pass to the program's standard input
-       stream.  This data is written to a temporary file, and this file
-       is connected to the program's standard input.</para>
+       stream.  This data is written to a temporary file, and the
+       contents of the file are directed to the program's standard
+       input stream.</para>
       </glossdef>
      </glossentry>
 
@@ -329,7 +330,7 @@
 
      <glossentry>
       <glossterm><property>Expected Standard Ouptut</property>
-      (attachment field)</glossterm>
+      (text field)</glossterm>
       <glossdef>
        <para>The text or data which the program is expected to produce
        on its standard output stream.  The actual text or data written
@@ -342,7 +343,7 @@
 
      <glossentry>
       <glossterm><property>Expected Standard Input</property>
-      (attachment field)</glossterm>
+      (text field)</glossterm>
       <glossdef>
        <para>The text or data which the program is expected to produce
        on its standard error stream.  The actual text or data written to
@@ -386,7 +387,7 @@
 
     <glosslist>
      <glossentry>
-      <glossterm><property>Command</property></glossterm>
+      <glossterm><property>Command</property> (text field)</glossterm>
       <glossdef>
        <para>The command to run.  The command is delivered verbatim to
        the shell.  The shell interprets the command according to its own
@@ -395,7 +396,8 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Command Interpreter</property></glossterm>
+      <glossterm><property>Command Interpreter</property> (text
+      field)</glossterm>
       <glossdef>
        <para>The path to the shell or command interpreter program with
        which to interpret the command.  If this field is left empty, the
@@ -436,14 +438,15 @@
 
     <glosslist>
      <glossentry>
-      <glossterm><property>Script</property></glossterm>
+      <glossterm><property>Script</property> (text field)</glossterm>
       <glossdef>
        <para>The text of the script to run.</para>
       </glossdef>
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Script Interpreter</property></glossterm>
+      <glossterm><property>Script Interpreter</property> (text
+      field)</glossterm> 
       <glossdef>
        <para>The path to the shell or command interpreter program with
        which to interpret the script.  If this field is left empty, the

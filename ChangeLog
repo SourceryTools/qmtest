@@ -1,5 +1,16 @@
 2001-08-28  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/xmldb.py (Database.GetTest): Handle ParseError.
+	* qm/test/classes/command.py (ExecTest.fields): Change stdin,
+	stdout, stderr fields to TextFields.
+	(ExecTest.Run): Adjust accordingly.
+	* tests/unit/test/classes/scripttest1.qmt: Likewise.
+	* tests/unit/test/classes/scripttest2.qmt: Likewise.
+	* tests/unit/test/classes/scripttest3.qmt: Likewise.
+	* doc/manual/test-reference.xml: Likewise.
+
+2001-08-28  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/classes/command.py (ScriptTest.fields): Make script
 	field multiline.
 	(ScriptTest.__init__): Test for empty string intepreter field.

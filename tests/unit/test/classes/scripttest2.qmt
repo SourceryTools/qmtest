@@ -6,13 +6,13 @@
   <integer>0</integer>
  </argument>
  <argument name='stdin'>
-  <attachment/>
+  <text/>
  </argument>
  <argument name='interpreter'>
   <text/>
  </argument>
  <argument name='stdout'>
-  <attachment/>
+  <text/>
  </argument>
  <argument name='script'>
   <text># The "path" context property contains the execution path.
@@ -21,7 +21,7 @@ test -n "${QMV_path}"
 </text>
  </argument>
  <argument name='stderr'>
-  <attachment/>
+  <text/>
  </argument>
  <argument name='arguments'>
   <set/>

@@ -165,10 +165,11 @@ class Database(base.Database, qm.common.MutexMixin):
                                   self.__tests,
                                   test_file_extension,
                                   self.__ParseTestDocument)
-        except qm.fields.DomNodeError, message:
+        except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
+               exception:
             message = qm.error("error loading xml test",
                                test_id=test_id,
-                               message=message)
+                               message=str(exception))
             raise TestFileError, message
         
 
