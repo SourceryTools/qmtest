@@ -1,5 +1,9 @@
 2001-04-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtest/core.xml: Paste in text from design document.
+
+2001-04-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* Makefile.in (PYTHONDOCDIRS): Comment out.
 	* install.py (doc_files): Add manual PDF file.
 	(doc_dirs): New variable.
