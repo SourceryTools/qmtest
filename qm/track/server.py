@@ -207,7 +207,7 @@ def _make_server(idb, port, address="", log_file=None):
     returns -- A server object.  Use 'run_server' to start the
     server."""
 
-    # Create a new server instance.  Enable XML-RPM.
+    # Create a new server instance.  Enable XML-RPC.
     server = WebServer(idb, port=port, address=address,
                        log_file=log_file,
                        xml_rpc_path="/xml-rpc")

@@ -470,18 +470,22 @@ class Field:
 
 
     def FormDecodeValue(self, encoding):
-        """Unencode the HTML form-encoded 'encoding' and return a value."""
+        """Decode the HTML form-encoded 'encoding' and return a value."""
 
         raise qm.MethodShouldBeOverriddenError, "Field.FormDecodeValue"
 
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         """Return a value for this field represented by DOM 'node'.
 
         This method does not validate the value for this particular
         instance; it only makes sure the node is well-formed, and
         returns a value of the correct Python type.
 
+        'node' -- The DOM node that is being evaluated.
+
+        'store' -- For attachments, the store that should be used.
+        
         raises -- 'DomNodeError' if the node's structure or contents are
         incorrect for this field."""
 
@@ -754,7 +758,7 @@ class IntegerField(Field):
         return int(encoding)
     
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         # Make sure 'node' is an '<integer>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "integer":
@@ -983,7 +987,7 @@ class TextField(Field):
         return urllib.unquote(encoding)
 
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         # Make sure 'node' is a '<text>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "text":
@@ -1301,7 +1305,7 @@ class SetField(Field):
         raise NotImplementedError
 
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         # Make sure 'node' is a '<set>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "set":
@@ -1313,7 +1317,8 @@ class SetField(Field):
         # Use the contained field to extract values for the children of
         # this node, which are the set elements.
         contained_field = self.GetContainedField()
-        return map(contained_field.GetValueFromDomNode, node.childNodes)
+        fn = lambda n: contained_field.GetValueFromDomNode(n, store)
+        return map(fn, node.childNodes)
 
 
     def MakeDomNodeForValue(self, value, document):
@@ -1399,7 +1404,7 @@ class UploadAttachmentPage(web.DtmlPage):
         'encoding_name' -- The name of the HTML input that should
         contain the encoded attachment.
 
-        'summary_field_name' -- The name of teh HTML input that should
+        'summary_field_name' -- The name of the HTML input that should
         contain the user-visible summary of the attachment.
 
         'in_set' -- If true, the attachment is being added to an
@@ -1408,6 +1413,7 @@ class UploadAttachmentPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "attachment.dtml")
         # Use a brand-new location for the attachment data.
         self.location = attachment.make_temporary_location()
+        self.store = "%d" % attachment.temporary_store.GetIndex()
         # Set up properties.
         self.field_name = field_name
         self.encoding_name = encoding_name
@@ -1621,6 +1627,7 @@ class AttachmentField(Field):
             value.GetDescription(),
             value.GetMimeType(),
             value.GetLocation(),
+            ("%d" % value.GetStore().GetIndex()),
             value.GetFileName(),
             )
         # Each part is URL-encoded.
@@ -1630,21 +1637,24 @@ class AttachmentField(Field):
 
 
     def FormDecodeValue(self, encoding):
+        """Decode the HTML form-encoded 'encoding' and return a value."""
+
         # An empty string represnts a missing attachment, which is OK.
         if string.strip(encoding) == "":
             return None
-        # The encoding is a semicolon-separated triplet of description,
-        # MIME type, and location.
+        # The encoding is a semicolon-separated sequence indicating the
+        # relevant information about the attachment.
         parts = string.split(encoding, ";")
         # Undo the URL encoding of each component.
         parts = map(urllib.unquote, parts)
         # Unpack the results.
-        description, mime_type, location, file_name = parts
+        description, mime_type, location, store, file_name = parts
+        # The store is reprsented by an index.  Retrieve the actual
+        # store itself.
+        store = attachment.get_attachment_store(string.atoi(store))
         # Create the attachment.
-        return attachment.Attachment(mime_type=mime_type,
-                                     description=description,
-                                     file_name=file_name,
-                                     location=location)
+        return attachment.Attachment(mime_type, description,
+                                     file_name, location, store)
 
 
     def FormatSummary(self, attachment):
@@ -1662,7 +1672,7 @@ class AttachmentField(Field):
                       attachment.GetMimeType())
 
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         # Make sure 'node' is an "attachment" element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "attachment":
@@ -1671,7 +1681,7 @@ class AttachmentField(Field):
                                    name=self.GetName(),
                                    right_tag="attachment",
                                    wrong_tag=node.tagName)
-        return attachment.from_dom_node(node)
+        return attachment.from_dom_node(node, store)
 
 
     def MakeDomNodeForValue(self, value, document):
@@ -1860,7 +1870,7 @@ class EnumerationField(TextField):
             raise ValueError, style
 
 
-    def GetValueFromDomNode(self, node):
+    def GetValueFromDomNode(self, node, store):
         # Make sure 'node' is an '<enumeral>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "enumeral":
@@ -2073,7 +2083,7 @@ class UidField(TextField):
 # functions
 ########################################################################
 
-def from_dom_node(node):
+def from_dom_node(node, store):
     """Construct a field object from a DOM node.
 
     'node' -- A DOM node for a "field" element.
@@ -2111,7 +2121,7 @@ def from_dom_node(node):
     # Set the default value.
     default_value_node = xmlutil.get_child(node, "default-value")
     default_value = field.GetValueFromDomNode(
-        default_value_node.childNodes[0])
+        default_value_node.childNodes[0], store)
     field.SetDefaultValue(default_value)
 
     return field

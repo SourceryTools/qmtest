@@ -537,7 +537,8 @@ class Database(base.Database, qm.common.MutexMixin):
             value_node = arg_node.childNodes[0]
             # The field knows how to extract its value from the value
             # node. 
-            value = field.GetValueFromDomNode(value_node)
+            value = field.GetValueFromDomNode(value_node,
+                                              self.__attachment_store)
             # Make sure the value is OK.
             value = field.Validate(value)
             # Store it.

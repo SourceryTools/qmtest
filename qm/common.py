@@ -7,7 +7,7 @@
 # Contents:
 #   General-purpose classes and functions.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2000, 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1163,7 +1163,11 @@ def purge_keys(map, keys):
 def make_unique_tag():
     """Return a unique tag string."""
 
-    return "%f%d" % (time.time() * 100, os.getpid())
+    global _unique_tag
+    
+    tag = "%d_%d" % (_unique_tag, os.getpid())
+    _unique_tag = _unique_tag + 1
+    return tag
 
 
 def split_argument_list(command):
@@ -1317,6 +1321,9 @@ _exit_functions = []
 # code.  These should be called after the QM-installed exit functions
 # are processed.
 _foreign_exit_functions = []
+
+# The next number to be used when handing out unqiue tag strings.
+_unique_tag = 0
 
 ########################################################################
 # Local Variables:

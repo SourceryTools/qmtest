@@ -245,24 +245,6 @@ class InstanceBase:
             if not arguments.has_key(name):
                 arguments[name] = field.GetDefaultValue()
 
-            # Convert attachments to 'AttachmentWrapper' objects.
-            # First, the values of attachment fields (unless 'None').
-            if isinstance(field, qm.fields.AttachmentField):
-                value = arguments[name]
-                if value is not None:
-                    arguments[name] = qm.attachment.AttachmentWrapper(
-                        value, attachment_store)
-            # Also, all items in the values of attachment set fields.
-            if isinstance(field, qm.fields.SetField) \
-               and isinstance(field.GetContainedField(),
-                              qm.fields.AttachmentField):
-                value = arguments[name]
-                new_value = map(
-                    lambda at, as=attachment_store:
-                    qm.attachment.AttachmentWrapper(at, as),
-                    value)
-                arguments[name] = new_value
-
         return apply(klass, [], arguments)
 
 
@@ -603,7 +585,13 @@ class Database:
         """Store a test in the database.
 
         'test' -- A test to write.  It may be a new version of an
-        existing test, or a new test."""
+        existing test, or a new test.  Any attachment fields in the
+        test will be represented by 'Attachment's.  If the store
+        associated with the attachment is not the attachment store
+        associated with the database, the attachment must be copied
+        from its current store to the new store.  The original
+        attachment will be removed from its current store by the
+        caller, if necessary."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
 

@@ -50,6 +50,8 @@ resources is analogous."""
 # imports
 ########################################################################
 
+from   qm.attachment import temporary_store
+import qm.fields
 import qm.label
 import qm.structured_text
 import qm.test.base
@@ -493,45 +495,6 @@ def handle_show(request):
     return ShowPage(item, edit, create, type)(request)
 
 
-def _retrieve_attachment_data(database, item_id, attachment):
-    """Retrieve temporary attachment data and store it in the right place.
-
-    Loads attachment data for 'attachment' stored in the temporary
-    attachment store and stores it in its permanent location in the test
-    database.
-
-    'database' -- The test database.
-
-    'item_id' -- The ID of the test or resource associated with this
-    attachment.
-
-    'attachment' -- An 'Attachment' instance.
-
-    returns -- An 'Attachment' instance (may be the same as
-    'attachment', or not) to use for the attachment."""
-
-    if attachment is None:
-        return None
-
-    location = attachment.GetLocation()
-    if qm.attachment.is_temporary_location(location):
-        # The attachment data is in the temporary store.  We need to
-        # extract it and store it in the test database's permanent
-        # attachment store.  Cause the temporary store to release
-        # control of the file containing the attachment data.
-        data_file_path = qm.attachment.temporary_store.Release(location)
-        # Adopt it into the permanent attachment store.
-        attachment_store = database.GetAttachmentStore()
-        return attachment_store.Adopt(
-            item_id=item_id,
-            mime_type=attachment.GetMimeType(),
-            description=attachment.GetDescription(),
-            file_name=attachment.GetFileName(),
-            path=data_file_path)
-    else:
-        return attachment
-
-
 def handle_submit(request):
     """Handle a test or resource submission.
 
@@ -607,25 +570,6 @@ def handle_submit(request):
             field_errors[field_name] = message
         else:
             # All is well with this field.
-
-            # If the field is an attachment field, or a set of
-            # attachments field, we have to process the values.  The
-            # data for each attachment is stored in the temporary
-            # attachment store; we need to copy it from there into the
-            # test database.  This function does the work.
-            fn = lambda attachment, database=database, item_id=item_id: \
-                 _retrieve_attachment_data(database, item_id, attachment)
-            if isinstance(field, qm.fields.AttachmentField):
-                # An attachment field -- process the value.
-                value = fn(value)
-            elif isinstance(field, qm.fields.SetField) \
-                 and isinstance(field.GetContainedField(),
-                                qm.fields.AttachmentField):
-                # An attachment set field -- process each element of the
-                # value.
-                value = map(fn, value)
-
-            # Store the field value.
             arguments[field_name] = value
 
     properties = qm.web.decode_properties(request["properties"])
@@ -683,6 +627,22 @@ def handle_submit(request):
     elif type is "resource":
         database.WriteResource(item)
 
+    # Remove any attachments located in the temporary store as they
+    # have now been copied to the store associated with the database.
+    for field in fields:
+        if isinstance(field, qm.fields.AttachmentField):
+            attachment = arguments[field.GetName()]
+            if attachment is not None \
+               and attachment.GetStore() == temporary_store:
+                temporary_store.Remove(attachment.GetLocation())
+        elif isinstance(field, qm.fields.SetField) \
+             and isinstance(field.GetContainedField(),
+                            qm.fields.AttachmentField):
+            for attachment in arguments[field.GetName()]:
+                if attachment is not None \
+                   and attachment.GetStore() == temporary_store:
+                    temporary_store.Remove(attachment.GetLocation())
+            
     # Redirect to a page that displays the newly-edited item.
     request = qm.web.WebRequest("show-" + type, base=request, id=item_id)
     raise qm.web.HttpRedirect, request

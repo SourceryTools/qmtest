@@ -1,3 +1,41 @@
+2001-10-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py (TemporaryAttachmentStore): Derived from
+	AttachmentStore.  Add all_stores variable.
+	(AttachmentStore.__init__): Add the new store to all_stores.
+	(AttachmentStore.GetIndex): New method.
+	(TemporaryAttachmentStore.__init__): Initialize the base
+	class.
+	(TemporaryAttachmentStore.Add): Close the file after the
+	data has been written out.
+	(Attachment): Include a reference to the associated attachment 
+	store.
+	(Attachment.__init__): Take an attachment store as a parameter.
+	(Attachment.__cmp__): Compare the attachment store along with
+	the other fields.
+	(AttachmentWrapper): Remove.
+	(from_dom_node): Add attachment store parameter.
+	(get_attachment_store): New function.
+	* qm/common.py (make_unique_tag): Return something more likely
+	to be unique.
+	(_unique_tag): New variable.
+	* qm/fields.py (Field.FromDecodeValue): Adjust comment.
+	(UploadAttachmentPage.__init__): Fix typo in comment.  Put the
+	attachment store into the context for the DTML page.
+	(AttachmentField.FromEncodeValue): Encode the attachment store.
+	(AttachmentField.FormDecodeValue): Decode the attachment store
+	value.
+	* qm/test/base.py (InstanceBase.__MakeItem): Remove special
+	handling for attachments.
+	(Database.WriteTest): Update comments.
+	* qm/test/web/show.py (_retrieve_attachment_data): Remove.
+	(handle_submit): Remove special handling for attachments.
+	Remove temporary attachments when they are no longer needed.
+	* qm/test/web/web.py (make_server): Fix typo in comment.
+	* qm/track/server.py (_make_server): Fix typo in comment.
+	* share/dtml/attachment.dtml: Encode the attachment store
+	when returning information to the server.
+	
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/cmdline.py (Command.__SummarizeResults): Only show

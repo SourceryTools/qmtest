@@ -33,6 +33,9 @@
    <input type="hidden" 
           name="location" 
           value="<dtml-var expr="location">">
+   <input type="hidden"
+          name="store"
+          value="<dtml-var expr="store">">
    <dtml-comment><!--
      A field for the user to upload a file.
    --></dtml-comment>
@@ -114,8 +117,7 @@
   </form>
 
  <dtml-comment><!--
-   This script fills in fields of the parent form.  See 
-   qm.track.web.web.format_attachment_field_value.
+   This script fills in fields of the parent form.
  --></dtml-comment>
  <script language="JavaScript">
  function do_submit()
@@ -127,6 +129,7 @@
    var description;
    var mime_type;
    var location;
+   var store;
    var file_name;
    var summary;
 
@@ -143,6 +146,7 @@
      description = file_name;
    // Get the on-server location of the uploaded attachment data.
    location = document.upload_form.location.value;
+   store = document.upload_form.store.value;
    // Get the MIME type.
    if(document.upload_form.detect_mime_type[0].checked)
      mime_type = "";
@@ -152,6 +156,7 @@
    encoding = escape(description) + ";"
               + escape(mime_type) + ";"
               + escape(location) + ";"
+              + escape(store) + ";"
               + escape(file_name);
 
    summary = description + " (" + file_name

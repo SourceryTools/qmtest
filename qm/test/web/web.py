@@ -196,7 +196,7 @@ def make_server(database, port, address="", log_file=None):
     temporary_attachment_store = qm.attachment.temporary_store
     server.RegisterScript(qm.fields.AttachmentField.upload_url,
                           temporary_attachment_store.HandleUploadRequest)
-    # The IDB's attachment store processes download requests for
+    # The DB's attachment store processes download requests for
     # attachment data.
     attachment_store = database.GetAttachmentStore()
     server.RegisterScript(qm.fields.AttachmentField.download_url,
