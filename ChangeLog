@@ -1,5 +1,8 @@
 2001-02-12  Benjamin Chelf  <chelf@codesourcery.com>
 
+        * qm/track/qmtrack.py (__main__): Change to catch exception.
+	* qm/command_line.py (ErrorHandler): Change to raise exception.
+	
 	* qm/track/qmtrack.py (PrintResults): Change from 'print' to
 	write.
 

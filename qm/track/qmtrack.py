@@ -74,10 +74,13 @@ class CommandLine:
     help_option = ('h', 'help', None, 'Help')
     class_option = ('c', 'class', 'class_name', 'Class for new issue')
     
-    create_command = ('create', 'Create a new issue', 'field[=,+=]value...',
+    create_command = ('create', 'Create a new issue',
+                      '-c classname field[=,+=]value...',
                       "This command will create an issue. The field/value"
                       " pairs indicate attributes for the given issue."
-                      " You must specify the mandatory fields, 'id',"
+                      " You must specify the class for the field with the"
+                      " class flag. You must also specify the mandatory"
+                      " fields, 'id',"
                       " 'categories', and 'summary'.", [ help_option,
                                                          class_option ])
     edit_command = ('edit', 'Edit an issue', 'id field[=,+=,-=]value...',
@@ -150,6 +153,13 @@ class CommandLine:
         self.output = output
         
 
+    def __del__(self):
+        """End the parsing."""
+
+        if idb != None:
+            self.idb.__del__
+
+    
     def ParseFieldValuePairs(self, list):
         """Parse the field value pairs from a list of strings.
 
@@ -654,11 +664,14 @@ class CommandLine:
 ########################################################################
 
 if __name__ == "__main__":
-    program = CommandLine(sys.argv[1:], sys.stdout)
-    program.ParseCommand()
-    program.OpenDatabase()
-    program.PerformCommand()
-    program.PrintResults()
+    try:
+        program = CommandLine(sys.argv[1:], sys.stdout)
+        program.ParseCommand()
+        program.OpenDatabase()
+        program.PerformCommand()
+        program.PrintResults()
+    except ValueError:
+        sys.exit(1)
     sys.exit(0)        
     
 ########################################################################

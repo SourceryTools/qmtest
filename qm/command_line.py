@@ -166,7 +166,7 @@ class CommandParser:
             else:
                 self.__output.write(self.GetCommandHelp(which))
         if fatal == 1:
-            sys.exit(1)
+            raise ValueError
         
 
     def CheckOptions(self, options):
