@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<class-directory>
+ <class kind="resource" name="dependency_checking_resource.DependencyCheckingResource"/>
+</class-directory>

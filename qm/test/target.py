@@ -171,6 +171,7 @@ class Target(qm.extension.Extension):
         self.__engine = engine
         # There are no resources available on this target yet.
         self.__resources = {}
+        self.__order_of_resources = []
 
         
     def Stop(self):
@@ -183,12 +184,15 @@ class Target(qm.extension.Extension):
         Derived classes may override this method."""
         
         # Clean up any available resources.
-        for (name, rop) in self.__resources.items():
+        self.__order_of_resources.reverse()
+        for name in self.__order_of_resources:
+            rop = self.__resources[name]
             if rop and rop[1] == Result.PASS:
                 self._CleanUpResource(name, rop[0])
         del self.__response_queue
         del self.__engine
         del self.__resources
+        del self.__order_of_resources
 
 
     def RunTest(self, descriptor, context):
@@ -321,6 +325,7 @@ class Target(qm.extension.Extension):
         del properties[Context.ID_CONTEXT_PROPERTY]
         rop = (resource, result.GetOutcome(), properties)
         self.__resources[result.GetId()] = rop
+        self.__order_of_resources.append(result.GetId())
         return rop
 
 

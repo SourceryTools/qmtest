@@ -1,5 +1,14 @@
 2004-05-21  Nathaniel Smith  <njs@codesourcery.com>
 
+	* qm/test/target.py (Target.Start): Add instance variable
+	'__order_of_resources'.
+	(Target._FinishResourceSetUp): Record resource setup order in
+	it.
+	(Target.Stop): Use it to determine resource cleanup order.
+	* tests/regress/resource_ordering: New test.
+	
+2004-05-21  Nathaniel Smith  <njs@codesourcery.com>
+
 	* Makefile: Switch default copyright date to 2004.
 	* docbook: Likewise.
 	* docbook-chapter: Likewise.
