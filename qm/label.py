@@ -263,10 +263,22 @@ def join(*components):
     return normpath(string.join(components, sep))
 
 
-def to_path(label):
-    """Return a relative file system path corresponding to 'label'."""
+def to_path(label, extension=""):
+    """Return a path corresponding to 'label'.
 
-    label = normpath(label)
+    'label' -- A label.
+
+    'extension' -- If extension is non-empty, it will be added to
+    every directory name in the path returned.
+
+    returns -- A path (without a leading separator) corresponding
+    to 'label'.  The path returned is always relative; it will never
+    begin with the operating system path separator character.
+
+    For example, if 'extension' is '".ext"', the file name returned
+    for the label '"a.b.c"' will be '"a.ext/b.ext/c"', assuming that
+    '/' is the operating system path separator."""
+
     # 'normpath' returns a label that begins with 'sep' only in one
     # case: if 'label' corresponds to the root label.  In this case, we
     # should return a null path string, not the file system path
@@ -274,7 +286,7 @@ def to_path(label):
     if label == sep:
         return ""
     else:
-        return string.replace(label, sep, os.sep)
+        return string.replace(label, sep, extension + os.sep)
 
 
 def from_path(path):

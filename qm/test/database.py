@@ -69,7 +69,7 @@ class NoSuchTestError(DatabaseError):
     def __str__(self):
         """Return a string describing this exception."""
 
-        return qm.error("no such test", test_id)
+        return qm.error("no such test", test_id=test_id)
 
                         
 
@@ -87,7 +87,7 @@ class NoSuchSuiteError(DatabaseError):
     def __str__(self):
         """Return a string describing this exception."""
 
-        return qm.error("no such suite", self.suite_id)
+        return qm.error("no such suite", suite_id=self.suite_id)
 
 
 
@@ -104,7 +104,7 @@ class NoSuchResourceError(DatabaseError):
     def __str__(self):
         """Return a string describing this exception."""
 
-        return qm.error("no such resource", self.suite_id)
+        return qm.error("no such resource", resource_id=self.resource_id)
 
 
 
@@ -148,6 +148,8 @@ class Database:
     associated with tests.  See the module 'qm.attachment' for more
     information about 'AttachmentStore'.
 
+    'Database' is an abstract class.
+
     You can extend QMTest by providing your own database implementation.
     One reason to do this is that you may want to store tests in a
     format different from the XML format that QMTest uses by default.
@@ -174,10 +176,9 @@ class Database:
 
     If QMTest calls a method on a database and that method raises an
     exception that is not caught within the method itself, QMTest will
-    usually issue an error message and abort.  However, if the exception
-    raised is an instance of 'DatabaseError', QMTest will format the
-    associated string as structured text, display it for the user,
-    and then attempt to continue processing."""
+    catch the exception and continue processing.  Therefore, methods
+    here only have to handle exceptions themselves if that is necessary
+    to maintain the integrity of the database."""
 
 
     def __init__(self, path, store):
@@ -284,18 +285,21 @@ class Database:
             return 1
 
 
-    def GetTestIds(self, directory="."):
+    def GetTestIds(self, directory=".", scan_subdirs=1):
         """Return all test IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
         begin the search.
 
+        'scan_subdirs' -- True if (and only if) subdirectories of
+        'directory' should be scanned.
+        
         'returns' -- A list of all tests located within 'directory',
         as absolute labels.
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
+        raise qm.MethodShouldBeOverriddenError, "Database.GetTestIds"
 
     # Methods that deal with suites.
 
@@ -309,6 +313,9 @@ class Database:
         
         raises -- 'NoSuchSuiteError' if there is no test in the database
         named 'test_id'.
+
+        All databases must have an implicit suite called '.' that
+        contains all tests in the database.
 
         Derived classes must override this method."""
 
@@ -337,7 +344,8 @@ class Database:
         """Remove the suite named 'suite_id' from the database.
 
         'suite_id' -- A label naming the suite that should be removed.
-
+        The suite will not be implicit.
+          
         raises -- 'NoSuchSuiteError' if there is no suite in the
         database named 'test_id'.
 
@@ -359,6 +367,9 @@ class Database:
         between the time that 'HasSuite' is called and the time that
         'GetSuite' is called.
 
+        All databases must have an implicit suite called '.' that
+        contains all tests in the database.
+
         Derived classes may override this method."""
 
         try:
@@ -369,11 +380,14 @@ class Database:
             return 1
 
 
-    def GetSuiteIds(self, directory="."):
+    def GetSuiteIds(self, directory=".", scan_subdirs=1):
         """Return all suite IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
         begin the search.
+
+        'scan_subdirs' -- True if (and only if) subdirectories of
+        'directory' should be scanned.
 
         'returns' -- A list of all suites located within 'directory',
         as absolute labels.
@@ -452,11 +466,14 @@ class Database:
             return 1
 
 
-    def GetResourceIds(self, directory="."):
+    def GetResourceIds(self, directory=".", scan_subdirs=1):
         """Return all resource IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
         begin the search.
+
+        'scan_subdirs' -- True if (and only if) subdirectories of
+        'directory' should be scanned.
 
         'returns' -- A list of all resources located within 'directory',
         as absolute labels.

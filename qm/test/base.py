@@ -487,18 +487,23 @@ class Suite:
 
 
    def GetTestIds(self):
-       """Return a sequence of the test IDs of the tests in this suite.
-       Does not include IDs of tests that are included via other
-       suites."""
+       """Return the tests contained in this suite.
+       
+       returns -- A sequence of labels corresponding to the tests
+       contained in this suite.  Tests that are contained in this suite
+       only because they are contained in a suite which is itself
+       contained in this suite are not returned."""
 
        return self.__test_ids
 
-
+   
    def GetSuiteIds(self):
-       """Return the IDs of suites explicitly part of this suite.
-
-       returns -- A list of suites explicitly in this suite.  Does not
-       include IDs of suites that are included via other suites."""
+       """Return the suites contained in this suite.
+       
+       returns -- A sequence of labels corresponding to the suites
+       contained in this suite.  Suites that are contained in this suite
+       only because they are contained in a suite which is itself
+       contained in this suite are not returned."""
 
        return self.__suite_ids
 

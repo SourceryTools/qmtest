@@ -38,6 +38,7 @@
 import base
 import database
 import dircache
+from   file_database import *
 import os
 import qm.common
 import qm.fields
@@ -46,19 +47,6 @@ import qm.structured_text
 import qm.xmlutil
 import shutil
 import string
-
-########################################################################
-# constants
-########################################################################
-
-test_file_extension = ".qmt"
-"""The file extension for XML files containing tests."""
-
-suite_file_extension = ".qms"
-"""The file extension for files representing test suites."""
-
-resource_file_extension = ".qma"
-"""The file extension for files representing resources."""
 
 ########################################################################
 # classes
@@ -85,7 +73,7 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(database.Database, qm.common.MutexMixin):
+class Database(FileDatabase, qm.common.MutexMixin):
     """A database represnting tests as XML files in a directory tree."""
 
     # When processing the DOM tree for an XML test file, we may
@@ -106,7 +94,7 @@ class Database(database.Database, qm.common.MutexMixin):
         must already exist."""
 
         # Initialize base classes.
-        database.Database.__init__(self, path, AttachmentStore(path))
+        FileDatabase.__init__(self, path, AttachmentStore(path, self))
         # Create a new database, if requested.
         if create:
             if os.path.exists(path):
@@ -133,20 +121,13 @@ class Database(database.Database, qm.common.MutexMixin):
             return []
 
 
-    def GetTest(self, test_id):
+    def _GetTestFromPath(self, test_id, test_path):
         # Try to use a cached value.
         try:
             return self.__tests[test_id]
         except KeyError:
             # Not in cache; no biggie.
             pass
-
-        # Construct the file system path to the test file.
-        test_path = self.IdToPath(test_id) + test_file_extension
-        # Is it there?
-        if not os.path.isfile(test_path):
-            # No.  The test doesn't exist.
-            raise database.NoSuchTestError, test_id
 
         # Load the test file.
         lock = self.GetLock()
@@ -182,7 +163,7 @@ class Database(database.Database, qm.common.MutexMixin):
         self.__MakeDomNodeForTest(document, document.documentElement,
                                   test, comments)
         # Find the file system path for the test file.
-        test_path = self.IdToPath(test_id) + test_file_extension
+        test_path = self.GetTestPath(test_id)
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(test_path)
         if not os.path.isdir(containing_directory):
@@ -200,28 +181,15 @@ class Database(database.Database, qm.common.MutexMixin):
         # Invalidate the cache entry.
         self.__InvalidateItem(test_id, self.__tests)
         # Remove the test file.
-        test_path = self.IdToPath(test_id) + test_file_extension
-        os.unlink(test_path)
+        FileDatabase.RemoveTest(self, test_id)
 
 
-    def GetTestIds(self, label="."):
-        suite = self.GetSuite(label)
-        return base.get_suite_contents_recursively(suite, self)[0]
-
-
-    def GetResource(self, resource_id):
+    def _GetResourceFromPath(self, resource_id, resource_path):
         # Try to use a cached value.
         try:
             return self.__resources[resource_id]
         except KeyError:
             pass
-
-        # Construct the file system path to the resource file.
-        resource_path = self.IdToPath(resource_id) + resource_file_extension
-        # Is it there?
-        if not os.path.isfile(resource_path):
-            # No.  The resource doesn't exist.
-            raise database.NoSuchResourceError, resource_id
 
         # Load the resource file.
         lock = self.GetLock()
@@ -257,7 +225,7 @@ class Database(database.Database, qm.common.MutexMixin):
         self.__MakeDomNodeForResource(document, document.documentElement,
                                     resource, comments)
         # Find the file system path for the resource file.
-        resource_path = self.IdToPath(resource_id) + resource_file_extension
+        resource_path = self.GetResourcePath(resource_id)
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(resource_path)
         if not os.path.isdir(containing_directory):
@@ -274,44 +242,26 @@ class Database(database.Database, qm.common.MutexMixin):
         assert self.HasResource(resource_id)
         # Invalidate the cache entry.
         self.__InvalidateItem(resource_id, self.__resources)
-        # Remove the resource file.
-        resource_path = self.IdToPath(resource_id) + resource_file_extension
-        os.unlink(resource_path)
+        FileDatabase.RemoveResource(self, resource_id)
 
 
-    def GetResourceIds(self, label="."):
-        suite = self.GetSuite(label)
-        return base.get_suite_contents_recursively(suite, self)[1]
-
-
-    def GetSuite(self, suite_id):
+    def _GetSuiteFromPath(self, suite_id, suite_path):
         try:
             return self.__suites[suite_id]
         except KeyError:
-            if suite_id == qm.label.root:
-                suite_path = self.GetPath()
-                suite = DirectorySuite(suite_id, suite_path, self)
-            else:
-                suite_path = self.IdToPath(suite_id) + suite_file_extension
-                if not os.path.exists(suite_path):
-                    raise database.NoSuchSuiteError, \
-                          qm.error("no such suite", suite_id=suite_id)
-                if os.path.isdir(suite_path):
-                    suite = DirectorySuite(suite_id, suite_path, self)
-                elif os.path.isfile(suite_path):
-                    suite = self.__LoadSuiteFile(suite_id, suite_path)
-                else:
-                    raise database.NoSuchSuiteError, \
-                          qm.error("no such suite", suite_id=suite_id)
-            self.__suites[suite_id] = suite
-            return suite
+            pass
+        
+        lock = self.GetLock()
+        suite = self.__LoadSuiteFile(suite_id, suite_path)
+        self.__suites[suite_id] = suite
+        return suite
             
 
     def WriteSuite(self, suite):
         """Write 'suite' to the database as a suite file."""
 
         # Don't write directory suites to suite file.
-        assert not isinstance(suite, DirectorySuite)
+        assert not suite.IsImplicit()
 
         lock = self.GetLock()
         # Invalidate the cache entry.
@@ -335,7 +285,7 @@ class Database(database.Database, qm.common.MutexMixin):
                 document, "suite_id", suite_id)
             suite_element.appendChild(suite_id_element)
         # Find the file system path for the suite file.
-        suite_path = self.IdToPath(suite.GetId()) + suite_file_extension
+        suite_path = self.GetSuitePath(suite)
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(suite_path)
         if not os.path.isdir(containing_directory):
@@ -355,23 +305,7 @@ class Database(database.Database, qm.common.MutexMixin):
         assert not suite.IsImplicit()
         # Invalidate the cache entry.
         self.__InvalidateItem(suite_id, self.__suites)
-        # Remove the suite file.
-        suite_path = self.IdToPath(suite_id) + suite_file_extension
-        os.unlink(suite_path)
-
-
-    def GetSuiteIds(self, label="."):
-        suite = self.GetSuite(label)
-        return base.get_suite_contents_recursively(suite, self)[2]
-
-
-    def IdToPath(self, id_):
-        """Convert an ID in the database to a path."""
-
-        parent_suite_id, name = qm.label.split(id_)
-        parent_suite = self.GetSuite(parent_suite_id)
-        return os.path.join(parent_suite.GetPath(),
-                            qm.label.to_path(name))
+        FileDatabase.RemoveSuite(self, suite_id)
 
 
     # Helper functions.
@@ -754,99 +688,6 @@ class Database(database.Database, qm.common.MutexMixin):
 
 
 
-class DirectorySuite(base.Suite):
-    """A test suite corresponding to directory in the database.
-
-    Each directory in the test database is considered a virtual suite.
-    This suite contains all of the tests in the directory and its
-    subdirectories."""
-
-    def __init__(self, suite_id, path, database):
-        """Create a new test suite instance.
-
-        'suite_id' -- The test suite ID.
-
-        'dir_path' -- The path, relative to 'db_path', to the directory
-        containing the tests.  All tests in and under this directory are
-        included in the suite.
-
-        'database' -- The database of which this suite is part."""
-
-        if not os.path.isdir(path):
-            raise database.NoSuchSuiteError, "no directory at %s" % path
-        # Initialize the base class. 
-        base.Suite.__init__(self, suite_id, implicit=1)
-        # Store the path to the directory, and the database.
-        self.__suite_path = path
-        self.__database = database
-        # These attributes contain the test and suite IDs in the suite,
-        # and are generated on demand.
-        self.__test_ids = None
-        self.__resource_ids = None
-        self.__suite_ids = None
-
-
-    def GetPath(self):
-        """Return the file system path corresponding to this suite."""
-
-        return self.__suite_path
-
-
-    def GetTestIds(self):
-        if self.__test_ids is None:
-            self.__Scan()
-        return self.__test_ids
-
-
-    def GetSuiteIds(self):
-        if self.__suite_ids is None:
-            self.__Scan()
-        return self.__suite_ids
-
-
-    def GetResourceIds(self):
-        if self.__resource_ids is None:
-            self.__Scan()
-        return self.__resource_ids
-
-
-    # Helper methods.
-
-    def __Scan(self):
-        lock = self.__database.GetLock()
-
-        resource_ids = []
-        suite_ids = []
-        test_ids = []
-
-        suite_id = self.GetId()
-        # Loop over contents of the suite directory.
-        for entry in dircache.listdir(self.__suite_path):
-            # Look at its extension.
-            name, extension = os.path.splitext(entry)
-            # Construct the full path and ID for this object.
-            entry_path = os.path.join(self.__suite_path, entry)
-            entry_id = qm.label.join(suite_id, name)
-            # Is it a suite?
-            if extension == suite_file_extension \
-               and (os.path.isfile(entry_path) or os.path.isdir(entry_path)):
-                # It's a suite.
-                suite_ids.append(entry_id)
-            elif extension == test_file_extension \
-                 and os.path.isfile(entry_path):
-                # It's a test file.
-                test_ids.append(entry_id)
-            elif extension == resource_file_extension \
-                 and os.path.isfile(entry_path):
-                # It's a resource file.
-                resource_ids.append(entry_id)
-
-        self.__resource_ids = resource_ids
-        self.__suite_ids = suite_ids
-        self.__test_ids = test_ids
-
-
-
 class AttachmentStore(qm.attachment.AttachmentStore):
     """The attachment store implementation to use with the XML database.
 
@@ -855,13 +696,17 @@ class AttachmentStore(qm.attachment.AttachmentStore):
     stored in the same subdirectory as the test.  Where possible, the
     attachment's file name is used."""
 
-    def __init__(self, path):
+    def __init__(self, path, database):
         """Create a connection to an attachment store.
 
         'path' -- The path to the top of the attachment store directory
-        tree."""
+        tree.
+
+        'database' -- The database with which this attachment store is
+        associated."""
 
         self.__path = path
+        self.__database = database
 
 
     def Store(self, item_id, mime_type, description, file_name, data):
@@ -970,9 +815,9 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         # Is the file name by itself OK in this directory?  It must not
         # have a file extension used by the XML database itself, and
         # there must be no other file with the same name there.
-        if extension not in [test_file_extension,
-                             suite_file_extension,
-                             resource_file_extension] \
+        if extension not in [self.__database.GetTestExtension(),
+                             self.__database.GetSuiteExtension(),
+                             self.__database.GetResourceExtension()] \
            and not os.path.exists(full_data_file_path):
             return data_file_path
 

@@ -1,5 +1,38 @@
 2001-10-06  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/label.py (to_path): Add extension parameter.
+	* qm/test/base.py (Suite.GetTestIds): Revise documentation.
+	(Suite.GetSuiteIds): Likewise.
+	* qm/test/database.py (NoSuchTestError.__str__): Fix typo.
+	(NoSuchSuiteError.__str__): Likewise.
+	(NoSuchResourceError.__str__): Likewise.
+	(Database): Update documentation.
+	(Database.GetTestIds): Add scan_subdirs parameter.
+	(Database.GetSuite): Update documentation.
+	(Database.HasSuite): Likewise.
+	(Database.GetSuiteIds): Add scan_subdirs parameter.
+	(Database.GetResourceIds): Likewise.
+	* qm/test/directory_suite.py: New file.
+	* qm/test/file_database.py: Likewise.
+	* qm/test/xmldb.py (test_file_extension): Remove.
+	(suite_file_extension): Likewise.
+	(resource_file_extension): Likewise.
+	(Database): Inherit from FileDatabase.
+	(Database.__init__): Adjust accordingly.
+	(Database.GetTest): Rename and modify to become ...
+	(Database._GetTestFromPath): ... this.
+	(Database.GetTestIds): Remove.
+	(Database.GetSuite): Rename and modify to become ...
+	(Database._GetSuiteFromPath): ... this.
+	(Database.GetSuiteIds): Remove.
+	(Database.GetResource): Rename and modify to become ...
+	(Database._GetResourceFromPath): ... this.
+	(Database.GetResourceIds): Remove.
+	(DirectorySuite): Remove.
+	(AttachmentStore.__init__): Add database parameter.
+	(AttachmentStore.__MakeDataFilePath): Use it to get the spellings
+	of the various attachments.
+	
 	* qm/test/xmldb.py (Database.__init__): Pass the attachment
 	store down to the base class.
 	(Database.GetAttachmentStore): Remove.
