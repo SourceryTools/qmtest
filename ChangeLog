@@ -1,5 +1,8 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in: Use version to get the version number.
+	* configure: Regenerated.
+
 	* scripts/qm-release (tag_qm): Overwrite version, rather than
 	appending to it.
 	
