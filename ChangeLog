@@ -1,3 +1,10 @@
+2002-08-08  Zack Weinberg  <zack@codesourcery.com>
+
+	* qm/label.py (Label.SplitLeft): New method.
+	* qm/test/database.py (Database.SplitLabelLeft): New method.
+	* qm/test/result.py (Result.Annotate): New method.
+	(Result.Fail): Use it.
+
 2002-08-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (QMException.__init__): New method.

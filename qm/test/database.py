@@ -559,7 +559,7 @@ class Database(qm.extension.Extension):
 
         if not labels:
             return ""
-        
+
         return str(apply(self.__label_class(labels[0]).Join,
                          labels[1:]))
     
@@ -570,6 +570,17 @@ class Database(qm.extension.Extension):
         returns -- A pair of strings '(directory, basename)'."""
 
         return map(str, self.__label_class(label).Split())
+
+
+    def SplitLabelLeft(self, label):
+        """Split the label into a pair '(parent, subpath)'.
+        This is the same operation as SplitLabel, except the split
+        occurs at the leftmost separator, not the rightmost, and a
+        single-component label comes back in the parent slot.
+
+        returns -- A pair of strings '(parent, subpath)'."""
+
+        return map(str, self.__label_class(label).SplitLeft())
 
 
     def LabelBasename(self, label):

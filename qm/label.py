@@ -90,6 +90,25 @@ class Label:
                     self.__class__(self._label))
 
 
+    def SplitLeft(self):
+        """Split the label into a pair '(parent, subpath)'.  This is
+        the same operation as Split, except the split occurs at the
+        leftmost separator, not the rightmost.
+
+        returns -- A pair '(directory, basename)', each of which is
+        a label.
+
+        It is always true that 'directory.join(basename)' will return a
+        label equivalent to the original label."""
+
+        first_sep = self._label.find(self.sep)
+        if first_sep != -1:
+            return (self.__class__(self._label[:first_sep]),
+                    self.__class__(self._label[first_sep + 1:]))
+        else:
+            return (self.__class__(self._label),
+                    self.__class__(""))
+
     def Components(self):
         """Split the label into its components.
 

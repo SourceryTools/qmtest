@@ -164,6 +164,9 @@ class Result:
         assert outcome in Result.outcomes
         self.__outcome = outcome
 
+    def Annotate(self, annotations):
+        """Add 'annotations' to the current set of annotations."""
+        self.__annotations.update(annotations)
 
     def Fail(self, cause=None, annotations={}):
         """Mark the test as failing.
@@ -177,9 +180,7 @@ class Result:
         self.SetOutcome(Result.FAIL)
         if cause:
             self[Result.CAUSE] = cause
-        for k in annotations.keys():
-            self[k] = annotations[k]
-            
+        self.Annotate(annotations)
         
     def GetId(self):
         """Return the label for the test or resource.
