@@ -1,3 +1,7 @@
+2002-05-19  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* COPYING: New file.
+
 2002-05-01  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
 
 	* compiler.py (Compiler.ParseOutput): Add ignore_regexps
