@@ -24,7 +24,8 @@
 
  <para>The sections on issue database configuration are primarily of
  interest to administrators and maintiners; users can skip directly to
- ... to learn how to work with issues in &qmtrack;.</para>
+ the the <link linkend="chap-track-manual">users manual</link> to
+ learn how to work with &qmtrack; once it has been set up.</para>
 
  <section id="sec-tracktut-idb">
   <title>Creating an &idb;</title>
@@ -124,7 +125,8 @@
   <filename>~/idb</filename>, run the &qmtrack; server on port 8000 by
   invoking:</para>
 
-  <screen>&prompt;<userinput>export QMTRACK_DB_PATH=~/idb</userinput>
+  <screen>&prompt;<userinput>QMTRACK_DB_PATH=~/idb</userinput>
+&prompt;<userinput>exporrt QMTRACK_DB_PATH</userinput>
 &prompt;<userinput>qmtrack configure -P 8000 -b</userinput>
   </screen>
 
@@ -161,11 +163,11 @@
   configured your user database correctly, the main &qmtrack; page
   should now include a category labelled
   <guilabel>Administrative</guilabel> in the bottom right, including a
-  <guibutton>Configure IDB...</guibutton> button.  Click on this button
+  <guibutton>Configure IDB</guibutton> button.  Click on this button
   to start configuring your &idb;</para>
 
   <para>From the <guilabel>Configure Issue Database</guilabel> page,
-  select the <guibutton>Add a New Class...</guibutton> button.  Enter a
+  select the <guibutton>Add a New Class</guibutton> button.  Enter a
   name and title for your issue class.  The name is used internally by
   &qmtrack;, while the title will be visible to users.  Both may be the
   same.  For example, specify "bug" for both.  The
@@ -178,14 +180,14 @@
 
   <para>&qmtrack; returns you to the <guilabel>Configure Issue
   Database</guilabel> page, which now shows your new issue class.  Click
-  on its <guibutton>Edit...</guibutton> button to examine its details.
+  on its <guibutton>Edit</guibutton> button to examine its details.
   You'll notice that &qmtrack; has included a several fields
   automatically; these fields are included in all issue classes, and
   cannot be deleted.  From this page, you can add additional fields,
   modify the settings of existing fields, and configure other special
   features.  When you're done, be sure to click on the <guibutton>Commit
   Changes</guibutton> button at the bottom of the form; &qmtrack; does
-  not change the issue in the &idb; until you do this.</para>
+  not change the issue class until you do this.</para>
 
   <para>When you are done editing your issue class, click on the
   <guilabel>Main Page</guilabel> link on the title bar at the top of the
@@ -202,7 +204,7 @@
   issue; others are for &qmtrack;'s internal use.</para>
 
   <para>The most important is the "Issue ID" field.  This contains a
-  unique issue ID (&iid;)&mdash;a short string which identifies the issue.
+  unique issue ID (&iid;) &dashdash; a short string which identifies the issue.
   Each's issue's &iid; is unique in the issue database.</para>
 
   <para>Another important field added by &qmtrack; is the "Summary"
@@ -219,7 +221,7 @@
   respectively.</para>
 
   <para>You may wish to add fields to your issue class.  To do so, click
-  on the <guibutton>Add a New Field...</guibutton> button.  Specify the
+  on the <guibutton>Add a New Field</guibutton> button.  Specify the
   name of the field (this is &qmtrack;'s internal name, not the name
   that will be presented to the user; you can specify the latter
   afterwards) and the field's type.  &qmtrack; represents field types by
@@ -290,7 +292,7 @@
   <para>&qmtrack; provides some special features to help you make the
   best use of your issue database.  These features can be configured for
   each issue class individually.  To do so, click on the
-  <guibutton>Edit...</guibutton> button for an issue class from the
+  <guibutton>Edit</guibutton> button for an issue class from the
   &idb; configuration page.  The form contains a section
   <guilabel>Special Features</guilabel> from which you can access
   them.</para>
@@ -304,7 +306,7 @@
      recipients of the notification message, and also specify the
      conditions under which the message is to be sent.</para>
 
-     <para>Click on the <guibutton>Configure...</guibutton> button for
+     <para>Click on the <guibutton>Configure</guibutton> button for
      the notification feature to configure email notification for all
      issues in that issue class.  &qmtrack; shows you a form from which
      you may specify both ordinary Internet email addresses and
@@ -346,7 +348,7 @@
      Optionally, you may configure the issue class to subscribe a user
      to an issue automatically when the user modifies that issue.</para>
 
-     <para>Click on the <guibutton>Configure...</guibutton> button for
+     <para>Click on the <guibutton>Configure</guibutton> button for
      the subscription feature to configure it.  &qmtrack; shows you a
      form from which you may specify the condition under which the
      notification email is sent.  The semantics of this field are

@@ -18,10 +18,36 @@
 <chapter id="chap-test-manual">
  <title>Using &qmtest;</title>
 
- <para>This chapter describes &qmtest; in more detail.  It explains
- the fundamental concepts that &qmtest; uses, the test classes that
- come with &qmtest;, and how to extend &qmtest; to support new
- application domains.</para>
+  <para>This chapter describes &qmtest; in more detail.  It explains
+  the fundamental concepts that &qmtest; uses, the test classes that
+  come with &qmtest;, and how to extend &qmtest; to support new
+  application domains.</para>
+
+  <para>The central principle underlying the design of QMTest is that
+  the problem of testing can be divided into a domain-dependent problem
+  and a domain-independent problem.  The domain-dependent problem is
+  deciding what to test and how to test it.  For example, should a
+  database be tested by performing unit tests on the C code that makes
+  up the database, or by performing integration tests using SQL queries?
+  How should the output of a query asking for a set of records be
+  compared to expected output?  Does the order in which the records
+  presented in matter?  These are questions that only someone who
+  understands the application domain can answer.</para>
+
+  <para>The domain-independent part of the problem is managing the
+  creation of tests, executing the tests, and displaying the results for
+  users.  For example, how does a user create a new test?  How are tests
+  stored?  Should failing tests be reported to the user, even if the
+  failure was expected?  These questions are independent of the
+  application domain; they are just as relevant for compiler tests as
+  they are for database tests.</para>
+
+  <para>QMTest is intended to solve the domain-independent part of the
+  problem and to offer a convenient, powerful, and flexible interface
+  for solving the domain-dependent problem.  QMTest is both a complete
+  application, in that it can be used <quote>out of the box</quote> to
+  handle many testing domains, and infrastructure, in that it can be
+  extended to handle other domains.</para>
 
   <section id="sec-qmtest-concepts">
   <title>&qmtest; Concepts</title>
@@ -80,230 +106,85 @@
   <section id="sec-resources">
    <title>Resources</title>
 
-   <para>Resources represent elements external to the test framework,
-   and possibly shared among tests, that are required to run a test.
-   Each test specifies the resources it requires, and &qmtest; sets up
-   the resources appropriately when scheduling tests.</para>
+   <para>Some tests take a lot of work to set up.  For example, a
+   database test that checks the result of SQL queries may require
+   that the database first be populated with a substantial number of
+   records.  If there are many tests that all use the same set of
+   records, it would be wasteful to set up the database for each test.
+   It would be more efficient to set up the database once, run all of
+   the tests, and then remove the databases upon completion.</para>
 
-   <para>A resource shares some common elements with a test:</para>
+   <para>You can use a <firstterm>resource</firstterm> to gain this
+   efficiency.  If a test depends on a resource, &qmtest; will ensure
+   that the resource is available before the test runs.  Once all
+   tests that depend on the resource have been run, &qmtest; will
+   destroy the resource.</para>
 
-   <itemizedlist>
-    <listitem>
-     <para>Each resource is specified by an ID, analogous to a test ID.
-     The requirements for resource IDs are the same as the requirements
-     for test IDs.  Resources are stored in the test databasealong with
-     tests and test suites.  Resource IDs and test IDs share the same ID
-     hierarchy.</para>
-    </listitem>
+   <para>Just as every test is an instance of a <firstterm>test
+   class</firstterm>, every resource is an instance of a
+   <firstterm>resource class</firstterm>.  The resource class explains
+   how to set up the resource and how to clean up when it is no longer
+   needed.  The arguments to the resource class are what make two
+   instances of the same resource class different from each other.
+   For example, in the case of a resource that sets up a database, the
+   records to place in the database might be given as arguments.
+   Every resource has a name, using the same format that is used for
+   tests.  It is possible to have a test and resource with the same
+   name; the test and resource namespaces are distinct.</para>
 
-    <listitem>
-     <para>Each resource specifies a <firstterm
-     id="def-resource-class">resource class</firstterm>, analogous to a
-     test class.  Like a test class, a resource class is a template with
-     named parameters.  Each resource instance provides argument values
-     matching these parameters.</para>
-    </listitem>
-   </itemizedlist>
-
-   <para>Resources are used differently from tests.  While a test is run
-   once in a test run, a resource is used twice: once to <firstterm
-   id="def-set-up">set up</firstterm> the resource, and once to
-   <firstterm id="def-clean-up">clean up</firstterm> the resource.  Each
-   of the setup and cleanup functions produce a result object that is
-   identical to a test result, except that the &UNTESTED; outcome is not
-   used.</para>
-
-   <para>A single resource may be used by more than one test.  In this
-   case, &qmtest; may set up the resource only once, before any of the
-   tests are run, and clean it up after all the tests have been run.
-   However, &qmtest; will share resources among tests in this way only
-   if all the tests run on the same <link
-   linkend="def-target">target</link>.  If the tests are run on multiple
-   targets, &qmtest; sets up the resource once on each target.</para>
-
-   <para>Since &qmtest; can schedule multiple tests concurrently, you
-   must make sure that two tests which use the same resource can run
-   concurrently without the possibility of a deadlock or race
-   condition.</para> 
+   <para>Under some circumstances (such as running tests on multiple
+   machines at once), &qmtest; may create more than one instance of
+   the same resource.  Therefore, you should never depend on there
+   being only one instance of a resource.  In addition, if you have
+   asked &qmtest; to run tests concurrently, two tests may access the
+   same resource at the same time.</para>
+ 
+   <para>Setting up or cleaning up a resource produces a result, just
+   like those produced for tests.  &qmtest; will display these results
+   in its summary output and record them in the results file.</para>
 
   </section> <!-- sec-resources -->
 
   <section id="sec-context">
    <title>Context</title>
 
-   <para>The <firstterm id="def-context">context</firstterm>
-   encapsulates all external information available to a test when it
-   executes.  The context contains information such as,
-    <itemizedlist>
-     <listitem>
-      <para>Information about the test execution environment, such as
-      which machine the test is running on and the current time of
-      day.</para>
-     </listitem>
+   <para>When you createa a test, you choose arguments for the test.
+   The test class uses this information to run the test.  However, the
+   test class may sometimes need information that is not available
+   when the test is created.  For example, if you are writing compiler
+   tests to verify conformance with the C programming language
+   specification, you do not know the location of the C compiler
+   itself.  The C compiler may be installed in different locations on
+   different machines.</para>
 
-     <listitem>
-      <para>Global configuration information.</para>
-     </listitem>
-
-     <listitem>
-      <para>Information about resources required by the test.</para>
-     </listitem>
-    </itemizedlist>
-   </para>
-
-   <para>The context is made of <firstterm
-   id="def-context-properties">context properties</firstterm>.  Each
-   property has a name and a string value.</para>
+   <para>A <firstterm id="def-context">context</firstterm> gives users
+   a way of conveying this kind of information to tests.  The context
+   is a set of key/value pairs.  The keys and values are always
+   strings.  In general, all tests in a given use of &qmtest; will
+   have the same context.  However, when a resource is set up, it may
+   place additional information in the context of those tests that
+   depend upon it; the tests can use this information to locate the
+   resource.</para>
 
   </section> <!-- sec-context -->
-
-  <section id="sec-test-suite">
-   <title>Test Suite</title>
-
-   <para>A <firstterm>test suite</firstterm> is a collection of tests
-   and other test suites.  Test suites help you easily to specify a
-   group of tests, and enable &qmtest; to report results for groups of
-   tests.</para>
-
-   <para>Conceptually, a test suite is simply a list of IDs of tests and
-   suites.  Even if a test is listed more than once, either directly or
-   within another test suite, it is considered to appear only once in
-   the test suite.  A test or test suite can appear in many different
-   test suites.</para>
-
-   <para>A test suite can contain another test suites; this is simply a
-   shortcut for listing all tests (and test suites, recursively) in the
-   contained suite.  A test suite may not include itself, either
-   directly or indirectly.</para>
-
-   <para>A common use of test suites is to create categories of tests
-   that are run in certain scenarios.  For example, you might add to
-   your test database three suites named <literal>nightly</literal>,
-   <literal>regression</literal>, and <literal>smoke_tests</literal>.
-   The <literal>nightly</literal> suite contains tests that are run
-   during the nightly system test run.  The
-   <literal>regression</literal> suite contains tests that developers
-   run before submitting program modifications, to test for
-   functionality regressions from the previous version.  The
-   <literal>smoke_tests</literal> suite contains a limited subset of
-   tests that are run when the tested system is built and installed, to
-   check for basic functionality and correctness.  Each test may appear
-   in none, one, two, or all three of these suites.</para>
-
-   <section id="sec-implicit-test-suites">
-    <title>Implicit Test Suites</title>
-
-    <para><xref linkend="sec-tests"/> explains how you may arrange
-    tests in a tree hierarchy, using a period ("<literal>.</literal>")
-    as the path separator in test IDs.  &qmtest; defines an
-    <firstterm>implicit test suite</firstterm> for each path prefix.
-    The suite ID of an implicit test suite is the path prefix, and the
-    suite contains all tests in the test database whose IDs start with
-    the path prefix.  Thus, implicit test suites reflect the structure
-    of the tree hierarchy you use to arrange your test IDs.</para>
-
-    <para>Consider, for example, a test database which contains tests
-    with these IDs:</para>
-
-    <simplelist type="vert" columns="1">
-     <member><literal>back_end.db_1</literal></member>
-     <member><literal>back_end.db2</literal></member>
-     <member><literal>front_end.cmdline</literal></member>
-     <member><literal>front_end.gui.widget_1</literal></member>
-     <member><literal>front_end.gui.widget_2</literal></member>
-    </simplelist>
-
-    <para>For this test database, &qmtest; defines implicit test suites
-    with IDs <literal>back_end</literal>, <literal>front_end</literal>,
-    and <literal>front_end.gui</literal>.  The test suite
-    <literal>front_end</literal> contains the tests
-    <literal>front_end.cmdline</literal>,
-    <literal>front_end.gui.widget_1</literal>, and
-    <literal>front_end.gui.widget_2</literal>.</para>
-
-    <para>The suite ID "<literal>.</literal>" (a single period)
-    specifies the test suite with an empty prefix.  This is the implicit
-    test suite which contains all test IDs in the test database. Thus,
-    for example, the command</para>
-
-    <screen>
-&prompt;<userinput>qmtest run .</userinput>
-    </screen>
-
-    <para>is equivalent to</para>
-
-    <screen>
-&prompt;<userinput>qmtest run</userinput>
-    </screen>
-
-   </section> <!-- sec-implicit-test-suites -->
-
-  </section> <!-- sec-test-suite -->
-
-  <section id="sec-test-database">
-   <title>Test Database</title>
-
-   <para>A <firstterm id="def-test-database">test database</firstterm>
-   stores tests and test suites.  The test database is responsible for
-   storing and retrieving the test instance associated with a particular
-   test ID, and for obtaining the test instances that make up a
-   particular suite.  &qmtest; stores a test database in a single
-   directory, which may include many files and subdirectories.</para>
-
-   <para>To specify a test database, provide the path to its top-level
-   directory.  When you invoke the &qmtest; program, you must specify
-   the test database by using the <option>&dashdash;db-path</option>
-   (<option>-D</option>) to &qmtest-cmd;.  For example,</para>
-
-   <screen>
-&prompt;<userinput>qmtest -D /path/to/test_database run gui_tests</userinput>
-<computeroutput>...</computeroutput>
-   </screen>
-
-   <para>To obviate specifying this option every time you run
-   &qmtest-cmd;, set the environment variable
-   <envar>QMTEST_DB_PATH</envar> to the location of the test database.
-   For example, if you are using a Bourne-style shell,</para>
-
-   <screen>
-&prompt;<userinput>export QMTEST_DB_PATH=/path/to/test_database</userinput>
-&prompt;<userinput>qmtest run gui_tests</userinput>
-<computeroutput>...</computeroutput>
-   </screen>
-
-   <para>Typically, you will need only a single test database for all of
-   your tests.  A test database may store different kinds of tests and
-   tests of different applications.  You may sometimes wish to divide
-   your tests among multiple test databases, for instance if you wish to
-   back them up separately or place them in separate source control
-   modules.  However, &qmtest; can operate on only one test database at
-   a time.  In a single test run you may only run tests from one test
-   database.</para>
-
-   <para>&qmtest; stores tests, resources, and test suites in the test
-   database using subdirectories containing XML files.  Generally, there
-   should be no need to examine or modify these files directly.
-   However, &qmtest; allows you to provide an alternate test database
-   implementation.  Another implementation might generate test
-   specifications dynamically, or extract tests from source code, or
-   load tests from a legacy test suite file structure.</para>
-
-  </section> <!-- sec-test-database -->
 
   <section id="sec-test-results">
    <title>Test Results</title>
 
-   <para>The result of executing a single test is an <link
-   linkend="def-outcome">outcome</link>, plus additional properties,
-   grouped together in a <link linkend="def-result">results</link>
-   object.</para>
+   <para>A <firstterm id="def-result">result</firstterm> is an
+   <firstterm id="def-outcome">outcome</firstterm> together with some
+   <firstterm>annotations</firstterm>.  The outcome indicates whether
+   the test passed or failed.  The annotations give additional
+   information about the result, such as the manner in which the test
+   failed, the output the test produced, or the amount of time it took
+   to run the test.</para>
 
    <section id="sec-outcomes">
     <title>Outcomes</title>
 
-    <para>The <firstterm id="def-outcome">outcome</firstterm> of a test
-    indicates whether it passed or failed, or whether some exceptional
-    situation occurred.  There are four test outcomes:
+    <para>The outcome of a test indicates whether it passed or failed,
+    or whether some exceptional event occurred.  There are four test
+    outcomes:
      <itemizedlist>
       <listitem>
        <para>&PASS;: The test succeeded.</para>
@@ -320,87 +201,160 @@
        executable in order to test it, but could not because the system
        call to create a new process failed.</para>
 
-       <para>This outcome can also indicate a bug in &qmtest; or the
-       test class.</para>
+       <para>This outcome may also indicate a defect in &qmtest; or in
+       the test class.</para>
       </listitem>
 
       <listitem>
        <para>&UNTESTED;: &qmtest; did not attempt to execute the test.
        For example, this outcome is used when &qmtest; determines that
-       one of the prerequisites failed.</para>
+       a prerequisite test failed.</para>
       </listitem>
      </itemizedlist>
     </para>
 
    </section> <!-- sec-outcomes -->
 
-   <section id="sec-results">
-    <title>Results</title>
+   <section id="sec-annotations">
+    <title>Annotations</title>
   
-    <para>A <firstterm id="def-result">result</firstterm> contains
-    information about the execution of a single test.  Each test result
-    contains the test's ID, a test outcome, and zero or more properties.
-    These may include such things as the reason why a particular test
-    was untested, or the values of environment variables when the test
-    was run.</para>
+    <para>An annotation is a key/value pair.  Both the keys and values
+    must are strings.  When a test (or resource) runs it may add
+    annotations to the result.  These annotations are displayed by
+    &qmtest; and preserved in the results file.  If you write your own
+    test class, you can use annotations to store information that will
+    make your test class more informative.</para>
 
-   </section> <!-- sec-results -->
-
-   <section id="sec-expected-outcomes">
-    <title>Expected Outcomes</title>
-
-    <para>Often when using a test suite repeatedly, some tests are
-    expected not to pass.  For instance, a particular test or set of
-    tests may exercise a unit of functionality that is not present in a
-    particular version of the tested system.  In such cases, it is
-    convenient to have results reported in relation to a set of
-    <firstterm id="def-expected-outcomes">expected outcomes</firstterm>,
-    in addition to absolute outcomes (passing, failing, etc.)  of each
-    test.</para>
-
-    <para>&qmtest; uses the same file format for test results and
-    expected outcomes.  You may use a test results file as the expected
-    outcomes for a subsequent test run.  Note that a test results file
-    contains additional data (result properties, resource results) that
-    are not required in an expected results file.  These are ignored if
-    the test results file is used an an expected outcomes file.</para>
-
-   </section> <!-- sec-expected-outcomes -->
+   </section> <!-- sec-annotations -->
 
   </section> <!-- sec-test-results -->
+
+  <section id="sec-test-suite">
+   <title>Test Suite</title>
+
+   <para>A <firstterm>test suite</firstterm> is a collection of tests.
+   &qmtest; can run an entire test suite at once, so by grouping tests
+   together in a test suite, you make it easier to run a number of
+   tests at once.  A single test can be a member of more than one test
+   suite.  A test suite can contain other test suites; the total set
+   of tests in a test suite includes both those tests included
+   directly and those tests included as part of another test suite.
+   Every test suite has a name, following the same conventions given
+   above for tests and resources.</para>
+
+   <para>One use of test suites is to provide groups of tests that are
+   run in different situations.  For example, the
+   <literal>nightly</literal> test suite might consist of those tests
+   that should be run automatically every night, while the
+   <literal>checkin</literal> test suite might consist of those tests
+   that have to pass before any changes are made to the target
+   application.</para>
+
+   <section id="sec-implicit-test-suites">
+    <title>Implicit Test Suites</title>
+
+    <para><xref linkend="sec-tests"/> explains how you may arrange
+    tests in a tree hierarchy, using a period
+    (<quote><literal>.</literal></quote>) as the path separator in
+    test names.  &qmtest; defines an <firstterm>implicit test
+    suite</firstterm> for each directory.  The name of these implicit
+    test suites is the same as the name of the directory.  The
+    implicit test suite corresponding to a directory contains all
+    tests in that directory or its subdirectories.</para>
+
+    <para>Consider, for example, a test database which contains tests
+    with these names:</para>
+
+    <simplelist type="vert" columns="1">
+     <member><filename>back_end.db_1</filename></member>
+     <member><filename>back_end.db2</filename></member>
+     <member><filename>front_end.cmdline</filename></member>
+     <member><filename>front_end.gui.widget_1</filename></member>
+     <member><filename>front_end.gui.widget_2</filename></member>
+    </simplelist>
+
+    <para>For this test database, &qmtest; defines implicit test suites
+    with IDs <filename>back_end</filename>, <filename>front_end</filename>,
+    and <filename>front_end.gui</filename>.  The test suite
+    <filename>front_end</filename> contains the tests
+    <filename>front_end.cmdline</filename>,
+    <filename>front_end.gui.widget_1</filename>, and
+    <filename>front_end.gui.widget_2</filename>.</para>
+
+    <para>The suite named "<filename>.</filename>" (a single period) is
+    the implicit test suite corresponding to the root directory in the
+    test database.  This suite therefore contains all tests in the
+    database.  For example, the command
+
+    <screen>
+&prompt;<userinput>qmtest run .</userinput>
+    </screen>
+
+    is equivalent to:
+
+    <screen>
+&prompt;<userinput>qmtest run</userinput>
+    </screen>
+
+    Both commands run all tests in the database.</para>
+
+   </section> <!-- sec-implicit-test-suites -->
+
+  </section> <!-- sec-test-suite -->
+
+  <section id="sec-test-database">
+   <title>Test Database</title>
+
+   <para>A <firstterm id="def-test-database">test database</firstterm>
+   stores tests, test suites, and resources.  When you ask &qmtest;
+   for a particular test by name, it queries the test database to
+   obtain the test itself.  &qmtest; stores a test database in a
+   single directory, which may include many files and
+   subdirectories.</para>
+ 
+   <para>In general, &qmtest; can only use one test database at a
+   time.  However, it is possible to create a test database which
+   contains other test databases.  This mechanism allows you to store
+   the tests associated with different parts of a large application in
+   different test databases, and still combine them into a single
+   large test database when required.</para>
+
+   <para>A single test database can store many different kinds of
+   tests.  By default, &qmtest; stores tests, resources, and test
+   suites in the test database using subdirectories containing XML
+   files.  Generally, there should be no need to examine or modify
+   these files directly.  However, the use of an XML format makes it
+   easy for you to automatically generate tests from another program,
+   if required.</para>
+
+  </section> <!-- sec-test-database -->
 
   <section id="sec-targets">
    <title>Targets</title>
 
-   <para>A <firstterm id="def-target">target</firstterm> is an entity
-   that can run tests.  If you are using &qmtest; to test a software
-   program, a target is a computer which is capable of running the
-   program.</para>
+   <para>A <firstterm id="def-target">target</firstterm> is &qmtest;'s
+   abstraction a machine.  By using multiple targets, you can run your
+   tests on multiple machines at one.  If you have many tests, and
+   many machines, you can greatly reduce the amount of time it takes
+   to run all of your tests by distributing the tests across multiple
+   targets.</para>
 
-   <para>&qmtest; supports testing software or other systems on multiple
-   targets.  One computer, on which the <command>&qmtest-cmd;
-   run</command> command is invoked, controls the test run, but tests
-   may be dispatched to other targets for execution.  &qmtest; also
-   supports targets which can run multiple tests at a time.</para>
-
-   <para>By default, &qmtest; assumes the existance of a single target
-   on which to run tests: the same computer on which &qmtest-cmd; is
-   invoked.  You may specify other target configurations by creating a
-   target file, which lists the available targets and their attributes,
-   and specifying the target file when you invoke &qmtest-cmd;.  See
-   <xref linkend="sec-target-files"/> for details on writing and using
-   target files.</para>
+   <para>By default, &qmtest; uses only one target: the machine on
+   which you are running &qmtest;.  You may specify other targets by
+   creating a target file, which lists the available targets and their
+   attributes, and specifying the target file when you invoke
+   &qmtest-cmd;.  See <xref linkend="sec-target-files"/> for details
+   on writing and using target files.</para>
 
    <para>Each target is a member of a single <firstterm
-   id="def-target-group">target group</firstterm>.  The target specifies
-   a target group name, a string that determines the nature and
-   capabilities of the target.  The syntax of target group names is left
-   to the test implementor.  For testing software on multiple platforms,
-   the target group could be used to represent the architecture and
-   operating system of target platforms.  One reasonable choice for
-   target group syntax is the GNU target triplet (for example, x86 Linux
-   systems have the GNU target triplet
-   "<literal>i386-pc-linux-gnu</literal>").</para>
+   id="def-target-group">target group</firstterm>.  All machines in
+   the same target group are considered equivalent.  A target group is
+   specified by a string.  If you are testing software on multiple
+   platforms at once, the target group might correspond to machines
+   running the same operating system.  For example, all Intel 80386
+   compatible machines running GNU/Linux might be in the
+   <quote><literal>i386-pc-linux-gnu</literal></quote> target
+   group.</para>
 
    <para><xref linkend="sec-ref-targets"/> describes how you specify and
    use targets with &qmtest;.</para>
@@ -415,7 +369,7 @@
   <para>To run one or more tests, use the <command>&qmtest-cmd;
   run</command> command.  Each invocation of the <command>&qmtest-cmd;
   run</command> command is a single test run, and produces a single set
-  of test results and statistics.  Specify as arguments the IDs of tests
+  of test results and statistics.  Specify as arguments the names of tests
   and test suites to run.  Even if you specify a test more than once,
   either directly or by incorporation in a test suite, &qmtest; runs it
   only once.</para>
@@ -433,13 +387,13 @@
   <section id="sec-ordering-and-dependencies">
    <title>Ordering and Dependencies</title>
 
-   <para>Given one or more input test IDs and test suite IDs, &qmtest;
+   <para>Given one or more input test names and test suite names, &qmtest;
    employs the following procedure to determine which tests and
    resources to run, and the order in which they are run.</para>
 
    <orderedlist>
     <listitem>
-     <para>&qmtest; resolves test IDs and test suite IDs.  Test suites
+     <para>&qmtest; resolves test names and test suite names.  Test suites
      are expanded into the tests they contain.  Since test suites may
      contain other test suites, this process is repeated until all test
      suites have been expanded.  The result is a set of tests that are
@@ -552,6 +506,678 @@
 
  </section> <!-- Running Tests -->
 
+ <section id="sec-database-contents">
+  <title>Test Database Contents</title>
+
+  <para>The default &qmtest; test database implementation stores the
+  database as a directory hierarcy containing XML files.  Each component
+  of a test, suite, or resource name is represented by a subdirectory.  A
+  test, suite, or resource is represented by an XML file.  These files
+  have file extensions <filename>.qmt</filename>,
+  <filename>.qms</filename>, and <filename>.qma</filename>,
+  respectively.</para>
+
+  <para>Expert &qmtest; users may modify the contents of the test
+  database directly by editing these files.  However, it is the user's
+  responsibility to ensure the integrity and validity of the XML
+  contents of each file.  For example, file and directory names should
+  contain only characters allowed in identifiers (lower-case letters,
+  digits, and underscores); a period should only be used to a file
+  extension, such as <filename>.qmt</filename>.  Also, the files and
+  directories in a test database should not be modified directly while
+  &qmtest; is running with that test database.</para>
+
+ </section> <!-- sec-database-contents -->
+
+ <section id="sec-test-command-line">
+  <title>Command Line Reference</title>
+
+  <para>The &qmtest-cmd; program understands these general options.
+  They can be used with any command, and should precede the command name
+  on the command line.</para>
+
+  <para>All options are available in a "long form," prefixed with
+  "&dashdash;" (two hyphens).  Some options also may be specified in a
+  "short form," consisting of a single hyphen and a one-letter
+  abbreviation (listed below in parentheses).  Short-form options may be
+  combined in the manner typical for UNIX programs; for example,
+  <command>-abc</command> is equivalent to <command>-a -b
+  -c</command>.</para>
+
+  <glosslist>
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;help</option> (<option>-h</option>)
+    </glossterm>
+    <glossdef>
+     <para>Display help information, listing commands and general
+     options for the &qmtest-cmd; command.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;verbose</option> (<option>-v</option>)
+    </glossterm>
+    <glossdef>
+     <para>Generate progress and status messages while executing.  This
+     option may be specified more than once; the more times it is
+     specified, the higher the verbose level, and the more messages are
+     printed.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;tdb</option> <replaceable>PATH</replaceable> 
+     (<option>-D</option>)
+    </glossterm>
+    <glossdef>
+     <para>Use the test database located at
+     <replaceable>PATH</replaceable>.  This flag overrides the value of
+     the environment variable <envar>QMTEST_DB_PATH</envar>, but if this
+     flag is not specified, the environment variable must be
+     defined.  See <xref linkend="sec-test-database"/>.</para>
+    </glossdef>
+   </glossentry>
+
+  </glosslist>
+
+  <para>Additional options are available for specific commands; these
+  are presented with each command.  Options specific to a command must
+  follow the command on the command line.  Specify the
+  <option>&dashdash;help</option> (<option>-h</option>) option after the
+  command for a description of the command and a list of of available
+  options for that command.</para>
+
+  <section id="sec-testcmd-run">
+   <title>The <command>&qmtest-cmd; run</command> Command</title>
+
+   <para>The <command>&qmtest-cmd; run</command> command runs tests.
+   Specify one or more test and/or test suite IDs on the command line,
+   or omit additional arguments to run all the tests in the test
+   database.  Tests listed more than once (directly or by inclusion in a
+   test suite) are run only once.  Tests may not be run in the order
+   listed.</para>
+
+   <para>The <command>run</command> accepts these options:</para>
+
+   <glosslist>
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;output</option> <replaceable>FILE</replaceable> 
+      (<option>-o</option>)
+     </glossterm>
+     <glossdef>
+      <para>Write full test results to <replaceable>FILE</replaceable>.
+      Specify "<literal>-</literal>" (a hyphen) to write results to
+      standard output.  If neither this option, nor the
+      <option>&dashdash;no-output</option> is specified, the results
+      are written to the file named <filename>results.qmr</filename>
+      in the current directory.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;no-output</option>
+     </glossterm>
+     <glossdef>
+      <para>Do not produce a test results file.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;summary</option> <replaceable>FILE</replaceable> 
+      (<option>-s</option>)
+     </glossterm>
+     <glossdef>
+      <para>Write a summary of the test run to
+      <replaceable>FILE</replaceable>.  Specify "<literal>-</literal>"
+      (a hyphen) to write results to standard output (the default).  </para>
+
+      <para>&qmtest; prints a summary of test results, including
+      statistics and the test IDs of tests that did not pass.  If
+      expected outcomes were specified, test IDs of tests that produced
+      unexpected outcomes.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;no-summary</option> (<option>-S</option>)
+     </glossterm>
+     <glossdef>
+      <para>Do not produce a summary of the test run.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry id="opt-test-run-context">
+     <glossterm>
+      <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
+      (<option>-c</option>)
+     </glossterm>
+     <glossdef>
+      <para>Add a property to the <link linkend="sec-the-context">test
+      execution context</link>.  The name of the property is
+      <replaceable>NAME</replaceable>, and its value is set to the string
+      <replaceable>VALUE</replaceable>.</para>
+
+      <para>This option may be specified multiple times.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry id="opt-test-run-context-file">
+     <glossterm>
+      <option>&dashdash;load-context</option> <replaceable>FILE</replaceable>
+      (<option>-C</option>)
+     </glossterm>
+     <glossdef>
+      <para>Read properties for the <link linkend="sec-the-context">test
+      execution context</link> from the file
+      <replaceable>FILE</replaceable>.</para>
+
+      <para>The file should be a text file with one context property on
+      each line, in the format <replaceable>NAME=VALUE</replaceable>.
+      Leading and trailing whitespace on each line are ignored.  Also,
+      blank lines and lines that begin with "#" (a hash mark) are
+      ignored as comments.</para>
+
+      <para>This option may be specified more than once, and used in
+      conjunction with the <option>&dashdash;context</option> option.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
+      (<option>-j</option>)
+     </glossterm>
+     <glossdef>
+      <para>Run tests in multiple <replaceable>COUNT</replaceable>
+      concurrent processes on the local computer.  On multiprocessor
+      machines, the processes may be scheduled to run in parallel on
+      different processors.  &qmtest; automatically collects results
+      from the processes and presents combines test results and summary.
+      By default, one process is used.</para>
+
+      <para>This option may not be combined with the <link
+      linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+      (<option>-T</option>) option</link>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry id="opt-test-run-targets">
+     <glossterm>
+      <option>&dashdash;targets</option> 
+      <replaceable>FILE</replaceable> (<option>-T</option>)
+     </glossterm>
+     <glossdef>
+      <para>Use targets specified in target specification file
+      <replaceable>FILE</replaceable>.  See <xref
+      linkend="sec-target-files"/> for a description of the target file
+      syntax.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;seed</option> <replaceable>INTEGER</replaceable>
+     </glossterm>
+     <glossdef>
+      <para>For each test run, &qmtest; randomizes the order in which
+      tests are run, subject to the constraints described in <xref
+      linkend="sec-ordering-and-dependencies"/>.  The random number
+      generator is seeded using the system time.  This maximizes the
+      chance of detecting unanticipated dependencies among tests across
+      multiple test runs.</para>
+
+      <para>For debugging purposes, it is sometimes necessary to obtain
+      a reproducable sequence of tests.  Use the
+      <option>&dashdash;seed</option> option to specify the seed for the
+      random number generator.</para>
+
+      <para>Note that even with the same random number seed, if tests
+      are run on targets with a concurrency greater than one, scheduling
+      uncertainty may still produce variation in the order in which
+      tests are run.</para>
+     </glossdef>
+    </glossentry>
+
+   </glosslist>
+   
+  </section> <!-- sec-testcmd-run -->
+
+ </section>
+
+ <section id="sec-ref-classes">
+  <title>Test and Resource Classes</title>
+
+  <para>This section describes test classes and resource classes
+  included with &qmtest;.  <xref linkend="sec-writing-test-classes"/>
+  provides instructions for writing your own test classes, <xref
+  linkend="sec-writing-resource-classes"/> for resource classes.</para>
+
+  <section id="sec-ref-test-classes">
+   <title>Test Classes</title>
+
+   <section id="sec-exectest">
+    <title><classname>command.ExecTest</classname></title>
+
+    <para>The <classname>command.ExecTest</classname> test class runs a
+    program from an ordinary executable file.  Each test specifies the
+    program executable to run, its full command line, and the data to
+    feed to its standard input stream.  <classname>ExecTest</classname>
+    collects the complete text of the program's standard output and
+    standard error streams and the program's exit code, and compares
+    these to expected values specified in the test.  If the standard
+    output and error text and the exit code match the expected values,
+    the test passes.</para>
+
+    <para>A <classname>command.ExecTest</classname> test supplies the
+    following arguments:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Program</property> (text field)</glossterm>
+      <glossdef>
+       <para>The name of the executable file to run.
+       <classname>command.ExecTest</classname> attempts to locate the
+       program executable in the path specified by the
+       <property>path</property> property of the test context.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Argument List</property> (set field of text
+      items)</glossterm>
+      <glossdef>
+       <para>The argument list for the program.  The elements of this
+       set are sequential items from which the program's argument list
+       is constructed.  <classname>command.ExecTest</classname>
+       automatically prepends an implicit zeroth element, the full path
+       of the program.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Standard Input</property> (text
+      field)</glossterm>
+      <glossdef>
+       <para>Text or data to pass to the program's standard input
+       stream.  This data is written to a temporary file, and the
+       contents of the file are directed to the program's standard
+       input stream.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Environment</property> (set field of text
+      items)</glossterm>
+      <glossdef>
+       <para>The environment (i.e. the set of environment variables)
+       available to the executing program.  Each element of this
+       argument is a string of the form
+       "<replaceable>VARIABLE</replaceable>=<replaceable>VALUE</replaceable>".</para>
+
+       <para><classname>command.ExecTest</classname> adds additional
+       environment variables automatically.  Each context property is
+       accessible as an environment variable; the name of the
+       environment variable is the name of the context property,
+       prefixed with "<envar>QMV_</envar>".</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Exit Code</property> (integer
+      field)</glossterm>
+      <glossdef>
+       <para>The exit code value expected from the program.  If the
+       program produces an exit code value different from this one, the
+       test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Ouptut</property>
+      (text field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard output stream.  The actual text or data written
+       to standard output is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Input</property>
+      (text field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard error stream.  The actual text or data written to
+       standard error is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+    </glosslist>
+
+   </section> <!-- sec-exectest -->
+
+   <section id="sec-commandtest">
+    <title><classname>command.ShellCommandTest</classname></title>
+
+    <para><classname>command.ShellCommandTest</classname> is very
+    similar to <classname>command.ExecTest</classname>, except that it
+    runs a program via the shell rather than directly.  Instead of
+    specifying an executable to run and the elements of its argument
+    list, a test provides a single command line.  The shell is
+    responsible for finding the executable and constructing its
+    argument list.</para>
+
+    <para>Standard input and the environment are specified in the test.
+    The test passes if the command produces the expected standard
+    output, standard error, and exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.ShellCommandTest</classname>, including the contents
+    of the test context, are directly accessible via shell variables.
+    The syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.ShellCommandTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> and <property>Argument List</property>
+    properties are replaced with these:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Command</property> (text field)</glossterm>
+      <glossdef>
+       <para>The command to run.  The command is delivered verbatim to
+       the shell.  The shell interprets the command according to its own
+       quoting rules andd syntax.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- sec-commandtest -->
+
+   <section id="sec-scripttest">
+    <title><classname>command.ShellScriptTest</classname></title>
+
+    <para><classname>command.ShellScriptTest</classname> is an extension of
+    <classname>command.CommandTest</classname> that lets a test specify
+    an entire shell script instead of a single command.  The script
+    specified in the test is written to a temporary file, and this file
+    is interpreted by the specified shell or command interpreter
+    program.</para>
+
+    <para>Standard input, the environment, and the argument list to pass
+    to the script are specified in the test.  The test passes if the
+    script produces the expected standard output, standard error, and
+    exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.ShellScriptTest</classname>, including the contents of
+    the test context, are directly accessible via shell variables.  The
+    syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.ShellScriptTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> property is replaced with:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Script</property> (text field)</glossterm>
+      <glossdef>
+       <para>The text of the script to run.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- sec-scripttest -->
+
+  </section> <!-- sec-ref-test-classes -->
+
+ </section> <!-- sec-ref-classes -->
+
+ <section id="sec-ref-targets">
+  <title>Test Targets</title>
+
+  <para>Test targets represent entities that &qmtest; uses to run
+  tests.  See <xref linkend="sec-targets"/> for an overview of how
+  &qmtest; uses targets.</para>
+
+  <section id="sec-target-specification">
+   <title>Target Specification</title>
+
+   <para>Each target specification includes the following:</para>
+
+   <orderedlist>
+    <listitem>
+     <para>The name of the target.  This is a name identifying the
+     target, such as the host name of the computer which will run the
+     tests.  Target names should be unique in a single target
+     file.</para>
+    </listitem>
+
+    <listitem>
+     <para>The <firstterm id="def-target-class">target
+     class</firstterm>.  Similar to a test class, a target class is a
+     Python class which implements a type of target.  As with test
+     classes, a target class is identified by its name, which includes
+     the module name and the class name.</para>
+
+     <para>For example,
+     <classname>qm.test.run.SubprocessTarget</classname> is the name of
+     a target class, provided by &qmtest;, which runs tests in multiple
+     subprocesses on the local computer.</para>
+
+     <para>&qmtest; includes several target class implementations.  See
+     <xref linkend="sec-target-classes"/> for details.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <link linkend="def-target-group">target group</link> name.
+     The test implementor may choose the syntax of target group names in
+     a test implementation.  Target groups may be used to encode
+     information about target attributes, such as architecture and
+     operating system, and capabilities.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <firstterm
+     id="def-target-concurrency">concurrency</firstterm> value, which
+     must be a positive integer.  Most target classes support concurrent
+     execution of multiple tests on the target.  This number allows the
+     target specification to control how many tests are executed
+     simultaneously.</para>
+    </listitem>
+
+    <listitem>
+     <para>Optionally, a target specification may include additional
+     properties.  Properties are named and have string values.  Some
+     target classes may use property information to control their
+     configuration.  For instance, a target class which executes tests
+     on a remote computer would extract the network address of the
+     remote computer from a target property.</para>
+    </listitem>
+   </orderedlist>
+
+  </section> <!-- sec-target-specifation -->
+
+  <section id="sec-target-files">
+   <title>Target Files</title>
+
+   <para>In a <firstterm id="def-target-file">target file</firstterm>,
+   you specify the computers or other test targets on which &qmtest; runs
+   tests.  Use the <link
+   linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+   (<option>-T</option>) option</link> to the <command>&qmtest-cmd;
+   run</command> command to specify the target file.</para>
+
+   <para>A target file is an XML document containing elements
+   representing <link linkend="sec-target-specification">target
+   specifications</link>.  The document type is
+   <literal>-//Software&nbsp;Carpentry//QMTest&nbsp;Target&nbsp;V0.1//EN</literal>,
+   and the document element is <sgmltag
+   class="element">targets</sgmltag>.</para>
+
+   <para>Each target specification is represented by a 
+   <sgmltag class="element">target</sgmltag> element, and includes
+   <sgmltag class="element">name</sgmltag>, 
+   <sgmltag class="element">class</sgmltag>, 
+   <sgmltag class="element">group</sgmltag>, and 
+   <sgmltag class="element">concurrency</sgmltag> elements.  Additional
+   <sgmltag class="element">property</sgmltag> elements may provide
+   target properties.</para>
+
+   <para>For example, the following target file specifies two targets
+   for running tests.</para>
+
+   <programlisting>
+<![CDATA[<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE targets PUBLIC "-//Software Carpentry//QMTest Target V0.1//EN" "http://www.software-carpentry.com/qm/xml/target.dtd">
+<targets>
+ <target>
+  <name>local</name>
+  <class>qm.test.run.SubprocessTarget</class>
+  <group>i386-pc-linux-gnu</group>
+  <concurrency>1</concurrency>
+ </target>
+ <target>
+  <name>remote</name>
+  <class>qm.test.run.RemoteShellTarget</class>
+  <group>sparc-sun-solaris2.5.1</group>
+  <concurrency>2</concurrency>
+  <property name="host">sunshine</property>
+  <property name="arguments">-l test</property>
+ </target>
+</targets>
+]]>
+  </programlisting>
+
+  <para>The first target is the <link
+  linkend="sec-subprocess-target">local</link> GNU/Linux computer.  The
+  second target is a remote computer running SPARC Solaris.  &qmtest;
+  invokes tests on the remote target using a <link
+  linkend="sec-remote-shell-target">remote shell</link> invocation.  The
+  remote computer's name is "sunshine", and two tests are run
+  concurrently on that target.</para>
+
+  </section> <!-- sec-target-files -->
+
+  <section id="sec-target-classes">
+   <title>Target Classes</title>
+
+   <para>&qmtest; includes these target class implementations.</para>
+
+   <section id="sec-subprocess-target">
+    <title>Local Subprocess Target</title>
+
+    <para>The <classname>qm.test.run.SubprocessTarget</classname> target
+    class runs tests in one or more subprocesses on the local computer
+    (the computer on which the &qmtest-cmd; command is invoked).  The
+    number of subprocesses is the degree of concurrency specified for
+    the target.</para>
+
+   </section> <!-- sec-subprocess-target -->
+
+   <section id="sec-remote-shell-target">
+    <title>Remote Shell Target</title>
+
+    <para>The <classname>qm.test.run.RemoteShellTarget</classname>
+    target class runs tests on a remote computer via a remote shell
+    invocation (<command>rsh</command>, <command>ssh</command>, or
+    similar).  This target uses a remote shell to invoke a program
+    similar to the &qmtest-cmd; command on the remote computer.  This
+    remote program accepts test commands and responds with results from
+    running these tests.</para>
+
+    <para>To use <classname>RemoteShellTarget</classname>, the remote
+    computer must have &qmtest; installed, and must contain an identical
+    copy of the test database.  &qmtest; does not transfer entire tests
+    over the remote shell connection; instead, it relies on the remote
+    test database for loading tests.</para>
+
+    <para>In addition, the remote shell program must be configured to
+    allow a remote login without additional intervention (such as typing
+    a password).  If you use <command>rsh</command>, you can use an
+    <filename>.rhosts</filename> file to set this up.  If you use
+    <command>ssh</command>, you can use an SSH public key and the
+    <command>ssh-agent</command> program for this.  See the
+    corresponding manual pages for details.</para>
+
+    <para>The concurrency value of the target specification controls the
+    number of concurrent tests to run on the remote host.  The number of
+    processes used on the remote host is one (the controlling process)
+    plus the concurrency value.</para>
+
+    <para>The <classname>RemoteShellTarget</classname> target class
+    takes its configuration from the following target properties:</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>The <property>remote_shell</property> property specifies the
+      path to the remote shell program.  If omitted, the configuration
+      variable <property>remote_shell</property> is used instead.  If
+      neither is specified, the default is
+      <filename>/usr/bin/ssh</filename>.  The remote shell program must
+      accept the same command-line syntax as
+      <command>rsh</command>.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>host</property> property specifies the remote
+      host name.  If omitted, the target name is used.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>database_path</property> property specifies
+      the path to the test database on the remote computer.  The test
+      database must be identical to the local test database.  If
+      omitted, the local test database path is used.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>arguments</property> property specifies
+      additional command-line arguments for the remote shell program.
+      The value of this property is split at space characters, and the
+      arguments are added to the command line before the name of the
+      remote host.</para>
+
+      <para>For example, if you are using the <command>ssh</command>
+      remote shell program and wish to log in to the remote computer
+      using a different user account, specify the <literal>-l
+      username</literal> option using the <property>arguments</property>
+      property.</para>
+     </listitem>
+
+     <listitem>
+      <para>&qmtest; uses the remote shell to invoke the
+      <command>qmtest_remote</command> program on the remote host.  This
+      program is installed by default in
+      <filename>/usr/local/bin/qmtest_remote</filename>.  You may
+      override this and use a version in a different place by specifying
+      the <property>qmtest_remote</property> property.</para>
+     </listitem>
+    </itemizedlist>
+
+   </section> <!-- sec-remote-shell-target -->
+
+  </section> <!-- sec-target-classes -->
+
+ </section> <!-- sec-ref-targets -->
+
  <section id="sec-writing-test-and-resource-classes">
   <title>Writing Test and Resource Classes</title>
 
@@ -566,32 +1192,32 @@
    <title>Writing Test Classes</title>
 
    <para>In &qmtest;, a test class is represented by a Python class.
-   The class need not be derived from any particular base class.
-   However, the class must include the three particular attributes: a
-   <varname>field</varname> attribute, whose value is a sequence of
-   field objects, and <function>__init__</function> and
-   <function>Run</function> functions.</para>
+   The class must inherit from
+   <classname>qm.test.test.Test</classname>.  The class must include
+   the three particular attributes: a <varname>arguments</varname>
+   attribute, whose value is a sequence of field objects, and
+   <function>__init__</function> and <function>Run</function>
+   functions.</para>
 
    <section>
-    <title>The <varname>field</varname> Attribute</title>
+    <title>The <varname>arguments</varname> Attribute</title>
 
-    <para>The test class must include a <varname>field</varname>
+    <para>The test class must include a <varname>arguments</varname>
     attribute, indicating the types of the test class's parameters.  The
-    <varname>field</varname> attribute's value should be a sequence
+    <varname>arguments</varname> attribute's value should be a sequence
     consisting of field objects.  A field object is an instance of a
     subclass of <classname>qm.fields.Field</classname>.  The names of
-    the fields (specified by the "name" attribute of the field object)
-    are the names of the parameters of the test class.  (&fixme;:
-    XREF)</para>
+    the arguments (specified by the "name" attribute of the field object)
+    are the names of the parameters of the test class.</para>
 
-    <para>For instance, this definition of the <varname>field</varname>
+    <para>For instance, this definition of the <varname>arguments</varname>
     attribute declares two parameters for the test class.  One
     parameter, called &quot;input_text&quot;, takes a text value.  The
     other parameter, called &quot;value_list&quot;, takes as its value a
     set of integers.</para>
 
     <programlisting>
-<![CDATA[    fields = [
+<![CDATA[    arguments = [
         qm.fields.IssueFieldText(
             name="input_text"),
         qm.fields.IssueFieldSet(qm.fields.IssueFieldInteger(
@@ -606,7 +1232,7 @@
     of the test class identify the purpose and semantics of each of the
     test class's parameters.</para>
 
-   </section> <!-- The field Attribute -->
+   </section> <!-- The arguments Attribute -->
 
    <section>
     <title>The <function>__init__</function> Function</title>
@@ -614,7 +1240,7 @@
     <para>The test class must provide an <function>__init__</function>
     function.  The parameters of this function should have the same
     names as the names of the fields declared in the
-    <varname>fields</varname> attribute.</para>
+    <varname>arguments</varname> attribute.</para>
 
     <para>When a test is loaded from the test database, &qmtest; creates
     a test object by instantiating the test class.  When it does so,
@@ -631,9 +1257,10 @@
     attribute.</para>
 
     <para>For example, this <function>__init__</function> function
-    matches the <varname>fields</varname> declared above.  It stores the
-    argument values as object attributes, where they can be accessed by
-    the <link linkend="sec-run-function"><function>Run</function>
+    matches the <varname>arguments</varname> declared above.  It
+    stores the argument values as object attributes, where they can be
+    accessed by the <link
+    linkend="sec-run-function"><function>Run</function>
     function</link>.</para>
 
     <programlisting>
@@ -651,17 +1278,17 @@
     function.  This function runs the test and produces a test
     result.</para>
 
-    <para>The <function>Run</function> function takes a single argument:
-    a context object.  The context object satisfies the interface of the
-    <classname>qm.test.base.Context</classname> Python class (though it
-    may in actuality be an instance of a different Python class).</para>
+    <para>The <function>Run</function> function takes two arguments:
+    the context and the result.  The context object satisfies the
+    interface of the <classname>qm.test.base.Context</classname>
+    Python class (though it may in actuality be an instance of a
+    different Python class).</para>
 
-    <para>The return value of <function>Run</function> should be a
-    result object, an instance of
-    <classname>qm.test.base.Result</classname>.  The result should
-    reflect an outcome of &PASS; or &FAIL; (represented by
-    <varname>qm.test.base.Result.PASS</varname> and
-    <varname>qm.test.base.Result.FAIL</varname>, respectively).</para>
+    <para>The result object is an instance of
+    <classname>qm.test.result.Result</classname>.  By default, the
+    result will indicate that the test passes.  If the test fails, the
+    test class should call the <function>Fail</function> method on the
+    result to indicate failure.</para>
 
     <para>If the <function>Run</function> raises an unhandled exception,
     &qmtest; creates a result for the test with the outcome &ERROR;.
@@ -689,60 +1316,43 @@
    <section id="sec-creating-results">
     <title>Creating Results</title>
 
-    <para>The result of a test is represented by an instance of
-    <classname>qm.test.base.Result</classname>.  A test class's
-    <function>Run</function> function should return such an instance to
-    indicate the tests's results.</para>
-
-    <para>When constructing a result object, specify the value of the
-    <parameter>outcome</parameter> parameter.  A test should specify
-    either <varname>qm.test.base.Result.PASS</varname> or
-    <varname>qm.test.base.Result.FAIL</varname>.  The
-    <function>Run</function> function may also specify additional
-    properties in the result object, either by passing additional
-    arguments to its initialization function, or by adding them using
-    Python's map assignment syntax.</para>
-
     <para>In case of a &FAIL; result, it is conventional to assign the
-    &quot;cause&quot; property a string value providing a description of
-    why the test failed.</para>
+    <literal>Result.CAUSE</literal> property a string value providing
+    a description of why the test failed.</para>
 
-    <para>These two equivalent examples demonstrate returning a result
-    that indicates a test failure (both assume that the
-    <classname>qm.test.base.Result</classname> class has been imported
-    into the module's global namespace).</para>
+    <para>These two equivalent examples demonstrate how to indicates
+    test failure (both assume that the
+    <classname>qm.test.result.Result</classname> class has been
+    imported into the module's global namespace).</para>
 
     <programlisting>
-<![CDATA[        result = Result(Result.FAIL)
-        result["cause"] = "Unexpected end of input."
-        return result]]>
+<![CDATA[        result.Fail()
+        result[Result.CAUSE] = "Unexpected end of input."]]>
     </programlisting>
 
     <para>or</para>
 
     <programlisting>
-<![CDATA[        return Result(Result.FAIL, cause="Unexpected end of input.")]]>
+<![CDATA[        result.Fail("Unexpected end of input.")]]>
     </programlisting>
 
     <para>Sometimes, a <function>Run</function> function implementation
-    detects a failure by catching an exception.  The function
-    <function>qm.test.base.make_result_for_exception</function> provides
+    detects a failure by catching an exception.  The method
+    <function>Result.NoteException</function> provides
     a convenient mechanism for creating a result that includes
-    information about the exception.  Call it passing the Python
-    exception information triplet, a cause, and the outcome.  For
-    example,</para>
+    information about the exception.For
+    example: 
 
     <programlisting>
 <![CDATA[        try:
             # ... run test code here ...
         except EndOfFileError:
-            return qm.test.base.make_result_for_exception(
-                exc_info=sys.exc_info(),
-                cause="Unexpected end of file.",
-                outcome=Result.FAIL)
+            result.NoteException()
 ]]>
     </programlisting>
 
+    The <function>NoteException</function> method will automatically
+   add annotations describing the cause of the exception.</para>
    </section> <!-- Creating Results -->
 
   </section> <!-- Writing Test Classes -->
@@ -752,22 +1362,15 @@
 
    <para>Writing resource classes is similar to writing test classes.
    The requirements are the same, except that instead of a <link
-   linkend="sec-run-function"><function>Run</function></link> function,
-   you must provide two functions, named <function>SetUp</function> and
-   <function>CleanUp</function>, to perform resource setup and cleanup.
-   Both of these functions take a single argument, a
-   <classname>Context</classname> object.</para>
-
-   <para>The <function>SetUp</function> and <function>CleanUp</function>
-   functions return a <link
-   linkend="sec-creating-results"><classname>Result</classname></link>
-   object, just like a test class's <function>Run</function> function.
-   Use the &PASS; outcome to indicate that the resource was set up
-   successfully, or &FAIL; to indicate failure.  Neither function should
-   raise an exception except to indicate an internal error.  Since the
-   cleanup function is called even if setup failed, the cleanup function
-   should degrade gracefully, and attempt to clean up a partially-set-up
-   resource, if possible.</para>
+   linkend="sec-run-function"><function>Run</function></link>
+   function, you must provide two functions, named
+   <function>SetUp</function> and <function>CleanUp</function>, to
+   perform resource setup and cleanup.  Both of these functions take
+   the same arguments that are provided to a test class
+   <function>Run</function> method.  Since the cleanup function is
+   called even if setup failed, the cleanup function should degrade
+   gracefully, and attempt to clean up a partially-set-up resource, if
+   possible.</para>
 
    <para>The setup function may add additional properties to the
    context.  These properties will be visibile only to the
@@ -784,31 +1387,20 @@
    tests.</para>
 
    <programlisting>
-    def SetUp(self, context):
+    def SetUp(self, context, result):
         try:
             handle = create_my_resource()
         except:
-            exc_info = sys.exc_info()
-            return qm.test.base.make_result_for_exception(
-                exc_info=exc_info,
-                cause=str(exc_info[1]),
-                outcome=Result.FAIL)
+            result.NoteException()
         else:
             context["resource_handle"] = str(handle)
-            return Result(Result.PASS)
 
     def CleanUp(self, context):
         handle = context["resource_handle"]
         try:
             destroy_my_resource(handle)
         except:
-            exc_info = sys.exc_info()
-            return qm.test.base.make_result_for_exception(
-                exc_info=exc_info,
-                cause=str(exc_info[1]),
-                outcome=Result.FAIL)
-        else:
-            return Result(Result.PASS)
+            result.NoteException()
    </programlisting>
 
   </section> <!-- sec-writing-resource-classes -->
@@ -826,9 +1418,8 @@
      <para>If the environment variable <envar>QMTEST_CLASSPATH</envar>
      is defined, &qmtest first checks any directories listed in it.
      This value of this environment variable should be a list of
-     directories to check for the module file, in the same format as the
-     standard Python <envar>PYTHONPATH</envar> environment
-     variable.</para>
+     directories to check for the module file, in the same format as
+     the standard <envar>PATH</envar> environment variable.</para>
     </listitem>
 
     <listitem>
@@ -862,28 +1453,52 @@
 
  </section> <!-- sec-writing-test-and-resource-classes -->
 
- <section id="sec-database-contents">
-  <title>Test Database Contents</title>
+ <section id="sec-ref-writing-database-classes">
+  <title>Writing a Database Class</title>
 
-  <para>The default &qmtest; test database implementation stores the
-  database as a directory hierarcy containing XML files.  Each component
-  of a test, suite, or resource ID is represented by a subdirectory.  A
-  test, suite, or resource is represented by an XML file.  These files
-  have file extensions <filename>.qmt</filename>,
-  <filename>.qms</filename>, and <filename>.qma</filename>,
-  respectively.</para>
+  <para>The database class controls the format in which tests are
+  stored.  &qmtest's default database class stores each test as an XML
+  file, but you might want to use a format that is particularly well
+  suited to your application domain or to your organization's
+  arrangment of computing resources.</para>
 
-  <para>Expert &qmtest; users may modify the contents of the test
-  database directly by editing these files.  However, it is the user's
-  responsibility to ensure the integrity and validity of the XML
-  contents of each file.  For example, file and directory names should
-  contain only characters allowed in identifiers (lower-case letters,
-  digits, and underscores); a period should only be used to a file
-  extension, such as <filename>.qmt</filename>.  Also, the files and
-  directories in a test database should not be modified directly while
-  &qmtest; is running with that test database.</para>
+  <para>For example, if you were testing a compiler, you might want to
+  represent tests as source files with special embedded comments
+  indicating what errors are expected when compiling the test.  You
+  could write a test database class that can read and write tests
+  in that format.</para>
 
- </section> <!-- sec-database-contents -->
+  <para>Or, if you wanted to share a single test database with many
+  people in such a way that everyone automatically saw updates to the
+  database, you might want to put all of the tests on a central HTTP
+  server.  You could write a test database class that retrieves tests
+  from the server and creates new tests by uploading them to the
+  server.</para>
+
+  <para>A test database class is a Python class that is derived from
+  <classname>qm.test.base.Database</classname>.  You must define
+  methods that handle retrieving a test from the database, writing a
+  test to the database, and other related tasks.  Read the code for
+  <classname>qm.test.base.Database</classname> to see what methods
+  need to be overridden.
+  </para>
+  
+  <para>To use your new database class, create a file called
+  <filename>configuration</filename> in the directory containing 
+  your test database.  This file should look like:
+   <programlisting>
+<![CDATA[<?xml version='1.0'?>
+<!DOCTYPE tdb-configuration PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "http://www.software-carpentry.com/qm/xml/tdb_configuration.dtd">
+<tdb-configuration>
+  <class_name>mydatabase.Database</class_name>
+</tdb-configuration>
+]]>
+  </programlisting>
+  Replace <classname>mydatabase.Database</classname> with the name of
+  your database class, including the module in which it is
+  located.</para>
+  
+ </section> <!-- sec-ref-writing-database-classes -->
 
 </chapter>
 <!--

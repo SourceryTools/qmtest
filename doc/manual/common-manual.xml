@@ -164,14 +164,8 @@ path=/usr/bin:/bin
   <section id="sec-rc-track">
    <title>&qmtrack; Configuration Variables</title>
 
-   <para>These configuration variables are used in &qmtrack;.  You
-   should define them in the <literal>[track]</literal> section of your
-   &qm; configuration file.</para>
-
-   <!--
-   <glosslist>
-   </glosslist>
-   -->
+   <para>There are no configuration variables used only by &qmtrack;
+   at this time.</para>
 
   </section> <!-- sec-rc-track -->
 

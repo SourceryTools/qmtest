@@ -18,6 +18,13 @@
 <chapter id="chap-test-tour">
  <title>Getting Started with &qmtest;</title>
  
+  <para>QMTest is an ogeneral-purpose, cross-platform software testing
+  tool.  QMTest can be used to test compilers, databases, graphical
+  user interfaces, or embedded systems.  QMTest provides a convenient
+  graphical user interface for creating, managing, and executing
+  tests, provides support for parallel test execution, and can be
+  extended in a variety of ways.</para>
+
   <para>This chapter will show you how to use &qmtest; by example.
   You will learn how to use &qmtest; to create tests, run tests, and
   examine the results.</para>

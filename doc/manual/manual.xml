@@ -66,12 +66,11 @@
  &introduction.xml;
 
  &test-tour.xml;
- &track-tour.xml;
-
  &test-manual.xml;
- &test-reference.xml;
+
+ &track-tour.xml;
  &track-manual.xml;
- &track-reference.xml;
+
  &common-manual.xml;
 
 </book>

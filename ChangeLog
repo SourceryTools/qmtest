@@ -1,3 +1,14 @@
+2001-10-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/common-manual.xml: Revise.
+	* doc/manual/manual.xml: Likewise.
+	* doc/manual/test-manual.xml: Likewise.
+	* doc/manual/test-reference.xml: Remove.
+	* doc/manual/test-tour.xml: Revise.
+	* doc/manual/track-tour.xml: Revise.
+	* doc/manual/track-reference.xml: Merge into...
+	* doc/manual/track-manual.xml: ... here.
+	
 2001-10-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/manual.xml (track-reference): New entity.
