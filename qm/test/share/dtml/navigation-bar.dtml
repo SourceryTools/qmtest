@@ -79,23 +79,29 @@ function show_menu(event, id) {
     active_menu = menu;
 }
 
+/* Called when the mouseout event is received by a menu.  */
 
 function hide_menu(event) {
     var target;
   
+    /* Figure out to which element the mouse is moving.  */
     if (window.event) {
         target = window.event.toElement;
     } else {
         target = event.relatedTarget;
     }
-    if (!is_parent_of(this, target))
+    /* If that element is not a child of the menu, hide the menu.  */
+    if (target && !is_parent_of(this, target))
         this.style.visibility = "hidden";
 }
 
+/* Called when an item on the menu bar is activated.  The event is
+   either a mouseover or onclick event.  */
 
 function hide_active_menu(event) {
     var target;
 
+    /* If there is no active menu, there's nothing to hide.  */
     if (!active_menu)
         return;
   

@@ -1,3 +1,8 @@
+2003-02-24  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/share/dtml/navigation-bar.dtml (hide_menu): Tweak for
+	Mozilla 1.0.1 compatibility.
+
 2003-02-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/common-manual.xml: Remove documentation about
