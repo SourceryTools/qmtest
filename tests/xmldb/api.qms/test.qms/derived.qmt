@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<extension class="test_inheritance.Derived" kind="test"><argument name="resources"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="prerequisites"><set/></argument></extension>

@@ -1,3 +1,12 @@
+2002-12-20  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (get_class_arguments): Allow derived classe
+	arguments to override base class arguments.
+	(get_class_arguments_as_dictionary): Reimplement.
+	* tests/xmldb/QMTest/test_inheritance.py: New file.
+	* tests/xmldb/QMTest/classes.qms: Update.
+	* tests/xmldb/api.qms/test.qms/derived.qmt: New test.
+	
 2002-12-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/file.py (SubstitutionField): Rework, using
