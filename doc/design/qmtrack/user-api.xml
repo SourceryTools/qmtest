@@ -31,7 +31,7 @@
   <para>We divide user functionality into three main categories:
    <orderedlist>
     <listitem>
-     <para>Creating and retiring issues.</para>
+     <para>Creating an issue.</para>
     </listitem>
 
     <listitem>
@@ -47,16 +47,11 @@
 
  </section>
 
- <section><title>Creating and Retiring Issues</title> 
-   <para>This section describes the basics of creating and retiring an
-   issue (the beginning and ending of the life of an issue,
-   respectively). To create an issue, simply create an Issue object. You
-   pass it initial values for the `summary,' `categories,' and
-   `attachment' and the corresponding objects represents the first
-   revision of the new issue. To retire an issue, simply call the
-   RetireIssue method on an existing issue. This will render the issue
-   closed. Although not deleted, queries will no longer include this issue
-   unless specifically requested to.</para>
+ <section><title>Creating Issues</title> <para>This section describes the
+   basics of creating an issue. To create an issue, simply create an Issue
+   object. You pass it initial values for the 'summary,' 'categories,' and
+   'attachment' and the corresponding objects represents the first
+   revision of the new issue.</para>
 
    <para>Methods:
    <programlisting>
@@ -65,11 +60,7 @@ class Issue:
     """Base class for issues."""
 
     def __init__(self, summary, categories, attachment):
-        """Create a new issue. Returns the issue ID."""
-
-    def RetireIssue(self):
-        """Retires an issue, thereby disallowing further edits to the
-        issue. This should only be done when issue is meant to be closed."""
+        """Returns the issue ID."""
 ]]>
    </programlisting>
   </para>
@@ -80,19 +71,15 @@ class Issue:
     creating a new revision of the issue). Because the user may wish to
     edit more than one field of a given issue for a new revision, we
     provide a mechanism that allows users to encapsulate multiple edits to
-    the issue under one revision. This also allows us to successfully lock
-    each issue upon editing as to avoid race conditions between multiple
-    users attempting to edit the same issue.</para>
+    the issue under one revision.</para>
 
     <para>To edit an issue, simply call the BeginEdit method on the
-    issue. This will aquire the lock for that issue and only return once
-    the caller has exclusive rights to make changes to the issue. Also,
-    this function will return a key that must be made in future edits in
-    this revision to assure that other users cannot make edits while the
-    caller is making edits. After performing all edits, complete the
-    revision update by calling the EndEdit method on the issue with the
-    returned key from BeginEdit. This will complete the revision and store
-    it in the database.</para>
+    issue. This will return a copy of the current revision of the issue
+    that can be edited (without changing the actual revision of the
+    issue). After performing all edits, complete the revision update by
+    calling the EndEdit method on the orignal issue, passing it the edited
+    issue. This will complete the revision and store it in the
+    database.</para>
 
     <para>Methods:
     <programlisting>
@@ -101,46 +88,46 @@ class Issue:
     """Base class for issues."""
 
     def BeginEdit(self):
-        """Begins edits for a new revision of an issue. Blocks until
+        """Returns a copy of the current revision of the issue.
+
+        Begins edits for a new revision of an issue. Blocks until
         caller has exclusive rights to make edits. Returns the key to be
         used in future edit calls. Acquires the edit lock on the issue."""
 
-    def EndEdit(self, key):
-        """Ends the editing process for an issue and
-        creates a new revision of the issue based on all the edits that
-        occured between the calls to BeginEdit and calls to
-        EndEdit. Releases the edit lock on the issue."""
+    def EndEdit(self, new_issue):
+        """Returns 0 if successful, 1 on error.
 
-    def CancelEdit(self, key):
-        """Cancels the given edits since the last call to BeginEdit
-        without updating the issue. Release the edit lock on the issue."""
+        Ends the editing process for an issue and creates a new revision
+        of the issue based on the issue passed to the method."""
 
-    def EditSummary(self, key, new_summary):
-        """Changes the summary to `new_summary'."""
+    def EditSummary(self, new_summary):
+        """Changes the summary to 'new_summary'."""
 
-    def AddCategory(self, key, new_category):
-        """Adds `new_category' to the list of categories of the issue."""
+    def AddCategory(self, new_category):
+        """Adds 'new_category' to the list of categories of the issue."""
 
-    def RemoveCategory(self, key, old_category):
-        """Removes `old_category' from the list of categories of the
-        issue."""
+    def RemoveCategory(self, old_category):
+        """Removes 'old_category' from the list of categories of the issue."""
 
-    def AddAttachment(self, key, attachment):
+    def AddAttachment(self, attachment):
         """Adds an attachment to the current revision of the issue."""
 
-    def Join(self, key1, issue, key2):
-        """Joins self and id together to form 1 issue from the two. `key2'
-           represents the edit key of the `issue.' Join must be called
-           on both issues involved."""
+    def Join(self, issue):
+        """Joins self and id together to form one issue from the two.
 
-    def Separate(self, key):
-        """Separates the current issue into two issues. The new issue
-           is a carbon copy of the old issue (with the same revision
-           history, etc.) and is returned from this function."""
+        Join must be called on both issues involved in the join."""
 
-    def EditAux(self, key, field, value):
-        """Edits one of the auxillary fields, `field,' giving it the
-        new value, `value.'"""
+    def Separate(self):
+        """Returns an issue that is a twin of the original.
+
+        Separates the current issue into two issues. The new issue is a
+        carbon copy of the old issue (with the same revision history,
+        etc.) and is returned from this function."""
+
+    def EditAux(self, field, value):
+        """Edits one of the auxillary fields.
+
+        Changes the value in 'field' to 'value.'"""
 ]]>
    </programlisting>
    </para>
@@ -156,36 +143,31 @@ class Issue:
     <programlisting>
 <![CDATA[
     def CreatedAfterDate(date)
-        """Returns list of issues created after `date.'"""
+        """Returns list of issues created after 'date.'"""
 
     def CreatedBeforeDate(date)
-        """Returns list of issues created before `date.'"""
+        """Returns list of issues created before 'date.'"""
 
     def CreatedRangeDate(date1, date2)
-        """Returns list of issues created between dates `date1' and
-        `date2.'"""
+        """Returns list of issues created between 'date1' and 'date2.'"""
 
     def CreatedOnDate(date)
-        """Returns list of issues created on date `date.'"""
+        """Returns list of issues created on 'date.'"""
 
-    def SummaryContains(search_string)
-        """Returns list of issues whose summary contains the text in
-           `search_string.'"""
+    def SummaryContains(string)
+        """Returns list of issues whose summary contains 'string.'"""
 
-    def SummaryExact(search_string)
-        """Returns list of issues whose summary matches exactly the
-           text in `search_string.'"""
+    def SummaryExact(string)
+        """Returns list of issues whose summary is exactly 'string.'"""
 
     def BelongsTo(category)
-        """Returns list of issues who belong to category `category.'"""
+        """Returns list of issues who belong to 'category.'"""
 
     def NotBelongsTo(category) 
-        """Returns list of issues who do not belong to category
-        `category.'"""
+        """Returns list of issues who do not belong to 'category.'"""
 
     def RelatedTo(issue)
-        """Returns list of issues related to `issue' through joins and
-        separates."""
+        """Returns list of issues related to 'issue.'"""
 ]]>
     </programlisting>
     </para>
