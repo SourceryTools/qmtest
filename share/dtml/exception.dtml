@@ -7,7 +7,7 @@
   Contents:
     Page in response to an internal error.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -21,19 +21,10 @@
  <h3>You Have Found a Bug in <dtml-var expr="GetProgramName()">!</h3>
  
  <p>This page indicates that <dtml-var expr="GetProgramName()"> has
- encountered an internal error.  This probably is caused by a bug in the
- program.</p>
+ encountered an internal error.</p>
 
- <p>Please visit the <a href="javascript: popup_qm_bug_system();">QM
- Tools bug tracking system</a> and check whether someone else has
- already reported this bug.  If no one has, please submit a bug report,
- including the information on this page and as much additional
- information as possible.  If you can, include step-by-step instructions
- for reproducing the problem.  Your assistance with this will help us
- make <dtml-var expr="GetProgramName()"> even better.</p>
-
- <p>When you are done, <a href="<dtml-var
- expr="GetMainPageUrl()">">click here to start over</a>.</p>
+ <p>You can <a href="<dtml-var
+ expr="GetMainPageUrl()">">return to the main page</a>.</p>
 
  <dtml-var expr="GenerateStartScript()">
  function popup_qm_bug_system()

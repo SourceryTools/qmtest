@@ -33,7 +33,7 @@ from   qm.test.execution_thread import *
 from   qm.test.result import *
 from   qm.test.result_stream import *
 from   qm.test.suite import *
-from   qm.test.xml_result_stream import *
+from   qm.test.pickle_result_stream import PickleResultStream
 import qm.web
 import string
 import StringIO
@@ -1824,7 +1824,7 @@ class QMTestServer(qm.web.WebServer):
         # Create a string stream to store the results.
         s = StringIO.StringIO()
         # Create an XML results stream for storing the results.
-        rs = XMLResultStream(s)
+        rs = PickleResultStream(s)
         # Write all the results.
         for (id, outcome) in self.__expected_outcomes.items():
             r = Result(Result.TEST, id, Context(), outcome)
@@ -1847,7 +1847,7 @@ class QMTestServer(qm.web.WebServer):
         # Create a string stream to store the results.
         s = StringIO.StringIO()
         # Create an XML results stream for storing the results.
-        rs = XMLResultStream(s)
+        rs = PickleResultStream(s)
         # Write all the results.
         for r in self.__results_stream.GetTestResults().values():
             rs.WriteResult(r)

@@ -27,7 +27,7 @@ import qm.platform
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.text_result_stream import *
-from   qm.test.xml_result_stream import *
+from   qm.test.pickle_result_stream import PickleResultStream
 from   qm.trace import *
 import qm.test.web.web
 import qm.xmlutil
@@ -1252,7 +1252,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 close_result_file = 1
                 
         if result_file is not None:
-            result_streams.append(XMLResultStream(result_file))
+            result_streams.append(PickleResultStream(result_file))
 
         # Keep track of whether or not any unexpected outcomes have
         # occurred.

@@ -1,5 +1,16 @@
 2002-11-25  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (load_results): Support pickled results files.
+	* qm/test/cmdline.py (xml_result_stream): Don't import it.
+	(pickle_result_stream): Do import it.
+	(QMTest.__ExecuteRun): Use PickleResultStream.
+	* qm/test/pickle_result_stream: New file.
+	* qm/test/web/web.py (xml_result_stream): Don't import it.
+	(pickle_result_stream): Do import it.
+	(QMTestServer.HandleSaveResults): Use PickleResultStream.
+	(QMTestServer.HandleSaveExpectations): Likewise.
+	* share/dtml/exception.dtml: Remove out-of-date language.
+	
 	* qm/test/context.py (ContextException.__init__): Initialize the
 	base class.
 	* qm/test/result.py (ContextException): Import it.

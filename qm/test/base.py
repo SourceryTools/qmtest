@@ -333,13 +333,30 @@ def load_results(file):
     returns -- A sequence of 'Result' objects."""
 
     results = []
-    results_document = qm.xmlutil.load_xml(file)
-    node = results_document.documentElement
-    # Extract the results.
-    results_elements = qm.xmlutil.get_children(node, "result")
-    for re in results_elements:
-        results.append(_result_from_dom(re))
-
+    # For backwards compatibility, look at the first few bytes of the
+    # file to see if it is an XML results file.
+    tag = file.read(5)
+    file.seek(-len(tag), 1)
+    
+    if tag == "<?xml":
+      results_document = qm.xmlutil.load_xml(file)
+      node = results_document.documentElement
+      # Extract the results.
+      results_elements = qm.xmlutil.get_children(node, "result")
+      for re in results_elements:
+          results.append(_result_from_dom(re))
+    else:
+        unpickler = cPickle.Unpickler(file)
+        while 1:
+            try:
+                results.append(unpickler.load())
+            except EOFError:
+                break
+            except cPickle.UnpicklingError:
+                # When file is a StringIO, EOFError is not raised when
+                # there is no more characters.  Instead, this exception
+                # is raised.
+                break
     return results
 
 
