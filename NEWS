@@ -10,6 +10,12 @@ There is a new "--result-format" option to "qmtest run" and "qmtest
 gui".  This option controls the format of the results file, i.e.,
 whether the binary or XML file format is used.
 
+QM 2.0.3
+========
+
+A JavaScript issue that prevented the pop-up menus in the GUI from
+working correctly with Mozilla 1.0.1 was corrected.
+
 QM 2.0.2
 ========
 
