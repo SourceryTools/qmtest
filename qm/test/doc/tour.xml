@@ -445,9 +445,9 @@ QMTest running at http://127.0.0.1:1158/test/dir
 <computeroutput><![CDATA[
 --- TEST RESULTS -------------------------------------------------------------
 
-  exec2                                         : PASS    , expected PASS    
-  exec0                                         : PASS    , expected PASS    
-  exec1                                         : FAIL    , expected FAIL    
+  exec2                                         : PASS
+  exec0                                         : PASS
+  exec1                                         : XFAIL
     Expression evaluates to false. 
 
 
@@ -463,7 +463,10 @@ QMTest running at http://127.0.0.1:1158/test/dir
 
    Note that &qmtest; indicates that there were no tests with
    unexpected outcomes, even though <filename>exec1</filename> still
-   fails.</para>
+   fails.  The <literal>XFAIL</literal> notation indicates that the
+   test failed, but that failure was expected.  In contrast,
+   <literal>XPASS</literal> means that a test passed
+   unexpectedly.</para>
 
   </section> <!-- sec-testtut-expected-outcomes -->
 

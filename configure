@@ -876,7 +876,11 @@ echo "$ac_t""$PYTHON_PREFIX" 1>&6
 
 echo $ac_n "checking Python platform""... $ac_c" 1>&6
 echo "configure:879: checking Python platform" >&5
-PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()"`
+PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()" 2>/dev/null`
+if test $? -ne 0; then
+  echo "$ac_t""could not be determined" 1>&6
+  { echo "configure: error: Python distutils module is not installed" 1>&2; exit 1; }
+fi
 echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 
 
@@ -884,7 +888,7 @@ echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 # Extract the first word of "happydoc", so it can be a program name with args.
 set dummy happydoc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:888: checking for $ac_word" >&5
+echo "configure:892: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -922,7 +926,7 @@ fi
 # Extract the first word of "jade", so it can be a program name with args.
 set dummy jade; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:926: checking for $ac_word" >&5
+echo "configure:930: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -958,7 +962,7 @@ fi
 # Extract the first word of "tidy", so it can be a program name with args.
 set dummy tidy; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:962: checking for $ac_word" >&5
+echo "configure:966: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -995,7 +999,7 @@ fi
 
 if test "$JADE" != no; then
   echo $ac_n "checking xml.dcl""... $ac_c" 1>&6
-echo "configure:999: checking xml.dcl" >&5
+echo "configure:1003: checking xml.dcl" >&5
   XML_DCL=no
   for file in \
     /usr/share/doc/jade*/pubtext/xml.dcl \
@@ -1014,7 +1018,7 @@ fi
 
 
 echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
-echo "configure:1018: checking DocBook stylesheets" >&5
+echo "configure:1022: checking DocBook stylesheets" >&5
 DOCBOOK_STYLESHEETS=no
 for dir in \
   /usr/lib/sgml/stylesheets/docbook \
@@ -1031,7 +1035,7 @@ echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
 
 DOCBOOK_DTD=
 echo $ac_n "checking for docbook DTD""... $ac_c" 1>&6
-echo "configure:1035: checking for docbook DTD" >&5
+echo "configure:1039: checking for docbook DTD" >&5
 # Check whether --with-docbook-dtd or --without-docbook-dtd was given.
 if test "${with_docbook_dtd+set}" = set; then
   withval="$with_docbook_dtd"
