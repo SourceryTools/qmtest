@@ -78,6 +78,7 @@ class ExecutionEngine:
         
         # All of the targets are idle at first.
         self.__idle_targets = targets[:]
+        self.__busy_targets = []
         # There are no responses from the targets yet.
         self.__response_queue = qm.queue.Queue(0)
         # There no pending or ready tests yet.
@@ -189,12 +190,26 @@ class ExecutionEngine:
             idle_targets = self.__idle_targets
             if not idle_targets:
                 if __debug__:
-                    self._Trace("All targets are idle -- waiting.")
+                    self._Trace("All targets are busy -- waiting.")
                 # Read a reply from the response_queue.
                 self._CheckForResponse(wait=1)
                 if __debug__:
                     self._Trace("Response received.")
                 # Keep going.
+                continue
+
+            # If there are no busy targets and no ready tests, we have
+            # a cycle in the dependency graph.  Pull the head off the
+            # pending queue and mark it UNTESTED, see if that helps.
+            if not self.__busy_targets and not self.__ready:
+                descriptor = self.__pending[0]
+                if __debug__:
+                    self._Trace(("Dependency cycle, discarding %s."
+                                 % descriptor.GetId()))
+                self.__pending.remove(descriptor)
+                self._AddUntestedResult(descriptor.GetId(),
+                                        qm.message("dependency cycle"))
+                self._UpdateDependentTests(descriptor, Result.UNTESTED)
                 continue
 
             # There is at least one idle target.  Try to find something
@@ -207,7 +222,19 @@ class ExecutionEngine:
                         # it from the ready list.
                         self.__ready.remove(descriptor)
                         # And from the pending list.
-                        self.__pending.remove(descriptor)
+                        try:
+                            self.__pending.remove(descriptor)
+                        except ValueError:
+                            # If the test is not pending, that means it
+                            # got pulled off for some reason
+                            # (e.g. breaking dependency cycles).  Don't
+                            # try to run it, it won't work.
+                            if __debug__:
+                              self._Trace(("Ready test %s not pending, skipped"
+                                           % descriptor.GetId()))
+                            wait = 0
+                            break
+
                         # Output a trace message.
                         if __debug__:
                             self._Trace(("About to run %s."
@@ -220,6 +247,7 @@ class ExecutionEngine:
                             if __debug__:
                                 self._Trace("Target is no longer idle.")
                             self.__idle_targets.remove(target)
+                            self.__busy_targets.add(target)
                         else:
                             if __debug__:
                                 self._Trace("Target is still idle.")
@@ -312,17 +340,24 @@ class ExecutionEngine:
             # If the actual outcome is not the outcome that was
             # expected, the dependent test cannot be run.
             if outcome != o:
-                self._AddUntestedResult(d.GetId(),
-                                        qm.message("failed prerequisite"),
-                                        { 'qmtest.prequisite' :
-                                          descriptor.GetId(),
-                                          'qmtest.outcome' : outcome,
-                                          'qmtest.expected_outcome' : o })
-                # This test will never be run.
-                n[0] = 0
-                self.__pending.remove(d)
-                # Recursively remove tests that depend on d.
-                self._UpdateDependentTests(d, Result.UNTESTED)
+                try:
+                    # This test will never be run.
+                    n[0] = 0
+                    self.__pending.remove(d)
+                    # Mark it untested.
+                    self._AddUntestedResult(d.GetId(),
+                                            qm.message("failed prerequisite"),
+                                            { 'qmtest.prequisite' :
+                                              descriptor.GetId(),
+                                              'qmtest.outcome' : outcome,
+                                              'qmtest.expected_outcome' : o })
+                    # Recursively remove tests that depend on d.
+                    self._UpdateDependentTests(d, Result.UNTESTED)
+                except ValueError:
+                    # This test has already been taken off the pending queue;
+                    # assume a result has already been recorded.  This can
+                    # happen when we're breaking dependency cycles.
+                    pass
             else:
                 # Decrease the count associated with the node, if
                 # the test has not already been declared a failure.
@@ -373,6 +408,7 @@ class ExecutionEngine:
             if __debug__:
                 self._Trace("Target is now idle.\n")
             self.__idle_targets.append(target)
+            self.__busy_targets.remove(target)
 
         # Output a trace message.
         if __debug__:

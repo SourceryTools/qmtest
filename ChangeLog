@@ -1,3 +1,9 @@
+2002-06-24  Zack Weinberg  <zack@codesourcery.com>
+
+	* share/diagnostics/common.txt: Add entry for "dependency cycle".
+	* qm/test/execution_engine.py (class ExecutionEngine): Implement
+	dependency-cycle detection.
+
 2002-06-21  Zack Weinberg  <zack@codesourcery.com>
 
 	* qm/platform_unix.py: Use URL quoting convention (%xx) to escape
@@ -34,7 +40,7 @@
 	* qm/test/result_stream.py: Likewise.
 	* qm/test/target.py: Likewise.
 	* qm/test/test.py: Likewise.
-	
+
 	* NEWS: Mention --version option.
 	* qm/test/doc/reference.xml: Add --version description.
 	* GNUmakefile.in: Fix typo in comment.
@@ -55,7 +61,7 @@
 
 	* NEWS: Mention that --random is no longer the default.
 	* qm/test/doc/reference.xml: Update accordingly.
-	
+
 	* qm/common.py (shuffle): Remove.
 	* qm/test/cmdline.py (whrandom): Do not import.
 	(random): Import.
@@ -74,14 +80,14 @@
 	* qm/user.py (Group.__init__): Remove check for valid labels.
 	* qm/xmlutil.py (load_xml): Remove incorrect comment.
 	* qm/test/base.py (validate_id): Remove.
-	(load_database): Convert Unicode strings to ordinary strings 
+	(load_database): Convert Unicode strings to ordinary strings
 	for use as keyword arguments.
 	(extension_kinds): Add label.
 	* qm/test/cmdline.py (QMTest.__ExecuteRun): Use the empty string,
 	not ".", to indicate that all tests should be run.
 	* qm/test/database.py: Rework to provide label manipulation
 	functions in terms of a particular label class.
-	* qm/test/file_database.py: Likewise.	
+	* qm/test/file_database.py: Likewise.
 	* qm/test/xmldb.py (Database): Likewise.
 	* qm/test/classes/classes.qmc: Add FileLabel and PythonLabel.
 	* qm/test/classes/file_label.py: New file.
@@ -92,7 +98,7 @@
 	(QMTestPage.FormatId): New method.
 	* tests/unit.qms/common.qms/label_is_valid.qmt: Update.
 	* tests/unit.qms/common.qms/label_thunk.qmt: Likewise.
-	
+
 2002-06-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/execution_engine.py (ExecutionEngine._CheckForResponse):
@@ -116,29 +122,29 @@
 	* qm/qm.sh (QM_PYTHON_FLAGS): Only use -O when running installed
 	code; do not use optimization when running from the build tree.
 	* qm/trace.py (Tracer.Write): Tweak output format.
-	* qm/web.py (xmlrpclib): Do not import it.  Remove XML-RPC 
+	* qm/web.py (xmlrpclib): Do not import it.  Remove XML-RPC
 	handling throughout.
 	* qm/xmlutil.py: Remove uses of PyXML throughout.
 	* qm/test/base.py: Do not default to xmldb for databases that
 	have no configuration file.
 	(load_results): Do not pass a validate parameter to load_xml.
 	* qm/test/database.py (Database.ExpandIds): Tidy.
-	* qm/test/execution_engine.py (ExecutionEngine._RunTests): If 
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): If
 	loading a test fails, put the exception traceback in the result.
-	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult): 
+	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult):
 	Use only methods available in DOM, not PyXML extensions.
-	* qm/test/xmldb.py (Database.__ParseTestDocument): Add trace 
+	* qm/test/xmldb.py (Database.__ParseTestDocument): Add trace
 	output.
 	(Database.__ParseResourceDocument): Likewise.
 	(Database.__GetArgumentsFromDomNode): Likewise.  Be tolerant of
 	embedded TEXT_NODEs.
 	(Database._Trace): New method.
-	
+
 2002-05-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/track: Remove directory.
 	* GNUmakefile.in (QM_TOOLS): Remove QMTrack.
-	
+
  	Merge from release-1-1-branch.
 
 2002-05-20  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
@@ -163,7 +169,7 @@
 	(build_binary): Use zcat.
 
 	* scripts/qm-release: Set the umask before building distributions.
-	
+
 	* scripts/qm-release (upload): New function.
 	* config.guess: New file.
 
@@ -174,7 +180,7 @@
 
 	* scripts/qm-release (tag_qm): Overwrite version, rather than
 	appending to it.
-	
+
 	* scripts/qm-release (tag_qm): New function.
 
 	* version: New file.
@@ -211,7 +217,7 @@
 
 	* qm/test/cmdline.py (QMTest.MakeContext): Fix typo.
 	* NEWS: Note fix.
-	
+
 2002-03-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (string_types): New variable.
@@ -242,7 +248,7 @@
 	(TestResultsPage.__init__): Use it.
 	(TestResultsPage.GetTotalUnexpected): Take advantage of the fact
 	that test_results is now a list, not a dictionary.
-	(TestResultsPage.GetResultsWithOutcome): Likewise.	
+	(TestResultsPage.GetResultsWithOutcome): Likewise.
 	(TestResultsPage.GetTestIds): Remove.
 
 	* qm/test/web/web.py (StorageResultsStream.Start): Add test_ids
@@ -277,11 +283,11 @@
 	(QMTestServer.HandleSaveContext): Likewise.
 	(QMTestServer.HandleSubmitContext): Likewise.
 	(QMTestServer._ClosePopupAndRedirect): New method.
-	
+
 	* COPYING: Replace with the GPL.
 	Replace all other copyright notices with references to COPYING.
 	* README: Note license change.
-	
+
 2002-03-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUMakefile.in (PYTHON_PACKAGES): Remove sgmlop.
@@ -333,7 +339,7 @@
 	* qm/test/file_database.py (FileDatabase.__init__): Remove the
 	store parameter.
 	* qm/test/qmtest.py (print_errror_message): Indent the message.
-	* qm/test/result.py (Result.outcomes): Order from most 
+	* qm/test/result.py (Result.outcomes): Order from most
 	interesting to least interesting.
 	* qm/test/target.py (Target.RunTest): Catch ContextException and
 	introduce appropriate failure notices.
@@ -371,7 +377,7 @@
 	(QMTest.results_file_name): Likewise.
 	* qm/test/share/dtml/load-expected-results.dtml: Use it.
 	* qm/test/share/dtml/load-results.dtml: Likewise.
-	* qm/test/share/dtml/navigation-bar.dtml (handle_menu_select): 
+	* qm/test/share/dtml/navigation-bar.dtml (handle_menu_select):
 	Reset menus after use.
 	* qm/test/web/web.py (QMTestPage.__init__): Use
 	QMTest.expectations_file_name and QMTest.results_file_name.  Store
@@ -382,7 +388,7 @@
 2002-02-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/command.py (Command.ExecTestBase.RunProgram):
-	Make sure that result annotations are stored as strings, not 
+	Make sure that result annotations are stored as strings, not
 	integers.
 
 	* qm.spec.in (Release): Increment.
@@ -391,7 +397,7 @@
 
 	* qm/test/web.py (ShowSuitePage.__init__): Fix typo.
 	* qm/test/file_database.py (FileDatabase._GetLabels): Likewise.
-	
+
 2002-01-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/result.py (Result.MakeDomNode): Fix typo.
@@ -399,7 +405,7 @@
 	Remove.
 	(TempDirectoryResource.SetUp): Fix typo.
 	(TempDirectoryResource.CleanUp): Likewise.
-	
+
 	* qm/test/database.py (ItemDescriptor._MakeItem): Tell a newly
 	created test or resource what its name is.
 
@@ -408,7 +414,7 @@
 	Do not use it.
 	* qm/test/qmtest.py: Remove Python 1.5 work-around.
 	* qm/test/result.py: Alphabetize annotations in results file.
-	
+
 	* qm/test/cmdline.py (QMTest.MakeContext): Fix spelling of
 	context file option.
 
@@ -436,7 +442,7 @@
 	* qm/test/target.py (Target.RunTest): Remove unnecessary code.
 	* qm/test/doc/reference.xml: Update description of how QMTest
 	locates the python interpreter to use.
-	
+
 2002-01-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (INSTALL_DIR): Set the mode of the installed
@@ -446,7 +452,7 @@
 
 	* configure.in: Issue an error if distutils is not installed.
 	* configure: Regenerated.
-	* qm/test/doc/tour.xml: Update output display.	
+	* qm/test/doc/tour.xml: Update output display.
 
 	* GNUmakefile.in (SCRIPTS): Add $(SCRIPT_EXT).
 
@@ -455,7 +461,7 @@
 	* qm/structured_text.py: Substantial changes to support a verbatim
 	markup.
 	* qm/test/result.py (Result.AsStructuredText): Remove.
-	* qm/test/text_result_stream.py (TextResultStream._DisplayResult): 
+	* qm/test/text_result_stream.py (TextResultStream._DisplayResult):
 	Do not use it.
 	* qm/test/classes/command.py (ExecTestBase): Change name of
 	"Expected Standard Error" field to "Standard Error".
@@ -465,14 +471,14 @@
 	* qm/test/share/dtml/result.dtml: Adjust formatting.
 	* qm/test/web/web.py (TestResultsPage.FormatResult): Remove.
 	(QMTestServer.HandleSaveResults): Fix typos.
-	
+
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/xmldb.py (Database.WriteSuite): Fix typo.
 	* qm/test/classes/command.py (_make_result_for_exception): Remove.
 	(ExecTestBase.RunProgram): Use execvpe, not execve.
 	* qm/test/web/web.py (qm.test.suite): Import it.
-	(QMTestServer.HandleCreateSuite): Pass the server, not the 
+	(QMTestServer.HandleCreateSuite): Pass the server, not the
 	test database, to ShowSuitePage.
 	(QMTestServer.HandleShowSuite): Likewise.
 	(QMTestServer.HandleSubmitSuite): Use Suite, not qm.test.base.Suite.
@@ -488,7 +494,7 @@
 	* scripts/qm-release (build_source): Correct copying of PDF
 	documentation.
 
-	* scripts/qm-release (build_source): Correct documentation 
+	* scripts/qm-release (build_source): Correct documentation
 	building.
 
 	* GNUmakefile.in (lib-install): Correct installation location
@@ -503,7 +509,7 @@
 	the release tarball.
 
 	* NEWS: New file.
-	
+
 	* qm/queue.py: New file.
 	* qm/test/base.py (get_extension_class_names_in_directory): Remove
 	debugging statement.
@@ -514,8 +520,8 @@
 	(ExecutionEngine.__init__): Use qm.queue.Queue, not Queue.Queue.
 	(ExecutionEngine.__CheckForResponse): Use qm.queue.Empty, not
 	Queue.Empty.
-	
-	* qm/test/execution_engine.py (ExecutionEngine.Run): Pass 
+
+	* qm/test/execution_engine.py (ExecutionEngine.Run): Pass
 	self to Target.Start.
 	(ExecutionEngine._RunTests): Do not add untested results for
 	tests that were not run if immediate termination was requested.
@@ -668,7 +674,7 @@
 	* qm/test/web/web.py (DefaultDtmlPage.__init__): New method.
 	(QMTestServer.__Init__): Change path to manual.
 	* qm/track/qmtrack.py: Use load_messages and qm.exit.
-	* qm/track/server.py (WebServer.__init__): Change path to 
+	* qm/track/server.py (WebServer.__init__): Change path to
 	manual.
 	* qm/track/doc/.cvsignore: New file.
 	* qm/track/doc/email.xml: Likewise.
@@ -706,9 +712,9 @@
 	* share/xml/.cvsignore: New file.
 	* share/xml/CATALOG: Remove.
 	* share/xml: Remove all DTDs.
-	* tests/unit.qms/test.qms/classes.qms/scripttest1.qmt: Fix 
+	* tests/unit.qms/test.qms/classes.qms/scripttest1.qmt: Fix
 	erroneous XML.
-	
+
 2002-01-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* .cvsignore (standard.mk): Remove.
@@ -725,7 +731,7 @@
 	* doc/manual/Makefile.in: Remove.
 	* doc/manual/track-manual.xml: Add user database description.
 	* doc/manual/track-tour.xml: Update links.
-	
+
 	* qm/common.py (threading): Do not import it.
 	(Lock): Remove.
 	(MutexMixin): Likewise.
@@ -786,7 +792,7 @@
 	* qm/test/xmldb.py (Database.__init__): Remove create parameter.
 	* qm/test/classes/classes.qmc: Add serial_target.SerialTarget.
 	* qm/test/classes/rsh_target.py: Rework substantially.
-	* qm/test/classes/temporary.py (TempDirectoryResource.SetUp): 
+	* qm/test/classes/temporary.py (TempDirectoryResource.SetUp):
 	Remember the path to the directory created.
 	(TempDirectoryResource.CleanUp): Remove context parameter.
 	* qm/test/classes/thread_target.py: Rework substantially.
@@ -795,7 +801,7 @@
 	store.
 	* share/diagnostics/test.txt: Adjust documentation.
 	* doc/test-manual.xml: Update description of context.
-	
+
 2001-12-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm.spec.in (Release): Increment.
@@ -822,7 +828,7 @@
 	* share/dtml/help.dtml (popup_manual): Likewise.
 	* share/web/common.js (show_help): Likewise.
 	(popup_manual): Likewise.
-	
+
 	* share/dtml/test/result.dtml: Sort the annotations.
 
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
@@ -901,7 +907,7 @@
 	documentation text.
 	(label_is_valid): Allow periods.
 	* share/web/stylesheets/qm.css: Make sure it is valid CSS.
-	
+
 	* standard.mk.in (all): Remove doc.
 	(doc): Rename to ...
 	(doc-all): ... this.
@@ -924,7 +930,7 @@
 	* share/web/static/index.html: Remove.
 	* share/xml/class-directory.dtd (class): Add target to the list
 	of allowed class kinds.
-	
+
 	* configure.in (AC_OUTPUT): Do not create qm/Makefile.
 	* configure: Regenerated.
 	* scripts/qm-release (QM_INSTALL_DIR): Use an absolute path.
@@ -935,7 +941,7 @@
 
 	* Makefile.in (SCRIPTS): Generate them here.
 	* qm/Makefile.in: Remove.
-	* scripts/qm-release (build_source): Tell CVS not to export 
+	* scripts/qm-release (build_source): Tell CVS not to export
 	empty directorieds.
 
 	* Makefile.in: Completely rework installation logic.
@@ -978,13 +984,13 @@
 	expectations.
 	* qm/test/classes/command.py (ExecTestBase.RunProgram): Use
 	execvpe to execute programs.
-	
+
 	* qm/test/web/web.py (QMTestServer.HandleSaveResults): Fix
 	typos.
 
 	* scripts/qm-release: Fix typo.
-	
-  	* scripts/qm-release: Update documentation copying rules. 
+
+  	* scripts/qm-release: Update documentation copying rules.
 
 	* README: Remove stale link.
 	* doc/manual/test-tour.xml: Fix typos.
@@ -1055,7 +1061,7 @@
 	* share/dtml/test/results.dtml: Indicate incomplete vs.
 	complete test results.
 	* share/web/stylesheets/qm.css (span.warning): New class.
-	
+
 2001-11-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/qm.mod (prompt): Reformat as >, not $.
@@ -1088,19 +1094,19 @@
 	* share/xml/test.dtd: Remove target-group attribute.
 	* qm/test/classes/command.py (ExecTestBase.RunProgram): Clarify
 	error message.
-	
+
 	* PyXML/xml/parsers/xmlproc/xmlproc.py (XMLProcessor.parse_start_tag):
 	Handle out-of-data condition correctly.
 
 	* qm/test/base.py (get_class_arguments): Fix typo in comment.
-	(get_class_description): 
+	(get_class_description):
 	* qm/test/cmdline.py (Command): Rename to ...
 	(QMTest): ... this.
 	(_the_qmtest): New variable.
 	(QMTest.__init__): Set it.
 	(QMTest.GetTargets): Store the resulting list of targets.
 	(get_qmtest): New function.
-	* qm/test/database.py (Database.GetTestClasses): Rename to 
+	* qm/test/database.py (Database.GetTestClasses): Rename to
 	...
 	(Database.GetTestClassNames): ... this.
 	(Database.GetResourceClasses): Rename to ...
@@ -1120,7 +1126,7 @@
 	* share/dtml/problems.dtml: Remove references to Software Carpentry.
 	* share/dtml/test/new.dtml: Update online help.
 	* share/dtml/test/show.dtml: Improve resource formatting.
-	
+
 2001-11-21  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/web/web.py (FormatId): Add documentation.
@@ -1252,11 +1258,11 @@
 	(QMTestServer.HandleSubmitItem): Use get_class_arguments.
 	(QMTestServer.MakeNewTest): Use get_class_arguments.
 	(QMTestServer.MakeNewResource): Use get_class_arguments.
-	
+
 2001-11-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/memory_issue_store.py (IssueStore.__Write): Store
-	issues safely.  
+	issues safely.
 	* qm/track/triggers/notification.py
 	(NotifyFixedTrigger.property_declarations): New attribute.
 	(NotifyFixedTrigger.GetRecipientAddresses): Handle empty list.
@@ -1290,7 +1296,7 @@
 	* qm/test/web/web.py (QMTestServer.MakeNewTest): Correct typos.
 	(QMTestServer.MakeNewResource): Likewise.
 	* share/diagnostics/test.txt: Reformat some error messages.
-	
+
 2001-11-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* COPYING: Fix typo.
@@ -1301,7 +1307,7 @@
 	* qm/test/base.py (CommandFailedError): Remove.
 	(Context): Remove.
 	(ContextWrapper): Remove.
-	(set_up_resource): Use Result.ACTION, not action, to 
+	(set_up_resource): Use Result.ACTION, not action, to
 	when constructing the result.
 	(clean_up_resource): Likewise.
 	* qm/test/cmdline.py (Command.commands_spec): Add -C and -c
@@ -1329,7 +1335,7 @@
 	* qm/test/web/web.py (QMTestServer.__init__): Remove
 	response_queue parameter.
 	(QMTestServer.HandleRunTests): Use TestRun.
-	
+
 2001-11-05  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Add command-line reference for
@@ -1374,7 +1380,7 @@
 	* qm/test/web/web.py (QMTestServer.__init__): Accept targets as
 	a parameter.
 	(QMTestServer.HandleRunTests): Use them.
-	
+
 	* qm/test/base.py (InstanceBase): Rename to ...
 	(InstanceDescriptor): ... this.
 	(TestDescriptor): Derive from InstanceDescriptor.
@@ -1396,7 +1402,7 @@
 	* qm/test/target.py: New file.
 	* qm/test/classes/rsh_target.py: Likewise.
 	* qm/test/classes/thread_target.py: Likewise.
-	
+
 2001-10-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/resource.py: New file.
@@ -1414,7 +1420,7 @@
 	* qm/test/run.py (Target.Stop): Adjust comment.
 	(SubprocessTarget.Stop): Remove assertion.
 	(RemoteShellTarget.Stop): Likewise.
-	(TestRun.Schedule): Use GetTargetGroup, not properties, to 
+	(TestRun.Schedule): Use GetTargetGroup, not properties, to
 	get the tests target group.
 	(TestRun.GetTestResults): Remove.
 	(TestRun.GetResourceResults): Remove.
@@ -1453,9 +1459,9 @@
 	* share/dtml/test/show.dtml: Remove properties handling.
 	* share/xml/resource.dtd: Remove properties.
 	* share/xml/test.dtd: Likewise.  Add target-group.
-	
+
 	* qm/test/qmtest.py: Remove the first directory from sys.path.
-	
+
 2001-10-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/track-manual.xml: Revise section on issue IDs.
@@ -1470,13 +1476,13 @@
 	(IssueClass.AllocateNextId): New method.
 	(IssueClass.MakeDomNode): Write out the next available ID.
 	(from_dom_node): Read it back in.
-	* qm/track/web/show.py (handle_submit): Assign issue IDs 
+	* qm/track/web/show.py (handle_submit): Assign issue IDs
 	automatically.
 	* share/diagnostics/track.txt: After creating an issue database,
 	tell the user how to configure it.
 	* share/xml/issue-classes.dtd (issue-class): Add next-id
 	attribute.
-	
+
 2001-10-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Note that -D is no lnoger required.
@@ -1488,7 +1494,7 @@
 	test suites.
 	(DirPage.MakeRunUrl): New method.
 	* share/dtml/test/dir.dtml (run_dir): New method.
-	
+
 	* qm/.cvsignore: Add *.pyo.
 	* qm/test.cvsignore: Likewise.
 	* qm/test/classes/.cvsignore: Likewise.
@@ -1496,7 +1502,7 @@
 	* qm/track/.cvsignore: Likewise.
 	* qm/track/triggers/.cvsignore: Likewise.
 	* qm/track/web/.cvsignore: Likewise.
-	
+
 	* qm/test/base.py (InstanceBase.__init__): Take 'database' as a
 	parameter.
 	(TestDescriptor.__init__): Likewise.
@@ -1536,18 +1542,18 @@
 	* qm/test/xmldb.py (Database): Adjust for removal of global
 	database variable.
 	* qm/test/web/web.py: Likewise.
-	
+
 2001-10-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/manual.xml (track-email): New entity.
 	* doc/manual/track-manual.xml: Reference it (but commented out).
 	* doc/manual/track-email.xml: New file.
-	
+
 2001-10-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/doc/manual/common-manual.xml: Adjust configuration file
 	description.
-	* qm/test/base.py (load_outcomes): Take a file object, not a path. 
+	* qm/test/base.py (load_outcomes): Take a file object, not a path.
 	* qm/test/cmdline.py (Command.__ExecuteRun): Adjust.
 	(Command.__ExecuteSummarize): Likewise.
 	* qm/test/web/run.py (TestResultsPage): Take expected_outcomes
@@ -1572,9 +1578,9 @@
 	(QMTestServer.HandleSubmitExpectationsForm): Likewise.
 	* qm/share/dtml/test/expectations.dtml: New file.
 	* qm/share/dtml/test/load-expected-results.dtml: Likewise.
-	* qm/share/dtml/test/navigation-bar.dtml (handle_menu_select): 
+	* qm/share/dtml/test/navigation-bar.dtml (handle_menu_select):
 	Simplify menu handling.
-	
+
 2001-10-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/doc/test-manual.xml: Update for changes to GUI.
@@ -1595,7 +1601,7 @@
 	* share/dtml/test/navigation-bar.dtml: Add support for
 	loading results.
 	* share/web/common.js: Fix HTML.
-	
+
 	* qm/web.py (DtmlPage.MakeMenuItem): New method.
 	(WebRequestHandler): Print thank you message when shutting down.
 	(WebServer.Bind): Remove getsockname call.
@@ -1622,7 +1628,7 @@
 	* share/dtml/test/results.dtml: Likewise.
 	* share/dtml/test/show.dtml: Likewise.
 	* share/dtml/test/suite.dtml: Likewise.
-	
+
 	* qm/platform_win32.py (open_in_browser): Implement.
 
 2001-10-19  Alex Samuel  <samuel@codesourcery.com>
@@ -1636,14 +1642,14 @@
 	Update accordingly throughout.
 	* qm/test/database.py (Database.GetClassPaths): Rewrite.
 	* qm/test/xmldb.py (Database.GetClassPaths): Use base class
-	implementation. 
+	implementation.
 
 2001-10-19  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (load_xml_file): Don't handle exceptions here.
 	* qm/web.py (WebRequestHandler.do_POST): Expand fields here.
 	(WebRequestHandler.__HandleXmlRpcRequest): Dump exception if
-	verbose. 
+	verbose.
 	(parse_form_query): Remove.
 	* qm/structured_text.py (StructuredTextProcessor.NormalizeSpaces):
 	Remove FIXME.  Expand tabs.
@@ -1665,7 +1671,7 @@
 	(Command.__PerformCreateIdb): Likewise.
 	(Command.__ImportIssues): Likewise.
 	* qm/track/web/query.py (QueryPage.MakePythonQueryHelp): Remove
-	FIXME. 
+	FIXME.
 	(QueryPage.MakeCategorySelect): Likewise.
 	(QueryPage.MakeStateSelect): Likewise.
 	* qm/track/web/issue_class.py: Remove FIXME.
@@ -1673,13 +1679,13 @@
 	issue classes here.
 	* qm/track/triggers/notification.py
 	(NotifyFixedTrigger.GetSubscriberAddresses): Remove FIXME.
-	(NotifyByUidFieldTrigger.GetSubscriberAddresses): Likewise. 
+	(NotifyByUidFieldTrigger.GetSubscriberAddresses): Likewise.
 	* qm/test/result.py (Result.MakeDomNode): Update comment.
 	* qm/test/cmdline.py (Command.tdb_class_option_spec): New
-	attribute. 
+	attribute.
 	(Command.commands_spec): Add create-tdb.  Alphabetize.
 	(Command.Execute): Reorganize.  Handle create-tdb.
-	(Command.__ExecuteCreateTdb): New. 
+	(Command.__ExecuteCreateTdb): New.
 	(Command.__ExecuteRun): Remove FIXME.
 	* qm/test/base.py (dtds): Add tdb-configuration.
 	(_get_db_configuration_directory): New function.
@@ -1690,17 +1696,17 @@
 	(_result_from_dom): Remove FIXME.
 	* qm/test/web/web.py (QMTestServer.HandleRunTests): Remove FIXME.
 	* qm/test/classes/command.py (make_result_for_exception): Rename
-	to... 
+	to...
 	(_make_result_for_exception): ... this.  Comment it.
 	Update accordingly throughout.
 	* share/xml/tdb-configuration.dtd (class_name): Rename to...
 	(class-name): ... this.
 	* share/diagnostics/common.txt (xmlrpc exception): New
-	diagnostic. 
+	diagnostic.
 	* share/diagnostics/test.txt (new db message): Likewise
 	(not test database): Likewise.
 	* doc/manual/test-manual.xml (sec-testcmd-create-tdb): New
-	section. 
+	section.
 	(sec-reg-writing-database-classes): Update.
 	* doc/manual/test-tour.xml (sec-testtut-setting-up): Likewise.
 	* tests/QMTest: New directory.
@@ -1806,7 +1812,7 @@
 	* doc/manual/track-tour.xml: Revise.
 	* doc/manual/track-reference.xml: Merge into...
 	* doc/manual/track-manual.xml: ... here.
-	
+
 2001-10-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/manual.xml (track-reference): New entity.
@@ -1814,7 +1820,7 @@
 	* doc/manual/track-manual.xml (sec-qmtrack-configuration): New
 	section.
 	* doc/manual/track-reference.xml: New file.
-	
+
 2001-10-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* configure.in (DOCBOOK_DTD): Look for it in the standard place.
@@ -1826,12 +1832,12 @@
 	(PropertyDeclaration): ... this.
 	Adjust accordingly throughout.
 	* qm/track/server.py (make_server): Use
-	handle_shutdown_by_administrator. 
+	handle_shutdown_by_administrator.
 	(handle_shutdown): Rename to...
 	(handle_shutdown_by_administrator): ... this.
 	(handle_shutdown): New function.
 	* qm/track/issue_database.py (setup_for_test): Use
-	SetSubscriptionCondition. 
+	SetSubscriptionCondition.
 	* qm/track/issue_class.py (Trigger.class_name): New variable.
 	(Trigger.property_declarations): Likewise.
 	(Trigger.__init__): Rewrite.
@@ -1840,7 +1846,7 @@
 	(Trigger.GetName): Use GetProperty.
 	(Trigger.MakeDomNode): New method.
 	(StateField.property_declarations): Adjust for
-	PropertyDeclaration. 
+	PropertyDeclaration.
 	(IssueClass.GetField): Fix error code.
 	(IssueClass.MakeDomNode): Store triggers.
 	(trigger_from_dom_node): New function.
@@ -1848,7 +1854,7 @@
 	* qm/track/triggers/state.py (Trigger.class_name): New variable.
 	(Trigger.property_declarations): Likewise.
 	(Trigger.__init__): Pass propertis to parent.  Don't use object
-	attributes. 
+	attributes.
 	(Trigger.Preupdate): Use GetProperty.
 	* qm/track/triggers/notification.py
 	(_NotifyTrigger.property_declarations): New variable.
@@ -1887,13 +1893,13 @@
 	(NotifyByUidFieldTrigger.GetSubscriptionCondition): ... this.
 	(NotifyByUidFieldTrigger.Preupdate): Use accessor.
 	* qm/track/triggers/discussion.py (DiscussionTrigger.class_name):
-	New variable. 
+	New variable.
 	(DiscussionTrigger.property_declarations): Likewise.
 	(DiscussionTrigger.__init__): Pass properties to parent.  Don't
 	use object attributes.
 	(DiscussionTrigger.Preupdate): Use GetProperty.
 	* qm/track/web/issue_class.py (handle_submit_subscription): Use
-	SetSubscriptionCondition. 
+	SetSubscriptionCondition.
 	* share/dtml/track/config-idb.dtml: Add shutdown button.
 	* share/xml/issue-classes.dtd (issue-class): Add triggers.
 	(trigger): New element.
@@ -1915,11 +1921,11 @@
 	* share/diagnostics/test-help.txt: Revise description of
 	test classes.
 	* share/dtml/test/new.dtml: Revise.
-	* share/tutorial/test/tdb/exec1.qmt: Right code that throws an 
+	* share/tutorial/test/tdb/exec1.qmt: Right code that throws an
 	exception, rather than simply computing an incorrect value.
 	* share/tutorial/test/tdb/_classes/count.py: Revise for new test
 	class API.
-	
+
 2001-10-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (set_up_resource): Set up the action
@@ -1930,7 +1936,7 @@
 	* qm/test/result.py (Result.__init__): Correct handling of
 	default parameter.
 	* qm/test/classes/command.py (Command.Run): Fix typos.
-	
+
 	* qm/test/base.py (base.dtds): Change version number for
 	result DTD.
 	(write_results): Remove.
@@ -1948,7 +1954,7 @@
 	(run_test): Indicate that the new result is for a test.
 	(set_up_resource): Indicate that the new result is for a resource.
 	(clean_up_resource): Likewise.
-	* qm/test/cmdline.py (Command.__ExecuteSummarize): Use 
+	* qm/test/cmdline.py (Command.__ExecuteSummarize): Use
 	TextResultStream.
 	(Command.__ExecuteRun): Likewise.  Use XMLResultStream.
 	(Command.__ProgressCallback): Remove.
@@ -1983,7 +1989,7 @@
 	* share/xml/CATALOG: Update result.dtd version.
 	* share/xml/result.dtd: Remove test-results and resource-results
 	elements.
-	
+
 2001-10-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (InstanceBase): Tweak documentation.
@@ -1996,7 +2002,7 @@
 	* qm/test/xmldb.py (Database.__ParseTestDescriptor): Likweise.
 	(Database.__ParseResourceDescriptor): Likewise.
 	* qm/test/web/show.py (handle_sumbit): Likewise.
-	
+
 	Use 'arguments' not 'fields' in test classes.
 	Change API for 'Run' method in tests.
 	* qm/test/base.py: Import qm.test.result.
@@ -2042,7 +2048,7 @@
 	(TestResultsPage.FormatResult): Likewise.
 	* qm/test/web/show.py (ShowPage.AddPrerequisitePage): Tweak.
 	(handle_submit): Likewise.
-	
+
 	* qm/test/base.py (InstanceBase.GetClass): Use
 	get_extension_class.
 	(load_databse): Likewise.
@@ -2059,7 +2065,7 @@
 	(__builtin_class_path): Likewise.
 	(extension_kinds): New variable.
 	(__class_caches): Likewise.
-	* qm/test/database.py (GetTestClasses): Use 
+	* qm/test/database.py (GetTestClasses): Use
 	get_extension_class_names.
 	(GetResourceClasses): Likewise.
 	* qm/test/run.py (SubprocessTarget.__init__): Fix typo in comment.
@@ -2071,7 +2077,7 @@
 	(handle_submit): Likewise.
 	* share/xml/CATALOG: Add class-directory.dtd.
 	* share/xml/class-directory.dtd: New file.
-	
+
 2001-10-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/label.py (MakeRelativeTo): Rename to ...
@@ -2136,7 +2142,7 @@
 	(AttachmentStore.__init__): Add database parameter.
 	(AttachmentStore.__MakeDataFilePath): Use it to get the spellings
 	of the various attachments.
-	
+
 	* qm/test/xmldb.py (Database.__init__): Pass the attachment
 	store down to the base class.
 	(Database.GetAttachmentStore): Remove.
@@ -2158,7 +2164,7 @@
 	of base.
 	* qm/test/web/show.py: Likewise.
 	* share/diagnostics/test.txt (no such resource): New error message.
-	
+
 	* qm/structured_text.py (HtmlFormatter.FinishDefinedTerm):
 	Write the <dd> tag corresponding to the beginning of the
 	definition itself.
@@ -2201,7 +2207,7 @@
 	* qm/track/qmtrack.py: ... this.
 	* sgmlop/Makefile.in (clean): Use double-colon rule.
 	* zope-dtml/ExtensionClass/Makefile.in (clean): Likewise.
-	
+
 2001-10-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Mention test suite.
@@ -2306,7 +2312,7 @@
 	class.
 	(TemporaryAttachmentStore.Add): Close the file after the
 	data has been written out.
-	(Attachment): Include a reference to the associated attachment 
+	(Attachment): Include a reference to the associated attachment
 	store.
 	(Attachment.__init__): Take an attachment store as a parameter.
 	(Attachment.__cmp__): Compare the attachment store along with
@@ -2333,7 +2339,7 @@
 	* qm/track/server.py (_make_server): Fix typo in comment.
 	* share/dtml/attachment.dtml: Encode the attachment store
 	when returning information to the server.
-	
+
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/cmdline.py (Command.__SummarizeResults): Only show
@@ -2348,18 +2354,18 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (Field): Rename __attributes to __properties
-	throughout. 
+	throughout.
 	(Field.GetAttribute): Rename to...
 	(Field.GetProperty): ... this.
 	(Field.SetAttribute): Rename to...
-	(Field.SetProperty): ... this.	
+	(Field.SetProperty): ... this.
 	(Field.GetAttributeNames): Rename to ...
 	(Field.GetPropertyNames): ... this.
 	(Field.IsAttribute): Rename to...
 	(Field.IsProperty): ... this.
 	Adjust accordingly throughout.
 	* qm/track/issue_class.py (StateField.GetStateModel): Use
-	GetProperty. 
+	GetProperty.
 	(StateField.SetStateModel): Use SetProperty.
 	* qm/test/base.py (ContextWrapper): Rename attributes to
 	properties throughout.
@@ -2367,10 +2373,10 @@
 	* qm/test/classes/file.py (SubstitutionField.__init__): Rename
 	attributes to properties.
 	(SubstitutionField): Rename path_attribute to path_property
-	throughout. 
+	throughout.
 	* qm/track/cmdline.py (Command.__PrintResults): Likewise.
 	* qm/track/triggers/notification.py
-	(_NotifyTrigger.__MakeMessage): Likewise. 
+	(_NotifyTrigger.__MakeMessage): Likewise.
 	* qm/track/web/show.py (ShowPage.IsShowField): Likewise.
 	(ShowPage.FormatFieldValue): Likewise.
 	* qm/track/web/summary.py (DisplayOptionsPage.__init__): Likewise.
@@ -2379,36 +2385,36 @@
 	* share/dtml/track/issue-class.dtml: Use IsAttribute.
 	* share/dtml/track/subscription.dtml: Likewise.
 	* share/dtml/test/show.dtml: Likewise.
-	* share/diagnostics/test.txt 
+	* share/diagnostics/test.txt
 	(context attribute cannot be deleted): Rename to ...
 	(context property cannot be deleted): ... this.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/classes/file.py (SubstitutionField.class_name): New
-	attribute. 
+	attribute.
 	(SubstitutionField.GetHelp): Fix link in help text.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/issue_class.py (IssueClass.__init__): Adjust field
-	descriptions. 
+	descriptions.
 	* qm/track/cmdline.py (Command.GetIdbPath): Fix exception.
 	(run_command): Handle IdbError.
 	* qm/track/qmtrack.in: Load diagnostics.
 	* qm/track/server.py: Remove obsolete import.
 	* qm/track/web/query.py: Likewise.
 	* qm/test/classes/command.py (ExecTest.fields): Fix description of
-	exit_code field. 
+	exit_code field.
 	* share/dtml/track/show.dtml: Show brief field descriptions when
-	editing. 
+	editing.
 	* share/dtml/test/show.dtml: Fix indentation.
 	* share/diagnostics/track.txt (idb locked): Adjust.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/classes/command.py (ExecTest.Run): Open input files for
-	read. 
+	read.
 
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
@@ -2418,7 +2424,7 @@
 	* share/dtml/test/new.dtml: Remove test class text field.
 	* share/dtml/test/show.dtml: Only show explanatory text about
 	properties when editing.
-	
+
 	* qm/fields.py (Field.GetDescription): Update docstring.
 	(Field.GetBriefDescription): New method.
 	* qm/structured_text.py (StructuredTextProcessor.__call__): Use
@@ -2429,9 +2435,9 @@
 	* qm/test/web/show.py (ShowPage.GetBriefClassDescription): New
 	method.
 	* share/dtml/test/new.dtml: Correct typo.
-	* share/dtml/test/show.dtml: Reduce verbosity; reoder some 
+	* share/dtml/test/show.dtml: Reduce verbosity; reoder some
 	comments.
-	
+
 	* qm/test/classes/command.py (ExecTest): Revise doc strings.
 	(ShellCommandTest): Likewise.
 	(ShellScriptTest): Likewise.
@@ -2442,7 +2448,7 @@
 	(StringExceptionTest): Likewise.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
-	
+
 	* qm/common.py (wrap_lines): Add indent parameter.
 	* qm/test/cmdline.py (Command.summary_formats): New attribute.
 	(Command.summary_option_spec): Remove.
@@ -2483,7 +2489,7 @@
 	(_temporary_location_prefix): Change.
 	* qm/test/xmldb.py (AttachmentStore.Adopt): Fix doc string.
 	(AttachmentStore.__MakeDataFilePath): Make safer file names.
-	* qm/test/cmdline.py (Command.__WriteSummary): Bail early if no tests. 
+	* qm/test/cmdline.py (Command.__WriteSummary): Bail early if no tests.
 
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
@@ -2503,7 +2509,7 @@
 	(HtmlFormatter.FinishDefinedTerm): Likewise.
 	(StructuredTextProcessor): Use __WriteText to format the label in
 	a defined term.
-	
+
 	* configure.in (DOCBOOK_STYLESHEETS): Add another directory
 	in which to locate xml.dcl.
 	(--with-docbook-dtd): New option.
@@ -2514,12 +2520,12 @@
 
 	* share/dtml/test/results.dtml: New file.
 	* share/dtml/track/configuration-navigation-bar.dtml: Likewise.
-	
+
 2001-09-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Update QMTRACK_DB_PATH name.
 	* doc/manual/track-tour.xml: Explain configuration server.
-	
+
 	* qm/attachment.py: Rework entirely.
 	* qm/xmlutil.py (load_xml_file): Add validate parameter.
 	(load_xml): Likewise.
@@ -2579,14 +2585,14 @@
 	(make_unique_tag): Likewise.
 	(_foreign_exit_functions): New variable.
 	* qm/cmdline.py: Reformat comments.
-	
+
 	* qm/track/__init__.py: Remove imports.
 	* qm/track/config.py: Remove.
 	* qm/track/idb.py: Likewise.
 	* qm/track/memory_idb.py: Likewise.
 	* qm/track/issue_database.py: New file.
 	* qm/track/issue_store.py: Likewise.
-	* qm/track/memory_issue_store.py: Likewise.	
+	* qm/track/memory_issue_store.py: Likewise.
 	* qm/track/qmtrack.in: Simplify, using run_command.
 	* qm/track/issue_class.py (issue_classes_dtd): New constant.
 	(IidField.class_name): New attribute.
@@ -2594,7 +2600,7 @@
 	(StateField.__init__): Take state model from an attribute.
 	(DiscussionField.class_name): New attribute.
 	(DiscussionField.__init__): Take the contained field as a
-	parameter. 
+	parameter.
 	(IssueClass.MakeDomNode): New method.
 	(from_dom_node): New function.
 	(load): Likewise.
@@ -2604,7 +2610,7 @@
 	(Attachment): Remove.
 	(Issue.GetRevision): Rename to...
 	(Issue.GetRevisionNumber): ... this.  Adjust accordingly
-	throughout. 
+	throughout.
 	(get_issues_from_dom_node): Add issue_classes parameter.
 	(get_issue_from_dom_node): Likewise.
 	(get_histories_from_dom_node): Likewise.
@@ -2613,14 +2619,14 @@
 	(write_issue_histories): ... this.  Adjust DOM format.
 	(load_issue_histories): New function.
 	(eval_issue_expression): Translate expression exceptions.
-	(_initialize_module): Don't set qm.attachment.attachment_class. 
+	(_initialize_module): Don't set qm.attachment.attachment_class.
 	* qm/track/cmdline.py: Adjust throughout for changes to IDB
-	objects. 
-	(idb_environment_variable_name): New constant. 
+	objects.
+	(idb_environment_variable_name): New constant.
 	(Command.idb_type_option_spec): Remove.
 	(Command.issue_store_implementation_option_spec): New attribute.
 	(Command.qmtrack_commands): Use it.  Add configure-idb.  Remove
-	initialize.  
+	initialize.
 	(Command.__init__): Adjust dispatch accordingly.
 	(Command.GetIdbPath): Use idb_environment_variable_name.
 	(Command.RequiresIdb): Adjust for changes to commands.
@@ -2638,7 +2644,7 @@
 	(Command.__PerformImport): Likewise.
 	(Command.__ImportIssueHistories): Likewise.
 	(Command.__PrintResults): Likewise.  Build list of histories for
-	export. 
+	export.
 	(run_command): New function.
 
 	* qm/track/web/web.py (DefaultDtmlPage.navigation_bar_template):
@@ -2664,8 +2670,8 @@
 	* qm/track/web/query.py: Get IDB from session throughout.
 	* qm/track/web/issue_class.py: Get IDB from session throughout.
 	Adjust for HttpRedirect throughout.
-	(handle_add_discussion): Construct TextField for DiscussionField. 
-	* qm/track/web/index.py (IndexPage.__init__): 
+	(handle_add_discussion): Construct TextField for DiscussionField.
+	* qm/track/web/index.py (IndexPage.__init__):
 	(IndexPage.__init__): Don't get issue classes.
 	(IndexPage.GetIssueClasses): New method.
 	(IndexPage.GetDefaultIssueClass): Likewise.
@@ -2678,9 +2684,9 @@
 	(execute): Likewise.
 	(execute_locally): New function.
 	(execute_remotely): Likewise.
-	
+
 	* share/xml/CATALOG: Add idb-configuration and issue-classes
-	DTDs. 
+	DTDs.
 	* share/xml/idb-configuration.dtd: New file.
 	* share/xml/issue-classes.dtd: Likewise.
 	* share/xml/fields.mod (mimetype): Rename to...
@@ -2704,7 +2710,7 @@
 	* qm/test/base.py: Adjust for changes in xmlutil throughout.
 	(Attachment): Remove.
 	(InstanceBase.SetWorkingDirectory): Don't call
-	__SetAttachmentPaths. 
+	__SetAttachmentPaths.
 	(InstanceBase.__MakeItem): Wrap attachments in arguments.
 	(InstanceBase.__SetAttachmentPaths): Remove.
 	(Suite): Reimplement.
@@ -2724,7 +2730,7 @@
 	(DefaultDtmlPage.FormatSuiteId): Likewise.
 	(DefaultDtmlPage.FormatId): New method.
 	(make_server): Add database parameter.  Register attachment
-	scripts. 
+	scripts.
 	* qm/test/web/suite.py: Adjust for changes in Suite.
 	(handle_submit): Adjust for HttpRedirect.
 	* qm/test/web/show.py (retrieve_attachment_data): Remove.
@@ -2759,7 +2765,7 @@
 	(using local idb): New diagnostic.
 	(using remote idb): Likewise.
 	* share/diagnostics/test.txt (error loading xml resource): New
-	diagnostic. 
+	diagnostic.
 	(error loading xml test): Adjust.
 	(failed prerequisite): New diagnostic.
 	(failed resource): Adjust.
@@ -2769,7 +2775,7 @@
 	(no such test): Adjust.
 	(no target for group): Likewise.
 	* share/diagnostics/common.txt (invalid property): New
-	diagnostic. 
+	diagnostic.
 
 	* tests/unit/common/format_time1.qmt: Remove.
 	* tests/unit/common/graph_complete.qmt: Likewise.
@@ -2832,7 +2838,7 @@
 	* tests/unit.qms/track.qms/export.qms/export2.qmt: Likewise.
 	* tests/unit.qms/track.qms/export.qms/idb.qma: Likewise.
 	* tests/unit.qms/track.qms/export.qms/setup_idb.qmt: Likewise.
-	
+
 2001-09-21  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_linux.py: Really remove it.
@@ -2868,11 +2874,11 @@
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* install-sh: Restore, with corrected permissions.
-	
+
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* install-sh: Remove.
-	
+
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py (copy_tree): Use makedirs.
@@ -2925,7 +2931,7 @@ g
 2001-09-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* configure.in: Extract PYTHON_VERSION, PYTHON_PREFIX,
-	PYTHON_PLATFORM. 
+	PYTHON_PLATFORM.
 	* configure: Regenerate.
 	* standard.mk.in (PYTHON_VERSION): New variable.
 	(PYTHON_PREFIX): Likewise.
@@ -2934,7 +2940,7 @@ g
 	* Makefile.in (zope-dtml/ExtensionClass/Makefile): Remove rule.
 	(sgmlop/Makefile): Use MAKEFILE_PRE_IN.
 	* qm/Makefile.in (setup_path.py): Substitute @python_version@ and
-	@python_platform@. 
+	@python_platform@.
 	* qm/setup_path.py.in (get_python_version): New function.
 	(__python_version): New variable.
 	(__python_platform): Likewise.
@@ -2948,7 +2954,7 @@ g
 	* sgmlop/Makefile.in (TOPDIR): New variable.
 	Include standard.mk.
 	(all): Use PYTHON.
-	
+
 2001-09-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* configure.in: Rewrite.
@@ -2987,7 +2993,7 @@ g
 	* tests/unit/test/classes/scripttest2.qmt: Likewise.
 	* tests/unit/test/classes/scripttest3.qmt: Likewise.
 	* doc/manual/test-tour.xml: Fix typo.
-	* doc/manual/test-reference.xml: Document some test classes. 
+	* doc/manual/test-reference.xml: Document some test classes.
 
 2001-08-28  Alex Samuel  <samuel@codesourcery.com>
 
@@ -3019,14 +3025,14 @@ g
 	* qm/test/xmldb.py (DirectorySuite.__ScanDirectory): Construct
 	absolute test IDs.
 	* qm/test/run.py (RemoteShellTarget.__init__): Use arguments
-	property. 
+	property.
 	(TestRun.AddResourceResult): Immediately try to clean up after
 	failed setup.
 	* qm/test/cmdline.py (Command.commands_spec): Put ID in brackets.
 	(Command.__ExecuteRun): Run all tests if none specified.  Collect
 	explicit test suites.
 	(Command.__WriteSummary): Print statistics by suite.  Supress null
-	output. 
+	output.
 	* share/diagnostics/test.txt (no ids specified): Remove.
 	* doc/qm.mod (PASS): New entity.
 	(FAIL): Likewise.
@@ -3054,7 +3060,7 @@ g
 	(SubprocessTarget.EnqueueCleanUpResource): Likewise.
 	(SubprocessTarget.OnReplyReady): Likewise.
 	(SubprocessTarget.GetQueueLength): Subtract number of ready
-	children. 
+	children.
 	(SubprocessTarget.OnReplyReady): Use base implementation.
 	(SubprocessTarget.__EnqueueCommand): Rename to...
 	(SubprocessTarget._EnqueueCommand): ... this.
@@ -3078,13 +3084,13 @@ g
 	(get_host_name): New function.
 
 	* qm/track/cmdline.py (Command.__PerformServer): Use
-	platform.get_host_name. 
+	platform.get_host_name.
 	* qm/track/triggers/notification.py (_NotifyTrigger.__init__):
-	Likewise. 
+	Likewise.
 
 	* qm/test/run.py: New file.
 	* qm/test/cmdline.py (Command.summary_option_spec): Remove
-	short-form option. 
+	short-form option.
 	(Command.profile_option_spec): Adjust.
 	(Command.concurrent_option_spec): Likewise.
 	(Command.remote_option_spec): Remove.
@@ -3095,7 +3101,7 @@ g
 	(Command.add_test_id): Adjust for new test run mechanism.
 	(Command.__ExecuteServer): Use platform.get_host_name.
 	(Command.__WriteSummary): Summarize resource results too.  Adjust
-	output. 
+	output.
 	* qm/test/base.py (dtds): Add target DTD.
 	(Resource.DoSetup): Rename to...
 	(Resource.SetUp): ... this.
@@ -3140,7 +3146,7 @@ g
 	(resource-results): Likewise.
 	* share/xml/target.dtd: New file.
 	* share/diagnostics/test.txt (concurrency not integer): New
-	diagnostic. 
+	diagnostic.
 	(failed resource): Likewise.
 	(incorrect prerequisite outcome): Likewise.
 	(no target for group): Likewise.
@@ -3149,7 +3155,7 @@ g
 	* tests/unit/common/parser_parse.qmt: Likewise.
 	* tests/unit/common/parser_help.qmt: Likewise.
 	* tests/unit/test/classes/tempdir1.qmt: Likewise.
-	
+
 2001-07-20  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/xmldb.py (Database.__ParseResourceDocument): Fix wrong
@@ -3181,7 +3187,7 @@ g
 	to "resource".
 	* qm/test/web/web.py: Rename "action" to "resource" throughout.
 	(DefaultDtmlPage.FormatTestId): Remove relative_to and within
-	parameters. 
+	parameters.
 	(DefaultDtmlPage.FormatResourceId): Likwise.
 	(DefaultDtmlPage.FormatSuiteId): Remove within parameter.
 	* qm/test/web/dir.py: Rename "action" to "resource" throughout.
@@ -3194,13 +3200,13 @@ g
 	* share/dtml/test/dir.dtml: Likewise.
 	* share/dtml/test/suite.dtml: Likewise.
 	* share/dtml/test/show.dtml: Likewise.  Show properties.  Adjust
-	formatting. 
+	formatting.
 	* share/xml/test.dtd: Rename "action" to "resource" throughout.
 	* share/xml/CATALOG: Likewise.
 	* share/xml/action.dtd: Remove.
 	* share/xml/resource.dtd: New file.
 	* share/web/common.js (property_add_or_change): Check if name is
-	valid. 
+	valid.
 	* share/web/dtml/test/add-action.dtml: Remove.
 	* share/web/dtml/test/add-resource.dtml: New file.
 	* unit/common/parser_help.qmt: Make IDs absolute.
@@ -3223,7 +3229,7 @@ g
 	* qm/track/config.py (open_idb): Fix IDB check.  Improve
 	diagnostics.
 	* share/diagnostics/track.txt (idb directory missing): New
-	diagnostic. 
+	diagnostic.
 	(idb problem): Likewise.
 	(idb path inaccessible): Likewise.
 	(idb path wrong): Likewise.
@@ -3250,14 +3256,14 @@ g
 	(decode_state): Use javascript_unescape.
 	(decode_transition): Likewise.
 	* qm/test/classes/python.py (ExecTest.fields): Make text fields
-	multiline. 
+	multiline.
 	(BaseExceptionTest.fields): Likewise.
 	(BaseExceptionTest.CheckArgument): Improve diagnostic.
 	(ExceptionTest.CheckArgument): Likewise.
 	* qm/test/classes/file.py (FileContentsField.fields): Make text
 	field multiline.
 	* share/diagnostics/test.txt (test raised wrong argument): Reword.
-	
+
 2001-07-16  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (DtmlPage.__init__): Remove show_decorations parameter.
@@ -3311,7 +3317,7 @@ g
 	* qm/fields.py (Field.UpdateFromRequest): Remove debugging output.
 	(EnumerationField.__init__): Handle 'None' default.
 	(EnumerationField.CompareValues): Handle values not among
-	enumerals. 
+	enumerals.
 	(EnumerationField.SetAttribute): Don't muck with the default value.
 	* qm/track/server.py (make_server): Register state-model.
 	* qm/track/qmtrack.in: Handle all other exceptions.
@@ -3350,7 +3356,7 @@ g
 2001-07-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* share/dtml/attachment.dtml: Use file name if description not
-	specified. 
+	specified.
 
 2001-07-14  Alex Samuel  <samuel@codesourcery.com>
 
@@ -3363,7 +3369,7 @@ g
 	(HtmlFormatter.End): New method.
 	(StructuredTextProcessor.__punctuation): Reformat.
 	(StructuredTextProcessor.__verbatim_regex): Accept line-end
-	terminator. 
+	terminator.
 	(StructuredTextProcessor.__strong_regex): Likewise.
 	(StructuredTextProcessor.__emph_regex): Likewise.
 	(StructuredTextProcessor.__underline_regex): Likewise.
@@ -3372,16 +3378,16 @@ g
 	(StructuredTextProcessor.__link_regex): New attribute.
 	(StructuredTextProcessor.__link_footnote_regex): Likewise.
 	(StructuredTextProcessor.__init__): Add attribute.
-	(StructuredTextProcessor.__call__): Process hyperlink footnotes. 
+	(StructuredTextProcessor.__call__): Process hyperlink footnotes.
 	(StructuredTextProcessor.End): Call formatter's End method.
 	(StructuredTextProcessor.__WriteText): Rewrite hyperlink
-	processing. 
+	processing.
 	* qm/track/web/summary.py (SummaryPage.__init__): Build dictionary
 	map.
 	(SummaryPage.MakeDisplayOptionsButton): Pass field dictionary to
-	DisplayOptionsPage. 
+	DisplayOptionsPage.
 	(SummaryPage.MakeColorKeyButton): Pass fields to ColorKeyPage.
-	(DisplayOptionsPage.__init__): Take field dictionary parameter.  
+	(DisplayOptionsPage.__init__): Take field dictionary parameter.
 	(DisplayOptionsPage.GetTitle): Handle IndexError.
 	(ColorKeyPage.__init__): Take field parameters.
 	(_hls_transform): Improve doc string.
@@ -3397,7 +3403,7 @@ g
 	(Field.UpdateFromRequest): Process default value.
 	(TextField.FormatValueAsHtml): Don't escape structured text HTML.
 	(EnumerationField.FormatValueAsHtml): Don't use
-	_GetAvailableEnumerals. 
+	_GetAvailableEnumerals.
 	(EnumerationField._GetAvailableEnumerals): Remove.
 	* qm/track/issue_class.py (StateField.FormatValueAsHtml): New
 	method.
@@ -3427,11 +3433,11 @@ g
 	(Command.__PerformInitialize): Use GetIdbPath.
 	(Command.__PerformDestroy): Likewise.
 	* share/diagnostics/common.txt (invalid enum value): New
-	diagnostic. 
+	diagnostic.
 	(missing command): Rewrite.
 	(unrecognized command): New diagnostic.
 	* share/diagnostics/track.txt (create field error): Fix
-	substitution. 
+	substitution.
 	(create issue error): Likewise.
 	(create no equals): Likewise.
 	(edit issue error sem): Likewise.
@@ -3453,22 +3459,22 @@ g
 	(show wrong args): Likewise.
 	(split issue error sem): Likewise.
 	* doc/manual/track-tour.xml: Update for changes in initialize
-	syntax. 
+	syntax.
 
 2001-07-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (TextField.property_declarations): Rename nonempty
-	to not_empty_text. 
-	(TextField.CompareValues): Re-compare strings case-sensitively. 
-	(TextField.Validate): Adjust for not_empty_text.  
+	to not_empty_text.
+	(TextField.CompareValues): Re-compare strings case-sensitively.
+	(TextField.Validate): Adjust for not_empty_text.
 	(TextField.GetHelp): Likewise.
 	(SetField.set_property_declarations): New attribute.
 	(SetField.__init__): Use it.
 	(SetField.CompareValues): Recompare set contents if they're the
-	same length. 
+	same length.
 	(SetField.Validate): Check not_empty_set attribute.
 	* qm/track/issue_class.py (IssueClass.__init__): Use
-	not_empty_text. 
+	not_empty_text.
 	* qm/track/web/web.py (HistoryPageFragment.FormatRevisionDiff):
 	Use field titles in output.
 	* share/diagnostics/common.txt (empty set field value): New
@@ -3486,7 +3492,7 @@ g
 	(EnumerationField.CompareValues): Likewise.
 	* qm/web.py (format_color): New function.
 	* qm/track/issue.py (IssueSortPredicate.__init__): Take field as
-	parameter. 
+	parameter.
 	(IssueSortPredicate.__call__): Use CompareValues.
 	(get_differing_fields): Likewise.
 	(difference_issues): Likewise.
@@ -3515,7 +3521,7 @@ g
 	* share/dtml/track/summary-color-key.dtml: New file.
 	* share/diagnostics/track-help.txt (summary display options help):
 	New help message.
-	
+
 2001-07-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* COPYING: Update year.
@@ -3527,7 +3533,7 @@ g
 	(make_choose_control): Adjust for encode_select_options.
 	(format_user_id): DOn't use default_class.
 	* qm/user.py (XmlDatabase.__init__): Improve exception.
-	* qm/platform_linux.py (open_in_browser): Improve error handling. 
+	* qm/platform_linux.py (open_in_browser): Improve error handling.
 	* qm/fields.py (Field.property_declarations): Fix swapped
 	attribute descriptions.
 	(TextField.property_declarations): Add multiline attribute.
@@ -3536,10 +3542,10 @@ g
 	(TextField.MakePropertyControls): Add control for multiline.
 	(EnumerationField.property_declarations): Augment description.
 	(EnumerationField.MakePropertyControls): Make ordered set
-	control. 
+	control.
 	(TimeField.FormatValueAsHtml): Improve full output format.
 	* qm/common.py (add_exit_function): Handle foreign exit function
-	better. 
+	better.
 	(print_message): Allow zero min_verbose.
 	* qm/track/qmtrack.in: Use qm.track.server module.
 	* qm/track/server.py (start_server): Rename to...
@@ -3554,7 +3560,7 @@ g
 	(Command.__PerformServer): Print a message if port number isn't
 	specified.  Handle --start-browser option.
 	* qm/test/cmdline.py (Command.__ExecuteServer): Improve message.
-	
+
 	* share/web/common.js: Comment throughout.
 	(remove_from_set): Adjust for encode_select_options.
 	(add_to_set): Likewise.
@@ -3570,8 +3576,8 @@ g
 	* share/diagnostics/track.txt (initialize invalid idb class): Fix.
 
 	* doc/manual/track-tour.xml (sec-tractut-user-db): Document
-	--start-browser option. 
-	* doc/manual/test-manual.xml (sec-database-contents): New section. 
+	--start-browser option.
+	* doc/manual/test-manual.xml (sec-database-contents): New section.
 
 2001-07-10  Alex Samuel  <samuel@codesourcery.com>
 
@@ -3603,7 +3609,7 @@ g
 	* qm/fields.py: Adjust throughout for DtmlPage.
 
 	* qm/track/web/web.py (PageInfo): Rename to...
-	(DtmlPage): ... this, and convert. 
+	(DtmlPage): ... this, and convert.
 	Adjust accordingly throughout.
 	(DtmlPage.GenerateStartBody): Use document template.
 	(generate_html_from_dtml): Remove.
@@ -3612,14 +3618,14 @@ g
 	* qm/track/web/query.py: Likewise.
 	* qm/track/web/show.py: Likewise.
 	* qm/track/web/summary.py: Likewise.
-	
+
 	* qm/test/web/web.py (PageInfo): Rename to...
 	(DtmlPage): ... this, and convert.
 	(generate_html_from_dtml): Remove.
 	* qm/test/web/dir.py: Adjust throughout for DtmlPage.
 	* qm/test/web/show.py: Likewise.
 	* qm/test/web/suite.py: Likewise.
-	
+
 	* share/dtml/attachment.dtml: Adjust for DtmlPage.
 	* share/dtml/set.dtml: Likewise.
 	* share/dtml/test/add-action.dtml: Likewise.
@@ -3656,19 +3662,19 @@ g
 
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
-	* qm/track/web/show.py (handle_submit): Handle IssueExistsError. 
+	* qm/track/web/show.py (handle_submit): Handle IssueExistsError.
 	* share/dtml/track/summary.dtml: Top-align issue rows.
 	* share/diagnostics/track.txt (iid already used): New diagnostic.
 
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (SetField.__init__): Use contained field property
-	declarations. 
+	declarations.
 	(SetField.MakePropertyControls): New method.
 	(EnumerationField.property_declarations): New
-	attribute. 
+	attribute.
 	(EnumerationField.__init__): Change enumeration parameter to
-	enumerals. 
+	enumerals.
 	(EnumerationField.SetAttribute): New method.
 	(EnumerationField.SetEnumerals): Simplify.
 	(EnumerationField.GetEnumerals): Handle empty enumerals.
@@ -3730,13 +3736,13 @@ g
 	(NotifyFixedTrigger.AddRecipientUid): ... this.
 	* qm/track/server.py (start_server): Register add-discussion,
 	show-notification, show-subscription, submit-notification,
-	submit-subscription. 
+	submit-subscription.
 	* qm/track/issue_class.py (IssueClass.__init__): Adjust descriptions.
 	(IssueClass.RegisterTrigger): Remove existing trigger.
 	(IssueClass.GetTrigger): New method.
 
 	* share/dtml/track/issue-class.dtml: Add buttons for special
-	features. 
+	features.
 	* share/dtml/track/add-notification-address.dtml: New template.
 	* share/dtml/track/add-notification-uid.dtml: Likewise.
 	* share/dtml/track/subscription.dtml: Likewise.
@@ -3757,7 +3763,7 @@ g
 	* qm/track/web/index.py (IndexPageInfo.__init__): Don't set
 	default_issue_class if there are none.
 	* qm/track/server.py (start_server): Register add-issue-class,
-	new-issue-class. 
+	new-issue-class.
 	* qm/track/issue_class.py (default_categories): Make it a list.
 	(IssueClass.__init__): Convert categories from list to map.
 	* qm/track/config.py (setup_idb_for_internal_use): Make categories
@@ -3766,7 +3772,7 @@ g
 	diagnostic.
 	(missing class title): Likewise.
 	* share/dtml/track/issue-class.dtml: Use issue class title.
-	Adjust. 
+	Adjust.
 	* share/dtml/track/index.dtml: Handle no issue class case.
 	* share/dtml/track/config-idb.dtml: Adjust formatting.  Add button
 	to add a new class.
@@ -3776,7 +3782,7 @@ g
 2001-07-02  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.MakeLoginForm): Add default_user_id
-	parameter. 
+	parameter.
 	(generate_login_form): Set default_user_id attribute.
 	* qm/track/server.py (do_command_for_xml_rpc): Fix typos.
 	* qm/track/qmtrack.in: Handle remote-idb option.
@@ -3797,7 +3803,7 @@ g
 	new-issue-field.
 	* qm/track/memory_idb.py (MemoryIdb.__init__): Add sanity checks.
 	(MemoryIdb.UpdateIssueClass): Rewrite field handling code.  Update
-	issues. 
+	issues.
 	* qm/track/issue_class.py (mandatory_field_names): New constant.
 	(IssueClass.RemoveField): New method.
 	* qm/track/web/summary.py (SummaryPageInfo.FormatFieldValue):
@@ -3812,7 +3818,7 @@ g
 	buttons.
 	* share/dtml/track/add-issue-field.dtml: New template.
 	* share/diagnostics/track.txt (invalid field type): New
-	diagnostic. 
+	diagnostic.
 
 2001-06-27  Alex Samuel  <samuel@codesourcery.com>
 
@@ -3827,7 +3833,7 @@ g
 	* qm/test/web/suite.py (ShowPageInfo.FormatSuiteId): New method.
 	* qm/test/classes/file.py: New file.
 	* qm/test/classes/command.py (ScriptTest.fields): Make script
-	field a text field. 
+	field a text field.
 	(ScriptTest.__init__): Adjust correspondingly.
 	* qm/test/cmdline.py (Command.__ExecuteServer): Use print_message.
 	* qm/test/base.py (standard_test_class_names): Add
@@ -3922,7 +3928,7 @@ g
 	(Field.UnsetDefaultValue): Remove.
 	(Field.HasDefaultValue): Likewise.
 	(Field.GetAttribute): Make default for default_value None.  Check
-	property_declarations for default. 
+	property_declarations for default.
 	(Field.IsAttribute): Default to false.
 	(Field.GenerateEditWebPage): New method.
 	(Field._MakeTextPropertyControl): Likewise.
@@ -3949,7 +3955,7 @@ g
 	* qm/track/memory_idb.py (MemoryIdb): Reorganize.
 	(MemoryIdb.UpdateIssueClass): New method.
 	* qm/track/issue_class.py (IidField.__init__): Add default_value
-	parameter. 
+	parameter.
 	(IidField.SetDefaultValue): Rewrite.
 	(IssueClass.__init__): Don't unset default value for iid.
 	* qm/track/issue.py (Issue.__init__): Don't reat IID specially.
@@ -3960,11 +3966,11 @@ g
 	(Issue.MakeDomElement): Assume a default value.
 	* qm/track/idb.py (IdbBase): Reorganize.
 	* qm/track/cmdline.py (Command.__PerformCreate): Don't check for
-	default value. 
+	default value.
 	* qm/track/web/query.py (QueryPageInfo.MakeQueryForm): Use AsForm.
 	* qm/track/web/issue_class.py (ShowPageInfo.GetFieldType): New
 	method.
-	(_get_issue_class_for_session): New function. 
+	(_get_issue_class_for_session): New function.
 	(handle_show): Rename to...
 	(handle_show_class): ... this.  Rewrite.
 	(handle_show_field): New function.
@@ -4012,7 +4018,7 @@ g
 	(Command.GetCommandOption): Likewise.
 	Use them throughout.
 	(Command.__Parse): Handle verbose option.
-	* qm/track/qmtrack.in: Use GetGlobalOption.  Add messages. 
+	* qm/track/qmtrack.in: Use GetGlobalOption.  Add messages.
 
 2001-06-11  Alex Samuel  <samuel@codesourcery.com>
 
@@ -4027,7 +4033,7 @@ g
 	(_initialize_module): New function.
 	Call it.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Generate from
-	DTML. 
+	DTML.
 	(__initialize_module): Rename to...
 	(_initialize_module): ... this.
 	* qm/track/web/summary.py (handle_summary): Process last_query.
@@ -4036,11 +4042,11 @@ g
 	* share/web/stylesheets/qm.css (table.navbar): New class.
 	(td.navbar): Likewise.
 	(a.navbar): Likewise.
-	
+
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
-	
+
 	* share/dtml/user.dtml: New file.
-	
+
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (create_dom_text_element): Don't add child for
@@ -4060,7 +4066,7 @@ g
 	(User.__init__): Add property parameters.
 	(XmlDatabaseUser): Remove class.
 	(XmlDatabase.__init__): Remember path.  Use get_user_from_dom and
-	get_group_from_dom. 
+	get_group_from_dom.
 	(XmlDatabase.Write): New method.
 	(get_user_from_dom): New function.
 	(_get_dom_properties): Likewise.
@@ -4075,7 +4081,7 @@ g
 	* share/web/images/right-arrow.gif: New bitmap.
 	* share/dtml/track/index.dtml: Adjust formatting.
 	* share/dtml/track/history.dtml: Use bitmap arrow.  Adjust
-	formatting. 
+	formatting.
 
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
@@ -4115,7 +4121,7 @@ g
 
 	* configure.in (AC_CONFIG_SUBDIRS): Remove.
 	* configure: Regenerate.
-	
+
 2001-06-08  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (WebServer.__init__): Register /.
@@ -4168,12 +4174,12 @@ g
 	* qm/test/web/web.py (PageInfo.GenerateStartBody): Add manual link.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Likewise.
 	* share/dtml/test/dir.dtml: Use GenerateEndBody.
-	
+
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (WebRequest.__init__): Copy client_address.
 	* qm/fields.py (TimeField.GetDefaultValue): Use
-	IntegerField.GetDefaultValue. 
+	IntegerField.GetDefaultValue.
 	(TimeField.GetHelp): Use default_value attribute.
 	* qm/track/issue.py (Issue.GetFieldAsText): New method.
 	* qm/track/triggers/discussion.py (DiscussionTrigger.Preupdate):
@@ -4194,7 +4200,7 @@ g
 	* tests/unit/common/parse_time2.qmt: Likewise.
 	* tests/unit/common/parse_time3.qmt: Likewise.
 	* tests/unit/common/parse_time4.qmt: Likewise.
-	
+
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/classes/python.py (ExecTest.Run): Add expression value
@@ -4225,7 +4231,7 @@ g
 2001-05-31  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py (RemoteTestHost.__init__): Change default qmtest
-	path. 
+	path.
 
 2001-05-31  Alex Samuel  <samuel@codesourcery.com>
 
@@ -4254,7 +4260,7 @@ g
 	--context-file from stdin.
 	(Command.add_test_id): Use MultiProcessEngine.
 	(Command.__WriteResults): Use write_results.
-	* qm/test/base.py (MultiThreadEngine): Generalize into... 
+	* qm/test/base.py (MultiThreadEngine): Generalize into...
 	(ConcurrentEngine): ... this.
 	(MultiProcessEngine): New class.
 	(MultiThreadEngine): Likewise.
@@ -4290,7 +4296,7 @@ g
 
 	* qm/web.py (make_select): Add form_name parameter.
 	* qm/track/web/query.py (QueryPageInfo.__init__): Don't get field
-	names. 
+	names.
 	(QueryPageInfo.MakeQueryForm): Add name parameter.
 	(QueryPageInfo.GetFieldTypeDescription): Remove.
 	(QueryPageInfo.MakePythonQueryHelp): New method.
@@ -4298,7 +4304,7 @@ g
 	(QueryPageInfo.MakeStateSelect): Likewise.
 	* qm/track/config.py (__initialize_module): Load help diagnostics.
 	* share/dtml/track/query.dtml: Remove help info.  Add browse
-	controls. 
+	controls.
 	* share/dtml/track/index.dtml: Adjust labels for query.
 
 2001-05-29  Alex Samuel  <samuel@codesourcery.com>
@@ -4314,7 +4320,7 @@ g
 	* qm/track/triggers/discussion.py: New file.
 	* qm/track/web/web.py (HistoryPageInfo.FormatRevisionDiff): Handle
 	set fields specially.
-	
+
 2001-05-28  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Mention scheduling across threads
@@ -4369,7 +4375,7 @@ g
 	(ProgramTerminateBySignalError): Likewise.
 	(ProgramStoppedError): Likewise.
 	(run_program_captured): Add doc string.  Use /dev/null for empty
-	stdin.  
+	stdin.
 	(get_temp_directory): New function.
 	* qm/platform.py (RunProgramError): Remove.
 	(ProgramTerminateBySignalError): Likewise.
@@ -4403,7 +4409,7 @@ g
 	(Command.WriteSummary): Treat missing expected outcome as PASS.
 	Adjust formatting.
 	* qm/test/base.py (InstanceBase.SetWorkingDirectory): Use
-	GetArguments. 
+	GetArguments.
 	(Suite.__init__): Initialize __test_id_cache.
 	(Suite.GetTestIds): Cache result.
 	(ResultWrapper.MakeDomNode): Handle sequence property values.
@@ -4491,28 +4497,28 @@ g
 	(ProgramStoppedError): Likewise.
 	* qm/common.py (Empty): New class.
 	* qm/track/web/index.py (IndexPageInfo.MakeNewForm): Specify form
-	name. 
+	name.
 	(IndexPageInfo.MakeShowForm): Likewise.
 	(IndexPageInfo.MakeEditForm): Remove.
 	(IndexPageInfo.MakeShowAllForm): Likewise.
 	(IndexPageInfo.MakeQueryForm): Specify form name.
 	(IndexPageInfo.MakeShutdownForm): Likewise.
 	(IndexPageInfo.MakeLogoutForm): Likewise.
-	* qm/track/server.py (handle_shutdown): Disallow non-administrators. 
-	
+	* qm/track/server.py (handle_shutdown): Disallow non-administrators.
+
 	* share/xml/users.xml.template: Add a group.
 	* share/xml/user.dtd (users): Allow group elements.
 	(group): New element.
 	(user-id): Likewise.
 	* share/web/stylesheets/qm.css (a.help-link): Don't specify
-	decorations. 
+	decorations.
 	* share/dtml/track/index.dtml: Adjust buttons.  Show shutdown
 	button for administrators only.
 	* share/diagnostics/common.txt (disabled account): New diagnostic.
 	(invalid login): Likewise.
 	(shutdown not allowed): Likewise.
 
-	* doc/manual/manual.xml (common-manual.xml): New entity.  Include it. 
+	* doc/manual/manual.xml (common-manual.xml): New entity.  Include it.
 	* doc/manual/common-manual.xml: New file.
 
 2001-05-16  Alex Samuel  <samuel@codesourcery.com>
@@ -4578,11 +4584,11 @@ g
 	* qm/track/web/show.py: Likewise.
 	* qm/track/web/summary.py: Likewise.
 	* qm/track/web/web.py: Likewise.
-	
+
 2001-05-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (WebRequestHandler.__HandlePageCacheRequest): New
-	method. 
+	method.
 	(WebRequestHandler.__HandleSessionCacheRequest): Likewise.
 	(WebRequestHandler.__HandleRequest): Call them.
 	(WebRequest.AsUrl): New method.
@@ -4591,7 +4597,7 @@ g
 	(make_popup_dialog): ... this and adjust for using page cache.
 	(make_confirmation_dialog_script): Rename to...
 	(make_confirmation_dialog): ... this, and remove function_name
-	parameter. 
+	parameter.
 	(Session.make_button_for_popup): Reimplement using page cache.
 	Leave old implementation, but disabled.
 	(cache_page): New function.
@@ -4606,13 +4612,13 @@ g
 	(add_exit_function): Likewise.
 	(_at_exit): Likewise.
 	(_exit_functions): New variable.
-	
+
 	* share/diagnostics/common.txt (temp dir error): New diagnostic.
 	* share/dtml/test/add-prerequisite.dtml: (add_prerequisite):
 	Likewise.
 	* share/dtml/test/add-category.dtml (add_category): Likewise.
 	* share/dtml/test/add-action.dtml (add_action): Hard-code form
-	field names. 
+	field names.
 	* share/dtml/test/suite.dtml: Adjust for MakeDeleteScript.
 	* share/dtml/test/show.dtml: Likewise.
 
@@ -4621,12 +4627,12 @@ g
 	* qm/track/web/summary.py (SummaryPageInfo.__init__): Pass request
 	to make_button_for_popup.
 	* qm/test/web/web.py (PageInfo.FormatTestId): Add relative_to
-	parameter. 
+	parameter.
 	(PageInfo.FormatActionId): Likewise.
 	(make_server): Don't register add-action, add-category,
-	add-prerequisite. 
+	add-prerequisite.
 	* qm/test/web/suite.py (ShowPageInfo.MakeDeleteScript): Adjust for
-	make_confirmation_dialog. 
+	make_confirmation_dialog.
 	* qm/test/web/show.py (ShowPageInfo.MakePrerequisitesControl):
 	Generate page here for make_set_control.
 	(ShowPageInfo.MakeActionsControl): Likewise.
@@ -4646,7 +4652,7 @@ g
 	(Database.__MakeDomNodeForAction): Likewise.
 	* qm/test/base.py (Test.GetPrerequisites): Add absolue parameter.
 	(Test.GetActions): Likewise.
-	(PrerequisiteMapAdapter.__getitem__): Use absolute IDs. 
+	(PrerequisiteMapAdapter.__getitem__): Use absolute IDs.
 	(Engine.null_function): Likewise, for prerequisites and actions.
 
 2001-05-11  Alex Samuel  <samuel@codesourcery.com>
@@ -4679,14 +4685,14 @@ g
 	(_counter): New variable.
 	* qm/fields.py (EnumerationField.GetTypeDescription): Fix quoting.
 	(UidField.FormatValueAsHtml): Remove extraneous arguments to
-	make_select. 
+	make_select.
 	* qm/track/web/summary.py (SummaryPageInfo.__init__): Add
 	field_names parameter.  Generate display options page.
 	(SummaryPageInfo.IsLinkToIssue): Remove.
 	(DisplayOptionsPageInfo): New class.
 	(handle_summary): Figure out fields to show.
 	* share/dtml/track/summary.dtml: Add Display Options button.
-	Adjust. 
+	Adjust.
 	* share/dtml/track/summary-display-options.dtml: New file.
 
 	* doc/manual/manual.xml: Fix title.
@@ -4718,10 +4724,10 @@ g
 	(EnumerationField.FormatValueAsText): Likewise.
 	(UidField.__init__): Use default user ID as default value.
 	* qm/common.py (RcConfiguration.Get): Return default if no rc file
-	loaded. 
+	loaded.
 	* share/diagnostics/common.txt (sendmail error): New diagnostic.
 	* qm/track/triggers/state.py (Trigger.Preupdate): Call
-	eval_revision_expression. 
+	eval_revision_expression.
 	* qm/track/triggers/notification.py: New file.
 	* qm/track/qmtrack.in: Load rc file.
 	* qm/track/issue.py (eval_expression): Replace with...
@@ -4729,13 +4735,13 @@ g
 	(eval_revision_expression): New function.
 	* qm/track/idb.py (IdbBase.Query): Call eval_issue_expression.
 	* qm/track/config.py (setup_idb_for_test): Add notification stuff.
-	
+
 2001-05-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (parse_url_query): Unquote the script URL.
 	(make_javascript_string): Escape forward slashes.
 	* qm/common.py (Enumeral): New class.
-	* qm/fields.py (Field.__init__): Add initialze_to_default attribute. 
+	* qm/fields.py (Field.__init__): Add initialze_to_default attribute.
 	(Field.GetAttributeNames): New method.
 	(EnumerationField.__init__): Make an Enumeral.
 	(EnumerationField.GetTypeDescription): Use enumeral strings.
@@ -4753,7 +4759,7 @@ g
 	* qm/track/web/show.py (ShowPageInfo.__init__): Rename
 	field_errors to errors.  Process structured text.
 	(ShowPageInfo.FormatFieldValue): Handle initialize_to_default
-	attribute. 
+	attribute.
 	(handle_submit): Handle trigger rejections.
 	* qm/track/triggers: New directory.
 	* qm/track/triggers/__init__.py: New file.
@@ -4802,7 +4808,7 @@ g
 	(IdbBase.__InvokePreupdateTriggers): Likewise.
 	(IdbBase.__InvokePostupdateTriggers): Likewise.
 	* qm/track/cmdline.py (Command.__PerformInitialize): Process
-	structured text message. 
+	structured text message.
 
 	* share/dtml/track/show.dtml: Adjust markup to show errors.
 	* share/dtml/track/issue-class.dtml: New file.
@@ -4820,9 +4826,9 @@ g
 	(make_server): ... this.  Return server instead of running it.
 	* qm/test/xmldb.py (Database.GetClassPaths): New method.
 	* qm/test/cmdline.py (Command.start_browser_option_spec): New
-	variable. 
+	variable.
 	(Command.commands_spec): Use it.  Remove edit and template
-	commands. 
+	commands.
 	(Command.HasGlobalOption): New method.
 	(Command.HasCommandOption): Likewise.
 	(Command.__ExecuteEdit): Remove.
@@ -4840,9 +4846,9 @@ g
 	(test class control): Likewise.
 	* share/diagnostics/common.txt (browser error): New diagnostic.
 	* doc/manual/manual.xml: Include test-reference.xml.
-	* doc/manual/test-manual.xml: Add section on specifying test classes. 
+	* doc/manual/test-manual.xml: Add section on specifying test classes.
 	* doc/manual/test-reference.xml: New file.
-	
+
 2001-04-30  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* install.bat: New file.
@@ -4921,11 +4927,11 @@ g
 	* qm/test.py: Remove file.
 	* qm/test/web/web.py (PageInfo.FormatSuiteId): New method.
 	(start_server): Register edit-suite, show-suite, submit-suite
-	scripts. 
+	scripts.
 	* qm/test/web/suite.py: New file.
 	* qm/test/web/dir.py (DirPageInfo.FormatItem): Use FormatSuiteId.
 	* qm/test/cmdline.py (Command.__ExecuteRun): Process arguments
-	here. 
+	here.
 	(Command.__ExecuteEdit): Use "unknown test id" diagnostic.
 	(Command.__WriteResults): Use base.dtds.
 	* qm/test/xmldb.py (Database.WriteTest): Likewise.
@@ -4998,7 +5004,7 @@ g
 	* qm/common.py (program_name): New variable.
 	* qm/Makefile.in ($(SCRIPTS)): Use PYTHONBIN.
 	* qm/track/config.py (setup_idb_for_test): Adjust syntax.  Add
-	descriptions. 
+	descriptions.
 	* qm/track/issue_class.py (IssueClass.__init__): Likewise.
 	(IidField.__init__): Pass attributes to base.
 	* qm/test/qmtest.in: Set common.program_name.  Load help diagnostics.
@@ -5015,13 +5021,13 @@ g
 	(a:visited): Likewise.
 	(a:active): Likewise.
 	(a:hover): Likewise.
-	
+
 2001-04-25  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/Makefile.in: Fix typo.
 
 2001-04-25  Alex Samuel  <samuel@codesourcery.com>
-	
+
 	* qm/xmlutil.py (write_dom_document): Don't write emacs gunk.
 	* qm/web.py (PageInfo.common_javascript): New attribute.
 	(PageInfo.FormatStructuredText): New method.
@@ -5117,7 +5123,7 @@ g
 	(Database.__MakeDomNodeForAction): New method.
 	(Database.__MakeDomNodeForItem): Likewise.
 	(scan_dir_for_labels): New function.
-	* qm/test/qmtest.in (print_error_message): Process structued text. 
+	* qm/test/qmtest.in (print_error_message): Process structued text.
 	* qm/test/cmdline.py (Command.port_option_spec): New attribute.
 	(Command.address_option_spec): Likewise.
 	(Command.log_file_option_spec): Likewise.
@@ -5125,7 +5131,7 @@ g
 	(Command.GetGlobalOption): Add default parameter.
 	(Command.GetCommandOption): Likewise.
 	(Command.Execute): Set global database.  Don't set __database
-	attribute. 
+	attribute.
 	(Command.GetDatabase): Use get_database.
 	(Command.__ExecuteServer): New method.
 	(Command.__ExecuteTemplate): Use make_new_test.
@@ -5168,7 +5174,7 @@ g
 	* tests/unit/common/parser_no_long.qmt: Likewise.
 	* tests/unit/common/parser_parse.qmt: Likewise.
 	* tests/unit/common/parser_two_char_short.qmt: Likewise.
-	
+
 	* share/web/stylesheets/qm.css (a:link): Underlinke links.
 	(a:visited): Likewise.
 	(a:active): Likewise.
@@ -5240,7 +5246,7 @@ g
 	(unknown test class): Likewise.
 	* qm/test/classes/python.py: New file.
 	* qm/test/xmldb.py (UnknownTestClassError): Fix typo.  Derive from
-	RuntimeError. 
+	RuntimeError.
 	(UnknownActionClassError): Likewise.
 	(Database.__ParseTestDocument): Handle ImportError.
 
@@ -5260,7 +5266,7 @@ g
 	* tests/unit/common/parser_parse.qmt: Likewise.
 	* tests/unit/common/parser_two_char_short.qmt: Likewise.
 	* tests/unit/test/classes/tempdir1.qmt (<class>): Use
-	python.ExecTest. 
+	python.ExecTest.
 
 2001-04-08  Alex Samuel  <samuel@codesourcery.com>
 
@@ -5270,7 +5276,7 @@ g
 	* doc/manual/introduciton.xml: Likewise.
 	* doc/manual/test-manual.xml: Likewise.
 	* doc/manual/test-tour.xml: Likewise.
-	
+
 	* qm/test/base.py (Engine.RunTests): Adjust handling of
 	action dependencies and context properties.
 
@@ -5295,9 +5301,9 @@ g
 	(Command.divider): Improve error messages.
 	* qm/test/base.py (NoSuchActionError): New class.
 	(InstanceBase): Likewise.
-	(Test): Derive from InstanceBase. 
+	(Test): Derive from InstanceBase.
 	(Test.__init__): Add some parameter defaults.  Add actions
-	parameter. 
+	parameter.
 	(Test.GetClassName): Remove.
 	(Test.GetClass): Likewise.
 	(Test.GetArguments): Likewise.
@@ -5313,7 +5319,7 @@ g
 	(Context.__ValidateValue): Remove.
 	(ContextWrapper): New class.
 	(Engine.RunTests): Reorganize.  Add actions.  Add context property
-	handling code. 
+	handling code.
 	(make_result_for_exception): Add outcome parameter.
 	(get_test_class): Generalize to...
 	(get_class): ... this.
@@ -5321,17 +5327,17 @@ g
 	(__loaded_classes): ... this.
 	(__builtin_test_class_path): Generalize to...
 	(__builtin_class_path): ... this.
-	* qm/test/classes/temporary.py: New file. 
+	* qm/test/classes/temporary.py: New file.
 	* qm/test/classes/python.py: Likewise.
 
-	* share/diagnostics/test.txt (context attribute cannot be deleted): 
+	* share/diagnostics/test.txt (context attribute cannot be deleted):
 	New diagnostic.
 	* share/xml/CATALOG (fields.mod): New entry.
 	* share/xml/fields.mod: New DTD module.
 	* share/xml/issue.dtd: Use shared fields module.
 	* share/xml/test.dtd: Likewise.
 	* share/xml/action.dtd: New file.
-	
+
 	* tests/unit/test/classes/tempdir1.qmt: New file.
 	* tests/unit/test/classes/tempdir1.qma: Likewise.
 
@@ -5345,7 +5351,7 @@ g
 	* share/tutorial/test/count.py: New file.
 	* share/tutorial/test/tdb/test1.qmt: Likewise.
 	* share/tutorial/test/tdb/test2.qmt: Likewise.
-	
+
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py: Fix order.
@@ -5388,7 +5394,7 @@ g
 	* qm/track/config.py (initialize_idb): Get user db template from
 	new location.
 	* qm/track/cmdline.py (Command.__PerformInitialize): Print a
-	message. 
+	message.
 	* qm/test/base.py (__builtin_test_class_path): Use
 	get_lib_directory in initializer.
 
@@ -5427,7 +5433,7 @@ g
 	* qm/attachment.py (make_dom_node): Handle 'None' attachments.
 	(from_dom_node): Likewise.
 	* qm/fields.py (AttachmentField.MakeDomNodeForValue): Likewise.
-	
+
 	* share/xml/test.dtd (attachment): Allow empty element.
 	* share/diagnostics/test.txt (invalid class): New diagnostic.
 	(mising arg for template): Likewise.
@@ -5454,7 +5460,7 @@ g
 	(Command.__ExecuteTemplate): Likewise.
 	(Command.divider): Print cause on ERROR outcome.
 	* qm/test/base.py (Test.__init__): Take test class name as
-	parameter. 
+	parameter.
 	(Test.GetClassName): New method.
 	(Test.GetClass): Adjust.
 	(Test.GetArguments): New method.
@@ -5525,7 +5531,7 @@ g
 	(generate_html_from_dtml): Likewise.
 	(generate_login_form): Likewise.
 	* qm/diagnostic.py (DiagnosticSet.ReadFromFile): Change path
-	parameter. 
+	parameter.
 	(__initialize_module): New function.  Call it.
 	* qm/diagnostics.txt: Remove.
 	* qm/common.py (get_base_directory): Add components parameter.
@@ -5534,11 +5540,11 @@ g
 	(__initialize_module): New function.  Call it.
 	(generate_html_from_dtml): Use generioc generate_html_from_path.
 	* qm/track/web/index.py (IndexPageInfo.MakeLogoutForm): Set
-	_redirect_url. 
+	_redirect_url.
 	* qm/track/server.py (start_server): Use get_share_directory.
-	Register logout.  
+	Register logout.
 	* qm/track/config.py (__initialize_module): New function.  Call
-	it. 
+	it.
 	* qm/test/qmtest.in: Use get_share_directory.
 
 	* qm/dtds/CATALOG: Remove.
@@ -5561,7 +5567,7 @@ g
 	* qm/dtds/: Remove directory.
 	* qm/track/web/images/: Likewise.
 	* qm/track/web/templates/: Likewise.
-	
+
 	* share/: New directory.
 	* share/diagnostics/: Likewise.
 	* share/dtml/: Likewise.
@@ -5589,7 +5595,7 @@ g
 	* share/xml/result.dtd: Likewise.
 	* share/xml/test.dtd: Likewise.
 	* share/xml/user.dtd: Likewise.
-	
+
 2001-03-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py (load_results): Use load_xml_file.
@@ -5644,10 +5650,10 @@ g
 	numbers.
 	* qm/track/issue.dtd: Remove.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust title
-	bar. 
+	bar.
 	(UploadAttachmentPageInfo.MakeSubmitUrl): Copy request.
 	* qm/track/web/summary.py (SummaryPageInfo.MakeIssueUrl): Copy
-	request. 
+	request.
 	* qm/track/web/query.py (QueryPageInfo.MakeQueryForm): Likewise.
 	* qm/track/web/show.py (ShowPageInfo.MakeSubmitUrl): Likewise.
 	(handle_submit): Likewise. Set the user field.
@@ -5668,7 +5674,7 @@ g
 	DTD file name.
 	* qm/test/results.dtd: Remove.
 	* qm/test/test.dtd: Likewise.
-	
+
 2001-03-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (create_dom_text_element): New function.
@@ -5676,10 +5682,10 @@ g
 	(create_dom_document): New function.
 	(write_dom_document): Likewise.
 	* qm/web.py (WebRequestHandler.do_GET): Ignore exceptions during
-	shutdown. 
+	shutdown.
 	(WebRequestHandler.do_POST): Likewise.
 	(WebRequestHandler.__HandleScriptRequest): Ignore IO errors during
-	write. 
+	write.
 	* qm/fields.py (Attachment): Remove.
 	Use attachment.Attachment throughout.
 	Replace qm.track.error with qm.error throughout.
@@ -5715,7 +5721,7 @@ g
 	(xml file unknown class): Likewise.
 	(xml file unknown field): Likewise.
 	(xml parse error): Likewise.
-	(format error): Add output format specifier. 
+	(format error): Add output format specifier.
 	* qm/track/cmdline.py (Command.output_option): New attribute.
 	(Command.qmtrack_commands): Use it for several commands.  Add
 	import command.
@@ -5725,8 +5731,8 @@ g
 	(Command.__PerformImport): New method.
 	(Command.__PrintResults): Adjust comments.  Implement XML format.
 	* qm/track/web/web.py (make_url_for_attachment): Use attachment
-	attributes. 
-	
+	attributes.
+
 	* qm/test/test.dtd: Adjust for attachment schema.
 	* qm/test/cmdline.py (Command.__WriteResults): Use
 	create_dom_document and write_dom_document.
@@ -5779,7 +5785,7 @@ g
 
 2001-03-20  Benjamin Chelf  <chelf@codesourcery.com>
 
-	* qm/track/sql_idb.py (SqlIdb.GetIssues): import types. 
+	* qm/track/sql_idb.py (SqlIdb.GetIssues): import types.
 	(SqlIdb.GetIssue): Change type IssueClass to
 	qm.track.issue_class.IssueClass to fix bug.
 	(SqlIdb.GetAllRevisions): Likewise.
@@ -5916,7 +5922,7 @@ g
 	(Command.Execute): Use "missing command" diagnostic.
 
 	* qm/track/web/query.py (QueryPageInfo.GetFieldTypeDescription):
-	Use GetTypeDescription method. 
+	Use GetTypeDescription method.
 	* qm/track/web/templates/summary.dtml: Show groupings only if
 	there is more than one issue class.  Improve formatting.
 	* qm/track/web/stylesheets/qmtrack.css (th.issue_class): Set
@@ -5943,14 +5949,14 @@ g
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/config.py (diagnostic): Generate path to diagnostics
-	file. 
+	file.
 
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (EnumerationField.FormatValueAsHtml): Fix name and
 	value defaults.
 	* qm/track/config.py (setup_idb_for_internal_use): Don't generate
-	issues. 
+	issues.
 
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
@@ -5964,7 +5970,7 @@ g
 	* qm/track/cmdline.py (Command.address_option): New variable.
 	(Command.qmtrack_commands): Use it.
 	(Command.__PerformServer): Handle address option.
-	
+
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/structured_text.py (TextFormatter.__init__): Set default
@@ -5974,10 +5980,10 @@ g
 	(to_text): Fix comment.
 	* qm/cmdline.py (CommandParser.GetOptionsHelp): Adjust output.
 	(CommandParser.GetCommandHelp): Treat command description as
-	structured text. 
+	structured text.
 
 	* qm/track/issue_class.py (IssueClass.__init__): Add title and
-	description. 
+	description.
 	(IssueClass.GetTitle): New method.
 	(IssueClass.GetDescription): Likewise.
 	* qm/track/idb.py (IdbBase.Query): Don't handle multiple issue
@@ -5994,14 +6000,14 @@ g
 	* qm/track/web/summary.py (SummaryPageInfo.__init__): Partition
 	issues by class.  Handle reverse sort.
 	(SummaryPageInfo.MakeResortUrl): Indicate reverse sort where
-	appropriate. 
+	appropriate.
 	(handle_summary): Loop over issue classes when querying.
 	* qm/track/web/index.py (IndexPageInfo.__init__): Extract issue
-	classes for IDB. 
+	classes for IDB.
 	* qm/track/web/stylesheets/qmtrack.css (th.issue_class): New
-	style. 
+	style.
 	* qm/track/web/templates/summary.dtml: Show issues grouped by
-	class. 
+	class.
 	* qm/track/web/templates/show.dtml: Print class for new issue.
 	* qm/track/web/templates/index.dtml: Show select for issue class
 	for new issue.
@@ -6015,7 +6021,7 @@ g
 	* qm/track/issue.py: Likewise.
 	(Attachment): Remove.
 	* qm/track/diagnostics.txt (field exist): Don't use class as a
-	parameter name. 
+	parameter name.
 	* qm/track/cmdline.py (Command.__CheckFieldTypes): Don't use class
 	as a parameter name.  Use qm.field.
 
@@ -6033,7 +6039,7 @@ g
 	(format_enum_field_value): Likewise.
 	(format_attachment_field_value): Likewise.
 	(make_url_for_attachment): Add field argument.  Insert into
-	AttachmentField. 
+	AttachmentField.
 	* qm/track/web/show.py (handle_submit): Use qm.field.
 	(ShowPageInfo.FormatFieldValue): Handle read_only and
 	initialize_only attributes.
@@ -6102,7 +6108,7 @@ g
 
 	* README: Adjust tutorial.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust
-	navigation bar. 
+	navigation bar.
 	* qm/track/config.py (setup_idb_for_test): Ajust titles.
 	* qm/track/issue_class.py (IssueClass.__init__): Likewise.
 	* qm/track/cmdline.py (Command.__PrintResults): Add full format
@@ -6112,7 +6118,7 @@ g
 
 	* README: Update.
 	* qm/web.py (WebRequestHandler.__HandleScriptRequest): Handle
-	SystemExit. 
+	SystemExit.
 	(WebServer.__init__): Initialize __shutdown_requested.
 	(WebServer.Run): Run until shutdown request.
 	(WebServer.RequestShutdown): New method.
@@ -6121,9 +6127,9 @@ g
 	* qm/track/web/templates/index.dtml: Adjust.  Add shutdown.
 	* qm/track/web/images/sc-logo.png: New file.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust title
-	bar. 
+	bar.
 	* qm/track/web/index.py (IndexPageInfo.MakeShutdownForm): New
-	method. 
+	method.
 	* qm/track/issue_class.py (default_categories): Adjust.
 	(IssueField.GetTitle): New method.
 	(IssueField.GetDescription): Likewise.
@@ -6133,7 +6139,7 @@ g
 	(open_idb): Use it.
 	(setup_idb_for_test): Adjust test values.
 	* qm/track/cmdline.py: Adjust command descriptions.  Add destroy
-	command. 
+	command.
 	(Command.__init__): Register destroy.
 	(Command.__PerformDestroy): New method.
 
@@ -6145,17 +6151,17 @@ g
 	(__AstToSQL): Likewise.
 	(__AstToSQLHelper): Likewise.
 	(__CheckTautology): Likewise.
-	
+
 2001-02-28  Alex Samuel  <samuel@codesourcery.com>
 
 	Support attachments in the web UI.
-	
+
 	* qm/web.py (WebRequestHandler.__HandleScriptRequest): Handle
 	results that aren't HTML.
 	* qm/common.py (format_byte_count): New function.
 
 	* qm/track/sql_idb.py (SqlIdb.__init__): Pass arguments to base
-	class. 
+	class.
 	(SqlIdb.Close): New method.
 	* qm/track/server.py (start_server): Add upload-attachment,
 	submit-attachment, and download-attachment handlers.
@@ -6195,7 +6201,7 @@ g
 	(format_set_field_value): Likewise.  Format brief and full
 	differently.  Fill option values with form-encoded elements.
 	Generate add function differently for different contained field
-	types. 
+	types.
 	(format_enum_field_value): Handle form_encoded style.
 	(format_attachment_field_value): New function.
 	(handle_upload_attachment): Likewise.
@@ -6231,7 +6237,7 @@ g
 	* qm/track/issue_class.py (IssueFieldIid.SetDefaultValue): New method.
 	* qm/track/config.py (initialize_idb): Check that the IDB path
 	doesn't exist.
-	
+
 2001-02-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (make_url_button): New function.
@@ -6259,7 +6265,7 @@ g
 	* qm/track/idb.py (get_field_type_description_for_query): Place
 	enumerals in double quotes.
 	* qm/track/config.py (setup_idb_for_test): Add problem_reports
-	field. 
+	field.
 	* qm/track/memory_idb.py (MemoryIdb.AddIssue): Check issue
 	validity.
 	(MemoryIdb.AddRevision): Likewise.
@@ -6271,12 +6277,12 @@ g
 	(format_text_field_value): Likewise.  Adjust formatting.
 	(format_set_field_value): Implement.
 	(format_enum_field_value): Add name argument.  Change option
-	values. 
+	values.
 	* qm/track/web/summary.py (SummaryPageInfo.IsIssueShown): Always
-	return 1. 
+	return 1.
 	(handle_summary): Filter out deleted issues.
 	* qm/track/web/show.py (ShowPageInfo.__init__): Add field_errors
-	argument. 
+	argument.
 	(handle_show): Make sure iid is specified.
 	(handle_submit): Add is_new.  Issue error on revision
 	incoherency.  Handle encoded set fields.  Validate submission and
@@ -6296,7 +6302,7 @@ g
 	* qm/track/issue_class.py: Fix imports.
 	* qm/track/server.py (start_server): Add index and query pages.
 	* qm/track/idb.py (IdbBase.Query): Use repr instead of quoting
-	strings. 
+	strings.
 	(get_field_type_description_for_query): New function.
 	* qm/track/config.py (get_name): New function.
 	(get_default_class): Likewise.
@@ -6322,7 +6328,7 @@ g
 	(PageInfo.MakeRule): Likewise.
 
 	* qm/track/sql_idb.py (SqlIdb.__BuildSqlForFieldValue): Call
-	escape_for_sql. 
+	escape_for_sql.
 	(SqlIdb.__GetFieldFromRow): Call unescape_for_sql.
 	(escape_for_sql): New function.
 	(unescape_for_sql): Likewise.
@@ -6375,19 +6381,19 @@ g
 2001-02-20  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/py: Set emacs fill-column.
-	
+
 	* Makefile.in (SUBDIRS): Remove doc.  Add sgmlop.
 	(setup): Add sgmlop/Makefile.
 	(sgmlop/Makefile): New rule.
 	* README: Add third-party software list.
 	* standard.mk.in (all): Remove doc.
-	
+
 	* qm/web.py (WebRequestHandler.__ProcessRequest): Rename to...
 	(WebRequestHandler.__HandleRequest): ... this.
 	(WebRequestHandler.__HandleScriptRequest): New method.
 	(WebRequestHandler.__HandleXmlRpcRequest): Likewise.
 	(WebRequestHandler.__HandleFileRequest): Likewise.
-	(WebServer.__init__): Initialize XML-RPC.  Set port and log file here. 
+	(WebServer.__init__): Initialize XML-RPC.  Set port and log file here.
 	(WebServer.GetXmlRpcUrl): New method.
 	(WebServer.IsXmlRpcUrl): Likewise.
 	(WebServer.Run): Don't set port and log file here.
@@ -6434,7 +6440,7 @@ g
 	* Makefile.in (SUBDIRS): Add qm.
 	(README): Update.
 	* configure.in (AC_OUTPUT): Add qm/Makefile.
-	* configure: Regenerate.	
+	* configure: Regenerate.
 	* standard.mk.in (PYTHONBIN): New macro.
 	(PYTHON): Use it.
 
@@ -6460,11 +6466,11 @@ g
 	(IdbBase.Query): ... this.  Adjust.
 	(get_ib_class): New function.
 	* qm/track/issue.py (Issue.__init__): Don't object to missing
-	field values. 
+	field values.
 	(Issue.StampTime): New method.
 	(IssueSortPredicate): New class.
 	* qm/track/issue_class.py (IssueField.__init__): Initialize more
-	attributes. 
+	attributes.
 	(IssueField.IsAttribute): New method.
 	(IssueFieldText): Rename multiline attribute to structured.
 	(IssueFieldEnumeration.Validate): Try int conversion.
@@ -6498,7 +6504,7 @@ g
 	* qm/track/web/templates/summary.dtml: Likewise.
 
 	* templates/dtml: New file.
-	
+
 2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/command_line.py: Fix formatting issue.
@@ -6511,7 +6517,7 @@ g
 	* qm/track/idb.py (IdbBase::PerformQuery): Define.
 	* qm/track/qmtrack.py: Fix split up strings to use 'printf' syntax.
 	(CommandLine::PerformQuery): Move code into idb.py. Only do UI stuff.
-	
+
 2001-02-15  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/qmtrack.py: Fix coding standards issues.
@@ -6521,16 +6527,16 @@ g
 	* qm/command_line.py (CommandParser::ParseCommandLine): Fix
 	to use 'write' instead of print. Add code to check for command
 	existence.
-	
+
 2001-02-14  Benjamin Chelf  <chelf@codesourcery.com>
 
-	* qm/track/issue_class.py (IssueFieldEnumeration::GetEnumeration): 
+	* qm/track/issue_class.py (IssueFieldEnumeration::GetEnumeration):
 	Define.
 	(IssueClass::__init__): Make 'iid' have no default value.
 
 	* qm/track/memory_idb.py (MemoryIdb::GetIssues): Define.
 
-	* qm/track/qmtrack.py (CommandLine::__init__): Initialize 
+	* qm/track/qmtrack.py (CommandLine::__init__): Initialize
 	results.
 	(CommandLine::ParseFieldValuePairs): Handle no '=' in string.
 	(CommandLine::OpenDatabase): Change warning to error.
@@ -6540,12 +6546,12 @@ g
 	(CommandLine::PerformEdit): Fix bugs and do type checking on
 	fields.
 	(CommandLine::PerformQuery): Define.
-	
+
 2001-02-12  Benjamin Chelf  <chelf@codesourcery.com>
 
-        * qm/track/qmtrack.py (__main__): Change to catch exception.
+	* qm/track/qmtrack.py (__main__): Change to catch exception.
 	* qm/command_line.py (ErrorHandler): Change to raise exception.
-	
+
 	* qm/track/qmtrack.py (PrintResults): Change from 'print' to
 	write.
 
@@ -6554,14 +6560,14 @@ g
 	* qm/command_line.py (ErrorHandler): New method.
 	(__init): Add output parameter.
 	(ParseCommandLine): Fix bugs.
-	
+
 	* qm/track/qmtrack.py: New file.
 
 2001-02-08  Alex Samuel  <samuel@codesourcery.com>
 
 	Module zope-dtml is now part of this module.  Add configury to set
 	up and use it.
-	
+
 	* configure.in (/usr/lib/python1.5/config/Makefile.pre.in): Check file.
 	* configure: Regenerate.
 	* Makefile.in (SUBDIRS): Add zope-dtml/ExtensionClass.
@@ -6594,7 +6600,7 @@ g
 
 	* README.sources: Clarify naming conventions.
 	* templates/py: Add section banners.
-	
+
 	* configure.in: New file.
 	* install-sh: Likewise.
 	* configure: Likewise.
@@ -6610,7 +6616,7 @@ g
 	* doc/design/qmtest/Makefile: Remove.
 	* doc/design/qmtrack/Makefile.in: New file.
 	* doc/design/qmtrack/Makefile: Remove.
-	
+
 2001-01-09  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: New file.
@@ -6663,9 +6669,9 @@ g
 	(FileSystemMutex): Likewise.
 	* qm/regression_test.py (run_regression_test_driver): Don't exit.
 	* qm/test.py: New file.
-	
+
 	* qm/track/issue.py (Issue.__init__): Adjust for changes in
-	IssueClass. 
+	IssueClass.
 	(Issue.Copy): New function.
 	(Attachment): New class.
 	* qm/track/issue_class.py (default_categories): New variable.
@@ -6694,7 +6700,7 @@ g
 	(test_add_issues): Likewise.
 	(test_get_issues): Likewise.
 	(test_attachments): Likewise.
-	
+
 2001-01-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* gadfly/__init__.py: New file.
@@ -6709,12 +6715,12 @@ g
 2000-12-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* gadfly/.cvsignore: New file.
-	
+
 2000-12-28  R. Lindsay Todd  <toddr@rpi.edu>
 
 	* doc/design/qmconfig/design-td.xml: Added new sections and
 	details.
-	
+
 	* doc/design/qmconfig/design-lm.xml: Break into sections.
 	* doc/design/qmconfig/design-probe.xml: Likewise.
 	* doc/design/qmconfig/design-td.xml: Likewise.
@@ -6734,7 +6740,7 @@ g
 	* doc/design/qmconfig/requirements.xml: Likewise.
 
 2000-12-26  R. Lindsay Todd  <toddr@rpi.edu>
-	
+
 	* standard.mk: Run pdfjadetex thrice, to get all references correct.
 
 	* doc/design/qmconfig/design-probe.xml: Updated API for probe
@@ -6750,7 +6756,7 @@ g
 	* Makefile (setup): New target.
 	(gadfly/sqlwhere.py): Likewise.
 	* standard.mk (setup): New phony target.
-	
+
 2000-12-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* Makefile: New file.
@@ -6759,7 +6765,7 @@ g
 
 	* qm/.cvsignore: New file.
 	* qm/track/.cvsignore: Likewise.
-	
+
 2000-12-21  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk (PRINTTEX): Define as dummy if there's no DocBook.
@@ -6773,7 +6779,7 @@ g
 	* qm/track/issue.py: Likewise.
 	* qm/track/issue_class.py: Likewise.
 	* qm/track/test.py: Likewise.
-	
+
 2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
 
 	* doc/design/qmconfig/design.xml: Reorder some sections.
@@ -6811,12 +6817,12 @@ g
 
 2000-12-14  Alex Samuel  <samuel@codesourcery.com>
 
-	* README.sources: Update ChangeLog and documentation instructions. 
+	* README.sources: Update ChangeLog and documentation instructions.
 
 2000-12-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Copy bitmaps into print
-	dir instead of setting paths. 
+	dir instead of setting paths.
 	* doc/design/qmconfig/design-probe.xml: Scale images.
 	* doc/design/qmconfig/design-td.xml: Likewise.
 	* doc/design/qmconfig/design.xml: Likewise.
@@ -6857,14 +6863,14 @@ g
 	* doc/design/qmtrack/triggers.xml: Likewise.
 	* doc/design/qmtrack/user-interface.xml: Likewise.
 	* doc/design/qmtrack/xml-repr.xml: Likewise.
-	
+
 2000-12-07  Alex Samuel  <samuel@codesourcery.com>
 
 	Tag "version-0-2" for delivery to LANL.
-	
+
 	* standard.mk ($(HTMLINDEX)): Process graphics here.
 	($(HTMLMANIFEST)): Remove separate target.
-	
+
 	* doc/qm-html.dsl (%generate-legalnotice-link%): Define true.
 	* doc/qm-print.dsl (%chapter-autolabel%): Likewise.
 	(%section-autolabel%): Likewise.
@@ -6885,7 +6891,7 @@ g
 	* doc/design/qmtest/qmtest.xml: Likewise.
 	* doc/design/qmtest/refs.xml: Likewise.
 	* doc/design/qmtest/req.xml: Likewise.
-	
+
 	* doc/design/qmtrack/concepts.xml: Likewise.
 	* doc/design/qmtrack/implementation.xml: Likewise.
 	* doc/design/qmtrack/introduction.xml: Likewise.
@@ -6894,13 +6900,13 @@ g
 	* doc/design/qmtrack/triggers.xml: Likewise.
 	* doc/design/qmtrack/user-interface.xml: Likewise.
 	* doc/design/qmtrack/xml-repr.xml: Likewise.
-	
+
 2000-12-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod (idb): Remove entity.
 	(iid): Likewise.
 	(faq): New entity.
-	
+
 	* doc/design/qmtest/refs.xml: Strip linefeeds.
 
 	* doc/design/qmtrack/qmtrack.xml (idb): New entity.
@@ -6916,7 +6922,7 @@ g
 	* doc/design/qmtrack/references.xml: New file.
 	* doc/design/qmtrack/state-model-example.dia: Likewise.
 	* doc/design/qmtrack/state-model-example.png: Likewise.
-	
+
 2000-12-06  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/create1.html: New file.
@@ -6934,18 +6940,18 @@ g
 	* doc/design/qmtrack/query1.jpg: Likewise.
 	* doc/design/qmtrack/query2.jpg: Likewise.
 	* doc/design/qmtrack/query3.jpg: Likewise.
-        * doc/design/qmtrack/main1.jpg: New file.
+	* doc/design/qmtrack/main1.jpg: New file.
 
 	* doc/design/user-interface.xml: Update e-mail section by adding
 	headers. Flesh out web section.
-	
+
 2000-12-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml (idb-impl.xml): Remove entity.
 	* doc/design/qmtrack/idb-impl.xml: Remove.
 	* doc/design/qmtrack/implementation.xml: Describe SQL IDB.
 	* doc/design/qmtrack/xml-repr.xml: Tune.
-	
+
 2000-12-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/user-interface.xml: Tidy up formatting.
@@ -6974,7 +6980,7 @@ g
 	* doc/design/qmtrack/idb-impl.xml: Edit.
 	* doc/design/qmtrack/triggers.xml: Explain get triggers better.
 	* doc/design/qmtrack/user-interface.xml: Expand.
-	
+
 2000-12-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod: New file.
@@ -6993,7 +6999,7 @@ g
 	* doc/design/qmtrack/introduction.xml: Likewise.
 	* doc/design/qmtrack/requirements.xml: Likewise.
 	* doc/design/qmtrack/xml-impl.xml: Likewise.
-	
+
 2000-12-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk (HTMLINDEX): New macro.
@@ -7010,7 +7016,7 @@ g
 	($(PRINTTEX)): New target.
 	($(PRINTPDF)): Likewise.
 	(%.html): Likewise.
-	
+
 	* doc/design/qmtrack/qmtrack.xml (dtml): New entity.
 	(implementation.xml): Likewise.
 	(idb-api.xml): Remove entity.
@@ -7022,10 +7028,10 @@ g
 	API.  Include IDB implementation section.
 	* doc/design/qmtrack/idb-impl.xml: Make it a section.
 	* doc/design/qmtrack/triggers.xml: Remove API stuff.  Make it a
-	section. 
+	section.
 	* doc/design/qmtrack/user-interface.xml: Make it a section.
-	Reformat. 
-	
+	Reformat.
+
 2000-12-02  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/user-interface.xml: Update e-mail section.
@@ -7044,7 +7050,7 @@ g
 	(docbook-print): Process TeX output for PDF.
 
 	* doc/design/qmtest/iface.xml: Add ids.  Clean up markup and
-	identation. 
+	identation.
 	* doc/design/qmtest/qmtest.xml (prompt): New entity.
 	* doc/design/qmtest/req.xml: Remove bogus tag.
 
@@ -7056,7 +7062,7 @@ g
 	* doc/design/qmtrack/concepts.xml: Add ids.  Rearrange sections.
 	* doc/design/qmtrack/idb-api.xml: Remove queries section.
 	* doc/design/qmtrack/idb-impl.xml: Fix link.
-	* doc/design/qmtrack/introduction.xml: Don't include requirements.xml. 
+	* doc/design/qmtrack/introduction.xml: Don't include requirements.xml.
 	* doc/design/qmtrack/qmtrack.xml (prompt): New entity.
 	(qmtrack-cmd): Likewise.
 	Don't include xml-repr.xml.  Include requirements.xml.
@@ -7064,18 +7070,18 @@ g
 	* doc/design/qmtrack/user-interface.xml: Edit command-line
 	section.  Tidy formatting.
 	* doc/design/qmtrack/xml-repr.xml: Make it a section.
-	
+
 2000-11-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml: Don't include user-api.xml.
 	* doc/design/qmtrack/user-api.xml: Remove.
-	
+
 2000-11-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm-html.dsl (html-manifest): Set true.
 	(html-manifest-filename): Set to "docbook-html.manifest".
 	(%use-id-as-filename%): Set to true.
-	
+
 	* doc/design/qmtrack/qmtrack.xml (api): New entity.
 	(sc): Likewise.
 	(introduction.xml): Likewise.
@@ -7083,8 +7089,8 @@ g
 	* doc/design/qmtrack/introduction.xml: New file.
 	* doc/design/qmtrack/requirements.xml: Make it a section.  Edit.
 	* doc/design/qmtrack/concepts.xml: Revise introductory text.
-	Add ids.  Rename time field.  
-	
+	Add ids.  Rename time field.
+
 2000-11-30  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/desgin/qmtrack/create1.jpg: New file.
@@ -7094,8 +7100,8 @@ g
 	* doc/desgin/qmtrack/edit3.jpg: Likewise.
 	* doc/desgin/qmtrack/query1.jpg: Likewise.
 	* doc/desgin/qmtrack/query2.jpg: Likewise.
-	* doc/desgin/qmtrack/query3.jpg: Likewise.	
-	
+	* doc/desgin/qmtrack/query3.jpg: Likewise.
+
 	* doc/design/qmtrack/user-interface.xml: Update to contain new
 	ideas for interfaces.
 
@@ -7107,7 +7113,7 @@ g
 	* doc/design/qmtrack/idb-impl.xml: New file.
 	* doc/design/qmtrack/qmtrack.xml: Include idb-impl.xml.
 	* doc/design/qmtrack/xml-repr.xml: Add ids and links.
-	
+
 2000-11-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm-html.dsl (%section-autolabel%): Set to true.
@@ -7130,8 +7136,8 @@ g
 	* doc/design/qmtrack/triggers.xml: Finish.
 	* doc/design/qmtrack/xml-repr.xml: New file.
 	* doc/design/qmtrack/user-interface.xml: Add id's.  Fix some
-	indentation. 
-	
+	indentation.
+
 2000-11-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/design/qmtest/core.xml: Fix DocBook syntax errors.
@@ -7152,9 +7158,9 @@ g
 	* doc/design/qmtrack/user-interface.xml: New file.
 
 2000-11-26  Alex Samuel  <samuel@codesourcery.com>
-	
+
 	* doc/design/qmtrack/idb-api.xml: Add missing </section> tag.
-	
+
 2000-11-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/concepts.xml: Continue.
@@ -7192,7 +7198,7 @@ g
 2000-11-10  Alex Samuel  <samuel@codesourcery.com>
 
 	Conversion to DocBook.
-	
+
 	* standard.mk (TIDYFLAGS): Use one-space indent.
 	(JADE): New variable.
 	(JADEEXTRA): Likewise.
@@ -7208,10 +7214,10 @@ g
 	(docbook-print): Likewise.
 	* doc/GNUmakefile: Rename to...
 	* doc/Makefile: ... this.
-	
+
 	* doc/qm-print.dsl: New file.
 	* doc/qm-html.dsl: Likewise.
-	
+
 	* doc/design/qmtest/GNUmakefile: Rename to...
 	* doc/design/qmtest/Makefile: ... this.
 	* doc/design/qmtest/*.xhtml: Remove.
@@ -7225,7 +7231,7 @@ g
 	* templates/docbook: New file.
 	* templates/docbook-chapter: Likewise.
 	* templates/xml: Add XML PI.
-	
+
 2000-11-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/GNUmakefile (SUBDIRS): Add design/qmtest.
@@ -7237,14 +7243,14 @@ g
 	(terms_classes): New list.
 	(terms_def_classes): Likewise.
 	* templates/html: Add emacs gunk to set fill-column.
-	
+
 2000-11-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/process-xhtml.py (clean_up_term): New function.
 	Use it.  Try to handle pluralized terms.
 	* doc/qm.css (div.XML): New class.
 	(span.Function): Likewise.
-	
+
 2000-11-01  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.css (a.Dfn): Remove.
@@ -7266,9 +7272,9 @@ g
 	(div.API): ... this.
 	(span.Identifier): New class.
 	(span.Class): Likewise.
-	
+
 	* doc/design/qmtest/terms.xhtml: New file.
-	
+
 2000-10-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/html: Use Open Publication License.
@@ -7276,14 +7282,14 @@ g
 	* doc/design/qmtrack/index.xhtml: Likewise.
 	* doc/design/qmtrack/architecture.xhtml: Likewise.
 	* doc/design/qmtrack/requirements.xhtml: Likewise.
-	
+
 2000-10-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/process-xhtml.py: Convert to coding standards.
 	* doc/qm.css (div.api): New style.
 	* templates/html: Remove emacs variable stuff.
 	* templates/py: Add emacs variable stuff.
-	
+
 2000-10-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* stanard.mk: Add comments.
@@ -7294,9 +7300,9 @@ g
 	(%.html): Use XHTML processor script.
 	* doc/process-xhtml.py: New script.
 	* doc/design/qmtrack/GNUmakefile: Use TOPDIR.
-	
+
 	* doc/qm.css: Improve comments.
-	
+
 2000-10-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk: New file.
@@ -7304,7 +7310,7 @@ g
 	* doc/qm.css: Likewise.
 	* doc/design/qmtrack/GNUmakefile: Likewise.
 	* templates/html: Update for XHTML.
-	
+
 2000-10-24  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/html (DOCTYPE): Add.
@@ -7320,7 +7326,7 @@ g
 2000-10-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtest/design.html: Import.
-	
+
 2000-10-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design: New directory.
@@ -7328,12 +7334,12 @@ g
 	* doc/design/qmbuild: Likewise.
 	* doc/design/qmtest: Likewise.
 	* doc/design/qmtrack: Likewise.
-	
+
 2000-10-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* ChangeLog: New file.
 	* README.sources: Likewise.
 	* COPYING: Likewise.
-	
+
 	* templates: New directory.
 	* doc: Likewise.
