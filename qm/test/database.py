@@ -20,7 +20,8 @@
 import os.path
 import qm
 from   qm.common import *
-import qm.test.base
+from   qm.label import *
+from   qm.test.base import *
 
 ########################################################################
 # classes
@@ -56,8 +57,7 @@ class ItemDescriptor:
         'arguments' -- A dictionary mapping argument names to argument
         values.  These arguments will be provided to the extension class
         when the entity is constructed."""
-        
-        qm.test.base.validate_id(instance_id)
+
         self.__database = database
         self.__id = instance_id
         self.__class_name = class_name
@@ -102,7 +102,7 @@ class ItemDescriptor:
 
         Derived classes should not override this method."""
 
-        return qm.test.base.get_class_arguments(self.GetClass())
+        return get_class_arguments(self.GetClass())
     
 
     def GetArguments(self):
@@ -163,9 +163,7 @@ class ItemDescriptor:
         # Do some extra processing for test arguments.
         for field in self.GetClassArguments():
             name = field.GetName()
-
             # Use a default value for each field for which an argument
-
             # was not specified.
             if not arguments.has_key(name):
                 arguments[name] = field.GetDefaultValue()
@@ -263,9 +261,8 @@ class TestDescriptor(ItemDescriptor):
         returns -- The Python class object for the entity.  For example,
         for a 'TestDescriptor', this method returns the test class."""
 
-        return qm.test.base.get_extension_class(self.GetClassName(),
-                                                'test',
-                                                self.GetDatabase())
+        return get_extension_class(self.GetClassName(), 'test',
+                                   self.GetDatabase())
     
     
     def GetTest(self):
@@ -349,9 +346,8 @@ class ResourceDescriptor(ItemDescriptor):
         returns -- The Python class object for the entity.  For example,
         for a 'TestDescriptor', this method returns the test class."""
 
-        return qm.test.base.get_extension_class(self.GetClassName(),
-                                                'resource',
-                                                self.GetDatabase())
+        return get_extension_class(self.GetClassName(), 'resource',
+                                   self.GetDatabase())
 
 
     def GetResource(self):
@@ -405,7 +401,7 @@ class NoSuchTestError(DatabaseError):
     def __str__(self):
         """Return a string describing this exception."""
 
-        return qm.error("no such test", test_id=test_id)
+        return qm.error("no such test", test_id=self.test_id)
 
                         
 
@@ -520,6 +516,9 @@ class Database:
     simultaneously.  Therefore, you must take appropriate steps to
     ensure thread-safe access to shared data."""
 
+    ATT_LABEL_CLASS = "Database.label_class"
+    """The name of the attribute used to specify the label class."""
+    
     def __init__(self, path, **attributes):
         """Construct a 'Database'.
 
@@ -537,7 +536,93 @@ class Database:
         # The path given must be an absolute path.
         assert os.path.isabs(path)
         self.__path = path
+
+        # Figure out what kind of labels are being used to name entities
+        # in this database.
+        label_class_name = attributes.get(self.ATT_LABEL_CLASS,
+                                          "python_label.PythonLabel")
+        self.__label_class = get_extension_class(label_class_name,
+                                                 "label", self)
+                                          
+    # Methods that deal with labels.
+    
+    def IsValidLabel(self, label, is_component = 1):
+        """Return true if 'label' is valid.
+
+        'label' -- A string that is being considered as a label.
+
+        'is_component' -- True if the string being tested is just a
+        single component of a label path.
         
+        returns -- True if 'label' is a valid name for entities in this
+        database."""
+
+        return self.__label_class("").IsValid(label, is_component)
+
+
+    def JoinLabels(self, *labels):
+        """Join the 'labels' together.
+
+        'labels' -- A sequence of strings corresponding to label
+        components.
+
+        returns -- A string containing the complete label."""
+
+        if not labels:
+            return ""
+        
+        return str(apply(self.__label_class(labels[0]).Join,
+                         labels[1:]))
+    
+
+    def SplitLabel(self, label):
+        """Split the label into a pair '(directory, basename)'.
+
+        returns -- A pair of strings '(directory, basename)'."""
+
+        return map(str, self.__label_class(label).Split())
+
+
+    def LabelBasename(self, label):
+        """Return the basename for the 'label'.
+
+        returns -- A string giving the basename for the 'label'."""
+
+        return str(self.__label_class(label).Basename())
+
+
+    def LabelDirname(self, label):
+        """Return the directory name for the 'label'.
+
+        returns -- A string giving the directory name for the 'label'."""
+
+        return str(self.__label_class(label).Dirname())
+    
+
+    def LabelSeparator(self):
+        """Return the separator character for labels.
+
+        returns -- A string giving the separator character for
+        labels."""
+
+        return self.__label_class.sep
+    
+    
+    def _LabelToPath(self, label, extension=""):
+        """Return a filesystem path corresponding to this label.
+
+        'label' -- A string giving the label.
+        
+        'extension' -- A string which is added to each of the components
+        but the last.  For example, if 'extension' is '.ext', and
+        'Components' returns '('a', 'b', 'c')', the path returned will
+        be 'a.ext/b.ext/c' if '/' is the separator character.
+        
+        returns -- A string giving a relative path in the filesystem
+        corresponding to this label."""
+
+        return self.__label_class(label).ToPath(extension)
+    
     # Methods that deal with tests.
     
     def GetTest(self, test_id):
@@ -618,7 +703,7 @@ class Database:
             return 1
 
 
-    def GetTestIds(self, directory=".", scan_subdirs=1):
+    def GetTestIds(self, directory="", scan_subdirs=1):
         """Return all test IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -647,7 +732,7 @@ class Database:
         raises -- 'NoSuchSuiteError' if there is no test in the database
         named 'test_id'.
 
-        All databases must have an implicit suite called '.' that
+        All databases must have an implicit suite called '' that
         contains all tests in the database.  More generally, for each
         directory in the database, there must be a corresponding suite
         that contains all tests in that directory and its
@@ -703,7 +788,7 @@ class Database:
         between the time that 'HasSuite' is called and the time that
         'GetSuite' is called.
 
-        All databases must have an implicit suite called '.' that
+        All databases must have an implicit suite called "" that
         contains all tests in the database.  More generally, for each
         directory in the database, there must be a corresponding suite
         that contains all tests in that directory and its
@@ -719,7 +804,7 @@ class Database:
             return 1
 
 
-    def GetSuiteIds(self, directory=".", scan_subdirs=1):
+    def GetSuiteIds(self, directory="", scan_subdirs=1):
         """Return all suite IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -805,7 +890,7 @@ class Database:
             return 1
 
 
-    def GetResourceIds(self, directory=".", scan_subdirs=1):
+    def GetResourceIds(self, directory="", scan_subdirs=1):
         """Return all resource IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -879,8 +964,7 @@ class Database:
         be)."""
 
         # Specify the configuration subdirectory.
-        config_dir = qm.test.base.get_db_configuration_directory(
-            self.GetPath())
+        config_dir = get_db_configuration_directory(self.GetPath())
         # It should exist.
         assert os.path.isdir(config_dir)
         # That's where test and resources classes go.
@@ -898,7 +982,7 @@ class Database:
         implementation allows all available test classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.get_extension_class_names('test', self)
+        return get_extension_class_names('test', self)
 
 
     def GetResourceClassNames(self):
@@ -912,7 +996,7 @@ class Database:
         implementation allows all available resource classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.get_extension_class_names('resource', self)
+        return get_extension_class_names('resource', self)
 
 
     def ExpandIds(self, ids):

@@ -20,7 +20,7 @@
 
 <!-- A class. -->
 <!ELEMENT class (#PCDATA)>
-<!ATTLIST class kind (database | resource | target | test) #REQUIRED>
+<!ATTLIST class kind (database | file | resource | target | test) #REQUIRED>
 
 <!-- 
   Local Variables:

@@ -228,10 +228,6 @@ class Field:
         'properties' -- A mapping of additional property assignments
         to set."""
 
-        if not label.is_valid(name):
-            raise ValueError, \
-                  qm.error("invalid field name", field_name=name)
-
         self.__properties = {}
         # Initialize declared properties to their default values.
         for declaration in self.property_declarations:

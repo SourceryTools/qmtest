@@ -63,7 +63,6 @@ def load_xml(file):
     This may occur if the file is either not well-formed or not
     valid."""
 
-    # If not validating, use a faster implementation.
     document = xml.dom.minidom.parse(file)
     file.close()
     return document

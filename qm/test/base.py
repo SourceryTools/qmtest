@@ -24,7 +24,6 @@ import qm
 import qm.attachment
 from   qm.common import *
 import qm.graph
-import qm.label
 import qm.platform
 import qm.structured_text
 from   qm.test.context import *
@@ -56,15 +55,6 @@ corresponding DTD public identifiers."""
 ########################################################################
 # functions
 ########################################################################
-
-def validate_id(item_id):
-    """Validate a test or resource ID.
-
-    raises -- 'QMException' if 'item_id' is not a valid ID."""
-
-    if not qm.label.is_valid(item_id, allow_separator=1):
-        raise QMException, qm.error("invalid id", id=item_id)
-
 
 def get_db_configuration_directory(db_path):
     """Return the path to the test database's configuration directory."""
@@ -125,8 +115,12 @@ def load_database(db_path):
     for node in qm.xmlutil.get_children(database, "attribute"):
         name = node.getAttribute("name")
         value = qm.xmlutil.get_dom_text(node)
-        attributes[name] = value
-        
+        # Python does not allow keyword arguments to have Unicode
+        # keywords.  Therefore, convert name to an ordinary string.
+        name = str(name)
+        # Keep track of the new attribute.
+        attributes[str(name)] = value
+    
     # Create the database.
     return apply(database_class, (db_path,), attributes)
 
@@ -505,6 +499,7 @@ def split_results_by_expected_outcome(results, expected_outcomes):
 ########################################################################
 
 extension_kinds = [ 'database',
+                    'label',
                     'resource',
                     'target',
                     'test', ]

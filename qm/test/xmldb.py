@@ -561,7 +561,7 @@ class Database(FileDatabase):
         suite_ids = qm.xmlutil.get_child_texts(suite, "suite_id")
         # Make sure they're all valid.
         for id_ in test_ids + suite_ids:
-            if not qm.label.is_valid(id_, allow_separator=1):
+            if not self.IsValidLabel(id_, is_component = 0):
                 raise RuntimeError, qm.error("invalid id", id=id_)
         # Construct the suite.
         return Suite(self, suite_id, implicit=0,
@@ -667,8 +667,8 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         'file_name' -- The file name specified for the attachment."""
         
         # Convert the item's containing suite to a path.
-        parent_suite_id = qm.label.split(item_id)[0]
-        parent_suite_path = qm.label.to_path(parent_suite_id)
+        parent_suite_id = self.SplitLabel(item_id)[0]
+        parent_suite_path = self._LabelToPath(parent_suite_id)
         # Construct a file name free of suspicious characters.
         base, extension = os.path.splitext(file_name)
         safe_file_name = qm.label.thunk(base) + extension

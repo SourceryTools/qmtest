@@ -102,7 +102,7 @@ class FileDatabase(Database):
                             NoSuchTestError)
 
 
-    def GetTestIds(self, directory=".", scan_subdirs=1):
+    def GetTestIds(self, directory="", scan_subdirs=1):
         """Return all test IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -174,9 +174,6 @@ class FileDatabase(Database):
         raises -- 'NoSuchSuiteError' if there is no test in the database
         named 'test_id'.
 
-        All databases must have an implicit suite called '.' that
-        contains all tests in the database.
-
         Derived classes must not override this method."""
 
         path = self.GetSuitePath(suite_id)
@@ -207,7 +204,7 @@ class FileDatabase(Database):
                             NoSuchSuiteError)
 
 
-    def GetSuiteIds(self, directory=".", scan_subdirs=1):
+    def GetSuiteIds(self, directory="", scan_subdirs=1):
         """Return all suite IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -237,9 +234,9 @@ class FileDatabase(Database):
         that contains, or would contain, 'suite_id'.  This method works
         even if no suite named 'suite_id' exists."""
 
-        # The implicit '.' suite corresponds to the directory in which
+        # The implicit "" suite corresponds to the directory in which
         # the database is located.
-        if suite_id == '.':
+        if suite_id == "":
             return self.GetPath()
         else:
             return self._GetPathFromLabel(suite_id) + self.__suite_extension
@@ -309,7 +306,7 @@ class FileDatabase(Database):
                             NoSuchResourceError)
 
 
-    def GetResourceIds(self, directory=".", scan_subdirs=1):
+    def GetResourceIds(self, directory="", scan_subdirs=1):
         """Return all resource IDs that begin with 'directory'.
 
         'directory' -- A label indicating the directory in which to
@@ -385,7 +382,7 @@ class FileDatabase(Database):
         file_dir = self.GetSuitePath(directory)
         for entry in dircache.listdir(file_dir):
             root = os.path.splitext(entry)[0]
-            if not qm.label.is_valid(root, user=1, allow_separator=0):
+            if not self.IsValidLabel(root):
                 continue
             entry_path = os.path.join(file_dir, entry)
             if (self._IsSuiteFile(entry_path)
@@ -456,7 +453,8 @@ class FileDatabase(Database):
         Derived classes must not override this method."""
 
         return os.path.join(self.GetPath(),
-                            qm.label.to_path(label, self.__suite_extension))
+                            self._LabelToPath(label,
+                                              self.__suite_extension))
 
 
     def _GetLabels(self, directory, scan_subdirs, label, predicate):
@@ -488,13 +486,13 @@ class FileDatabase(Database):
             # does not exist.  It would not be valid to create an entity
             # with such an id.
             root = os.path.splitext(entry)[0]
-            if not qm.label.is_valid(root, user=1, allow_separator=0):
+            if not self.IsValidLabel(root):
                 continue
             # Compute the full path to 'entry'.
             entry_path = os.path.join(directory, entry)
             # If it satisfies the 'predicate', add it to the list.
             if predicate(entry_path):
-                labels.append(qm.label.join(label, root))
+                labels.append(self.JoinLabels(label, root))
             # If it is a subdirectory, recurse.
             if (scan_subdirs and os.path.isdir(entry_path)
                 and self._IsSuiteFile(entry_path)):

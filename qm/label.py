@@ -5,7 +5,7 @@
 # Date:   2001-03-17
 #
 # Contents:
-#   Functions for manipulating lowest-common-demoniator labels.
+#   Label
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -13,156 +13,164 @@
 #
 ########################################################################
 
-"""A "label" is an operating-system independent path name.
-
-A label names entities in the same way that file names name files, but
-in an operating-system independent way.  For example, while the
-separator character on some systems is '/', and on other systems is
-'\', it is always '.' in QM.  It is easy to convert labels to real
-file names when necessary.
-
-QM does not always map labels on to file names.  For example,
-labels are used to name tests in a QMTest test database, but the
-database is free to store the tests however it likes.  It could,
-for example, store them all in a single file.
-
-Labels are strings that follow the following rules:
-
-  - A label consists of one or more characters chosen from [a-z0-9_.].
-
-  - Labels that begin with an underscore are considered reserved for
-    internal use.  While they are valid labels, users are not allowed
-    to create entities with these names.
-
-The '.' is treated as the separator character.  A label that begins
-with a '.' is called an "absolute label"; one that does not is a
-"relative label"."""
-
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import os
 import re
 import string
+import types
 
 ########################################################################
-# constants
+# Classes
 ########################################################################
 
-sep = "."
-"""The namespace separator character in labels."""
+class Label:
+    """A 'Label' identifies an entity.
 
-root = sep
-"""The root label."""
+    A 'Label' is a generalization of a filename.  Like filenames, labels
+    consist of one or more directories followed by a basename.  However,
+    the format used for a label need not be the same as that used by
+    filenames.
 
-########################################################################
-# classes
-########################################################################
+    Each label class defines a separator character to take the place of
+    the '/' character used by many file systems.
+    
+    All labels are relative labels; no label may begin with a separator
+    character."""
 
-class AsAbsolute:
-    """An 'AsAbsolute' turns relative labels into absolute labels.
+    def __init__(self, label):
+        """Construct a new 'Label'.
 
-    An 'AsAbsolute' stores a directory.  When applied to a label, the
-    directory and the label are 'join'ed."""
+        'label' -- A string giving the value of the label."""
+
+        assert type(label) in (types.StringType, types.UnicodeType)
+        self._label = label
         
-    def __init__(self, directory):
-        """Construct a new 'AsAbsolute'.
 
-        'directory' -- A label indicating a directory.  Labels provided
-        to the '__call__' method will be treated as relative to
-        'directory'."""
+    def Join(self, *labels):
+        """Combine this label and the 'labels' into a single label.
 
-        self.__directory = directory
+        'labels' -- A sequence of strings giving the components of the
+        new label.  All but the last are taken as directory names; the
+        last is treated as a basename."""
 
+        result = self._label
+        for l in labels:
+            if not result:
+                # If the label is empty so far, l is the first component.
+                result = l
+            elif result and result[-1] == self.sep:
+                # If the label thus far ends with a separator, we do not
+                # want to add another one.
+                result += l
+            else:
+                result = result + self.sep + l
 
-    def __call__(self, label):
-        """Return an absolute label for 'label'.
-
-        'label' -- A relative label.
-
-        returns -- An absolute label, constructed by 'join'ing the
-        'directory' used to construct the 'AsAbsolute' with 'label'."""
-
-        return join(self.__directory, label)
-
-
-
-class AsRelative:
-    """An 'AsRelative' transforms absolute labels into relative labels.
-
-    An 'AsAbsolute' stores a directory.  When applied to a label, the
-    portion of the label that is relative to the directory is
-    returned."""
-
-    def __init__(self, directory):
-        """Construct a new 'AsRelative'.
-
-        'directory' -- A label naming a directory."""
+        return self.__class__(result)
+    
         
-        self.__directory = directory
+    def Split(self):
+        """Split the label into a pair '(directory, basename)'.
+
+        returns -- A pair '(directory, basename)', each of which is
+        a label.
+
+        It is always true that 'directory.join(basename)' will return a
+        label equivalent to the original label."""
+
+        last_sep = self._label.rfind(self.sep)
+        if last_sep != -1:
+            return (self.__class__(self._label[:last_sep]),
+                    self.__class__(self._label[last_sep + 1:]))
+        else:
+            return (self.__class__(""),
+                    self.__class__(self._label))
 
 
-    def __call__(self, label):
-        """Return a relative label for 'label'.
+    def Components(self):
+        """Split the label into its components.
 
-        'label' -- An absolute label, whose prefix is the 'directory'.
-        used to to construct the 'AsRelative'.
+        returns -- A sequence of labels, each corresponding to a
+        component of this label."""
+
+        return map(self.__class__, self._label.split(self.sep))
+
+                   
+    def Basename(self):
+        """Return the basename for the label.
+
+        returns -- A string giving the basename for the label.  The
+        value returned for 'l.basename()' is always the same as
+        'l.split()[1]'."""
+
+        return self.Split()[1]
+    
+    
+    def Dirname(self):
+        """Return the directory name for the 'label'.
+
+        returns -- A string giving the directory name for the 'label'.
+        The value returned for 'l.dirname()' is always the same as
+        'l.split()[0]'."""
+
+        return self.Split()[0]
+
+
+    def ToPath(self, extension = ""):
+        """Return a filesystem path corresponding to this label.
+
+        'extension' -- A string which is added to each of the components
+        but the last.  For example, if 'extension' is '.ext', and
+        'Components' returns '('a', 'b', 'c')', the path returned will
+        be 'a.ext/b.ext/c' if '/' is the separator character.
         
-        returns -- A relative label.  Applying 'join' to the 'directory'
-        and the returned value will yield the original 'label'.
+        returns -- A string giving a relative path in the filesystem
+        corresponding to this label."""
 
-        raises -- 'ValueError' if the 'directory' is nott a prefix of
-        'label'."""
+        components = self.Components()
+        if components:
+            components = (map(lambda l: str(l) + extension,
+                              components[:-1]) 
+                          + [str(components[-1])])
+            
+        return apply(os.path.join, components)
+        
 
-        path_len = len(self.__directory)
-        if path_len == 0:
-            return label
-        if len(label) < path_len + 1 \
-           or label[:path_len] != self.__directory:
-            raise ValueError, \
-                  "path %s is not a prefix of label %s" \
-                  % (self.__directory, label)
-        return label[:path_len + 1]
+    def IsValid(self, label, is_component):
+        """Returns true if 'label' is not valid.
+
+        'label' -- The string being tested for validity.
+        
+        'is_component' -- True if the string being tested is just a
+        single component of a label path.
+        
+        returns -- True if 'label' is not valid."""
+
+        if label and label[0] == self.sep:
+            # All labels are relative; a valid label cannot begin with a
+            # separator.
+            return 0
+        elif is_component and self.sep in label:
+            # A component label cannot contain a separator.
+            return 0
+        elif label.find(self.sep + self.sep) != -1:
+            # It is invalid to have two separators in a row.
+            return 0
+            
+        return 1
 
 
+    def __str__(self):
+        """Return the string form of this label."""
+
+        return self._label
+    
 ########################################################################
-# functions
+# Functions
 ########################################################################
-
-__label_regex = re.compile("[-a-z0-9_]+$")
-__label_regex_with_sep = re.compile("[-a-z0-9_%s]+$" % sep)
-
-def is_valid(label, user=1, allow_separator=0):
-    """Test whether 'label' is a valid label.
-
-    'label' -- The string to validate.
-
-    'user' -- If true, labels reserved for internal use are also
-    rejected.  Labels beginning with an underscore are reserved for
-    internal use.
-
-    'allow_separator' -- If true, allow a period in the label, as a path
-    separator. 
-
-    returns -- True if 'label' is valid."""
-
-    # A label must have at least one character.
-    if len(label) == 0:
-        return 0
-    # Choose the appropriate regular expression.
-    if allow_separator:
-        regex = __label_regex_with_sep
-    else:
-        regex = __label_regex
-    # Try to match.
-    if not regex.match(label):
-        return 0
-    # The regex doesn't match empty strings, so this indexing is OK.
-    if user and label[0] == '_':
-        return 0
-    return 1
-
 
 __thunk_regex = re.compile("[^a-z0-9_]")
 
@@ -187,127 +195,7 @@ def thunk(label):
     # Make sure the label isn't empty.
     if label == "":
         raise ValueError, "Empty label"
-    return normpath(label)
-
-
-def split(label):
-    """Divide a label at the last separator character.
-
-    returns -- A pair '(namespace, name)', where 'name' is the name of
-    the label in its containing 'namespace'.  If the separator character
-    does not appear in 'label', 'namespace' is "." and 'name' is the
-    same as 'label'."""
-    
-    label = normpath(label)
-    if label == sep:
-        return (sep, "")
-    elif sep in label:
-        last_sep = string.rfind(label, sep)
-        return (label[:last_sep], label[last_sep + 1:])
-    else:
-        return (sep, label)
-
-
-def split_fully(label):
-    """Divide a label into components at separator characters.
-
-    returns -- A sequence of path components.  If 'label' is the root
-    label, the return value is an empty sequence."""
-
-    label = normpath(label)
-    if label == sep:
-        return []
-    return string.split(label, sep)
-
-
-def basename(label):
-    """Return the last component of 'label'."""
-
-    return split(label)[1]
-
-
-def dirname(label):
-    """Return 'label' without its last component."""
-
-    result = split(label)[0]
-    if result == "":
-        result = sep
-    return result
-
-
-__multiple_separators_regex = re.compile("%s+" % re.escape(sep))
-
-def normpath(label):
-    """Normalize separators in 'label'."""
-
-    # Remove leading and trailing separators.
-    while len(label) > 0 and label[0] == sep:
-        label = label[1:]
-    while len(label) > 0 and label[-1] == sep:
-        label = label[:-1]
-    # Anything left?
-    if label == "":
-        return sep
-    else:
-        # Replace multiple separators with a single one.
-        return __multiple_separators_regex.sub(sep, label)
-
-
-def join(*components):
-    """Join components with the separator character."""
-
-    # Join the results.
-    return normpath(string.join(components, sep))
-
-
-def to_path(label, extension=""):
-    """Return a path corresponding to 'label'.
-
-    'label' -- A label.
-
-    'extension' -- If extension is non-empty, it will be added to
-    every directory name in the path returned.
-
-    returns -- A path (without a leading separator) corresponding
-    to 'label'.  The path returned is always relative; it will never
-    begin with the operating system path separator character.
-
-    For example, if 'extension' is '".ext"', the file name returned
-    for the label '"a.b.c"' will be '"a.ext/b.ext/c"', assuming that
-    '/' is the operating system path separator."""
-
-    # 'normpath' returns a label that begins with 'sep' only in one
-    # case: if 'label' corresponds to the root label.  In this case, we
-    # should return a null path string, not the file system path
-    # separator, so handle this case specially.
-    if label == sep:
-        return ""
-    else:
-        return string.replace(label, sep, extension + os.sep)
-
-
-def from_path(path):
-    """Return a label corresponding to a file system 'path'.
-
-    Leading path separators are ignored, so you can't distinguish from
-    the label whether the path was absolute or relative."""
-
-    label = string.replace(path, os.sep, sep)
-    return normpath(label)
-
-
-def is_prefix(path, path_prefix):
-    """Return true if 'path_prefix' is a path prefix of 'path'."""
-
-    path_prefix = normpath(path_prefix)
-    if path_prefix == sep:
-        # This is the top-level path, and therefore considered a prefix
-        # to any path.
-        return 1
-    else:
-        length = len(path_prefix)
-        return length <= len(path) and path[:length] == path_prefix
-    
+    return label
 
 ########################################################################
 # Local Variables:

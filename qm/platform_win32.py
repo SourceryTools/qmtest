@@ -7,7 +7,7 @@
 # Contents:
 #   Platform-specific function for Win32.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -28,7 +28,7 @@ import sys
 # constants
 ########################################################################
 
-default_shell = [os.environ.get("COMPSPEC", r"C:\WINNT\SYSTEM32\CMD.EXE")]
+default_shell = [os.environ.get("COMSPEC", r"C:\WINNT\SYSTEM32\CMD.EXE")]
 
 ########################################################################
 # classes

@@ -1,3 +1,32 @@
+2002-06-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (Field.__init__): Remove check for valid labels.
+	* qm/label.py: Rework completely so that Label is an abstract
+	base class.
+	* qm/platform_win32.py (default_shell): Correct spelling of
+	COMSPEC environment variable.
+	* qm/user.py (Group.__init__): Remove check for valid labels.
+	* qm/xmlutil.py (load_xml): Remove incorrect comment.
+	* qm/test/base.py (validate_id): Remove.
+	(load_database): Convert Unicode strings to ordinary strings 
+	for use as keyword arguments.
+	(extension_kinds): Add label.
+	* qm/test/cmdline.py (QMTest.__ExecuteRun): Use the empty string,
+	not ".", to indicate that all tests should be run.
+	* qm/test/database.py: Rework to provide label manipulation
+	functions in terms of a particular label class.
+	* qm/test/file_database.py: Likewise.	
+	* qm/test/xmldb.py (Database): Likewise.
+	* qm/test/classes/classes.qmc: Add FileLabel and PythonLabel.
+	* qm/test/classes/file_label.py: New file.
+	* qm/test/classes/python_label.py: Likewise.
+	* qm/test/share/dtds/class-directory.dtd: Add labels.
+	* qm/test/web/web.py: Adjust manipulation of labels throughout.
+	(QMTestPage.GetDatabase): New method.
+	(QMTestPage.FormatId): New method.
+	* tests/unit.qms/common.qms/label_is_valid.qmt: Update.
+	* tests/unit.qms/common.qms/label_thunk.qmt: Likewise.
+	
 2002-06-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/execution_engine.py (ExecutionEngine._CheckForResponse):

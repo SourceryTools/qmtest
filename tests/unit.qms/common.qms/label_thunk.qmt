@@ -5,15 +5,18 @@
  <argument name='source'>
   <text>
 import qm.label
+def is_valid(l):
+   from python_label import PythonLabel
+   return PythonLabel("").IsValid(l, 1)
 </text>
  </argument>
  <argument name='expression'>
-  <text>qm.label.is_valid(qm.label.thunk("abcyz_12390_")) \
-           and qm.label.is_valid(qm.label.thunk("   abc 123   ")) \
-           and qm.label.is_valid(qm.label.thunk("hello world!")) \
-           and qm.label.is_valid(qm.label.thunk("(*@KAJD)92809  kj!")) \
-           and qm.label.is_valid(qm.label.thunk("____foo bar____")) \
-           and qm.label.is_valid(qm.label.thunk("This is a test."))</text>
+  <text>is_valid(qm.label.thunk("abcyz_12390_")) \
+           and is_valid(qm.label.thunk("   abc 123   ")) \
+           and is_valid(qm.label.thunk("hello world!")) \
+           and is_valid(qm.label.thunk("(*@KAJD)92809  kj!")) \
+           and is_valid(qm.label.thunk("____foo bar____")) \
+           and is_valid(qm.label.thunk("This is a test."))</text>
  </argument>
 </test>
 <!--

@@ -4,17 +4,18 @@
  <class>python.ExecTest</class>
  <argument name='source'>
   <text>
-import qm.label
+def is_valid(l):
+   from python_label import PythonLabel
+   return PythonLabel("").IsValid(l, 1)
 </text>
  </argument>
  <argument name='expression'>
-  <text>qm.label.is_valid("abcde") \
-           and qm.label.is_valid("ab_xz_efg_0912_bjd__f_") \
-           and qm.label.is_valid("_foo_bar", user=0) \
-           and not qm.label.is_valid("_foo_bar") \
-           and not qm.label.is_valid("") \
-           and not qm.label.is_valid("Hello") \
-           and not qm.label.is_valid("hello world")</text>
+  <text>is_valid("abcde") \
+           and is_valid("ab_xz_efg_0912_bjd__f_") \
+           and is_valid("_foo_bar") \
+           and not is_valid("") \
+           and not is_valid("Hello") \
+           and not is_valid("hello world")</text>
  </argument>
 </test>
 <!--

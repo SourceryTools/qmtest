@@ -7,7 +7,7 @@
 # Contents:
 #   User management facilities.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -202,8 +202,6 @@ class Group:
 
         'user_ids' -- IDs of users initially in the group."""
 
-        if not label.is_valid(group_id):
-            raise ValueError, 'invalid group ID "%s"' % group_id
         self.__id = group_id
         self.__user_ids = list(user_ids)
 

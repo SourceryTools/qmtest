@@ -347,14 +347,6 @@ function popup_box(title, message)
 }
 
 
-// Return true if 'label' is a valid label.
-
-function label_is_valid(label)
-{
-  return label.match(/^[a-z0-9][a-z0-9_.]*$/) != null;
-}
-
-
 // Select an item in a select input by option value.
 //
 // 'select' -- The select input.

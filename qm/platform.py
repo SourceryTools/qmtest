@@ -7,7 +7,7 @@
 # Contents:
 #   Platform-specific code.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -55,7 +55,7 @@ def get_shell_for_command():
     shell = common.rc.Get("command_shell", None, "common")
     if shell is not None:
         # Split the configuration value into an argument list.
-        shell = common.split_argument_list(shell)
+        return common.split_argument_list(shell)
     else:
 	if sys.platform == "win32":
 	    shell = default_shell + ["/c"]
@@ -75,7 +75,7 @@ def get_shell_for_script():
     shell = common.rc.Get("script_shell", None, "common")
     if shell is not None:
         # Split the configuration value into an argument list.
-        shell = common.split_argument_list(shell)
+        return common.split_argument_list(shell)
     else:
         # Use the default, but copy it so the caller can change it.
         shell = default_shell[:]

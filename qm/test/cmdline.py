@@ -731,7 +731,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # the IDs of tests and suites to run.
         if len(self.__arguments) == 0:
             # No IDs specified; run the entire test database.
-            self.__arguments.append(".")
+            self.__arguments.append("")
 
         # Expand arguments in test IDs.
         try:
