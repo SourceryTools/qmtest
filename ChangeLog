@@ -1,3 +1,44 @@
+2004-01-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py (Attachment.Move): New method.
+	(AttachmentStore.Store): Do not return a value.
+	(TemporaryAttachmentStore.Store): Do not check
+	is_temporary_location.
+	(is_temporary_location): Remove.
+	(make_dom_node): Do not check is_temporary_location.
+	* qm/extension.py (Extension.MakeDomElement): Remove debugging
+	code.
+	* qm/fields.py (Field.GetSubfields): New method.
+	(Field.ParseFormValue): Take a dictionary of attachment stores as
+	a parameter, not a single attachment store.
+	(TextField.ParseFormValue): Likewise.
+	(TupleField.GetSubfields): New method.
+	(TupleField.ParseFormValue): Take a dictionary of attachment
+	stores as a parameter, not a single attachment store.
+	(SetField.GetContainedField): Remove.
+	(SetField.GetHelp): Adjust.
+	(SetField.GetSubfields): New method.
+	(SetField.MakeDomNodeForValue): Do not use GetContainedField.
+	(SetField.ParseFormValue): Likewise.  Take a dictionary of attachment
+	stores as a parameter, not a single attachment store.
+	(UploadAttachmentPage.__next_temporary_location): Remove.
+	(UploadAttachmentPage.__init__): Add attachment_store parameter.
+	(AttachmentField.FormatValueAsHTML): Encode the attachment store.
+	(AttachmentField.ParseFormValue): Decode it.
+	* qm/web.py (WebServer.__init__): Create a temporary attachment
+	store.
+	(WebServer.GetTemporaryAttachmentStore): New method.
+	* qm/test/runnable.py (Runnable.GetAttachments): New method.
+	(Runnable.__GetAttachments): Likewise.
+	* qm/test/classes/xml_database.py
+	(XMLDatabase.__StoreAttachments): Rewrite.
+	* qm/test/web/web.py (QMTestServer.__init__): Do not create a
+	temporary attachment store.
+	(QMTestServer.HandleSubmitItem): Pass all available attachment
+	stores to ParseFormValue.  Do not try to remove unused attachments
+	here.
+	* share/dtml/attachment.dtml: Encode the attachment store id.
+
 2004-01-13  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qm/test/file_database.py: Fix little bug.

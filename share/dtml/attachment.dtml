@@ -151,7 +151,8 @@
    encoding = escape(description) + ";"
               + escape(mime_type) + ";"
               + escape(location) + ";"
-              + escape(file_name);
+              + escape(file_name) + ";"
+              + escape("<dtml-var expr="attachment_store_id">");
 
    summary = description + " (" + file_name
    if(document.upload_form.detect_mime_type[1].checked)

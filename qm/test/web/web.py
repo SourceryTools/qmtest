@@ -1575,11 +1575,6 @@ class QMTestServer(qm.web.WebServer):
         self.RegisterPathTranslation(
             "/manual", qm.get_doc_directory("test", "html"))
 
-        # Create a temporary attachment store to process attachment data
-        # uploads.
-        self.__temporary_store = qm.attachment.TemporaryAttachmentStore()
-        self.RegisterScript(qm.fields.AttachmentField.upload_url,
-                            self.__temporary_store.HandleUploadRequest)
         # The DB's attachment store processes download requests for
         # attachment data.
         attachment_store = database.GetAttachmentStore()
@@ -2023,7 +2018,7 @@ class QMTestServer(qm.web.WebServer):
             # Check that the class exists.
             try:
                 qm.test.base.get_extension_class(class_name, type,
-                                                 self.GetDatabase())
+                                                 database)
             except ValueError:
                 # The class name was incorrectly specified.
                 field_errors["_class"] = qm.error("invalid class name",
@@ -2263,7 +2258,7 @@ class QMTestServer(qm.web.WebServer):
         item_class_name = request["class"]
         item_class = qm.test.base.get_extension_class(item_class_name,
                                                       type,
-                                                      self.GetDatabase())
+                                                      database)
         fields = get_class_arguments(item_class)
 
         # We'll perform various kinds of validation as we extract form
@@ -2274,6 +2269,10 @@ class QMTestServer(qm.web.WebServer):
         # Loop over fields of the class, looking for arguments in the
         # submitted request.
         arguments = {}
+        temporary_store = self.GetTemporaryAttachmentStore()
+        main_store = database.GetAttachmentStore()
+        attachment_stores = { id(temporary_store): temporary_store,
+                              id(main_store): main_store }
         for field in fields:
             # Construct the name we expect for the corresponding argument.
             field_name = field.GetName()
@@ -2281,7 +2280,7 @@ class QMTestServer(qm.web.WebServer):
             # Parse the value for this field.
             try:
                 value, r = field.ParseFormValue(request, form_field_name,
-                                                self.__temporary_store)
+                                                attachment_stores)
                 if r:
                     redisplay = 1
                 arguments[field_name] = value
@@ -2295,15 +2294,15 @@ class QMTestServer(qm.web.WebServer):
         if type is "test":
             # Create a new test.
             item = TestDescriptor(
-                    self.GetDatabase(),
+                    database,
                     test_id=item_id,
                     test_class_name=item_class_name,
                     arguments=arguments)
 
         elif type is "resource":
             # Create a new resource.
-            item = ResourceDescriptor(self.GetDatabase(),
-                                      item_id, item_class_name, arguments)
+            item = ResourceDescriptor(database, item_id,
+                                      item_class_name, arguments)
 
         # If necessary, redisplay the form.
         if redisplay:
@@ -2314,24 +2313,6 @@ class QMTestServer(qm.web.WebServer):
 
         # Store it in the database.
         database.WriteExtension(item_id, item.GetItem())
-
-        # Remove any attachments located in the temporary store as they
-        # have now been copied to the store associated with the
-        # database.
-        temporary_store = self.__temporary_store
-        for field in fields:
-            if isinstance(field, qm.fields.AttachmentField):
-                attachment = arguments[field.GetName()]
-                if attachment is not None \
-                   and attachment.GetStore() is temporary_store:
-                    temporary_store.Remove(attachment.GetLocation())
-            elif isinstance(field, qm.fields.SetField) \
-                 and isinstance(field.GetContainedField(),
-                                qm.fields.AttachmentField):
-                for attachment in arguments[field.GetName()]:
-                    if attachment is not None \
-                       and attachment.GetStore() is temporary_store:
-                        temporary_store.Remove(attachment.GetLocation())
 
         # Redirect to a page that displays the newly-edited item.
         request = qm.web.WebRequest("show-" + type, base=request, id=item_id)

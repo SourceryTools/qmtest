@@ -19,6 +19,7 @@
 
 import qm
 import qm.extension
+from   qm.fields import AttachmentField, TupleField, SetField
 
 ########################################################################
 # Classes
@@ -105,3 +106,45 @@ class Runnable(qm.extension.Extension):
         stored."""
 
         return self.__database
+
+
+    def GetAttachments(self):
+        """Return the 'Attachment's to this 'Runnable'.
+
+        returns -- A sequence consisting of the 'Attachment' objects
+        associated with this runnable."""
+
+        attachments = []
+        for f in qm.extension.get_class_arguments(self.__class__):
+            self.__GetAttachments(f,
+                                  getattr(self, f.GetName()),
+                                  attachments)
+        return attachments
+
+
+    def __GetAttachments(self, field, value, attachments):
+        """Return the 'Attachments' that are part of 'field'.
+
+        'field' -- The 'Field' being examined.
+
+        'value' -- The value of that 'Field' in 'self'.
+
+        'attachments' -- A sequence consisting of the attachments
+        found so far.  Additional 'Attachment's are appended to this
+        sequence by this function."""
+
+        if isinstance(field, AttachmentField):
+            attachments.append(getattr(self, field.GetName()))
+        elif isinstance(field, TupleField):
+            subfields = field.GetSubfields()
+            for i in xrange(len(subfields)):
+                self.__GetAttachments(subfields[i], value[i],
+                                      attachments)
+        elif isinstance(field, SetField):
+            subfield = field.GetSubfields()[0]
+            for i in xrange(len(value)):
+                self.__GetAttachments(subfield, value[i],
+                                      attachments)
+
+        return
+                

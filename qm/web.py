@@ -747,6 +747,12 @@ class WebServer(HTTPServer):
         self.__cache_path = self.__cache_dir.GetPath()
         os.mkdir(os.path.join(self.__cache_path, "sessions"), 0700)
 
+        # Create a temporary attachment store to process attachment data
+        # uploads.
+        self.__temporary_store = qm.attachment.TemporaryAttachmentStore()
+        self.RegisterScript(qm.fields.AttachmentField.upload_url,
+                            self.__temporary_store.HandleUploadRequest)
+
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
@@ -923,6 +929,14 @@ class WebServer(HTTPServer):
         return (self.server_name, self.server_port)
 
 
+    def GetTemporaryAttachmentStore(self):
+        """Return the 'AttachmentStore' used for new 'Attachment's.
+
+        returns -- The 'AttachmentStore' used for new 'Attachment's."""
+
+        return self.__temporary_store
+    
+        
     def MakeButtonForCachedPopup(self,
                                  label,
                                  html_text,

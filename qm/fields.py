@@ -68,7 +68,6 @@ class Field(object):
 
     form_field_prefix = "_field_"
     
-
     def __init__(self,
                  name,
                  default_value,
@@ -190,6 +189,15 @@ class Field(object):
         ''' % (self.GetTitle(), description, help, self.GetName(), )
 
 
+    def GetSubfields(self):
+        """Returns the sequence of subfields contained in this field.
+
+        returns -- The sequence of subfields contained in this field.
+        If there are no subfields, an empty sequence is returned."""
+
+        return ()
+
+        
     def IsComputed(self):
         """Returns true if this field is computed automatically.
 
@@ -317,7 +325,7 @@ class Field(object):
         raise NotImplemented
     
         
-    def ParseFormValue(self, request, name, attachment_store):
+    def ParseFormValue(self, request, name, attachment_stores):
         """Convert a value submitted from an HTML form.
 
         'request' -- The 'WebRequest' containing a value corresponding
@@ -325,8 +333,9 @@ class Field(object):
 
         'name' -- The name corresponding to this field in the 'request'.
 
-        'attachment_store' -- The 'AttachmentStore' into which new
-        attachments should be placed.
+        'attachment_stores' -- A dictionary mapping 'AttachmentStore' ids
+        (in the sense of Python's 'id' built-in) to the
+        'AttachmentStore's themselves.
         
         returns -- A pair '(value, redisplay)'.  'value' is the value
         for this field, as indicated in 'request'.  'redisplay' is true
@@ -657,7 +666,7 @@ class TextField(Field):
         return value
 
 
-    def ParseFormValue(self, request, name, attachment_store):
+    def ParseFormValue(self, request, name, attachment_stores):
 
         # HTTP specifies text encodings are CR/LF delimited; convert to
         # the One True Text Format (TM).
@@ -723,6 +732,12 @@ class TupleField(Field):
 
         return help
 
+
+    def GetSubfields(self):
+
+        return self.__fields
+
+    
     ### Output methods.
 
     def FormatValueAsHtml(self, server, value, style, name = None):
@@ -761,13 +776,13 @@ class TupleField(Field):
                    self.__fields, value)
 
 
-    def ParseFormValue(self, request, name, attachment_store):
+    def ParseFormValue(self, request, name, attachment_stores):
 
         value = []
         redisplay = 0
         for f in self.__fields:
             v, r = f.ParseFormValue(request, name + "_" + f.GetName(),
-                                    attachment_store)
+                                    attachment_stores)
             value.append(v)
             if r:
                 redisplay = 1
@@ -830,19 +845,18 @@ class SetField(Field):
         self.__not_empty_set = not_empty_set == "true"
 
 
-    def GetContainedField(self):
-        """Returns the field instance of the contents of the set."""
-
-        return self.__contained
-
-
     def GetHelp(self):
         return """
         A set field.  A set contains zero or more elements, all of the
         same type.  The elements of the set are described below:
 
-        """ + self.GetContainedField().GetHelp()
+        """ + self.__contained.GetHelp()
 
+
+    def GetSubfields(self):
+
+        return (self.__contained,)
+    
 
     def GetHtmlHelp(self, edit=0):
         help = Field.GetHtmlHelp(self)
@@ -869,7 +883,7 @@ class SetField(Field):
             return "None"
         # Format each element of the set, and join them into a
         # comma-separated list. 
-        contained_field = self.GetContainedField()
+        contained_field = self.__contained
         formatted_items = []
         for item in value:
             formatted_item = contained_field.FormatValueAsText(item, columns)
@@ -886,7 +900,7 @@ class SetField(Field):
         if name is None:
             name = self.GetHtmlFormFieldName()
 
-        contained_field = self.GetContainedField()
+        contained_field = self.__contained
 
         if style == "brief" or style == "full":
             if len(value) == 0:
@@ -960,7 +974,7 @@ class SetField(Field):
         # Create a set element.
         element = document.createElement("set")
         # Add a child node for each item in the set.
-        contained_field = self.GetContainedField()
+        contained_field = self.__contained
         for item in value:
             # The contained field knows how to make a DOM node for each
             # item in the set.
@@ -1027,7 +1041,7 @@ class SetField(Field):
                 invalid(tok)
             # Parse the string constant.
             v = eval(tok[1])
-            elements.append(self.GetContainedField().ParseTextValue(v))
+            elements.append(self.__contained.ParseTextValue(v))
 
         # There should not be any tokens left over.
         tok = g.next()
@@ -1037,7 +1051,7 @@ class SetField(Field):
         return self.Validate(elements)
         
                        
-    def ParseFormValue(self, request, name, attachment_store):
+    def ParseFormValue(self, request, name, attachment_stores):
 
         values = []
         redisplay = 0
@@ -1046,7 +1060,7 @@ class SetField(Field):
         action = request[name]
         # Loop over the entries for each of the elements, adding them to
         # the set.
-        contained_field = self.GetContainedField()
+        contained_field = self.__contained
         element = 0
 	for element in xrange(int(request[name + "_count"])):
             element_name = name + "_%d" % element
@@ -1054,7 +1068,7 @@ class SetField(Field):
                     and request.get(element_name + "_remove") == "on"):
                 v, r = contained_field.ParseFormValue(request,
                                                       element_name,
-                                                      attachment_store)
+                                                      attachment_stores)
                 values.append(v)
                 if r:
                     redisplay = 1
@@ -1099,7 +1113,7 @@ class SetField(Field):
                            wrong_tag=node.tagName)
         # Use the contained field to extract values for the children of
         # this node, which are the set elements.
-        contained_field = self.GetContainedField()
+        contained_field = self.__contained
         fn = lambda n, f=contained_field, s=attachment_store: \
              f.GetValueFromDomNode(n, s)
         values = map(fn,
@@ -1114,15 +1128,17 @@ class SetField(Field):
 class UploadAttachmentPage(web.DtmlPage):
     """DTML context for generating upload-attachment.dtml."""
 
-    __next_temporary_location = 0
-
-    def __init__(self, 
+    def __init__(self,
+                 attachment_store,
                  field_name,
                  encoding_name,
                  summary_field_name,
                  in_set=0):
         """Create a new page object.
 
+        'attachment_store' -- The AttachmentStore in which the new
+        attachment will be placed.
+        
         'field_name' -- The user-visible name of the field for which an
         attachment is being uploaded.
 
@@ -1139,6 +1155,7 @@ class UploadAttachmentPage(web.DtmlPage):
         # Use a brand-new location for the attachment data.
         self.location = attachment.make_temporary_location()
         # Set up properties.
+        self.attachment_store_id = id(attachment_store)
         self.field_name = field_name
         self.encoding_name = encoding_name
         self.summary_field_name = summary_field_name
@@ -1302,12 +1319,8 @@ class AttachmentField(Field):
                 field_value = ""
             else:
                 # We'll encode all the relevant information.
-                parts = (
-                    value.GetDescription(),
-                    value.GetMimeType(),
-                    value.GetLocation(),
-                    value.GetFileName(),
-                    )
+                parts = (description, mime_type, location, file_name,
+                         str(id(value.GetStore())))
                 # Each part is URL-encoded.
                 parts = map(urllib.quote, parts)
                 # The parts are joined into a semicolon-delimited list.
@@ -1315,9 +1328,11 @@ class AttachmentField(Field):
             field_value = 'value="%s"' % field_value
 
             # Generate the popup upload page.
-            upload_page = UploadAttachmentPage(self.GetTitle(),
-                                               name,
-                                               summary_field_name)()
+            upload_page = \
+                UploadAttachmentPage(server.GetTemporaryAttachmentStore(),
+                                     self.GetTitle(),
+                                     name,
+                                     summary_field_name)()
             
             # Generate controls for this form.
             
@@ -1396,7 +1411,7 @@ class AttachmentField(Field):
         return value
 
 
-    def ParseFormValue(self, request, name, attachment_store):
+    def ParseFormValue(self, request, name, attachment_stores):
 
         encoding = request[name]
         # An empty string represnts a missing attachment, which is OK.
@@ -1408,11 +1423,14 @@ class AttachmentField(Field):
         # Undo the URL encoding of each component.
         parts = map(urllib.unquote, parts)
         # Unpack the results.
-        description, mime_type, location, file_name = parts
+        description, mime_type, location, file_name, store_id = parts
+        # Figure out which AttachmentStore corresponds to the id
+        # provided.
+        store = attachment_stores[int(store_id)]
         # Create the attachment.
         value = attachment.Attachment(mime_type, description,
                                       file_name, location,
-                                      attachment_store)
+                                      store)
         return (self.Validate(value), 0)
 
 

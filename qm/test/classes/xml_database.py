@@ -87,17 +87,35 @@ class XMLDatabase(ExtensionDatabase):
 
         'item' -- A 'Test' or 'Resource'.  If any of its fields contain
         attachments, add them to the 'AttachmentStore'."""
-           
-        for field in get_class_arguments(item.__class__):
-            if isinstance(field, qm.fields.AttachmentField):
-                attachment = getattr(item, field.GetName())
-                if (attachment is not None
-                    and attachment.GetStore() != self.__store):
-                    location = \
-                        self.__MakeDataFilePath(item.GetId(),
-                                                attachment.GetFileName())
-                    setattr(item, field.GetName(),
-                            self.__store.Store(attachment, location))
+
+        # Get all of the attachments associated with the new item.
+        new_attachments = item.GetAttachments()
+
+        # Remove old attachments that are not also among the new
+        # attachments.
+        store = self.GetAttachmentStore()
+        try:
+            old_item = self.GetItem(item.kind, item.GetId())
+        except:
+            old_item = None
+        if old_item:
+            old_attachments = old_item.GetItem().GetAttachments()
+            for o in old_attachments:
+                found = 0
+                for n in new_attachments:
+                    if (n.GetStore() == store
+                        and n.GetFileName() == o.GetFileName()):
+                        found = 1
+                        break
+                if not found:
+                    store.Remove(o.GetLocation())
+
+        # Put any new attachments into the attachment store.
+        for a in new_attachments:
+            if a.GetStore() != store:
+                location = self.__MakeDataFilePath(item.GetId(),
+                                                   a.GetFileName())
+                a.Move(store, location)
 
          
     def __MakeDataFilePath(self, item_id, file_name):

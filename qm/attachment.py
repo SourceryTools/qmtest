@@ -156,6 +156,26 @@ class Attachment:
 
         return self.__store
 
+
+    def Move(self, store, location):
+        """Move the 'Attachment' to a new location.
+
+        'store' -- The 'AttachmentStore' that will contain the
+        attachment.
+
+        'location' -- The location of the attachment within its current
+        store."""
+
+        # Store this attachment in its new location.  That must be done
+        # before removing it from its current location as that step will
+        # destroy the data contained in the attachment.
+        store.Store(self, location)
+        # Now, remove the attachment from its current location.
+        self.__store.Remove(self.__location)
+        # Finally, update the information associated with the attachment.
+        self.__store = store
+        self.__location = location
+
     
     def __str__(self):
         return '<Attachment "%s" (%s)>' \
@@ -238,10 +258,7 @@ class AttachmentStore(object):
 
         'attachment' -- The 'Attachment' to store.
 
-        'location' -- The location in which to store the 'attachment'.
-
-        returns -- A new 'Attachment' whose 'AttachmentStore' is
-        'self'."""
+        'location' -- The location in which to store the 'attachment'."""
 
         raise NotImplementedError
         
@@ -297,12 +314,6 @@ class FileAttachmentStore(AttachmentStore):
         # Close the file.
         file.close()
 
-        return Attachment(attachment.GetMimeType(),
-                          attachment.GetDescription(),
-                          attachment.GetFileName(),
-                          location,
-                          self)
-
 
     def Remove(self, location):
         """Remove an attachment.
@@ -350,9 +361,6 @@ class TemporaryAttachmentStore(FileAttachmentStore):
         to close."""
 
         location = request["location"]
-        # Because this data is in the temporary attachment store, the
-        # location should be a temporary location.
-        assert is_temporary_location(location)
         # Create the file.
         file = open(self.GetDataFile(location), "w")
         # Write the data.
@@ -380,12 +388,6 @@ def make_temporary_location():
     """Return a unique location for temporary attachment data."""
 
     return _temporary_location_prefix + common.make_unique_tag()
-
-        
-def is_temporary_location(location):
-    """Return true if 'location' is a temporary attachment location."""
-
-    return location.startswith(_temporary_location_prefix)
 
 
 def make_dom_node(attachment, document):
@@ -420,11 +422,7 @@ def make_dom_node(attachment, document):
     # Create a location element, to include attachment data by
     # reference.
     location = attachment.GetLocation()
-    # Attchments whose data is in the temporary store should not be
-    # externalized. 
-    assert not is_temporary_location(location)
-    child = xmlutil.create_dom_text_element(
-        document, "location", location)
+    child = xmlutil.create_dom_text_element(document, "location", location)
 
     node.appendChild(child)
     return node

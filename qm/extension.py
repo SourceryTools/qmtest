@@ -130,8 +130,6 @@ class Extension(object):
 
         # Get all of the arguments.
         arguments = get_class_arguments_as_dictionary(self.__class__)
-        import sys
-        print >> sys.stderr, arguments
         # Determine which subset of the 'arguments' have been set
         # explicitly.
         explicit_arguments = {}
@@ -139,7 +137,6 @@ class Extension(object):
             # Do not record computed fields.
             if field.IsComputed():
                 continue
-            print >> sys.stderr, name
             if self.__dict__.has_key(name):
                 explicit_arguments[name] = self.__dict__[name]
 
