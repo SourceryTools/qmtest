@@ -62,32 +62,27 @@ class IndexPageInfo(web.PageInfo):
 
     def MakeNewForm(self):
         request = self.request.copy("new")
-        return qm.web.make_form_for_request(request, name="new_form")
+        return request.AsForm(name="new_form")
 
 
     def MakeShowForm(self):
         request = self.request.copy("show")
-        return qm.web.make_form_for_request(request, name="show_form")
+        return request.AsForm(name="show_form")
 
 
     def MakeQueryForm(self):
         request = self.request.copy("summary")
-        return qm.web.make_form_for_request(request, name="query_form")
+        return request.AsForm(name="query_form")
 
 
     def MakeQueryUrl(self):
         return self.request.copy("query").AsUrl()
 
 
-    def MakeShutdownForm(self):
-        request = self.request.copy("shutdown")
-        return qm.web.make_form_for_request(request, name="shutdown_form")
-
-
     def MakeLogoutForm(self):
         request = qm.web.WebRequest("logout", base=self.request)
         request["_redirect_url"] = self.request.GetUrl()
-        return qm.web.make_form_for_request(request, name="logout_form")
+        return request.AsForm(name="logout_form")
 
 
 

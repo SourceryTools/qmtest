@@ -70,7 +70,7 @@
    <form name="form"
          method="post"
          action="<dtml-var expr="MakeSubmitUrl()">"
-         enctype="multipart/form-data"/>
+         enctype="multipart/form-data">
    <dtml-comment><!--
      In a form, IID and revision may not be represented as form
      controls.  Nevertheless, we need the values of these fields to be

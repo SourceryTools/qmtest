@@ -66,6 +66,8 @@ class MemoryIdb(qm.track.IdbBase):
     #   indexed by revision number.
 
 
+    # Overrides of base class functions.
+
     def __init__(self, path, create_idb=0):
         """Create a new IDB "connection".
 
@@ -98,39 +100,13 @@ class MemoryIdb(qm.track.IdbBase):
         qm.track.IdbBase.Close(self)
 
 
-    def __Write(self):
-        """Write out the IDB state."""
-
-        # Open a pickle file.
-        pickle_file = open(self.__GetPicklePath(), "w")
-        # The persistent state consists of a tuple containing the
-        # issue class map and the issue map.
-        persistent = (
-            self.__issue_classes,
-            self.__issues
-            )
-        cPickle.dump(persistent, pickle_file)
-        pickle_file.close()
-
-
-    def __GetPicklePath(self):
-        """Return the full path to the IDB pickle file."""
-        
-        return os.path.join(self.path, "idb.pickle")
-
+    # Abstract functions of the base class defined here.
 
     def GetIssueClass(self, name):
-        """Return the issue class named by 'name'."""
-
         return self.__issue_classes[name]
         
 
     def AddIssueClass(self, issue_class):
-        """Add 'issue_class' to the IDB.
-
-        raises -- 'KeyError' if there is already a class in the
-        IDB with the same name as the name of 'issue_class'."""
-
         name = issue_class.GetName()
         if self.__issue_classes.has_key(name):
             raise KeyError, "issue class name %s already exists" % name
@@ -325,8 +301,64 @@ class MemoryIdb(qm.track.IdbBase):
         return revisions[-1].GetRevision()
 
 
+    def UpdateIssueClass(self, issue_class):
+        """Update an issue class.
+
+        Finds the issue class in the IDB whose name is the same as that
+        of 'issue_class', and replaces it with 'issue_class'.
+
+        'issue_class' -- An 'IssueClass' object."""
+
+        issue_class_name = issue_class.GetName()
+        old_issue_class = self.GetIssueClass(issue_class_name)
+
+        old_fields = old_issue_class.GetFields()
+        old_field_names = map(lambda f: f.GetName(), old_fields)
+        new_fields = issue_class.GetFields()
+        new_field_names = map(lambda f: f.GetName(), new_fields)
+
+        # Determine whether any fields were added or removed.
+        added_fields = []
+        for field in new_fields:
+            if not field.GetName() in old_field_names:
+                added_fields.append(field)
+        removed_fields = []
+        for field in old_fields:
+            if not field.GetName() in new_field_names:
+                removed_fields.append(field)
+
+        # FIXME: Implement this.
+        if len(added_fields) > 0 or len(removed_fields) > 0:
+            raise NotImplementedError, "add or remove fields from issue class"
+
+        # Replace the the old issue class with the new one.
+        self.__issue_classes[issue_class_name] = issue_class
+        self.__Write()
+
+
     # Helper functions.
     
+    def __Write(self):
+        """Write out the IDB state."""
+
+        # Open a pickle file.
+        pickle_file = open(self.__GetPicklePath(), "w")
+        # The persistent state consists of a tuple containing the
+        # issue class map and the issue map.
+        persistent = (
+            self.__issue_classes,
+            self.__issues
+            )
+        cPickle.dump(persistent, pickle_file)
+        pickle_file.close()
+
+
+    def __GetPicklePath(self):
+        """Return the full path to the IDB pickle file."""
+        
+        return os.path.join(self.path, "idb.pickle")
+
+
     def __InsertIssue(self, issue):
         """Insert an issue record into the database.
 

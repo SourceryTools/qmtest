@@ -215,9 +215,7 @@ class PageInfo:
         request["_redirect_url"] = redirect_request.GetUrl()
         # Use a POST method to submit the login form, so that passwords
         # don't appear in web logs.
-        form = qm.web.make_form_for_request(request,
-                                            method="post",
-                                            name="login_form")
+        form = request.AsForm(method="post", name="login_form")
         form = form + \
         '''
            <table cellpadding="0" cellspacing="0">
@@ -1084,6 +1082,45 @@ class WebRequest:
             return "%s?%s" % (self.GetUrl(), urllib.urlencode(self))
 
 
+    def AsForm(self, method="get", name=None):
+        """Return an opening form tag for this request.
+
+        'method' -- The HTML method to use for the form, either "get" or
+        "post".
+
+        'name' -- A name for the form, or 'None'.
+
+        returns -- An opening form tag for the request, plus hidden
+        input elements for arguments to the request.
+
+        The caller must add additional inputs, the submit input, and
+        close the form tag."""
+
+        if name is not None:
+            name_attribute = 'name="%s"' % name
+        else:
+            name_attribute = ''
+        # Generate the form tag.
+        if method == "get":
+            result = '<form method="get" action="%s" %s>\n' \
+                     % (self.GetUrl(), name_attribute)
+        elif method == "post":
+            result = '''<form %s
+                              method="post"
+                              enctype="multipart/form-data"
+                              action="%s">\n''' \
+            % (name_attribute, self.GetUrl())
+        else:
+            raise ValueError, "unknown method %s" % method
+        # Add hidden inputs for the request arguments.
+        for name, value in self.items():
+            result = result \
+                     + '<input type="hidden" name="%s" value="%s">\n' \
+                     % (name, value)
+
+        return result
+
+
     # Methods to emulate a mapping.
 
     def __getitem__(self, key):
@@ -1307,8 +1344,7 @@ def parse_url_query(url):
         for key, value_list in fields.items():
             if len(value_list) != 1:
                 # Tell the client that we don't like this query.
-                self.send_response(400, "Multiple values in query.")
-                return
+                print "WARNING: Multiple values in query."
             fields[key] = value_list[0]
     else:
         # No, it's just an ordinary URL.
@@ -1439,46 +1475,6 @@ def make_url(script_name, base_request=None, **fields):
 
     request = apply(WebRequest, (script_name, base_request), fields)
     return request.AsUrl()
-
-
-def make_form_for_request(request, method="get", name=None):
-    """Generate an opening form tag for 'request'.
-
-    'request' -- A 'WebRequest' object.
-
-    'method' -- The HTTP method for this form, either "get" or "post".
-
-    'name' -- The name of this form, or 'None'.
-
-    returns -- An opening form tag for the request, plus hidden input
-    elements for arguments to the request.
-
-    The caller must add additional inputs, the submit input, and close
-    the form tag."""
-
-    if name is not None:
-        name_attribute = 'name="%s"' % name
-    else:
-        name_attribute = ''
-    # Generate the form tag.
-    if method == "get":
-        result = '<form method="get" action="%s" %s>\n' \
-                 % (request.GetUrl(), name_attribute)
-    elif method == "post":
-        result = '''<form %s
-                          method="post"
-                          enctype="multipart/form-data"
-                          action="%s">\n''' \
-        % (name_attribute, request.GetUrl())
-    else:
-        raise ValueError, "unknown method %s" % method
-    # Add hidden inputs for the request arguments.
-    for name, value in request.items():
-        result = result \
-                 + '<input type="hidden" name="%s" value="%s">\n' \
-                 % (name, value)
-
-    return result
 
 
 def make_button_for_request(title, request):
@@ -1786,6 +1782,161 @@ def decode_set_control_contents(content_string):
     if string.strip(content_string) == "":
         return []
     return string.split(content_string, ",")
+
+
+def make_properties_control(form_name,
+                            field_name,
+                            properties,
+                            select_name=None):
+    """Construct a control for representing a set of properties.
+
+    'form_name' -- The name of form in which the control is included.
+
+    'field_name' -- The name of the input control that contains an
+    encoded representation of the properties.  See 'encode_properties'
+    and 'decode_properties'.
+
+    'properties' -- A map from property names to values of the
+    properties to include in the control initially.
+
+    'select_name' -- The name of the select control that displays the
+    elements of the set.  If 'None', a control name is generated
+    automatically."""
+
+    # Generate a name for the select control if none was specified.
+    if select_name is None:
+        select_name = "_propsel_" + field_name
+    name_control_name = "_propname_" + field_name
+    value_control_name = "_propval_" + field_name
+    add_change_button_name = "_propaddedit_" + field_name
+
+    # Construct the select control.
+    select = '''
+    <select name="%s"
+            size="6"
+            width="240"
+            onchange="property_update_selection(document.%s.%s,
+                                                document.%s.%s,
+                                                document.%s.%s);
+                      document.%s.%s.value = ' Change ';"
+    />\n''' \
+             % (select_name, form_name, select_name,
+                form_name, name_control_name, form_name, value_control_name,
+                form_name, add_change_button_name)
+    # Add an option for each initial property.
+    for name, value in properties.items():
+        select = select + \
+                 '<option value="%s=%s">%s = %s</option>\n' \
+                 % (name, value, name, value)
+    select = select + '</select>\n'
+    
+    # Construct the hidden control contianing the set's elements.  Its
+    # initial value is the encoding of the initial elements.
+    initial_value = encode_properties(properties)
+    contents = '<input type="hidden" name="%s" value="%s"/>' \
+               % (field_name, initial_value)
+
+    # Construct a control for the property name.
+    name_control = \
+    '''<input type="text"
+           name="%s"
+           size="32"
+           onkeydown="document.%s.%s.value = ' Add ';"
+    />''' % (name_control_name, form_name, add_change_button_name)
+    # Construct a control for the property value.
+    value_control = '<input type="text" name="%s" size="32"/>' \
+                    % value_control_name
+
+    # Construct the "Change" button.  When it's clicked, call
+    # 'property_update', passing the select control and the hidden
+    # control whose value should be updated with the new encoded
+    # property list.
+    add_change_button = \
+    '''<input type="button"
+              name="%s"
+              size="12"
+              value=" Add "
+              onclick="property_add_or_change(document.%s.%s,
+                                              document.%s.%s,
+                                              document.%s.%s.value,
+                                              document.%s.%s.value);"
+    />''' % (add_change_button_name, form_name, select_name,
+             form_name, field_name, form_name, name_control_name,
+             form_name, value_control_name)
+
+    # Construct the "Remove" button.
+    remove_button = \
+    '''<input type="button"
+           size="12"
+           value=" Remove "
+           onclick="property_remove(document.%s.%s, document.%s.%s);"
+    />''' % (form_name, select_name, form_name, field_name)
+
+    # Arrange everything in a table to control the layout.
+    return contents + '''
+    <table border="0" cellpadding="0" cellspacing="0"><tbody>
+     <tr valign="top">
+      <td colspan="2">%s</td>
+      <td>&nbsp;</td>
+      <td>%s</td>
+     </tr>
+     <tr>
+      <td>Name:&nbsp;</td>
+      <td align="right">%s </td>
+      <td>&nbsp;</td>
+      <td>%s</td>
+     </tr>
+     <tr>
+      <td>Value:&nbsp;</td>
+      <td align="right">%s </td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+     </tr>
+    </tbody></table>
+    ''' % (select, remove_button, name_control, add_change_button,
+           value_control)
+
+
+def encode_properties(properties):
+    """Construct a URL-encoded representation of a set of properties.
+
+    'properties' -- A map from property names to values.  Names must be
+    URL-safe strings.  Values are arbitrary strings.
+
+    returns -- A URL-encoded string representation of 'properties'.
+
+    This function is the inverse of 'decode_properties'."""
+
+    # Construct a list of property assignment strings.  The RHS is
+    # URL-quoted. 
+    result = map(lambda p: "%s=%s" % (p[0], urllib.quote_plus(p[1])),
+                 properties.items())
+    # Join them into a comma-delimited list.
+    return string.join(result, ",")
+        
+
+def decode_properties(properties):
+    """Decode a URL-encoded representation of a set of properties.
+
+    'properties' -- A string containing URL-encoded properties.
+
+    returns -- A map from names to values.
+
+    This function is the inverse of 'encode_properties'."""
+
+    # The string is a comma-delimited list.  Split it up.
+    properties = string.split(properties, ",")
+    # Convert to a map, processing each item.
+    result = {}
+    for assignment in properties:
+        # Each element is a "name=value" assignment.  Split it up.
+        name, value = string.split(assignment, "=")
+        # The value is URL-quoted.  Unquote it.
+        value = urllib.unquote_plus(value)
+        # Set it in the map.
+        result[name] = value
+
+    return result
 
 
 def make_javascript_string(text):

@@ -305,7 +305,7 @@ def handle_new(request):
         issue_class_name = qm.track.get_configuration()["default_class"]
     issue_class = idb.GetIssueClass(issue_class_name)
     # Create a new issue.
-    issue = qm.track.Issue(issue_class, "")
+    issue = qm.track.Issue(issue_class)
 
     request["style"] = "new"
 
@@ -344,7 +344,7 @@ def handle_submit(request):
         
     if is_new:
         # Create a new issue instance.
-        issue = qm.track.Issue(issue_class, iid)
+        issue = qm.track.Issue(issue_class, iid=iid)
     else:
         # It's a new revision of an existing issue.  Retrieve the
         # latter. 

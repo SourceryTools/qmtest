@@ -119,6 +119,7 @@ def start_server(port, address="", log_file=None):
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
+        ( "config-idb", qm.track.web.issue_class.handle_config_idb ),
         ( "download-attachment", qm.track.web.handle_download_attachment ),
         ( "index", qm.track.web.index.handle_index ),
         ( "login", qm.web.handle_login ),
@@ -126,9 +127,12 @@ def start_server(port, address="", log_file=None):
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
-        ( "show-issue-class", qm.track.web.issue_class.handle_show ),
+        ( "show-issue-class", qm.track.web.issue_class.handle_show_class ),
+        ( "show-issue-field", qm.track.web.issue_class.handle_show_field ),
         ( "shutdown", handle_shutdown ),
         ( "submit", qm.track.web.show.handle_submit ),
+        ( "submit-issue-class", qm.track.web.issue_class.handle_submit_class ),
+        ( "submit-issue-field", qm.track.web.issue_class.handle_submit_field ),
         ( "summary", qm.track.web.summary.handle_summary ),
         ]:
         server.RegisterScript(script_base + name, function)

@@ -134,10 +134,9 @@
      <tr><th>Administrative</th></tr>
      <tr>
       <td>
-       <dtml-var expr="MakeShutdownForm()">
-        <input type="button" 
-               value=" Shut Down "
-               onclick="document.shutdown_form.submit();"/>
+       <form>
+        <dtml-var expr="MakeButton('Configure IDB', 'config-idb')">
+        <dtml-var expr="MakeButton('Shut Down', 'shutdown')">
        </form>
       </td>
      </tr>

@@ -74,7 +74,7 @@ function show_help(help_page)
   if(help_window != null && !help_window.closed)
     help_window.close();
   help_window = window.open("", "help",
-			    "resizeable,toolbar,scrollbars");
+                "resizeable,toolbar,scrollbars");
   help_window.document.open("text/html", "replace");
   help_window.document.write(help_page);
   help_window.document.close();
@@ -121,5 +121,124 @@ function swap_option(select, offset)
 function popup_manual()
 {
   window.open("/manual/index.html", "manual",
-	      "resizeable,toolbar,scrollbars");
+          "resizeable,toolbar,scrollbars");
 }
+
+
+// Add or change a property in a property control.
+//
+// 'select' -- The select input displaying the properties.
+//
+// 'contents' -- The hidden input that gets the encoded representation
+// of the properties.
+//
+// 'name' -- The property name.
+//
+// 'value' -- The property value.
+//
+// If there already is a property named 'name', its value is replaced
+// with 'value'.  Otherwise, a new property is added.
+//
+// See 'qm.web.make_properties_control'.
+
+function property_add_or_change(select, contents, name, value)
+{
+  // No name?  Bail.
+  if(name == "")
+    return;
+
+  var options = select.options;
+  // Construct the property as it will appear in the select input.
+  var option_text = name + " = " + value;
+  // Construct the encoded representation of the property.
+  value = escape(value);
+  var option_value = name + "=" + value;
+
+  // Look for a existing property named 'name'.  Scan over the contents
+  // of the select input.
+  for(var i = 0; i < options.length; ++i) {
+    var option = options[i];
+    // Split the property name out of its encoded value.
+    var option_name = option.value.split("=")[0];
+    // Does it match our name?
+    if(option_name == name) {
+      // Yes.  Replace the property value with ours.
+      option.text = option_text;
+      option.value = option_value;
+      // Reencode the properties.
+      update_from_select_list(select, contents);
+      // Select the modified entry in the select input.
+      options.selectedIndex = i;
+      return;
+    }
+  }
+
+  // Fell through; we didn't find a property matching 'name'.  So,
+  // add a new property.
+  options[options.length] = new Option(option_text, option_value);
+  // Reencode the properties.
+  update_from_select_list(select, contents);
+  // Make the new property selected.
+  options.selectedIndex = options.length - 1;
+  return;
+}
+
+
+// Remove the selected property in a property control.
+// 
+// 'select' -- The select input displaying the properties.
+//
+// 'contents' -- The hidden input that gets the encoded representation
+// of the properties.
+//
+// See 'qm.web.make_properties_control'.
+
+function property_remove(select, contents)
+{
+  // Is a property selected?
+  if(select.selectedIndex != -1) {
+    // Yes; remove it.
+    select.options[select.selectedIndex] = null;
+    // Reencode the properties.
+    update_from_select_list(select, contents);
+  }
+}
+
+
+// Update the name and value inputs when a new property is selected.
+//
+// 'select' -- The select input displaying the properties.
+//
+// 'name_text' -- The text input that displays the property name.
+//
+// 'value_text' -- The text input that displays the property value.
+//
+// Sets the contents of 'name_text' and 'value_text' to the name and
+// value, respectively, of the property selected in 'select'.
+//
+// See 'qm.web.make_properties_control'.
+
+function property_update_selection(select, name_text, value_text)
+{
+  var index = select.selectedIndex;
+  if(index == -1)
+    // No property is selected.
+    return;
+  // Get the encoded property from the select input.
+  var option_value = select[index].value;
+  // Extract the property name and value.
+  var separator = option_value.indexOf("=");
+  var name = option_value.substring(0, separator);
+  var value = option_value.substring(separator + 1, option_value.length);
+  value = unescape(value);
+  // Set the text inputs appropriately.
+  name_text.value = name;
+  value_text.value = value;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Local Variables:
+// mode: java
+// indent-tabs-mode: nil
+// fill-column: 72
+// End:

@@ -606,15 +606,9 @@ class Command:
         # fields that they specify.
         self.__CheckFieldTypes(hash, icl)
 
-        # Check that the user gave values for all fiels that do not
-        # have a default value and are, therefore, mandatory.
+        # FIXME: Are there any fields that have to be specified
+        # explicitly? 
         mandatory_fields = []
-        for field in icl.GetFields():
-            # If a field in the issue class doesn't have a default value,
-            # it is required that the user specify a value when creating
-            # the issue.
-            if not field.HasDefaultValue():
-                mandatory_fields.append(field.GetName())
 
         missing = []
         for field in mandatory_fields:
@@ -634,7 +628,7 @@ class Command:
         # Once we have checked that everything is in order to create the
         # new issue, we build it based on the argument pairs.
         iid = hash['iid']
-        new_issue = qm.track.Issue(icl, iid)
+        new_issue = qm.track.Issue(icl, iid=iid)
         for key, value in hash.items():
             if key != 'iid':
                 try:

@@ -98,20 +98,25 @@ class NoSuchTransitionError(RuntimeError):
 class IidField(qm.fields.TextField):
     """A field containing the ID of an issue."""
 
-    def __init__(self, name, **attributes):
-        """Create an IID field.
-
-        The field has no default value."""
+    def __init__(self, name, default_value="", **attributes):
+        """Create an IID field."""
         
         # Do base-class initialization, with different defaults.
         attributes = attributes.copy()
-        attributes["default_value"] = None
-        apply(qm.fields.TextField.__init__, (self, name), attributes)
+        apply(qm.fields.TextField.__init__,
+              (self, name, default_value),
+              attributes)
 
 
     def GetTypeDescription(self):
         return "an issue ID"
 
+
+    def SetDefaultValue(self, value):
+        if value is not "":
+            value = self.Validate(value)
+        self.default_value = value
+        
 
     def Validate(self, value):
         value = str(value)
@@ -119,11 +124,6 @@ class IidField(qm.fields.TextField):
             raise ValueError, \
                   qm.track.error("invalid iid", iid=value) 
         return value
-
-
-    def SetDefaultValue(self, value):
-        # An issue ID field never has a default value.
-        pass
 
 
 
@@ -891,9 +891,6 @@ class IssueClass:
             title="Issue ID",
             description="A label that uniquely identifies the issue.",
             initialize_only="true")
-        # We do not want the iid to have a default value. It
-        # always must be specified.
-        field.UnsetDefaultValue()
         self.AddField(field)
 
         # The revision number field.

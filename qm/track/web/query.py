@@ -63,7 +63,7 @@ class QueryPageInfo(web.PageInfo):
         'name' -- The HTML name of the form."""
 
         request = self.request.copy("summary")
-        return qm.web.make_form_for_request(request, name=name)
+        return request.AsForm(name=name)
 
 
     def MakePythonQueryHelp(self):

@@ -54,6 +54,14 @@ import xml.dom
 import xmlutil
 
 ########################################################################
+# constants
+########################################################################
+
+query_field_property_prefix = "_prop_"
+# The prefix for names of query fields for field properties in web
+# requests. 
+
+########################################################################
 # exceptions
 ########################################################################
 
@@ -70,28 +78,153 @@ class DomNodeError(Exception):
 # classes
 ########################################################################
 
+class FieldPropertyDeclaration:
+    """A declaration of a field property.
+
+    A 'FieldPropertyDeclaration' is used to declare a property
+    understood by a field type, and provide auxiliary information,
+    including a user-friendly description and a default value.
+
+    Individual fields may have other properties defined for them as
+    well; it is not a requirement that all properties defined for a
+    field must correspond to property declarations of the field's
+    type.
+
+    The name of a property is composed of lower-case letters, digits,
+    and underscores.  Properties are string-valued, but there are no
+    typographic restriction on the value."""
+
+    def __init__(self, name, description, default_value):
+        """Declare a field property.
+
+        'name' -- The property name.
+
+        'description' -- A user-friendly description, in structured text
+        format, of the property.
+
+        'default_value' -- The default value for this property."""
+
+        self.name = name
+        self.description = description
+        self.default_value = default_value
+
+
+
+class FieldEditPageInfo(web.PageInfo):
+    """Context for generating HTML from DTML template 'field.dtml'.
+
+    The DTML template 'field.dtml' is used to generate a page for
+    displaying and editing the configuration of a field.  The field's
+    type and name may not be modified, but its other properties may.
+
+    See 'Field.GenerateEditWebPage'."""
+
+    def __init__(self, request, field, submit_request):
+        """Create a new page info object.
+
+        'request' -- The 'WebRequest' in response to which the page is
+        being generated.
+
+        'field' -- The field being edited.
+
+        'submit_request' -- A 'WebRequest' object to which the field
+        edit form is submitted."""
+        
+        # Initialize the base class.
+        web.PageInfo.__init__(self, request)
+        # Store attributes for later.
+        self.field = field
+        self.property_controls = field.MakePropertyControls()
+        self.submit_request = submit_request
+
+
+    def MakeExtraPropertyInputs(self):
+        """Construct form inputs for arbitrary field properties.
+
+        These inputs are used for displaying and editing properties
+        other than the standard properties understood by a field.  Any
+        properties for which there are controls included in the field's
+        'MakePropertyControls' are omitted from this control."""
+
+        # Construct a map from property names to corresponding values.
+        # Only include properties for which there is no control in
+        # 'property_controls'. 
+        properties = {}
+        for name in self.field.GetAttributeNames():
+            if not self.property_controls.has_key(name):
+                value = self.field.GetAttribute(name)
+                properties[name] = value
+        # Generate the inputs.
+        return qm.web.make_properties_control(form_name="form",
+                                              field_name="extra_properties",
+                                              properties=properties)
+
+
+    def GetFieldType(self, field):
+        """Return the class name of this field."""
+        
+        return field.__class__
+
+
+    def GetDocString(self, field):
+        """Return the doc string for 'field', formatted as HTML."""
+
+        doc_string = field.__class__.__doc__
+        if doc_string is None:
+            return "&nbsp;"
+        else:
+            return qm.web.format_structured_text(doc_string)
+
+
+
 class Field:
-    """Base class for issue field types.
+    """Base class for field types."""
 
-    The following attributes are recognized for all field types.
+    property_declarations = [
+        FieldPropertyDeclaration(
+            name="name",
+            description="""The name displayed for this field in user
+            interfaces.""",
+            default_value=""
+            ),
 
-    read_only -- If true, the field may not be modified by users.
+        FieldPropertyDeclaration(
+            name="title",
+            description="""The internal name for this field. QM uses
+            this name to identify the field. This name is also used when
+            referring to the field in Python expressions.""",
+            default_value=""
+            ),
 
-    initialize_only -- If true, the field may only be modified by a
-    user when a new issue is created.
+        FieldPropertyDeclaration(
+            name="description",
+            description="A description of this field's role or purpose.",
+            default_value=""
+            ),
 
-    initialize_to_default -- Only the default value is available when
-    the issue is created.  Other values may subsequently be specified
-    when additional revisions are created.
+        FieldPropertyDeclaration(
+            name="hidden",
+            description="""If true, the field is for internal purposes,
+            and not shown in user interfaces.""",
+            default_value="false"
+            ),
 
-    hidden -- If true, the field is for internal purposes, and not
-    shown in user interfaces."""
+        FieldPropertyDeclaration(
+            name="read_only",
+            description="If true, the field may not be modified by users.",
+            default_value="false"
+            ),
 
-    def __init__(self, name, **attributes):
+        ]
+
+
+    def __init__(self, name, default_value, **attributes):
         """Create a new (generic) field.
 
         'name' -- The value of the name attribute.  Must be a valid
         label.
+
+        'default_value' -- The default value for this field.
 
         'attributes' -- A mapping of additional attribute assignments
         to set."""
@@ -100,18 +233,19 @@ class Field:
             raise ValueError, \
                   qm.error("invalid field name", field_name=name)
 
-        self.__attributes = {
-            "name" : name,
-            "title" : name,
-            "read_only" : "false",
-            "initialize_only" : "false",
-            "initialize_to_default": "false",
-            "hidden" : "false",
-            }
-        self.__attributes.update(attributes)
+        self.__attributes = {}
+        # Initialize declared properties to their default values.
+        for declaration in self.property_declarations:
+            self.__attributes[declaration.name] = \
+                declaration.default_value
+        # Set the name.
+        self.__attributes["name"] = name
         # Use the name as the title, if no other was specified.
-        if not self.__attributes.has_key("title"):
+        if not attributes.has_key("title"):
             self.__attributes["title"]
+        # Update any additional properties provided explicitly.
+        self.__attributes.update(attributes)
+        self.SetDefaultValue(default_value)
 
 
     def __repr__(self):
@@ -133,7 +267,7 @@ class Field:
     def GetDescription(self):
         """Return a description of this field."""
 
-        return self.GetAttribute("description", "(no description)")
+        return self.GetAttribute("description")
 
 
     def GetTypeDescription(self):
@@ -150,29 +284,13 @@ class Field:
         self.default_value = value
 
 
-    def UnsetDefaultValue(self):
-        """Remove the default value for this field, if any.
-
-        If a field has no default value, its value must be specified
-        for every issue created with that field."""
-
-        if hasattr(self, "default_value"):
-            del self.default_value
-
-
-    def HasDefaultValue(self):
-        """Return true if this field has a default value."""
-
-        return hasattr(self, "default_value")
-
-
     def GetDefaultValue(self):
         """Return the default value for this field."""
 
         return common.copy(self.default_value)
 
 
-    def GetAttribute(self, attribute_name, default_value=""):
+    def GetAttribute(self, attribute_name, default_value=None):
         """Return the value of an attribute.
 
         Return the value of the attribute named by 'attribute_name'.
@@ -181,13 +299,20 @@ class Field:
         if self.__attributes.has_key(attribute_name):
             return self.__attributes[attribute_name]
         else:
-            return default_value
+            if default_value is None:
+                for declaration in self.property_declarations:
+                    if declaration.name == attribute_name:
+                        return declaration.default_value
+                raise RuntimeError, \
+                      "no default value for %s" % attribute_name
+            else:
+                return default_value
 
 
     def IsAttribute(self, attribute_name):
         """Return a true value if an attribute has the value "true"."""
 
-        return self.GetAttribute(attribute_name) == "true"
+        return self.GetAttribute(attribute_name, "false") == "true"
 
 
     def GetAttributeNames(self):
@@ -363,10 +488,131 @@ class Field:
         ''' % (self.GetTitle(), description, help, self.GetName(), )
 
 
+    def GenerateEditWebPage(self, request, submit_request):
+        """Generate a web page for editing a field.
+
+        'request' -- The request in response to which this page is being
+        generated.
+
+        'submit_request' -- The 'WebRequest' to which the field edit
+        form should be submitted.
+
+        The 'UpdateFromRequest' method should generally be used to
+        process the submission request."""
+
+        page_info = FieldEditPageInfo(request, self, submit_request)
+        return web.generate_html_from_dtml("field.dtml", page_info)
+
+
+    def _MakeTextPropertyControl(self, property_name):
+        """Generate HTML inputs for a text-valued property.
+
+        'property_name' -- The name of the property.
+
+        returns -- HTML text for form inputs suitable for use in
+        'MakePropertyControls'."""
+
+        return '<input type="text" name="%s%s" size="40" value="%s"/>' \
+               % (query_field_property_prefix, property_name,
+                  self.GetAttribute(property_name))
+
+
+    def _MakeBooleanPropertyControl(self, property_name):
+        """Generate HTML inputs for a boolean-valued property.
+
+        'property_name' -- The name of the property.
+
+        returns -- HTML text for form inputs suitable for use in
+        'MakePropertyControls'."""
+
+        property_value = self.GetAttribute(property_name)
+        assert property_value in ["true", "false"]
+        if property_value == "true":
+            true_checked = "checked"
+            false_checked = ""
+        else:
+            true_checked = ""
+            false_checked = "checked"
+        return '''
+        <input type="radio" name="%s%s" value="true" %s />&nbsp;true
+        &nbsp;&nbsp;&nbsp;
+        <input type="radio" name="%s%s" value="false" %s />&nbsp;false
+        ''' % (query_field_property_prefix, property_name, true_checked,
+               query_field_property_prefix, property_name, false_checked)
+
+
+    def MakePropertyControls(self):
+        """Return controls for editing the properties of this field.
+
+        returns -- A map from property names to strings containing HTML
+        source for Web form controls for editing the corresponding
+        property.
+
+        Not all properties understood by the field need be included in
+        the map.
+
+        The names of the form inputs for property values should
+        generally be of the form '"%s%s" % (query_field_property_prefix,
+        field_name)'.
+
+        A subclass which override this method should include map entries
+        added by its base class version in its own return value."""
+
+        return {
+            "title":
+                self._MakeTextPropertyControl("title"),
+
+            # FIXME: The name is made read-only here.  Is that good?
+            "name":
+                self.GetAttribute("name"),
+
+            "description":
+                '''<textarea name="%sdescription"
+                             cols="40"
+                             rows="8">%s</textarea>'''
+                % (query_field_property_prefix, self.GetDescription()),
+
+            "hidden":
+                self._MakeBooleanPropertyControl("hidden"),
+
+            "read_only":
+                self._MakeBooleanPropertyControl("read_only"),
+
+            }
+
+
+    def UpdateFromRequest(self, request):
+        """Update the settings of this field from a web request.
+
+        'request' -- A 'WebRequest' object.  The request is assumed to
+        include form fields for controls generated by
+        'GenerateEditWebPage' and 'MakePropertyControls' for this page.
+
+        postconditions -- The state of this field is updated according
+        to the form fields in 'request'."""
+        
+        for name, value in request.items():
+            # Does this query field look like a field property?
+            if qm.common.starts_with(name, query_field_property_prefix):
+                # Yes.  Trim the prefix to obtain the property name.
+                name = name[len(query_field_property_prefix):]
+                value = str(value)
+                self.SetAttribute(name, value)
+
+        # The submission contains an additional field,
+        # 'extra_properties', that contains other properties of the
+        # field not covered by explicit property inputs.  
+        extra_properties = request["extra_properties"]
+        extra_properties = qm.web.decode_properties(extra_properties)
+        # Set them.
+        self.SetAttributes(extra_properties)
+
+
 
 ########################################################################
 
 class IntegerField(Field):
+    """A signed integer field."""
 
     def __init__(self, name, default_value=0, **attributes):
         """Create an integer field.
@@ -377,9 +623,7 @@ class IntegerField(Field):
         'default_value' -- The default value for the field."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name,), attributes)
-        # Set the default value.
-        self.SetDefaultValue(default_value)
+        apply(Field.__init__, (self, name, default_value), attributes)
 
 
     def GetTypeDescription(self):
@@ -456,11 +700,9 @@ class IntegerField(Field):
     def GetHelp(self):
         help = '''
             This field takes an integer value between %d and %d inclusive.
-        ''' % (-sys.maxint - 1, sys.maxint)
-        if self.HasDefaultValue():
-            help = help + '''
+
             The default value of this field is %d.
-            ''' % self.GetDefaultValue()
+        ''' % (-sys.maxint - 1, sys.maxint, self.GetDefaultValue())
         return help
     
 
@@ -468,40 +710,38 @@ class IntegerField(Field):
 ########################################################################
 
 class TextField(Field):
-    """A field that contains text.  
+    """A field that contains text."""
 
-    'default_value' -- The default value for this field.
-    
-    A text field uses the following attributes:
+    property_declarations = Field.property_declarations + [
+        FieldPropertyDeclaration(
+            name="structured",
+            description="""If true, the field contains structured
+            text.""",
+            default_value="false"
+            ),
 
-    structured -- If true, the field contains multiline structured
-    text.
+        FieldPropertyDeclaration(
+            name="verbatim",
+            description="""If true, the contents of the field are
+            treated as preformatted text.""",
+            default_value="false"
+            ),
 
-    verbatim -- If true, the contents of the field are quoted as a
-    block when the field is externalized; otherwise, individual
-    characters are quoted as required by the externalizaton mechanism.
+        FieldPropertyDeclaration(
+            name="nonempty",
+            description="""The value of this field is considered invalid
+            if it empty or composed only of whitespace.""",
+            default_value="false"
+            ),
 
-    big -- This is a hint that, if true, recommends to issue database
-    mechanisms that the contents of the field may be large and should
-    be stored out-of-line.
+        ]
 
-    nonempty -- The value of this field is considered invalid if it
-    consists of an empty string (after stripping)."""
 
     def __init__(self, name, default_value="", **attributes):
         """Create a text field."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name,))
-        # Set default attribute values.
-        self.SetAttribute("structured", "false")
-        self.SetAttribute("verbatim", "false")
-        self.SetAttribute("big", "false")
-        self.SetAttribute("nonempty", "false")
-        # Set the default field value.
-        self.SetDefaultValue(default_value)
-        # Set any provided attributes.
-        self.SetAttributes(attributes)
+        apply(Field.__init__, (self, name, default_value), attributes)
 
 
     def GetTypeDescription(self):
@@ -650,11 +890,29 @@ class TextField(Field):
         if self.IsAttribute("nonempty"):
             help = help + """
             This field may not be empty.  """
-        if self.HasDefaultValue():
-            help = help + """
+        help = help + """
             The default value of this field is "%s".
             """ % self.GetDefaultValue()
         return help
+
+
+    def MakePropertyControls(self):
+        # Start the with the base controls.
+        controls = Field.MakePropertyControls(self)
+        # Add controls for our own properties.
+        controls.update({
+            "structured":
+                self._MakeBooleanPropertyControl("structured"),
+
+            "verbatim":
+                self._MakeBooleanPropertyControl("verbatim"),
+
+            "nonempty":
+                self._MakeBooleanPropertyControl("nonempty"),
+
+            })
+
+        return controls
 
 
 
@@ -1004,9 +1262,7 @@ class AttachmentField(Field):
         Sets the default value of the field to 'None'."""
 
         # Perform base class initialization. 
-        apply(Field.__init__, (self, name,), attributes)
-        # Set the default value of this field.
-        self.SetDefaultValue(None)
+        apply(Field.__init__, (self, name, None), attributes)
 
 
     def GetTypeDescription(self):
@@ -1297,11 +1553,9 @@ class EnumerationField(IntegerField):
             default_value = min(self.__enumeration.values())
             default_value = common.Enumeral(self.__enumeration, default_value)
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, ), attributes)
+        apply(Field.__init__, (self, name, default_value), attributes)
         # Store the enumeration as an attribute.
         self.SetAttribute("enumeration", repr(enumeration))
-        # Set the default value.
-        self.SetDefaultValue(default_value)
 
 
     def GetTypeDescription(self):
@@ -1431,12 +1685,9 @@ class EnumerationField(IntegerField):
         help = help + """
         An enumeral may be specified either by its name (a string) or by
         its numerical value.
-        """
-        if self.HasDefaultValue():
-            default_value = self.GetDefaultValue()
-            help = help + '''
+
         The default value of this field is "%s".
-            ''' % str(default_value)
+        """ % str(self.GetDefaultValue())
         return help
 
 
@@ -1461,8 +1712,8 @@ class TimeField(IntegerField):
         """Create a time field.
 
         The field is given a default value for this field is 'None', which
-        causes the current time to be used when an issue is created if no
-        field value is provided."""
+        corresponds to the current time when the field value is first
+        created."""
 
         # Perform base class initalization.
         apply(IntegerField.__init__, (self, name), attributes)
@@ -1471,11 +1722,15 @@ class TimeField(IntegerField):
 
 
     def GetTypeDescription(self):
-        return "a date/time (right now, it is %s)" % self.GetCurrentTime()
+        return "a date/time (right now, it is %s)" \
+               % self.FormatValueAsText(self.GetCurrentTime())
 
 
     def FormatValueAsText(self, value, columns=72):
-        return qm.common.format_time(value, local_time_zone=1)
+        if value is None:
+            return "now"
+        else:
+            return qm.common.format_time(value, local_time_zone=1)
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -1546,8 +1801,10 @@ class UidField(TextField):
     """A field containing a user ID."""
 
     def __init__(self, name, **attributes):
-        attributes["default_value"] = user.database.GetDefaultUserId()
-        apply(TextField.__init__, (self, name), attributes)
+        default_user_id = user.database.GetDefaultUserId()
+        apply(TextField.__init__,
+              (self, name, default_user_id),
+              attributes)
 
 
     def GetTypeDescription(self):

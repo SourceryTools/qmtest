@@ -1,3 +1,88 @@
+2001-06-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.MakeLoginForm): Use AsForm.
+	(WebRequest.AsForm): New method.
+	(parse_url_query): Print warning instead of error response.
+	(make_form_for_request): Remove.
+	(make_properties_control): New function.
+	(encode_properties): Likewise.
+	(decode_properties): Likewise.
+	* qm/fields.py (query_field_property_prefix): New variable.
+	(FieldPropertyDeclaration): New class.
+	(FieldEditPageInfo): Likewise.
+	(Field.property_declarations): New attribute.
+	(Field.__init__): Initialize properties from property_declarations.
+	(Field.GetDescription): Don't specify default here.
+	(Field.UnsetDefaultValue): Remove.
+	(Field.HasDefaultValue): Likewise.
+	(Field.GetAttribute): Make default for default_value None.  Check
+	property_declarations for default. 
+	(Field.IsAttribute): Default to false.
+	(Field.GenerateEditWebPage): New method.
+	(Field._MakeTextPropertyControl): Likewise.
+	(Field._MakeBooleanPropertyControl): Likewise.
+	(Field.MakePropertyControls): Likewise.
+	(Field.UpdateFromRequest): Likewise.
+	(IntegerField): Add doc string.
+	(IntegerField.__init__): Pass default_value to base __init__.
+	(IntegerField.GetHelp): Assume default value.
+	(TextField): Revise doc string.
+	(TextField.property_declarations): New attribute.
+	(TextField.__init__): Don't initialize properties.
+	(TextField.GetHelp): Assume default value.
+	(TextField.MakePropertyControls): New method.
+	(AttachmentField.__init__): Pass default value to base __init__.
+	(EnumerationField.__init__): Likewise.
+	(EnumerationField.GetHelp): Assume default value.
+	(TimeField.GetTypeDescription): Use FormatValueAsText.
+	(TimeField.FormatValueAsText): Accept None value.
+	(UidField.__init__): Pass default to base __init__.
+
+	* qm/track/server.py (start_server): Register config-idb,
+	show-issue-field, submit-issue-class, submit-issue-field.
+	* qm/track/memory_idb.py (MemoryIdb): Reorganize.
+	(MemoryIdb.UpdateIssueClass): New method.
+	* qm/track/issue_class.py (IidField.__init__): Add default_value
+	parameter. 
+	(IidField.SetDefaultValue): Rewrite.
+	(IssueClass.__init__): Don't unset default value for iid.
+	* qm/track/issue.py (Issue.__init__): Don't reat IID specially.
+	(Issue.GetField): Return field's default value if none in issue.
+	(Issue.SetField): Use GetClass.
+	(Issue.DiagnosticPrint): Likewise.
+	(Issue.Validate): Likewise.
+	(Issue.MakeDomElement): Assume a default value.
+	* qm/track/idb.py (IdbBase): Reorganize.
+	* qm/track/cmdline.py (Command.__PerformCreate): Don't check for
+	default value. 
+	* qm/track/web/query.py (QueryPageInfo.MakeQueryForm): Use AsForm.
+	* qm/track/web/issue_class.py (ShowPageInfo.GetFieldType): New
+	method.
+	(_get_issue_class_for_session): New function. 
+	(handle_show): Rename to...
+	(handle_show_class): ... this.  Rewrite.
+	(handle_show_field): New function.
+	(handle_submit_field): Likewise.
+	(handle_config_idb): Likewise.
+	(handle_submit_class): Likewise.
+	* qm/track/web/index.py (IndexPageInfo.MakeNewForm): Use AsForm.
+	(IndexPageInfo.MakeShowForm): Likewise.
+	(IndexPageInfo.MakeQueryForm): Likewise.
+	(IndexPageInfo.MakeLogoutForm): Likewise.
+
+	* qm/test/cmdline.py (Command.__ExecuteServer): Revise URL message.
+
+	* share/web/common.js: Adjust formatting.
+	(property_add_or_change): New function.
+	(property_remove): Likewise.
+	(property_update_select): Likewise.
+	* share/dtml/track/show.dtml: Close input element.
+	* share/dtml/track/issue-class.dtml: Rewrite, practically.
+	* share/dtml/track/index.dtml: Use MakeButton for administrative
+	buttons.
+	* share/dtml/field.dtml: New template.
+	* share/dtml/track/config-idb.dtml: Likewise.
+
 2001-06-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* share/dtml/track/show.dtml: Use an ordinary button for OK.

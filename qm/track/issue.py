@@ -125,13 +125,11 @@ class Attachment(qm.attachment.Attachment):
 class Issue:
     """Generic issue implementation."""
 
-    def __init__(self, issue_class, iid, **field_values):
+    def __init__(self, issue_class, **field_values):
         """Create a new issue.
 
         'issue_class' -- The class to which this issue belongs.  An
         instance of 'IssueClass'.
-
-        'iid' -- The ID for the new issue.
 
         'field_values' -- Additional values for issue fields.  The
         default value is used for any field in the issue class that is
@@ -143,11 +141,9 @@ class Issue:
         # Initialize fields to default values, 
         for field in issue_class.GetFields():
             name = field.GetName()
-            if name == "iid":
-                self.__fields[name] = iid
-            elif field_values.has_key(name):
+            if field_values.has_key(name):
                 self.__fields[name] = field_values[name]
-            elif field.HasDefaultValue():
+            else:
                 self.__fields[name] = field.GetDefaultValue()
 
 
@@ -181,25 +177,21 @@ class Issue:
             # subsequently.  Use the default value of this field, if it
             # has one.
             issue_class = self.GetClass()
-            field = self.GetClass().GetField(name)
-            if field.HasDefaultValue():
-                return field.GetDefaultValue()
-            else:
-                # No default value; rethrow the exception.
-                raise
+            field = issue_class.GetField(name)
+            return field.GetDefaultValue()
 
 
     def SetField(self, name, value):
         """Set the value of the field 'name' to 'value'."""
 
-        field = self.__issue_class.GetField(name)
+        field = self.GetClass().GetField(name)
         self.__fields[name] = value
 
 
     def DiagnosticPrint(self, file):
         """Print a debugging summary to 'file'."""
 
-        file.write("Issue, class: %s\n" % self.__issue_class.GetName())
+        file.write("Issue, class: %s\n" % self.GetClass().GetName())
         for name, value in self.__fields.items():
             file.write("  -- %s: %s\n" % (name, repr(value)))
         file.write("\n")
@@ -215,7 +207,7 @@ class Issue:
 
         invalid_fields = {}
         # Loop over fields.
-        for field in self.__issue_class.GetFields():
+        for field in self.GetClass().GetFields():
             field_name = field.GetName()
             # Extrace the value.
             value = self.__fields[field_name]
@@ -310,8 +302,7 @@ class Issue:
             # Get the issue's value for this field.
             value = self.GetField(field_name)
             # Is it the same as the field's default?
-            if field.HasDefaultValue() \
-               and value == field.GetDefaultValue() \
+            if value == field.GetDefaultValue() \
                and (str(value) == "" or str(value) == "[]"):
                 # Yes; suppress this field for brevity.
                 continue

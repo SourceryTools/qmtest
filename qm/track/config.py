@@ -564,7 +564,7 @@ def setup_idb_for_test():
     icl.AddField(field)
 
     for counter in range(1, 10):
-        i = qm.track.Issue(icl, "iss%02d" % counter)
+        i = qm.track.Issue(icl, iid=("iss%02d" % counter))
         i.SetField("summary",
                    "This is issue number %d." % counter)
         idb.AddIssue(i)

@@ -36,12 +36,15 @@
 ########################################################################
 
 import cPickle
-import qm
-import qm.track.issue
 import issue_class
 from   issue_class import TriggerResult
 import os
+import qm
+import qm.code
+from   qm.code import abstract_method
+import qm.common
 import qm.fields
+import qm.track.issue
 import string
 import types
 
@@ -154,16 +157,6 @@ class IdbBase:
         return os.stat(path)[6]
 
 
-    def GetIssues(self):
-        """Return a list of all the issues.
-
-        *This method is deprecated and should not be used.*"""
-
-        
-        # This function should be overridden by derived classes.
-        raise NotImplementedError, "GetIssues method must be overridden"
-
-    
     def Query(self, query_str, issue_class_name):
         """Query on the database.
         
@@ -186,7 +179,47 @@ class IdbBase:
                     
         return results
 
+
+    # Functions that must be overridden in derived classes.
+
+    def GetIssueClass(self, name):
+        """Return an issue class object."""
         
+        raise qm.common.MethodShouldBeOverriddenError, "BaseIdb.GetIssueClass"
+
+
+    def AddIssueClass(self, issue_class):
+        """Add 'issue_class' to the IDB.
+
+        raises -- 'KeyError' if there is already a class in the
+        IDB with the same name as the name of 'issue_class'."""
+
+        raise qm.common.MethodShouldBeOverriddenError, "BaseIdb.AddIssueClass"
+
+    
+    def GetIssues(self):
+        """Return a list of all the issues.
+
+        *This method is deprecated and should not be used.*"""
+
+        raise qm.common.MethodShouldBeOverriddenError, "BaseIdb.GetIssues"
+
+
+    def AddIssue(self, issue):
+        """Add a new issue record to the database.
+
+        'issue' -- The new issue.  The revision number is ignored and
+        set to zero.
+
+        precondition -- The issue class of 'issue' must occur in this
+        IDB, and fields of 'issue' must match the class's.
+
+        returns -- A true value if the insert succeeded, or a false
+        value if it was vetoed by a trigger."""
+
+        raise qm.common.MethodShouldBeOverriddenError, "BaseIdb.AddIssue"
+
+
     # Functions for derived classes.
 
     def __GetAttachmentPath(self, location):
