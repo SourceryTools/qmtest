@@ -62,7 +62,7 @@ def check_python_version():
     If the Python interpreter is not sufficiently recent, issue an
     error message and exit."""
 
-    version_str = ".".join(_required_python_version)
+    version_str = ".".join([str(num) for num in _required_python_version])
     message = "Python " + version_str + " or higher is required.\n"
     message += "Set QM_PYTHON to an appropriate Python interpreter.\n"
     try:
