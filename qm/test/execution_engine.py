@@ -119,7 +119,7 @@ class ExecutionEngine:
 
         # Start all of the targets.
         for target in self.__targets:
-            target.Start(self.__response_queue)
+            target.Start(self.__response_queue, self)
 
         # Run all of the tests.
         try:
@@ -211,10 +211,12 @@ class ExecutionEngine:
             # until some target finishes what its doing.
             self._CheckForResponse(wait=wait)
 
-        # Any tests that are still pending are untested.
-        for descriptor in self.__pending:
-            self._AddUntestedResult(descriptor.GetId(),
-                                    qm.message("execution terminated"))
+        # Any tests that are still pending are untested, unless there
+        # has been an explicit request that we exit immediately.
+        if not self.IsTerminationRequested():
+            for descriptor in self.__pending:
+                self._AddUntestedResult(descriptor.GetId(),
+                                        qm.message("execution terminated"))
 
 
     def _CheckForResponse(self, wait):
@@ -284,10 +286,15 @@ class ExecutionEngine:
         a test or resource."""
 
         # Find the target with the name indicated in the result.
-        if result[Result.TARGET]:
+        if result.has_key(Result.TARGET):
             for target in self.__targets:
                 if target.GetName() == result[Result.TARGET]:
                     break
+        else:
+            # Not all results will have associated targets.  If the
+            # test was not run at all, there will be no associated
+            # target.
+            target = None
                         
         # Store the result.
         if result.GetKind() == Result.TEST:
@@ -298,7 +305,8 @@ class ExecutionEngine:
             assert 0
             
         # This target might now be idle.
-        if target not in self.__idle_targets and target.IsIdle():
+        if (target and target not in self.__idle_targets
+            and target.IsIdle()):
             self.__idle_targets.append(target)
 
         # Report the result.

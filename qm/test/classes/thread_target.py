@@ -116,13 +116,17 @@ class ThreadTarget(Target):
         return idle
 
 
-    def Start(self, response_queue):
+    def Start(self, response_queue, engine=None):
         """Start the target.
         
         'response_queue' -- The 'Queue' in which the results of test
-        executions are placed."""
+        executions are placed.
 
-        Target.Start(self, response_queue)
+        'engine' -- The 'ExecutionEngine' that is starting the target,
+        or 'None' if this target is being started without an
+        'ExecutionEngine'."""
+
+        Target.Start(self, response_queue, engine)
         
         # Build the threads.
         self.__threads = []

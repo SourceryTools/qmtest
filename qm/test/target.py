@@ -167,17 +167,22 @@ class Target:
         return re.match(group_pattern, self.GetGroup())
         
         
-    def Start(self, response_queue):
+    def Start(self, response_queue, engine=None):
         """Start the target.
 
         'response_queue' -- The 'Queue' in which the results of test
         executions are placed.
+        
+        'engine' -- The 'ExecutionEngine' that is starting the target,
+        or 'None' if this target is being started without an
+        'ExecutionEngine'.
         
         Derived classes may override this method, but the overriding
         method must call this method at some point during its
         execution."""
 
         self.__response_queue = response_queue
+        self.__engine = engine
 
         
     def Stop(self):
@@ -231,6 +236,13 @@ class Target:
         result = Result(Result.TEST, descriptor.GetId(), context)
         try:
             descriptor.Run(context, result)
+        except KeyboardInterrupt:
+            result.NoteException()
+            # We received a KeyboardInterrupt, indicating that the
+            # user would like to exit QMTest.  Ask the execution
+            # engine to stop.
+            if self.__engine:
+                self.__engine.RequestTermination()
         except:
             result.NoteException()
         # Record the result.
@@ -324,6 +336,13 @@ class Target:
         # Set up the resource.
         try:
             resource.SetUp(context, result)
+        except KeyboardInterrupt:
+            result.NoteException()
+            # We received a KeyboardInterrupt, indicating that the
+            # user would like to exit QMTest.  Ask the execution
+            # engine to stop.
+            if self.__engine:
+                self.__engine.RequestTermination()
         except:
             result.NoteException()
         # Record the result.

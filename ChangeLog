@@ -1,5 +1,19 @@
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/execution_engine.py (ExecutionEngine.Run): Pass 
+	self to Target.Start.
+	(ExecutionEngine._RunTests): Do not add untested results for
+	tests that were not run if immediate termination was requested.
+	(ExecutionEngine._AddResult): Do not assume that Result.TARGET
+	will be present for all results.
+	* qm/test/target.py (Target.Start): Add engine parameter.
+	(Target.RunTest): Handle KeyboardInterrupts by stopping the
+	execution engine.
+	(Target._SetUpResource): Likewise.
+	* qm/test/classes/rsh_target.py (RSHTarget.Start): Add engine
+	parameter.
+	* qm/test/classes/rsh_target.py (ThreadTarget.Start): Likewise.
+
 	* qm/label.py (__label_regex): Add hyphens.
 	(__label_regex_with_sep): Likewise.
 	* qm/xmlutil.py (discard_node): Implement with
