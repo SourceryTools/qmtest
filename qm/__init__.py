@@ -17,7 +17,21 @@
 # imports
 ########################################################################
 
-from qm.__version import version, version_info
+import string
+
+try:
+    # The config file is created during "make install" by setup.py.
+    from qm.config import config, version
+    version_info = tuple(string.split(version, '.'))
+    """The version of QM as a tuple of '(major, minor, release)'."""
+except:
+    # If qm.config was not available, we are running out of the source tree.
+    import os.path
+    class config:
+        data_dir=os.path.dirname(os.path.dirname(__file__))
+
+    from qm.__version import version, version_info
+
 from qm.common import *
 from qm.diagnostic import error, warning, message
 

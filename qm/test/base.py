@@ -131,8 +131,12 @@ def get_extension_directories(kind, database, database_path = None):
         dirs.append(qm.test.database.get_configuration_directory
                     (database_path))
         
-    # Search the builtin directory, too.
+    # When running from the source tree, we look for path relative
+    # to this file.
     dirs.append(os.path.join(os.path.dirname(__file__), "classes"))
+    # In an installed version of QMTest, the config object tells us
+    # where to look.
+    dirs.append(os.path.join(qm.config.data_dir, 'test', 'classes'))
 
     return dirs
 
