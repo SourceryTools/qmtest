@@ -1,5 +1,9 @@
 2001-10-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* README: Mention test suite.
+
+2001-10-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* unit.qms/test.qms/classes.qms/scripttest3.qmt: Update.
 	* unit.qms/track.qms/export.qms/export1.qmt: Remove obsolete test.
 	* unit.qms/track.qms/export.qms/export2.qmt: Likewise.

@@ -60,6 +60,21 @@
     /usr/local/bin/qmtest and /usr/local/bin/qmtrack, respectively.
 
 
+  - TESTING QM
+
+    QM comes with a test suite to verify its functioning.  Of course,
+    this test suite is implemented using QMTest.  The test suite is
+    located in the tests subdirectory of the source tree.  To run it,
+    invoke
+
+      qmtest -D /path/to/qm/tests run
+
+    This assumes that the qmtest executable you just installed (or
+    another one) is in your PATH, and that /path/to/qm is the path to
+    your QM source tree.  See section 4, below, for more information
+    about QMTest. 
+
+
 ------------------------------------------------------------------------
 
 3.  GETTING STARTED WITH QMTRACK
