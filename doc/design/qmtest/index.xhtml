@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+  File:   index.xhtml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Main page for qmtest design document.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+
+    <title>qmtest design</title>
+  </head>
+
+  <body>
+    <h1>qmtest design</h1>
+
+    <div class="Contents">
+      <p>Contents</p>
+      <ol>
+        <li><a
+        href="index.html#CHAP-introduction">Introduction</a></li>
+        <li><a href="core.html#CHAP-core">Core Concepts</a></li>
+        <li><a href="impl.html#CHAP-impl">Core Implementation</a></li>
+        <li><a href="ui.html#CHAP-ui">User Interfaces</a></li>
+      </ol>
+    </div>
+
+    <a name="CHAP-introduction">
+      <h3>Introduction</h3>
+    </a>
+
+    <p>Most programmers don't do enough testing today because: </p>
+    <ul>
+      <li>They aren't required to.</li>
+
+      <li>It's tedious.</li>
+
+      <li>Existing tools are obscure, hard to use, expensive, don't
+      actually provide much help, or all three.</li>
+
+      <li>They don't know where to start, when to stop, or how to
+      tell whether the tests they've written are meaningful.</li>
+    </ul>
+
+    <p>Software tools alone cannot solve the first problem, but
+    qmtest tries to solve the second by addressing the third and
+    fourth. In particular: </p>
+    <ul>
+      <li>qmtest has a gentle learning curve, especially for
+      developers without software engineering training. qmtest does
+      this by: 
+      <ul>
+        <li>being very simple to install and configure;</li>
+
+        <li>making it very easy for developers to create an empty
+        (skeletal) testsuite for a project;</li>
+
+        <li>making it equally easy for developers to create the first
+        real test for a project, or to add another test once N tests
+        have been written.</li>
+      </ul>
+      </li>
+
+      <li>qmtest provides a very simple workflow, so that tests can
+      easily and systematically be added, modified, inspected, and
+      summarized by developers, managers, and other
+      stakeholders.</li>
+
+      <li>qmtest provides feedback regarding the quality and
+      thoroughness of testing so that developers will be able to tell
+      how much they have done, how much remains to be done, and how
+      well third party modules have been tested.</li>
+    </ul>
+
+    <p>Some of the particular scenarios that qmtest handles are: </p>
+    <ul>
+      <li>Static unit testing of functions, classes, and modules in
+      languages such as C, Python, and Java. (These three languages
+      are chosen as examples because they span the range from
+      low-level to high-level.)</li>
+
+      <li>Customizable reporting of test results, ranging from a
+      single-line command-line summary of the number of tests that
+      passed and failed, through to automatic creation of charts of
+      test statistics over time.</li>
+
+      <li>Scriptable control of testsuite execution, so that
+      portions can be executed selectively, executed repeatedly under
+      different load conditions, only executed at certain times of
+      day, and so on.</li>
+
+      <li>Parallel execution of testsuites.</li>
+    </ul>
+
+    <p>This document begins by describing 
+    <a href="#story">six typical users</a>
+
+    , whose testing needs qmtest is designed to address. It then
+    explores their 
+    <a href="#req">requirements</a>
+
+    in more detail, in order to determine the features that qmtest
+    must have. qmtest's 
+    <a href="#arch">architecture</a>
+
+    and 
+    <a href="#iface">user interface</a>
+
+    are described next, along with some details of its 
+    <a href="#impl">implementation</a>
+
+    . These are followed by a provisional 
+    <a href="#devplan">development plan</a>
+
+    and an analysis of the 
+    <a href="#risk">risks</a>
+
+    the project faces. The document closes with pointers to other
+    testing-related resources.</p>
+
+    <a name="intro-not">
+      <h4>What qmtest is Not</h4>
+    </a>
+
+    <p>In order to bound the scope of this project, it is important
+    to be specific about what qmtest will not try to provide.</p>
+
+    <ol>
+      <li>qmtest is not a build system. It will not determine which
+      parts of the programs being tested need to be recompiled, or
+      which test programs need to be re-linked. It 
+      <em>may</em>
+
+      include support for re-running tests whose last recorded
+      result is older than the thing being tested.</li>
+
+      <li>qmtest is not a version control system, or a relational
+      database. In particular, versioning of tests will be handled
+      by whatever version control system developers are already
+      using. Similarly, qmtest will log the results of tests, but
+      will rely on the capabilities of external systems to maintain
+      historical records. Note, however, that qmtest 
+      <em>will</em>
+
+      be able to retrieve information from those archiving systems
+      in order to create reports.</li>
+
+      <li>qmtest is not a test creation wizard itself, although
+      tools for creating qmtest-compatible tests will be shipped
+      with it.</li>
+
+      <li>qmtest is not a general program execution harness. Some
+      users may choose to run their programs via qmtest under
+      non-test circumstances (e.g. in order to obtain logging
+      information), but qmtest is not a replacement for distributed
+      load-balancing software, safe shells, or other tools.</li>
+    </ol>
+
+  </body>
+</html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  End:
+-->

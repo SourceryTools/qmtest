@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+  File:   core.xhtml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Core architecture of qmtest.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+
+    <title>qmtest core architecture</title>
+  </head>
+
+  <body>
+    <a name="CHAP-core">
+      <h3>qmtest Core Concepts</h3>
+    </a>
+
+    <p>This section described the core concepts of qmtest.  These
+    include the definition of a test itself, the components of the
+    system that store and execute tests, and the structure of the test
+    results.</p>
+
+    <p>After describing the <a class="Term">test</a>, the fundamental
+    unit of behavior in qmtest, we present the concept of <a
+    class="Term">test database</a>, the objects in which tests are
+    stored, and the <a class="Term">execution engine</a>, the
+    component of the system that selects and runs tests and collects
+    their results.</p>
+
+    <h4>Tests</h4>
+
+    <p>A <a class="TermDef">test</a> is the basic until of testing in
+    qmtest.  A test consists of the following components:</p>
+    <ol>
+      <li>A <a class="Term">test id</a>.  This uniquely identifies the
+      test among all the tests in the <a class="Term">test
+      database</a>.</li>
+
+      <li>A reference to a single <a class="Term">test class</a>.  The
+      test class contains the mechanism by which the test is actually
+      run.  Each test is considered to be an instance of the test
+      class to which it refers.</li>
+
+      <li>A set of zero or more arguments, corresponding to parameters
+      of the test class.</li>
+
+      <li>A set of zero or more <a class="Term">categories</a>.  These
+      are used to divide tests into (not necessarily disjoint) sets
+      that make sense to users.</li>
+      
+      <li>Zero or more <a class="Term">preactions</a> and <a
+      class="Term">postactions</a>.  These specify actions that need
+      to be taken to set up for this test, and clean up after this
+      test, respectively.</li>
+
+      <li>Zero or more <a class="Term">prerequisites</a>.  These are
+      other tests in the test system that must be run before this test
+      is.  Optionally, each of these may be required to pass or to
+      fail as a precondition.</li>
+
+      <li>Zero or more <a class="Term">design-time arguments</a> which
+      contain meta-information not necessary to run the test, but
+      useful for presenting and interpreting the test in the user
+      interface.</li> 
+    </ol>
+
+    <h5>Test ids</h5>
+
+    <p>A <a class="TermDef">test id</a> is a text string that
+    identifies a test.  Test ids must be unique within the <a
+    class="Term">test database</a> containing the test.</p>
+
+    <p>If the test database presents a tree organization, the test id
+    is a filesystem-style path from the root of the tree to the
+    location of the test it identifies, with path components separated
+    by a periond (&quot;.&quot;).  This character is reserved and may
+    not be used in interior or leaf node names.  No other characters
+    have special interpretation.</p>
+
+    <h5>Test arguments</h5>
+
+    <p>The arguments to test classes that are stored in tests are text
+    strings containing Python expressions.  The Python expressions are
+    evaluated at the time the test is executed.  <span
+    class="Fixme">Specify the environment in which the expressions are
+    evaluated.</span></p>
+
+    <h5>Categories</h5>
+
+    <p>A <a class="TermDef">category</a> is an implicit subset of
+    tests, grouped according to some property of significance to test
+    users and maintainers.  Each category is named with a text string.
+    Each test includes a set (which may be empty) of category names,
+    specifying the categories to which it belongs.</p>
+
+    <p>Categories are intended to group tests according to intrinsic
+    properties of the tests themselves.  Another mechanism, a <a
+    class="Term">testsuite</a>, exists to group tests by extrinisic
+    properties, such as frequency of use.</p>
+
+    <h5>Prerequisites</h5>
+
+    <p>A <a class="TermDef">prerequisite</a> of a test is another test
+    that must be run first.  Optionally, a test may specify that the
+    precondition either must pass or must fail before that test is
+    run.  If its prerequisite is not met, the test is not run, and its
+    <a class="Term">outcome</a> is set to <span
+    class="Identifier">NOT_RUN</span>. <span class="Fixme">(Fix this
+    when outcome enumerals have been decided.)</span></p>
+
+    <h5>Design-time arguments</h5>
+
+    <p><span class="Fixme">Write stuff here.</span></p>
+
+    <h4>Testsuites</h4>
+
+    <p>A testsuite is a set of <a class="Term">tests</a>.  A test
+    suite enumerates the <a class="Term">test ids</a> of the tests it
+    contains.  A testsuite may also include other testsuites.  When a
+    testsuite is presented to the <a class="Term">execution engine</a>
+    to be run, the testsuite is considered to contain the union of the
+    tests it contains directly and those tests contained in its
+    contained testsuites.</p>
+
+    <h4>Actions</h4>
+
+    <p>An <a class="TermDef">action</a> has the same elements as a <a
+    class="Term">test</a>.  It differs by its intended purpose and
+    interpretation of its outcome.  While a test is a basic unit of
+    testing, an action is invoked for its side effects.  When an
+    action is run, the <a class="Term">outcome</a> is not reported to
+    the user as it would be for a test.  Instead, if the action fails,
+    this is considered to be an error.  If the action succeeds,
+    execution simply continues.</p>
+
+    <p>Actions are intended to be used to specify operations that are
+    needed to set up for and clean up after tests.  For instance, an
+    action might create a temporary file that is used as an input by
+    a particular test.  That test would specify the action as a <a
+    class="TermDef">preaction</a>, an action that must taken before
+    the test is run.  If the action fails, the test is not run.
+    Similarly, another action might clean up the temporary file after
+    the test.  The test would specify that action as a <a
+    class="TermDef">postaction</a>, which would be run regardless
+    of the outcome of the test.</p>
+
+    <p>An action has the same elements as a test, so, specifically, an
+    action may have preactions and postactions.  Cycles among
+    preactions and postactions are not allowed.  <span
+    class="Fixme">Need an implementation check for these?</span></p>
+
+    <p><span class="Fixme">May an action have <a
+    class="Term">prerequisites</a>?</span></p> 
+
+    <h4>Test classes</h4>
+
+    <p>A <a class="TermDef">test class</a> may be thought of a type of
+    tests.  Test classes incorporate the procedures for actually
+    running the test, so all tests of the same test class share the
+    same running procedure.</p>
+
+    <p>However, test classes may be parameterized.  In this case, each
+    test will supply argument values to satisfy the parameters of its
+    test class.  As with Python functions, a test class may include
+    both mandatory and optional (named) parameters.</p>
+
+    <h4>Test databases</h4>
+
+    <p>A <a class="TermDef">test database</a> (or <a
+    class="TermDef">tdb</a>) is the unit of storage of tests.  A test
+    database is able to enumerate the <a class="Term">test ids</a> of
+    tests it contains, and to return the test corresponding to one
+    such test id.</p>
+
+    <p>A test database may optionally present a tree arrangement of
+    the tests it contains, in which the leaf nodes are tests.  Each
+    interior and leaf node has a text name.  The <a class="Term">test
+    id</a> of each test will specify its position in the tree.</p>
+
+    <p>Test databases may be composed.  <span class="Fixme">How does
+    this work?  Explain the interaction with heirarchical test
+    ids.</span></p>
+
+    <h4>Execution engine</h4>
+
+    <p>The <a class="TermDef">execution engine</a> is the component of
+    the system that coordinates the execution of tests and the
+    collection of <a class="Term">test results</a>.  The execution
+    engine accepts as input a set of tests and <a
+    class="Term">testsuites</a> specifying tests to be run.  It
+    returns a mapping from <a class="Term">test ids</a> to <a
+    class="Term">test results</a>.</p>
+
+    <p>Results of tests that were not explicitly specified (directly
+    or through a testsuite) to the execution engine are not included
+    in the set of results.  However, the results of tests run as
+    prerequisites and <a class="Term">actions</a> run as <a
+    class="Term">preactions</a> and <a class="Term">postactions</a>
+    are available via the test results of the tests that causes these
+    prerequisite tests and actions to be run.</p>
+
+    <p>The execution engine operates by following this conceptual
+    procedure:</p>
+    <ol>
+      <li>The execution engine recursively expands any testsuite it is
+      given as input into the individual test ids it contains.</li>
+
+      <li>The execution engine obtains the corresponding tests from
+      the <a class="Term">test database</a>.</li>
+
+      <li>The execution engine determines the transative closure of
+      preactions, postactions, and prerequisites, to obtain a set of
+      all test and actions that need to be run.  At the same time, it
+      constructs a dependency graph reflecting ordering dependencies
+      among these.</li>
+
+      <li>The execution engine performs a topological sort on the
+      dependency graph, and executes the tests in an acceptable
+      order.  <span class="Fixme">The execution engine may parallelize
+      tests if this does not violate dependency relations.</span></li>
+
+      <li>The execution engine collects the results of each test run.
+      For tests that are not run because of failed prerequisites or
+      preactions, a result is fabricated with an <a
+      class="Term">outcome</a> reflecting this.  Links to
+      prerequisite results and preaction and postaction results are
+      linked to the results for each test.  A set of results is
+      constructed for the tests computed in step 1.</li>
+    </ol>
+
+    <h4>Test results</h4>
+
+    <p>Each test result contains the following information.</p>
+    <ol>
+      <li>The <a class="Term">test id</a> of the test that was
+      run.</li>
+
+      <li>An <a class="Term">outcome</a>.</li>
+      
+      <li>Links to results for <a class="Term">preactions</a>, <a
+      class="Term">postactions</a>, and <a
+      class="Term">prerequisites</a> run because of this test.</li>
+
+      <li>Arbitrary data specific to the <a class="Term">test
+      class</a> containing additional information about the test run
+      and its results.  This data is not interpreted by the <a
+      class="Term">execution engine</a>.</li>
+
+      <li>A block of <a class="Term">environmental state</a>
+      specifying information about the test execution environment at
+      the time the test was run.</li>
+    </ol>
+
+    <h5>Outcomes</h5>
+
+    <p>Each test is primarily characterized by an <a
+    class="TermDef">outcome</a>.  The outcome is one enumeral from a
+    fixed, non-configurable set of possible outcomes.  Actions also
+    use these outcomes to express success or failure.  The set of
+    enumerals are:</p>
+    <ul>
+      <li><span class="Identifier">PASS</span>: The test passed, or
+      the action completed successfully.</li>
+
+      <li><span class="Identifier">FAIL</span>: The test failed, or
+      the action did not complete successfully.  Additional
+      information about the failure may be available in the
+      class-specific data in the test result.</li>
+
+      <li><span class="Identifier">FAILED_DEPENDENCY</span>: The test
+      was not run because a dependency failed---either a <a
+      class="Term">preaction</a> did not run successfully, or a <a
+      class="Term">prerequisite</a> test produced an unexpected
+      outcome.</li>
+
+      <li><span class="Fixme">Correct and complete this
+      list!</span></li> 
+    </ul>
+
+    <h5>Environmental state</h5>
+
+    <p>Each test result includes a block of <a
+    class="TermDef">environmental state</a> information.  For all
+    qmtest implementations, the environmental state includes a
+    wall-clock time stamp of when the test was run.  Implementations
+    may add other data as well, such as the host on which the test was
+    run, and the identity of the user who invoked the test.</p>
+
+  </body>
+</html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  End:
+-->

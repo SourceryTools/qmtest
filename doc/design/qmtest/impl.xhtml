@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+  File:   impl.xhtml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-02
+
+  Contents:
+    Core qmtest implementation.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+
+    <title>qmtest Core Implementation</title>
+  </head>
+
+  <body>
+
+    <a name="CHAP-impl">
+      <h3>qmtest Core Implementation</h3>
+    </a>
+
+    <p>This chapter describes the Python implementation of the core
+    qmtest components.  For some components, many implementations are
+    envisioned; the requirements for these implementations are
+    given.</p>
+
+    <h4>Test implementations</h4>
+
+    <h5>Test class implementations</h5>
+
+    <p>Each qmtest <a class="Term">test class</a> is implemented as a
+    Python class.  Though qmtest does not recognize any notion of test
+    class inheritance, this may be produced in effect via Python class
+    inheritance.</p> 
+
+    <p>A test class should have the following members:</p>
+    <ul>
+      <li>An initialization method (<span
+      class="Function">__init__</span>), that is used to instantiate <a
+      class="Term">test instances</a>.  Test instances are Python
+      instances of the Python class corresponding to the test class.
+      The parameters of the initialization method are the test class
+      parameters (which may be explicit or optional).</li>
+
+      <li>A <span class="Function">run</span> method.  <span
+      class="Fixme">What are the parameters to the run
+      method?</span></li>
+    </ul>
+
+    <p>After this point, we will use the term <a class="Term">test
+    class</a> to refer to the corresponding Python class sometimes,
+    when there is no ambiguity.</p>
+
+    <h5>Finding test classes</h5>
+
+    <p>Instantiating a <a class="Term">test instance</a> requires
+    locating and instantiating test class.  This is done via these two
+    methods:</p> 
+    <ol>
+      <li>The test class is located in the Python execution
+      environment in the usual way, using the <span
+      class="Code">PYTHONPATH</span> mechanism.</li>
+
+      <li>If the class has not been found, the <a class="Term">test
+      database</a> is asked to locate the test class.  The test
+      database is provided with the name of the test class and also
+      with the test identifier being instantiated.  (This allows the
+      test database to handle relative paths in its conceptual tree,
+      between the test id and the test class.)</li>
+    </ol>
+
+    <h5>Test records</h5>
+
+    <p>Test records are represented by instances of the class <span
+    class="Class">qmtest.TestRecord</span>.  This class has the
+    following members:</p>
+
+    <div class="API">
+<pre>
+class TestRecord:
+    """The canonical representation of a test."""
+
+    def GetId():
+        """Return the test id of this test."""
+
+    def GetClassName():
+        """Return the name of the test class of which this is an
+        instance."""
+
+    def GetArguments():
+        """Return a sequence of arguments to the test class.  If the
+        test class takes optional named arguments, the last element of
+        the sequence is a dictionary from parameter names to
+        corresponding values.  All values are text strings containing
+        Python expressions."""
+
+    def GetCategories():
+        """Return a sequence of names of categories to which this test
+        belongs."""
+
+    def GetPrerequisites():
+        """Return a sequence of pairs representing prerequisite tests
+        for this test.  The first element of the pair is the test id
+        of the prerequisite test.  The second element is the outcome
+        that that test must produce for the prerequisite to be
+        considered met.  If the second element is None, any outcome is
+        considered sufficient."""
+
+    def GetPreactions():
+        """Return a sequence of action ids of actions that must be run
+        and produce a successful outcome before this test is run."""
+
+    def GetPostactions():
+        """Return a sequence of action ids of actions that must be run
+        after this test is run."""
+
+    def GetDesignTimeArguments():
+        """Fix me."""
+</pre>
+    </div>
+
+    <p>Note that test records are not polymorphic, regardless of the
+    test class of the test.</p>
+
+    <p>Test records are the representation of tests that are stored in
+    and returned by <a class="Term">test databases</a>.  Most test
+    database implementations will externalize test records to a
+    persistent store.  The preferred text-based format for doing this
+    is XML.</p>
+
+    <p><span class="Fixme">Present a DTD for test records (and action
+    records) here.</span></p>
+
+    <p>For example, a test record might be stored like this:</p>
+    <div class="XML">
+<pre>
+&lt;qmtest.test&gt;
+  &lt;class&gt;compile-link-run&lt;/class&gt;
+  &lt;argument&gt;test123.c&lt;/argument&gt;
+  &lt;argument name=&quot;flags&quot;&gt;-O2 -fpic&lt;/argument&gt;
+  &lt;category&gt;C&lt;/category&gt;
+  &lt;category&gt;back end&lt;/category&gt;
+  &lt;category&gt;PIC&lt;/category&gt;
+  &lt;category&gt;optimization&lt;/category&gt;
+  &lt;prerequisite&gt;torture.link.test123&lt;/prerequisite&gt;
+&lt;/qmtest.test&gt;
+</pre>
+    </div>
+
+    <h5>Test instances</h5>
+
+    <p>A <a class="TermDef">test instance</a> is an instance of a <a
+    class="Term">test classes</a>.  For a test to be run, a test
+    instance must be created.  To do this, the test class is first
+    obtained from the test class name stored in the <a
+    class="Term">test record</a>.  The test arguments are extracted
+    from the test record and evaluated in the test-time execution
+    context.  The results are passed to the initialization function of
+    the test class to create the instance.  To run the test, the
+    instance's run method is invoked.</p>
+
+    <h4>Action implementation</h4>
+
+    <p><span class="Fixme">Same as test implementation, except we do
+    somethign different with the outcomes, right?  Or is there a
+    different set of outcomes for actions?</span></p>
+
+    <h4>Test result implementation</h4>
+
+    <h4>The execution engine</h4>
+
+  </body>
+</html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  End:
+-->

@@ -5,7 +5,7 @@
 # Date:   2000-10-20
 #
 # Contents:
-#   Makefile for documentation tree.
+#   Makefile for qmtest design document
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -31,6 +31,6 @@
 #
 ########################################################################
 
-SUBDIRS		= design/qmtrack design/qmtest
+HTML		= $(subst .xhtml,.html,$(wildcard *.xhtml))
 
-include ../standard.mk
+include $(TOPDIR)/standard.mk
