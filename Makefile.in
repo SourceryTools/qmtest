@@ -65,8 +65,8 @@ PyXML:
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
 	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) -O install.py \
-	    $(INSTALLBINDIR) $(INSTALLLIBDIR) \
-	    $(INSTALLSHAREDIR) $(INSTALLDOCDIR)
+	    "$(INSTALLBINDIR)" "$(INSTALLLIBDIR)" \
+	    "$(INSTALLSHAREDIR)" "$(INSTALLDOCDIR)"
 
 clean::
 	cd PyXML; $(PYTHON) ./setup.py clean

@@ -44,8 +44,19 @@ include $(TOPDIR)/standard.mk
 all:		setup_path.py $(SCRIPTS)
 
 # Generate executable scripts.
+ifneq ($(PYTHON_PLATFORM),win32)
 $(SCRIPTS): qm.sh Makefile
 	rm -rf $@
 	cp qm.sh $@
 	chmod a-w $@
 	chmod a+x $@
+else
+PYTHONEXE = `@PYTHON@ -c "import sys; print sys.prefix"`\\python
+$(SCRIPTS): Makefile
+	rm -rf $@
+	echo "@echo off" > $@
+	echo "set QM_HOME=$(prefix)" >> $@
+	echo "set QM_BUILD=0" >> $@
+	echo -n "$(PYTHONEXE) \"$(prefix)\\lib\\qm\\qm\\$@.py\" " >> $@
+	echo "%1 %2 %3 %4 %5 %6 %7 %8 %9" >> $@
+endif

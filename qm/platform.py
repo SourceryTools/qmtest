@@ -50,20 +50,55 @@ class MailError(RuntimeError):
     pass
 
 
-
 ########################################################################
 # initialization
 ########################################################################
 
-if sys.platform[:5] == "linux" \
-   or  sys.platform[:4] == "irix":
+if sys.platform == "win32":
+    from platform_win32 import *
+else:
     from platform_unix import *
 
-elif sys.platform == "win32":
-    from platform_win32 import *
+########################################################################
+# functions
+########################################################################
 
-else:
-    raise RuntimeError, "unsupported platform: %s" % sys.platform
+def get_shell_for_command():
+    """Return the command shell to use when running a single shell command.
+
+    returns -- A sequence of argument list entries to use when invoking
+    the shell.  The first element of the list is the shell executable
+    path.  The command should be appended to the argument list."""
+
+    shell = common.rc.Get("command_shell", None, "common")
+    if shell is not None:
+        # Split the configuration value into an argument list.
+        shell = common.split_argument_list(shell)
+    else:
+	if sys.platform == "win32":
+	    shell = default_shell + ["/c"]
+	else:
+            shell = default_shell + ["-c"]
+    return shell
+
+
+def get_shell_for_script():
+    """Return the command shell to use when running a shell script.
+
+    returns -- A sequence of argument list entries to use when running a
+    shell script.  The first element of the list is the shell
+    executable.  The name of the script should be appended to the
+    argument list."""
+
+    shell = common.rc.Get("script_shell", None, "common")
+    if shell is not None:
+        # Split the configuration value into an argument list.
+        shell = common.split_argument_list(shell)
+    else:
+        # Use the default, but copy it so the caller can change it.
+        shell = default_shell[:]
+    return shell
+
 
 ########################################################################
 # Local Variables:

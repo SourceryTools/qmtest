@@ -64,10 +64,16 @@ packages = [
 # Scripts that must be copied to the bin directory.  The key
 # is the name of the script that will be generated; the value is
 # its location in the build directory.
-scripts = {
-    "qmtest": "qm/test/qmtest",
-    "qmtest-remote": "qm/test/qmtest-remote"
-    }
+if sys.platform == "win32":
+    scripts = {
+	"qmtest.bat": "qm/test/qmtest",
+	"qmtest-remote.bat": "qm/test/qmtest-remote"
+	}
+else:
+    scripts = {
+	"qmtest": "qm/test/qmtest",
+	"qmtest-remote": "qm/test/qmtest-remote"
+	}
 
 # Documentation files to install.
 doc_files = [
@@ -170,7 +176,7 @@ def install_package(src, dst):
             # Compile it to bytecode.
             py_compile.compile(e_dst)
 
-        elif extension == ".so":
+        elif extension in (".so", ".pyd"):
             # It's a shared object, presumably part of a native Python
             # module. 
             print "installing %s" % e_dst

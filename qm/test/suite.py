@@ -65,7 +65,6 @@ class Suite:
        self.__database = database
        self.__id = suite_id
        self.__implicit = implicit
-       assert self.__implicit or len(resource_ids) == 0
        self.__test_ids = list(test_ids)
        self.__suite_ids = list(suite_ids)
 
