@@ -38,6 +38,8 @@
 import os
 import qm
 import qm.attachment
+from   qm.test.result import *
+from   qm.test.result_stream import *
 import qm.web
 import string
 
@@ -139,6 +141,43 @@ class ContextPage(DtmlPage):
         self.__server = server
         self.context = server.GetContext()
         
+
+class ResultPage(DtmlPage):
+    """DTML page for showing result detail."""
+
+    def __init__(self, result):
+        """Construct a new 'ResultPage'
+
+        'result' -- The result to display."""
+
+        DtmlPage.__init__(self, "result.dtml")
+        self.result = result
+        
+        
+class StorageResultsStream(ResultStream):
+    """A 'StorageResultsStream' stores results.
+
+    A 'StorageResultsStream' does not write any output.  It simply
+    stores the results for future display."""
+
+    def __init__(self):
+        """Construct a 'StorageResultsStream'."""
+
+        ResultStream.__init__(self)
+        self.test_results = {}
+        self.resource_results = {}
+        
+
+    def WriteResult(self, result):
+        """Output a test result.
+
+        'result' -- A 'Result'."""
+
+        if result.GetKind() == Result.TEST:
+            self.test_results[result.GetId()] = result
+        else:
+            self.resource_results[result.GetId()] = result
+            
     
 class QMTestServer(qm.web.WebServer):
     """A 'QMTestServer' is the web GUI interface to QMTest."""
@@ -187,6 +226,7 @@ class QMTestServer(qm.web.WebServer):
             ( "run-tests", self.HandleRunTests ),
             ( "show-dir", qm.test.web.dir.handle_dir ),
             ( "show-resource", qm.test.web.show.handle_show ),
+            ( "show-result", self.HandleShowResult ),
             ( "show-suite", qm.test.web.suite.handle_show ),
             ( "show-test", qm.test.web.show.handle_show ),
             ( "shutdown", self.HandleShutdown ),
@@ -272,16 +312,27 @@ class QMTestServer(qm.web.WebServer):
                                    {}),
             ]
 
-        results_page = qm.test.web.run.TestResultsPage()
-
+        
         # Run the tests.
-        qm.test.run.test_run(test_ids, self.__context,
-                             target_specs, [results_page])
+        self.__results_stream = StorageResultsStream()
+        qm.test.run.test_run(test_ids, self.__context, target_specs,
+                             [self.__results_stream])
 
         # Display the results.
+        results_page = \
+            qm.test.web.run.TestResultsPage(self.__results_stream.test_results)
         return results_page(request)
 
-        
+
+    def HandleShowResult(self, request):
+        """Handle a request to show result detail.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        result = self.__results_stream.test_results[request["id"]]
+        return ResultPage(result)(request)
+    
+    
     def HandleShutdown(self, request):
         """Handle a request to shut down the server.
 

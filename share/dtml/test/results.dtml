@@ -21,24 +21,76 @@
  <dtml-var expr="GenerateHtmlHeader('Test Run Results')">
  <dtml-var expr="GenerateStartBody()">
 
+ <h3>Statistics</h3>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+  <dtml-let total="GetTotal()"
+            total_unexp="GetTotalUnexpected()">
+   <tr class="heading">
+    <td width="16%" align="center">Outcome</td>
+    <td width="21%" align="center"># of Tests</td>
+    <td width="21%" align="center">% of Total</td>
+    <td width="21%" align="center"># Unexpected</td>
+    <td width="21%" align="center">% of Total</td>
+   </tr>
+   <dtml-in expr="GetOutcomes()">
+    <dtml-let outcome=sequence-item
+              count="GetCount(outcome)"
+              unexp_count="GetUnexpectedCount(outcome)">
+     <dtml-if count>
+      <tr class="field">
+       <td><span class="outcome"><dtml-var sequence-item></span></td>
+       <td align="right"><dtml-var expr="count"></td>
+       <td align="right"><dtml-var 
+                          expr="'%3.0f' % ((100. * count) / total)"></td>
+       <td align="right"><dtml-var expr="unexp_count"></td>
+       <td align="right"><dtml-var 
+                          expr="'%3.0f' % ((100. * unexp_count) / total)"></td>
+      </tr>
+     </dtml-if>
+    </dtml-let>
+   </dtml-in>
+   <tr class="field">
+    <td><span class="outcome">Total</span></td>
+    <td align="right"><dtml-var total></td>
+    <td align="right">100</td>
+    <td align="right"><dtml-var total_unexp></td>
+    <td align="right"><dtml-var 
+                      expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
+   </tr>
+  </dtml-let>
+ </table>
+
  <h3>Test Results</h3>
 
  <table border="0" cellpadding="4" cellspacing="4" width="100%">
-  <dtml-in expr="GetTestIds()">
-  <dtml-let test_id=sequence-item
-            result="test_results[test_id]"
-            outcome="result.GetOutcome()">
-   <tr class="<dtml-var expr="GetClassForResult(result)">">
-    <td>
-     <a name="<dtml-var name="test_id">">
-     <span class="outcome">
-      <dtml-var expr="FormatId(test_id, 'test')">:
-      <dtml-var name="outcome">
-     </span>
-     <dtml-var expr="FormatResult(result)">
-    </td>
-   </tr>
-  </dtml-let>
+  <tr class="heading">
+   <td align="center" width="60%">Test</td>
+   <td align="center" width="10%">Outcome</td>
+   <td align="center" width="10%">Expected</td>
+   <td align="center" width="10%">Details</td>
+  </tr>
+  <dtml-in expr="[0, 1]">
+   <dtml-let expected=sequence-item>
+    <dtml-in expr="GetTestIds(expected)" sort>
+     <dtml-let test_id=sequence-item
+               result="test_results[test_id]"
+               outcome="result.GetOutcome()"
+               url="GetDetailUrl(test_id)">
+      <tr class="<dtml-var expr="GetClassForResult(result)">">
+       <td><dtml-var expr="FormatId(test_id, 'test')"></td>
+       <td><span class="outcome"><dtml-var name="outcome">
+        </span></td>
+       <dtml-if expr="expected_results.has_key(test_id)">
+        <td><span class="outcome">
+            <dtml-var expr="expected_results[test_id]"></span></td>
+       <dtml-else>
+        <td>&nbsp;</td>
+       </dtml-if>
+       <td align="center"><a href="<dtml-var url>">Details</a></td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-let>
   </dtml-in>
  </table>  
 

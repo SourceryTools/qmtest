@@ -1,0 +1,63 @@
+<dtml-comment><!--
+
+  File:   result.dtml
+  Author: Mark Mitchell
+  Date:   2001-10-18
+
+  Contents:
+    Document template for test result detail.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Result Detail')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3><dtml-var expr="result.GetId()"></h3>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+  <tr class="heading">
+   <td width="10%">Outcome</td>
+   <td width="90%">Cause</td>
+  </tr>
+  <tr class ="field">
+   <td><span class="outcome"><dtml-var expr="result.GetOutcome()"></span></td>
+   <td><dtml-var expr="result.GetCause()"></td>
+  </tr>
+ </table>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+  <tr class="heading">
+   <td width="20%">Annotation</td>
+   <td width="80%">Value</td>
+  </tr>
+  <dtml-in expr="result.keys()">
+   <dtml-let annotation=sequence-item>
+    <dtml-if expr="annotation != result.CAUSE">
+     <tr class="field">
+      <td><dtml-var annotation></td>
+      <td><dtml-var expr="result[annotation]"></td>
+     </tr>
+    </dtml-if>
+   </dtml-let>
+  </dtml-in>
+ </table>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

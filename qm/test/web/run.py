@@ -41,7 +41,6 @@
 
 import qm.test.base
 from   qm.test.result import *
-from   qm.test.result_stream import *
 import qm.test.run
 import qm.web
 import string
@@ -51,30 +50,21 @@ import web
 # classes
 ########################################################################
 
-class TestResultsPage(web.DtmlPage, ResultStream):
+class TestResultsPage(web.DtmlPage):
     """DTML page for displaying test results."""
 
-    def __init__(self):
-        """Construct a new 'TestResultsPage'."""
+    def __init__(self, test_results):
+        """Construct a new 'TestResultsPage'.
+
+        'test_results' -- A map from test ids to 'Result' objects."""
         
         # Initialize the base classes.
         web.DtmlPage.__init__(self, "results.dtml")
-        ResultStream.__init__(self)
 
-        self.test_results = {}
+        self.test_results = test_results
+        self.expected_results = {}
         
 
-    def WriteResult(self, result):
-        """Output a test result.
-
-        'result' -- A 'Result'."""
-
-        # Record the results as they are received.  Resource results
-        # are ignored.
-        if result.GetKind() == Result.TEST:
-            self.test_results[result.GetId()] = result
-
-        
     def Summarize(self):
         """Output summary information about the results.
 
@@ -83,7 +73,7 @@ class TestResultsPage(web.DtmlPage, ResultStream):
         Any finalization, such as the closing of open files, should
         also be performed at this point."""
 
-        pass
+        ResultStream.Summarize(self)
 
       
     def FormatResult(self, result):
@@ -112,16 +102,107 @@ class TestResultsPage(web.DtmlPage, ResultStream):
             }[outcome]
 
 
-    def GetTestIds(self):
+    def GetOutcomes(self):
+        """Return the list of result outcomes.
+
+        returns -- A sequence of result outcomes."""
+
+        return Result.outcomes
+
+
+    def GetTotal(self):
+        """Return the total number of tests.
+
+        returns -- The total number of tests."""
+
+        return len(self.test_results)
+
+
+    def GetTotalUnexpected(self):
+        """Return the total number of unexpected results.
+
+        returns -- The total number of unexpected results."""
+
+        return len(self.GetRelativeResults(self.test_results.values(),
+                                           0))
+
+
+    def GetResultsWithOutcome(self, outcome):
+        """Return the number of tests with the given 'outcome'.
+
+        'outcome' -- One of the 'Result.outcomes'.
+
+        returns -- The results with the given 'outcome'."""
+
+        return filter(lambda r, o=outcome: r.GetOutcome() == o,
+                          self.test_results.values())
+    
+        
+    def GetCount(self, outcome):
+        """Return the number of tests with the given 'outcome'.
+
+        'outcome' -- One of the 'Result.outcomes'.
+
+        returns -- The number of tests with the given 'outcome'."""
+
+        return len(self.GetResultsWithOutcome(outcome))
+
+
+    def GetUnexpectedCount(self, outcome):
+        """Return the number of tests with the given 'outcome'.
+
+        'outcome' -- One of the 'Result.outcomes'.
+
+        returns -- The number of tests with the given 'outcome' that
+        were expected to have some other outcome."""
+
+        results = self.GetResultsWithOutcome(outcome)
+        results = self.GetRelativeResults(results, 0)
+        return len(results)
+
+    
+    def GetTestIds(self, expected):
         """Return a sequence of test IDs whose results are to be shown.
 
-        The IDs are in the order in which their results should be
-        shown."""
+        returns -- The test ids for tests whose outcome is as expected,
+        if 'expected' is true, or unexpected, if 'expected' is false."""
 
-        test_ids = self.test_results.keys()
-        test_ids.sort()
-        return test_ids
+        results = self.GetRelativeResults(self.test_results.values(),
+                                          expected)
+        return map(lambda r: r.GetId(), results)
 
+
+    def GetRelativeResults(self, results, expected):
+        """Return the results that match, or fail to match, expectations.
+
+        'results' -- A sequence of 'Result' objects.
+
+        'expected' -- A boolean.  If true, expected results are
+        returned.  If false, unexpected results are returned."""
+
+        if expected:
+            return filter(lambda r, er=self.expected_results: \
+                              r.GetOutcome() == er.get(r.GetId(),
+                                                        Result.PASS),
+                          results)
+        else:
+            return filter(lambda r, er=self.expected_results: \
+                              r.GetOutcome() != er.get(r.GetId(),
+                                                        Result.PASS),
+                          results)
+
+
+    def GetDetailUrl(self, test_id):
+        """Return the detail URL for a test.
+
+        'test_id' -- The name of the test.
+
+        returns -- The URL that contains details about the 'test_id'."""
+
+        return qm.web.WebRequest("show-result",
+                                 base = self.request,
+                                 id=test_id).AsUrl()
+    
 ########################################################################
 # Local Variables:
 # mode: python

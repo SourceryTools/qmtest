@@ -211,6 +211,18 @@ class Result:
         return self.__context
     
 
+    def GetCause(self):
+        """Return the cause of failure, if the test failed.
+
+        returns -- If the test failed, return the cause of the
+        failure, if available."""
+
+        if self.has_key(Result.CAUSE):
+            return self[Result.CAUSE]
+        else:
+            return ""
+    
+        
     def NoteException(self,
                       exc_info=None,
                       cause="An exception occurred.",
@@ -326,8 +338,7 @@ class Result:
 
 
     def keys(self):
-        assert type(key) == types.StringType
-        return self.__annotations.keys(key)
+        return self.__annotations.keys()
 
 
     def items(self):
