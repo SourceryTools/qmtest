@@ -356,6 +356,87 @@ def get_default_class():
     return get_idb().GetIssueClass(default_class_name)
 
 
+def setup_idb_for_internal_use():
+    """Add issue classes for internal use.
+
+    precondition -- A local session is open."""
+
+    idb = get_idb()
+
+    categories = {
+        "common"    : 0,
+        "qmtest"    : 1,
+        "qmtrack"   : 2,
+        }
+    states = {
+        "submitted" : 0,
+        "active"    : 1,
+        "resolved"  : 2,
+        "deleted"   : 3
+        }
+    priority = {
+        "high"      : 3,
+        "medium"    : 2,
+        "low"       : 1,
+        }
+
+    icl = qm.track.IssueClass(name="bug",
+                              title="Bug Report",
+                              categories=categories,
+                              states=states)
+
+    icl.GetField("state").SetDefaultValue("submitted")
+
+    field = qm.fields.TextField("description")
+    field.SetAttribute("title", "Description")
+    field.SetAttribute("structured", "true")
+    icl.AddField(field)
+
+    field = qm.fields.EnumerationField("priority", priority, "medium")
+    field.SetAttribute("title", "Priority")
+    field.SetAttribute("ordered", "true")
+    icl.AddField(field)
+
+    field = qm.fields.AttachmentField("attachments")
+    field.SetAttribute("title", "File Attachments")
+    field = qm.fields.SetField(field)
+    icl.AddField(field)
+
+    idb.AddIssueClass(icl)
+    get_configuration()["default_class"] = "bug"
+
+    for counter in range(1, 3):
+        i = qm.track.Issue(icl, "iss%02d" % counter)
+        i.SetField("summary",
+                   "This is issue number %d." % counter)
+        idb.AddIssue(i)
+
+    icl = qm.track.IssueClass(name="enhancement",
+                              title="Enhancement Request",
+                              categories=categories,
+                              states=states)
+
+    icl.GetField("state").SetDefaultValue("submitted")
+
+    field = qm.fields.TextField("description")
+    field.SetAttribute("title", "Description")
+    field.SetAttribute("structured", "true")
+    icl.AddField(field)
+
+    field = qm.fields.EnumerationField("priority", priority, "medium")
+    field.SetAttribute("title", "Priority")
+    field.SetAttribute("ordered", "true")
+    icl.AddField(field)
+
+    idb.AddIssueClass(icl)
+
+    for counter in range(4, 6):
+        i = qm.track.Issue(icl, "iss%02d" % counter)
+        i.SetField("summary",
+                   "This is issue number %d." % counter)
+        idb.AddIssue(i)
+
+
 def setup_idb_for_test():
     """Add testing stuff to the IDB.
 
@@ -363,7 +444,8 @@ def setup_idb_for_test():
 
     idb = get_idb()
 
-    icl = qm.track.IssueClass("test_class")
+    icl = qm.track.IssueClass(name="test_class",
+                              title="Test Issue Class")
     get_configuration()["default_class"] = "test_class"
 
     field = qm.fields.AttachmentField("attachments")

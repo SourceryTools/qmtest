@@ -1,3 +1,44 @@
+2001-03-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/structured_text.py (TextFormatter.__init__): Set default
+	width to 78.  Initialize __depth.
+	(TextFormatter.StartList): Don't indent outermost paragraphs.
+	(TextFormatter.EndList): Likewise.
+	(to_text): Fix comment.
+	* qm/cmdline.py (CommandParser.GetOptionsHelp): Adjust output.
+	(CommandParser.GetCommandHelp): Treat command description as
+	structured text. 
+
+	* qm/track/issue_class.py (IssueClass.__init__): Add title and
+	description. 
+	(IssueClass.GetTitle): New method.
+	(IssueClass.GetDescription): Likewise.
+	* qm/track/idb.py (IdbBase.Query): Don't handle multiple issue
+	classes here.
+	* qm/track/sql_idb.py (SqlIdb.Query): Likewise.
+	(SqlIdb.__AddResults): Remove.
+	* qm/track/config.py (setup_idb_for_internal_use): New function.
+	(setup_idb_for_test): Set class title.
+	* qm/track/cmdline.py (Command): Update option descriptions.
+	(Command.internal_option): New variable.
+	(Command.qmtrack_commands): Use it.
+	(Command.__PerformInitialize): Handle internal option.
+
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Partition
+	issues by class.  Handle reverse sort.
+	(SummaryPageInfo.MakeResortUrl): Indicate reverse sort where
+	appropriate. 
+	(handle_summary): Loop over issue classes when querying.
+	* qm/track/web/index.py (IndexPageInfo.__init__): Extract issue
+	classes for IDB. 
+	* qm/track/web/stylesheets/qmtrack.css (th.issue_class): New
+	style. 
+	* qm/track/web/templates/summary.dtml: Show issues grouped by
+	class. 
+	* qm/track/web/templates/show.dtml: Print class for new issue.
+	* qm/track/web/templates/index.dtml: Show select for issue class
+	for new issue.
+
 2001-03-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (WebRequestHandler.do_GET): Flush and shut down

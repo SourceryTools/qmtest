@@ -34,6 +34,26 @@
      <td>
       Create a new issue.
       <dtml-var expr="MakeNewForm()">
+       <dtml-comment><!--
+         Show a select control to choose the issue class, if there is
+         more than one available.
+       --></dtml-comment>
+       <dtml-if expr="_len(issue_classes) > 1">
+        <select name="class">
+         <dtml-in name="issue_classes">
+         <dtml-let issue_class=sequence-item>
+          <option 
+                  value="<dtml-var expr="issue_class.GetName()">"
+           <dtml-if expr="issue_class == default_issue_class">
+                  selected
+           </dtml-if>
+          >
+           <dtml-var expr="issue_class.GetTitle()">
+          </option>
+         </dtml-let>
+         </dtml-in>
+        </select>
+       </dtml-if>
        <input type="submit" value=" New "/>
       </form>
      </td>

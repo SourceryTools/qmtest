@@ -39,6 +39,7 @@ import cPickle
 import rexec
 import qm
 import issue
+import issue_class
 import os
 import qm.fields
 import string
@@ -278,16 +279,14 @@ class IdbBase:
         raise NotImplementedError, "GetIssues method must be overridden"
 
     
-    def Query(self, query_str, issue_class_name=None):
+    def Query(self, query_str, issue_class_name):
         """Query on the database.
         
         query_str -- The string with the python expression to be evaluated
         on each issue to determine if the issue matches.
         
         issue_class_name -- The name of the class of which you wish to
-        query issues.  Only issues of that class will be queried.  If
-        this argument is 'None', all issues in the database will be
-        queried.
+        query issues.  Only issues of that class will be queried.  
         
         returns -- This function returns a list of issues that match a
         query.
@@ -304,7 +303,7 @@ class IdbBase:
 
             # We should only do the query if the issue is of the correct
             # class.
-            if issue_class_name is None or c.GetName() == class_name:
+            if c.GetName() == issue_class_name:
                 # Set up the execution environment for the expression.
                 for field in c.GetFields():
                     field_name = field.GetName()
@@ -448,7 +447,7 @@ def get_field_type_description_for_query(field):
         return "an enumeration of %s" % string.join(enumerals, ", ")
     elif isinstance(field, qm.fields.TimeField):
         return "a date/time (right now, it is %s)" % field.GetCurrentTime()
-    elif isinstance(field, qm.fields.IidField):
+    elif isinstance(field, issue_class.IidField):
         return "a valid issue ID"
     elif isinstance(field, qm.fields.UidField):
         return "a valid user ID"

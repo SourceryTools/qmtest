@@ -22,7 +22,8 @@
  <dtml-var expr="GenerateStartBody()">
   <p>Click on a column heading to sort by that field.</p>
 
-  <dtml-if name="issues">
+  <dtml-if expr="issue_map != {}">
+
    <table <dtml-var name="table_attributes">
           width="100%" 
           columns="<dtml-var expr="_.len(field_names)">">
@@ -40,30 +41,47 @@
     </thead>
 
     <!-- Rows corresponding to issues. -->
+
     <tbody>
-     <dtml-in name="issues">
-     <dtml-with expr="_.namespace(issue=_['sequence-item'])">
-      <dtml-if expr="IsIssueShown(issue)">
-       <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
-        <dtml-in name="field_names">
-        <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
-         <td>
-          <dtml-if expr="IsLinkToIssue(issue, field_name)">
-           <a href="<dtml-var expr="MakeIssueUrl(issue)">">
-          </dtml-if>
-          <font color="<dtml-var expr="GetForegroundColor(issue)">">
-           <dtml-var expr="FormatFieldValue(issue, field_name)">
-          </font>
-          <dtml-if expr="IsLinkToIssue(issue, field_name)">
-           </a>
-          </dtml-if>
-         </td>
-        </dtml-with>
-        </dtml-in>
-       </tr>
-      </dtml-if>
-     </dtml-with>
+
+     <dtml-in name="issue_classes">
+     <dtml-let issue_class=sequence-item
+               issues="issue_map[issue_class]">
+
+      <tr bgcolor="white">
+       <th class="issue_class" 
+           colspan="<dtml-var expr="_.len(field_names)">">
+        <dtml-var expr="issue_class.GetTitle()">
+       </th>
+      </tr>
+
+       <dtml-in name="issues">
+       <dtml-with expr="_.namespace(issue=_['sequence-item'])">
+        <dtml-if expr="IsIssueShown(issue)">
+         <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
+          <dtml-in name="field_names">
+          <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
+           <td>
+            <dtml-if expr="IsLinkToIssue(issue, field_name)">
+             <a href="<dtml-var expr="MakeIssueUrl(issue)">">
+            </dtml-if>
+            <font color="<dtml-var expr="GetForegroundColor(issue)">">
+             <dtml-var expr="FormatFieldValue(issue, field_name)">
+            </font>
+            <dtml-if expr="IsLinkToIssue(issue, field_name)">
+             </a>
+            </dtml-if>
+           </td>
+          </dtml-with>
+          </dtml-in>
+         </tr>
+        </dtml-if>
+       </dtml-with>
+       </dtml-in>
+
+     </dtml-let>
      </dtml-in>
+
     </tbody>
 
    </table>

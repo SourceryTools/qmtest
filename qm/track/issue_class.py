@@ -98,15 +98,35 @@ class IidField(qm.fields.TextField):
 class IssueClass:
     """Generic in-memory implementation of an issue class."""
 
-    def __init__(self, name, categories=default_categories,
+    def __init__(self,
+                 name,
+                 title=None,
+                 description="",
+                 categories=default_categories,
                  states=default_states):
-        """Create a new issue class named 'name'.
+        """Create a new issue class.
+
+        'name' -- The name of this issue class.
+
+        'title' -- A user-friendly name.  If 'None', the value of 'name'
+        is used.
+
+        'description' -- A description of the issue class.
+
+        'categories' -- The enumeral to use for the "categories" field.
+
+        'states' -- The enumeal to use for the "states" field.
 
         The issue class initially includes mandatory fields.  The iid
         and revision fields, in that order, are gauranteed to be the
         first two fields added, and as returned by 'GetFields()'."""
 
         self.__name = name
+        if title is None:
+            self.__title = name
+        else:
+            self.__title = title
+        self.__description = description
         # Maintain both a list of fields and a mapping from field
         # names to fields.  The list is to preserve the order of the
         # fields; the mapping is for fast lookups by field name.
@@ -175,6 +195,18 @@ class IssueClass:
         """Return the name of this class."""
 
         return self.__name
+
+
+    def GetTitle(self):
+        """Return the user-friendly title of this class."""
+
+        return self.__title
+
+
+    def GetDescription(self):
+        """Return a description of this issue class."""
+
+        return self.__description
 
 
     def GetFields(self):

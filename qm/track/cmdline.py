@@ -72,17 +72,19 @@ class Command:
     # these, simply add or remove one in this style, and then add or
     # remove it from the appropriate array directly below these
     # definitions.
-    format_option = ('f', 'format', 'type', 'Format for output')
-    database_option = ('i', 'idb', 'path', 'Path to IDB')
-    help_option = ('h', 'help', None, 'Help')
-    class_option = ('c', 'class', 'class_name', 'Class for new issue')
-    query_class_option = ('c', 'class', 'class_name',
-                          'Class of issues to query')
-    port_option = ('P', 'port', 'port', 'Server port number')
-    log_file_option = (None, 'log-file', 'path', 'Log file name')
-    idb_type_option = (None, 'idb-type', 'type', 'IDB type')
+    format_option = ('f', 'format', 'TYPE', 'Format for output.')
+    database_option = ('i', 'idb', 'PATH', 'Path to IDB.')
+    help_option = ('h', 'help', None, 'Display usage summary.')
+    class_option = ('c', 'class', 'NAME', 'Class for new issue.')
+    query_class_option = ('c', 'class', 'NAME',
+                          'Class of issues to query.')
+    port_option = ('P', 'port', 'PORT', 'Server port number.')
+    log_file_option = (None, 'log-file', 'PATH', 'Log file name.')
+    idb_type_option = (None, 'idb-type', 'TYPE', 'IDB type.')
     test_values_option = (None, 'test-values', None,
-                          'Populate IDB with values for testing')
+                          'Populate IDB with values for testing.')
+    internal_option = (None, 'internal', None,
+                       'Set up IDB for internal use.')
 
     qmtrack_options = [
         database_option,
@@ -159,7 +161,7 @@ class Command:
          'path',
          "This command initializes a new issue database.  Valid "
          "IDB types are 'MemoryIdb' and 'GadflyIdb'.",
-         [ help_option, idb_type_option, test_values_option ],
+         [ help_option, idb_type_option, test_values_option, internal_option ],
         ),
         
         ('destroy',
@@ -808,6 +810,12 @@ class Command:
         if command_options.has_key('test-values'):
             qm.track.open_idb(idb_path)
             qm.track.setup_idb_for_test()
+            qm.track.close_idb()
+
+        # If requested, populate the IDB with test values.
+        elif command_options.has_key('internal'):
+            qm.track.open_idb(idb_path)
+            qm.track.setup_idb_for_internal_use()
             qm.track.close_idb()
 
 

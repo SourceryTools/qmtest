@@ -406,7 +406,7 @@ class SqlIdb(idb.IdbBase):
         return self.GetIssue(iid).GetRevision()
 
 
-    def Query(self, query_str, issue_class_name=None):
+    def Query(self, query_str, issue_class_name):
         """Query the database.
 
         This method is overridden from the idb base class. Instead of
@@ -418,9 +418,7 @@ class SqlIdb(idb.IdbBase):
         on each issue to determine if the issue matches.
         
         issue_class_name -- The name of the class of which you wish to
-        query issues.  Only issues of that class will be queried.  If
-        this argument is 'None', all issues in the database will be
-        queried.
+        query issues.  Only issues of that class will be queried.  
 
         returns -- This function returns a list of issues that match a
         query."""
@@ -432,51 +430,26 @@ class SqlIdb(idb.IdbBase):
         else:
             query_command = self.__ConvertToSQL(query_str)
 
-        results = [ ]
-        self.results = [ ]
-
-        if issue_class_name is not None:
-            icl = self.GetIssueClass(issue_class_name)
-            try:
-                results = self.__SelectRows(icl, query_command)
-            except:
-                raise qm.UserError, "Invalid SQL query '%s'." \
-                      % query_command
-            self.__AddResults(icl, results)
-        else:
-            for icl in self.GetIssueClasses():
-                try:
-                    results = self.__SelectRows(icl, query_command)
-                except:
-                    raise qm.UserError, "Invalid SQL query '%s'." \
-                          % query_command
-            
-                self.__AddResults(icl, results)
+        rows = [ ]
+        icl = self.GetIssueClass(issue_class_name)
+        try:
+            results = self.__SelectRows(icl, query_command)
+        except:
+            raise qm.UserError, "Invalid SQL query '%s'." \
+                  % query_command
+        # For each result, build the issue to be in the list.
+        results = []
+        for row in rows:
+            # Construct the issue.
+            issue = self.__BuildIssueFromRow(icl, row)
+            # Append the new issue to the list of results.
+            results.append(issue)
 
         # Return the list of matches
-        return self.results
+        return results
 
         
     # Helper functions.
-
-    def __AddResults(self, icl, results):
-        """Add the matching rows to the total results.
-
-        This helper builds an issue out of each row in the given results
-        and places it in the self.results instance variable.
-
-        'icl' -- The issue class for these results. Used to build the new
-        issues.
-        
-        'results' -- A list of rows to turn into issues."""
-
-        # For each result, build the issue to be in the list.
-        for match in results:
-            # Construct the issue.
-            issue = self.__BuildIssueFromRow(icl, match)
-            # Append the new issue to the list of results.
-            self.results.append(issue)
-
 
     def __ColumnSpecForField(self, issue_class, field):
         """Return a column specification for storing 'field'.
@@ -940,14 +913,14 @@ class SqlIdb(idb.IdbBase):
             ast = parser.ast2tuple(parser.expr(string_expr))
         except:
             raise qm.UserError, \
-                  "Unable to parse python query expression '%s'." \
+                  "Unable to parse Python query expression '%s'." \
                   % string_expr
         try:
             # Pass it on to the helper to create the actual SQL string.
             sql_str = self.__AstToSQL(ast)
         except:
             raise ValueError, \
-                  "Invalid python expression on which to query: '%s'" \
+                  "Invalid Python query expression: '%s'" \
                   % string_expr
         return sql_str
 

@@ -49,9 +49,10 @@
     <td>
      <b><font size="+1">
       <dtml-if expr="style == 'new'">
-       New Issue
+       New <dtml-var expr="issue.GetClass().GetTitle()">
       <dtml-else>
        Issue <dtml-var expr="issue.GetId()">
+       (<dtml-var expr="issue.GetClass().GetTitle()">)
       </dtml-if>
      </font></b>
      <dtml-if expr="field_errors != {}">

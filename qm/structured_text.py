@@ -80,7 +80,7 @@ class TextFormatter(Formatter):
 
     def __init__(self,
                  output_file=sys.stdout,
-                 width=72,
+                 width=78,
                  indent_size=2,
                  indent=0,
                  list_bullet="-"):
@@ -95,6 +95,7 @@ class TextFormatter(Formatter):
         self.__indent = indent
         self.__indent_size = indent_size
         self.__list_bullet = list_bullet
+        self.__list_depth = 0
 
 
     def WriteText(self, text):
@@ -121,16 +122,22 @@ class TextFormatter(Formatter):
     def StartList(self, type):
         """Start a list environment of type 'type'."""
 
-        # Bump up indentation for paragraphs.
-        if type == "paragraph":
+        # Bump up indentation for paragraphs, except for the outermost
+        # level. 
+        if type == "paragraph" and self.__list_depth > 0:
             self.__indent = self.__indent + self.__indent_size
+        # Keep track of the nesting depth of lists.
+        self.__list_depth = self.__list_depth + 1
 
 
     def EndList(self, type):
         """End a list environment of type 'type'."""
 
-        # Bump back indentation when ending paragraph lists.
-        if type == "paragraph":
+        # Keep track of the nesting depth of lists.
+        self.__list_depth = self.__list_depth - 1
+        # Bump back indentation when ending paragraph lists, except for
+        # the outermost level.
+        if type == "paragraph" and self.__list_depth > 0:
             self.__indent = self.__indent - self.__indent_size
 
 
@@ -401,6 +408,7 @@ class StructuredTextProcessor:
     def NormalizeSpaces(self, text):
         """Return 'text' with spaces normalized."""
 
+        # FIXME: Handle tabs and other unholy whitespace here.
         return string.strip(text) + " "
 
 
@@ -651,7 +659,7 @@ def to_html(structured_text):
     
 
 def to_text(structured_text):
-    """Return 'structured_text' formatted as HTML."""
+    """Return 'structured_text' formatted as plain text."""
 
     # Create a text formatter that dumps its output to a StringIO.
     output_string = cStringIO.StringIO()

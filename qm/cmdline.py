@@ -52,6 +52,7 @@ import copy
 import getopt
 import qm
 import string
+import structured_text
 import sys
 
 ########################################################################
@@ -231,7 +232,7 @@ class CommandParser:
             if option[2] is None:
                 long_form = "--%-24s" % option[1]
             else:
-                long_form = "--%-24s" % (option[1] + "  " + option[2])
+                long_form = "--%-24s" % (option[1] + " " + option[2])
             # Generate a line for this option.
             help_string = help_string \
                           + "  %s %s: %s\n" \
@@ -278,7 +279,8 @@ class CommandParser:
                 help_string = help_string \
                               + self.GetOptionsHelp(command_item[4])
                 help_string = help_string + "\n"
-                help_string = help_string + command_item[3] + "\n"
+                help_string = help_string \
+                              + structured_text.to_text(command_item[3])
                 return help_string
             
         return "Command not found"

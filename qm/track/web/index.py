@@ -51,6 +51,14 @@ class IndexPageInfo(web.PageInfo):
         # Initialize the base class.
         qm.web.PageInfo.__init__(self, request)
 
+        # Retrieve and store all the issues available in this issue
+        # class.
+        idb = qm.track.get_idb()
+        self.issue_classes = idb.GetIssueClasses()
+        # Store the name of the default issue class.
+        default_name = qm.track.get_configuration()["default_class"]
+        self.default_issue_class = idb.GetIssueClass(default_name)
+
 
     def MakeNewForm(self):
         request = qm.web.WebRequest("new")

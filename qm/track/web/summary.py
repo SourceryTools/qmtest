@@ -38,7 +38,8 @@ code in this module.
 
 The form recognizes the following query arguments:
 
-'sort' -- The name of the field by which to sort the issues.
+'sort' -- The name of the field by which to sort the issues, prefixed
+with a hyphen for reverse sort.
 
 'query' -- If specified, show the issues matching this query.
 Otherwise, show all issues."""
@@ -69,21 +70,48 @@ class SummaryPageInfo(web.PageInfo):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
-        request."""
+        request.
+
+        'issues' -- A sequence of issues to summarize."""
 
         qm.web.PageInfo.__init__(self, request)
 
         # FIXME: For now, show these fields.
         self.field_names = [ "iid", "summary", "timestamp", "state" ]
 
-        self.issues = issues
+        # Partition issues by issue class.  'self.issue_map' is a map
+        # from issue class onto a sequence of issues.
+        self.issue_map = {}
+        for issue in issues:
+            issue_class = issue.GetClass()
+            if self.issue_map.has_key(issue_class):
+                self.issue_map[issue_class].append(issue)
+            else:
+                self.issue_map[issue_class] = [ issue ]
 
         # Did the request specify a sort order?
         if self.request.has_key("sort"):
-            # Yes.  Sort the issues accordingly.
+            # Yes.  Sort each list of issues accordingly.
             sort_field = self.request["sort"]
-            sort_predicate = qm.track.IssueSortPredicate(sort_field)
-            self.issues.sort(sort_predicate)
+            # If the first character of the sort field is a hyphen, that
+            # indicates a reverse sort.
+            if sort_field[0] == "-":
+                reverse = 1
+                # The rest is the field name.
+                sort_field = sort_field[1:]
+            else:
+                reverse = 0
+            sort_predicate = qm.track.IssueSortPredicate(sort_field,
+                                                         reverse)
+            for issue_list in self.issue_map.values():
+                issue_list.sort(sort_predicate)
+
+        # Extract a list of issue classes we need to show.
+        self.issue_classes = self.issue_map.keys()
+        # Put them into dictionary order by title.
+        sort_predicate = lambda cl1, cl2: \
+                         cmp(cl1.GetTitle(), cl2.GetTitle())
+        self.issue_classes.sort(sort_predicate)
 
 
     def IsIssueShown(self, issue):
@@ -126,6 +154,11 @@ class SummaryPageInfo(web.PageInfo):
 
         # Take all the previous field values.
         new_request = self.request.copy()
+        # If the previous key had a sort field, and this is the same
+        # field, prepend a dash, which indicates reverse sort.
+        if self.request.has_key("sort") \
+           and self.request["sort"] == field_name:
+            field_name = "-" + field_name
         # Add a sort specificaiton.
         new_request["sort"] = field_name
         # Generate the new URL.
@@ -161,7 +194,10 @@ def handle_summary(request):
         query = request["query"]
 
         try:
-            issues = idb.Query(query)
+            issues = []
+            # Query all issue classes successively.
+            for issue_class in idb.GetIssueClasses():
+                issues = issues + idb.Query(query, issue_class.GetName())
         except NameError, name:
             msg = """
             %s cannot understand the name %s in the query you specified:

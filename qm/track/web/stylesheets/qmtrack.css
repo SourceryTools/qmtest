@@ -48,6 +48,13 @@ th {
 td {
 }
 
+th.issue_class {
+    background-color: white;
+    color: black;
+    text-align: left;
+    text-decoration: bold;
+}
+
 span#colhead {
     background-color: black;
     color: white;
