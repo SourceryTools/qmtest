@@ -1,0 +1,1412 @@
+<html>
+<head>
+<title>
+Software Carpentry Testing Tool Design
+</title>
+</head>
+<body>
+
+<h1 align="center">
+Software Carpentry
+<br>
+Testing Tool Design
+</h1>
+
+<blockquote role="abstract"><em>
+This document describes the design of the Software Carpentry testing
+tool, provisionally named "Qmtest". 
+</em></blockquote>
+
+<a name="toc">
+<h2>Contents</h2>
+<ul>
+<li><a href="#intro"> Introduction </a></li>
+	<ul>
+	<li><a href="#intro-ack"> Acknowledgments </a></li>
+	</ul>
+<li><a href="#usecase"> Use Cases </a></li>
+	<ul>
+	<li><a href="#usecase-bhargan"> Bhargan Basepair </a></li>
+	<li><a href="#usecase-daryl"> Daryl Dowhile </a></li>
+	<li><a href="#usecase-glenda"> Glenda Grammar </a></li>
+	<li><a href="#usecase-ovide"> Ovide Overlay </a></li>
+	<li><a href="#usecase-tahura"> Tahura Transparency </a></li>
+	</ul>
+<li><a href="#term"> Terminology </a></li>
+<li><a href="#req"> Requirements </a></li>
+<li><a href="#arch"> Architecture </a></li>
+<li><a href="#iface"> Interface </a></li>
+<li><a href="#impl"> Implementation </a></li>
+<li><a href="#devplan"> Development Plan </a></li>
+<li><a href="#risks"> Risks </a></li>
+<li><a href="#ref"> References </a></li>
+</ul>
+</a>
+
+<a name="intro">
+<h2>Introduction</h2>
+
+<p>
+Most programmers don't do enough testing today because:
+<ul>
+<li>
+They aren't required to.
+</li>
+<li>
+It's tedious.
+</li>
+<li>
+Existing tools are obscure, hard to use, expensive, don't actually provide much help, or all three.
+</li>
+<li>
+They don't know where to start, when to stop, or how to tell whether the tests they've written are meaningful.
+</li>
+</ul>
+</p>
+
+<p>
+Software tools alone cannot solve the first problem, but Qmtest tries
+to solve the second by addressing the third and fourth.  In
+particular:
+<ul>
+<li>
+Qmtest has a gentle learning curve, especially for developers without
+software engineering training. Qmtest does this by:
+	<ul>
+	<li>
+	being very simple to install and configure;
+	</li>
+	<li>
+	making it very easy for developers to create an empty
+	(skeletal) test suite for a project;
+	</li>
+	<li>
+	making it equally easy for developers to create the first real
+	test for a project, or to add another test once N tests have
+	been written.
+	</li>
+	</ul>
+</li>
+<li>
+Qmtest provides a very simple workflow, so that tests can easily and
+systematically be added, modified, inspected, and summarized by
+developers, managers, and other stakeholders.
+</li>
+<li>
+Qmtest provides feedback regarding the quality and thoroughness of
+testing so that developers will be able to tell how much they have
+done, how much remains to be done, and how well third party modules
+have been tested.
+</li>
+</ul>
+</p>
+
+<p>
+Some of the particular scenarios that Qmtest handles are:
+<ul>
+<li>
+Static unit testing of functions, classes, and modules in languages
+such as C, Python, and Java. (These three languages are chosen as
+examples because they span the range from low-level to high-level.)
+</li>
+<li>
+Customizable reporting of test results, ranging from a single-line
+command-line summary of the number of tests that passed and failed,
+through to automatic creation of charts of test statistics over time.
+</li>
+<li>
+Scriptable control of test suite execution, so that portions can be
+executed selectively, executed repeatedly under different load
+conditions, only executed at certain times of day, and so on. 
+</li>
+<li>
+Parallel execution of test suites. 
+</li>
+</ul>
+</p>
+
+<p>
+This document begins by describing <a href="#usecase">six typical
+users</a>, whose testing needs Qmtest is designed to address.  It then
+explores their <a href="#req">requirements</a> in more detail, in
+order to determine the features that Qmtest must have.  Qmtest's
+overall <a href="#arch">architecture</a> is described next, in order
+to provide a context for the subsequent descriptions of its user <a
+href="#iface">user interface</a> and <a
+href="#impl">implementation</a>.  These are followed by a provisional
+<a href="#devplan">development plan</a> and an analysis of the <a
+href="#risk">risks</a> the project faces.  The document closes with
+pointers to other testing-related resources.
+</p>
+
+<a name="intro-ack">
+<h3>Acknowledgments</h3>
+
+<p>
+This document has its origins in the submissions to the testing
+category of the Software Carpentry design competition in the spring of
+2000, and in the hundreds of messages on the Software Carpentry
+discussion list in August--October of the same year.  We are grateful
+to Paul Dubois (<a href="http://www.llnl.gov">Lawrence Livermore
+National Laboratory</a>), Stephen Lee (<a
+href="http://www.lanl.gov">Los Alamos National Laboratory</a>), Brian
+Marick (of <a href="http://www.testing.com">testing.com</a>), Ken
+Martin (<a href="http://www.kitware.com">Kitware</a>), and Dave Thomas
+(a very <a href="http://www.pragmaticprogrammer.com">pragmatic
+programmer</a>) for their input.
+</p>
+
+</a> <!-- end ack -->
+
+</a> <!-- end intro -->
+
+<a name="usecase">
+<h2>Use Cases</h2>
+
+<a name="usecase-bhargan">
+<h3>Bhargan Basepair</h3>
+
+<p>
+Bhargan Basepair works for Genes'R'Us, a bio-technology firm with
+development labs in four countries.  He and his two assistants are
+developing fuzzy pattern-matching algorithms for finding similarities
+between DNA records in standard databases.  Since his promotion,
+Bhargan spends most of his time doing administrative and miscellaneous
+tasks, in an attempt to prevent his assistants from losing focus.
+</p>
+
+<p>
+As a semi-official service for other Genes'R'Us researchers, and as a
+way of testing the efficacy of his group's heuristics, Bhargan runs an
+overnight DNA sequence query service.  Researchers send him sequences
+by electronic mail in a variety of formats (in-line, attachments, URLs
+to pages behind the company firewall, etc.).  Bhargan saves these
+messages in files called <code>search/a</code>, <code>search/b</code>,
+and so on, then edits them to add query directives.  (As he is very
+conscientious, he almost never overwrites one query with another.)
+Before leaving at night, he runs a Bourne shell script which performs
+a search using the contents of every file in the search directory in
+turn.  The results of each search are put in a file with a name of the
+form <code>search/a.out</code>.  Each search typically takes 15-20
+minutes; he is sometimes not able to run all of the searches he has
+received in a single night.
+</p>
+
+<p>
+When Bhargan comes in the next morning, he pages through his mail
+again, sending the appropriate <code>.out</code> file to each
+researcher.  He then makes a list of searches that his shell script
+didn't have time to get to, or which didn't run successfully
+(e.g. because of format errors.  After copying these to a temporary
+directory, he uses a small <code>awk</code> script to archive the
+query sequence, the results (if any), the date, the databases
+searched, and the search control parameters.  Periodically, he
+examines this data in order to tune his search engine's parameters.
+</p>
+
+<p>
+Bhargan wants to test the intern's code thoroughly before using it.
+He has the source code, but the student has gone back to college, and
+the documentation never quite got written.  Bhargan's concerns are:
+
+<ul>
+
+<li>
+One person's results must <em>never</em> be sent to someone else ---
+there could be legal fallout if this ever happened.
+</li>
+
+<li>
+Queries should never be lost or garbled: anyone who sends a valid
+query should eventually get a reply.  Bhargan has been doing the
+filtering and queueing by hand, and decided to automate it because he
+was making two or three errors per week; the automated service must
+have a lower "dropped message" rate than this.
+</li>
+
+<li>
+Each night's run of the program should append summary results to a log
+file.  Previous results should not be overwritten.  Bhargan has to be
+able to read and edit this file while the program is running --- he
+spends a lot of time at conferences and customer sites, and due to the
+time differences, this means it's often 2:00 a.m. in the office when
+he logs in.
+</li>
+
+</ul>
+</p>
+
+<p>
+One extra wrinkle is that the test program shouldn't send mail to real
+people, or be sent mail from them.  The corporate IT department might
+be willing to set up dummy user accounts for Bhargan to use in
+testing, but he'll probably see the millenium roll over again before
+it actually gets done.
+</p>
+
+</a> <!-- end usecase-bhargan -->
+
+<a name="usecase-daryl">
+<h3>Daryl Dowhile</h3>
+
+<p>
+Daryl did a comparative study of the efficiencies of different parsing
+algorithms for his Master's degree in Computer Science at Euphoric
+State University, and is now working on a contract to implement a
+parser for Fortran-2000 (or "F00") for the GNU Compiler Collection
+(GCC).  The parser currently contains 47,000 executable lines of C and
+C++ in 350 functions, distributed among 18 files, and is expected to
+triple in size by the time the project is done.  Even at this point,
+the F00 parser will be less than a third the size of commercial C++
+parsers; it will achieve this economy by re-using much of the parsing
+framework developed for other languages.
+</p>
+
+<p>
+Daryl starts an average working day by bringing his copy of the source
+up to date with any overnight check-ins from colleagues working on
+other modules.  He then checks his email to see whether there are any
+upcoming developments that will affect him, such as any extensions to
+the module used to internationalize error messages.  Once these
+administrative tasks are done, he decides which part of the draft F00
+standard he is going to implement next, and then writes a few new test
+cases that exercise those language features.  (Some of these are
+actually not legal F00, since a large part of the contract is to
+improve the compiler's error messages.)
+</p>
+
+<p>
+Daryl only starts adding the new feature to the parser once all of his
+test cases are written and failing --- past experience has taught him
+that if he writes his tests <em>after</em> implementing the feature,
+he will test against his implementation, and not against the language
+standard.  Writing the tests first also allows him to double-check the
+error messages that the parser is generating.  According to the work
+log he is keeping for this project, he typically makes three to five
+changes to pre-existing features of the parser each time he adds a new
+feature.
+</p>
+
+<p>
+Daryl has inherited a collection of approximately 1200 tests, most
+written to test the Fortran-77 and Fortran-90 parsers that are his
+starting point.  Each test is run by invoking the compiler on a source
+file with certain diagnostic flags enabled.  The test is considered a
+pass if the compiler emits exactly the expected diagnostic messages.
+</p>
+
+<p>
+A single source file may be used as a fixture in several tests --- for
+example, it maybe compiled several times at different warning levels.
+Control information for each test is embedded in specially-formatted
+comments in the source files, which are scattered throughout the
+source tree.  A simple Awk script extracts control information from
+the source files, runs the parser, and prints the test name followed
+by either "success" (if the test behaved as expected), "failure" (if
+the test ran, but did not produce the expected output), or "error" (if
+the test crashes the parser).
+</p>
+
+<p>
+Daryl typically writes five or ten tests for each feature before
+implementing the feature, and another five or ten during testing.  At
+least once a day, he types:
+</p>
+
+<blockquote><pre>
+make parser_test | grep -v "success:"
+</pre></blockquote>
+
+<p>
+in the root directory of the project, in order to re-run all of the
+tests, and display only those that have not succeeded.  (The Unix
+shell command <code>grep&nbsp;-v</code> prints only those lines that
+do not contain the specified substring.)
+</p>
+
+<p>
+Daryl would like to improve the way in which tests are re-run.  In
+particular, he would like a tool to collect statistics on how many
+tests have been executed, with what results, so that he has a progress
+log to include in his monthly progress report.  He would also like
+some help generating tests: many are simple variations on a theme,
+such as using eighteen different kinds of constants as array
+subscripts, and he has made several errors in the tests themselves
+when copying and modifying old test files.  Finally, he would like a
+single command to run the entire test suite simultaneously on each of
+the dozen or so different machines in the testing network.  These
+machines are a mix of various versions of Unix and Microsoft Windows.
+</p>
+
+</a> <!-- end usecase-daryl -->
+
+<a name="usecase-glenda">
+<h3>Glenda Grammar</h3>
+
+<p>
+Glenda is writing a set of tutorials for a new image processing
+library to pay her bills while she finishes a Ph.D. in mathematics.
+She has taken several undergraduate and graduate-level programming
+courses, and is reasonably proficient with C++.
+</p>
+
+<p>
+Glenda's employer is a consulting company part-owned by her
+supervisor.  Because the company's two dozen employees are now
+scattered around the country, the company manages work using email
+lists.  Messages sent to any of the lists are automatically archived,
+and a collection of CGI scripts allow the messages to be accessed by
+date, author, or subject.  (Work is under way to allow employees to
+search the content of messages as well.)
+</p>
+
+<p>
+On a good day, Glenda emails questions to the library's developers,
+reads responses, updates the current text of the tutorials (which are
+presently a collection of HTML pages), and writes or updates the
+example programs.  Each time she changes an example, she re-runs it,
+and checks its output (sometimes text, but more often an image).  If
+she is satisfied, she puts the fresh output into the company's CVS
+repository, then runs the new code through a small script to HTMLify
+it (e.g. escape special characters, and replace tabs with an
+appropriate number of spaces), and pastes the result into the
+tutorial.
+</p>
+
+<p>
+On a bad day, Glenda is told that there has been a change to the
+library that will affect one of the tutorials.  In this case, she must
+re-run each example that she thinks might be affected, check its
+output against what is currently in the tutorial, and update material
+accordingly.  She often sends messages to the "Bugs" list after doing
+this, as she is usually the first one to notice when changes in one
+section of the library expose errors in another.
+</p>
+
+<p>
+Glenda has the following testing needs:
+
+<ol>
+
+<li>
+Each time she changes an example she needs to ensure that the output
+agrees with her description in the tutorial.  The output can be:
+	<ul>
+
+	<li>
+	an image;
+	</li>
+
+	<li>
+	"exact" text, such as a count of the number of files loaded
+	and processed; or
+	</li>
+
+	<li>
+	numerical text, such as smoothing coefficients.  In this case,
+	changes to the program may cause small, but acceptable,
+	changes to the output.
+	</li>
+
+	</ul>
+</li>
+
+<li>
+She needs to ensure that her HTML-based tutorial and the example code
+are properly cross-referenced: each example is referenced by at least
+one tutorial, and all references to examples are valid.
+</li>
+
+</ol>
+</p>
+
+<p>
+Ideally, both processes should be totally automated.
+</p>
+
+</a> <!-- end usecase-glenda -->
+
+<a name="usecase-ovide">
+<h3>Ovide Overlay</h3>
+
+<p>
+Ovide Overlay is developing new algorithms for the map overlay module
+of a geographical information system.  The module takes as input two
+maps, A and B.  Each map covers the same geographical area, and is
+divided into non-overlapping polygons.  The module's output is the
+overlay of the maps, i.e., the new map that would be generated by
+drawing the input maps on transparent film, and placing them on top of
+each other.  For example, if map A shows soil types, and map B shows
+vegetation, the output map would show where different kinds of plants
+are growing on different types of soil.
+</p>
+
+<p>
+In order to simplify his studies, Ovide is using maps divided into
+rectangles, whose vertices all lie on a [0...X]&times;[0...Y] grid.
+His existing program implements a naive "all-against-all" overlay
+algorithm, in which every rectangle in map A is tested against every
+rectangle in map B.  Ovide wants to study two improvements to this
+algorithm:
+
+<ul>
+
+<li>
+The most obvious way to improve this algorithm is to make use of the
+sorted order of the entries in each input list.  Clearly, two polygons
+P and Q cannot overlay if the upper X coordinate of P is less than the
+lower X coordinate of Q, or vice versa.  If the polygons in one map
+are sorted by increasing upper X, and those in the other are sorted by
+increasing lower X, this ordering can be used to limit the sweep of
+the inner overlay loop.
+</li>
+
+<li>
+A second optimization is to keep track of how much of the area of each
+polygon has not yet been accounted for.  Suppose, for example, that a
+polygon P from one map overlaps exactly two polygons Q1 and Q2 from a
+second map.  Once the two output polygons have been generated, all of
+the area of P has been "used up"; the program no longer needs to
+consider it when calculating overlaps with other polygons from the
+second map.  This could be implemented by adding an integer field to
+each polygon to keep track of its unaccounted-for area.  When the area
+of a polygon is exhausted, it is deleted from its list.
+</li>
+
+</ul>
+</p>
+
+</a> <!-- end usecase-ovide -->
+
+<a name="usecase-tahura">
+<h3>Tahura Transparency</h3>
+
+<p>
+Tahura is a junior professor at Euphoric State University, and
+part-owner of a consulting company that is developing a new
+transparency rendering library in C++.  (This is the same company that
+employs <a href="#usecase-glenda">Glenda Grammar</a> as a technical
+writer.)  The company's two dozen employees are scattered around the
+country, and communicate largely via email, and through the shared
+version control repository.
+</p>
+
+<p>
+Tahura's main tasks are to make sure that all of the developers know
+what they are supposed to be building, and that they are actually
+building it.  Each developer is supposed to keep a list of current
+tasks, and milestones recently achieved, on a personal web page.
+Tahura checks these pages every Thursday morning, in preparation for a
+regularly-scheduled conference call that afternoon.  She is also very
+careful to save each work-related message three times: once in a
+folder named for the developer, once in another folder named for the
+project, and once by date.
+</p>
+
+<p>
+Tahura is also still trying to do some technical work herself by
+experimenting with new wrinkles on existing rendering algorithms using
+MATLAB.  When one of these experiments looks promising, she hands the
+MATLAB script to the company's developers, so that they can reproduce
+the algorithm in C++.  The developers can then compare the output of
+the (slow) MATLAB and (fast) C++ versions to validate their
+implementation.  The output that is compared is not images, but rather
+histograms of lighting intensity for each of a set of sample problems.
+Once these are close enough (no more than 2% difference for any value,
+and no more than 5% cumulative difference), the developers compare a
+few images visually.
+</p>
+
+<p>
+As part of the run-up to the next release of the library, Tahura wants
+to start recording performance information during each run of the test
+suite.  Her experience has been that unexpected changes in execution
+times usually indicate that something has gone wrong, and her
+customers consider any slowing down of the library to be a bug.  At
+present, each test prints an identifying string (usually the name of
+the algorithm, and a version number) and either "pass", "fail", or
+"error".  She is trying to decide how to add performance information
+to this: should tests print the absolute execution time, report the
+percentage change from the previously-recorded time, or just print
+"fail" instead of "pass" if the performance changes by too much?  She
+must also find a way to deal with the fact that the test suite may be
+run on several different machines: should different performance
+expectations be recorded for each, or should some benchmark be run,
+and its time used to scale the expected results?
+</p>
+
+</a> <!-- end usecase-tahura -->
+
+</a> <!-- end usecase -->
+
+<a name="term">
+<h2>Terminology</h2>
+
+<p>
+A <b role="defn">test subject</b> is the thing being tested.  This
+may range from a single function or procedure call, up to an entire
+application.
+</p>
+
+<p>
+A <b role="defn">fault</b> is a significant difference between a test
+subject's actual behavior, and its desired behavior.  The main
+purposes of testing are to help isolate faults, to ensure that faults
+are not re-introduced, and to gauge the likely number of faults in the
+subject.
+</p>
+
+<p>
+A <b role="defn">test result</b> is one of the four following values:
+
+<dl>
+<dt>
+<b role="defn">Pass</b>:
+</dt>
+<dd>
+A "pass" result means that the test behaved as desired,
+i.e. produced the correct result, raised the right exception,
+or generated an image that differed from a reference image by
+no more than a specified tolerance.
+</dd>
+<dt>
+<b role="defn">Fail</b>:
+</dt>
+<dd>
+A failure occurs when a test executes to completion, and
+produces a result, but that result is not acceptable.  Failure
+indicates that the subject of the test is broken.
+</dd>
+<dt>
+<b role="defn">Error</b>:
+</dt>
+<dd>
+An error result indicates that the test itself is broken.  Some
+examples of this are a memory access violation occurring during the
+setup of the test, or Qmtest not being able to find the reference
+object against which this test's output is to be compared.  None,
+some, or all of the test itself may have been executed in this case,
+which has implications for the structure and behavior of <a
+href="#req-updown">setup and teardown</a>.
+</dd>
+<dt>
+<b role="defn">Deferred</b>:
+</dt>
+<dd>
+A deferred result indicates that the test was not actually executed.
+This may occur because of system load (e.g. the web server is too busy
+to be used for testing), because the test suite has been configured to
+skip particular tests, or (most commonly) because one or more of the
+predecessors of a dependent test failed.
+</dd>
+</dl>
+</p>
+
+<p>
+An <b role="defn">independent test</b> is one which:
+<ol>
+<li>
+does not interact with other independent tests; and
+</li>
+<li>
+produces exactly one of the four results described below.
+</li>
+</ol>
+The first requirement implies that Qmtest may execute independent
+tests in any order, and get uniform results.  It also implies that the
+output of one independent test cannot be used as the input to
+another.  Qmtest's design encourage programmers to write independent
+tests.
+</p>
+
+<p>
+A <b role="defn">fixture</b> is a starting point for a test.
+Examples include:
+<ul>
+<li>
+an empty fixture (for a function whose behavior depends only on its
+input parameters);
+</li>
+<li>
+an initial state of an object and/or a set of global variables;
+</li>
+<li>
+one or more input files for a compiler or image processing program; or
+</li>
+<li>
+a set of user accounts and password table entries on a networked
+system.
+</li>
+</ul>
+Creating a fixture is called <b role="defn">setup</b>; dismantling a
+fixture (e.g. deleting dummy user accounts or temporary files) is
+called <b role="defn">teardown</b>.
+</p>
+
+<p>
+A <b role="defn">variable fixture</b> is one which may be set up in
+different ways.  Typically, this involves using a pseudo-random number
+generator.  As discussed in the section on <a
+href="#req-reproducible">reproducibility</a>, Qmtest requires that all
+variable fixtures be reproducible, i.e. that truly random data not be
+used in setting up fixtures.
+</p>
+
+<p>
+A <b role="defn">shared fixture</b> is one which is used as the
+starting point for two or more independent tests.  Qmtest must
+u(re-)create every fixture before every independent test, and tear it
+down after afterward.
+</p>
+
+<p>
+A <b role="defn">dependent test</b> is one which can only be
+executed properly if one or more other tests have already been
+executed.  Dependent tests are usually fragile than independent tests,
+and provide less useful information, but are sometimes easier to set
+up.
+</p>
+
+<p>
+A <b role="defn">unit test</b> is a test which exercises one feature
+of a test subject.  This term is necessarily as vague as the
+definition of "feature".  Note that a unit test may actually interact
+with the test subject many times, i.e. may call a function hundreds or
+thousands of times with different parameters.  From Qmtest's point of
+view, however, the result is still the same: pass, fail, error, or
+deferred.
+</p>
+
+<p>
+A <b role="defn">regression test</b> is one whose result is
+determined by comparing its behavior or output with that obtained from
+a previous run of the same test.  Regression tests are typically used
+to ensure that changes to systems do not cause them to regress,
+i.e. do not introduce errors in sub-systems that previously worked
+correctly.  Note that the report from a regression test is only as
+accurate as the inspection of the reference result.
+</p>
+
+<p>
+An <b role="defn">oracle</b> is any entity which can determine the
+correctness of the result of a test.  Typical oracles include:
+<ul>
+<li>
+human experts;
+</li>
+<li>
+independently validated versions of programs; and
+</li>
+<li>
+manually calculated results.
+</li>
+</ul>
+Note that reliance on human experts as oracles makes test suites
+fragile, since those experts may not be available to re-assess the
+correctness of reference results when they are called into question,
+or to change those reference results when the test subject changes.
+</p>
+
+</a> <!-- end term -->
+
+<a name="req">
+<h2>Requirements</h2>
+
+<p>
+This section lists requirements derived from the use cases presented
+above, and from the discussions on the Software Carpentry mailing
+list.  The four most important requirements
+(<a href="#req-accuracy">accuracy</a>, <a
+href="#req-smallscale">usability</a>, <a
+href="#req-reproducible">reproducibility</a>, and <a
+href="#req-standards">recycling existing standards</a>) are presented
+first; secondary or derived requirements follow.
+</p>
+
+<a name="req-accuracy">
+<h3>Accuracy</h3>
+
+<p>
+The most important requirement on Qmtest is <em
+role="req">accuracy</em>: it must never report that a test has
+succeeded when in fact it has failed, or vice versa: in statistical
+terminology, there must be <em role="req">no false positives</em> and
+<em role="req">no false negatives</em>.  A corollary of this
+requirement is that Qmtest must <em role="req">always execute at least
+all of the tests requested by the user</em>.  Ideally, it should only
+execute exactly these tests, but in practice, it is acceptable for
+Qmtest to run more tests than the user asked for, so long as all of
+the tests that were asked for are run.
+</p>
+
+</a> <!-- end req-accuracy -->
+
+<a name="req-smallscale">
+<h3>Small-Scale Usability</h3>
+
+<p>
+The second most important requirement is that <em
+role="req">small-scale testing must be easier to do with Qmtest than
+by hand</em>.  In particular, if Qmtest requires users to do things
+that only pay off on medium or large projects, many of those users
+will choose to do ad hoc testing initially, instead of using Qmtest.
+In theory, users could then switch to Qmtest when its adoption cost
+was outweighed by its benefits, but in practice, those ad hoc test
+suites will usually grow (or, more likely, rust) as their projects
+grow.
+</p>
+
+</a> <!-- end req-smallscale -->
+
+<a name="req-reproducible">
+<h3>Reproducibility</h3>
+
+<p>
+The third requirement is that <em role="req">test execution must be
+reproducible</em>: Qmtest must be able to recreate the starting point
+for a particular run of a test exactly.  This requirement is necessary
+in order to minimize the burden on human users: without it, it could
+be necessary to repeatedly re-run a test that reported an error or
+failure in order to isolate the fault.  Note that this does not mean
+that the test result is exactly reproducible --- some tests of network
+software and user interfaces are intrinsically non-deterministic ---
+but random number generator seeds, file sizes, and the like must be
+stored in a re-executable way.
+</p>
+
+</a> <!-- end req-reproducible -->
+
+<a name="req-standards">
+<h3>Recycle Existing Standards</h3>
+
+<p>
+The fourth general requirement is that Qmtest <em role="req">must use
+existing standards, syntax, conventions, and tools</em> wherever
+possible. Even when customized solutions (e.g. a special-purpose test
+description language) might be cleaner, developing, maintaining, and
+documenting these solutions requires more resources than this project
+has.  More importantly, the cost to users of learning, integrating,
+and customizing them decreases the chances of Qmtest having an impact
+on common daily practice.
+</p>
+
+<p>
+The specific implications of this requirement are:
+<ul>
+
+<li>
+Where Qmtest needs Boolean operators, quoting rules, floating-point
+numbers, or other programmatic constructs, it uses the syntax defined
+for Python.  Note that this does <em>not</em> mean that Qmtest will be
+Python-centric; the rationale is simply that there is no point
+defining yet another set of rules for writing things like:
+<blockquote><pre>
+output &lt; 5.0 and command != "start\n"
+</pre></blockquote>
+</li>
+
+<li>
+Where Qmtest needs structured data storage, the format of that storage
+will be defined in terms of XML.  This does <em>not</em> mean that
+only XML will be used: flat text, executable scripts, relational
+database schemas, persisted Python scripts, and other formats may be
+supported as well.  However, since XML is more constraining than these
+formats, designing in terms of it will ensure that all features are
+available in all modes.
+</li>
+
+<li>
+Where Qmtest needs data formats (e.g. parameters for procedure calls),
+it will use the rules included in the draft SOAP standard.  Again,
+this does <em>not</em> mean that only SOAP will be used in the
+system; as with programmatic syntax, however, there seems to be little
+point developing yet another set of rules for describing or
+constraining such things as arrays of strings...
+</li>
+
+</ul>
+</p>
+
+<p>
+A "negative" standards requirement is that Qmtest <em role="req">must
+not require all tests to be command-line applications</em>.  In
+particular, tests <em>may</em> have access to standard input and
+standard output, and <em>may</em> be able to report success or failure
+by exiting with a zero or non-zero status, but Qmtest does not insist
+upon this.  This requirement is necessary because many applications of
+interest may be long-lived services (e.g. a web server), or may rely
+on a framework (such as the Microsoft Foundation Classes or some Java
+GUI frameworks) that does not provide standard input or standard
+output.
+</p>
+
+</a> <!-- end req-standards -->
+
+<a name="req-dep">
+<h3>Dependent and Independent Tests</h3>
+
+<p>
+Qmtest must <em role="req">allow programmers to specify dependencies
+between tests</em>, and to <em role="req">prevent dependent tests from
+being executed if the tests on which they depend did not behave as
+expected</em>.  For obvious reasons, dependencies between tests must
+be acyclic; Qmtest must <em role="req">detect and report cyclic
+dependencies</em>.  Qmtest should try to <b role="desire">detect and
+report cyclic dependencies before executing any tests</b>, but is not
+required to do this, since this may not be possible (as discussed in
+the section on <a href="#req-multi">generating tests on the fly</a>).
+</p>
+
+<p>
+Finally, it must be possible to <em role="req">separate setup and
+teardown from particular tests</em>, so that the modified fixtures
+required for dependent tests are not destroyed before those tests are
+executed.  Qmtest must <em role="req">trace dependencies between
+tests</em>, and automatically determine when to set up and tear down
+fixtures.  If possible, Qmtest should <b role="desire">share
+dependency detection and management functionality with Qmbuild</b>.
+</p>
+
+</a> <!-- end req-dep -->
+
+<a name="req-expect">
+<h3>Expected and Unexpected Results</h3>
+
+<p>
+There are often periods in a development cycle during which certain
+tests are expected to fail.  For example, if Extreme Programming's
+"test, then code" development model is being used, all of a module's
+tests will initially fail.  Qmtest must therefore allow programmers to
+<em role="req">specify that some tests are expected to fail</em>.  It
+must also <em role="req">report expected failures separately from
+passes, unexpected failures, and other results</em>.
+</p>
+
+</a> <!-- end req-expect -->
+
+<a name="req-report">
+<h3>Reporting</h3>
+
+<p>
+Qmtest must be able to <b role="req">report test results in textual,
+human-readable form</b>.  This is necessary for two reasons:
+<ol>
+<li>
+While all version control systems are able to find and display
+micro-differences between text files, most are not able to do this for
+binary files.  Since users should archive test results along with the
+tests themselves (and the code being tested), Qmtest must be designed
+to facilitate this.
+</li>
+<li>
+Many developers still use command-line tools, and will want to run
+Qmtest from the command-line.  Its output must therefore be viewable
+without external helper applications, such as web browsers.
+</li>
+</ol>
+</p>
+
+<p>
+This requirement does <em>not</em> imply that flat text will be
+Qmtest's only, or usual, output format.  In particular, as XML-aware
+tools mature and become more common, Qmtest must therefore be able to
+<b role="req">report and store test results as XML</b>.  This will
+make it easier for XML-aware integrated development environments
+(IDEs) and version control systems, to leverage the semantic content
+of Qmtest's output.
+</p>
+
+<p>
+Requiring test authors to write tests that can generate output in two
+or more formats is an unacceptable burden.  Qmtest must therefore <b
+role="req">provide test result formatting and reporting functions in
+all languages of interest</b>.  The <b role="req">format in which
+these functions report results must be controlled by a single
+switch</b>, i.e. there cannot be separate functions for different
+reporting formats.
+</p>
+
+</a> <!-- end req-report -->
+
+<a name="req-suite">
+<h3>Test Suites</h3>
+
+<p>
+In order to make test management practical, Qmtest must allow test
+authors to <b role="req">aggregate tests into test suites</b>.
+Further, <b role="req">test suites must support setup and
+teardown</b>, i.e. it must be possible for a suite author to specify
+some initialization that is to be performed before any of the tests in
+a suite are executed, and some finalization that is to be performed
+after all of the suite's tests have completed.
+</p>
+
+<p>
+It must be possible to <b role="req">make tests and test suites
+members of suites</b>.  However, <b role="req">test suites do not
+generate test results</b>, i.e. there is no sense in which a suite
+"passes" or "fails".  The reason for this is that the results of
+individual tests are not binary: there is no sensible way in which to
+classify an arbitrary combination of pass, fail, error, and deferred
+into a scalar result.  However, as discussed below, <a
+href="#req-summary">summary reporting</a> will be provided.
+</p>
+
+</a> <!-- end req-suite -->
+
+<a name="req-id">
+<h3>Test Identification</h3>
+
+<p>
+A second important aspect of test management is that <b
+role="req">every test must be uniquely identified</b>, and <b
+role="req">test identifiers must be long-lived</b>.  The first
+requirement is needed so that developers can specify particular tests
+to be re-executed, or drill down to the results of individual tests
+after the fact.  The second requirement ensures that test results can
+be accurately compared against historical records.  If, for example,
+tests were identified by sequence numbers within suites, then
+insertion of a new test into a suite could change the numbering of
+subsequent tests, which would break historical comparison.
+</p>
+
+<p>
+The standard solution to the problem of unique, long-lived
+identification is hierarchical naming.  Since this is familiar to most
+programmers (and to any non-programmer who has ever navigated a tree
+of directories and files), Qmtest will <b role="req">require every
+test (or test suite) to be uniquely named below its parent</b>.
+Specific tests can then be referred to using path-like identifiers.
+</p>
+
+<p>
+As many users of backup and version control systems have discovered,
+hierarchical naming does maintain historical comparability when items
+are moved or renamed.  For example, if a test is moved from a
+program's "I/O" suite, and put in its "runtime" suite, its full name
+will change.  It would therefore be desirable for Qmtest to <b
+role="desire">include name-tracking</b>, but this will not be
+implemented in the first version.
+</p>
+
+</a> <!-- end req-id -->
+
+<a name="req-summary">
+<h3>Summary Reporting</h3>
+
+<p>
+Qmtest must be able to <b role="req">summarize the results of
+tests</b>, i.e. produce a count of the number of tests which have
+passed, failed, generated an error, or been deferred.  This <b
+role="req">reporting must be hierarchical</b>: users must be able to
+inspect the summaries for suites, sub-suites, and so on.  In order to
+avoid confusion, <b role="req">summary reporting must mirror the test
+suite hierarchy</b>, i.e. aggregate results will only be produced that
+correspond to the nodes in the tree of suites and sub-suites.
+Finally, <b role="req">reporting and recording must be
+independent</b>, i.e. Qmtest must be able to record more information
+about test results than it provides in summary reports, so that users
+can drill down to isolate faults after the fact.
+</p>
+
+</a> <!-- end req-summary -->
+
+<a name="req-info">
+<h3>Extra Information</h3>
+
+<p>
+Developers may want tests to report extra information along with a
+standard result (pass, fail, error, or deferred).  For example, it may
+be desirable to have tests report execution time, memory usage, number
+of context switches, and so on.  Qmtest's <b role="req">output format
+must allow tests to report extra named values</b>, while the <b
+role="req">summary reporting system must allow extra named values to
+be combined hierarchically</b>.
+</p>
+
+<p>
+One common case in which extra information is provided is <b
+role="req">explaining why specific tests were deferred</b>.  If test
+authors make the execution of particular tests dependent on external
+factors, which (combination) of those factors resulted in the test
+being deferred must be reported.  This topic is revisited in the
+discussion of <a href="#req-traversal">test traversal</a> below.
+</p>
+
+<p>
+Note that this version of Qmtest restricts extra information to be
+name/value pairs, without any internal structure (i.e. a property
+set).  This restriction may be relaxed in future versions.
+</p>
+
+</a> <!-- end req-info -->
+
+<a name="req-change">
+<h3>Logging Changes</h3>
+
+<p>
+The most important question Qmtest can answer during the development
+cycle is, "What has changed?"  Qmtest's default reporting must
+therefore <em role="req">report test results in a manner that draws
+attention to recent changes</em>.  In order to do this, Qmtest must be
+able to <b role="req">temporarily record the results of recent test
+runs</b>, and <b role="req">permanently record the results of selected
+test runs</b>.  The <b role="req">distinction between temporary and
+permanent recording must be under developers' control</b>, so that
+(for example) an individual developer can create a personal log of
+changes to test results while trying to fix a specific bug, and then
+create a permanent shared record of test results when the bug has been
+fixed, or a new feature added.
+</p>
+
+</a>
+
+<a name="req-traversal">
+<h3>Traversal</h3>
+
+<p>
+Qmtest must be able to <b role="req">automatically traverse test
+suites by default</b>, i.e. execute all of the tests or test suites
+included in a suite recursively.  However, it must be possible for
+users to <b role="req">specify tests or suites to be executed or
+omitted</b>.
+</p>
+
+<p>
+Four special cases of traversal control deserve closer attention.
+The first is that the user must be able to specify that <b
+role="req">one or more tests are to be included or omitted</b> when
+Qmtest is run.  This <b role="req">filtering must be logged</b>,
+e.g. by recording it in the header of the overall test result record,
+or by including dummy deferred reports for all tests not executed.
+The reason for deferring tests must be included in the test report, as
+discussed in the section on <a href="#req-info">extra information</a>.
+</p>
+
+<p>
+The second special case arises when the user makes a persistent change
+to the <a href="#req-spec">test specification (discussed below)</a> to
+include or exclude a test or set of tests.  This filter specification
+must be logged, as discussed above.
+</p>
+
+<p>
+The third special case is that Qmtest must be able to <b
+role="req">re-execute only those tests that produced specific results
+during a previous run</b>.  This implies that Qmtest <b
+role="req">must have access to the temporary and permanent results of
+previous test runs while executing</b>.
+</p>
+
+<p>
+The final special case is that <b role="req">users must be able to
+provide symbolic tags for tests or test suites which can be used as
+input to filtering</b>.  For example, users must be able to specify
+that a particular test is only to be executed on specific platforms,
+or that it is only to be run as part of a full smoke-and-build trial.
+The effect this requirement has on <a href="#req-spec">test
+specification</a> is discussed below.
+</p>
+
+</a> <!-- end req-traversal -->
+
+<a name="req-physical">
+<h3>Physical Organization of Tests</h3>
+
+<p>
+Qmtest <b role="req">cannot mandate a physical structure for
+projects</b> in order to support testing.  In particular, developers
+must be able to put tests, temporary files, transient results, and
+permanent results:
+<ul>
+<li>
+in the same directories as the test subjects;
+</li>
+<li>
+in sub-directories of those directories;
+</li>
+<li>
+in a parallel directory hierarchy; or
+</li>
+<li>
+any combination of the above.
+</li>
+</ul>
+</p>
+
+<p>
+Qmtest must therefore allow users to <b role="req">separately specify
+the location of tests, temporary files, transient results, and
+permanent results</b>.  In order to avoid placing too great a burden
+on first-time users, however, Qmtest <b role="req">cannot require
+explicit specification of object locations</b>. Instead, it must have
+sensible, predictable default expectations and behavior.
+</p>
+
+<p>
+Finally, Qmtest <b role="req">must not require redundant
+specification</b> of locations.  For example, the user should be able
+to specify once, at the root of the testing hierarchy, that
+intermediate files are to be put in <code>/tmp</code>, and that test
+results are to be archived in the same directories as tests
+themselves.  Sub-suites and sub-tests should then inherit this
+behavior.
+</p>
+
+<p>
+<em role="question">Question: this seems to imply some sort of
+persistent record of inherited settings.  If a user executes an entire
+suite with the results directory set to <code>./results</code>, then
+re-executes the part of the suite contained in the sub-directory
+<code>platform</code>, Qmtest must be able to remember that results
+are supposed to go in <code>platform/results</code>.  This is
+manageable, but what about the case in which the user creates a whole
+new sub-directory, and runs Qmtest in there for the first time, rather
+than in the root directory?  How does Qmtest know that results are
+supposed to go in <code>newdir/results</code>?</em>
+</p>
+
+</a> <!-- end req-physical -->
+
+<a name="req-parallel">
+<h3>Parallel Execution</h3>
+
+@@@
+
+</a> <!-- end req-parallel -->
+
+<a name="req-spec">
+<h3>Test Specification</h3>
+
+<ol>
+<li>
+Input transformation: everything is mapped by user-specified filter
+(many standard ones provided) into canonical SOAP representation.
+</li>
+<li>
+E.g. multiple tests in a single file handled by splitting filter, flat
+text input handled by simple parser/translator, etc.x
+</li>
+<li>
+E.g. Daryl Dowhile implements a filter to extract test specs from
+legacy test files.
+</li>
+</ol>
+
+</a> <!-- end req-spec -->
+
+<a name="req-multi">
+<h3>Multi-Tests and Reflective Tests</h3>
+
+<p>
+Users will often want to generate multiple tests programmatically in
+cases where generating tests manually is impractical.  For example, <a
+href="#usecase-ovide">Ovide</a> may write a small program that
+generates all 169 different possible cases of two rectangles
+overlapping (or failing to overlap).  There are three ways in which
+this could be managed:
+<ol>
+<li>
+Users could be required to have their test generators save results in
+the <a href="#req-spec">specification format</a> described above.
+This option is rejected because of storage and management
+requirements: a generator which tests all combinations arithmetic
+expressions involving five or fewer operators could involve millions
+of test specifications.
+</li>
+<li>
+Qmtest could allow tests to report partial success or failure,
+e.g. return a vector of results rather than a scalar result.  This
+option is rejected because it makes human comprehension of results
+more error-prone.
+</li>
+<li>
+Users could be required to structure multi-tests as iterators,
+i.e. build a function or test program that could be called repeatedly
+to create and execute tests one at a time.  This option is rejected
+because writing re-entrant code (particularly re-entrant standalone
+programs) is complicated.
+</li>
+<li>
+Users could be allowed to <b role="req">specify that a test
+specification is actually a test specification generator</b>,
+i.e. that Qmtest was to execute the "test", then execute on the output
+of the "test", and so on until actual tests were being executed.  This
+option is the one that Qmtest uses, as it integrates well with the
+input transformation discussed in the section on <a
+href="#req-spec">test specification</a>.
+</li>
+</ol>
+</p>
+
+<p>
+Of course, allowing test specifications to generate more test
+specifications on the fly opens up the possibility of infinite
+recursion.  Qmtest must therefore <b role="req">have a default limit
+on the depth of test generation recursion</b>, and <b role="req">allow
+users to override the test generation recursion limit</b>.
+</p>
+
+</a> <!-- end req-multi -->
+
+<a name="req-updown">
+<h3>Setup and Teardown</h3>
+
+<p>
+Individual tests and test suites may require arbitrary setup before,
+and teardown after, their execution.  In order to simplify test
+management, Qmtest requires that <b role="req">setup and teardown must
+be specified in the test specification</b>, that <b role="req">setup
+and teardown operations must be logged</b> when tests are executed,
+and that <b role="req">tests are only executed if their setup
+operations complete successfully</b>.  Users are encouraged to specify
+teardown operations so that they will execute correctly (i.e. return
+the environment to its pre-test state) even if setup and the test
+itself failed partially or completely.
+</p>
+
+<p>
+<em role="question">Question: how should setup and teardown be
+specified?  Options that must be included are:
+<ul>
+<li>
+arbitrary shell commands (which are platform-specific, and may not be
+directly nestable in XML);
+</li>
+<li>
+Python scripts (which have the same problems as shell scripts); and
+</li>
+<li>
+extra command-line options to the test itself specifying which input
+file to open, what output directory to create, etc. (in cases where
+these are distinct from the options that specify the test itself).
+</li>
+</ul>
+</em>
+</p>
+
+</a> <!-- end req-updown -->
+
+<a name="req-sandbox">
+<h3>Sandboxing and Throttling</h3>
+</a> <!-- end req-sandbox -->
+
+</a> <!-- end req -->
+
+<a name="arch">
+<h2>Architecture</h2>
+
+</a> <!-- end arch -->
+
+<a name="iface">
+<h2>Interface</h2>
+</a> <!-- end iface -->
+
+<a name="devplan">
+<h2>Development Plan</h2>
+</a> <!-- end devplan -->
+
+<a name="risk">
+<h2>Risks</h2>
+</a> <!-- end risk -->
+
+<a name="ref">
+<h2>References</h2>
+
+<p>
+Brian Marick (a judge in both rounds of the Software Carpentry design
+competition) is the author of a thorough survey of the art called
+<cite>The Craft of Software Testing</cite>.  Many of his other
+writings are available on-line at:
+<blockquote>
+<a href="http://www.testing.com">http://www.testing.com</a>
+</blockquote>
+</p>
+
+<p>
+<cite>Testing Computer Software</cite>, by Cem Kaner, Hung Quoc
+Nguyen, and Jack Falk, is a good look at testing in the real world.
+</p>
+
+<p>
+<cite>The Pragmatic Programmer</cite>, by Andy Hunt and Dave Thomas
+(both judges in the Software Carpentry design competition), includes a
+lot of good material on when and how to test during development.  The
+book's web site is at:
+<blockquote>
+<a href="http://www.pragmaticprogrammer.com">http://www.pragmaticprogrammer.com</a>
+</blockquote>
+</p>
+
+<p>
+Some existing testing tools used in Open Source development include:
+	<blockquote>
+	<table cellpadding="5">
+	<tr>
+		<td>Expect</td>
+		<td><a href="http://expect.nist.gov/">http://expect.nist.gov/</a></td>
+	</tr>
+	<tr>
+		<td>DejaGnu</td>
+		<td><a href="http://www.gnu.org/software/dejagnu/dejagnu.html">http://www.gnu.org/software/dejagnu/dejagnu.html</a></td>
+	</tr>
+	<tr>
+		<td>TET</td>
+		<td><a href="http://tetworks.opengroup.org/">http://tetworks.opengroup.org/</a</td>
+	</tr>
+	</table>
+	</blockquote>
+</p>
+
+<p>
+The FAQ for comp.software.testing is available at:
+<blockquote>
+<a href="http://www.landfield.com/faqs/software-eng/testing-faq/">http://www.landfield.com/faqs/software-eng/testing-faq/</a>.
+</blockquote>
+</p>
+
+<p>
+The <a href="http://www.visualizationtoolkit.org">Visualization
+Toolkit</a> (VTK) stands out among large Open Source projects for the
+amount and thoroughness of its testing.  The procedures VTK uses are
+described in a paper by William Lorensen and James Miller, which is
+available on-line at:
+<blockquote>
+<a href="ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf">ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf</a>
+</blockquote>
+</p>
+
+<p>
+Highlights from the <a
+href="http://www.software-carpentry.com">Software Carpentry</a>
+discussion list are summarized at:
+<blockquote>
+<a href="http://www.software-carpentry.com/sc_test/#highlights">http://www.software-carpentry.com/sc_test/#highlights</a>
+</blockquote>
+The entire discussion list is archived at:
+<blockquote>
+<a href="http://www.software-carpentry.com/lists/sc-discuss/maillist.html">http://www.software-carpentry.com/lists/sc-discuss/maillist.html</a>
+</blockquote>
+</p>
+
+</a> <!-- end ref -->
+
+<hr/>
+
+<table cellpadding="10">
+<tr>
+	<td>Author:</td>
+	<td>$Author$</td>
+</tr>
+<tr>
+	<td>Date:</td>
+	<td>$Date$</td>
+</tr>
+<tr>
+	<td>Version:</td>
+	<td>$Version$</td>
+</tr>
+</table>
+
+</body>
+</html>
