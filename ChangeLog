@@ -1,3 +1,51 @@
+2003-06-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (FieldEditPage.__init__): Add server parameter.
+	(FieldEditPage.MakeDefaultValueControl): Pass it to
+	FormatValueAsHtml.
+	(Field.FormatValueAsText): Adjust call to FormatValueAsHtml.
+	(Field.FormatValueAsHtml): Add server parameter.
+	(Field.GenerateEditWebPage): Likewise.
+	(Field.MakePropertyControls): Likewise.
+	(IntegerField.FormatValueAsHtml): Add server parameter.
+	(TextField.FormatValueAsHtml): Likewise.
+	(TextField.MakePropertyControls): Likewise.
+	(TupleField.FormaatValueAsHtml): Likewise.
+	(SetField.FormaatValueAsHtml): Likewise.
+	(SetField.MakePropertyControls): Likewise.
+	(AttachmentField.FormatValueAsHtml): Likewise.
+	(EnumerationField.FormatValueAsHtml): Likewise.
+	(EnumerationField.MakePropertyControls): Likewise.
+	(ChoiceField.FormatValueAsHtml): Likewise.
+	(TimeField.FormatValueAsHtml): Likewise.
+	(UidField): Remove.
+	* qm/web.py (WebRequestHandler.__HandlePageCacheRequest): Use
+	WebServer.GetCachedPage.
+	(WebRequestHandler.__HandleSessionCacheRequest): Likewise.
+	(WebServer.__init__): Create a page cache.
+	(WebServer.MakeButtonForCachedPopup): New method.
+	(WebServer.MakeConfirmationDialog): Likewise.
+	(WebServer.MakePopupDialog): Likewise.
+	(WebServer.CachePage): Likewise.
+	(WebServer.GetCachedPage): Likewise.
+	(WebServer.__GetPathForCachedPage): Likewise.
+	(make_popup_dialog): Remove.
+	(make_confirmation_dialog): Likewise.
+	(make_popup_page): Likewise.
+	(make_button_for_cached_popup): Likewise.
+	(cache_page): Likewise.
+	(_get_path_for_cache_page): Likewise.
+	(get_from_cache): Likewise.
+	(format_user_id): Likewise.
+	(_page_cache_path): Likewise.
+	* qm/test/web/web.py (ShowItemPage.FormatFieldValue): Adjust calls
+	to FormatValueAsHtml.
+	(ShowItemPage.MakeDeleteScript): Use
+	WebServer.MakeConfirmationDialog.
+	(ShowSuitePage.MakeDeleteScript): Likewise.
+	
+	* qm/external/DocumentTemplate/.cvsignore: Likewise.
+	
 2003-06-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_test.py (DejaGNUTest._ParseTclWords):

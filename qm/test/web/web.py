@@ -995,20 +995,21 @@ class ShowItemPage(QMTestPage):
             # Use the default value if none is provided.
             value = field.GetDefaultValue()
         # Format it appropriately.
+        server = self.server
         if self.edit:
             if field.IsProperty("hidden"):
-                return field.FormatValueAsHtml(value, "hidden")
+                return field.FormatValueAsHtml(server, value, "hidden")
             elif field.IsProperty("read_only"):
                 # For read-only fields, we still need a form input, but
                 # the user shouldn't be able to change anything.  Use a
                 # hidden input, and display the contents as if this
                 # wasn't an editing form.
-                return field.FormatValueAsHtml(value, "hidden") \
-                       + field.FormatValueAsHtml(value, "full")
+                return field.FormatValueAsHtml(server, value, "hidden") \
+                       + field.FormatValueAsHtml(server, value, "full")
             else:
-                return field.FormatValueAsHtml(value, "edit")
+                return field.FormatValueAsHtml(server, value, "edit")
         else:
-            return field.FormatValueAsHtml(value, "full")
+            return field.FormatValueAsHtml(server, value, "full")
 
 
     def GetClassDescription(self):
@@ -1073,7 +1074,7 @@ class ShowItemPage(QMTestPage):
         message = """
         <p>Are you sure you want to delete the %s %s?</p>
         """ % (self.type, item_id)
-        return qm.web.make_confirmation_dialog(message, delete_url)
+        self.server.MakeConfirmationDialog(message, delete_url)
 
 
 
@@ -1189,7 +1190,7 @@ class ShowSuitePage(QMTestPage):
         message = """
         <p>Are you sure you want to delete the suite %s?</p>
         """ % suite_id
-        return qm.web.make_confirmation_dialog(message, delete_url)
+        self.server.MakeConfirmationDialog(message, delete_url)
 
         
         

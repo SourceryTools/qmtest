@@ -101,11 +101,10 @@ class FieldEditPage(web.DtmlPage):
 
     See 'Field.GenerateEditWebPage'."""
 
-    def __init__(self, field, submit_request):
+    def __init__(self, field, server, submit_request):
         """Create a new page info object.
 
-        'request' -- The 'WebRequest' in response to which the page is
-        being generated.
+        'server' -- The 'WebServer' in use.
 
         'field' -- The field being edited.
 
@@ -116,7 +115,8 @@ class FieldEditPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "field.dtml")
         # Store properties for later.
         self.field = field
-        self.property_controls = field.MakePropertyControls()
+        self.__server = server
+        self.property_controls = field.MakePropertyControls(server)
         self.submit_request = submit_request
 
 
@@ -170,7 +170,8 @@ class FieldEditPage(web.DtmlPage):
         else:
             style = "new"
         default_value = field.GetDefaultValue()
-        return field.FormatValueAsHtml(default_value, style,
+        return field.FormatValueAsHtml(self.__server,
+                                       default_value, style,
                                        name="_default_value")
 
 
@@ -433,7 +434,8 @@ class Field:
         # Create a file to hold the result.
         text_file = cStringIO.StringIO()
         # Format the field as HTML.
-        html_file = cStringIO.StringIO(self.FormatValueAsHtml(value,
+        html_file = cStringIO.StringIO(self.FormatValueAsHtml(None,
+                                                              value,
                                                               "brief"))
 
         # Turn the HTML into plain text.
@@ -451,9 +453,12 @@ class Field:
         return text
     
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
         """Return an HTML rendering of a 'value' for this field.
 
+        'server' -- The 'WebServer' in which the HTML will be
+        displayed.
+        
         'value' -- The value for this field.  May be 'None', which
         renders a default value (useful for blank forms).
 
@@ -570,9 +575,11 @@ class Field:
         ''' % (self.GetTitle(), description, help, self.GetName(), )
 
 
-    def GenerateEditWebPage(self, request, submit_request):
+    def GenerateEditWebPage(self, server, request, submit_request):
         """Generate a web page for editing a field.
 
+        'server' -- The server processing this request.
+        
         'request' -- The request in response to which this page is being
         generated.
 
@@ -582,7 +589,7 @@ class Field:
         The 'UpdateFromRequest' method should generally be used to
         process the submission request."""
 
-        return FieldEditPage(self, submit_request)(request)
+        return FieldEditPage(self, server, submit_request)(request)
 
 
     def IsComputed(self):
@@ -633,9 +640,11 @@ class Field:
                query_field_property_prefix, property_name, false_checked)
 
 
-    def MakePropertyControls(self):
+    def MakePropertyControls(self, server):
         """Return controls for editing the properties of this field.
 
+        'server' -- The 'WebServer' in use.
+        
         returns -- A map from property names to strings containing HTML
         source for Web form controls for editing the corresponding
         property.
@@ -740,7 +749,7 @@ class IntegerField(Field):
         return str(value)
     
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
         # Use default value if requested.
         if value is None:
             value = 0
@@ -891,7 +900,7 @@ class TextField(Field):
             return common.wrap_lines(value, columns)
     
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
         # Use default value if requested.
         if value is None:
             value = ""
@@ -1031,9 +1040,10 @@ class TextField(Field):
         return help
 
 
-    def MakePropertyControls(self):
+    def MakePropertyControls(self, server):
+
         # Start the with the base controls.
-        controls = Field.MakePropertyControls(self)
+        controls = Field.MakePropertyControls(self, server)
         # Add controls for our own properties.
         controls.update({
             "multiline":
@@ -1078,7 +1088,7 @@ class TupleField(Field):
             self.__fields, value)
 
 
-    def FormatValueAsHtml(self, value, style, name = None):
+    def FormatValueAsHtml(self, server, value, style, name = None):
 
         # Format the field as a multi-column table.
         html = '<table border="0" cellpadding="0"><tr>'
@@ -1089,7 +1099,7 @@ class TupleField(Field):
                 element_name = None
             html += "<td><b>" + f.GetTitle() + "</b>:</td>"
             html += ("<td>" 
-                     + f.FormatValueAsHtml(v, style, element_name)
+                     + f.FormatValueAsHtml(server, v, style, element_name)
                      + "</td>")
         html += "</tr></table>"
         # Add a dummy field with the desired 'name'.
@@ -1247,7 +1257,7 @@ class SetField(Field):
         return qm.common.wrap_lines(result, columns)
 
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
         # Use default value if requested.
         if value is None:
             value = []
@@ -1262,7 +1272,8 @@ class SetField(Field):
                 # An empty set.
                 return "None"
             formatted \
-                = map(lambda v: contained_field.FormatValueAsHtml(v, style),
+                = map(lambda v: contained_field.FormatValueAsHtml(server,
+                                                                  v, style),
                       value)
             if style == "brief":
                 # In the brief style, list elements separated by commas.
@@ -1285,7 +1296,8 @@ class SetField(Field):
                     html += \
                        ('''<input type="checkbox" name="%s" /></td><td>'''
                         % checkbox_name)
-                html += contained_field.FormatValueAsHtml(element,
+                html += contained_field.FormatValueAsHtml(server,
+                                                          element,
                                                           style,
                                                           element_name)
                 html += "</td></tr>\n"
@@ -1423,9 +1435,10 @@ class SetField(Field):
         return help
 
 
-    def MakePropertyControls(self):
+    def MakePropertyControls(self, server):
+
         # Use property controls for the contained field.
-        controls = self.GetContainedField().MakePropertyControls()
+        controls = self.GetContainedField().MakePropertyControls(server)
         # Add controls for properties in 'set_property_declarations'.
         controls["not_empty_set"] = \
             self._MakeBooleanPropertyControl("not_empty_set")
@@ -1545,7 +1558,8 @@ class AttachmentField(Field):
         return self.FormatSummary(value)
 
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
+        
         field_name = self.GetName()
 
         if value is None:
@@ -1635,10 +1649,10 @@ class AttachmentField(Field):
             # A button to pop up the upload form.  It causes the upload
             # page to appear in a popup window.
             upload_button \
-                = qm.web.make_button_for_cached_popup("Upload",
-                                                      upload_page,
-                                                      window_width=640,
-                                                      window_height=320)
+                = server.MakeButtonForCachedPopup("Upload",
+                                                  upload_page,
+                                                  window_width=640,
+                                                  window_height=320)
             # A button to clear the attachment.
             clear_button = '''
             <input type="button"
@@ -1885,7 +1899,7 @@ class EnumerationField(TextField):
             return string.split(enumerals, ",")
 
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
         # Use default value if requested.
         if value is None:
             value = self.GetDefaultValue()
@@ -1898,7 +1912,7 @@ class EnumerationField(TextField):
             if len(enumerals) == 0:
                 # No available enumerals.  Don't let the user change
                 # anything. 
-                self.FormatValueAsHtml(value, "brief", name)
+                self.FormatValueAsHtml(server, value, "brief", name)
             else:
                 return qm.web.make_select(name, enumerals, value, str, str)
 
@@ -1948,9 +1962,10 @@ class EnumerationField(TextField):
         return help
 
 
-    def MakePropertyControls(self):
+    def MakePropertyControls(self, server):
+
         # Start with controls for base-class properties.
-        controls = TextField.MakePropertyControls(self)
+        controls = TextField.MakePropertyControls(self, server)
         # These text field controls aren't relevant to enumerations.
         controls["structured"] = None
         controls["verbatim"] = None
@@ -1964,7 +1979,7 @@ class EnumerationField(TextField):
         add_page = web.DtmlPage("add-enumeral.dtml",
                                 field_name=field_name,
                                 select_name=select_name)()
-        url = qm.web.cache_page(add_page).AsUrl()
+        url = server.CachePage(add_page).AsUrl()
         # Start with the current set of enumerals.  'make_set_control'
         # expects pairs of elements.
         initial_elements = map(lambda e: (e, e), self.GetEnumerals())
@@ -2000,10 +2015,11 @@ class ChoiceField(TextField):
     choices for an 'ChoiceField' are computed dynamically, rather than
     chosen statically."""
 
-    def FormatValueAsHtml(self, value, style, name = None):
+    def FormatValueAsHtml(self, server, value, style, name = None):
 
         if style not in ("new", "edit"):
-            return qm.fields.TextField.FormatValueAsHtml(self, value,
+            return qm.fields.TextField.FormatValueAsHtml(self, server,
+                                                         value,
                                                          style, name)
 
         # For an editable field, give the user a choice of available
@@ -2065,7 +2081,8 @@ class TimeField(IntegerField):
             return qm.common.format_time(value, local_time_zone=1)
 
 
-    def FormatValueAsHtml(self, value, style, name=None):
+    def FormatValueAsHtml(self, server, value, style, name=None):
+
         value = self.FormatValueAsText(value)
 
         if style == "new" or style == "edit":
@@ -2130,42 +2147,6 @@ class TimeField(IntegerField):
             The default value for this field is %s.
             """ % self.FormatValueAsText(default_value)
         return help
-        
-
-
-########################################################################
-
-class UidField(TextField):
-    """A field containing a user ID."""
-
-    def __init__(self, name, **properties):
-        default_user_id = user.database.GetDefaultUserId()
-        apply(TextField.__init__,
-              (self, name, default_user_id),
-              properties)
-
-
-    def GetTypeDescription(self):
-        return "a user ID"
-
-
-    def FormatValueAsHtml(self, value, style, name=None):
-        # Use default value if requested.
-        if value is None:
-            value = self.GetDefaultValue()
-        # Use the default field form field name if requested.
-        if name is None:
-            name = self.GetHtmlFormFieldName()
-
-        if style in ["new", "edit"]:
-            uids = qm.user.database.keys()
-            return qm.web.make_select(name, uids, value)
-
-        elif style in ["brief", "full"]:
-            return web.format_user_id(value)
-
-        else:
-            raise ValueError, style
 
 
 

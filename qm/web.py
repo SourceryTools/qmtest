@@ -561,7 +561,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         """Process a retrieval request from the global page cache."""
 
         # Get the page from the cache.
-        page = get_from_cache(request, session_id=None)
+        page = self.server.GetCachedPage(request)
         # Send it.
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
@@ -582,7 +582,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_error(400, "Missing session ID.")
             return
         # Get the page from the cache.
-        page = get_from_cache(request, session_id)
+        page = self.server.GetCachedPage(request, session_id)
         # Send it.
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
@@ -720,10 +720,7 @@ class WebServer(HTTPServer):
         information that would be difficult to reconstruct later.
 
     Pages may be shared across sessions, or may be specific to a
-    particular session.
-
-    The page cache is shared among all 'WebServer' instances.  Use the
-    'cache_page' function to insert a page into the cache."""
+    particular session."""
 
 
     def __init__(self,
@@ -757,6 +754,10 @@ class WebServer(HTTPServer):
         # Register the common JavaScript.
         self.RegisterPathTranslation(
             "/common.js", qm.get_share_directory("web", "common.js"))
+
+        self.__cache_dir = temporary_directory.TemporaryDirectory()
+        self.__cache_path = self.__cache_dir.GetPath()
+        os.mkdir(os.path.join(self.__cache_path, "sessions"), 0700)
 
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
@@ -932,6 +933,182 @@ class WebServer(HTTPServer):
         returns -- A pair '(hostname, port)'."""
 
         return (self.server_name, self.server_port)
+
+
+    def MakeButtonForCachedPopup(self,
+                                 label,
+                                 html_text,
+                                 request=None,
+                                 window_width=480,
+                                 window_height=240):
+        """Construct a button for displaying a cached popup page.
+
+        'label' -- The button label.
+
+        'html_text' -- The HTML source for the popup page.
+
+        'window_width' -- The width, in pixels, of the popup window.
+
+        'window_height' -- The height, in pixels, of the popup window.
+
+        returns -- HTML source for the button.  The button must be placed
+        within a form element."""
+
+        # Place the page in the page cache.
+        if request is None:
+            session_id = None
+        else:
+            session_id = request.GetSessionId()
+        page_url = self.CachePage(html_text, session_id).AsUrl()
+
+        return make_button_for_popup(label, page_url, window_width,
+                                     window_height)
+
+
+    def MakeConfirmationDialog(self, message, url):
+        """Generate JavaScript for a confirmation dialog box.
+
+        'url' -- The location in the main browser window is set to the URL
+        if the user confirms the action.
+
+        See 'make_popup_dialog_script' for a description of 'function_name'
+        and 'message' and information on how to use the return value."""
+
+        # If the user clicks the "Yes" button, advance the main browser
+        # page. 
+        open_script = "window.opener.document.location = %s;" \
+                      % make_javascript_string(url)
+        # Two buttons: "Yes" and "No".  "No" doesn't do anything.
+        buttons = [
+            ( "Yes", open_script ),
+            ( "No", None ),
+            ]
+        return self.MakePopupDialog(message, buttons, title="Confirm")
+
+
+    def MakePopupDialog(self, message, buttons, title=""):
+        """Generate JavaScript to show a popup dialog box.
+
+        The popup dialog box displays a message and one or more buttons.
+        Each button can have a JavaScript statement (or statements)
+        associated with it; if the button is clicked, the statement is
+        invoked.  After any button is clicked, the popup window is closed as
+        well.
+
+        'message' -- HTML source of the message to display in the popup
+        window.
+
+        'buttons' -- A sequence of button specifications.  Each is a pair
+        '(caption, script)'.  'caption' is the button caption.  'script' is
+        the JavaScript statement to invoke when the button is clicked, or
+        'None'.
+
+        'title' -- The popup window title.
+
+        returns -- JavaScript statements to show the dialog box, suiteable
+        for use as an event handler."""
+
+        # Construct the popup page.
+        page = make_popup_page(message, buttons, title)
+        page_url = self.CachePage(page).AsUrl()
+        # Construct the JavaScript variable and function.
+        return "window.open('%s', 'popup', 'width=480,height=200,resizable')" \
+               % page_url
+
+
+    def CachePage(self, page_text, session_id=None):
+        """Cache an HTML page.
+        
+        'page_text' -- The text of the page.
+        
+        'session_id' -- The session ID for this page, or 'None'.
+        
+        returns -- A 'WebRequest' object with which the cached page can be
+        retrieved later.
+        
+        If 'session_id' is 'None', the page is placed in the global page
+        cache.  Otherwise, it is placed in the session page cache for that
+        session."""
+
+        if session_id is None:
+            # No path was specified.  Place the file in the top directory.
+            dir_path = self.__cache_path
+            script_name = _page_cache_name
+        else:
+            # A session was specified.  Put the file in a subdirectory named
+            # after the session.
+            dir_path = os.path.join(self.__cache_path, "sessions", session_id)
+            script_name = _session_cache_name
+            # Create that directory if it doesn't exist.
+            if not os.path.isdir(dir_path):
+                os.mkdir(dir_path, 0700)
+
+        # Generate a name for the page.
+        global _counter
+        page_name = str(_counter)
+        _counter = _counter + 1
+        # Write it.
+        page_file_name = os.path.join(dir_path, page_name)
+        page_file = open(page_file_name, "w", 0600)
+        page_file.write(page_text)
+        page_file.close()
+
+        # Return a request for this page.
+        request = WebRequest(script_name, page=page_name)
+        if session_id is not None:
+            request.SetSessionId(session_id)
+        return request
+
+
+    def GetCachedPage(self, request, session_id=None):
+        """Retrieve a page from the page cache.
+
+        'request' -- The URL requesting the page from the cache.
+
+        'session_id' -- The session ID for the request, or 'None'.
+
+        returns -- The cached page, or a placeholder page if the page was
+        not found in the cache.
+
+        If 'session_id' is 'None', the page is retrieved from the global
+        page cache.  Otherwise, it is retrieved from the session page cache
+        for that session."""
+
+        page_file_name = self.__GetPathForCachedPage(request, session_id)
+        if os.path.isfile(page_file_name):
+            # Return the page.
+            return open(page_file_name, "r").read()
+        else:
+            # Oops, no such page.  Generate a placeholder.
+            return """
+            <html>
+             <body>
+              <h3>Cache Error</h3>
+              <p>You have requested a page that no longer is in the server's
+              cache.  The server may have been restarted, or the page may
+              have expired.  Please start over.</p>
+              <!-- %s -->
+             </body>
+            </html>
+            """ % url
+
+
+    def __GetPathForCachedPage(self, request, session_id):
+        """Return the path for a cached page.
+
+        'request' -- The URL requesting the page from the cache.
+
+        'session_id' -- The session ID for the request, or 'None'."""
+
+        if session_id is None:
+            dir_path = self.__cache_path
+        else:
+            # Construct the path to the directory containing pages in the
+            # cache for 'session_id'.
+            dir_path = os.path.join(self.__cache_path, "sessions", session_id)
+        # Construct the path to the file containing the page.
+        page_name = request["page"]
+        return os.path.join(dir_path, page_name)
 
 
     def HandleNoSessionError(self, request, message):
@@ -2003,57 +2180,6 @@ def make_help_link_html(help_text, label="Help"):
            help_page.GenerateEndScript())
 
 
-def make_popup_dialog(message, buttons, title=""):
-    """Generate JavaScript to show a popup dialog box.
-
-    The popup dialog box displays a message and one or more buttons.
-    Each button can have a JavaScript statement (or statements)
-    associated with it; if the button is clicked, the statement is
-    invoked.  After any button is clicked, the popup window is closed as
-    well.
-
-    'message' -- HTML source of the message to display in the popup
-    window.
-
-    'buttons' -- A sequence of button specifications.  Each is a pair
-    '(caption, script)'.  'caption' is the button caption.  'script' is
-    the JavaScript statement to invoke when the button is clicked, or
-    'None'.
-
-    'title' -- The popup window title.
-
-    returns -- JavaScript statements to show the dialog box, suiteable
-    for use as an event handler."""
-
-    # Construct the popup page.
-    page = make_popup_page(message, buttons, title)
-    page_url = cache_page(page).AsUrl()
-    # Construct the JavaScript variable and function.
-    return "window.open('%s', 'popup', 'width=480,height=200,resizable')" \
-           % page_url
-
-
-def make_confirmation_dialog(message, url):
-    """Generate JavaScript for a confirmation dialog box.
-
-    'url' -- The location in the main browser window is set to the URL
-    if the user confirms the action.
-
-    See 'make_popup_dialog_script' for a description of 'function_name'
-    and 'message' and information on how to use the return value."""
-
-    # If the user clicks the "Yes" button, advance the main browser
-    # page. 
-    open_script = "window.opener.document.location = %s;" \
-                  % make_javascript_string(url)
-    # Two buttons: "Yes" and "No".  "No" doesn't do anything.
-    buttons = [
-        ( "Yes", open_script ),
-        ( "No", None ),
-        ]
-    return make_popup_dialog(message, buttons, title="Confirm")
-
-
 def make_popup_page(message, buttons, title=""):
     """Generate a popup dialog box page.
 
@@ -2359,175 +2485,6 @@ def make_button_for_popup(label,
     """ % locals()
 
 
-def make_button_for_cached_popup(label,
-                                 html_text,
-                                 request=None,
-                                 window_width=480,
-                                 window_height=240):
-    """Construct a button for displaying a cached popup page.
-
-    'label' -- The button label.
-
-    'html_text' -- The HTML source for the popup page.
-
-    'window_width' -- The width, in pixels, of the popup window.
-
-    'window_height' -- The height, in pixels, of the popup window.
-
-    returns -- HTML source for the button.  The button must be placed
-    within a form element."""
-
-    # Place the page in the page cache.
-    if request is None:
-        session_id = None
-    else:
-        session_id = request.GetSessionId()
-    page_url = cache_page(html_text, session_id).AsUrl()
-
-    return make_button_for_popup(label, page_url, window_width,
-                                 window_height)
-
-        
-def cache_page(page_text, session_id=None):
-    """Cache an HTML page.
-
-    'page_text' -- The text of the page.
-
-    'session_id' -- The session ID for this page, or 'None'.
-
-    returns -- A 'WebRequest' object with which the cached page can be
-    retrieved later.
-
-    If 'session_id' is 'None', the page is placed in the global page
-    cache.  Otherwise, it is placed in the session page cache for that
-    session."""
-
-    global _page_cache_path
-    global _counter
-
-    if _page_cache_path is None:
-        # This is the first time we're inserting anything in the cache.
-        # Set it up.
-        _page_cache = temporary_directory.TemporaryDirectory()
-        _page_cache_path = _page_cache.GetPath()
-        os.mkdir(os.path.join(_page_cache_path, "sessions"), 0700)
-
-    if session_id is None:
-        # No path was specified.  Place the file in the top directory.
-        dir_path = _page_cache_path
-        script_name = _page_cache_name
-    else:
-        # A session was specified.  Put the file in a subdirectory named
-        # after the session.
-        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
-        script_name = _session_cache_name
-        # Create that directory if it doesn't exist.
-        if not os.path.isdir(dir_path):
-            os.mkdir(dir_path, 0700)
-
-    # Generate a name for the page.
-    page_name = str(_counter)
-    _counter = _counter + 1
-    # Write it.
-    page_file_name = os.path.join(dir_path, page_name)
-    page_file = open(page_file_name, "w", 0600)
-    page_file.write(page_text)
-    page_file.close()
-
-    # Return a request for this page.
-    request = WebRequest(script_name, page=page_name)
-    if session_id is not None:
-        request.SetSessionId(session_id)
-    return request
-
-
-def _get_path_for_cache_page(request, session_id):
-    """Return the path for a cached page.
-
-    'request' -- The URL requesting the page from the cache.
-
-    'session_id' -- The session ID for the request, or 'None'."""
-    
-    if session_id is None:
-        dir_path = _page_cache_path
-    else:
-        # Construct the path to the directory containing pages in the
-        # cache for 'session_id'.
-        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
-    # Construct the path to the file containing the page.
-    page_name = request["page"]
-    return os.path.join(dir_path, page_name)
-
-
-def get_from_cache(request, session_id=None):
-    """Retrieve a page from the page cache.
-
-    'request' -- The URL requesting the page from the cache.
-
-    'session_id' -- The session ID for the request, or 'None'.
-
-    returns -- The cached page, or a placeholder page if the page was
-    not found in the cache.
-
-    If 'session_id' is 'None', the page is retrieved from the global
-    page cache.  Otherwise, it is retrieved from the session page cache
-    for that session."""
-    
-    page_file_name = _get_path_for_cache_page(request, session_id)
-    if os.path.isfile(page_file_name):
-        # Return the page.
-        return open(page_file_name, "r").read()
-    else:
-        # Oops, no such page.  Generate a placeholder.
-        return """
-        <html>
-         <body>
-          <h3>Cache Error</h3>
-          <p>You have requested a page that no longer is in the server's
-          cache.  The server may have been restarted, or the page may
-          have expired.  Please start over.</p>
-          <!-- %s -->
-         </body>
-        </html>
-        """ % url
-
-
-def format_user_id(user_id):
-    """Generate HTML for a user ID."""
-
-    try:
-        # Look up the user in the user database.
-        user_item = user.database[user_id]
-    except KeyError:
-        # The user isn't in the database.  Oops.
-        return '<font color="red">%s</font>' % user_id
-    else:
-        # Have we already generated and cached a user information page
-        # for this user?
-        if not hasattr(user_item, "__page_cache_request"):
-            # No.  Generate it now.
-            user_page = DtmlPage.default_class(
-                "user.dtml",
-                user_id=user_id,
-                user=user_item)()
-            # Put it in the page cache.
-            user_page_request = cache_page(user_page)
-            # Attach it to the user item.
-            user_item.__page_cache_request = user_page_request
-        else:
-            # Yes, we generated the page previously. 
-            user_page_request = user_item.__page_cache_request
-
-        # Return a link that pops up a window display the user
-        # information page.
-        return '''
-        <a href="javascript: void(0);"
-           onclick="window.open('%s', 'popup',
-                                'height=200,width=300,resizable');"
-           class="userid">%s</a>''' \
-            % (user_page_request.AsUrl(), user_id)
-
-
 def format_color(red, green, blue):
     """Format an RGB color value for HTML.
 
@@ -2590,9 +2547,6 @@ sessions = {}
 
 _counter = 0
 """A counter for generating somewhat-unique names."""
-
-_page_cache_path = None
-"""The path to the page cache."""
 
 _page_cache_name = "page-cache"
 """The URL prefix for the global page cache."""
