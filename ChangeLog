@@ -1,3 +1,59 @@
+2002-01-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* standard.mk.in (TESTFLAGS): Remove.
+	(test): Likewise.
+
+2001-12-30  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py (AttachmentStore.GetSize): Provide a default
+	implementation.
+	(FileAttachmentStore): New class.
+	* qm/common.py (load_class): Fix typo in error message.
+	* qm/xmlutil.py (discard_node): New function.
+	* qm/test/base.py (run_test): Remove.
+	(set_up_resource): Likewise.
+	(clean_up_resource): Likewise.
+	* qm/test/cmdline.py (profile): Do not import it.
+	(QMTest.profile_option_spec): Remove.
+	(QMTest.GetTargets): Use SerialTarget if concurrent execution has
+	not been requested.
+	(QMTest.__ExecuteSummarize): Fix typo.
+	(QMTest.__ExecuteRun): Improve keyboard interrupt handling.
+	* qm/test/context.py (re): Import it.
+	(Context.get): Fix typo.
+	(Context.ValidateKey): Accept keys that include periods and
+	underscores.
+	(ContextWrapper.Get): Fix typo.
+	* qm/test/database.py (ItemDescriptor._Execute): Allow the context
+	to be None.
+	(ResourceDescriptor.CleanUp): Do not take a context parameter.
+	(Database.GetResource): Fix formatting.
+	* qm/test/execution_thread.py: Rework substantially throughout.
+	* qm/test/file_database.py (FileDatabase._GetLabels): Simplify.
+	* qm/test/qmtest-remote.py: Rework for revised target interface.
+	* qm/test/qmtest.py: Improve keyboard interrupt handling.
+	* qm/test/resource.py (Resource.CleanUp): Do not take a context
+	parameter.
+	* qm/test/result.py (Result.RESOURCE): New constant.
+	* qm/test/target.py (Target): Rework substantially.
+	(CommandThread): Likewise.
+	* qm/test/xmldb.py (Database.__init__): Remove create parameter.
+	* qm/test/classes/classes.qmc: Add serial_target.SerialTarget.
+	* qm/test/classes/rsh_target.py: Rework substantially.
+	* qm/test/classes/temporary.py (TempDirectoryResource.SetUp): 
+	Remember the path to the directory created.
+	(TempDirectoryResource.CleanUp): Remove context parameter.
+	* qm/test/classes/thread_target.py: Rework substantially.
+	* qm/test/web/web.py (QMTestServer.__init__): Do not register
+	a download URL if the database does not have an attachment
+	store.
+	* share/diagnostics/test.txt: Adjust documentation.
+	* doc/test-manual.xml: Update description of context.
+	
+2001-12-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm.spec.in (Release): Increment.
+
 2001-12-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/test-manual.xml: Fix typo.

@@ -120,9 +120,6 @@ endif
 # HappyDoc configuration.
 HAPPYDOC	= @HAPPYDOC@
 
-# Flags to pass to the regression test driver script.
-TESTFLAGS	= -v -k
-
 # The install program.
 INSTALL		= @top_srcdir@/install-sh -c
 INSTALL_DATA    = $(INSTALL) -m 644
@@ -261,13 +258,3 @@ clean::
 	@for subdir in $(SUBDIRS); do \
           (cd $${subdir} && make $@); \
         done
-
-# Run regression tests.  Regression tests are stored in files named
-# test.py.  The file may be present for each package under qm.
-test:
-	@for test in `find $(TOPDIR)/qm -name test.py`; \
-	do \
-	  echo "running $${test}"; \
-	  $(PYTHON) $${test} $(TESTFLAGS); \
-	  echo; \
-	done

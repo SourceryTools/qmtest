@@ -47,61 +47,15 @@ from   threading import *
 class LocalThread(CommandThread):
     """A 'LocalThread' executes commands locally."""
 
-    def __init__(self, target):
-	"""Construct a new 'LocalThread'.
+    def _RunTest(self, descriptor, context):
+        """Run the test given by 'descriptor'.
 
-	'target' -- The 'ThreadTarget' that owns this thread."""
-
-	CommandThread.__init__(self, target)
-
-
-    def _RunTest(self, test_id, context):
-        """Run the test given by 'test_id'.
-
-        'test_id' -- The name of the test to be run.
+        'descriptor' -- The name of the test to be run.
 
         'context' -- The 'Context' in which to run the test."""
 
-        test = self.GetTarget().GetDatabase().GetTest(test_id)
-        result = run_test(test, context)
-        self.RecordResult(result)
+        self.GetTarget()._RunTest(descriptor, context)
         
-
-    def _SetUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource."""
-
-        resource = self.GetTarget().GetDatabase().GetResource(resource_id)
-        result = set_up_resource(resource, context)
-        self.RecordResult(result)
-
-
-    def _CleanUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource."""
-
-        resource = self.GetTarget().GetDatabase().GetResource(resource_id)
-        result = clean_up_resource(resource, context)
-        self.RecordResult(result)
-
-
-    def RecordResult(self, result):
-        """Record the 'result'.
-
-        'result' -- A 'Result' of a test or resource execution."""
-
-        # Tell the target that we have nothing to do.
-        self.GetTarget().NoteIdleThread(self)
-        # Pass the result back to the target.
-        self.GetTarget().RecordResult(result)
-
-
 
 class ThreadTarget(Target):
     """A target implementation that runs tests in local threads.
@@ -131,10 +85,12 @@ class ThreadTarget(Target):
         Target.__init__(self, name, group, concurrency, properties,
                         database)
 
-
-        # Create a lock to guard all accesses to __ready_threads.
-        self.__lock = Lock()
-
+        # Create a lock to guard accesses to __ready_threads.
+        self.__ready_threads_lock = Lock()
+        # Create a condition variable to guard accesses to the
+        # available resources table.
+        self.__resources_condition = Condition()
+        
 
     def IsIdle(self):
         """Return true if the target is idle.
@@ -145,7 +101,7 @@ class ThreadTarget(Target):
         # Acquire the lock.  (Otherwise, a thread that terminates
         # right as we are checking for idleness may alter
         # __ready_threads.)
-        self.__lock.acquire()
+        self.__ready_threads_lock.acquire()
         
         # This target is idle if there are any ready threads.
         if self.__ready_threads:
@@ -154,7 +110,7 @@ class ThreadTarget(Target):
             idle=0
 
         # Release the lock.
-        self.__lock.release()
+        self.__ready_threads_lock.release()
 
         return idle
 
@@ -179,7 +135,6 @@ class ThreadTarget(Target):
 
         # Initially, all threads are ready.
         self.__ready_threads = self.__threads[:]
-        self.__command_queue = []
         
 
     def Stop(self):
@@ -187,6 +142,8 @@ class ThreadTarget(Target):
 
         postconditions -- The target may no longer be used."""
 
+        Target.Stop(self)
+        
         # Send each thread a "quit" command.
         for thread in self.__threads:
 	    thread.Stop()
@@ -195,63 +152,128 @@ class ThreadTarget(Target):
 	    thread.join()
 
 
-    def RunTest(self, test_id, context):
-        """Run the test given by 'test_id'.
+    def RunTest(self, descriptor, context):
+        """Run the test given by 'descriptor'.
 
-        'test_id' -- The name of the test to be run.
+        'descriptor' -- The 'TestDescriptor' for the test.
 
-        'context' -- The 'Context' in which to run the test."""
+        'context' -- The 'Context' in which to run the test.
 
-        self.__lock.acquire()
+        Derived classes may override this method."""
+
+        # Use an idle thread to execute the test.
+        self.__ready_threads_lock.acquire()
         thread = self.__ready_threads.pop(0)
-        self.__lock.release()
-        thread.RunTest(test_id, context)
+        self.__ready_threads_lock.release()
+        thread.RunTest(descriptor, context)
             
 
-    def SetUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
+    def _RunTest(self, descriptor, context):
+        """Run the test given by 'descriptor'.
 
-        'resource_id' -- The name of the resource to be set up.
+        'descriptor' -- The 'TestDescriptor' for the test.
 
-        'context' -- The 'Context' in which to run the resource."""
+        'context' -- The 'Context' in which to run the test.
 
-        self.__lock.acquire()
-        thread = self.__ready_threads.pop(0)
-        self.__lock.release()
-        thread.SetUpResource(resource_id, context)
+        This method will be called from the thread that has been
+        assigned the test."""
 
-
-    def CleanUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource.
-
-        Derived classes must override this method."""
-
-        self.__lock.acquire()
-        thread = self.__ready_threads.pop(0)
-        self.__lock.release()
-        thread.CleanUpResource(resource_id, context)
+        Target.RunTest(self, descriptor, context)
 
 
-    def NoteIdleThread(self, thread):
-        """Note that 'thread' has become idle.
+    def _RecordResult(self, result):
+        """Record the 'result'.
+
+        'result' -- A 'Result' of a test or resource execution."""
+
+        # If this is a test result, then this thread has finished all
+        # of its work.
+        if result.GetKind() == Result.TEST:
+            self._NoteIdleThread()
+        # Pass the result back to the execution engine.
+        Target._RecordResult(self, result)
+        
+            
+    def _BeginResourceSetUp(self, resource_name):
+        """Begin setting up the indicated resource.
+
+        'resource_name' -- A string naming a resource.
+
+        returns -- If the resource has already been set up, returns a
+        tuple '(outcome, map)'.  The 'outcome' indicates the outcome
+        that resulted when the resource was set up; the 'map' is a map
+        from strings to strings indicating properties added by this
+        resource.  Otherwise, returns 'None', but marks the resource
+        as in the process of being set up; it is the caller's
+        responsibility to finish setting it up by calling
+        '_FinishResourceSetUp'."""
+
+        # Acquire the lock.
+        self.__resources_condition.acquire()
+        try:
+            # Loop until either we are assigned to set up the resource
+            # or until some other thread has finished setting it up.
+            while 1:
+                rop = Target._BeginResourceSetUp(self, resource_name)
+                # If this is the first thread to call _BeginResourceSetUp
+                # for this thread will set up the resource.
+                if not rop:
+                    return rop
+                # If this resource has already been set up, we do not
+                # need to do anything more.
+                if rop[0]:
+                    return rop
+                # Otherwise, some other thread is in the process of
+                # setting up this resource so we just wait for it to
+                # finish its job.
+                self.__resources_condition.wait()
+        finally:
+            # Release the lock.
+            self.__resources_condition.release()
+                
+
+    def _FinishResourceSetUp(self, resource, result):
+        """Finish setting up a resource.
+
+        'resource' -- The 'Resource' itself.
+
+        'result' -- The 'Result' associated with setting up the
+        resource.
+
+        returns -- A tuple of the same form as is returned by
+        '_BeginResourceSetUp' with the resource has already been set
+        up."""
+
+        # Acquire the lock.
+        self.__resources_condition.acquire()
+        # Record the fact that the resource is set up.
+        rop = Target._FinishResourceSetUp(self, resource, result)
+        # Tell all the other threads that the resource has been set
+        # up.
+        self.__resources_condition.notifyAll()
+        # Release the lock.
+        self.__resources_condition.release()
+
+        return rop
+
+        
+    def _NoteIdleThread(self):
+        """Note that the current thread.
 
         This method is called by the thread when it has completed a
         task."""
 
         # Acquire the lock.  (Otherwise, IsIdle might be called right
         # as we are accessing __ready_threads.)
-        self.__lock.acquire()
+        self.__ready_threads_lock.acquire()
 
         # Now that we have acquired the lock make sure that we release
         # it, even if an exception occurs.
         try:
+            thread = currentThread()
             assert thread not in self.__ready_threads
             self.__ready_threads.append(thread)
         finally:
             # Release the lock.
-            self.__lock.release()
+            self.__ready_threads_lock.release()
 

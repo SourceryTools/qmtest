@@ -68,7 +68,8 @@ class XMLResultStream(ResultStream):
         element = result.MakeDomNode(self.__document)
         xml.dom.ext.PrettyPrint(element, self.__file, indent=" ",
                                 encoding="ISO-8859-1")
-
+        qm.xmlutil.discard_node(element)
+        
 
     def Summarize(self):
         """Output summary information about the results.

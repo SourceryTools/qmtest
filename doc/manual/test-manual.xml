@@ -8,7 +8,7 @@
   Contents:
     Manual for QMTest.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -458,9 +458,9 @@
   <section id="sec-the-context">
    <title>The Context</title>
 
-   <para>&qmtest; passes a context object to the run method of a test
-   that is run and to the setup and cleanup methods of a
-   resource.</para>
+   <para>&qmtest; passes a context object to the
+   <function>Run</function> method of a test that is run and to the
+   <function>SetUp</function> method of a resource.</para>
 
    <para>Most of the properties of the context are the same for all
    tests and resource functions run during a single test run.  These
@@ -475,31 +475,18 @@
    <para>In addition, a resource setup function may add additional
    properties to a context.  These added properties do not become part
    of the common context; they are hidden from other tests and resources
-   except in the following cases:
-   </para>
+   except that the properties added by a resource are visible to tests 
+   that require that resource.</para>
 
-   <itemizedlist>
-    <listitem>
-     <para>The properties added to the context by a resource's setup
-     function are visible to all tests that require that
-     resource.</para>
-    </listitem>
-
-    <listitem>
-     <para>The properties added to the context by a resource's setup
-     function are visible to the same resource's cleanup
-     function.</para>
-    </listitem>
-   </itemizedlist>
-
-   <para>For instance, a resource setup function might allocate the
-   resource and place a handle to it (for instance, a temporary
-   directory name or a database session key) in the context as a
-   context property.  Tests that require that resource have access to
-   the temporary resource via the handle stored in the context.  The
-   resource's cleanup function also uses the handle to deallocate the
-   resource (delete the temporary directory, close the database
-   session).</para>
+   <para>For instance, a resource <function>SetUp</function> function
+   might allocate the resource and place a handle to it (for instance,
+   a temporary directory name or a database session key) in the
+   context as a context property.  Tests that require that resource
+   have access to the temporary resource via the handle stored in the
+   context.  The resource's cleanup function also uses the handle to
+   deallocate the resource.  That information should be stored in the
+   resource object itself since no context is made available to the
+   <function>CleanUp</function>.</para>
 
   </section> <!-- The Context -->
 
@@ -1715,40 +1702,40 @@
    linkend="sec-run-function"><function>Run</function></link>
    function, you must provide two functions named
    <function>SetUp</function> and <function>CleanUp</function> to
-   perform resource setup and cleanup.  Both of these functions take
-   the same arguments that are provided to a test class
-   <function>Run</function> method.  Since the cleanup function is
-   called even if setup failed, the cleanup function should degrade
-   gracefully, and attempt to clean up a partially-set-up resource, if
-   possible.</para>
+   perform resource setup and cleanup.  The <function>SetUp</function>
+   function must have the same signature as a test classs
+   <function>Run</function>.  The <function>CleanUp</function>
+   function is similar, but does not take a
+   <parameter>context</parameter> parameter.</para>
 
    <para>The setup function may add additional properties to the
-   context.  These properties will be visible only to the
-   <function>CleanUp</function> function called for the same resource
-   and to tests that require this resource.  To insert a context
-   property, use Python's map assignment syntax.</para>
+   context.  These properties will be visible only to tests that
+   require this resource.  To insert a context property, use Python's
+   map assignment syntax.</para>
 
    <para>Below is an example of setup and cleanup functions for a
    resource which calls <function>create_my_resource</function> and
    <function>destroy_my_resource</function> to do the work of creating
-   and destroying the resource.  The resource is identified by a string
-   handle, which is inserted into the context under the name
-   <literal>resource_handle</literal>, where it may be accessed by
-   tests.</para>
+   and destroying the resource.  The resource is identified by a
+   string handle, which is inserted into the context under the name
+   <literal>Resource.handle</literal>, where it may be accessed by
+   tests.  Context property names should always have the form
+   <literal>Class.name</literal> so that there is no risk of collision
+   between properties created by different resource classes.</para>
 
    <programlisting>
     def SetUp(self, context, result):
         try:
             handle = create_my_resource()
+            self.__handle = handle
         except:
             result.NoteException()
         else:
             context["resource_handle"] = str(handle)
 
-    def CleanUp(self, context):
-        handle = context["resource_handle"]
+    def CleanUp(self, result):
         try:
-            destroy_my_resource(handle)
+            destroy_my_resource(self.__handle)
         except:
             result.NoteException()
    </programlisting>

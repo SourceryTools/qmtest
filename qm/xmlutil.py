@@ -275,6 +275,23 @@ def sanitize_text_for_comment(text):
     return text
 
 
+def discard_node(node):
+    """Discard the DOM 'node'.
+
+    'node' -- The node to discard.
+
+    In general, DOM nodes can contain circular data structures.  Python
+    versions before Python 2.0 could not collect such data structures,
+    so we must manually break the cycles."""
+
+    for child in node.childNodes:
+        discard_node(child)
+    attributes = node.__dict__.get('__attributes')
+    if attributes:
+        for attribute in attributes:
+            attribute.__dict__.clear()
+    node.__dict__.clear()
+
 ########################################################################
 # Local Variables:
 # mode: python

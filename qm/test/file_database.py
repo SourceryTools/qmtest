@@ -137,7 +137,7 @@ class FileDatabase(Database):
 
         Derived classes must not override this method."""
 
-        # Compute the directory in which to start looking.
+        # Compute the path name of the directory in which to start.
         file_dir = self.GetSuitePath(directory)
         # Get all the files that correspond to tests.
         return self._GetLabels(file_dir, scan_subdirs,
@@ -151,7 +151,7 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file that contains, or
         would contain, 'test_id'.  This method works even if no test
-        named 'test_id' exsits."""
+        named 'test_id' exists."""
 
         return self._GetPathFromLabel(test_id) + self.__test_extension
 
@@ -256,7 +256,7 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file (or directory)
         that contains, or would contain, 'suite_id'.  This method works
-        even if no suite named 'suite_id' exsits."""
+        even if no suite named 'suite_id' exists."""
 
         # The implicit '.' suite corresponds to the directory in which
         # the database is located.
@@ -358,7 +358,7 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file that contains, or
         would contain, 'resource_id'.  This method works even if no
-        Resource named 'resource_id' exsits."""
+        Resource named 'resource_id' exists."""
 
         return self._GetPathFromLabel(resource_id) \
                + self.__resource_extension
@@ -494,16 +494,14 @@ class FileDatabase(Database):
         'predicate' -- A function that takes a file name and returns
         a boolean.
 
-        returns -- Labels for all file names in 'directory'.  If
-        'scan_subdirs' is true, subdirectories that have
-        'self.__suite_extension' as their extension, that satisfy
-        'predicate'.
+        returns -- Labels for all file names in 'directory'. that
+        satisfy 'predicate'  If 'scan_subdirs' is true, subdirectories
+        are scanned as well.
 
         Derived classes must not override this method."""
 
         labels = []
-        # Create an object that can relativize any labels we find.
-        as_absolute = qm.label.AsAbsolute(label)
+
         # Go through all of the files (and subdirectories) in that
         # directory.
         for entry in dircache.listdir(directory):
@@ -517,7 +515,7 @@ class FileDatabase(Database):
             entry_path = os.path.join(directory, entry)
             # If it satisfies the 'predicate', add it to the list.
             if predicate(entry_path):
-                labels.append(as_absolute(root))
+                labels.append(qm.label.join(label, root))
             # If it is a subdirectory, recurse.
             if (scan_subdirs and os.path.isdir(entry_path)
                 and self._IsSuiteFile(entry_path)):

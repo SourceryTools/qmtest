@@ -192,7 +192,8 @@ class ItemDescriptor:
     def _Execute(self, context, result, method):
         """Execute the entity.
         
-        'context' -- The 'Context' in which the test should be executed.
+        'context' -- The 'Context' in which the test should be executed,
+        or 'None' if the 'method' does not take a 'Context' argument.
 
         'result' -- The 'Result' object corresponding to this execution.
 
@@ -200,23 +201,27 @@ class ItemDescriptor:
         should be invoked to perform the execution."""
 
         working_directory = self.GetWorkingDirectory()
-        if not working_directory:
-            working_directory = "."
-
-        # Remember the previous working directory so we can restore
-        # it.
-        old_working_directory = os.getcwd()
+        old_working_directory = None
+        
         try:
-            # Change to the working directory appropriate for this
-            # test.
-            os.chdir(working_directory)
+            if working_directory:
+                # Remember the previous working directory so we can
+                # restore it.
+                old_working_directory = os.getcwd()
+                # Change to the working directory appropriate for this
+                # test.
+                os.chdir(working_directory)
             # Get the item.
             item = self.GetItem()
             # Execute the indicated method.
-            eval("item.%s(context, result)" % method)
+            if context:
+                eval("item.%s(context, result)" % method)
+            else:
+                eval("item.%s(result)" % method)
         finally:
             # Restore the working directory.
-            os.chdir(old_working_directory)
+            if old_working_directory:
+                os.chdir(old_working_directory)
 
 
 
@@ -375,14 +380,12 @@ class ResourceDescriptor(ItemDescriptor):
         self._Execute(context, result, "SetUp")
 
 
-    def CleanUp(self, context, result):
+    def CleanUp(self, result):
         """Clean up the resource.
-
-        'context' -- The 'Context' in which the resource should be executed.
 
         'result' -- The 'Result' object for this resource."""
 
-        self._Execute(context, result, "CleanUp")
+        self._Execute(None, result, "CleanUp")
 
 
 
@@ -533,7 +536,7 @@ class Database:
         'store' -- The attachment store that is used to store 
         'Attachment's to tests or resources.
 
-        Derived classes must call this method from there own '__init__'
+        Derived classes must call this method from their own '__init__'
         methods.  Evey derived class must have an '__init__' method that
         takes the path to the directory containing the database as its
         only argument.  The path provided to the derived class '__init__'
@@ -749,7 +752,7 @@ class Database:
     # Methods that deal with resources.
 
     def GetResource(self, resource_id):
-        """Return the 'ResourceDescriptor' for the resource named 'resouce_id'.
+        """Return the 'ResourceDescriptor' for the resource 'resouce_id'.
 
         'resource_id' -- A label naming the resource.
 
@@ -841,7 +844,9 @@ class Database:
         returns -- A sequence of (relative) labels indictating the
         immediate subdirectories of 'directory'.  For example, if "a.b"
         and "a.c" are directories in the database, this method will
-        return "b" and "c" given "a" as 'directory'."""
+        return "b" and "c" given "a" as 'directory'.
+
+        Derived classes must override this method."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.GetSubdirectories"
         

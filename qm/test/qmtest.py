@@ -33,6 +33,7 @@
 
 # Set up the Python module lookup path to find QM.
 
+import errno
 import os
 import os.path
 import sys
@@ -89,27 +90,38 @@ qm.rc.Load("test")
 program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
-    # Parse the command line.
-    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
-    # Execute the command.
-    command.Execute(sys.stdout)
-    exit_code = 0
-
+    try:
+        # Parse the command line.
+        command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
+        # Execute the command.
+        command.Execute(sys.stdout)
+        exit_code = 0
+    except IOError, exception:
+        # There is a bug in Python 1.5.2 (and perhaps other versions prior
+        # to 2.1) that can cause SIGINT to be delivered to a thread other
+        # than the main thread.  The main thread will therefore get an
+        # IOError exception (indicating an interrupted sytem call) rather
+        # than a KeyboardInterrupt exception.  We therefore transform
+        # the IOError into a KeyboardInterrupt.
+        if exception.errno == errno.EINTR:
+            raise KeyboardInterrupt
+        # For other kinds of IOErrors, just reraise the current
+        # exception.
+        else:
+            raise
 except RuntimeError, msg:
     print_error_message(msg)
     exit_code = 1
-
 except qm.cmdline.CommandError, msg:
     print_error_message(str(msg)
                         + "\n\nInvoke %s --help for help with usage.\n"
                         % program_name)
     exit_code = 2
-
 except KeyboardInterrupt:
     # User killed it; that's OK.
     sys.stderr.write("\nInterrupted.\n")
     exit_code = 0
-
+    
 # End the program.
 sys.exit(exit_code)
 

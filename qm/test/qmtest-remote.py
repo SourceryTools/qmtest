@@ -124,7 +124,7 @@ try:
         database = qm.test.base.load_database(database_path)
 
         # Get the target class.
-        target_class = get_extension_class("thread_target.ThreadTarget",
+        target_class = get_extension_class("serial_target.SerialTarget",
                                            'target', database)
         # Build the target.
         target = target_class(None, None, int(concurrency), {},
@@ -149,15 +149,22 @@ try:
 
             # Decompose command.
             method, id, context = command
-            # Spin until the target is idle.
-            while not target.IsIdle():
-                pass
+            # Get the descriptor.
+            descriptor = database.GetTest(id)
             # Run it.
-            target.__class__.__dict__[method](target, id, context)
-            # Read the result.
-            result = response_queue.get()
-            # Pass the result back.
-            cPickle.dump(result, sys.stdout)
+            target.RunTest(descriptor, context)
+            # There are no results yet.
+            results = []
+            # Read all of the results.
+            while 1:
+                try:
+                    result = response_queue.get(0)
+                    results.append(result)
+                except Queue.Empty:
+                    # There are no more results.
+                    break
+            # Pass the results back.
+            cPickle.dump(results, sys.stdout)
             # The standard output stream is bufferred, but the master
             # will block waiting for a response, so we must flush
             # the buffer here.

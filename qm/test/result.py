@@ -113,6 +113,7 @@ class Result:
     ACTION = "qmtest.action"
     CAUSE = "qmtest.cause"
     EXCEPTION = "qmtest.exception"
+    RESOURCE = "qmtest.resource"
     TARGET = "qmtest.target"
     TRACEBACK = "qmtest.traceback"
     
@@ -256,7 +257,9 @@ class Result:
 
         Note that the context is not represented in the DOM node.
 
-        'document' -- The containing DOM document."""
+        'document' -- The containing DOM document.
+
+        returns -- The element created."""
 
         # The node is a result element.
         element = document.createElement("result")

@@ -44,6 +44,7 @@ import qm.graph
 import qm.label
 import qm.platform
 import qm.structured_text
+from   qm.test.context import *
 from   qm.test.result import *
 import qm.xmlutil
 import string
@@ -150,10 +151,8 @@ def create_database(db_path, class_name):
 
     'db_path' -- The path to the test database.
 
-    'class_name' -- The class name of the test database implementation.
+    'class_name' -- The class name of the test database implementation."""
 
-    raises -- 'ValueError' if 'db_path' already exists."""
-    
     # Make sure the path doesn't already exist.
     if os.path.exists(db_path):
         raise RuntimeError, qm.error("db path exists", path=db_path)
@@ -502,73 +501,6 @@ def split_results_by_expected_outcome(results, expected_outcomes):
             unexpected.append(result)
     return expected, unexpected
 
-
-def run_test(test, context):
-    """Run a test.
-
-    'test' -- The 'Test' to run.
-
-    'context' -- The 'Context' object with which to run it.
-
-    returns -- A 'Result' object for the test."""
-
-    result = Result(Result.TEST, test.GetId(), context)
-
-    try:
-        # Run the test.
-        test.Run(context, result)
-    except KeyboardInterrupt:
-        # Let this propagate out, so the user can kill the test run.
-        raise
-    except:
-        # The test raised an exception.
-        result.NoteException()
-
-    return result
-
-
-def set_up_resource(resource, context):
-    """Set up a resource.
-
-    'resource' -- The 'Resource' to set up.
-
-    'context' -- The 'Context' object with which to run it.
-
-    returns -- A complete 'Result' object for the setup function."""
-
-    result = Result(Result.RESOURCE, resource.GetId(), context,
-                    Result.PASS, { Result.ACTION : "setup" } )
-
-    # Set up the resoure.
-    try:
-        resource.SetUp(context, result)
-    except:
-        # The resource raised an exception.
-        result.NoteException(cause="Uncaught exception.")
-
-    return result
-
-
-def clean_up_resource(resource, context):
-    """Clean up a resource.
-
-    'resource' -- The 'Resource' to clean up.
-
-    'context' -- The 'Context' object with which to run it.
-
-    returns -- A complete 'Result' object for the cleanup function."""
-
-    result = Result(Result.RESOURCE, resource.GetId(), context,
-                    Result.PASS, { Result.ACTION : "cleanup" } )
-    
-    # Clean up the resource.
-    try:
-        val = resource.CleanUp(context, result)
-    except:
-        # The resource raised an exception.
-        result.NoteException(cause="Uncaught exception.")
-
-    return result
 
 ########################################################################
 # variables
