@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   idb-impl.xml
+  Author: Alex Samuel
+  Date:   2000-11-28
+
+  Contents:
+    Chapter `Issue Database Implementations' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter>
+ <title>Issue Database Implementations</title>
+
+ <para>In this chapter, we present two implementations of the
+ &qmtrack; <link linkend="chap-idb-api">issue database</link>.
+  <orderedlist>
+   <listitem>
+    <para>The <link linkend="sec-xml-idb"
+    endterm="sec-xml-idb-title"></link> section describes an &idb;
+    which uses &xml; as its storage format.  Each issue is stored in
+    an &xml;-formatted text file.</para>
+
+    <para>This implementation provides the following benefits:
+     <itemizedlist>
+      <listitem>
+       <para>Ease of implementation.  &xml; input and output code
+       developed to implement the &xml; export functionality of
+       &qmtrack; can be used immediately to read and write the
+       issue.</para>
+      </listitem>
+
+      <listitem>
+       <para>Editability.  Expert users can modify the &idb; directly
+       by editing the &xml; issue files.  While we will in the long
+       run discourage users from modifying the &idb; in this way, the
+       ability to do so will be especially useful to &qmtrack;
+       developers before the system is complete.</para>
+      </listitem>
+
+      <listitem>
+       <para>Transparency.  It is conceivable that other tools will
+       take advantage of a well-documented &xml; external format to
+       manipulate the &idb; directly.</para>
+      </listitem>
+
+      <listitem>
+       <para>No additional software requirements.  By including &xml;
+       parsing and generating code directly in the &qmtrack;
+       distribution, we will enable users to use this &idb;
+       implementation "out of the box", without installing or
+       configuring additional software.</para>
+      </listitem>
+     </itemizedlist>
+    </para>
+   </listitem>
+
+   <listitem>
+    <para>The <link linkend="sec-sql-idb"
+    endterm="sec-sql-idb-title"></link> section describes an &idb;
+    which uses an &sql; &rdbms; as its storage mechanism.  Each issue
+    is represented by a rows in one or more tables.  The &sql;
+    implementation relies on ordinary disk files as well for auxiliary
+    storage, for such data as file attachment contents.</para>
+
+    <para>The &sql; implementation provides the following advantages:
+     <itemizedlist>
+      <listitem>
+       <para>Speed.  &rdbms;s are optimized for high-speed storage and
+       retrieval of data.  A good &idb; implementation will take
+       advantage of &rdbms; features such as indexing to speed up
+       common operations.</para>
+      </listitem>
+
+      <listitem>
+       <para>Scalability.  The efficiency and compactness of an
+       &rdbms;'s data representation makes it suitable for very large
+       deployments.</para>
+      </listitem>
+
+      <listitem>
+       <para>Integrity.  Most &rdbms; systems provide mechanisms to
+       preserve the database integrity in such eventualities as sudden
+       system failure.</para>
+      </listitem>
+     </itemizedlist>
+    </para>
+
+   </listitem>
+  </orderedlist>
+ </para>
+
+ <section id="sec-xml-idb">
+  <title id="sec-xml-idb-title">&xml; issue database</title>
+
+  <para>The &xml; &idb; implementation uses the canonical &xml;
+  representation for issues described in section <link
+  linkend="chap-xml-repr"
+  endterm="chap-xml-repr-title"></link>.</para>
+
+  <section>
+   <title>Issue files</title>
+
+   <para>Each issue is stored in a single &xml; file containing an
+   <sgmltag>&lt;issue&gt;</sgmltag> element.  All revisions of the
+   issue are included in this file.  The current revision is stored in
+   full issue record format, with all fields included.  Previous
+   revisions are stored as <link
+   linkend="sec-diff-issue-records">difference issue
+   records</link>.</para>
+
+   <para>ARRANGEMENT IN FILESYSTEM ***********************</para>
+
+  </section>
+
+ </section>
+
+ <section id="sec-sql-idb">
+  <title id="sec-sql-idb-title">&sql; issue database</title>
+ 
+  <para></para>
+
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

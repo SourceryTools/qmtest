@@ -290,32 +290,32 @@
       </thead>
       <tbody>
        <row>
-        <entry>qm_id</entry>
+        <entry>iid</entry>
         <entry><constant>iid</constant></entry>
         <entry>issue id</entry>
        </row>
        <row>
-        <entry>qm_revision</entry>
+        <entry>revision</entry>
         <entry><constant>integer</constant></entry>
         <entry>revision number</entry>
        </row>
        <row>
-        <entry>qm_time</entry>
+        <entry>time</entry>
         <entry><constant>date</constant></entry> 
         <entry>the date and time at which this issue revision was
         entered into the &idb;</entry>
        </row>
        <row>
-        <entry>qm_summary</entry>
+        <entry>summary</entry>
         <entry><constant>string</constant></entry>
         <entry>short summary</entry>
        </row>
        <row>
-        <entry>qm_categories</entry>
+        <entry>categories</entry>
         <entry><constant>enumeration set</constant></entry>
         <entry>the categories to which the issue belongs</entry> </row>
        <row>
-        <entry>qm_parents</entry>
+        <entry>parents</entry>
         <entry><constant>iid set</constant></entry>
         <entry>the single iid of the parent issue if this issue was
         created in a split operation; the iid of all parent issues if
@@ -323,7 +323,7 @@
         otherwise</entry>
        </row>
        <row>
-        <entry>qm_children</entry>
+        <entry>children</entry>
         <entry><constant>iid set</constant></entry>
         <entry>the single iid of the child issue if this issue was
         joined with other issues; the iid of all children if this issue
@@ -350,7 +350,7 @@
       </thead>
       <tbody>
        <row>
-        <entry>qm_attachments</entry>
+        <entry>attachments</entry>
         <entry>special</entry>
         <entry>a collection of zero or more file attachments containing
         arbitrary data</entry>
@@ -394,14 +394,121 @@
  </section>
 
  <section>
-  <title>Issue Queries</title>
+  <title>Queries</title>
 
-  <para>Queries are made using an exemplar pattern.  A query is
-  specified by providing an issue record in which all fields are empty
-  except those for which a match is desired.  The latter fields may
-  contain a field value appropriate for that field, if an exact match
-  is desired, or a filter function which is used to ascertain
-  matches.</para>
+  <para>A <firstterm>query</firstterm> is used to select a subset of
+  issues of an issue class.  A query is expressed as a Python boolean
+  expression, using a restricted subset of Python syntax.  An &idb;
+  implementation processes the query as if the expression is evaluated
+  on each issue; if the expression evaluates to true, the the query is
+  said to <firstterm>match</firstterm> and the issue is included in
+  the query's result set.</para>
+
+  <para>The following Python constructs are allowed in queries:
+   <itemizedlist>
+    <listitem>
+     <para>Integer literals.</para>
+    </listitem>
+
+    <listitem>
+     <para>String literals, using the standard Python single- or
+     double-quote syntax and optonally the <literal>r</literal>
+     prefix.</para>
+    </listitem>
+
+    <listitem>
+     <para>Logical operators: <function>and</function>,
+     <function>or</function>, and <function>not</function>.</para>
+    </listitem>
+
+    <listitem>
+     <para>Parentheses for grouping boolean expressions.</para>
+    </listitem>
+
+    <listitem>
+     <para>Equality and inequality operators <function>==</function>
+     and <function>!=</function>, taking string, integer, or
+     enumerated operands.</para>
+    </listitem>
+
+    <listitem>
+     <para>Comparison operarators <function>&lt;</function>,
+     <function>&lt;=</function>, <function>&gt;=</function>, and
+     <function>&gt;</function>, taking integer, date, or enumeral
+     operands.</para>
+    </listitem>
+
+    <listitem>
+     <para>The <literal>in</literal> operator, taking a set right-hand
+     operand.</para>
+    </listitem>
+   </itemizedlist>
+  In addition, the following syntax elements are allowed:
+   <itemizedlist>
+    <listitem>
+     <para>The name of a field in the issue class.  The name is
+     replaced by the field's value.</para>
+    </listitem>
+
+    <listitem>
+     <para>An enumeral name.  If collisions occur between enumeral
+     names in multiple enumerations or between an enumeral name and a
+     field name, the behavior is undefined.</para>
+    </listitem>
+
+    <listitem>
+     <para>The <function>~</function> operator, taking string
+     operands.  This operator denotes a regular expression match, ala
+     Perl.</para>
+    </listitem>
+
+    <listitem>
+     <para>The <function>in</function> operator, taking string
+     operands.  The operation evaluates to true if the left-hand
+     keyword occurs in the right-hand string.</para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+  <para>The result of a query incorporating valid Python constructs
+  not included in the subset presented above are &idb;
+  implementation-defined.  An implementation may, but is not required
+  to, implement a larger subset of valid Python boolean
+  expressions.</para>
+
+  <section>
+   <title>Query examples</title>
+
+   <para>Below are some examples of &qmtrack; issue queries
+   incorporating operations on mandatory and sstandard fields.</para>
+
+   <segmentedlist>
+    <segtitle>Query</segtitle>
+    <segtitle>Interpretation</segtitle>
+    <seglistitem>
+     <seg>
+      <userinput>"front-end" in categories and severity ==
+      critical</userinput>
+     </seg>
+     <seg>
+      Select all issues in the "front-end" category and at critical
+      severity.
+     </seg>
+    </seglistitem>
+
+    <seglistitem>
+     <seg>
+      <userinput>not "C++" in summary and time &gt; "2000 Oct
+      31"</userinput>
+     </seg>
+     <seg>
+      Select all issues not containing the text "C++" in the summary
+      and last revised after October 31.
+     </seg>
+    </seglistitem>
+   </segmentedlist>
+
+  </section>
 
  </section>
 

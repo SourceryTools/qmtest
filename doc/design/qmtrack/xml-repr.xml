@@ -17,8 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter>
- <title>&xml; Representation</title>
+<chapter id="chap-xml-repr">
+ <title id="chap-xml-repr-title">&xml; Representation</title>
 
  <para>Issues may be represented in &xml;, both in the inner workings
  of an &idb; implementation, and in user-visible output.  The latter
@@ -73,8 +73,9 @@
   stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
   elements will be included with different
   <property>revision-numer</property> values.  The &idb;
-  implementation may choose to store differences between revisions
-  instead of the entire field data for each revision, i.e. for the
+  implementation may choose to store <link
+  linkend="sec-diff-issue-records">difference issue records</link>
+  instead of the entire field data for past revision, i.e. for the
   next-most-recent and previous revisions, only fields that were
   changes are included in the <sgmltag>&lt;field-data&gt;</sgmltag>
   element.</para>

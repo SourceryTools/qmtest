@@ -26,6 +26,8 @@
   <!ENTITY idb "<acronym>IDB</acronym>">
   <!ENTITY iid "<acronym>IID</acronym>">
   <!ENTITY qmtrack "QMTrack">
+  <!ENTITY rdbms "<acronym>RDBMS</acronym>">
+  <!ENTITY sql "<acronym>SQL</acronym>">
   <!ENTITY xml "<acronym>XML</acronym>">
 
   <!-- Each chapter is contained in a separate file, and included by
@@ -37,6 +39,7 @@
   <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
   <!ENTITY user-api.xml SYSTEM "user-api.xml">
+  <!ENTITY idb-impl.xml SYSTEM "idb-impl.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
 ]>
 <book>
@@ -65,6 +68,7 @@
  &idb-api.xml;
  &triggers.xml;
  &user-api.xml;
+ &idb-impl.xml;
  &user-interface.xml;
 
 </book>

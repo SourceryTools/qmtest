@@ -17,7 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>Issue Database API</title>
+<chapter id="chap-idb-api">
+ <title id="chap-idb-api-title">Issue Database API</title>
 
  <section>
   <title>Issue Classes</title>
@@ -170,10 +171,10 @@ class IssueFieldText(IssueField):
     <para>An instance of <classname>IssueFieldSet</classname>
     represents a set field.  A set field can be thought of as a
     collection of zero or more instances of another field type.  All
-    contents of a set must be of the same type.  A values of this
-    field type is represented in memory as a Python sequence, with the
-    type of sequence elements given by the contained field
-    type.</para>
+    contents of a set must be of the same type.  A set field may not
+    contain sets.  A values of this field type is represented in
+    memory as a Python sequence, with the type of sequence elements
+    given by the contained field type.</para>
 
     <programlisting>
 <![CDATA[
@@ -184,7 +185,7 @@ class IssueFieldSet(IssueField):
     following attributes:
 
     '"contents"' -- An 'IssueField' describing the elements of the
-    set."""
+    set.  It may not be an 'IssueFieldSet'."""
 
     def __init__(self, contained_field):
         """Create a set field.
@@ -414,6 +415,57 @@ class IssueRecord:
 ]]>
   </programlisting>
 
+  <section id="sec-diff-issue-records">
+   <title id="sec-diff-issue-records-title">Difference issue records</title>
+
+   <para>An <classname>IssueRecord</classname> instance may also be
+   used to represent the <emphasis>difference</emphasis> between two
+   revisions of the same issue.  Only fields that differ between the
+   two issue revisions are included in the issue record; other fields
+   are omitted.</para>
+
+   <para>The revision number returned by
+   <function>GetRevisionNumber</function> for such an object is a pair
+   of numbers, <varname>(from_rev, to_rev)</varname>.  To obtain the
+   issue record corresponding to revision number
+   <varname>to_rev</varname>, retrieve the issue record
+   corresponding to revision number <varname>from_rev</varname>, and
+   replace any fields present in the difference issue record.</para>
+
+   <para>Functions are provided to obtain a difference given two issue
+   records, and to apply a difference to an issue record to obtain the
+   revised issue record:
+    <programlisting><![CDATA[
+def issue_record_diff(from_record, to_record):
+    """Calculate the difference between two issue records.
+
+    'from_record' -- An 'IssueRecord' instance.
+
+    'to_record' -- An 'IssueRecord' instance corresponding to a
+    revision of the same issue given by 'from_record'.
+
+    returns -- A difference issue record between 'from_record' and
+    'to_record'."""
+
+
+def issue_record_patch(from_record, diff_record):
+    """Apply a difference  to a full issue record.
+
+    'from_record' -- An 'IssueRecord' instance.
+
+    'diff_record' -- A difference 'IssueRecord' instance.
+
+    returns -- An issue record containing 'from_record' with all
+    fields present in 'diff_record' replaced.
+
+    invariant -- The result of 'issue_record_patch(r1,
+    issue_record_diff(r1, r2))' is identical to 'r2'."""
+]]>
+    </programlisting>
+   </para>
+
+  </section>
+
  </section>
 
  <section id="sec-file-attachments">
@@ -456,167 +508,10 @@ class Attachment:
 
  </section>
 
- <section id="sec-query-implementation">
-  <title id="sec-query-implementation-title">Query
-  implementation</title>
+ <section id="sec-queries">
+  <title>Queries</title>
 
-  <para>A query is specified by providing an exemplar
-  <classname>IssueRecord</classname> instance.  The
-  <classname>IssueQuery</classname> subclass can be used to construct
-  such an instance.</para>
-
-  <para>Each field in the <classname>IssueRecord</classname> used to
-  specify the query may be in one of three states:
-   <orderedlist>
-    <listitem>
-     <para>A field value is not specified.  This indicates that any
-     field value for this field should match.</para>
-    </listitem>
-
-    <listitem>
-     <para>The field value is an instance of
-     <classname>FieldQuery</classname> (<link
-     linkend="sec-fieldquery">see below</link>).</para>
-    </listitem>
-
-    <listitem>
-     <para>The field contains some other value.  An exact match to
-     this field value is required.</para>
-    </listitem>
-   </orderedlist>
-  All fields for which either a <classname>FieldQuery</classname> or
-  exact-match value is provided must match for an issue to match the
-  query.</para>
-
-  <programlisting>
-<![CDATA[
-class IssueQuery(IssueRecord):
-
-    def __init__(self, class_name):
-        """Create a new query object.
-
-        The query object can be used to match instances of
-        'class_name'.  Initially, the query has no restrictions,
-        i.e. every issue of 'class_name' will match."""
-
-
-    def MatchField(self, field_name, value):
-        """Add a match constraint to the query.
-
-        Restricts the query to issues matching 'value' in the field
-        'field_name'.  
-
-        * If 'value' is an instance of 'FieldQuery' or a subclass,
-          that object's 'Query' method is used to determine a match.
-
-        * If 'value' is not a function object, the match is for exact
-          Python equality of the value of field 'field_name' to
-          'value'. """
-]]>
-  </programlisting>
-
-  <section id="sec-fieldquery">
-   <title><classname>FieldQuery</classname></title>
-
-   <para>A <classname>FieldQuery</classname> object specifies a query
-   criterion other than an exact match.  A field query has one method,
-   <function>Query</function>, which takes a field value as its
-   argument and returns a boolean match result.  If the result is
-   true, the field is considered to match.</para>
-
-   <programlisting>
-<![CDATA[
-class FieldQuery:
-    """A 'FieldQuery' object may be supplied as a field value in an
-    'IssueRecord' that is used to specify a query.  The 'FieldQuery'
-    object signifies a query type other than an exact match on that
-    field.""" 
-
-    def Query(self, value):
-        """Return true if 'value' matches this query."""
-]]>
-   </programlisting>
-
-   <para>In many cases, programs and extensions will create custom
-   <classname>FieldQuery</classname> subclasses to express complicated
-   queries.  To process these queries, an &idb; implementation must
-   retrieve all issues (or all issues matching other field queries)
-   and filter this set by applying the <function>Query</function>
-   method to each to determine matches.</para>
-
-   <para>As an optimization, a collection of standard
-   <classname>FieldQuery</classname> subclasses are provided with
-   standardized semantics.  An &idb; implementation may be able to
-   improve query performance by providing special-case implementations
-   of some of these field query types, using features of the
-   underlying storage mechanism.</para>
-
-   <para>The following three <classname>FieldQuery</classname>
-   subclasses provide common string-matching operations.  Other query
-   types will be added as we gain experience with the system and
-   gather data about bottlenecks in query performance.</para>
-
-   <programlisting>
-<![CDATA[
-class FieldQueryRegex(FieldQuery):
-    """This query operates on text fields by matching a regular
-    expression.  The query matches if the regular expression matches
-    the field value."""
-
-    def __init__(self, regex):
-        """Create a new regular expression query with 'regex'."""
-
-
-class FieldQueryKeywordAll(FieldQuery):
-    """This query operates on text fields by searching for keywords.
-    All keywords must be found in the field value for the query to
-    match."""
-
-    def __init__(self, keywords):
-        """Create a keyword query for all of a set of keywords.
-
-        'keywords' -- A sequence of strings containing the
-        keywords."""
-
-
-class FieldQueryKeywordAny(FieldQuery):
-    """This query operates on text fields by searching for keywords.
-    If any keywords are found in the field value, the query
-    matches."""
-
-    def __init__(self, keywords):
-          """Create a keyword query for any of a set of keywords.
-
-        'keywords' -- A sequence of strings containing the
-        keywords.""" 
-]]>
-   </programlisting>
-
-   <para>An RDBMS &idb; implementation, for example, might use the
-   <acronym>SQL</acronym> <function>LIKE</function> statement to
-   implement the keyword query operations.</para>
-
-   <para>For integer and enumerated fields, a standard query type is
-   provided for numerical comparison.</para>
-
-   <programlisting>
-<![CDATA[
-class FieldQueryNumericalComparison(FieldQuery):
-    """This query operates on integer and enumeration fields by
-    performing a numerical comparison."""
-
-    def __init__(self, operation, value):
-        """Creates a numerical comparison object.
-
-        'operation' -- One of '<', '<=', '>', or '>=', specifying the
-        operation to use.
-
-        'value' -- The value for the right-hand side of the comparison
-        operation.  The field value is on the left-hand side."""
-]]>
-   </programlisting>
-
-  </section>
+  <para></para>
 
  </section>
 
