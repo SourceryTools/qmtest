@@ -7,7 +7,7 @@
 # Contents:
 #   Test classes involving file contents.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -180,7 +180,7 @@ class FileContentsTest(Test):
     pattern matches replaced with the corresponding substitutions,
     before the comparison is performed."""
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="path_property",
             title="Path Property",
@@ -253,7 +253,7 @@ class FileContentsTest(Test):
         returns -- The string 'text', processed with the substitutions
         configured for this test instance."""
 
-        substitutions_field = self.fields[2].GetContainedField()
+        substitutions_field = self.arguments[2].GetContainedField()
         for substitution in self.substitutions:
             pattern, replacement = substitutions_field.SplitValue(substitution)
             text = re.sub(pattern, replacement, text)

@@ -1,3 +1,8 @@
+2002-05-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/file.py (FileContentsTest.fields): Rename to ...
+	(FileContentsTest.arguments): ... this.
+
 2002-04-30  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
 
 	* qm/cmdline.py (CommandParser.ParseCommandLine): Avoid joining
