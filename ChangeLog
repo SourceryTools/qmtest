@@ -1,3 +1,7 @@
+2003-09-07  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention correction of critical resource defect.
+
 2003-09-05  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/qm.sh (PYTHONPATH): Break "export PTYHONPATH=..." into two

@@ -34,13 +34,16 @@ The exit code returned by QMTest is now documented, and now
 distinguishes between a failure of QMTest to carry out the action
 requested by the user and the failure of a test run by QMTest.
 
-A defect that could cause a multi-threaded or multi-process tests run
-to hang if a resource could not be set up has been corrected.
-
 Comparisions between the expected standard output and actual standard
 output done by test classes in the "command" module now ignore line
 endings.  This change facilitates moving tests between operating
 systems.
+
+A defect that could cause a multi-threaded or multi-process tests run
+to hang if a resource could not be set up has been corrected.
+
+A defect that resulted in resources being created only per run of the
+GUI, rather than once per test run, has been corrected.
 
 QM 2.0.4 (Not Yet Released)
 ===========================
