@@ -1,5 +1,14 @@
 2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
 
+	* doc/design/qmconfig/overview.xml: Remove /> sequences, so as to
+	not confuse psgml.
+	* doc/design/qmconfig/design-lm.xml: Likewise.
+	* doc/design/qmconfig/requirements.xml: Likewise.
+	* doc/design/qmconfig/design.xml: Likewise.
+	* doc/design/qmconfig/design-td.xml: Likewise.
+
+2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
+
 	* doc/design/qmconfig/design.xml: Add/fix id's.
 	* doc/design/qmconfig/intro.xml: Likewise.
 	* doc/design/qmconfig/overview.xml: Likewise.

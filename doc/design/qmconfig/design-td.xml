@@ -30,7 +30,11 @@
  describing the symbol, what requires the symbol's value, and what
  probe provides a symbol (for symbols derived from probe results).
  Dynamic metadata indicates from when a symbol's value came &mdash;
- from the &D-tailor;, or from a probe.</para>
+ from the &D-tailor;, or from a probe.  Information about the needed
+ probes is stored in the &M-TD; itself.  Additionally, if we have
+ files that collect symbols, e.g, header files similar to
+ &Q-autoconf;'s <filename class="headerfile">config.h</filename>, we
+ need to store information about them, too.</para>
 
  <para>In normal operation, &qmconfig; creates a &M-TD;, sans values,
  by scanning source files and the &M-PDD; for <firstterm
