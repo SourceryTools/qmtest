@@ -1,3 +1,8 @@
+2003-09-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable._MakeCloseOnExec): Deal with
+	missing fcntl.FD_CLOEXEC.
+
 2003-09-09  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* setup.py: Factor out commands into ...

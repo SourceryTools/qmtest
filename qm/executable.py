@@ -319,8 +319,15 @@ class Executable(object):
 
         assert sys.platform != "win32"
 
-        old_flags = fcntl.fcntl(fd, fcntl.F_GETFD)
-        fcntl.fcntl(fd, fcntl.F_SETFD, old_flags | fcntl.FD_CLOEXEC)
+        flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        try:
+            flags |= fcntl.FD_CLOEXEC
+        except AttributeError:
+            # The Python 2.2 RPM shipped with Red Hat Linux 7.3 does
+            # not define FD_CLOEXEC.  Fortunately, FD_CLOEXEC is 1 on
+            # every UNIX system.
+            flags |= 1
+        fcntl.fcntl(fd, fcntl.F_SETFD, flags)
 
 
     def __CreateCommandLine(self, arguments):
