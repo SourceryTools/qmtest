@@ -266,7 +266,7 @@ class SqlIdb(idb.IdbBase):
                 issue = self.__BuildIssueFromRow(icl, row)
                 # Invoke get triggers on it.
                 try:
-                    self._IdbBase__InvokeGetTriggers(issue)
+                    self._InvokeGetTriggers(issue)
                 except idb.TriggerRejectError:
                     pass
                 else:
@@ -346,7 +346,7 @@ class SqlIdb(idb.IdbBase):
         issue = self.__BuildIssueFromRow(found_in_issue_class, result)
         # Invoke get triggers.
         try:
-            self._IdbBase__InvokeGetTriggers(issue)
+            self._InvokeGetTriggers(issue)
         except idb.TriggerReject:
             # The trigger rejected the retrieval, so behave as if the
             # issue was nout found.
@@ -404,7 +404,7 @@ class SqlIdb(idb.IdbBase):
             issue = self.__BuildIssueFromRow(found_in_issue_class, row)
             # Invoke get triggers.
             try:
-                self._IdbBase__InvokeGetTriggers(issue)
+                self._InvokeGetTriggers(issue)
             except idb.TriggerRejectError:
                 pass
             else:
@@ -536,7 +536,7 @@ class SqlIdb(idb.IdbBase):
         value if it was vetoed by a trigger."""
 
         # Invoke preupdate triggers.
-        self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
+        self._InvokePreupdateTriggers(issue, previous_issue)
 
         # The name of the table containing this class.
         table_name = self.__GetTableName(issue_class)
@@ -563,7 +563,7 @@ class SqlIdb(idb.IdbBase):
         del cursor
 
         # Invoke postupdate triggers.
-        self._IdbBase__InvokePostupdateTriggers(issue, previous_issue)
+        self._InvokePostupdateTriggers(issue, previous_issue)
 
         return 1
 

@@ -390,9 +390,10 @@ def setup_idb_for_internal_use():
     idb = get_idb()
 
     categories = {
-        "common"    : 0,
-        "qmtest"    : 1,
-        "qmtrack"   : 2,
+        "common"        : 0,
+        "qmtest"        : 1,
+        "qmtrack"       : 2,
+        "documentation" : 3,
         }
     priority = {
         "high"      : 3,
@@ -469,6 +470,7 @@ def setup_idb_for_internal_use():
     idb.AddIssueClass(icl)
     get_configuration()["default_class"] = "bug"
 
+
     icl = qm.track.IssueClass(name="enhancement",
                               title="Enhancement Request",
                               categories=categories)
@@ -506,6 +508,18 @@ def setup_idb_for_internal_use():
         condition="1",
         uid_field_name="subscribers")
     trigger.SetAutomaticSubscription("user != 'guest'")
+    icl.RegisterTrigger(trigger)
+
+    field = qm.track.issue_class.DiscussionField(
+        name="follow_up",
+        title="Follow-up",
+        description="Follow-up discussion of this issue.",
+        structured="true")
+    icl.AddField(field)
+
+    trigger = qm.track.triggers.discussion.DiscussionTrigger(
+        name="follow_up_discussion",
+        field_name="follow_up")
     icl.RegisterTrigger(trigger)
 
     idb.AddIssueClass(icl)

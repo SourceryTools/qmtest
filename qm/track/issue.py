@@ -41,7 +41,6 @@ import qm.attachment
 import qm.xmlutil
 import string
 import sys
-import xml.dom.ext.reader.Sax
 
 ########################################################################
 # classes
@@ -122,6 +121,85 @@ class Attachment(qm.attachment.Attachment):
 
 
 
+class IssueDifference:
+    """A difference between two issues.
+
+    An 'IssueDifference' stores only fields that differ between two
+    issues.  The issues must be in the same class.
+
+    Use 'difference_issues' to construct an 'IssueDifference' instance
+    automatically from two issues."""
+
+    def __init__(self, issue_class, **field_values):
+        """Construct a new 'IssueDifference' object.
+
+        'issue_class' -- The issue class.
+
+        'field_values' -- Field name and value associations for fields
+        that differ between the two issues."""
+
+        self.__issue_class = issue_class
+        self.__fields = field_values.copy()
+
+
+    def GetClass(self):
+        """Return the issue class of this issue difference."""
+
+        return self.__issue_class
+
+
+    def HasField(self, name):
+        """Return true if this difference includes the field named 'name'."""
+
+        return self.__fields.has_key(name)
+
+
+    def GetField(self, name):
+        """Return the value of the field named 'name'.
+
+        raises -- 'KeyError' if this difference doesn't include that
+        field.""" 
+
+        return self.__fields[name]
+
+
+    def SetField(self, name, value):
+        """Set the value for field 'name' to 'value'.""""
+
+        self.__fields[name] = value
+
+        
+    def GetFieldNames(self):
+        """Return a list of field names in this issue difference."""
+
+        return self.__fields.keys()
+
+
+    def MakeDomElement(self, document):
+        """Generate a DOM element node for this issue.
+
+        'document' -- The containing DOM document node."""
+
+        # The node is an "issue-difference" element.
+        element = document.createElement("issue-difference")
+
+        # Add an element for each field.
+        for field_name, value in self.__fields.items():
+            field = self.__issue_class.GetField(field_name)
+            # The field value goes in a field element.
+            field_element = document.createElement("field")
+            field_element.setAttribute("name", field_name)
+            # Generate the field value.
+            value_element = field.MakeDomNodeForValue(value, document)
+            # Put the field value in the field element.
+            field_element.appendChild(value_element)
+            # Add the field element to the issue element.
+            element.appendChild(field_element)
+
+        return element
+
+
+
 class Issue:
     """Generic issue implementation."""
 
@@ -152,7 +230,7 @@ class Issue:
                % (self.GetClass().GetName(), self.GetId(), self.GetRevision())
 
 
-    def Copy(self):
+    def copy(self):
         """Return a duplicate of this issue."""
 
         # Construct a new 'Issue' instance with the same class and the
@@ -184,7 +262,7 @@ class Issue:
     def SetField(self, name, value):
         """Set the value of the field 'name' to 'value'."""
 
-        field = self.GetClass().GetField(name)
+        assert self.GetClass().GetField(name) is not None
         self.__fields[name] = value
 
 
@@ -284,6 +362,7 @@ class Issue:
         # The node is an issue element.
         element = document.createElement("issue")
         element.setAttribute("id", self.GetId())
+
         # Add a node containing the issue class name.
         class_element = qm.xmlutil.create_dom_text_element(
             document, "class", issue_class.GetName())
@@ -378,31 +457,51 @@ def get_differing_fields(iss1, iss2):
     return differing_fields
 
 
-def load_issues_from_xml_file(file_name):
-    """Load issues in XML file 'file_name'.
+def difference_issues(iss1, iss2):
+    """Return an issue difference between issues 'iss1' and 'iss2'.
 
-    returns -- A sequence of 'Issue' objects."""
-    
-    # Create a validating XML parser.
-    reader = xml.dom.ext.reader.Sax.Reader(validate=1)
-    # Open the input file.
-    issue_file = open(file_name, "r")
-    try:
-        # Read and parse input.
-        issues_document = reader.fromStream(issue_file)
-    except xml.sax._exceptions.SAXParseException, exception:
-        raise IssueFileError, qm.error("xml parse error",
-                                       line=exception.getLineNumber(),
-                                       character=exception.getColumnNumber(),
-                                       file_name=file_name,
-                                       message=exception._msg)
-    issue_file.close()
-    issues_element = issues_document.documentElement
-    # Convert DOM nodes to 'Issue' instances.
-    return __issues_from_dom(issues_element)
+    'iss1', 'iss2' -- Two 'Issue' instances in the same issue class.
+
+    returns -- An 'IssueDifference' instance containing fields of 'iss2'
+    that differ from 'iss1'."""
+
+    # Make sure both are in the same class.
+    issue_class = iss1.GetClass()
+    assert issue_class == iss2.GetClass()
+
+    # Construct the 'IssueDifference' object.
+    difference = IssueDifference(issue_class)
+    for field in issue_class.GetFields():
+        field_name = field.GetName()
+        value1 = iss1.GetField(field_name)
+        value2 = iss2.GetField(field_name)
+        if not field.ValuesAreEqual(value1, value2):
+            difference.SetField(field_name, value2)
+    return difference
 
 
-def __issues_from_dom(issues_node):
+def patch_issue(issue, difference):
+    """Inverse of 'difference_issues'.
+
+    'issue' -- An 'Issue' instance.
+
+    'difference' -- An 'IssueDifference' instance.  It must have the
+    same issue class as 'issue'.
+
+    returns -- A new issue constructed from 'issue' with the fields in
+    'difference' applied."""
+
+    # Make sure both are in the same class.
+    assert issue.GetClass() == difference.GetClass()
+    # Start with a copy of 'issue'.
+    result = issue.copy()
+    # Patch in all differing field values.
+    for field_name in difference.GetFieldNames():
+        result.SetField(field_name, difference.GetField(field_name))
+    return result
+
+
+def get_issues_from_dom_node(issues_node):
     """Convert a DOM element to issues.
 
     'issues_node' -- A DOM issues element node.
@@ -414,12 +513,53 @@ def __issues_from_dom(issues_node):
     # Extract one result for each result element.
     issues = []
     for issue_node in issues_node.getElementsByTagName("issue"):
-        issue_ = __issue_from_dom(issue_node)
+        issue_ = get_issue_from_dom_node(issue_node)
         issues.append(issue_)
     return issues
     
 
-def __issue_from_dom(issue_node):
+def _get_field_values_from_dom_node(node, issue_class):
+    """Extract field values from a DOM node.
+
+    Extracts field values from child elements named "field".
+
+    'node' -- A DOM node.
+
+    'issue_class' -- The issue class containing the fields to extract.
+
+    returns -- A map from field names to corresponding values.  The
+    values are validated in the corresponding field."""
+    
+    field_values = {}
+    for field_node in node.getElementsByTagName("field"):
+        # The field name is stored in an attribute.
+        field_name = field_node.getAttribute("name")
+        try:
+            # Look up the corresponding field.
+            field = issue_class.GetField(field_name)
+        except KeyError:
+            # There's no field by that name in the class.
+            raise IssueFileError, \
+                  qm.error("xml file unknown field",
+                           field_name=field_name,
+                           class_name=issue_class.GetName())
+
+        # There should be only one node in the field element, namely the
+        # value element.
+        assert len(field_node.childNodes) == 1
+        value_node = field_node.childNodes[0]
+        # The field can convert the DOM node to a value.  Let any
+        # exceptions from this method percolate up.
+        value = field.GetValueFromDomNode(value_node)
+        # Validate the value.  Let exceptions percolate.
+        value = field.Validate(value)
+        # Store the field value.
+        field_values[field_name] = value
+
+    return field_values
+
+
+def get_issue_from_dom_node(issue_node):
     """Convert a DOM element to an issue.
 
     'issue_node' -- A DOM issue element node.
@@ -442,36 +582,81 @@ def __issue_from_dom(issue_node):
         raise IssueFileError, \
               qm.error("xml file unknown class", class_name=issue_class_name)
 
-    # Extract field values.  Each is in a field element.
-    field_values = {}
-    for field_node in issue_node.getElementsByTagName("field"):
-
-        # The field name is stored in an attribute.
-        field_name = field_node.getAttribute("name")
-        try:
-            # Look up the corresponding field.
-            field = issue_class.GetField(field_name)
-        except KeyError:
-            # There's no field by that name in the class.
-            raise IssueFileError, \
-                  qm.error("xml file unknown field",
-                           field_name=field_name,
-                           class_name=issue_class_name)
-
-        # There should be only one node in the field element, namely the
-        # value element.
-        assert len(field_node.childNodes) == 1
-        value_node = field_node.childNodes[0]
-        # The field can convert the DOM node to a value.  Let any
-        # exceptions from this method percolate up.
-        value = field.GetValueFromDomNode(value_node)
-        # Validate the value.  Let exceptions percolate.
-        value = field.Validate(value)
-        # Store the field value.
-        field_values[field_name] = value
+    # Extract field values.  Each is in a field element.]
+    field_values = _get_field_values_from_dom_node(issue_node, issue_class)
+    field_values["iid"] = iid
 
     # Construct an issue.
-    return apply(Issue, [ issue_class, iid ], field_values)
+    return apply(Issue, [issue_class], field_values)
+
+
+def get_issue_difference_from_dom_node(difference_node, issue_class):
+    """Convert a DOM element to an issue difference.
+
+    'difference_node' -- A DOM "issue-difference" element.
+
+    'issue_class' -- The issue class for the difference node.  This must
+    be provided, since the XML representation of an issue difference
+    does not include the issue class explicitly.
+
+    returns -- An 'IssueDifference' instance."""
+
+    assert difference_node.tagName == "issue-difference"
+    # Extract field values.  Each is in a field element.
+    field_values = _get_field_values_from_dom_node(difference_node,
+                                                   issue_class)
+    return apply(IssueDifference, [issue_class], field_values)
+
+
+def get_histories_from_dom_node(histories_node):
+    """Convert a DOM element to a sequence of issue histories.
+
+    'histories_node' -- A DOM issue histories element node.  The node
+    must be a "histories" element.
+
+    returns -- A sequence of issue histories.  Each element is a
+    sequence of consecutive revisions of a single issue."""
+
+    assert histories_node.tagName == "histories"
+    return map(get_history_from_dom_node,
+               histories_node.getElementsByTagName("history"))
+    
+
+def get_history_from_dom_node(history_node):
+    """Convert a DOM element to an issue history.
+
+    'history_node' -- A DOM issue history element node.  The node must
+    be a "history" element.
+
+    returns -- A sequence of consecutive revisions of the issue."""
+
+    assert history_node.tagName == "history"
+
+    issue_nodes = history_node.getElementsByTagName("issue")
+    assert len(issue_nodes) == 1
+    issue = get_issue_from_dom_node(issue_nodes[0])
+    issue.SetField("revision", 0)
+    revisions = [issue]
+    
+    issue_class = issue.GetClass()
+    for difference_node in \
+        history_node.getElementsByTagName("issue-difference"):
+        
+        difference = get_issue_difference_from_dom_node(
+            difference_node, issue_class)
+
+        if not difference.HasField("revision"):
+            raise IssueFileError, \
+                  qm.error("xml file no revision number")
+        revision_number = difference.GetField("revision")
+        if revision_number != len(revisions):
+            raise IssueFileError, \
+                  qm.error("xml file nonconsecutive revisions")
+        
+        revision = patch_issue(revisions[-1], difference)
+        revisions.append(revision)
+            
+    return revisions
 
 
 def issues_to_xml(issues, output):
@@ -496,6 +681,46 @@ def issues_to_xml(issues, output):
     # Generate output.
     qm.xmlutil.write_dom_document(document, output)
     
+
+def export_issues(issues, output):
+    """Export full issues, with revision history, as XML.
+
+    'issues' -- A sequence of issues.
+
+    'output' -- A file object to which to write the exported XML."""
+
+    idb = qm.track.get_idb()
+
+    # Create a DOM document.
+    document = qm.xmlutil.create_dom_document(
+        public_id="-//Software Carpentry//QMTrack Issue V0.1//EN",
+        dtd_file_name="issue.dtd",
+        document_element_tag="histories"
+        )
+    # Add an issue element for each issue.
+    for issue in issues:
+        # Create a 'history' element for this issue.
+        history_element = document.createElement("history")
+        # Get a list of all revisions of this issue.
+        revisions = idb.GetAllRevisions(issue.GetId(), issue.GetClass())
+
+        # Write the initial revision.
+        assert revisions[0].GetRevision() == 0
+        revision_element = revisions[0].MakeDomElement(document)
+        history_element.appendChild(revision_element)
+        
+        # Process subsequent revisions, only including differing
+        # fields. 
+        for revision_number in xrange(1, len(revisions)):
+            difference = difference_issues(revisions[revision_number - 1],
+                                           revisions[revision_number])
+            revision_element = difference.MakeDomElement(document)
+            history_element.appendChild(revision_element)
+
+        document.documentElement.appendChild(history_element)
+    # Generate output.
+    qm.xmlutil.write_dom_document(document, output)
+
 
 def eval_issue_expression(expression, issue, extra_locals={}):
     """Evaluate a user expression on an issue.

@@ -279,8 +279,6 @@ class Field:
     def SetDefaultValue(self, value):
         """Make 'value' the default value for this field."""
 
-        # Validate the default value.
-        value = self.Validate(value)
         self.default_value = value
 
 
@@ -1567,7 +1565,7 @@ class EnumerationField(IntegerField):
         try:
             return common.Enumeral(self.__enumeration, value)
         except ValueError:
-            values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
+            values = string.join(map(lambda (k, v): "%s (%d)" % (k, v),
                                      self.__enumeration.items()),
                                  ", ")
             raise ValueError, \

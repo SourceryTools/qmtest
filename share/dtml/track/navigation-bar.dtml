@@ -1,3 +1,19 @@
+<dtml-comment><!--
+
+  File:   navigation-bar.dtml
+  Author: Alex Samuel
+  Date:   2001-05-30
+
+  Contents:
+    Template for QMTrack navigation bar.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
 <table width="100%" 
        class="navbar"
        border="0"
@@ -12,18 +28,21 @@
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="request.copy('index').AsUrl()">">Main Page</a>
+      href="<dtml-var expr="web.WebRequest('index', base=request).AsUrl()">"
+   >Main Page</a>
   </td>
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="request.copy('query').AsUrl()">">Search</a>
+      href="<dtml-var expr="web.WebRequest('query', base=request).AsUrl()">"
+   >Search</a>
   </td>
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="request.copy('summary', 
-            last_query='1').AsUrl()">">Search Again</a>
+      href="<dtml-var expr="web.WebRequest('summary', last_query='1', 
+            base=request).AsUrl()">"
+   >Search Again</a>
   </td>   
 
   <td class="navbar" width="12%" align="center">
@@ -33,3 +52,10 @@
   </td>
  </tr>
 </table>
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

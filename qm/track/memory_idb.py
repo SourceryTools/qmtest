@@ -115,22 +115,26 @@ class MemoryIdb(qm.track.IdbBase):
         self.__Write()
 
 
-    def AddIssue(self, issue):
+    def AddIssue(self, issue, insert=0):
         """Add a new issue record to the database.
 
         'issue' -- The new issue.  The revision number is ignored and
         set to zero.
 
+        'insert' -- If true, insert the issue without invoking any
+        triggers or changing the issue.  The revision number on the
+        issue must be zero.
+
         precondition -- The issue class of 'issue' must occur in this
         IDB, and fields of 'issue' must match the class's.
 
-        returns -- A true value if the insert succeeded, or a false
-        value if it was vetoed by a trigger."""
+        raises -- 'idb.IssueExistsError' if there is already an issue in
+        the IDB with the same IID as 'issue'."""
 
         # Make sure the issue is OK.
         issue.AssertValid()
         # Copy the issue, since we'll be holding onto it.
-        issue = issue.Copy()
+        issue = issue.copy()
         # Make sure the issue is in a class known to this IDB.
         issue_class = issue.GetClass()
         issue_class_name = issue_class.GetName()
@@ -140,42 +144,76 @@ class MemoryIdb(qm.track.IdbBase):
         # Make sure the iid is unique.
         iid = issue.GetId()
         if self.__issues.has_key(iid):
-            raise ValueError, "iid is already used"
-        # Set the initial revision number to zero.
-        issue.SetField("revision", 0)
-        # Set the timestamp to now.
-        issue.StampTime()
+            raise idb.IssueExistsError, "iid is already used"
+
+        if insert:
+            assert issue.GetRevision() == 0
+        else:
+            # Set the initial revision number to zero.
+            issue.SetField("revision", 0)
+            # Set the timestamp to now.
+            issue.StampTime()
+
+        if not insert:
+            # Invoke preupdate triggers.
+            self._InvokePreupdateTriggers(issue, None)
+
         # Store the new issue.
-        return self.__InsertIssue(issue)
+        self.__issues[iid] = [issue]
+
+        if not insert:
+            # Invoke postupdate triggers.
+            self._InvokePostupdateTriggers(issue, None)
+
+        # Commit changes.
+        self.__Write()
 
 
-    def AddRevision(self, issue):
+    def AddRevision(self, issue, insert=0):
         """Add a revision of an existing issue to the database.
 
         'issue' -- A new revision of an existing issue.  The revision
         number is ignored and replaced with the next consecutive one
         for the issue.
 
-        returns -- A true value if the insert succeeded, or a false
-        value if it was vetoed by a trigger."""
+        'insert' -- If true, insert the revision without invoking any
+        triggers or changing the revision.  The revision number on the
+        issue must be the next revision number for the issue."""
 
         # Make sure the issue is OK.
         issue.AssertValid()
         # Copy the issue, since we'll be holding onto it.
-        issue = issue.Copy()
+        issue = issue.copy()
         # Retrieve the current list of revisions of the issue.
         iid = issue.GetId()
         revisions = self.__issues[iid]
+        prevision_revision = revisions[-1]
         # Make sure the new revision is in the same issue class.
         if issue.GetClass() != revisions[0].GetClass():
             raise ValueError, "revision in different issue class"
-        # Assign the next revision number.
-        next_revision = len(revisions)
-        issue.SetField("revision", next_revision)
-        # Set the timestamp to now.
-        issue.StampTime()
+
+        next_revision_number = len(revisions)
+        if insert:
+            assert issue.GetRevision() == next_revision_number
+        else:
+            # Assign the next revision number.
+            issue.SetField("revision", next_revision_number)
+            # Set the timestamp to now.
+            issue.StampTime()
+
+        if not insert:
+            # Invoke preupdate triggers.
+            self._InvokePreupdateTriggers(issue, previous_revision)
+
         # Store the new revision.
-        return self.__InsertIssue(issue)
+        revisions.append(issue)
+
+        if not insert:
+            # Invoke postupdate triggers.
+            self._InvokePostupdateTriggers(issue, previous_revision)
+
+        # Commit changes.
+        self.__Write()
 
 
     def GetIssueClasses(self):
@@ -212,9 +250,20 @@ class MemoryIdb(qm.track.IdbBase):
             filter_fn = lambda i, cl=issue_class: i[0].GetClass() == cl
             matching_issues = filter(filter_fn, matching_issues)
         # Don't return the issues themselves -- return copies instead.
-        return map(lambda issue: issue[-1].Copy(), matching_issues)
+        return map(lambda issue: issue[-1].copy(), matching_issues)
 
     
+    def HasIssue(self, iid):
+        """Return true if the IDB contains an issue with the IID 'iid'."""
+
+        try:
+            self.GetIssue(iid)
+        except KeyError:
+            return 0
+        else:
+            return 1
+
+
     def GetIssue(self, iid, revision=None, icl=None):
         """Return the current revision of issue 'iid'.
 
@@ -247,10 +296,10 @@ class MemoryIdb(qm.track.IdbBase):
             issue = revisions[revision]
 
         # Found an issue.  Invoke get triggers.
-        self._IdbBase__InvokeGetTriggers(issue)
+        self._InvokeGetTriggers(issue)
 
         # All done.
-        return issue.Copy()
+        return issue.copy()
 
 
     def GetAllRevisions(self, iid, issue_class=None):
@@ -280,12 +329,12 @@ class MemoryIdb(qm.track.IdbBase):
         issues = []
         for issue in revisions:
             try:
-                self._IdbBase__InvokeGetTriggers(issue)
+                self._InvokeGetTriggers(issue)
             except idb.TriggerRejectError:
                 pass
             else:
                 # Keep the revision only if the trigger passed it.
-                issues.append(issue.Copy())
+                issues.append(issue.copy())
 
         # Return the list of revisions that were accepted.
         return issues
@@ -357,44 +406,6 @@ class MemoryIdb(qm.track.IdbBase):
         """Return the full path to the IDB pickle file."""
         
         return os.path.join(self.path, "idb.pickle")
-
-
-    def __InsertIssue(self, issue):
-        """Insert an issue record into the database.
-
-        'issue' -- An 'Issue' instance, either for a new issue or for
-        a new revision of an existing issue.
-
-        returns -- A true value if the insert succeded, or a false
-        value if a preupdate trigger vetoed the isertion."""
-
-        iid = issue.GetId()
-        if self.__issues.has_key(iid):
-            revisions = self.__issues[iid]
-            previous_issue = revisions[-1]
-        else:
-            revisions = None
-            previous_issue = None
-
-        # Invoke preupdate triggers.
-        self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
-
-        if revisions != None:
-            # This is not the first revision of the issue.  Append
-            # this new revision to the end.
-            revisions.append(issue)
-        else:
-            # This is the first revision of the issue.  Create a new
-            # list of revisions.
-            self.__issues[iid] = [issue]
-
-        # Invoke postupdate triggers.
-        self._IdbBase__InvokePostupdateTriggers(issue, previous_issue)
-
-        # Commit the changes to disk.
-        self.__Write()
-
-        return 1
 
 
 

@@ -231,12 +231,21 @@ required for the transition, was not satisfied:
 
   '%(expression)s'
 
+@ xml file no revision number
+A revision difference in an issue history is missing its revision number.
+
+@ xml file nonconsecutive revisions
+The revision numbers in the issue history file are not consecutive.
+
 @ xml file unknown class
 The issue file contains issues of unknown issue class %(class_name)s.
 
+@ xml file unknown document element
+An issue XML file may not have a "%(element_tag)s" document element.
+
 @ xml file unknown field
-The issue file contains an unknown field %(field_name)s of issue class
-%(class_name)s. 
+The issue file contains an unknown field "%(field_name)s" of issue class
+%(class_name)s.
 
 ########################################################################
 # Local Variables:

@@ -52,6 +52,15 @@ import types
 # exceptions
 ########################################################################
 
+class IssueExistsError(RuntimeError):
+    """An issue already exists in the IDB with the specified IID.
+
+    The exception argument is the offending IID."""
+
+    pass
+
+
+
 class TriggerRejectError(RuntimeError):
     """An exception indicating that a trigger has rejected an operation.
 
@@ -228,7 +237,7 @@ class IdbBase:
         return os.path.join(self.path, "attachments", location)
     
 
-    def __InvokeGetTriggers(self, issue):
+    def _InvokeGetTriggers(self, issue):
         """Run "get" triggers on 'issue'.
 
         Invokes the 'Get' method of any triggers registered in the issue
@@ -248,7 +257,7 @@ class IdbBase:
                 raise TriggerRejectError, result
             
 
-    def __InvokePreupdateTriggers(self, issue, previous_issue):
+    def _InvokePreupdateTriggers(self, issue, previous_issue):
         """Run "preupdate" triggers for an issue update.
 
         Invokes the 'Preupdate' method of any triggers registered in the
@@ -273,7 +282,7 @@ class IdbBase:
                 raise TriggerRejectError, result
 
 
-    def __InvokePostupdateTriggers(self, issue, previous_issue):
+    def _InvokePostupdateTriggers(self, issue, previous_issue):
         """Run "postupdate" triggers for an issue update.
 
         Invokes the 'Postupdate' method of any triggers registered in
@@ -310,6 +319,34 @@ def get_idb_class(idb_type):
         return qm.track.gadfly_idb.GadflyIdb
     else:
         raise ValueError, "unknown IDB type %s" % idb_type
+
+
+def import_issue_history(idb, issue_history):
+    """Import issue revision histories into an IDB.
+
+    'idb' -- An issue database into which to import the issue history.
+
+    'issue_history' -- A sequence of revisions of a single issue
+    representing the revision history for a single issue.  The issues
+    are indexed in the sequence by revision number.
+
+    raises -- 'IssueExistsError' if 'idb' contains no issues with the
+    same issue ID as the issue in 'issue_history'."""
+
+    iid = issue_history[0].GetId()
+    # Make sure all issues in 'issue_history' have the same issue ID.
+    assert len(filter(lambda i, iid=iid: i.GetId() != iid,
+                      issue_history)) == 0
+    # Make sure their revision numbers are consecutive.
+    for revision_number in xrange(0, len(issue_history)):
+        assert issue_history[revision_number].GetRevision() \
+               == revision_number
+    
+    # Add the first revision as a new issue.
+    idb.AddIssue(issue_history[0], insert=1)
+    # Add subsequent revisions.
+    for revision in issue_history[1:]:
+        idb.AddRevision(revision, insert=1)
 
 
 ########################################################################

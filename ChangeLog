@@ -1,3 +1,66 @@
+2001-06-15  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (decode_properties): Handle empty properties.
+	(format_user_id): Use red instead of blink.
+	* qm/fields.py (Field.SetDefaultValue): Don't validate.
+	(EnumerationField.Validate): Fix lambda.
+
+	* qm/track/sql_idb.py: Adjust method names throughout.
+	* qm/track/memory_idb.py: Likewise.
+	(MemoryIdb.AddIssue): Add insert parameter.  Do't use
+	__InsertIssue.
+	(MemoryIdb.AddRevision): Likewise.
+	(MemoryIdb.HasIssue): New method.
+	(MemoryIdb.__InsertIssue): Remove.
+	* qm/track/issue.py (IssueDifference): New class.
+	(Issue.Copy): Rename to...
+	(Issue.copy): ... this.
+	(Issue.SetField): Add assert.
+	(load_issues_from_xml_file): Remove.
+	(_issues_from_dom): Likewise.
+	(difference_issues): New function.
+	(patch_issue): Likewise.
+	(get_issues_from_dom_node): Likewise.
+	(_get_field_values_from_dom_node): Likewise.
+	(get_issue_from_dom_node): Likewise.
+	(get_issue_difference_from_dom_node): Likewise.
+	(get_histories_from_dom_node): Likewise.
+	(get_history_from_dom_node): Likewise.
+	(export_issues): Likewise.
+	* qm/track/idb.py (IssueExistsError): New class.
+	(IdbBase.__InvokeGetTriggers): Rename to...
+	(IdbBase._InvokeGetTriggers): ... this.
+	(IdbBase.__InvokePreupdateTriggers): Rename to...
+	(IdbBase._InvokePreupdateTriggers): ... this.
+	(IdbBase.__InvokePostupdateTriggers): Rename to...
+	(IdbBase._InvokePostupdateTriggers): ... this.
+	(import_issue_history): New function.
+	* qm/track/config.py (setup_idb_for_internal_use): Add
+	documentation to categories.  Add discussion field to
+	enhancement_request class.
+	* qm/track/cmdline.py: Adjust formatting.
+	(Command.formats): Add export.
+	(Command.__PerformCreate): Use IssueExistsError.
+	(Command.__PerformSplit): Likewise.  Use copy.
+	(Command.__PerformJoin): Likewise.
+	(Command.__PerformImport): Rewrite.
+	(Command.__ImportIssues): New method.
+	(Command.__ImportIssueHistories): Likewise.
+	(Command.__PrintResults): Handle export format.
+	* qm/track/web/summary.py (handle_summary): Rewrite query
+	determination logic.
+
+	* share/xml/issue.dtd (histories): New element.
+	(history): Likewise.
+	(issue-difference): Likewise.
+	* share/dtml/track/navigation-bar.dtml: Add banner.
+	Don't copy requests.
+	* share/diagnostics/track.txt (xml file no revision number): New
+	diagnostic.
+	(xml file nonconsecutive revisions): Likewise.
+	(xml file unknown document element): Likewise.
+	(xml file unknown field): Add quotes.
+
 2001-06-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.MakeLoginForm): Use AsForm.

@@ -303,25 +303,27 @@ def handle_summary(request):
     'request' -- A 'WebRequest' object."""
 
     user = request.GetSession().GetUser()
-
     idb = qm.track.get_idb()
-    if request.has_key("query") or request.has_key("last_query"):
-        # This page is a response to a query.
-        use_last_query = int(request.get("last_query", 0))
-        if use_last_query:
-            # Retrieve the last query performed by the user.
-            query = user.GetConfigurationProperty("summary_last_query", "1")
-        else:
-            # Use the query specified in the request.
-            query = request["query"]
 
+    if request.has_key("last_query"):
+        # Retrieve the last query performed by the user.
+        query = user.GetConfigurationProperty("summary_last_query", "1")
+    elif request.has_key("query"):
+        # Use the query specified in the request.
+        query = request["query"]
+    else:
+        query = "1"
+
+    if query == "1":
+        # Trivial query -- get all issues.
+        issues = idb.GetIssues()
+    else:
+        # Run a normal query.
         try:
             issues = []
             # Query all issue classes successively.
             for issue_class in idb.GetIssueClasses():
                 issues = issues + idb.Query(query, issue_class.GetName())
-            # Store the query so the user can repeat it easily.
-            user.SetConfigurationProperty("summary_last_query", query)
         except NameError, name:
             msg = qm.error("query name error", name=name, query=query)
             return qm.web.generate_error_page(request, msg)
@@ -335,9 +337,8 @@ def handle_summary(request):
                            error=str(exception))
             return qm.web.generate_error_page(request, msg)
 
-    else:
-        # No query was specified; show all issues.
-        issues = idb.GetIssues()
+    # Store the query so the user can repeat it easily.
+    user.SetConfigurationProperty("summary_last_query", query)
 
     # The request may specify the fields to display in the summary.  Are
     # they specified?

@@ -1924,6 +1924,11 @@ def decode_properties(properties):
 
     This function is the inverse of 'encode_properties'."""
 
+    properties = string.strip(properties)
+    # Empty?
+    if properties == "":
+        return {}
+
     # The string is a comma-delimited list.  Split it up.
     properties = string.split(properties, ",")
     # Convert to a map, processing each item.
@@ -2543,7 +2548,7 @@ def format_user_id(user_id):
         user_item = user.database[user_id]
     except KeyError:
         # The user isn't in the database.  Oops.
-        return "<blink>%s</blink>" % user_id
+        return '<font color="red">%s</font>' % user_id
     else:
         # Have we already generated and cached a user information page
         # for this user?

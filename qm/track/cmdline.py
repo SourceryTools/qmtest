@@ -36,6 +36,7 @@
 ########################################################################
 
 import config
+import idb
 import issue
 import os
 import os.path
@@ -45,6 +46,8 @@ import qm.cmdline
 import qm.fields
 import qm.structured_text
 import qm.track
+import qm.track.issue
+import qm.xmlutil
 import rexec
 import string
 import sys
@@ -64,8 +67,15 @@ class Command:
     """The name of the application."""
     
     formats = (
-        'none', 'iid', 'iid-single', 'summary', 'short', 'long',
-        'full', 'xml'
+        'export',
+        'full',
+        'iid',
+        'iid-single',
+        'long',
+        'none',
+        'short',
+        'summary',
+        'xml',
         )
 
     # The following are the options and commands for qmtrack.  To edit
@@ -213,7 +223,9 @@ class Command:
          "FILE ...",
          """
          This command imports issues or issue revisions stored in an XML
-         file.
+         file.  Each file may contain either individual issues (from the
+         "xml" output format) or complete issue revision histories (from
+         the "export" output format).
          """,
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
@@ -305,16 +317,16 @@ class Command:
 
         # Build a map used to dispatch command names to handlers.
         self.__command_dispatch = {
-            'create': self.__PerformCreate,
-            'destroy': self.__PerformDestroy,
-            'edit': self.__PerformEdit,
-            'import': self.__PerformImport,
-            'initialize': self.__PerformInitialize,
-            'join': self.__PerformJoin,
-            'query': self.__PerformQuery,
-            'server' : self.__PerformServer,
-            'show' : self.__PerformShow,
-            'split': self.__PerformSplit,
+            "create" : self.__PerformCreate,
+            "destroy ": self.__PerformDestroy,
+            "edit" : self.__PerformEdit,
+            "import" : self.__PerformImport,
+            "initialize" : self.__PerformInitialize,
+            "join" : self.__PerformJoin,
+            "query" : self.__PerformQuery,
+            "server" : self.__PerformServer,
+            "show" : self.__PerformShow,
+            "split" : self.__PerformSplit,
             }
 
         self.__Parse()
@@ -644,7 +656,7 @@ class Command:
         # with that 'iid' already exists.  If so, report an error.
         try:
             idb.AddIssue(new_issue)
-        except ValueError:
+        except idb.IssueExistsError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("create issue error", iid=iid)
 
@@ -742,8 +754,8 @@ class Command:
         self.split_issue_error_sem % iid
 
         # Copy the original issue.
-        issue1 = issue.Copy()
-        issue2 = issue.Copy()
+        issue1 = issue.copy()
+        issue2 = issue.copy()
 
         # Set the parents and children.
         issue1.SetField('parents', [ issue ])
@@ -760,14 +772,14 @@ class Command:
             idb.GetIssue(issue1.GetId())
             raise qm.cmdline.CommandError, \
                   qm.track.error("split iid error sem", iid=issue1.GetId())
-        except ValueError:
+        except idb.IssueExistsError:
             # Couldn't find the issue; that's good.
             pass
         try:
             idb.GetIssue(issue2.GetId())
             raise qm.cmdline.CommandError, \
                   qm.track.error("split iid error sem", iid=issue2.GetId())
-        except ValueError:
+        except idb.IssueExistsError:
             # Couldn't find the issue; that's good.
             pass
 
@@ -809,7 +821,7 @@ class Command:
         # We should probably think about this more.  For now, this function
         # will only copy the first issue, give it a new name, and set the
         # parents/children correctly.
-        new_issue = issue1.Copy()
+        new_issue = issue1.copy()
         new_issue.SetField('iid', issue1.GetField('iid') + '.'
                            + issue2.GetField('iid'))
         new_issue.SetField('parents', [ issue1, issue2 ])
@@ -820,7 +832,7 @@ class Command:
         # names already exist.  If so, report an error.
         try:
             idb.AddIssue(new_issue)
-        except ValueError:
+        except idb.IssueExistsError:
             raise ComandError, \
                   qm.track.error("join iid error sem", iid=issue1.GetId())
 
@@ -1019,9 +1031,34 @@ class Command:
         # Load issues from all files.
         issues = []
         for file_name in file_names:
-            issues = issues + qm.track.load_issues_from_xml_file(file_name)
+            # Open and parse the XML file.
+            issue_file = open(file_name, "r")
+            document = qm.xmlutil.load_xml(issue_file, file_name)
+            issue_file.close()
 
-        # Now loop over the issues.
+            document_element = document.documentElement
+            document_tag = document_element.tagName
+
+            # What kind of document is it?
+            if document_tag == "issues":
+                # An "issues" document contains individual issues.
+                # Import them as current revisions.
+                self.__ImportIssues(document_element)
+            elif document_tag == "histories":
+                # A "histories" document contains entire revision
+                # histories of issues.  Import them as entire issues. 
+                self.__ImportIssueHistories(document_element)
+            else:
+                raise issue.IssueFileError, \
+                      qm.error("xml file unknown document element",
+                               element_tag=document_tag)
+            
+
+    def __ImportIssues(self, node):
+        """Import issues from DOM "issues" element 'node'."""
+
+        issues = issue.get_issues_from_dom_node(node)
+        # Loop over the issues.
         idb = qm.track.get_idb()
         for issue in issues:
             iid = issue.GetId()
@@ -1047,6 +1084,17 @@ class Command:
                     idb.AddRevision(issue)
                     output.write("imported issue %s revision %d\n"
                                  % (iid, current_revision.GetRevision() + 1))
+
+
+    def __ImportIssueHistories(self, node):
+        """Import issue histories from DOM "histories" element 'node'."""
+
+        # FIXME: Handle any errors?
+        issue_histories = issue.get_histories_from_dom_node(node)
+        issue_db = qm.track.get_idb()
+        for history in issue_histories:
+            idb.import_issue_history(issue_db, history)
+            
 
 
     def __PrintResults(self, output, *issues):
@@ -1088,7 +1136,9 @@ class Command:
                     output.write("%-24s: %s\n" % (field.GetTitle(), value))
                 output.write('\n\n')
         elif self.format_name == 'xml':
-            qm.track.issues_to_xml(issues, output)
+            qm.track.issue.issues_to_xml(issues, output)
+        elif self.format_name == "export":
+            qm.track.issue.export_issues(issues, output)
 
 
 
