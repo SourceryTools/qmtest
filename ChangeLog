@@ -1,3 +1,8 @@
+2004-01-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (_version_output): Add 2004 to list of
+	copyright dates.
+
 2004-01-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/xml_database.py

@@ -474,7 +474,7 @@ Valid formats are %s.
 
     __version_output = \
         ("QMTest %s\n" 
-         "Copyright (C) 2002, 2003 CodeSourcery, LLC\n"
+         "Copyright (C) 2002, 2003, 2004 CodeSourcery, LLC\n"
          "QMTest comes with ABSOLUTELY NO WARRANTY\n"
          "For more information about QMTest visit http://www.qmtest.com\n")
     """The string printed when the --version option is used.
