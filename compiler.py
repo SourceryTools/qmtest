@@ -13,7 +13,7 @@
 #
 ########################################################################
 
-from   executable import *
+from   qm.executable import *
 import os
 import os.path
 import StringIO
@@ -27,17 +27,6 @@ import sys
     
 class CompilerExecutable(RedirectedExecutable):
     """A 'CompilerExecutable' is a 'Compiler' that is being run."""
-
-    def __init__(self, compiler, dir = None):
-        """Construct a new 'CompilerExecutable'.
-
-        'compiler' -- The 'Compiler' to run.
-
-        'dir' -- If not 'None', The directory in which to run the
-        compiler."""
-
-        RedirectedExecutable.__init__(self, compiler.GetPath(), dir)
-
 
     def _InitializeChild(self):
         """Initialize the child process.
@@ -133,8 +122,8 @@ class Compiler:
         # Get the command to use.
         command = self.GetCompilationCommand(mode, files, options, output)
         # Invoke the compiler.
-        executable = CompilerExecutable(self, dir)
-        status = executable.Run(command)
+        executable = CompilerExecutable()
+        status = executable.Run(command, dir = dir)
         # Return all of the information.
         return (status, executable.stdout, command)
         

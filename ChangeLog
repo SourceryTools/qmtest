@@ -1,3 +1,12 @@
+2002-11-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (CompilerExecutable): Derive from QM's
+	RedirectedExecutable class.
+	* compiler_test.py (CompiledExecutable): Likewise.
+	* executable.py: Remove.
+	* gcc_database.py (Demangler): Derive from QM's
+	RedirectedExecutable class.
+
 2002-11-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler_test.py (arguments): Remove.

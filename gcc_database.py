@@ -18,7 +18,7 @@ from   compiler import *
 from   compiler_test import *
 import dircache
 import errno
-from   executable import *
+from   qm.executable import *
 import fnmatch
 import glob
 import os
@@ -45,17 +45,13 @@ except:
 class Demangler(RedirectedExecutable):
     """A 'Demangler' demangles its standard input."""
 
-    def __init__(self, path, dir, input):
+    def __init__(self, input):
         """Construct a new 'Demangler'.
 
-        'path' -- The path to the demangler.
-
-        'dir' -- The directory in which to run the demangler.
-        
         'input' -- A string giving the input to be provided to the
         demangler."""
 
-        RedirectedExecutable.__init__(self, path)
+        RedirectedExecutable.__init__(self)
         self.__input = input
         
         
@@ -890,10 +886,9 @@ class DGTest(GPPTest):
             # If we have to demangle the contents, do it.
             if (self._demangled_assembly_patterns
                 or self._forbidden_demangled_assembly_patterns):
-                demangler = Demangler(context["DGTest.demangler"],
-                                      self._GetDirectoryForTest(),
-                                      asm_contents)
-                demangler.Run([demangler.GetPath()])
+                demangler = Demangler(asm_contents)
+                demangler.Run(context["DGTest.demangler"],
+                              self._GetDirectoryForTest())
                 asm_contents = demangler.stdout
 
             # See if all the patterns are there.
