@@ -81,7 +81,8 @@ class TextResultStream(FileResultStream):
             The "full" format is like "brief" except that all
             annotations are shown for tests as they are run.
 
-            The "stats" format omits the failing tests section."""),
+            In the "stats" format only the summary statistics are
+            displayed."""),
         ]
     
     def __init__(self, arguments):
@@ -104,11 +105,22 @@ class TextResultStream(FileResultStream):
             except:
                 pass
             
-        self.__test_results = []
-        self.__resource_results = []
         self.__first_test = 1
-        
-        
+        # Keep track of tests and resources that had unexpected outcomes.
+        self.__unexpected_test_results = []
+        self.__unexpected_resource_results = []
+        # And how many tests were run.
+        self.__num_tests = 0
+        # And how many tests there are with each outcome.
+        self.__outcome_counts = {}
+        for o in Result.outcomes:
+            self.__outcome_counts[o] = 0
+        # And how many unexpected tests there are with each outcome.
+        self.__unexpected_outcome_counts = {}
+        for o in Result.outcomes:
+            self.__unexpected_outcome_counts[o] = 0
+
+
     def WriteResult(self, result):
         """Output a test or resource result.
 
@@ -116,12 +128,25 @@ class TextResultStream(FileResultStream):
 
         # Record the results as they are received.
         if result.GetKind() == Result.TEST:
-            self.__test_results.append(result)
+            # Remember how many tests we have processed.
+            self.__num_tests += 1
+            # Increment the outcome count.
+            outcome = result.GetOutcome()
+            self.__outcome_counts[outcome] += 1
+            # Remember tests with unexpected results so that we can
+            # display them at the end of the run.
+            test_id = result.GetId()
+            expected_outcome = self.expected_outcomes.get(result.GetId(),
+                                                          Result.PASS)
+            if outcome != expected_outcome:
+                self.__unexpected_outcome_counts[outcome] += 1
+                self.__unexpected_test_results.append(result)
         else:
-            self.__resource_results.append(result)
-
-        # In batch mode, no results are displayed as tests are run.
-        if self.format == "batch":
+            if result.GetOutcome() != result.PASS:
+                self.__unexpected_resource_results.append(result)
+            
+        # In some modes, no results are displayed as the tests are run.
+        if self.format == "batch" or self.format == "stats":
             return
         
         # Display a heading before the first result.
@@ -155,33 +180,20 @@ class TextResultStream(FileResultStream):
             compare_ids = lambda r1, r2: cmp(r1.GetId(), r2.GetId())
 
             # Sort test results by ID.
-            self.__test_results.sort(compare_ids)
+            self.__unexpected_test_results.sort(compare_ids)
             # Print individual test results.
             if self.expected_outcomes:
-                # Show tests that produced unexpected outcomes.
-                bad_results = split_results_by_expected_outcome(
-                    self.__test_results, self.expected_outcomes)[1]
                 self._DisplayHeading("TESTS WITH UNEXPECTED OUTCOMES")
-                self._SummarizeResults(bad_results)
-            if not self.expected_outcomes or self.format == "full":
-                # No expected outcomes were specified, so show all tests
-                # that did not pass.
-                bad_results = filter(
-                    lambda r: r.GetOutcome() != Result.PASS,
-                    self.__test_results)
-                if bad_results:
-                    self._DisplayHeading("TESTS THAT DID NOT PASS")
-                    self._SummarizeResults(bad_results)
+            else:
+                self._DisplayHeading("TESTS THAT DID NOT PASS")
+            self._SummarizeResults(self.__unexpected_test_results)
 
-            # Sort resource results by ID.
-            self.__resource_results.sort(compare_ids)
-            bad_results = filter(
-                lambda r: r.GetOutcome() != Result.PASS,
-                self.__resource_results)
-            if len(bad_results) > 0:
+            if self.__unexpected_resource_results:
+                # Sort resource results by ID.
+                self.__unexpected_resource_results.sort(compare_ids)
                 # Print individual resource results.
                 self._DisplayHeading("RESOURCES THAT DID NOT PASS")
-                self._SummarizeResults(bad_results)
+                self._SummarizeResults(self.__unexpected_resource_results)
 
         if self.format != "batch":
             self._DisplayStatistics()
@@ -200,33 +212,23 @@ class TextResultStream(FileResultStream):
 
         # Summarize the test statistics.
         if self.expected_outcomes:
-            self._SummarizeRelativeTestStats(self.__test_results)
+            self._SummarizeRelativeTestStats()
         else:
-            self._SummarizeTestStats(self.__test_results)
+            self._SummarizeTestStats()
 
-        # Summarize test results by test suite.
-        if self.format in ("full", "stats") \
-           and len(self.suite_ids) > 0:
-            # Print statistics by test suite.
-            self._DisplayHeading("STATISTICS BY TEST SUITE")
-            self._SummarizeTestSuiteStats()
 
-        
-    def _SummarizeTestStats(self, results):
-        """Generate statistics about the overall results.
+    def _SummarizeTestStats(self):
+        """Generate statistics about the overall results."""
 
-        'results' -- The sequence of 'Result' objects to summarize."""
-
-        num_tests = len(results)
+        num_tests = self.__num_tests
         self.file.write("  %6d        tests total\n" % num_tests)
 
         # If there are no tests, there is no need to go into detail.
         if num_tests == 0:
             return
 
-        counts_by_outcome = self._CountOutcomes(results)
         for outcome in Result.outcomes:
-            count = counts_by_outcome[outcome]
+            count = self.__outcome_counts[outcome]
             if count > 0:
                 self.file.write("  %6d (%3.0f%%) tests %s\n"
                                 % (count, (100. * count) / num_tests,
@@ -234,33 +236,27 @@ class TextResultStream(FileResultStream):
         self.file.write("\n")
 
         
-    def _SummarizeRelativeTestStats(self, results):
-        """Generate statistics showing results relative to expectations.
-
-        'results' -- The sequence of 'Result' objects to summarize."""
+    def _SummarizeRelativeTestStats(self):
+        """Generate statistics showing results relative to expectations."""
 
         # Indicate the total number of tests.
-        num_tests = len(results)
+        num_tests = self.__num_tests
         self.file.write("  %6d        tests total\n" % num_tests)
 
         # If there are no tests, there is no need to go into detail.
         if num_tests == 0:
             return
 
-        # Split the results into those that produced expected outcomes, and
-        # those that didn't.
-        expected, unexpected = \
-            split_results_by_expected_outcome(results,
-                                              self.expected_outcomes)
         # Report the number that produced expected outcomes.
+        unexpected_count = len(self.__unexpected_test_results)
+        expected_count = num_tests - unexpected_count
         self.file.write("  %6d (%3.0f%%) tests as expected\n"
-                        % (len(expected),
-                           (100. * len(expected)) / num_tests))
+                        % (expected_count,
+                           (100. * expected_count) / num_tests))
         # For results that produced unexpected outcomes, break them down by
         # actual outcome.
-        counts_by_outcome = self._CountOutcomes(unexpected)
         for outcome in Result.outcomes:
-            count = counts_by_outcome[outcome]
+            count = self.__unexpected_outcome_counts[outcome]
             if count > 0:
                 self.file.write("  %6d (%3.0f%%) tests unexpected %s\n"
                                 % (count, (100. * count) / num_tests,
@@ -268,46 +264,6 @@ class TextResultStream(FileResultStream):
         self.file.write("\n")
 
 
-    def _CountOutcomes(self, results):
-        """Count results by outcome.
-
-        'results' -- A sequence of 'Result' objects.
-
-        returns -- A map from outcomes to counts of results with that
-        outcome.""" 
-
-        counts = {}
-        for outcome in Result.outcomes:
-            counts[outcome] = 0
-        for result in results:
-            outcome = result.GetOutcome()
-            counts[outcome] = counts[outcome] + 1
-        return counts
-        
-        
-    def _SummarizeTestSuiteStats(self):
-        """Generate statistics showing results by test suite."""
-
-        for suite_id in self.suite_ids:
-            # Expand the contents of the suite.
-            suite = self.database.GetSuite(suite_id)
-            ids_in_suite = suite.GetAllTestAndSuiteIds()[0]
-            # Determine the results belonging to tests in the suite.
-            results_in_suite = []
-            for result in self.__test_results:
-                if result.GetId() in ids_in_suite:
-                    results_in_suite.append(result)
-            # If there aren't any, skip.
-            if len(results_in_suite) == 0:
-                continue
-
-            self.file.write("  %s\n" % suite.GetId())
-            if self.expected_outcomes is None:
-                self._SummarizeTestStats(results_in_suite)
-            else:
-                self._SummarizeRelativeTestStats(results_in_suite)
-
-        
     def _SummarizeResults(self, results):
         """Summarize each of the results.
 

@@ -394,29 +394,6 @@ def _result_from_dom(node):
     return result
 
 
-def split_results_by_expected_outcome(results, expected_outcomes):
-    """Partition a sequence of results by expected outcomes.
-
-    'results' -- A sequence of 'Result' objects.
-
-    'expected_outcomes' -- A map from ID to corresponding expected
-    outcome.
-
-    returns -- A pair of lists.  The first contains results that
-    produced the expected outcome.  The second contains results that
-    didn't."""
-
-    expected = []
-    unexpected = []
-    for result in results:
-        expected_outcome = expected_outcomes.get(result.GetId(), Result.PASS)
-        if result.GetOutcome() == expected_outcome:
-            expected.append(result)
-        else:
-            unexpected.append(result)
-    return expected, unexpected
-
-
 ########################################################################
 # variables
 ########################################################################

@@ -1,3 +1,21 @@
+2003-08-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (split_results_by_expected_outcome): Remove.
+	* qm/test/cmdline.py (QMTest.__GetResultStreams): Remove
+	test_suites parameter.
+	* qm/test/result_stream.py (ResultStream.arguments): Remove
+	suite_ids.
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream.__init__): Do not save test and resource
+	results.
+	(TextResultStream.WriteResult): Update outcome counts, but do not
+	save results.
+	(TextResultStream.Summarize): Adjust accordingly.
+	(TextResultStream._SummarizeTestStats): Remove results parameter.
+	(TextResultStream._SummarizeRelativeTestStats): Likewise.
+	(TextResultStream._CountOutcomes): Remove.
+	(TextResultStream._SummarizeTestSuiteStats): Remove.
+
 2003-07-31  Nathaniel Smith  <njs@codesourcery.com>
 	    Mark Mitchell  <mark@codesourcery.com>
 

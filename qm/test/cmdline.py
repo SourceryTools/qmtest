@@ -1237,7 +1237,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Compute the list of result streams to which output should be
         # written.
-        streams = self.__GetResultStreams(suite_ids)
+        streams = self.__GetResultStreams()
         
         # Send the annotations through.
         for s in streams:
@@ -1385,7 +1385,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             result_streams.append(rs)
 
         # Handle the --result-stream options.
-        result_streams.extend(self.__GetResultStreams(test_suites))
+        result_streams.extend(self.__GetResultStreams())
         
         if self.HasCommandOption("random"):
             # Randomize the order of the tests.
@@ -1583,7 +1583,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                            kind = kind)
 
                        
-    def __GetResultStreams(self, test_suites):
+    def __GetResultStreams(self):
         """Return the result streams to use.
 
         returns -- A list of 'ResultStream' objects, as indicated by the
@@ -1596,7 +1596,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         arguments = {
             "expected_outcomes" : self.__GetExpectedOutcomes(),
             "database" : database,
-            "suite_ids" : test_suites
             }
         
         # Look up the summary format.
@@ -1614,7 +1613,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             as.update(arguments)
             stream = self.GetTextResultStreamClass()(as)
             result_streams.append(stream)
-        
+
         f = lambda n: qm.test.base.get_extension_class(n,
                                                        "result_stream",
                                                        database)
