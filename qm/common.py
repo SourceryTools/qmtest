@@ -1298,6 +1298,12 @@ _foreign_exit_functions = []
 # The next number to be used when handing out unqiue tag strings.
 _unique_tag = 0
 
+# The string types available in this implementation of Python.
+try:
+    string_types = (types.StringType, types.UnicodeType)
+except AttributeError:
+    string_types = (types.StringType,)
+
 ########################################################################
 # Local Variables:
 # mode: python
