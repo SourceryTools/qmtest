@@ -1,5 +1,8 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (tag_qm): Overwrite version, rather than
+	appending to it.
+	
 	* scripts/qm-release (tag_qm): New function.
 
 	* version: New file.
