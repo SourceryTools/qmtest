@@ -196,6 +196,11 @@ upload() {
   if [ $? -ne 0 ]; then
     error "Could not obtain platform name."
   fi
+  # We are not building Cygwin binaries, so transform "cygwin" into
+  # "windows".
+  if [ $PLATFORM = i686-pc-cygwin ]; then
+    PLATFORM="windows"
+  fi 
   PLATFORM_FTP_DIRECTORY="${FTP_DIRECTORY}/${PLATFORM}"
 
   # Make sure the FTP directory exists.
@@ -233,7 +238,7 @@ upload() {
 
   # Upload the self-extracting executable.
   if [ ${EXEC} -ne 0 ]; then
-    scp ${QM_BINARY_EXE} "${FTP_SERVER}:${FTP_DIRECTORY}/windows" || \
+    scp ${QM_BINARY_EXE} "${FTP_SERVER}:${PLATFORM_FTP_DIRECTORY}" || \
       error "Could not upload Windows distribution."
   fi
 }

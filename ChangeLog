@@ -1,3 +1,7 @@
+2002-05-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* scripts/qm-release (upload): Update Windows logic.
+
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release (tag_qm): Return to the top level directory.
