@@ -1,3 +1,15 @@
+2000-12-26  R. Lindsay Todd  <toddr@rpi.edu>
+	
+	* standard.mk: Run pdfjadetex thrice, to get all references correct.
+
+	* doc/design/qmconfig/design-probe.xml: Updated API for probe
+	class, to be consistent with other components.
+	* doc/design/qmconfig/figures/cl_probe.*: Updated to match API for
+	probe class.
+
+	* doc/design/qmconfig/design-lm.xml: Add figure for LangServ.
+	* doc/design/qmconfig/figures/cl_langserv.*: New file.
+
 2000-12-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* Makefile (setup): New target.

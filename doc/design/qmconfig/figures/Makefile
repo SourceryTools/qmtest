@@ -20,7 +20,7 @@ DIAFIGS = \
 	uc_tailor.dia uc_maint.dia uc_softdev.dia uc_kit.dia \
 	pkg_qmconfig.dia pkg_bdist.dia pkg_boot.dia \
 		pkg_build.dia pkg_lang.dia \
-	cl_pdd.dia cl_probe.dia cl_tailor.dia cl_tailorsym.dia
+	cl_langserv.dia cl_pdd.dia cl_probe.dia cl_tailor.dia cl_tailorsym.dia
 
 PNGFIGS = $(DIAFIGS:.dia=.png)
 

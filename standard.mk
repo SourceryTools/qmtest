@@ -180,6 +180,8 @@ $(PRINTDIR)/$(PRINTPDF): \
 		$(PRINTDIR)/$(PRINTTEX)
 	test "$(DOCBITMAPS)" && cp $(DOCBITMAPS) $(PRINTDIR)/ || true
 	cd $(PRINTDIR); \
+	    pdfjadetex $(PRINTTEX) ; \
+	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) 
 
 # Run regression tests.  Regression tests are stored in files named

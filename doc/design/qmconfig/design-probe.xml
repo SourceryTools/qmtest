@@ -175,62 +175,28 @@ class QualifiedProbe:
         returns -- A "ProbeSource" object."""
 
 
-    def GetDefinedSymbols(self, probe_platform):
+    def GetDefinedSymbols(self):
 
-        """Get the list of symbols defined by this probe.
-
-        'probe_platform' -- A name designating the scripting language
-        and other characteristics of the probe platform.
-
-        raise $$$ -- No script for 'probe_platform'.
+        """Get the list of symbols defined by this qualified probe.
 
         returns -- List of Symbol objects These have already been
         initialized with the appropriate "ProbeSource" objects."""
 
 
-    def GetRequiredSymbols(self, probe_platform):
+    def GetRequiredSymbols(self):
 
-        """Get the list of symbols required by this probe.  These
-        symbols will need values before the probe script can be
+        """Get the list of symbols required by this qualified probe.
+        These symbols will need values before the probe script can be
         executed.
-
-        'probe_platform' -- A name designating the scripting language
-        and other characteristics of the probe platform.
-
-        raise $$$ -- No script for 'probe_platform'.
 
         returns -- List of Symbol objects."""
 
 
-    def GetScript(self, probe_platform):
+    def GetScript(self):
 
-        """Get the script needed to execute this probe.
-
-        'probe_platform' -- A name designating the scripting language
-        and other characteristics of the probe platform.
-
-        raise $$$ -- No script for 'probe_platform'.
+        """Get the script needed to execute this qualified probe.
 
         returns -- The script."""
-
-
-class Probe:
-
-    """Class representing a probe."""
-
-    def Qualify(self, probe_dp, probe_aux):
-
-        """Qualify this probe with the supplied parameters.
-
-        'probe_dp' -- The distinguished parameters to this probe.
-
-        'probe_aux' -- Auxiliary parameters for this probe, which may
-        come from a ProbeAuxDB.
-
-        raise $$$ -- Incomplete set of parameters, or spurious
-        parameters.
-
-        returns -- A qualified probe."""
         
 
     def GetPatternSet(self, prog_lang, set_name=None):
@@ -247,9 +213,76 @@ class Probe:
         symbols, etc.  Other languages may have a single pattern set,
         in which case this parameter may be omitted.
 
-        returns -- A list of patterns.  These may be regular
-        expressions.  Really, they are whatever the language-specific
-        scanner requires."""
+        returns -- A PatternSet.
+
+        $$$ We need to spec out PatternSet objects.  They must allow a
+        Scanner to identify symbols, determine the distinguished
+        parameters, and determine the probe."""
+
+
+class Probe:
+
+    """Class representing a probe."""
+
+    def __init__(self, probe_name, version, source,
+                 probe_dp, short_doc, long_doc=None):
+
+        """Define a new probe.
+
+        'probe_name' -- The name of this probe.
+
+        'version' -- Version of this probe.
+
+        'source' -- URL for a source for this probe.
+
+        'probe_dp' -- A dictionary mapping distinguished parameter
+        names to their types.
+
+        'short_doc' -- Brief description of this probe.
+
+        'long_doc' -- Extended description of this probe.  If None,
+        then use 'short_doc' as the long description, too."""
+
+
+    def AddDescription(self, lang, short_doc, long_doc=None):
+
+        """Add a description for this probe in some natural language.
+
+        'lang' -- Designator for a natural language.
+
+        'short_doc' -- Short documentation string for this probe,
+        presumably written in the natural language indicated by
+        'lang'.  (The 'short_doc' string from when the probe was
+        created is a fallback description.)
+
+        'long_doc' -- Extended documentation string for the probe,
+        again presumably written in the natural language indicated by
+        'lang'.  If 'long_doc' is None, then there is no extended
+        documentation string."""
+
+
+    def AddPlatform(self, probe_platform, script, pattern_set, probe_ap):
+
+        """Add support for a probe platform.  The 'script' will be
+        scanned for required symbols.
+
+        'probe_platform' -- A string representing a probe platform.
+
+        'script' -- A string containing the probe script.
+
+        $$$ Need to specify substitutions, both of parameters and
+        required symbols!!!
+
+        'pattern_set' -- A PatternSet object for the symbols defined
+        by this probe.
+
+        'probe_ap' -- A dictionary mapping auxiliary parameter
+        names to their types.
+
+        raises $$$ -- Distinguished parameters cannot be determined
+        using 'pattern_set'.
+
+        raises $$$ -- 'probe_platform' is unknown."""
 
 
     def GetName(self):
@@ -259,7 +292,142 @@ class Probe:
         returns -- The name of the probe."""
 
 
-class ProbeAuxDB:
+    def GetVersion(self):
+
+        """Get the version of this probe.
+
+        returns -- A version string."""
+
+
+    def GetShortDescription(self, lang=None):
+
+        """Get the short documentation string for this probe for the
+        specified language.  If not found, return the the fallback
+        short documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The short documentation string."""
+
+
+    def GetLongDescription(self, lang=None):
+
+        """Get the long documentation string for this probe for the
+        specified language.  If not found, return the the fallback
+        long documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The long documentation string."""
+
+
+    def Qualify(self, probe_platform, probe_dp, probe_ap):
+
+        """Qualify this probe with the supplied parameters.
+
+        'probe_platform' -- A string representing a probe platform.
+
+        'probe_dp' -- The distinguished parameters to this probe.
+
+        'probe_ap' -- Auxiliary parameters for this probe, which may
+        come from a AuxProbeDB.
+
+        raise $$$ -- Incomplete set of parameters, or spurious
+        parameters.
+
+        raise $$$ -- No script for 'probe_platform'.
+
+        returns -- A qualified probe."""
+
+
+class AuxProbe:
+
+    """Class for auxiliary probes.  These provide information for
+    auxiliary parameters."""
+
+    def __init__(self, probe_name, probe_dp):
+
+        """Create an AuxProbe object.
+
+        'probe_name' -- Name of the probe.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to types."""
+
+
+    def AddPlatform(self, probe_platform, probe_ap):
+
+        """Add information about auxiliary parameters associated with
+        a probe platform.
+
+        precondition -- There is not already a set of auxiliary
+        parameters for 'probe_platform'.
+
+        'probe_platform' -- A string representing a probe execution
+        platform.
+
+        'probe_ap' -- A dictionary mapping auxiliary parameter names
+        to tuples of (type, default value).
+
+        raise 'KeyError' -- Already a set of auxiliary parameters
+        associated with 'probe_platform'."""
+
+
+    def AddParameterSet(self, probe_platform, probe_dp, probe_ap):
+
+        """Add a set of auxiliary parameter values for a distinguished
+        probe.
+
+        precondition -- We already have defined auxiliary parameter
+        value types for this 'probe_platform'.
+
+        'probe platform' -- Name of the probe execution platform for
+        which we are defining auxiliary parameter values.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to values.
+
+        'probe_ap' -- Dictionary mapping auxiliary parameter names to
+        values.
+
+        raise 'IndexError' -- One or more parameters are missing.
+
+        raise 'TypeError' -- A parameter value does not match its
+        associated type."""
+
+
+    def GetName(self):
+
+        """Get the name of this probe.
+
+        returns -- Name of the probe."""
+
+
+    def GetProbeSource(self, probe_platform, probe_dp):
+
+        """Get a ProbeSource object associated with this probe, with
+        specified 'probe_platform' and distinguished parameters.
+
+        precondition -- Information for this 'probe_platform' has
+        already been added.
+
+        'probe_platform' -- Name of the probe execution platform.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to values.
+
+        raise 'KeyError' -- No information for 'probe_platform' has
+        been added.
+
+        raise $$$ -- Unable to determine auxiliary parameters.
+
+        returns -- A ProbeSource object with the auxiliary parameter
+        field filled in."""
+
+
+class AuxProbeDB:
 
     """Database of auxiliary information for probes.  A probe is
     selected by parsing symbol names, and may include certain
@@ -274,60 +442,41 @@ class ProbeAuxDB:
     from the probe auxiliary database."""
 
 
-    def AddProbe(self, probe_name, probe_dp_types, probe_aux_types):
+    def AddProbe(self, aux_probe):
 
-        """Add information about a probe to the auxiliary probe
-        database.
+        """Add auxiliary information about a probe to the auxiliary
+        probe database.
 
-        'probe_name' -- The probe being added to the database.
+        precondition -- There is not already an AuxProbe object in
+        this database with the same name as 'aux_probe'.
 
-        'probe_dp_type' -- A dictionary mapping distinguished
-        parameter names to their types.
+        'aux_probe' -- An AuxProbe object providing the auxiliary
+        information.
 
-        'probe_aux_types' -- A dictionary mapping auxiliary parameter
-        names to their types.
-
-        $$$ We need to decide how to represent these types...
-
-        raise 'KeyError' -- There already is probe information for
-        'probe_name' in this database.
-
-        returns -- None"""
+        raises 'KeyError' -- Already an AuxProbe with the same name as
+        'aux_probe'."""
 
 
-    def AddProbeParameters(self, probe_name, probe_dp, probe_aux):
+    def GetProbeSource(self, probe_name, probe_platform, probe_dp):
 
-        """Add a set of parameters to a distinguished probe.
+        """Get a ProbeSource object for the specified probe.
 
-        'probe_name' -- The probe for which information is being
-        added.
+        'probe_name' -- Name of the probe.
 
-        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
-        is a mapping of parameter names to values.
+        'probe_platform' -- Name of the probe execution platform.
 
-        'probe_aux' -- A mapping of auxiliary parameter names to
-        values.
+        'probe_dp' -- Distinguished parameters for the probe.
 
-        raise 'KeyError' -- There is no information for 'probe_name'
-        with the specified parameters in this database."""
+        raises 'KeyError' -- Unable to locate a probe.
 
+        raises 'TypeError' -- A parameter value does not match the
+        type.
 
-    def GetProbeParameters(self, probe_name, probe_dp={}):
+        raises $$$ -- Unable to determine an auxiliary parameter
+        value.
 
-        """Find the set of auxiliary parameters for a probe.
-
-        'probe_name' -- The name of the probe being checked.
-
-        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
-        is a mapping of parameter names to values.
-
-        raise 'KeyError' -- There is no information for 'probe_name'
-        with the specified parameters in this database.
-
-        raise 'IndexError' -- One or more distinguished parameters for
-        'probe_name' are missing.
-
-        returns -- A dictionary mapping parameter names to values."""
+        returns -- A ProbeSource object with the auxiliary parameters
+        filled in."""
 
 
 class ProbeDB:
@@ -367,14 +516,14 @@ class ProbeDB:
         returns -- None"""
 
 
-    def AddProbeAuxDB(self, padb):
+    def AddAuxProbeDB(self, apdb):
 
-        """Add a ProbeAuxDB object to the list of auxiliary databases
+        """Add a AuxProbeDB object to the list of auxiliary databases
         used by this probe database.  This relationship persists until
         'self' is closed. These databases are searched in the order
         given for additional parameters.
 
-        'padb' -- The ProbeAuxDB being added to the list.
+        'apdb' -- The AuxProbeDB being added to the list.
 
         returns -- None"""
 
@@ -396,9 +545,18 @@ class ProbeDB:
         returns -- None"""
 
 
-    def ChooseProbe(self, symbol_name, prog_lang, set_name=None):
+    def GetProbe(self, probe_name):
 
-        """Select a probe object."""
+        """Get a Probe object named 'probe_name'.
+
+        'probe_name' -- Name of the probe being sought.
+
+        raises 'KeyError' -- No probe named 'probe_name'.
+
+        returns -- The Probe object."""
+
+    # $$$ We also need methods related to PatternSet objects, and
+    # probably methods to iterate over the probes.
 ]]></programlisting></para>
 
 </section>

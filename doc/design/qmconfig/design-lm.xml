@@ -20,7 +20,22 @@
 
  <para>The language module, <classname
  role="module">lang_serv</classname>, is responsible for providing
- services needed by the file scanner and file adapter.</para>
+ services needed by the file scanner and file adapter.  <xref
+ linkend="mod.lang-serv"></xref> shows the class diagrams related to
+ the language services.</para>
+
+ <figure id="mod.lang-serv">
+  <title>Language Services</title>
+  <mediaobject>
+   <imageobject>
+    <imagedata align="center" width="6in" scalefit="1"
+               fileref="cl_langserv.png"></imagedata>
+   </imageobject>
+   <textobject>
+    <phrase>Language Services</phrase>
+   </textobject>
+  </mediaobject>
+ </figure>
 
  <figure id="mod.lang-serv.LangServRegistry">
   <title>Language Module: LangServRegistry</title>

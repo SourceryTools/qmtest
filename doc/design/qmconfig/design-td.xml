@@ -112,7 +112,7 @@ class ProbeSource:
     source probe and parameters in a "ProbeSource" object."""
 
 
-    def __init__(self, probe_platform, probe_name, probe_dp, probe_ap):
+    def __init__(self, probe_name, probe_platform, probe_dp, probe_ap):
 
         """Create the "ProbeSource" object.
 
@@ -126,9 +126,9 @@ class ProbeSource:
         probe on 'probe_platform', with default values to parameters
         already assigned.
 
-        'probe_platform' -- Name of the probe execution platform.
-
         'probe_name' -- Name of the probe.
+
+        'probe_platform' -- Name of the probe execution platform.
 
         'probe_dp' -- Distinguished parameters for this probe.  This
         is a mapping of parameter names to values.
@@ -138,6 +138,14 @@ class ProbeSource:
         values."""
 
 
+    def GetProbeName(self):
+
+        """Get the name of the probe.
+
+        returns -- Name of the probe used as a source for this
+        object."""
+
+
     def GetProbePlatform(self):
 
         """Get the probe platform for which this probe source is
@@ -145,15 +153,6 @@ class ProbeSource:
 
         returns -- A string representing a probe execution
         platform."""
-
-
-
-    def GetProbeName(self):
-
-        """Get the name of the probe.
-
-        returns -- Name of the probe used as a source for this
-        object."""
 
 
     def GetDistinguishedParameters(self):
