@@ -1,3 +1,14 @@
+2003-08-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/platform_unix.py (SignalException.__init__): Tweak message
+	formatting.
+	(_initialize): Tidy.
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Honor
+	termination requests.
+	* qm/test/target.py: Import qm.platform and signal.
+	(Target.RunTest): Honor temination requests in the form of
+	SIGTERM.
+
 2003-08-11  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/command.py (ExecTestBase.MakeEnvironment):

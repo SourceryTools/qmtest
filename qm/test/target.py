@@ -19,10 +19,12 @@
 
 import qm
 import qm.extension
+import qm.platform
 from   qm.test.context import *
 from   qm.test.result import *
 from   qm.test.database import NoSuchResourceError
 import re
+import signal
 import sys
 
 ########################################################################
@@ -206,12 +208,26 @@ class Target(qm.extension.Extension):
             # Run the test.
             descriptor.Run(context, result)
         except KeyboardInterrupt:
-            result.NoteException(cause = "Interrupted.")
+            result.NoteException(cause = "Interrupted by user.")
             # We received a KeyboardInterrupt, indicating that the
             # user would like to exit QMTest.  Ask the execution
             # engine to stop.
             if self.__engine:
                 self.__engine.RequestTermination()
+        except qm.platform.SignalException, e:
+            # Note the exception.
+            result.NoteException(cause = str(e))
+            # If we get a SIGTERM, propagate it so that QMTest
+            # terminates.
+            if e.GetSignalNumber() == signal.SIGTERM:
+                # Record the result so that the traceback is
+                # available.
+                self._RecordResult(result)
+                # Ask the execution engine to stop running tests.
+                if self.__engine:
+                    self.__engine.RequestTermination()
+                # Re-raise the exception.
+                raise
         except self.__ResourceSetUpException, e:
             result.SetOutcome(Result.UNTESTED)
             result[Result.CAUSE] = qm.message("failed resource")

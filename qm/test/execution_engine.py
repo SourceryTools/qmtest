@@ -341,7 +341,8 @@ class ExecutionEngine:
         # to run.
         self.__target_pattern_queues = {}
         
-        while self.__num_tests_started < num_tests:
+        while (self.__num_tests_started < num_tests
+               and not self.IsTerminationRequested()):
             # Process any responses and update the count of idle targets.
             while self.__CheckForResponse(wait=0):
                 pass

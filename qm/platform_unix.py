@@ -58,7 +58,7 @@ class SignalException(common.QMException):
         'signal_number' -- The signal number."""
 
         # Construct a text argument for the exception.
-        message = "signal %d" % signal_number
+        message = "Signal %d" % signal_number
         # Include the signal name, if available.
         signal_name = get_signal_name(signal_number)
         if signal_name is not None:
@@ -276,15 +276,12 @@ def _initialize():
     """Perform module initialization."""
 
     # Install signal handlers for several common signals.
-    map(install_signal_handler,
-        [
-        signal.SIGALRM,
-        signal.SIGHUP,
-        signal.SIGTERM,
-        signal.SIGUSR1,
-        signal.SIGUSR2,
-        ])
-        
+    for s in (signal.SIGALRM,
+              signal.SIGHUP,
+              signal.SIGTERM,
+              signal.SIGUSR1,
+              signal.SIGUSR2):
+        install_signal_handler(s)
 
 _initialize()
 
