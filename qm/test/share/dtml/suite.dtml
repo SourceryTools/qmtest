@@ -7,7 +7,7 @@
   Contents:
     Document template for displaying suite contents.
 
-  Copyright (C) 2001 CodeSourcery LLC.  
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
 
   For license terms see the file COPYING.
 
@@ -137,8 +137,14 @@
     <tr class="heading">
      <td colspan="2">
       <dtml-var expr="web.make_submit_button()">
-      <dtml-var expr="MakeButton('Cancel', 'show-suite', 'submit', 
-                                 id=suite.GetId())">
+      <dtml-if expr="is_new_suite">
+        <dtml-var expr="MakeButton('Cancel', 'dir', 'submit')">
+      <dtml-else>
+        <dtml-var expr="MakeButton('Cancel', 'show-suite', 'submit', 
+                                   id=suite.GetId())">
+      </dtml-if>
+     </td>
+    </tr>
    </dtml-if>
 
   </tbody>

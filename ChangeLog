@@ -1,3 +1,12 @@
+2002-05-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/web/web.py (ShowSuitePage.__init__): Add is_new_suite
+	parameter.
+	(QMTestServer.HandleCreateSuite): Pass it.
+	(QMTestServer.HandleShowSuite): Likewise.
+	* qm/test/share/dtml/suite.dtml: Make cancellation of new suite
+	requests redirect to the main directory page.
+
 2002-05-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/file.py (FileContentsTest.fields): Rename to ...

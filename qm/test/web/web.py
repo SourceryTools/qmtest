@@ -1144,24 +1144,33 @@ class ShowItemPage(QMTestPage):
 class ShowSuitePage(QMTestPage):
     """Page for displaying the contents of a test suite."""
 
-    def __init__(self, server, suite, edit):
+    def __init__(self, server, suite, edit, is_new_suite):
         """Construct a new DTML context.
 
         'server' -- The 'QMTestServer' creating this page.
         
         'suite' -- The 'Suite' instance to display.
 
-        'edit' -- If true, display controls for editing the suite."""
-        
+        'edit' -- If true, display controls for editing the suite.
+
+        'is_new_suite' -- If true, the suite being displayed is being
+        created at this time."""
+
         # Initialize the base class.
         QMTestPage.__init__(self, "suite.dtml", server)
+
+        # It does not make sense to display a new suite without being
+        # able to edit it; there is nothing to show.
+        assert edit or not new_suite 
+        
         # Set up attributes.
         database = server.GetDatabase()
         self.suite = suite
         self.test_ids = suite.GetTestIds()
         self.suite_ids = suite.GetSuiteIds()
         self.edit = edit
-
+        self.is_new_suite = is_new_suite
+        
         if not suite.IsImplicit():
             self.edit_menu_items.append(("Edit Suite", "edit_suite();"))
             self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
@@ -1243,8 +1252,8 @@ class ShowSuitePage(QMTestPage):
         """ % suite_id
         return qm.web.make_confirmation_dialog(message, delete_url)
 
-
-
+        
+        
 class StorageResultsStream(ResultStream):
     """A 'StorageResultsStream' stores results.
 
@@ -1724,7 +1733,7 @@ class QMTestServer(qm.web.WebServer):
             # Everything looks good.  Make an empty suite.
             suite = Suite(self.__database, suite_id)
             # Show the editing page.
-            return ShowSuitePage(self, suite, edit=1)(request)
+            return ShowSuitePage(self, suite, edit=1, is_new_suite=1)(request)
 
 
     def HandleDeleteItem(self, request):
@@ -2132,7 +2141,7 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite = database.GetSuite(suite_id)
         # Generate HTML.
-        return ShowSuitePage(self, suite, edit)(request)
+        return ShowSuitePage(self, suite, edit, is_new_suite=0)(request)
 
 
     def HandleShutdown(self, request):
