@@ -1,3 +1,9 @@
+2001-11-21  Jeffrey Oldham <oldham@codesourcery.com>
+	    Ricardo Anguiano <anguiano@codesourcery.com>
+
+	* README.sources: Fix typo.
+	* doc/manual/test-manual.xml: Likewise.
+
 2001-11-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (get_class_arguments): Retrofit to Python 1.5.2.

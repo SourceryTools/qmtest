@@ -101,7 +101,7 @@ subject to the following modifications and clarifications:
   - Do not use special CVS substitution keywords ("Id:, "Author:",
     etc.) in source code.
 
-  - Always use the followng naming conventions:
+  - Always use the following naming conventions:
 
       Item               Style
       ----------------------------------------
