@@ -557,6 +557,7 @@ class CommandLine:
         return 0;
 
 
+    # XXX Change all of these 'print's to writes...
     def PrintResults(self):
         """Print the list of issues that are the results of the command.
 
@@ -567,28 +568,29 @@ class CommandLine:
         elif self.format_name == 'iid':
             for i in range(0, len(self.results) - 1):
                 issue = results[i]
-                print issue.GetId() + ",",
-            print self.results[len(self.results) - 1].GetId()
+                self.output.write(issue.GetId() + ', ')
+            self.output.write(self.results[len(self.results) - 1].GetId())
+            self.output.write('\n');
         elif self.format_name == 'iid-single':
             for issue in self.results:
-                print issue.GetId()
+                self.output.write(issue.GetId() + '\n')
         elif self.format_name == 'summary':
             for issue in self.results:
-                print "id: " + issue.GetId()
-                print "summary:  " + issue.GetField('summary')
-                print
+                self.output.write('id: ' + issue.GetId() + '\n')
+                self.output.write('summary:  ' + issue.GetField('summary'))
+                self.output.write('\n\n')
         # Same as 'iid-single' for now
         elif self.format_name == 'short':
             for issue in self.results:
-                print issue.GetId()            
+                self.output.write(issue.GetId() + '\n')
         # Same as 'summary' for now
         elif self.format_name == 'full':
             for issue in self.results:
-                print "id: " + issue.GetId()
-                print "summary:  " + issue.GetField('summary')
-                print
+                self.output.write('id: ' + issue.GetId() + '\n')
+                self.output.write('summary:  ' + issue.GetField('summary'))
+                self.output.write('\n\n')
         elif self.format_name == 'xml':
-            print 'unimplemented output format'
+            self.output.write('Unimplemented output format.')
             return 1
         return 0
 

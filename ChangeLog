@@ -1,3 +1,8 @@
+2001-02-12  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/qmtrack.py (PrintResults): Change from 'print' to
+	write.
+
 2001-02-11  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/command_line.py (ErrorHandler): New method.
