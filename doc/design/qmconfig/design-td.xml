@@ -19,10 +19,10 @@
  <title>&M-TD;</title>
 
  <para>The actual &M-TD; used to tailor a kit may be composed from
- several databases.  This allows the &D-tailor; to use central
- system-wide or personal databases to share tailoring information
- across a number of &D-kits;, while still individually tailoring a
- particular &D-kit;.</para>
+ several separate databases.  This allows the &D-tailor; to use
+ central system-wide or personal databases to share tailoring
+ information across a number of &D-kits;, while still individually
+ tailoring a particular &D-kit;.</para>
 
  <para>The &M-TD; contains both metadata about the different tailoring
  symbols needed to tailor an application, and the values of those
