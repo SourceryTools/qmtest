@@ -6,7 +6,7 @@
   Date:   2000-11-07
 
   Contents:
-    Section `Requirements' of qmtrack design document.
+    Chapter `Requirements' of qmtrack design document.
 
   This is part of the master document contained in qmtrack.xml.
 
@@ -17,86 +17,86 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
+<chapter>
+ <title>Requirements</title>
+
+ <para>The guiding principles of the &qmtrack; design are listed here.</para> 
+
+ <formalpara>
+  <title>Simplicity</title>
+  
+  <para>It is a strong requirement that the tool be accessible and
+  understandable.  It should be fairly obvious what different parts of
+  the interface do, and the inner mechanisms should operate in ways
+  that most users can easily predict.</para>
+ </formalpara>
+
+ <formalpara>
+  <title>Efficiency</title>
+
+  <para>We aim to optimize for minimum effort to do the most common
+  operations, and best use of resources like screen real estate to
+  maximize the amount of information that we summarize and
+  present.</para>
+ </formalpara>
+
+ <formalpara>
+  <title>Generality</title>
+
+  <para>We try to avoid making unnecessary assumptions that would
+  restrict the applicability of the tool.  For example, there is no
+  reason why one might not also want to use this tool to manage a
+  design process, non-software projects, or organizational
+  decisions.</para>
+
+ </formalpara>
+
+ <formalpara>
+  <title>Persistence</title>
+
+  <para>We prefer hiding or reclassifying information to deleting
+  it. This helps support the collection of statistics later. If
+  records are never destroyed, there is little danger in providing
+  access to a larger community, and logging yields accountability,
+  which may encourage better behaviour.</para>
+
+ </formalpara>
+
  <section>
-  <title>Requirements</title>
+  <title>Feature requirements</title>
 
-  <para>The guiding principles of the &qmtrack; design are listed here.</para> 
+  <orderedlist>
+   <listitem>
+    <para>Modularity of user interfaces.  All features should be
+    accessible via the web, e-mail, and the commend line.  Creation of
+    other user interfaces should be possible via clear
+    interfaces.</para>
+   </listitem>
 
-  <formalpara>
-    <title>Simplicity</title>
-    
-    <para>It is a strong requirement that the tool be accessible and
-    understandable.  It should be fairly obvious what different parts
-    of the interface do, and the inner mechanisms should operate in
-    ways that most users can easily predict.</para>
-  </formalpara>
+   <listitem>
+    <para>Policy-neutrality.  The basic system architecture should
+    make asolutely minimal assumptions about howhow the system will be
+    used.</para>
+   </listitem>
 
-  <formalpara>
-   <title>Efficiency</title>
+   <listitem>
+    <para>Policy support.  Clear mechanisms will be provided for
+    implementing and enforcing use policies.  Additionally,
+    implementations of common policies will be provided as optional
+    features.</para>
+   </listitem>
 
-   <para>We aim to optimize for minimum effort to do the most common
-   operations, and best use of resources like screen real estate to
-   maximize the amount of information that we summarize and
-   present.</para>
-  </formalpara>
-
-  <formalpara>
-   <title>Generality</title>
-
-   <para>We try to avoid making unnecessary assumptions that would
-   restrict the applicability of the tool.  For example, there is no
-   reason why one might not also want to use this tool to manage a
-   design process, non-software projects, or organizational
-   decisions.</para>
-
-  </formalpara>
-
-  <formalpara>
-   <title>Persistence</title>
-
-   <para>We prefer hiding or reclassifying information to deleting
-   it. This helps support the collection of statistics later. If
-   records are never destroyed, there is little danger in providing
-   access to a larger community, and logging yields accountability,
-   which may encourage better behaviour.</para>
-
-  </formalpara>
-
-  <section>
-   <title>Feature requirements</title>
-
-   <orderedlist>
-    <listitem>
-     <para>Modularity of user interfaces.  All features should be
-     accessible via the web, e-mail, and the commend line.  Creation
-     of other user interfaces should be possible via clear
-     interfaces.</para>
-    </listitem>
-
-    <listitem>
-     <para>Policy-neutrality.  The basic system architecture should
-     make asolutely minimal assumptions about howhow the system will
-     be used.</para>
-    </listitem>
-
-    <listitem>
-     <para>Policy support.  Clear mechanisms will be provided for
-     implementing and enforcing use policies.  Additionally,
-     implementations of common policies will be provided as optional
-     features.</para>
-    </listitem>
-
-    <listitem>
-     <para>Abstracted identity, authentication, and security.  Notions
-     of user identity and mechanisms for authenticating users and
-     securing communications will work through abstract interfaces.
-     Implementations for typical use cases will be provided.</para>
-    </listitem>
-   </orderedlist>
-
-  </section>
+   <listitem>
+    <para>Abstracted identity, authentication, and security.  Notions
+    of user identity and mechanisms for authenticating users and
+    securing communications will work through abstract interfaces.
+    Implementations for typical use cases will be provided.</para>
+   </listitem>
+  </orderedlist>
 
  </section>
+
+</chapter>
 
 <!--
   Local Variables:
@@ -106,6 +106,6 @@
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("introduction.xml" "chapter" "section")
+  sgml-parent-document: ("introduction.xml" "book" "chapter")
   End:
 -->

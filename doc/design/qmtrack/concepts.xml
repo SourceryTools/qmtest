@@ -17,8 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter>
- <title>Conceptual Architecture</title>
+<chapter id="chap-concepts">
+ <title id="chap-concepts-title">Concepts</title>
 
  <para>The fundamental item of information in &qmtrack; is the <phrase
  id="def-issue"><firstterm>issue</firstterm></phrase>.  Each issue has
@@ -38,7 +38,8 @@
  <emphasis>worse</emphasis> off than if the items were not categorized
  at all.</para>
 
- <section><title>Issue Database</title>
+ <section id="sec-issue-database">
+  <title id="sec-issue-database-title">Issue Database</title>
 
   <para>The issue database is an abstract database model used by
   &qmtrack; to store, retrieve, and query issues.  &qmtrack; accesses
@@ -83,7 +84,8 @@
   schema;.  Each table corresponds to one issue class, and all issues
   stored in that table are members of that issue class.</para>
 
-  <section><title>Issue classes</title>
+  <section id="sec-issue-classes">
+   <title id="sec-issue-classes-title">Issue classes</title>
 
    <para>An <phrase id="def-issue-class"><firstterm>issue
    class</firstterm></phrase> is a set of issues that share the same
@@ -101,128 +103,126 @@
 
   </section>
 
-  <section id="sec-fields">
-   <title id="sec-fields-title">Fields</title>
+  <section id="sec-field-types">
+   <title id="sec-fields-types-title">Field types</title>
 
    <para>The &idb; consists of a set of tables corresponding to issue
    classes.  Each row of this table corresponds to a single revision
    of an issue.</para>
 
-   <section><title>Field types</title>
+   <para>The &idb; supports the following field data types:
+    <orderedlist>
+     <listitem>
+      <para><constant>text</constant> fields contain arbitrary text.
+      By convention, the text is not broken into lines with newlines
+      (user interfaces will wrap text as necessary).  Paragraphs are
+      ended with two newline characters.  There is no length limit on
+      text fields.</para>
+     </listitem>
 
-    <para>The &idb; supports the following field data types:
-     <orderedlist>
-      <listitem>
-       <para><constant>text</constant> fields contain arbitrary text.
-       By convention, the text is not broken into lines with newlines
-       (user interfaces will wrap text as necessary).  Paragraphs are
-       ended with two newline characters.  There is no length limit on
-       text fields.</para>
-      </listitem>
+     <listitem>
+      <para><constant>integer</constant> fields contain a signed
+      32-bit integer.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>integer</constant> fields contain a signed
-       32-bit integer.</para>
-      </listitem>
+     <listitem>
+      <para><constant>attachment</constant> fields contain an
+      arbitrary file attachment.  The attachment consistes of a (text)
+      MIME type, a text description, and the binary data of the file
+      itself.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>attachment</constant> fields contain an
-       arbitrary file attachment.  The attachment consistes of a
-       (text) MIME type, a text description, and the binary data of
-       the file itself.</para>
-      </listitem>
+     <listitem>
+      <para><constant>set</constant> fields contain zero or more
+      instances of another field type.</para>
+     </listitem>
+    </orderedlist>
+   </para>
 
-      <listitem>
-       <para><constant>set</constant> fields contain zero or more
-       instances of another field type.</para>
-      </listitem>
-     </orderedlist>
-    </para>
+   <para>The data types listed below are also stored in the &idb;, but
+   don't necessarily require additional data type support from the
+   underlying database.  The &qmtrack; system will supply an
+   implementation of these data types using the above complusory
+   types, if required.  However, implementations may override the
+   implementation for any or all of these types for space or time
+   optimization.
+    <orderedlist>
+     <listitem>
+      <para><constant>string</constant> fields contain short character
+      strings.  These fields should not contain newlines, carriage
+      returns, tabs, or other control characters (but are under no
+      fixed length limit).  Database implementations should validate
+      that <constant>string</constant> fields contain appropriate
+      values only.</para>
+     </listitem>
 
-    <para>The data types listed below are also stored in the &idb;,
-    but don't necessarily require additional data type support from
-    the underlying database.  The &qmtrack; system will supply an
-    implementation of these data types using the above complusory
-    types, if required.  However, implementations may override the
-    implementation for any or all of these types for space or time
-    optimization.
-     <orderedlist>
-      <listitem>
-       <para><constant>string</constant> fields contain short
-       character strings.  These fields should not contain newlines,
-       carriage returns, tabs, or other control characters (but are
-       under no fixed length limit).  Database implementations should
-       validate that <constant>string</constant> fields contain
-       appropriate values only.</para>
-      </listitem>
+     <listitem>
+      <para><constant>time</constant> fields store a UTC
+      date/time.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>time</constant> fields store a UTC
-       date/time.</para>
-      </listitem>
+     <listitem>
+      <para><constant>uid</constant> fields store a user id as a
+      <constant>string</constant>.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>uid</constant> fields store a user id as a
-       <constant>string</constant>.</para>
-      </listitem>
+     <listitem>
+      <para><constant>iid</constant> fields contain an issue id as a
+      <constant>text</constant> field.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>iid</constant> fields contain an issue id as a
-       <constant>text</constant> field.</para>
-      </listitem>
+     <listitem>
+      <para><constant>iid set</constant> fields contain zero or more
+      references to other issues in the same &idb;.  These fields are
+      typically stored as <constant>integer list</constant> fields in
+      the underlying &idb; implementation.</para>
+     </listitem>
 
-      <listitem>
-       <para><constant>iid set</constant> fields contain zero or more
-       references to other issues in the same &idb;.  These fields are
-       typically stored as <constant>integer list</constant> fields in
-       the underlying &idb; implementation.</para>
-      </listitem>
-
-      <listitem>
-       <para><constant>enumeration</constant> fields contain an
-       enumerated value: exactly one value selected from a
-       preconfigured set of alternatives.  Enumeration values are
-       typically stored as integers; the mapping between values and
-       enumerals is part of the &idb; configuration.</para>
-      </listitem>
-     </orderedlist>
-    </para>    
-
-   </section>
-
-   <section><title>Issue id</title>
-
-    <para>Each issue has a unique <firstterm>issue id</firstterm>, or
-    <firstterm>&iid;</firstterm>.  The &iid; is a text string.  Each
-    &qmtrack; installation may choose one of two conventions for
-    structuring &iid;s.
-     <orderedlist>
-      <listitem>
-       <para>The &iid;s may be placed in a flat namespace.  The &iid;
-       values are arbitrary, and may contain any characters other than
-       a period (".").</para>
-      </listitem>
-
-      <listitem>
-       <para>The &iid;s may be structured in a tree.  Each interior
-       node of the tree has an arbitrary name (unique among its
-       siblings).  Each leaf of the tree also has an arbitrary name,
-       and corresponds to an issue.  The &iid; of the issue is the
-       period-delimited sequence of node names, starting from the
-       direct children of the root node.  All interior and leaf node
-       names may contain any characters except for a period (".").
-       Absolute paths in the tree begin with a period.</para>
-
-       <!-- FIXME: How do we specify "up one directory"? -->
-      </listitem>
-     </orderedlist>
-    </para>
-
-   </section>
+     <listitem>
+      <para><constant>enumeration</constant> fields contain an
+      enumerated value: exactly one value selected from a
+      preconfigured set of alternatives.  Enumeration values are
+      typically stored as integers; the mapping between values and
+      enumerals is part of the &idb; configuration.</para>
+     </listitem>
+    </orderedlist>
+   </para>    
 
   </section>
 
-  <section><title>Revisions and audit</title>
+  <section id="sec-iids">
+   <title id="sec-iids-title">Issue id</title>
+
+   <para>Each issue has a unique <firstterm>issue id</firstterm>, or
+   <firstterm>&iid;</firstterm>.  The &iid; is a text string.  Each
+   &qmtrack; installation may choose one of two conventions for
+   structuring &iid;s.
+    <orderedlist>
+     <listitem>
+      <para>The &iid;s may be placed in a flat namespace.  The &iid;
+      values are arbitrary, and may contain any characters other than
+      a period (".").</para>
+     </listitem>
+
+     <listitem>
+      <para>The &iid;s may be structured in a tree.  Each interior
+      node of the tree has an arbitrary name (unique among its
+      siblings).  Each leaf of the tree also has an arbitrary name,
+      and corresponds to an issue.  The &iid; of the issue is the
+      period-delimited sequence of node names, starting from the
+      direct children of the root node.  All interior and leaf node
+      names may contain any characters except for a period (".").
+      Absolute paths in the tree begin with a period.</para>
+
+      <!-- FIXME: How do we specify "up one directory"? -->
+     </listitem>
+    </orderedlist>
+   </para>
+
+  </section>
+  
+  <section id="sec-revisions">
+   <title id="sec-revisions-title">Revisions and audit</title>
 
    <para>Rows in the &idb; are read-only; in normal circumstances,
    rows are never modified or removed from the table.  Instead, a new
@@ -252,13 +252,16 @@
 
  </section>
 
- <section><title>Issues</title>
+ <section id="sec-issues">
+  <title id="sec-issues-title">Issues</title>
 
-  <para>An issue is the principal data record in &qmtrack;.  Each
-  issue corresponds to a bug report, feature request, or other process
-  item in the &qmtrack; database.</para>
+  <para>An <link linkend="def-issue">issue</link> is the principal
+  data record in &qmtrack;.  Each issue corresponds to a bug report,
+  feature request, or other process item in the &qmtrack;
+  database.</para>
 
-  <section><title>Fields</title>
+  <section id="sec-fields">
+   <title id="sec-fields-title">Fields</title>
 
    <para>Each issue (or, more accurately, each revision of each issue)
    contains fields specified by the columns of the &idb; schema.  Fields
@@ -411,8 +414,8 @@
 
  </section>
 
- <section>
-  <title>Queries</title>
+ <section id="sec-queries">
+  <title id="sec-queries-title">Queries</title>
 
   <para>A <firstterm>query</firstterm> is used to select a subset of
   issues of an issue class.  A query is expressed as a Python boolean

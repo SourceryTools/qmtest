@@ -6,7 +6,7 @@
   Date:   2000-11-07
 
   Contents:
-    Chapter `XML Representation' of qmtrack design document.
+    Section `XML Representation' of qmtrack design document.
 
   This is part of the master document contained in qmtrack.xml.
 
@@ -17,24 +17,24 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="chap-xml-repr">
- <title id="chap-xml-repr-title">&xml; Representation</title>
+ <section id="sec-xml-repr">
+  <title id="sec-xml-repr-title">&xml; Representation</title>
 
- <para>Issues may be represented in &xml;, both in the inner workings
- of an &idb; implementation, and in user-visible output.  The latter
- includes exported &xml; and use of &xml; in user interfaces, such as
- in the <link linkend="sec-email">e-mail interface</link>.</para>
+  <para>Issues may be represented in &xml;, both in the inner workings
+  of an &idb; implementation, and in user-visible output.  The latter
+  includes exported &xml; and use of &xml; in user interfaces, such as
+  in the <link linkend="sec-email">e-mail interface</link>.</para>
 
- <section>
-  <title>Issue &dtd;</title>
+  <section>
+   <title>Issue &dtd;</title>
 
-  <para>This &dtd; is the canonical representation for &qmtrack;
-  issues in &xml;.  While &idb; implementations may choose a different
-  &dtd; for their internal storage mechanism, issues should be
-  represented according to this &dtd; for all user-visible &xml;
-  output.  </para>
+   <para>This &dtd; is the canonical representation for &qmtrack;
+   issues in &xml;.  While &idb; implementations may choose a
+   different &dtd; for their internal storage mechanism, issues should
+   be represented according to this &dtd; for all user-visible &xml;
+   output.</para>
 
-  <programlisting><![CDATA[
+   <programlisting><![CDATA[
 <!ELEMENT issue (class, iid, field-data*)>
 
 <!ELEMENT field-data (field*)>
@@ -56,50 +56,50 @@
 <!ELEMENT mime-type (#PCDATA)>
 
 <!ELEMENT external-name (#PCDATA)>
-  ]]></programlisting>
+]]></programlisting>
 
-  <para>The formal public identifier for this &dtd; is
-   <programlisting>
-    "-//Software Carpentry//DTD QMTrack V0.1//EN"
-   </programlisting>
-  </para>
+   <para>The formal public identifier for this &dtd; is
+    <programlisting>
+     "-//Software Carpentry//DTD QMTrack V0.1//EN"
+    </programlisting>
+   </para>
 
-  <para>&xml; representations of an issue will normally present a
-  single revision only, namely the latest revision.  In this case, the
-  <sgmltag>&lt;issue&gt;</sgmltag> element will contain only a single
-  <sgmltag>&lt;field-data&gt;</sgmltag> element, and the the
-  <property>revision-numer</property> attribute is supressed.  For
-  &xml;-based &idb; implementations in which multiple revisions are
-  stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
-  elements will be included with different
-  <property>revision-numer</property> values.  The &idb;
-  implementation may choose to store <link
-  linkend="sec-diff-issue-records">difference issue records</link>
-  instead of the entire field data for past revision, i.e. for the
-  next-most-recent and previous revisions, only fields that were
-  changes are included in the <sgmltag>&lt;field-data&gt;</sgmltag>
-  element.</para>
+   <para>&xml; representations of an issue will normally present a
+   single revision only, namely the latest revision.  In this case,
+   the <sgmltag>&lt;issue&gt;</sgmltag> element will contain only a
+   single <sgmltag>&lt;field-data&gt;</sgmltag> element, and the the
+   <property>revision-numer</property> attribute is supressed.  For
+   &xml;-based &idb; implementations in which multiple revisions are
+   stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
+   elements will be included with different
+   <property>revision-numer</property> values.  The &idb;
+   implementation may choose to store <link
+   linkend="sec-diff-issue-records">difference issue records</link>
+   instead of the entire field data for past revision, i.e. for the
+   next-most-recent and previous revisions, only fields that were
+   changes are included in the <sgmltag>&lt;field-data&gt;</sgmltag>
+   element.</para>
 
-  <para>The <sgmltag>&lt;field&gt;</sgmltag> element is used for all
-  issue fields.  For set fields, the contents are zero or more item
-  tags, each corresponding to an element of the set.  For attachment
-  fields, the contents are an <sgmltag>&lt;attachment&gt;</sgmltag>
-  element.  Other field types are represented with CDATA.</para>
+   <para>The <sgmltag>&lt;field&gt;</sgmltag> element is used for all
+   issue fields.  For set fields, the contents are zero or more item
+   tags, each corresponding to an element of the set.  For attachment
+   fields, the contents are an <sgmltag>&lt;attachment&gt;</sgmltag>
+   element.  Other field types are represented with CDATA.</para>
 
-  <para>The second component of the
-  <sgmltag>&lt;attachment&gt;</sgmltag> element is the attachment's
-  MIME type.  The third component,
-  <sgmltag>&lt;external-name&gt;</sgmltag>, is a file name or other
-  identifier for the location of the attachment data.  For disk-based
-  &idb; implementations, it will contain a relative path to a file.
-  For e-mail &xml; issue representations, it will contain the name of
-  a MIME attachment included in the e-mail message.</para>
+   <para>The second component of the
+   <sgmltag>&lt;attachment&gt;</sgmltag> element is the attachment's
+   MIME type.  The third component,
+   <sgmltag>&lt;external-name&gt;</sgmltag>, is a file name or other
+   identifier for the location of the attachment data.  For disk-based
+   &idb; implementations, it will contain a relative path to a file.
+   For e-mail &xml; issue representations, it will contain the name of
+   a MIME attachment included in the e-mail message.</para>
 
-  <section>
-   <title>&xml; example</title>
+   <section>
+    <title>&xml; example</title>
 
-   <para>Below is an example of an issue for a compiler bug report.
-    <programlisting><![CDATA[
+    <para>Below is an example of an issue for a compiler bug report.
+     <programlisting><![CDATA[
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
 <issue>
@@ -132,16 +132,16 @@ int foo (char* p) {
     </field>
   </field-data>
 </issue>
-    ]]></programlisting>
-   This example includes one attachment, which is stored outside of
-   the &xml; representation in a file (or other entity) named
-   "<filename>attachment001</filename>".</para>
+     ]]></programlisting>
+    This example includes one attachment, which is stored outside of
+    the &xml; representation in a file (or other entity) named
+    "<filename>attachment001</filename>".</para>
 
+   </section>
+   
   </section>
 
  </section>
-
-</chapter>
 
 <!--
   Local Variables:
@@ -150,6 +150,6 @@ int foo (char* p) {
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  sgml-parent-document: ("qmtrack.xml" "chapter" "section")
   End:
 -->

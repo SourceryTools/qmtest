@@ -26,7 +26,9 @@
   <!ENTITY dtd "<acronym>DTD</acronym>">
   <!ENTITY idb "<acronym>IDB</acronym>">
   <!ENTITY iid "<acronym>IID</acronym>">
+  <!ENTITY prompt "<prompt>$ </prompt>">
   <!ENTITY qmtrack "QMTrack">
+  <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
   <!ENTITY rdbms "<acronym>RDBMS</acronym>">
   <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
   <!ENTITY sql "<acronym>SQL</acronym>">
@@ -58,8 +60,8 @@
  </bookinfo>
 
  &introduction.xml;
+ &requirements.xml;
  &concepts.xml;
- &xml-repr.xml;
  &idb-api.xml;
  &triggers.xml;
  &idb-impl.xml;

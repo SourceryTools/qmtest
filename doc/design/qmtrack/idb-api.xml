@@ -504,12 +504,7 @@ class Attachment:
 
  </section>
 
- <section id="sec-queries">
-  <title>Queries</title>
-
-  <para></para>
-
- </section>
+ &xml-repr.xml;
 
 </chapter>
 

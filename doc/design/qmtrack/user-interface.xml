@@ -19,210 +19,198 @@
 -->
 <chapter><title>User Interface</title>
 
- <section><title>Modes of Interaction</title>
+ <para>This section describes the different methods the user can use
+ to create issues, edit issues, and query the database. We invision
+ three main modes for interaction: command line, email, and
+ web. However, based on the specification in the previous section, any
+ mode may be added.</para>
 
-  <para>This section describes the different methods the user can use to
-  create issues, edit issues, and query the database. We invision three
-  main modes for interaction: command line, email, and web. However, based
-  on the specification in the previous section, any mode may be
-  added.</para>
+ <section id="sec-command-line">
+  <title id="sec-command-line-title">Command line</title>
+  
+  <para>All &qmtrack; command-line functionality is accessed via the
+  &qmtrack-cmd; command, using a command-line syntax popularized by
+  the <application>CVS</application> program.  The user provides a
+  <firstterm id="def-subcommand">subcommand</firstterm> with each
+  invocation of &qmtrack-cmd;, which specifies the type of operation
+  to be performed.  The user may specify options modifying &qmtrack;'s
+  behavior, and, for certain subcommands, additional arguments.</para>
 
- </section>
+  <synopsis>
+    qmtrack [ options ] command [ command_options ] [ command_args ]
+  </synopsis>
 
- <section><title>Command Line</title>
+  <para>When creating or modifying an issue, field values are
+  specified as arguments.  The user specifies field values to
+  &qmtrack-cmd; commands using assignment notation, as in
+  <userinput><replaceable>field</replaceable>=<replaceable>value</replaceable></userinput>.
+  For set fields, different notation is used instead to add or remove
+  elements from the set.  To add elements, the user specifies
+  <userinput><replaceable>field</replaceable>+=<replaceable>value</replaceable></userinput>.
+  To remove elements, the <userinput>-=</userinput> symbol is used
+  instead.  All of the commands to create and edit issues use the
+  above three operators to specify new values for fields.</para>
 
-  <para>
-  <programlisting>
-<![CDATA[
-Usage:
+  <section id="sec-qmtrack-commands">
+   <title id="sec-qmtrack-commands-title">&qmtrack-cmd commands</title>
 
-qmtrack [ options ] command [ command_options ] [ command_args ]
+   <formalpara>
+    <title><command>create</command></title> 
 
-]]>
-  </programlisting>
-  qmtrack commands:</para>
-  <para><literal>create</literal>: This command is used to create a new
-  issue. It takes as its mandatory arguments a summary and
-  categories. Optional arguments include any other field values you wish
-  to set. For example:
-  <programlisting>
-<![CDATA[
-$ qmtrack create SUMMARY="My first issue" CATEGORIES+=simple CATEGORIES+=first
-2
-$ 
-]]>
-  </programlisting>
-  will create a new issue that has the summary, <literal>"My first
-  issue"</literal> and belongs to the two categories,
-  <literal>simple</literal> and <literal>first</literal>. The value
-  printed to standard out is the ID of the issue.</para>
+    <para>This command is used to create a new issue.  It takes as its
+    mandatory arguments a summary and categories.  Optional arguments
+    include any other field values you wish to set.  For example,
+     <screen>
+      &prompt;<userinput>qmtrack create summary="My first issue" categories+=simple categories+=first</userinput>
+      <computeroutput>iss2</computeroutput>
+     </screen>
+    will create a new issue that has the summary, "My first issue" and
+    belongs to the two categories, "simple" and "first". The value
+    printed is the ID of the new issue.</para>
+   </formalpara>
 
-  <para> To specify field values to qmtrack commands, there are three
-  special characters to indicate which action should be taken:
-   <itemizedlist>
-    <listitem>
-     <para>= : Set the field to the given value (e.g. FIELD=value).</para>
-    </listitem>
+   <formalpara>
+    <title><command>edit</command></title>
 
-    <listitem>
-     <para>+= : Add the given value to the set of values in the field
-     (e.g. CATEGEORY+=value). This should only be used on fields that
-     contain sets of values.</para>
-    </listitem>
+    <para>This command is used to edit an existing issue. It takes the
+    ID of the command you wish to edit and then as arguments any
+    fields you wish to edit. For example,
+     <screen>
+      &prompt;<userinput>qmtrack edit foo categories-=first</userinput>
+      <computeroutput>foo</computeroutput>
+     </screen>
+    will edit the issue with id "iss2" removing the category "first"
+    from the issue. A new revision of the issue will be created and
+    stored in the database.  &qmtrack; responds with the issue id of
+    the edited issue.</para>
+   </formalpara>
 
-    <listitem>
-     <para>-= : Remove the given value to the set of values in the field
-     (e.g. CATEGORY-=value). This should only be used on fields that
-     contain sets of values.</para>
-    </listitem>
-   </itemizedlist>
-  All of the commands to create and edit issues use the above three
-  operators to specify new values for fields.
-  </para>
-  <para><literal>edit</literal>: This command is used to edit an existing
-  issue. It takes the ID of the command you wish to edit and then as
-  arguments any fields you wish to edit. For example:
-  <programlisting>
-<![CDATA[
-$ qmtrack edit 2 CATEGORIES-=first
-SUCCESS: Edited ID 2.
-$ 
-]]>
-  </programlisting>
-  will edit the issue with ID 2 removing the <literal>first</literal>
-  category from the issue. A new revision of the issue will be created and
-  stored in the database. If the edit succeeds,
-  <literal>"SUCCESS"</literal> will be printed to standard out followed by
-  a message containing information on the current revision number of the
-  issue.
-  </para>
-  <para>You may also use the <literal>edit</literal> command to join two
-  or more issues into one and split one issue into two. Simply give the
-  edit command the <literal>-j</literal> flag followed by another ID to
-  join it to the issue. Any edits that are given on the command line will
-  be applied to the first revision of the joined issue. Similarly, the
-  <literal>-s</literal> flag will split the current issue into two
-  issues. Any edits made on that command line will be applied to the new
-  issue and its ID will be given on the command line as if create had been
-  called. All fields that are not edited in the split issue will be copied
-  from the original issue.
-  </para>
-  <para><literal>query</literal>: This command is used to search the
-  database for issues that match certain criteria. 
-  arguments any fields you wish to edit. For example:
-  <programlisting>
-<![CDATA[
-$ qmtrack query -v INSERT NEW QUERY SYNTAX HERE
-QUERY RESULTS:
-1 issue
+   <formalpara>
+    <title><command>split</command></title>
 
-Issue 2, Summary "My first issue", Last updated "October 6, 2000"
+    <para>The <command>split</command> command splits one issue into
+    two.  The issue ids of the two new issues are printed (the old
+    issue id is no longer used).  For example,
+     <screen>
+      &prompt;<userinput>qmtrack split foo</userinput>
+      <computeroutput>foo.1, foo.2</computeroutput>
+     </screen>
+    </para>
+   </formalpara>
 
-$ 
-]]>
-  </programlisting>
-  searches for all issues that were updated in the range of dates between
-  October 5th, 2000 and October 7th, 2000. The results are printed to
-  standard out based on the verbosity level of the request. The full set
-  of options are as follows:
-  </para>
-  <informaltable>
-   <tgroup cols="2">
-    <thead>
-     <row>
-      <entry>flag</entry>
-      <entry>description</entry>
-     </row>
-    </thead>
-    <tbody>
-     <row>
-      <entry><literal>-v</literal></entry>
-      <entry>First level of verbosity.</entry>
-     </row>
-     <row>
-      <entry><literal>-vv</literal></entry>
-      <entry>More verbose.</entry>
-     </row>
-     <row>
-      <entry><literal>-vvv</literal></entry>
-      <entry>Most verbose.</entry>
-     </row>
+   <formalpara>
+    <title><command>join</command></title>
 
-<!-- For now commented out until we have a new way of querying.
-     <row>
-      <entry><literal>-e</literal></entry>
-      <entry>Match exactly. Following this flag is the
-      field to match and then the value to match in that field exactly.
-      </entry>
-     </row>
-     <row>
-      <entry><literal>-c</literal></entry>
-      <entry>Contains. Following this flag is the field to match and then
-      the value to test if the field contains that value. This should only
-      be used on fields that have multiple possible values or strings. For
-      example, you may search the CATEGORY field for issues that are
-      members of one category or search on the SUMMARY field to find all
-      issues that contain the string <literal>"bug"</literal> in their
-      summary. However, it does not make sense to do a "contains" search
-      on a field like REVISION.</entry>
-     </row>
-     <row>
-      <entry><literal>-l</literal></entry>
-      <entry>Less than. For fields that have a specfic ordering (e.g.,
-       DATE or SEVERITY), you may use this flag to search for issues that
-       have a value less than a specified value in the given field. This
-       flag also takes the field to match and then a value.</entry>
-     </row>
-     <row>
-      <entry><literal>-g</literal></entry>
-      <entry>Greater than. Opposite of less than.</entry>
-     </row>
-     <row>     
-      <entry><literal>-r</literal></entry>
-      <entry>Range. Used to simplify writing of a less than search anded
-      with a greater than search. This flag, unlike any other, takes two
-      values after the field: the lower bound and the upper bound.</entry>
-     </row>
+    <para>The <command>join</command> command joins two or more issues
+    into a new issue.  If any field assignments are specified, these
+    fields are modified in the newly-joined issue.  The issue id of
+    the newly joined issue is printed.  For example,
+     <screen>
+      &prompt;<userinput>qmtrack join foo bar</userinput>
+      <computeroutput>foo_bar</computeroutput>
+     </screen>
+    </para>
+   </formalpara>
 
-     <row>
-      <entry><literal>-a</literal></entry>
-      <entry>And. Used to and two search criteria together. Simply list
-      the two flags (and their arguments) after the <literal>-a</literal>
-      flag and the query will intersect the results of the two queries
-      before printing. To and together more than two results, use multiple
-      <literal>-a</literal> flags.</entry>
-     </row>
-     <row>
-      <entry><literal>-o</literal></entry>
-      <entry>Or. Used to or two search criteria
-      together. Syntactically equivalent to the <literal>-a</literal> flag
-      except the two queries are unioned instead of intersected.</entry>
-     </row>
-     <row>
-      <entry><literal>-n</literal></entry>
-      <entry>Not. Used to take the complement of a given search
-      criteria. The opposite of the given criteria is reported when this
-      flag preceeds that query flag.</entry>
-     </row>
--->
+   <formalpara>
+    <title><command>query</command></title>
 
-    </tbody>
-   </tgroup>
-  </informaltable>
+    <para>This command is used to search the database for issues that
+    match certain criteria.  A Python-like syntax is used to specify
+    queries, as described in <link linkend="sec-queries"
+    endterm="sec-queries-title"></link>.  For example,
+     <screen>
+      &prompt;<userinput> qmtrack query front_end in categories and severity &gt; serious</userinput>
+      <computeroutput>foo,bar,bar2,baz</computeroutput>
+     </screen>
+    searches for all issues in the category "front_end" at the
+    severity level "serious" or greater.  &qmtrack; responds with the
+    issue ids of matching issues.</para>
+   </formalpara>
+
+  </section>
+
+  <section id="sec-output-options">
+   <title id="sec-output-options-title">Output options</title>
+
+   <para>By default, &qmtrack; displays a comma-separated list of
+   issue ids created, edited, or matched by the user's operation.
+   Other output may be selected using the <option>--format</option>
+   (<option>-f</option>) option.  This option takes an option
+   parameter, which is the name of a format style.  See <xref
+   linkend="tab-format-params"></xref> for parameter values.</para>
+
+   <table id="tab-format-params">
+    <title><option>--format</option> parameters</title>
+    <tgroup cols="2">
+     <thead>
+      <row>
+       <entry>format style</entry>
+       <entry>description</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry><literal>none</literal></entry>
+       <entry>Don't display any issue output.</entry>
+      </row>
+      <row>
+       <entry><literal>iid</literal></entry>
+       <entry>Comma-delimited issue ids (default).</entry>
+      </row>
+      <row>
+       <entry><literal>iid-single</literal></entry>
+       <entry>Issue ids, delimited with newlines, useful for shell
+        and line-oriented processing.</entry>
+      </row>
+      <row>
+       <entry><literal>summary</literal></entry>
+       <entry>Issue ids and summaries.</entry>
+      </row>
+      <row>
+       <entry><literal>short</literal></entry>
+       <entry>To be determined.</entry>
+      </row>
+      <row>
+       <entry><literal>full</literal></entry>
+       <entry>To be determined.</entry>
+      </row>
+      <row>
+       <entry><literal>command</literal></entry> 
+       <entry>Field assignments, in the format that would be passed
+        to the <command>qmtrack create</command> command.  Note that
+        some fields, such as attachment fields, cannot be represented
+        this way.</entry>
+      </row>
+      <row>
+       <entry><literal>xml</literal></entry>
+       <entry>The issue(s) in canonical XML format.</entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+
+   <para>Additionally, the <option>--custom-format</option>
+   (<option>-F</option>) option may be used to specify a different
+   format.  This option takes as its parameter a comma-separated list
+   of field names to display in tabular format.</para>
+
+  </section>
+
  </section>
 
  <section id="sec-email">
-  <title id="sec-email-title">Email</title>
+  <title id="sec-email-title">E-mail</title>
 
-  <para>To create, edit, and query issues via email, simply construct an
-  email in xml as shown below and send the message to the database. It
+  <para>To create, edit, and query issues via e-mail, simply construct an
+  e-mail in xml as shown below and send the message to the database. It
   will respond with the same information that would be given on the
   command line had the request been issued that way. The first line of the
-  email should contain the command (e.g. <literal>create</literal>,
+  e-mail should contain the command (e.g. <literal>create</literal>,
   <literal>edit</literal>, or <literal>query</literal>). You may then
   either give the command as you would on the command line, or you may
   specify it using an xml representation. For example, to create a new
-  issue, you can send an email with this body:
+  issue, you can send an e-mail with this body:
   
   <programlisting>
 <![CDATA[
@@ -243,7 +231,7 @@ $
   ]]>
   </programlisting>
 
-  Either way, you would receive an email back containing the text:
+  Either way, you would receive an e-mail back containing the text:
 
   <programlisting>
 <![CDATA[
@@ -332,7 +320,7 @@ $
   directives, simply place the directive on a line before the one or two
   fields to that argument. For example, to perform a query that finds all
   issues that do not contain the word "foo" in the summary and have "bar"
-  as their only category, the email is formed like this:
+  as their only category, the e-mail is formed like this:
    <programlisting>
 <![CDATA[
 query

@@ -103,8 +103,7 @@
 
   <para>The &xml; &idb; implementation uses the canonical &xml;
   representation for issues described in section <link
-  linkend="chap-xml-repr"
-  endterm="chap-xml-repr-title"></link>.</para>
+  linkend="sec-xml-repr" endterm="sec-xml-repr-title"></link>.</para>
 
   <section>
    <title>Issue files</title>
