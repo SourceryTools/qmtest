@@ -1,3 +1,24 @@
+2000-12-06  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* doc/design/qmtrack/create1.html: New file.
+	* doc/design/qmtrack/create2.html: Likewise.
+	* doc/design/qmtrack/edit1.html: Likewise.
+	* doc/design/qmtrack/edit2.html: Likewise.
+	* doc/design/qmtrack/query1.html: Likewise.
+	* doc/design/qmtrack/query2.html: Likewise.
+	* doc/design/qmtrack/main1.html: Likewise.
+
+	* doc/design/qmtrack/create1.jpg: Update.
+	* doc/design/qmtrack/create2.jpg: Likewise.
+	* doc/design/qmtrack/edit1.jpg: Likewise.
+	* doc/design/qmtrack/edit2.jpg: Likewise.
+	* doc/design/qmtrack/query1.jpg: Likewise.
+	* doc/design/qmtrack/query2.jpg: Likewise.
+	* doc/design/qmtrack/query3.jpg: Likewise.
+
+	* doc/design/user-interface.xml: Update e-mail section by adding
+	headers. Flesh out web section.
+	
 2000-12-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml (idb-impl.xml): Remove entity.

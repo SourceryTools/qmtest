@@ -214,12 +214,20 @@
    e-mail with the command as you would issue it on the command line and
    send it to the database. The database will respond with the information
    in &xml; form. For example, to create a new issue, you can send an e-mail
-   with this body:
+   like this:
     <programlisting>
-     create summary="My issue" categories+=foo categories+=bar
+Subject: create
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
+create summary="My issue" categories+=foo categories+=bar
     </programlisting>
-   or with this body:
+   or like this:
     <programlisting><![CDATA[
+Subject: create
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
 create
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -235,6 +243,10 @@ create
     ]]></programlisting>
    Either way, you would receive an e-mail back containing the text:
     <programlisting><![CDATA[
+Subject: Re: create
+To: qmtrack-user@another-domain.com
+Date: Tue, 5 Dec 2000 23:45:15 -0800 (PST)
+
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
 <issue>
@@ -255,16 +267,28 @@ create
    category, foo, from the issue we just created, you could send the
    following message:
     <programlisting>
-     edit iss2 categories-=foo
+Subject: edit
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
+edit iss2 categories-=foo
     </programlisting>
    or you could send the following message:
     <programlisting>
-     edit iss2
+Subject: edit
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
+edit iss2
     </programlisting>
    with no arguments to the edit command except for the issue. Sending
    an email of this form will cause the database to send you the
    following message:
     <programlisting><![CDATA[
+Subject: Re: edit
+To: qmtrack-user@another-domain.com
+Date: Tue, 5 Dec 2000 23:45:15 -0800 (PST)
+
 edit
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -281,6 +305,10 @@ edit
     ]]></programlisting>
    which you would then edit to look like:
     <programlisting><![CDATA[
+Subject: Re: edit
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
 edit
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -298,8 +326,15 @@ edit
    you wish to add an attachment to this revision of the issue, you
    can simply attach it to the email. In either case, you after the
    edit is complete, you would receive a message that looked like
-   this: <programlisting><![CDATA[ <?xml version="1.0"?> <!DOCTYPE
-   issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+   this: 
+   <programlisting>
+     <![CDATA[ 
+Subject: Re: edit
+To: qmtrack-user@another-domain.com
+Date: Tue, 5 Dec 2000 23:45:15 -0800 (PST)
+
+<?xml version="1.0"?> 
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
 <issue>
  <iid>iss2</iid>
  <field-data>
@@ -317,8 +352,12 @@ edit
    done on the command line, the syntax is identical to that on the
    command line. However, if you choose to use an &xml; representation
    for your query, you are more limited in the way you search. Imagine
-   the following body of an e-mail message to be sent to the database:
+   the following e-mail message to be sent to the database:
     <programlisting><![CDATA[
+Subject: query
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
 query
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -332,9 +371,13 @@ query
     ]]></programlisting>
    This will return the &xml; representation for any issues that have
    <literal>bar</literal> in their category set. This would be
-   equivalent to sending a message containing the body:
+   equivalent to sending a message like this:
     <programlisting>
-     query 'bar in categories'
+Subject: query
+To: qmtrack-database@domain.com
+Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
+
+query 'bar in categories'
     </programlisting>
    </para>
 
@@ -427,65 +470,111 @@ query
     </mediaobject>
    </figure>
 
-   <para>To create a new issue, the user will be presented with a form
-   like the following:
+   <para>The main menu, as represented above in the state model, will look
+   something like this:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="main1.jpg" format="JPG" scale="50"></imagedata>
+     </imageobject>
+    </mediaobject>
+   This is the control center for the database. From this menu, the user
+   can access the forms necessary to create new issues, view existing
+   issues, edit issues, query for issues, and perform advanced queries
+   with a subset of the python expressions.</para>
+
+   <para>On clicking the "Create" button of the "Main Menu" page, the user
+   will be presented with a form like the following:
     <mediaobject>
      <imageobject>
       <imagedata fileref="create1.jpg" format="JPG" scale="50"></imagedata>
      </imageobject>
     </mediaobject>
-   He/she will then fill in the necessary data, click "Create," and be
-   shown a page like the following:
+   This is the "New Issue" form described in the state model above. Notice
+   how the fields are displayed. In this form, the fields are to be
+   displayed in a way that allows them to be edited. This is one of the
+   three methods of display. The other two, as will be described below,
+   are the displays for read-only fields and querie fields. Each field can
+   be displayed in one of the three ways based upon the context of the
+   page. Once the user fills in the requisite information on the "New
+   Issue" page and clicks the "Create" button, the user will be taken to a
+   "View Issue" form that will show him/her the newly created issue. The
+   following is an example of the "View Issue" form that would be seen
+   after creating a new issue:
     <mediaobject>
      <imageobject>
       <imagedata fileref="create2.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   To edit, the user will be presented with a form like this:
+   Notice the read-only form of the fields in this "View Issue" page. None
+   of the fields can be edited since this page is intended to display
+   issues only. Also, the "View Issue" page allows more audit information
+   to be displayed, as described in the state model above as well as a
+   button to edit the issue being displayed.
+
+   The user has two ways of getting to the "Edit Issue" page described
+   above in the state model. One way is for the user can simply click the
+   "Edit" button on a "View Issue" page. The other way, the user simply
+   enters the ID of the issue he/she wants to edit on the "Main Menu" page
+   and then clicks "Edit" from there. Either way, the user will be
+   presented with a page like this:
     <mediaobject>
      <imageobject>
       <imagedata fileref="edit1.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   He/she will then fill in the ID of the issue to edited and click on
-   "Retrieve." This will fill in the form with the issue:
+   Then the user can then edit the issue on the page. Notice that the
+   fields are displated in their edit form, just as they were on the
+   "Create Issue" page. The user then clicks "Edit" to commit the changes
+   he/she made. Again, a "View Issue" page will be displayed with the
+   issue that was just edited:
     <mediaobject>
      <imageobject>
       <imagedata fileref="edit2.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   Then the user can edit it and click on "Edit" to commit the changes
-   made. After doing this, the user will be presented with a page like
-   the following:
-    <mediaobject>
-     <imageobject>
-      <imagedata fileref="edit3.jpg" format="JPG"></imagedata>
-     </imageobject>
-    </mediaobject>
-   To query, the user will be presented wiht a form like this:
+
+   To perform queries, the user may either enter the Python expression
+   query string on the "Main Menu" page described above, or click the
+   "Query" button on that page. In the latter case, a page like the
+   following for the "Query Form", descibed above in the state model, will
+   be displayed:
     <mediaobject>
      <imageobject>
       <imagedata fileref="query1.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   Then the user can simply put values in the fields as desired,
-   choosing how to search on each field with the given pull down
-   menus. (Each field type has a set of "ways to search" that are
-   determined and used to generate the pull down menus.) Once the user
-   inputs the data and clicks "Query":
+   Then the user can simply put values in the fields as desired, choosing
+   how to search on each field with the given pull down menus. Notice that
+   this page shows the third type of display for fields, the query
+   display. For queries, it is not sufficient to simply have an edit box
+   for each field. Each field must accompanied by some options for how to
+   query on that field. For example, for queries on integer fields, the
+   user may wish to specify "less than," "greater than," or "exact"
+   searches on that field. Therefore, there exist pull down menus on the
+   page above representing the type of query on each field. The following
+   demonstrates a potential query that the user might perform:
     <mediaobject>
      <imageobject>
       <imagedata fileref="query2.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   the following page is returned:
+   After clicking the "Query" button, a page like the following is
+   returned:
     <mediaobject>
      <imageobject>
       <imagedata fileref="query3.jpg" format="JPG"></imagedata>
      </imageobject>
     </mediaobject>
-   The user may then refine the search to enforce additional
-   constraints.</para>
+   This is the "Issue List" as described in the state model above. It is a
+   list of all the issues that matched the criteria specified in the query
+   (either an "Advanced Query" or "Basic Query"). From this page, the user
+   may refine his/her search by clicking the "Refine Query" button. This
+   will return the user to the "Query Form" page to enter additional
+   information. The query will then be performed only on the issues in the
+   issue list. Also, the user may view (and subsequently edit) individual
+   issues in the issue list by clicking on their ID. Clicking on the ID
+   will take the user to a "View Issue" page for that issue.
+   </para>
 
   </section>
 
