@@ -34,6 +34,28 @@ tool, provisionally named "Qmtest".
 	</ul>
 <li><a href="#term"> Terminology </a></li>
 <li><a href="#req"> Requirements </a></li>
+	<ul>
+	<li><a href="#req-accuracy"> Accuracy </a></li>
+	<li><a href="#req-smallscale"> Small-Scale Usability </a></li>
+	<li><a href="#req-reproducible"> Reproducibility </a></li>
+	<li><a href="#req-standards"> Recycle Existing Standards </a></li>
+	<li><a href="#req-dep"> Dependent and Independent Tests </a></li>
+	<li><a href="#req-expect"> Expected and Unexpected Results </a></li>
+	<li><a href="#req-report"> Reporting </a></li>
+	<li><a href="#req-suite"> Test Suites </a></li>
+	<li><a href="#req-id"> Test Identification </a></li>
+	<li><a href="#req-summary"> Summary Reporting </a></li>
+	<li><a href="#req-info"> Extra Information </a></li>
+	<li><a href="#req-change"> Logging Changes </a></li>
+	<li><a href="#req-traversal"> Traversal </a></li>
+	<li><a href="#req-physical"> Physical Organization of Tests </a></li>
+	<li><a href="#req-parallel"> Parallel Execution </a></li>
+	<li><a href="#req-spec"> Test Specification </a></li>
+	<li><a href="#req-multi"> Multi-Tests and Reflective Tests </a></li>
+	<li><a href="#req-updown"> Setup and Teardown </a></li>
+	<li><a href="#req-sandbox"> Sandboxing and Throttling </a></li>
+	<li><a href="#req-summary"> Summary </a></li>
+	</ul>
 <li><a href="#arch"> Architecture </a></li>
 <li><a href="#iface"> Interface </a></li>
 <li><a href="#impl"> Implementation </a></li>
@@ -851,8 +873,8 @@ between tests</em>, and to <em role="req">prevent dependent tests from
 being executed if the tests on which they depend did not behave as
 expected</em>.  For obvious reasons, dependencies between tests must
 be acyclic; Qmtest must <em role="req">detect and report cyclic
-dependencies</em>.  Qmtest should try to <b role="desire">detect and
-report cyclic dependencies before executing any tests</b>, but is not
+dependencies</em>.  Qmtest should try to <em role="desire">detect and
+report cyclic dependencies before executing any tests</em>, but is not
 required to do this, since this may not be possible (as discussed in
 the section on <a href="#req-multi">generating tests on the fly</a>).
 </p>
@@ -863,8 +885,8 @@ teardown from particular tests</em>, so that the modified fixtures
 required for dependent tests are not destroyed before those tests are
 executed.  Qmtest must <em role="req">trace dependencies between
 tests</em>, and automatically determine when to set up and tear down
-fixtures.  If possible, Qmtest should <b role="desire">share
-dependency detection and management functionality with Qmbuild</b>.
+fixtures.  If possible, Qmtest should <em role="desire">share
+dependency detection and management functionality with Qmbuild</em>.
 </p>
 
 </a> <!-- end req-dep -->
@@ -888,8 +910,8 @@ passes, unexpected failures, and other results</em>.
 <h3>Reporting</h3>
 
 <p>
-Qmtest must be able to <b role="req">report test results in textual,
-human-readable form</b>.  This is necessary for two reasons:
+Qmtest must be able to <em role="req">report test results in textual,
+human-readable form</em>.  This is necessary for two reasons:
 <ol>
 <li>
 While all version control systems are able to find and display
@@ -910,7 +932,7 @@ without external helper applications, such as web browsers.
 This requirement does <em>not</em> imply that flat text will be
 Qmtest's only, or usual, output format.  In particular, as XML-aware
 tools mature and become more common, Qmtest must therefore be able to
-<b role="req">report and store test results as XML</b>.  This will
+<em role="req">report and store test results as XML</em>.  This will
 make it easier for XML-aware integrated development environments
 (IDEs) and version control systems, to leverage the semantic content
 of Qmtest's output.
@@ -918,11 +940,11 @@ of Qmtest's output.
 
 <p>
 Requiring test authors to write tests that can generate output in two
-or more formats is an unacceptable burden.  Qmtest must therefore <b
+or more formats is an unacceptable burden.  Qmtest must therefore <em
 role="req">provide test result formatting and reporting functions in
-all languages of interest</b>.  The <b role="req">format in which
+all languages of interest</em>.  The <em role="req">format in which
 these functions report results must be controlled by a single
-switch</b>, i.e. there cannot be separate functions for different
+switch</em>, i.e. there cannot be separate functions for different
 reporting formats.
 </p>
 
@@ -933,18 +955,18 @@ reporting formats.
 
 <p>
 In order to make test management practical, Qmtest must allow test
-authors to <b role="req">aggregate tests into test suites</b>.
-Further, <b role="req">test suites must support setup and
-teardown</b>, i.e. it must be possible for a suite author to specify
+authors to <em role="req">aggregate tests into test suites</em>.
+Further, <em role="req">test suites must support setup and
+teardown</em>, i.e. it must be possible for a suite author to specify
 some initialization that is to be performed before any of the tests in
 a suite are executed, and some finalization that is to be performed
 after all of the suite's tests have completed.
 </p>
 
 <p>
-It must be possible to <b role="req">make tests and test suites
-members of suites</b>.  However, <b role="req">test suites do not
-generate test results</b>, i.e. there is no sense in which a suite
+It must be possible to <em role="req">make tests and test suites
+members of suites</em>.  However, <em role="req">test suites do not
+generate test results</em>, i.e. there is no sense in which a suite
 "passes" or "fails".  The reason for this is that the results of
 individual tests are not binary: there is no sensible way in which to
 classify an arbitrary combination of pass, fail, error, and deferred
@@ -958,9 +980,9 @@ href="#req-summary">summary reporting</a> will be provided.
 <h3>Test Identification</h3>
 
 <p>
-A second important aspect of test management is that <b
-role="req">every test must be uniquely identified</b>, and <b
-role="req">test identifiers must be long-lived</b>.  The first
+A second important aspect of test management is that <em
+role="req">every test must be uniquely identified</em>, and <em
+role="req">test identifiers must be long-lived</em>.  The first
 requirement is needed so that developers can specify particular tests
 to be re-executed, or drill down to the results of individual tests
 after the fact.  The second requirement ensures that test results can
@@ -974,8 +996,8 @@ subsequent tests, which would break historical comparison.
 The standard solution to the problem of unique, long-lived
 identification is hierarchical naming.  Since this is familiar to most
 programmers (and to any non-programmer who has ever navigated a tree
-of directories and files), Qmtest will <b role="req">require every
-test (or test suite) to be uniquely named below its parent</b>.
+of directories and files), Qmtest will <em role="req">require every
+test or test suite to be uniquely named below its parent</em>.
 Specific tests can then be referred to using path-like identifiers.
 </p>
 
@@ -984,8 +1006,8 @@ As many users of backup and version control systems have discovered,
 hierarchical naming does maintain historical comparability when items
 are moved or renamed.  For example, if a test is moved from a
 program's "I/O" suite, and put in its "runtime" suite, its full name
-will change.  It would therefore be desirable for Qmtest to <b
-role="desire">include name-tracking</b>, but this will not be
+will change.  It would therefore be desirable for Qmtest to <em
+role="desire">include name-tracking</em>, but this will not be
 implemented in the first version.
 </p>
 
@@ -995,16 +1017,16 @@ implemented in the first version.
 <h3>Summary Reporting</h3>
 
 <p>
-Qmtest must be able to <b role="req">summarize the results of
-tests</b>, i.e. produce a count of the number of tests which have
-passed, failed, generated an error, or been deferred.  This <b
-role="req">reporting must be hierarchical</b>: users must be able to
-inspect the summaries for suites, sub-suites, and so on.  In order to
-avoid confusion, <b role="req">summary reporting must mirror the test
-suite hierarchy</b>, i.e. aggregate results will only be produced that
+Qmtest <em role="req">must summarize the results of tests</em>,
+i.e. produce a count of the number of tests which have passed, failed,
+generated an error, or been deferred.  This <em role="req">reporting
+must be hierarchical</em>: users must be able to inspect the summaries
+for suites, sub-suites, and so on.  In order to avoid confusion, <em
+role="req">summary reporting must mirror the test suite
+hierarchy</em>, i.e. aggregate results will only be produced that
 correspond to the nodes in the tree of suites and sub-suites.
-Finally, <b role="req">reporting and recording must be
-independent</b>, i.e. Qmtest must be able to record more information
+Finally, <em role="req">reporting and recording must be
+independent</em>, i.e. Qmtest must be able to record more information
 about test results than it provides in summary reports, so that users
 can drill down to isolate faults after the fact.
 </p>
@@ -1018,15 +1040,15 @@ can drill down to isolate faults after the fact.
 Developers may want tests to report extra information along with a
 standard result (pass, fail, error, or deferred).  For example, it may
 be desirable to have tests report execution time, memory usage, number
-of context switches, and so on.  Qmtest's <b role="req">output format
-must allow tests to report extra named values</b>, while the <b
+of context switches, and so on.  Qmtest's <em role="req">output format
+must allow tests to report extra named values</em>, while the <em
 role="req">summary reporting system must allow extra named values to
-be combined hierarchically</b>.
+be combined hierarchically</em>.
 </p>
 
 <p>
-One common case in which extra information is provided is <b
-role="req">explaining why specific tests were deferred</b>.  If test
+One common case in which extra information is provided is <em
+role="req">explaining why specific tests were deferred</em>.  If test
 authors make the execution of particular tests dependent on external
 factors, which (combination) of those factors resulted in the test
 being deferred must be reported.  This topic is revisited in the
@@ -1049,10 +1071,10 @@ The most important question Qmtest can answer during the development
 cycle is, "What has changed?"  Qmtest's default reporting must
 therefore <em role="req">report test results in a manner that draws
 attention to recent changes</em>.  In order to do this, Qmtest must be
-able to <b role="req">temporarily record the results of recent test
-runs</b>, and <b role="req">permanently record the results of selected
-test runs</b>.  The <b role="req">distinction between temporary and
-permanent recording must be under developers' control</b>, so that
+able to <em role="req">temporarily record the results of recent test
+runs</em>, and <em role="req">permanently record the results of selected
+test runs</em>.  The <em role="req">distinction between temporary and
+permanent recording must be under developers' control</em>, so that
 (for example) an individual developer can create a personal log of
 changes to test results while trying to fix a specific bug, and then
 create a permanent shared record of test results when the bug has been
@@ -1065,18 +1087,18 @@ fixed, or a new feature added.
 <h3>Traversal</h3>
 
 <p>
-Qmtest must be able to <b role="req">automatically traverse test
-suites by default</b>, i.e. execute all of the tests or test suites
+Qmtest must be able to <em role="req">automatically traverse test
+suites by default</em>, i.e. execute all of the tests or test suites
 included in a suite recursively.  However, it must be possible for
-users to <b role="req">specify tests or suites to be executed or
-omitted</b>.
+users to <em role="req">specify tests or suites to be executed or
+omitted</em>.
 </p>
 
 <p>
 Four special cases of traversal control deserve closer attention.
-The first is that the user must be able to specify that <b
-role="req">one or more tests are to be included or omitted</b> when
-Qmtest is run.  This <b role="req">filtering must be logged</b>,
+The first is that the user must be able to specify that <em
+role="req">one or more tests are to be included or omitted</em> when
+Qmtest is run.  This <em role="req">filtering must be logged</em>,
 e.g. by recording it in the header of the overall test result record,
 or by including dummy deferred reports for all tests not executed.
 The reason for deferring tests must be included in the test report, as
@@ -1091,17 +1113,17 @@ must be logged, as discussed above.
 </p>
 
 <p>
-The third special case is that Qmtest must be able to <b
+The third special case is that Qmtest must be able to <em
 role="req">re-execute only those tests that produced specific results
-during a previous run</b>.  This implies that Qmtest <b
+during a previous run</em>.  This implies that Qmtest <em
 role="req">must have access to the temporary and permanent results of
-previous test runs while executing</b>.
+previous test runs while executing</em>.
 </p>
 
 <p>
-The final special case is that <b role="req">users must be able to
+The final special case is that <em role="req">users must be able to
 provide symbolic tags for tests or test suites which can be used as
-input to filtering</b>.  For example, users must be able to specify
+input to filtering</em>.  For example, users must be able to specify
 that a particular test is only to be executed on specific platforms,
 or that it is only to be run as part of a full smoke-and-build trial.
 The effect this requirement has on <a href="#req-spec">test
@@ -1114,8 +1136,8 @@ specification</a> is discussed below.
 <h3>Physical Organization of Tests</h3>
 
 <p>
-Qmtest <b role="req">cannot mandate a physical structure for
-projects</b> in order to support testing.  In particular, developers
+Qmtest <em role="req">cannot mandate a physical structure for
+projects</em> in order to support testing.  In particular, developers
 must be able to put tests, temporary files, transient results, and
 permanent results:
 <ul>
@@ -1135,17 +1157,17 @@ any combination of the above.
 </p>
 
 <p>
-Qmtest must therefore allow users to <b role="req">separately specify
+Qmtest must therefore allow users to <em role="req">separately specify
 the location of tests, temporary files, transient results, and
-permanent results</b>.  In order to avoid placing too great a burden
-on first-time users, however, Qmtest <b role="req">cannot require
-explicit specification of object locations</b>. Instead, it must have
+permanent results</em>.  In order to avoid placing too great a burden
+on first-time users, however, Qmtest <em role="req">cannot require
+explicit specification of object locations</em>. Instead, it must have
 sensible, predictable default expectations and behavior.
 </p>
 
 <p>
-Finally, Qmtest <b role="req">must not require redundant
-specification</b> of locations.  For example, the user should be able
+Finally, Qmtest <em role="req">must not require redundant
+specification</em> of locations.  For example, the user should be able
 to specify once, at the root of the testing hierarchy, that
 intermediate files are to be put in <code>/tmp</code>, and that test
 results are to be archived in the same directories as tests
@@ -1228,8 +1250,8 @@ because writing re-entrant code (particularly re-entrant standalone
 programs) is complicated.
 </li>
 <li>
-Users could be allowed to <b role="req">specify that a test
-specification is actually a test specification generator</b>,
+Users could be allowed to <em role="req">specify that a test
+specification is actually a test specification generator</em>,
 i.e. that Qmtest was to execute the "test", then execute on the output
 of the "test", and so on until actual tests were being executed.  This
 option is the one that Qmtest uses, as it integrates well with the
@@ -1242,9 +1264,9 @@ href="#req-spec">test specification</a>.
 <p>
 Of course, allowing test specifications to generate more test
 specifications on the fly opens up the possibility of infinite
-recursion.  Qmtest must therefore <b role="req">have a default limit
-on the depth of test generation recursion</b>, and <b role="req">allow
-users to override the test generation recursion limit</b>.
+recursion.  Qmtest must therefore <em role="req">have a default limit
+on the depth of test generation recursion</em>, and <em role="req">allow
+users to override the test generation recursion limit</em>.
 </p>
 
 </a> <!-- end req-multi -->
@@ -1255,11 +1277,11 @@ users to override the test generation recursion limit</b>.
 <p>
 Individual tests and test suites may require arbitrary setup before,
 and teardown after, their execution.  In order to simplify test
-management, Qmtest requires that <b role="req">setup and teardown must
-be specified in the test specification</b>, that <b role="req">setup
-and teardown operations must be logged</b> when tests are executed,
-and that <b role="req">tests are only executed if their setup
-operations complete successfully</b>.  Users are encouraged to specify
+management, Qmtest requires that <em role="req">setup and teardown must
+be specified in the test specification</em>, that <em role="req">setup
+and teardown operations must be logged</em> when tests are executed,
+and that <em role="req">tests are only executed if their setup
+operations complete successfully</em>.  Users are encouraged to specify
 teardown operations so that they will execute correctly (i.e. return
 the environment to its pre-test state) even if setup and the test
 itself failed partially or completely.
@@ -1290,6 +1312,244 @@ these are distinct from the options that specify the test itself).
 <a name="req-sandbox">
 <h3>Sandboxing and Throttling</h3>
 </a> <!-- end req-sandbox -->
+
+<a name="req-summary">
+<h3>Summary</h3>
+
+<ol>
+
+<li>
+Accuracy.
+</li>
+
+<li>
+No false positives.
+</li>
+
+<li>
+No false negatives.
+</li>
+
+<li>
+Always execute at least all of the tests requested by the user.
+</li>
+
+<li>
+Small-scale testing must be easier to do with Qmtest than by hand.
+</li>
+
+<li>
+Test execution must be reproducible.
+</li>
+
+<li>
+Must use existing standards, syntax, conventions, and tools.
+</li>
+
+<li>
+Must not require all tests to be command-line applications.
+</li>
+
+<li>
+Allow programmers to specify dependencies between tests.
+</li>
+
+<li>
+Prevent dependent tests from being executed if the tests on which they
+depend did not behave as expected.
+</li>
+
+<li>
+Detect and report cyclic dependencies.
+</li>
+
+<li>
+Separate setup and teardown from particular tests.
+</li>
+
+<li>
+Trace dependencies between tests.
+</li>
+
+<li>
+Specify that some tests are expected to fail.
+</li>
+
+<li>
+Report expected failures separately from passes, unexpected failures,
+and other results.
+</li>
+
+<li>
+Report test results in textual, human-readable form.
+</li>
+
+<li>
+Report and store test results as XML.
+</li>
+
+<li>
+Provide test result formatting and reporting functions in all
+languages of interest.
+</li>
+
+<li>
+Format in which these functions report results must be controlled by a
+single switch.
+</li>
+
+<li>
+Aggregate tests into test suites.
+</li>
+
+<li>
+Test suites must support setup and teardown.
+</li>
+
+<li>
+Make tests and test suites members of suites.
+</li>
+
+<li>
+Test suites do not generate test results.
+</li>
+
+<li>
+Every test must be uniquely identified.
+</li>
+
+<li>
+Test identifiers must be long-lived.
+</li>
+
+<li>
+Require every test or test suite to be uniquely named below its
+parent.
+</li>
+
+<li>
+Must summarize the results of tests.
+</li>
+
+<li>
+Reporting must be hierarchical.
+</li>
+
+<li>
+Summary reporting must mirror the test suite hierarchy.
+</li>
+
+<li>
+Reporting and recording must be independent.
+</li>
+
+<li>
+Output format must allow tests to report extra named values.
+</li>
+
+<li>
+Summary reporting system must allow extra named values to be combined
+hierarchically.
+</li>
+
+<li>
+Explaining why specific tests were deferred.
+</li>
+
+<li>
+Report test results in a manner that draws attention to recent changes.
+</li>
+
+<li>
+Temporarily record the results of recent test runs.
+</li>
+
+<li>
+Permanently record the results of selected test runs.
+</li>
+
+<li>
+Distinction between temporary and permanent recording must be under
+developers' control.
+</li>
+
+<li>
+Automatically traverse test suites by default.
+</li>
+
+<li>
+Specify tests or suites to be executed or omitted.
+</li>
+
+<li>
+One or more tests are to be included or omitted.
+</li>
+
+<li>
+Filtering must be logged.
+</li>
+
+<li>
+Re-execute only those tests that produced specific results during a
+previous run.
+</li>
+
+<li>
+Must have access to the temporary and permanent results of previous
+test runs while executing.
+</li>
+
+<li>
+Users must be able to provide symbolic tags for tests or test suites
+which can be used as input to filtering.
+</li>
+
+<li>
+Cannot mandate a physical structure for projects.
+</li>
+
+<li>
+Separately specify the location of tests, temporary files, transient
+results, and permanent results.
+</li>
+
+<li>
+Cannot require explicit specification of object locations.
+</li>
+
+<li>
+Must not require redundant specification.
+</li>
+
+<li>
+Specify that a test specification is actually a test specification
+generator.
+</li>
+
+<li>
+Have a default limit on the depth of test generation recursion.
+</li>
+
+<li>
+Allow users to override the test generation recursion limit.
+</li>
+
+<li>
+Setup and teardown must be specified in the test specification.
+</li>
+
+<li>
+Setup and teardown operations must be logged.
+</li>
+
+<li>
+Tests are only executed if their setup operations complete
+successfully.
+</li>
+
+</ol>
+
+</a> <!-- end req-summary -->
 
 </a> <!-- end req -->
 
@@ -1403,8 +1663,8 @@ The entire discussion list is archived at:
 	<td>$Date$</td>
 </tr>
 <tr>
-	<td>Version:</td>
-	<td>$Version$</td>
+	<td>Revision:</td>
+	<td>$Revision$</td>
 </tr>
 </table>
 
