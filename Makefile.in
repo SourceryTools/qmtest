@@ -113,6 +113,7 @@ install: \
 # we use the same technique everywhere.
 RELLIBDIR := $(shell expr "$(INSTALLLIBDIR)" : '$(prefix)/\(.*\)')
 RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
+RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
 
 # Unfortunately, some versions of Python's Distutils do not set modes
 # on the installed files so we have to do it manually here.  There is
@@ -129,6 +130,7 @@ $(PYTHON_PACKAGES_INSTALL):
                 --install-platlib="$(RELLIBDIR)" \
                 --install-scripts="$(RELSHAREDIR)" \
 		--install-data="$(RELSHAREDIR)" \
+                --install-headers="$(RELINCDIR)" \
 		--record=$$MANIFEST && \
 		for x in `cat $$MANIFEST`; do \
 			test -x $$x && chmod 0755 $(prefix)/$$x || \

@@ -137,6 +137,13 @@ INSTALLBINDIR	= @bindir@
 INSTALLLIBDIR	= @libdir@/qm
 INSTALLSHAREDIR	= @datadir@/qm
 INSTALLDOCDIR   = @datadir@/doc/qm
+INSTALLINCDIR   = @includedir@
+
+ifneq ($(PYTHON_PLATFORM),win32)
+NATPREFIX       = $(prefix)
+else
+NATPREFIX       := $(shell cygpath -a -w $(prefix))
+endif
 
 .PHONY:		all clean doc subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print doc-python
