@@ -200,7 +200,9 @@ distclean: clean
 	rm -f qm.spec
 
 # Run tests.
-check: check-serial check-threads check-processes
+.PHONY: check check-serial check-threads check-processes check-rsh
+
+check: check-serial check-threads check-processes check-rsh
 
 check-serial: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS) \
@@ -223,6 +225,16 @@ check-processes: all
 	qm/test/qmtest -D tests run -T tests/QMTest/process_target \
 		$(QMTESTFLAGS) \
 		-c qmtest_path=qm/test/qmtest
+
+check-rsh: all
+	rm -f tests/QMTest/rsh_target
+	qm/test/qmtest -D tests create-target \
+                -a host=localhost -a remote_shell=ssh \
+		-T tests/QMTest/rsh_target \
+		rsh rsh_target.RSHTarget
+	qm/test/qmtest -D tests run -T tests/QMTest/rsh_target \
+		$(QMTESTFLAGS) \
+		-c qmtest_path=`pwd`/qm/test/qmtest
 
 ########################################################################
 # Documentation Rules

@@ -3,6 +3,12 @@ NEWS
 
 This file describes user visible changes to QM.
 
+QM 2.0.4 (Not Yet Released)
+===========================
+
+A defect that could cause crashes in the RSHTarget class has been
+corrected.
+
 QM 2.0.3
 ========
 

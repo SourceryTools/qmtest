@@ -1904,6 +1904,10 @@
     of the test class identify the purpose and semantics of each of the
     test class's parameters.</para>
 
+    <para>None of the arguments may have the same name as a class
+    variable in the test class, including class variables in base
+    classes.</para>
+
    </section> <!-- The arguments Attribute -->
 
    <section id="sec-run-function">
