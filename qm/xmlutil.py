@@ -75,6 +75,22 @@ def load_xml_file(path):
     except:
         # FIXME.  Any errors that need to be handled here?
         raise
+    else:
+        return load_xml(file, whence=path)
+
+
+def load_xml(file, whence="(input)"):
+    """Return a DOM document loaded from the XML file object 'file'.
+
+    'file' -- A file object from which to read XML.
+
+    'whence' -- Where the XML came from (e.g. a file path), for use in
+    diagnostic messages.
+
+    raises -- 'ParseError' if an error occurs while parsing the file.
+    This may occur if the file is either not well-formed or not
+    valid."""
+
     # Construct the path to the DTD catalog.
     catalog_path = os.path.join(qm.get_share_directory(),
                                 "xml", "CATALOG")
@@ -87,7 +103,7 @@ def load_xml_file(path):
         raise ParseError, qm.error("xml parse error",
                                    line=exception.getLineNumber(),
                                    character=exception.getColumnNumber(),
-                                   file_name=path,
+                                   file_name=whence,
                                    message=exception._msg)
     file.close()
     return document

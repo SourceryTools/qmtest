@@ -1,3 +1,29 @@
+2001-05-31  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py (load_xml_file): Split into...
+	(load_xml): ... this new function.
+	* qm/platform_linux.py (get_user_name): New function.
+	* qm/platform_win32.py (get_user_name): Likewise.
+
+	* qm/test/cmdline.py (Command.MakeContext): Look for
+	--context-file and --context arguments at the same time.  Allow
+	--context-file from stdin.
+	(Command.add_test_id): Use MultiProcessEngine.
+	(Command.__WriteResults): Use write_results.
+	* qm/test/base.py (MultiThreadEngine): Generalize into... 
+	(ConcurrentEngine): ... this.
+	(MultiProcessEngine): New class.
+	(MultiThreadEngine): Likewise.
+	(CommandEngine): Reimplement, generalized.
+	(LocalCommandEngine): New class.
+	(RshEngine): Likewise.
+	(write_results): New function.
+	(save_results): Likewise.
+	(read_results): Likewise.
+	(load_results): Use it.
+	(__results_from_dom): Rename to...
+	(_results_from_dom): ... this.
+
 2001-05-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/structured_text.py (html_help_text): New variable.

@@ -35,15 +35,18 @@
 # imports
 ########################################################################
 
+import cPickle
+import cStringIO
 import os
 import qm
 import qm.attachment
 import qm.graph
 import qm.label
+import qm.platform
 import qm.xmlutil
 import string
 import sys
-import threading
+import tempfile
 import types
 
 ########################################################################
@@ -1419,23 +1422,31 @@ class InProcessEngine(Engine):
 
 
 
-class MultiThreadEngine(Engine):
-    """A concurrent engine that runs tests in multiple threads."""
+class ConcurrentEngine(Engine):
+    """An engine that runs tests in concurrent threads of execution.
 
-    def __init__(self, thread_count):
+    This is a base class for engines that distribute tests across
+    multiple threads of execution, on a single host or multiple hosts.
+    Subclasses, which provide a concrete implementation for the threads
+    of execution (threads, local processes, remote processes, etc.)
+    override the '_Run' method."""
+
+    def __init__(self, concurrency):
         """Create a new engine.
 
-        'thread_count' -- The number of concurrent threads to create for
-        running tests.  The main (calling) thread does not run any
-        tests.""" 
+        'concurrency' -- The number of concurrent threads of execution
+        in which to run tests."""
 
         Engine.__init__(self)
-        self.__thread_count = thread_count
-        
+        self.__concurrency = concurrency
+
 
     def RunTests(self, test_ids, context, progress_callback=None):
+        # Construct a schedule of tests to run in each test.  Call the
+        # subclass's '_Run' method actually to run them.
+        
         database = get_database()
-        thread_count = self.__thread_count
+        concurrency = self.__concurrency
 
         # Construct a map-like object for test prerequisites.
         prerequisite_map = PrerequisiteMapAdapter(database)
@@ -1447,33 +1458,131 @@ class MultiThreadEngine(Engine):
 
         # Zig-zag round-robin through the partitions, assigning the
         # tests in each to consecutive threads.
-        test_ids_for_thread = []
-        for i in range(0, thread_count):
-            test_ids_for_thread.append([])
+        schedule = []
+        for i in range(0, concurrency):
+            schedule.append([])
         for i in range(0, len(partitions)):
             # Compute the next thread index.  Count up from zero and
             # then back down again, e.g. 0 1 2 3 3 2 1 0 0 1 2 ...
-            thread_index = i % (2 * thread_count)
-            if thread_index >= thread_count:
-                thread_index = 2 * thread_count - thread_index - 1
+            thread_index = i % (2 * concurrency)
+            if thread_index >= concurrency:
+                thread_index = 2 * concurrency - thread_index - 1
             # Assign the tests to that thread.
-            test_ids_for_thread[thread_index].extend(partitions[i])
+            schedule[thread_index].extend(partitions[i])
+
+        return self._Run(schedule, context)
+
+
+    def _Run(self, schedule, context):
+        """Run tests in concurrent processes.
+
+        'schedule' -- A schedule indicating tests to run.  The value is
+        a sequence, and each element of the list is a sequence
+        contianing the IDs of tests to run in a single thread.  The
+        length of 'schedule' is the number of concurrent threads to use.
+
+        'context' -- The test execution context.
+
+        returns -- A map from test IDs to corresponding 'Result'
+        objects."""
+
+        raise qm.common.MethodMustBeOverriddenError("ConcurrentEngine._Run")
+
+
+
+class MultiProcessEngine(ConcurrentEngine):
+    """An engine that runs tests in several concurrent local processes."""
+
+    # Note that there is no test database locking across processes,
+    # currently.  This implementation assumes that the database is not
+    # modified, so locking is unnecessary.
+
+    def _Run(self, schedule, context):
+        qmtest_executable = sys.argv[0]
+        database = get_database()
+        db_path = database.GetPath()
+
+        # Keep track of child processes.  Each element is a tuple of the
+        # child process ID and the name of the file in which it stores
+        # its results. 
+        children = []
+        # Spawn the children.
+        for test_ids_for_process in schedule:
+            # Create a temporary file name, into which the child process
+            # will write its results.
+            results_file_name = tempfile.mktemp()
+
+            # Fork a process.
+            child_pid = os.fork()
+
+            if child_pid > 0:
+                # This is the parent process.  Remember our child.
+                qm.common.print_message(3,
+                    "Child process %d created." % child_pid)
+                children.append((child_pid, results_file_name))
+
+            else:
+                # This is the child process.  Run the tests in an
+                # ordinary in-process engine.
+                engine = InProcessEngine()
+                results = engine.RunTests(test_ids_for_process, context)
+                # Write the results to a file.  Use Python pickle format
+                # instead of XML since it's faster.
+                results_file = open(results_file_name, "w")
+                cPickle.dump(results.AsMap(), results_file)
+                results_file.close()
+                # End this process unceremoniously.
+                os._exit(0)
+
+        # Accumulate results from across children here.
+        results = {}
+        # Wait for children to complete.
+        for child_pid, results_file_name in children:
+            # Wait until the child process is done.
+            pid, exit_status = os.waitpid(child_pid, 0)
+            assert pid == child_pid
+            qm.common.print_message(3, "Child process %d completed." % pid)
+            # Load its results.
+            results_file = open(results_file_name, "r")
+            child_results = cPickle.load(results_file)
+            results_file.close()
+            results.update(child_results)
+            # Clean up the results file.
+            os.unlink(results_file_name)
+
+        return results
+
+
+
+class MultiThreadEngine(ConcurrentEngine):
+    """An engine that runs tests in concurrent Python threads.
+
+    **WARNING**: Due to a Python bug involving adverse interactions
+    between Python threads and the 'os.fork' call, this implementation
+    does not work reliably on some systems.  Particularly, some test
+    classes may use 'os.fork' to execute a tested program in a separate
+    process.  The bug may cause the Python interpreter to hang
+    unpredictably when calls to 'os.fork' are made from Python
+    threads."""
+
+    def _Run(self, schedule, context):
+        import threading
 
         # Create threads.
         threads = []
-        for i in range(0, thread_count):
+        thread_count = len(schedule)
+        for test_ids_for_thread in schedule:
             # Pass the context and the thread IDs to run in the thread.
-            thread_args = (test_ids_for_thread[i], context)
+            thread_args = (test_ids_for_thread, context)
             # Create the thread.
             thread = threading.Thread(target=self.__ThreadFunction,
                                       args=thread_args) 
             thread.__results = {}
-
             # Start the thread.
             qm.common.print_message(2, "starting thread %s\n"
                                     % thread.getName())
             thread.start()
-
+            # Remember the thread for later.
             threads.append(thread)
 
         # Join all the threads.  Accumulate test results from each.
@@ -1497,6 +1606,8 @@ class MultiThreadEngine(Engine):
 
         'context' -- The test context object."""
         
+        import threading
+
         # Run the tests using an ordinary 'InProcessEngine'.
         engine = InProcessEngine()
         results = engine.RunTests(test_ids, context)
@@ -1507,42 +1618,164 @@ class MultiThreadEngine(Engine):
 
 
 
-# FIXME.  This is not currently used.
-
 class CommandEngine(Engine):
+    """Engine that runs tests by invoking the 'qmtest' command.
+
+    This is a base class for engine classes which run tests by invoking
+    the 'qmtest' command directly.  The invocation may be local or
+    remote.  Subclasses should override the '_Run' method to implement
+    the actual command invocation."""
+
+    def __init__(self,
+                 qmtest_executable,
+                 db_path,
+                 extra_args=[]):
+        """Create a new engine.
+
+        'qmtest_executable' -- The path to the 'qmtest' executable, in
+        the context in which it will be run.
+
+        'db_path' -- The path to the test database, in the context tests
+        will be run.
+
+        'extra_args' -- Additional command-line arguments (generally,
+        options) to pass to the 'qmtest' command."""
+        
+        self.__qmtest_executable = qmtest_executable
+        self.__db_path = db_path
+        self.__extra_args = []
+
 
     def RunTests(self, test_ids, context, progress_callback=None):
-        qmtest_executable = sys.argv[0]
-
-        context_file_name, context_file = qm.common.open_temporary_file()
-        for key, value in context.items():
-            context_file.write("%s=%s\n" % (key, value))
-        context_file.close()
-
-        results_file_name, results_file = qm.common.open_temporary_file()
-        results_file.close()
-
+        # Construct the argument list for running 'qmtest'.
         args = [
-            qmtest_executable,
-            "--db-path", get_database().GetPath(),
+            self.__qmtest_executable,
+            "--db-path", self.__db_path,
             "run",
-            "--output", results_file_name,
-            "--context-file", context_file_name,
-            ] \
-            + test_ids
-        print args
+            "--output", "-",
+            "--no-summary",
+            "--context-file", "-",
+            ] + self.__extra_args + test_ids
+        # We'll feed the test execution context to the command
+        # invocation on standard input.  Generate the context in the
+        # right format.
+        context_input = map(lambda (k, v): "%s=%s" % (k, v),
+                            context.items())
+        context_input = string.join(context_input, "\n")
 
-        exit_code = platform.run_program(args[0], args)
+        # Run the command.
+        exit_code, stdout, stderr = self._Run(args, stdin=context_input)
 
-        if exit_code != 0:
-            raise RuntimeError, "Subprocess QMTest failed (%d)." % exit_code
-
-        results = load_results(results_file_name)
-
-        os.unlink(context_file_name)
-        os.unlink(results_file_name)
+        # If something appeared on standard error, write it, to help
+        # diagnose problems.
+        if stderr != "":
+            sys.stderr.write(stderr)
+        # Standard output contains the XML representation of the
+        # results.  Parse it.
+        results_file = cStringIO.StringIO(stdout)
+        results_document = qm.xmlutil.load_xml(results_file)
+        # Extract the result elements.
+        results = _results_from_dom(results_document.documentElement)
 
         return results
+
+
+    def _Run(self, args, stdin):
+        """Invoke the 'qmtest' command.
+
+        'args' -- The argument list for the complete 'qmtest' command.
+        The executable itself is 'args[0]'.
+
+        'stdin' -- Text to feed the command on standard input.
+
+        returns -- An exit code, standard output, standard error
+        triplet."""
+
+        raise qm.common.MethodShouldBeOverriddenError, "CommandEngine._Run"
+
+
+
+class LocalCommandEngine(CommandEngine):
+    """Command engine to invoke the 'qmtest' command locally."""
+
+    def __init__(self):
+        """Create a new engine."""
+        
+        # Use the current executable.
+        qmtest_exectuable = sys.argv[0]
+        # Use the current database path.
+        db_path = get_database().GetPath()
+        # Initialize the base class.
+        CommmandEngine.__init__(self, qmtest_exectuable, db_path)
+
+
+    def _Run(self, args, stdin):
+        # Just run it directly.
+        return qm.platform.run_program_captured(args[0], args, stdin=stdin)
+
+
+
+class RshEngine(CommandEngine):
+    """Command engine to invoke 'qmtest' remotely via a remote shell
+
+    This engine uses a remote shell connection to invoke the 'qmtest'
+    command on another host.  The remote shell is implemented using a
+    command such as 'rsh' or 'ssh'.
+
+    This engine assumes that the same version of QMTest is installed
+    correctly on the remote machine, and that the test database (or an
+    identical copy) is accessible there as well."""
+
+    def __init__(self,
+                 remote_host,
+                 remote_user=None,
+                 remote_qmtest_executable="/usr/local/bin/qmtest",
+                 remote_db_path=None,
+                 remote_args=[],
+                 rsh_program="/usr/bin/ssh"):
+        """Create a new engine.
+
+        'remote_host' -- The name of the remote host.
+
+        'remote_user' -- The name of user account on the remote host in
+        which to run 'qmtest'.  If 'None', don't specify the user name
+        explicitly; use whatever is the default for the remote shell
+        program. 
+
+        'remote_db_path' -- The path to the test database on the remote
+        host.  If 'None', the local test database path is used.
+
+        'remote_args' -- Additional command-line options to pass to the
+        remote 'qmtest' invocation. 
+
+        'remote_qmtest_executable' -- The path to 'qmtest'"""
+
+        # Use the local test database path if none is specified.
+        if remote_db_path is None:
+            remote_db_path = get_database().GetPath()
+        # Initialize the base class.
+        CommandEngine.__init__(self,
+                               remote_qmtest_executable,
+                               remote_db_path,
+                               remote_args)
+        self.__remote_host = remote_host
+        self.__remote_user = remote_user
+        self.__rsh_program = rsh_program
+        
+
+    def _Run(self, args, stdin):
+        # Construct the command line for the remote program.
+        ssh_args = [self.__rsh_program, self.__remote_host]
+        # Should we specify the remote user name?
+        if self.__remote_user is not None:
+            # Yes.  Use the '-l' option.
+            ssh_args.append("-l")
+            ssh_args.append(self.__remote_user)
+        # Add to the end the 'qmtest' invocation itself.
+        ssh_args.extend(args)
+        # Go.
+        return qm.platform.run_program_captured(ssh_args[0], ssh_args,
+                                                stdin=stdin)
 
 
 
@@ -1733,19 +1966,63 @@ def load_outcomes(path):
     return outcomes
 
 
-def load_results(path):
-    """Load test results from a file.
+def write_results(results, output):
+    """Write results in XML format.
 
-    'path' -- Path to an XML results file.
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'output' -- A file object to which to write the results."""
+
+    document = qm.xmlutil.create_dom_document(
+        public_id=dtds["result"],
+        dtd_file_name="result.dtd",
+        document_element_tag="results"
+        )
+    # Add a result element for each test that was run.
+    for result in results:
+        result_element = result.MakeDomNode(document)
+        document.documentElement.appendChild(result_element)
+    # Generate output.
+    qm.xmlutil.write_dom_document(document, output)
+    
+
+def save_results(results, path):
+    """Save results to an XML file.
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'path' -- The path of the file in which to svae them."""
+    
+    results_file = open(path, "w")
+    write_results(results, results_file)
+    results_file.close()
+
+
+def read_results(input):
+    """Read test results from XML format.
+
+    'input' -- A file object from which to read the results.
+
+    returns -- A map from test IDs to 'ResultWrapper' objects."""
+    
+    results_document = qm.xmlutil.load_xml(input)
+    # Extract the result elements.
+    return _results_from_dom(results_document.documentElement)
+
+
+def load_results(path):
+    """Read test results from a file.
+
+    'path' -- The file from which to read the results.
 
     returns -- A map from test IDs to 'ResultWrapper' objects."""
     
     results_document = qm.xmlutil.load_xml_file(path)
     # Extract the result elements.
-    return __results_from_dom(results_document.documentElement)
+    return _results_from_dom(results_document.documentElement)
 
 
-def __results_from_dom(results_node):
+def _results_from_dom(results_node):
     """Extract results from a results element.
 
     'results_node' -- A DOM node corresponding to a results element.
@@ -1756,12 +2033,12 @@ def __results_from_dom(results_node):
     # Extract one result for each result element.
     results = {}
     for result_node in results_node.getElementsByTagName("result"):
-        result = __result_from_dom(result_node)
+        result = _result_from_dom(result_node)
         results[result.GetTestId()] = result
     return results
 
 
-def __result_from_dom(result_node):
+def _result_from_dom(result_node):
     """Extract a result from a result element.
 
     'result_node' -- A DOM node corresponding to a result element.

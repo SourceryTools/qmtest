@@ -65,6 +65,13 @@ def open_in_browser(url):
     raise NotImplementedError, "open_in_browser on win32"
 
 
+def get_user_name():
+    """Return the name user running the current program."""
+
+    # FIXME: Security.
+    return os.environ["USERNAME"]
+
+
 ########################################################################
 # Local Variables:
 # mode: python

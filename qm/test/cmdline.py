@@ -122,7 +122,7 @@ class Command:
         "C",
         "context-file",
         "FILE",
-        "Read context from a file."
+        "Read context from a file (- for stdin)."
         )
 
     port_option_spec = (
@@ -321,19 +321,20 @@ class Command:
             path=qm.rc.Get("path", os.environ["PATH"])
             )
 
-        # Look for all occurrences of the '--context' option.
         for option, argument in self.__command_options:
-            if option == "context":
-                self.__ParseContextAssignment(argument, context)
-
-        # Look for the '--context-file' option.
-        for option, argument in self.__command_options:
+            # Look for the '--context-file' option.
             if option == "context-file":
-                try:
-                    lines = open(argument, "r").readlines()
-                except:
-                    raise qm.cmdline.CommandError, \
-                          qm.error("could not read file", path=argument)
+                if argument == "-":
+                    # Read from standard input.
+                    lines = sys.stdin.readlines()
+                else:
+                    # Read from a file.
+                    try:
+                        lines = open(argument, "r").readlines()
+                    except:
+                        raise qm.cmdline.CommandError, \
+                              qm.error("could not read file",
+                                       path=argument)
                 lines = map(string.strip, lines)
                 for line in lines:
                     if line == "":
@@ -344,6 +345,10 @@ class Command:
                         pass
                     else:
                         self.__ParseContextAssignment(line, context)
+
+            # Look for the '--context' option.
+            elif option == "context":
+                self.__ParseContextAssignment(argument, context)
 
         return context
 
@@ -442,7 +447,7 @@ class Command:
                     concurrency = -1
                 if concurrency < 1:
                     raise CommandError, qm.error("invalid concurrency")
-                engine = base.MultiThreadEngine(concurrency)
+                engine = base.MultiProcessEngine(concurrency)
 
             context = self.MakeContext()
             self.__output = output
@@ -686,18 +691,7 @@ class Command:
 
         'output' -- A file object to which to write the results."""
 
-        document = qm.xmlutil.create_dom_document(
-            public_id=base.dtds["result"],
-            dtd_file_name="result.dtd",
-            document_element_tag="results"
-            )
-        # Add a result element for each test that was run.
-        for test_id in results.keys():
-            result = results[test_id]
-            result_element = result.MakeDomNode(document)
-            document.documentElement.appendChild(result_element)
-        # Generate output.
-        qm.xmlutil.write_dom_document(document, output)
+        base.write_results(results.values(), output)
 
 
 

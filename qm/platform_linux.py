@@ -490,6 +490,13 @@ def get_temp_directory():
     return "/var/tmp"
 
 
+def get_user_name():
+    """Return the name user running the current program."""
+
+    # FIXME: Security.
+    return os.environ["USER"]
+
+
 ########################################################################
 # initialization
 ########################################################################
