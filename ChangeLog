@@ -1,5 +1,7 @@
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (rmdir_recursively): Remove the directory itself.
+
 	* qm/attachment.py (TemporaryAttachmentStore): Derived from
 	AttachmentStore.  Add all_stores variable.
 	(AttachmentStore.__init__): Add the new store to all_stores.

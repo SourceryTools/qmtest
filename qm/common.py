@@ -597,12 +597,15 @@ def rmdir_recursively(path):
 
     assert os.path.isdir(path)
 
+    # Remove everything in the directory.
     for entry in dircache.listdir(path):
         entry_path = os.path.join(path, entry)
         if os.path.isdir(entry_path):
             rmdir_recursively(entry_path)
         else:
             os.unlink(entry_path)
+    # Remove the directory itself.
+    os.rmdir(path)
 
 
 def replace_by_map(text, replacements):
