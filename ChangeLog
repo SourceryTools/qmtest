@@ -18,6 +18,10 @@
 	* doc/design/qmtest/req.xml: Likewise.
 	* doc/design/qmtest/design.html: Remove.
 
+2000-11-28  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtrack/triggers.xml: New file.
+
 2000-11-27  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml: Add user-interface.xml.
