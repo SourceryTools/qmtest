@@ -7,7 +7,7 @@
 # Contents:
 #   Autoconf configuration for QM.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -117,7 +117,7 @@ dnl ####################################################################
 dnl Look for HappyDoc, which we use to build source documentation.
 dnl ####################################################################
 
-AC_PATH_PROG(HAPPYDOC, happydoc, no)
+AC_PATH_PROG(HAPPYDOC, happydoc)
 
 dnl ####################################################################
 dnl Jade and Tidy are used to generate documentation.  Without Jade,
@@ -195,13 +195,26 @@ fi
 
 # Do not try to build documentation unless --enable-maintainer-mode
 # was specified.  The documentation is pre-generated for releases.
-
 if test $DOCUMENTATION = yes && test $MAINTAINER_MODE = 0; then
   AC_MSG_WARN(Documentation is only built in maintainer mode.)
   DOCUMENTATION=no
 fi
 
+# Maintainers should be building documentation.
+if test $DOCUMENTATION = no && test $MAINTAINER_MODE = 1; then
+  AC_MSG_WARN(Documentation will not be built despite --enable-maintainer-mode.)
+  AC_MSG_WARN(Check that Jade and Docbook have been installed.)
+fi
+
+if test $DOCUMENTATION = yes \
+   || test -f "$srcdir/qm/test/doc/print/manual.pdf"; then
+  INSTALL_DOCUMENTATION=yes
+else
+  INSTALL_DOCUMENTATION=no
+fi
+
 AC_SUBST(DOCUMENTATION)
+AC_SUBST(INSTALL_DOCUMENTATION)
 
 dnl ####################################################################
 dnl Generate results

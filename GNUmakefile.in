@@ -7,7 +7,7 @@
 # Contents:
 #   Top-level qm makefile.
 # 
-# Copyright (C) 2001, 2002 CodeSourcery LLC
+# Copyright (C) 2001, 2002, 2003 CodeSourcery LLC
 #
 # For license terms see the file COPYING.
 #
@@ -58,6 +58,8 @@ DTDS := $(COMMON_DTDS) $(COPIED_TOOL_DTDS)
 
 # Whether or not we should generate documentation.
 DOCUMENTATION = @DOCUMENTATION@
+# Whether or not we should install documentation.
+INSTALL_DOCUMENTATION = @INSTALL_DOCUMENTATION@
 
 # Jade configuration,
 JADE = @JADE@
@@ -338,6 +340,7 @@ $(PYTHON_PACKAGES_INSTALL):
 # Install documentation.
 .PHONY: doc-install
 
+ifeq ($(INSTALL_DOCUMENTATION),yes)
 doc-install:
 	$(INSTALL_DIR) "$(INSTALLDOCDIR)"
 	$(INSTALL_DATA) README "$(INSTALLDOCDIR)"
@@ -353,6 +356,12 @@ doc-install:
 		$(INSTALL_DATA) qm/$$tool/doc/print/manual.pdf \
 		"$(INSTALLDOCDIR)/$$tool/pdf"; \
 	done
+else
+doc-install:
+	@echo "Documentation is unavailable and will not be installed."
+	@echo "Online help will be unavailable."
+	@echo "Configure with --enable-maintainer-mode to build documentation."
+endif
 
 # Install scripts.
 .PHONY: scripts-install

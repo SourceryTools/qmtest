@@ -1,5 +1,10 @@
 2003-06-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in (INSTALL_DOCUMENTATION): New variable.
+	(doc-install): Guard it by testing INSTALL_DOCUMENTATION.
+	* configure.in (INSTALL_DOCUMENTATION): Set it.
+	* configure: Regenerated.
+	
 	* README: Mention HappyDoc.
 	* qm/test/classes/dejagnu_stream.py
 	(DejaGNUStream.__summary_outcomes): New variable.
