@@ -1,3 +1,20 @@
+2004-02-20  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (format_time_iso): Make argument default to
+	current time.
+	* qm/test/execution_engine.py (ExecutionEngine.Run): Don't pass
+	explicit argument to 'format_time_iso'.
+	(ExecutionEngine._WriteInitialAnnotations): Likewise.
+	
+	* qm/test/target.py (qm.common): Import.
+	(Target.RunTest): Record start and end times.
+
+	* qm/test/classes/tet_stream.py (TETStream._ExtractTime): New
+	function.
+	(TETStream._WriteTCStart): Use it.
+	(TETStream._WriteDejaGNUResult): Likewise.
+	(TETStream._WriteTestResult): Likewise.
+
 2004-02-19  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (parse_time_iso): New function.

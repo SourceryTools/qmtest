@@ -18,6 +18,7 @@
 ########################################################################
 
 import qm
+import qm.common
 import qm.extension
 import qm.platform
 from   qm.test.context import *
@@ -211,8 +212,14 @@ class Target(qm.extension.Extension):
             self.__SetUpResources(descriptor, context)
             # Make the ID of the test available.
             context[context.ID_CONTEXT_PROPERTY] = descriptor.GetId()
+            # Note the start time.
+            result[Result.START_TIME] = qm.common.format_time_iso()
             # Run the test.
-            descriptor.Run(context, result)
+            try:
+                descriptor.Run(context, result)
+            finally:
+                # Note the end time.
+                result[Result.END_TIME] = qm.common.format_time_iso()
         except KeyboardInterrupt:
             result.NoteException(cause = "Interrupted by user.")
             # We received a KeyboardInterrupt, indicating that the

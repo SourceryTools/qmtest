@@ -93,6 +93,15 @@ class TETStream(FileResultStream):
                 time.strftime("%Y%m%d", t))
 
 
+    def _ExtractTime(self, result, key):
+        """Extracts the start time from a result."""
+
+        if result.has_key(key):
+            return self._TETFormatTime(result[key])[0]
+        else:
+            return "00:00:00"
+
+
     def WriteAnnotation(self, key, value):
 
         if key == "qmtest.run.start_time":
@@ -164,10 +173,10 @@ class TETStream(FileResultStream):
 
         # Test case start
         # 10 | activity_number testcase_path time | invocable_components
-        self._WriteLine(10,
-                        "%i %s 00:00:00"
-                        % (self._tcc_number, result.GetId()),
-                        "")
+        started = self._ExtractTime(result, Result.START_TIME)
+        data = "%i %s %s" % (self._tcc_number, result.GetId(), started)
+        self._WriteLine(10, data, "")
+
 
     def _WriteResultAnnotations(self, result, seq_start=1):
         """Writes out annotations for a 'result' in TET format.
@@ -216,6 +225,9 @@ class TETStream(FileResultStream):
 
         self._WriteResultAnnotations(result)
                 
+        start_time = self._ExtractTime(result, Result.START_TIME)
+        end_time = self._ExtractTime(result, Result.END_TIME)
+
         purpose = 1
         for k in keys:
             r = result[k]
@@ -223,8 +235,8 @@ class TETStream(FileResultStream):
             # Test purpose start
             # 200 | activity_number test_purpose_number time | text
             self._WriteLine(200,
-                            "%i %i 00:00:00"
-                            % (self._tcc_number, purpose),
+                            "%i %i %s"
+                            % (self._tcc_number, purpose, start_time),
                             "")
             outcome_num, outcome_name \
                          = { DejaGNUTest.PASS: self.PASS,
@@ -239,10 +251,12 @@ class TETStream(FileResultStream):
                            }[outcome]
             # Test purpose result
             # 220 | activity_number tp_number result time | result-name
-            self._WriteLine(220,
-                            "%i %i %i 00:00:00"
-                            % (self._tcc_number, purpose, outcome_num),
-                            outcome_name)
+            data = "%i %i %i %s" % (self._tcc_number,
+                                    purpose,
+                                    outcome_num,
+                                    end_time)
+            self._WriteLine(220, data, outcome_name)
+            
             if outcome == DejaGNUTest.WARNING:
                 # Test case information
                 # 520 | activity_num tp_num context block sequence | text
@@ -267,7 +281,7 @@ class TETStream(FileResultStream):
         # "completion status" appears undocumented; it is zero in all of
         # the documented examples.
         self._WriteLine(80,
-                        "%i 0 00:00:00" % self._tcc_number,
+                        "%i 0 %s" % (self._tcc_number, end_time),
                         "")
 
             
@@ -277,7 +291,9 @@ class TETStream(FileResultStream):
         self._WriteTCStart(result)
         # Test purpose start
         # 200 | activity_number test_purpose_number time | text
-        self._WriteLine(200, "%i 0 00:00:00" % self._tcc_number, "")
+        start_time = self._ExtractTime(result, Result.START_TIME)
+        data = "%i 0 %s" % (self._tcc_number, start_time)
+        self._WriteLine(200, data, "")
 
         outcome_num, outcome_name = { Result.FAIL: self.FAIL,
                                       Result.PASS: self.PASS,
@@ -286,10 +302,9 @@ class TETStream(FileResultStream):
                                     }[result.GetOutcome()]
         # Test purpose result
         # 220 | activity_number tp_number result time | result-name
-        self._WriteLine(220,
-                        "%i 0 %i 00:00:00"
-                        % (self._tcc_number, outcome_num),
-                        outcome_name)
+        end_time = self._ExtractTime(result, Result.END_TIME)
+        data = "%i 0 %i %s" % (self._tcc_number, outcome_num, end_time)
+        self._WriteLine(220, data, outcome_name)
 
         if result.GetOutcome() == Result.ERROR:
             # Test case controller message
@@ -307,7 +322,7 @@ class TETStream(FileResultStream):
         # "completion status" appears undocumented; it is zero in all of
         # the documented examples.
         self._WriteLine(80,
-                        "%i 0 00:00:00" % self._tcc_number,
+                        "%i 0 %s" % (self._tcc_number, end_time),
                         "")
 
 

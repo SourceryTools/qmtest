@@ -556,7 +556,7 @@ def format_time(time_secs, local_time_zone=1):
            "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
 
 
-def format_time_iso(time_secs):
+def format_time_iso(time_secs=None):
     """Generate a ISO8601-compliant formatted date and time.
 
     The output is in the format "YYYY-MM-DDThh:mm:ss+TZ", where TZ is
@@ -565,10 +565,13 @@ def format_time_iso(time_secs):
     sorting behaviour.
 
     'time_secs' -- The time to be formatted, as returned by
-    e.g. 'time.time()'.
+    e.g. 'time.time()'.  If 'None' (the default), uses the current
+    time.
 
     returns -- The formatted time as a string."""
 
+    if time_secs is None:
+        time_secs = time.time()
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time_secs))
 
 

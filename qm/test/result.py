@@ -106,6 +106,8 @@ class Result:
     RESOURCE = "qmtest.resource"
     TARGET = "qmtest.target"
     TRACEBACK = "qmtest.traceback"
+    START_TIME = "qmtest.start_time"
+    END_TIME = "qmtest.end_time"
     
     # Other class variables.
 

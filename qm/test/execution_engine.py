@@ -294,7 +294,7 @@ class ExecutionEngine:
             
             # Let all of the result streams know that the test run is
             # complete.
-            end_time_str = qm.common.format_time_iso(time.time())
+            end_time_str = qm.common.format_time_iso()
             for rs in self.__result_streams:
                 rs.WriteAnnotation("qmtest.run.end_time", end_time_str)
                 rs.Summarize()
@@ -814,7 +814,7 @@ class ExecutionEngine:
     def _WriteInitialAnnotations(self):
 
         # Calculate annotations.
-        start_time_str = qm.common.format_time_iso(time.time())
+        start_time_str = qm.common.format_time_iso()
 
         try:
             username = qm.common.get_username()
