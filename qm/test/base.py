@@ -104,6 +104,28 @@ class NoSuchActionError(Exception):
 
 
 
+class CommandFailedError(RuntimeError):
+    """A command invocation of 'qmtest' failed."""
+
+    def __init__(self, arguments, exit_code, stdout, stderr):
+        """Create a new exception.
+
+        'arguments' -- The list of arguments used to invoke the command.
+
+        'exit_code' -- The command's exit code.
+        
+        'stdout' -- The contents of the command's standard output.
+
+        'stderr' -- The contents of the command's standard error."""
+
+        RuntimeError.__init__(self, "Command failed.")
+        self.arguments = string.join(arguments, " ")
+        self.exit_code = str(exit_code)
+        self.stdout = stdout
+        self.stderr = stderr
+
+
+
 ########################################################################
 # classes
 ########################################################################
@@ -1572,7 +1594,35 @@ class SubprocessEngine(ConcurrentEngine):
             else:
                 # This is the child process.  Run the tests in an
                 # ordinary in-process engine.
-                results = engine.RunTests(test_ids_for_process, context)
+                try:
+                    results = engine.RunTests(test_ids_for_process, context)
+
+                # Something went wrong.  Generate results, with an
+                # 'ERROR' outcome for each test we were supposed to run
+                # in this process.
+                except CommandFailedError:
+                    exc_info = sys.exc_info()
+                    exception = exc_info[1]
+                    results = {}
+                    result = Result(Result.ERROR,
+                                    cause=str(exception),
+                                    arguments=exception.arguments,
+                                    exit_code=exception.exit_code,
+                                    stdout=exception.stdout,
+                                    stderr=exception.stderr)
+                    for test_id in test_ids_for_process:
+                        results[test_id] = ResultWrapper(test_id,
+                                                         context, result)
+                except:
+                    results = {}
+                    result = make_result_for_exception(
+                        sys.exc_info(),
+                        outcome=Result.ERROR,
+                        cause="Error running subprocess.")
+                    for test_id in test_ids_for_process:
+                        results[test_id] = ResultWrapper(test_id,
+                                                         context, result)
+
                 # Write the results to a file.  Use Python pickle format
                 # instead of XML since it's faster.
                 results_file = open(results_file_name, "w")
@@ -1724,6 +1774,7 @@ class CommandEngine(Engine):
         # right format.
         context_input = map(lambda (k, v): "%s=%s" % (k, v),
                             context.items())
+
         context_input = string.join(context_input, "\n")
 
         # Run the command.
@@ -1733,14 +1784,18 @@ class CommandEngine(Engine):
         # diagnose problems.
         if stderr != "":
             sys.stderr.write(stderr)
-        # Standard output contains the XML representation of the
-        # results.  Parse it.
-        results_file = cStringIO.StringIO(stdout)
-        results_document = qm.xmlutil.load_xml(results_file)
-        # Extract the result elements.
-        results = _results_from_dom(results_document.documentElement)
 
-        return results
+        if exit_code == 0:
+            # The command succeeded.  Standard output contains the XML
+            # representation of the results.  Parse it.
+            results_file = cStringIO.StringIO(stdout)
+            results_document = qm.xmlutil.load_xml(results_file)
+            # Extract the result elements.
+            return _results_from_dom(results_document.documentElement)
+        else:
+            # The command failed.
+            exception = CommandFailedError(args, exit_code, stdout, stderr)
+            raise exception
 
 
     def _Run(self, args, stdin):
@@ -1838,9 +1893,19 @@ class RshEngine(CommandEngine):
             ssh_args.append(self.__remote_user)
         # Add to the end the 'qmtest' invocation itself.
         ssh_args.extend(args)
-        # Go.
-        return qm.platform.run_program_captured(ssh_args[0], ssh_args,
-                                                stdin=stdin)
+        # Do it.
+        exit_code, stdout, stderr = qm.platform.run_program_captured(
+            ssh_args[0], ssh_args, stdin=stdin)
+        # Did the remote command succeed?
+        if exit_code == 0:
+            # Yes.  Pass our results up.
+            return exit_code, stdout, stderr
+        else:
+            # No.  Raise the exception here, so that the exception
+            # contains the full remote invocation argument list.
+            exception = CommandFailedError(ssh_args, exit_code,
+                                           stdout, stderr)
+            raise exception
 
 
 

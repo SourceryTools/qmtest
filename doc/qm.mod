@@ -41,11 +41,13 @@
 <!ENTITY xml "<acronym>XML</acronym>">
 
 <!-- Commands.  -->
+
 <!ENTITY qmtest-cmd "<command>qmtest</command>">
 <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
 
 <!-- Other commonly-used symbols and phrases.  -->
 
+<!ENTITY fixme "<emphasis role=&#34;fixme&#34;>FIXME</emphasis>">
 <!ENTITY prompt "<prompt>$ </prompt>">
 
 <!-- FIXME: The TeX stylesheets smush this into a single dash.  -->

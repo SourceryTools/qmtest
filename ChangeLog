@@ -1,3 +1,23 @@
+2001-06-07  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/classes/python.py (ExecTest.Run): Add expression value
+	to failing result.
+	* qm/test/cmdline.py (Command.add_test_id): Get rsh program from rc.
+	* qm/test/base.py (CommandFailedError): New class.
+	(SubprocessEngine._Run): Catch it.
+	(CommandEngine.RunTests): Raise it.
+	(RshEngine._Run): Likewise.
+	* share/tutorial/test/tdb/exec0.qmt: New file.
+	* share/tutorial/test/tdb/exec1.qmt: Likewise.
+	* share/tutorial/test/tdb/exec2.qmt: Likewise.
+	* share/tutorial/test/tdb/test1.qmt: Remove.
+	* share/tutorial/test/tdb/test2.qmt: Likewise.
+	* share/tutorial/test/tdb/_classes/count.py: Add descriptions.
+	* doc/manual/test-tour.xml: Rewrite completely.
+	* doc/manual/test-reference.xml: Document some command-line stuff.
+	* doc/manual/test-manual.xml: Major revisions and additions.
+	* doc/qm.mod (fixme): New entity.
+
 2001-06-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod (qmtest-cmd): New entity.

@@ -126,8 +126,10 @@ class ExecTest:
                     if value:
                         result = Result(Result.PASS)
                     else:
-                        result = Result(Result.FAIL,
-                                        cause="Expression evaluates to false.")
+                        result = Result(
+                            Result.FAIL,
+                            cause="Expression evaluates to false.",
+                            value=repr(value))
             else:
                 # No expression provided; if we got this far, the text
                 # passes. 

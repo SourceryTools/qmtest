@@ -455,7 +455,10 @@ class Command:
                 remote_hosts = map(lambda host_name:
                                        base.RemoteTestHost(host_name),
                                    remote_hosts)
-                engine = base.MultiRshEngine(remote_hosts)
+                rsh_program = qm.rc.Get("remote_shell",
+                                        section="common",
+                                        default="/usr/bin/ssh")
+                engine = base.MultiRshEngine(remote_hosts, rsh_program)
 
             elif concurrency is not None:
                 # The user specified concurrent testing.  Use the

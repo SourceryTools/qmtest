@@ -21,7 +21,209 @@
  <section id="sec-test-command-line">
   <title>Command Line Reference</title>
 
-  <para>Write me.</para>
+  <para>The &qmtest-cmd; program understands these general options.
+  They can be used with any command, and should precede the command name
+  on the command line.</para>
+
+  <para>All options are available in a "long form," prefixed with
+  "&dashdash;" (two hyphens).  Some options also may be specified in a
+  "short form," consisting of a single hyphen and a one-letter
+  abbreviation (listed below in parentheses).  Short-form options may be
+  combined in the manner typical for UNIX programs; for example,
+  <command>-abc</command> is equivalent to <command>-a -b
+  -c</command>.</para>
+
+  <glosslist>
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;help</option> (<option>-h</option>)
+    </glossterm>
+    <glossdef>
+     <para>Display help information, listing commands and general
+     options for the &qmtest-cmd; command.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;verbose</option> (<option>-v</option>)
+    </glossterm>
+    <glossdef>
+     <para>Generate progress and status messages while executing.  This
+     option may be specified more than once; the more times it is
+     specified, the higher the verbose level, and the more messages are
+     printed.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <option>&dashdash;db-path</option> <replaceable>PATH</replaceable> 
+     (<option>-D</option>)
+    </glossterm>
+    <glossdef>
+     <para>Use the test database located at
+     <replaceable>PATH</replaceable>.  This flag overrides the value of
+     the environment variable <envar>QMTEST_DB_PATH</envar>, but if this
+     flag is not specified, the environment variable must be
+     defined.  See <xref linkend="sec-test-database"/>.</para>
+    </glossdef>
+   </glossentry>
+
+  </glosslist>
+
+  <para>Additional options are available for specific commands; these
+  are presented with each command.  Options specific to a command must
+  follow the command on the command line.  Specify the
+  <option>&dashdash;help</option> (<option>-h</option>) option after the
+  command for a description of the command and a list of of available
+  options for that command.</para>
+
+  <section id="sec-testcmd-run">
+   <title>The <command>run</command> Command</title>
+
+   <para>The <command>run</command> command runs tests.  Specify one or
+   more test and/or test suite IDs on the command line.  Tests listed
+   more than once (directly or by inclusion in a test suite) are run
+   only once.  Tests may not be run in the order listed.</para>
+
+   <para>The <command>run</command> accepts these options:</para>
+
+   <glosslist>
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;output</option> <replaceable>FILE</replaceable> 
+      (<option>-o</option>)
+     </glossterm>
+     <glossdef>
+      <para>Write full test results to <replaceable>FILE</replaceable>.
+      Specify "<literal>-</literal>" (a hyphen) to write results to
+      standard output.  See &fixme; xref for a description of the format
+      of test result files.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;no-output</option>
+     </glossterm>
+     <glossdef>
+      <para>Don't write full test results (the default).</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;summary</option> <replaceable>FILE</replaceable> 
+      (<option>-s</option>)
+     </glossterm>
+     <glossdef>
+      <para>Write a summary of the test run to
+      <replaceable>FILE</replaceable>.  Specify "<literal>-</literal>"
+      (a hyphen) to write results to standard output (the default).  </para>
+
+      <para>&qmtest; prints a summary of test results, including
+      statistics and the test IDs of tests that did not pass.  If
+      expected outcomes were specified, test IDs of tests that produced
+      unexpected outcomes.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;no-summary</option> (<option>-S</option>)
+     </glossterm>
+     <glossdef>
+      <para>Don't write a summary of the test run.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
+      (<option>-c</option>)
+     </glossterm>
+     <glossdef>
+      <para>Add a property to the <link linkend="sec-the-context">test
+      execution context</link>.  The name of the property is
+      <replaceable>NAME</replaceable>, and its value is set to the string
+      <replaceable>VALUE</replaceable>.</para>
+
+      <para>This option may be specified multiple times.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;context-file</option> <replaceable>FILE</replaceable>
+      (<option>-C</option>)
+     </glossterm>
+     <glossdef>
+      <para>Read properties for the <link linkend="sec-the-context">test
+      execution context</link> from the file
+      <replaceable>FILE</replaceable>.</para>
+
+      <para>The file should be a text file with one context property on
+      each line, in the format <replaceable>NAME=VALUE</replaceable>.
+      Leading and trailing whitespace on each line are ignored.  Also,
+      blank lines and lines that begin with "#" (a hash mark) are
+      ignored as comments.</para>
+
+      <para>This option may be specified more than once, and used in
+      conjunction with the <option>&dashdash;context</option> option.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;threads</option> <replaceable>COUNT</replaceable>
+      (<option>-j</option>)
+     </glossterm>
+     <glossdef>
+      <para>Run tests in multiple concurrent threads of exection.
+      &qmtest; divides the tests in the test run into
+      <replaceable>COUNT</replaceable> groups, and each group is
+      executed in a separate thread.  On multiprocessor machines, these
+      threads may be scheduled to run in parallel on different
+      processors.  &qmtest; automatically collects results from the
+      threads and presents combines test results and summary.</para>
+
+      <para>Note that "threads" is used in a generic sense.  On some
+      platforms, &qmtest; may use multiple processes instead of Python
+      threads or another thread implementation.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;remote-hosts</option> 
+      <replaceable>HOST,...</replaceable> (<option>-r</option>)
+     </glossterm>
+     <glossdef>
+      <para>Run tests on one or more remote hosts, instead of locally.
+      <replaceable>HOST,...</replaceable> is a comma-delimited list of
+      host names.  &qmtest; divides the test runs into groups, one for
+      each host, and runs those tests on the corresponding hosts.</para>
+
+      <para>Each remote host must have the &qmtest-cmd; command
+      installed in the default location, and must have an identical copy
+      of the test database accessible at the same path as on the local
+      host.</para>
+
+      <para>On Linux, &qmtest; uses an <command>rsh</command>-like
+      program to run tests remotely.  That program must be configured to
+      invoke commands remotely on the specified hosts without any
+      additional user interaction, and to pass standard input to and
+      standard output from the remote command.  The default program to
+      use is <filename>/usr/bin/ssh</filename>.  This may be overridden
+      by the <literal>remoate_shell</literal> configuration variable in
+      the &fixme; xref user's QM configuration file.</para>
+     </glossdef>
+    </glossentry>
+
+   </glosslist>
+   
+  </section> <!-- sec-testcmd-run -->
 
  </section>
 

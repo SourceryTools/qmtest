@@ -18,150 +18,480 @@
 <chapter id="chap-test-tour">
  <title>Getting Started with &qmtest;</title>
  
-  <para>Until better tools for managing the test database are in place,
-  some manual work is required to set things up.</para>
+  <para>The &qm; distribution includes an example test database.  This
+  tutorial shows you how to perform basic &qmtest; operations, using the
+  example test database.</para>
 
-  <section>
-   <title>&qmtest; Concepts</title>
+  <para>Some of the examples use Python-based tests, but you don't
+  really need to know Python to understand them.  You will have to know
+  some Python to understand <xref linkend="sec-testtut-test-class"/>,
+  though.</para>
 
-   <section>
-    <title>Test Database Organization</title>
+  <section id="sec-testtut-setting-up">
+   <title>Setting Up</title>
 
-    <para>Before you run &qmtest;, you'll have to set up a test database.
-    The database is a directory or directory tree containing tests and
-    test suites.  Tests are represented by files with the
-    <filename>.qmt</filename> extension.  Test suites are represented by
-    files with the <filename>.qms</filename> extension.  Each directory
-    in the test suite also corresponds to an implicit test suite.</para>
+   <para>To use &qmtest;, you'll need a <link
+   linkend="sec-test-database">test database</link>. The test database
+   is a directory in which &qmtest; stores information about tests and
+   other objects.  The test database contains XML files, Python files,
+   and subdirectories, but for simple operations there's no need to look
+   inside the database directly.</para>
 
-    <para>Tests are referred to by test IDs.  These are simply the path
-    in the test database tree, using `.' as the path separator.  The file
-    extension is not part of the test ID.</para>
+   <para>If you wish to create a new, empty test database from scratch,
+   simply create an empty directory.  However, for this tutorial, we'll
+   use the example test database provided with &qmtest;, which includes
+   some demo tests.  Since we'll modify the test database later in the
+   tutorial, let's start by making a copy of it, by copying the entire
+   test database directory tree.  On a UNIX-like system, you could make
+   a copy named <filename>tdb</filename> in your home directory by
+   invoking this command:</para>
 
-    <para>For example, suppose your test database, rooted at
-    <filename>tdb</filename>, looks like this.</para>
+   <screen>
+    &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb ~/tdb</userinput>
+   </screen>
 
-    <literallayout>
-tdb/core1.qmt
-tdb/core2.qmt
-tdb/gui/window.qmt
-tdb/gui/menu.qmt
-tdb/cmdline/help.qmt
-tdb/cmdline/verbose.qmt
-    </literallayout>
+  </section> <!-- sec-testtut-setting-up -->
 
-    <para>The test IDs of the "core" tests are simply
-    <symbol>core1</symbol> and <symbol>core2</symbol>.  The test IDs of
-    the GUI tests are <symbol>gui.window</symbol> and
-    <symbol>gui.menu</symbol>.  You may refer to these latter two tests
-    together by specifying the (implicit) test suite
-    <symbol>gui</symbol>.</para>
+  <section id="sec-testtut-running-tests">
+   <title>Running Tests</title>
 
-    <para>All tests in the database are part of the implicit test suite
-    with the ID ``<symbol>.</symbol>''.</para>
+   <para>You can access all &qmtest; functions via the &qmtest-cmd;
+   program.  When you invoke &qmtest-cmd;, you must specify a command,
+   which tells the program which action to perform.  Some commands
+   require additional arguments, which you should place after the
+   command.  Also, you may specify general options to &qmtest-cmd; (with
+   flags that come before the command), and options to individual
+   commands (with flags that come after the command).</para>
 
-   </section>
+   <para>To see a list of available commands, and general options to
+   &qmtest-cmd;, invoke it with the <option>&dashdash;help</option> (or
+   <option>-h</option>) option.  To see a description of each command,
+   and additional options specific to that command, invoke
+   <command>qmtest <replaceable>command</replaceable>
+   &dashdash;help</command>.</para>
 
-   <section>
-    <title>Test File Contents</title>
+   <para>You must tell &qmtest; which test database to use by specifying
+   the <option>&dashdash;test-db</option> (or <option>-D</option>)
+   option and providing the path to the test database.  Alternately, you
+   can save typing by defining the environment variable
+   <envar>QMTEST_DB_PATH</envar> to specify the test database
+   path.</para>
 
-    <para>A test file contains &xml;, using the <sgmltag
-    class="element">test</sgmltag> document element.</para>
+   <para>The command for running tests is <command>run</command>.
+   Specify one or more IDs of tests and suite to run.  &qmtest;
+   recursively expands suites to obtain a list of test IDs for the test
+   run.  To run all tests in the test database, specify the special
+   suite ID "<literal>.</literal>" (a period).  (For an explanation of
+   this, see <xref linkend="sec-implicit-test-suites"/>.)</para>
 
-    <para>The most important XML elements are <sgmltag
-    class="element">&lt;class&gt;</sgmltag>, which specifies the test
-    class, and <sgmltag class="element">&lt;argument&gt;</sgmltag>,
-    which specifies one of the arguments to the (parameterized) test
-    class.</para>
+   <para>Assuming you made a copy of the example test database as
+   described in the previous section, try this command, to run all the
+   tests in the database:</para>
 
-    <para>Suppose, for example, test class <classname>Count</classname>
-    takes two arguments: an input string and an expected value.  The
-    test computes the string length of the argument, and compares it to
-    the expected value.</para>
+   <screen>
+&prompt;<userinput>qmtest -D ~/tdb run .</userinput>
+   </screen>
 
-    <para>A test of class Foo might look like this:</para>
+   <para>Equivalently, you could set <envar>QMTEST_DB_PATH</envar>, and
+   omit the <option>-D</option> option.  Subsequently in this tutorial,
+   we'll assume you've set this environment variable.  If you're using a
+   Bourne-style shell, you might invoke these commands instead:</para>
 
-    <programlisting>
-<![CDATA[
-<?xml version="1.0"?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//&qmtest; Test V0.1//EN" "">
-<test>
- <class>count.Count</class>
- <argument name="input">
-  <text>This is the input.</text>
- </argument>
- <argument name="expected_value">
-  <integer>18</integer>
- </argument>
-</test>
+   <screen>
+&prompt<userinput>export QMTEST_DB_PATH=~/tdb</userinput>
+&prompt<userinput>qmtest run .</userinput>
+   </screen>
+
+   <para>&qmtest; runs the tests, and prints a summary of the test
+   run:</para>
+
+   <screen><computeroutput><![CDATA[
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+
+       2 ( 67%) tests PASS
+       1 ( 33%) tests FAIL
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                           : FAIL     [Expression evaluates to false.]
+
+]]></computeroutput></screen>
+
+   <para>&qmtest; prints out two things.  First, it displays statistics
+   about the tests that were run.  Three tests were actually run.  These
+   are broken down by <link linkend="sec-outcomes">test outcome</link>:
+   two of them passed, and one failed.  Following the statistics
+   summary, &qmtest; lists the IDs of all tests whose outcome was not
+   passing, in this case the single test <literal>exec1</literal>.  Next
+   to the designation "FAIL," in brackets, is a brief description of why
+   the test failed.  This description is dependent on the implementation
+   of the <link linkend="sec-test-classes">test class</link> (a test
+   class is basically a template that determines how a test runs), and
+   may be missing for some classes.</para>
+   
+  </section> <!-- sec-testtut-running-tests -->
+
+  <section id="sec-testtut-results">
+   <title>Test Results</title>
+
+   <para>Why did test <literal>exec1</literal> fail?</para>
+
+   <para>&qmtest; can generate comprehensive results for a test run.
+   These results are formatted as an XML document, and may include
+   additional information about each test's execution, depending on the
+   test class.  To generate XML test results, use the
+   <option>&dashdash;output</option> (or <option>-o</option>) option,
+   and specify a file name for the resulting file.</para>
+
+   <para>To learn more about the failed test <literal>exec1</literal>,
+   let's run it again, this time instructing &qmtest; to write results
+   to the file <filename>results.xml</filename>.</para>
+
+   <screen>
+&prompt;<userinput>qmtest run -o results.xml exec1</userinput>
+   </screen>
+
+   <para>&qmtest; generates this output in
+   <filename>results.xml</filename>:</para>
+
+   <programlisting><![CDATA[
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE results PUBLIC "-//Software Carpentry//QMTest Result V0.1//EN" "http://www.software-carpentry.com/qm/xml/result.dtd">
+<results>
+ <result id='exec1'>
+  <outcome>FAIL</outcome>
+  <property name='value'>0</property>
+  <property name='cause'>Expression evaluates to false.</property>
+ </result>
+</results>
 ]]></programlisting>
 
-    <para>Note that there are two <sgmltag
-    class="element">argument</sgmltag> elements, one for each
-    argument.</para>
+   <para>Notice the single <sgmltag class="element">result</sgmltag>
+   element, whose <sgmltag class="attribute">id</sgmltag> attribute is
+   the test ID <literal>exec1</literal>.  For this test, the result
+   contain the outcome "FAIL," indicating a failing test; the cause,
+   which was displayed in square brackets in the test summary; and an
+   additional property "value."  To understand this property, we have to
+   know more about <literal>exec1</literal> and its test class.
+   In short, the test class for <literal>exec1</literal> defines a
+   test as passing if a Python expression evaluates to a value that is
+   considered to have a boolean true value in Python.  The expression
+   for test <literal>exec1</literal> evaluated to zero, which has a
+   false value in Python.</para>
 
-    <para>Create a directory named <filename>tdb</filename>, and store
-    this &xml; source as <filename>tdb/test1.qmt</filename>.</para>
+  </section> <!-- sec-testtut-results -->
 
-   </section>
+  <section id="sec-testtut-examining">
+   <title>Examining Tests</title>
 
-   <section>
-    <title>Test Classes</title>
+   <para>Now let's look at the tests in the test database.  &qmtest;
+   provides a web-based graphical user interface for browsing and
+   editing tests, actions, and test suites.</para>
 
-    <para>A test class is represented by a Python class.  The Python
-    class needs three attributes:</para>
+   <para>The <command>qmtest server</command> command starts a miniature
+   web server, which generates the user interface.  Once you've started
+   the web server, you can point your web browser at it to access the
+   user interface, or you can have &qmtest; start a web browser for you
+   automatically.  You may specify a port number on which to run the web
+   browser using the <option>&dashdash;port</option> (or
+   <option>-P</option>) option; if you omit this, &qmtest; will use
+   port 8000.  The <option>&dashdash;start-browser</option> (or
+   <option>-b</option>) instructs &qmtest; to attempt to open a web
+   browser and point it at the running server.</para>
 
-    <itemizedlist>
-     <listitem>
-      <para>An attribute named <property>fields</property>.  This
-      attribute is a declaration of the parameters to the test
-      class.</para>
+   <para>Try starting the web user interface with this command:</para>
 
-      <para>The parameters are represented by a sequence of objects,
-      each an instance of <classname>qm.fields.Field</classname>.  For
-      example, a text-valued field is an instance of
-      <classname>qm.fields.TextField</classname>, an integer-valued
-      field is an instance of
-      <classname>qm.fields.IntegerField</classname>, etc.  See
-      <filename>qm/fields.py</filename> and the corresponding
-      documentation for details about these.</para>
+   <screen>
+&prompt;<userinput>qmtest server -b</userinput>
+   </screen>
 
-      <para>The field names correspond to the argument names as
-      specified in the test &xml; file.  In the
-      <classname>Count</classname> example above, the field names are
-      <property>input</property> and
-      <property>expected_value</property>.</para>
-     </listitem>
+   <para>If all goes well, &qmtest; starts the server and then points
+   your web browser at it.  On some systems, &qmtest; may be unable to
+   start a web browser automatically.  In this case, you can configure
+   &qmtest; to find your browser (see &fixme;).  Or, you can start the
+   server separately by omitting the <option>-b</option> option;
+   &qmtest; will print out the appropriate URL, and you can copy it into
+   your web browser manually.</para>
 
-     <listitem>
-      <para>An <function>__init__</function> function.  The arguments to
-      this function must have the same names as the names of the
-      fields.</para>
-     </listitem>
+   <para>The page you should see in your browser lists the contents of
+   the test database (three tests), plus buttons for adding new tests,
+   actions, and suites.  The <guilabel>Full Listing</guilabel> link in
+   the upper-right corner will return you to this page.</para>
 
-     <listitem>
-      <para>A <function>Run</function> function.  This function is
-      called with a single argument, an instance of
-      <classname>qm.test.base.Context</classname>.  It should return an
-      instance of <classname>qm.test.base.Result</classname>, indicating
-      the test result.</para>
-     </listitem>
-    </itemizedlist>
+   <para>Each test ID is a hyperlink.  Clicking on it will take you to a
+   page displaying that test.  Click on the link for test
+   <literal>exec1</literal>, the one that is failing.</para>
 
-    <para>For example, the Count class described above might look like
-    this.</para>
+   <para>&qmtest; now shows you full details about test
+   <literal>exec1</literal>.  Towards the top, in grey, is information
+   about this test's test class,, including a full text description.
+  Following this are the arguments for <literal>exec1</literal>
+   in blue.  A test class is a template that describes how a test runs;
+   it is parameterized by [&fixme; xref] fields.  Each test provides
+   [&fixme; xref] arguments for these fields, which determine what this
+   specific tests does.</para>
 
-    <programlisting><![CDATA[
+   <para>The test class for test <literal>exec1</literal> is
+   <classname>python.ExecTest</classname>.  Tests of this class are
+   composed of two parts: a sequence of Python statements, and a Python
+   expression.  When the test is run, &qmtest; executs the Python
+   statements, and then evaluates the Python expression in the same
+   context (so, for instance, variables defined in the statements can be
+   referenced in the expression).  If the expression evaluates to a
+   value Python considers to have a boolean true value, the test passes.
+   For test <literal>exec1</literal>, the sequence of Python statements
+   is simply the single statement <literal>pass</literal>, which does
+   nothing.  The Python expression is "<literal>2 + 2 == 5</literal>".
+   As Python is a sensible language, this expression obviously evaluates
+   to some value which Python considers to be false (specificly, zero).
+   That's why the test fails.</para>
+
+   <para>At the bottom of the test page, there are additional fields
+   labelled "Prerequisite Tests" and "Actions."  These specify the
+   relationship of this test with other tests and actions.  There is
+   also a field labelled "Categories," which can be used as a further
+   organizational tool.  You can ignore these fields for now.</para>
+
+  </section> <!-- sec-testtut-examining -->
+
+  <section id="sec-testtut-expected-outcomes">
+   <title>Expected Test Outcomes</title>
+
+   <para>Let's re-run a test run including all the tests in the test
+   database, this time writing the full results to a file,
+   <filename>results.xml</filename>.</para>
+
+   <screen>
+&prompt;<userinput>qmtest run -o results.xml .</userinput>
+<computeroutput><![CDATA[
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+
+       2 ( 67%) tests PASS
+       1 ( 33%) tests FAIL
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                           : FAIL     [Expression evaluates to false.]
+
+]]></computeroutput></screen>
+
+   <para>The full test results file contains the outcome
+   (<symbol>PASS</symbol>, <symbol>FAIL</symbol>, etc.)  for each test
+   that was run.  The result for each test may also contain additional
+   properties, depending on the test class.</para>
+
+   <para>&qmtest; allows you to specify expected outcomes for some or
+   all of the tests in a test run.  Specify expected outcomes using the
+   <option>&dashdash;outcomes</option> (or <option>-O</option>) option
+   followed by the name of a file containing expected outcomes.  The
+   format for an expected outcomes file is exactly the same as that of a
+   test results file.  In fact, you may specify a test results file as
+   the expected outcomes file for a subsequent test run; &qmtest; will
+   report test results differing between the first run and the second.
+   Test result proprties in the expected outcomes file, other than each
+   test's outcome, are simply ignored.  If there is no entry for a given
+   test ID in the expected outcomes file, &qmtest; assumes the expected
+   outcome <symbol>PASS</symbol>.</para>
+
+   <para>For example, to re-run all the tests in the test suite, using
+   the previous results as expected outcomes, invoke &qmtest-cmd; like
+   this:</para>
+
+   <screen>
+&prompt;<userinput>qmtest run -O results.xml .</userinput>
+<computeroutput><![CDATA[
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+
+  Test results relative to expected outcomes:
+
+       3 (100%) tests as expected
+
+  Actual test results:
+
+       2 ( 67%) tests PASS
+       1 ( 33%) tests FAIL
+
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  (None)
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                           : FAIL     [Expression evaluates to false.]
+
+]]></computeroutput></screen>
+
+   <para>Now, even though one test fails, &qmtest; reports that 100% of
+   tests produced outcomes as expected&mdash;the expected outcome for test
+   <literal>exec1</literal> was <symbol>FAIL</symbol>, which matched its
+   actual outcome.  In addition to listing tests that produced outcomes
+   other than <symbol>PASS</symbol>, &qmtest; also lists each test which
+   produced an outcome that didn't match its expected outcome (in this
+   case, no tests).</para>
+
+  </section> <!-- sec-testtut-expected-outcomes -->
+
+  <section id="sec-testtut-modifying">
+   <title>Modifying and Creating Tests</title>
+
+   <para>Now let's fix test <literal>exec1</literal> so it
+   passes.</para>
+
+   <para>Click on the <guibutton>Edit</guibutton> button towards the
+   upper-right corner of the page for <literal>exec1</literal>.
+   &qmtest; shows a similar form, but now the values of arguments are
+   editable.</para>
+
+   <para>Change the second argument, labelled "Python Expression," to an
+   expression that evaluates to a boolean true value, such as
+   "<literal>2 + 3 == 5</literal>".  At the bottom of the form is an
+   <guibutton>OK</guibutton> button; click on it to submit the changes.
+   &qmtest; redisplays the test, now showing your updated Python
+   expression.</para>
+
+   <para>Now let's shut down the server and rerun the tests in the test
+   database.  End the server by pressing <keycap>Control-C</keycap> in
+   the terminal window where you ran <command>qmtest run</command>, and
+   resubmit the original test run:</para>
+
+   <screen>
+<userinput>^C</userinput>
+<computeroutput>Interrupted.</computeroutput>
+&prompt;<userinput>qmtest run .</userinput>
+<computeroutput><![CDATA[
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+
+       3 (100%) tests PASS
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  (None)
+
+]]></computeroutput></screen>
+
+   <para>Now all three tests pass.</para>
+
+   <para>Creating a new test is no more difficult.  From the full
+   listing page for the test database, click on the <guibutton>New
+   Test</guibutton> button.  &qmtest; displays a page asking for the new
+   test's ID and test class.  For the test ID, enter
+   <literal>new.exec0</literal>.  For the test class, choose
+   <classname>python.ExecTest</classname>, the same test class used for
+   the test <literal>exec1</literal> we just edited.  Then click on the
+   <guibutton>Next &gt;</guibutton> button, and &qmtest; shows you a
+   page identical to the form for editing an existing test.</para>
+
+   <para>&qmtest; provides default values for the arguments, which you
+   can change.  Try replacing the statement <literal>pass</literal> with
+   a variable assignment, such as <literal>x = 3</literal>.  Replace the
+   expression "<literal>1</literal>" with an expression involving
+   <varname>x</varname>, one that is true, such as <literal>2 * x &lt;
+   7</literal>.  Click on the <guibutton>OK</guibutton> button when you
+   are done.</para>
+
+   <para>You can try running your new test by specifying its test ID to
+   <command>qmtest run</command>, or you can run all tests in the
+   database, including your new test.</para>
+
+  </section> <!-- sec-testtut-modifying -->
+
+
+  <section id="sec-testtut-test-class">
+   <title>Writing a Test Class</title>
+
+   <para>&qmtest; includes several useful standard test classes, with
+   which you can write a variety of useful tests.  However, for many
+   applications you may need to write new test classes, or adapt
+   existing test classes to suit.  To do this requires a moderate
+   facility with Python.</para>
+
+   <para>A test class is represented by a Python class.  The Python
+   class needs to have three specific attributes:</para>
+
+   <itemizedlist>
+    <listitem>
+     <para>An attribute named <property>fields</property>.  This
+     attribute is a declaration of the parameters to the test
+     class.</para>
+
+     <para>The parameters are represented by a sequence of objects, each
+     an instance of <classname>qm.fields.Field</classname>.  For
+     example, a text-valued field is an instance of
+     <classname>qm.fields.TextField</classname>, an integer-valued field
+     is an instance of <classname>qm.fields.IntegerField</classname>,
+     etc.  See &fixme; xref for details about these.</para>
+
+     <para>The field names correspond to the argument names as
+     specified in the test &xml; file.  In the
+     <classname>Count</classname> example above, the field names are
+     <property>input</property> and
+     <property>expected_value</property>.</para>
+    </listitem>
+
+    <listitem>
+     <para>An <function>__init__</function> function.  The arguments to
+     this function must have the same names as the names of the
+     fields.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <function>Run</function> function.  This function is
+     called with a single argument, an instance of
+     <classname>qm.test.base.Context</classname>.  It should return an
+     instance of <classname>qm.test.base.Result</classname>, indicating
+     the test result.</para>
+    </listitem>
+   </itemizedlist>
+
+   <para>The doc string of the Python class is used as the description
+   for the test class in the user interface.  &qmtest; interprets it
+   according to the usual Python structured text semantics, and
+   reformats it as HTML.  Each field object may have an property named
+   <varname>description</varname>, which serves an analogous role for
+   fields of the test class.  Field objects may also have a property
+   named <varname>title</varname>, which is a user-friendly title for
+   the field that's shown in the user interface instead of the internal
+   name.</para>
+
+   <para>For example, let's write a simple test class named
+   <classname>Count</classname>.  This test class counts the length of a
+   string, and compares it to an expected value.  The string and the
+   expected value are arguments in each particular test of this test
+   class, and the test passes if the length of the string matches the
+   expected value.</para>
+
+   <para>The Python file containing this test test class might look like
+   this:</para>
+
+   <programlisting><![CDATA[
 import qm.fields
 from   qm.test.base import Result
 
 class Count:
+    """Tutorial test class.
+
+    A 'Count' test counts up the number of characters in a string, given
+    by the value of the "Input" field.  The test passes if the length
+    matches the value of the "Expected Value" field."""
+
     fields = [
         qm.fields.TextField(
             name="input",
+            title="Input",
             description="The input string."),
+
         qm.fields.IntegerField(
             name="expected_value",
+            title="Expected Value",
             description="The expected length of the input string."),
         ]
 
@@ -180,102 +510,55 @@ class Count:
             return Result(Result.FAIL)
 ]]></programlisting>
 
-    <para>To use this class, create a file named
-    <filename>count.py</filename> and place this Python source in it.
-    The module name is <classname>count</classname> and the class name
-    is <classname>Count</classname>, so you must specify the class name
-    as <classname>count.Count</classname> in the <sgmltag
-    class="element">class</sgmltag> element of your test files, as
-    illustrated above.</para>
+   <para>Where should you place this file?  <xref
+   linkend="sec-specifying-test-class"/> describes in detail how
+   &qmtest; locates test classes.  Classes such as this one that are
+   used only within a single test database are placed in a subdirectory
+   named <filename>_classes</filename> in the test database directory.
+   The tutorial database already includes a file containing the test
+   class listed above; if you made a copy of the test database as
+   described above, you should have a file
+   <filename>~/tdb/_classes/count.py</filename>.  Since the test class
+   <classname>Count</classname> is stored in the Python module file
+   <filename>count.py</filename>, &qmtest; refers to the test class by
+   the name <classname>count.Count</classname>.</para>
 
-    <para>Also, you must tell &qmtest; where to find the count module.
-    Set the environment variable <envar>QMTEST_CLASSPATH</envar> to the
-    directory containing <filename>count.py</filename>.</para>
+   <para>To create a test using this class, click on the <guibutton>New
+   Test</guibutton> button on the full listing page, as before.  For the
+   new test ID, enter <literal>new.count0</literal>.  Since
+   <classname>count.Count</classname> is a custom class, its name does
+   not appear in the list of standard test classes; you must enter it
+   manually into the test class dialog box.  When you click on the
+   <guibutton>Next &gt;</guibutton> button, &qmtest; shows you a form to
+   edit the new test.  Note that the doc string for
+   <classname>Count</classname> appears as the test class description,
+   and the <varname>title</varname> and <varname>description</varname>
+   properties of the two fields are listed next to controls for the two
+   test arguments.  For the "Input" field, enter the string
+   "<literal>Hello, world!</literal>."  For the "Expected Value" field,
+   enter the value 13.  Click <guibutton>OK</guibutton>, and you should
+   now be able to run the new test <literal>new.count0</literal>, which
+   should pass.</para>
 
-   </section>
+   <screen>
+&prompt;<userinput>qmtest run new.count0</userinput>
+<computeroutput><![CDATA[
+--- STATISTICS ---------------------------------------------------------------
 
-   <section>
-    <title>Running Tests</title>
+       1        tests total
 
-    <para>Now that you have a test and a test class, you can run tests.
-    Make sure your <envar>QMTEST_CLASSPATH</envar> environment variable
-    is set to the directory containing count.py.  Also set the
-    <envar>QMTEST_DB_PATH</envar> environment variable to your test
-    database directory (<filename>tdb</filename>, above).</para>
+       1 (100%) tests PASS
 
-    <para>For example,</para>
+--- TESTS THAT DID NOT PASS --------------------------------------------------
 
-    <screen>
-     <prompt>$</prompt> <userinput>ls -o /tmp/qmtest-demo/</userinput>
-     <computeroutput>count.py tdb</computeroutput>
-     <prompt>$</prompt> <userinput>ls -o /tmp/qmtest-demo/tdb/</userinput>
-     <computeroutput>test1.qmt</computeroutput>
-     <prompt>$</prompt> <userinput>export QMTEST_CLASSPATH=/tmp/qmtest-demo</userinput>
-     <prompt>$</prompt> <userinput>export QMTEST_DB_PATH=/tmp/qmtest-demo/tdb</userinput>
-    </screen>
+  (None)
 
-    <para>Now you can run tests using the qmtest run command.  Specify
-    the test IDs to run on the command line.</para>
+]]></computeroutput>
+   </screen>
 
-    <screen>
-     <prompt>$</prompt> <userinput>qmtest run test1</userinput>
-     <computeroutput>
+  </section> <!-- sec-testtut-test-class -->
 
-      --- STATISTICS ---------------------------------------------------------------
-
-	     1        tests total
-
-	     1 (100%) tests PASS
-
-      --- TESTS THAT DID NOT PASS --------------------------------------------------
-
-        (None)
-
-     </computeroutput>
-    </screen>
-
-    <para>&qmtest; runs <symbol>test1</symbol>, which passes.  To see
-    what happens if it fails, edit <filename>test1.qmt</filename> and
-    change the <property>expected_value</property> argument to some
-    other number.</para>
-
-   </section>
-
-   <section>
-    <title>Full Test Results</title>
-
-    <para>Specify the <option>&dashdash;output</option> option to
-    generate a full test result listing in &xml; format.  For
-    example,</para>
-
-    <screen>
-     <prompt>$</prompt> <userinput>qmtest run &dashdash;output results.xml test1</userinput>
-    </screen>
-
-   </section>
-
-   <section>
-    <title>Expected Test Results</title>
-
-    <para>The full test result listing contains the outcome
-    (<symbol>PASS</symbol>, <symbol>FAIL</symbol>, etc.)  for each test
-    that was run.  It may also contain additional information, as
-    specified by the test class.</para>
-
-    <para>You can use the results from a previous test run as expected
-    outcomes for a subsequent run.  &qmtest; will report, in addition to
-    which tests passed or failed, which tests had outcomes different
-    from expected values.</para>
-
-    <para>To use an &xml; result file as the expected outcomes for a
-    subsequent test run, use the <option>&dashdash;outcomes</option>
-    option.  For example,</para>
-
-    <screen>
-     <prompt>$</prompt> <userinput>qmtest run &dashdash;outcomes results.xml test1</userinput>
-    </screen>
-
-   </section>
+<!--
 
    <section>
     <title>Provided Test Classes</title>
@@ -369,7 +652,8 @@ class Count:
     expected on standard error.</para>
 
    </section>
-  </section>
+-->
+
 </chapter>
 <!--
   Local Variables:

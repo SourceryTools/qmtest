@@ -28,7 +28,7 @@
 
    <para>An individual <firstterm>test</firstterm> is an entity that,
    when run, produces a single <link
-   linkend="concept-outcome">outcome</link> indicating success or
+   linkend="sec-outcomes">outcome</link> indicating success or
    failure.  A test consists of:
     <orderedlist>
      <listitem>
@@ -72,35 +72,64 @@
     </orderedlist>
    </para>
 
-   <section>
+   <section id="sec-test-ids">
     <title>Test Identifiers</title>
 
-    <para>A <firstterm>test ID</firstterm> is a string that identifies
-    a test.  Every test must have a unique ID within the database that
-    contains it.</para>
+    <para>A <firstterm>test ID</firstterm> is a string that identifies a
+    test.  Every test must have a unique test ID within the test
+    database that contains it.</para>
 
-    <para>A test's ID is constructed by concatenating its name with
-    the ID of the suite that contains it, using "." as a concatenator.
-    Suite IDs are constructed similarly.  Each field in the name is
-    composed of digits, lower-case letters, and underscores.  Thus,
-    test IDs are strings like
-    <literal>stream.output.unable_to_open_file_for_writing</literal>.
-    These restrictions allow safe, easy mapping of test IDs into the
-    file system.  Test IDs and suite IDs are in separate namespaces;
-    every test database implementation must allow users to create a
-    test and a test suite with the same ID.</para>
+    <para>A test ID is composed of digits, lower-case letters, and
+    underscores.  For example, <literal>widget_test_2</literal> is a
+    valid test ID.  You may use sequentially-assigned test IDs, or
+    choose IDs that help you remember what a test is for.</para>
 
-   </section>
+    <para>In addition, you may optionally arrange test IDs into a tree
+    hierarchy, similar to subdirectories in a file system.  To do this,
+    use a period ("<literal>.</literal>") as a path separator.  Each
+    component of the path must obey the restrictions for a test ID.
+    Typically, this mechanism is used to arrange tests based on which
+    component or aspect of the tested system they test.  For example,
+    <literal>front_end.gui.widget_test_2</literal> is a valid test ID.
+    In such an arrangement, all tests of the tested system's front end
+    program would have IDs that begin with
+    <literal>front_end.</literal>, and all tests of th front end's
+    graphical user interface would have test IDs that begin with
+    <literal>front_end.gui.</literal>.</para>
 
-   <section>
+    <para>Path prefixes in the namespace of test IDs, such as
+    <literal>front_end</literal> and <literal>front_end.gui</literal> in
+    the examples above, define <link
+    linkend="sec-implicit-test-suites">implicit test suites</link>,
+    which allow you easily to specify all tests with the same path
+    prefix.  For this reason, a path prefix may not be used as a test
+    ID.  For example, you may not have two tests with IDs
+    <literal>front_end.gui.widget_test_2</literal> and
+    <literal>front_end.gui</literal>.</para>
+
+   </section> <!-- sec-test-ids -->
+
+   <section id="sec-test-classes">
     <title>Test Classes</title>
 
     <para>A <firstterm>test class</firstterm> defines how a particular
     type of test is created and run.  Each test class corresponds to a
-    Python class with the same name that contains code to execute the
-    test and to interpret the result of that execution.</para>
+    Python class that contains code to execute the test and to interpret
+    the result of that execution.</para>
 
-   </section>
+    <para>&qmtest; includes a collection of standard test classes, which
+    are useful for writing a wide variety of tests.  These are listed in
+    &fixme;.  You may use these test classes as a base for creating your
+    own test classes, or you may create new test classes from
+    scratch.</para>
+
+    <para>The name of the test class is composed of the module
+    containing the corresponding Python class, and the name of the
+    Python class.  See <xref linkend="sec-specifying-test-class"/> for a
+    description of the mechanism by which &qmtest; locates Python
+    classes for use as test classes.</para>
+
+   </section> <!-- sec-test-classes -->
 
    <section>
     <title>Arguments</title>
@@ -151,7 +180,7 @@
     executed at some point before the test is run; the cleanups are
     executed afterwards.  If any of the setups indicate failure, the
     test is not run; it's <link
-    linkend="concept-outcome">outcome</link> will be
+    linkend="sec-outcomes">outcome</link> will be
     <literal>UNTESTED</literal>.</para>
 
    </section>
@@ -185,12 +214,228 @@
 
   </section> <!-- Context -->
 
+  <section id="sec-test-suite">
+   <title>Test Suite</title>
+
+   <para>A <firstterm>test suite</firstterm> is a collection of tests
+   and other test suites.  Test suites help you specify a group of tests
+   easily, and enable &qmtest; to report results for groups of
+   tests.</para>
+
+   <para>Conceptually, a test suite is simply a list of IDs of contained
+   tests and suites.  Even if a test appears more than once, either
+   directly or via another test suite, it is considered to appear only
+   once in the test suite.  Each test and test suite can appear in many
+   different test suites.</para>
+
+   <para>A test suite can contain another test suites; this is simply a
+   shortcut for listing all tests (and test suites, recursively) in the
+   contained suite.  Of course, a test suite may not include itself,
+   either directly or indirectly.</para>
+
+   <para>A common use of test suites is to create categories of tests
+   that are run in certain circumstances.  For example, you might add to
+   your test database three suites named <literal>nightly</literal>,
+   <literal>regression</literal>, and <literal>smoke_tests</literal>.
+   The <literal>nightly</literal> suite contains tests that are run
+   during the nightly system test run.  The
+   <literal>regression</literal> suite contains tests that developers
+   run before submitting program modifications, to test for
+   functionality regressions from the previous version.  The
+   <literal>smoke_tests</literal> suite contains a limited subset of
+   tests that are run when the tested system is built and installed, to
+   check for basic functionality and correctness.  Any given test may
+   appear in none, one, two, or all three of these suites.</para>
+
+   <section id="sec-implicit-test-suites">
+    <title>Implicit Test Suites</title>
+
+    <para><xref linkend="sec-test-ids"/> explains how you may arrange
+    tests in a tree hierarchy, using a period ("<literal>.</literal>")
+    as the path separator in test IDs.  &qmtest; defines an
+    <firstterm>implicit test suite</firstterm> for each path prefix.
+    The suite ID of an implicit test suite is the path prefix, and the
+    suite all tests in the test database whose IDs start with the path
+    prefix.  Thus, implicit test suites reflect the structure of the
+    tree hierarchy you use to arrange your test IDs.</para>
+
+    <para>Consider, for example, a test database which contains tests
+    with these IDs:</para>
+
+    <simplelist type="vert" columns="1">
+     <member><literal>back_end.db_1</literal></member>
+     <member><literal>back_end.db2</literal></member>
+     <member><literal>front_end.cmdline</literal></member>
+     <member><literal>front_end.gui.widget_1</literal></member>
+     <member><literal>front_end.gui.widget_2</literal></member>
+    </simplelist>
+
+    <para>For this test database, &qmtest; defines implicit test suites
+    with IDs <literal>back_end</literal>, <literal>front_end</literal>,
+    and <literal>front_end.gui</literal>.  The test suite
+    <literal>front_end</literal> contains the tests
+    <literal>front_end.cmd</literal>,
+    <literal>front_end.gui.widget_1</literal>, and
+    <literal>front_end.gui.widget_2</literal>.</para>
+
+    <para>The suite ID <literal>.</literal> (a single period) specifies
+    the test suite with an empty prefix.  This is the implicit test
+    suite which contains all test IDs in the test database.</para>
+
+   </section> <!-- sec-implicit-test-suites -->
+
+  </section> <!-- sec-test-suite -->
+
+  <section id="sec-test-database">
+   <title>Test Database</title>
+
+   <para>A <firstterm id="def-test-database">test database</firstterm>
+   stores tests and test suites.  The test database is responsible for
+   obtaining the test instance associated with a particular test ID, or
+   for obtaining the test instances that make up a particular suite.
+   &qmtest; stores a test database in a single directory, which may
+   include many files and subdirectories.</para>
+
+   <para>To specify a test database, provide the path to its top-level
+   directory.  When you invoke the &qmtest; program, you must specify
+   the test database by using the <option>&dashdash;db-path</option>
+   (<option>-D</option>) to &qmtest-cmd;.  For example,</para>
+
+   <screen>
+    &prompt; <userinput>qmtest -D /path/to/test_database run gui_tests</userinput>
+    <computeroutput>...</computeroutput>
+   </screen>
+
+   <para>To avoid using this option every time you run &qmtest-cmd;, set
+   the environment variable <envar>QMTEST_DB_PATH</envar> to the
+   location of the test database.  For example, if you are using a
+   Bourne-style shell,</para>
+
+   <screen>
+    &prompt; <userinput>export QMTEST_DB_PATH=/path/to/test_database</userinput>
+    &prompt; <userinput>qmtest run gui_tests</userinput>
+    <computeroutput>...</computeroutput>
+   </screen>
+
+   <para>Typically, you will need only a single test database for all of
+   your tests.  A test database may store different kinds of tests and
+   tests of different applications.  You may sometimes wish to divide
+   your tests among multiple test databases, for instance if you wish to
+   back them up separately or place them in distinct source control
+   modules.  However, &qmtest; can operate on only one test database at
+   a time.  For instance, in a single test run you may only run tests
+   from one test database.</para>
+
+   <para>&qmtest; stores tests, actions, and test suites in the test
+   database using subdirectories containing XML files.  Generally, there
+   should be no need to examine or modify these files directly.
+   However, &qmtest; allows you to provide an alternate test database
+   implementation.  Another implementation might generate test
+   specifications dynamically, or extract tests from source code, or
+   load tests from a legacy test suite file structure.</para>
+
+  </section> <!-- sec-test-database -->
+
+  <section>
+   <title>Test Results</title>
+
+   <para>The result of executing a single test is an <link
+   linkend="def-outcome">outcome</link> plus additional properties,
+   grouped together in a <link linkend="def-result">results</link>
+   object.</para>
+
+   <section id="sec-outcomes">
+    <title>Outcomes</title>
+
+    <para>The <firstterm id="def-outcome">outcome</firstterm> of a
+    test indicates whether it passed, failed, or whether some
+    exceptional situation occurred.  In particular, there are four
+    test outcomes:
+     <itemizedlist>
+      <listitem>
+       <para><literal>PASS</literal>: the test succeeded.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>FAIL</literal>: the test failed.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>ERROR</literal>: a problem occurred in the test
+       execution environment, rather than in the tested system.  For
+       example, this outcome is used when the test class attempted to
+       spawn a process containing an executable in order to test it,
+       but could not because the system call to create a new process
+       failed.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>UNTESTED</literal>: &qmtest; did not attempt to
+       execute the test.  For example, this outcome is used when
+       &qmtest; determines that one of the prerequisites
+       failed.</para>
+      </listitem>
+     </itemizedlist>
+    </para>
+
+   </section> <!-- sec-outcomes -->
+
+   <section id="sec-results">
+    <title>Results</title>
+  
+    <para>A <firstterm id="def-result">result</firstterm> contains
+    information about the execution of a single test.  Each test
+    result contains the test's ID, a test outcome, the time at which
+    the test was executed, and zero or more properties.  These may
+    include such things as the reason why a particular test was
+    untested, or the values of environment variables when the test was
+    run.</para>
+
+   </section> <!-- sec-results -->
+
+   <section id="sec-expected-outcomes">
+    <title>Expected Outcomes</title>
+
+    <para>When &qmtest; completes a test run, it reports statistics
+    broken down by test outcome, and lists tests which did not pass.
+    Often when using a test suite repeatedly, though, some tests are
+    expected not to pass.  For instance, a particular test or set of
+    tests may exercise a unit of functionality that is not present in a
+    particular version of the tested system.  In such cases, it is
+    convenient to have results reported in relation to a set of expected
+    outcomes, in addition to absolute outcomes (passing, failing, etc.)
+    of each test.</para>
+
+   </section> <!-- sec-expected-outcomes -->
+
+  </section> <!-- Test Results -->
+
  </section> <!-- Concepts -->
 
  <section id="sec-running-tests">
   <title>Running Tests</title>
 
-  <para>Introduction...</para>
+  <para>To run one or more tests, use the
+  &qmtest-cmd;&nbsp;<command>run</command> command.  Each invocation of
+  the <command>run</command> command is a single test run, and produces
+  a single set of test results and statistics.  Specify as arguments the
+  IDs of tests and test suites to run.  Even if a test is specified more
+  than once, either directly or by incorporation in a test suite, it is
+  only run once.</para>
+
+  <para>If you wish to run all tests in the test database, use the
+  implicit test suite <literal>.</literal> (a single period; see <xref
+  linkend="sec-implicit-test-suites"/>).  For example,</para>
+
+  <screen>
+   &prompt; <userinput>qmtest run .</userinput>
+   <computeroutput>...</computeroutput>
+  </screen>
+
+  <para>&qmtest; can run tests in multiple concurrent threads of
+  execution, or on multiple remote hosts.  See the documentation for the
+  <link linkend="sec-testcmd-run"><command>run</command> command</link>
+  for details.</para>
 
   <section>
    <title>Ordering and Dependencies</title>
@@ -292,97 +537,6 @@
 
   </section> <!-- Ordering and Dependencies -->
 
-  <section>
-   <title>Test Execution</title>
-
-   <para>The result of executing a single test is an <link
-   linkend="def-outcome">outcome</link> and additional <link
-   linkend="def-result">results</link>.</para>
-
-   <section id="concept-outcome">
-    <title>Outcomes</title>
-
-    <para>The <firstterm id="def-outcome">outcome</firstterm> of a
-    test indicates whether it passed, failed, or whether some
-    exceptional situation occurred.  In particular, there are four
-    test outcomes:
-     <itemizedlist>
-      <listitem>
-       <para><literal>PASS</literal>: the test succeeded.</para>
-      </listitem>
-
-      <listitem>
-       <para><literal>FAIL</literal>: the test failed.</para>
-      </listitem>
-
-      <listitem>
-       <para><literal>ERROR</literal>: a problem occurred in the test
-       execution environment, rather than in the tested system.  For
-       example, this outcome is used when the test class attempted to
-       spawn a process containing an executable in order to test it,
-       but could not because the system call to create a new process
-       failed.</para>
-      </listitem>
-
-      <listitem>
-       <para><literal>UNTESTED</literal>: &qmtest; did not attempt to
-       execute the test.  For example, this outcome is used when
-       &qmtest; determines that one of the prerequisites
-       failed.</para>
-      </listitem>
-     </itemizedlist>
-    </para>
-
-   </section>
-
-   <section id="concept-result">
-    <title>Results</title>
-  
-    <para>A <firstterm id="def-result">result</firstterm> contains
-    information about the execution of a single test.  Each test
-    result contains the test's ID, a test outcome, the time at which
-    the test was executed, and zero or more properties.  These may
-    include such things as the reason why a particular test was
-    untested, or the values of environment variables when the test was
-    run.</para>
-
-   </section>
-
-  </section>
-
-  <section>
-   <title>Test Aggregation</title>
-
-   <section>
-    <title>Test Suite</title>
-
-    <para>A <firstterm>test suite</firstterm> is a collection of tests
-    and other test suites.  Test suites are used to aggregate
-    reporting of results, as in "17 out of 22 graph traversal tests
-    reported errors".  Test suites are also used to specify which
-    tests to re-run, as in "execute all I/O tests". </para>
-
-   </section>
-
-   <section id="concept-database">
-    <title>Test Database</title>
-
-    <para>A <firstterm id="def-test-database">test
-    database</firstterm> stores test and test suite specifications.
-    The test database is responsible for obtaining the test instance
-    associated with a particular test ID, or for obtaining the test
-    instances that make up a particular suite.  Although much of the
-    subsequent discussion refers to a particular implementation of the
-    test database (which places test specifications in the
-    file system), &qmtest; allows for the substitution of alternative
-    test database implementations.  Such implementations might generate
-    test specifications dynamically, or extract them from source
-    code.</para>
-
-   </section>
-   
-  </section>
-
   <section id="sec-the-context">
    <title>The Context</title>
 
@@ -440,13 +594,6 @@
    temporary directory, close the database session).</para>
 
   </section> <!-- The Context -->
-
-  <section>
-   <title>Test Results</title>
-
-   <para>Write me.</para>
-
-  </section> <!-- Test Results -->
 
  </section> <!-- Running Tests -->
 
@@ -664,7 +811,7 @@
 
   </section> <!-- Writing Action Classes -->
 
-  <section>
+  <section id="sec-specifying-test-class">
    <title>Specifying the Class</title>
 
    <para>To use your test class, you must place the Python module file
@@ -709,7 +856,7 @@
    <classname>module</classname> is the name of the module and
    <classname>Class</classname> is the name of the class.</para>
 
-  </section> <!-- Specifying the Class -->
+  </section> <!-- sec-specifying-test-class -->
 
  </section> <!-- Writing Test Classes and Action Classes -->
 
