@@ -1,3 +1,10 @@
+2002-12-02    <Mark Mitchell <mark@codesourcery.com>>
+
+	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Use binary mode
+	to read and write results files.
+	(QMTest.__GetExpectedOutcomes): Likewise.
+	(QMTest.__FilterTestsToRun): Likewise.
+
 2002-12-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/doc/tour.xml: Update for QM 2.0.

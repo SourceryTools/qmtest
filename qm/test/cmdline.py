@@ -1020,7 +1020,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             results_path = self.__arguments[0]
         # Load results.
         try:
-            results = base.load_results(open(results_path, "r"))
+            results = base.load_results(open(results_path, "rb"))
             test_results = filter(lambda r: r.GetKind() == Result.TEST,
                                   results)
             resource_results = \
@@ -1248,7 +1248,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             else:
                 # A named file.  Open the file in unbufferred mode so
                 # that results are written out immediately.
-                result_file = open(result_file_name, "w", 0)
+                result_file = open(result_file_name, "wb", 0)
                 close_result_file = 1
                 
         if result_file is not None:
@@ -1404,7 +1404,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             return {}
 
         try:
-            return base.load_outcomes(open(outcomes_file_name, "r"))
+            return base.load_outcomes(open(outcomes_file_name, "rb"))
         except IOError, e:
             raise qm.cmdline.CommandError, str(e)
         
@@ -1427,7 +1427,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         rerun_file_name = self.GetCommandOption("rerun")
         if rerun_file_name:
             # Load the outcomes from the file specified.
-            outcomes = base.load_outcomes(open(rerun_file_name))
+            outcomes = base.load_outcomes(open(rerun_file_name, "rb"))
             # We can avoid treating the no-expectation case as special
             # by creating an empty map.
             if expectations is None:
