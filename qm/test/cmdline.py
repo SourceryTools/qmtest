@@ -160,6 +160,13 @@ class Command:
         "Profile test execution to PROFILE-FILE."
         )
 
+    concurrent_option_spec = (
+        "j",
+        "threads",
+        "COUNT",
+        "Execute tests in COUNT concurrent threads."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -182,7 +189,7 @@ class Command:
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
            outcomes_option_spec, context_option_spec, context_file_spec,
-           profile_option_spec )
+           profile_option_spec, concurrent_option_spec )
          ),
 
         ("server",
@@ -425,10 +432,21 @@ class Command:
             test_ids = test_ids.keys()
 
             # Set up a test engine for running tests.
-            engine = base.Engine(database)
+            concurrency = self.GetCommandOption("threads", None)
+            if concurrency is None:
+                engine = base.InProcessEngine()
+            else:
+                try:
+                    concurrency = int(concurrency)
+                except:
+                    concurrency = -1
+                if concurrency < 1:
+                    raise CommandError, qm.error("invalid concurrency")
+                engine = base.MultiThreadEngine(concurrency)
+
             context = self.MakeContext()
             self.__output = output
-            if qm.verbose > 0:
+            if qm.common.verbose > 0:
                 # If running verbose, specify a callback function to
                 # display test results while we're running.
                 callback = self.__ProgressCallback

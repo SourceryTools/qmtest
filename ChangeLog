@@ -1,3 +1,38 @@
+2001-05-28  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/graph.py: Add doc string.
+	(CycleError): New class.
+	(__sort_helper): Handle node missing from edges map.
+	(_partition): New function.
+	(partition_as_map): Likewise.
+	* qm/common.py (Lock): New class.
+	(MutexMixin): Likewise.
+	(OrderedMap.AsMap): New method.
+	(print_message): Swap order of parameters.
+	* share/diagnostics/test.txt (invalid concurrency): Likewise.
+	* qm/test/xmldb.py (Database): Also derive from MutexMixin.
+	(Database.GetClassPaths): Lock.
+	(Database.HasTest): Likewise.
+	(Database.GetTest): Likewise.
+	(Database.WriteTest): Likewise.
+	(Database.RemoveTest): Likewise.
+	(Database.GetTestIds): Likewise.
+	(Database.HasAction): Likewise.
+	(Database.GetAction): Likewise.
+	(Database.WriteAction): Likewise.
+	(Database.RemoveAction): Likewise.
+	(Database.GetActionIds): Likewise.
+	* qm/test/cmdline.py (Command.concurrent_option_spec): New
+	attribute.
+	(Command.commands_spec): Include it.
+	(Command.add_test_id): Handle --threads option.
+	* qm/test/base.py (Engine): Rename to...
+	(InProcessEngine): ... this.
+	(Engine): New class.
+	(MultiThreadEngine): Likewise.
+	(CommandEngine): Likewise.
+	(load_database): Adjust call to print_message.
+
 2001-05-24  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Mention Distutils.

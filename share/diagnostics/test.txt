@@ -52,9 +52,15 @@ The path you specified for the test database, %(path)s, already exists.
 A problem occurred while loading the XML test "%(test_id)s":
 %(message)s.
 
+@ invalid class
+There is no test class "%(class_name)s".
+
 @ invalid class name
 The class name "%(class_name)s" is invalid.  Specify the class name in
 the form 'module.class'.
+
+@ invalid concurrency
+Specify a positive integer with the '--parallel' option.
 
 @ invalid context assignment
 The context property "%(argument)s" is not valid.  Specify context
@@ -67,9 +73,6 @@ lower-case letters, digits, underscores, and periods.
 @ invalid environment assignment
 The string '%(assignment)s' is not a valid environment element.
 Environment elements must have the form 'variable=value'.
-
-@ invalid class
-There is no test class "%(class_name)s".
 
 @ invalid result
 The test %(id)s of class %(test_class)s returned an invalid result,

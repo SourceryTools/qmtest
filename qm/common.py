@@ -49,6 +49,7 @@ import socket
 import string
 import sys
 import tempfile
+import threading
 import time
 import traceback
 import types
@@ -289,6 +290,70 @@ class FileSystemMutex:
         return self.__locked
         
         
+
+class Lock:
+    """A lock held on a mutex or simiar lock."""
+
+    def __init__(self, mutex):
+        """Take out a lock.
+
+        'mutex' -- A lock object.  The object must have methods
+        'acquire' and 'release'.  For example, use instances of
+        'threading.Lock' or 'threading.RLock'.
+
+        preconditions -- Depends on properties of 'mutex'."""
+
+        self.__mutex = mutex
+        mutex.acquire()
+
+
+    def __del__(self):
+        """Release the lock."""
+
+        self.__mutex.release()
+        
+
+
+class MutexMixin:
+    """Mutex lock mixin class.
+
+    Instances of subclasses of this class have a per-instance lock for
+    serializing access."""
+
+    def __init__(self, mutex=None):
+        """Initialize locking.
+
+        'mutex' -- If not 'None', the mutex to use for locking.
+        Otherwise, a new one is provided.
+
+        Note that this method need not be called if 'mutex' is
+        'None'.""" 
+
+        if mutex is not None:
+            self.__mutex = mutex
+
+
+    def GetMutex(self):
+        """Return the mutex object used for locking this instance."""
+        
+        return self.__mutex
+
+
+    def GetLock(self):
+        """Lock this instance.
+
+        returns -- A 'lock' object."""
+
+        try:
+            mutex = self.__mutex
+        except AttributeError:
+            # Perform first-time initialization, in case '__init__' was
+            # not called.
+            mutex = threading.RLock()
+            self.__mutex = mutex
+        return Lock(mutex)
+
+
 
 class Configuration:
     """A persistent set of program configuration variables.
@@ -577,6 +642,15 @@ class OrderedMap:
                         repr(k[i]) + ": " + repr(v[i]),
                     range(0, len(self.__keys)))
         return "OrderedMap{%s}" % string.join(pairs, ", ")
+
+
+    def AsMap(self):
+        """Return an ordinary map object."""
+
+        result = {}
+        for i in range(0, len(self.__keys)):
+            result[self.__keys[i]] = self.__values[i]
+        return result
 
 
 
@@ -1143,13 +1217,13 @@ def wrap_lines(text, columns=72, break_delimiter="\\"):
     return string.join(lines, "\n")
 
 
-def print_message(text, min_verbose=1):
+def print_message(min_verbose, text):
     """Print a status message, if the verbose level is high enough.
 
-    'text' -- The text of the message.
-
     'min_verbose' -- The minimum verbose level for which this message
-    will be printed.  Must be greater than zero."""
+    will be printed.  Must be greater than zero.
+
+    'text' -- The text of the message."""
 
     assert min_verbose > 0
     if verbose >= min_verbose:

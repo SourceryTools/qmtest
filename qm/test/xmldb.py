@@ -83,7 +83,7 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(base.Database):
+class Database(base.Database, qm.common.MutexMixin):
     """A database represnting tests as XML files in a directory tree."""
 
     # This value, used in the test and suite caches, indicates that the
@@ -133,6 +133,7 @@ class Database(base.Database):
 
 
     def GetClassPaths(self):
+        lock = self.GetLock()
         # Specify the '_classes' subdirectory, if it exists.
         class_dir = os.path.join(self.__path, "_classes")
         if os.path.isdir(class_dir):
@@ -150,10 +151,12 @@ class Database(base.Database):
     def HasTest(self, test_id):
         """Return true if the database contains a test with 'test_id'."""
 
+        lock = self.GetLock()
         return self.__HasItem(test_id, self.__tests, test_file_extension)
 
 
     def GetTest(self, test_id):
+        lock = self.GetLock()
         if not self.HasTest(test_id):
             raise base.NoSuchTestError, test_id
 
@@ -170,6 +173,7 @@ class Database(base.Database):
         
 
     def WriteTest(self, test, comments=0):
+        lock = self.GetLock()
         # Invalidate the cache entry.
         self.__InvalidateItem(test.GetId(), self.__tests)
         # Generate the document and document type for XML test files.
@@ -195,6 +199,7 @@ class Database(base.Database):
 
 
     def RemoveTest(self, test_id):
+        lock = self.GetLock()
         # Make sure there is such a test.
         assert self.HasTest(test_id)
         # Invalidate the cache entry.
@@ -205,6 +210,7 @@ class Database(base.Database):
 
 
     def GetTestIds(self, path="."):
+        lock = self.GetLock()
         dir_path = self.IdToPath(path, absolute=1)
         return scan_dir_for_labels(dir_path, test_file_extension)
 
@@ -212,10 +218,12 @@ class Database(base.Database):
     def HasAction(self, action_id):
         """Return true if the database contains an action with 'action_id'."""
 
+        lock = self.GetLock()
         return self.__HasItem(action_id, self.__actions, action_file_extension)
 
 
     def GetAction(self, action_id):
+        lock = self.GetLock()
         if not self.HasAction(action_id):
             raise base.NoSuchActionError, action_id
 
@@ -225,6 +233,7 @@ class Database(base.Database):
         
 
     def WriteAction(self, action, comments=0):
+        lock = self.GetLock()
         # Invalidate the cache entry.
         self.__InvalidateItem(action.GetId(), self.__actions)
         # Generate the document and document type for XML action files.
@@ -251,6 +260,7 @@ class Database(base.Database):
 
 
     def RemoveAction(self, action_id):
+        lock = self.GetLock()
         # Make sure there is such a action.
         assert self.HasAction(action_id)
         # Invalidate the cache entry.
@@ -262,6 +272,7 @@ class Database(base.Database):
 
 
     def GetActionIds(self, path="."):
+        lock = self.GetLock()
         dir_path = self.IdToPath(path, absolute=1)
         return scan_dir_for_labels(dir_path, action_file_extension)
 
@@ -269,6 +280,7 @@ class Database(base.Database):
     def HasSuite(self, suite_id):
         """Return true if the database contains a suite with 'suite_id'."""
 
+        lock = self.GetLock()
         try:
             # Check the cache.  If there's an entry for this suite ID,
             # use the caches state.
@@ -295,6 +307,8 @@ class Database(base.Database):
 
 
     def GetSuite(self, suite_id):
+        lock = self.GetLock()
+
         if not self.HasSuite(suite_id):
             raise base.NoSuchSuiteError, "no test suite with ID %s" % suite_id
 
@@ -325,6 +339,7 @@ class Database(base.Database):
         # Don't write directory suites to suite file.
         assert not isinstance(suite, DirectorySuite)
 
+        lock = self.GetLock()
         # Invalidate the cache entry.
         self.__InvalidateItem(suite.GetId(), self.__suites)
         # Generate the document and document type for XML suite files.
@@ -360,6 +375,7 @@ class Database(base.Database):
 
 
     def RemoveSuite(self, suite_id):
+        lock = self.GetLock()
         # Make sure there is such a suite.
         assert self.HasSuite(suite_id)
         # Make sure it's not an implicit test suite.
@@ -374,6 +390,7 @@ class Database(base.Database):
 
 
     def GetSuiteIds(self, path=".", implicit=0):
+        lock = self.GetLock()
         # First find IDs corresponding to test suite files.
         dir_path = self.IdToPath(path, absolute=1)
         suites = scan_dir_for_labels(dir_path, suite_file_extension)
@@ -404,6 +421,7 @@ class Database(base.Database):
 
 
     def SetAttachmentData(self, attachment, data, item_id):
+        lock = self.GetLock()
         # Construct the path to the directory in which the test or
         # action given by 'item_id' is written.  The attachment should
         # be written to this directory.

@@ -43,6 +43,7 @@ import qm.label
 import qm.xmlutil
 import string
 import sys
+import threading
 import types
 
 ########################################################################
@@ -1086,17 +1087,19 @@ class PrerequisiteMapAdapter:
         return test.GetPrerequisites(absolute=1).keys()
 
 
+    def get(self, test_id, default=[]):
+        test = self.__database.GetTest(test_id)
+        return test.GetPrerequisites(absolute=1).keys()
+        
+
 
 class Engine:
-   """The test execution engine."""
+   """Base class for a test execution engine."""
 
-   def __init__(self, database):
-       """Create a new testing engine.
+   def __init__(self):
+       """Create a new engine."""
 
-       'database' -- The test database containing the tests on which
-       this engine operates."""
-
-       self.__database = database
+       pass
 
 
    def RunTest(self, test_id, context):
@@ -1110,6 +1113,21 @@ class Engine:
 
        results = self.RunTests([ test_id ], context)
        return results[test_id]
+
+
+   def RunSuite(self, suite_id, context):
+       """Execute a test suite.
+
+       'suite_id' -- The ID of the suite to run.
+
+       'context' -- Context to pass to the tests.
+
+       returns -- A map from test IDs to 'Result' objects of tests that
+       were run.  The tests that were run is a superset of the tests in
+       'suite_id'."""
+
+       suite = self._database.GetSuite(suite_id)
+       return self.RunTests(suite.GetTestIds(), context)
 
 
    def RunTests(self, test_ids, context, progress_callback=None):
@@ -1130,279 +1148,401 @@ class Engine:
        were run.  The tests that were run is a superset of
        'test_ids'."""
 
-       # For convenience, set 'progress_callback' to a do-nothing
-       # function if it is 'None'.
-       if progress_callback is None:
-           def null_function(message):
-               pass
-           progress_callback = null_function
-
-       qm.print_message("Computing test order.\n", 2)
-
-       # Construct a map-like object for test prerequisites.
-       prerequisite_map = PrerequisiteMapAdapter(self.__database)
-       # Perform a topological sort to determine the tests that will be
-       # run and the order in which to run them.  The sort may return a
-       # superset of the original 'test_ids'.
-       test_ids = qm.graph.topological_sort(test_ids,
-                                            prerequisite_map)
-
-       # This map associates a test with each test ID.
-       tests = {}
-
-       qm.print_message("Computing required actions.\n", 2)
-
-       # This map contains information about when cleanup actions should
-       # be run.  There is an entry for each action referenced by at
-       # least one of the tests that will be run.  The key is the action
-       # ID, and the value is the ID of the test after which the cleanup
-       # action must be run.
-       cleanup_action_map = {}
-
-       # Loop over all the tests, in the order that they will be run.
-       for test_id in test_ids:
-           # Look up the test.
-           test = self.__database.GetTest(test_id)
-           # Store it.
-           tests[test_id] = test
-           # Loop over all the actions it references.
-           for action_id in test.GetActions(absolute=1):
-               # The cleanup action should be run after this test.
-               # Another, earlier test may have been here, but this test
-               # will be run later, so reschedule the cleanup.
-               cleanup_action_map[action_id] = test_id
-
-       # This map contains the context properties that were added by
-       # each setup action that has been run so far.  A key in this map
-       # is an action ID, and the corresponding value represents the
-       # properties that the setup action added to the context (as a map
-       # from property name to value).  If the setup action failed, the
-       # corresponding value is 'None'.
-       setup_attributes = {}
-
-       qm.print_message("Running tests.\n", 2)
-
-       # Run tests.  Store the results in an ordered map so that we can
-       # retrieve results by test ID efficiently, and also preserve the
-       # order in which tests were run.
-       results = qm.OrderedMap()
-       for test_id in test_ids:
-           test = tests[test_id]
-           result = None
-           action_ids = test.GetActions(absolute=1)
-
-           # Prerequisite tests and setup actions may add additional
-           # properties to the context which are visible to this test.
-           # Accumulate those properties in this map.
-           extra_context_properties = {}
-           
-           # Check that all the prerequisites of this test have produced
-           # the expected outcomes.  If a prerequisite produced a
-           # different outcome, generate an UNTESTED result and stop
-           # processing prerequisites.
-           
-           prerequisites = test.GetPrerequisites(absolute=1)
-           for prerequisite_id, outcome in prerequisites.items():
-               # Because of the topological sort, the prerequisite
-               # should already have been run.
-               assert results.has_key(prerequisite_id)
-               # Did the prerequisite produce the required outcome?
-               prerequisite_result = results[prerequisite_id]
-               if prerequisite_result.GetOutcome() != outcome:
-                   # No.  As a result, we won't run this test.  Create
-                   # a result object with the UNTESTED outcome.
-                   result = Result(outcome=Result.UNTESTED,
-                                   failed_prerequisite=prerequisite_id)
-                   break
-               else:
-                   # Properties added to the context by the prerequisite
-                   # test are to be available to this test.
-                   extra_context_properties.update(
-                       prerequisite_result.GetContextProperties())
-
-           # Do setup actions (unless a prerequisite failed).  This is
-           # done only for the first test that references the action.
-           # If a setup action fails, generate an UNTESTED result for
-           # this test and stop processing setup actions.
-
-           if result is not None:
-               # Don't bother with setup actions if we already have a
-               # test result indicating a failed prerequisite.
-               pass
-           else:
-               # Loop over actions referenced by this test.
-               for action_id in action_ids:
-                   # Have we already done the setup for this action?
-                   if setup_attributes.has_key(action_id):
-                       # The action has already been run.  Look up the
-                       # context properties that the setup function
-                       # generated.
-                       added_attributes = setup_attributes[action_id]
-                       if added_attributes is None:
-                           # The action failed when it was run, so don't
-                           # run this test.
-                           result = Result(outcome=Result.UNTESTED,
-                                           failed_setup_action=action_id)
-                           break
-                   else:
-                       # This is the first test to reference this action.
-                       # Look up the action.
-                       try:
-                           action = self.__database.GetAction(action_id)
-                       except NoSuchActionError:
-                           # Oops, it's missing.  Don't run the test.
-                           result = Result(outcome=Result.UNTESTED,
-                                           missing_action=action_id)
-                           break
-
-                       # Make another context wrapper for the setup
-                       # function.  The setup function shouldn't see any
-                       # properties added by prerequisite tests or other
-                       # actions.  Also, we need to isolate the
-                       # properties added by this function.
-                       wrapper = ContextWrapper(context)
-
-                       # Do the setup action.
-                       progress_callback("action %-43s: " % action_id)
-                       try:
-                           action.DoSetup(wrapper)
-                       except:
-                           # The action raised an exception.  Don't run
-                           # the test.
-                           progress_callback("SETUP ERROR\n")
-                           result = Result(Result.UNTESTED,
-                                           failed_setup_action=action_id)
-                           # Add some information about the traceback.
-                           exc_info = sys.exc_info()
-                           result["setup_exception_" + action_id] = \
-                                            "%s: %s" % exc_info[:2]
-                           result["setup_traceback_" + action_id] = \
-                                            qm.format_traceback(exc_info)
-                           # Record 'None' for this action, indicating
-                           # that it failed.
-                           setup_attributes[action_id] = None
-                           break
-                       else:
-                           # The action completed successfully.
-                           progress_callback("SETUP\n")
-                           # Extract the context properties added by the
-                           # setup function.
-                           added_attributes = wrapper.GetAddedProperties()
-                           # Store them for other tests that reference
-                           # this action.
-                           setup_attributes[action_id] = added_attributes
-
-                   # Accumulate the properties generated by this setup
-                   # action. 
-                   extra_context_properties.update(added_attributes)
-
-           # We're done with prerequisites and setup actions, and it's
-           # time to run the test.
-           progress_callback("test %-45s: " % test_id)
-
-           # If we don't already have a result (all prerequisites
-           # checked out and setup actions succeeded), actually run the
-           # test.
-           if result is None:
-               # Create a context wrapper that we'll use when running
-               # the test.  It includes the original context, plus
-               # additional properties added by prerequisite tests and
-               # setup actions.
-               context_wrapper = ContextWrapper(context,
-                                                extra_context_properties)
-               try:
-                   # Run the test.
-                   result = test.Run(context_wrapper)
-               except KeyboardInterrupt:
-                   # Let this propagate out, so the user can kill the
-                   # test run.
-                   raise
-               except:
-                   # The test raised an exception.  Create a result
-                   # object for it.
-                   result = make_result_for_exception(sys.exc_info())
-               else:
-                   # The test ran to completion.  It should have
-                   # returned a 'Result' object.
-                   if not isinstance(result, qm.test.base.Result):
-                       # Something else.  That's an error.
-                       raise RuntimeError, \
-                             qm.error("invalid result",
-                                      id=test_id,
-                                      test_class=test.GetClass().__name__,
-                                      result=repr(result))
-
-           # Invoke the callback.
-           progress_callback(result.GetOutcome() + "\n")
-
-           # Finally, run cleanup actions for this test.  Run them no
-           # matter what the test outcome is, even if prerequisites or
-           # setup actions failed.  If a cleanup action fails, try
-           # running the other cleanup actions anyway.
-
-           # Loop over actions referenced by this test.
-           for action_id in action_ids:
-               if cleanup_action_map[action_id] != test_id:
-                   # This is not the last test to require this cleanup
-                   # action, so don't do it yet.
-                   continue
-               if not setup_attributes.has_key(action_id):
-                   # The setup action was never run, so don't run the
-                   # cleanup action.
-                   continue
-               # Loop up the action.
-               action = self.__database.GetAction(action_id)
-
-               # Create a context wrapper for running the cleanup
-               # method.  It includes the original context, plus any
-               # additional properties added by the setup method of the
-               # same action.
-               properties = setup_attributes[action_id]
-               if properties is None:
-                   # The setup method failed, but we're running the
-                   # cleanup method anyway.  Don't use any extra
-                   # properties.
-                   properties = {}
-               wrapper = ContextWrapper(context, properties)
-
-               # Now run the cleanup action.
-               progress_callback("action %-43s: " % action_id)
-               try:
-                   action.DoCleanup(wrapper)
-               except:
-                   # It raised an exception.  No biggie; just record
-                   # some information in the result.
-                   progress_callback("CLEANUP ERROR\n")
-                   exc_info = sys.exc_info()
-                   result["cleanup_exception_" + action_id] = \
-                                    "%s: %s" % exc_info[:2]
-                   result["cleanup_traceback_" + action_id] = \
-                                    qm.format_traceback(exc_info)
-               else:
-                   # The cleanup action succeeded.
-                   progress_callback("CLEANUP\n")
-
-           # Record the test ID and context by wrapping the result.
-           result = ResultWrapper(test_id, context_wrapper, result)
-           # Store the test result.
-           results[test_id] = result
-
-       return results
+       raise NotImplementedError, "Engine.RunTests"
+   
 
 
-   def RunSuite(self, suite_id, context):
-       """Execute a test suite.
+class InProcessEngine(Engine):
+    """Test execution engine that runs tests directly."""
 
-       'suite_id' -- The ID of the suite to run.
+    def RunTests(self, test_ids, context, progress_callback=None):
+        database = get_database()
 
-       'context' -- Context to pass to the tests.
+        # For convenience, set 'progress_callback' to a do-nothing
+        # function if it is 'None'.
+        if progress_callback is None:
+            def null_function(message):
+                pass
+            progress_callback = null_function
+            
+        qm.print_message(2, "Computing test order.\n")
+       
+        # Construct a map-like object for test prerequisites.
+        prerequisite_map = PrerequisiteMapAdapter(database)
+        # Perform a topological sort to determine the tests that will be
+        # run and the order in which to run them.  The sort may return a
+        # superset of the original 'test_ids'.
+        test_ids = qm.graph.topological_sort(test_ids,
+                                             prerequisite_map)
 
-       returns -- A map from test IDs to 'Result' objects of tests that
-       were run.  The tests that were run is a superset of the tests in
-       'suite_id'."""
+        # This map associates a test with each test ID.
+        tests = {}
 
-       suite = self.__database.GetSuite(suite_id)
-       return self.RunTests(suite.GetTestIds(), context)
+        qm.print_message(2, "Computing required actions.\n")
+
+        # This map contains information about when cleanup actions should
+        # be run.  There is an entry for each action referenced by at
+        # least one of the tests that will be run.  The key is the action
+        # ID, and the value is the ID of the test after which the cleanup
+        # action must be run.
+        cleanup_action_map = {}
+
+        # Loop over all the tests, in the order that they will be run.
+        for test_id in test_ids:
+            # Look up the test.
+            test = database.GetTest(test_id)
+            # Store it.
+            tests[test_id] = test
+            # Loop over all the actions it references.
+            for action_id in test.GetActions(absolute=1):
+                # The cleanup action should be run after this test.
+                # Another, earlier test may have been here, but this test
+                # will be run later, so reschedule the cleanup.
+                cleanup_action_map[action_id] = test_id
+
+        # This map contains the context properties that were added by
+        # each setup action that has been run so far.  A key in this map
+        # is an action ID, and the corresponding value represents the
+        # properties that the setup action added to the context (as a map
+        # from property name to value).  If the setup action failed, the
+        # corresponding value is 'None'.
+        setup_attributes = {}
+
+        qm.print_message(2, "Running tests.\n")
+
+        # Run tests.  Store the results in an ordered map so that we can
+        # retrieve results by test ID efficiently, and also preserve the
+        # order in which tests were run.
+        results = qm.OrderedMap()
+        for test_id in test_ids:
+            test = tests[test_id]
+            result = None
+            action_ids = test.GetActions(absolute=1)
+
+            # Prerequisite tests and setup actions may add additional
+            # properties to the context which are visible to this test.
+            # Accumulate those properties in this map.
+            extra_context_properties = {}
+
+            # Check that all the prerequisites of this test have produced
+            # the expected outcomes.  If a prerequisite produced a
+            # different outcome, generate an UNTESTED result and stop
+            # processing prerequisites.
+
+            prerequisites = test.GetPrerequisites(absolute=1)
+            for prerequisite_id, outcome in prerequisites.items():
+                # Because of the topological sort, the prerequisite
+                # should already have been run.
+                assert results.has_key(prerequisite_id)
+                # Did the prerequisite produce the required outcome?
+                prerequisite_result = results[prerequisite_id]
+                if prerequisite_result.GetOutcome() != outcome:
+                    # No.  As a result, we won't run this test.  Create
+                    # a result object with the UNTESTED outcome.
+                    result = Result(outcome=Result.UNTESTED,
+                                    failed_prerequisite=prerequisite_id)
+                    break
+                else:
+                    # Properties added to the context by the prerequisite
+                    # test are to be available to this test.
+                    extra_context_properties.update(
+                        prerequisite_result.GetContextProperties())
+
+            # Do setup actions (unless a prerequisite failed).  This is
+            # done only for the first test that references the action.
+            # If a setup action fails, generate an UNTESTED result for
+            # this test and stop processing setup actions.
+
+            if result is not None:
+                # Don't bother with setup actions if we already have a
+                # test result indicating a failed prerequisite.
+                pass
+            else:
+                # Loop over actions referenced by this test.
+                for action_id in action_ids:
+                    # Have we already done the setup for this action?
+                    if setup_attributes.has_key(action_id):
+                        # The action has already been run.  Look up the
+                        # context properties that the setup function
+                        # generated.
+                        added_attributes = setup_attributes[action_id]
+                        if added_attributes is None:
+                            # The action failed when it was run, so don't
+                            # run this test.
+                            result = Result(outcome=Result.UNTESTED,
+                                            failed_setup_action=action_id)
+                            break
+                    else:
+                        # This is the first test to reference this action.
+                        # Look up the action.
+                        try:
+                            action = database.GetAction(action_id)
+                        except NoSuchActionError:
+                            # Oops, it's missing.  Don't run the test.
+                            result = Result(outcome=Result.UNTESTED,
+                                            missing_action=action_id)
+                            break
+
+                        # Make another context wrapper for the setup
+                        # function.  The setup function shouldn't see any
+                        # properties added by prerequisite tests or other
+                        # actions.  Also, we need to isolate the
+                        # properties added by this function.
+                        wrapper = ContextWrapper(context)
+
+                        # Do the setup action.
+                        progress_callback("action %-43s: " % action_id)
+                        try:
+                            action.DoSetup(wrapper)
+                        except:
+                            # The action raised an exception.  Don't run
+                            # the test.
+                            progress_callback("SETUP ERROR\n")
+                            result = Result(Result.UNTESTED,
+                                            failed_setup_action=action_id)
+                            # Add some information about the traceback.
+                            exc_info = sys.exc_info()
+                            result["setup_exception_" + action_id] = \
+                                             "%s: %s" % exc_info[:2]
+                            result["setup_traceback_" + action_id] = \
+                                             qm.format_traceback(exc_info)
+                            # Record 'None' for this action, indicating
+                            # that it failed.
+                            setup_attributes[action_id] = None
+                            break
+                        else:
+                            # The action completed successfully.
+                            progress_callback("SETUP\n")
+                            # Extract the context properties added by the
+                            # setup function.
+                            added_attributes = wrapper.GetAddedProperties()
+                            # Store them for other tests that reference
+                            # this action.
+                            setup_attributes[action_id] = added_attributes
+
+                    # Accumulate the properties generated by this setup
+                    # action. 
+                    extra_context_properties.update(added_attributes)
+
+            # We're done with prerequisites and setup actions, and it's
+            # time to run the test.
+            progress_callback("test %-45s: " % test_id)
+
+            # If we don't already have a result (all prerequisites
+            # checked out and setup actions succeeded), actually run the
+            # test.
+            if result is None:
+                # Create a context wrapper that we'll use when running
+                # the test.  It includes the original context, plus
+                # additional properties added by prerequisite tests and
+                # setup actions.
+                context_wrapper = ContextWrapper(context,
+                                                 extra_context_properties)
+                try:
+                    # Run the test.
+                    result = test.Run(context_wrapper)
+                except KeyboardInterrupt:
+                    # Let this propagate out, so the user can kill the
+                    # test run.
+                    raise
+                except:
+                    # The test raised an exception.  Create a result
+                    # object for it.
+                    result = make_result_for_exception(sys.exc_info())
+                else:
+                    # The test ran to completion.  It should have
+                    # returned a 'Result' object.
+                    if not isinstance(result, qm.test.base.Result):
+                        # Something else.  That's an error.
+                        raise RuntimeError, \
+                              qm.error("invalid result",
+                                       id=test_id,
+                                       test_class=test.GetClass().__name__,
+                                       result=repr(result))
+
+            # Invoke the callback.
+            progress_callback(result.GetOutcome() + "\n")
+
+            # Finally, run cleanup actions for this test.  Run them no
+            # matter what the test outcome is, even if prerequisites or
+            # setup actions failed.  If a cleanup action fails, try
+            # running the other cleanup actions anyway.
+
+            # Loop over actions referenced by this test.
+            for action_id in action_ids:
+                if cleanup_action_map[action_id] != test_id:
+                    # This is not the last test to require this cleanup
+                    # action, so don't do it yet.
+                    continue
+                if not setup_attributes.has_key(action_id):
+                    # The setup action was never run, so don't run the
+                    # cleanup action.
+                    continue
+                # Loop up the action.
+                action = database.GetAction(action_id)
+
+                # Create a context wrapper for running the cleanup
+                # method.  It includes the original context, plus any
+                # additional properties added by the setup method of the
+                # same action.
+                properties = setup_attributes[action_id]
+                if properties is None:
+                    # The setup method failed, but we're running the
+                    # cleanup method anyway.  Don't use any extra
+                    # properties.
+                    properties = {}
+                wrapper = ContextWrapper(context, properties)
+
+                # Now run the cleanup action.
+                progress_callback("action %-43s: " % action_id)
+                try:
+                    action.DoCleanup(wrapper)
+                except:
+                    # It raised an exception.  No biggie; just record
+                    # some information in the result.
+                    progress_callback("CLEANUP ERROR\n")
+                    exc_info = sys.exc_info()
+                    result["cleanup_exception_" + action_id] = \
+                                     "%s: %s" % exc_info[:2]
+                    result["cleanup_traceback_" + action_id] = \
+                                     qm.format_traceback(exc_info)
+                else:
+                    # The cleanup action succeeded.
+                    progress_callback("CLEANUP\n")
+
+            # Record the test ID and context by wrapping the result.
+            result = ResultWrapper(test_id, context_wrapper, result)
+            # Store the test result.
+            results[test_id] = result
+
+        return results
+
+
+
+class MultiThreadEngine(Engine):
+    """A concurrent engine that runs tests in multiple threads."""
+
+    def __init__(self, thread_count):
+        """Create a new engine.
+
+        'thread_count' -- The number of concurrent threads to create for
+        running tests.  The main (calling) thread does not run any
+        tests.""" 
+
+        Engine.__init__(self)
+        self.__thread_count = thread_count
+        
+
+    def RunTests(self, test_ids, context, progress_callback=None):
+        database = get_database()
+        thread_count = self.__thread_count
+
+        # Construct a map-like object for test prerequisites.
+        prerequisite_map = PrerequisiteMapAdapter(database)
+        # Partition tests.  Tests related by a prerequisite relationship
+        # are placed in the same partition.
+        partitions = qm.graph.partition(test_ids, prerequisite_map)
+        # Sort the tests by decreasing partition size.
+        partitions.sort(lambda p1, p2: cmp(len(p2), len(p1)))
+
+        # Zig-zag round-robin through the partitions, assigning the
+        # tests in each to consecutive threads.
+        test_ids_for_thread = []
+        for i in range(0, thread_count):
+            test_ids_for_thread.append([])
+        for i in range(0, len(partitions)):
+            # Compute the next thread index.  Count up from zero and
+            # then back down again, e.g. 0 1 2 3 3 2 1 0 0 1 2 ...
+            thread_index = i % (2 * thread_count)
+            if thread_index >= thread_count:
+                thread_index = 2 * thread_count - thread_index - 1
+            # Assign the tests to that thread.
+            test_ids_for_thread[thread_index].extend(partitions[i])
+
+        # Create threads.
+        threads = []
+        for i in range(0, thread_count):
+            # Pass the context and the thread IDs to run in the thread.
+            thread_args = (test_ids_for_thread[i], context)
+            # Create the thread.
+            thread = threading.Thread(target=self.__ThreadFunction,
+                                      args=thread_args) 
+            thread.__results = {}
+
+            # Start the thread.
+            qm.common.print_message(2, "starting thread %s\n"
+                                    % thread.getName())
+            thread.start()
+
+            threads.append(thread)
+
+        # Join all the threads.  Accumulate test results from each.
+        results = {}
+        for thread in threads:
+            qm.common.print_message(2, "joining thread %s\n"
+                                    % thread.getName())
+            # Wait for the thread to complete.
+            thread.join()
+            # Grab its results.
+            results.update(thread.__results)
+
+        # All done.
+        return results
+
+
+    def __ThreadFunction(self, test_ids, context):
+        """The thread function for threads running tests.
+
+        'test_ids' -- A sequence of test IDs to run.
+
+        'context' -- The test context object."""
+        
+        # Run the tests using an ordinary 'InProcessEngine'.
+        engine = InProcessEngine()
+        results = engine.RunTests(test_ids, context)
+        # Convert the results to an ordinary Python map.
+        results = results.AsMap()
+        # Append it to the provided list.
+        threading.currentThread().__results = results
+
+
+
+# FIXME.  This is not currently used.
+
+class CommandEngine(Engine):
+
+    def RunTests(self, test_ids, context, progress_callback=None):
+        qmtest_executable = sys.argv[0]
+
+        context_file_name, context_file = qm.common.open_temporary_file()
+        for key, value in context.items():
+            context_file.write("%s=%s\n" % (key, value))
+        context_file.close()
+
+        results_file_name, results_file = qm.common.open_temporary_file()
+        results_file.close()
+
+        args = [
+            qmtest_executable,
+            "--db-path", get_database().GetPath(),
+            "run",
+            "--output", results_file_name,
+            "--context-file", context_file_name,
+            ] \
+            + test_ids
+        print args
+
+        exit_code = platform.run_program(args[0], args)
+
+        if exit_code != 0:
+            raise RuntimeError, "Subprocess QMTest failed (%d)." % exit_code
+
+        results = load_results(results_file_name)
+
+        os.unlink(context_file_name)
+        os.unlink(results_file_name)
+
+        return results
 
 
 
@@ -1459,8 +1599,8 @@ def load_database(path):
         database_module = qm.common.load_module("database", classes_path)
     except ImportError, e:
         # Couldn't import the module.
-        qm.common.print_message(
-            "Warning: couldn't import database module:\n%s\n" % str(e), 2)
+        qm.common.print_message(2, 
+            "Warning: couldn't import database module:\n%s\n" % str(e))
         pass
     else:
         # Look for a class named 'Database' in the module.
