@@ -1,5 +1,8 @@
 2003-11-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* test/regress/xml1/asdfasdf.qmt: Do not hard-code path to test.
+	* test/regress/xml1/fnord.qmt: Do not hard-code path to true.
+
 	* qm/test/doc/reference.xml: Improve documentation for "qmtest
 	create".
 
