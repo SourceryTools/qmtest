@@ -597,7 +597,7 @@ class Database(qm.extension.Extension):
         return self.__label_class.sep
     
     
-    def _LabelToPath(self, label, extension=""):
+    def LabelToPath(self, label, extension=""):
         """Return a filesystem path corresponding to this label.
 
         'label' -- A string giving the label.

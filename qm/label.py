@@ -109,6 +109,7 @@ class Label:
             return (self.__class__(self._label),
                     self.__class__(""))
 
+
     def Components(self):
         """Split the label into its components.
 

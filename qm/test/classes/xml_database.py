@@ -371,7 +371,7 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         
         # Convert the item's containing suite to a path.
         parent_suite_id = self.SplitLabel(item_id)[0]
-        parent_suite_path = self._LabelToPath(parent_suite_id)
+        parent_suite_path = self.LabelToPath(parent_suite_id)
         # Construct a file name free of suspicious characters.
         base, extension = os.path.splitext(file_name)
         safe_file_name = qm.label.thunk(base) + extension

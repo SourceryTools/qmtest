@@ -395,7 +395,7 @@ class FileDatabase(Database):
 
         Derived classes must not override this method."""
 
-        return os.path.join(self.GetRoot(), self._LabelToPath(label))
+        return os.path.join(self.GetRoot(), self.LabelToPath(label))
 
 
     def _GetLabelFromBasename(self, basename):
@@ -580,7 +580,7 @@ class ExtensionDatabase(FileDatabase):
     def _GetPathFromLabel(self, label):
 
         return os.path.join(self.GetRoot(),
-                            self._LabelToPath(label, self.suite_extension))
+                            self.LabelToPath(label, self.suite_extension))
 
         
     def _GetLabelFromBasename(self, basename):

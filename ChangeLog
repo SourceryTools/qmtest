@@ -1,3 +1,13 @@
+2002-11-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/database.py (Database._LabelToPath): Rename to ...
+	(Database.LabelToPath): ... this.
+	* qm/test/file_database.py (FileDatabase._GetPathFromLabel):
+	Adjust.
+	(ExtensionDatabase._GetPathFromLabel): Likewise.
+	* qm/test/classes/xml_database.py
+	(XMLDatabase.__MakeDataFilePath): Likewise.
+
 2002-10-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (make_dom_element): Add element parameter.
