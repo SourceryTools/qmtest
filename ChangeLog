@@ -1,5 +1,7 @@
 2002-01-03  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in (QM_TOOLS): Compute it automatically.
+
 	* GNUmakefile.in (QM_TOOLS): New variable.
 	(MAKEFILE_PRE_IN): Remove.
 	(SCRIPTS): Calculate it automatically.

@@ -32,7 +32,9 @@
 ########################################################################
 
 # The QM Tools that are being built in this version of QM.
-QM_TOOLS	= test track
+QM_TOOLS	:= $(notdir \
+                     $(filter qm/test qm/track, \
+	               $(wildcard qm/*)))
 
 # This trick is necessary to create a make variable containing a
 # single space.  See the "(make)Flavors" info page.
