@@ -1334,33 +1334,6 @@
      </varlistentry>
 
      <varlistentry>
-      <term><option>-s</option> <replaceable>file</replaceable></term>
-      <term>
-       <option>&dashdash;summary</option> <replaceable>file</replaceable> 
-      </term>
-      <listitem>
-       <para>Write a summary of the test run to
-       <replaceable>file</replaceable>.  Specify "<literal>-</literal>"
-       (a hyphen) to write results to standard output (the
-       default).</para>
-
-       <para>&qmtest; prints a summary of test results, including
-       statistics and the names of tests that did not pass.  If
-       expected outcomes were specified, the the names of tests that
-       had unexpected results are printed, instead of the names of
-       tests that did not pass.</para>
-      </listitem>
-     </varlistentry>
-
-     <varlistentry>
-      <term><option>-S</option></term>
-      <term><option>&dashdash;no-summary</option></term>
-      <listitem> 
-       <para>Do not produce a summary of the test run.</para>
-      </listitem>
-     </varlistentry>
-
-     <varlistentry>
       <term>
        <option>&dashdash;seed</option> <replaceable>integer</replaceable>
       </term>
@@ -1450,7 +1423,7 @@
      <varlistentry>
       <term><option>-O</option> <replaceable>file</replaceable></term>
       <term>
-       <option>&dashdash;option</option> <replaceable>file</replaceable>
+       <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
       </term>
       <listitem>
        <para>For details about this option, see the description of the 
@@ -1540,9 +1513,10 @@
       </glossterm>
       <glossdef>
        <para>The default path to use when creating a PID file with the
-       <option>&dashdash;pid-file</option> option.  If this entry is
-       not present, an appropriate platform-specific default value is
-       used.</para>
+       <option>&dashdash;pid-file</option> option.  (See <xref
+       linkend="sec-testcmd-gui"/> for more information about this
+       option.) If this entry is not present, an appropriate
+       platform-specific default value is used.</para>
       </glossdef>
      </glossentry>
     </glosslist>

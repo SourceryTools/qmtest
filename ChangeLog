@@ -1,5 +1,10 @@
 2003-09-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/doc/reference.xml: Remove documentation for non-existant
+	--summary and --no-summary options to "qmtest run".  Fix typo in
+	-O documentation for "qmtest summarize".  Improve --pid-file
+	documentation.
+
 	* qm/test/classes/pickle_result_stream.py
 	(PickleResultReader.__init__): Treat cPickle.UnpicklingError like
 	EOFError.
