@@ -21,6 +21,7 @@ import errno
 import os
 import os.path
 import sys
+import string
 
 # The Python interpreter will place the directory containing this
 # script in the default path to search for modules.  That is
@@ -35,7 +36,21 @@ sys.path = sys.path[1:]
 
 import sys
 import gc
+
+# This executable is supposed to live in ${QM_HOME}/bin (posix)
+# or ${QM_HOME}\Scripts (nt) so we deduce the QM_HOME variable
+# by stripping off the last two components of the path.
+#
+_qm_home = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+os.environ['QM_HOME']=_qm_home
+
 import qm
+
+class config:
+    pass
+qm.config = config()
+qm.config.data_dir = os.path.join(_qm_home, 'share', 'qm')
+
 import qm.cmdline
 import qm.diagnostic
 import qm.platform

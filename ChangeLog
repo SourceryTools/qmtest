@@ -1,3 +1,10 @@
+2003-09-16  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* qmdist/command/install_data.py: Do not generate data_dir,
+	as this isn't reliable (windows installer).
+	* qm/__init__.py: Do not use predefined data_dir.
+	* qm/test/qmtest.py: Deduce data_dir from sys.argv[0].
+
 2003-09-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (make_dom_document): Simplify.
