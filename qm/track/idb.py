@@ -39,8 +39,8 @@ import cPickle
 import rexec
 import qm
 import issue
-import issue_class
 import os
+import qm.fields
 import string
 import types
 
@@ -318,7 +318,7 @@ class IdbBase:
                     # enumerations, in which case we need to fish
                     # into the set to get the mapping of each thing
                     # that could be in the set.
-                    enum_type = qm.track.issue_class.IssueFieldEnumeration
+                    enum_type = qm.fields.EnumerationField
                     enum = None
                     if not isinstance(field, enum_type):
                         try:
@@ -442,25 +442,25 @@ def get_idb_class(idb_type):
 def get_field_type_description_for_query(field):
     """Return a summary of how to use 'field' in Python query expressions."""
 
-    if isinstance(field, issue_class.IssueFieldEnumeration):
+    if isinstance(field, qm.fields.EnumerationField):
         enumerals = field.GetEnumerals()
         enumerals = map(lambda x: '"%s"' % x[0], enumerals)
         return "an enumeration of %s" % string.join(enumerals, ", ")
-    elif isinstance(field, issue_class.IssueFieldTime):
+    elif isinstance(field, qm.fields.TimeField):
         return "a date/time (right now, it is %s)" % field.GetCurrentTime()
-    elif isinstance(field, issue_class.IssueFieldIid):
+    elif isinstance(field, qm.fields.IidField):
         return "a valid issue ID"
-    elif isinstance(field, issue_class.IssueFieldUid):
+    elif isinstance(field, qm.fields.UidField):
         return "a valid user ID"
-    elif isinstance(field, issue_class.IssueFieldInteger):
+    elif isinstance(field, qm.fields.IntegerField):
         return "an integer"
-    elif isinstance(field, issue_class.IssueFieldText):
+    elif isinstance(field, qm.fields.TextField):
         return "a string"
-    elif isinstance(field, issue_class.IssueFieldSet):
+    elif isinstance(field, qm.fields.SetField):
         contained_field = field.GetContainedField()
         return "a sequence; each element is %s" \
                % get_field_type_description_for_query(contained_field)
-    elif isinstance(field, issue_class.IssueFieldAttachment):
+    elif isinstance(field, qm.fields.AttachmentField):
         return "an attachment; may not be used in queries"
     else:
         raise NotImplementedError

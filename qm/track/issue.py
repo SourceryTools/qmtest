@@ -183,53 +183,6 @@ class Issue:
 
 
 
-class Attachment:
-    """A file attachment."""
-
-    def __init__(self,
-                 location,
-                 mime_type="application/octet-stream",
-                 description=""):
-        """Creates a new attachment object."""
-
-        self.location = location
-        self.mime_type = mime_type
-        self.description = description
-
-
-    def __cmp__(self, other):
-        if other is None:
-            return -1
-        if self.location == other.location \
-           and self.description == other.description \
-           and self.mime_type == other.mime_type:
-            return 0
-        else:
-            return 1
-
-
-    def GetLocation(self):
-        """Returns the location of the attachment data.
-
-        The interpretation of the return value, a string, is
-        context-dependent."""
-
-        return self.location
-
-
-    def GetMimeType(self):
-        """Returns the MIME type of the attachment."""
-
-        return self.mime_type
-
-
-    def GetDescription(self):
-        """Returns a description of the attachment."""
-
-        return self.description
-
-
-
 class IssueSortPredicate:
     """Predicate function to sort issues by a given field value."""
 
@@ -268,8 +221,7 @@ def get_differing_fields(iss1, iss2):
     'iss1', 'iss2' -- The issues to compare.  They must be in the same
     class.
 
-    returns -- A sequence 'IssueField' items for fields that
-    differ."""
+    returns -- A sequence of 'Field' items for fields that differ."""
 
     # Make sure the issues are in the same class.
     issue_class = iss1.GetClass()

@@ -41,17 +41,34 @@
      A field for the user to upload a file.
    --></dtml-comment>
    Upload file contents for field 
-   <span class="fieldname"><dtml-var expr="request['field_name']"></span>:
-   <br>
-   <input type="file" 
-          size="40" 
-          name="file_data">
-   <br>
+   <span class="fieldname"><dtml-var expr="request['field_name']"></span>
+   <hr></hr>
+
+   <table border="0">
+    <tr>
+     <td>
+      Description:
+     </td>
+     <td>
+      <input type="text"
+             size="40"
+             name="description"/>
+     </td>
+    </tr>
+    <tr>
+     <td>
+      File:
+     </td>
+     <td>
+      <input type="file" 
+             size="30" 
+             name="file_data"/>
+     </td>
+    </tr>
    <dtml-comment><!--
      The user may specify a MIME type explicitly, or request that it be
      determined automatically.  
    --></dtml-comment>
-   <table border="0">
     <tr>
      <td>
       MIME&nbsp;type:
@@ -81,9 +98,8 @@
      </td>
     </tr>
    </table>
-   <br>
    <input type="submit" 
-          value=" Upload "/>
+          value=" OK "/>
   </form>
 
  <dtml-comment><!--
@@ -94,37 +110,39 @@
  function inform_parent()
  {
    var parent_form = window.opener.document.form;
+   var field = parent_form.<dtml-var expr="request['encoding_name']">;
+   var summary_field = 
+     parent_form.<dtml-var expr="request['summary_field_name']">;
 
-   // Set the location field in the form that invoked this popup to
-   // the attachment location provided by the server.  This allows the
-   // parent form to locate the attachment data later.
-   parent_form.<dtml-var expr="request['location_field']">.value =
-     document.upload_form.location.value;
-
-   // Set the MIME type in the invoking form.  Use an empty MIME type
-   // to indicate auto-detect.
-   if(document.upload_form.detect_mime_type[0].checked)
-     parent_form.<dtml-var expr="request['mime_type_field']">.value = "";
-   else
-     parent_form.<dtml-var expr="request['mime_type_field']">.value = 
-       document.upload_form.mime_type.value;
+   var description;
+   var mime_type;
+   var location;
+   var file_name;
+   var summary;
 
    // Get the name of the uploaded file.
-   var file_name = document.upload_form.file_data.value;
+   file_name = document.upload_form.file_data.value;
    // Keep the file name only; discard directories.
    file_name = file_name.replace(/.*\//, "");
    file_name = file_name.replace(/.*\\/, "");
 
-   // Fill the file name into the description field, if it's empty.
-   var desc_field = 
-     parent_form.<dtml-var expr="request['description_field']">;
-   if(desc_field.value == "" || desc_field.value == null)
-     desc_field.value = file_name;
+   // Get the other data.
+   description = document.upload_form.description.value;
+   location = document.upload_form.location.value;
+   if(document.upload_form.detect_mime_type[0].checked)
+     mime_type = "";
+   else
+     mime_type = document.upload_form.mime_type.value;
 
-   // Also tell the parent form the uploaded file's name.  This way we
-   // can try to guess its MIME type later.
-   parent_form.<dtml-var expr="request['file_name_field']">.value =
-     file_name;
+   field.value = escape(description) + ";"
+                 + escape(mime_type) + ";"
+                 + escape(location) + ";"
+                 + escape(file_name);
+
+   summary = description;
+   if(document.upload_form.detect_mime_type[1].checked)
+     summary +=  " [" + mime_type + "]";
+   summary_field.value = summary;
  }
 
  // This function is used to select the "Specify" radio button when

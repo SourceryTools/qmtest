@@ -118,7 +118,7 @@ class SummaryPageInfo(web.PageInfo):
 
         field = issue.GetClass().GetField(field_name)
         value = issue.GetField(field_name)
-        return web.format_field_value(field, value, style="brief")
+        return field.FormatValueAsHtml(value, style="brief")
 
 
     def MakeResortUrl(self, field_name):

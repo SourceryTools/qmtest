@@ -41,6 +41,7 @@ import qm.regression_test
 from   qm.track import *
 import qm.track.gadfly_idb
 import qm.track.memory_idb
+import qm.fields
 import sys
 
 ########################################################################
@@ -68,21 +69,21 @@ def test_mandatory_fields_1():
 
 
 def test_set_field_1():
-    # IssueFieldSet should throw a TypeError if its argument isn't a
+    # qm.fields.SetField should throw a TypeError if its argument isn't a
     # field.
     try:
-        set = IssueFieldSet(0)
+        set = qm.fields.SetField(0)
         return 0
     except TypeError:
         return 1
     
 
 def test_set_field_2():
-    # IssueFieldSet should throw a ValueError if its argument isn't a
+    # qm.fields.SetField should throw a ValueError if its argument isn't a
     # field.
     try:
-        contents = IssueFieldSet(IssueFieldInteger("test_int"))
-        set = IssueFieldSet(contents)
+        contents = qm.fields.SetField(qm.fields.IntegerField("test_int"))
+        set = qm.fields.SetField(contents)
         return 0
     except ValueError:
         return 1
@@ -91,8 +92,8 @@ def test_set_field_2():
 def test_set_field_3():
     # The name of a set field is the name of the contained field.
     name = "test_field"
-    contents = IssueFieldInteger(name)
-    set = IssueFieldSet(contents)
+    contents = qm.fields.IntegerField(name)
+    set = qm.fields.SetField(contents)
     return set.GetName() == name
 
 
@@ -112,8 +113,8 @@ def test_mandatory_fields_2():
 def test_set_field_4():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
-    text_field = IssueFieldText(field_name)
-    issue_class.AddField(IssueFieldSet(text_field))
+    text_field = qm.fields.TextField(field_name)
+    issue_class.AddField(qm.fields.SetField(text_field))
     issue = Issue(issue_class, "i0")
     issue.SetField(field_name, [ "hello", "world", 42 ])
     return issue.GetField(field_name) == [ "hello", "world", "42" ]
@@ -123,7 +124,7 @@ def test_enumeration_field_1():
     field_name = "test_field"
     enum = { "small" : 1, "medium" : 10, "large" : 100 }
     issue_class = IssueClass("test_class")
-    field = IssueFieldEnumeration(field_name, enum)
+    field = qm.fields.EnumerationField(field_name, enum)
     field.SetDefaultValue("medium")
     issue_class.AddField(field)
     issue = Issue(issue_class, "i0")
@@ -141,7 +142,7 @@ def test_enumeration_field_1():
 def test_time_field_1():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
-    issue_class.AddField(IssueFieldTime(field_name))
+    issue_class.AddField(qm.fields.TimeField(field_name))
     issue = Issue(issue_class, "i0")
     issue.SetField(field_name, "2000-12-22 12:00")
     if issue.GetField(field_name) != "2000-12-22 12:00":
@@ -152,7 +153,7 @@ def test_time_field_1():
 def test_time_field_2():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
-    issue_class.AddField(IssueFieldTime(field_name))
+    issue_class.AddField(qm.fields.TimeField(field_name))
     issue = Issue(issue_class, "i0")
     # An exception should be raised if we try to set the field value
     # to something that doesn't look like a time.
@@ -179,9 +180,9 @@ def test_add_issue_class():
     log_file = open("test.py.sqllog", "wt")
     idb = idb_impl(idb_path, log_file)
     icl = qm.track.IssueClass("test_class")
-    icl.AddField(IssueFieldInteger("a_number", 14))
-    field = IssueFieldInteger("int_set")
-    icl.AddField(IssueFieldSet(field))
+    icl.AddField(qm.fields.IntegerField("a_number", 14))
+    field = qm.fields.IntegerField("int_set")
+    icl.AddField(qm.fields.SetField(field))
     idb.AddIssueClass(icl)
     if idb.GetIssueClass("test_class") == None:
         return 0
@@ -252,7 +253,7 @@ def test_get_issues():
 def test_attachments():
     idb = idb_impl(idb_path)
     icl = qm.track.IssueClass("test_class2")
-    icl.AddField(IssueFieldAttachment("attachment"))
+    icl.AddField(qm.fields.AttachmentField("attachment"))
     idb.AddIssueClass(icl)
     i = qm.track.Issue(icl, "iss_5")
     idb.AddIssue(i)

@@ -39,6 +39,7 @@ import os
 import qm
 import qm.diagnostic
 import qm.track.idb
+import qm.fields
 import string
 import time
 
@@ -365,12 +366,12 @@ def setup_idb_for_test():
     icl = qm.track.IssueClass("test_class")
     get_configuration()["default_class"] = "test_class"
 
-    field = qm.track.IssueFieldAttachment("attachments")
+    field = qm.fields.AttachmentField("attachments")
     field.SetAttribute("title", "File Attachments")
-    field = qm.track.IssueFieldSet(field)
+    field = qm.fields.SetField(field)
     icl.AddField(field)
 
-    field = qm.track.IssueFieldText("description")
+    field = qm.fields.TextField("description")
     field.SetAttribute("title", "Description")
     field.SetAttribute("structured", "true")
     icl.AddField(field)
@@ -380,7 +381,7 @@ def setup_idb_for_test():
         "medium" : 2,
         "low" : 1,
         }
-    field = qm.track.IssueFieldEnumeration("severity", severity_enum, "medium")
+    field = qm.fields.EnumerationField("severity", severity_enum, "medium")
     field.SetAttribute("title", "Severity")
     field.SetAttribute("ordered", "true")
     icl.AddField(field)

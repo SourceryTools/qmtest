@@ -64,15 +64,14 @@ SQL-based implementation of the issue database.
 # imports
 ########################################################################
 
-import rexec
+from   issue import *
+import idb
 import parser
+import qm.fields
+import rexec
+import string
 import symbol
 import token
-import idb
-from   issue import *
-from   issue_class import *
-import string
-
 
 ########################################################################
 # classes
@@ -145,7 +144,7 @@ class SqlIdb(idb.IdbBase):
         fields = self.__GetFieldsOfIssueClass(issue_class)
         field_specs = []
         for field in fields:
-            if isinstance(field, IssueFieldSet):
+            if isinstance(field, qm.fields.SetField):
                 self.__MakeTableForSetField(issue_class, field)
             else:
                 spec = self.__ColumnSpecForField(issue_class, field)
@@ -490,16 +489,16 @@ class SqlIdb(idb.IdbBase):
 
         name = field.GetName()
         # Select column type based on the field type.
-        if isinstance(field, IssueFieldInteger):
+        if isinstance(field, qm.fields.IntegerField):
             return "%s INTEGER" % name
 
-        elif isinstance(field, IssueFieldText):
+        elif isinstance(field, qm.fields.TextField):
             return "%s VARCHAR" % name
 
-        elif isinstance(field, IssueFieldSet):
+        elif isinstance(field, qm.fields.SetField):
             raise RuntimeError, 'field may not be a set field'
 
-        elif isinstance(field, IssueFieldAttachment):
+        elif isinstance(field, qm.fields.AttachmentField):
             # For an attachment field, 'col_name' is a triplet of
             # three names of columns that are used to implement
             # the field.   All three should be VARCHARs.
@@ -513,14 +512,14 @@ class SqlIdb(idb.IdbBase):
     def __MakeTableForSetField(self, issue_class, field):
         """Create an auxiliary table for set field 'field'."""
 
-        assert isinstance(field, IssueFieldSet)
+        assert isinstance(field, qm.fields.SetField)
 
         # Build the name of the table.
         table_name = self.__GetTableNameForSetField(issue_class, field)
         # Extract the field type of the elements of the set.
         contained = field.GetContainedField()
         # Set fields may not be nested.
-        if __debug__ and isinstance(contained, IssueFieldSet):
+        if __debug__ and isinstance(contained, qm.fields.SetField):
             raise RuntimeError, \
                   "a set field may not contain a set field"
         # Build the column specification of the value column.
@@ -576,7 +575,7 @@ class SqlIdb(idb.IdbBase):
         # For each set in the issue, insert rows into auxiliary tables
         # corresponding to list elements. 
         for field in self.__GetFieldsOfIssueClass(issue_class):
-            if isinstance(field, IssueFieldSet):
+            if isinstance(field, qm.fields.SetField):
                 self.__AddSetFieldContents(cursor, field, issue)
         # Delete the cursor to commit the results.
         del cursor
@@ -635,12 +634,12 @@ class SqlIdb(idb.IdbBase):
         """Return the name of the column containing 'field'."""
 
         name = field.GetName()
-        if isinstance(field, IssueFieldAttachment):
+        if isinstance(field, qm.fields.AttachmentField):
             # Attachment fields are implemented by three columns.
             # Return a triplet of the column names.  Use reserved
             # labels to avoid conflicts with user field names.
             return "_atl_%s, _att_%s, _atd_%s" % (3 * (name, ))
-        elif isinstance(field, IssueFieldSet):
+        elif isinstance(field, qm.fields.SetField):
             return None
         else:
             return name
@@ -649,7 +648,7 @@ class SqlIdb(idb.IdbBase):
     def __GetTableNameForSetField(self, issue_class, field):
         """Return the name of the auxiliary table for set 'field'."""
 
-        assert isinstance(field, IssueFieldSet)
+        assert isinstance(field, qm.fields.SetField)
         return "_set_%s_%s" % (issue_class.GetName(), field.GetName())
         
 
@@ -741,7 +740,7 @@ class SqlIdb(idb.IdbBase):
         field_values = {}
         for field in self.__GetFieldsOfIssueClass(issue_class):
             name = field.GetName()
-            if isinstance(field, IssueFieldSet):
+            if isinstance(field, qm.fields.SetField):
                 value = self.__GetSetFieldContents(issue_class, field,
                                                  iid, revision)
             else:
@@ -784,18 +783,18 @@ class SqlIdb(idb.IdbBase):
         returns -- A string containing the SQL representation, or
         'None' if none is required."""
 
-        if isinstance(field, IssueFieldInteger):
+        if isinstance(field, qm.fields.IntegerField):
             # Convert the integer to a string.
             return str(value)
-        elif isinstance(field, IssueFieldText):
+        elif isinstance(field, qm.fields.TextField):
             # Express the text as an SQL string literal.
             value = escape_for_sql(value)
             return make_sql_string_literal(value)
-        elif isinstance(field, IssueFieldSet):
+        elif isinstance(field, qm.fields.SetField):
             # Set fields are implemented with auxiliary tables.
             # They require no columns in the main table.
             return None
-        elif isinstance(field, IssueFieldAttachment):
+        elif isinstance(field, qm.fields.AttachmentField):
             # An attachment is represented by three columns.
             if value == None:
                 # For no attachment, use three empty strings.
@@ -830,19 +829,19 @@ class SqlIdb(idb.IdbBase):
         'row' with elements removed from the front that were used to
         find the field value, and 'value' is the field value."""
         
-        if isinstance(field, IssueFieldInteger):
+        if isinstance(field, qm.fields.IntegerField):
             value = int(row[0])
             new_row = row[1:]
 
-        elif isinstance(field, IssueFieldText):
+        elif isinstance(field, qm.fields.TextField):
             value = str(row[0])
             value = unescape_for_sql(value)
             new_row = row[1:]
 
-        elif isinstance(field, IssueFieldSet):
+        elif isinstance(field, qm.fields.SetField):
             raise ValueError, 'field may not be a set field'
 
-        elif isinstance(field, IssueFieldAttachment):
+        elif isinstance(field, qm.fields.AttachmentField):
             # The next three columns contain information about the
             # attachment. 
             location, value, mime_type = row[:3]
@@ -852,7 +851,7 @@ class SqlIdb(idb.IdbBase):
                 # A null location field indicates no attachment.
                 value = None
             else:
-                value = Attachment(location, value, mime_type)
+                value = qm.fields.Attachment(location, value, mime_type)
 
         else:
             raise RuntimeError, "unrecognized field type"
@@ -867,7 +866,7 @@ class SqlIdb(idb.IdbBase):
 
         'field' -- The set field of which the contents are returned."""
 
-        assert isinstance(field, IssueFieldSet)
+        assert isinstance(field, qm.fields.SetField)
 
         # The name of the auxiliary table containing set contents.
         table_name = self.__GetTableNameForSetField(issue_class, field)
@@ -905,7 +904,7 @@ class SqlIdb(idb.IdbBase):
         'cursor' -- The cursor to use to execute the INSERT
         statements."""
 
-        assert isinstance(field, IssueFieldSet)
+        assert isinstance(field, qm.fields.SetField)
 
         iid = issue.GetId()
         revision = issue.GetRevision()

@@ -109,8 +109,8 @@ Unknown format "%(format)". You must specify a valid format to display the
 issues.
 
 @ field exist
-No field "%(field)" in issue class "%(class)". You may specify only
-fields that are present in the issue class.
+No field "%(field)" in issue class "%(issue_class)". You may specify
+only fields that are present in the issue class.
 
 @ field set use equal
 The operator = is not allowed for a set field "%(field)". You must use the

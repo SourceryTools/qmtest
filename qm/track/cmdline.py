@@ -42,6 +42,7 @@ import sys
 import rexec
 import qm
 import qm.track
+import qm.fields
 import qm.cmdline
 import string
 
@@ -424,13 +425,13 @@ class Command:
             if not issue_class.HasField(field_name):
                 raise qm.cmdline.CommandError, \
                       qm.track.error("field exist", field=field_name, \
-                                     class=issue_class.GetName())
+                                     issue_class=issue_class.GetName())
 
             # If the field does exist, get the field.
             field = issue_class.GetField(field_name)
             # If the field is of the set type, and they used the syntax
             # for a non-set type, report an error.
-            if isinstance(field, qm.track.issue_class.IssueFieldSet):
+            if isinstance(field, qm.fields.SetField):
                 if not is_set_operation:
                     raise qm.cmdline.CommandError, \
                           qm.track.error("field set use equal", \

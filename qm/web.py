@@ -199,6 +199,8 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         # Build a request object and hand it off.
         request = apply(WebRequest, (script_url, ), fields)
         self.__HandleRequest(request)
+        self.wfile.flush()
+        self.connection.shutdown(1)
 
 
     def do_POST(self):

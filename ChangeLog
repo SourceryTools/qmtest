@@ -1,3 +1,54 @@
+2001-03-13  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (WebRequestHandler.do_GET): Flush and shut down
+	socket.
+	* qm/fields.py: New file.
+
+	* qm/track/issue.py: Likewise.
+	(Attachment): Remove.
+	* qm/track/diagnostics.txt (field exist): Don't use class as a
+	parameter name. 
+	* qm/track/cmdline.py (Command.__CheckFieldTypes): Don't use class
+	as a parameter name.  Use qm.field.
+
+	* qm/track/web/web.py: Use qm.field.
+	(form_field_prefix): Remove.
+	(attachment_description_prefix): Likewise.
+	(attachment_mime_type_prefix): Likewise.
+	(attachment_location_prefix): Likewise.
+	(attachment_file_name_prefix): Likewise.
+	(make_form_field_value): Likewise.
+	(format_field_value): Likewise.
+	(format_int_field_value): Likewise.
+	(format_text_field_value): Likewise.
+	(format_set_field_value): Likewise.
+	(format_enum_field_value): Likewise.
+	(format_attachment_field_value): Likewise.
+	(make_url_for_attachment): Add field argument.  Insert into
+	AttachmentField. 
+	* qm/track/web/show.py (handle_submit): Use qm.field.
+	(ShowPageInfo.FormatFieldValue): Handle read_only and
+	initialize_only attributes.
+	(validate_mime_type): Remove.
+	(extract_attachment_field_value): Likewise.
+	(decode_set_field_value): Likewise.
+	(handle_submit): Simplify, using qm.field.
+	* qm/track/sql_idb.py: Use qm.field.
+	* qm/track/test.py: Likewise.
+	* qm/track/config.py (setup_idb_for_test): Likewise.
+	* qm/track/idb.py: Likewise.
+	* qm/track/issue_class.py (IssueField): Remove.
+	(IssueFieldInteger): Likewise.
+	(IssueFieldText): Likewise.
+	(IssueFieldSet): Likewise.
+	(IssueFieldAttachment): Likewise.
+	(IssueFieldEnumeration): Likewise.
+	(IssueFieldTime): Likewise.
+	(IssueFieldUid).
+	(IssueClass.__init__): Use qm.field.
+	* qm/track/web/templates/upload-attachment.dtml: Use new
+	attachment encoding.
+
 2001-03-13  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/test.py (test_graph_cycle): Define.
