@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest ThreadTarget class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,6 +36,7 @@
 ########################################################################
 
 from   qm.test.base import *
+from   qm.test.command_thread import *
 from   qm.test.target import *
 import Queue
 from   threading import *

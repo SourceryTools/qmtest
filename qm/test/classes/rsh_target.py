@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest RSHTarget class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,6 +37,7 @@
 
 import cPickle
 import os
+from   qm.test.command_thread import *
 from   qm.test.target import *
 import string
 
@@ -82,9 +83,6 @@ class RSHThread(CommandThread):
             result = Result(Result.TEST, test_id, context)
             result.NoteException()
             self.GetTarget()._RecordResult(result)
-        
-        # Tell the target that we have nothing to do.
-        self.GetTarget().NoteIdle()
 
 
     def _Stop(self):
@@ -287,14 +285,6 @@ class RSHTarget(Target):
         os.waitpid(self.__child_pid, 0)
 
 
-    def NoteIdle(self):
-        """Called when the RemoteThread becomes idle."""
-
-        self.__lock.acquire()
-        self.__idle = 1
-        self.__lock.release()
-        
-        
     def RunTest(self, descriptor, context):
         """Run the test given by 'test_id'.
 
@@ -303,3 +293,18 @@ class RSHTarget(Target):
         'context' -- The 'Context' in which to run the test."""
 
         self.__thread.RunTest(descriptor, context)
+
+
+    def _RecordResult(self, result):
+        """Record the 'result'.
+
+        'result' -- A 'Result' of a test or resource execution."""
+
+        # If this is a test result, then this thread has finished all
+        # of its work.
+        if result.GetKind() == Result.TEST:
+            self.__lock.acquire()
+            self.__idle = 1
+            self.__lock.release()
+        # Pass the result back to the execution engine.
+        Target._RecordResult(self, result)

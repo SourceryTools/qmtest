@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest database class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -524,8 +524,11 @@ class Database:
     exception that is not caught within the method itself, QMTest will
     catch the exception and continue processing.  Therefore, methods
     here only have to handle exceptions themselves if that is necessary
-    to maintain the integrity of the database."""
+    to maintain the integrity of the database.
 
+    A single 'Database' may be accessed by multiple threads
+    simultaneously.  Therefore, you must take appropriate steps to
+    ensure thread-safe access to shared data."""
 
     def __init__(self, path, store):
         """Construct a 'Database'.

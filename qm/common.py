@@ -7,7 +7,7 @@
 # Contents:
 #   General-purpose classes and functions.
 #
-# Copyright (c) 2000, 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2000, 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,7 +52,6 @@ import socket
 import string
 import sys
 import tempfile
-import threading
 import time
 import traceback
 import types
@@ -211,70 +210,6 @@ class FileSystemMutex:
         return self.__locked
         
         
-
-class Lock:
-    """A lock held on a mutex or simiar lock."""
-
-    def __init__(self, mutex):
-        """Take out a lock.
-
-        'mutex' -- A lock object.  The object must have methods
-        'acquire' and 'release'.  For example, use instances of
-        'threading.Lock' or 'threading.RLock'.
-
-        preconditions -- Depends on properties of 'mutex'."""
-
-        self.__mutex = mutex
-        mutex.acquire()
-
-
-    def __del__(self):
-        """Release the lock."""
-
-        self.__mutex.release()
-        
-
-
-class MutexMixin:
-    """Mutex lock mixin class.
-
-    Instances of subclasses of this class have a per-instance lock for
-    serializing access."""
-
-    def __init__(self, mutex=None):
-        """Initialize locking.
-
-        'mutex' -- If not 'None', the mutex to use for locking.
-        Otherwise, a new one is provided.
-
-        Note that this method need not be called if 'mutex' is
-        'None'.""" 
-
-        if mutex is not None:
-            self.__mutex = mutex
-
-
-    def GetMutex(self):
-        """Return the mutex object used for locking this instance."""
-        
-        return self.__mutex
-
-
-    def GetLock(self):
-        """Lock this instance.
-
-        returns -- A 'lock' object."""
-
-        try:
-            mutex = self.__mutex
-        except AttributeError:
-            # Perform first-time initialization, in case '__init__' was
-            # not called.
-            mutex = threading.RLock()
-            self.__mutex = mutex
-        return Lock(mutex)
-
-
 
 class MapReplacer:
     """A callable object to replace text according to a map."""

@@ -1,13 +1,13 @@
 ########################################################################
 #
-# File:   qmtest-remote.in
+# File:   qmtest-remote.py
 # Author: Alex Samuel
 # Date:   2001-08-11
 #
 # Contents:
 #   QMTest remote test execution program.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,7 +85,6 @@ from   qm.test.base import *
 import qm.test.run
 import Queue
 import sys
-from   threading import *
 
 ########################################################################
 # functions

@@ -1,5 +1,25 @@
 2002-01-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (threading): Do not import it.
+	(Lock): Remove.
+	(MutexMixin): Likewise.
+	* qm/test/cmdline.py (QMTest.__ExecuteRun): Use ExecutionEngine,
+	not ExecutionThread.
+	* qm/test/command_thread.py: New file.
+	* qm/test/database.py (Database): Update documentation.
+	* qm/test/execution_engine.py: New file.
+	* qm/test/execution_thread.py (ExecutionThread): Move
+	majority of contents to execution_engine.py.
+	* qm/test/qmtest-remote.py (threading): Do not import it.
+	* qm/test/target.py (CommandThread): Remove.
+	* qm/test/xmldb.py (Database): Do not inherit from MutexMixin.
+	Remove all references to locks and mutexes.
+	* qm/test/classes/rsh_target.py (RSHTarget.NoteIdle): Remove.
+	(RSHTarget._RecordResult): Mark the target idle when recording
+	a test result.
+	* qm/test/classes/thread_target.py (qm.test.command_thread):
+	Import it.
+
 	* standard.mk.in (TESTFLAGS): Remove.
 	(test): Likewise.
 
