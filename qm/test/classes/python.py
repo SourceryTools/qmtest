@@ -87,31 +87,29 @@ class ExecTest(Test):
             multiline="true",
             default_value="1"
             )
-        ] + Test.arguments
+        ]
 
 
-    def __init__(self, source, expression, target_group):
+    def __init__(self, **properties):
 
-        Test.__init__(self, target_group)
+        apply(Test.__init__, (self,), properties)
         
         # Store stuff for later.
-        if source is None:
-            self.__source = ""
+        if self.source is None:
+            self.source = ""
         else:
-            self.__source = source
             # Make sure the source ends with a newline.  A user is
             # likely to be confused by the error message if it's
             # missing. 
-            if self.__source[-1] != "\n":
-                self.__source = self.__source + "\n" 
-        self.__expression = expression
+            if self.source[-1] != "\n":
+                self.source = self.source + "\n" 
 
 
     def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         # Execute the source code.
         try:
-            exec self.__source in global_namespace, local_namespace
+            exec self.source in global_namespace, local_namespace
         except:
             # The source raised an unhandled exception, so the test
             # fails
@@ -119,10 +117,10 @@ class ExecTest(Test):
         else:
             # The source code execute OK.  Was an additional expression
             # provided? 
-            if self.__expression is not None:
+            if self.expression is not None:
                 # Yes; evaluate it.
                 try:
-                    value = eval(self.__expression,
+                    value = eval(self.expression,
                                  global_namespace, local_namespace)
                 except:
                     # Oops, an exception while evaluating the
@@ -169,24 +167,23 @@ class BaseExceptionTest(Test):
             ignored.""",
             default_value=""
             )
-        ]  + Test.arguments
+        ]
 
 
-    def __init__(self, source, exception_argument, target_group):
+    def __init__(self, **properties):
 
-        Test.__init__(self, target_group)
+        apply(Test.__init__, (self,), properties)
         
         # Store stuff for later.
-        self.__source = source
-        if string.strip(exception_argument) != "":
-            self.exception_argument = eval(exception_argument, {}, {})
+        if string.strip(self.exception_argument) != "":
+            self.exception_argument = eval(self.exception_argument, {}, {})
 
 
     def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         try:
             # Execute the test code.
-            exec self.__source in global_namespace, local_namespace
+            exec self.source in global_namespace, local_namespace
         except:
             exc_info = sys.exc_info()
             # Check the exception argument.
@@ -237,27 +234,6 @@ class ExceptionTest(BaseExceptionTest):
     test fails."""
 
     arguments = [
-        BaseExceptionTest.arguments[0],
-
-        qm.fields.TextField(
-            name="exception_argument",
-            title="Exception Argument",
-            description="""The expected value of the exception.
-
-            This value is a Python expression which should evaluate
-            to the same value as the exception raised.
-
-            If this field is left blank, the value of the exception is
-            ignored.
-
-            A value of "None" or "()" matches an exception raised
-            without an argument, as in 'raise ValueError'; an exception
-            raised with the argument 'None', as in 'raise ValueError,
-            None'; and an exception raised with an empty tuple as its
-            argument, as in 'raise ValueError, ()'.""",
-            default_value=""
-            ),
-
         qm.fields.TextField(
             name="exception_class",
             title="Exception Class",
@@ -268,17 +244,8 @@ class ExceptionTest(BaseExceptionTest):
             test fails.""",
             default="Exception"
             )
-        ] + Test.arguments
+        ]
 
-
-    def __init__(self, source, exception_class, exception_argument,
-                 target_group):
-        # Initialize the base class.
-        BaseExceptionTest.__init__(self, source, exception_argument,
-                                   target_group)
-        # Store stuff for later.
-        self.__exception_class_name = exception_class
-                 
 
     def MakeResult(self, exc_info, result):
         # Make sure the exception is an object.
@@ -287,7 +254,7 @@ class ExceptionTest(BaseExceptionTest):
                                    exc_type=str(type(exc_info[0]))))
         # Make sure it's an instance of the right class.
         exception_class_name = exc_info[0].__name__
-        if exception_class_name != self.__exception_class_name:
+        if exception_class_name != self.exception_class:
             cause = qm.message("test raised wrong class",
                                class_name=exception_class_name)
             result.Fail(cause=cause)
@@ -334,24 +301,14 @@ class StringExceptionTest(BaseExceptionTest):
     an exception.  The exception must be a string and must have
     the expected value."""
 
-    arguments = BaseExceptionTest.arguments + [
+    arguments = [
         qm.fields.TextField(
             name="exception_text",
             title="Exception Text",
             description="The expected exception string.",
             default_value="exception"
             )
-
         ]
-
-
-    def __init__(self, source, exception_text, exception_argument,
-                 target_group):
-        # Initialize the base class.
-        BaseExceptionTest.__init__(self, source, exception_argument,
-                                   target_group)
-        # Store stuff for later.
-        self.__exception_text = exception_text
 
 
     def MakeResult(self, exc_info, result):
@@ -360,7 +317,7 @@ class StringExceptionTest(BaseExceptionTest):
             result.Fail(qm.message("test raised non-string",
                                    exc_type=str(type(exc_info[0]))))
         # Make sure it's the right string.
-        if exc_info[0] != self.__exception_text:
+        if exc_info[0] != self.exception_text:
             result.Fail(qm.message("test raised wrong string",
                                    text=exc_info[0]))
         

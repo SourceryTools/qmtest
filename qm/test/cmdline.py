@@ -360,11 +360,11 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # 2. The QMTEST_DB_PATH environment variable.
         # 3. The current directory.
         db_path = self.GetGlobalOption("tdb")
-        if not db_path \
-           and os.environ.has_key(self.db_path_environment_variable):
-            db_path = os.environ[self.db_path_environment_variable]
-        else:
-            db_path = "."
+        if not db_path:
+            if os.environ.has_key(self.db_path_environment_variable):
+                db_path = os.environ[self.db_path_environment_variable]
+            else:
+                db_path = "."
         # If the path is not already absolute, make it into an
         # absolute path at this point.
         if not os.path.isabs(db_path):

@@ -403,7 +403,8 @@ class ShowItemPage(DtmlPage):
         'database' -- The 'Database' in which the test or resource is
         located.
         
-        'item' -- The 'Test' or 'Resource' instance.
+        'item' -- The 'TestDescriptor' or 'ResourceDescriptor' for the
+        test being shown.
 
         'edit' -- True for editing the item; false for displaying it
         only.
@@ -422,7 +423,7 @@ class ShowItemPage(DtmlPage):
         # Set up attributes.
         self.__database = database
         self.item = item
-        self.fields = item.GetClass().arguments
+        self.fields = item.GetClassArguments()
         self.edit = edit
         self.new = new
         assert type in ["test", "resource"]
@@ -1559,7 +1560,7 @@ class QMTestServer(qm.web.WebServer):
         item_class = qm.test.base.get_extension_class(item_class_name,
                                                       type,
                                                       self.GetDatabase())
-        fields = item_class.arguments
+        fields = qm.test.base.get_class_arguments(item_class)
 
         # We'll perform various kinds of validation as we extract form
         # fields.  Errors are placed into this map; later, if it's empty, we
@@ -1751,7 +1752,7 @@ class QMTestServer(qm.web.WebServer):
                                          test_id=test_id)
         # Construct an argument map containing default values.
         arguments = {}
-        for field in test_class.arguments:
+        for field in qm.test.base.get_class_arguments(test_class):
             name = field.GetName()
             value = field.GetDefaultValue()
             arguments[name] = value
@@ -1777,7 +1778,7 @@ class QMTestServer(qm.web.WebServer):
                                          resource_id=resource_id)
         # Construct an argument map containing default values.
         arguments = {}
-        for field in resource_class.arguments:
+        for field in qm.test.base.get_class_arguments(resource_class):
             name = field.GetName()
             value = field.GetDefaultValue()
             arguments[name] = value

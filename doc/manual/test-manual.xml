@@ -1335,10 +1335,9 @@
    <para>In &qmtest;, a test class is represented by a Python class.
    The class must inherit from
    <classname>qm.test.test.Test</classname>.  The class must include
-   the three particular attributes: a <varname>arguments</varname>
-   attribute, whose value is a sequence of field objects, and
-   <function>__init__</function> and <function>Run</function>
-   functions.</para>
+   two things: a <varname>arguments</varname>
+   attribute, whose value is a sequence of field objects, and a 
+   <function>Run</function> function.</para>
 
    <section>
     <title>The <varname>arguments</varname> Attribute</title>
@@ -1374,43 +1373,6 @@
     test class's parameters.</para>
 
    </section> <!-- The arguments Attribute -->
-
-   <section>
-    <title>The <function>__init__</function> Function</title>
-
-    <para>The test class must provide an <function>__init__</function>
-    function.  The parameters of this function should have the same
-    names as the names of the fields declared in the
-    <varname>arguments</varname> attribute.</para>
-
-    <para>When a test is loaded from the test database, &qmtest; creates
-    a test object by instantiating the test class.  When it does so,
-    &qmtest; passes arguments specified for the test as named arguments
-    to the test class's <function>__init__</function> function.  The
-    allowed names for test class arguments are the names of the fields
-    specified in the <varname>fields</varname> attribute, so the
-    parameters of the <function>__init__</function> function must have
-    the same names.</para>
-
-    <para>The <function>__init__</function> function should not declare
-    default values for any of its parameters.  Default values may be
-    specified for field objects in the <varname>fields</varname>
-    attribute.</para>
-
-    <para>For example, this <function>__init__</function> function
-    matches the <varname>arguments</varname> declared above.  It
-    stores the argument values as object attributes, where they can be
-    accessed by the <link
-    linkend="sec-run-function"><function>Run</function>
-    function</link>.</para>
-
-    <programlisting>
-<![CDATA[    def __init__(self, input_text, value_list):
-        self.__input_text = input_text
-        self.__value_list = value_list]]>
-    </programlisting>
-
-   </section> <!-- The __init__ Function -->
 
    <section id="sec-run-function">
     <title>The <function>Run</function> Function</title>

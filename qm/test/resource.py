@@ -94,26 +94,25 @@ class Resource:
     QMTest prompts the user for arguments to create a new resource, it
     will prompt in the order that the fields are provided here.
 
-    Derived classes must redefine this class variable.  Each derived
-    class should contain all of the arguments in this base class.  One
-    way to accomplish that is to add '+ Resource.arguments' to the end
-    of the arguments initializer in the derived class."""
+    Derived classes may redefine this class variable.  However,
+    derived classes should not explicitly include the arguments from
+    base classes; QMTest will automatically combine all the arguments
+    found throughout the class hierarchy."""
+
     
-    def __init__(self):
+    def __init__(self, **arguments):
         """Construct a new 'Resource'
 
-        Derived classes must override this method.  The derived
-        class method should have one argument for each element
-        of 'arguments'.  The names of the arguments to the derived
-        class version of '__init__' should match the names given
-        in 'arguments'.  QMTest will call the derived class
-        '__init__' with each parameter bound to the value the user
-        specified when creating the test.
+        'arguments' -- A dictionary mapping argument names (as
+        specified in the 'arguments' class variable) to values.
 
-        The Derived class method should begin by calling this
-        method."""
+        This method will place all of the arguments into this objects
+        instance dictionary.
         
-        pass
+        Derived classes may override this method.  The Derived class
+        method should begin by calling this method."""
+        
+        self.__dict__.update(arguments)
 
 
     def SetUp(self, context, result):

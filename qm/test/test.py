@@ -100,32 +100,25 @@ class Test:
     QMTest prompts the user for arguments to create a new test, it
     will prompt in the order that the fields are provided here.
 
-    Derived classes must redefine this class variable.  Each derived
-    class should contain all of the arguments in this base class.  One
-    way to accomplish that is to add '+ Test.arguments' to the end of
-    the arguments initializer in the derived class."""
+    Derived classes may redefine this class variable.  However,
+    derived classes should not explicitly include the arguments from
+    base classes; QMTest will automatically combine all the arguments
+    found throughout the class hierarchy."""
 
 
-    def __init__(self, target_group):
+    def __init__(self, **arguments):
         """Construct a new 'Test'.
 
-        'target_group' -- A regular expression (represented as a
-        string) that indicates the targets on which this test can be
-        run.  If the pattern matches a particular group name, the test
-        can be run on targets in that group.
+        'arguments' -- A dictionary mapping argument names (as
+        specified in the 'arguments' class variable) to values.
+
+        This method will place all of the arguments into this objects
+        instance dictionary.
         
-        Derived classes must override this method.  The derived
-        class method should have one argument for each element
-        of 'arguments'.  The names of the arguments to the derived
-        class version of '__init__' should match the names given
-        in 'arguments'.  QMTest will call the derived class
-        '__init__' with each parameter bound to the value the user
-        specified when creating the test.
+        Derived classes may override this method.  The Derived class
+        method should begin by calling this method."""
 
-        The Derived class method should begin by calling this
-        method."""
-
-        self.__target_group = target_group
+        self.__dict__.update(arguments)
 
 
     def Run(self, context, result):
@@ -154,5 +147,4 @@ class Test:
         pattern matches a particular group name, the test can be run
         on targets in that group."""
 
-        return self.__target_group
-        
+        return self.target_group

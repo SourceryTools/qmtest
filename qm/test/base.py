@@ -353,6 +353,28 @@ def get_resource_class(class_name, database):
     return get_extension_class(class_name, 'resource', database)
 
 
+def get_class_arguments(klass):
+    """Return the arguments specified by the test or resource 'klass'.
+
+    returns -- A list of 'Field' objects containing all the
+    arguments in the class hierarchy."""
+
+    arguments = []
+
+    # Start with the most derived class.
+    classes = [klass]
+    while classes:
+        # Pull the first class off the list.
+        c = classes.pop(0)
+        # Add all of the new base classes to the end of the list.
+        classes.extend(c.__bases__)
+        # Add the arguments from this class.
+        if c.__dict__.has_key("arguments"):
+            arguments.extend(c.__dict__["arguments"])
+
+    return arguments
+
+
 def load_outcomes(file):
     """Load test outcomes from a file.
 
