@@ -1196,7 +1196,7 @@ class ShowSuitePage(QMTestPage):
         message = """
         <p>Are you sure you want to delete the suite %s?</p>
         """ % suite_id
-        self.server.MakeConfirmationDialog(message, delete_url)
+        return self.server.MakeConfirmationDialog(message, delete_url)
 
         
         

@@ -1,3 +1,8 @@
+2004-02-08  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/web/web.py (ShowSuitePage.MakeDeleteScript): Return the
+	result of MakeConfirmationDialog.
+
 2004-02-04  Anders Hasselqvist <Anders.Hasselqvist@tss.teleca.se>
 
 	* qm/fields.py (ChoiceField.FormatValueAsHtml): Make sure there is
