@@ -23,7 +23,8 @@
 
  <form name="form"
        method="post"
-       action="<dtml-var expr="request.copy('new-issue-class').AsUrl()">"
+       action="<dtml-var expr="web.WebRequest('new-issue-class', 
+                               base=request).AsUrl()">"
        enctype="multipart/form-data"/>
 
  <h3>Add a New Issue Class</h3>

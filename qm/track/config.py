@@ -407,11 +407,11 @@ def setup_idb_for_internal_use():
         "qmtrack",
         "documentation",
         ]
-    priority = {
-        "high"      : 3,
-        "medium"    : 2,
-        "low"       : 1,
-        }
+    priority = [
+        "high",
+        "medium",
+        "low",
+        ]
 
     icl = qm.track.IssueClass(name="bug",
                               title="Bug Report",
@@ -428,7 +428,7 @@ def setup_idb_for_internal_use():
 
     field = qm.fields.EnumerationField(
         name="priority",
-        enumeration=priority,
+        enumerals=priority,
         default_value="medium",
         title="Priority",
         description="The priority for resolving this issue.",
@@ -476,7 +476,7 @@ def setup_idb_for_internal_use():
     trigger = triggers.notification.NotifyFixedTrigger(
         name="new_issue_notification",
         condition="_new",
-        subscriber_addresses=["samuel-qmtrack@codesourcery.com"])
+        recipient_addresses=["samuel-qmtrack@codesourcery.com"])
     icl.RegisterTrigger(trigger)
 
     idb.AddIssueClass(icl)
@@ -498,7 +498,7 @@ def setup_idb_for_internal_use():
 
     field = qm.fields.EnumerationField(
         name="priority",
-        enumeration=priority,
+        enumerals=priority,
         default_value="medium",
         title="Priority",
         description="The priority for resolving this issue.",
@@ -565,14 +565,14 @@ def setup_idb_for_test():
         structured="true")
     icl.AddField(field)
 
-    severity_enum = {
-        "high" : 3,
-        "medium" : 2,
-        "low" : 1,
-        }
+    severity_enum = [
+        "high",
+        "medium",
+        "low",
+        ]
     field = qm.fields.EnumerationField(
         name="severity",
-        enumeration=severity_enum,
+        enumerals=severity_enum,
         default_value="medium",
         title="Severity",
         description="""

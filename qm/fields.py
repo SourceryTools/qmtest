@@ -1004,6 +1004,8 @@ class SetField(Field):
         self._Field__attributes = contained._Field__attributes
         # Remeber the contained field type.
         self.__contained = contained
+        # Masquerade property declarations as for contained field.
+        self.property_declarations = contained.property_declarations
         # Set the default field value to any empty set.
         self.SetDefaultValue([])
 
@@ -1204,6 +1206,11 @@ class SetField(Field):
             in the list, and click on the <i>Remove</i> button.</p>
             """
         return help
+
+
+    def MakePropertyControls(self):
+        # Use property controls for the contained field.
+        return self.GetContainedField().MakePropertyControls()
 
 
 
@@ -1538,7 +1545,19 @@ class EnumerationField(TextField):
     ordered -- If non-zero, the enumerals are presented to the user
     ordered by value."""
 
-    def __init__(self, name, enumerals, default_value=None, **attributes):
+    property_declarations = TextField.property_declarations + [
+        FieldPropertyDeclaration(
+            name="enumerals",
+            description="""The enumerals allowed for this field.""",
+            default_value="[]"),
+
+        ]
+
+    def __init__(self,
+                 name,
+                 default_value=None,
+                 enumerals=[],
+                 **attributes):
         """Create an enumeration field.
 
         'enumerals' -- A sequence of strings of available enumerals.
@@ -1547,14 +1566,9 @@ class EnumerationField(TextField):
         'None', the first enumeral is used."""
 
         # Perform base class initialization.
-        apply(TextField.__init__, (self, name), attributes)
+        apply(TextField.__init__, (self, name, default_value), attributes)
         # Set the enumerals.
         self.SetEnumerals(enumerals)
-        # If 'default_value' is 'None', use the first enumeral.
-        if default_value == None:
-            default_value = self.GetEnumerals()[0]
-        # Reset the default value.
-        self.SetDefaultValue(default_value)
 
 
     def GetTypeDescription(self):
@@ -1576,18 +1590,24 @@ class EnumerationField(TextField):
                            values=string.join(values, ", "))
 
 
+    def SetAttribute(self, enumeral_name, value):
+        # Call the base implementation.
+        Field.SetAttribute(self, enumeral_name, value)
+        # If the enumeral changed, we may have to update the default
+        # value, too.
+        if enumeral_name == "enumerals":
+            default_value = self.GetDefaultValue()
+            enumerals = self.GetEnumerals()
+            if default_value not in enumerals and len(enumerals) > 0:
+                self.SetDefaultValue(enumerals[0])
+            
+
     def SetEnumerals(self, enumerals):
-        # Make sure some enumerals were specified.
-        if len(enumerals) == 0:
-            raise ValueError, qm.error("empty enum")
-        # Make sure all the enumerals are strings.
-        enumerals = map(lambda e: str(e), enumerals)
-        # Check for duplicates.
-        for enumeral in enumerals:
-            if enumerals.count(enumeral) != 1:
-                raise ValueError, "duplicate enumeral: %s" % enumeral
-        # Store the list of enumerals as an attribute.
-        self.SetAttribute("enumerals", repr(enumerals))
+        """Set the list of valid enumerals.
+
+        'enumerals' -- A list of strings representing enumeral names."""
+
+        self.SetAttribute("enumerals", string.join(enumerals, ","))
 
 
     def GetEnumerals(self):
@@ -1596,7 +1616,11 @@ class EnumerationField(TextField):
         returns -- A sequence consisting of string enumerals objects, in
         the appropriate order."""
 
-        return eval(self.GetAttribute("enumerals"))
+        enumerals = self.GetAttribute("enumerals")
+        if enumerals == "":
+            return []
+        else:
+            return string.split(enumerals, ",")
 
 
     def ParseFormValue(self, value):
@@ -1625,8 +1649,13 @@ class EnumerationField(TextField):
 
         if style == "new" or style == "edit":
             enumerals = self._GetAvailableEnumerals(value)
-            return qm.web.make_select(name, enumerals, value,
-                                      str, self.FormEncodeValue)
+            if len(enumerals) == 0:
+                # No available enumerals.  Don't let the user change
+                # anything. 
+                self.FormatValueAsHtml(value, "brief", name)
+            else:
+                return qm.web.make_select(name, enumerals, value,
+                                          str, self.FormEncodeValue)
 
         elif style == "hidden":
             return '<input type="hidden" name="%s" value="%s"/>' \
@@ -1678,6 +1707,35 @@ class EnumerationField(TextField):
         """Return a limited sequence of enumerals."""
 
         return self.GetEnumerals()
+
+
+    def MakePropertyControls(self):
+        # Start with controls for base class properties.
+        controls = TextField.MakePropertyControls(self)
+        controls["structured"] = None
+        controls["verbatim"] = None
+        controls["nonempty"] = None
+
+        # Now to add controls for editing the set of available
+        # enumerals.  Construct query field names.
+        field_name = query_field_property_prefix + "enumerals"
+        select_name = "_set_" + field_name
+        # Generate the page for entering a new enumeral name.
+        page_info = qm.web.PageInfo()
+        page_info.field_name = field_name
+        page_info.select_name = select_name
+        add_page = web.generate_html_from_dtml("add-enumeral.dtml", page_info)
+        # Start with the current set of enumerals.  'make_set_control'
+        # expects pairs of elements.
+        initial_elements = map(lambda e: (e, e), self.GetEnumerals())
+        # Construct the controls.
+        controls["enumerals"] = web.make_set_control(
+            form_name="form",
+            field_name=field_name,
+            add_page=add_page,
+            initial_elements=initial_elements)
+
+        return controls
 
 
 

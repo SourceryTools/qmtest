@@ -648,7 +648,7 @@ class StateField(qm.fields.EnumerationField):
         enumerals = state_model.GetStateNames()
         # Initialize the base class.
         apply(qm.fields.EnumerationField.__init__,
-              (self, name, enumerals, initial_state_name),
+              (self, name, initial_state_name, enumerals),
               attributes)
 
         

@@ -149,17 +149,15 @@
         <td><b>Title:</b></td>
         <td width="100%"><dtml-var expr="field.GetTitle()"></td>
         <td rowspan="4">
-         <input type="button"
-                value=" Edit... "
-                onclick="window.open( 
-                    '<dtml-var expr="request.copy('show-issue-field', 
-                                     field=field.GetName()).AsUrl()">',
-                    'field', 'resizeable,scrollbars');"
-         />
+         <dtml-var expr="MakeUrlButton('Edit...',
+                         web.WebRequest('show-issue-field', 
+                                        base=request,
+                                        field=field.GetName()).AsUrl())">
          <dtml-if expr="field.GetName() not in mandatory_field_names">
           <dtml-var expr="MakeUrlButton('Delete',
-                                        request.copy('delete-issue-field',
-                                            field=field.GetName()).AsUrl())">
+                          web.WebRequest('delete-issue-field', 
+                                         base=request,
+                                         field=field.GetName()).AsUrl())">
          </dtml-if>
         </td>
        </tr>

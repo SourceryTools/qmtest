@@ -239,13 +239,6 @@ class NotificationPageInfo(web.PageInfo):
 def _get_issue_class_for_session(request):
     """Return the issue class object for the session in 'request'."""
 
-    # The request should contain a field specifying the internal ID of
-    # the session object, as a sanity check.
-    try:
-        session_issue_class_id = int(request["session_issue_class_id"])
-    except KeyError:
-        # The session ID wasn't specified in the request.
-        raise RuntimeError, "No ID session issue class in request."
     # The issue class object itself should be attached to the session
     # object. 
     session = request.GetSession()
@@ -254,9 +247,6 @@ def _get_issue_class_for_session(request):
     except AttributeError:
         # Oops, no issue class for this session.
         raise RuntimeError, "No issue class for request."
-    # Make sure the ID specified in the request matches our ID.
-    if id(issue_class) != session_issue_class_id:
-        raise RuntimeError, "ID mismatch for session issue class."
 
     return issue_class
 
@@ -294,7 +284,6 @@ def handle_show_class(request):
         # a sanity check later when the issue class is retrieved from
         # the session.
         del request["issue_class"]
-        request["session_issue_class_id"] = str(id(issue_class))
         raise qm.web.HttpRedirect, request.AsUrl()
 
     page_info = ShowPageInfo(request, issue_class)
@@ -335,21 +324,9 @@ def handle_submit_field(request):
     # Change the field according to the request.
     field.UpdateFromRequest(request)
 
-    # Return a page that closes the field editing window and reloads the
-    # issue class page in the window opener.
-    return '''
-    <html>
-     <body>
-      <script language="JavaScript">
-      // Reload the document in the parent window, which should be the
-      // page showing whatever contains this field.
-      window.opener.location = window.opener.location;
-      // Close this popup window.
-      window.close();
-      </script>
-     </body>
-    </html>
-    '''
+    show_field_request = qm.web.WebRequest("show-issue-class",
+                                           base=request)
+    raise qm.web.HttpRedirect, show_field_request.AsUrl()
 
 
 def handle_config_idb(request):
@@ -421,8 +398,7 @@ def handle_delete_field(request):
     # Remove it.
     issue_class.RemoveField(field)
     # Redisplay the issue class.
-    show_request = request.copy("show-issue-class")
-    del show_request["field"]
+    show_request = qm.web.WebRequest("show-issue-class", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
@@ -494,10 +470,9 @@ def handle_new_field(request):
         # Add it to the issue class.
         issue_class.AddField(field)
 
-        # Redirect to the page displaying the issue class.
-        show_request = request.copy("show-issue-class")
-        for attribute_name in ["name", "type", "is_set"]:
-            del show_request[attribute_name]
+        # Redirect to the page displaying the new field.
+        show_request = qm.web.WebRequest("show-issue-field",
+                                         base=request, field=field_name)
         raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
@@ -550,7 +525,7 @@ def handle_new_class(request):
     if len(idb.GetIssueClasses()) == 1:
         qm.track.get_configuration()["default_class"] = class_name
     # Redirect to the IDB configuration page.
-    show_request = request.copy("config-idb")
+    show_request = qm.web.WebRequest("config-idb", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
@@ -595,13 +570,7 @@ def handle_submit_notification(request):
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = request.copy("show-issue-class")
-    for attribute_name in [
-        "recipient_addresses",
-        "recipient_uids",
-        "notification_condition"
-        ]:
-        del show_request[attribute_name]
+    show_request = qm.web.WebRequest("show-issue-class", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
@@ -667,14 +636,7 @@ changes to this issue."""))
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = request.copy("show-issue-class")
-    for attribute_name in [
-        "notification_condition",
-        "subscription_condition",
-        "hide_subscription"
-        ]:
-        if show_request.has_key(attribute_name):
-            del show_request[attribute_name]
+    show_request = qm.web.WebRequest("show-issue-class", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
@@ -702,7 +664,7 @@ def handle_add_discussion(request):
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = request.copy("show-issue-class")
+    show_request = qm.web.WebRequest("show-issue-class", base=request)
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 

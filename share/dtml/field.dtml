@@ -59,7 +59,7 @@
 
   <dtml-in expr="field.property_declarations">
   <dtml-let declaration=sequence-item>
-   <dtml-if expr="property_controls.has_key(declaration.name)">
+   <dtml-if expr="property_controls.get(declaration.name, _.None)">
 
     <tr class="field" valign="top">
      <td>
@@ -107,9 +107,8 @@
  <input type="button"
         value=" OK "
         onclick="document.form.submit();"/>
- <input type="button"
-        value=" Cancel "
-        onclick="window.close();"/>
+ <dtml-var expr="MakeButton('Cancel', 
+                            web.WebRequest('show-issue-class').AsUrl())">
 
  </form>
 

@@ -1,5 +1,37 @@
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/fields.py (SetField.__init__): Use contained field property
+	declarations. 
+	(SetField.MakePropertyControls): New method.
+	(EnumerationField.property_declarations): New
+	attribute. 
+	(EnumerationField.__init__): Change enumeration parameter to
+	enumerals. 
+	(EnumerationField.SetAttribute): New method.
+	(EnumerationField.SetEnumerals): Simplify.
+	(EnumerationField.GetEnumerals): Handle empty enumerals.
+	(EnumerationField.MakePropertyControls): New method.
+	* qm/track/issue_class.py (StateField.__init__): Adjust base class
+	initializer call.
+	* qm/track/config.py (setup_idb_for_internal_use): Adjust priority
+	enumerals.
+	(setup_idb_for_test): Adjust severity enumerals.
+	* qm/track/web/issue_class.py (_get_issue_class_for_session):
+	Don't check issue object ID.
+	(handle_show_class): Don't set issue object ID in request.
+	(handle_submit_field): Redirect after processing field.
+	(handle_delete_field): Don't copy request.
+	(handle_new_field): Likewise.
+	(handle_new_class): Likewise.
+	(handle_submit_notification): Likewise.
+	(handle_submit_subscription): Likewise.
+	(handle_add_discussion): Likewise.
+	* share/dtml/track/issue-class.dtml: Don't open edit page in new
+	browser window.
+	* share/dtml/add-enumeral.dtml: New template.
+
+2001-07-03  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/common.py (Enumeral): Remove.
 	* qm/fields.py (EnumerationField): Reimplement as TextField subclass.
 	* qm/track/issue_class.py (StateField.__init__): Adjust accordingly.
