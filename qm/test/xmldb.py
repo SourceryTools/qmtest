@@ -367,7 +367,6 @@ class Database(FileDatabase, qm.common.MutexMixin):
                                                 "category")
         prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
         resources = self.__GetResourcesFromDomNode(test_node)
-        target_group = test_node.getAttribute("target-group")
         # Construct a test descriptor for it.
         test = TestDescriptor(self,
                               test_id,
@@ -540,7 +539,6 @@ class Database(FileDatabase, qm.common.MutexMixin):
 
         # Build common stuff.
         self.__MakeDomNodeForItem(document, element, test, comments)
-        element.setAttribute("target-group", test.GetTargetGroup())
         
         # Build and add category elements.
         for category in test.GetCategories():
@@ -724,41 +722,6 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         data_file = open(os.path.join(self.__path, data_file_path), "w")
         data_file.write(data)
         data_file.close()
-        # Construct an 'Attachment'.
-        return qm.attachment.Attachment(
-            mime_type,
-            description,
-            file_name,
-            location=data_file_path)
-
-
-    def Adopt(self, item_id, mime_type, description, file_name, path):
-        """Extract attachment data from a file, and remove the file.
-
-        'item_id' -- The ID of the test or resource of which this
-        attachment is part.
-
-        'mime_type' -- The attachment MIME type.
-
-        'description' -- A description of the attachment.
-
-        'file_name' -- The name of the file from which the attachment
-        was uploaded.
-
-        'path' -- The path to the file containing attachment data.
-
-        returns -- An 'Attachment' object, with its location set
-        correctly.
-
-        postconditions -- The file at 'path' does not exist."""
-
-        # Construct the path at which we'll store the attachment data.
-        data_file_path = self.__MakeDataFilePath(item_id, file_name)
-        full_data_file_path = os.path.join(self.__path, data_file_path)
-        # Copy the data file.
-        shutil.copy(path, full_data_file_path)
-        # Delete the original data file.
-        os.unlink(path)
         # Construct an 'Attachment'.
         return qm.attachment.Attachment(
             mime_type,

@@ -185,36 +185,41 @@
       </td>
      </tr>
 
-     <tr class="field" valign="top">
-      <td>
-       <b>Categories</b>
-       <dtml-if expr="edit">
-         <p>Categories that apply to this test.</p>
-       </dtml-if>
-      </td>
-      <td>
-       <dtml-if expr="edit">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-         <tr valign="top"><td>
-          <dtml-var expr="MakeCategoriesControl()">
-         </td><td>
-          <dtml-var expr="web.make_help_link('categories control')">
-         </td></tr>
-        </table>
-       <dtml-else>
-        <dtml-if expr="_.len(categories) > 0">
-         <dtml-in name="categories">
-         <dtml-let category=sequence-item>
-          <dtml-var expr="category"> 
-          <br>
-         </dtml-let>
-         </dtml-in>
-        <dtml-else>
-         None
+     <dtml-comment>
+      At present, categories are not used in QMTest, and are therefore
+      not displayed.
+
+      <tr class="field" valign="top">
+       <td>
+        <b>Categories</b>
+        <dtml-if expr="edit">
+          <p>Categories that apply to this test.</p>
         </dtml-if>
-       </dtml-if>
-      </td>
-     </tr>
+       </td>
+       <td>
+        <dtml-if expr="edit">
+         <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr valign="top"><td>
+           <dtml-var expr="MakeCategoriesControl()">
+          </td><td>
+           <dtml-var expr="web.make_help_link('categories control')">
+          </td></tr>
+         </table>
+        <dtml-else>
+         <dtml-if expr="_.len(categories) > 0">
+          <dtml-in name="categories">
+          <dtml-let category=sequence-item>
+           <dtml-var expr="category"> 
+           <br>
+          </dtml-let>
+          </dtml-in>
+         <dtml-else>
+          None
+         </dtml-if>
+        </dtml-if>
+       </td>
+      </tr>
+    </dtml-comment>
 
      <tr class="field" valign="top">
       <td>
