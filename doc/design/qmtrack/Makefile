@@ -34,5 +34,7 @@
 DOCBOOK		= $(wildcard *.xml)
 DOCBOOKMAIN	= qmtrack.xml
 
+DOCBITMAPS      = $(wildcard *.jpg)
+
 include $(TOPDIR)/standard.mk
 

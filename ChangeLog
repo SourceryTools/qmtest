@@ -1,5 +1,26 @@
 2000-12-01  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk: Update instructional comments.
+	(HTMLDIR): New macro.
+	(HTMLMANIFEST): Likewise.
+	(HTMLTARBALL): Likewise.
+	(docbook-html): Make it a collection target only.
+	(html-dir): New target.
+	(html-output): Likewise.
+	(html-graphics): Likewise.
+	($(HTMLTARBALL)): Likewise.
+	(docbook-print): Process TeX output for PDF.
+
+	* doc/design/qmtest/iface.xml: Add ids.  Clean up markup and
+	identation. 
+	* doc/design/qmtest/qmtest.xml (prompt): New entity.
+	* doc/design/qmtest/req.xml: Remove bogus tag.
+
+	* doc/design/qmtrack/Makefile (DOCBITMAPS): New macro.
+	* doc/design/qmtrack/user-interface.xml: Add ids.
+
+2000-12-01  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/design/qmtrack/concepts.xml: Add ids.  Rearrange sections.
 	* doc/design/qmtrack/idb-api.xml: Remove queries section.
 	* doc/design/qmtrack/idb-impl.xml: Fix link.

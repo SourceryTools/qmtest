@@ -16,7 +16,11 @@
 #   Variables handled by these makefile rules include
 #
 #     SUBDIRS:      Subdirectories of the current directory.
-#     HTML:         HTML files to be generated from XHTML.
+#
+#     DOCBOOK:      DocBook XML source files.
+#     DOCBOOKMAIN:  The main DocBook XML source file.
+#
+#     DOCBITMAPS:   Bitmap files used in the HTML documentation.
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -65,8 +69,17 @@ SGMLDIRS        += /usr/lib/sgml/stylesheets/docbook
 HTMLSS          = $(TOPDIR)/doc/qm-html.dsl
 PRINTSS         = $(TOPDIR)/doc/qm-print.dsl
 
+# Output directory and manifest file for HTML output.  These are
+# controlled by the HTML stylesheet.
+HTMLDIR		= html
+HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
+
+# Tarball containing HTML output.
+HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
+
 .PHONY:		all clean doc subdirs
 .PHONY:         doc-html doc-print docbook-html docbook-print 
+.PHONY:		html-dir html-output html-graphics $(HTMLTARBALL)
 .PHONY:		$(SUBDIRS)
 
 ########################################################################
@@ -95,25 +108,51 @@ subdirs:	$(SUBDIRS)
 $(SUBDIRS):	
 	cd $@ && make TOPDIR=$(TOPDIR)
 
+docbook-html:	html-dir html-output html-graphics $(HTMLTARBALL)
+
+html-dir:
+	mkdir -p $(HTMLDIR)
+
 # The DocBook modular stylesheets generate some sloppy HTML.  Process
 # it with tidy.  Unfortunately, tidy will emit copious warnings;
 # funnel them to /dev/null.  Also tidy returns non-zero indicating
 # warnings; supress this by running true.
-docbook-html:	$(DOCBOOKMAIN) $(DOCBOOK)
-	mkdir -p html
+html-output:  	html-dir $(DOCBOOKMAIN) $(DOCBOOK)
 	$(JADE) \
-            $(foreach dir,$(SGMLDIRS),-D$(dir)) \
-	    -t sgml -d $(HTMLSS) $(JADEEXTRA) $<
-	for f in html/*.html; do \
+	    $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	    -t sgml -d $(HTMLSS) $(JADEEXTRA) $(DOCBOOKMAIN)
+	for f in html/*.html; \
+	do \
 	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
 	    true; \
 	done 
+
+# For each image file required by the HTML documentation output, copy
+# it into the output directory and also add the filename to the
+# manifest.
+html-graphics:	html-output $(DOCBITMAPS)
+	for gr in $(DOCBITMAPS); \
+	do \
+	    cp $${gr} $(HTMLDIR)/; \
+	    echo $${gr} >> $(HTMLMANIFEST); \
+	done
+
+# Build a tarball containing the whole HTML output.
+$(HTMLTARBALL):	html-output html-graphics
+	tar zcf $(HTMLTARBALL) \
+	    $(foreach f,$(shell cat $(HTMLMANIFEST)),$(HTMLDIR)/$(f))
 
 docbook-print:	$(DOCBOOKMAIN) $(DOCBOOK)
 	mkdir -p print
 	$(JADE) \
             $(foreach dir,$(SGMLDIRS),-D$(dir)) \
 	    -t tex -d $(PRINTSS) $(JADEEXTRA) $<
+	if [ -n "$(DOCBITMAPS)" ]; then cp $(DOCBITMAPS) print/; fi
+	texfile=$(DOCBOOKMAIN:.xml=.tex); \
+	mv $${texfile} print/; \
+	    cd print; \
+	    pdfjadetex $${texfile} && \
+	    pdfjadetex $${texfile}
 
 ########################################################################
 # Pattern rules

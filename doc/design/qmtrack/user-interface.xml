@@ -17,7 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>User Interface</title>
+<chapter id="chap-ui">
+ <title id="chap-ui-title">User Interface</title>
 
  <para>This section describes the different methods the user can use
  to create issues, edit issues, and query the database. We invision
@@ -120,7 +121,7 @@
     queries, as described in <link linkend="sec-queries"
     endterm="sec-queries-title"></link>.  For example,
      <screen>
-      &prompt;<userinput> qmtrack query front_end in categories and severity &gt; serious</userinput>
+      &prompt;<userinput> qmtrack query 'front_end in categories and severity &gt; serious'</userinput>
       <computeroutput>foo,bar,bar2,baz</computeroutput>
      </screen>
     searches for all issues in the category "front_end" at the

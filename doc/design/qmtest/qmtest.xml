@@ -22,6 +22,7 @@
   <!-- Commonly-used symbols, terms, and abbreviations specific to
   this document.  -->
 
+  <!ENTITY prompt "<prompt>$ </prompt>">
   <!ENTITY qmbuild "QMBuild">
   <!ENTITY qmtest "QMTest">
 
