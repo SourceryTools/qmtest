@@ -60,14 +60,14 @@ action_file_extension = ".qma"
 # classes
 ########################################################################
 
-class UnkownTestClassError(Exception):
+class UnknownTestClassError(RuntimeError):
     """An unknown test class was specified."""
     
     pass
 
 
 
-class UnkownActionClassError(Exception):
+class UnknownActionClassError(RuntimeError):
     """An unknown action class was specified."""
     
     pass
@@ -350,8 +350,11 @@ class Database(base.Database):
         # Obtain the test class.
         try:
             test_class = base.get_class(test_class_name)
-        except KeyError:
-            raise UnknownTestClassError, class_name
+        except ImportError:
+            raise UnknownTestClassError, \
+                  qm.error("unknown test class",
+                           test_class_name=test_class_name,
+                           test_id=test_id)
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
         categories = qm.xmlutil.get_dom_children_texts(test_node,
                                                        "category")

@@ -2,22 +2,27 @@
 <!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
 <test>
  <class>python.ExecTest</class>
- <action>tempdir1</action>
  <argument name='source'>
   <attachment>
-<data>
-import os.path
-
-# The action 'tempdir1' created a temporary directory for us.
-dir_path = context["temp_dir_path"]
-
-# The directory should exist.
-assert os.path.isdir(dir_path)
-
-# The directory should be empty.
-assert len(os.listdir(dir_path)) == 0
+   <data>
+import qm.graph
+nodes = [1, 2, 4, 5, 6, 7, 8]
+edges = {
+    1: [2], 
+    2: [3], 
+    3: [], 
+    4: [6, 7], 
+    5: [], 
+    6: [5, 3], 
+    7: [5], 
+    8: [1, 4]
+    }
+result = qm.graph.topological_sort(nodes, edges, 0)
 </data>
   </attachment>
+ </argument>
+ <argument name='expression'>
+  <text>result == [3, 2, 1, 5, 6, 7, 4, 8]</text>
  </argument>
 </test>
 <!--

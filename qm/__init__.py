@@ -36,7 +36,7 @@
 ########################################################################
 
 from qm.common import *
-from qm.diagnostic import error, warning
+from qm.diagnostic import error, warning, message
 
 ########################################################################
 # Local Variables:

@@ -88,6 +88,9 @@ You must specify one or more test or suite IDs.
 @ test already exists
 There is already a test with ID "%(test_id)s".
 
+@ test did not raise
+The test code did not raise an exception.
+
 @ test class not fully specified
 You must specify the Python path to the test class, including the
 packages or modules containig the class.  
@@ -95,11 +98,35 @@ packages or modules containig the class.
 For example, for test "MyTest" in module "mymod" of package "mypack",
 specify "mypack.mymod.MyTest".
 
+@ test raised non-object
+The test code raised an exception that isn't an exception object
+instance.  The type of the exception was '%(exc_type)s'.
+
+@ test raised non-string
+The test code raised an exception that isn't a string.  The type of the
+exception was '%(exc_type)s'.
+
+@ test raised wrong argument
+The test code raised an exception with an unexpected exception argument
+'%(argument)s'.
+
+@ test raised wrong class
+The test code raised an exception of the unexpected class type
+'%(class_name)s'.
+
+@ test raised wrong string
+The test code raised a string exception containing unexpected text
+"%(text)s".
+
 @ unknown id
 There is no test with ID "%(test_id)s" in the database.
 
 @ unknown id in suite
 The ID "%(id)s" in suite "%(suite)s" does not exist.
+
+@ unknown test class
+The test class '%(test_class_name)s' of test "%(test_id)s" was not
+found. 
 
 @ xml invalid arg name
 %(name)s is not the name of an argument of this test class.

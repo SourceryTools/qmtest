@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <attachment>
+   <data>
+import qm.label
+</data>
+  </attachment>
+ </argument>
+ <argument name='expression'>
+  <text>qm.label.is_valid(qm.label.thunk("")) \
+           and qm.label.is_valid(qm.label.thunk("abcyz_12390_")) \
+           and qm.label.is_valid(qm.label.thunk("   abc 123   ")) \
+           and qm.label.is_valid(qm.label.thunk("hello world!")) \
+           and qm.label.is_valid(qm.label.thunk("(*@KAJD)92809  kj!")) \
+           and qm.label.is_valid(qm.label.thunk("____foo bar____")) \
+           and qm.label.is_valid(qm.label.thunk("This is a test."))</text>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->

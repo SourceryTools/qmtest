@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <prerequisite>parser_create</prerequisite>
+ <argument name='source'>
+  <attachment>
+   <data>
+command_line = [
+    '-b', 
+    'foo', 
+    '--a_option', 
+    'edit', 
+    '--e_option', 
+    'issue1', 
+    'issue2'
+    ]
+parser = context["parser_create.parser"]
+parsed_line = parser.ParseCommandLine(command_line)
+</data>
+  </attachment>
+ </argument>
+ <argument name='expression'>
+  <text>parsed_line[0][0][0] == 'b_option' \
+  and parsed_line[0][0][1] == 'foo' \
+  and parsed_line[0][1][0] == 'a_option' \
+  and parsed_line[0][1][1] == '' \
+  and parsed_line[1] == 'edit' \
+  and parsed_line[2][0][0] == 'e_option' \
+  and parsed_line[2][0][1] == '' \
+  and parsed_line[3][0] == 'issue1' \
+  and parsed_line[3][1] == 'issue2'
+</text>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->

@@ -1,3 +1,38 @@
+2001-04-09  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/diagnostic.py (message): New function.
+	* qm/__init__.py: Import message from diagnostic.
+	* share/diagnostics/test.txt (test did not raise): New diagnostic.
+	(test raised non-object): Likewise.
+	(test raised non-string): Likewise.
+	(test raised wrong argument): Likewise.
+	(test raised wrong class): Likewise.
+	(test raised wrong string): Likewise.
+	(unknown test class): Likewise.
+	* qm/test/classes/python.py: New file.
+	* qm/test/xmldb.py (UnknownTestClassError): Fix typo.  Derive from
+	RuntimeError. 
+	(UnknownActionClassError): Likewise.
+	(Database.__ParseTestDocument): Handle ImportError.
+
+	* tests/common.qms: New suite.
+	* tests/unit/common/graph_complete.qmt: New test.
+	* tests/unit/common/graph_cycle.qmt: Likewise.
+	* tests/unit/common/graph_pass.qmt: Likewise.
+	* tests/unit/common/label_is_valid.qmt: Likewise.
+	* tests/unit/common/label_thunk.qmt: Likewise.
+	* tests/unit/common/parser_create.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_long.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_short.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_long.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_short.qmt: Likewise.
+	* tests/unit/common/parser_help.qmt: Likewise.
+	* tests/unit/common/parser_no_long.qmt: Likewise.
+	* tests/unit/common/parser_parse.qmt: Likewise.
+	* tests/unit/common/parser_two_char_short.qmt: Likewise.
+	* tests/unit/test/classes/tempdir1.qmt (<class>): Use
+	python.ExecTest. 
+
 2001-04-08  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/: New directory.

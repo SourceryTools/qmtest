@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExceptionTest</class>
+ <argument name='source'>
+  <attachment>
+   <data>
+import qm.cmdline
+option_d = ('d', 'd_option', None, 'Option D Description')
+option_e = ('e', 'd_option', None, 'Option E Description')
+command_1 = ('create', 'Create an issue', 'name',
+             "This command will create an issue. _name_ is the"
+             " name of the issue to be created.",
+             [option_d, option_e])
+qm.cmdline.CommandParser('qmtrack', [], [command_1])
+</data>
+  </attachment>
+ </argument>
+ <argument name='exception_class'>
+  <text>ValueError</text>
+ </argument>
+ <argument name='exception_argument'>
+  <text>'duplicate long command option --d_option'</text>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->

@@ -150,6 +150,15 @@ class DiagnosticSet:
 # functions
 ########################################################################
 
+def message(tag, **substitutions):
+    """Generate a diagnostic message."""
+
+    global diagnostic_set
+    return apply(diagnostic_set.Generate,
+                 (tag, "message", None),
+                 substitutions)
+
+
 def error(tag, output=None, **substitutions):
     """Generate or emit an error diagnostic."""
 
