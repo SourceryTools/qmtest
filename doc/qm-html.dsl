@@ -57,6 +57,13 @@
 ;; Turn on Cascading Style Sheets markup in the resulting HTML.
 (define %css-decoration% #t)
 
+;; Assign numbers to sections and subsections.
+(define %section-autolabel% #t)
+
+;; Don't place the first section of each chapter in the same chunk as
+;; the chapter head.
+(define (chunk-skip-first-element-list) (list))
+
 </style-specification-body>
 </style-specification>
 <external-specification id="docbook" document="dbstyle">
