@@ -1,5 +1,15 @@
 2003-11-09  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in (.PHONY): Add build and doc.
+	(build): New target.
+	(doc): Likewise.
+	(check-serial): Depend on build, not all.
+	(check-threads): Likewise.
+	(check-processes): Likewise.
+	(check-rsh): Likewise.
+
+	* qm/temporary_directory.py (sys): Import it.
+	
 	* GNUmakefile.in (DOCUMENTATION): Set value to MAINTAINER_MODE.
 	(TIDY): Likewise.
 	(TIDYFLAGS): Likewise.

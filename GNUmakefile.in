@@ -48,12 +48,22 @@ bindir		= @bindir@
 # Build Rules
 ########################################################################
 
-.PHONY: all
-all:
+# Do not want "make all" to build the documentation if the user did
+# not request documentation at configure-time.
 ifeq ($(DOCUMENTATION),1)
-	$(PYTHON) ./setup.py build_doc
+maybe_doc=doc
+else
+maybe_doc=
 endif
+
+.PHONY: all build doc
+all: build $(maybe_doc)
+
+build:
 	$(PYTHON) ./setup.py build
+
+doc:
+	$(PYTHON) ./setup.py build_doc
 
 # Build internal documentation.
 ifneq ($(HAPPYDOC),)
@@ -100,11 +110,11 @@ install: all
 # networking support.
 check: check-serial check-threads check-processes
 
-check-serial: all
+check-serial: build
 	qm/test/qmtest -D tests run $(QMTESTFLAGS) \
 		-c qmtest_path=qm/test/qmtest
 
-check-threads: all
+check-threads: build
 	rm -f tests/QMTest/thread_target
 	qm/test/qmtest -D tests create-target -a threads=4 \
 		-T tests/QMTest/thread_target \
@@ -114,7 +124,7 @@ check-threads: all
 		-c qmtest_path=qm/test/qmtest \
 		-c qmtest_target=tests/QMTest/thread_target
 
-check-processes: all
+check-processes: build
 	rm -f tests/QMTest/process_target
 	qm/test/qmtest -D tests create-target -a processes=4 \
 		-T tests/QMTest/process_target \
@@ -124,7 +134,7 @@ check-processes: all
 		-c qmtest_path=qm/test/qmtest \
 		-c qmtest_target=tests/QMTest/process_target
 
-check-rsh: all
+check-rsh: build
 	rm -f tests/QMTest/rsh_target
 	qm/test/qmtest -D tests create-target \
                 -a host=localhost -a remote_shell=ssh \
