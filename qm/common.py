@@ -42,6 +42,7 @@ import re
 import socket
 import string
 import time
+import traceback
 import types
 
 ########################################################################
@@ -293,8 +294,28 @@ def get_host_name():
     return __host_name
 
 
+def format_exception(exc_info):
+    """Format an exception as structured text.
+
+    'exc_info' -- A three-element tuple containing exception info, of
+    the form '(type, value, traceback)'.
+
+    returns -- A string containing a the formatted exception."""
+
+    # FIXME.  We can do better by looking into the traceback ourselves. 
+
+    # Break up the exection info tuple.
+    type, value, trace = exc_info
+    # Format the traceback, with a newline separating elements.
+    traceback_listing = traceback.format_tb(trace)
+    traceback_listing = string.join(traceback_listing)
+    # Generate output.
+    return "Exception '%s : %s'\n%s\n" % (type, value, traceback_listing)
+
+
 ########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

@@ -76,10 +76,26 @@
 
 ------------------------------------------------------------------------
 
-4. NOTICES
+4. THIRD-PARTY SOFTWARE
 
-   This product includes software developed by Digital Creations for
-   use in the Z Object Publishing Environment (http://www.zope.org/).
+   The QM Tools incorporate code written by third parties. 
+
+     - The zope-dtml module contains code for generating HTML from DTML
+       (Document Template Markup Language) from the Zope package, by
+       Digital Creations.
+
+     - The gadfly module containsthe Gadfly SQL Relational Database
+       (http://www.chordate.com/kwParsing/gadfly.html), written by
+       Chordate Systems.
+
+     - The sgmlop module contains an optimized SGML/XML parser by
+       Fredrik Lundh and Secret Labs AB.
+
+     - The xmlrpc module contains a Python implementation of XML/RPC by
+       Fredrik Lundh and Secret Labs AB.
+       
+   Please consult the corresponding READMEs, license files, etc. for
+   applicable copyright notices.
 
 
 ------------------------------------------------------------------------

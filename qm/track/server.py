@@ -37,9 +37,13 @@
 
 import os
 import qm
+import qm.track.cmdline
 import qm.track.config
 import qm.track.web
 import qm.web
+import StringIO
+import sys
+import xmlrpclib
 
 ########################################################################
 # classes
@@ -48,6 +52,32 @@ import qm.web
 ########################################################################
 # functions
 ########################################################################
+
+def do_command_for_xml_rpc(argument_list):
+    """Execute a command submitted via XML-RPC.
+
+    preconditions -- An IDB connection in local mode.
+
+    'argument_list' -- The argument list containing the command to
+    execute.
+
+    returns -- A triplet '(exit_code, output_text, error_text)'."""
+
+    assert qm.track.state["mode"] == "local"
+    # Parse the command.
+    try:
+        command = qm.track.cmdline.Command(argument_list)
+    except qm.trak.cmdine.CommandError, msg:
+        # Command error.  Return the error message as the error text.
+        return (2, "", msg)
+    # Excute the command, capturing output to string files.
+    output_file = StringIO.StringIO()
+    error_file = StringIO.StringIO()
+    exit_code = execute(command, output_file, error_file)
+    # Return the exit code and output texts.
+    result = (exit_code, output_file.getvalue(), error_file.getvalue())
+    return result
+
 
 def start_server(port, log_file=None):
     """Start an HTTP server.
@@ -68,8 +98,10 @@ def start_server(port, log_file=None):
     # Base URL path for QMTrack stuff.
     script_base = "/track/"
 
-    # Create a new server instance.
-    server = qm.web.WebServer()
+    # Create a new server instance.  Enable XML-RPM.
+    server = qm.web.WebServer(port,
+                              log_file=log_file,
+                              xml_rpc_path="/xml-rpc")
     # Register all our web pages.
     for name, function in [
         ( "show", qm.track.web.handle_show ),
@@ -80,23 +112,25 @@ def start_server(port, log_file=None):
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",
                                    os.path.join(web_directory, "stylesheets"))
+    # Register the remote command handler.
+    server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 
-    # Write the URL file.  It contains the URL for this server.
+    # Write the URL file.  It contains the XML-RPC URL for this server.
     url_path = qm.track.state["server_url_path"]
     url_file = open(url_path, "w")
     host_name = qm.get_host_name()
-    url_file.write("http://%s:%d%s\n" % (host_name, port, script_base))
+    url_file.write(server.GetXmlRpcUrl() + '\n')
     url_file.close()
 
     try:
         # Start the server.
-        server.Run(port, log_file)
+        server.Run()
     finally:
         # Clean up the URL file.
         os.remove(url_path)
 
 
-def execute(command, output_file):
+def execute(command, output_file, error_file):
     """Execute a command.
 
     If the we're in local mode, execute the command on the local IDB.
@@ -105,10 +139,13 @@ def execute(command, output_file):
 
     'command' -- A 'qm.track.Command' instance to execute.
 
-    'output_file' -- A file object to which normal output is written."""
-    
-    # FIXME.  Handle exceptions and write to 'error_file'
+    'output_file' -- A file object to which normal output is written.
 
+    'error_file' -- A file object to which error messages are written.
+
+    returns -- An integer exit code.  Zero indicates success; non-zero
+    values indicate failure. """
+    
     # Check if this command requires an IDB connection.
     if command.RequiresIdb():
         # It does.  Make sure we're connected.
@@ -122,20 +159,51 @@ def execute(command, output_file):
                 raise RuntimeError, \
                       "%s cannot be invoked on a remote IDB" \
                       % command.GetCommand()
-            # FIXME.  Implement remote execution here.
-            raise NotImplementedError, "remote command execution"
-
+            # Connect to the server.
+            server_url = qm.track.state["server_url"]
+            server = xmlrpclib.Server(server_url)
+            # Invoke the command on the server.
+            argument_list = command.GetArgumentList()
+            result = server.execute_command(argument_list)
+            # Unpack the results.
+            exit_code, output_text, error_text = result
+            # Write the returned texts to corresponding files.
+            output_file.write(output_text)
+            error_file.write(error_text)
+            # All done.
+            return exit_code
+        
         elif mode == "local":
-            # We're in local mode.  Execute the command.
-            command.Execute(output_file)
+            try:
+                command.Execute(output_file)
+                return 0
+            except qm.cmdline.CommandError, msg:
+                script_name = qm.track.state["script_name"]
+                error_file.write("%s: %s\n" % (script_name, msg))
+                error_file.write("Invoke %s --help for help with usage.\n"
+                                 % script_name)
+                return 2
+            except RuntimeError, msg:
+                # A runtime error should come with a message that is
+                # comprehensible to the user.
+                error_file.write(str(msg) + "\n")
+                return 1
+            except:
+                # For other exceptions, for now, just dump out the
+                # stack trace.
+                exception = qm.format_exception(sys.exc_info())
+                error_file.write(exception)
+                return 1
 
     else:
         # The command doesn't require a connection.  Go ahead with it.
         command.Execute(output_file)
+        return 0
 
 
 ########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

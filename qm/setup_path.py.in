@@ -68,6 +68,8 @@ __base_dir = "@qm_top_directory@"
 add_to_python_path()
 add_to_python_path("zope-dtml")
 add_to_python_path("zope-dtml", "ExtensionClass")
+add_to_python_path("sgmlop")
+add_to_python_path("xmlrpc")
 
 # Now store the top QM Python directory where other modules can access
 # it.

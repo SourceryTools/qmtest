@@ -82,7 +82,11 @@ class Command:
     test_values_option = (None, 'test-values', None,
                           'Populate IDB with values for testing')
 
-    qmtrack_options = [ format_option, database_option, help_option ]
+    qmtrack_options = [
+        format_option,
+        database_option,
+        help_option,
+        ]
     """All the command line options for qmtrack."""
     
     qmtrack_commands = [
@@ -226,6 +230,12 @@ class Command:
         given command."""
 
         return self.__command_name
+
+
+    def GetArgumentList(self):
+        """Return the argument list that initialized this command."""
+
+        return self.__argument_list
 
 
     def GetGlobalOptions(self):
@@ -398,7 +408,7 @@ class Command:
         if not self.format_name in self.formats:
             raise qm.cmdline.CommandError, \
                   self.format_error % self.format_name
-        
+
     
     def __CheckFieldTypes(self, hash, issue_class):
         """Check that the field types are correctly used.

@@ -123,7 +123,7 @@ TESTFLAGS	= -v -k
 NULLSTRING	:=
 SPACE		:= $(NULLSTRING) # Leave this comment here.
 
-all:		subdirs doc
+all:		subdirs
 
 subdirs:	$(SUBDIRS)
 

@@ -40,11 +40,14 @@
 import BaseHTTPServer
 import cgi
 import os
+import qm.common
 import SimpleHTTPServer
 import string
 import sys
 import traceback
+import types
 import urllib
+import xmlrpclib
 
 ########################################################################
 # classes
@@ -141,7 +144,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         script_url, fields = parse_url_query(self.path)
         # Build a request object and hand it off.
         request = apply(WebRequest, (script_url, ), fields)
-        self.__ProcessRequest(request)
+        self.__HandleRequest(request)
 
 
     def do_POST(self):
@@ -164,67 +167,117 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             fields.update(url_fields)
             # Create and process a request.
             request = apply(WebRequest, (script_url, ), fields)
-            self.__ProcessRequest(request)
+            self.__HandleRequest(request)
+        elif content_type == "text/xml":
+            # Check if this request corresponds to an XML-RPC invocation.
+            if self.server.IsXmlRpcUrl(self.path):
+                self.__HandleXmlRpcRequest()
+            else:
+                self.send_response(400, "Unexpected request.")
         else:
-            raise UnimplementedError, "unknown POST encoding: %s" % ctype
+            raise NotImplementedError, \
+                  "unknown POST encoding: %s" % content_type
+        self.wfile.flush()
+        self.connection.shutdown(1)
 
 
-    def __ProcessRequest(self, request):
+    def __HandleScriptRequest(self, request):
+        try:
+            # Execute the script.  The script returns the HTML
+            # text to return to the client.
+            script_output = self.server.ProcessScript(request)
+        except HttpRedirect, location:
+            # The script requested an HTTP redirect response to
+            # the client.
+            self.send_response(302)
+            self.send_header("Location", location)
+            self.end_headers()
+            return
+        except:
+            # Oops, the script raised an exception.  Show
+            # information about the exception instead.
+            script_output = format_exception(sys.exc_info())
+        # Send its output.
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html")
+        self.end_headers()
+        self.wfile.write(script_output)
+
+
+    def __HandleXmlRpcRequest(self):
+        content_length = int(self.headers["Content-length"])
+        content = self.rfile.read(content_length)
+        arguments, method_name = xmlrpclib.loads(content)
+        # Do we have a matching method?
+        try:
+            method = self.server.GetXmlRpcMethod(method_name)
+        except KeyError:
+            # No matching method; report the error.
+            response = xmlrpclib.Fault(2, "no method: %s" % method_name)
+        else:
+            try:
+                # Invoke the method.
+                response = apply(method, arguments, {})
+                if not isinstance(response, types.TupleType):
+                    response = (response, )
+            except:
+                # The method raised an exception.  Send an XML-RPC
+                # fault response. 
+                exc_info = sys.exc_info()
+                response = xmlrpclib.Fault(1, "%s : %s"
+                                           % (exc_info[0], exc_info[1]))
+                # FIXME: For ease of debugging, dump exceptions out.
+                sys.stderr.write(qm.format_exception(exc_info))
+
+        # Encode the reponse.
+        response_string = xmlrpclib.dumps(response)
+        # Send it off.
+        self.send_response(200)
+        self.send_header("Content-type", "text/xml")
+        self.end_headers()
+        self.wfile.write(response_string)
+
+
+    def __HandleFileRequest(self, request, path):
+        # There should be no query arguments to a request for an
+        # ordinary file.
+        if len(request.keys()) > 0:
+            self.send_error(400, "Unexpected request.")
+            return
+        # Open the file.
+        try:
+            file = open(path, "r")
+        except IOError:
+            # Send a generic 404 if there's a problem opening the file.
+            self.send_error(404, "File not found.")
+            return
+        # Send the file.
+        self.send_response(200)
+        self.send_header("Content-Type", self.guess_type(path))
+        self.end_headers()
+        self.copyfile(file, self.wfile)
+
+
+    def __HandleRequest(self, request):
         """Process a request from a GET or POST operation.
 
         'request' -- A 'WebRequest' object."""
 
-        # First, check if this request corresponds to a script.
+        # Check if this request corresponds to a script.
         if self.server.IsScript(request):
             # It is, so run it.
-            try:
-                # Execute the script.  The script returns the HTML
-                # text to return to the client.
-                script_output = self.server.ProcessScript(request)
-            except HttpRedirect, location:
-                # The script requested an HTTP redirect response to
-                # the client.
-                self.send_response(302)
-                self.send_header("Location", location)
-                self.end_headers()
-                return
-            except:
-                # Oops, the script raised an exception.  Show
-                # information about the exception instead.
-                script_output = format_exception(sys.exc_info())
-            # Send its output.
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html")
-            self.end_headers()
-            self.wfile.write(script_output)
-            return
+            self.__HandleScriptRequest(request)
+        else:
+            # Now check if it maps onto a file.  Translate the script URL
+            # into a file system path.
+            path = self.server.TranslateRequest(request)
+            # Is it a file?
+            if path is not None and os.path.isfile(path):
+                self.__HandleFileRequest(request, path)
 
-        # Now check if it maps onto a file.  Translate the script URL
-        # into a file system path.
-        path = self.server.TranslateRequest(request)
-        # Is it a file?
-        if path is not None and os.path.isfile(path):
-            # There should be no query arguments to a request for an
-            # ordinary file.
-            if len(request.keys()) > 0:
-                self.send_error(400, "Unexpected request.")
-                return
-            # Open the file.
-            try:
-                file = open(path, "r")
-            except IOError:
-                # Send a generic 404 if there's a problem opening the file.
+            else:
+                # The server doesn't know about this URL.
                 self.send_error(404, "File not found.")
-                return
-            # Send the file.
-            self.send_response(200)
-            self.send_header("Content-Type", self.guess_type(path))
-            self.end_headers()
-            self.copyfile(file, self.wfile)
-            return
-
-        # The server doesn't know about this URL.
-        self.send_error(404, "File not found.")
 
 
     def log_message(self, format, *args):
@@ -240,7 +293,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 class WebServer(BaseHTTPServer.HTTPServer):
-    """A web server that serves both ordinary files and dynamic content.
+    """A web server that serves ordinary files, dynamic content, and XML-RPC.
 
     To configure the server to serve ordinary files, register the
     directories containing those files with
@@ -251,6 +304,10 @@ class WebServer(BaseHTTPServer.HTTPServer):
     To congifure the server to serve dynamic content, register dynamic
     URLs with 'RegisterScript'.  A request matching the URL exactly
     will cause the server to invoke the provided function.
+
+    To configure the server to service XML-RPC requests, pass an
+    'xml_rpc_path' to the '__init__' function and register methods
+    with 'RegisterXmlRpcMethod'.
 
     The web server resolves request URLs in a two-step process.
 
@@ -264,16 +321,40 @@ class WebServer(BaseHTTPServer.HTTPServer):
        returned."""
 
 
-    def __init__(self):
+    def __init__(self, port, log_file=sys.stderr, xml_rpc_path=None):
         """Create a new web server.
+
+        'port' -- The port on which to accept connections.
+
+        'log_file' -- A file object to which to write log messages.
+        If it's 'None', no logging.
+
+        'xml_rpc_path' -- The script path at which to accept XML-RPC
+        requests.   If 'None', XML-RPC is disabled for this server.
 
         The server is not started until the 'Run' method is invoked."""
 
+        self.__port = port
+        self.__log_file = log_file
         self.__scripts = {}
         self.__translations = {}
+        self.__xml_rpc_methods = {}
+        self.__xml_rpc_path = xml_rpc_path
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
+
+
+    def GetXmlRpcUrl(self):
+        """Return the URL at which this server accepts XML-RPC.
+
+        returns -- The URL, or 'None' if XML-RPC is disabled."""
+
+        if self.__xml_rpc_path is None:
+            return None
+        else:
+            return "http://%s:%d%s" % (qm.common.get_host_name(),
+                                       self.__port, self.__xml_rpc_path) 
 
 
     def RegisterScript(self, script_path, script):
@@ -324,11 +405,38 @@ class WebServer(BaseHTTPServer.HTTPServer):
         self.__translations[url_path] = file_path
 
 
+    def RegisterXmlRpcMethod(self, method, method_name=None):
+        """Register an XML-RPC method.
+
+        precoditions -- XML-RPC must be enabled.
+
+        'method' -- The method to call in response to the request.  It
+        must be callable.  The request arguments are passed to this
+        method's positional parameters.
+
+        'method_name' -- The RPC name to associate with this method.
+        If 'None', the name of 'method' is used."""
+
+        assert self.__xml_rpc_path is not None
+        assert callable(method)
+        # Take the name of 'method' if no name is provided.
+        if method_name is None:
+            method_name = method.__name__
+        # Map it.
+        self.__xml_rpc_methods[method_name] = method
+
+
     def IsScript(self, request):
-        """Return a true value if 'request' corresponds to a
-        script."""
+        """Return a true value if 'request' corresponds to a script."""
 
         return self.__scripts.has_key(request.GetUrl())
+
+
+    def IsXmlRpcUrl(self, url):
+        """Return true if 'url' corresponds to an XML-RPC invocation."""
+
+        return self.__xml_rpc_path is not None \
+               and url == self.__xml_rpc_path
 
 
     def ProcessScript(self, request):
@@ -365,15 +473,22 @@ class WebServer(BaseHTTPServer.HTTPServer):
         return None
 
 
-    def Run(self, port, log_file=sys.stderr):
-        """Start the web server, accepting connections on port 'port'.
+    def GetXmlRpcMethod(self, method_name):
+        """Return the method corresponding to XML-RPC 'method_name'.
 
-        'log_file' -- A file object to which to write log messages.
-        If it's 'None', no logging."""
+        returns -- A callable object corresponding to 'method_name'.
 
-        self.__log_file = log_file
+        raises -- 'KeyError' if there is no mapping for
+        'method_name'."""
+
+        return self.__xml_rpc_methods[method_name]
+
+
+    def Run(self):
+        """Start the web server."""
+
         # Initialize the base class here.  This causes the server to start.
-        BaseHTTPServer.HTTPServer.__init__(self, ('', port), 
+        BaseHTTPServer.HTTPServer.__init__(self, ('', self.__port), 
                                            WebRequestHandler)
         self.serve_forever()
 
@@ -601,7 +716,7 @@ def format_exception(exc_info):
 """
 <html>
  <body>
-  <p>An error has occurred: <b>%s (%s)</b></p>
+  <p>An error has occurred: <b>%s : %s</b></p>
   <p>Stack trace follows:</p>
   <pre>
 %s
@@ -651,4 +766,5 @@ def make_url_for_request(request):
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

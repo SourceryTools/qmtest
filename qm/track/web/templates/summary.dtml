@@ -43,7 +43,7 @@
     <tbody>
      <dtml-in name="issues">
      <dtml-with expr="_.namespace(issue=_['sequence-item'])">
-      <dtml-if expr="IsShowIssue(issue)">
+      <dtml-if expr="IsIssueShown(issue)">
        <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
         <dtml-in name="field_names">
         <dtml-with expr="_.namespace(field_name=_['sequence-item'])">

@@ -228,7 +228,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
 
             # All is well.  Put the system into remote mode.
             state["mode"] = "remote"
-            state["server_url_path"] = server_url_path
+            state["server_url"] = server_url
             state["idb_path"] = path
             return
 
@@ -263,11 +263,14 @@ def close_idb():
         __configuration = None
         # Release the lock.
         __global_lock.Unlock()
+        # Clean up state.
+        del state["server_url_path"]
 
     elif mode == "remote":
         # We shouldn't have the lock in remote mode.
         assert not __global_lock.IsLocked()
-        # Not much to do.  
+        # Clean up state.
+        del state["server_url"]
         
     else:
         # No session is open.
@@ -275,7 +278,6 @@ def close_idb():
 
     # Clean up state.
     del state["idb_path"]
-    del state["server_url_path"]
     state["mode"] = "none"
 
 

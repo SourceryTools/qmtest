@@ -1,3 +1,40 @@
+2001-02-20  Alex Samuel  <samuel@codesourcery.com>
+
+	* templates/py: Set emacs fill-column.
+	
+	* Makefile.in (SUBDIRS): Remove doc.  Add sgmlop.
+	(setup): Add sgmlop/Makefile.
+	(sgmlop/Makefile): New rule.
+	* README: Add third-party software list.
+	* standard.mk.in (all): Remove doc.
+	
+	* qm/web.py (WebRequestHandler.__ProcessRequest): Rename to...
+	(WebRequestHandler.__HandleRequest): ... this.
+	(WebRequestHandler.__HandleScriptRequest): New method.
+	(WebRequestHandler.__HandleXmlRpcRequest): Likewise.
+	(WebRequestHandler.__HandleFileRequest): Likewise.
+	(WebServer.__init__): Initialize XML-RPC.  Set port and log file here. 
+	(WebServer.GetXmlRpcUrl): New method.
+	(WebServer.IsXmlRpcUrl): Likewise.
+	(WebServer.Run): Don't set port and log file here.
+	* qm/setup_path.py.in: Add sgmlop and xmlrpc to path.
+	* qm/common.py (format_exception): New function.
+
+	* qm/track/qmtrack.in (script_name): Remove.  Set state variable
+	instead.
+	(exit_code): New variable.
+	Handle exceptions differently.
+	* qm/track/server.py (do_command_for_xml_rpc): New function.
+	(start_server): Enable XML-RPC.  Write XML-RPC URL to URL file.
+	(execute): Handle error messages and exit code.  Implement remote
+	mode. Handle exceptions.
+	* qm/track/config.py (open_idb): Set server_url state in remote mode.
+	(close_idb): Clean up correspondingly.
+	* qm/track/cmdline.py (Command.GetArgumentList): New function.
+	* qm/track/web/summary.py (SummaryPageInfo.IsShowIssue): Rename to...
+	(SummaryPageInfo.IsIssueShown): ... this.
+	* qm/track/web/templates/summary.dtml: Adjust accordingly
+
 2001-02-18  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Add more instructions.

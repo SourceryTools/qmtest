@@ -88,7 +88,7 @@ class SummaryPageInfo(web.PageInfo):
             self.issues.sort(sort_predicate)
 
 
-    def IsShowIssue(self, issue):
+    def IsIssueShown(self, issue):
         """Return a true value if 'issue' should be displayed."""
 
         return issue.GetField("state") >= 0
