@@ -48,6 +48,10 @@ You must specify at least one value for the "%(field_title)s" field.
 @ empty text field value
 You must specify a value for the "%(field_title)s" field.
 
+@ ext arg name matches class var
+The extension class "%(class_name)s" has both a class variable and an
+argument with the name "%(argument_name)s".
+
 @ invalid enum key
 The string "%(key)s" is not a valid enumeral.  Enumeral names must be
 composed of lower-case letters, digits, hyphens, and underscores.

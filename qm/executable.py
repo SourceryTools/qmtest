@@ -74,7 +74,7 @@ class Executable:
         environment that should be provided to the child.
 
         'dir' -- If not 'None', the directory in which the child
-        should begin executable.  If 'None', the child will execute in
+        should begin execution.  If 'None', the child will execute in
         the same directory as the parent.
 
         'path' -- If not 'None', the path to the program to run.  If
@@ -189,7 +189,7 @@ class Executable:
         the child will inherit the parents environment.
 
         'dir' -- If not 'None', the directory in which the child
-        should begin executable.  If 'None', the child will execute in
+        should begin execution.  If 'None', the child will execute in
         the same directory as the parent.
 
         'path' -- If not 'None', the path to the program to run.  If

@@ -1,3 +1,23 @@
+2003-03-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (.PHONY): Mention more targets.
+	(check): Add check-rsh.
+	(check-rsh): New target.
+	* qm/extension.py (Extension._allow_arg_names_matching_class_vars): New
+	variable.
+	(get_class_arguments): Use it.
+	* qm/test/classes/command.py
+	(ExecTest._allow_arg_names_matching_class_vars): Set it.
+	(ShellScriptTest._allow_arg_names_matching_class_vars): Likewise.
+	* qm/test/classes/rsh_target.py
+	(RSHTarget._allow_arg_names_matching_class_vars): Likewise.
+	(RSHTarget.__init__): Always set "arguments".
+	(RSHTarget._GetInterpreter): Fix thinko.
+	* qm/test/doc/reference.xml: Mention the fact that test classes
+	should not use fields with the same names as class variables in
+	base classes.
+	* NEWS: Mention changes.
+
 2003-03-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (format_traceback): Tweak formatting of generated

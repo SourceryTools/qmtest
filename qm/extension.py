@@ -61,6 +61,20 @@ class Extension:
 
     A map from the names of arguments for this class to the
     corresponding 'Field'."""
+
+    _allow_arg_names_matching_class_vars = None
+    """True if it is OK for fields to have the same name as class variables.
+
+    If this variable is set to true, it is OK for the 'arguments' to
+    contain a field whose name is the same as a class variable.  That
+    makes the 'default_value' handling for fields fail, and is
+    generally confusing.
+
+    This module no longer allows such classes, unless this variable is
+    set to true.  That permits legacy extension classes to continue
+    working, while preventing new extension classes from making the
+    same mistake."""
+
     
     def __init__(self, arguments):
         """Construct a new 'Extension'.
@@ -126,6 +140,15 @@ def get_class_arguments(extension_class):
             new_arguments = c.__dict__.get("arguments", [])
             for a in new_arguments:
                 name = a.GetName()
+                # An extension class may not have an argument with the
+                # same name as a class variable.  That leads to
+                # serious confusion.
+                if (not extension_class._allow_arg_names_matching_class_vars
+                    and hasattr(extension_class, name)):
+                    raise qm.common.QMException, \
+                          qm.error("ext arg name matches class var",
+                                   class_name = extension_class.__name__,
+                                   argument_name = name)
                 # If we already have an entry for this name, then a
                 # derived class overrides this argument.
                 if not dictionary.has_key(name):

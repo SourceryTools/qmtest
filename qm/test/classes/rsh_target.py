@@ -61,6 +61,9 @@ class RSHTarget(ProcessTarget):
             default_value="")
         ]
     
+    _allow_arg_names_matching_class_vars = 1
+
+    
     def __init__(self, database, properties):
         """Construct a new 'RSHTarget'.
 
@@ -69,7 +72,13 @@ class RSHTarget(ProcessTarget):
 
         'properties'  -- A dictionary mapping strings (property names)
         to strings (property values)."""
-        
+
+        # Because "arguments" is both a field name and class variable,
+        # the usual default handling of field arguments will not work
+        # corectly; we must explicitly set the default value.
+        if not properties.has_key("arguments"):
+            properties["arguments"] = ""
+            
         # Initialize the base class.
         ProcessTarget.__init__(self, database, properties)
 
@@ -88,6 +97,6 @@ class RSHTarget(ProcessTarget):
                                              section="common")
         # Extra command-line arguments to the remote shell program
         # may be specified with the "arguments" property.
-        arguments = self.arguments.split(" ")
+        arguments = self.arguments.split()
 
         return [remote_shell_program] + arguments + [self.host]

@@ -3,8 +3,8 @@ NEWS
 
 This file describes user visible changes to QM.
 
-QM 2.1
-======
+QM 2.1 (Not Yet Released)
+=========================
 
 There is now a "-O" or "--outcomes" option for setting the expected
 outcomes, even when working within in the GUI.
@@ -15,6 +15,12 @@ whether the binary or XML file format is used.
 
 A defect that could cause a multi-threaded or multi-process test run
 to hang if a resource could not be set up has been corrected.
+
+QM 2.0.4 (Not Yet Released)
+===========================
+
+A defect that could cause crashes in the RSHTarget class has been
+corrected.
 
 QM 2.0.3
 ========

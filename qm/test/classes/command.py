@@ -274,6 +274,8 @@ class ExecTest(ExecTestBase):
             automatically."""
             ))]
 
+    _allow_arg_names_matching_class_vars = 1
+
 
     def Run(self, context, result):
         """Run the test.
@@ -410,7 +412,9 @@ class ShellScriptTest(ExecTestBase):
             ))        
         ]
 
+    _allow_arg_names_matching_class_vars = 1
 
+    
     def Run(self, context, result):
         """Run the test.
 
