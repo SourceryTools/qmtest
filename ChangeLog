@@ -1,3 +1,34 @@
+2002-08-22  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (check): Use check-serial, check-threads,
+	check-processes.
+	(check-serial): New target.
+	(check-threads): Likewise.
+	(check-processes): Likewise.
+	* qm/test/cmdline.py (QMTest.Execute): Return a value.
+	(QMTest.GetTargets): Handle errors in the target file more
+	gracefully.
+	(QMTest.__ExecuteRun): Return a value.
+	(QMTest.__ExecuteRemote): Likewise.
+	(QMTest.__ExecuteSummarize): Likewise.
+	(QMTest.__GetExpectedOutcomes): Always return a valid map.
+	* qm/test/qmtest.py: Return a non-zero exit code if there are
+	unexpected outcomes.
+	* qm/test/resource.py (Resource.arguments): Correct use of hidden
+	parameter.
+	* qm/test/test.py (Test.arguments): Likewise.
+	* qm/test/classes/process_target.py (ProcessTarget.arguments): Fix
+	typo in default_value for database_path.
+	(ProcessTarget.__init__): Fix
+	typo.
+	(ProcessTarget.Start): Use "self.processes" not "self.concurrency".
+	* qm/test/classes/rsh_target.py (RSHTarget.__init__): Likewise.
+	* qm/test/classes/thread_target.py (ThreadTarget.arguments): Fix
+	use of default_value.
+	(ThreadTarget.__init__): Expect "concurrency" to be a string.
+	* qm/test/share/dtml/dir.dtml: Fix grammar in displayed message.
+	* qm/test/share/messages/diagnostics.txt: Add message.
+
 2002-08-08  Zack Weinberg  <zack@codesourcery.com>
 
 	Revised test suite.

@@ -99,7 +99,7 @@ class Test(qm.extension.Extension):
             description="""The name of this test.
 
             A label naming the test.""",
-            hidden=1,
+            hidden="true",
             default_value=""),
         TargetGroupField(
             name="target_group",

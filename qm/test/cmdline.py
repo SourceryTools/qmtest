@@ -465,23 +465,26 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     def Execute(self, output):
         """Execute the command.
 
-        'output' -- The file object to send output to."""
+        'output' -- The file object to send output to.
+
+        returns -- 0 if the command was executed successfully.  1 if
+        there was a problem or if any tests run had unexpected outcomes."""
 
         # If --version was given, print the version number and exit.
         # (The GNU coding standards require that the program take no
         # further action after seeing --version.)
         if self.HasGlobalOption("version"):
             sys.stdout.write(self.__version_output % self._GetVersionString())
-            return
+            return 0
         # If the global help option was specified, display it and stop.
         if (self.GetGlobalOption("help") is not None 
             or self.__command == "help"):
             output.write(self.__parser.GetBasicHelp())
-            return
+            return 0
         # If the command help option was specified, display it and stop.
         if self.GetCommandOption("help") is not None:
             self.__WriteCommandHelp(self.__command, output)
-            return
+            return 0
 
         # Handle the verbose option.  The verbose level is the number of
         # times the verbose option was specified.
@@ -509,6 +512,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Normalize the path so that it is easy for the user to read
         # if it is emitted in an error message.
         self.__db_path = os.path.normpath(db_path)
+
+        error_occurred = 0
         
         # Some commands don't require a test database.
         if self.__command == "create-tdb":
@@ -531,7 +536,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 "run" : self.__ExecuteRun,
                 "summarize": self.__ExecuteSummarize,
                 }[self.__command]
-            method(output)
+            error_occurred = method(output)
+
+        return error_occurred
 
 
     def GetDatabase(self):
@@ -572,7 +579,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 arguments["group"] = "local"
                 if concurrency > 1:
                     class_name = "thread_target.ThreadTarget"
-                    arguments["concurrency"] = concurrency
+                    arguments["concurrency"] = str(concurrency)
                 else:
                     class_name = "serial_target.SerialTarget"
                 target_class \
@@ -580,7 +587,12 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                           'target', self.GetDatabase())
                 self.targets = [ target_class(self.GetDatabase(), arguments) ]
             else:
-                document = qm.xmlutil.load_xml_file(file_name)
+                try:
+                    document = qm.xmlutil.load_xml_file(file_name)
+                except:
+                    raise QMException, \
+                          qm.error("could not load target file",
+                                   file=file_name)
                 targets_element = document.documentElement
                 assert targets_element.tagName == "targets"
                 self.targets = []
@@ -910,15 +922,21 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Don't show any results by test suite though.
             suite_ids = []
 
+        any_unexpected_outcomes = 0
+        
         # Simulate the events that would have occurred during an
         # actual test run.
         stream = TextResultStream(output, format, outcomes,
                                   self.GetDatabase(), suite_ids)
         for r in test_results:
             stream.WriteResult(r)
+            if r.GetOutcome() != outcomes.get(r.GetId(), Result.PASS):
+                any_unexpected_outcomes = 1
         for r in resource_results:
             stream.WriteResult(r)
         stream.Summarize()
+
+        return any_unexpected_outcomes
         
 
     def __ExecuteRemote(self, output):
@@ -931,7 +949,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         target_class = get_extension_class("serial_target.SerialTarget",
                                            'target', database)
         # Build the target.
-        target = target_class("child", None, {}, database)
+        target = target_class(database, { "name" : "child" })
 
         # Start the target.
         response_queue = Queue.Queue(0)
@@ -972,6 +990,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # will block waiting for a response, so we must flush
             # the buffer here.
             sys.stdout.flush()
+
+        return 0
 
 
     def __ExecuteRun(self, output):
@@ -1031,6 +1051,41 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
+        class UnexpectedOutcomesStream(ResultStream):
+            """An 'UnexpectedOutcomesStream' notices unexpected results.
+
+            An 'UnexpectedOutcomesStream' sets a flag if any unexpected
+            results occur."""
+            
+            def __init__(self, expected_outcomes):
+                """Construct an 'UnexpectedOutcomesStream'.
+
+                'expected_outcomes' -- A map from test IDs to expected
+                outcomes."""
+
+                ResultStream.__init__(self)
+
+                self.__expected_outcomes = expected_outcomes
+                self.__any_unexpected_outcomes = 0
+                
+
+            def WriteResult(self, result):
+
+                if (result.GetKind() == result.TEST
+                    and (result.GetOutcome()
+                         != self.__expected_outcomes.get(result.GetId(),
+                                                         Result.PASS))):
+                    self.__any_unexpected_outcomes = 1
+
+
+            def AnyUnexpectedOutcomes(self):
+                """Returns true if any unexpected outcomes have occurred.
+
+                returns -- True if any unexpected outcomes have
+                occurred."""
+
+                return self.__any_unexpected_outcomes
+                
         # Create ResultStreams for textual output and for generating
         # a results file.
         result_streams = []
@@ -1062,6 +1117,11 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if result_file is not None:
             result_streams.append(XMLResultStream(result_file))
 
+        # Keep track of whether or not any unexpected outcomes have
+        # occurred.
+        unexpected_outcomes_stream = UnexpectedOutcomesStream(expectations)
+        result_streams.append(unexpected_outcomes_stream)
+        
         try:
             if self.HasCommandOption("random"):
                 # Randomize the order of the tests.
@@ -1073,6 +1133,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             engine = ExecutionEngine(database, test_ids, context, targets,
                                      result_streams)
             engine.Run()
+            return unexpected_outcomes_stream.AnyUnexpectedOutcomes()
         finally:
             # Close the result file.
             if close_result_file:
@@ -1140,6 +1201,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Accept requests.
         server.Run()
 
+        return 0
+
 
     def __WriteCommandHelp(self, command, output):
         """Write help information about 'command' on 'output'.
@@ -1157,11 +1220,12 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         returns -- A map from test names to outcomes corresponding to
         the expected outcome files provided on the command line.  If no
-        expected outcome files are provided, 'None' is returned."""
+        expected outcome files are provided, an empty map is
+        returned."""
 
         outcomes_file_name = self.GetCommandOption("outcomes")
         if not outcomes_file_name:
-            return None
+            return {}
 
         try:
             return base.load_outcomes(open(outcomes_file_name, "r"))

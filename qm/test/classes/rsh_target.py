@@ -61,17 +61,17 @@ class RSHTarget(ProcessTarget):
             default_value="")
         ]
     
-    def __init__(self, properties, database):
+    def __init__(self, database, properties):
         """Construct a new 'RSHTarget'.
 
-        'properties'  -- A dictionary mapping strings (property names)
-        to strings (property values).
-        
         'database' -- The 'Database' containing the tests that will be
-        run."""
+        run.
 
+        'properties'  -- A dictionary mapping strings (property names)
+        to strings (property values)."""
+        
         # Initialize the base class.
-        ProcessTarget.__init__(self, properties, database)
+        ProcessTarget.__init__(self, database, properties)
 
         # Use the target name as the default name for the remote host.
         if not self.host:

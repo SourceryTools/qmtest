@@ -42,7 +42,11 @@
     <dtml-if results>
      <tr><td><table class="data" width="100%">
       <caption>
+       <dtml-if path>
+        Result Summary
+       <dtml-else>
         Result Summary for <span class="id"><dtml-var path></span> 
+       </dtml-if>
       </caption>
       </tr>
       <tr class="heading">

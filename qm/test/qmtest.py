@@ -77,8 +77,7 @@ try:
                                      major_version, minor_version,
                                      release_version)
     # Execute the command.
-    command.Execute(sys.stdout)
-    exit_code = 0
+    exit_code = command.Execute(sys.stdout)
 except qm.cmdline.CommandError, msg:
     print_error_message(msg)
     sys.stderr.write(

@@ -27,7 +27,7 @@ class ProcessTarget(Target):
     """A 'ProcessTarget' runs tests in child processes."""
 
     arguments = [
-        qm.fields.IntegerField(
+        qm.fields.TextField(
             name="processes",
             title="Number of Processes",
             description="""The number of processes to devote to running tests.
@@ -37,7 +37,7 @@ class ProcessTarget(Target):
             tests to be run at once.  You can experiment with this
             value to find the number that results in the fastest
             execution.""",
-            default_value=1),
+            default_value="1"),
         qm.fields.TextField(
             name="database_path",
             title="Database Path",
@@ -46,7 +46,7 @@ class ProcessTarget(Target):
             A string giving the directory containing the test
             database.  If this value is the empty string, QMTest uses
             the path provided on the command line.""",
-            default_value=1),
+            default_value=""),
         qm.fields.TextField(
             name="qmtest",
             title="QMTest Path",
@@ -67,7 +67,7 @@ class ProcessTarget(Target):
         to strings (property values)."""
         
         # Initialize the base class.
-        Target.__init__(self, properties, database)
+        Target.__init__(self, database, properties)
 
         # There are no children yet.
         self.__children = []
@@ -97,7 +97,7 @@ class ProcessTarget(Target):
 
         Target.Start(self, response_queue, engine)
 
-        for x in xrange(self.concurrency):
+        for x in xrange(int(self.processes)):
             # Create two pipes: one to write commands to the remote
             # QMTest, and one to read responses.
             command_pipe = os.pipe()

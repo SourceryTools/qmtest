@@ -48,7 +48,7 @@ class ThreadTarget(Target):
     thread executes one test or resource function at a time."""
 
     arguments = [
-        qm.fields.IntegerField(
+        qm.fields.TextField(
             name="concurrency",
             title="Number of Threads",
             description="""The number of threads to devote to running tests.
@@ -58,7 +58,7 @@ class ThreadTarget(Target):
             tests to be run at once.  You can experiment with this
             value to find the number that results in the fastest
             execution.""",
-            default_value=1),
+            default_value="1"),
         ]
     
     def __init__(self, database, properties):
@@ -117,7 +117,7 @@ class ThreadTarget(Target):
         
         # Build the threads.
         self.__threads = []
-        for i in xrange(0, self.concurrency):
+        for i in xrange(0, int(self.concurrency)):
             # Create the new thread.
             thread = LocalThread(self)
             # Start the thread.

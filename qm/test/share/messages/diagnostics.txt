@@ -30,6 +30,9 @@ The property %(property)s cannot be deleted from this context.
 @ could not load extension class
 The "%(class_name)s" extension class could not be loaded.
 
+@ could not load target file
+The "%(file)s" target file could not be loaded.
+
 @ db path doesn't exist
 "%(path)s" does not exist. 
 

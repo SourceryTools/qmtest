@@ -77,7 +77,7 @@ class Resource(qm.extension.Extension):
             description="""The name of this resource.
 
             A label naming the resource.""",
-            hidden=1,
+            hidden="true",
             default_value=""),
         ]
     

@@ -200,8 +200,20 @@ distclean: clean
 	rm -f qm.spec
 
 # Run tests.
-check: all
+check: check-serial check-threads check-processes
+
+check-serial: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS) \
+		-c qmtest_path=qm/test/qmtest
+
+check-threads: all
+	qm/test/qmtest -D tests run -T tests/QMTest/thread_target \
+		$(QMTESTFLAGS) \
+		-c qmtest_path=qm/test/qmtest
+
+check-processes: all
+	qm/test/qmtest -D tests run -T tests/QMTest/process_target \
+		$(QMTESTFLAGS) \
 		-c qmtest_path=qm/test/qmtest
 
 ########################################################################
