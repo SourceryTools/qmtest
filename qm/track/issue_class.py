@@ -39,6 +39,7 @@ import issue
 import qm
 import qm.fields
 import qm.label
+import qm.xmlutil
 import qm.web
 import string
 import types
@@ -78,6 +79,9 @@ default_categories = [
 
 default_state_model = None
 
+# The DTD for storing a list of issue classes.
+
+issue_classes_dtd = "-//Software Carpentry//QMTrack Issue Classes V0.1//EN"
 
 ########################################################################
 # exceptions
@@ -111,6 +115,8 @@ class NoSuchTransitionError(RuntimeError):
 
 class IidField(qm.fields.TextField):
     """A field containing the ID of an issue."""
+
+    class_name = "qm.track.issue_class.IidField"
 
     def __init__(self, name, default_value="", **attributes):
         """Create an IID field."""
@@ -628,6 +634,8 @@ class StateField(qm.fields.EnumerationField):
     The integrity of the state model is not enforced in this class.  See
     'triggers.state.Trigger'."""
 
+    class_name = "qm.track.issue_class.StateField"
+
     property_declarations = \
         qm.fields.EnumerationField.property_declarations + [
         qm.fields.FieldPropertyDeclaration(
@@ -639,16 +647,20 @@ class StateField(qm.fields.EnumerationField):
         ]
 
 
-    def __init__(self, name, state_model, **attributes):
+    def __init__(self, name, **attributes):
         """Construct a new field.
+
+        The 'state_model' attribute must be initialized, to the encoded
+        state model for this field (or a 'StateModel' instance).
 
         'name' -- The name of this field.
 
-        'state_model' -- A 'StateModel' instance describing the
-        available states and transitions of this field.
-
         postconditions -- The default value of this field is set to the
         state model's initial state."""
+
+        state_model = attributes["state_model"]
+        if not isinstance(state_model, StateModel):
+            state_model = decode_state_model(state_model)
 
         # Construct a starting enumeration consisting of the initial
         # state only.  We need the enumeration to be non-empty, and for
@@ -657,6 +669,9 @@ class StateField(qm.fields.EnumerationField):
         initial_state_name = state_model.GetInitialStateName()
         enumerals = state_model.GetStateNames()
         # Initialize the base class.
+        qm.common.purge_keys(
+            attributes,
+            ["name", "initial_state_name", "enumerals", "state_model"])
         apply(qm.fields.EnumerationField.__init__,
               (self, name, initial_state_name, enumerals),
               attributes)
@@ -812,12 +827,16 @@ class DiscussionField(qm.fields.SetField):
     each discussion element listing the user name and timestamp for the
     element."""
 
-    def __init__(self, name, **attributes):
-        # Create the contained field, which is a text field.  Pass
-        # extra attributes to it.
-        contained_field = apply(qm.fields.TextField, (name, ), attributes)
+    class_name = "qm.track.issue_class.DiscussionField"
+
+    def __init__(self, text_field):
+        """Create a new discussion field.
+
+        'text_field' -- A 'TextField' instance for elements of the
+        discussion."""
+
         # Now construct our base class, the set field.
-        apply(qm.fields.SetField.__init__, (self, contained_field))
+        apply(qm.fields.SetField.__init__, (self, text_field))
 
 
     def Validate(self, value):
@@ -1160,6 +1179,35 @@ issues.""",
         return default
 
 
+    def MakeDomNode(self, document):
+        """Construct a DOM node describing the issue class.
+
+        'document' -- The DOM document in which to contruct the node.
+
+        returns -- A DOM node for an "issue-class" element."""
+
+        # Create the main element node.
+        element = document.createElement("issue-class")
+        # Set the name in an attribute.
+        element.setAttribute("name", self.GetName())
+        # Annotate the title and description.
+        title_element = qm.xmlutil.create_dom_text_element(
+            document, "title", self.GetTitle())
+        element.appendChild(title_element)
+        description_element = qm.xmlutil.create_dom_text_element(
+            document, "description", self.GetDescription())
+        element.appendChild(description_element)
+
+        # FIXME: triggers
+
+        # Store the fields.
+        for field in self.__fields:
+            field_element = field.MakeDomNode(document)
+            element.appendChild(field_element)
+
+        return element
+
+
 
 ########################################################################
 # functions
@@ -1293,6 +1341,68 @@ def decode_transition(encoding):
         condition = TransitionCondition(
             "", qm.web.javascript_unescape(condition))
     return Transition(start, end, condition)
+    
+
+def from_dom_node(node):
+    """Construct an issue class from a DOM node.
+
+    'node' -- A DOM node element, with tag "issue-class".
+
+    returns -- An 'IssueClass' element."""
+
+    assert node.tagName == "issue-class"
+
+    name = node.getAttribute("name")
+    title = qm.xmlutil.get_child_text(node, "title")
+    description = qm.xmlutil.get_child_text(node, "description")
+    
+    fields = []
+    fields_by_name = {}
+    for field_node in qm.xmlutil.get_children(node, "field"):
+        field = qm.fields.from_dom_node(field_node)
+        fields.append(field)
+        fields_by_name[field.GetName()] = field
+
+    # FIXME: Triggers.
+
+    issue_class = IssueClass(name, title, description)
+    issue_class._IssueClass__fields = fields
+    issue_class._IssueClass__fields_by_name = fields_by_name
+
+    return issue_class
+
+
+def load(path):
+    """Load issue classes from 'path'.
+
+    returns -- A map from issue class named to 'IssueClass' objects."""
+
+    document = qm.xmlutil.load_xml_file(path)
+    issue_classes = {}
+    for node in \
+        qm.xmlutil.get_children(document.documentElement, "issue-class"):
+        issue_class = from_dom_node(node)
+        issue_classes[issue_class.GetName()] = issue_class
+    return issue_classes
+
+
+def save(path, issue_classes):
+    """Save issue classes to the file at 'path'.
+
+    'issue_classes' -- A sequence of 'IssueClass' objects."""
+
+    # Create an XML document.
+    document = qm.xmlutil.create_dom_document(
+        public_id=issue_classes_dtd,
+        dtd_file_name="issue-classes.dtd",
+        document_element_tag="issue-classes"
+        )
+    # Create issue class elements.
+    for issue_class in issue_classes:
+        issue_class_node = issue_class.MakeDomNode(document)
+        document.documentElement.appendChild(issue_class_node)
+    # Write it.
+    qm.xmlutil.write_dom_document(document, open(path, "w"))
     
 
 ########################################################################

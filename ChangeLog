@@ -1,3 +1,321 @@
+2001-09-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: Update QMTRACK_DB_PATH name.
+	* doc/manual/track-tour.xml: Explain configuration server.
+	
+	* qm/attachment.py: Rework entirely.
+	* qm/xmlutil.py (load_xml_file): Add validate parameter.
+	(load_xml): Likewise.
+	(child_tag_predicate): New function.
+	(get_child): Likewise.
+	(get_children): Likewise.
+	(get_child_text): Likewise.
+	(get_child_texts): Likewise.
+	(get_dom_child_text): Remove.
+	(get_dom_children_texts): Likewise.
+	* qm/web.py (HttpRedirect.__init__): New method.
+	(WebRequestHandler.__HandleScriptRequest): Adjust accordingly.
+	(WebServer.HandleNoSessionError): Likewise.
+	(WebRequest.copy): Copy the client address.
+	(handle_login): Adjust for change to HttpRedirect.
+	(handle_logout): Likewise.
+	(cache_page): Adjust for rmdir_recursively.
+	(_handle_root): Adjust for change to HttpRedirect.
+	* qm/user.py: Adjust for changes in xmlutil.
+	* qm/label.py (root): New variable.
+	(split): Rewrite.
+	(split_fully): New function.
+	(dirname): Use sep.
+	* qm/fields.py: Adjust throughout for changes to xmlutil.
+	(Field.class_name): New attribute.
+	(Field.MakeDomNode): New method.
+	(IntegerField.class_name): New attribute.
+	(TextField.class_name): Likewise.
+	(SetField.class_name): Likewise.
+	(SetField.FormatValueAsHtml): Use attachment accessors.
+	(SetField.MakeDomNode): New method.
+	(UploadAttachmentPage.__init__): Use make_temporary_location.
+	(UploadAttachmentPage.MakeSubmitUrl): Use upload_url.
+	(AttachmentField.class_name): New attribute.
+	(AttachmentField.upload_url): Likewise.
+	(AttachmentField.download_url): Likewise.
+	(AttachmentField.MakeDownloadUrl): Remove.
+	(AttachmentField.FormatValueAsHtml): Use attachment accessors.
+	(AttachmentField.FormEncodeValue): Likewise.
+	(AttachmentField.FormDecodeValue): Don't use attachment_class.
+	(AttachmentField.FormatSummary): Use attachment accessors.
+	(AttachmentField.MakeDomNodeForValue): Use make_dom_node always.
+	(EnumerationField.class_name): New attribute.
+	(EnumerationField.__init__): Decode enumerals if necessary.
+	(TimeField.class_name): New attribute.
+	(UidField.class_name): New attribute.
+	(from_dom_node): New function.
+	* qm/common.py (Configuration): Remove.
+	(remove_directory_recursively): Rename to...
+	(rmdir_recursively): ... this.
+	(load_module): Add default for path.
+	(load_class): Likewise.
+	(add_exit_function): Store external exit functions separately, and
+	call them at the end.
+	(make_map_from_list): New function.
+	(purge_keys): Likewise.
+	(make_unique_tag): Likewise.
+	(_foreign_exit_functions): New variable.
+	* qm/cmdline.py: Reformat comments.
+	
+	* qm/track/__init__.py: Remove imports.
+	* qm/track/config.py: Remove.
+	* qm/track/idb.py: Likewise.
+	* qm/track/memory_idb.py: Likewise.
+	* qm/track/issue_database.py: New file.
+	* qm/track/issue_store.py: Likewise.
+	* qm/track/memory_issue_store.py: Likewise.	
+	* qm/track/qmtrack.in: Simplify, using run_command.
+	* qm/track/issue_class.py (issue_classes_dtd): New constant.
+	(IidField.class_name): New attribute.
+	(StateField.class_name): Likewise.
+	(StateField.__init__): Take state model from an attribute.
+	(DiscussionField.class_name): New attribute.
+	(DiscussionField.__init__): Take the contained field as a
+	parameter. 
+	(IssueClass.MakeDomNode): New method.
+	(from_dom_node): New function.
+	(load): Likewise.
+	(save): Likewise.
+	* qm/track/issue.py (ExpressionNameError): New exception class.
+	(ExpressionSyntaxError): Likewise.
+	(Attachment): Remove.
+	(Issue.GetRevision): Rename to...
+	(Issue.GetRevisionNumber): ... this.  Adjust accordingly
+	throughout. 
+	(get_issues_from_dom_node): Add issue_classes parameter.
+	(get_issue_from_dom_node): Likewise.
+	(get_histories_from_dom_node): Likewise.
+	(get_history_from_dom_node): Likewise.
+	(export_issues): Rename to...
+	(write_issue_histories): ... this.  Adjust DOM format.
+	(load_issue_histories): New function.
+	(eval_issue_expression): Translate expression exceptions.
+	(_initialize_module): Don't set qm.attachment.attachment_class. 
+	* qm/track/cmdline.py: Adjust throughout for changes to IDB
+	objects. 
+	(idb_environment_variable_name): New constant. 
+	(Command.idb_type_option_spec): Remove.
+	(Command.issue_store_implementation_option_spec): New attribute.
+	(Command.qmtrack_commands): Use it.  Add configure-idb.  Remove
+	initialize.  
+	(Command.__init__): Adjust dispatch accordingly.
+	(Command.GetIdbPath): Use idb_environment_variable_name.
+	(Command.RequiresIdb): Adjust for changes to commands.
+	(Command.Execute): Add idb parameter.
+	(Command.__PerformCreate): Likewise.
+	(Command.__PerformEdit): Likewise.
+	(Command.__PerformSplit): Likewise.
+	(Command.__PerformJoin): Likewise.
+	(Command.__PerformQuery): Likewise.
+	(Command.__PerformConfigureIdb): New method.
+	(Command.__PerformServer): Rewrite.
+	(Command.__PerformShow): Add idb parameter.
+	(Command.__PerformCreateIdb): Likewise.
+	(Command.__PerformDestroyIdb): Likewise.  Don't lock here.
+	(Command.__PerformImport): Likewise.
+	(Command.__ImportIssueHistories): Likewise.
+	(Command.__PrintResults): Likewise.  Build list of histories for
+	export. 
+	(run_command): New function.
+
+	* qm/track/web/web.py (DefaultDtmlPage.navigation_bar_template):
+	New attribute.
+	(DefaultDtmlPage.GenerateStartBody): Use it.
+	(DefaultDtmlPage.GetName): Use qm.common.program_name.
+	(handle_download_attachment): Remove.
+	(make_url_for_attachment): Remove.
+	(_initialize_module): Don't set MakeDownloadUrl.
+	* qm/track/web/summary.py: Get IDB from session and use issue
+	store throughout.
+	(handle_summary): Simplify query.  Handle query exceptions.
+	* qm/track/web/show.py: Get IDB from session and use issue store
+	throughout.
+	(ShowPage.__init__): Don't get revisions here.  Initialize
+	__history.
+	(ShowPage.FormatFieldValue): Use GetHistory.
+	(ShowPage.FormatHistory): Likewise.
+	(ShowPage.GetHistory): New method.
+	(retrieve_attachment_data): Remove.
+	(handle_submit): Use _store_attachment_data.
+	(_store_attachment_data): New function.
+	* qm/track/web/query.py: Get IDB from session throughout.
+	* qm/track/web/issue_class.py: Get IDB from session throughout.
+	Adjust for HttpRedirect throughout.
+	(handle_add_discussion): Construct TextField for DiscussionField. 
+	* qm/track/web/index.py (IndexPage.__init__): 
+	(IndexPage.__init__): Don't get issue classes.
+	(IndexPage.GetIssueClasses): New method.
+	(IndexPage.GetDefaultIssueClass): Likewise.
+	* qm/track/server.py (_script_base): New constant.
+	(WebServer): New class.
+	(_make_server): New function.
+	(make_server): Use it.
+	(make_configuration_server): New function.
+	(run_server): Remove.
+	(execute): Likewise.
+	(execute_locally): New function.
+	(execute_remotely): Likewise.
+	
+	* share/xml/CATALOG: Add idb-configuration and issue-classes
+	DTDs. 
+	* share/xml/idb-configuration.dtd: New file.
+	* share/xml/issue-classes.dtd: Likewise.
+	* share/xml/fields.mod (mimetype): Rename to...
+	(mime-type): ... this.
+	* share/web/stylesheets/qm.css (tr.pass): New style.
+	(tr.fail): Likewise.
+	(tr.untested): Likewise.
+	(tr.error): Likewise.
+	(span.outcome): Likewise.
+	(span.cause): Likewise.
+	(span.id): Likewise.
+
+	* qm/test/xmldb.py: Rework entirely.
+	* qm/test/run.py: Adjust for changes in xmlutil throughout.
+	(TestRun.Schedule): Improve diagnostics.
+	* qm/test/cmdline.py (Command.Execute): Catch exception when
+	loading database.
+	(Command.MakeContext): Don't add path to context here.
+	(Command.__ExecuteRun): Use expand_ids.
+	(Command.__ExecuteServer): Pass database to make_server.
+	* qm/test/base.py: Adjust for changes in xmlutil throughout.
+	(Attachment): Remove.
+	(InstanceBase.SetWorkingDirectory): Don't call
+	__SetAttachmentPaths. 
+	(InstanceBase.__MakeItem): Wrap attachments in arguments.
+	(InstanceBase.__SetAttachmentPaths): Remove.
+	(Suite): Reimplement.
+	(Database.GetSuiteIds): Remove implicit parameter.
+	(Database.GetAttachmentStore): New method.
+	(Database.SetAttachmentData): Remove.
+	(ResultWrapper.keys): New method.
+	(get_suite_contents_recursively): New function.
+	(expand_ids): Likewise.
+	(load_database): Don't primt a message when the database module
+	can't be imported.
+	(run_test): Add path to context.
+	Don't set qm.attachment.attachment_class.
+	* qm/test/web/run.py: New file.
+	* qm/test/web/web.py (DefaultDtmlPage.FormatTestId): Remove.
+	(DefaultDtmlPage.FormatResourceId): Likewise.
+	(DefaultDtmlPage.FormatSuiteId): Likewise.
+	(DefaultDtmlPage.FormatId): New method.
+	(make_server): Add database parameter.  Register attachment
+	scripts. 
+	* qm/test/web/suite.py: Adjust for changes in Suite.
+	(handle_submit): Adjust for HttpRedirect.
+	* qm/test/web/show.py (retrieve_attachment_data): Remove.
+	(_retrieve_attachment_data): New function.
+	(handle_submit): Adjust accordingly.  Adjust for HttpRedirect.
+	(handle_delete): Likewise.
+	* qm/test/web/dir.py (DirPage.FormatItem): Remove.
+	* qm/test/classes/temporary.py (TempDirectoryResource.CleanUp):
+	Adjust for rmdir_recursively.
+
+	* share/dtml/track/show.dtml: Adjust for changes to Issue.
+	* share/dtml/track/navigation-bar.dtml: Replace SC logo.
+	* share/dtml/track/index.dtml: Use GetIssueClasses.  Remove Config
+	IDB button.
+	* share/dtml/track/history.dtml: Adjust for changes to Issue.
+	* share/dtml/test/suite.dtml: Use FormatId.  Add Run button.
+	Handle suites uniformly.
+	* share/dtml/test/show.dtml: Use FormatId.  Add Run button.
+	* share/dtml/test/navigation-bar.dtml: Replace SC logo.
+	* share/dtml/test/dir.dtml: Adjust format.
+	* share/dtml/exception.dtml: Escape type and value.
+
+	* share/diagnostics/track.txt (idb directory missing): Adjust.
+	(idb problem): Remove.
+	(idb in use): New diagnostic.
+	(idb path exists): Adjust.
+	(initialize invalid idb class): Remove.
+	(idb problem): New diagnostic.
+	(idb server not accessible): Likewise.
+	(issue store module error): Likewise.
+	(new idb message): Adjust.
+	(using local idb): New diagnostic.
+	(using remote idb): Likewise.
+	* share/diagnostics/test.txt (error loading xml resource): New
+	diagnostic. 
+	(error loading xml test): Adjust.
+	(failed prerequisite): New diagnostic.
+	(failed resource): Adjust.
+	(incorrect prerequisite outcome): Remove.
+	(no such action): Adjust
+	(no such suite): New diagnostic.
+	(no such test): Adjust.
+	(no target for group): Likewise.
+	* share/diagnostics/common.txt (invalid property): New
+	diagnostic. 
+
+	* tests/unit/common/format_time1.qmt: Remove.
+	* tests/unit/common/graph_complete.qmt: Likewise.
+	* tests/unit/common/graph_cycle.qmt: Likewise.
+	* tests/unit/common/graph_pass.qmt: Likewise.
+	* tests/unit/common/label_is_valid.qmt: Likewise.
+	* tests/unit/common/label_thunk.qmt: Likewise.
+	* tests/unit/common/parse_time1.qmt: Likewise.
+	* tests/unit/common/parse_time2.qmt: Likewise.
+	* tests/unit/common/parse_time3.qmt: Likewise.
+	* tests/unit/common/parse_time4.qmt: Likewise.
+	* tests/unit/common/parser_create.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_long.qmt: Likewise.
+	* tests/unit/common/parser_dup_command_short.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_long.qmt: Likewise.
+	* tests/unit/common/parser_duplicate_short.qmt: Likewise.
+	* tests/unit/common/parser_help.qmt: Likewise.
+	* tests/unit/common/parser_no_long.qmt: Likewise.
+	* tests/unit/common/parser_parse.qmt: Likewise.
+	* tests/unit/common/parser_two_char_short.qmt: Likewise.
+	* tests/unit/test/classes/commandtest1.qmt: Likewise.
+	* tests/unit/test/classes/scripttest1.qmt: Likewise.
+	* tests/unit/test/classes/scripttest2.qmt: Likewise.
+	* tests/unit/test/classes/scripttest3.qmt: Likewise.
+	* tests/unit/test/classes/tempdir1.qma: Likewise.
+	* tests/unit/test/classes/tempdir1.qmt: Likewise.
+	* tests/unit/track/export/export1.qmt: Likewise.
+	* tests/unit/track/export/export2.qmt: Likewise.
+	* tests/unit/track/export/idb.qma: Likewise.
+	* tests/unit/track/export/setup_idb.qmt: Likewise.
+	* tests/unit.qms/common.qms/format_time1.qmt: New file.
+	* tests/unit.qms/common.qms/graph_complete.qmt: Likewise.
+	* tests/unit.qms/common.qms/graph_cycle.qmt: Likewise.
+	* tests/unit.qms/common.qms/graph_pass.qmt: Likewise.
+	* tests/unit.qms/common.qms/label_is_valid.qmt: Likewise.
+	* tests/unit.qms/common.qms/label_thunk.qmt: Likewise.
+	* tests/unit.qms/common.qms/parse_time1.qmt: Likewise.
+	* tests/unit.qms/common.qms/parse_time2.qmt: Likewise.
+	* tests/unit.qms/common.qms/parse_time3.qmt: Likewise.
+	* tests/unit.qms/common.qms/parse_time4.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_create.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_dup_command_long.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_dup_command_short.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_duplicate_long.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_duplicate_short.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_help.qmt: Likewise.: Likewise.
+	* tests/unit.qms/common.qms/parser_no_long.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_parse.qmt: Likewise.
+	* tests/unit.qms/common.qms/parser_two_char_short.qmt: Likewise.
+	* tests/unit.qms/test.qms/suite1.qmt: Likewise.
+	* tests/unit.qms/test.qms/suite2.qmt: Likewise.
+	* tests/unit.qms/test.qms/suite3.qmt: Likewise.
+	* tests/unit.qms/test.qms/test_suite1.qms: Likewise.
+	* tests/unit.qms/test.qms/classes.qms/scripttest1.qmt: Likewise.
+	* tests/unit.qms/test.qms/classes.qms/scripttest2.qmt: Likewise.
+	* tests/unit.qms/test.qms/classes.qms/scripttest3.qmt: Likewise.
+	* tests/unit.qms/test.qms/classes.qms/tempdir1.qma: Likewise.
+	* tests/unit.qms/test.qms/classes.qms/tempdir1.qmt: Likewise.
+	* tests/unit.qms/track.qms/export.qms/export1.qmt: Likewise.
+	* tests/unit.qms/track.qms/export.qms/export2.qmt: Likewise.
+	* tests/unit.qms/track.qms/export.qms/idb.qma: Likewise.
+	* tests/unit.qms/track.qms/export.qms/setup_idb.qmt: Likewise.
+	
 2001-09-21  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_linux.py: Really remove it.

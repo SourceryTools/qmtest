@@ -34,84 +34,36 @@
 # Set up the Python module lookup path to find QMTrack.
 execfile("@qm_setup_path_script@")
 
+try:
+
 ########################################################################
 # imports
 ########################################################################
 
-import os
-import qm.cmdline
-import qm.common
-import qm.platform
-import qm.structured_text
-import qm.track
-import qm.track.cmdline
-import qm.track.server
-import sys
+    import os
+    import qm.common
+    import qm.track.cmdline
+    import sys
 
 ########################################################################
 # script
 ########################################################################
 
-# Set the program name.
-qm.common.program_name = "QMTrack"
+    # Set the program name.
+    qm.common.program_name = "QMTrack"
 
-# Store the path to the command, in case someone wants it later.
-qm.track.state["script_name"] = sys.argv[0]
-
-# Load RC options.
-qm.rc.Load("track")
+    # Load RC options.
+    qm.rc.Load("track")
                                                        
-try:
-    # Parse the command line.
-    command = qm.track.cmdline.Command(sys.argv[1:])
+    # Run the command on the command line.
+    exit_code = qm.track.cmdline.run_command(sys.argv)
 
-    # If the command needs an IDB, set it up.
-    if command.RequiresIdb():
-        if command.HasGlobalOption("remote-idb"):
-            # The user specified a URL to a remote server.  Use it for
-            # remote mode. 
-            qm.track.set_remote_mode(command.GetGlobalOption("remote-idb"))
-        else:
-            # Find the path to the IDB.
-            idb_path = command.GetIdbPath()
-            # Open a session to the IDB.
-            qm.track.open_idb(idb_path)
-            qm.common.print_message(2, "IDB at %s opened.\n" % idb_path)
-
-    try:
-        # Execute the command.
-        exit_code = qm.track.server.execute(command, sys.stdout, sys.stderr)
-    finally:
-        # Close the session, if one's open.
-        qm.track.close_idb()
-        qm.common.print_message(2, "IDB closed.\n")
-
-except qm.cmdline.CommandError, msg:
-    script_name = qm.track.state["script_name"]
-    sys.stderr.write("%s error:\n" % script_name)
-    sys.stderr.write(qm.structured_text.to_text(str(msg)))
-    sys.stderr.write("Invoke %s --help for help with usage.\n"
-                     % script_name)
-    exit_code = 2
+    # End the program.
+    sys.exit(exit_code)
 
 except KeyboardInterrupt:
-    # User killed it; that's OK.
-    sys.stderr.write("\nInterrupted.\n")
-    exit_code = 0
-
-except qm.platform.SignalException, exception:
-    # The program was ended by an exception.
-    sys.stderr.write("Terminated by %s.\n" % str(exception))
-    exit_code = 0
-
-except:
-    # Some other exception.
-    exception = sys.exc_info()[1]
-    sys.stderr.write(qm.structured_text.to_text(str(exception)))
-    exit_code = 1
-
-# End the program.
-sys.exit(exit_code)
+    sys.stderr.write("Interrupted.\n")
+    sys.exit(1)
 
 ########################################################################
 # Local Variables:

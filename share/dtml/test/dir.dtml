@@ -52,18 +52,15 @@
    <dtml-in expr="items">
    <dtml-let item=sequence-item
              index=sequence-index>
-    <tr>
-     <td align="center">
-      <dtml-if expr="item.type != 'test'">
-       [<dtml-var expr="item.type">]&nbsp;&nbsp;
-      <dtml-else>
-       &nbsp;
-      </dtml-if>
-     </td>
-     <td width="100%">
-      <dtml-var expr="FormatItem(item)">
-     </td>
-    </tr>
+    <tr><td align="center">
+     <dtml-if expr="item.type != 'test'">
+      [<dtml-var expr="item.type">]&nbsp;&nbsp;
+     <dtml-else>
+      &nbsp;
+     </dtml-if>
+    </td><td width="100%">
+      <dtml-var expr="FormatId(item.id, item.type, 'tree')">
+    </td></tr>
    </dtml-let>
    </dtml-in>
 

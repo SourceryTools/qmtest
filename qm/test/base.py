@@ -132,82 +132,6 @@ class CommandFailedError(RuntimeError):
 # classes
 ########################################################################
 
-class Attachment(qm.attachment.Attachment):
-    """A file attachment.
-
-    A file attachment to a test description may include data in-line, as
-    part of the test description, or may reference external data.  For
-    instance, in the XML test database impelementation, a test
-    description may include attachment data for its arguments directly
-    in the XML file, or may reference data in another file stored in the
-    test database.
-
-    To store in-line data with the attachment, use the 'data'
-    attribute.  To reference external data, set the 'location' to the
-    data's location as presented in the test specification.  In the
-    latter case, some other agent must set the 'path' attribute of the
-    attribute object to the full path to the attachment file, since the
-    attachment doesn't have the necessary context."""
-
-    def __init__(self,
-                 mime_type=None,
-                 description="",
-                 file_name="",
-                 data=None,
-                 location=None):
-        """Creata a new attachment.
-
-        'data' -- The attachment data, or 'None' if it's stored in an
-        external file.
-
-        'location' -- The name (not generally a full path) of the
-        external file containing the attachment data, or 'None'.  If
-        this option is specified, the caller is responsible for setting
-        the 'path' attribute of the new attachment object to the full
-        path to the data file."""
-
-        # Check semantics.
-        assert data is not None or location is not None
-        assert data is None or location is None
-
-        # Perform base class initialization.
-        qm.attachment.Attachment.__init__(self, mime_type,
-                                          description, file_name)
-        if data is not None:
-            self.data = data
-        else:
-            self.location = location
-        
-
-    def GetData(self):
-        if hasattr(self, "data"):
-            return self.data
-        else:
-            # Read the data from the external file.
-            return open(self.path, "r").read()
-
-
-    def GetDataSize(self):
-        if hasattr(self, "data"):
-            return len(data)
-        else:
-            # Examine the external file.
-            return os.stat(self.path)[6]
-
-
-    def MakeDomNode(self, document):
-        if hasattr(self, "data"):
-            # Include in-line attachment data.
-            return qm.attachment.make_dom_node(self, document,
-                                               data=self.data)
-        else:
-            # Simply specify the location in the DOM tree.  The full
-            # path is context-dependent and shouldn't be stored.
-            return qm.attachment.make_dom_node(self, document,
-                                               location=self.location)
-
-
-
 class InstanceBase:
     """Common base class for test and resource objects."""
 
@@ -252,9 +176,6 @@ class InstanceBase:
         """Set the working directory of the test to 'directory_path'."""
 
         self.__working_directory = directory_path
-        # Set the full path for each attachment in a test argument that
-        # references attachment data by location.
-        self.__SetAttachmentPaths(self.GetArguments().values())
 
 
     def GetWorkingDirectory(self):
@@ -312,38 +233,37 @@ class InstanceBase:
         """Construct the underlying user test or resource object."""
 
         arguments = self.GetArguments().copy()
+        attachment_store = get_database().GetAttachmentStore()
 
-        # Use a default value for each field for which an argument was
-        # not specified.
+        # Do some extra processing for test arguments.
         klass = self.GetClass()
         for field in klass.fields:
-            field_name = field.GetName()
-            if not arguments.has_key(field_name):
-                arguments[field_name] = field.GetDefaultValue()
+            name = field.GetName()
+
+            # Use a default value for each field for which an argument
+            # was not specified.
+            if not arguments.has_key(name):
+                arguments[name] = field.GetDefaultValue()
+
+            # Convert attachments to 'AttachmentWrapper' objects.
+            # First, the values of attachment fields (unless 'None').
+            if isinstance(field, qm.fields.AttachmentField):
+                value = arguments[name]
+                if value is not None:
+                    arguments[name] = qm.attachment.AttachmentWrapper(
+                        value, attachment_store)
+            # Also, all items in the values of attachment set fields.
+            if isinstance(field, qm.fields.SetField) \
+               and isinstance(field.GetContainedField(),
+                              qm.fields.AttachmentField):
+                value = arguments[name]
+                new_value = map(
+                    lambda at, as=attachment_store:
+                    qm.attachment.AttachmentWrapper(at, as),
+                    value)
+                arguments[name] = new_value
 
         return apply(klass, [], arguments)
-
-
-    def __SetAttachmentPaths(self, value):
-        """Set full attachment paths.
-
-        If 'value' is an 'Attachment' instance, the 'path' attribute is
-        set.  If 'value' is a sequence type, the 'path' attribute is set
-        for any 'Attachment' elements in it."""
-
-        if type(value) == types.InstanceType \
-           and isinstance(value, Attachment) \
-           and hasattr(value, "location"):
-            # It's an attachment type, and has the 'location' attribute
-            # set, so set the path.
-            value.path = os.path.join(self.__working_directory,
-                                      value.location)
-        elif type(value) == types.ListType \
-             or type(value) == types.TupleType:
-            # It's a sequence.  Call ourselves recursively on its
-            # elements. 
-            for element in value:
-                self.__SetAttachmentPaths(element)
 
 
 
@@ -534,30 +454,66 @@ class Resource(InstanceBase):
 
 
 class Suite:
-   """A group of tests."""
+   """A group of tests.
 
-   def __init__(self, suite_id, test_ids=[], suite_ids=[], implicit=0): 
+   A test suite is a collection of tests.  The suite may contain other
+   suites by reference as well; all tests contained in these contained
+   suites are considered contained in the containing suite as well.
+
+   There are two kinds of test suites:
+
+     * Ordinary test suites are created by the user as an organizational
+       aid.  The user specifies the IDs of tests and other suites
+       contained in the suite.
+
+     * QMTest creates *implicit* test suites as well.  These virtual
+       test suites automatically contain all tests and suites whose IDs
+       start with a common prefix.
+
+       For example, consider a test database that contains tests with
+       IDs "X.Y.a" and "X.Y.Z.b".  The latter is contained in an
+       implicit suite "X.Y.Z".  This, along with the test "X.Y.a", is
+       contained in the implicit suite "X.Y", which is in turn contained
+       in the implicit suite "X".
+
+   Ordinary test suites do not contain resources.  However, implicit
+   test suites do contain resources whose IDs have the suite ID as a
+   prefix.
+
+   Use 'get_suite_contents_recursively' to find the tests, suites, and
+   resources transitively contained in a suite."""
+
+   def __init__(self,
+                suite_id,
+                implicit=0,
+                test_ids=[],
+                suite_ids=[],
+                resource_ids=[]): 
        """Create a new test suite instance.
 
        'suite_id' -- The ID of the new suite.
+
+       'implicit' -- If true, this is an implicit suite.  It contains
+       all tests whose IDs have this suite's ID as a prefix.
 
        'test_ids' -- A sequence of IDs of tests contained in the suite.
 
        'suite_ids' -- A sequence of IDs of suites contained in the
        suite.
 
-       'implicit' -- If true, this is an implicit suite.  It contains
-       all tests whose IDs have this suite's ID as a prefix."""
+       'resource_ids' -- A sequence of IDs of resources contained in the
+       suite.  Must be empty unless the suite is implicit."""
 
        self.__id = suite_id
+       self.__implicit = implicit
+       assert self.__implicit or len(resource_ids) == 0
        self.__test_ids = list(test_ids)
        self.__suite_ids = list(suite_ids)
-       self.__implicit = implicit
-       self.__test_id_cache = None
+       self.__resource_ids = list(resource_ids)
 
 
    def GetId(self):
-       """Return the ID for this test suite."""
+       """Return the ID of this test suite."""
 
        return self.__id
 
@@ -572,58 +528,31 @@ class Suite:
 
    def GetTestIds(self):
        """Return a sequence of the test IDs of the tests in this suite.
-
-       returns -- A sequence of IDs of all tests in this suite.  If this
-       suite contains other suites, these are expanded recursively to
-       produce the full list of tests.  No test will appear more than
-       once."""
-
-       if self.__test_id_cache is None:
-           database = get_database()
-           if self.IsImplicit():
-               dir_id = self.GetId()
-           else:
-               dir_id = qm.label.dirname(self.GetId())
-           # Instead of keeping a list of test IDs, we'll build a map, to
-           # assist with skipping duplicates.  The keys are test IDs (we
-           # don't care about the values).
-           ids = {}
-           # Start by entering the tests explicitly part of this suite.
-           for test_id in self.__test_ids:
-               ids[test_id] = test_id
-           # Now loop over suites contained in this suite.
-           for suite_id in self.__suite_ids:
-               suite = database.GetSuite(suite_id)
-               # Get the test IDs in the contained suite.
-               test_ids_in_suite = suite.GetTestIds()
-               # Make note of them.
-               for test_id in test_ids_in_suite:
-                   ids[test_id] = None
-           # All done.
-           self.__test_id_cache = ids.keys()
-
-       return self.__test_id_cache
-
-
-   def GetRawTestIds(self):
-       """Return the IDs of tests explicitly part of this suite.
-
-       returns -- A list of tests explicitly in this suite.  Does not
-       include IDs of tests that are included in this suite via other
+       Does not include IDs of tests that are included via other
        suites."""
 
        return self.__test_ids
 
 
-   def GetRawSuiteIds(self):
+   def GetSuiteIds(self):
        """Return the IDs of suites explicitly part of this suite.
 
        returns -- A list of suites explicitly in this suite.  Does not
-       include IDs of suites that are included via other suites.  Suite
-       IDs are relative to the path contianing this suite."""
+       include IDs of suites that are included via other suites."""
 
        return self.__suite_ids
 
+
+   def GetResourceIds(self):
+       """Return the IDs of resources explicitly part of this suite.
+
+       Generally, suites do not contain resources explicitly, so this
+       function will usually return an empty sequence.  However,
+       implicit test suites, corresponding for instance to file system
+       directories, may contain resources."""
+
+       return self.__resource_ids
+   
 
 
 class Database:
@@ -653,7 +582,6 @@ class Database:
         """Return true if the database has a test with ID 'test_id'."""
 
         # The default implementation of this function uses 'GetTest'.
-
         try:
             self.GetTest(test_id)
         except NoSuchTestError:
@@ -726,7 +654,7 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.RemoveSuite"
 
 
-    def GetSuiteIds(self, path=".", implicit=0):
+    def GetSuiteIds(self, path="."):
         """Return suite IDs of all test suites relative to 'path'.
 
         'implicit' -- If true, include implicit test suites
@@ -776,17 +704,10 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.GetResourceIds"
 
 
-    def SetAttachmentData(self, attachment, data, item_id):
-        """Store attachment data to the database.
+    def GetAttachmentStore(self):
+        """Return the store for attachment data."""
 
-        'attachment' -- An 'Attachment' instance.
-
-        'data' -- The attachment data as a string.
-
-        'item_id' -- A test or resource ID associated with this
-        attachment."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.SetAttachmentData"
+        raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
 
 
 
@@ -872,7 +793,7 @@ class ResultWrapper:
 
 
     def GetId(self):
-        """Return the ID of the test or resource for which this is a result."""
+        """Return the test's or resource's ID for which this is a result."""
         
         return self.__test_id
 
@@ -934,6 +855,10 @@ class ResultWrapper:
 
     def has_key(self, key):
         return self.__result._Result__properties.has_key(key)
+
+
+    def keys(self):
+        return self.__result._Result__properties.keys()
 
 
     def items(self):
@@ -1170,6 +1095,105 @@ def validate_id(item_id):
         raise RuntimeError, qm.error("invalid id", id=item_id)
 
 
+def get_suite_contents_recursively(suite, database):
+    """Determine tests, suites, and resources contained in a suite.
+
+    This function determines the IDs of tests, suites, and resources
+    contained directly or indirecty (i.e. via a contained suite) in
+    'suite'.
+
+    An ordinary suite contained in an implicit suite is not expanded.
+    Thus, implicit suites contain tests, resources, and suites whose IDs
+    have the suite ID as a prefix, and no others.
+
+    'suite' -- A 'Suite' instance.
+
+    'database' -- The database containing 'suite'.
+
+    returns -- A triple 'test_ids, resource_ids, suite_ids'.  Each
+    element is a sequence of IDs."""
+
+    test_ids = []
+    resource_ids = []
+    suite_ids = []
+
+    # Maintain a work list of suites to process.
+    work_list = [suite]
+    # Process until the work list is empty.
+    while len(work_list) > 0:
+        suite = work_list.pop(0)
+        # Accumulate test and resource IDs in the suite.
+        test_ids.extend(suite.GetTestIds())
+        resource_ids.extend(suite.GetResourceIds())
+        # Find sub suites in the suite.
+        sub_suite_ids = suite.GetSuiteIds()
+        # Accumulate them.
+        suite_ids.extend(sub_suite_ids)
+        # Retrieve the 'Suite' objects.
+        sub_suites = map(database.GetSuite, sub_suite_ids)
+        # Don't expand ordinary suites contained in implicit suites.
+        if suite.IsImplicit():
+            sub_suites = filter(lambda s: s.IsImplicit(), sub_suites)
+        # Add contained suites to the work list.
+        work_list.extend(sub_suites)
+
+    return test_ids, resource_ids, suite_ids
+
+
+def expand_ids(ids):
+    """Expand test and suite IDs into test IDs.
+
+    'ids' -- A sequence of IDs of tests and suites, which may be mixed
+    together.
+
+    returns -- A pair 'test_ids, suite_ids'.  'test_ids' is a
+    sequence of test IDs including all test IDs mentioned in 'ids' plus
+    all test IDs obtained from recursively expanding suites included in
+    'ids'.  'suite_ids' is the set of IDs of suites included directly
+    and indirectly in 'ids'.
+
+    raises -- 'ValueError' if an element in 'id' is neither a test or
+    suite ID.  The exception argument is the erroneous element."""
+
+    database = get_database()
+
+    # We'll collect test and suite IDs in maps, to make duplicate checks
+    # efficient.
+    test_ids = {}
+    suite_ids = {}
+    # These function add to the maps.
+    def add_test_id(test_id, test_ids=test_ids):
+        test_ids[test_id] = None
+    def add_suite_id(suite_id, suite_ids=suite_ids):
+        suite_ids[suite_id] = None
+
+    for id in ids:
+        # Skip this ID if we've already seen it.
+        if suite_ids.has_key(id) or test_ids.has_key(id):
+            continue
+        # Is this a suite ID?
+        if database.HasSuite(id):
+            # Yes.  Load the suite.
+            suite = database.GetSuite(id)
+            # Determine all the tests and suites contained directly and
+            # indirectly in this suite.
+            suite_test_ids, suite_resource_ids, sub_suite_ids = \
+                get_suite_contents_recursively(suite, database)
+            # Add them.
+            map(add_test_id, suite_test_ids)
+            map(add_suite_id, sub_suite_ids)
+        # Or is this a test ID?
+        elif database.HasTest(id):
+            # Yes.  Add it.
+            add_test_id(id)
+        else:
+            # It doesn't look like a test or suite ID.
+            raise ValueError, id
+
+    # Convert the maps to sequences.
+    return test_ids.keys(), suite_ids.keys()
+
+
 def make_result_for_exception(exc_info, cause=None, outcome=Result.ERROR):
     """Return a 'Result' object for a test that raised an exception.
 
@@ -1210,8 +1234,6 @@ def load_database(path):
         database_module = qm.common.load_module("database", classes_path)
     except ImportError, e:
         # Couldn't import the module.
-        qm.common.print_message(2, 
-            "Warning: couldn't import database module:\n%s\n" % str(e))
         pass
     else:
         # Look for a class named 'Database' in the module.
@@ -1443,7 +1465,7 @@ def _result_from_dom(result_node):
 
     assert result_node.tagName == "result"
     # Extract the outcome, and build a base 'Result' object.
-    outcome = qm.xmlutil.get_dom_child_text(result_node, "outcome")
+    outcome = qm.xmlutil.get_child_text(result_node, "outcome")
     result = Result(outcome)
     # Extract properties, one for each property element.
     for property_node in result_node.getElementsByTagName("property"):
@@ -1469,6 +1491,8 @@ def run_test(test_id, context):
     'context' -- The 'Context' object with which to run it.
 
     returns -- A complete 'ResultWrapper' object for the test."""
+
+    context["path"] = qm.rc.Get("path", os.environ["PATH"])
 
     test = get_database().GetTest(test_id)
 
@@ -1566,12 +1590,6 @@ __builtin_class_path = [
     qm.common.get_lib_directory("qm", "test", "classes"),
     ]
 """Standard paths to search for test and resource classes."""
-
-########################################################################
-# initialization
-########################################################################
-
-qm.attachment.attachment_class = Attachment
 
 ########################################################################
 # Local Variables:

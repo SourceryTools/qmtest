@@ -9,7 +9,7 @@
 
 <!-- The value of an attachment field.  -->
 <!ELEMENT attachment ((description?, 
-                       mimetype?, 
+                       mime-type?, 
                        filename?, 
                        (location | data))?)>
 
@@ -17,7 +17,7 @@
 <!ELEMENT description (#PCDATA)>
 
 <!-- The MIME type of an attachment.  -->
-<!ELEMENT mimetype (#PCDATA)>
+<!ELEMENT mime-type (#PCDATA)>
 
 <!-- The file name from which an attachment was uploaded.  -->
 <!ELEMENT filename (#PCDATA)>

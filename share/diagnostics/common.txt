@@ -80,6 +80,10 @@ The value of this field must be an integer.
 @ invalid login
 The user name or password you entered is invalid.  Please log in again.
 
+@ invalid property
+The property '%(error)s' is invalid.  Use the form 'NAME=VALUE' to
+specify properties.  
+
 @ missing command
 Specify a command.
 

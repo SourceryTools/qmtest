@@ -133,3 +133,32 @@ a.navbar {
 input.submit {
     background-color: e0e0e0;
 }
+
+tr.pass {
+    background-color: f0f8ff;
+}
+
+tr.fail {
+    background-color: fff0f8;
+}
+
+tr.untested {
+    background-color: f0f0f0;
+}
+
+tr.error {
+    background-color: ffffe0;
+}
+
+span.outcome {
+    font-weight: bold;
+}
+
+span.cause {
+    font-style: italic;
+}
+
+span.id {
+    font-family: monospace;
+    font-weight: bold;
+}

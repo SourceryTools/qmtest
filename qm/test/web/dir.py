@@ -89,17 +89,6 @@ class DirPage(web.DtmlPage):
         self.items.sort(lambda i1, i2: cmp(i1.id, i2.id))
 
 
-    def FormatItem(self, item):
-        """Return a representation of 'item', a 'DirItem' object."""
-
-        if item.type == "test":
-            return self.FormatTestId(item.id)
-        elif item.type == "suite":
-            return self.FormatSuiteId(item.id)
-        elif item.type == "resource":
-            return self.FormatResourceId(item.id)
-
-
 
 ########################################################################
 # functions

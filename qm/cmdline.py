@@ -319,16 +319,17 @@ class CommandParser:
         'argv' -- A string containing the command line starting with
         argv[1].  It should not contain the name of the executed program.
 
-        returns -- A 4-tuple of the options given, the command given, the
-        command options, and the command arguments.  Its form is this:
-        (options, command, command_options, command_args).  'options' is a list
-        of 2-tuples indicating each option specified and the argument given
-        to that option (if applicable).  'command' is the command given.
-        'command_options' is a list of 2-tuples indicating each option given
-        to the command and its possible argument.  'command-args' is a
-        list of arguments as given to the command.  If no command is
-        given, then the function will return '' for the command, [] for
-        the arguments, and [] for the command options.
+        returns -- A 4-tuple of the options given, the command given,
+        the command options, and the command arguments.  Its form is
+        this: (options, command, command_options, command_args).
+        'options' is a list of 2-tuples indicating each option specified
+        and the argument given to that option (if applicable).
+        'command' is the command given.  'command_options' is a list of
+        2-tuples indicating each option given to the command and its
+        possible argument.  'command-args' is a list of arguments as
+        given to the command.  If no command is given, then the function
+        will return '' for the command, [] for the arguments, and [] for
+        the command options.
 
         raises -- 'CommandError' if the command is invalid."""
 

@@ -58,7 +58,7 @@ are,
 import DocumentTemplate
 import os
 import qm.fields
-import qm.track
+import qm.track.issue
 import qm.web
 import re
 import string
@@ -73,6 +73,8 @@ class DefaultDtmlPage(qm.web.DtmlPage):
 
     html_generator = "QMTrack"
 
+    navigation_bar_template = "navigation-bar.dtml"
+
 
     def __init__(self, dtml_template, **attributes):
         # Initialize the base class.
@@ -82,13 +84,13 @@ class DefaultDtmlPage(qm.web.DtmlPage):
     def GetName(self):
         """Return the name of the application."""
 
-        return qm.track.get_name()
+        return qm.common.program_name
 
 
     def GenerateStartBody(self, decorations=1):
         if decorations:
             # Include the navigation bar.
-            navigation_bar = DtmlPage("navigation-bar.dtml")
+            navigation_bar = DtmlPage(self.navigation_bar_template)
             return "<body>%s<br>" % navigation_bar(self.request)
         else:
             return "<body>"
@@ -159,7 +161,7 @@ class HistoryPageFragment(DtmlPage):
         'revision2' -- The older revision."""
 
         # Find the fields that differ between the revisions.
-        fields = qm.track.get_differing_fields(revision1, revision2)
+        fields = qm.track.issue.get_differing_fields(revision1, revision2)
         # Certain fields we expect to differ or are irrelevant to the
         # revision history; supress these from the list.
         ignore_fields = ("revision", "timestamp", "user")
@@ -215,46 +217,10 @@ class HistoryPageFragment(DtmlPage):
 
 
 ########################################################################
-# functions
-########################################################################
-
-def handle_download_attachment(request):
-    """Process a request to download attachment data."""
-
-    # Get the attachment location and MIME type from the request.
-    location = request["location"]
-    mime_type = request["mime_type"]
-    # Get the attachment data.
-    idb = qm.track.get_idb()
-    data = idb.GetAttachmentData(location)
-    # Send it back to the client.
-    return (mime_type, data)
-
-
-def make_url_for_attachment(field, attachment):
-    """Return a URL to download 'attachment'."""
-
-    request = qm.web.WebRequest("download-attachment",
-                                location=attachment.location,
-                                mime_type=attachment.mime_type)
-    url = request.AsUrl()
-    # Here's a nice hack.  If the user saves the attachment to a file,
-    # browsers (some at least) guess the default file name from the
-    # URL by taking everything following the final slash character.  So,
-    # we add this bogus-looking argument to fool the browser into using
-    # our file name.
-    url = url + "&=/" + urllib.quote_plus(attachment.file_name)
-    return url
-
-
-########################################################################
 # initialization
 ########################################################################
 
 def _initialize_module():
-    # The generic 'AttachmentField' implementation needs to know about
-    # our URLs for downloading attachments.
-    qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
     # Use our 'DtmlPage' subclass even when generating generic
     # (non-QMTrack) pages.
     qm.web.DtmlPage.default_class = DefaultDtmlPage

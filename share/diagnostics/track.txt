@@ -105,12 +105,12 @@ Unknown format "%(format)s". You must specify a valid format to display the
 issues.
 
 @ idb directory missing
-The IDB path '%(path)s' doesn't exist.
+The IDB path '%(path)s' does not exist.
 
-@ idb problem
-%(program_name)s encountered a problem accessing the IDB:
-
-  %(problem)s
+@ idb in use
+The issue database is currently in used by another QMTrack process.  The
+command you specified cannot be performed until the issue database is no
+longer in use.
 
 @ idb locked
 The IDB is currently locked by another QMTrack process.  Please try
@@ -129,9 +129,9 @@ A parent directory, '%(parent_path)s', of the path you have specified for
 the new IDB, '%(idb_path)s', does not exist.
 
 @ idb path exists
-The path you have specified for the new IDB, '%(idb_path)s', already
-exists.  Please move this file or directory out of the way before
-initializing an IDB there.  
+The path you have specified for the new IDB, '%(path)s', already exists.
+Please move this file or directory out of the way before initializing an
+IDB there.
 
 If there already is an IDB at this path, remove it first with the
 "destroy" command.
@@ -142,11 +142,17 @@ The IDB path '%(path)s' is not accessible.
 @ idb path wrong
 The path '%(path)s' does not appear to point to an IDB.
 
+@ idb problem
+%(program_name)s encountered a problem accessing the IDB:
+
+  %(problem)s
+
+@ idb server path not accessible
+The IDB at '%(path)s' is being used by another %(program_name)s server,
+but that server is not accessible.
+
 @ iid already used
 There is already an issue in the IDB with the issue ID "%(iid)s".
-
-@ initialize invalid idb class
-IDB type "%(type)s" is invalid.
 
 @ invalid class name
 "%(class_name)s" is not a valid name for an issue class.  An issue class
@@ -172,6 +178,12 @@ Python class that is a subclass of 'qm.fields.Field'.
 lower-case letters, digits, and underscores, and may not begin with an
 underscore. 
 
+@ issue store module error
+The issue store implementation module '%(name)s' could not be loaded.
+The following import error occurred:
+
+%(error)s
+
 @ join iid error sem
 The generated iid "%(iid)s" from the two issues to be joined is already 
 in the IDB.
@@ -196,13 +208,9 @@ You did not specify an issue database (IDB).  Either
 You must specify one or more files from which to import issues.
 
 @ new idb message
-QMTrack has created a new IDB for you at %(path)s.  Either set the
-'%(envvar)s' environment variable to this path, or use the '--idb'
-option when you invoke QMTrack.
-
-A new user account database has been created in '%(userdb)s', containing
-a single guest user only.  Edit this file to add additional user
-accounts, or to disable the guest account.
+%(program_name)s has created a new issue database for you at %(path)s.
+Either set the '%(envvar)s' environment variable to this path, or use
+the '--idb' option when you invoke QMTrack.
 
 @ no changes
 You have specified no changes to the issue.  A new revision has not been
@@ -267,6 +275,12 @@ The transition from state "%(starting_state_name)s" to state
 required for the transition, was not satisfied:
 
   '%(expression)s'
+
+@ using local idb
+Using local IDB at %(path)s .
+
+@ using remote idb
+Using remote IDB at %(url)s .
 
 @ xml file no revision number
 A revision difference in an issue history is missing its revision number.

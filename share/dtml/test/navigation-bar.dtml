@@ -20,10 +20,10 @@
        cellspacing="0"
        cellpadding="0">
  <tr>
-  <td width="50%">
-   &nbsp;
-   <a href="http://www.software-carpentry.com/"><img border="0"
-   src="/images/sc-logo.png"></a>
+  <td width="45%" height="28">
+   &nbsp;&nbsp;
+   <b><font size="+1" color="#d0edef">QM</font><font size="+2"
+   color="white">Test</font></b>
   </td>
 
   <td class="navbar" width="12%" align="center">

@@ -26,16 +26,22 @@
    <tr>
     <td>
      <h3>
-      Test Suite <dtml-var expr="suite.GetId()">
+      Test Suite 
+      <dtml-if expr="edit">
+       <dtml-var expr="FormatId(suite.GetId(), 'suite', 'plain')">
+      <dtml-else>
+       <dtml-var expr="FormatId(suite.GetId(), 'suite', 'navigation')">
+      </dtml-if>
      </h3>
      <dtml-if expr="suite.IsImplicit()">
       <p>This is an implicit test suite.  Every test whose ID has
-      <dtml-var expr="suite.GetId()"> as a prefix is included in this
-      suite.</p>
+      <dtml-var expr="FormatId(suite.GetId(), 'suite', 'plain')"> as a
+      prefix is included in this suite.</p>
      </dtml-if>
     </td>
     <td align="right">
      <form>
+      <dtml-var expr="MakeButton('Run', 'run-tests', ids=suite.GetId())">
       <dtml-if expr="not suite.IsImplicit() and not edit">
        <dtml-var expr="MakeButton('Edit', 'edit-suite', id=suite.GetId())">
        <input type="button"
@@ -91,7 +97,7 @@
          <ul>
           <dtml-in expr="test_ids">
           <dtml-let id=sequence-item>
-           <li><dtml-var expr="FormatTestId(id)">
+           <li><dtml-var expr="FormatId(id, 'test')">
           </dtml-let>
           </dtml-in>
          </ul>
@@ -108,47 +114,45 @@
     </td>
    </tr>
 
-   <dtml-if expr="not suite.IsImplicit()">
-    <tr valign="top" class="field">
-     <td>
-      <b>Suite IDs</b>
-      <p>IDs of other suites that are included in this suite.</p>
-     </td>
-     <td>
-      <table border="0" cellpadding="0" cellspacing="4" width="100%"><tr>
-       <dtml-if name="edit">
+   <tr valign="top" class="field">
+    <td>
+     <b>Suite IDs</b>
+     <p>IDs of other suites that are included in this suite.</p>
+    </td>
+    <td>
+     <table border="0" cellpadding="0" cellspacing="4" width="100%"><tr>
+      <dtml-if name="edit">
 
-        <td>
-         <dtml-var name="suite_id_controls">
-        </td>
-        <td valign="top" align="right">
-         <dtml-var expr="web.make_help_link('suite suite IDs control')">
-        </td>
+       <td>
+        <dtml-var name="suite_id_controls">
+       </td>
+       <td valign="top" align="right">
+        <dtml-var expr="web.make_help_link('suite suite IDs control')">
+       </td>
 
-       <dtml-else>
+      <dtml-else>
 
-        <td>
-         <dtml-if expr="_.len(suite_ids)">
-          <ul>
-           <dtml-in expr="suite_ids">
-           <dtml-let id=sequence-item>
-            <li><dtml-var expr="FormatSuiteId(id)">
-           </dtml-let>
-           </dtml-in>
-          </ul>
-         <dtml-else>
-          &nbsp;
-         </dtml-if>
-        </td>
-        <td valign="top" align="right">
-         <dtml-var expr="web.make_help_link('suite suite IDs')">
-        </td>
+       <td>
+        <dtml-if expr="_.len(suite_ids)">
+         <ul>
+          <dtml-in expr="suite_ids">
+          <dtml-let id=sequence-item>
+           <li><dtml-var expr="FormatId(id, 'suite')">
+          </dtml-let>
+          </dtml-in>
+         </ul>
+        <dtml-else>
+         None
+        </dtml-if>
+       </td>
+       <td valign="top" align="right">
+        <dtml-var expr="web.make_help_link('suite suite IDs')">
+       </td>
 
-       </dtml-if>
-      </tr></table>
-     </td>
-    </tr>
-   </dtml-if>
+      </dtml-if>
+     </tr></table>
+    </td>
+   </tr>
 
    <dtml-if expr="edit">
     <tr class="heading">

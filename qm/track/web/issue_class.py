@@ -177,7 +177,7 @@ class ConfigIdbPage(web.DtmlPage):
         """Return a sequence of issue classes in the IDB."""
 
         # Generate a list of issue classes in the IDB.
-        idb = qm.track.get_idb()
+        idb = self.request.GetSession().idb
         issue_classes = idb.GetIssueClasses()
         # Put them into dictionary order.
         issue_classes.sort(lambda c1, c2: cmp(c1.GetName(), c2.GetName()))
@@ -302,7 +302,7 @@ def handle_show_class(request):
         issue_class = _get_issue_class_for_session(request)
     else:
         # Got the issue class name.  Get it from the IDB.
-        idb = qm.track.get_idb()
+        idb = session.idb
         issue_class = idb.GetIssueClass(issue_class_name)
         # Make a copy of it.
         issue_class = copy.deepcopy(issue_class)
@@ -315,7 +315,7 @@ def handle_show_class(request):
         # a sanity check later when the issue class is retrieved from
         # the session.
         del request["issue_class"]
-        raise qm.web.HttpRedirect, request.AsUrl()
+        raise qm.web.HttpRedirect, request
 
     return ShowPage(issue_class)(request)
 
@@ -354,9 +354,8 @@ def handle_submit_field(request):
     # Change the field according to the request.
     field.UpdateFromRequest(request)
 
-    show_field_request = qm.web.WebRequest("show-issue-class",
-                                           base=request)
-    raise qm.web.HttpRedirect, show_field_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("show-issue-class", base=request)
 
 
 def handle_submit_class(request):
@@ -378,7 +377,7 @@ def handle_submit_class(request):
     # Determine by checking whether there is already an issue class in
     # the IDB with the same name.
     try:
-        idb = qm.track.get_idb()
+        idb = session.idb
         previous_issue_class = idb.GetIssueClass(issue_class_name)
 
     except KeyError:
@@ -394,7 +393,7 @@ def handle_submit_class(request):
     del session.__issue_class    
     # Redirect to the IDB configuration page.
     raise qm.web.HttpRedirect, \
-          qm.web.WebRequest("config-idb", base=request).AsUrl()
+          qm.web.WebRequest("config-idb", base=request)
 
 
 def handle_delete_field(request):
@@ -411,8 +410,8 @@ def handle_delete_field(request):
     # Remove it.
     issue_class.RemoveField(field)
     # Redisplay the issue class.
-    show_request = qm.web.WebRequest("show-issue-class", base=request)
-    raise qm.web.HttpRedirect, show_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("show-issue-class", base=request)
 
 
 def handle_new_field(request):
@@ -473,7 +472,7 @@ def handle_new_field(request):
         # Redirect to the page displaying the new field.
         show_request = qm.web.WebRequest("show-issue-field",
                                          base=request, field=field_name)
-        raise qm.web.HttpRedirect, show_request.AsUrl()
+        raise qm.web.HttpRedirect, show_request
 
 
 def handle_new_class(request):
@@ -509,14 +508,14 @@ def handle_new_class(request):
                                       title=class_title,
                                       categories=categories)
     # Add it to the IDB.
-    idb = qm.track.get_idb()
+    idb = request.GetSession().idb 
     idb.AddIssueClass(issue_class)
     # If this is the first issue class, make it the default issue class.
     if len(idb.GetIssueClasses()) == 1:
         qm.track.get_configuration()["default_class"] = class_name
     # Redirect to the IDB configuration page.
-    show_request = qm.web.WebRequest("config-idb", base=request)
-    raise qm.web.HttpRedirect, show_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("config-idb", base=request)
 
 
 def handle_show_notification(request):
@@ -558,8 +557,8 @@ def handle_submit_notification(request):
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = qm.web.WebRequest("show-issue-class", base=request)
-    raise qm.web.HttpRedirect, show_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("show-issue-class", base=request)
 
 
 def handle_show_subscription(request):
@@ -625,8 +624,8 @@ changes to this issue."""))
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = qm.web.WebRequest("show-issue-class", base=request)
-    raise qm.web.HttpRedirect, show_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("show-issue-class", base=request)
 
 
 def handle_add_discussion(request):
@@ -636,11 +635,12 @@ def handle_add_discussion(request):
     issue_class = _get_issue_class_for_session(request)
     # Construct the field, if it doesn't exist.
     if not issue_class.HasField("discussion"):
-        discussion_field = qm.track.issue_class.DiscussionField(
+        text_field = qm.fields.TextField(
             name="discussion",
             title="Discussion",
             description="Follow-up discussion of this issue.",
             structured="true")
+        discussion_field = qm.track.issue_class.DiscussionField(text_field)
         issue_class.AddField(discussion_field)
     else:
         discussion_field = issue_class.GetField("discussion")
@@ -651,8 +651,8 @@ def handle_add_discussion(request):
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)
     # Redirect to the page displaying the issue class.
-    show_request = qm.web.WebRequest("show-issue-class", base=request)
-    raise qm.web.HttpRedirect, show_request.AsUrl()
+    raise qm.web.HttpRedirect, \
+          qm.web.WebRequest("show-issue-class", base=request)
 
 
 ########################################################################

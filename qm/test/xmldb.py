@@ -43,6 +43,7 @@ import qm.fields
 import qm.label
 import qm.structured_text
 import qm.xmlutil
+import shutil
 import string
 
 ########################################################################
@@ -86,15 +87,6 @@ class TestFileError(RuntimeError):
 class Database(base.Database, qm.common.MutexMixin):
     """A database represnting tests as XML files in a directory tree."""
 
-    # This value, used in the test and suite caches, indicates that the
-    # corresponding ID doesn't correspond to an existing test or suite.
-    __DOES_NOT_EXIST = "does not exist"
-
-    # This value, used in the test and suite caches, indicates that the
-    # corresponding ID corresponds to an existing test or suite, but the
-    # test or suite hasn't been loaded.
-    __NOT_LOADED = "not loaded"
-
     # When processing the DOM tree for an XML test file, we may
     # encounter two kinds of errors.  One indicates an invalid DOM tree,
     # i.e. the structure is at variance with the test DTD.  We can use
@@ -123,13 +115,12 @@ class Database(base.Database, qm.common.MutexMixin):
                   qm.error("db path doesn't exist", path=path)
         # Remember the path.
         self.__path = path
-        # Cache results in these attributes.  The keys are test or suite
-        # IDs, and the values are either the loaded test or suite
-        # objects, or the special values '__DOES_NOT_EXIST' or
-        # '__NOT_LOADED'. 
+        # Cache loaded objects in these attributes.
         self.__tests = {}
         self.__suites = {}
         self.__resources = {}
+        # Connect to the attachment store.
+        self.__attachment_store = AttachmentStore(path)
 
 
     def GetClassPaths(self):
@@ -148,29 +139,38 @@ class Database(base.Database, qm.common.MutexMixin):
         return self.__path
 
 
-    def HasTest(self, test_id):
-        """Return true if the database contains a test with 'test_id'."""
-
-        lock = self.GetLock()
-        return self.__HasItem(test_id, self.__tests, test_file_extension)
-
-
     def GetTest(self, test_id):
-        lock = self.GetLock()
-        if not self.HasTest(test_id):
+        # Try to use a cached value.
+        try:
+            return self.__tests[test_id]
+        except KeyError:
+            # Not in cache; no biggie.
+            pass
+
+        # Construct the file system path to the test file.
+        test_path = self.IdToPath(test_id) + test_file_extension
+        # Is it there?
+        if not os.path.isfile(test_path):
+            # No.  The test doesn't exist.
             raise base.NoSuchTestError, test_id
 
+        # Load the test file.
+        lock = self.GetLock()
         try:
-            return self.__GetItem(test_id,
-                                  self.__tests,
-                                  test_file_extension,
-                                  self.__ParseTestDocument)
+            test = self.__LoadItem(test_id, test_path,
+                                   self.__ParseTestDocument)
         except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
                exception:
+            # Problem while parsing XML.
             message = qm.error("error loading xml test",
                                test_id=test_id,
                                message=str(exception))
             raise TestFileError, message
+        else:
+            # Cache the test for next time.
+            self.__tests[test_id] = test
+            # Return it.
+            return test
         
 
     def WriteTest(self, test, comments=0):
@@ -188,7 +188,7 @@ class Database(base.Database, qm.common.MutexMixin):
         self.__MakeDomNodeForTest(document, document.documentElement,
                                   test, comments)
         # Find the file system path for the test file.
-        test_path = self.TestIdToPath(test_id, absolute=1)
+        test_path = self.IdToPath(test_id) + test_file_extension
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(test_path)
         if not os.path.isdir(containing_directory):
@@ -206,32 +206,46 @@ class Database(base.Database, qm.common.MutexMixin):
         # Invalidate the cache entry.
         self.__InvalidateItem(test_id, self.__tests)
         # Remove the test file.
-        test_path = self.TestIdToPath(test_id, absolute=1)
+        test_path = self.IdToPath(test_id) + test_file_extension
         os.unlink(test_path)
 
 
-    def GetTestIds(self, path="."):
-        lock = self.GetLock()
-        dir_path = self.IdToPath(path, absolute=1)
-        return scan_dir_for_labels(dir_path, test_file_extension)
-
-
-    def HasResource(self, resource_id):
-        """Return true if we contain a resource with 'resource_id'."""
-
-        lock = self.GetLock()
-        return self.__HasItem(resource_id, self.__resources,
-                              resource_file_extension)
+    def GetTestIds(self, label="."):
+        suite = self.GetSuite(label)
+        return base.get_suite_contents_recursively(suite, self)[0]
 
 
     def GetResource(self, resource_id):
-        lock = self.GetLock()
-        if not self.HasResource(resource_id):
+        # Try to use a cached value.
+        try:
+            return self.__resources[resource_id]
+        except KeyError:
+            pass
+
+        # Construct the file system path to the resource file.
+        resource_path = self.IdToPath(resource_id) + resource_file_extension
+        # Is it there?
+        if not os.path.isfile(resource_path):
+            # No.  The resource doesn't exist.
             raise base.NoSuchResourceError, resource_id
 
-        return self.__GetItem(resource_id, self.__resources,
-                              resource_file_extension,
-                              self.__ParseResourceDocument)
+        # Load the resource file.
+        lock = self.GetLock()
+        try:
+            resource = self.__LoadItem(resource_id, resource_path,
+                                       self.__ParseResourceDocument)
+        except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
+               exception:
+            # Problem while parsing XML.
+            message = qm.error("error loading xml resource",
+                               resource_id=resource_id,
+                               message=str(exception))
+            raise TestFileError, message
+        else:
+            # Cache the resource for next time.
+            self.__resources[resource_id] = resource
+            # Return it.
+            return resource
         
 
     def WriteResource(self, resource, comments=0):
@@ -249,8 +263,7 @@ class Database(base.Database, qm.common.MutexMixin):
         self.__MakeDomNodeForResource(document, document.documentElement,
                                     resource, comments)
         # Find the file system path for the resource file.
-        resource_path = self.IdToPath(resource_id, absolute=1) \
-                      + resource_file_extension
+        resource_path = self.IdToPath(resource_id) + resource_file_extension
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(resource_path)
         if not os.path.isdir(containing_directory):
@@ -268,73 +281,37 @@ class Database(base.Database, qm.common.MutexMixin):
         # Invalidate the cache entry.
         self.__InvalidateItem(resource_id, self.__resources)
         # Remove the resource file.
-        resource_path = self.IdToPath(resource_id, absolute=1) \
-                      + resource_file_extension
+        resource_path = self.IdToPath(resource_id) + resource_file_extension
         os.unlink(resource_path)
 
 
-    def GetResourceIds(self, path="."):
-        lock = self.GetLock()
-        dir_path = self.IdToPath(path, absolute=1)
-        return scan_dir_for_labels(dir_path, resource_file_extension)
-
-
-    def HasSuite(self, suite_id):
-        """Return true if the database contains a suite with 'suite_id'."""
-
-        lock = self.GetLock()
-        try:
-            # Check the cache.  If there's an entry for this suite ID,
-            # use the caches state.
-            return self.__suites[suite_id] is not self.__DOES_NOT_EXIST
-        except KeyError:
-            # It's not in the cache, so check the file system.
-            id_path = self.IdToPath(suite_id, absolute=0)
-            path = self.IdToPath(suite_id, absolute=1)
-            # Is there a directory corresponding to the ID?
-            if os.path.isdir(path):
-                # Yes.  Indicate in the cache that the suite exists.
-                self.__suites[suite_id] = self.__NOT_LOADED
-                return 1
-            # Is there an explicit suite file corresponding to the ID?
-            id_path = id_path + suite_file_extension
-            path = path + suite_file_extension
-            if os.path.isfile(path):
-                # Yes.  Indicate in the cache that the suite exists.
-                self.__suites[suite_id] = self.__NOT_LOADED
-                return 1
-            # No suite found.  Enter that into the cache.
-            self.__suites[suite_id] = self.__DOES_NOT_EXIST
-            return 0
+    def GetResourceIds(self, label="."):
+        suite = self.GetSuite(label)
+        return base.get_suite_contents_recursively(suite, self)[1]
 
 
     def GetSuite(self, suite_id):
-        lock = self.GetLock()
-
-        if not self.HasSuite(suite_id):
-            raise base.NoSuchSuiteError, \
-                  "no test suite with ID %s" % suite_id
-
-        # Look in the cache.
-        suite = self.__suites[suite_id]
-        if suite == self.__NOT_LOADED:
-            path = self.IdToPath(suite_id, absolute=1)
-            # The suite exists, but is not loaded.  We'll have to load
-            # it here.  Is there a directory corresponding to the ID?
-            if os.path.isdir(path):
-                # Return the virtual suite corresponding to that
-                # directory.
-                suite = DirectorySuite(suite_id, self)
+        try:
+            return self.__suites[suite_id]
+        except KeyError:
+            if suite_id == qm.label.root:
+                suite_path = self.GetPath()
+                suite = DirectorySuite(suite_id, suite_path, self)
             else:
-                # Load a suite from a file.
-                suite = self.__GetSuite(suite_id)
-            # Enter the suite into the cache.
+                suite_path = self.IdToPath(suite_id) + suite_file_extension
+                if not os.path.exists(suite_path):
+                    raise base.NoSuchSuiteError, \
+                          qm.error("no such suite", suite_id=suite_id)
+                if os.path.isdir(suite_path):
+                    suite = DirectorySuite(suite_id, suite_path, self)
+                elif os.path.isfile(suite_path):
+                    suite = self.__LoadSuiteFile(suite_id, suite_path)
+                else:
+                    raise base.NoSuchSuiteError, \
+                          qm.error("no such suite", suite_id=suite_id)
             self.__suites[suite_id] = suite
             return suite
-        else:
-            # Already loaded; return cached value.
-            return suite
-
+            
 
     def WriteSuite(self, suite):
         """Write 'suite' to the database as a suite file."""
@@ -355,17 +332,16 @@ class Database(base.Database, qm.common.MutexMixin):
         # IDs and suite IDs.  Use the raw test and suite IDs, i.e. don't
         # expand suites to their contained tests. 
         suite_element = document.documentElement
-        for test_id in suite.GetRawTestIds():
+        for test_id in suite.GetTestIds():
             test_id_element = qm.xmlutil.create_dom_text_element(
                 document, "test_id", test_id)
             suite_element.appendChild(test_id_element)
-        for suite_id in suite.GetRawSuiteIds():
+        for suite_id in suite.GetSuiteIds():
             suite_id_element = qm.xmlutil.create_dom_text_element(
                 document, "suite_id", suite_id)
             suite_element.appendChild(suite_id_element)
         # Find the file system path for the suite file.
-        suite_path = self.IdToPath(suite.GetId(), absolute=1) \
-                     + suite_file_extension
+        suite_path = self.IdToPath(suite.GetId()) + suite_file_extension
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(suite_path)
         if not os.path.isdir(containing_directory):
@@ -386,70 +362,27 @@ class Database(base.Database, qm.common.MutexMixin):
         # Invalidate the cache entry.
         self.__InvalidateItem(suite_id, self.__suites)
         # Remove the suite file.
-        suite_path = self.IdToPath(suite_id, absolute=1) \
-                     + suite_file_extension
+        suite_path = self.IdToPath(suite_id) + suite_file_extension
         os.unlink(suite_path)
 
 
-    def GetSuiteIds(self, path=".", implicit=0):
-        lock = self.GetLock()
-        # First find IDs corresponding to test suite files.
-        dir_path = self.IdToPath(path, absolute=1)
-        suites = scan_dir_for_labels(dir_path, suite_file_extension)
-        # Were implicit suite IDs requested?
-        if implicit:
-            # Yes.  Scan for subdirectories.
-            suites = suites + scan_dir_for_suite_dirs(dir_path)
-        return suites
+    def GetSuiteIds(self, label="."):
+        suite = self.GetSuite(label)
+        return base.get_suite_contents_recursively(suite, self)[2]
 
 
-    def TestIdToPath(self, test_id, absolute=0):
-        """Convert a test ID in the database to a path to the test file."""
+    def IdToPath(self, id_):
+        """Convert an ID in the database to a path."""
 
-        return self.IdToPath(test_id, absolute) + test_file_extension
-
-
-    def IdToPath(self, id_, absolute=0):
-        """Convert an ID in the database to a path.
-
-        'absolute' -- If true, include the path to the test database
-        itself.  Otherwise, the path is relative to the top of the test
-        database."""
-
-        path = qm.label.to_path(id_)
-        if absolute:
-            path = os.path.join(self.__path, path)
-        return path
+        parent_suite_id, name = qm.label.split(id_)
+        parent_suite = self.GetSuite(parent_suite_id)
+        return os.path.join(parent_suite.GetPath(),
+                            qm.label.to_path(name))
 
 
-    def SetAttachmentData(self, attachment, data, item_id):
-        lock = self.GetLock()
-        # Construct the path to the directory in which the test or
-        # resource given by 'item_id' is written.  The attachment should
-        # be written to this directory.
-        dir_path = self.IdToPath(qm.label.dirname(item_id), absolute=1)
-        # Construct the file name to which the attachment data is
-        # written.  Try to use the file name associated with the
-        # attachment. 
-        file_name = attachment.file_name
-        path = os.path.join(dir_path, file_name)
-        # If a file by that name already exists, generate a new file
-        # name by appending subsequent integers until we have a file
-        # name that doesn't already exist.
-        count = 0
-        while os.path.exists(path):
-            file_name = "%s.%d" % (attachment.file_name, count)
-            count = count + 1
-            path = os.path.join(dir_path, file_name)
-        # Open the attachment file, and set its permissions.
-        attachment_file = open(path, "wb")
-        os.chmod(path, 0600)
-        # Write the attachment data.
-        attachment_file.write(data)
-        attachment_file.close()
-        # Update the 'Attachment' object to the new location of the
-        # attachment data. 
-        attachment.location = file_name
+    def GetAttachmentStore(self):
+        return self.__attachment_store
+
 
 
     # Helper functions.
@@ -459,76 +392,32 @@ class Database(base.Database, qm.common.MutexMixin):
 
         if cache.has_key(item_id):
             del cache[item_id]
+        # Invalidate the suite containing this item.
+        parent_suite_id = qm.label.split(item_id)[0]
+        if self.__suites.has_key(parent_suite_id):
+            del self.__suites[parent_suite_id]
 
 
-    def __HasItem(self, item_id, cache, file_extension):
-        """Return true if an item (a test or resource) exits.
-
-        This function is used for logic common to tests and resources.
-
-        'item_id' -- The ID of the item.
-
-        'cache' -- A cache map in which to look up the item ID, and to
-        update if the item is found.
-
-        'file_extension' -- The file extension that is used for files
-        representing this kind of item."""
-
-        try:
-            # Try looking it up in the cache.
-            return cache[item_id] is not self.__DOES_NOT_EXIST
-        except KeyError:
-            # Not found in the cache, so check in the file system.  Turn
-            # the period-separated test ID into a file system path,
-            # relative to the top of the test database.
-            path = self.IdToPath(item_id, absolute=1) + file_extension
-            # Does the test file exist?
-            if os.path.isfile(path):
-                # Yes.  Enter into the cache that the test exists but is
-                # not loaded.
-                cache[item_id] = self.__NOT_LOADED
-                return 1
-            else:
-                # No.  Enter into the cache that the test does not exist.
-                cache[item_id] = self.__DOES_NOT_EXIST
-                return 0
-
-
-    def __GetItem(self, item_id, cache, file_extension, document_parser):
-        """Return an item (a test or resource).
+    def __LoadItem(self, item_id, path, document_parser):
+        """Load an item (a test or resource) from an XML file.
 
         This function is used for logic common to tests and resources.
 
         'item_id' -- The ID of the item to get.
 
-        'cache' -- A cache map in which to look up the item ID, and if
-        the item is loaded, into which to enter it.
-
-        'file_extension' -- The file extension that is used for files
-        representing this kind of item.  The file contents are XML.
+        'path' -- The path to the test or resource file.
 
         'document_parser' -- A function that takes an XML DOM document
         as its argument and returns the constructed item object."""
 
-        # Look in the cache.
-        item = cache[item_id]
-        if item == self.__NOT_LOADED:
-            # The item exists, but hasn't been loaded, so we'll have to
-            # load it here.  Turn the period-separated ID into a file
-            # system path, relative to the top of the item database.
-            path = self.IdToPath(item_id, absolute=1) + file_extension
-            # Load and parse the XML item representation.
-            document = qm.xmlutil.load_xml_file(path)
-            # Turn it into an object.
-            item = document_parser(item_id, document)
-            # Set its working directory.
-            item.SetWorkingDirectory(os.path.dirname(path))
-            # Enter it into the cache.
-            cache[item_id] = item
-            return item
-        else:
-            # Already loaded; return the cached value.
-            return item
+        # Load and parse the XML item representation.
+        document = qm.xmlutil.load_xml_file(path)
+        # Turn it into an object.
+        item = document_parser(item_id, document)
+        # Set its working directory.
+        item.SetWorkingDirectory(os.path.dirname(path))
+
+        return item
 
 
     def __ParseTestDocument(self, test_id, document):
@@ -554,7 +443,7 @@ class Database(base.Database, qm.common.MutexMixin):
                            test_class_name=test_class_name,
                            test_id=test_id)
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
-        categories = qm.xmlutil.get_dom_children_texts(test_node,
+        categories = qm.xmlutil.get_child_texts(test_node,
                                                        "category")
         prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
         resources = self.__GetResourcesFromDomNode(test_node)
@@ -735,10 +624,7 @@ class Database(base.Database, qm.common.MutexMixin):
                 document, "category", category)
             element.appendChild(cat_element)
 
-        # Build and add prerequisite elements.  First find the ID path
-        # containing this test.
-        containing_id = qm.label.split(test_id)[0]
-        # Loop over prerequisites.
+        # Build and add prerequisite elements.  Loop over prerequisites.
         for prerequisite_id, outcome in test.GetPrerequisites().items():
             # The ID of the prerequisite test is stored as the element
             # contents.
@@ -851,12 +737,11 @@ class Database(base.Database, qm.common.MutexMixin):
             element.appendChild(property_element)
 
 
-    def __GetSuite(self, suite_id):
-        """Load the test suite file with ID 'suite_id'.
+    def __LoadSuiteFile(self, suite_id, path):
+        """Load the test suite file at 'path' with suite ID 'suite_id'.
 
         returns -- A 'Suite' object."""
 
-        path = self.IdToPath(suite_id, absolute=1) + suite_file_extension
         # Make sure there is a file by that name.
         if not os.path.isfile(path):
             raise base.NoSuchSuiteError, "no suite file %s" % path
@@ -865,14 +750,17 @@ class Database(base.Database, qm.common.MutexMixin):
         suite = document.documentElement
         assert suite.tagName == "suite"
         # Extract the test and suite IDs.
-        test_ids = qm.xmlutil.get_dom_children_texts(suite, "test_id")
-        suite_ids = qm.xmlutil.get_dom_children_texts(suite, "suite_id")
+        test_ids = qm.xmlutil.get_child_texts(suite, "test_id")
+        suite_ids = qm.xmlutil.get_child_texts(suite, "suite_id")
         # Make sure they're all valid.
         for id_ in test_ids + suite_ids:
             if not qm.label.is_valid(id_, allow_separator=1):
                 raise RuntimeError, qm.error("invalid id", id=id_)
         # Construct the suite.
-        return base.Suite(suite_id, test_ids, suite_ids)
+        return base.Suite(suite_id,
+                          implicit=0,
+                          test_ids=test_ids,
+                          suite_ids=suite_ids)
 
 
 
@@ -883,142 +771,231 @@ class DirectorySuite(base.Suite):
     This suite contains all of the tests in the directory and its
     subdirectories."""
 
-    def __init__(self, suite_id, database):
+    def __init__(self, suite_id, path, database):
         """Create a new test suite instance.
 
         'suite_id' -- The test suite ID.
 
-        'database' -- The database containing the suite.
-
         'dir_path' -- The path, relative to 'db_path', to the directory
         containing the tests.  All tests in and under this directory are
-        included in the suite."""
+        included in the suite.
 
-        # Make sure the path exists.
-        path = os.path.join(database.GetPath(),
-                            database.IdToPath(suite_id))
+        'database' -- The database of which this suite is part."""
+
         if not os.path.isdir(path):
             raise base.NoSuchSuiteError, "no directory at %s" % path
         # Initialize the base class. 
         base.Suite.__init__(self, suite_id, implicit=1)
-        # Store the path to the directory.
+        # Store the path to the directory, and the database.
         self.__suite_path = path
+        self.__database = database
+        # These attributes contain the test and suite IDs in the suite,
+        # and are generated on demand.
+        self.__test_ids = None
+        self.__resource_ids = None
+        self.__suite_ids = None
 
 
-    def GetRawTestIds(self):
-        test_ids = {}
-        suite_ids = {}
-        self.__ScanDirectory(test_ids)
-        return test_ids.keys()
+    def GetPath(self):
+        """Return the file system path corresponding to this suite."""
 
-
-    def GetRawSuiteIds(self):
-        # Implicit suites don't contain other suites.
-        return []
+        return self.__suite_path
 
 
     def GetTestIds(self):
-        return self.GetRawTestIds()
+        if self.__test_ids is None:
+            self.__Scan()
+        return self.__test_ids
+
+
+    def GetSuiteIds(self):
+        if self.__suite_ids is None:
+            self.__Scan()
+        return self.__suite_ids
+
+
+    def GetResourceIds(self):
+        if self.__resource_ids is None:
+            self.__Scan()
+        return self.__resource_ids
 
 
     # Helper methods.
 
-    def __ScanDirectory(self, test_ids, sub_path=""):
-        """Recursively scan the tests in directory 'sub_path'.
+    def __Scan(self):
+        lock = self.__database.GetLock()
 
-        'test_ids' -- A map whose keys are test IDs.
-
-        'sub_path' -- Path relative to top of suite directory from which
-        to add tests.
-
-        This method calls itself recursively for subdirectories."""
+        resource_ids = []
+        suite_ids = []
+        test_ids = []
 
         suite_id = self.GetId()
-        sub_id = qm.label.from_path(sub_path)
-        # Generate the full path to the directory being scanned.
-        path = os.path.join(self.__suite_path, sub_path)
-        # Loop over its contents.
-        for entry in dircache.listdir(path):
-            entry_path = os.path.join(path, entry)
-            # Is it a directory?
-            if os.path.isdir(entry_path):
-                # Yes.  Scan recursively.
-                self.__ScanDirectory(test_ids, os.path.join(sub_path, entry))
-            else:
-                # Look at its extension.
-                name, extension = os.path.splitext(entry)
-                if extension == test_file_extension:
-                    # It looks like a test file.
-                    test_id = qm.label.join(suite_id, sub_id, name)
-                    test_ids[test_id] = None
-                    
+        # Loop over contents of the suite directory.
+        for entry in dircache.listdir(self.__suite_path):
+            # Look at its extension.
+            name, extension = os.path.splitext(entry)
+            # Construct the full path and ID for this object.
+            entry_path = os.path.join(self.__suite_path, entry)
+            entry_id = qm.label.join(suite_id, name)
+            # Is it a suite?
+            if extension == suite_file_extension \
+               and (os.path.isfile(entry_path) or os.path.isdir(entry_path)):
+                # It's a suite.
+                suite_ids.append(entry_id)
+            elif extension == test_file_extension \
+                 and os.path.isfile(entry_path):
+                # It's a test file.
+                test_ids.append(entry_id)
+            elif extension == resource_file_extension \
+                 and os.path.isfile(entry_path):
+                # It's a resource file.
+                resource_ids.append(entry_id)
+
+        self.__resource_ids = resource_ids
+        self.__suite_ids = suite_ids
+        self.__test_ids = test_ids
 
 
-########################################################################
-# functions
-########################################################################
 
-def scan_dir_for_labels(dir, extension): 
-    """Return labels for files in and under 'dir' matching 'extension'.
+class AttachmentStore(qm.attachment.AttachmentStore):
+    """The attachment store implementation to use with the XML database.
 
-    Recursively searches for files under 'dir' whose names end in
-    'extension'.  Returns a list of corresponding labels, relative to
-    'dir'."""
+    The attachment store stores attachment data in the same directory
+    hierarchy as test files.  The data file for a test's attachment is
+    stored in the same subdirectory as the test.  Where possible, the
+    attachment's file name is used."""
 
-    results = []
-    # Scan contents of 'dir'.
-    for entry in dircache.listdir(dir):
-        # Construct the full path to the entry.
-        entry_path = os.path.join(dir, entry)
-        # Is it a subdirectory?
-        if os.path.isdir(entry_path):
-            # Yes.  Call ourselves recursively.
-            sub_results = scan_dir_for_labels(entry_path, extension)
-            # Make the contents of the subdirectory relative to the
-            # top-level 'dir' by prefixing the subdirectory name.
-            rel = qm.label.MakeRelativeTo(entry)
-            sub_results = map(rel, sub_results)
-            # Add to the results.
-            results = results + sub_results
-        else:
-            # Not a directory.  Is it a file ending with the desired
-            # extension? 
-            if os.path.isfile(entry_path):
-                entry_name, entry_extension = os.path.splitext(entry)
-                if extension == entry_extension:
-                    # Yes; keep it.
-                    results.append(entry_name)
+    def __init__(self, path):
+        """Create a connection to an attachment store.
 
-    return results
+        'path' -- The path to the top of the attachment store directory
+        tree."""
+
+        self.__path = path
 
 
-def scan_dir_for_suite_dirs(dir):
-    """Return labels for directories under 'dir' that are suites."""
+    def Store(self, item_id, mime_type, description, file_name, data):
+        """Store attachment data, and construct an attachment object.
 
-    results = []
-    # Scan contents of 'dir'.
-    for entry in dircache.listdir(dir):
-        # Construct the full path to the entry.
-        entry_path = os.path.join(dir, entry)
-        # Is it a subdirectory?
-        if os.path.isdir(entry_path):
-            # Yes.  If it's called 'CVS', though, skip it, so that we
-            # don't get confused by CVS-controlled test suite directory
-            # hierarchies.
-            if entry == "CVS":
+        'item_id' -- The ID of the test or resource of which this
+        attachment is part.
+
+        'mime_type' -- The attachment MIME type.
+
+        'description' -- A description of the attachment.
+
+        'file_name' -- The name of the file from which the attachment
+        was uploaded.
+
+        'data' -- The attachment data.
+
+        returns -- An 'Attachment' object, with its location set
+        correctly."""
+
+        # Construct the path at which we'll store the attachment data.
+        data_file_path = self.__MakeDataFilePath(item_id, file_name)
+        # Store it.
+        data_file = open(os.path.join(self.__path, data_file_path), "w")
+        data_file.write(data)
+        data_file.close()
+        # Construct an 'Attachment'.
+        return qm.attachment.Attachment(
+            mime_type,
+            description,
+            file_name,
+            location=data_file_path)
+
+
+    def Adopt(self, item_id, mime_type, description, file_name, path):
+        """Extract attachment data from a file, and remove the file.
+
+        'item_id' -- The ID of the test or resource of which this
+        attachment is part.
+
+        'mime_type' -- The attachment MIME type.
+
+        'description' -- A description of the attachment.
+
+        'file_name' -- The name of the file from which the attachment
+        was uploaded.
+
+        'data' -- The attachment data.
+
+        returns -- An 'Attachment' object, with its location set
+        correctly.
+
+        postconditions -- The file at 'path' does not exist."""
+
+        # Construct the path at which we'll store the attachment data.
+        data_file_path = self.__MakeDataFilePath(item_id, file_name)
+        full_data_file_path = os.path.join(self.__path, data_file_path)
+        # Copy the data file.
+        shutil.copy(path, full_data_file_path)
+        # Delete the original data file.
+        os.unlink(path)
+        # Construct an 'Attachment'.
+        return qm.attachment.Attachment(
+            mime_type,
+            description,
+            file_name,
+            location=data_file_path)
+
+
+    # Implementation of base class methods.
+
+    def GetData(self, location):
+        data_file_path = os.path.join(self.__path, location)
+        return open(data_file_path, "r").read()
+
+
+    def GetDataFile(self, location):
+        data_file_path = os.path.join(self.__path, location)
+        return data_file_path
+
+
+    def GetSize(self, location):
+        data_file_path = os.path.join(self.__path, location)
+        return os.stat(data_file_path)[6]
+
+
+    # Helper functions.
+
+    def __MakeDataFilePath(self, item_id, file_name):
+        """Construct the path to an attachment data file.
+
+        'item_id' -- The test or resource item of which the attachment
+        is part.
+
+        'file_name' -- The file name specified for the attachment."""
+        
+        # Convert the item's containing suite to a path.
+        parent_suite_id = qm.label.split(item_id)[0]
+        parent_suite_path = qm.label.to_path(parent_suite_id)
+        # Is the file name by itself OK in this directory?  It must not
+        # have a file extension used by the XML database itself, and
+        # there must be no other file with the same name there.
+        extension = os.path.splitext(file_name)[1]
+        data_file_path = os.path.join(parent_suite_path, file_name)
+        full_data_file_path = os.path.join(self.__path, data_file_path)
+        if extension not in [test_file_extension,
+                             suite_file_extension,
+                             resource_file_extension] \
+           and not os.path.exists(full_data_file_path):
+            return data_file_path
+
+        # No good.  Construct alternate names by appending numbers
+        # incrementally.
+        index = 0
+        while 1:
+            data_file_path = os.path.join(parent_suite_path, file_name) \
+                             + ".%d" % index
+            full_data_file_path = os.path.join(self.__path, data_file_path)
+            if os.path.exists(full_data_file_path):
+                index = index + 1
                 continue
-            # Add the directory itself.
-            # FIXME: Check if it's empty?
-            results.append(entry)
-            # Call ourselves recursively.
-            sub_results = scan_dir_for_suite_dirs(entry_path)
-            # Make the contents of the subdirectory relative to the
-            # top-level 'dir' by prefixing the subdirectory name.
-            rel = qm.label.MakeRelativeTo(entry)
-            sub_results = map(rel, sub_results)
-            # Add to the results.
-            results = results + sub_results
-    return results
+            else:
+                return data_file_path
+        
 
 
 ########################################################################

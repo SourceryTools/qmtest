@@ -86,7 +86,7 @@
     Subsequently, you have to tell qmtrack where the IDB is.  Either use
     the --idb option, or
 
-      export QMTRACK_IDB_PATH=/path/to/idb
+      export QMTRACK_DB_PATH=/path/to/idb
 
 
   - USING QMTRACK FROM THE COMMAND LINE

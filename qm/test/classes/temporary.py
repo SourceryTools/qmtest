@@ -36,7 +36,7 @@
 ########################################################################
 
 import os
-import qm
+import qm.common
 import qm.fields
 from   qm.test.base import Result
 import tempfile
@@ -106,7 +106,7 @@ class TempDirectoryResource:
         # Clean up the directory.
         try:
             if self.__delete_recursively:
-                qm.remove_directory_recursively(dir_path)
+                qm.common.rmdir_recursively(dir_path)
             else:
                 os.rmdir(dir_path)
         except OSError, error:

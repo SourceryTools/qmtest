@@ -1,6 +1,8 @@
 PUBLIC "-//Software Carpentry//User Database V0.1//EN" "user.dtd"
 PUBLIC "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" "fields.mod"
 
+PUBLIC "-//Software Carpentry//QMTrack IDB Configuration V0.1//EN" "idb-configuration.dtd"
+PUBLIC "-//Software Carpentry//QMTrack Issue Classes V0.1//EN" "issue-classes.dtd"
 PUBLIC "-//Software Carpentry//QMTrack Issue V0.1//EN" "issue.dtd"
 
 PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "test.dtd"

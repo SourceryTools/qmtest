@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>from qm.test.base import expand_ids
+suite_ids = expand_ids(['unit.test.test_suite1'])[1]
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>len(suite_ids) == 0
+</text>
+ </argument>
+</test>

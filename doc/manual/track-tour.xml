@@ -105,26 +105,27 @@
 
  </section> <!-- sec-tracktut-user-db -->
 
- <section id="sec-tracktut-server">
-  <title>Starting the Server</title>
+ <section id="sec-tracktut-configuration">
+  <title>Configuring the Issue Database</title>
 
-  <para>&qmtrack; provides a Web-based user interface and remote access
-  capabilities through a built-in Web server.  While &qmtrack; does
-  support a command-line interface, you can perform most tasks,
-  including configuration, from the Web interface.</para>
+  <para>&qmtrack; provides a Web-based interface for configuring an
+  issue database, via a built-in Web server.  You configure an issue
+  database by starting the configuration Web server and pointing your
+  browser at it.  While the configuration server is running, you may not
+  interact with the issue database in other ways.</para>
 
-  <para>To start the server, use the <command>qmtrack server</command>
-  command.  Specify the TCP port number on which to run the server with
-  the <option>&dashdash;port</option> (<option>-P</option>) option.
-  Don't forget to specify the path to the &idb;.</para>
+  <para>To start the configuration server, use the
+  <command>&qmtrack-cmd; configure</command> command.  Specify the TCP
+  port number on which to run the server with the
+  <option>&dashdash;port</option> (<option>-P</option>) option.  Don't
+  forget to specify the path to the &idb;.</para>
 
   <para>For example, if you created an &idb; at the path
   <filename>~/idb</filename>, run the &qmtrack; server on port 8000 by
   invoking:</para>
 
-  <screen>
-&prompt;<userinput>export QMTRACK_IDB_PATH=~/idb</userinput>
-&prompt;<userinput>qmtrack server -P 8000 -b</userinput>
+  <screen>&prompt;<userinput>export QMTRACK_DB_PATH=~/idb</userinput>
+&prompt;<userinput>qmtrack configure -P 8000 -b</userinput>
   </screen>
 
   <para>The <option>&dashdash;start-browser</option>
@@ -136,7 +137,7 @@
   system, see <xref linkend="sec-rc"></xref> for information on
   configuring it correctly.)</para>
 
- </section> <!-- sec-tracktut-server -->
+ </section> <!-- sec-tracktut-configuration -->
 
  <section id="sec-tracktut-issue-class">
   <title>Creating an Issue Class</title>
@@ -394,6 +395,30 @@
   </glosslist>
 
  </section> <!-- sec-tracktut-special-features -->
+
+ <section id="sec-tracktut-server">
+  <title>Starting the Server</title>
+
+  <para>&qmtrack; provides a Web-based user interface and remote access
+  capabilities through a built-in Web server.  While &qmtrack; does
+  support a command-line interface, you can perform most tasks,
+  including configuration, from the Web interface.</para>
+
+  <para>Start the main Web user interface with the <command>qmtrack
+  server</command> command.  The options to this command are similar to
+  those of the configuration server command, <command>&qmtrack-cmd;
+  configure</command>, described in <xref
+  linkend="sec-tracktut-configuration"/>.  Specify the TCP port number on
+  which to run the server with the <option>&dashdash;port</option>
+  (<option>-P</option>) option.  Don't forget to specify the path to the
+  &idb;.</para>
+
+  <para>If you specify the <option>&dashdash;start-browser</option>
+  (<option>-b</option>) option, &qmtrack; will open a browser window and
+  connect to the Web user interface.  Otherwise, &qmtrack; prints the
+  appropriate URL, and you may connect to the URL yourself.</para>
+
+ </section> <!-- sec-tracktut-server -->
 
 </chapter>
 <!--

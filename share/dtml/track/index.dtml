@@ -60,7 +60,7 @@
          bgcolor="#f0f0f0">
    <tbody>
 
-    <dtml-if expr="_.len(issue_classes) > 0">
+    <dtml-if expr="_.len(GetIssueClasses()) > 0">
 
      <tr><th>Create a New Issue</th></tr>
      <tr>
@@ -70,13 +70,13 @@
           Show a select control to choose the issue class, if there is
           more than one available.
         --></dtml-comment>
-        <dtml-if expr="_.len(issue_classes) > 1">
+        <dtml-if expr="_.len(GetIssueClasses()) > 1">
          <select name="class">
-          <dtml-in name="issue_classes">
+          <dtml-in name="GetIssueClasses()">
           <dtml-let issue_class=sequence-item>
            <option 
                    value="<dtml-var expr="issue_class.GetName()">"
-            <dtml-if expr="issue_class == default_issue_class">
+            <dtml-if expr="issue_class == GetDefaultIssueClass()">
                    selected
             </dtml-if>
            >
@@ -131,7 +131,7 @@
       </td>
      </tr>
 
-    <dtml-else>  <!-- _len(issue_classes) == 0 -->
+    <dtml-else>  <!-- _len(GetIssueClasses()) == 0 -->
 
      <tr>
       <td>
@@ -141,7 +141,7 @@
       </td>
      </tr>
 
-    </dtml-if> <!-- _len(issue_classes) > 0 -->
+    </dtml-if> <!-- _len(GetIssueClasses()) > 0 -->
 
     <dtml-if expr="UserIsInGroup('administrators')">
 
@@ -151,7 +151,6 @@
      <tr>
       <td>
        <form>
-        <dtml-var expr="MakeButton('Configure IDB...', 'config-idb')">
         <dtml-var expr="MakeButton('Shut Down', 'shutdown')">
        </form>
       </td>

@@ -51,12 +51,19 @@ The path you specified for the test database, %(path)s, does not exist.
 @ db path exists
 The path you specified for the test database, %(path)s, already exists.
 
-@ error loading xml test
-A problem occurred while loading the XML test "%(test_id)s":
+@ error loading xml resource
+A problem occurred while loading the XML resource file "%(resource_id)s":
 %(message)s.
 
+@ error loading xml test
+A problem occurred while loading the XML test file "%(test_id)s":
+%(message)s.
+
+@ failed prerequisite
+A prerequisite produced an incorrect outcome.
+
 @ failed resource
-Setup of the required resource "%(id)s" failed.
+Setup of a required resource failed.
 
 @ file invalid pattern
 The substitution pattern "%(pattern)s" is invalid: %(msg)s.  The pattern
@@ -65,9 +72,6 @@ should be a valid Python regular expression.
 @ file invalid substitution
 The substitution "%(substitution)s" is invalid.  A substitution should
 have the form "/*pattern*/*replacement*/".
-
-@ incorrect prerequisite outcome
-Prerequisite %(id)s produced %(outcome)s instead of %(expected_outcome)s.
 
 @ invalid class
 There is no test class "%(class_name)s".
@@ -129,13 +133,16 @@ You must speicfy the ID of the item to submit.
 Cannot execute the shell interpreter.
 
 @ no such action
-There is no action with the action ID you specified, "%(action_id)s".
+There is no action with the action ID "%(action_id)s".
+
+@ no such suite
+There is no suite with the suite ID "%(suite_id)s".
 
 @ no such test
-There is no test with the test ID you specified, "%(test_id)s".
+There is no test with the test ID "%(test_id)s".
 
 @ no target for group
-No target which matches the group pattern "%(group_pattern)s". 
+No target which matches the group pattern specified for this test.
 
 @ seed not integer
 The random number generator seed you specified, "%(seed)s", is not an

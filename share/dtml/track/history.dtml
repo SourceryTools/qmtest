@@ -20,7 +20,7 @@
  <tbody>
    <dtml-in expr="revisions">
    <dtml-let revision=sequence-item
-             revision_number="revision.GetRevision()"
+             revision_number="revision.GetRevisionNumber()"
              index=sequence-index>
     <tr bgcolor="white">
      <td colspan="3"><dtml-var expr="MakeSpacer(0, 0)"></td>
@@ -35,7 +35,7 @@
      </td>
      <td align="right">
       <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
-       <b>revision <dtml-var expr="revision.GetRevision()"></b></a>
+       <b>revision <dtml-var expr="revision.GetRevisionNumber()"></b></a>
      </td>
      <td>
       <dtml-var expr="GetRevisionTime(revision)">

@@ -78,35 +78,37 @@ class DefaultDtmlPage(qm.web.DtmlPage):
         return self.MakeListingUrl()
 
 
-    def FormatTestId(self, test_id):
-        """Return markup for 'test_id'."""
+    def FormatId(self, id, type, style="basic"):
+        script = "show-" + type
+        request = qm.web.WebRequest(script, base=self.request, id=id)
+        url = request.AsUrl()
+        parent_suite_id, name = qm.label.split(id)
 
-        request = qm.web.WebRequest("show-test",
-                                    base=self.request,
-                                    id=test_id)
-        return '<a href="%s"><span class="test_id">%s</span></a>' \
-               % (request.AsUrl(), test_id)
+        if style == "plain":
+            return '<span class="id">%s</span>' % id
 
+        elif style == "basic":
+            return '<a href="%s"><span class="id">%s</span></a>' % (url, id)
 
-    def FormatResourceId(self, resource_id):
-        """Return markup for 'resource_id'."""
+        elif style == "navigation":
+            if parent_suite_id == qm.label.root:
+                parent = ""
+            else:
+                parent = self.FormatId(parent_suite_id, "suite", style) \
+                         + qm.label.sep
+            return parent \
+                   + '<a href="%s"><span class="id">%s</span></a>' \
+                   % (url, name)
 
-        request = qm.web.WebRequest("show-resource",
-                                    base=self.request,
-                                    id=resource_id)
-        return '<a href="%s"><span class="resource_id">%s</span></a>' \
-               % (request.AsUrl(), resource_id)
+        elif style == "tree":
+            return "&nbsp;&nbsp;&nbsp;" \
+                   * (len(qm.label.split_fully(id)) - 1) \
+                   + '<a href="%s"><span class="id">%s</span></a>' \
+                   % (url, name)
 
+        else:
+            assert style
 
-    def FormatSuiteId(self, suite_id):
-        """Return markup for 'suite_id'."""
-
-        request = qm.web.WebRequest("show-suite",
-                                    base=self.request,
-                                    id=suite_id)
-        return '<a href="%s"><span class="suite_id">%s</span></a>' \
-               % (request.AsUrl(), suite_id)
-    
 
 
 class DtmlPage(DefaultDtmlPage):
@@ -127,8 +129,10 @@ class DtmlPage(DefaultDtmlPage):
 # functions
 ########################################################################
 
-def make_server(port, address="", log_file=None):
+def make_server(database, port, address="", log_file=None):
     """Create and bind an HTTP server.
+
+    'database' -- The test database to serve.
 
     'port' -- The port number on which to accept HTTP requests.
 
@@ -142,6 +146,7 @@ def make_server(port, address="", log_file=None):
     address.  Call its 'Run' method to start accepting requests."""
 
     import qm.test.web.dir
+    import qm.test.web.run
     import qm.test.web.show
     import qm.test.web.suite
 
@@ -151,7 +156,6 @@ def make_server(port, address="", log_file=None):
     server = qm.web.WebServer(port,
                               address,
                               log_file=log_file)
-    qm.attachment.register_attachment_upload_script(server)
     # Register all our web pages.
     for name, function in [
         ( "create-resource", qm.test.web.show.handle_show ),
@@ -167,6 +171,7 @@ def make_server(port, address="", log_file=None):
         ( "new-resource", qm.test.web.show.handle_new_resource ),
         ( "new-suite", qm.test.web.suite.handle_new ),
         ( "new-test", qm.test.web.show.handle_new_test ),
+        ( "run-tests", qm.test.web.run.handle_run_tests ),
         ( "show-resource", qm.test.web.show.handle_show ),
         ( "show-suite", qm.test.web.suite.handle_show ),
         ( "show-test", qm.test.web.show.handle_show ),
@@ -186,6 +191,17 @@ def make_server(port, address="", log_file=None):
     server.RegisterPathTranslation(
         "/manual", qm.get_doc_directory("manual", "html"))
     
+    # The global temporary attachment store processes attachment data
+    # uploads.
+    temporary_attachment_store = qm.attachment.temporary_store
+    server.RegisterScript(qm.fields.AttachmentField.upload_url,
+                          temporary_attachment_store.HandleUploadRequest)
+    # The IDB's attachment store processes download requests for
+    # attachment data.
+    attachment_store = database.GetAttachmentStore()
+    server.RegisterScript(qm.fields.AttachmentField.download_url,
+                          attachment_store.HandleDownloadRequest)
+
     # Bind the server to the specified address.
     try:
         server.Bind()

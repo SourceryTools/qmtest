@@ -61,7 +61,8 @@ edit -- Edit an existing issue."""
 import mimetypes
 import qm.fields
 import qm.structured_text
-import qm.track.idb
+import qm.track.issue
+import qm.track.issue_store
 import qm.web
 import string
 import sys
@@ -123,16 +124,12 @@ class ShowPage(web.DtmlPage):
             errors[key] = qm.structured_text.to_html(value)
         self.errors = errors
         self.fields = self.issue.GetClass().GetFields()
-        # If we're showing the revision history, get the previous
-        # revisions. 
-        if show_history:
-            idb = qm.track.get_idb()
-            self.revisions = idb.GetAllRevisions(issue.GetId(),
-                                                 issue.GetClass())
         if self.style == "edit":
             # Since we're editing the issue, show it with an
             # incremented revision number.
             issue.SetField("revision", issue.GetField("revision") + 1)
+        # Cache the issue's revision history in this attribute.
+        self.__history = None
 
 
     def IsForm(self):
@@ -156,6 +153,7 @@ class ShowPage(web.DtmlPage):
     def FormatFieldValue(self, field):
         """Return an HTML rendering of the value for 'field'."""
 
+        idb = self.request.GetSession().idb
         style = self.style
         field_name = field.GetName()
         value = self.issue.GetField(field_name)
@@ -188,7 +186,7 @@ class ShowPage(web.DtmlPage):
             # indicate we're not showing the current revision.
             result = result \
                      + " (current revision is %d)" \
-                     % self.revisions[-1].GetRevision()
+                     % self.GetHistory()[-1].GetRevisionNumber()
 
         return result
 
@@ -225,7 +223,7 @@ class ShowPage(web.DtmlPage):
         # argument to hide.
         if show:
             request["history"] = "1"
-            request["revision"] = self.issue.GetRevision()
+            request["revision"] = self.issue.GetRevisionNumber()
         else:
             if request.has_key("history"):
                 del request["history"]
@@ -245,10 +243,22 @@ class ShowPage(web.DtmlPage):
     def FormatHistory(self):
         """Generate HTML for the revision history of this issue."""
 
-        fragment = web.HistoryPageFragment(self.revisions,
-                                           self.issue.GetRevision())
+        fragment = web.HistoryPageFragment(
+            self.GetHistory(), self.issue.GetRevisionNumber())
         fragment.MakeShowRevisionUrl = self.MakeShowRevisionUrl
         return fragment()
+
+
+    def GetHistory(self):
+        """Return a list of all revisions of the issue."""
+
+        # Obtain the list of revisions just in time, and cache the
+        # results. 
+        if self.__history is None:
+            issue_store = self.request.GetSession().idb.GetIssueStore()
+            iid = self.issue.GetId()
+            self.__history = issue_store.GetIssueHistory(iid)
+        return self.__history
 
 
 
@@ -269,16 +279,16 @@ def handle_show(request):
 
     # Determine the issue to show.
     iid = request["iid"]
-    idb = qm.track.get_idb()
+    istore = request.GetSession().idb.GetIssueStore()
 
     try:
         # Get the issue.
         if request.has_key("revision"):
             # A specific revision was requested.
-            issue = idb.GetIssue(iid, int(request["revision"]))
+            issue = istore.GetIssue(iid, int(request["revision"]))
         else:
             # Use the current revision.
-            issue = idb.GetIssue(iid)
+            issue = istore.GetIssue(iid)
     except KeyError:
         # An issue with the specified iid was not fount.  Show a page
         # indicating the error.
@@ -298,7 +308,7 @@ def handle_show(request):
 def handle_new(request):
     """Generate a form for a new issue."""
 
-    idb = qm.track.get_idb()
+    idb = request.GetSession().idb
 
     # If an issue class was specified, use it; otherwise, assume the
     # default class.
@@ -313,30 +323,13 @@ def handle_new(request):
     return ShowPage(issue, "new")(request)
 
 
-def retrieve_attachment_data(attachment):
-    """Retrieve a temporary attachment's data and store it in the IDB."""
-
-    location = attachment.location
-    # Is this attachment in the temporary area?
-    if not qm.attachment.is_temporary_attachment_location(location):
-        # No; skip it.
-        return
-    # Retrieve the attachment data.
-    data = qm.attachment.retrieve_temporary_attachment(location)
-    # Store it in the IDB.
-    idb = qm.track.get_idb()
-    location = idb.GetNewAttachmentLocation()
-    idb.SetAttachmentData(location, data)
-    # Store the new data location (in the IDB) into the attachment.
-    attachment.location = location
-
-
 def handle_submit(request):
     """Process a submission of a new or modified issue."""
 
     iid = request["iid"]
     requested_revision = int(request["revision"])
-    idb = qm.track.get_idb()
+    idb = request.GetSession().idb
+    istore = idb.GetIssueStore()
     issue_class = idb.GetIssueClass(request["class"])
 
     # Is this the submission of a new issue?
@@ -348,12 +341,12 @@ def handle_submit(request):
     else:
         # It's a new revision of an existing issue.  Retrieve the
         # latter. 
-        issue = idb.GetIssue(iid)
+        issue = istore.GetIssue(iid)
         # Make sure the requested revision is one greater than the
         # most recent stored revision for this issue.  If it's not,
         # this probably indicates that this issue was modified while
         # this new revision was being formulated by the user.
-        if issue.GetRevision() + 1 != requested_revision:
+        if issue.GetRevisionNumber() + 1 != requested_revision:
             msg = """
             Someone else has modified this issue since you started
             editing it (or perhaps you submitted the same changes
@@ -379,6 +372,7 @@ def handle_submit(request):
         try:
             value = field.ParseFormValue(value)
         except:
+            sys.stderr.write(qm.common.format_exception(sys.exc_info()))
             # Something went wrong parsing the value.  Associate an
             # error message with this field.
             message = str(sys.exc_info()[1])
@@ -391,13 +385,16 @@ def handle_submit(request):
             # IDB.  This function does the work.
             if isinstance(field, qm.fields.AttachmentField):
                 # An attachment field -- process the value.
-                retrieve_attachment_data(value)
+                value = _store_attachment_data(idb, issue, value)
             elif isinstance(field, qm.fields.SetField) \
                  and isinstance(field.GetContainedField(),
                                 qm.fields.AttachmentField):
                 # An attachment set field -- process each element of the
                 # value.
-                map(retrieve_attachment_data, value)
+                value = map(
+                    lambda attachment, idb=idb, issue=issue: \
+                    _store_attachment_data(idb, issue, attachment),
+                    value)
 
             issue.SetField(field_name, value)
 
@@ -415,8 +412,8 @@ def handle_submit(request):
     # If this is a new revision of an existing issue, find the changes
     # made relative to the previous revision.
     if requested_revision > 0:
-        previous_revision = idb.GetIssue(iid)
-        differences = qm.track.get_differing_fields(
+        previous_revision = istore.GetIssue(iid)
+        differences = qm.track.issue.get_differing_fields(
             issue, previous_revision)
         # Has anything at all changed?
         if len(differences) == 0:
@@ -428,13 +425,14 @@ def handle_submit(request):
         try:
             if requested_revision == 0:
                 # Add the new issue.
-                idb.AddIssue(issue)
+                istore.AddIssue(issue)
             else:
                 # Add the new revision.
-                idb.AddRevision(issue)
-        except qm.track.idb.IssueExistsError, exception:
+                issue.SetField("revision", requested_revision)
+                istore.AddRevision(issue)
+        except ValueError, exception:
             errors["iid"] = qm.error("iid already used", iid=iid)
-        except qm.track.idb.TriggerRejectError, exception:
+        except qm.track.issue_store.TriggerRejectError, exception:
             trigger_result = exception.GetResult()
             errors["_issue"] = trigger_result.GetMessage()
 
@@ -454,8 +452,29 @@ def handle_submit(request):
         # to the show page for the newly-created or -modified issue.
         # That way, if the user reloads the page or backs up to it,
         # the issue form will not be resubmitted.
-        request = qm.web.WebRequest("show", base=request, iid=iid)
-        raise qm.web.HttpRedirect, request.AsUrl()
+        raise qm.web.HttpRedirect, \
+              qm.web.WebRequest("show", base=request, iid=iid)
+
+
+def _store_attachment_data(idb, issue, attachment):
+    """Retrieve a temporary attachment's data and store it in the IDB."""
+
+    location = attachment.GetLocation()
+    # Is this attachment in the temporary area?
+    if qm.attachment.is_temporary_location(location):
+        # Release the file containing the attachment data from the
+        # temporary attachment store.
+        temporary_astore = qm.attachment.temporary_store
+        data_path = temporary_astore.Release(location)
+        # Store the attachment data permanently.
+        astore = idb.GetAttachmentStore()
+        return astore.Adopt(issue,
+                            attachment.GetMimeType(),
+                            attachment.GetDescription(),
+                            attachment.GetFileName(),
+                            data_path)
+    else:
+        return attachment
 
 
 ########################################################################

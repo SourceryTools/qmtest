@@ -39,6 +39,7 @@ import os
 import qm
 import qm.attachment
 import qm.cmdline
+import qm.fields
 import qm.platform
 import qm.structured_text
 import qm.track.cmdline
@@ -51,8 +52,115 @@ import sys
 import xmlrpclib
 
 ########################################################################
+# constants
+########################################################################
+
+# Base URL path for QMTrack stuff.
+_script_base = "/track/"
+
+########################################################################
 # classes
 ########################################################################
+
+class WebServer(qm.web.WebServer):
+    """The QMTrack web server.
+
+    This server enhance the base class version by attaching an
+    '_IssueDatabase' instance to each session as the 'idb' attribute."""
+
+    # FIXME: Implement virtual hosting by configuring the server with
+    # multiple IDBs.  The server can choose the appropriate one from the
+    # host name in the web request.
+
+    def __init__(self,
+                 idb,
+                 port,
+                 address="",
+                 log_file=sys.stderr,
+                 xml_rpc_path=None):
+        """Create a new web server.
+
+        'idb' -- The issue database to serve.
+
+        See 'qm.web.WebServer.__init__' for descriptions of the other
+        parameters."""
+
+        # Initialize the base class.
+        qm.web.WebServer.__init__(self, port=port, address=address,
+                                  log_file=log_file,
+                                  xml_rpc_path=xml_rpc_path)
+        # Store the IDB.
+        self.__idb = idb
+
+        # Register the location of some static stuff.
+        self.RegisterPathTranslation(
+            "/stylesheets", qm.get_share_directory("web", "stylesheets"))
+        self.RegisterPathTranslation(
+            "/images", qm.get_share_directory("web", "images"))
+        self.RegisterPathTranslation(
+            "/static", qm.get_share_directory("web", "static"))
+        # Register the QM manual.
+        self.RegisterPathTranslation(
+            "/manual", qm.get_doc_directory("manual", "html"))
+        # Register the remote command handler.
+        self.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
+
+        # The global temporary attachment store processes attachment
+        # data uploads.
+        temporary_attachment_store = qm.attachment.temporary_store
+        self.RegisterScript(qm.fields.AttachmentField.upload_url,
+                            temporary_attachment_store.HandleUploadRequest)
+
+        # The IDB's attachment store processes download requests for
+        # attachment data.
+        attachment_store = idb.GetAttachmentStore()
+        self.RegisterScript(qm.fields.AttachmentField.download_url,
+                            attachment_store.HandleDownloadRequest)
+                            
+
+        # Bind the server to the specified address.
+        try:
+            self.Bind()
+        except qm.web.AddressInUseError, address:
+            raise RuntimeError, \
+                  qm.error("address in use", address=address)
+        except qm.web.PrivilegedPortError:
+            raise RuntimeError, \
+                  qm.error("privileged port", port=port)
+
+
+    def HandleNoSessionError(self, request, message):
+        try:
+            # Invoke the base class version.  It returns a page only if
+            # something went wrong constructing a session; in that case,
+            # just pass on the page.
+            return qm.web.WebServer.HandleNoSessionError(
+                self, request, message)
+        except qm.web.HttpRedirect, redirection:
+            # The base class version constructed a session, and attached
+            # its ID to the request.  Look up that session.
+            session = redirection.request.GetSession()
+            # Attach the IDB to the session.
+            session.idb = self.__idb
+            # Continue with the redirection.
+            raise
+
+
+    def HandleLogin(self, request):
+        try:
+            # Invoke the generic version.  It returns a page only if
+            # the login failed; in that case, just pass on the page.
+            return qm.web.handle_login(request)
+        except qm.web.HttpRedirect, redirection:
+            # The generic version constructed a session, and attached
+            # its ID to the request.  Look up that session.
+            session = redirection.request.GetSession()
+            # Attach the IDB to it.
+            session.idb = self.__idb
+            # Continue with th redirection.
+            raise
+        
+
 
 ########################################################################
 # functions
@@ -84,10 +192,10 @@ def do_command_for_xml_rpc(argument_list):
     return result
 
 
-def make_server(port, address="", log_file=None):
+def _make_server(idb, port, address="", log_file=None):
     """Start an HTTP server.
 
-    preconditions -- An IDB connection in local mode.
+    'idb' -- The issue database to serve.
 
     'port' -- The port number on which to accept HTTP requests.
 
@@ -97,74 +205,13 @@ def make_server(port, address="", log_file=None):
     'log_file' -- A file object to which the server will log requests.
     'None' for no logging.
 
-    returns -- A server object.  Use 'run_server' to start the server."""
-
-    import qm.track.web.index
-    import qm.track.web.issue_class
-    import qm.track.web.query
-    import qm.track.web.show
-    import qm.track.web.summary
-
-    # FIXME.  Can we hard code less stuff here?
-
-    # Path to the QMTrack web subdirectory.
-    web_directory = qm.get_share_directory("web")
-    # Base URL path for QMTrack stuff.
-    script_base = "/track/"
+    returns -- A server object.  Use 'run_server' to start the
+    server."""
 
     # Create a new server instance.  Enable XML-RPM.
-    server = qm.web.WebServer(port,
-                              address,
-                              log_file=log_file,
-                              xml_rpc_path="/xml-rpc")
-    qm.attachment.register_attachment_upload_script(server)
-    # Register all our web pages.
-    for name, function in [
-        ( "", qm.track.web.index.handle_index ),
-        ( "add-discussion",
-              qm.track.web.issue_class.handle_add_discussion ),
-        ( "add-issue-class", qm.track.web.issue_class.handle_add_class ),
-        ( "add-issue-field", qm.track.web.issue_class.handle_add_field ),
-        ( "config-idb", qm.track.web.issue_class.handle_config_idb ),
-        ( "delete-issue-field", qm.track.web.issue_class.handle_delete_field ),
-        ( "download-attachment", qm.track.web.handle_download_attachment ),
-        ( "index", qm.track.web.index.handle_index ),
-        ( "login", qm.web.handle_login ),
-        ( "logout", qm.web.handle_logout ),
-        ( "new", qm.track.web.show.handle_new ),
-        ( "new-issue-class", qm.track.web.issue_class.handle_new_class ),
-        ( "new-issue-field", qm.track.web.issue_class.handle_new_field ),
-        ( "query", qm.track.web.query.handle_query ),
-        ( "show", qm.track.web.show.handle_show ),
-        ( "show-issue-class", qm.track.web.issue_class.handle_show_class ),
-        ( "show-issue-field", qm.track.web.issue_class.handle_show_field ),
-        ( "show-notification",
-              qm.track.web.issue_class.handle_show_notification ),
-        ( "show-subscription",
-              qm.track.web.issue_class.handle_show_subscription ),
-        ( "shutdown", handle_shutdown ),
-        ( "state-model", qm.track.web.issue_class.handle_state_model ),
-        ( "submit", qm.track.web.show.handle_submit ),
-        ( "submit-issue-class", qm.track.web.issue_class.handle_submit_class ),
-        ( "submit-issue-field", qm.track.web.issue_class.handle_submit_field ),
-        ( "submit-notification",
-              qm.track.web.issue_class.handle_submit_notification ),
-        ( "submit-subscription",
-              qm.track.web.issue_class.handle_submit_subscription ),
-        ( "summary", qm.track.web.summary.handle_summary ),
-        ]:
-        server.RegisterScript(script_base + name, function)
-    server.RegisterPathTranslation(
-        "/stylesheets", qm.get_share_directory("web", "stylesheets"))
-    server.RegisterPathTranslation(
-        "/images", qm.get_share_directory("web", "images"))
-    server.RegisterPathTranslation(
-        "/static", qm.get_share_directory("web", "static"))
-    # Register the QM manual.
-    server.RegisterPathTranslation(
-        "/manual", qm.get_doc_directory("manual", "html"))
-    # Register the remote command handler.
-    server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
+    server = WebServer(idb, port=port, address=address,
+                       log_file=log_file,
+                       xml_rpc_path="/xml-rpc")
 
     # Bind the server to the specified address.
     try:
@@ -179,28 +226,99 @@ def make_server(port, address="", log_file=None):
     return server
 
 
-def run_server(server):
-    """Start accepting requests.
+def make_server(idb, port, address="", log_file=None):
+    """Start an HTTP server for interacting with QMTrack.
 
-    'server' -- A server created with 'make_server'.
+    'idb' -- The issue database to serve.
 
-    Does not return until the server shuts down."""
+    'port' -- The port number on which to accept HTTP requests.
 
-    # Print the XML-RPM URL for this server, if verbose.
-    xml_rpc_url = server.GetXmlRpcUrl()
-    qm.common.print_message(1, "XML-RPC URL is %s .\n" % xml_rpc_url)
-    # Write the URL file.  It contains the XML-RPC URL for this server.
-    url_path = qm.track.state["server_url_path"]
-    url_file = open(url_path, "w")
-    url_file.write(xml_rpc_url + '\n')
-    url_file.close()
+    'address' -- The local address to which to bind the server.  An
+    empty string indicates all local addresses.
 
-    try:
-        # Start the server.
-        server.Run()
-    finally:
-        # Clean up the URL file.
-        os.remove(url_path)
+    'log_file' -- A file object to which the server will log requests.
+    'None' for no logging.
+
+    returns -- A server object.  Use 'run_server' to start the server."""
+
+    server = _make_server(idb, port, address, log_file)
+
+    import qm.track.web.index
+    import qm.track.web.query
+    import qm.track.web.show
+    import qm.track.web.summary
+
+    # Register all our web pages.
+    for name, function in [
+        ( "", qm.track.web.index.handle_index ),
+        ( "index", qm.track.web.index.handle_index ),
+        ( "login", server.HandleLogin ),
+        ( "logout", qm.web.handle_logout ),
+        ( "new", qm.track.web.show.handle_new ),
+        ( "query", qm.track.web.query.handle_query ),
+        ( "show", qm.track.web.show.handle_show ),
+        ( "shutdown", handle_shutdown ),
+        ( "submit", qm.track.web.show.handle_submit ),
+        ( "summary", qm.track.web.summary.handle_summary ),
+        ]:
+        server.RegisterScript(_script_base + name, function)
+
+    return server
+
+
+def make_configuration_server(idb, port, address="", log_file=None):
+    """Start an HTTP server for configuring an IDB.
+
+    'idb' -- The issue database to configure.
+
+    'port' -- The port number on which to accept HTTP requests.
+
+    'address' -- The local address to which to bind the server.  An
+    empty string indicates all local addresses.
+
+    'log_file' -- A file object to which the server will log requests.
+    'None' for no logging.
+
+    returns -- A server object.  Use 'run_server' to start the server."""
+
+    server = _make_server(idb, port, address, log_file)
+
+    import qm.track.web
+    import qm.track.web.issue_class
+
+    # When we're running the configuration server, use a different
+    # navigation bar.
+    qm.track.web.DefaultDtmlPage.navigation_bar_template = \
+        "configuration-navigation-bar.dtml"
+
+    # Register all our web pages.
+    for name, function in [
+        ( "add-discussion",
+              qm.track.web.issue_class.handle_add_discussion ),
+        ( "add-issue-class", qm.track.web.issue_class.handle_add_class ),
+        ( "add-issue-field", qm.track.web.issue_class.handle_add_field ),
+        ( "config-idb", qm.track.web.issue_class.handle_config_idb ),
+        ( "delete-issue-field", qm.track.web.issue_class.handle_delete_field ),
+        ( "new-issue-class", qm.track.web.issue_class.handle_new_class ),
+        ( "new-issue-field", qm.track.web.issue_class.handle_new_field ),
+        ( "show-issue-class", qm.track.web.issue_class.handle_show_class ),
+        ( "show-issue-field", qm.track.web.issue_class.handle_show_field ),
+        ( "show-notification",
+              qm.track.web.issue_class.handle_show_notification ),
+        ( "show-subscription",
+              qm.track.web.issue_class.handle_show_subscription ),
+        ( "shutdown", handle_shutdown ),
+        ( "state-model", qm.track.web.issue_class.handle_state_model ),
+        ( "submit-issue-class", qm.track.web.issue_class.handle_submit_class ),
+        ( "submit-issue-field", qm.track.web.issue_class.handle_submit_field ),
+        ( "submit-notification",
+              qm.track.web.issue_class.handle_submit_notification ),
+        ( "submit-subscription",
+              qm.track.web.issue_class.handle_submit_subscription ),
+        ]:
+        server.RegisterScript(_script_base + name, function)
+
+    return server
 
 
 def handle_shutdown(request):
@@ -218,55 +336,21 @@ def handle_shutdown(request):
         return qm.web.generate_error_page(request, message)
 
 
-def execute(command, output_file, error_file):
+def execute_locally(command, idb, output_file, error_file):
     """Execute a command.
 
-    If the we're in local mode, execute the command on the local IDB.
-    If we're in remote mote, pass the command to the remote server for
-    execution.
-
     'command' -- A 'qm.track.Command' instance to execute.
+
+    'idb' -- The 'Idb' instance on which to run the command.
 
     'output_file' -- A file object to which normal output is written.
 
     'error_file' -- A file object to which error messages are written.
 
-    returns -- An integer exit code.  Zero indicates success; non-zero
-    values indicate failure. """
+    returns -- An integer exit code."""
     
-    mode = qm.track.config.state["mode"]
-
     try:
-        # Check if this command requires an IDB connection.
-        if command.RequiresIdb() and mode == "remote":
-            # We're in remote mode.  Make sure this command doesn't require
-            # a local connection.
-            if command.RequiresLocalIdb():
-                raise RuntimeError, \
-                      qm.track.error("cannot invoke remotely",
-                                     command=command.GetCommand())
-                return 1
-            # Connect to the server.
-            server_url = qm.track.state["server_url"]
-            server = xmlrpclib.Server(server_url)
-            # Invoke the command on the server.
-            argument_list = command.GetArgumentList()
-            result = server.execute_command(argument_list)
-            # Unpack the results.
-            exit_code, output_text, error_text = result
-            # Write the returned texts to corresponding files.
-            output_file.write(output_text)
-            error_file.write(error_text)
-            # All done.
-            return exit_code
-        # Run commands locally.
-        elif not command.RequiresIdb() or mode == "local":
-            command.Execute(output_file)
-            return 0
-    except RuntimeError, msg:
-        msg = qm.structured_text.to_text(str(msg))
-        error_file.write(msg)
-        return 1
+        command.Execute(idb, output_file)
     except qm.UserError, msg:
         # A user error should come with a message that is comprehensible
         # to the user.
@@ -293,12 +377,54 @@ def execute(command, output_file, error_file):
     except qm.platform.SignalException:
         # The server was killed by a signal.  Let the exception through.
         raise
+    except RuntimeError, exception:
+        # Some other exception.
+        error_file.write(qm.structured_text.to_text(str(exception)))
+        return 1
     except:
         # For other exceptions, for now, just dump out the
         # stack trace.
         exception = qm.format_exception(sys.exc_info())
         error_file.write(exception)
         return 1
+    else:
+        return 0
+
+
+def execute_remotely(command, server_url, output_file, error_file):
+    """Execute a command remotely via XML/RPC.
+
+    'command' -- A 'qm.track.Command' instance to execute.
+
+    'server_url' -- The URL of the remote XML/RPC server.
+
+    'output_file' -- A file object to which normal output is written.
+
+    'error_file' -- A file object to which error messages are written.
+
+    returns -- An integer exit code."""
+
+    assert not command.RequiresLocalIdb()
+    
+    # We're in remote mode.  Make sure this command doesn't require
+    # a local connection.
+    if command.RequiresLocalIdb():
+        raise RuntimeError, \
+              qm.track.error("cannot invoke remotely",
+                             command=command.GetCommand())
+        return 1
+    # Connect to the server.
+    server = xmlrpclib.Server(server_url)
+    # Invoke the command on the server.
+    argument_list = command.GetArgumentList()
+    result = server.execute_command(argument_list)
+    # Unpack the results.
+    exit_code, output_text, error_text = result
+    # Write the returned texts to corresponding files.
+    output_file.write(output_text)
+    error_file.write(error_text)
+    # All done.
+    return exit_code
 
 
 ########################################################################

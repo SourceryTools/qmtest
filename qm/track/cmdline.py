@@ -35,9 +35,8 @@
 # imports
 ########################################################################
 
-import config
-import idb
 import issue
+import issue_database
 import os
 import os.path
 import qm
@@ -46,13 +45,19 @@ import qm.cmdline
 import qm.fields
 import qm.platform
 import qm.structured_text
-import qm.track
 import qm.track.issue
 import qm.xmlutil
 import rexec
 import server
 import string
 import sys
+
+########################################################################
+# constants
+########################################################################
+
+idb_environment_variable_name = "QMTRACK_DB_PATH"
+"""The name of the environment variable containing the IDB path."""
 
 ########################################################################
 # classes
@@ -148,11 +153,11 @@ class Command:
         "Log file name."
         )
     
-    idb_type_option_spec = (
+    issue_store_implementation_option_spec = (
         None,
-        "idb-type",
-        "TYPE",
-        "IDB type."
+        "issue-store",
+        "MODULE",
+        "Issue store implementation module."
         )
 
     test_values_option_spec = (
@@ -207,38 +212,40 @@ class Command:
     
     qmtrack_commands = [
 
+        ("configure-idb",
+         "Configure the IDB.",
+         "",
+"""This command starts the QMTrack issue database configuration server.
+You may interact with the server via a web user interface over HTTP.""",
+         [ help_option_spec, port_option_spec, address_option_spec,
+           start_browser_option_spec ],
+         ),
+
         ("create",
          "Create a new issue.",
          "-c classname field[=,+=]value...",
-         """
-         This command will create an issue. The field/value pairs
-         indicate attributes for the given issue. You must specify the
-         class for the field with the" " class flag. You must also
-         specify the mandatory fields, 'id', 'categories', and
-         'summary'.
-         """,
+"""This command will create an issue. The field/value pairs indicate
+attributes for the given issue. You must specify the class for the field
+with the" " class flag. You must also specify the mandatory fields,
+'id', 'categories', and 'summary'.""",
          [ help_option_spec, class_option_spec, format_option_spec,
            output_option_spec ]
          ),
         
-        ("destroy",
+        ("destroy-idb",
          "Destroy an IDB.",
          "",
-         """
-         This command destroys an issue database and removes associated
-         files.
-         """,
+"""This command destroys an issue database and removes associated
+files.""",
          [ help_option_spec, force_option_spec ],
          ),
 
         ("edit",
          "Edit an issue.",
          "id field[=,+=,-=]value...",
-         """
-         This command will edit an issue. The 'id' is the issue's
-         id. The field/value pairs represent the fields you wish to
-         edit. A new revision of the issue will be created.
-         """,
+"""This command will edit an issue. The 'id' is the issue's id. The
+field/value pairs represent the fields you wish to edit. A new revision
+of the issue will be created. """,
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
@@ -246,52 +253,47 @@ class Command:
          "Import issues from XML files.",
          "FILE ...",
          """
-         This command imports issues or issue revisions stored in an XML
-         file.  Each file may contain either individual issues (from the
-         "xml" output format) or complete issue revision histories (from
-         the "export" output format).
+This command imports issues or issue revisions stored in an XML file.
+Each file may contain either individual issues (from the "xml" output
+format) or complete issue revision histories (from the "export" output
+format).
          """,
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
-        ("initialize",
-         "Initialize an IDB.",
-         "",
-         """
-         This command initializes a new issue database.
-         The available IDB types are:
+        ("create-idb",
+         "Create an issue database.",
+         "[ NAME=VALUE ... ]",
+"""Initialize a new issue database.  You may specify configuration
+properties on the command line.
 
-             'MemoryIdb' [default] -- Store issue data in native Python
-             format.
-         """
-         # """
-         # 
-         #     'GadflyIdb' -- Store issue data in a built-in Python SQL
-         #     database. 
-         # """
-         ,
-         [ help_option_spec, idb_type_option_spec, test_values_option_spec,
-           internal_option_spec, output_option_spec ],
+Optionally, specify the issue store module with the '--issue-store'
+option.  QMTrack includes these issue store modules:
+
+    'qm.track.memory_issue_store' [default] -- Keep all issues in
+    memory while running.  Store issues in an XML file.
+
+You may specify another module instead; make sure it is in the
+'PYTHONPATH'.""",
+         [ help_option_spec, issue_store_implementation_option_spec,
+           test_values_option_spec, internal_option_spec,
+           output_option_spec ],
         ),
         
         ("join",
          "Join two issues.",
          "id1 id2",
-         """
-         This command will join two issues into a single issue. The
-         resulting issue will be the child of each of the original
-         issues and they will be its parent.
-         """,
+"""This command will join two issues into a single issue. The resulting
+issue will be the child of each of the original issues and they will be
+its parent.""",
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
         ("query",
          "Query the database.",
          "expression",
-         """
-         This command will query the database to find all issues for
-         which the query expression evalutes to true.
-         """,
+"""This command will query the database to find all issues for which the
+query expression evalutes to true.""",
          [ help_option_spec, query_class_option_spec,
            format_option_spec, output_option_spec ]
          ),
@@ -299,10 +301,8 @@ class Command:
         ("server",
          "Start the server.",
          "",
-         """
-         This command starts the QMTrack server.  The server provides a
-         web user interface and remote command access over HTTP.
-         """,
+"""This command starts the QMTrack server.  The server provides a web
+user interface and remote command access over HTTP.""",
          [ help_option_spec, port_option_spec, address_option_spec,
            log_file_option_spec, start_browser_option_spec ]
          ),
@@ -310,21 +310,17 @@ class Command:
         ("show",
          "Display an issue.",
          "id",
-         """
-         This command displays a single issue.  This command is a
-         shortcut for 'query iid==value'.
-         """,
+"""This command displays a single issue.  This command is a shortcut for
+'query iid==value'.""",
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
         ("split",
          "Split an issue.",
          "id",
-         """
-         This command will split a single issue into two issues. The new
-         issues will be the children of the original issue and it will
-         be their parent.
-         """,
+"""This command will split a single issue into two issues. The new
+issues will be the children of the original issue and it will be their
+parent.""",
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
@@ -349,11 +345,12 @@ class Command:
 
         # Build a map used to dispatch command names to handlers.
         self.__command_dispatch = {
+            "configure-idb" : self.__PerformConfigureIdb,
             "create" : self.__PerformCreate,
-            "destroy" : self.__PerformDestroy,
+            "destroy-idb" : self.__PerformDestroyIdb,
             "edit" : self.__PerformEdit,
             "import" : self.__PerformImport,
-            "initialize" : self.__PerformInitialize,
+            "create-idb" : self.__PerformCreateIdb,
             "join" : self.__PerformJoin,
             "query" : self.__PerformQuery,
             "server" : self.__PerformServer,
@@ -428,9 +425,8 @@ class Command:
         if idb_path is None:
             # No IDB path specified explicitly.  Try the environment
             # variable.
-            env_var_name = qm.track.state["idb_env_var"]
             try:
-                idb_path = os.environ[env_var_name]
+                idb_path = os.environ[idb_environment_variable_name]
             except KeyError:
                 # The environment variable wasn't set, either.  Can't
                 # find the IDB, so give up.
@@ -446,7 +442,7 @@ class Command:
         if self.HasGlobalOption("help") or self.HasCommandOption("help"):
             return 0
         # Some commands don't require an IDB connection.
-        if self.GetCommand() in ('initialize', 'destroy', ):
+        if self.GetCommand() in ("create-idb", "destroy-idb", ):
             return 0
         # All other commands require an IDB.
         return 1
@@ -466,7 +462,7 @@ class Command:
         return 0
 
         
-    def Execute(self, output):
+    def Execute(self, idb, output):
         """Execute the command."""
 
         # Was the output option specified?
@@ -497,7 +493,7 @@ class Command:
         assert self.__command_dispatch.has_key(self.__command_name)
         handler = self.__command_dispatch[self.__command_name]
         # Call the command handler function.
-        handler(output)
+        handler(idb, output)
 
         # Close the output file, if we opened it.
         if output_file is not None:
@@ -649,7 +645,7 @@ class Command:
                                          field=field_name)
                     
         
-    def __PerformCreate(self, output):
+    def __PerformCreate(self, idb, output):
         """Create an issue because the create command was given."""
 
         # Get the class of the issue from the command line.
@@ -664,7 +660,6 @@ class Command:
 
         # If the issue class they specified does not exist, catch the
         # exception and report an error.
-        idb = qm.track.get_idb()
         try:
             icl = idb.GetIssueClass(issue_class_name)
         except KeyError:
@@ -703,7 +698,8 @@ class Command:
             if key != 'iid':
                 try:
                     if string.rfind(key, '+') == len(key) - 1:
-                        new_issue.SetField(string.replace(key, '+', ''), value)
+                        new_issue.SetField(string.replace(key, '+', ''),
+                                           value)
                     elif string.rfind(key, '-') != len(key) - 1:
                         new_issue.SetField(key, value)
                 except ValueError, msg:
@@ -713,15 +709,15 @@ class Command:
         # Add the issue to the database.  Check to see if the issue
         # with that 'iid' already exists.  If so, report an error.
         try:
-            idb.AddIssue(new_issue)
-        except idb.IssueExistsError:
+            idb.GetIssueStore().AddIssue(new_issue)
+        except ValueError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("create issue error", iid=iid)
 
-        self.__PrintResults(output, new_issue)
+        self.__PrintResults(idb, output, new_issue)
 
 
-    def __PerformEdit(self, output):
+    def __PerformEdit(self, idb, output):
         """Edit an issue because the edit command was given."""
 
         # If there are no command arguments to the command, they did
@@ -734,9 +730,8 @@ class Command:
 
         # Get the given issue out of the database.  If the issue is not
         # in the database, report an error.
-        idb = qm.track.get_idb()
         try:
-            issue = idb.GetIssue(iid)
+            issue = idb.GetIssueStore().GetIssue(iid)
         except KeyError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("edit issue error sem", iid=iid)
@@ -785,14 +780,15 @@ class Command:
                     issue.SetField(key, value)                   
 
         # Finally, add the new revision of the issue to the database.
-        idb.AddRevision(issue)
+        idb.GetIssueStore().AddRevision(issue)
 
-        self.__PrintResults(output, issue)
+        self.__PrintResults(idb, output, issue)
 
 
-    def __PerformSplit(self, output):
+    def __PerformSplit(self, idb, output):
         """Split one issue into two."""
 
+        istore = idb.GetIssueStore()
         # If there are no command arguments to the command, they did
         # not specify a command to be split and we report an error.
         if len(self.__arguments) == 0:
@@ -802,9 +798,8 @@ class Command:
         iid = self.__arguments[0]
 
         # Get the issue out of the database.
-        idb = qm.track.get_idb()
         try:
-            issue = idb.GetIssue(iid)
+            issue = istore.GetIssue(iid)
         except KeyError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("split issue error sem", iid=iid)
@@ -827,30 +822,31 @@ class Command:
         # Check to see if the issue names already exist.  If so,
         # report an error.
         try:
-            idb.GetIssue(issue1.GetId())
+            istore.GetIssue(issue1.GetId())
             raise qm.cmdline.CommandError, \
                   qm.track.error("split iid error sem", iid=issue1.GetId())
-        except idb.IssueExistsError:
+        except ValueError:
             # Couldn't find the issue; that's good.
             pass
         try:
-            idb.GetIssue(issue2.GetId())
+            istore.GetIssue(issue2.GetId())
             raise qm.cmdline.CommandError, \
                   qm.track.error("split iid error sem", iid=issue2.GetId())
-        except idb.IssueExistsError:
+        except ValueError:
             # Couldn't find the issue; that's good.
             pass
 
         # Add the new issues to the database.
-        idb.AddIssue(issue1)
-        idb.AddIssue(issue2)
+        istore.AddIssue(issue1)
+        istore.AddIssue(issue2)
 
-        self.__PrintResults(output, issue1, issue2)
+        self.__PrintResults(idb, output, issue1, issue2)
 
 
-    def __PerformJoin(self, output):
+    def __PerformJoin(self, idb, output):
         """Join two issues into a single one."""
 
+        istore = idb.GetIssueStore()
         # Join should take exactly two arguments, the iids of the issues
         # to be joined.  If a different number of arguments are given,
         # report an error.
@@ -862,14 +858,13 @@ class Command:
         iid2 = self.__arguments[1]
 
         # Get the issues out of the database.
-        idb = qm.track.get_idb()
         try:
-            issue1 = idb.GetIssue(iid1)
+            issue1 = istore.GetIssue(iid1)
         except KeyError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("join issue error sem", iid=iid1)
         try:
-            issue2 = idb.GetIssue(iid2)
+            issue2 = istore.GetIssue(iid2)
         except KeyError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("join issue error sem", iid=iid2)
@@ -889,15 +884,15 @@ class Command:
         # Add the new issue to the database.  Check to see if the issue
         # names already exist.  If so, report an error.
         try:
-            idb.AddIssue(new_issue)
-        except idb.IssueExistsError:
+            istore.AddIssue(new_issue)
+        except ValueError:
             raise ComandError, \
                   qm.track.error("join iid error sem", iid=issue1.GetId())
 
-        self.__PrintResults(output, new_issue)
+        self.__PrintResults(idb, output, new_issue)
 
 
-    def __PerformQuery(self, output):
+    def __PerformQuery(self, idb, output):
         """Perform a query on the database."""
 
         # Get the class of the issue from the command line.  Use
@@ -915,7 +910,6 @@ class Command:
         # evaluator.
         query_str = string.join(self.__arguments)
 
-        idb = qm.track.get_idb()
         if issue_class_name is None:
             # No issue class was specified.  Therefore, search all issue
             # classes.  Obtain all their names.
@@ -926,15 +920,14 @@ class Command:
             issue_class_names = [ issue_class_name ]
         results = []
         # Aggregate query results for all issue classes.
+        istore = idb.GetIssueStore()
         for name in issue_class_names:
-            results = results + (idb.Query(query_str, name))
+            results = results + (istore.Query(query_str, name))
 
-        apply(self.__PrintResults, (output, ) + tuple(results))
+        apply(self.__PrintResults, (idb, output, ) + tuple(results))
 
 
-    def __PerformServer(self, output):
-        """Process the server command."""
-
+    def __HandleServerOptions(self, default_address=""):
         # Get the port number specified by a command option, if any.
         port_number = self.GetCommandOption("port", None)
         if port_number is None:
@@ -949,7 +942,7 @@ class Command:
         # Get the local address specified by a command option, if any.
         # If not was specified, use the empty string, which corresponds
         # to all local addresses.
-        address = self.GetCommandOption("address", "")
+        address = self.GetCommandOption("address", default_address)
         # Was a log file specified?
         log_file_path = self.GetCommandOption("log-file", None)
         if log_file_path is not None:
@@ -963,15 +956,30 @@ class Command:
         else:
             # The option '--log-file' wasn't specified, so no logging.
             log_file = None
+            
+        return (port_number, address, log_file)
+
+
+
+    def __PerformConfigureIdb(self, idb, output):
+        """Process the server command."""
+
+        # FIXME: Security.  Restrict access to the configuration
+        # database with a cookie value in the URL?
+
+        # FIXME: Default to binding to localhost only?
+
         # Construct the server.
-        web_server = server.make_server(port_number, address, log_file)
-    
+        port_number, address, log_file = self.__HandleServerOptions()
+        web_server = server.make_configuration_server(idb, port_number,
+                                                      address, log_file)
+
         # Construct the URL to the main page on the server.
         if address == "":
             url_address = qm.platform.get_host_name()
         else:
             url_address = address
-        url = "http://%s:%d/track/" % (url_address, port_number)
+        url = "http://%s:%d/track/config-idb" % (url_address, port_number)
 
         if self.HasCommandOption("start-browser"):
             # Now that the server is bound to its address, we can point
@@ -985,7 +993,46 @@ class Command:
         server.run_server(web_server)
 
     
-    def __PerformShow(self, output):
+    def __PerformServer(self, idb, output):
+        """Process the server command."""
+
+        # Construct the server.
+        port_number, address, log_file = self.__HandleServerOptions()
+        web_server = server.make_server(idb, port_number, address, log_file)
+
+        # Construct the URL to the main page on the server.
+        if address == "":
+            url_address = qm.platform.get_host_name()
+        else:
+            url_address = address
+        url = "http://%s:%d/track/index" % (url_address, port_number)
+
+        if self.HasCommandOption("start-browser"):
+            # Now that the server is bound to its address, we can point
+            # a browser at it safely.
+            qm.platform.open_in_browser(url)
+        else:
+            qm.common.print_message(0, "%s server running at %s .\n"
+                                    % (qm.common.program_name, url))
+
+        # Print the XML-RPM URL for this server, if verbose.
+        xml_rpc_url = web_server.GetXmlRpcUrl()
+        qm.common.print_message(1, "XML-RPC URL is %s .\n" % xml_rpc_url)
+        # Write the URL file.  It contains the XML-RPC URL for this server.
+        url_path = os.path.join(self.GetIdbPath(), "server.url")
+        url_file = open(url_path, "w")
+        url_file.write(xml_rpc_url + '\n')
+        url_file.close()
+
+        try:
+            # Start the server.
+            web_server.Run()
+        finally:
+            # Clean up the URL file.
+            os.remove(url_path)
+
+    
+    def __PerformShow(self, idb, output):
         """Process the show command."""
 
         # Make sure an iid argument was specified.
@@ -997,68 +1044,73 @@ class Command:
 
         # Get the given issue out of the database.  If the issue is not
         # in the database, report an error.
-        idb = qm.track.get_idb()
         try:
-            issue = idb.GetIssue(iid)
+            issue = idb.GetIssueStore().GetIssue(iid)
         except KeyError:
             raise qm.cmdline.CommandError, \
                   qm.track.error("show no iid", iid=iid)
 
-        self.__PrintResults(output, issue)
+        self.__PrintResults(idb, output, issue)
 
 
-    def __PerformInitialize(self, output):
-        """Process the initialize command."""
+    def __PerformCreateIdb(self, idb_, output):
+        """Create a new issue database."""
 
         idb_path = self.GetIdbPath()
 
         # Determine the IDB class name from the command line or
         # default.
+
         # FIXME: Use the MemoryIdb implementation by default, for now.
-        idb_class_name = self.GetCommandOption("idb-type", "MemoryIdb")
+        issue_store_module_name = self.GetCommandOption(
+            "issue-store", "qm.track.memory_issue_store")
+
         # Make sure the class name is valid.
         try:
-            idb_class = qm.track.idb.get_idb_class(idb_class_name)
-        except ValueError:
+            issue_store_module = \
+                qm.common.load_module(issue_store_module_name)
+        except ImportError, exception:
             raise qm.ConfigurationError, \
-                  qm.track.error("initialize invalid idb class", \
-                                 type=idb_class_name)
+                  qm.track.error("issue store module error",
+                                 name=issue_store_module_name,
+                                 error=str(exception))
+
+        # Extract configuration variables from the command line.
+        configuration = {}
+        for argument in self.__arguments:
+            if not "=" in argument:
+                raise qm.cmdline.CommandError, \
+                      qm.error("invalid property", error="argument") 
+            key, value = string.split(argument, "=", 1)
+            configuration[key] = value
 
         # Create the IDB.
-        test_values = self.HasCommandOption("test-values")
-        qm.track.initialize_idb(idb_path, idb_class_name, test_values)
+        idb = issue_database.create(
+            idb_path, issue_store_module_name, configuration)
 
-        # If requested, populate the IDB with test values.
-        if self.HasCommandOption("internal"):
-            qm.track.open_idb(idb_path)
-            qm.track.setup_idb_for_internal_use()
-            qm.track.close_idb()
+        # If requested, populate the IDB for testing.
+        if self.HasCommandOption("test-values"):
+            idb = issue_database.open(idb_path)
+            issue_database.setup_for_test(idb)
+            idb.Close()
 
         # Print a helpful message.
         message = qm.warning("new idb message",
                              path=idb_path,
-                             envvar=qm.track.state["idb_env_var"],
+                             envvar=idb_environment_variable_name, 
                              userdb=os.path.join(idb_path, "users.xml"))
         message = qm.structured_text.to_text(message)
-        output.write(message + "\n")
+        output.write(message)
 
 
-    def __PerformDestroy(self, output):
-        """Process the destroy command."""
+    def __PerformDestroyIdb(self, idb, output):
+        """Destroy an issue database."""
 
         idb_path = self.GetIdbPath()
         # Make sure there is something that looks like an IDB there.
         if not os.path.isdir(idb_path):
             raise qm.cmdline.CommandError, \
                   qm.error("no idb at path", idb_path=idb_path)
-        # Lock the IDB, to make sure we don't delete it under some
-        # other process.
-        lock = qm.track.config.get_idb_lock(idb_path)
-        try:
-            lock.Lock(0)
-        except qm.common.MutexLockError:
-            raise RuntimeError, \
-                  qm.track.error("idb locked", lock_path=lock.GetPath())
 
         while not self.HasCommandOption("force"):
             # Ask the user for for confirmation.
@@ -1079,11 +1131,10 @@ class Command:
                 continue
 
         # Destroy the IDB.
-        qm.remove_directory_recursively(idb_path)
-        # Don't try to release the lock.  It vanished with the IDB.
+        issue_database.destroy(idb_path)
 
 
-    def __PerformImport(self, output):
+    def __PerformImport(self, idb, output):
         """Process the import command."""
 
         # Make sure some import files were specified.
@@ -1096,9 +1147,7 @@ class Command:
         issues = []
         for file_name in file_names:
             # Open and parse the XML file.
-            issue_file = open(file_name, "r")
-            document = qm.xmlutil.load_xml(issue_file, file_name)
-            issue_file.close()
+            document = qm.xmlutil.load_xml_file(file_name)
 
             document_element = document.documentElement
             document_tag = document_element.tagName
@@ -1107,31 +1156,35 @@ class Command:
             if document_tag == "issues":
                 # An "issues" document contains individual issues.
                 # Import them as current revisions.
-                self.__ImportIssues(document_element)
+                self.__ImportIssues(idb, document_element)
             elif document_tag == "histories":
                 # A "histories" document contains entire revision
                 # histories of issues.  Import them as entire issues. 
-                self.__ImportIssueHistories(document_element)
+                self.__ImportIssueHistories(idb, document_element)
             else:
                 raise issue.IssueFileError, \
                       qm.error("xml file unknown document element",
                                element_tag=document_tag)
             
 
-    def __ImportIssues(self, node):
-        """Import issues from DOM "issues" element 'node'."""
+    def __ImportIssues(self, idb, node):
+        """Import issues from DOM "issues" element 'node' into 'idb'."""
 
-        issues = issue.get_issues_from_dom_node(node)
+        istore = idb.GetIssueStore()
+
+        issue_classes = qm.common.make_map_from_list(
+            idb.GetIssueClasses(), lambda icl: icl.GetName())
+        issues = issue.get_issues_from_dom_node(node, issue_classes)
+
         # Loop over the issues.
-        idb = qm.track.get_idb()
         for issue in issues:
             iid = issue.GetId()
             try:
                 # Try to get the current revision for this IID.
-                current_revision = idb.GetIssue(iid)
+                current_revision = istore.GetIssue(iid)
             except KeyError:
                 # Couldn't get it; that means it's a new issue.
-                idb.AddIssue(issue)
+                istore.AddIssue(issue)
                 output.write("imported issue %s new\n" % iid)
             else:
                 # Got the current revision, so this issue already
@@ -1145,24 +1198,26 @@ class Command:
                                  % iid)
                 else:
                     # Add the new revision.
-                    idb.AddRevision(issue)
-                    output.write("imported issue %s revision %d\n"
-                                 % (iid, current_revision.GetRevision() + 1))
+                    istore.AddRevision(issue)
+                    output.write(
+                        "imported issue %s revision %d\n"
+                        % (iid, current_revision.GetRevisionNumber() + 1))
 
 
-    def __ImportIssueHistories(self, node):
-        """Import issue histories from DOM "histories" element 'node'."""
+    def __ImportIssueHistories(self, idb_, node):
+        """Import issue histories from DOM element 'node'. into 'idb_'."""
 
         # FIXME: Handle any errors?
         issue_histories = issue.get_histories_from_dom_node(node)
-        issue_db = qm.track.get_idb()
         for history in issue_histories:
-            idb.import_issue_history(issue_db, history)
+            idb.import_issue_history(idb_, history)
             
 
 
-    def __PrintResults(self, output, *issues):
+    def __PrintResults(self, idb, output, *issues):
         """Print the list of issues that are the results of the command.
+
+        'idb' -- The issue database.
 
         'output' -- A file object to write the results to.
 
@@ -1202,8 +1257,102 @@ class Command:
         elif self.format_name == 'xml':
             qm.track.issue.issues_to_xml(issues, output)
         elif self.format_name == "export":
-            qm.track.issue.export_issues(issues, output)
+            # Retrieve the issue history for each issue.
+            istore = idb.GetIssueStore()
+            histories = []
+            for issue in issues:
+                history = istore.GetIssueHistory(issue.GetId())
+                histories.append(history)
+            # Write them.
+            qm.track.issue.write_issue_histories(histories, output)
 
+
+
+########################################################################
+# functions
+########################################################################
+
+def run_command(argument_list,
+                output_file=sys.stdout,
+                error_file=sys.stderr):
+    """Construct a command from 'argument_list', and execute it.
+
+    'argument_list' -- A list of command-line arguments, as 'sys.argv'.
+    The first element is the name of the script used to invoke QMTrack. 
+
+    'output_file' -- A file object to which to write normal output.
+
+    'error_file' -- A file object to which to write error messages.
+
+    returns -- An integer exit code."""
+
+    # Separate off the script name.
+    script_name = argument_list[0]
+    argument_list = argument_list[1:]
+
+    try:
+        # Parse the argument list.
+        try:
+            command = Command(argument_list)
+        except qm.cmdline.CommandError, msg:
+            error_file.write("%s error:\n" % script_name)
+            error_file.write(qm.structured_text.to_text(str(msg)))
+            error_file.write("Invoke %s --help for help with usage.\n"
+                             % script_name)
+            return 2
+
+        # We'll set 'server_url' to the URL of the remote server, if
+        # applicable.  Otherwise, 'idb' is the local IDB instance.
+        server_url = None
+        idb = None
+
+        # Now execute the command.  Is it to be executed remotely?
+        if command.RequiresIdb():
+            if command.HasGlobalOption("remote-idb"):
+                # The user specified a URL to a remote server.  Use it
+                # for remote mode.
+                server_url = command.GetGlobalOption("remote-idb")
+            else:
+                # We have a local IDB path.
+                idb_path = command.GetIdbPath()
+                # Open the IDB.
+                try:
+                    idb = issue_database.open(idb_path)
+                except issue_database.AccessIdbRemotelyInstead, exception:
+                    # Tried to open the IDB, but it's in use.  Luckily,
+                    # we can connect to the server that's using it.
+                    server_url = str(exception)
+
+        # So, are we using a remote IDB or a local one?
+        if server_url is not None and command.RequiresIdb():
+            # If this command requires a local IDB, we're out of luck.
+            if command.RequiresLocalIdb():
+                raise RuntimeError, qm.error("idb in use")
+            # Use a remote IDB.
+            qm.common.print_message(2, 
+                qm.message("using remote idb", url=server_url))
+            server.execute_remotely(command, server_url,
+                                    output_file, error_file)
+        else:
+            # Use a local IDB.
+            try:
+                # Execute the command.
+                exit_code = server.execute_locally(
+                    command, idb, output_file, error_file)
+            finally:
+                # Close the session, if one's open.
+                if idb is not None:
+                    idb.Close()
+
+    except KeyboardInterrupt:
+        # User killed it; that's OK.
+        error_file.write("Interrupted.\n")
+        return 0
+
+    except qm.platform.SignalException, exception:
+        # The program was ended by an exception.
+        error_file.write("Terminated by %s.\n" % str(exception))
+        return 0
 
 
 ########################################################################

@@ -69,7 +69,8 @@ class QueryPage(web.DtmlPage):
 
         # FIXME: These are only the fields for the default issue class.
         try:
-            default_class = qm.track.get_default_class()
+            default_class = \
+                self.request.GetSession().idb.GetDefaultIssueClass()
         except KeyError:
             fields = []
         else:
@@ -114,7 +115,8 @@ class QueryPage(web.DtmlPage):
 
         # FIXME.
         try:
-            default_class = qm.track.get_default_class()
+            default_class = \
+                self.request.GetSession().idb.GetDefaultIssueClass()
         except KeyError:
             return "&nbsp;"
         else:
@@ -132,7 +134,8 @@ class QueryPage(web.DtmlPage):
 
         # FIXME.
         try:
-            default_class = qm.track.get_default_class()
+            default_class = \
+                self.request.GetSession().idb.GetDefaultIssueClass()
         except KeyError:
             return "&nbsp;"
         else:

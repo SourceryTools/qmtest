@@ -42,7 +42,6 @@ import label
 import os
 import re
 import qm
-import qm.xmlutil
 import string
 import structured_text
 import sys
@@ -195,7 +194,12 @@ class FieldEditPage(web.DtmlPage):
 
 
 class Field:
-    """Base class for field types."""
+    """Base class for field types.
+
+    Subclasses should override any applicable methods, and must define
+    'class_name' to the fully-qualified name of the field class."""
+
+    class_name = None
 
     property_declarations = [
         FieldPropertyDeclaration(
@@ -633,11 +637,48 @@ class Field:
         self.SetAttributes(extra_properties)
 
 
+    def MakeDomNode(self, document):
+        """Construct a DOM element node describing this field.
+
+        'document' -- A DOM document object in which to create the node.
+
+        returns -- A DOM node for a "field" element."""
+
+        # Construct the main element node.
+        element = document.createElement("field")
+        # Store the field name as an attribute.
+        element.setAttribute("name", self.GetName())
+        # Store the Python class name of this field.
+        class_element = xmlutil.create_dom_text_element(
+            document, "class", self.class_name)
+        element.appendChild(class_element)
+        # Store the default value.
+        default_value = self.GetDefaultValue()
+        default_value_element = \
+            self.MakeDomNodeForValue(default_value, document)
+        default_element = document.createElement("default-value")
+        default_element.appendChild(default_value_element)
+        element.appendChild(default_element)
+
+        # Create an element for each property.
+        for name, value in self.__attributes.items():
+            if name == "name":
+                continue
+            property_element = xmlutil.create_dom_text_element(
+                document, "property", str(value))
+            property_element.setAttribute("name", name)
+            element.appendChild(property_element)
+
+        return element
+
+
 
 ########################################################################
 
 class IntegerField(Field):
     """A signed integer field."""
+
+    class_name = "qm.fields.IntegerField"
 
     def __init__(self, name, default_value=0, **attributes):
         """Create an integer field.
@@ -708,7 +749,7 @@ class IntegerField(Field):
                                    right_tag="integer",
                                    wrong_tag=node.tagName)
         # Retrieve the contained text.
-        value = qm.xmlutil.get_dom_text(node)
+        value = xmlutil.get_dom_text(node)
         # Convert it to an integer.
         try:
             return int(value)
@@ -718,8 +759,8 @@ class IntegerField(Field):
 
 
     def MakeDomNodeForValue(self, value, document):
-        return qm.xmlutil.create_dom_text_element(document, "integer",
-                                                  str(value))
+        return xmlutil.create_dom_text_element(document, "integer",
+                                               str(value))
 
 
     def GetHelp(self):
@@ -736,6 +777,8 @@ class IntegerField(Field):
 
 class TextField(Field):
     """A field that contains text."""
+
+    class_name = "qm.fields.TextField"
 
     property_declarations = Field.property_declarations + [
         FieldPropertyDeclaration(
@@ -935,11 +978,11 @@ class TextField(Field):
                                    right_tag="text",
                                    wrong_tag=node.tagName)
         # Just the text, ma'am.
-        return qm.xmlutil.get_dom_text(node)
+        return xmlutil.get_dom_text(node)
 
 
     def MakeDomNodeForValue(self, value, document):
-        return qm.xmlutil.create_dom_text_element(document, "text", value)
+        return xmlutil.create_dom_text_element(document, "text", value)
 
 
     def GetHelp(self):
@@ -1039,6 +1082,8 @@ class SetField(Field):
     contain sets.
 
     The default field value is set to an empty set."""
+
+    class_name = "qm.fields.SetField"
 
     set_property_declarations = [
         FieldPropertyDeclaration(
@@ -1171,9 +1216,9 @@ class SetField(Field):
                 element_value = contained_field.FormEncodeValue(element)
                 if isinstance(contained_field, AttachmentField):
                     element_text = "%s (%s; %s)" \
-                                   % (element.description,
-                                      element.file_name,
-                                      element.mime_type)
+                                   % (element.GetDescription(),
+                                      element.GetFileName(),
+                                      element.GetMimeType())
                 else:
                     element_text = \
                         contained_field.FormatValueAsText(element)
@@ -1304,6 +1349,20 @@ class SetField(Field):
         return controls
 
 
+    def MakeDomNode(self, document):
+        # Construct the basic 'Field' DOM node.
+        node = Field.MakeDomNode(self, document)
+        # Properties will be specified by the contained field, so remove
+        # them here.
+        for property_node in node.getElementsByTagName("property"):
+            node.removeChild(property_node)
+        # Construct an element for the contained field.
+        contained_node = self.GetContainedField().MakeDomNode(document)
+        node.appendChild(contained_node)
+
+        return node
+    
+
 
 ########################################################################
 
@@ -1333,7 +1392,7 @@ class UploadAttachmentPage(web.DtmlPage):
 
         web.DtmlPage.__init__(self, "attachment.dtml")
         # Use a brand-new location for the attachment data.
-        self.location = attachment.get_temporary_location()
+        self.location = attachment.make_temporary_location()
         # Set up attributes.
         self.field_name = field_name
         self.encoding_name = encoding_name
@@ -1344,7 +1403,7 @@ class UploadAttachmentPage(web.DtmlPage):
     def MakeSubmitUrl(self):
         """Return the URL for submitting this form."""
 
-        return self.request.copy(attachment.upload_url).AsUrl()
+        return self.request.copy(AttachmentField.upload_url).AsUrl()
 
 
 
@@ -1356,13 +1415,28 @@ class AttachmentField(Field):
     handle the attachment submission requests.  See
     'attachment.register_attachment_upload_script'."""
 
-    MakeDownloadUrl = None
-    """Function for generating a URL to download this attachment.
+    class_name = "qm.fields.AttachmentField"
 
-    This variable, if not 'None', contains a callable that returns a
-    string containing the URL for dowloading an 'Attachment' object
-    specified as its argument.  The URL is used when formatting field
-    values as HTML."""
+    upload_url = "/attachment-upload"
+    """The URL used to upload data for an attachment.
+
+    The upload request will include these query arguments:
+
+      'location' -- The location at which to store the attachment data.
+
+      'file_data' -- The attachment data.
+
+    """
+
+    download_url = "/attachment-download"
+    """The URL used to download an attachment.
+
+    The download request will include this query argument:
+
+      'location' -- The location in the attachment store from which to
+      retrieve the attachment data.
+
+    """
 
 
     def __init__(self, name, **attributes):
@@ -1398,9 +1472,10 @@ class AttachmentField(Field):
             # attachment. 
             pass
         elif isinstance(value, attachment.Attachment):
-            location = value.location
-            type = value.mime_type
-            description = value.description
+            location = value.GetLocation() 
+            mime_type = value.GetMimeType()
+            description = value.GetDescription()
+            file_name = value.GetFileName()
         else:
             raise ValueError, "'value' must be 'None' or an 'Attachment'"
 
@@ -1412,18 +1487,22 @@ class AttachmentField(Field):
             if value is None:
                 return "None"
             # Link the attachment description to the data itself.
-            make_url = self.MakeDownloadUrl
-            if make_url is None:
-                result = "<tt>%s</tt>" % description
-            else:
-                download_url = make_url(value)
-                result = '<a href="%s"><tt>%s</tt></a>' % (download_url,
-                                                           description)
+            download_url = web.WebRequest(self.download_url,
+                                          location=location,
+                                          mime_type=mime_type).AsUrl()
+            # Here's a nice hack.  If the user saves the attachment to a
+            # file, browsers (some at least) guess the default file name
+            # from the URL by taking everything following the final
+            # slash character.  So, we add this bogus-looking argument
+            # to fool the browser into using our file name.
+            download_url = download_url + \
+                           "&=/" + urllib.quote_plus(file_name)
+            
+            result = '<a href="%s">%s</a>' \
+                     % (download_url, description)
             # For the full style, display the MIME type.
             if style == "full":
-                size = value.GetDataSize()
-                size = qm.format_byte_count(size)
-                result = result + ' (%s; %s)' % (type, size)
+                result = result + ' (%s)' % (mime_type)
             return result
 
         elif style == "new" or style == "edit":
@@ -1524,10 +1603,10 @@ class AttachmentField(Field):
 
         # We'll encode all the relevant information.
         parts = (
-            value.description,
-            value.mime_type,
-            value.location,
-            value.file_name,
+            value.GetDescription(),
+            value.GetMimeType(),
+            value.GetLocation(),
+            value.GetFileName(),
             )
         # Each part is URL-encoded.
         map(urllib.quote, parts)
@@ -1547,10 +1626,10 @@ class AttachmentField(Field):
         # Unpack the results.
         description, mime_type, location, file_name = parts
         # Create the attachment.
-        return attachment.attachment_class(mime_type=mime_type,
-                                           description=description,
-                                           file_name=file_name,
-                                           location=location)
+        return attachment.Attachment(mime_type=mime_type,
+                                     description=description,
+                                     file_name=file_name,
+                                     location=location)
 
 
     def FormatSummary(self, attachment):
@@ -1563,12 +1642,13 @@ class AttachmentField(Field):
             return "None"
         else:
             return "%s (%s; %s)" \
-                   % (attachment.description, attachment.file_name,
-                      attachment.mime_type)
+                   % (attachment.GetDescription(),
+                      attachment.GetFileName(),
+                      attachment.GetMimeType())
 
 
     def GetValueFromDomNode(self, node):
-        # Make sure 'node' is an '<attachment>' element.
+        # Make sure 'node' is an "attachment" element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "attachment":
             raise DomNodeError, \
@@ -1580,10 +1660,7 @@ class AttachmentField(Field):
 
 
     def MakeDomNodeForValue(self, value, document):
-        if value is None:
-            return attachment.make_dom_node(None, document)
-        else:
-            return value.MakeDomNode(document)
+        return attachment.make_dom_node(value, document)
 
 
     def GetHelp(self):
@@ -1634,6 +1711,8 @@ class EnumerationField(TextField):
     ordered -- If non-zero, the enumerals are presented to the user
     ordered by value."""
 
+    class_name = "qm.fields.EnumerationField"
+
     property_declarations = TextField.property_declarations + [
         FieldPropertyDeclaration(
             name="enumerals",
@@ -1656,6 +1735,9 @@ class EnumerationField(TextField):
         'default_value' -- The default value for this enumeration.  If
         'None', the first enumeral is used."""
 
+        # If we're handed an encoded list of enumerals, decode it.
+        if isinstance(enumerals, types.StringType):
+            enumerals = string.split(enumerals, ",")
         # Make sure the default value is legitimate.
         if not default_value in enumerals and len(enumerals) > 0:
             default_value = enumerals[0]
@@ -1773,12 +1855,12 @@ class EnumerationField(TextField):
                                    right_tag="enumeral",
                                    wrong_tag=node.tagName)
         # Extract the value.
-        return qm.xmlutil.get_dom_text(node)
+        return xmlutil.get_dom_text(node)
 
 
     def MakeDomNodeForValue(self, value, document):
         # Store the name of the enumeral.
-        return qm.xmlutil.create_dom_text_element(
+        return xmlutil.create_dom_text_element(
             document, "enumeral", str(value))
 
 
@@ -1838,6 +1920,8 @@ class TimeField(IntegerField):
     epoch, UTC (the semantics of the standard 'time' function), with
     one-second precision.  User representations of 'TimeField' fields
     show one-minue precision."""
+
+    class_name = "qm.fields.TimeField"
 
     def __init__(self, name, **attributes):
         """Create a time field.
@@ -1937,6 +2021,8 @@ class TimeField(IntegerField):
 class UidField(TextField):
     """A field containing a user ID."""
 
+    class_name = "qm.fields.UidField"
+
     def __init__(self, name, **attributes):
         default_user_id = user.database.GetDefaultUserId()
         apply(TextField.__init__,
@@ -1966,6 +2052,54 @@ class UidField(TextField):
         else:
             raise ValueError, style
 
+
+
+########################################################################
+# functions
+########################################################################
+
+def from_dom_node(node):
+    """Construct a field object from a DOM node.
+
+    'node' -- A DOM node for a "field" element.
+
+    returns -- An instance of a 'Field' subclass specified by the
+    element."""
+
+    assert node.tagName == "field"
+
+    # Get the Python class for the field.
+    field_class_name = xmlutil.get_child_text(node, "class")
+    # Load the class.
+    field_class = common.load_class(field_class_name)
+
+    if issubclass(field_class, SetField):
+        # If it's a set field, find the class of the contained field,
+        # and load it with a recursive call.
+        contained_field_node = xmlutil.get_child(node, "field")
+        contained_field = from_dom_node(contained_field_node)
+        # Construct the set field around it.
+        field = field_class(contained_field)
+
+    else:
+        # Get the name attribute.
+        name = node.getAttribute("name")
+        # Construct a map of properties.
+        properties = {}
+        for property_node in node.getElementsByTagName("property"):
+            property_name = property_node.getAttribute("name")
+            property_value = xmlutil.get_dom_text(property_node)
+            properties[property_name] = property_value
+        # Instantiate the field.
+        field = apply(field_class, [name], properties)
+        
+    # Set the default value.
+    default_value_node = xmlutil.get_child(node, "default-value")
+    default_value = field.GetValueFromDomNode(
+        default_value_node.childNodes[0])
+    field.SetDefaultValue(default_value)
+
+    return field
 
 
 ########################################################################

@@ -86,7 +86,7 @@
    </dtml-if>
    <input type="hidden" 
           name="revision" 
-          value="<dtml-var expr="issue.GetRevision()">">
+          value="<dtml-var expr="issue.GetRevisionNumber()">">
   </dtml-if>
 
   <table border="0"

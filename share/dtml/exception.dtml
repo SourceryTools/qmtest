@@ -48,15 +48,13 @@
  <hr size="1" noshade>
 
  <p><b>Exception type:</b>
- <tt><dtml-var expr="_.str(exception_type)"></tt></p>
+ <tt><dtml-var expr="web.escape(_.str(exception_type))"></tt></p>
 
  <p><b>Exception value:</b> 
- <tt><dtml-var expr="_.str(exception_value)"></tt></p>
+ <tt><dtml-var expr="web.escape(_.str(exception_value))"></tt></p>
 
  <p><b>Stack trace:</b></p>
- <pre>
-<dtml-var expr="traceback_listing">
- </pre>
+ <pre><dtml-var expr="web.escape(traceback_listing)"></pre>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

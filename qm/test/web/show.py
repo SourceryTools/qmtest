@@ -63,7 +63,7 @@ import web
 ########################################################################
 
 class ShowPage(web.DtmlPage):
-    """DTML context for generating DTML template show.dtml.
+    """DTML page for showing and editing tests and resources.
 
     See 'handle_show' for more information."""
 
@@ -372,7 +372,7 @@ def handle_show(request):
 
       'edit-resource' -- Likewise for an resource.
 
-    This functiondistinguishes among these cases by checking the script
+    This function distinguishes among these cases by checking the script
     name of the request object.
 
     The request must have the following fields:
@@ -479,8 +479,12 @@ def handle_show(request):
     return ShowPage(item, edit, create, type)(request)
 
 
-def retrieve_attachment_data(database, item_id, attachment):
+def _retrieve_attachment_data(database, item_id, attachment):
     """Retrieve temporary attachment data and store it in the right place.
+
+    Loads attachment data for 'attachment' stored in the temporary
+    attachment store and stores it in its permanent location in the test
+    database.
 
     'database' -- The test database.
 
@@ -489,16 +493,29 @@ def retrieve_attachment_data(database, item_id, attachment):
 
     'attachment' -- An 'Attachment' instance.
 
-    Loads attachment data for 'attachment' stored in the temporary
-    attachment store and stores it in its permanent location in the test
-    database."""
+    returns -- An 'Attachment' instance (may be the same as
+    'attachment', or not) to use for the attachment."""
 
     if attachment is None:
-        return
-    if qm.attachment.is_temporary_attachment_location(attachment.location):
-        data = qm.attachment.retrieve_temporary_attachment(
-            attachment.location)
-        database.SetAttachmentData(attachment, data, item_id)
+        return None
+
+    location = attachment.GetLocation()
+    if qm.attachment.is_temporary_location(location):
+        # The attachment data is in the temporary store.  We need to
+        # extract it and store it in the test database's permanent
+        # attachment store.  Cause the temporary store to release
+        # control of the file containing the attachment data.
+        data_file_path = qm.attachment.temporary_store.Release(location)
+        # Adopt it into the permanent attachment store.
+        attachment_store = database.GetAttachmentStore()
+        return attachment_store.Adopt(
+            item_id=item_id,
+            mime_type=attachment.GetMimeType(),
+            description=attachment.GetDescription(),
+            file_name=attachment.GetFileName(),
+            path=data_file_path)
+    else:
+        return attachment
 
 
 def handle_submit(request):
@@ -583,16 +600,16 @@ def handle_submit(request):
             # attachment store; we need to copy it from there into the
             # test database.  This function does the work.
             fn = lambda attachment, database=database, item_id=item_id: \
-                 retrieve_attachment_data(database, item_id, attachment)
+                 _retrieve_attachment_data(database, item_id, attachment)
             if isinstance(field, qm.fields.AttachmentField):
                 # An attachment field -- process the value.
-                fn(value)
+                value = fn(value)
             elif isinstance(field, qm.fields.SetField) \
                  and isinstance(field.GetContainedField(),
                                 qm.fields.AttachmentField):
                 # An attachment set field -- process each element of the
                 # value.
-                map(fn, value)
+                value = map(fn, value)
 
             # Store the field value.
             arguments[field_name] = value
@@ -654,7 +671,7 @@ def handle_submit(request):
 
     # Redirect to a page that displays the newly-edited item.
     request = qm.web.WebRequest("show-" + type, base=request, id=item_id)
-    raise qm.web.HttpRedirect, request.AsUrl()
+    raise qm.web.HttpRedirect, request
 
 
 def handle_delete(request):
@@ -682,7 +699,7 @@ def handle_delete(request):
         raise RuntimeError, "unrecognized script name"
     # Redirect to the main page.
     request = qm.web.WebRequest("dir", base=request)
-    raise qm.web.HttpRedirect, request.AsUrl()
+    raise qm.web.HttpRedirect, request
 
 
 ########################################################################

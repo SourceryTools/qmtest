@@ -62,8 +62,10 @@ def make_system_id(name):
     return "http://www.software-carpentry.com/qm/xml/%s" % name
 
 
-def load_xml_file(path):
+def load_xml_file(path, validate=1):
     """Return a DOM document loaded from the XML file 'path'.
+
+    'validate' -- If true, a validating XML parser is used.
 
     raises -- 'ParseError' if an error occurs while parsing the file.
     This may occur if the file is either not well-formed or not
@@ -76,16 +78,18 @@ def load_xml_file(path):
         # FIXME.  Any errors that need to be handled here?
         raise
     else:
-        return load_xml(file, whence=path)
+        return load_xml(file, whence=path, validate=validate)
 
 
-def load_xml(file, whence="(input)"):
+def load_xml(file, whence="(input)", validate=1):
     """Return a DOM document loaded from the XML file object 'file'.
 
     'file' -- A file object from which to read XML.
 
     'whence' -- Where the XML came from (e.g. a file path), for use in
     diagnostic messages.
+
+    'validate' -- If true, a validating XML parser is used.
 
     raises -- 'ParseError' if an error occurs while parsing the file.
     This may occur if the file is either not well-formed or not
@@ -95,7 +99,8 @@ def load_xml(file, whence="(input)"):
     catalog_path = os.path.join(qm.get_share_directory(),
                                 "xml", "CATALOG")
     # Create a validating DOM reader.
-    reader = xml.dom.ext.reader.Sax.Reader(validate=1, catName=catalog_path)
+    reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
+                                           catName=catalog_path)
     try:
         # Read and parse XML.
         document = reader.fromStream(file)
@@ -127,23 +132,66 @@ def get_dom_text(node):
     return child.data
 
 
-def get_dom_child_text(node, child_tag):
+def child_tag_predicate(child_tag):
+    """Return a predicate function for finding element nodes by tag.
+
+    returns -- A predicate function that takes a node as its argument
+    and returns true if the node is an element node whose tag is
+    'child_tag'."""
+
+    return lambda node, tag=child_tag: \
+           node.nodeType == xml.dom.Node.ELEMENT_NODE \
+           and node.tagName == tag
+
+
+def get_child(node, child_tag):
+    """Return the child element node of 'node' whose tag is 'child_tag'.
+
+    'node' -- A DOM node.  It must have exactly one element child with
+    the tag 'child_tag'.
+
+    'child_tag' -- The desired element tag.
+
+    returns -- A child DOM node of 'node'.
+
+    raises -- 'KeyError' if 'node' has no element child with tag
+    'child_tag', or more than one.. """
+
+    matching_children = \
+        filter(child_tag_predicate(child_tag), node.childNodes)
+    if len(matching_children) != 1:
+        raise KeyError, child_tag
+    return matching_children[0]
+
+
+def get_children(node, child_tag):
+    """Return a sequence of children of 'node' whose tags are 'child_tag'."""
+    
+    return filter(child_tag_predicate(child_tag), node.childNodes)
+
+
+def get_child_text(node, child_tag, default=None):
     """Return the text contained in a child of DOM 'node'.
 
     'child_tag' -- The tag of the child node whose text is to be
     retrieved.
 
-    prerequisites -- 'node' is an element node with exactly one child
-    with the tag 'child_tag'.  That child has exactly one child, which
-    is a text node."""
+    'default' -- If 'node' has no child element with tag 'child_tag',
+    returns 'default', unless 'default' is 'None'.
 
-    assert node.nodeType == xml.dom.Node.ELEMENT_NODE
-    children = node.getElementsByTagName(child_tag)
-    assert len(children) == 1
-    return get_dom_text(children[0])
+    raises -- 'KeyError' if 'default' is 'None' and 'node' has no child
+    element with tag 'child_tag'."""
+
+    try:
+        return get_dom_text(get_child(node, child_tag))
+    except KeyError:
+        if default is not None:
+            return default
+        else:
+            raise
 
 
-def get_dom_children_texts(node, child_tag):
+def get_child_texts(node, child_tag):
     """Return a sequence of text contents of children.
 
     'node' -- A DOM node.
@@ -152,11 +200,7 @@ def get_dom_children_texts(node, child_tag):
     tag 'child_tag'.  Each child must have exactly one child of its own,
     which must be a text node."""
 
-    results = []
-    for child_node in node.getElementsByTagName(child_tag):
-        text = get_dom_text(child_node)
-        results.append(text)
-    return results
+    return map(get_dom_text, get_children(node, child_tag))
 
 
 def create_dom_text_element(document, tag, text):

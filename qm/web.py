@@ -362,9 +362,20 @@ class HttpRedirect(Exception):
     the server should send an HTTP redirect (code 302) response to the
     client instead of the usual code 202 response.
 
-    The exception argument is the URL of the redirect target."""
+    The exception argument is the URL of the redirect target.  The
+    'request' attribute contains a 'WebRequest' for the redirect
+    target."""
 
-    pass
+    def __init__(self, redirect_target_request):
+        """Construct a redirection exception.
+
+        'redirect_target_request' -- The 'WebRequest' to which to
+        redirect the client."""
+
+        # Initialize the base class.
+        Exception.__init__(self, redirect_target_request.AsUrl())
+        # Store the request itself.
+        self.request = redirect_target_request
 
 
 
@@ -448,11 +459,11 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 script_output = self.server.HandleNoSessionError(request, msg)
             except InvalidSessionError, msg:
                 script_output = generate_login_form(request, msg)
-        except HttpRedirect, location:
+        except HttpRedirect, redirection:
             # The script requested an HTTP redirect response to
             # the client.
             self.send_response(302)
-            self.send_header("Location", location)
+            self.send_header("Location", str(redirection))
             self.end_headers()
             return
         except SystemExit:
@@ -1009,7 +1020,7 @@ class WebServer(HTTPServer):
         session = Session(request, user_id)
         # Redirect to the same page but using the new session ID.
         request.SetSessionId(session.GetId())
-        raise HttpRedirect, request.AsUrl()
+        raise HttpRedirect(request)
 
 
 
@@ -1194,7 +1205,12 @@ class WebRequest:
         new_fields = self.__fields.copy()
         new_fields.update(fields)
         # Make the request.
-        return apply(WebRequest, (url, ), new_fields)
+        new_request = apply(WebRequest, (url, ), new_fields)
+        # Copy the client address, if present.
+        if hasattr(self, "client_address"):
+            new_request.client_address = self.client_address
+
+        return new_request
 
 
 
@@ -1630,7 +1646,7 @@ def handle_login(request, default_redirect_url="/"):
     # Add the ID of the new session to the request.
     redirect_request.SetSessionId(session_id)
     # Redirect the client to the URL for the redirected page.
-    raise HttpRedirect, redirect_request.AsUrl()
+    raise HttpRedirect, redirect_request
 
 
 def handle_logout(request, default_redirect_url="/"):
@@ -1655,7 +1671,7 @@ def handle_logout(request, default_redirect_url="/"):
         del redirect_request["_redirect_url"]
     del redirect_request[session_id_field]
     # Redirect to the specified request.
-    raise HttpRedirect, redirect_request.AsUrl()
+    raise HttpRedirect, redirect_request
 
 
 def generate_error_page(request, error_text):
@@ -2482,7 +2498,7 @@ def cache_page(page_text, session_id=None):
         os.mkdir(os.path.join(_page_cache_path, "sessions"), 0700)
         # Clean up the cache at exit.
         cleanup_function = lambda path=_page_cache_path: \
-                           common.remove_directory_recursively(path)
+                           common.rmdir_recursively(path)
         common.add_exit_function(cleanup_function)
 
     if session_id is None:
@@ -2572,7 +2588,7 @@ _handle_problems = DtmlPage.default_class("problems.dtml")
 def _handle_root(requets):
     """Respond to a request for the root page on this server."""
 
-    raise HttpRedirect, "/static/index.html"
+    raise HttpRedirect, WebRequest("/static/index.html")
 
 
 def format_user_id(user_id):

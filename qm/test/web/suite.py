@@ -61,8 +61,8 @@ class ShowPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "suite.dtml")
         # Set up attributes.
         self.suite = suite
-        self.test_ids = suite.GetRawTestIds()
-        self.suite_ids = suite.GetRawSuiteIds()
+        self.test_ids = suite.GetTestIds()
+        self.suite_ids = suite.GetSuiteIds()
         self.edit = edit
 
         if edit:
@@ -71,7 +71,7 @@ class ShowPage(web.DtmlPage):
 
             # Construct a list of all test IDs, relative to the suite,
             # that are not explicitly included in the suite.
-            excluded_test_ids = database.GetTestIds(path=dir_id)
+            excluded_test_ids = database.GetTestIds(dir_id)
             for test_id in self.test_ids:
                 if test_id in excluded_test_ids:
                     excluded_test_ids.remove(test_id)
@@ -84,7 +84,7 @@ class ShowPage(web.DtmlPage):
                 excluded_test_ids)
 
             # Likewise for suite IDs.
-            excluded_suite_ids = database.GetSuiteIds(path=dir_id, implicit=1)
+            excluded_suite_ids = database.GetSuiteIds(dir_id)
             for suite_id in self.suite_ids:
                 if suite_id in excluded_suite_ids:
                     excluded_suite_ids.remove(suite_id)
@@ -217,12 +217,14 @@ def handle_submit(request):
     else:
         suite_ids = string.split(suite_ids, ",")
     # Construct a new suite.
-    suite = qm.test.base.Suite(suite_id, test_ids, suite_ids)
+    suite = qm.test.base.Suite(suite_id,
+                               test_ids=test_ids,
+                               suite_ids=suite_ids)
     # Store it.
     database.WriteSuite(suite)
     # Redirect to a page that displays the newly-edited item.
     raise qm.web.HttpRedirect, \
-          qm.web.make_url("show-suite", id=suite_id)
+          qm.web.WebRequest("show-suite", base=request, id=suite_id)
 
 
 def handle_create(request):
@@ -271,8 +273,7 @@ def handle_delete(request):
     suite_id = request["id"]
     database.RemoveSuite(suite_id)
     # Redirect to the main page.
-    request = qm.web.WebRequest("dir", base=request)
-    raise qm.web.HttpRedirect, request.AsUrl()
+    raise qm.web.HttpRedirect, qm.web.WebRequest("dir", base=request)
 
 
 ########################################################################

@@ -74,6 +74,9 @@ import string
 sep = "."
 """The namespace separator character in labels."""
 
+root = sep
+"""The root label."""
+
 ########################################################################
 # classes
 ########################################################################
@@ -198,14 +201,29 @@ def split(label):
 
     returns -- A pair '(namespace, name)', where 'name' is the name of
     the label in its containing 'namespace'.  If the separator character
-    does not appear in 'label', 'namespace' is an empty string and
-    'name' is the same as 'label'."""
+    does not appear in 'label', 'namespace' is "." and 'name' is the
+    same as 'label'."""
     
-    if sep in label:
+    label = normpath(label)
+    if label == sep:
+        return (sep, "")
+    elif sep in label:
         last_sep = string.rfind(label, sep)
         return (label[:last_sep], label[last_sep + 1:])
     else:
-        return ("", label)
+        return (sep, label)
+
+
+def split_fully(label):
+    """Divide a label into components at separator characters.
+
+    returns -- A sequence of path components.  If 'label' is the root
+    label, the return value is an empty sequence."""
+
+    label = normpath(label)
+    if label == sep:
+        return []
+    return string.split(label, sep)
 
 
 def basename(label):
@@ -219,7 +237,7 @@ def dirname(label):
 
     result = split(label)[0]
     if result == "":
-        result = "."
+        result = sep
     return result
 
 

@@ -844,9 +844,11 @@ class TestRun:
                 # There is no target whose target group is allowable for
                 # this test.  We therefore can't run this test.  Add an
                 # 'UNTESTED' result for it.
-                cause = qm.message("no target for group",
-                                   group_pattern=test.GetProperty("group"))
-                result = base.Result(base.Result.UNTESTED, cause=cause)
+                cause = qm.message("no target for group")
+                group_pattern = test.GetProperty("group")
+                result = base.Result(base.Result.UNTESTED,
+                                     cause=cause,
+                                     group_pattern=group_pattern)
                 result = base.ResultWrapper(test_id, self.__context, result)
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
@@ -857,14 +859,16 @@ class TestRun:
                 # One of the test's prerequisites was run and produced
                 # the incorrect outcome.  We won't run this test.  Add
                 # an 'UNTESTED' result for it.
+                cause = qm.message("failed prerequisite")
                 prerequisite_outcome = \
                     self.__test_results[prerequisite_id].GetOutcome()
                 expected_outcome = test.GetPrerequisites()[prerequisite_id]
-                cause = qm.message("incorrect prerequisite outcome",
-                                   id=prerequisite_id,
-                                   outcome=prerequisite_outcome,
-                                   expected_outcome=expected_outcome)
-                result = base.Result(base.Result.UNTESTED, cause=cause)
+                result = base.Result(
+                    base.Result.UNTESTED,
+                    cause=cause,
+                    prerequisite_id=prerequisite_id,
+                    prerequisite_outcome=prerequisite_outcome,
+                    expected_outcome=expected_outcome)
                 result = base.ResultWrapper(test_id, self.__context, result)
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
@@ -875,8 +879,10 @@ class TestRun:
                 # One of the resources required for this test failed
                 # during setup, so we can't run the test.  Add an
                 # 'UNTESTED' result for it.
-                cause = qm.message("failed resource", id=resource_id)
-                result = base.Result(base.Result.UNTESTED, cause=cause)
+                cause = qm.message("failed resource")
+                result = base.Result(base.Result.UNTESTED,
+                                     cause=cause,
+                                     resource_id=resource_id)
                 result = base.ResultWrapper(test_id, self.__context, result)
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
@@ -1421,10 +1427,10 @@ def _target_spec_from_dom(node):
     returns -- A 'TargetSpec' object."""
 
     # Extract standard elements.
-    name = qm.xmlutil.get_dom_child_text(node, "name")
-    class_name = qm.xmlutil.get_dom_child_text(node, "class")
-    group = qm.xmlutil.get_dom_child_text(node, "group")
-    concurrency = qm.xmlutil.get_dom_child_text(node, "concurrency")
+    name = qm.xmlutil.get_child_text(node, "name")
+    class_name = qm.xmlutil.get_child_text(node, "class")
+    group = qm.xmlutil.get_child_text(node, "group")
+    concurrency = qm.xmlutil.get_child_text(node, "concurrency")
     concurrency = int(concurrency)
     # Extract properties.
     properties = {}

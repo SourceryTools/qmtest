@@ -628,7 +628,7 @@ def get_group_from_dom(group_node):
     assert group_node.tagName == "group"
 
     group_id = group_node.getAttribute("id")
-    user_ids = xmlutil.get_dom_children_texts(group_node, "user-id")
+    user_ids = xmlutil.get_child_texts(group_node, "user-id")
     # Make the group.
     return Group(group_id, user_ids)
 

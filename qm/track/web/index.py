@@ -51,14 +51,13 @@ class IndexPage(web.DtmlPage):
         # Initialize the base class.
         web.DtmlPage.__init__(self, "index.dtml")
 
-        # Retrieve and store all the issues available in this issue
-        # class.
-        idb = qm.track.get_idb()
-        self.issue_classes = idb.GetIssueClasses()
-        # Store the name of the default issue class.
-        if len(self.issue_classes) > 0:
-            default_name = qm.track.get_configuration()["default_class"]
-            self.default_issue_class = idb.GetIssueClass(default_name)
+
+    def GetIssueClasses(self):
+        return self.request.GetSession().idb.GetIssueClasses()
+
+
+    def GetDefaultIssueClass(self):
+        return self.request.GetSession().idb.GetDefaultIssueClass()
 
 
     def MakeLogoutForm(self):

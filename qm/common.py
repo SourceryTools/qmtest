@@ -39,6 +39,7 @@ import base64
 import ConfigParser
 import cPickle
 import cStringIO
+import dircache
 import gzip
 import imp
 import operator
@@ -272,61 +273,6 @@ class MutexMixin:
             mutex = threading.RLock()
             self.__mutex = mutex
         return Lock(mutex)
-
-
-
-class Configuration:
-    """A persistent set of program configuration variables.
-
-    A 'Configuration' object acts as a map of configuration variables.
-    The configuration is associated with a file path.  It can be made
-    persistent by invoking 'Save', which writes it to that file."""
-
-    def __init__(self, path, **initialization):
-        """Create or load a configuration.
-
-        'path' -- The path to the configuration file.
-
-        'initialization' -- Initial configuration values."""
-
-        self.__path = path
-        self.__fields = {}
-        # Initialize the fields using our '__setitem__' method.
-        for key, value in initialization.items():
-            self[key] = value
-
-
-    def Save(self):
-        """Save the configuration."""
-        
-        # Write the configuration to a pickle.
-        pickle_file = open(self.__path, "w")
-        cPickle.dump(self.__fields, pickle_file)
-        pickle_file.close()
-
-
-    def Load(self):
-        """Load the configuration.
-
-        raise -- 'ConfigurationError' if the configuration cannot be
-        loaded."""
-
-        # Unpickle the configuration.
-        pickle_file = open(self.__path, "r")
-        self.__fields = cPickle.load(pickle_file)
-        pickle_file.close()
-
-
-    def __getitem__(self, key):
-        return self.__fields[key]
-
-
-    def __setitem__(self, key, value):
-        self.__fields[key] = value
-
-
-    def __delitem__(self, key):
-        del self.__fields[key]
 
 
 
@@ -646,12 +592,17 @@ def format_byte_count(bytes):
     return "%d bytes" % bytes
 
 
-def remove_directory_recursively(path):
+def rmdir_recursively(path):
     """Remove the directory at 'path' and everything under it."""
 
     assert os.path.isdir(path)
-    # FIXME: Make this portable, or provide a Windows implementation.
-    os.system('rm -rf "%s"' % path)
+
+    for entry in dircache.listdir(path):
+        entry_path = os.path.join(path, entry)
+        if os.path.isdir(entry_path):
+            rmdir_recursively(entry_path)
+        else:
+            os.unlink(entry_path)
 
 
 def replace_by_map(text, replacements):
@@ -689,7 +640,7 @@ def convert_from_dos_text(text):
     return string.replace(text, "\r\n", "\n")
 
 
-def load_module(name, path):
+def load_module(name, path=sys.path):
     """Load a Python module.
 
     'name' -- The fully-qualified name of the module to load, for
@@ -759,7 +710,7 @@ def load_module(name, path):
             file.close()
         
         
-def load_class(name, path):
+def load_class(name, path=sys.path):
     """Load a Python class.
 
     'name' -- The fully-qualified (including package and module names)
@@ -991,17 +942,16 @@ def add_exit_function(exit_function):
     'exit_function' -- A callable that takes no arguments."""
 
     global _exit_functions
+    global _foreign_exit_functions
 
     # Check whether there is already an exit function registered with
     # the Python interpreter.
     if hasattr(sys, "exitfunc"):
-        # Yes, there is.
-        exit_function = sys.exitfunc
-        # Is it our exit function dispatcher?
-        if exit_function is not _at_exit:
+        # Yes, there is.  Is it our exit function dispatcher?
+        if sys.exitfunc is not _at_exit:
             # Something else is there.  That's OK; we'll add it to the
-            # end of our own queue.
-            _exit_functions.append(exit_function)
+            # end of our own queue and run it later.
+            _foreign_exit_functions.append(sys.exitfunc)
             # Replace it.
             sys.exitfunc = _at_exit
     else:
@@ -1016,7 +966,12 @@ def _at_exit():
     """Perform cleanup stuff at program termination."""
 
     global _exit_functions
+    global _foreign_exit_functions
+    
+    # First run QM-installed exit functions.
     map(lambda fn: fn(), _exit_functions)
+    # Finally, run any foreign exit functions that other code installed.
+    map(lambda fn: fn(), _foreign_exit_functions)
 
 
 def copy(object):
@@ -1109,6 +1064,7 @@ def print_message(min_verbose, text):
 
     if verbose >= min_verbose:
         sys.stdout.write(text)
+        sys.stdout.flush()
 
 
 def format_time(time_secs, local_time_zone=1):
@@ -1171,6 +1127,38 @@ def sequence_difference(seq1, seq2):
         if item not in seq2:
             result.append(item)
     return result
+
+
+def make_map_from_list(list, key_function=str):
+    """Construct a map from a list.
+
+    Each element in 'list' is added to the map.  'key_function' is
+    invoked on each element to construct its key; the value is the
+    element itself.  If more than one element produces a given key, the
+    last one will appear under that key; the others will not appear."""
+
+    map = {}
+    for element in list:
+        map[key_function(element)] = element
+    return map
+
+
+def purge_keys(map, keys):
+    """Remove each entry from 'map' that matches a key in 'keys'.
+
+    'map' -- A map object.
+
+    'keys' -- A sequence of keys."""
+
+    for key in keys:
+        if map.has_key(key):
+            del map[key]
+
+
+def make_unique_tag():
+    """Return a unique tag string."""
+
+    return "%f%d" % (time.time() * 100, os.getpid())
 
 
 def split_argument_list(command):
@@ -1316,11 +1304,14 @@ verbose = 0
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""
 
+# Functions that should be called when the program exits.  Each element
+# is a callable that takes no arguments.  The return value is ignored.
 _exit_functions = []
-"""Functions that should be called when the program exits.
 
-Each element is a callable that takes no arguments.  The return value is
-ignored."""
+# Foreign exit functions that were installed in 'sys.exitfunc' by non-QM
+# code.  These should be called after the QM-installed exit functions
+# are processed.
+_foreign_exit_functions = []
 
 ########################################################################
 # Local Variables:

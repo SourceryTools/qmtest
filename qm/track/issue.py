@@ -35,7 +35,6 @@
 # imports
 ########################################################################
 
-import config
 import qm
 import qm.attachment
 import qm.xmlutil
@@ -43,7 +42,7 @@ import string
 import sys
 
 ########################################################################
-# classes
+# exceptions
 ########################################################################
 
 class IssueFieldError(Exception):
@@ -60,66 +59,25 @@ class IssueFileError(RuntimeError):
 
 
 
-class Attachment(qm.attachment.Attachment):
-    """An attachments whose data is stored in the IDB.
+class ExpressionNameError(Exception):
+    """A unknown name was referenced in an issue expression.
 
-    This subclass of 'qm.attachment.Attachment' always uses the
-    'location' attribute to refer to attachment contents in the IDB.
-    The 'data' attribute is never used to carry attachment data around
-    with attachment objects."""
+    The expression argument is the referenced name."""
 
-    def __init__(self,
-                 mime_type=None,
-                 description="",
-                 file_name="",
-                 data=None,
-                 location=None):
-        """Create a new attachment.
-
-        'data' -- The attachment data, or 'None' if it's already in the
-        IDB.
-
-        'location' -- The location of the data in the IDB, or 'None' if
-        it isn't there yet.
-
-        Exactly one of 'data' and 'location' should be not 'None.  If
-        'data' is specified, the data is put into the database."""
-
-        # Check semantics.
-        assert data is None or location is None
-        assert data is not None or location is not None
-
-        # Perform base class initialization.
-        qm.attachment.Attachment.__init__(self, mime_type,
-                                          description, file_name)
-        if data is not None:
-            # We have the attachment data.  Put it in the IDB.
-            idb = config.get_idb()
-            location = idb.GetNewAttachmentLocation()
-            idb.SetAttachmentData(location, data)
-            self.location = location
-        else:
-            # Data is already in the IDB.  Reference it.
-            self.location = location
+    pass
 
 
-    def GetData(self):
-        # Obtain it from the IDB.
-        return config.get_idb().GetAttachmentData(self.location)
+
+class ExpressionSyntaxError(Exception):
+    """An issue expression contained a syntax error."""
+
+    pass
 
 
-    def GetDataSize(self):
-        # Obtain it from the IDB.
-        return config.get_idb().GetAttachmentSize(self.location)
 
-
-    def MakeDomNode(self, document):
-        # Always include the attachment's content data in-line when
-        # representing it as XML.
-        return qm.attachment.make_dom_node(self, document,
-                                           data=self.GetData())
-
-
+########################################################################
+# classes
+########################################################################
 
 class IssueDifference:
     """A difference between two issues.
@@ -227,7 +185,8 @@ class Issue:
 
     def __repr__(self):
         return "<Issue (%s) %s #%d>" \
-               % (self.GetClass().GetName(), self.GetId(), self.GetRevision())
+               % (self.GetClass().GetName(), self.GetId(),
+                  self.GetRevisionNumber())
 
 
     def copy(self):
@@ -321,7 +280,7 @@ class Issue:
         return self.GetField("iid")
 
 
-    def GetRevision(self):
+    def GetRevisionNumber(self):
         """Return the revision number."""
 
         return self.GetField("revision")
@@ -504,10 +463,13 @@ def patch_issue(issue, difference):
     return result
 
 
-def get_issues_from_dom_node(issues_node):
+def get_issues_from_dom_node(issues_node, issue_classes):
     """Convert a DOM element to issues.
 
     'issues_node' -- A DOM issues element node.
+
+    'issue_classes' -- A map from issue class names to 'IssueClass'
+    instances, to be used when construction 'Issue' objects.
 
     returns -- A sequence of 'Issue' objects."""
 
@@ -516,7 +478,7 @@ def get_issues_from_dom_node(issues_node):
     # Extract one result for each result element.
     issues = []
     for issue_node in issues_node.getElementsByTagName("issue"):
-        issue_ = get_issue_from_dom_node(issue_node)
+        issue_ = get_issue_from_dom_node(issue_node, issue_classes)
         issues.append(issue_)
     return issues
     
@@ -562,24 +524,25 @@ def _get_field_values_from_dom_node(node, issue_class):
     return field_values
 
 
-def get_issue_from_dom_node(issue_node):
+def get_issue_from_dom_node(issue_node, issue_classes):
     """Convert a DOM element to an issue.
 
     'issue_node' -- A DOM issue element node.
+
+    'issue_classes' -- A map from issue class names to 'IssueClass'
+    instances, to be used when construction 'Issue' objects.
 
     returns -- An 'Issue' instance."""
 
     assert issue_node.tagName == "issue"
 
-    idb = config.get_idb()
-
     # Extract the issue ID.
     iid = issue_node.getAttribute("id")
     # Extract the issue class name.
-    issue_class_name = qm.xmlutil.get_dom_child_text(issue_node, "class")
+    issue_class_name = qm.xmlutil.get_child_text(issue_node, "class")
     try:
         # Look up the issue class.
-        issue_class = idb.GetIssueClass(issue_class_name)
+        issue_class = issue_classes[issue_class_name]
     except KeyError:
         # It's a class we don't know.
         raise IssueFileError, \
@@ -611,25 +574,35 @@ def get_issue_difference_from_dom_node(difference_node, issue_class):
     return apply(IssueDifference, [issue_class], field_values)
 
 
-def get_histories_from_dom_node(histories_node):
+def get_histories_from_dom_node(histories_node, issue_classes):
     """Convert a DOM element to a sequence of issue histories.
 
     'histories_node' -- A DOM issue histories element node.  The node
     must be a "histories" element.
 
+    'issue_classes' -- A map from issue class names to 'IssueClass'
+    instances, to be used when construction 'Issue' objects.
+
     returns -- A sequence of issue histories.  Each element is a
     sequence of consecutive revisions of a single issue."""
 
     assert histories_node.tagName == "histories"
-    return map(get_history_from_dom_node,
-               histories_node.getElementsByTagName("history"))
+    issue_histories = []
+    for history_node in qm.xmlutil.get_children(histories_node, "history"):
+        issue_history = get_history_from_dom_node(history_node,
+                                                  issue_classes)
+        issue_histories.append(issue_history)
+    return issue_histories
     
 
-def get_history_from_dom_node(history_node):
+def get_history_from_dom_node(history_node, issue_classes):
     """Convert a DOM element to an issue history.
 
     'history_node' -- A DOM issue history element node.  The node must
     be a "history" element.
+
+    'issue_classes' -- A map from issue class names to 'IssueClass'
+    instances, to be used when construction 'Issue' objects.
 
     returns -- A sequence of consecutive revisions of the issue."""
 
@@ -637,7 +610,7 @@ def get_history_from_dom_node(history_node):
 
     issue_nodes = history_node.getElementsByTagName("issue")
     assert len(issue_nodes) == 1
-    issue = get_issue_from_dom_node(issue_nodes[0])
+    issue = get_issue_from_dom_node(issue_nodes[0], issue_classes)
     issue.SetField("revision", 0)
     revisions = [issue]
     
@@ -669,8 +642,6 @@ def issues_to_xml(issues, output):
 
     'output' -- A file object to which to write the XML."""
 
-    idb = qm.track.get_idb()
-
     # Create a DOM document.
     document = qm.xmlutil.create_dom_document(
         public_id="-//Software Carpentry//QMTrack Issue V0.1//EN",
@@ -685,14 +656,13 @@ def issues_to_xml(issues, output):
     qm.xmlutil.write_dom_document(document, output)
     
 
-def export_issues(issues, output):
-    """Export full issues, with revision history, as XML.
+def write_issue_histories(issue_histories, output):
+    """Write full histories, with revision history, as XML.
 
-    'issues' -- A sequence of issues.
+    'issue_histories' -- A sequence of issue histories.  Each element is
+    a sequence of revisions of a single issue.
 
-    'output' -- A file object to which to write the exported XML."""
-
-    idb = qm.track.get_idb()
+    'output' -- A file object to which to write the XML issue histories."""
 
     # Create a DOM document.
     document = qm.xmlutil.create_dom_document(
@@ -701,28 +671,45 @@ def export_issues(issues, output):
         document_element_tag="histories"
         )
     # Add an issue element for each issue.
-    for issue in issues:
+    for issue_history in issue_histories:
         # Create a 'history' element for this issue.
         history_element = document.createElement("history")
-        # Get a list of all revisions of this issue.
-        revisions = idb.GetAllRevisions(issue.GetId(), issue.GetClass())
 
         # Write the initial revision.
-        assert revisions[0].GetRevision() == 0
-        revision_element = revisions[0].MakeDomElement(document)
+        assert issue_history[0].GetRevisionNumber() == 0
+        revision_element = issue_history[0].MakeDomElement(document)
         history_element.appendChild(revision_element)
         
         # Process subsequent revisions, only including differing
         # fields. 
-        for revision_number in xrange(1, len(revisions)):
-            difference = difference_issues(revisions[revision_number - 1],
-                                           revisions[revision_number])
+        for revision_number in xrange(1, len(issue_history)):
+            difference = difference_issues(issue_history[revision_number - 1],
+                                           issue_history[revision_number])
             revision_element = difference.MakeDomElement(document)
             history_element.appendChild(revision_element)
 
         document.documentElement.appendChild(history_element)
     # Generate output.
     qm.xmlutil.write_dom_document(document, output)
+
+
+def load_issue_histories(issue_file_path, issue_classes):
+    """Load issue histories stored in the XML file at 'issue_file_path'.
+
+    'issue_classes' -- A map from issue class names to 'IssueClass'
+    instances, to be used when construction 'Issue' objects.
+
+    preconditions -- The file specified by 'issue_file_path' must be a
+    valid XML file, whose document element is a "histories" element.
+
+    returns -- A sequence of issue histories.  Each issue history is a
+    sequence of 'Issue' instances representing consecutive revisions of
+    a single issue."""
+
+    document = qm.xmlutil.load_xml_file(issue_file_path)
+    assert document.documentElement.tagName == "histories"
+    return get_histories_from_dom_node(document.documentElement,
+                                       issue_classes)
 
 
 def eval_issue_expression(expression, issue, extra_locals={}):
@@ -756,7 +743,12 @@ def eval_issue_expression(expression, issue, extra_locals={}):
         value = issue.GetField(field_name)
         locals[field_name] = value
     # Do it.
-    return eval(expression, globals, locals)
+    try:
+        return eval(expression, globals, locals)
+    except NameError, exception:
+        raise ExpressionNameError, str(exception)
+    except SyntaxError, exception:
+        raise ExpressionSyntaxError, str(exception)
 
 
 def eval_revision_expression(expression,
@@ -838,7 +830,12 @@ def eval_revision_expression(expression,
     extra_locals["_changed_to"] = changed_to_fn
     extra_locals["_new"] = previous_revision is None
 
-    return eval_issue_expression(expression, revision, extra_locals)
+    try:
+        return eval_issue_expression(expression, revision, extra_locals)
+    except NameError, exception:
+        raise ExpressionNameError, str(exception)
+    except SyntaxError, exception:
+        raise ExpressionSyntaxError, str(exception)
 
 
 ########################################################################
@@ -856,8 +853,6 @@ function objects."""
 ########################################################################
 
 def _initialize_module():
-    qm.attachment.attachment_class = Attachment
-
     global allowed_builtins
     for name in [ 'None', 'abs', 'buffer', 'chr', 'cmp', 'coerce',
                   'complex', 'divmod', 'filter', 'float', 'getattr',

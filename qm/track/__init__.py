@@ -32,16 +32,6 @@
 ########################################################################
 
 ########################################################################
-# imports
-########################################################################
-
-from config import *
-from idb import *
-from issue import *
-from issue_class import *
-from qm.diagnostic import error, warning
-
-########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil

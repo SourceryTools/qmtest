@@ -326,7 +326,10 @@ class Command:
                 raise RuntimeError, \
                       qm.error("no db specified",
                                envvar=self.db_path_environment_variable)
-        base.load_database(db_path)
+        try:
+            base.load_database(db_path)
+        except ValueError, exception:
+            raise RuntimeError, str(exception)
 
         # Dispatch to the appropriate method.
         method = {
@@ -345,9 +348,7 @@ class Command:
     def MakeContext(self):
         """Construct a 'Context' object for running tests."""
 
-        context = base.Context(
-            path=qm.rc.Get("path", os.environ["PATH"])
-            )
+        context = base.Context()
 
         for option, argument in self.__command_options:
             # Look for the '--context-file' option.
@@ -463,32 +464,11 @@ class Command:
             # No IDs specified; run the entire test database.
             self.__arguments.append(".")
 
-        # We'll collect all the tests to run in this map. 
-        test_ids = {}
-        test_suites = []
-        # This function adds a test to 'test_ids'.
-        def add_test_id(test_id, test_ids=test_ids):
-            test_ids[test_id] = None
-        # Validate test IDs and expand test suites in the arguments.
-        for argument in self.__arguments:
-            if database.HasSuite(argument):
-                # It's a test suite.  Add all the test IDs in the
-                # suite. 
-                suite = database.GetSuite(argument)
-                map(add_test_id, suite.GetTestIds())
-                # Accumulate a list of all test suites specified
-                # explicitly, except for the suite representing the
-                # entire test database.
-                if argument != ".":
-                    test_suites.append(argument)
-            elif database.HasTest(argument):
-                # It's a test.  Add it.
-                add_test_id(argument)
-            else:
-                # It doesn't look like a test or suite.
-                raise qm.cmdline.CommandError, \
-                      qm.error("unknown test or suite id", id=argument)
-        test_ids = test_ids.keys()
+        # Expand arguments in test IDs.
+        try:
+            test_ids, test_suites = base.expand_ids(self.__arguments)
+        except (base.NoSuchTestError, base.NoSuchSuiteError), error:
+            raise qm.cmdline.CommandError, str(error)
 
         if qm.common.verbose > 0:
             # If running verbose, specify a callback function to
@@ -581,6 +561,8 @@ class Command:
     def __ExecuteServer(self, output):
         """Process the server command."""
 
+        database = self.GetDatabase()
+
         # Get the port number specified by a command option, if any.
         # Otherwise use a default value.
         port_number = self.GetCommandOption("port", default=8000)
@@ -605,7 +587,7 @@ class Command:
             log_file = open(log_file_path, "a+")
 
         # Set up the server.
-        server = web.web.make_server(port_number, address, log_file)
+        server = web.web.make_server(database, port_number, address, log_file)
 
         # Construct the URL to the main page on the server.
         if address == "":

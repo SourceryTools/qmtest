@@ -55,6 +55,7 @@ be shown.  If omitted, the value 0 is impled."""
 ########################################################################
 
 import colorsys
+import qm.track.issue
 import qm.web
 import string
 import sys
@@ -139,8 +140,8 @@ class SummaryPage(web.DtmlPage):
         # Sort the issues in each class.
         for issue_class, issue_list in self.issue_map.items():
             sort_field = issue_class.GetField(sort_field_name)
-            sort_predicate = qm.track.IssueSortPredicate(sort_field,
-                                                         reverse)
+            sort_predicate = \
+                qm.track.issue.IssueSortPredicate(sort_field, reverse)
             issue_list.sort(sort_predicate)
 
         # Extract a list of issue classes we need to show.
@@ -470,8 +471,10 @@ def handle_summary(request):
 
     'request' -- A 'WebRequest' object."""
 
-    user = request.GetSession().GetUser()
-    idb = qm.track.get_idb()
+    session = request.GetSession()
+    user = session.GetUser()
+    idb = session.idb
+    issue_store = idb.GetIssueStore()
 
     if request.has_key("last_query"):
         # Retrieve the last query performed by the user.
@@ -482,28 +485,17 @@ def handle_summary(request):
     else:
         query = "1"
 
-    if query == "1":
-        # Trivial query -- get all issues.
-        issues = idb.GetIssues()
-    else:
-        # Run a normal query.
-        try:
-            issues = []
-            # Query all issue classes successively.
-            for issue_class in idb.GetIssueClasses():
-                issues = issues + idb.Query(query, issue_class.GetName())
-        except NameError, name:
-            msg = qm.error("query name error", name=name, query=query)
-            return qm.web.generate_error_page(request, msg)
-        except SyntaxError:
-            msg = qm.error("query syntax error", query=query)
-            return qm.web.generate_error_page(request, msg)
-        except:
-            # Don't let other exceptions slip through either.
-            exception = sys.exc_info()[1]
-            msg = qm.error("query misc error", query=query,
-                           error=str(exception))
-            return qm.web.generate_error_page(request, msg)
+    try:
+        issues = []
+        # Query all issue classes successively.
+        for issue_class in idb.GetIssueClasses():
+            issues = issues + issue_store.Query(query, issue_class.GetName())
+    except qm.track.issue.ExpressionNameError, exception:
+        msg = qm.error("query name error", name=str(exception), query=query)
+        return qm.web.generate_error_page(request, msg)
+    except qm.track.issue.ExpressionSyntaxError:
+        msg = qm.error("query syntax error", query=query)
+        return qm.web.generate_error_page(request, msg)
 
     # Store the query so the user can repeat it easily.
     user.SetConfigurationProperty("summary_last_query", query)
