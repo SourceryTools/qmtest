@@ -1317,7 +1317,8 @@ class SetField(Field):
         # Use the contained field to extract values for the children of
         # this node, which are the set elements.
         contained_field = self.GetContainedField()
-        fn = lambda n: contained_field.GetValueFromDomNode(n, store)
+        fn = lambda n, f=contained_field, s=store: \
+             f.GetValueFromDomNode(n, s)
         return map(fn, node.childNodes)
 
 

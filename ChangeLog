@@ -1,5 +1,13 @@
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/fields.py (SetField.GetValueFromDomNode): Correct thinko.
+
+	* qm/test/classes/command.py (ExecTest.fields): Adjust
+	documentation for environment.
+	(ExecTest.MakeEnvironment): Include the contents of the current
+	environment.
+	* doc/manual/test-reference.xml: Note change.
+
 	* doc/manual/test-reference.xml: Add section on writing database
 	classes.
 

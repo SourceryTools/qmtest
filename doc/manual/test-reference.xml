@@ -312,9 +312,7 @@
        environment variables automatically.  Each context property is
        accessible as an environment variable; the name of the
        environment variable is the name of the context property,
-       prefixed with "<envar>QMV_</envar>".  Also, <envar>PATH</envar>
-       contains the execution path specified in the
-       <property>path</property> context variable.</para>
+       prefixed with "<envar>QMV_</envar>".</para>
       </glossdef>
      </glossentry>
 
@@ -369,7 +367,7 @@
     responsible for finding the executable and constructing its argument
     list.</para>
 
-    <para>Standard input and the environment is specified in the test.
+    <para>Standard input and the environment are specified in the test.
     The test passes if the command produces the expected standard
     output, standard error, and exit code.</para>
 

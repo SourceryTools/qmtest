@@ -107,24 +107,26 @@ class ExecTest:
         qm.fields.SetField(qm.fields.TextField(
             name="environment",
             title="Environment",
-            description="""The contents of the environment.
+            description="""Additional environment variables.
 
-            Each element must be of the form 'VAR=VAL'.  The
-            program will be run in an environment where the environment
-            variable 'VAR' has the value 'VAL'.
+            By default, QMTest runs tests with the same environment that
+            QMTest is running in.  If you run tests in parallel, or
+            using a remote machine, the environment variables available
+            will be dependent on the context in which the remote test
+            is executing.
 
-            QMTest automatically sets these environment variables:
+            You may add variables to the environment.  Each entry must
+            be of the form 'VAR=VAL'.  The program will be run in an
+            environment where the environment variable 'VAR' has the
+            value 'VAL'.  If 'VAR' already had a value in the
+            environment, it will be replaced with 'VAL'.
 
-              'PATH' -- This environment variable is set to the value of
-              the 'path' context property.
-
-            Also, QMTest adds an environment variable corresponding to
-            each context property.  The name of the environment variable
-            is the name of the context property, prefixed with 'QMV_'.
-            For example, if the value of the context property named
-            'target' is available in the environment variable
-            'QMV_target'."""
-            )),
+            In addition, QMTest automatically adds an environment
+            variable corresponding to each context property.  The name
+            of the environment variable is the name of the context
+            property, prefixed with 'QMV_'.  For example, if the value
+            of the context property named 'target' is available in the
+            environment variable 'QMV_target'.""" )),
         
         qm.fields.IntegerField(
             name="exit_code",
@@ -180,11 +182,9 @@ class ExecTest:
     def MakeEnvironment(self, context):
         """Construct the environment for executing the target program."""
 
-        # Start with any environment variables that are automatically
-        # defined. 
-        environment = {
-            "PATH": context["path"],
-            }
+        # Start with any environment variables that are already present
+        # in the environment.
+        environment = os.environ.copy()
         # Copy context variables into the environment.
         for key, value in context.items():
             name = "QMV_" + key
