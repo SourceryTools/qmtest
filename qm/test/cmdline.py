@@ -352,23 +352,24 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if self.__command == "":
             raise qm.cmdline.CommandError, qm.error("missing command")
 
-        # Figure out the path to the test database.
+        # Look in several places to find the test database:
+        #
+        # 1. The command-line.
+        # 2. The QMTEST_DB_PATH environment variable.
+        # 3. The current directory.
         db_path = self.GetGlobalOption("tdb")
-        if db_path is None:
-            # The db-path option wasn't specified.  Try the environment
-            # variable.
-            try:
-                db_path = os.environ[self.db_path_environment_variable]
-            except KeyError:
-                raise RuntimeError, \
-                      qm.error("no db specified",
-                               envvar=self.db_path_environment_variable)
+        if not db_path \
+           and os.environ.has_key(self.db_path_environment_variable):
+            db_path = os.environ[self.db_path_environment_variable]
+        else:
+            db_path = "."
+
         # If the path is not already absolute, make it into an
         # absolute path at this point.
         if not os.path.isabs(db_path):
             db_path = os.path.join(os.getcwd(), db_path)
 
-        # Some commands don't require a test database.  
+        # Some commands don't require a test database.
         if self.__command == "create-tdb":
             self.__ExecuteCreateTdb(output, db_path)
         else:

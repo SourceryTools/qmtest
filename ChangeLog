@@ -1,5 +1,15 @@
 2001-10-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/manual/test-manual.xml: Note that -D is no lnoger required.
+	* doc/manual/test-tour.xml: Likewise.
+	* qm/test/cmdline.py (Command.Execute): If no database is
+	specified, assume the database is in the current directory.
+	* qm/test/xmldb.py (GetResource): Fix typo.
+	* qm/test/web/web.py (DirPage.__init__): Do not show implicit
+	test suites.
+	(DirPage.MakeRunUrl): New method.
+	* share/dtml/test/dir.dtml (run_dir): New method.
+	
 	* qm/.cvsignore: Add *.pyo.
 	* qm/test.cvsignore: Likewise.
 	* qm/test/classes/.cvsignore: Likewise.

@@ -575,9 +575,10 @@
     <glossdef>
      <para>Use the test database located at
      <replaceable>PATH</replaceable>.  This flag overrides the value of
-     the environment variable <envar>QMTEST_DB_PATH</envar>, but if this
-     flag is not specified, the environment variable must be
-     defined.  See <xref linkend="sec-test-database"/>.</para>
+     the environment variable <envar>QMTEST_DB_PATH</envar>.  If
+     neither this flag nor the environment variable is specified,
+     &qmtest; assumes that the current directory should be used as the
+     database.  See <xref linkend="sec-test-database"/>.</para>
     </glossdef>
    </glossentry>
 
@@ -600,7 +601,7 @@
    such as in an external relational database.)</para>
 
    <para>When you create a new test database, you must specify the path
-   you wish to use in one of the usual ways: either use the
+   you wish to use in one of the usual ways:  use the
    <option>&dashdash;tdb</option> (<option>-D</option>) option, or
    specify the <envar>QMTEST_DB_PATH</envar> environment variable.  The
    path you specify for the new test database must not exist.</para>

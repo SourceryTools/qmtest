@@ -84,6 +84,12 @@
 
  <dtml-var expr="GenerateEndBody()">
 
+ <script language="JavaScript">
+   function run_dir() {
+    location = '<dtml-var "MakeRunUrl()">';
+   }
+ </script>
+
 </html>
 
 <dtml-comment><!-- 

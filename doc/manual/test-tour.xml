@@ -84,11 +84,12 @@
    <command>qmtest <replaceable>command</replaceable>
    &dashdash;help</command>.</para>
 
-   <para>You must always tell &qmtest; which test database to use
+   <para>You can always tell &qmtest; which test database to use
    either by specifying the <option>-D</option> option and providing
    the path to the test database, or by setting the environment
    variable <envar>QMTEST_DB_PATH</envar> to the test database
-   path.</para>
+   path.  If you do not specify a test database, &qmtest; assumes that
+   you want to use the current directoy as the test database.</para>
 
    <para>From this point on in the tutorial, the examples will assume
    that you have set the <envar>QMTEST_DB_PATH</envar> environment

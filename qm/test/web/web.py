@@ -244,14 +244,27 @@ class DirPage(DtmlPage):
         self.subdir_ids = map(qm.label.AsAbsolute(path), self.subdir_ids)
         self.test_ids = database.GetTestIds(path, scan_subdirs=0)
         self.suite_ids = database.GetSuiteIds(path, scan_subdirs=0)
+        # Do not show implicit suites.  Otherwise, there are two
+        # entries for a directory: one as a subdirectory entry, and
+        # the other as a test suite.
+        self.suite_ids = filter(lambda s, d=database: \
+                                    not d.GetSuite(s).IsImplicit(),
+                                self.suite_ids)
         self.resource_ids = database.GetResourceIds(path, scan_subdirs=0)
 
-        # We include the root testsuite in the root directory, as
-        # a special case.
-        if path == qm.label.sep:
-            self.suite_ids = [ "." ] + self.suite_ids
+        # Provide a menu choice to allow running all of the tests in
+        # this directory.
+        self.run_menu_items.append(("This Directory", "run_dir();"))
 
 
+    def MakeRunUrl(self):
+        """Return the URL for running this directory."""
+
+        return qm.web.WebRequest("run-tests",
+                                 base=self.request,
+                                 ids=self.path) \
+               .AsUrl()
+    
 
 class ExpectationsPage(DtmlPage):
     """DTML page for editing expected outcomes."""
@@ -268,6 +281,7 @@ class ExpectationsPage(DtmlPage):
         self.outcomes = Result.outcomes
         self.test_ids = self.__server.GetDatabase().ExpandIds(".")[0]
         self.test_ids.sort()
+
 
         
 class LoadExpectedResultsPage(DtmlPage):
