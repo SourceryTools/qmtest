@@ -30,8 +30,6 @@ PYTHONDOCDIRS	= qm
 PYTHONBIN	= @PYTHON@
 PYTHON 		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
 		  $(PYTHONBIN) -O
-PYTHON_VERSION	= @PYTHON_VERSION@
-PYTHON_PREFIX   = @PYTHON_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHONDIRS	= $(TOPDIR)
 
@@ -302,10 +300,14 @@ $(TEX_MANUALS): \
 
 .PHONY: doc-python
 
+ifneq ($(HAPPYDOC),)
 doc-python: $(PYTHONDOCDIRS)
 	for dir in $(PYTHONDOCDIRS); do \
 	    $(PYTHON) $(HAPPYDOC) $${dir}; \
-done
+	done
+else
+doc-python:
+endif
 
 ########################################################################
 # Installation Rules

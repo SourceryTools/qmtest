@@ -996,9 +996,9 @@ class ShowItemPage(QMTestPage):
         # Format it appropriately.
         server = self.server
         if self.edit:
-            if field.IsProperty("hidden"):
+            if field.IsHidden():
                 return field.FormatValueAsHtml(server, value, "hidden")
-            elif field.IsProperty("read_only"):
+            elif field.IsReadOnly():
                 # For read-only fields, we still need a form input, but
                 # the user shouldn't be able to change anything.  Use a
                 # hidden input, and display the contents as if this
@@ -1820,7 +1820,7 @@ class QMTestServer(qm.web.WebServer):
             ids = string.split(request["ids"], ",")
         else:
             ids = [""]
-        test_ids, suite_ids = self.GetDatabase().ExpandIds(ids)
+        test_ids = self.GetDatabase().ExpandIds(ids)[0]
 
         # Let the results stream know that we are going to start
         # providing it with results.

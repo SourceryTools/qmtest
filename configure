@@ -271,7 +271,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
 ac_unique_file="configure.in"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS MAINTAINER_MODE QM_MAJOR_VER QM_MINOR_VER QM_RELEASE_VER QM_VERSION PYTHON PYTHON_VERSION PYTHON_PREFIX PYTHON_PLATFORM HAPPYDOC JADE TIDY XML_DCL DOCBOOK_STYLESHEETS DOCBOOK_DTD DOCUMENTATION INSTALL_DOCUMENTATION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS MAINTAINER_MODE QM_MAJOR_VER QM_MINOR_VER QM_RELEASE_VER QM_VERSION PYTHON PYTHON_PLATFORM HAPPYDOC JADE TIDY XML_DCL DOCBOOK_STYLESHEETS DOCBOOK_DTD DOCUMENTATION INSTALL_DOCUMENTATION LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1323,7 +1323,6 @@ PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 echo "$as_me:$LINENO: result: $PYTHON_VERSION" >&5
 echo "${ECHO_T}$PYTHON_VERSION" >&6
 
-
 # Some Python versions before 2.1 have serious bugs if threads and
 # fork are used together.  Therefore, Python 2.1 or higher is required.
 if test "$PYTHON_MAJOR" -lt 2 || \
@@ -1332,13 +1331,6 @@ if test "$PYTHON_MAJOR" -lt 2 || \
 echo "$as_me: error: QM requires Python version 2.1 or greater" >&2;}
    { (exit 1); exit 1; }; }
 fi
-
-echo "$as_me:$LINENO: checking Python prefix" >&5
-echo $ECHO_N "checking Python prefix... $ECHO_C" >&6
-PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
-echo "$as_me:$LINENO: result: $PYTHON_PREFIX" >&5
-echo "${ECHO_T}$PYTHON_PREFIX" >&6
-
 
 echo "$as_me:$LINENO: checking Python platform" >&5
 echo $ECHO_N "checking Python platform... $ECHO_C" >&6
@@ -2212,8 +2204,6 @@ s,@QM_MINOR_VER@,$QM_MINOR_VER,;t t
 s,@QM_RELEASE_VER@,$QM_RELEASE_VER,;t t
 s,@QM_VERSION@,$QM_VERSION,;t t
 s,@PYTHON@,$PYTHON,;t t
-s,@PYTHON_VERSION@,$PYTHON_VERSION,;t t
-s,@PYTHON_PREFIX@,$PYTHON_PREFIX,;t t
 s,@PYTHON_PLATFORM@,$PYTHON_PLATFORM,;t t
 s,@HAPPYDOC@,$HAPPYDOC,;t t
 s,@JADE@,$JADE,;t t

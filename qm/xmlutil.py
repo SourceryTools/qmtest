@@ -44,7 +44,12 @@ def load_xml_file(path):
 def load_xml(file):
     """Return a DOM document loaded from the XML file object 'file'.
 
-    'validate' -- If true, a validating XML parser is used."""
+    'file' -- A file object, opened for reading.
+    
+    returns -- The DOM document contained in 'file'.
+    
+    This function closes 'file', whether or not reading the document was
+    successful."""
 
     try:
         document = xml.dom.minidom.parse(file)

@@ -235,11 +235,12 @@
     <title>Annotations</title>
   
     <para>An annotation is a key/value pair.  Both the keys and values
-    must are strings.  When a test (or resource) runs it may add
-    annotations to the result.  These annotations are displayed by
-    &qmtest; and preserved in the results file.  If you write your own
-    test class, you can use annotations to store information that will
-    make your test class more informative.</para>
+    are strings.  The value is HTML.  When a test (or resource) runs
+    it may add annotations to the result.  These annotations are
+    displayed by &qmtest; and preserved in the results file.  If you
+    write your own test class, you can use annotations to store
+    information that will make your test class more
+    informative.</para>
 
    </section> <!-- sec-annotations -->
 
@@ -1550,8 +1551,8 @@
       </glossterm>
       <glossdef>
        <para>The default path to use when creating a PID file with the
-       <option>&dashdash;pid-file</option>.  If this entry is not
-       present, an appropriate platform-specific default value is 
+       <option>&dashdash;pid-file</option> option.  If this entry is
+       not present, an appropriate platform-specific default value is
        used.</para>
       </glossdef>
      </glossentry>

@@ -1,3 +1,19 @@
+2003-06-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (PYTHON_VERSION): Remove.
+	(PYTHON_PREFIX): Remove.
+	(doc-python): Conditionalize on the avaialability of happydoc.
+	* configure.in (PYTHON_VERSION): Don't AC_SUBST it.
+	(PYTHON_PREFIX): Likewise.
+	* configure: Regenerated.
+	* qm/fields.py: Remove all traces of PropertyDeclaration.
+	* qm/xmlutil.py (load_xml): Update comments.
+	* qm/test/qmtest.py: Try to make sure that gc.collect is called.
+	* qm/test/doc/reference.xml: Correct typos.
+	* qm/test/share/dtml/show.dtml: Use Field.IsHidden.
+	* qm/test/web/web.py (ShowItemPage.FormatFieldValue): Likewise.
+	(QMTestServer.HandleRunTests): Tidy.
+	
 2003-06-16  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/qmtest.py (check_python_version): Call `str' on

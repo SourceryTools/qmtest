@@ -64,7 +64,7 @@ else
 fi
 
 dnl ####################################################################
-dnl Determine the Python version, installation prefix, and and platform.
+dnl Determine the Python version.
 dnl ####################################################################
 
 # The code used to check the version only reports the version accurately
@@ -90,7 +90,6 @@ PYTHON_MINOR=`$PYTHON python-ver.py`
 rm python-ver.py
 PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 AC_MSG_RESULT($PYTHON_VERSION)
-AC_SUBST(PYTHON_VERSION)
 
 # Some Python versions before 2.1 have serious bugs if threads and
 # fork are used together.  Therefore, Python 2.1 or higher is required.
@@ -98,11 +97,6 @@ if test "$PYTHON_MAJOR" -lt 2 || \
    (test "$PYTHON_MAJOR" -eq 2 && test "$PYTHON_MINOR" -lt 1); then
   AC_MSG_ERROR(QM requires Python version 2.1 or greater)
 fi
-
-AC_MSG_CHECKING(Python prefix)
-PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
-AC_MSG_RESULT($PYTHON_PREFIX)
-AC_SUBST(PYTHON_PREFIX)
 
 AC_MSG_CHECKING(Python platform)
 PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()" 2>/dev/null`

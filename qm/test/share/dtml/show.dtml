@@ -117,7 +117,7 @@
     <dtml-in name="fields">
     <dtml-let field=sequence-item
               field_name="field.GetName()">
-     <dtml-if expr="not field.IsProperty('hidden')">
+     <dtml-if expr="not field.IsHidden()">
       <dtml-comment><!--
 
         Show a row with the field label and a rendering of its value.
@@ -158,7 +158,7 @@
       <dtml-if expr="edit">
        <dtml-var expr="FormatFieldValue(field)">
       </dtml-if> <!-- edit -->
-     </dtml-if> <!-- not field.IsProperty('hidden') -->
+     </dtml-if> <!-- not field.IsHidden() -->
     </dtml-let>
     </dtml-in>
 
