@@ -51,7 +51,7 @@ import types
 ########################################################################
 
 class ExecTest(Test):
-    """Check the result of a Python expression.
+    """Check that a Python expression evaluates to true.
 
     An 'ExecTest' test consists of Python source code together with
     an (optional) Python expression.  First the Python code is

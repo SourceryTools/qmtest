@@ -126,6 +126,10 @@ td.navbar {
     color: white;
 }
 
+td.unexpected {
+    background-color: ffe0e8;
+}
+
 a.navbar:link {
     color: white;
 }
@@ -151,7 +155,7 @@ tr.pass {
 }
 
 tr.fail {
-    background-color: fff0f8;
+    background-color: ffe0e8;
 }
 
 tr.untested {

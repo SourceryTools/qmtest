@@ -1,3 +1,19 @@
+2001-11-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/qm.mod (prompt): Reformat as >, not $.
+	* doc/manual/test-tour.xml: Focus more attention on the graphical
+	user interface.  Reorganize.
+	* qm/fields.py (Field.GetHtmlHelp): Tweak message.
+	* qm/web.py (qm_bug_system_url): Use qm.codesourcery.com, not
+	qm.software-carpentry.com.
+	* qm/test/classes/python.py (ExecTest): Tweak doc string.
+	* share/dtml/test/results.dtml: Highligh unexpected results.
+	* share/tutorial/test/tdb/exec1.qmt: Change this test so that
+	it FAILs, rather than ERRORs.
+	* share/web/stylesheets/qm.css (td.unexpected): Set
+	background-color.
+	(tr.fail): Change background-color.
+
 2001-11-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (TestDescriptor.__init__): Correct

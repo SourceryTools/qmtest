@@ -2,10 +2,13 @@
 <!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
 <test>
  <class>python.ExecTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
  <argument name='source'>
-  <text>pass</text>
+  <text>x = 2</text>
  </argument>
  <argument name='expression'>
-  <text>3/0</text>
+  <text>x + x == 5</text>
  </argument>
 </test>
