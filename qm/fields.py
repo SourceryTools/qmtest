@@ -467,13 +467,16 @@ class Field:
         raise NotImplementedError
 
 
-    def ParseFormValue(self, request, name):
+    def ParseFormValue(self, request, name, attachment_store):
         """Convert a value submitted from an HTML form.
 
         'request' -- The 'WebRequest' containing a value corresponding
         to this field.
 
         'name' -- The name corresponding to this field in the 'request'.
+
+        'attachment_store' -- The 'AttachmentStore' into which new
+        attachments should be placed.
         
         returns -- A pair '(value, redisplay)'.  'value' is the value
         for this field, as indicated in 'request'.  'redisplay' is true
@@ -503,8 +506,11 @@ class Field:
         return urllib.quote_plus(repr(value))
 
 
-    def FormDecodeValue(self, encoding):
-        """Decode the HTML form-encoded 'encoding' and return a value."""
+    def FormDecodeValue(self, encoding, attachment_store):
+        """Decode the HTML form-encoded 'encoding' and return a value.
+
+        'attachment_store' -- The 'AttachmentStore' into which new
+        attachments should be placed."""
 
         return eval(urllib.unquote_plus(value))
 
@@ -974,7 +980,7 @@ class TextField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, request, name):
+    def ParseFormValue(self, request, name, attachment_store):
 
         # HTTP specifies text encodints are CR/LF delimited; convert to
         # the One True Text Format (TM).
@@ -1092,12 +1098,13 @@ class TupleField(Field):
         return html
 
 
-    def ParseFormValue(self, request, name):
+    def ParseFormValue(self, request, name, attachment_store):
 
         value = []
         redisplay = 0
         for f in self.__fields:
-            v, r = f.ParseFormValue(request, name + "_" + f.GetName())
+            v, r = f.ParseFormValue(request, name + "_" + f.GetName(),
+                                    attachment_store)
             value.append(v)
             if r:
                 redisplay = 1
@@ -1311,7 +1318,7 @@ class SetField(Field):
             return html
 
 
-    def ParseFormValue(self, request, name):
+    def ParseFormValue(self, request, name, attachment_store):
 
         values = []
 
@@ -1329,7 +1336,9 @@ class SetField(Field):
                 break
             if not (action == "remove"
                     and request.get(element_name + "_remove") == "on"):
-                v, r = contained_field.ParseFormValue(request, element_name)
+                v, r = contained_field.ParseFormValue(request,
+                                                      element_name,
+                                                      attachment_store)
                 values.append(v)
                 if r:
                     redisplay = 1
@@ -1467,7 +1476,6 @@ class UploadAttachmentPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "attachment.dtml")
         # Use a brand-new location for the attachment data.
         self.location = attachment.make_temporary_location()
-        self.store = "%d" % attachment.temporary_store.GetIndex()
         # Set up properties.
         self.field_name = field_name
         self.encoding_name = encoding_name
@@ -1659,9 +1667,9 @@ class AttachmentField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, request, name):
+    def ParseFormValue(self, request, name, attachment_store):
 
-        return (self.FormDecodeValue(request[name]), 0)
+        return (self.FormDecodeValue(request[name], attachment_store), 0)
 
 
     def GenerateFormValue(self, value):
@@ -1689,7 +1697,7 @@ class AttachmentField(Field):
         return string.join(parts, ";")
 
 
-    def FormDecodeValue(self, encoding):
+    def FormDecodeValue(self, encoding, attachment_store):
         """Decode the HTML form-encoded 'encoding' and return a value."""
 
         # An empty string represnts a missing attachment, which is OK.
@@ -1701,13 +1709,14 @@ class AttachmentField(Field):
         # Undo the URL encoding of each component.
         parts = map(urllib.unquote, parts)
         # Unpack the results.
-        description, mime_type, location, store, file_name = parts
-        # The store is reprsented by an index.  Retrieve the actual
+        description, mime_type, location, file_name = parts
+        # The store is represented by an index.  Retrieve the actual
         # store itself.
-        store = attachment.get_attachment_store(string.atoi(store))
+        store = qm.test.get_qmtest().attachment_store
         # Create the attachment.
         return attachment.Attachment(mime_type, description,
-                                     file_name, location, store)
+                                     file_name, location,
+                                     attachment_store)
 
 
     def FormatSummary(self, attachment):

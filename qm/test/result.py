@@ -119,7 +119,7 @@ class Result:
     most interesting to least interesting from the point of view of
     someone browsing results."""
 
-    def __init__(self, kind, id, context, outcome=PASS, annotations={}):
+    def __init__(self, kind, id, outcome=PASS, annotations={}):
         """Construct a new 'Result'.
 
         'kind' -- The kind of result.  The value must be one of the
@@ -127,9 +127,6 @@ class Result:
         
         'id' -- The label for the test or resource to which this
         result corresponds.
-
-        'context' -- The 'ContextWrapper' in use when the test (or
-        resource) was executed.
 
         'outcome' -- The outcome associated with the test.  The value
         must be one of the 'Result.outcomes'.
@@ -141,7 +138,6 @@ class Result:
 
         self.__kind = kind
         self.__id = id
-        self.__context = context
         self.__outcome = outcome
         self.__annotations = annotations.copy()
 
@@ -207,15 +203,6 @@ class Result:
 
         return self.__id
 
-
-    def GetContext(self):
-        """Return the context in which the test or resource executed.
-
-        returns -- The 'ContextWrapper' in which the test or resource
-        executed."""
-
-        return self.__context
-    
 
     def GetCause(self):
         """Return the cause of failure, if the test failed.
@@ -311,7 +298,6 @@ class Result:
 
         return element
 
-
     # These methods allow 'Result' to act like a dictionary of
     # annotations.
     
@@ -347,3 +333,4 @@ class Result:
 
     def items(self):
         return self.__annotations.items()
+

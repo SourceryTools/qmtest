@@ -183,7 +183,7 @@ class ExecutionEngine:
                 self.__descriptor_graph[descriptor] = [0, []]
                 self.__pending.append(descriptor)
             except:
-                result = Result(Result.TEST, id, self.__context)
+                result = Result(Result.TEST, id)
                 result.NoteException(cause = "Could not load test.",
                                      outcome = Result.UNTESTED)
                 self._AddResult(result)
@@ -461,8 +461,7 @@ class ExecutionEngine:
         additional annotations for the result."""
 
         # Create the result.
-        result = Result(Result.TEST, test_name, self.__context,
-                        Result.UNTESTED, annotations)
+        result = Result(Result.TEST, test_name, Result.UNTESTED, annotations)
         result[Result.CAUSE] = cause
         self._AddResult(result)
 

@@ -1555,11 +1555,11 @@ class QMTestServer(qm.web.WebServer):
         self.RegisterPathTranslation(
             "/manual", qm.get_doc_directory("test", "html"))
 
-        # The global temporary attachment store processes attachment data
+        # Create a temporary attachment store to process attachment data
         # uploads.
-        temporary_attachment_store = qm.attachment.temporary_store
+        self.__temporary_store = qm.attachment.TemporaryAttachmentStore()
         self.RegisterScript(qm.fields.AttachmentField.upload_url,
-                            temporary_attachment_store.HandleUploadRequest)
+                            self.__temporary_store.HandleUploadRequest)
         # The DB's attachment store processes download requests for
         # attachment data.
         attachment_store = database.GetAttachmentStore()
@@ -2254,7 +2254,8 @@ class QMTestServer(qm.web.WebServer):
                 return qm.web.generate_error_page(request, message)
             # Parse the value for this field.
             try:
-                value, r = field.ParseFormValue(request, form_field_name)
+                value, r = field.ParseFormValue(request, form_field_name,
+                                                self.__temporary_store)
                 if r:
                     redisplay = 1
                 arguments[field_name] = value
@@ -2292,7 +2293,7 @@ class QMTestServer(qm.web.WebServer):
         # Remove any attachments located in the temporary store as they
         # have now been copied to the store associated with the
         # database.
-        temporary_store = qm.attachment.temporary_store
+        temporary_store = self.__temporary_store
         for field in fields:
             if isinstance(field, qm.fields.AttachmentField):
                 attachment = arguments[field.GetName()]

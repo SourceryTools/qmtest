@@ -41,7 +41,8 @@ class FileResultStream(ResultStream):
             All results will be written to the file indicated.  If no
             filename is specified, or the filename specified is "-",
             the standard output will be used.""",
-            verbatim = "true"),
+            verbatim = "true",
+            default_value = ""),
         qm.fields.PythonField(
             name = "file"),
     ]

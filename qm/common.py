@@ -286,20 +286,6 @@ def format_byte_count(bytes):
     return "%d bytes" % bytes
 
 
-def rmdir_recursively(path):
-    """Remove the directory at 'path' and everything under it."""
-
-    # Remove everything in the directory.
-    for entry in dircache.listdir(path):
-        entry_path = os.path.join(path, entry)
-        if os.path.isdir(entry_path):
-            rmdir_recursively(entry_path)
-        else:
-            os.unlink(entry_path)
-    # Remove the directory itself.
-    os.rmdir(path)
-
-
 def convert_from_dos_text(text):
     """Replace CRLF with LF in 'text'."""
 
@@ -426,7 +412,12 @@ def load_class(name, search_path = sys.path, load_path = sys.path):
     # Extract the requested class.
     try:
         klass = module.__dict__[class_name]
-        if not isinstance(klass, types.ClassType):
+        # Check to see the KLASS really is a class.  Python 2.2's
+        # "new-style" classes are not instances of types.ClassType so we
+        # must check two conditions: one for old-style and one for
+        # new-style classes.
+        if (not isinstance(klass, types.ClassType)
+            and not issubclass(klass, object)):
             # There's something by that name, but it's not a class
             raise QMException, "%s is not a class" % name
         return klass
@@ -522,8 +513,6 @@ def open_temporary_file_fd():
     returns -- A pair '(file_name, file_descriptor)' for the temporary
     file."""
 
-    # FIXME: Security.
-
     file_name = tempfile.mktemp()
     try:
         # Attempt to open the file.
@@ -548,78 +537,6 @@ def open_temporary_file():
 
     file_name, fd = open_temporary_file_fd()
     return (file_name, os.fdopen(fd, "w+b"))
-
-
-def make_temporary_directory():
-    """Create a temporary directory.
-
-    returns -- The path to the temporary directory."""
-
-    dir_path = tempfile.mktemp()
-    try:
-        os.mkdir(dir_path, 0700)
-    except:
-        exc_info = sys.exc_info()
-        raise common.QMException, \
-              qm.error("temp dir error",
-                       dir_path=dir_path,
-                       exc_class=str(exc_info[0]),
-                       exc_arg=str(exc_info[1]))
-    return dir_path
-
-
-def find_program_in_path(program_name, path=None):
-    """Attempt to locate a program in an execution path.
-
-    'program_name' -- The name of the program to run.
-
-    'path' -- A string encoding a list of directories (in a
-    system-specifiec form) in which to look for the program.  If
-    'None', the 'PATH' environment variable is used.
-
-    returns -- The path to the program, or 'None' if it was not
-    found."""
-
-    # If no path was specified, use the PATH environment variable.
-    if path is None:
-        path = os.environ["PATH"]
-    # Split the path into directories.
-    path_separator = os.pathsep
-    directories = string.split(path, path_separator)
-    # Loop over directories.
-    for directory in directories:
-        program_path = os.path.join(directory, program_name)
-        # Is there such a file, and is it executable?
-        if is_executable(program_path):
-            # Good -- that's the result.
-            return program_path
-    # Couldn't find it.
-    return None
-
-
-def is_executable(path):
-    """Return true if 'path' is an executable file."""
-
-    # Make sure 'path' exists.
-    if not os.path.isfile(path):
-        return 0
-    # If we have 'os.access' available, check for executability.
-    if hasattr(os, "access") and not os.access(path, os.X_OK):
-        return 0
-    # Looks OK.
-    return 1
-
-
-def starts_with(text, prefix):
-    """Return true if 'prefix' is a prefix of 'text'."""
-
-    return text[:len(prefix)] == prefix
-
-
-def ends_with(text, suffix):
-    """Return true if 'suffix' is a suffix of 'text'."""
-
-    return text[-len(suffix):] == suffix
 
 
 def copy(object):
@@ -885,7 +802,7 @@ def read_assignments(file):
     lines = map(string.strip, lines)
     # Drop any lines that are completely blank or lines that are
     # comments.
-    lines = filter(lambda x: x != "" and not starts_with(x, "#"),
+    lines = filter(lambda x: x != "" and not x.startswith("#"),
                    lines)
     # Go through each of the lines to process the context assignment.
     for line in lines:

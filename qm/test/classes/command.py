@@ -7,7 +7,7 @@
 # Contents:
 #   Test classes for testing command-line programs.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -129,38 +129,6 @@ class ExecTestBase(Test):
         ]
 
 
-    class InputExecutable(qm.executable.TimeoutRedirectedExecutable):
-        """An 'InputExecutable' receives a string on its standard input."""
-
-        def __init__(self, input, timeout):
-            """Construct a new 'InputExecutable'.
-
-            'input' -- The string to be provided the executable on its
-            standard input.
-
-            'timeout' -- The number of seconds that the child is
-            permitted to run.  This value may be a floating-point value.
-            However, the value may be rounded to an integral value on
-            some systems.  If the 'timeout' is negative, this class
-            behaves like 'Executable'."""
-
-
-            qm.executable.TimeoutRedirectedExecutable.__init__(self, timeout)
-            self.__input = input
-            
-
-        def _WriteStdin(self):
-
-            # If there's nothing more to write, stop.
-            if not self.__input:
-                qm.executable.RedirectedExecutable._WriteStdin(self)
-            else:            
-                # Write some data.
-                written = os.write(self._stdin_pipe[1],
-                                   self.__input[:64 * 1024])
-                self.__input = self.__input[written:]
-            
-
     def MakeEnvironment(self, context):
         """Construct the environment for executing the target program."""
 
@@ -205,7 +173,7 @@ class ExecTestBase(Test):
         # Construct the environment.
         environment = self.MakeEnvironment(context)
         # Create the executable.
-        e = ExecTestBase.InputExecutable(self.stdin, self.timeout)
+        e = qm.executable.Filter(self.stdin, self.timeout)
         # Run it.
         exit_status = e.Run(arguments, environment, path = program)
 

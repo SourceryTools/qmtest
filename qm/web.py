@@ -7,7 +7,7 @@
 # Contents:
 #   Common code for implementing web user interfaces.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -19,7 +19,6 @@
 # imports
 ########################################################################
 
-import atexit
 import BaseHTTPServer
 import cgi
 import diagnostic
@@ -38,6 +37,7 @@ import socket
 import string
 import structured_text
 import sys
+import temporary_directory
 import time
 import traceback
 import types
@@ -2408,12 +2408,9 @@ def cache_page(page_text, session_id=None):
     if _page_cache_path is None:
         # This is the first time we're inserting anything in the cache.
         # Set it up.
-        _page_cache_path = common.make_temporary_directory()
+        _page_cache = temporary_directory.TemporaryDirectory()
+        _page_cache_path = _page_cache.GetPath()
         os.mkdir(os.path.join(_page_cache_path, "sessions"), 0700)
-        # Clean up the cache at exit.
-        cleanup_function = lambda path=_page_cache_path: \
-                           common.rmdir_recursively(path)
-        atexit.register(cleanup_function)
 
     if session_id is None:
         # No path was specified.  Place the file in the top directory.

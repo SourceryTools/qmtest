@@ -388,10 +388,8 @@ def _result_from_dom(node):
     # Extract the test ID.
     test_id = node.getAttribute("id")
     kind = node.getAttribute("kind")
-    # The context is not represented in the DOM node.
-    context = None
     # Build a Result.
-    result = Result(kind, test_id, context, outcome)
+    result = Result(kind, test_id, outcome)
     # Extract properties, one for each property element.
     for property_node in node.getElementsByTagName("property"):
         # The name is stored in an attribute.

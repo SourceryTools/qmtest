@@ -195,12 +195,14 @@ class Target(qm.extension.Extension):
         Derived classes may override this method."""
 
         # Create the result.
-        result = Result(Result.TEST, descriptor.GetId(), context)
+        result = Result(Result.TEST, descriptor.GetId())
         try:
+            # Augment the context with the tmpdir property.
+            context = Context(context)
+            context[context.TMPDIR_CONTEXT_PROPERTY] \
+                = self._GetTemporaryDirectory()
             # Set up any required resources.
-            properties = self.__SetUpResources(descriptor, context)
-            # Create the modified context.
-            context = ContextWrapper(context, properties)
+            self.__SetUpResources(descriptor, context)
             # Run the test.
             descriptor.Run(context, result)
         except KeyboardInterrupt:
@@ -265,7 +267,7 @@ class Target(qm.extension.Extension):
         return None
 
 
-    def _FinishResourceSetUp(self, resource, result):
+    def _FinishResourceSetUp(self, resource, result, properties):
         """Finish setting up a resource.
 
         'resource' -- The 'Resource' itself.
@@ -273,13 +275,18 @@ class Target(qm.extension.Extension):
         'result' -- The 'Result' associated with setting up the
         resource.
 
+        'properties' -- A dictionary of additional context properties
+        that should be provided to tests that depend on this resource.
+
         returns -- A tuple of the same form as is returned by
         '_BeginResourceSetUp' when the resource has already been set
         up."""
 
-        rop = (resource,
-               result.GetOutcome(),
-               result.GetContext().GetAddedProperties())
+        # The temporary directory is not be preserved; there is no
+        # guarantee that it will be the same in a test that depends on
+        # this resource as it was in the resource itself.
+        del properties[Context.TMPDIR_CONTEXT_PROPERTY]
+        rop = (resource, result.GetOutcome(), properties)
         self.__resources[result.GetId()] = rop
         return rop
 
@@ -298,7 +305,6 @@ class Target(qm.extension.Extension):
         up."""
         
         # See if there are resources that need to be set up.
-        properties = {}
         for resource in descriptor.GetResources():
             (r, outcome, resource_properties) \
                 = self._SetUpResource(resource, context)
@@ -308,9 +314,9 @@ class Target(qm.extension.Extension):
             if outcome != Result.PASS:
                 raise self.__ResourceSetUpException, resource
             # Update the list of additional context properties.
-            properties.update(resource_properties)
+            context.update(resource_properties)
 
-        return properties
+        return context
     
         
     def _SetUpResource(self, resource_name, context):
@@ -330,19 +336,14 @@ class Target(qm.extension.Extension):
         if rop:
             return rop
         # Set up the context.
-        wrapper = ContextWrapper(context)
-        result = Result(Result.RESOURCE_SETUP, resource_name, wrapper,
-                        Result.PASS)
+        wrapper = Context(context)
+        result = Result(Result.RESOURCE_SETUP, resource_name, Result.PASS)
         resource = None
         # Get the resource descriptor.
         try:
             resource_desc = self.GetDatabase().GetResource(resource_name)
             # Set up the resources on which this resource depends.
-            properties = self.__SetUpResources(resource_desc, context)
-            # Add the context properties from those resources to the
-            # context for the resource that is now being set up.
-            for k, v in properties.items():
-                wrapper[k] = v
+            self.__SetUpResources(resource_desc, wrapper)
             # Set up the resource itself.
             resource_desc.SetUp(wrapper, result)
             # Obtain the resource within the try-block so that if it
@@ -367,7 +368,8 @@ class Target(qm.extension.Extension):
         # Record the result.
         self._RecordResult(result)
         # And update the table of available resources.
-        return self._FinishResourceSetUp(resource, result)
+        return self._FinishResourceSetUp(resource, result,
+                                         wrapper.GetAddedProperties())
 
 
     def _CleanUpResource(self, name, resource):
@@ -377,8 +379,7 @@ class Target(qm.extension.Extension):
 
         'name' -- The name of the reosurce itself."""
 
-        result = Result(Result.RESOURCE_CLEANUP, name, 
-                        ContextWrapper(Context()))
+        result = Result(Result.RESOURCE_CLEANUP, name)
         # Clean up the resource.
         try:
             val = resource.CleanUp(result)
@@ -387,4 +388,10 @@ class Target(qm.extension.Extension):
         self._RecordResult(result)
 
 
+    def _GetTemporaryDirectory(self):
+        """Return the path to a temporary directory.
+
+        returns -- The path to a temporary directory to pass along to
+        tests and resources via the 'TMPDIR_CONTEXT_PROPERTY'."""
         
+        raise NotImplementedError

@@ -7,7 +7,7 @@
 # Contents:
 #   Extension
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -25,7 +25,7 @@ import xml
 # Classes
 ########################################################################
 
-class Extension:
+class Extension(object):
     """A class derived from 'Extension' is a QM extension.
 
     A variety of different classes are derived from 'Extension'.  All

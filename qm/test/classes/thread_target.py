@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest ThreadTarget class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from   qm.temporary_directory import TemporaryDirectory
 from   qm.test.base import *
 import qm.test.cmdline
 from   qm.test.command_thread import *
@@ -31,6 +32,12 @@ from   threading import *
 class LocalThread(CommandThread):
     """A 'LocalThread' executes commands locally."""
 
+    def __init__(self, target):
+
+        CommandThread.__init__(self, target)
+        self.__temporary_directory = TemporaryDirectory()
+        
+    
     def _RunTest(self, descriptor, context):
         """Run the test given by 'descriptor'.
 
@@ -39,6 +46,15 @@ class LocalThread(CommandThread):
         'context' -- The 'Context' in which to run the test."""
 
         self.GetTarget()._RunTest(descriptor, context)
+
+
+    def GetTemporaryDirectory(self):
+        """Return the path to the temporary directory for this thread.
+
+        returns -- The path to the temporary directory associated with
+        this thread."""
+        
+        return self.__temporary_directory.GetPath()
         
 
 
@@ -235,22 +251,12 @@ class ThreadTarget(Target):
             self.__resources_condition.release()
                 
 
-    def _FinishResourceSetUp(self, resource, result):
-        """Finish setting up a resource.
-
-        'resource' -- The 'Resource' itself.
-
-        'result' -- The 'Result' associated with setting up the
-        resource.
-
-        returns -- A tuple of the same form as is returned by
-        '_BeginResourceSetUp' with the resource has already been set
-        up."""
+    def _FinishResourceSetUp(self, resource, result, properties):
 
         # Acquire the lock.
         self.__resources_condition.acquire()
         # Record the fact that the resource is set up.
-        rop = Target._FinishResourceSetUp(self, resource, result)
+        rop = Target._FinishResourceSetUp(self, resource, result, properties)
         # Tell all the other threads that the resource has been set
         # up.
         self.__resources_condition.notifyAll()
@@ -289,3 +295,8 @@ class ThreadTarget(Target):
         if __debug__:
             tracer = qm.test.cmdline.get_qmtest().GetTracer()
             tracer.Write(message, "thread_target")
+
+
+    def _GetTemporaryDirectory(self):
+
+        return currentThread().GetTemporaryDirectory()

@@ -40,6 +40,8 @@ class ResultStream(qm.extension.Extension):
     'ResultStream' would be to write out test results in alternative
     file format."""
 
+    kind = "result_stream"
+    
     def WriteResult(self, result):
         """Output a test result.
 

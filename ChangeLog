@@ -1,3 +1,79 @@
+2003-05-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py (atexit): Do not import it.
+	(temporary_directory): Import it.
+	(AttachmentStore.all_stores): Remove.
+	(AttachmentStore.__init__): Do not update it.
+	(FileAttachmentStore): Use TemporaryDirectory.
+	(FileAttachmentStore.__CleanUpTemporaryDirectory): Likewise.
+	(is_temporary_location): Use string.startswith.
+	(get_attachment_store): Remove.
+	* qm/common.py (load_class): Support new-style classes.
+	(rmdir_recursively): Remove.
+	(make_temporary_directory): Likewise.
+	(find_program_in_path): Remove.
+	(starts_with): Remove.
+	(ends_with): Likewise.
+	(read_assignments): Use string.startswith.
+	* qm/executable.py (F_GETFD): Do not set it.
+	(F_SETFD): Likewise.
+	(FD_CLOEXEC): Likewise.
+	(Executable.__init__): Remove.
+	(Executable.Run): Use fnctl.F_GETFD, etc.
+	(RedirectedExecutable): Inherit from TimeoutExecutable.  Make
+	adjustments accordingly.
+	(Filter): New class.
+	* qm/extension.py (Extension): Make it a new-sytle class.
+	* qm/fields.py (Field.ParseFormValue): Add attachment_store
+	parameter.
+	(Field.FormDecodeValue): Likewise.
+	(UploadAttachmentPage): Do not encode an attachment store.
+	(AttachmentField.FormDecodeValue): Do not decode it either.
+	* qm/platform_unix.py (get_temp_directory): Remove.
+	* qm/temporary_directory.py: New file.
+	* qm/web.py (atexit): Do not import it.
+	(temporary_directory): Import it.
+	(cache_page): Use TemporaryDirectory.
+	* qm/test/base.py (_result_from_dom): Do not use a context when
+	creating 'Result' objects.
+	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Handle -fnone.
+	* qm/test/context.py (Context): Inherit from types.DictType.
+	(ContextWrapper): Remove.
+	* qm/test/database.py (ItemDescriptor._Execute): Compare context
+	to None, rather than using "if context".
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Do not
+	use a context when creating 'Result' objects.
+	* qm/test/file_result_stream (FileResultStream.arguments): Add
+	default value for 'filename' attribute.
+	* qm/test/qmtest.py (main): New method.
+	Collect garbage.
+	* qm/test/result.py (Result.__init__): Remove 'context'.
+	(Result.GetContext): Remove.
+	* qm/test/result_stream.py (ResultStream.kind): Define.
+	* qm/test/target.py (Target.RunTest): Do not use a context when
+	creating 'Result' objects.
+	(Target._FinishResourceSetUp): Add 'properties' parameter.
+	(Target._SetUpResource): Adjust accordingly.
+	(Target._CleanUPResource): Do not use a context when
+	creating 'Result' objects.
+	* qm/test/classes/command.py (ExecTestBase.InputExecutable):
+	Remove.
+	* qm/test/classes/process_target.py (ProcessTarget.RunTest): Do
+	not use a context when creating 'Result' objects.
+	* qm/test/classes/serial_target.py (SerialTarget.__init__): Create
+	a temporary directory.
+	* qm/test/classes/temporary.py (TempDirectoryResource):
+	Reimplement in terms of TemporaryDirectory.
+	* qm/test/classes/thread_target.py (LocalThread.__init__): Create a
+	temporary directory.
+	(LocalThread.GetTemporaryDirectory): New method.
+	(ThreadTarget._FinishResourceSetUp): Adjust call to
+	_FinishResourceSetUp.
+	(ThreadTarget._GetTemporaryDirectory): New method.
+	* qm/test/doc/reference.xml: Fix typo.
+	* qm/test/web/web.py (QMTestServer.__init__): Create a temporary
+	attachment store.
+
 2003-04-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/context.py (Context.GetAddedProperties): New method.

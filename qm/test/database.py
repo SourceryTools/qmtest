@@ -165,7 +165,7 @@ class ItemDescriptor:
         # Get the item.
         item = self.GetItem()
         # Execute the indicated method.
-        if context:
+        if context is not None:
             eval("item.%s(context, result)" % method)
         else:
             eval("item.%s(result)" % method)

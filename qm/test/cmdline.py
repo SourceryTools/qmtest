@@ -22,6 +22,7 @@ import base
 import database
 import os
 import qm
+import qm.attachment
 import qm.cmdline
 import qm.platform
 from   qm.test.context import *
@@ -1242,9 +1243,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Add the streams explicitly specified by the user.
         streams.extend(self.__GetResultStreams())
         # Add the text output stream.
-        stream = TextResultStream(self._stdout, format, outcomes,
-                                  self.GetDatabase(), suite_ids)
-        streams.append(stream)
+        if format != "none":
+            stream = TextResultStream(self._stdout, format, outcomes,
+                                      self.GetDatabase(), suite_ids)
+            streams.append(stream)
         
         # Simulate the events that would have occurred during an
         # actual test run.
@@ -1418,7 +1420,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             result_streams.append(stream)
 
         # Handle the --output option.
-        close_result_file = 0
         if self.HasCommandOption("no-output"):
             # User specified no output.
             result_file_name = None
@@ -1427,7 +1428,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             if result_file_name is None:
                 # By default, write results to a default file.
                 result_file_name = "results.qmr"
-                
+
         if result_file_name is not None:
             rs = (self.GetFileResultStreamClass()
                   ({ "filename" : result_file_name}))

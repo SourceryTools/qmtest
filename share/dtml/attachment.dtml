@@ -11,7 +11,7 @@
   qm.track.web.web.format_attachment_field_value et seq. to see how this
   popup is generated and used.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2003 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -33,9 +33,6 @@
    <input type="hidden" 
           name="location" 
           value="<dtml-var expr="location">">
-   <input type="hidden"
-          name="store"
-          value="<dtml-var expr="store">">
    <dtml-comment><!--
      A field for the user to upload a file.
    --></dtml-comment>
@@ -129,7 +126,6 @@
    var description;
    var mime_type;
    var location;
-   var store;
    var file_name;
    var summary;
 
@@ -146,7 +142,6 @@
      description = file_name;
    // Get the on-server location of the uploaded attachment data.
    location = document.upload_form.location.value;
-   store = document.upload_form.store.value;
    // Get the MIME type.
    if(document.upload_form.detect_mime_type[0].checked)
      mime_type = "";
@@ -156,7 +151,6 @@
    encoding = escape(description) + ";"
               + escape(mime_type) + ";"
               + escape(location) + ";"
-              + escape(store) + ";"
               + escape(file_name);
 
    summary = description + " (" + file_name

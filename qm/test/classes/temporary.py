@@ -7,7 +7,7 @@
 # Contents:
 #   Resource classes to manage temporary files and directories.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -23,7 +23,7 @@ import qm.fields
 from   qm.test.result import *
 from   qm.test.test import *
 from   qm.test.resource import *
-import tempfile
+import qm.temporary_directory
 
 ########################################################################
 # classes
@@ -48,46 +48,23 @@ class TempDirectoryResource(Resource):
         qm.fields.IntegerField(
             name="delete_recursively",
             title="Delete Directory Recursively",
-            description="If non-zero, the contents of the temporary "
-            "directory are deleted recursively during cleanup. "
-            "Otherwise, the directory must be empty on cleanup.",
-            default_value=0
+            description="""This field is obsolete  All temporary
+            directories are removed recursively.""",
+            default_value=1,
             ),
         ]
 
 
     def SetUp(self, context, result):
+
         # Generate a temporary file name.
-        self.__dir_path = tempfile.mktemp()
-        try:
-            # Create the directory.
-            os.mkdir(self.__dir_path, 0700)
-        except OSError, error:
-            # Setup failed.
-            cause = "Directory creation failed.  %s" % str(error)
-            result.Fail(cause)
-        else:
-            # Setup succeeded.  Store the path to the directory where
-            # tests can get at it.
-            context[self.dir_path_property] = self.__dir_path
+        self.__dir = qm.temporary_directory.TemporaryDirectory()
+        context[self.dir_path_property] = self.__dir.GetPath()
     
 
     def CleanUp(self, result):
-        # Extract the path to the directory.
-        dir_path = self.__dir_path
-        # Clean up the directory.
-        try:
-            if self.delete_recursively:
-                qm.common.rmdir_recursively(dir_path)
-            else:
-                os.rmdir(dir_path)
-        except OSError, error:
-            # Cleanup failed.
-            cause = "Directory cleanup failed.  %s" % str(error)
-            Result.Fail(cause=cause)
-        else:
-            # Cleanup succeeded.
-            pass
+
+        del self.__dir
 
 
 ########################################################################

@@ -7,7 +7,7 @@
 # Contents:
 #   SerialTarget
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -15,9 +15,8 @@
 # Imports
 ########################################################################
 
-from   qm.test.base import *
-from   qm.test.context import *
-from   qm.test.target import *
+from   qm.test.target import Target
+from   qm.temporary_directory import TemporaryDirectory
 
 ########################################################################
 # Classes
@@ -26,6 +25,12 @@ from   qm.test.target import *
 class SerialTarget(Target):
     """A target that runs tests in serial on the local machine."""
 
+    def __init__(self, database, properties):
+
+        super(SerialTarget, self).__init__(database, properties)
+        self.__temporary_directory = TemporaryDirectory()
+
+            
     def IsIdle(self):
         """Return true if the target is idle.
 
@@ -37,3 +42,6 @@ class SerialTarget(Target):
         return 1
 
 
+    def _GetTemporaryDirectory(self):
+
+        return self.__temporary_directory.GetPath()

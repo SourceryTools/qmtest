@@ -37,13 +37,6 @@ else:
     import cPickle
     import fcntl
     import select
-
-    # Unfortunately, Python does not provide symbolic constants for
-    # F_GETFD, F_SETFD, and FD_CLOEXEC.  Fortunately, they are the
-    # same on virtually all UNIX systems.
-    F_GETFD = 1
-    F_SETFD = 2
-    FD_CLOEXEC = 1
     
 ########################################################################
 # Classes
@@ -62,17 +55,6 @@ class Executable(object):
     'Spawn' or 'Run' more than once), so long as the uses are not
     interleaved."""
 
-    def __init__(self):
-        """Construct a new 'Executable'."""
-
-        # This method is a placeholder.  At some point in the future,
-        # we may need to do some initialization; by providing the
-        # method derived classes can call Executable.__init__ and will
-        # not need to be updated later.
-
-        pass
-    
-        
     def Spawn(self, arguments=[], environment = None, dir = None,
               path = None, exception_pipe = None):
         """Spawn the program.
@@ -251,7 +233,8 @@ class Executable(object):
             # Mark the write end as close-on-exec so that the file
             # descriptor is not passed on to the child.
             fd = exception_pipe[1]
-            fcntl.fcntl(fd, F_SETFD, fcntl.fcntl(fd, F_GETFD) | FD_CLOEXEC)
+            fcntl.fcntl(fd, fcntl.F_SETFD,
+                        fcntl.fcntl(fd, fcntl.F_GETFD) | fcntl.FD_CLOEXEC)
         else:
             exception_pipe = None
 
@@ -378,11 +361,133 @@ class Executable(object):
 
 
 
-class RedirectedExecutable(Executable):
+class TimeoutExecutable(Executable):
+    """A 'TimeoutExecutable' runs for a limited time.
+
+    If the timer expires, the child process is killed.
+
+    In order to implement this functionality, the child process is
+    placed into its own process group.  An additional monitoring
+    process is created whose sole job is to kill the primary child's
+    process group if the timeout expires.  Process groups are used
+    so that if the child process spawns additional processes they
+    are killed too.  A separate monitoring process is used so as not
+    to block the parent.
+
+    The 'Run' method will automatically start the monitoring process.
+    The 'Spawn' method does not start the monitoring process.  User's
+    of 'Spawn' should invoke '_DoParent' in order to start the
+    monitoring process.  Derived class '_DoParent' functions should
+    call the version defined in this class."""
+
+    def __init__(self, timeout = -1):
+        """Construct a new 'TimeoutExecutable'.
+
+        'timeout' -- The number of seconds that the child is permitted
+        to run.  This value may be a floating-point value.  However,
+        the value may be rounded to an integral value on some
+        systems.  If the 'timeout' is negative, this class behaves
+        like 'Executable'."""
+
+        super(TimeoutExecutable, self).__init__()
+        
+        # This functionality is not yet supported under Windows.
+        if timeout >= 0:
+            assert sys.platform != "win32"
+        
+        self.__timeout = timeout
+
+
+    def _InitializeChild(self):
+
+        # Put the child into its own process group.  This step is
+        # performed in both the parent and the child; therefore both
+        # processes can safely assume that the creation of the process
+        # group has taken place.
+        if self.__timeout >= 0:
+            os.setpgid(0, 0)
+
+        super(TimeoutExecutable, self)._InitializeChild()
+
+
+    def _HandleChild(self):
+
+        super(TimeoutExecutable, self)._HandleChild()
+        
+        if self.__timeout >= 0:
+            # Put the child into its own process group.  This step is
+            # performed in both the parent and the child; therefore both
+            # processes can safely assume that the creation of the process
+            # group has taken place.
+            child_pid = self._GetChildPID()
+            try:
+                os.setpgid(child_pid, child_pid)
+            except:
+                # The call to setpgid may fail if the child has exited,
+                # or has already called 'exec'.  In that case, we are
+                # guaranteed that the child has already put itself in the
+                # desired process group.
+                pass
+
+            # Create the monitoring process.
+            #
+            # If the monitoring process is in parent's process group and
+            # kills the child after waitpid has returned in the parent, we
+            # may end up trying to kill a process group other than the one
+            # that we intend to kill.  Therefore, we put the monitoring
+            # process in the same process group as the child; that ensures
+            # that the process group will persist until the monitoring
+            # process kills it.
+            self.__monitor_pid = os.fork()
+            if self.__monitor_pid != 0:
+                # Make sure that the monitoring process is placed into the
+                # child's process group before the parent process calls
+                # 'waitpid'.  In this way, we are guaranteed that the process
+                # group as the child 
+                os.setpgid(self.__monitor_pid, child_pid)
+            else:
+                try:
+                    # Put the monitoring process into the child's process
+                    # group.  We know the process group still exists at this
+                    # point because either (a) we are in the process
+                    # group, or (b) the parent has not yet called waitpid.
+                    os.setpgid(0, child_pid)
+                    # Give the child time to run.
+                    time.sleep (self.__timeout)
+                    # Kill all processes in the child process group.
+                    os.kill(0, signal.SIGKILL)
+                finally:
+                    # Exit.  This code is in a finally clause so that
+                    # we are guaranteed to get here no matter what.
+                    os._exit(0)
+
+
+    def Run(self, arguments=[], environment = None, dir = None,
+            path = None):
+
+        # Run the process.
+        try:
+            status = super(TimeoutExecutable, self).Run(arguments,
+                                                        environment,
+                                                        dir,
+                                                        path)
+        finally:
+            # Clean up the monitoring program; it is no longer needed.
+            if self.__timeout >= 0:
+                os.kill(self.__monitor_pid, signal.SIGKILL)
+                os.waitpid(self.__monitor_pid, 0)
+                
+        return status
+
+
+
+class RedirectedExecutable(TimeoutExecutable):
     """A 'RedirectedExecutable' redirects the standard I/O streams."""
 
     def _InitializeParent(self):
 
+        super(RedirectedExecutable, self)._InitializeParent()
+        
         # Create a pipe for each of the streams.
         self._stdin_pipe = self._StdinPipe()
         self._stdout_pipe = self._StdoutPipe()
@@ -435,7 +540,7 @@ class RedirectedExecutable(Executable):
     def _InitializeChild(self):
 
         # Let the base class do any initialization required.
-        Executable._InitializeChild(self)
+        super(RedirectedExecutable, self)._InitializeChild()
         
         # Close the pipe ends that we do not need.
         if self._stdin_pipe:
@@ -471,8 +576,6 @@ class RedirectedExecutable(Executable):
 
     def _HandleChild(self):
 
-        Executable._HandleChild(self)
-        
         # Close the pipe ends that we do not need.
         if self._stdin_pipe:
             self._ClosePipeEnd(self._stdin_pipe[0])
@@ -481,10 +584,17 @@ class RedirectedExecutable(Executable):
         if self._stderr_pipe:
             self._ClosePipeEnd(self._stderr_pipe[1])
 
+        # The pipes created by 'RedirectedExecutable' must be closed
+        # before the monitor process (created by 'TimeoutExecutable')
+        # is created.  Otherwise, if the child process dies, 'select'
+        # in the parent will not return if the monitor process may
+        # still have one of the file descriptors open.
+        super(RedirectedExecutable, self)._HandleChild()
+        
         
     def _DoParent(self):
 
-        Executable._DoParent(self)
+        super(RedirectedExecutable, self)._DoParent()
 
         # Process the various redirected streams until none of the
         # streams remain open.
@@ -614,7 +724,13 @@ class RedirectedExecutable(Executable):
         returns -- A pipe, or 'None' if the standard input should be
         closed in the child."""
 
-        return self._CreatePipe()
+        pipe = self._CreatePipe()
+        if sys.platform != "win32":
+            # Make sure that writing to the pipe will never result in
+            # deadlock.
+            fcntl.fcntl(pipe[1], fcntl.F_SETFL,
+                        fcntl.fcntl(pipe[1], fcntl.F_GETFL) | os.O_NONBLOCK)
+        return pipe
 
 
     def _StdoutPipe(self):
@@ -705,143 +821,34 @@ class RedirectedExecutable(Executable):
 
 
 
-class TimeoutExecutable(Executable):
-    """A 'TimeoutExecutable' runs for a limited time.
+class Filter(RedirectedExecutable):
+    """A 'FilterExecutable' feeds an input string to another proces.
 
-    If the timer expires, the child process is killed.
+    The input string is provided to a child process via a pipe; the
+    standard output and standard error streams from the child process
+    are collected in the 'Filter'."""
 
-    In order to implement this functionality, the child process is
-    placed into its own process group.  An additional monitoring
-    process is created whose sole job is to kill the primary child's
-    process group if the timeout expires.  Process groups are used
-    so that if the child process spawns additional processes they
-    are killed too.  A separate monitoring process is used so as not
-    to block the parent.
+    def __init__(self, input, timeout = -1):
+        """Create a new 'Filter'.
 
-    The 'Run' method will automatically start the monitoring process.
-    The 'Spawn' method does not start the monitoring process.  User's
-    of 'Spawn' should invoke '_DoParent' in order to start the
-    monitoring process.  Derived class '_DoParent' functions should
-    call the version defined in this class."""
+        'input' -- The string containing the input to provide to the
+        child process.
 
-    def __init__(self, timeout):
-        """Construct a new 'TimeoutExecutable'.
+        'timeout' -- If non-negative, the number of seconds to wait
+        for the child to complete its processing."""
 
-        'timeout' -- The number of seconds that the child is permitted
-        to run.  This value may be a floating-point value.  However,
-        the value may be rounded to an integral value on some
-        systems.  If the 'timeout' is negative, this class behaves
-        like 'Executable'."""
-
-        # This functionality is not yet supported under Windows.
-        assert sys.platform != "win32"
-        
-        self.__timeout = timeout
+        super(Filter, self).__init__(timeout)
+        self.__input = input
+        self.__next = 0
 
 
-    def _InitializeChild(self):
+    def _WriteStdin(self):
 
-        # Put the child into its own process group.  This step is
-        # performed in both the parent and the child; therefore both
-        # processes can safely assume that the creation of the process
-        # group has taken place.
-        if self.__timeout >= 0:
-            os.setpgid(0, 0)
-        
-        return Executable._InitializeChild(self)
-
-
-    def _HandleChild(self):
-
-        Executable._HandleChild(self)
-        
-        if self.__timeout >= 0:
-            # Put the child into its own process group.  This step is
-            # performed in both the parent and the child; therefore both
-            # processes can safely assume that the creation of the process
-            # group has taken place.
-            child_pid = self._GetChildPID()
-            try:
-                os.setpgid(child_pid, child_pid)
-            except:
-                # The call to setpgid may fail if the child has exited,
-                # or has already called 'exec'.  In that case, we are
-                # guaranteed that the child has already put itself in the
-                # desired process group.
-                pass
-
-            # Create the monitoring process.
-            #
-            # If the monitoring process is in parent's process group and
-            # kills the child after waitpid has returned in the parent, we
-            # may end up trying to kill a process group other than the one
-            # that we intend to kill.  Therefore, we put the monitoring
-            # process in the same process group as the child; that ensures
-            # that the process group will persist until the monitoring
-            # process kills it.
-            self.__monitor_pid = os.fork()
-            if self.__monitor_pid != 0:
-                # Make sure that the monitoring process is placed into the
-                # child's process group before the parent process calls
-                # 'waitpid'.  In this way, we are guaranteed that the process
-                # group as the child 
-                os.setpgid(self.__monitor_pid, child_pid)
-            else:
-                try:
-                    # Put the monitoring process into the child's process
-                    # group.  We know the process group still exists at this
-                    # point because either (a) we are in the process
-                    # group, or (b) the parent has not yet called waitpid.
-                    os.setpgid(0, child_pid)
-                    # Give the child time to run.
-                    time.sleep (self.__timeout)
-                    # Kill all processes in the child process group.
-                    os.kill(0, signal.SIGKILL)
-                finally:
-                    # Exit.  This code is in a finally clause so that
-                    # we are guaranteed to get here no matter what.
-                    os._exit(0)
-
-
-    def Run(self, arguments=[], environment = None, dir = None,
-            path = None):
-
-        # Run the process.
-        try:
-            status = Executable.Run(self, arguments, environment, dir, path)
-        finally:
-            # Clean up the monitoring program; it is no longer needed.
-            if self.__timeout >= 0:
-                os.kill(self.__monitor_pid, signal.SIGKILL)
-                os.waitpid(self.__monitor_pid, 0)
-                
-        return status
-
-
-
-class TimeoutRedirectedExecutable(TimeoutExecutable,
-                                  RedirectedExecutable):
-    """An 'Executable' that runs for a limited time with redirected output."""
-                                  
-    def _InitializeChild(self):
-
-        TimeoutExecutable._InitializeChild(self)
-        RedirectedExecutable._InitializeChild(self)
-
-
-    def _InitializeParent(self):
-
-        TimeoutExecutable._InitializeParent(self)
-        RedirectedExecutable._InitializeParent(self)
-
-
-    def _HandleChild(self):
-
-        # Order is important.  The pipes created by
-        # 'RedirectedExecutable' must be closed before the monitor
-        # process (created by 'TimeoutExecutable') is created.
-        # Otherwise, if the child process dies, 'select' in the parent
-        # will not return if the monitor process may still have one of
-        # the file descriptors open.
-        RedirectedExecutable._HandleChild(self)
-        TimeoutExecutable._HandleChild(self)
+        # If there's nothing more to write, stop.
+        if self.__next == len(self.__input):
+            super(Filter, self)._WriteStdin()
+        else:            
+            # Write some data.
+            self.__next += os.write(self._stdin_pipe[1],
+                                    self.__input[self.__next
+                                                 : self.__next + 64 * 1024])

@@ -7,7 +7,7 @@
 # Contents:
 #   ProcessTarget
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -203,7 +203,7 @@ class ProcessTarget(Target):
             # We could not write to the child.  (One situation in
             # which this happens is that the child process has been
             # killed.)
-            result = Result(Result.TEST, descriptor.GetId(), context)
+            result = Result(Result.TEST, descriptor.GetId())
             result.NoteException()
             self._RecordResult(result)
             self.__idle_children.append(child)

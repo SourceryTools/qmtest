@@ -142,7 +142,7 @@
  
    <para>Tests have limited access to the resources on which they
    depend.  A resource may place additional information into the
-   context (<xref linnkend="sec-context"/>) that is visible to the
+   context (<xref linkend="sec-context"/>) that is visible to the
    test.  However, the actual resource object itself is not available
    to tests.  (The reason for this limitiation is that for a target
    consisting of multiple processes, the resource object may not be

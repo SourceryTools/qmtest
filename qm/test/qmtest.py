@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest command line application.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -37,6 +37,7 @@ execfile(os.path.join(setup_path_dir, 'setup_path.py'))
 # imports
 ########################################################################
 
+import gc
 import qm
 import qm.cmdline
 import qm.diagnostic
@@ -56,6 +57,22 @@ def print_error_message(message):
     message = prefix + message[len(prefix):]
     sys.stderr.write(message)
 
+
+def main():
+    """Run QMTest.
+
+    returns -- The exit code that should be provided to the operating
+    system."""
+    
+    # Parse the command line.
+    command = qm.test.cmdline.QMTest(sys.argv[1:],
+                                     major_version, minor_version,
+                                     release_version)
+    # Execute the command.
+    exit_code = command.Execute()
+
+    return exit_code
+    
 ########################################################################
 # script
 ########################################################################
@@ -70,12 +87,7 @@ qm.diagnostic.load_messages("test")
 qm.rc.Load("test")
                                                        
 try:
-    # Parse the command line.
-    command = qm.test.cmdline.QMTest(sys.argv[1:],
-                                     major_version, minor_version,
-                                     release_version)
-    # Execute the command.
-    exit_code = command.Execute()
+    exit_code = main()
 except qm.cmdline.CommandError, msg:
     print_error_message(msg)
     sys.stderr.write(
@@ -102,7 +114,12 @@ except qm.platform.SignalException, se:
     # Other signals should be handled earlier.
     else:
         raise
-    
+
+# Collect garbage so that any "__del__" methods with externally
+# visible side-effects are executed.
+del qm.test.cmdline._the_qmtest
+gc.collect()
+
 # End the program.
 sys.exit(exit_code)
 

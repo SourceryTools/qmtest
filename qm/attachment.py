@@ -7,7 +7,7 @@
 # Contents:
 #   Generic code for handling arbitrary file attachments.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -41,11 +41,11 @@ program.  The 'temporary_store' global instance should be used."""
 # imports
 ########################################################################
 
-import atexit
 import common
 import mimetypes
 import os
 import xmlutil
+import temporary_directory
 
 ########################################################################
 # classes
@@ -65,16 +65,10 @@ class AttachmentStore:
     for retrieving attachment data only; not for storing it.  The
     interface for storing may be defined in any way by implementations."""
 
-    # A map from attachment store names to the stores themselves.
-    all_stores = []
-
     def __init__(self):
         """Create a new 'AttachmentStore'."""
 
-        # Remember the index associated with this attachment store.
-        self.__index = len(AttachmentStore.all_stores)
-        # Remember this attachment store.
-        AttachmentStore.all_stores.append(self)
+        pass
 
 
     def GetIndex(self):
@@ -139,7 +133,7 @@ class AttachmentStore:
 
         raise NotImplementedError
         
-        
+
 
 class FileAttachmentStore(AttachmentStore):
     """An attachment store based on the file system.
@@ -218,10 +212,9 @@ class TemporaryAttachmentStore(AttachmentStore):
         # Initialize the base class.
         AttachmentStore.__init__(self)
         # Construct a temporary directory in which to store attachment
-        # data. 
-        self.__path = common.make_temporary_directory()
-        # On exit, clean up the temporary directory.
-        atexit.register(self.__CleanUpTemporaryDirectory)
+        # data.
+        self.__tmpdir = temporary_directory.TemporaryDirectory()
+        self.__path = self.__tmpdir.GetPath()
 
 
     def GetData(self, location):
@@ -329,12 +322,6 @@ class TemporaryAttachmentStore(AttachmentStore):
         """Convert an attachment location to a path."""
 
         return os.path.join(self.__path, location)
-
-
-    def __CleanUpTemporaryDirectory(self):
-        """Delete the entire temporary attachment store."""
-
-        common.rmdir_recursively(self.__path)
 
 
 
@@ -473,7 +460,7 @@ def make_temporary_location():
 def is_temporary_location(location):
     """Return true if 'location' is a temporary attachment location."""
 
-    return common.starts_with(location, _temporary_location_prefix)
+    return location.startswith(_temporary_location_prefix)
 
 
 def make_dom_node(attachment, document):
@@ -545,24 +532,6 @@ def from_dom_node(node, store):
     location = xmlutil.get_child_text(node, "location")
     # Construct the resulting attachment.
     return Attachment(mime_type, description, file_name, location, store)
-
-
-def get_attachment_store(index):
-    """Return the indicated attachment store.
-    
-    'index' -- The index of the attachment store to be returned,
-    i.e., the value returned by 'GetIndex' for the desired store.
-    
-    returns -- The attachment store named."""
-    
-    return AttachmentStore.all_stores[index]
-
-    
-########################################################################
-# variables
-########################################################################
-
-temporary_store = TemporaryAttachmentStore()
 
 ########################################################################
 # Local Variables:

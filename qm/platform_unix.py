@@ -7,7 +7,7 @@
 # Contents:
 #   Platform-specific function for UNIX and UNIX-like systems.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -244,12 +244,6 @@ def _signal_handler(signal_number, execution_frame):
     """Generic signal handler that raises an exception."""
 
     raise SignalException(signal_number)
-
-
-def get_temp_directory():
-    """Return the full path to a directory for storing temporary files."""
-
-    return "/var/tmp"
 
 
 def get_user_name():
