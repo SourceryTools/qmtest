@@ -124,19 +124,17 @@
 
   <screen>
 &prompt;<userinput>export QMTRACK_IDB_PATH=~/idb</userinput>
-&prompt;<userinput>qmtrack server -P 8000</userinput>
+&prompt;<userinput>qmtrack server -P 8000 -b</userinput>
   </screen>
 
-  <para>Once the server is running, you may access the &qmtrack; Web
-  user interface by pointing your browser at this URL:</para>
-
-  <programlisting>
-   http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/track/
-  </programlisting>
-
-  <para>Replace <replaceable>hostname</replaceable> with the host name
-  of your computer, and <replaceable>port</replaceable> with the port
-  number you specified.</para>
+  <para>The <option>&dashdash;start-browser</option>
+  (<option>-b</option>) option instructs &qmtrack; to attempt to open a
+  browser window and point it at the server.  If you do not specify this
+  option, &qmtrack; prints out the URL at which the server is running;
+  you should open a browser window yourself and point it at this URL.
+  (If &qmtrack; has trouble opening a web browser automatically on your
+  system, see <xref linkend="sec-rc"></xref> for information on
+  configuring it correctly.)</para>
 
  </section> <!-- sec-tracktut-server -->
 

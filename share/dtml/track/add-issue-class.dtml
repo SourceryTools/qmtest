@@ -76,7 +76,8 @@
    <td>
     <b>Title</b>
     <p>The title of this issue class.  Users of <dtml-var
-    expr="GetName()"> refer to the issue class by this title.</p>
+    expr="GetName()"> refer to the issue class by this title.  Use a
+    singular noun or phrase such as "Bug" or "Enhancement Request".</p>
    </td>
    <td>
     <input type="text"

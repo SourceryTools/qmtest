@@ -145,8 +145,7 @@
    <input type="button" 
           value=" OK "
           onclick="document.form.submit();"/>
-   <dtml-var expr="MakeButton('Cancel', WebRequest('show', 
-                   iid=issue.GetId()).AsUrl())">
+   <dtml-var expr="MakeButton('Cancel', 'show', iid=issue.GetId())">
    </form>
   </dtml-if>
 

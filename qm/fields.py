@@ -40,6 +40,7 @@ import common
 import diagnostic
 import label
 import os
+import re
 import qm
 import qm.xmlutil
 import string
@@ -187,16 +188,16 @@ class Field:
     property_declarations = [
         FieldPropertyDeclaration(
             name="name",
-            description="""The name displayed for this field in user
-            interfaces.""",
+            description="""The internal name for this field. QM uses
+            this name to identify the field. This name is also used when
+            referring to the field in Python expressions.""",
             default_value=""
             ),
 
         FieldPropertyDeclaration(
             name="title",
-            description="""The internal name for this field. QM uses
-            this name to identify the field. This name is also used when
-            referring to the field in Python expressions.""",
+            description="""The name displayed for this field in user
+            interfaces.""",
             default_value=""
             ),
 
@@ -715,6 +716,13 @@ class TextField(Field):
 
     property_declarations = Field.property_declarations + [
         FieldPropertyDeclaration(
+            name="multiline",
+            description="""If false, a value for this field is a single
+            line of text.  If true, multi-line text is allowed.""",
+            default_value="false"
+            ),
+
+        FieldPropertyDeclaration(
             name="structured",
             description="""If true, the field contains structured
             text.""",
@@ -762,12 +770,18 @@ class TextField(Field):
         if self.IsAttribute("nonempty") and value == "":
             raise ValueError, \
                   qm.error("empty field value", field_name=self.GetTitle()) 
+        # If this is not a multi-line text field, remove line breaks
+        # (and surrounding whitespace).
+        if not self.IsAttribute("multiline"):
+            value = re.replace(" *\n+ *", " ", value)
         return value
 
 
     def FormatValueAsText(self, value, columns=72):
         if self.IsAttribute("structured"):
             return structured_text.to_text(value, width=columns)
+        elif self.IsAttribute("verbatim"):
+            return value
         else:
             return common.wrap_lines(value, columns)
     
@@ -783,46 +797,47 @@ class TextField(Field):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            if self.IsAttribute("verbatim") \
-               or self.IsAttribute("structured"):
+            if self.IsAttribute("multiline"):
                 result = '<textarea cols="64" rows="8" name="%s">' \
                          '%s</textarea>' \
                          % (name, web.escape(value))
-                # If this is a structured text field, add a note to that
-                # effect, so users aren't surprised.
-                if self.IsAttribute("structured"):
-                    result = result \
-                    + '<br><font size="-1">This is a ' \
-                    + qm.web.make_help_link_html(
-                        qm.structured_text.html_help_text,
-                        "structured text") \
-                    + 'field.</font>'
-                return result
             else:
-                return '<input type="text" size="40" name="%s" value="%s"/>' \
-                       % (name, web.escape(value))
+                result = \
+                    '<input type="text" size="40" name="%s" value="%s"/>' \
+                    % (name, web.escape(value))
+            # If this is a structured text field, add a note to that
+            # effect, so users aren't surprised.
+            if self.IsAttribute("structured"):
+                result = result \
+                + '<br><font size="-1">This is a ' \
+                + qm.web.make_help_link_html(
+                    qm.structured_text.html_help_text,
+                    "structured text") \
+                + 'field.</font>'
+            return result
 
         elif style == "hidden":
             return '<input type="hidden" name="%s" value="%s"/>' \
                    % (name, web.escape(value))            
 
         elif style == "brief":
-            if self.IsAttribute("verbatim"):
-                # Truncate to 80 characters, if it's longer.
-                if len(value) > 80:
-                    value = value[:80] + "..."
-                # Replace all whitespace with ordinary space.
-                value = re.replace("\w", " ")
-                # Put it in a <tt> element.
-                return '<tt>%s</tt>' % web.escape(value)
-            elif self.IsAttribute("structured"):
+            if self.IsAttribute("structured"):
                 # Use only the first line of text.
                 value = string.split(value, "\n", 1)
-                result = web.format_structured_text(value[0])
-                if len(value) > 1:
-                    result = result + "..."
-                return result
+                value = web.format_structured_text(value[0])
             else:
+                # Replace all whitespace with ordinary space.
+                value = re.sub(r"\s", " ", value)
+
+            # Truncate to 40 characters, if it's longer.
+            if len(value) > 40:
+                value = value[:40] + "..."
+
+            if self.IsAttribute("verbatim"):
+                # Put verbatim text in a <tt> element.
+                return '<tt>%s</tt>' % web.escape(value)
+            else:
+                # Other text set normally.
                 return web.escape(value)
 
         elif style == "full":
@@ -832,14 +847,15 @@ class TextField(Field):
                 # we were to escape first, line lengths would be
                 # computed using escape codes rather than visual
                 # characters. 
+                break_delimiter = "#@LINE$BREAK@#"
                 value = common.wrap_lines(value, columns=80,
-                                          break_delimiter="#@LINE$BREAK@#")
+                                          break_delimiter=break_delimiter)
                 # Now escape special characters.
                 value = web.escape(value)
                 # Replace the line break tag with visual indication of
                 # the break.
                 value = string.replace(value,
-                                       "#@LINE$BREAK@#", r"<blink>\</blink>")
+                                       break_delimiter, r"<blink>\</blink>")
                 # Place verbatim text in a <pre> element.
                 return '<pre>%s</pre>' % value
             elif self.IsAttribute("structured"):
@@ -915,6 +931,9 @@ class TextField(Field):
         controls = Field.MakePropertyControls(self)
         # Add controls for our own properties.
         controls.update({
+            "multiline":
+                self._MakeBooleanPropertyControl("multiline"),
+
             "structured":
                 self._MakeBooleanPropertyControl("structured"),
 
@@ -1547,7 +1566,8 @@ class EnumerationField(TextField):
     property_declarations = TextField.property_declarations + [
         FieldPropertyDeclaration(
             name="enumerals",
-            description="""The enumerals allowed for this field.""",
+            description="""The enumerals allowed for this field.
+            Enumerals are presented in the order listed.""",
             default_value="[]"),
 
         ]
@@ -1731,7 +1751,8 @@ class EnumerationField(TextField):
             form_name="form",
             field_name=field_name,
             add_page=add_page,
-            initial_elements=initial_elements)
+            initial_elements=initial_elements,
+            ordered=1)
 
         return controls
 
@@ -1779,7 +1800,13 @@ class TimeField(IntegerField):
             return '<input type="text" size="8" name="%s" value="%s"/>' \
                    % (name, value)
         elif style == "full" or style == "brief":
-            return value
+            # The time is formatted in three parts: the date, the time,
+            # and the time zone.  Replace the space between the time and
+            # the time zone with a non-breaking space, so that if the
+            # time is broken onto two lines, it is broken between the
+            # date and the time.
+            date, time, time_zone = string.split(value, " ")
+            return date + " " + time + "&nbsp;" + time_zone
         elif style == "hidden":
             return '<input type="hidden" name="%s" value="%s"/>' \
                    % (name, value)

@@ -658,23 +658,8 @@ class StateField(qm.fields.EnumerationField):
         return self.__state_model
 
 
-    def UpdateEnumeration(self):
-        """Update the enumeration to reflect the state model.
-
-        This method must be called if states are added to the state
-        model, to update the corresponding enumeration of states.
-
-        preconditions -- There are no enumeral names in this field's
-        enumeration that are not the names of states in the state
-        model.  That is, no states have been removed from the state
-        model (though states may have been added)."""
-        
-        # Make sure the state model looks OK.
-        self.__state_model.Validate()
-        # Extract the names of states in the state model.
-        states_in_model = self.__state_model.GetStateNames()
-        # Store them.
-        self.SetEnumerals(states_in_model)
+    def GetEnumerals(self):
+        return self.__state_model.GetStateNames()
 
 
     def GetHelp(self):
@@ -693,17 +678,17 @@ class StateField(qm.fields.EnumerationField):
             transitions_to = state_model.GetAvailableEndingStateNames(
                 state_name)
             if len(transitions_to) > 0:
-                transitions_to = map(lambda t: '"%s"' % t, transitions_to)
+                transitions_to = map(lambda t: "*%s*" % t, transitions_to)
                 transitions_to = string.join(transitions_to, " , ")
             else:
                 transitions_to = "None"
             help = help + \
-                   '            * "%s": %s  Transitions to: %s.\n\n' \
+                   "            * *%s*: %s  Transitions to: %s.\n\n" \
                    % (state_name, description, transitions_to)
         # Also mention the state model's initial state.
-        help = help + '''
-        The initial state is "%s".
-            ''' % state_model.GetInitialStateName()
+        help = help + """
+        The initial state is *%s*.
+            """ % state_model.GetInitialStateName()
         return help
 
 

@@ -432,10 +432,11 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             if self.server.IsXmlRpcUrl(self.path):
                 self.__HandleXmlRpcRequest()
             else:
-                self.send_response(400, "Unexpected request.")
+                self.send_response(400, "Unexpected request (not XML/RPC).")
         else:
-            raise NotImplementedError, \
-                  "unknown POST encoding: %s" % content_type
+            self.send_response(400,
+                               "Unexpected request (POST of %s)."
+                               % content_type)
         try:
             self.wfile.flush()
             self.connection.shutdown(1)
@@ -1664,7 +1665,7 @@ def generate_error_page(request, error_text):
 
     returns -- The generated HTML source for the page."""
 
-    page = DtmlPage.default_class("error.dtml", error_text=error_text)
+    page = DtmlPage("error.dtml", error_text=error_text)
     return page(request)
 
 
@@ -1673,7 +1674,7 @@ def generate_login_form(redirect_request, message=None):
 
     'message' -- If not 'None', a message to display to the user."""
 
-    page = DtmlPage.default_class(
+    page = DtmlPage(
         "login_form.dtml",
         show_decorations=0,
         message=message,
@@ -1690,7 +1691,8 @@ def make_set_control(form_name,
                      rows=6,
                      width=200,
                      window_width=480,
-                     window_height=240):
+                     window_height=240,
+                     ordered=0):
     """Construct a control for representing a set of items.
 
     'form_name' -- The name of form in which the control is included.
@@ -1713,7 +1715,10 @@ def make_set_control(form_name,
     'width' -- The width of the select control.
 
     'window_width', 'window_height' -- The width and height of the popup
-    window for adding a new element."""
+    window for adding a new element.
+
+    'ordered' -- If true, controls are included for specifying the order
+    of elements in the set."""
 
     # Generate a name for the select control if none was specified.
     if select_name is None:
@@ -1735,21 +1740,37 @@ def make_set_control(form_name,
     contents = '<input type="hidden" name="%s" value="%s"/>' \
                % (field_name, initial_value)
 
+    buttons = []
+
     # Construct a unique name for the JavaScript function for responding
     # to the "Add..." button.
     global _counter
     add_function = "_set_add_%d" % _counter
     _counter = _counter + 1
     # Construct the "Add..." button.
-    add_button = make_button_for_popup("Add...", add_page, request,
-                                       window_width, window_height)
+    buttons.append(make_button_for_popup("Add...", add_page, request,
+                                         window_width, window_height))
     # Construct the "Remove" button.
-    remove_button = '''
+    buttons.append('''
     <input type="button"
            size="12"
            value=" Remove "
            onclick="remove_from_set(document.%s.%s, document.%s.%s);"
-    />''' % (form_name, select_name, form_name, field_name)
+    />''' % (form_name, select_name, form_name, field_name))
+
+    if ordered:
+        buttons.append('''
+        <input type="button"
+               size="12"
+               value=" Move Up "
+               onclick="move_in_set(document.%s.%s, document.%s.%s, -1);"
+        />''' % (form_name, select_name, form_name, field_name))
+        buttons.append('''
+        <input type="button"
+               size="12"
+               value=" Move Down "
+               onclick="move_in_set(document.%s.%s, document.%s.%s, 1);"
+        />''' % (form_name, select_name, form_name, field_name))
 
     # Arrange everything in a table to control the layout.
     return contents + '''
@@ -1761,12 +1782,10 @@ def make_set_control(form_name,
       <td>&nbsp;</td>
       <td>
        %s
-       <br>
-       %s
       </td>
      </tr>
     </tbody></table>
-    ''' % (select, add_button, remove_button)
+    ''' % (select, string.join(buttons, "<br>"))
 
 
 def encode_set_control_contents(values):
@@ -2283,10 +2302,10 @@ def make_choose_control(field_name,
     <input type="button"
            value=" << Add "
            onclick="move_option(document.form.%s, document.form.%s);
-                    update_from_select_list(document.form.%s,
-                                            document.form.%s);">
+                    document.form.%s.value =
+                        encode_select_options(document.form.%s);" />
     ''' % (excluded_select_name, included_select_name,
-           included_select_name, field_name)
+           field_name, included_select_name)
     buttons.append(button)
 
     # The Remove button.
@@ -2295,10 +2314,10 @@ def make_choose_control(field_name,
            type="button"
            value=" Remove >> "
            onclick="move_option(document.form.%s, document.form.%s);
-                    update_from_select_list(document.form.%s,
-                                            document.form.%s);">&nbsp;
+                    document.form.%s.value =
+                        encode_select_options(document.form.%s);" />&nbsp;
     ''' % (included_select_name, excluded_select_name,
-           included_select_name, field_name)
+           field_name, included_select_name)
     buttons.append(button)
 
     if ordered:
@@ -2307,9 +2326,9 @@ def make_choose_control(field_name,
         <input type="button"
                value=" Move Up "
                onclick="swap_option(document.form.%s, -1);
-                        update_from_select_list(document.form.%s,
-                                                document.form.%s);">
-        ''' % (included_select_name, included_select_name, field_name)
+                        document.form.%s.value =
+                            encode_select_options(document.form.%s);"/>
+        ''' % (included_select_name, field_name, included_select_name)
 
         buttons.append(button)
 
@@ -2318,9 +2337,9 @@ def make_choose_control(field_name,
         <input type="button"
                value=" Move Down "
                onclick="swap_option(document.form.%s, 1);
-                        update_from_select_list(document.form.%s,
-                                                document.form.%s);">
-        ''' % (included_select_name, included_select_name, field_name)
+                        document.form.%s.value =
+                            encode_select_options(document.form.%s);"/>
+        ''' % (included_select_name, field_name, included_select_name)
         buttons.append(button)
 
     # Arrange everything properly.
@@ -2568,7 +2587,7 @@ def format_user_id(user_id):
         # for this user?
         if not hasattr(user_item, "__page_cache_request"):
             # No.  Generate it now.
-            user_page = DtmlPage.default_class(
+            user_page = DtmlPage(
                 "user.dtml",
                 show_decorations=0,
                 user_id=user_id,

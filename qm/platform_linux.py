@@ -137,12 +137,12 @@ def open_in_browser(url):
     url = string.replace(url, "'", r"\'")
     # Which browser to use?
     browser = common.rc.Get("browser", "netscape", "common")
-    browser = find_in_path(browser)
-    if browser is None:
+    browser_executable = find_in_path(browser)
+    if browser_executable is None:
         raise RuntimeError, \
               qm.error("browser error", browser_path=browser)
     # Invoke the browser.
-    exit_code = os.system("%s '%s' &" % (browser, url))
+    os.system("%s '%s' &" % (browser_executable, url))
 
 
 def send_email(body,

@@ -1021,6 +1021,8 @@ def add_exit_function(exit_function):
 
     'exit_function' -- A callable that takes no arguments."""
 
+    global _exit_functions
+
     # Check whether there is already an exit function registered with
     # the Python interpreter.
     if hasattr(sys, "exitfunc"):
@@ -1028,9 +1030,9 @@ def add_exit_function(exit_function):
         exit_function = sys.exitfunc
         # Is it our exit function dispatcher?
         if exit_function is not _at_exit:
-            # Something else is there.  Print a warning.
-            sys.stderr.write("Warning: Replacing foreign value of "
-                             "sys.exitfunc.\n")
+            # Something else is there.  That's OK; we'll add it to the
+            # end of our own queue.
+            _exit_functions.append(exit_function)
             # Replace it.
             sys.exitfunc = _at_exit
     else:
@@ -1038,7 +1040,6 @@ def add_exit_function(exit_function):
         sys.exitfunc = _at_exit
 
     # Add the exit function to the list of things to do at exit.
-    global _exit_functions
     _exit_functions.append(exit_function)
 
 
@@ -1130,11 +1131,13 @@ def print_message(min_verbose, text):
     """Print a status message, if the verbose level is high enough.
 
     'min_verbose' -- The minimum verbose level for which this message
-    will be printed.  Must be greater than zero.
+    will be printed.  A message with minimum verbose level of zero is
+    always printed; such messages should be used only in exceptional
+    situations, and certainly never in situations likely to be "batch
+    mode" use cases.
 
     'text' -- The text of the message."""
 
-    assert min_verbose > 0
     if verbose >= min_verbose:
         sys.stdout.write(text)
 

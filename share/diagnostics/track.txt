@@ -117,7 +117,7 @@ has been left behind by a defuct QMTrack process, delete the directory
 There is already an issue in the IDB with the issue ID "%(iid)s".
 
 @ initialize invalid idb class
-IDB type "%(type)" is invalid.
+IDB type "%(type)s" is invalid.
 
 @ initialize no idb path
 You must specify an IDB path to the initialize command.

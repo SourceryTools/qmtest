@@ -31,36 +31,98 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+// Remove the select item from a set control.
+//
+// 'select' -- The select input displaying the elements in the set.
+//
+// 'contents' -- The hidden input that contains the encoded contents of
+// the set. 
+
 function remove_from_set(select, contents)
 {
+  // Is anything selected?
   if(select.selectedIndex != -1)
+    // Yes.  Drop it from the options list.
     select.options[select.selectedIndex] = null;
-  update_from_select_list(select, contents);
+  // Re-encode the set contents.
+  contents.value = encode_select_options(select);
   return false;
 }
+
+
+// Add an element to a set control.
+//
+// 'select' -- The select input displaying the elements in the set.
+//
+// 'contents' -- The hidden input that contains the encoded contents of
+// the set. 
+//
+// 'text' -- The user-visible text representing the element to add to
+// the set. 
+//
+// 'value' -- The encoded value representing the element to add to the
+// set. 
+//
+// The new element is not added if there is already another element in
+// the set with the same encoded value.
 
 function add_to_set(select, contents, text, value)
 {
   var options = select.options;
+  // Look for another option that has the same value.
   for(var i = 0; i < options.length; ++i)
     if(options[i].value == value)
+      // Found a match; don't continue.
       return false;
+  // Append a new option, if the value is not empty.
   if(value != "")
     options[options.length] = new Option(text, value);
-  update_from_select_list(select, contents);
+  // Re-encode the set contents.
+  contents.value = encode_select_options(select);
   return false;
 }
 
-function update_from_select_list(select, contents)
+
+// Move the selected element in a set control.
+//
+// 'select' -- The select input displaying the elements in the set.
+//
+// 'contents' -- The hidden input that contains the encoded contents of
+// the set. 
+//
+// 'offset' -- The number of positions by which to move the selected
+// element.  Negative values move the element towards the beginning of
+// the set. 
+
+function move_in_set(select, contents, offset)
 {
+  swap_option(select, offset);
+  contents.value = encode_select_options(select);
+}
+
+
+// Encode the values of the options in a set control.
+//
+// 'select' -- The select input displaying the elements in the set.
+//
+// returns -- A string containing the value of the options of 'select',
+// separated by commas.
+
+function encode_select_options(select)
+{
+  // Construct the encoded value in this variable.
   var result = "";
+  // Loop over options in the select list.
   for(var i = 0; i < select.options.length; ++i) {
+    // Elements after the first are preceded by commas.
     if(i > 0)
       result += ",";
+    // Append the next value.
     result += select.options[i].value;
   }
-  contents.value = result;
+  return result;
 }
+
 
 function update_from_select(select, control)
 {
@@ -166,7 +228,7 @@ function property_add_or_change(select, contents, name, value)
       option.text = option_text;
       option.value = option_value;
       // Reencode the properties.
-      update_from_select_list(select, contents);
+      contents.value = encode_select_options(select);
       // Select the modified entry in the select input.
       options.selectedIndex = i;
       return;
@@ -177,7 +239,7 @@ function property_add_or_change(select, contents, name, value)
   // add a new property.
   options[options.length] = new Option(option_text, option_value);
   // Reencode the properties.
-  update_from_select_list(select, contents);
+  contents.value = encode_select_options(select);
   // Make the new property selected.
   options.selectedIndex = options.length - 1;
   return;
@@ -199,8 +261,8 @@ function property_remove(select, contents)
   if(select.selectedIndex != -1) {
     // Yes; remove it.
     select.options[select.selectedIndex] = null;
-    // Reencode the properties.
-    update_from_select_list(select, contents);
+    // Re-encode the properties.
+    contents.value = encode_select_options(select);
   }
 }
 

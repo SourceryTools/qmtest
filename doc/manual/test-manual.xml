@@ -858,7 +858,30 @@
 
   </section> <!-- sec-specifying-test-class -->
 
- </section> <!-- Writing Test Classes and Action Classes -->
+ </section> <!-- sec-writing-test-and-action-classes -->
+
+ <section id="sec-database-contents">
+  <title>Test Database Contents</title>
+
+  <para>The default &qmtest; test database implementation stores the
+  database as a directory hierarcy containing XML files.  Each component
+  of a test, suite, or action ID is represented by a subdirectory.  A
+  tests, suites, or actions itself is represented by an XML file.  These
+  files have file extensions <filename>.qmt</filename>,
+  <filename>.qms</filename>, and <filename>.qma</filename>,
+  respectively.</para>
+
+  <para>Expert &qmtest; users may modify the contents of the test
+  database directly by editing these files.  However, it is the user's
+  responsibility to ensure the integrity and validity of the XML
+  contents of each file.  For example, file and directory names should
+  contain only characters allowed in identifiers (lower-case letters,
+  digits, and underscores); a period should only be used to a file
+  extension, such as <filename>.qmt</filename>.  Also, the files and
+  directories in a test database should not be modified directly while
+  an instance of &qmtest; is running with that test database.</para>
+
+ </section> <!-- sec-database-contents -->
 
 </chapter>
 <!--

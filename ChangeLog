@@ -1,3 +1,60 @@
+2001-07-11  Alex Samuel  <samuel@codesourcery.com>
+
+	* COPYING: Update year.
+
+	* qm/web.py (WebRequestHandler.do_POST): Improve error handling.
+	(format_exception): Don't use default_class.
+	(generate_login_form): Likewise.
+	(make_set_control): Add ordered parameter.
+	(make_choose_control): Adjust for encode_select_options.
+	(format_user_id): DOn't use default_class.
+	* qm/user.py (XmlDatabase.__init__): Improve exception.
+	* qm/platform_linux.py (open_in_browser): Improve error handling. 
+	* qm/fields.py (Field.property_declarations): Fix swapped
+	attribute descriptions.
+	(TextField.property_declarations): Add multiline attribute.
+	(TextField.Validate): Remove line breaks if not multiline.
+	(TextField.FormatValueAsHtml): Reorganize for multiline.
+	(TextField.MakePropertyControls): Add control for multiline.
+	(EnumerationField.property_declarations): Augment description.
+	(EnumerationField.MakePropertyControls): Make ordered set
+	control. 
+	(TimeField.FormatValueAsHtml): Improve full output format.
+	* qm/common.py (add_exit_function): Handle foreign exit function
+	better. 
+	(print_message): Allow zero min_verbose.
+	* qm/track/qmtrack.in: Use qm.track.server module.
+	* qm/track/server.py (start_server): Rename to...
+	(make_server): ... this.  Don't start serving.
+	(run_server): New function.
+	* qm/track/issue_class.py (StateField.UpdateEnumeration): Remove.
+	(StateField.GetEnumerals): New method.
+	(StateField.GetHelp): Put state names in italics.
+	* qm/track/cmdline.py (Command.start_browser_option_spec): New
+	attribute.
+	(Command.qmtrack_commands): Include it.  Don't list GadflyIdb.
+	(Command.__PerformServer): Print a message if port number isn't
+	specified.  Handle --start-browser option.
+	* qm/test/cmdline.py (Command.__ExecuteServer): Improve message.
+	
+	* share/web/common.js: Comment throughout.
+	(remove_from_set): Adjust for encode_select_options.
+	(add_to_set): Likewise.
+	(move_in_set): New function.
+	(update_from_select_list): Replace with...
+	(encode_select_options): ... this.
+	(property_add_or_change): Adjust for encode_select_options.
+	(property_remove): Likewise.
+	* share/dtml/field.dtml: Adjust layout.
+	* share/dtml/track/show.dtml: Fix Cancel button.
+	* share/dtml/track/issue-class.dtml: Don't list triggers.
+	* share/dtml/track/add-issue-class.dtml: Improve help text.
+	* share/diagnostics/track.txt (initialize invalid idb class): Fix.
+
+	* doc/manual/track-tour.xml (sec-tractut-user-db): Document
+	--start-browser option. 
+	* doc/manual/test-manual.xml (sec-database-contents): New section. 
+
 2001-07-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo): Rename to...

@@ -150,7 +150,7 @@ class Command:
         "b",
         "start-browser",
         None,
-        "Start a browser and point it at the server."
+        "Open a browser window to the Web interface."
         )
 
     profile_option_spec = (
@@ -566,7 +566,8 @@ class Command:
             # a browser at it safely.
             qm.platform.open_in_browser(url)
         else:
-            qm.common.print_message(2, "QMTest server running at %s .\n" % url)
+            qm.common.print_message(0, "%s server running at %s .\n"
+                                    % (qm.common.program_name, url))
 
         # Accept requests.
         server.Run()

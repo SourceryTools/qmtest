@@ -44,6 +44,7 @@ import qm.common
 import qm.platform
 import qm.track
 import qm.track.cmdline
+import qm.track.server
 import sys
 
 ########################################################################
@@ -91,7 +92,7 @@ try:
 
     try:
         # Execute the command.
-        exit_code = qm.track.execute(command, sys.stdout, sys.stderr)
+        exit_code = qm.track.server.execute(command, sys.stdout, sys.stderr)
     finally:
         # Close the session, if one's open.
         qm.track.close_idb()

@@ -84,7 +84,7 @@ def do_command_for_xml_rpc(argument_list):
     return result
 
 
-def start_server(port, address="", log_file=None):
+def make_server(port, address="", log_file=None):
     """Start an HTTP server.
 
     preconditions -- An IDB connection in local mode.
@@ -97,7 +97,7 @@ def start_server(port, address="", log_file=None):
     'log_file' -- A file object to which the server will log requests.
     'None' for no logging.
 
-    Does not return until the server shuts down."""
+    returns -- A server object.  Use 'run_server' to start the server."""
 
     import qm.track.web.index
     import qm.track.web.issue_class
@@ -174,6 +174,16 @@ def start_server(port, address="", log_file=None):
     except qm.web.PrivilegedPortError:
         raise RuntimeError, \
               qm.track.error("privileged port", port=port)
+
+    return server
+
+
+def run_server(server):
+    """Start accepting requests.
+
+    'server' -- A server created with 'make_server'.
+
+    Does not return until the server shuts down."""
 
     # Print the XML-RPM URL for this server, if verbose.
     xml_rpc_url = server.GetXmlRpcUrl()

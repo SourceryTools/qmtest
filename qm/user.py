@@ -378,8 +378,9 @@ class XmlDatabase:
             # we know. 
             for user_id in group:
                 if not self.__users.has_key(user_id):
-                    raise XmlDatabaseError, "user %s in group %s is unknown" \
-                          % (user_id, group_id)
+                    raise XmlDatabaseError, \
+                          'user "%s" in group "%s" is unknown' \
+                          % (user_id, group.GetId())
             # Store the group.
             self.__groups[group.GetId()] = group
             

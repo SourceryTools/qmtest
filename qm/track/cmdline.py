@@ -49,6 +49,7 @@ import qm.track
 import qm.track.issue
 import qm.xmlutil
 import rexec
+import server
 import string
 import sys
 
@@ -181,6 +182,13 @@ class Command:
         "Display informational messages."
         )
 
+    start_browser_option_spec = (
+        "b",
+        "start-browser",
+        None,
+        "Open a browser window to the Web interface."
+        )
+
     qmtrack_option_specs = [
         database_option_spec,
         help_option_spec,
@@ -242,12 +250,20 @@ class Command:
          "Initialize an IDB.",
          "path",
          """
-         This command initializes a new issue database.  Valid IDB types
-         are 'MemoryIdb' and 'GadflyIdb'.
-         """,
+         This command initializes a new issue database.
+         The available IDB types are:
+
+             'MemoryIdb' [default] -- Store issue data in native Python
+             format.
+         """
+         # """
+         # 
+         #     'GadflyIdb' -- Store issue data in a built-in Python SQL
+         #     database. 
+         # """
+         ,
          [ help_option_spec, idb_type_option_spec, test_values_option_spec,
            internal_option_spec, output_option_spec ],
-
         ),
         
         ("join",
@@ -280,7 +296,7 @@ class Command:
          web user interface and remote command access over HTTP.
          """,
          [ help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec ]
+           log_file_option_spec, start_browser_option_spec ]
          ),
     
         ("show",
@@ -886,12 +902,16 @@ class Command:
         """Process the server command."""
 
         # Get the port number specified by a command option, if any.
-        # Otherwise use a default value.
-        port_number = self.GetCommandOption("port", 8000)
-        try:
-            port_number = int(port_number)
-        except ValueError:
-            raise qm.cmdline.CommandError, qm.error("bad port number")
+        port_number = self.GetCommandOption("port", None)
+        if port_number is None:
+            # The port number was not specified.  Use a default value.
+            port_number = 8000
+        else:
+            try:
+                port_number = int(port_number)
+            except ValueError:
+                raise qm.cmdline.CommandError, \
+                      qm.error("bad port number")
         # Get the local address specified by a command option, if any.
         # If not was specified, use the empty string, which corresponds
         # to all local addresses.
@@ -909,9 +929,27 @@ class Command:
         else:
             # The option '--log-file' wasn't specified, so no logging.
             log_file = None
-        # Start the server.
-        qm.track.start_server(port_number, address, log_file)
+        # Construct the server.
+        web_server = server.make_server(port_number, address, log_file)
     
+        # Construct the URL to the main page on the server.
+        if address == "":
+            url_address = qm.common.get_host_name()
+        else:
+            url_address = address
+        url = "http://%s:%d/track/" % (url_address, port_number)
+
+        if self.HasCommandOption("start-browser"):
+            # Now that the server is bound to its address, we can point
+            # a browser at it safely.
+            qm.platform.open_in_browser(url)
+        else:
+            qm.common.print_message(0, "%s server running at %s .\n"
+                                    % (qm.common.program_name, url))
+
+        # Go.
+        server.run_server(web_server)
+
     
     def __PerformShow(self, output):
         """Process the show command."""
