@@ -154,6 +154,33 @@ class ExecTestBase(Test):
         return environment
 
 
+    def ValidateOutput(self, stdout, stderr, result):
+        """Validate the output of the program.
+
+        'stdout' -- A string containing the data written to the standard output
+        stream.
+
+        'stderr' -- A string containing the data written to the standard error
+        stream.
+
+        'result' -- A 'Result' object. It may be used to annotate
+        the outcome according to the content of stderr.
+
+        returns -- A list of strings giving causes of failure."""
+
+        causes = []
+        # Check to see if the standard output matches.
+        if not self.__CompareText(stdout, self.stdout):
+            causes.append("standard output") 
+            result["ExecTest.expected_stdout"] = result.Quote(self.stdout)
+        # Check to see if the standard error matches.
+        if not self.__CompareText(stderr, self.stderr):
+            causes.append("standard error")
+            result["ExecTest.expected_stderr"] = result.Quote(self.stderr)
+
+        return causes
+
+
     def RunProgram(self, program, arguments, context, result):
         """Run the 'program'.
 
@@ -210,16 +237,8 @@ class ExecTestBase(Test):
                 causes.append("exit_code")
                 result["ExecTest.expected_exit_code"] \
                     = str(self.exit_code)
-            # Check to see if the standard output matches.
-            if not self.__CompareText(stdout, self.stdout):
-                causes.append("standard output")
-                result["ExecTest.expected_stdout"] \
-                    = result.Quote(self.stdout)
-            # Check to see that the standard error matches.
-            if not self.__CompareText(stderr, self.stderr):
-                causes.append("standard error")
-                result["ExecTest.expected_stderr"] \
-                    = result.Quote(self.stderr)
+            # Validate the output.
+            causes += self.ValidateOutput(stdout, stderr, result)
             # If anything went wrong, the test failed.
             if causes:
                 result.Fail("Unexpected %s." % string.join(causes, ", ")) 
@@ -254,7 +273,6 @@ class ExecTestBase(Test):
         # The "splitlines" method works independently of the line ending
         # convention in use.
         return s1.splitlines() == s2.splitlines()
-
         
     
 class ExecTest(ExecTestBase):
