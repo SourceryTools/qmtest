@@ -1,5 +1,7 @@
 2001-11-09  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/database.py (TestDescriptor.GetTargetGroup): Robustify.
+
 	* doc/manual/test-tour.xml: Clarify command sequence for running
 	tests.
 	* qm/common.py (find_program_in_path): Use the PATH environment

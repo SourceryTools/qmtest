@@ -303,7 +303,7 @@ class TestDescriptor(ItemDescriptor):
         pattern matches a particular group name, the test can be run
         on targets in that group."""
 
-        return self.GetArguments()["target_group"]
+        return self.GetArguments().get("target_group", ".*")
     
         
     def Run(self, context, result):
