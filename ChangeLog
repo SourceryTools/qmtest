@@ -1,3 +1,9 @@
+2003-06-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py: More massive reorganization and cleanup.
+	* qm/test/doc/manual.xml: Add links to onlin documentation.
+	* qm/test/doc/reference.xml: Describe Field classes.
+	
 2003-06-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* README: Correct typo.

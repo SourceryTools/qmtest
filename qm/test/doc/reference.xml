@@ -1986,6 +1986,208 @@
  section in this chapter explains how to register your new extension
  classes.</para>
 
+ <section id="sec-extension-classes">
+  <title>Extension Classes</title>
+
+  <para>All extensions to QMTest are implemented by writing a new
+  Python class.  This new Python class will be derived from an
+  appropriate existing QMTest Python class.  For example, new test
+  classes are derived from <classname>Test</classname> while new test
+  database classes are derived from
+  <classname>Database</classname>.</para>
+
+  <para>The classes from which new extensions are derived (like
+  <classname>Test</classname>) are all themselves derived from
+  &extension_class;.  The <classname>Extension</classname> class
+  provides the basic framework used by all extension classes.  In
+  particular, every instance of <classname>Extension</classname> can
+  be represented in XML format in persistent storage.</para>
+
+  <para>Every <classname>Extension</classname> class has an associated
+  list of <firstterm>arguments</firstterm>.  When an
+  <classname>Extension</classname> instance is written out as XML, the
+  value of each argument which is encoded in the output.  Similarly,
+  when an <classname>Extension</classname> instance is read back in,
+  the arguments are decoded.  Conceptually, two
+  <classname>Extension</classname> instances are the same if they are
+  instances of the same derived class and their arguments have the
+  same values.</para>
+
+  <para>Each argument has both a name and a type.  For example, every
+  <classname>Test</classname> has an argument called
+  <varname>target_group</varname>.  The target group is a string
+  indicating on which targets a particular test should be
+  run.</para>
+
+  <para>Each argument is represented by an instance of &field_class;.
+  A <classname>Field</classname> instance can read or write values in
+  XML format.  A <classname>Field</classname> can also produce an HTML
+  representation of a value, or an HTML form that allows a user to
+  update the value of the field.  It is the fact that all
+  <classname>Extension</classname> arguments are instances of
+  <classname>Field</classname> that makes it possible to represent
+  <classname>Extension</classname> instances as XML.  Smilarly, it is
+  the the use of the <classname>Field</classname> class that allows
+  the user to edit tests in the QMTest GUI.</para>
+
+  <para>Each class derived from <classname>Extension</classname> may
+  contain a variable called <varname>arguments</varname>.  The value
+  of <varname>arguments</varname> must be a list of
+  <classname>Field</classname> instances.  The complete set of
+  arguments for a derived class consists of the arguments specified in
+  the derived class together with all of those specified in base
+  classes.  In other words, a derived class should not explicitly
+  include arguments that have already been specified in a base
+  class.</para>
+ </section><!-- sec-extension-classes -->
+
+ <section id="sec-field-classes">
+  <title>Field Classes</title>
+  
+  <para>A &field_class; is a named, typed component of a data
+  structure.  A <classname>Field</classname> can read and write XML
+  representations of values, generate HTML representations of values,
+  or present HTML forms that permit the user to pudate the value of
+  the field.  There are several classes derived from
+  <classname>Field</classname> that you can use in extension classes.
+  If none of those classes satisfy your needs, you can create a new
+  class derived from <classname>Field</classname>.</para>
+
+  <para>Every <classname>Field</classname> has a name.  The name is a
+  string, and must be a valid Python identifier.  (The reason for this
+  restriction is that instances of <classname>Extension</classname>
+  have an instance variables corresponding to each field.)  A
+  <classname>Field</classname> may also have a title, which is used
+  when presenting the <classname>Field</classname> to the user.  The
+  title need not be a valid Python identifier.  For example, the
+  <classname>RSHTarget</classname> class has an argument whose name is
+  <literal>host</literal>, but whose title is <literal>Remote Host
+  Name</literal>.  When accessing an instance of this class, the
+  programmer refers to <literal>self.host</literal>.  In the GUI,
+  however, the user will see the value presented as <literal>Remote
+  Host Name</literal>.</para>
+
+  <para>A <classname>Field</classname> may have an associated
+  description, which is a longer explanation of the
+  <classname>Field</classname> and its purpose.  This information is
+  presented to the user by the GUI.</para>
+
+  <para>A <classname>Field</classname> may have a default value.  The
+  default value is used if no explicit value is provided for the
+  field.</para>
+
+  <para>This example code from <classname>RSHTarget</classname> shows
+  how a <classname>Field</classname> is constructed:
+  <programlisting>
+<![CDATA[   qm.fields.TextField(
+        name="remote_shell",
+        title="Remote Shell Program",
+        description="""The path to the remote shell program.
+
+         The name of the program that can be used to create a
+         remote shell.  This program must accept the same command
+         line arguments as the 'rsh' program.""",
+         default_value="ssh")
+]]>
+  </programlisting>See the internal documentation for &field_class;
+   for complete interface documentation.</para>
+
+  <section id="sec-field-classes-list">
+   <title>Built-In Field Classes</title>
+
+   <para>QMTest comes with several useful field classes:
+    <itemizedlist>
+     <listitem>
+      <para>&integer_field_class; stores integers.</para>
+     </listitem>
+
+     <listitem>
+      <para>&text_field_class; stores strings.</para>
+     </listitem>
+
+     <listitem>
+      <para>&enumeration_field_class; stores one of a
+      set of (statically determined) possible values.</para>
+     </listitem>
+
+     <listitem>
+      <para>&choice_field_class; stores one of a
+      set of (dynamically determined) possible values.</para>
+     </listitem>
+
+     <listitem>
+      <para>&boolean_field_class; stores a boolean value.</para>
+     </listitem>
+
+     <listitem>
+      <para>&time_field_class; stores a date and time.</para>
+     </listitem>
+
+     <listitem>
+      <para>&attachment_field_class; stores arbitrary
+      data.</para>
+     </listitem>
+
+     <listitem>
+      <para>&set_field_class; stores multiple values of the
+      same type.</para>
+     </listitem>
+
+     <listitem>
+      <para>&tuple_field_class; stores a fixed number of other fields.</para>
+     </listitem>
+    </itemizedlist>
+   </para>
+
+  </section>
+
+  <section id="sec-field-classes-writing">
+   <title>Writing a Field Class</title>
+
+   <para>Before writing any code, you should decide what kind of data
+   your field class will store.  For example, will your field class
+   store arbitrary strings?  Or only strings that match a particular
+   regular expression?  Or will your field class store images?  Once
+   you have decided this question, you can write the
+   <function>Validate</function> function for your field class.  This
+   function checks an input value (a Python object) for validity.
+   <function>Validate</function> can return a modified version of the
+   value.  For example, if the field stores strings, you could choose
+   to accept an integer as an input to <function>Validate</function>
+   and convert the integer to a string before returning it.</para>
+
+   <para>The <function>FormatValueAsHtml</function> function produces
+   an HTML representation of the value.  You must define this function
+   so that the GUI can display the value of the field.  The
+   <parameter>style</parameter> parameter indicates how the value
+   should be displayed.  If the style is <literal>new</literal> or
+   <literal>edit</literal>, the HTML representation returned should be
+   a form that the user can use to set the value.  If the user does
+   not modify the form, <function>ParseFormValue</function> should
+   yield the value that was provided to
+   <function>FormatValueAsHtml</function>.</para>
+
+   <para>The <function>MakeDomNodeForValue</function> and
+   <function>GetValueFromDomNode</function> functions convert values
+   to and from XML format.  The <function>FormatValueAsText</function>
+   and <function>ParseTextValue</function> functions convert to and
+   from plain text.  As with <function>FormatValueAsHtml</function>
+   and <function>ParseFormValue</function>, these pairs of functions
+   should be inverses of one another.</para>
+
+   <para>The <function>ParseTextValue</function>,
+   <function>ParseFormValue</function>, and
+   <function>GetValueFromDomNode</function> functions should use
+   <function>Validate</function> to check that the values produced are
+   permitted by the <classname>Field</classname>.  In this way,
+   derived classes that want to restrict the set of valid values, but
+   are otherwise content to use the base class functionality, need
+   only provide a new implementation of
+   <function>Validate</function>.</para>
+  </section>
+
+ </section><!-- sec-field-classes -->
+
  <section id="sec-writing-test-and-resource-classes">
   <title>Writing Test and Resource Classes</title>
 

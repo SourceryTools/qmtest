@@ -101,7 +101,11 @@ class Field(object):
         'title' -- The name given this field when it is displayed in
         user interfaces.
 
-        'description' -- A description of this field's role or purpose.
+        'description' -- A string explaining the purpose of this field.
+        The 'description' must be provided as structured text.  The
+        first line of the structured text must be a one-sentence
+        description of the field; that line is extracted by
+        'GetBriefDescription'.
 
         'hidden' -- If true, this field is for internal puprpose only
         and is not shown in user interfaces.
@@ -132,17 +136,19 @@ class Field(object):
             self.__read_only = 1
             self.__hidden = 1
 
-        self.default_value = default_value
-
-
-    def __repr__(self):
-        return "<%s %s>" % (self.__class__, self.GetName())
+        self.__default_value = default_value
 
 
     def GetName(self):
         """Return the name of the field."""
 
         return self.__name
+
+
+    def GetDefaultValue(self):
+        """Return the default value for this field."""
+
+        return common.copy(self.__default_value)
 
 
     def GetTitle(self):
@@ -172,168 +178,6 @@ class Field(object):
         return structured_text.get_first(description)
 
         
-    def GetDefaultValue(self):
-        """Return the default value for this field."""
-
-        return common.copy(self.default_value)
-
-
-    def Validate(self, value):
-        """Validate a field value.
-
-        For an acceptable type and value, return the representation of
-        'value' in the underlying field storage.
-
-        'value' -- A value to validate for this field.
-
-        returns -- The canonicalized representation of 'value'.
-
-        raises -- 'ValueError' if 'value' is not a valid value for
-        this field.
-
-        Implementations of this method must be idempotent."""
-
-        raise NotImplementedError
-
-
-    def GetHtmlFormFieldName(self):
-        """Return the form field name corresponding this field.
-
-        returns -- The name that is used for the control representing
-        this field in an HTML form."""
-
-        name = self.GetName()
-        if name == "iid" or name == "revision":
-            # Use these field names unaltered.
-            return name
-        else:
-            # Field names can't contain hyphens, so this name shouldn't
-            # collide with anything.
-            return "_field_" + self.GetName()
-
-
-    def FormatValueAsText(self, value, columns=72):
-        """Return a plain text rendering of a 'value' for this field.
-
-        'columns' -- The maximum width of each line of text."""
-
-        # Create a file to hold the result.
-        text_file = cStringIO.StringIO()
-        # Format the field as HTML.
-        html_file = cStringIO.StringIO(self.FormatValueAsHtml(None,
-                                                              value,
-                                                              "brief"))
-
-        # Turn the HTML into plain text.
-        parser = htmllib.HTMLParser(formatter.AbstractFormatter
-                                    (formatter.DumbWriter(text_file,
-                                                          maxcol = columns)))
-        parser.feed(html_file)
-        parser.close()
-        text = text_file.getValue()
-
-        # Close the files.
-        text_file.close()
-        html_file.close()
-        
-        return text
-    
-
-    def FormatValueAsHtml(self, server, value, style, name=None):
-        """Return an HTML rendering of a 'value' for this field.
-
-        'server' -- The 'WebServer' in which the HTML will be
-        displayed.
-        
-        'value' -- The value for this field.  May be 'None', which
-        renders a default value (useful for blank forms).
-
-        'style' -- The rendering style.  Can be "full" or "brief" (both
-        read-only), or "new" or "edit" or "hidden".
-
-        'name' -- The name to use for the primary HTML form element
-        containing the value of this field, if 'style' specifies the
-        generation of form elements."""
-
-        raise NotImplementedError
-
-
-    def ParseFormValue(self, request, name, attachment_store):
-        """Convert a value submitted from an HTML form.
-
-        'request' -- The 'WebRequest' containing a value corresponding
-        to this field.
-
-        'name' -- The name corresponding to this field in the 'request'.
-
-        'attachment_store' -- The 'AttachmentStore' into which new
-        attachments should be placed.
-        
-        returns -- A pair '(value, redisplay)'.  'value' is the value
-        for this field, as indicated in 'request'.  'redisplay' is true
-        if and only if the form should be redisplayed, rather than
-        committed.  If an error occurs, an exception is thrown."""
-
-        return (self.ParseTextValue(request[name]), 0)
-
-
-    def ParseTextValue(self, value):
-        """Parse a value represented as a string.
-
-        'value' -- A string representing the value.
-
-        returns -- The corresponding field value."""
-
-        raise NotImplemented
-    
-        
-    def FormEncodeValue(self, value):
-        """Return an encoding for 'value' to store in HTML forms.
-
-        The form-encoded value is used to represent a value when it is
-        an element in a set.  The options in the HTML list element
-        representing the set store these encodings as their values."""
-
-        return urllib.quote_plus(repr(value))
-
-
-    def FormDecodeValue(self, encoding, attachment_store):
-        """Decode the HTML form-encoded 'encoding' and return a value.
-
-        'attachment_store' -- The 'AttachmentStore' into which new
-        attachments should be placed."""
-
-        return eval(urllib.unquote_plus(value))
-
-
-    def GetValueFromDomNode(self, node, attachment_store):
-        """Return a value for this field represented by DOM 'node'.
-
-        This method does not validate the value for this particular
-        instance; it only makes sure the node is well-formed, and
-        returns a value of the correct Python type.
-
-        'node' -- The DOM node that is being evaluated.
-
-        'attachment_store' -- For attachments, the store that should be
-        used.
-        
-        raises -- 'DomNodeError' if the node's structure or contents are
-        incorrect for this field."""
-
-        raise NotImplementedError
-
-
-    def MakeDomNodeForValue(self, value, document):
-        """Generate a DOM element node for a value of this field.
-
-        'value' -- The value to represent.
-
-        'document' -- The containing DOM document node."""
-
-        raise NotImplementedError
-
-
     def GetHelp(self):
         """Generate help text about this field in structured text format."""
 
@@ -389,39 +233,195 @@ class Field(object):
 
         return self.__read_only
 
+    ### Output methods.
+    
+    def FormatValueAsText(self, value, columns=72):
+        """Return a plain text rendering of a 'value' for this field.
+
+        'columns' -- The maximum width of each line of text.
+
+        returns -- A plain-text string representing 'value'."""
+
+        # Create a file to hold the result.
+        text_file = cStringIO.StringIO()
+        # Format the field as HTML.
+        html_file = cStringIO.StringIO(self.FormatValueAsHtml(None,
+                                                              value,
+                                                              "brief"))
+
+        # Turn the HTML into plain text.
+        parser = htmllib.HTMLParser(formatter.AbstractFormatter
+                                    (formatter.DumbWriter(text_file,
+                                                          maxcol = columns)))
+        parser.feed(html_file)
+        parser.close()
+        text = text_file.getValue()
+
+        # Close the files.
+        html_file.close()
+        text_file.close()
+        
+        return text
+    
+
+    def FormatValueAsHtml(self, server, value, style, name=None):
+        """Return an HTML rendering of a 'value' for this field.
+
+        'server' -- The 'WebServer' in which the HTML will be
+        displayed.
+        
+        'value' -- The value for this field.  May be 'None', which
+        renders a default value (useful for blank forms).
+
+        'style' -- The rendering style.  Can be "full" or "brief" (both
+        read-only), or "new" or "edit" or "hidden".
+
+        'name' -- The name to use for the primary HTML form element
+        containing the value of this field, if 'style' specifies the
+        generation of form elements.  If 'name' is 'None', the value
+        returned by '_GetHtmlFormFieldName()' should be used.
+
+        returns -- A string containing the HTML representation of
+        'value'."""
+
+        raise NotImplementedError
+
+
+    def MakeDomNodeForValue(self, value, document):
+        """Generate a DOM element node for a value of this field.
+
+        'value' -- The value to represent.
+
+        'document' -- The containing DOM document node."""
+
+        raise NotImplementedError
+
+    ### Input methods.
+    
+    def Validate(self, value):
+        """Validate a field value.
+
+        For an acceptable type and value, return the representation of
+        'value' in the underlying field storage.
+
+        'value' -- A value to validate for this field.
+
+        returns -- The canonicalized representation of 'value'.
+
+        raises -- 'ValueError' if 'value' is not a valid value for
+        this field.
+
+        Implementations of this method must be idempotent."""
+
+        raise NotImplementedError
+
+
+    def ParseTextValue(self, value):
+        """Parse a value represented as a string.
+
+        'value' -- A string representing the value.
+
+        returns -- The corresponding field value."""
+
+        raise NotImplemented
+    
+        
+    def ParseFormValue(self, request, name, attachment_store):
+        """Convert a value submitted from an HTML form.
+
+        'request' -- The 'WebRequest' containing a value corresponding
+        to this field.
+
+        'name' -- The name corresponding to this field in the 'request'.
+
+        'attachment_store' -- The 'AttachmentStore' into which new
+        attachments should be placed.
+        
+        returns -- A pair '(value, redisplay)'.  'value' is the value
+        for this field, as indicated in 'request'.  'redisplay' is true
+        if and only if the form should be redisplayed, rather than
+        committed.  If an error occurs, an exception is thrown."""
+
+        # Retrieve the value provided in the form.
+        value = request[name]
+        # Treat the result as we would if it were provided on the
+        # command-line.
+        return (self.ParseTextValue(value), 0)
+
+
+    def GetValueFromDomNode(self, node, attachment_store):
+        """Return a value for this field represented by DOM 'node'.
+
+        This method does not validate the value for this particular
+        instance; it only makes sure the node is well-formed, and
+        returns a value of the correct Python type.
+
+        'node' -- The DOM node that is being evaluated.
+
+        'attachment_store' -- For attachments, the store that should be
+        used.
+        
+        raises -- 'DomNodeError' if the node's structure or contents are
+        incorrect for this field."""
+
+        raise NotImplementedError
+
+    # Other methods.
+    
+    def _GetHtmlFormFieldName(self):
+        """Return the form field name corresponding this field.
+
+        returns -- A string giving the name that should be used for this
+        field when used in an HTML form."""
+
+        return self.form_field_prefix + self.GetName()
+
+
+    def __repr__(self):
+
+        # This output format is more useful when debugging than the
+        # default "<... instance at 0x...>" format provided by Python.
+        return "<%s %s>" % (self.__class__, self.GetName())
+
 
 ########################################################################
 
 class IntegerField(Field):
-    """A signed integer field."""
+    """An 'IntegerField' stores an 'int' or 'long' object."""
 
     def __init__(self, name, default_value=0, **properties):
-        """Create an integer field.
+        """Construct a new 'IntegerField'.
 
-        The field must be able to represent a 32-bit signed
-        integer.
+        'name' -- As for 'Field.__init__'.
 
-        'default_value' -- The default value for the field."""
+        'default_value' -- As for 'Field.__init__'.
+
+        'properties' -- Other keyword arguments for 'Field.__init__'."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, default_value), properties)
+        super(IntegerField, self).__init__(name, default_value, **properties)
 
 
-    def Validate(self, value):
-        return int(value)
+    def GetHelp(self):
 
+        return """This field stores an integer.
+
+               The default value of this field is %d."""
+    
+    ### Output methods.
 
     def FormatValueAsText(self, value, columns=72):
+
         return str(value)
     
 
     def FormatValueAsHtml(self, server, value, style, name=None):
         # Use default value if requested.
         if value is None:
-            value = 0
+            value = self.GetDefaultValue()
         # Use the default field form field name if requested.
         if name is None:
-            name = self.GetHtmlFormFieldName()
+            name = self._GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             return '<input type="text" size="8" name="%s" value="%d"/>' \
@@ -432,12 +432,28 @@ class IntegerField(Field):
             return '<input type="hidden" name="%s" value="%d"/>' \
                    % (name, value)            
         else:
-            raise ValueError, style
+            assert None
+
+
+    def MakeDomNodeForValue(self, value, document):
+        return xmlutil.create_dom_text_element(document, "integer",
+                                               str(value))
+
+
+    ### Input methods.
+
+    def Validate(self, value):
+
+        if not isinstance(value, (int, long)):
+            raise ValueError, value
+
+        return value
 
 
     def ParseTextValue(self, value):
+
         try:
-            return int(value)
+            return self.Validate(int(value))
         except:
             raise qm.common.QMException, \
                   qm.error("invalid integer field value")
@@ -455,26 +471,7 @@ class IntegerField(Field):
         # Retrieve the contained text.
         value = xmlutil.get_dom_text(node)
         # Convert it to an integer.
-        try:
-            return int(value)
-        except ValueError:
-            raise DomNodeError, \
-                  diagnostic.error("dom bad integer", value=value)
-
-
-    def MakeDomNodeForValue(self, value, document):
-        return xmlutil.create_dom_text_element(document, "integer",
-                                               str(value))
-
-
-    def GetHelp(self):
-        help = '''
-            This field takes an integer value between %d and %d inclusive.
-
-            The default value of this field is %d.
-        ''' % (-sys.maxint - 1, sys.maxint, self.GetDefaultValue())
-        return help
-    
+        return self.ParseTextValue(value)
 
 
 ########################################################################
@@ -515,28 +512,33 @@ class TextField(Field):
         self.__not_empty_text = not_empty_text == "true"
 
 
-    def Validate(self, value):
-        # Be forgiving, and try to convert 'value' to a string if it
-        # isn't one.
-        value = str(value)
-        # Clean up unless it's a verbatim string.
-        if not self.__verbatim:
-            # Remove leading whitespace.
-            value = string.lstrip(value)
-        # If this field has the not_empty_text property set, make sure the
-        # value complies.
-        if self.__not_empty_text and value == "":
-            raise ValueError, \
-                  qm.error("empty text field value",
-                           field_title=self.GetTitle()) 
-        # If this is not a multi-line text field, remove line breaks
-        # (and surrounding whitespace).
-        if not self.__multiline:
-            value = re.sub(" *\n+ *", " ", value)
-        return value
+    def GetHelp(self):
 
+        help = """
+            A text field.  """
+        if self.__structured:
+            help = help + '''
+            The text is interpreted as structured text, and formatted
+            appropriately for the output device.  See "Structured Text
+            Formatting
+            Rules":http://www.python.org/sigs/doc-sig/stext.html for
+            more information.  '''
+        elif self.__verbatim:
+            help = help + """
+            The text is stored verbatim; whitespace and indentation are
+            preserved.  """
+        if self.__not_empty_text:
+            help = help + """
+            This field may not be empty.  """
+        help = help + """
+            The default value of this field is "%s".
+            """ % self.GetDefaultValue()
+        return help
+
+    ### Output methods.
 
     def FormatValueAsText(self, value, columns=72):
+
         if self.__structured:
             return structured_text.to_text(value, width=columns)
         elif self.__verbatim:
@@ -546,6 +548,7 @@ class TextField(Field):
     
 
     def FormatValueAsHtml(self, server, value, style, name=None):
+
         # Use default value if requested.
         if value is None:
             value = ""
@@ -553,7 +556,7 @@ class TextField(Field):
             value = str(value)
         # Use the default field form field name if requested.
         if name is None:
-            name = self.GetHtmlFormFieldName()
+            name = self._GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             if self.__multiline:
@@ -634,6 +637,34 @@ class TextField(Field):
             raise ValueError, style
 
 
+    def MakeDomNodeForValue(self, value, document):
+
+        return xmlutil.create_dom_text_element(document, "text", value)
+
+    ### Input methods.
+
+    def Validate(self, value):
+
+        if not isinstance(value, qm.common.string_types):
+            raise ValueError, value
+        
+        # Clean up unless it's a verbatim string.
+        if not self.__verbatim:
+            # Remove leading whitespace.
+            value = string.lstrip(value)
+        # If this field has the not_empty_text property set, make sure the
+        # value complies.
+        if self.__not_empty_text and value == "":
+            raise ValueError, \
+                  qm.error("empty text field value",
+                           field_title=self.GetTitle()) 
+        # If this is not a multi-line text field, remove line breaks
+        # (and surrounding whitespace).
+        if not self.__multiline:
+            value = re.sub(" *\n+ *", " ", value)
+        return value
+
+
     def ParseFormValue(self, request, name, attachment_store):
 
         # HTTP specifies text encodints are CR/LF delimited; convert to
@@ -643,7 +674,8 @@ class TextField(Field):
     
 
     def ParseTextValue(self, value):
-        return value
+
+        return self.Validate(value)
 
     
     def GetValueFromDomNode(self, node, attachment_store):
@@ -655,59 +687,50 @@ class TextField(Field):
                                    name=self.GetName(),
                                    right_tag="text",
                                    wrong_tag=node.tagName)
-        return xmlutil.get_dom_text(node)
-
-
-    def MakeDomNodeForValue(self, value, document):
-        return xmlutil.create_dom_text_element(document, "text", value)
-
-
-    def GetHelp(self):
-        help = """
-            A text field.  """
-        if self.__structured:
-            help = help + '''
-            The text is interpreted as structured text, and formatted
-            appropriately for the output device.  See "Structured Text
-            Formatting
-            Rules":http://www.python.org/sigs/doc-sig/stext.html for
-            more information.  '''
-        elif self.__verbatim:
-            help = help + """
-            The text is stored verbatim; whitespace and indentation are
-            preserved.  """
-        if self.__not_empty_text:
-            help = help + """
-            This field may not be empty.  """
-        help = help + """
-            The default value of this field is "%s".
-            """ % self.GetDefaultValue()
-        return help
+        return self.Validate(xmlutil.get_dom_text(node))
 
 
 ########################################################################
 
 class TupleField(Field):
-    """A 'TupleField' contains zero or more other 'Field's.
+    """A 'TupleField' contains zero or more other 'Field' objects.
 
-    The contained fields may be of different types."""
+    The contained 'Field' objects may have different types.  The value
+    of a 'TupleField' is a Python list; the values in the list
+    correspond to the values of the contained 'Field' objects.  For
+    example, '["abc", 3]' would be a valid value for a 'TupleField'
+    containing a 'TextField' and an 'IntegerField'."""
 
     def __init__(self, name, fields, **properties):
         """Construct a new 'TupleField'.
 
-        'fields' -- The fields contained in the tuple."""
+        'name' -- The name of the field.
+
+        'fields' -- A sequence of 'Field' instances.
+
+        The new 'TupleField' stores a list whose elements correspond to
+        the 'fields'."""
 
         default_value = map(lambda f: f.GetDefaultValue(), fields)
         Field.__init__(self, name, default_value, **properties)
         self.__fields = fields
 
 
-    def Validate(self, value):
+    def GetHelp(self):
 
-        assert len(value) == len(self.__fields)
-        map(lambda f, v: f.Validate(v),
-            self.__fields, value)
+        help = ""
+        need_space = 0
+        for f in self.__fields:
+            if need_space:
+                help += "\n"
+            else:
+                need_space = 1
+            help += "** " + f.GetTitle() + " **\n\n"
+            help += f.GetHelp()
 
+        return help
+
+    ### Output methods.
 
     def FormatValueAsHtml(self, server, value, style, name = None):
 
@@ -729,6 +752,23 @@ class TupleField(Field):
         return html
 
 
+    def MakeDomNodeForValue(self, value, document):
+
+        element = document.createElement("tuple")
+        for f, v in map(None, self.__fields, value):
+            element.appendChild(f.MakeDomNodeForValue(v, document))
+
+        return element
+
+    ### Input methods.
+    
+    def Validate(self, value):
+
+        assert len(value) == len(self.__fields)
+        map(lambda f, v: f.Validate(v),
+            self.__fields, value)
+
+
     def ParseFormValue(self, request, name, attachment_store):
 
         value = []
@@ -740,6 +780,10 @@ class TupleField(Field):
             if r:
                 redisplay = 1
 
+        # Now that we've computed the value of the entire tuple, make
+        # sure it is valid.
+        value = self.Validate(value)
+        
         return (value, redisplay)
             
 
@@ -749,31 +793,7 @@ class TupleField(Field):
         for f, element in map(None, self.__fields, node.childNodes):
             values.append(f.GetValueFromDomNode(element, attachment_store))
 
-        return values
-
-
-    def MakeDomNodeForValue(self, value, document):
-
-        element = document.createElement("tuple")
-        for f, v in map(None, self.__fields, value):
-            element.appendChild(f.MakeDomNodeForValue(v, document))
-
-        return element
-    
-
-    def GetHelp(self):
-
-        help = ""
-        need_space = 0
-        for f in self.__fields:
-            if need_space:
-                help += "\n"
-            else:
-                need_space = 1
-            help += "** " + f.GetTitle() + " **\n\n"
-            help += f.GetHelp()
-
-        return help
+        return self.Validate(values)
     
 
     
@@ -814,27 +834,39 @@ class SetField(Field):
         self.__not_empty_set = not_empty_set == "true"
 
 
-    def Validate(self, value):
-        # If this field has the not_empty_set property set, make sure
-        # the value complies.
-        if self.__not_empty_set and len(value) == 0:
-            raise ValueError, \
-                  qm.error("empty set field value",
-                           field_title=self.GetTitle()) 
-        # Assume 'value' is a sequence.  Copy it, simultaneously
-        # validating each element in the contained field.
-        result = []
-        for element in value:
-            result.append(self.__contained.Validate(element))
-        return result
-
-
     def GetContainedField(self):
         """Returns the field instance of the contents of the set."""
 
         return self.__contained
 
 
+    def GetHelp(self):
+        return """
+        A set field.  A set contains zero or more elements, all of the
+        same type.  The elements of the set are described below:
+
+        """ + self.GetContainedField().GetHelp()
+
+
+    def GetHtmlHelp(self, edit=0):
+        help = Field.GetHtmlHelp(self)
+        if edit:
+            # In addition to the standard generated help, include
+            # additional instructions about using the HTML controls.
+            help = help + """
+            <hr noshade size="2">
+            <h4>Modifying This Field</h4>
+        
+            <p>Add a new element to the set by clicking the
+            <i>Add</i> button.  The new element will have a default
+            value until you change it.  To remove elements from the
+            set, select them by checking the boxes on the left side of
+            the form.   Then, click the <i>Remove</i> button.</p>
+            """
+        return help
+
+    ### Output methods.
+    
     def FormatValueAsText(self, value, columns=72):
         # If the set is empty, indicate this specially.
         if len(value) == 0:
@@ -856,7 +888,7 @@ class SetField(Field):
             value = []
         # Use the default field form field name if requested.
         if name is None:
-            name = self.GetHtmlFormFieldName()
+            name = self._GetHtmlFormFieldName()
 
         contained_field = self.GetContainedField()
 
@@ -923,6 +955,35 @@ class SetField(Field):
             return html
 
 
+    def MakeDomNodeForValue(self, value, document):
+
+        # Create a set element.
+        element = document.createElement("set")
+        # Add a child node for each item in the set.
+        contained_field = self.GetContainedField()
+        for item in value:
+            # The contained field knows how to make a DOM node for each
+            # item in the set.
+            item_node = contained_field.MakeDomNodeForValue(item, document)
+            element.appendChild(item_node)
+        return element
+
+    ### Input methods.
+    
+    def Validate(self, value):
+
+        # If this field has the not_empty_set property set, make sure
+        # the value complies.
+        if self.__not_empty_set and len(value) == 0:
+            raise ValueError, \
+                  qm.error("empty set field value",
+                           field_title=self.GetTitle()) 
+        # Assume 'value' is a sequence.  Copy it, simultaneously
+        # validating each element in the contained field.
+        return map(lambda v: self.__contained.Validate(v),
+                   value)
+
+
     def ParseFormValue(self, request, name, attachment_store):
 
         values = []
@@ -967,7 +1028,7 @@ class SetField(Field):
         for n in names:
             del request[n]
             
-        return (values, redisplay)
+        return (self.Validate(values), redisplay)
 
 
     def GetValueFromDomNode(self, node, attachment_store):
@@ -984,48 +1045,11 @@ class SetField(Field):
         contained_field = self.GetContainedField()
         fn = lambda n, f=contained_field, s=attachment_store: \
              f.GetValueFromDomNode(n, s)
-        return map(fn,
-                   filter(lambda n: n.nodeType == xml.dom.Node.ELEMENT_NODE,
-                          node.childNodes))
+        values = map(fn,
+                     filter(lambda n: n.nodeType == xml.dom.Node.ELEMENT_NODE,
+                            node.childNodes))
+        return self.Validate(values)
 
-
-    def MakeDomNodeForValue(self, value, document):
-        # Create a set element.
-        element = document.createElement("set")
-        # Add a child node for each item in the set.
-        contained_field = self.GetContainedField()
-        for item in value:
-            # The contained field knows how to make a DOM node for each
-            # item in the set.
-            item_node = contained_field.MakeDomNodeForValue(item, document)
-            element.appendChild(item_node)
-        return element
-
-
-    def GetHelp(self):
-        return """
-        A set field.  A set contains zero or more elements, all of the
-        same type.  The elements of the set are described below:
-
-        """ + self.GetContainedField().GetHelp()
-
-
-    def GetHtmlHelp(self, edit=0):
-        help = Field.GetHtmlHelp(self)
-        if edit:
-            # In addition to the standard generated help, include
-            # additional instructions about using the HTML controls.
-            help = help + """
-            <hr noshade size="2">
-            <h4>Modifying This Field</h4>
-        
-            <p>Add a new element to the set by clicking the
-            <i>Add</i> button.  The new element will have a default
-            value until you change it.  To remove elements from the
-            set, select them by checking the boxes on the left side of
-            the form.   Then, click the <i>Remove</i> button.</p>
-            """
-        return help
 
 
 ########################################################################
@@ -1110,16 +1134,43 @@ class AttachmentField(Field):
         apply(Field.__init__, (self, name, None), properties)
 
 
-    def Validate(self, value):
-        # The value should be an instance of 'Attachment', or 'None'.
-        if value != None and not isinstance(value, attachment.Attachment):
-            raise ValueError, \
-                  "the value of an attachment field must be an 'Attachment'"
-        return value
+    def GetHelp(self):
+        return """
+        An attachment field.  An attachment consists of an uploaded
+        file, which may be of any file type, plus a short description.
+        The name of the file, as well as the file's MIME type, are also
+        stored.  The description is a single line of plain text.
+
+        An attachment need not be provided.  The field may be left
+        empty."""
 
 
+    def GetHtmlHelp(self, edit=0):
+        help = Field.GetHtmlHelp(self)
+        if edit:
+            # In addition to the standard generated help, include
+            # additional instructions about using the HTML controls.
+            help = help + """
+            <hr noshade size="2">
+            <h4>Modifying This Field</h4>
+        
+            <p>The text control describes the current value of this
+            field, displaying the attachment's description, file name,
+            and MIME type.  If the field is empty, the text control
+            displays "None".  The text control cannot be edited.</p>
+
+            <p>To upload a new attachment (replacing the previous one,
+            if any), click on the <i>Change...</i> button.  To clear the
+            current attachment and make the field empty, click on the
+            <i>Clear</i> button.</p>
+            """
+        return help
+    
+    ### Output methods.
+    
     def FormatValueAsText(self, value, columns=72):
-        return self.FormatSummary(value)
+
+        return self._FormatSummary(value)
 
 
     def FormatValueAsHtml(self, server, value, style, name=None):
@@ -1140,7 +1191,7 @@ class AttachmentField(Field):
 
         # Use the default field form field name if requested.
         if name is None:
-            name = self.GetHtmlFormFieldName()
+            name = self._GetHtmlFormFieldName()
 
         if style == "full" or style == "brief":
             if value is None:
@@ -1189,8 +1240,23 @@ class AttachmentField(Field):
             summary_field_name = "_attachment" + name
 
             # Fill in the description if there's already an attachment.
-            summary_value = 'value="%s"' % self.FormatSummary(value)
-            field_value = 'value="%s"' % self.GenerateFormValue(value)
+            summary_value = 'value="%s"' % self._FormatSummary(value)
+            if value is None:
+                field_value = ""
+            else:
+                # We'll encode all the relevant information.
+                parts = (
+                    value.GetDescription(),
+                    value.GetMimeType(),
+                    value.GetLocation(),
+                    ("%d" % value.GetStore().GetIndex()),
+                    value.GetFileName(),
+                    )
+                # Each part is URL-encoded.
+                parts = map(urllib.quote, parts)
+                # The parts are joined into a semicolon-delimited list.
+                field_value = string.join(parts, ";")
+            field_value = 'value="%s"' % field_value
 
             # Generate the popup upload page.
             upload_page = UploadAttachmentPage(self.GetTitle(),
@@ -1226,9 +1292,8 @@ class AttachmentField(Field):
                    onclick="document.form.%s.value = 'None';
                             document.form.%s.value = '';"/>
             ''' % (field_name, summary_field_name, name)
-            # A hidden control for the encoded attachment value.  See
-            # 'FormEncodeValue' and 'FormDecodeValue'.  The popup upload
-            # form fills in this control.
+            # A hidden control for the encoded attachment value.  The
+            # popup upload form fills in this control.
             hidden_control = '''
             <input type="hidden"
                    name="%s"
@@ -1245,59 +1310,11 @@ class AttachmentField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, request, name, attachment_store):
-
-        return (self.FormDecodeValue(request[name], attachment_store), 0)
-
-
-    def GenerateFormValue(self, value):
-        if value is None:
-            return ""
-        else:
-            return self.FormEncodeValue(value)
+    def MakeDomNodeForValue(self, value, document):
+        return attachment.make_dom_node(value, document)
 
 
-    def FormEncodeValue(self, value):
-        # We shouldn't have to form-encode a null attachment.
-        assert value is not None
-
-        # We'll encode all the relevant information.
-        parts = (
-            value.GetDescription(),
-            value.GetMimeType(),
-            value.GetLocation(),
-            ("%d" % value.GetStore().GetIndex()),
-            value.GetFileName(),
-            )
-        # Each part is URL-encoded.
-        map(urllib.quote, parts)
-        # The parts are joined into a semicolon-delimited list.
-        return string.join(parts, ";")
-
-
-    def FormDecodeValue(self, encoding, attachment_store):
-        """Decode the HTML form-encoded 'encoding' and return a value."""
-
-        # An empty string represnts a missing attachment, which is OK.
-        if string.strip(encoding) == "":
-            return None
-        # The encoding is a semicolon-separated sequence indicating the
-        # relevant information about the attachment.
-        parts = string.split(encoding, ";")
-        # Undo the URL encoding of each component.
-        parts = map(urllib.unquote, parts)
-        # Unpack the results.
-        description, mime_type, location, file_name = parts
-        # The store is represented by an index.  Retrieve the actual
-        # store itself.
-        store = qm.test.get_qmtest().attachment_store
-        # Create the attachment.
-        return attachment.Attachment(mime_type, description,
-                                     file_name, location,
-                                     attachment_store)
-
-
-    def FormatSummary(self, attachment):
+    def _FormatSummary(self, attachment):
         """Generate a user-friendly summary for 'attachment'.
 
         This value is used when generating the form.  It can't be
@@ -1312,6 +1329,40 @@ class AttachmentField(Field):
                       attachment.GetMimeType())
 
 
+    ### Input methods.
+        
+    def Validate(self, value):
+
+        # The value should be an instance of 'Attachment', or 'None'.
+        if value != None and not isinstance(value, attachment.Attachment):
+            raise ValueError, \
+                  "the value of an attachment field must be an 'Attachment'"
+        return value
+
+
+    def ParseFormValue(self, request, name, attachment_store):
+
+        encoding = request[name]
+        # An empty string represnts a missing attachment, which is OK.
+        if string.strip(encoding) == "":
+            return None
+        # The encoding is a semicolon-separated sequence indicating the
+        # relevant information about the attachment.
+        parts = string.split(encoding, ";")
+        # Undo the URL encoding of each component.
+        parts = map(urllib.unquote, parts)
+        # Unpack the results.
+        description, mime_type, location, file_name = parts
+        # The store is represented by an index.  Retrieve the actual
+        # store itself.
+        store = qm.test.get_qmtest().attachment_store
+        # Create the attachment.
+        value = attachment.Attachment(mime_type, description,
+                                      file_name, location,
+                                      attachment_store)
+        return (self.Validate(value), 0)
+
+
     def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an "attachment" element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
@@ -1321,45 +1372,7 @@ class AttachmentField(Field):
                                    name=self.GetName(),
                                    right_tag="attachment",
                                    wrong_tag=node.tagName)
-        return attachment.from_dom_node(node, attachment_store)
-
-
-    def MakeDomNodeForValue(self, value, document):
-        return attachment.make_dom_node(value, document)
-
-
-    def GetHelp(self):
-        return """
-        An attachment field.  An attachment consists of an uploaded
-        file, which may be of any file type, plus a short description.
-        The name of the file, as well as the file's MIME type, are also
-        stored.  The description is a single line of plain text.
-
-        An attachment need not be provided.  The field may be left
-        empty."""
-
-
-    def GetHtmlHelp(self, edit=0):
-        help = Field.GetHtmlHelp(self)
-        if edit:
-            # In addition to the standard generated help, include
-            # additional instructions about using the HTML controls.
-            help = help + """
-            <hr noshade size="2">
-            <h4>Modifying This Field</h4>
-        
-            <p>The text control describes the current value of this
-            field, displaying the attachment's description, file name,
-            and MIME type.  If the field is empty, the text control
-            displays "None".  The text control cannot be edited.</p>
-
-            <p>To upload a new attachment (replacing the previous one,
-            if any), click on the <i>Change...</i> button.  To clear the
-            current attachment and make the field empty, click on the
-            <i>Clear</i> button.</p>
-            """
-        return help
-    
+        return self.Validate(attachment.from_dom_node(node, attachment_store))
 
 
 ########################################################################
@@ -1401,20 +1414,6 @@ class EnumerationField(TextField):
         self.__enumerals = string.join(enumerals, ",")
 
 
-    def Validate(self, value):
-        value = str(value)
-        enumerals = self.GetEnumerals()
-        if value in enumerals:
-            return value
-        else:
-            values = map(lambda (k, v): "%s (%d)" % (k, v), enumerals)
-            raise ValueError, \
-                  qm.error("invalid enum value",
-                           value=value,
-                           field_title=self.GetTitle(),
-                           values=string.join(values, ", "))
-
-
     def GetEnumerals(self):
         """Return a sequence of enumerals.
 
@@ -1428,13 +1427,31 @@ class EnumerationField(TextField):
             return string.split(enumerals, ",")
 
 
+    def GetHelp(self):
+        enumerals = self.GetEnumerals()
+        help = """
+        An enumeration field.  The value of this field must be one of a
+        preselected set of enumerals.  The enumerals for this field are,
+
+        """
+        for enumeral in enumerals:
+            help = help + '            * "%s"\n\n' % enumeral
+        help = help + '''
+
+        The default value of this field is "%s".
+        ''' % str(self.GetDefaultValue())
+        return help
+
+    ### Output methods.
+    
     def FormatValueAsHtml(self, server, value, style, name=None):
+
         # Use default value if requested.
         if value is None:
             value = self.GetDefaultValue()
         # Use the default field form field name if requested.
         if name is None:
-            name = self.GetHtmlFormFieldName()
+            name = self._GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             enumerals = self.GetEnumerals()
@@ -1456,6 +1473,29 @@ class EnumerationField(TextField):
             raise ValueError, style
 
 
+    def MakeDomNodeForValue(self, value, document):
+        # Store the name of the enumeral.
+        return xmlutil.create_dom_text_element(
+            document, "enumeral", str(value))
+
+
+    ### Input methods.
+    
+    def Validate(self, value):
+
+        super(EnumerationField, self).Validate(value)
+        enumerals = self.GetEnumerals()
+        if value in enumerals:
+            return value
+        else:
+            values = map(lambda (k, v): "%s (%d)" % (k, v), enumerals)
+            raise ValueError, \
+                  qm.error("invalid enum value",
+                           value=value,
+                           field_title=self.GetTitle(),
+                           values=string.join(values, ", "))
+
+
     def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an '<enumeral>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
@@ -1466,29 +1506,7 @@ class EnumerationField(TextField):
                                    right_tag="enumeral",
                                    wrong_tag=node.tagName)
         # Extract the value.
-        return xmlutil.get_dom_text(node)
-
-
-    def MakeDomNodeForValue(self, value, document):
-        # Store the name of the enumeral.
-        return xmlutil.create_dom_text_element(
-            document, "enumeral", str(value))
-
-
-    def GetHelp(self):
-        enumerals = self.GetEnumerals()
-        help = """
-        An enumeration field.  The value of this field must be one of a
-        preselected set of enumerals.  The enumerals for this field are,
-
-        """
-        for enumeral in enumerals:
-            help = help + '            * "%s"\n\n' % enumeral
-        help = help + '''
-
-        The default value of this field is "%s".
-        ''' % str(self.GetDefaultValue())
-        return help
+        return self.Validate(xmlutil.get_dom_text(node))
 
 
 
@@ -1564,6 +1582,35 @@ class TimeField(IntegerField):
         super(TimeField, self).__init__(name, None, **properties)
 
 
+    def GetHelp(self):
+        if time.daylight:
+            time_zones = "%s or %s" % time.tzname
+        else:
+            time_zones = time.tzname[0]
+        help = """
+            This field contains a time and date.  The format for the
+            time and date is 'YYYY-MM-DD HH:MM ZZZ'.  The 'ZZZ' field is
+            the time zone, and may be the local time zone (%s) or
+            "UTC".
+
+            If the date component is omitted, today's date is used.  If
+            the time component is omitted, midnight is used.  If the
+            time zone component is omitted, the local time zone is
+            used.
+        """ % time_zones
+        default_value = self.GetDefaultValue()
+        if default_value is None:
+            help = help + """
+            The default value for this field is the current time.
+            """
+        else:
+            help = help + """
+            The default value for this field is %s.
+            """ % self.FormatValueAsText(default_value)
+        return help
+
+    ### Output methods.
+    
     def FormatValueAsText(self, value, columns=72):
         if value is None:
             return "now"
@@ -1592,51 +1639,21 @@ class TimeField(IntegerField):
         else:
             raise ValueError, style
 
-
+    ### Input methods.
+        
     def ParseTextValue(self, value):
-        return qm.common.parse_time(value, default_local_time_zone=1)
+
+        return self.Validate(qm.common.parse_time(value,
+                                                  default_local_time_zone=1))
 
 
     def GetDefaultValue(self):
-        default_value = IntegerField.GetDefaultValue(self)
-        if default_value is None:
-            return self.GetCurrentTime() 
-        else:
+
+        default_value = super(TimeField, self).GetDefaultValue()
+        if default_value is not None:
             return default_value
 
-
-    def GetCurrentTime(self):
-        """Return a field value corresponding to the current time."""
-
         return int(time.time())
-
-
-    def GetHelp(self):
-        if time.daylight:
-            time_zones = "%s or %s" % time.tzname
-        else:
-            time_zones = time.tzname[0]
-        help = """
-            This field contains a time and date.  The format for the
-            time and date is 'YYYY-MM-DD HH:MM ZZZ'.  The 'ZZZ' field is
-            the time zone, and may be the local time zone (%s) or
-            "UTC".
-
-            If the date component is omitted, today's date is used.  If
-            the time component is omitted, midnight is used.  If the
-            time zone component is omitted, the local time zone is
-            used.
-        """ % time_zones
-        default_value = self.default_value
-        if default_value is None:
-            help = help + """
-            The default value for this field is the current time.
-            """
-        else:
-            help = help + """
-            The default value for this field is %s.
-            """ % self.FormatValueAsText(default_value)
-        return help
 
 
 

@@ -31,6 +31,22 @@
   <!ENTITY introduction.xml SYSTEM "introduction.xml">
   <!ENTITY tour.xml SYSTEM "tour.xml">
   <!ENTITY reference.xml SYSTEM "reference.xml">
+
+  <!ENTITY internal_doc_url "http://www.codesourcery.com/qm/qmtest_internals_docs/qm">
+
+  <!ENTITY extension_class "<ulink url=&#34;&internal_doc_url;/extension/Extension.html&#34;><classname>Extension</classname></ulink>">
+  <!ENTITY field_class "<ulink url=&#34;&internal_doc_url;/fields/Field.html&#34;><classname>Field</classname></ulink>">
+  <!ENTITY integer_field_class "<ulink url=&#34;&internal_doc_url;/fields/IntegerField.html&#34;><classname>IntegerField</classname></ulink>">
+  <!ENTITY text_field_class "<ulink url=&#34;&internal_doc_url;/fields/TextField.html&#34;><classname>TextField</classname></ulink>">
+  <!ENTITY enumeration_field_class "<ulink url=&#34;&internal_doc_url;/fields/EnumerationField.html&#34;><classname>EnumerationField</classname></ulink>">
+  <!ENTITY choice_field_class "<ulink url=&#34;&internal_doc_url;/fields/ChoiceField.html&#34;><classname>ChoiceField</classname></ulink>">
+  <!ENTITY boolean_field_class "<ulink url=&#34;&internal_doc_url;/fields/BooleanField.html&#34;><classname>BooleanField</classname></ulink>">
+  <!ENTITY time_field_class "<ulink url=&#34;&internal_doc_url;/fields/TimeField.html&#34;><classname>TimeField</classname></ulink>">
+  <!ENTITY attachment_field_class "<ulink url=&#34;&internal_doc_url;/fields/AttachmentField.html&#34;><classname>AttachmentField</classname></ulink>">
+  <!ENTITY set_field_class "<ulink url=&#34;&internal_doc_url;/fields/SetField.html&#34;><classname>SetField</classname></ulink>">
+  <!ENTITY tuple_field_class "<ulink url=&#34;&internal_doc_url;/fields/TupleField.html&#34;><classname>TupleField</classname></ulink>">
+  <!ENTITY test_class "<ulink url=&#34;&internal_doc_url;/test/test/Test.html&#34;><classname>Test</classname></ulink>">
+
 ]>
 <book>
  <bookinfo>
