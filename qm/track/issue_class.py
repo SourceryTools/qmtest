@@ -1345,10 +1345,13 @@ def decode_transition(encoding):
     return Transition(start, end, condition)
     
 
-def from_dom_node(node):
+def from_dom_node(node, attachment_store):
     """Construct an issue class from a DOM node.
 
     'node' -- A DOM node element, with tag "issue-class".
+
+    'attachment_store' -- The attachment store in which to presume
+    attachments are located.
 
     returns -- An 'IssueClass' element."""
 
@@ -1361,7 +1364,7 @@ def from_dom_node(node):
     fields = []
     fields_by_name = {}
     for field_node in qm.xmlutil.get_children(node, "field"):
-        field = qm.fields.from_dom_node(field_node)
+        field = qm.fields.from_dom_node(field_node, attachment_store)
         fields.append(field)
         fields_by_name[field.GetName()] = field
 
@@ -1374,8 +1377,11 @@ def from_dom_node(node):
     return issue_class
 
 
-def load(path):
+def load(path, attachment_store):
     """Load issue classes from 'path'.
+
+    'attachment_store' -- The attachment store in which to presume
+    attachments are located.
 
     returns -- A map from issue class named to 'IssueClass' objects."""
 
@@ -1383,7 +1389,7 @@ def load(path):
     issue_classes = {}
     for node in \
         qm.xmlutil.get_children(document.documentElement, "issue-class"):
-        issue_class = from_dom_node(node)
+        issue_class = from_dom_node(node, attachment_store)
         issue_classes[issue_class.GetName()] = issue_class
     return issue_classes
 

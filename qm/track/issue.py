@@ -463,13 +463,16 @@ def patch_issue(issue, difference):
     return result
 
 
-def get_issues_from_dom_node(issues_node, issue_classes):
+def get_issues_from_dom_node(issues_node, issue_classes, attachment_store):
     """Convert a DOM element to issues.
 
     'issues_node' -- A DOM issues element node.
 
-    'issue_classes' -- A map from issue class names to 'IssueClass'
-    instances, to be used when construction 'Issue' objects.
+    'issue_classes' -- A map from issue class names to corresponding
+    'IssueClass' objects.
+
+    'attachment_store' -- The attachment store in which attachments are
+    presumed to be located.
 
     returns -- A sequence of 'Issue' objects."""
 
@@ -478,12 +481,13 @@ def get_issues_from_dom_node(issues_node, issue_classes):
     # Extract one result for each result element.
     issues = []
     for issue_node in issues_node.getElementsByTagName("issue"):
-        issue_ = get_issue_from_dom_node(issue_node, issue_classes)
+        issue_ = get_issue_from_dom_node(
+            issue_node, issue_classes, attachment_store)
         issues.append(issue_)
     return issues
     
 
-def _get_field_values_from_dom_node(node, issue_class):
+def _get_field_values_from_dom_node(node, issue_class, attachment_store):
     """Extract field values from a DOM node.
 
     Extracts field values from child elements named "field".
@@ -491,6 +495,9 @@ def _get_field_values_from_dom_node(node, issue_class):
     'node' -- A DOM node.
 
     'issue_class' -- The issue class containing the fields to extract.
+
+    'attachment_store' -- The attachment store in which to presume
+    attachments are located.
 
     returns -- A map from field names to corresponding values.  The
     values are validated in the corresponding field."""
@@ -515,7 +522,7 @@ def _get_field_values_from_dom_node(node, issue_class):
         value_node = field_node.childNodes[0]
         # The field can convert the DOM node to a value.  Let any
         # exceptions from this method percolate up.
-        value = field.GetValueFromDomNode(value_node)
+        value = field.GetValueFromDomNode(value_node, attachment_store)
         # Validate the value.  Let exceptions percolate.
         value = field.Validate(value)
         # Store the field value.
@@ -524,13 +531,16 @@ def _get_field_values_from_dom_node(node, issue_class):
     return field_values
 
 
-def get_issue_from_dom_node(issue_node, issue_classes):
+def get_issue_from_dom_node(issue_node, issue_classes, attachment_store):
     """Convert a DOM element to an issue.
 
     'issue_node' -- A DOM issue element node.
 
-    'issue_classes' -- A map from issue class names to 'IssueClass'
-    instances, to be used when construction 'Issue' objects.
+    'issue_classes' -- A map from issue class names to corresponding
+    'IssueClass' objects.
+
+    'attachment_store' -- The attachment store in which attachments are
+    presumed to be located.
 
     returns -- An 'Issue' instance."""
 
@@ -549,14 +559,17 @@ def get_issue_from_dom_node(issue_node, issue_classes):
               qm.error("xml file unknown class", class_name=issue_class_name)
 
     # Extract field values.  Each is in a field element.]
-    field_values = _get_field_values_from_dom_node(issue_node, issue_class)
+    field_values = _get_field_values_from_dom_node(
+        issue_node, issue_class, attachment_store)
     field_values["iid"] = iid
 
     # Construct an issue.
     return apply(Issue, [issue_class], field_values)
 
 
-def get_issue_difference_from_dom_node(difference_node, issue_class):
+def get_issue_difference_from_dom_node(difference_node,
+                                       issue_class,
+                                       attachment_store):
     """Convert a DOM element to an issue difference.
 
     'difference_node' -- A DOM "issue-difference" element.
@@ -565,23 +578,31 @@ def get_issue_difference_from_dom_node(difference_node, issue_class):
     be provided, since the XML representation of an issue difference
     does not include the issue class explicitly.
 
+    'attachment_store' -- The attachment store in which to presume
+    attachments are located.
+
     returns -- An 'IssueDifference' instance."""
 
     assert difference_node.tagName == "issue-difference"
     # Extract field values.  Each is in a field element.
-    field_values = _get_field_values_from_dom_node(difference_node,
-                                                   issue_class)
+    field_values = _get_field_values_from_dom_node(
+        difference_node, issue_class, attachment_store)
     return apply(IssueDifference, [issue_class], field_values)
 
 
-def get_histories_from_dom_node(histories_node, issue_classes):
+def get_histories_from_dom_node(histories_node,
+                                issue_classes,
+                                attachment_store):
     """Convert a DOM element to a sequence of issue histories.
 
     'histories_node' -- A DOM issue histories element node.  The node
     must be a "histories" element.
 
-    'issue_classes' -- A map from issue class names to 'IssueClass'
-    instances, to be used when construction 'Issue' objects.
+    'issue_classes' -- A map from issue class names to corresponding
+    'IssueClass' objects.
+
+    'attachment_store' -- The attachment store in which attachments are
+    presumed to be located.
 
     returns -- A sequence of issue histories.  Each element is a
     sequence of consecutive revisions of a single issue."""
@@ -589,20 +610,23 @@ def get_histories_from_dom_node(histories_node, issue_classes):
     assert histories_node.tagName == "histories"
     issue_histories = []
     for history_node in qm.xmlutil.get_children(histories_node, "history"):
-        issue_history = get_history_from_dom_node(history_node,
-                                                  issue_classes)
+        issue_history = get_history_from_dom_node(
+            history_node, issue_classes, attachment_store)
         issue_histories.append(issue_history)
     return issue_histories
     
 
-def get_history_from_dom_node(history_node, issue_classes):
+def get_history_from_dom_node(history_node, issue_classes, attachment_store):
     """Convert a DOM element to an issue history.
 
     'history_node' -- A DOM issue history element node.  The node must
     be a "history" element.
 
-    'issue_classes' -- A map from issue class names to 'IssueClass'
-    instances, to be used when construction 'Issue' objects.
+    'issue_classes' -- A map from issue class names to corresponding
+    'IssueClass' objects.
+
+    'attachment_store' -- The attachment store in which attachments are
+    presumed to be located.
 
     returns -- A sequence of consecutive revisions of the issue."""
 
@@ -610,7 +634,8 @@ def get_history_from_dom_node(history_node, issue_classes):
 
     issue_nodes = history_node.getElementsByTagName("issue")
     assert len(issue_nodes) == 1
-    issue = get_issue_from_dom_node(issue_nodes[0], issue_classes)
+    issue = get_issue_from_dom_node(
+        issue_nodes[0], issue_classes, attachment_store)
     issue.SetField("revision", 0)
     revisions = [issue]
     
@@ -619,7 +644,7 @@ def get_history_from_dom_node(history_node, issue_classes):
         history_node.getElementsByTagName("issue-difference"):
         
         difference = get_issue_difference_from_dom_node(
-            difference_node, issue_class)
+            difference_node, issue_class, attachment_store)
 
         if not difference.HasField("revision"):
             raise IssueFileError, \
@@ -693,11 +718,14 @@ def write_issue_histories(issue_histories, output):
     qm.xmlutil.write_dom_document(document, output)
 
 
-def load_issue_histories(issue_file_path, issue_classes):
+def load_issue_histories(issue_file_path, issue_classes, attachment_store):
     """Load issue histories stored in the XML file at 'issue_file_path'.
 
-    'issue_classes' -- A map from issue class names to 'IssueClass'
-    instances, to be used when construction 'Issue' objects.
+    'issue_classes' -- A map from issue class names to corresponding
+    'IssueClass' objects.
+
+    'attachment_store' -- The attachment store in which attachments are
+    presumed to be located.
 
     preconditions -- The file specified by 'issue_file_path' must be a
     valid XML file, whose document element is a "histories" element.
@@ -708,8 +736,8 @@ def load_issue_histories(issue_file_path, issue_classes):
 
     document = qm.xmlutil.load_xml_file(issue_file_path)
     assert document.documentElement.tagName == "histories"
-    return get_histories_from_dom_node(document.documentElement,
-                                       issue_classes)
+    return get_histories_from_dom_node(
+        document.documentElement, issue_classes, attachment_store)
 
 
 def eval_issue_expression(expression, issue, extra_locals={}):

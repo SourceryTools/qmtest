@@ -90,7 +90,7 @@ class IssueStore(issue_store.IssueStore):
 
     def UpdateIssueClass(self, issue_class):
         issue_class_name = issue_class.GetName()
-        old_issue_class = self._issue_classes(issue_class_name)
+        old_issue_class = self._issue_classes[issue_class_name]
 
         # Determine whether any fields were added or removed.
         added_fields = []
@@ -281,11 +281,12 @@ def create(path, configuration):
     new_issue_store.Close()
 
 
-def open(path, issue_classes, configuration):
+def open(path, issue_classes, configuration, attachment_store):
     # Load the issue histories.
     qm.common.print_message(3, "MemoryIdb: Loading issues... ")
     histories = \
-        issue.load_issue_histories(_get_issue_path(path), issue_classes)
+        issue.load_issue_histories(_get_issue_path(path),
+                                   issue_classes, attachment_store)
 
     # Install them and perform sanity checks.
     qm.common.print_message(3, "checking... ")

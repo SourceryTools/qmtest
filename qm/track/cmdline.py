@@ -694,7 +694,7 @@ parent.""",
         # Once we have checked that everything is in order to create the
         # new issue, we build it based on the argument pairs.
         iid = hash['iid']
-        new_issue = qm.track.Issue(icl, iid=iid)
+        new_issue = qm.track.issue.Issue(icl, iid=iid)
         for key, value in hash.items():
             if key != 'iid':
                 try:
@@ -991,7 +991,7 @@ parent.""",
                                     % (qm.common.program_name, url))
 
         # Go.
-        server.run_server(web_server)
+        web_server.Run()
 
     
     def __PerformServer(self, idb, output):
@@ -1175,7 +1175,8 @@ parent.""",
 
         issue_classes = qm.common.make_map_from_list(
             idb.GetIssueClasses(), lambda icl: icl.GetName())
-        issues = issue.get_issues_from_dom_node(node, issue_classes)
+        issues = issue.get_issues_from_dom_node(
+            node, issue_classes, idb.GetAttachmentStore())
 
         # Loop over the issues.
         for issue in issues:
@@ -1206,14 +1207,16 @@ parent.""",
 
 
     def __ImportIssueHistories(self, idb_, node):
-        """Import issue histories from DOM element 'node'. into 'idb_'."""
+        """Import issue histories from DOM element 'node' into 'idb_'."""
 
         # FIXME: Handle any errors?
-        issue_histories = issue.get_histories_from_dom_node(node)
+        issue_classes = qm.common.make_map_from_list(
+            idb_.GetIssueClasses(), lambda c: c.GetName())
+        issue_histories = issue.get_histories_from_dom_node(
+            node, issue_classes, idb_.GetAttachmentStore())
         for history in issue_histories:
             idb.import_issue_history(idb_, history)
             
-
 
     def __PrintResults(self, idb, output, *issues):
         """Print the list of issues that are the results of the command.

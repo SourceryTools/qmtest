@@ -315,10 +315,10 @@ def handle_new(request):
     if request.has_key("class"):
         issue_class_name = request["class"]
     else:
-        issue_class_name = qm.track.get_configuration()["default_class"]
+        issue_class_name = idb.GetConfiguration()["default_class"]
     issue_class = idb.GetIssueClass(issue_class_name)
     # Create a new issue.
-    issue = qm.track.Issue(issue_class)
+    issue = qm.track.issue.Issue(issue_class)
 
     return ShowPage(issue, "new")(request)
 
@@ -337,7 +337,7 @@ def handle_submit(request):
         
     if is_new:
         # Create a new issue instance.
-        issue = qm.track.Issue(issue_class, iid=iid)
+        issue = qm.track.issue.Issue(issue_class, iid=iid)
     else:
         # It's a new revision of an existing issue.  Retrieve the
         # latter. 
@@ -385,7 +385,7 @@ def handle_submit(request):
             # IDB.  This function does the work.
             if isinstance(field, qm.fields.AttachmentField):
                 # An attachment field -- process the value.
-                value = _store_attachment_data(idb, issue, value)
+                value = web.store_attachment_data(idb, issue, value)
             elif isinstance(field, qm.fields.SetField) \
                  and isinstance(field.GetContainedField(),
                                 qm.fields.AttachmentField):
@@ -393,7 +393,7 @@ def handle_submit(request):
                 # value.
                 value = map(
                     lambda attachment, idb=idb, issue=issue: \
-                    _store_attachment_data(idb, issue, attachment),
+                    web.store_attachment_data(idb, issue, attachment),
                     value)
 
             issue.SetField(field_name, value)
@@ -454,27 +454,6 @@ def handle_submit(request):
         # the issue form will not be resubmitted.
         raise qm.web.HttpRedirect, \
               qm.web.WebRequest("show", base=request, iid=iid)
-
-
-def _store_attachment_data(idb, issue, attachment):
-    """Retrieve a temporary attachment's data and store it in the IDB."""
-
-    location = attachment.GetLocation()
-    # Is this attachment in the temporary area?
-    if qm.attachment.is_temporary_location(location):
-        # Release the file containing the attachment data from the
-        # temporary attachment store.
-        temporary_astore = qm.attachment.temporary_store
-        data_path = temporary_astore.Release(location)
-        # Store the attachment data permanently.
-        astore = idb.GetAttachmentStore()
-        return astore.Adopt(issue,
-                            attachment.GetMimeType(),
-                            attachment.GetDescription(),
-                            attachment.GetFileName(),
-                            data_path)
-    else:
-        return attachment
 
 
 ########################################################################

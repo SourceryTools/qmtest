@@ -353,6 +353,28 @@ def handle_submit_field(request):
     # Change the field according to the request.
     field.UpdateFromRequest(request)
 
+    # If this is an attachment field (or set thereof), its default value
+    # might be an attachment (or list of attachments) that we need to
+    # transfer from the temporary attachment database to our permanent
+    # attachment store.
+    default_value = field.GetDefaultValue()
+    idb = request.GetSession().idb
+    if isinstance(field, qm.fields.AttachmentField):
+        # An attachment field -- process the value.
+        default_value = \
+            web.store_attachment_data(idb, None, default_value)
+        field.SetDefaultValue(default_value)
+    elif isinstance(field, qm.fields.SetField) \
+         and isinstance(field.GetContainedField(),
+                        qm.fields.AttachmentField):
+        # An attachment set field -- process each element of the
+        # value.
+        default_value = map(
+            lambda attachment, idb=idb: \
+            web.store_attachment_data(idb, None, attachment),
+            default_value)
+        field.SetDefaultValue(default_value)
+
     raise qm.web.HttpRedirect, \
           qm.web.WebRequest("show-issue-class", base=request)
 
@@ -511,7 +533,7 @@ def handle_new_class(request):
     idb.AddIssueClass(issue_class)
     # If this is the first issue class, make it the default issue class.
     if len(idb.GetIssueClasses()) == 1:
-        qm.track.get_configuration()["default_class"] = class_name
+        idb.GetConfiguration()["default_class"] = class_name
     # Redirect to the IDB configuration page.
     raise qm.web.HttpRedirect, \
           qm.web.WebRequest("config-idb", base=request)

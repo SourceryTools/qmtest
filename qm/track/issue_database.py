@@ -130,13 +130,17 @@ class AttachmentStore(qm.attachment.AttachmentStore):
 
         'path' -- The path to the attachment store subdirectory."""
 
+        # Initialize the base class.
+        qm.attachment.AttachmentStore.__init__(self)
+        # Store the path.
         self.__path = path
 
 
     def Store(self, issue, mime_type, description, file_name, data):
         """Store attachment data, and construct an attachment object.
 
-        'issue' -- The issue of which this attachment is part.
+        'issue' -- The issue of which this attachment is part.  May be
+        'None'. 
 
         'mime_type' -- The attachment MIME type.
 
@@ -151,7 +155,11 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         correctly."""
 
         # Construct the path at which we'll store the attachment data.
-        data_file_name = self.__MakeDataFileName(issue.GetId())
+        if issue is None:
+            issue_id = "_none"
+        else:
+            issue_id = issue.GetId()
+        data_file_name = self.__MakeDataFileName(issue_id)
         data_file_path = os.path.join(self.__path, data_file_name)
         # Store it.
         _builtin_open(data_file_path, "w").write(data)
@@ -160,13 +168,15 @@ class AttachmentStore(qm.attachment.AttachmentStore):
             mime_type,
             description,
             file_name,
-            location=data_file_name)
+            location=data_file_name,
+            store=self)
 
 
-    def Adopt(self, issue, mime_type, description, file_name, path):
-        """Extract attachment data from a file, and remove the file.
+    def StoreFromFile(self, issue, mime_type, description, file_name, path):
+        """Store attachment data from a file, and construct an attachment.
 
-        'issue' -- The issue of which this attachment is part.
+        'issue' -- The issue of which this attachment is part.  May be
+        'None', if the attachment isn't part of any issue.
 
         'mime_type' -- The attachment MIME type.
 
@@ -180,23 +190,10 @@ class AttachmentStore(qm.attachment.AttachmentStore):
         the file.
 
         returns -- An 'Attachment' object, with its location set
-        correctlty. 
+        correctlty."""
 
-        postconditions -- The file at 'path' does not exist."""
-
-        # Construct the path at which we'll store the attachment data.
-        data_file_name = self.__MakeDataFileName(issue.GetId())
-        data_file_path = os.path.join(self.__path, data_file_name)
-        # Copy the data file.
-        shutil.copy(path, data_file_path)
-        # Delete the data file.
-        os.unlink(path)
-        # Construct an 'Attachment'.
-        return qm.attachment.Attachment(
-            mime_type,
-            description,
-            file_name,
-            location=data_file_name)
+        data = _builtin_open(path, "r").read()
+        return self.Store(issue, mime_type, description, file_name, data)
 
 
     # Implementation of base class methods.
@@ -290,6 +287,29 @@ class _IssueDatabase:
         configuration = self.GetConfiguration()
         if not configuration.has_key("default_class"):
             configuration["default_class"] = name
+
+
+    def UpdateIssueClass(self, issue_class):
+        """Update an issue class object with changes.
+
+        Call this function after changing an issue class currently
+        handled by the issue store.  'issue_class' replaces the existing
+        issue class with the same name.
+
+        'issue_class' -- An 'IssueClass' object.
+
+        raises -- 'KeyError' if there is no issue class already known to
+        the issue store with the same name as 'issue_class'."""
+
+        # Look up the issue class.  There should already be one under
+        # that name.
+        name = issue_class.GetName()
+        old_issue_class = self.GetIssueClass(name)
+        # Give the issue store an opportunity to make whatever changes
+        # it needs to.
+        self.__issue_store.UpdateIssueClass(issue_class)
+        # Remember the new issue class object instead of the old one.
+        self.__issue_classes[name] = issue_class
 
 
     def GetIssueClass(self, issue_class_name):
@@ -541,17 +561,18 @@ def open(path):
                 user_db_path = os.path.join(path, "users.xml")
                 user_db = qm.user.load_xml_database(user_db_path)
 
+                # Open the attachment store.
+                attachment_store_path = _get_attachment_store_path(path)
+                attachment_store = AttachmentStore(attachment_store_path)
+
                 # Load issue classes.
                 issue_classes_path = _get_issue_classes_path(path)
-                issue_classes = issue_class.load(issue_classes_path)
+                issue_classes = issue_class.load(issue_classes_path,
+                                                 attachment_store)
 
                 # Load configuration.
                 configuration_path = _get_configuration_path(path)
                 configuration = _load_configuration(configuration_path)
-
-                # Open the attachment store.
-                attachment_store_path = _get_attachment_store_path(path)
-                attachment_store = AttachmentStore(attachment_store_path)
 
                 # Open the issue store.  Start by determining and
                 # loading the issue store implementation module.
@@ -559,7 +580,8 @@ def open(path):
                 open_istore = \
                     _get_issue_store_function(istore_module_name, "open")
                 # Open the connection.
-                istore = open_istore(path, issue_classes, configuration)
+                istore = open_istore(
+                    path, issue_classes, configuration, attachment_store)
             except:
                 # Oops, a problem loading the configuration or user
                 # database.  Don't leave a lock behind.

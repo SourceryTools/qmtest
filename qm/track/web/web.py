@@ -217,6 +217,46 @@ class HistoryPageFragment(DtmlPage):
 
 
 ########################################################################
+# functions
+########################################################################
+
+def store_attachment_data(idb, issue, attachment):
+    """Retrieve a temporary attachment's data and store it in the IDB.
+
+    'issue' -- The issue of which the attachment is part.  May be
+    'None', for instance if the attachment is part of the default value
+    for an attachment field.
+
+    'attachment' -- The attachment.  If it is not a temporary
+    attachment, returns 'attachment'.
+
+    returns -- The attachment object to use in place of the original
+    one."""
+
+    location = attachment.GetLocation()
+    # Is this attachment in the temporary area?
+    if qm.attachment.is_temporary_location(location):
+        # Release the file containing the attachment data from the
+        # temporary attachment store.
+        temporary_astore = qm.attachment.temporary_store
+        data_path = temporary_astore.GetDataFile(location)
+        # Store the attachment data permanently.
+        astore = idb.GetAttachmentStore()
+        new_attachment = astore.StoreFromFile(
+            issue,
+            attachment.GetMimeType(),
+            attachment.GetDescription(),
+            attachment.GetFileName(),
+            data_path)
+        # Remove it from the temporary store.
+        temporary_astore.Remove(location)
+        # Return it.
+        return new_attachment
+    else:
+        return attachment
+
+
+########################################################################
 # initialization
 ########################################################################
 

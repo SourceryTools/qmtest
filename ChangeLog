@@ -1,5 +1,44 @@
 2001-10-03  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/fields.py (Field.GetValueFromDomNode): Rename store parameter
+	to attachment_store.
+	Likewise for all subclasses.
+	(from_dom_node): Likewise.  Pass it recursively.
+	* qm/track/memory_issue_store.py (IssueStore.UpdateIssueClass):
+	Fix brackets.
+	(open): Add attachment_store parameter.
+	* qm/track/issue_database.py (AttachmentStore.__init__): Call base
+	class __init__.
+	(AttachmentStore.Store): Accept None for issue.
+	(AttachmentStore.Adopt): Remove.
+	(AttachmentStore.StoreFromFile): New method.
+	(_IssueDatabase.UpdateIssueClass): New function.
+	(open): Open the attachment store first, and pass it to the issue
+	store open function.
+	* qm/track/issue.py (get_issues_from_dom_node): Add
+	attachment_store parameter.
+	(_get_field_values_from_dom_node): Likewise.
+	(get_issue_from_dom_node): Likewise.
+	(get_issue_difference_from_dom_node): Likewise.
+	(get_histories_from_dom_node): Likewise.
+	(get_history_from_dom_node): Likewise.
+	(load_issue_histories): Likewise.
+	* qm/track/issue_class.py (from_dom_node): Likewise.
+	(load): Likewise.
+	* qm/track/cmdline.py (Command.__PerformCreate): Use correct
+	module for Issue.
+	(Command.__PerformConfigureIdb): Call web_server.Run directly.
+	* qm/track/web/web.py (store_attachment_data): New function.
+	* qm/track/web/issue_class.py (handle_submit_field): Call
+	store_attachment_data for attachment field default values.
+	(handle_new_class): Use idb.GetConfiguration.
+	* qm/track/web/show.py (handle_new): Likewise.
+	Use correct module for Issue.
+	(handle_submit): Likewise.
+	(_store_attachment_data): Remove.
+
+2001-10-03  Alex Samuel  <samuel@codesourcery.com>
+
 	* README.sources: Clarify blank lines.
 	* qm/track/test.py: Remove.
 	* qm/track/web/issue_class.py: Remove spurious import.

@@ -475,7 +475,7 @@ class Field:
         raise qm.MethodShouldBeOverriddenError, "Field.FormDecodeValue"
 
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         """Return a value for this field represented by DOM 'node'.
 
         This method does not validate the value for this particular
@@ -484,7 +484,8 @@ class Field:
 
         'node' -- The DOM node that is being evaluated.
 
-        'store' -- For attachments, the store that should be used.
+        'attachment_store' -- For attachments, the store that should be
+        used.
         
         raises -- 'DomNodeError' if the node's structure or contents are
         incorrect for this field."""
@@ -758,7 +759,7 @@ class IntegerField(Field):
         return int(encoding)
     
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an '<integer>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "integer":
@@ -987,7 +988,7 @@ class TextField(Field):
         return urllib.unquote(encoding)
 
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is a '<text>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "text":
@@ -1305,7 +1306,7 @@ class SetField(Field):
         raise NotImplementedError
 
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is a '<set>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "set":
@@ -1317,7 +1318,7 @@ class SetField(Field):
         # Use the contained field to extract values for the children of
         # this node, which are the set elements.
         contained_field = self.GetContainedField()
-        fn = lambda n, f=contained_field, s=store: \
+        fn = lambda n, f=contained_field, s=attachment_store: \
              f.GetValueFromDomNode(n, s)
         return map(fn, node.childNodes)
 
@@ -1673,7 +1674,7 @@ class AttachmentField(Field):
                       attachment.GetMimeType())
 
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an "attachment" element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "attachment":
@@ -1682,7 +1683,7 @@ class AttachmentField(Field):
                                    name=self.GetName(),
                                    right_tag="attachment",
                                    wrong_tag=node.tagName)
-        return attachment.from_dom_node(node, store)
+        return attachment.from_dom_node(node, attachment_store)
 
 
     def MakeDomNodeForValue(self, value, document):
@@ -1871,7 +1872,7 @@ class EnumerationField(TextField):
             raise ValueError, style
 
 
-    def GetValueFromDomNode(self, node, store):
+    def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an '<enumeral>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "enumeral":
@@ -2084,10 +2085,13 @@ class UidField(TextField):
 # functions
 ########################################################################
 
-def from_dom_node(node, store):
+def from_dom_node(node, attachment_store):
     """Construct a field object from a DOM node.
 
     'node' -- A DOM node for a "field" element.
+
+    'attachment_store' -- The attachment store in which to presume
+    attachments are located.
 
     returns -- An instance of a 'Field' subclass specified by the
     element."""
@@ -2103,7 +2107,8 @@ def from_dom_node(node, store):
         # If it's a set field, find the class of the contained field,
         # and load it with a recursive call.
         contained_field_node = xmlutil.get_child(node, "field")
-        contained_field = from_dom_node(contained_field_node)
+        contained_field = from_dom_node(contained_field_node,
+                                        attachment_store)
         # Construct the set field around it.
         field = field_class(contained_field)
 
@@ -2122,7 +2127,7 @@ def from_dom_node(node, store):
     # Set the default value.
     default_value_node = xmlutil.get_child(node, "default-value")
     default_value = field.GetValueFromDomNode(
-        default_value_node.childNodes[0], store)
+        default_value_node.childNodes[0], attachment_store)
     field.SetDefaultValue(default_value)
 
     return field
