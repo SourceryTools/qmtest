@@ -64,11 +64,11 @@ mandatory_field_names = [
 
 # FIXME: These are bogus test values.  Put something better here.
 
-default_categories = {
-    "crash" : 0,
-    "documentation" : 1,
-    "improvement": 2,
-}
+default_categories = [
+    "crash",
+    "documentation",
+    "improvement",
+]
 
 
 # The default set of states to use for a new issue class, if one is
@@ -955,10 +955,14 @@ class IssueClass:
             nonempty="true")
         self.AddField(field)
 
-        # The categories field.
+        # The categories field.  First create an enumeration map from
+        # the list of categories provided.
+        categories_enum = {}
+        for i in range(0, len(categories)):
+            categories_enum[categories[i]] = i
         field = qm.fields.EnumerationField(
             name="categories",
-            enumeration=categories,
+            enumeration=categories_enum,
             title="Categories",
             description="""
             The names of categories to which this issue belongs.  A

@@ -122,6 +122,11 @@ You must specify an IDB path to the initialize command.
 @ initialize wrong flag
 The --idb option is not allowed to this command.
 
+@ invalid class name
+"%(class_name)s" is not a valid name for an issue class.  An issue class
+name may be composed of lower-case letters, digits, and underscores, and
+may not begin with an underscore.
+
 @ invalid enum key
 "%(key)s" is not a valid enumeral name.  The name may be composed of
 lower-case letters, digits, and underscores, and may not begin with an
@@ -154,6 +159,9 @@ The iid "%(iid)" was not found in the database.
 
 @ join issue error syn
 Fewer than two iids specified. You must specified two iids to be joined.
+
+@ missing class title
+You must specify a title for this issue class.
 
 @ missing idb
 You did not specify an issue database (IDB).  Either

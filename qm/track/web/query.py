@@ -70,8 +70,12 @@ class QueryPageInfo(web.PageInfo):
         """Construct a link to popup help about Python queries."""
 
         # FIXME: These are only the fields for the default issue class.
-        default_class = qm.track.get_default_class()
-        fields = default_class.GetFields()
+        try:
+            default_class = qm.track.get_default_class()
+        except KeyError:
+            fields = []
+        else:
+            fields = default_class.GetFields()
 
         # First, some general help about Python queries.
         help_text = qm.diagnostic.help_set.Generate("query help")
@@ -111,28 +115,36 @@ class QueryPageInfo(web.PageInfo):
         """Make a list control displaying available categories."""
 
         # FIXME.
-        default_class = qm.track.get_default_class()
-        field = default_class.GetField("categories")
-        categories = field.GetContainedField().GetEnumeration().keys()
-        categories.sort()
-        return qm.web.make_select(field_name="category",
-                                  form_name="browse_category",
-                                  items=categories,
-                                  default_value=categories[0]) 
+        try:
+            default_class = qm.track.get_default_class()
+        except KeyError:
+            return "&nbsp;"
+        else:
+            field = default_class.GetField("categories")
+            categories = field.GetContainedField().GetEnumeration().keys()
+            categories.sort()
+            return qm.web.make_select(field_name="category",
+                                      form_name="browse_category",
+                                      items=categories,
+                                      default_value=categories[0]) 
                            
 
     def MakeStateSelect(self):
         """Make a list control displaying available states."""
 
         # FIXME.
-        default_class = qm.track.get_default_class()
-        field = default_class.GetField("state")
-        states = field.GetEnumeration().keys()
-        states.sort()
-        return qm.web.make_select(field_name="state",
-                                  form_name="browse_state",
-                                  items=states,
-                                  default_value=states[0]) 
+        try:
+            default_class = qm.track.get_default_class()
+        except KeyError:
+            return "&nbsp;"
+        else:
+            field = default_class.GetField("state")
+            states = field.GetEnumeration().keys()
+            states.sort()
+            return qm.web.make_select(field_name="state",
+                                      form_name="browse_state",
+                                      items=states,
+                                      default_value=states[0]) 
 
 
 

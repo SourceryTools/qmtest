@@ -1688,10 +1688,6 @@ def make_set_control(form_name,
     elements of the set.  If 'None', a control name is generated
     automatically. 
 
-    'add_request' -- If not 'None', a 'WebRequest' object which is
-    invoked when the user selects the "Add..." button to add a new
-    element to the set.
-
     'add_page' -- If not 'None', the HTML source for a popup web page
     that is displayed in response to the "Add..." button.
 
@@ -1702,10 +1698,7 @@ def make_set_control(form_name,
     'width' -- The width of the select control.
 
     'window_width', 'window_height' -- The width and height of the popup
-    window for adding a new element.
-
-    Exactly one of 'add_request' and 'add_page' should be specified.
-    """
+    window for adding a new element."""
 
     # Generate a name for the select control if none was specified.
     if select_name is None:
@@ -1733,7 +1726,7 @@ def make_set_control(form_name,
     add_function = "_set_add_%d" % _counter
     _counter = _counter + 1
     # Construct the "Add..." button.
-    add_button = make_button_for_popup("Add", add_page, request,
+    add_button = make_button_for_popup("Add...", add_page, request,
                                        window_width, window_height)
     # Construct the "Remove" button.
     remove_button = '''
@@ -2113,7 +2106,8 @@ def make_select(field_name,
                 default_value,
                 item_to_text=str,
                 item_to_value=str,
-                form_name="form"):
+                form_name="form",
+                update_external_field=0):
     """Construct HTML controls for selecting an item from a list.
 
     'field_name' -- The name of the form control which will contain the
@@ -2134,6 +2128,10 @@ def make_select(field_name,
     'form_name' -- The name of the form that will contain the returned
     controls. 
 
+    'update_external_field' -- If true, update a field named
+    'field_name' when the selection changes.  If false, a hidden field
+    named 'field_name' is included, and updated when selection changes.
+
     returns -- The HTML text for the controls.  
 
     For each item, 'item_to_text' and 'item_to_value' are used to
@@ -2146,8 +2144,11 @@ def make_select(field_name,
     # Add a hidden control with the specified field name.  This
     # input will contain the value of the currently-selected
     # UID.
-    result = '<input type="hidden" name="%s" value="%s"/>' \
-             % (field_name, item_to_value(default_value))
+    if update_external_field:
+        result = ''
+    else:
+        result = '<input type="hidden" name="%s" value="%s"/>' \
+                 % (field_name, item_to_value(default_value))
     # Write the handler to update the hidden control when the
     # selection changes in the select control.
     on_change = "update_from_select(document.%s.%s, " \

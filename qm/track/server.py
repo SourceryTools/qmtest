@@ -121,6 +121,7 @@ def start_server(port, address="", log_file=None):
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
+        ( "add-issue-class", qm.track.web.issue_class.handle_add_class ),
         ( "add-issue-field", qm.track.web.issue_class.handle_add_field ),
         ( "config-idb", qm.track.web.issue_class.handle_config_idb ),
         ( "delete-issue-field", qm.track.web.issue_class.handle_delete_field ),
@@ -129,6 +130,7 @@ def start_server(port, address="", log_file=None):
         ( "login", qm.web.handle_login ),
         ( "logout", qm.web.handle_logout ),
         ( "new", qm.track.web.show.handle_new ),
+        ( "new-issue-class", qm.track.web.issue_class.handle_new_class ),
         ( "new-issue-field", qm.track.web.issue_class.handle_new_field ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),

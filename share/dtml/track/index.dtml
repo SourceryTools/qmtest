@@ -30,7 +30,7 @@
          width="100%">
 
    <tbody>
-    <tr>
+    <tr valign="top">
      <td valign="top" width="25%" bgcolor="#f0f0f0">
       <table border="0" cellspacing="0" cellpadding="6" width="100%">
        <tr><th>
@@ -59,73 +59,88 @@
          width="100%"
          bgcolor="#f0f0f0">
    <tbody>
-    <tr><th>Create a New Issue</th></tr>
-    <tr>
-     <td>
-      <dtml-var expr="MakeNewForm()">
-       <dtml-comment><!--
-         Show a select control to choose the issue class, if there is
-         more than one available.
-       --></dtml-comment>
-       <dtml-if expr="_.len(issue_classes) > 1">
-        <select name="class">
-         <dtml-in name="issue_classes">
-         <dtml-let issue_class=sequence-item>
-          <option 
-                  value="<dtml-var expr="issue_class.GetName()">"
-           <dtml-if expr="issue_class == default_issue_class">
-                  selected
-           </dtml-if>
-          >
-           <dtml-var expr="issue_class.GetTitle()">
-          </option>
-         </dtml-let>
-         </dtml-in>
-        </select>
-       </dtml-if>
-       <input type="button" 
-              value=" New "
-              onclick="document.new_form.submit();"/>
-      </form>
-     </td>
-    </tr>
 
-    <tr><td></td></tr>
+    <dtml-if expr="_.len(issue_classes) > 0">
 
-    <tr><th>Show or Edit an Existing Issue</th></tr>
-    <tr>
-     <td>
-      <dtml-var expr="MakeShowForm()">
-       Issue ID: <input type="text" size="8" name="iid"/>
-       <input type="hidden" name="style">
-       <input type="button" 
-              value=" Show "
-              onclick="document.show_form.style.value = 'full';
-                       document.show_form.submit();"/>
-       <input type="button"
-              value=" Edit "
-              onclick="document.show_form.style.value = 'edit';
-                       document.show_form.submit();"/>
-      </form>
-     </td>
-    </tr>
+     <tr><th>Create a New Issue</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="MakeNewForm()">
+        <dtml-comment><!--
+          Show a select control to choose the issue class, if there is
+          more than one available.
+        --></dtml-comment>
+        <dtml-if expr="_.len(issue_classes) > 1">
+         <select name="class">
+          <dtml-in name="issue_classes">
+          <dtml-let issue_class=sequence-item>
+           <option 
+                   value="<dtml-var expr="issue_class.GetName()">"
+            <dtml-if expr="issue_class == default_issue_class">
+                   selected
+            </dtml-if>
+           >
+            <dtml-var expr="issue_class.GetTitle()">
+           </option>
+          </dtml-let>
+          </dtml-in>
+         </select>
+        </dtml-if>
+        <input type="button" 
+               value=" New "
+               onclick="document.new_form.submit();"/>
+       </form>
+      </td>
+     </tr>
 
-    <tr><td></td></tr>
+     <tr><td></td></tr>
 
-    <tr><th>Search and Browse Issues</th></tr>
-    <tr>
-     <td>
-      <dtml-var expr="MakeQueryForm()">
-       Query Expression: 
-       <input type="text" size="40" name="query"/>
-       <input type="button" 
-              onclick="document.query_form.submit();" 
-              value=" Search "/>
-      </form>
-      See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
-      for instructions and more options.
-     </td>
-    </tr>
+     <tr><th>Show or Edit an Existing Issue</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="MakeShowForm()">
+        Issue ID: <input type="text" size="8" name="iid"/>
+        <input type="hidden" name="style">
+        <input type="button" 
+               value=" Show "
+               onclick="document.show_form.style.value = 'full';
+                        document.show_form.submit();"/>
+        <input type="button"
+               value=" Edit "
+               onclick="document.show_form.style.value = 'edit';
+                        document.show_form.submit();"/>
+       </form>
+      </td>
+     </tr>
+
+     <tr><td></td></tr>
+
+     <tr><th>Search and Browse Issues</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="MakeQueryForm()">
+        Query Expression: 
+        <input type="text" size="40" name="query"/>
+        <input type="button" 
+               onclick="document.query_form.submit();" 
+               value=" Search "/>
+       </form>
+       See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
+       for instructions and more options.
+      </td>
+     </tr>
+
+    <dtml-else>  <!-- _len(issue_classes) == 0 -->
+
+     <tr>
+      <td>
+       <p>There are no issue classes in this issue database (IDB).  An
+       administrator must configure the IDB to include at least one
+       issue class before new issues may be added.</p>
+      </td>
+     </tr>
+
+    </dtml-if> <!-- _len(issue_classes) > 0 -->
 
     <dtml-if expr="UserIsInGroup('administrators')">
 
@@ -135,7 +150,7 @@
      <tr>
       <td>
        <form>
-        <dtml-var expr="MakeButton('Configure IDB', 'config-idb')">
+        <dtml-var expr="MakeButton('Configure IDB...', 'config-idb')">
         <dtml-var expr="MakeButton('Shut Down', 'shutdown')">
        </form>
       </td>

@@ -116,6 +116,52 @@ class NewFieldPageInfo(web.PageInfo):
 
 
 
+class AddClassPageInfo(web.PageInfo):
+    """DTML context for the form to add a new issue class."""
+
+    def __init__(self, request, errors={}):
+        # Initialize the base class.
+        web.PageInfo.__init__(self, request)
+        # Convert the error messages in 'errors' from structured text to
+        # HTML. 
+        for key, value in errors.items():
+            errors[key] = qm.structured_text.to_html(value)
+        self.errors = errors
+
+
+    def MakeCategoriesControl(self):
+        """Construct controls for specifying the categories."""
+        
+        # Names of HTML form fields.
+        field_name = "categories"
+        select_name = "_set_" + field_name
+        # Generate the popup page to specify each additional category.
+        page_info = qm.web.PageInfo(self.request)
+        page_info.field_name = field_name
+        page_info.select_name = select_name
+        add_page = web.generate_html_from_dtml("add-category-name.dtml",
+                                               page_info)
+        # Are we redisplaying a form following an invalid submission?
+        if len(self.errors) > 0:
+            # Yes.  Extract the categories from the submission.
+            categories = self.request["categories"]
+            initial_elements = qm.web.decode_set_control_contents(categories)
+        else:
+            # No.  Show the default set of categories.
+            initial_elements = qm.track.issue_class.default_categories
+        # Construct a list of pairs, which 'make_set_control' needs.
+        initial_elements = map(lambda c: (c, c), initial_elements)
+        # Construct the control.
+        return qm.web.make_set_control(
+            form_name="form",
+            field_name=field_name,
+            select_name=select_name,
+            add_page=add_page,
+            initial_elements=initial_elements,
+            request=self.request)
+
+
+
 ########################################################################
 # functions
 ########################################################################
@@ -148,7 +194,11 @@ def _get_issue_class_for_session(request):
 def handle_show_class(request):
     """Handle a web request to show and edit an issue class.
 
-    'request' -- A 'WebRequest' object."""
+    'request' -- A 'WebRequest' object.
+
+    These query field are used from the request object:
+
+      'issue_class' -- The name of the issue class to show."""
 
     session = request.GetSession()
 
@@ -379,6 +429,59 @@ def handle_new_field(request):
         for attribute_name in ["name", "type", "is_set"]:
             del show_request[attribute_name]
         raise qm.web.HttpRedirect, show_request.AsUrl()
+
+
+def handle_add_class(request):
+    """Handle a 'add-issue-class' request.
+
+    This request shows a form for adding a new issue class to the IDB."""
+
+    page_info = AddClassPageInfo(request)
+    return web.generate_html_from_dtml("add-issue-class.dtml", page_info)
+
+   
+def handle_new_class(request):
+    """Handle a 'new-issue-class' request.
+
+    This request processes the form submission for the creation of a new
+    issue class.  These query attributes are used from the request:
+
+      'name' -- The issue class name.
+
+      'title' -- The issue class title.
+
+      'categories' -- The available enumerals for the "categories"
+      field."""
+    
+    # Extract the form contents and validate them.
+    errors = {}
+    class_name = string.strip(request["name"])
+    if not qm.label.is_valid(class_name):
+        errors["name"] = qm.error("invalid class name", class_name=class_name)
+    class_title = string.strip(request["title"])
+    if class_title == "":
+        errors["title"] = qm.error("missing class title")
+    categories = qm.web.decode_set_control_contents(request["categories"])
+
+    # Were there any validation errors?
+    if len(errors) > 0:
+        # Yes.  Redisplay the form, listing the errors.
+        page_info = AddClassPageInfo(request, errors)
+        return web.generate_html_from_dtml("add-issue-class.dtml", page_info)
+    
+    # Construct the issue class.
+    issue_class = qm.track.IssueClass(name=class_name,
+                                      title=class_title,
+                                      categories=categories)
+    # Add it to the IDB.
+    idb = qm.track.get_idb()
+    idb.AddIssueClass(issue_class)
+    # If this is the first issue class, make it the default issue class.
+    if len(idb.GetIssueClasses()) == 1:
+        qm.track.get_configuration()["default_class"] = class_name
+    # Redirect to the IDB configuration page.
+    show_request = request.copy("config-idb")
+    raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
 ########################################################################

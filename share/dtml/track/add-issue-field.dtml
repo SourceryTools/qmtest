@@ -109,11 +109,11 @@
 
  </table>
 
-  <input type="button"
-         value=" OK "
-         onclick="document.form.submit();"/>
-  <dtml-var expr="MakeUrlButton('Cancel',
-                      request.copy('show-issue-class').AsUrl())">
+ <input type="button"
+        value=" OK "
+        onclick="document.form.submit();"/>
+ <dtml-var expr="MakeUrlButton('Cancel',
+                     request.copy('show-issue-class').AsUrl())">
 
  </form>
 

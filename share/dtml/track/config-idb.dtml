@@ -26,16 +26,34 @@
  <form>
 
  <table border="0" 
-        cellpadding="6"
-        cellspacing="2"
+        cellpadding="4"
+        cellspacing="4"
         width="100%"
         columns="2">
+
+  <tr class="heading" valign="top">
+   <td colspan="2">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+     <tr>
+      <td>
+       <b>Issue Classes</b>
+      </td>
+      <td align="right">
+       <dtml-var expr="MakeButton('Add a New Class...', 'add-issue-class')">
+      </td>
+     </tr>
+    </table>
+    <p>An issue classes defines a schema of fields that may be used for
+    an issue.  Each issue belongs to a single issue class, which defines
+    the fields that are present in the issue.</p>
+   </td>
+  </tr>
 
   <dtml-in expr="issue_classes">
   <dtml-let issue_class=sequence-item>
    <tr class="field">
-    <td>
-     <b><dtml-var expr="issue_class.GetName()"></b>
+    <td width="100%">
+     <b><dtml-var expr="issue_class.GetTitle()"></b>
     </td>
     <td>
      <input type="button"

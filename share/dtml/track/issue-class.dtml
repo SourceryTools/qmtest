@@ -28,15 +28,16 @@
    <tr>
     <td>
      <h3>
-      Issue Class <dtml-var expr="issue_class.GetTitle()">
+      Issue Class "<dtml-var expr="issue_class.GetTitle()">"
      </h3>
-    </td>
-   </tr>
+     <p>The internal name of this issue class is 
+     <tt><dtml-var expr="issue_class.GetName()"></tt>.</p>
 
-   <tr>
-    <td>
-     <p>No changes will be made to the issue database until you click on
-     the "Commit Changes" button at the bottom of the form.</p>
+     <p>Mandatory fields are required by <dtml-var expr="GetName()">,
+     and may not be deleted.</p>
+
+     <p><i>No changes will be made to the issue database until you click
+     on the "Commit Changes" button at the bottom of the form.</i></p>
     </td>
    </tr>
   </table>
@@ -59,7 +60,7 @@
         <b>Fields</b>
        </td>
        <td align="right">
-        <dtml-var expr="MakeUrlButton('Add Field...',
+        <dtml-var expr="MakeUrlButton('Add a New Field...',
                                   request.copy('add-issue-field').AsUrl())">
        </td>
       </tr>
@@ -73,6 +74,10 @@
     <tr class="field" valign="top">
      <td width="20%">
       <b><dtml-var expr="field.GetTitle()"></b>
+      <dtml-if expr="field.GetName() in mandatory_field_names">
+      <br>
+      <i>(mandatory field)</i>
+      </dtml-if>
      </td>     
      <td>
       <table border="0" cellpadding="0" cellspacing="4" width="100%">

@@ -401,12 +401,12 @@ def setup_idb_for_internal_use():
 
     idb = get_idb()
 
-    categories = {
-        "common"        : 0,
-        "qmtest"        : 1,
-        "qmtrack"       : 2,
-        "documentation" : 3,
-        }
+    categories = [
+        "common",
+        "qmtest",
+        "qmtrack",
+        "documentation",
+        ]
     priority = {
         "high"      : 3,
         "medium"    : 2,

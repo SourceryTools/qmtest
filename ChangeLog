@@ -1,5 +1,35 @@
 2001-07-02  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (make_set_control): Add ellipsis to Add...
+	(make_select): Add update_external_field parameter.
+	* qm/track/web/query.py (QueryPageInfo.MakePythonQueryHelp):
+	Handle no issue classes case.
+	(QueryPageInfo.MakeCategorySelect): Likewise.
+	(QueryPageInfo.MakeStateSelect): Likewise.
+	* qm/track/web/issue_class.py (AddClassPageInfo): New class.
+	(handle_add_class): New function.
+	(handle_new_class): Likewise.
+	* qm/track/web/index.py (IndexPageInfo.__init__): Don't set
+	default_issue_class if there are none.
+	* qm/track/server.py (start_server): Register add-issue-class,
+	new-issue-class. 
+	* qm/track/issue_class.py (default_categories): Make it a list.
+	(IssueClass.__init__): Convert categories from list to map.
+	* qm/track/config.py (setup_idb_for_internal_use): Make categories
+	a list.
+	* share/diagnostics/track.txt (invalid class name): New
+	diagnostic.
+	(missing class title): Likewise.
+	* share/dtml/track/issue-class.dtml: Use issue class title.
+	Adjust. 
+	* share/dtml/track/index.dtml: Handle no issue class case.
+	* share/dtml/track/config-idb.dtml: Adjust formatting.  Add button
+	to add a new class.
+	* share/dtml/track/add-issue-class.dtml: Likewise.
+	* share/dtml/track/add-category-name.dtml: New template.
+
+2001-07-02  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.MakeLoginForm): Add default_user_id
 	parameter. 
 	(generate_login_form): Set default_user_id attribute.
