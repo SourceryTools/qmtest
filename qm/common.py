@@ -217,8 +217,14 @@ class RcConfiguration(ConfigParser.ConfigParser):
 
     
 ########################################################################
-# functions
+# Functions
 ########################################################################
+
+def get_lib_directory(*components):
+    """Return the path to a file in the QM library directory."""
+
+    return os.path.join(qm.prefix, qm.lib_dir, *components)
+
 
 def get_share_directory(*components):
     """Return the path to a file in the QM data file directory."""

@@ -32,9 +32,13 @@ def get_relative_path(dir1, dir2):
     
     returns -- The relative path from 'dir1' to 'dir2'."""
 
+    dir1 = os.path.abspath(dir1)
+    dir2 = os.path.abspath(dir2)
     rel_path = ""
     while not dir2.startswith(dir1):
         rel_path = os.path.join(os.pardir, rel_path)
         dir1 = os.path.dirname(dir1)
-
+        if dir1 == os.sep:
+            dir1 = ""
+            break
     return os.path.join(rel_path, dir2[len(dir1) + 1:])

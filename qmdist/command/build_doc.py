@@ -20,6 +20,7 @@ from distutils.dir_util import copy_tree, remove_tree
 from distutils.file_util import copy_file
 import os
 import os.path
+from   os.path import normpath
 import string
 import glob
 
@@ -62,11 +63,11 @@ class build_doc(build.build):
         'src' -- The xml (master) source file to be processed.
 
         'builddir' -- The directory from which to call jade."""
-        cwd = os.getcwd()
+
         # Use an absolute path so that calls to chdir do not invalidate
         # the name.
         src = os.path.abspath(src)
-        builddir = os.path.join(self.build_temp, builddir)
+        builddir = os.path.dirname(src)
         if (type == 'sgml'):
             # The stylesheet used for html output sets
             # 'html' to be the output directory. Jade
@@ -74,7 +75,8 @@ class build_doc(build.build):
             self.mkpath(builddir + '/html')
         else:
             self.mkpath(builddir)
-            
+
+        cwd = os.getcwd()
         os.chdir(builddir)            
         cmd = [jade] + args + ['-t', type]
         cmd += ['-d', os.path.join(cwd, 'doc', 'qm-%s.dsl'%type)]
@@ -91,27 +93,27 @@ class build_doc(build.build):
         As this command requires 'jade', it will do nothing if
         that couldn't be found in the default path."""
 
-        source_files = map(os.path.normpath,
+        source_files = map(normpath,
                            ['qm/test/doc/manual.xml',
                             'qm/test/doc/introduction.xml',
                             'qm/test/doc/tour.xml',
                             'qm/test/doc/reference.xml'])
 
         jade = find_executable('jade')
-        dcl = find_file(map(os.path.normpath,
+        dcl = find_file(map(normpath,
                             ['/usr/share/doc/jade*/pubtext/xml.dcl',
                              '/usr/share/doc/openjade*/pubtext/xml.dcl',
                              '/usr/doc/jade*/pubtext/xml.dcl',
                              '/usr/share/sgml/declaration/xml.dcl']),
                         os.path.isfile)
 
-        stylesheets = find_file(map(os.path.normpath,
+        stylesheets = find_file(map(normpath,
                                     ['/usr/lib/sgml/stylesheets/docbook',
                                      '/usr/lib/sgml/stylesheets/dsssl/docbook',
                                      '/usr/share/sgml/docbook/dsssl-stylesheets']),
                                 os.path.isdir)
 
-        dtd = find_file(map(os.path.normpath,
+        dtd = find_file(map(normpath,
                             ['/usr/lib/sgml',
                              '/usr/share/sgml/docbook']),
                         os.path.isdir)
@@ -120,10 +122,15 @@ class build_doc(build.build):
             self.warn("can't build documentation")
             return
 
+        # All files that are generated below are generated in the
+        # source tree.  That is the only way that Distutils will
+        # install the documentation as data files (in "share") rather
+        # than as program files (in "lib").
+        
         #
         # Build html output.
         #
-        target = os.path.normpath(self.build_lib + '/qm/test/doc/html')
+        target = normpath("qm/test/doc/html")
         if newer_group(source_files, target):
             self.announce("building html manual")
             # Remove the target first such that its new mtime reflects
@@ -131,78 +138,56 @@ class build_doc(build.build):
             if os.path.isdir(target): remove_tree(target)
             self.call_jade(jade, ['-D%s'%dtd, '-D%s'%stylesheets],
                            dcl, 'sgml',
-                           os.path.normpath('qm/test/doc/manual.xml'),
-                           os.path.normpath('qm/test/doc'))
+                           normpath('qm/test/doc/manual.xml'),
+                           normpath('qm/test/doc'))
             tidy = find_executable('tidy')
             if tidy:
-                for f in glob.glob(map(os.path.normpath,
-                                       self.build_temp + '/qm/test/doc/html/*.html')):
+                for f in glob.glob(normpath('/qm/test/doc/html/*.html')):
                     spawn([tidy,
                            '-wrap', '72', '-i',
                            '--indent-spaces', '1',
                            '-f', '/dev/null',
                            '-asxml', '-modify', f])
-            if self.build_temp != self.build_lib:
-                src = os.path.normpath(self.build_temp + '/qm/test/doc/html')
-                dst = target
-                self.mkpath(dst)
-                copy_tree(src, dst, 1, 1, 0, 1,
-                          self.verbose, self.dry_run)
 
-        #
-        # Build tex output.
-        #
-        target = os.path.normpath(self.build_lib + '/qm/test/doc/print/manual.tex')
+        target = normpath("qm/test/doc/print/manual.tex")
         if newer_group(source_files, target):
             self.announce("building tex manual")
             # Remove the target first such that its new mtime reflects
             # this build.
             if os.path.isfile(target): os.remove(target)
             self.call_jade(jade,
-                           ['-D%s'%dtd, '-D%s'%stylesheets, '-o', 'manual.tex'],
+                           ['-D%s'%dtd, '-D%s'%stylesheets, '-o',
+                            'manual.tex'],
                            dcl, 'tex',
-                           os.path.normpath('qm/test/doc/manual.xml'),
-                           os.path.normpath('qm/test/doc'))
+                           normpath('qm/test/doc/manual.xml'),
+                           normpath('qm/test/doc'))
 
-            # Jade places the output TeX source file in the current directory,
-            # so move it where we want it afterwards.
-            # We have to change -- into -{-} so that TeX does not generate long 
+            # Jade places the output TeX source file in the current
+            # directory, so move it where we want it afterwards.  We have
+            # to change -- into -{-} so that TeX does not generate long
             # dashes.  This is a bug in Jade.
-            cwd = os.getcwd()
-            self.mkpath(self.build_temp + '/qm/test/doc/print')
-            os.chdir(os.path.normpath(self.build_temp + '/qm/test/doc'))
+            orig_tex_manual = normpath("qm/test/doc/manual.tex")
+            self.mkpath(normpath("qm/test/doc/print"))
             self.spawn(['sh', '-c',
-                        'sed -e "s|--|-{-}|g" < manual.tex > print/manual.tex'])
-            os.remove('manual.tex')
-            os.chdir(cwd)
-            if self.build_temp != self.build_lib:
-                src = os.path.normpath(self.build_temp + '/qm/test/doc/print/manual.tex')
-                dst = target
-                self.mkpath(os.path.dirname(dst))
-                copy_file(src, target,
-                          1, 1, 1, None, self.verbose, self.dry_run)
+                        ('sed -e "s|--|-{-}|g" < %s > %s'
+                         % (orig_tex_manual,
+                            normpath("qm/test/doc/print/manual.tex")))])
+            os.remove(orig_tex_manual)
 
         #
         # Build pdf output.
         #
-        target = os.path.normpath(self.build_lib + '/qm/test/doc/print/manual.pdf')
+        target = normpath("qm/test/doc/print/manual.pdf")
         if newer_group(source_files, target):
             self.announce("building pdf manual")
             # Remove the target first such that its new mtime reflects
             # this build.
             if os.path.isfile(target): os.remove(target)
             cwd = os.getcwd()
-            os.chdir(os.path.normpath(self.build_temp + '/qm/test/doc/print/'))
-            self.spawn(['pdfjadetex', 'manual.tex'])
-            self.spawn(['pdfjadetex', 'manual.tex'])
-            self.spawn(['pdfjadetex', 'manual.tex'])
+            os.chdir("qm/test/doc/print")
+            for i in xrange(3):
+                self.spawn(['pdfjadetex', "manual.tex"])
             os.chdir(cwd)
-            if self.build_temp != self.build_lib:
-                src = os.path.normpath(self.build_temp + '/qm/test/doc/print/manual.pdf')
-                dst = target
-                self.mkpath(os.path.dirname(dst))
-                copy_file(src, target,
-                          1, 1, 1, None, self.verbose, self.dry_run)
 
         #
         # Build reference manual via 'happydoc'.

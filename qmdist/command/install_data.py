@@ -39,15 +39,20 @@ class install_data(base.install_data):
         i = self.distribution.get_command_obj('install')
         il = self.distribution.get_command_obj('install_lib')
 
-        config = os.path.join(il.install_dir, 'qm/config.py')
+        config = os.path.join(il.install_dir, "qm", "config.py")
         self.announce("generating %s" %(config))
         outf = open(config, "w")
         outf.write("version='%s'\n" % (self.distribution.get_version()))
-        # Compute the path to the data directory.
-        data_dir = os.path.join(self.install_dir, "qm")
-        # Encode the relative path from the installation prefix to the
+        prefix = i.root or i.prefix
+
+        # Record the relative path from the installation prefix to the
         # data directory.
+        data_dir = os.path.join(self.install_dir, "qm")
         outf.write("data_dir='%s'\n"
-                   % get_relative_path (i.prefix, data_dir))
+                   % get_relative_path (prefix, data_dir))
+        # And do the library directory.
+        lib_dir = os.path.join(il.install_dir, "qm")
+        outf.write("lib_dir='%s'\n"
+                   % get_relative_path (prefix, lib_dir))
         outf.write("\n")
         self.outfiles.append(config)

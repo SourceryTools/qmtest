@@ -3,3 +3,6 @@ config.log
 config.cache
 config.status
 qm.spec
+build
+dist
+MANIFEST

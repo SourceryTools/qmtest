@@ -1,3 +1,26 @@
+2003-11-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* .cvsignore: Add build, dist, and MANIFEST.
+	* MANIFEST.in: Update for recent changes.
+	* setup.py: Put qm/test/classes in lib, not share.  Add more
+	metadata.  Correct documentation handling.
+	* qm/__init__.py: Import lib_dir from qm.config.
+	* common.py (get_lib_directory): New function.
+	* qm/test/base.py (get_extension_directories): Use
+	get_lib_directory, not get_share_directory.
+	* qm/test/clases/__init__.py: New file.
+	* qmdist/.cvsignore: Likewise.
+	* qmdist/command/.cvsignore: Likeiwse.
+	* qmdist/command/__init__.py (get_relative_path): Robustify.
+	* qmdist/command/build.py: New file.
+	* qmdist/command/build_doc.py (build_doc.call_jade): Put generated
+	files in the source directory.
+	(build_doc.run): Update accordingly.
+	* qmdist/command/install_data.py (install_data.run): Set
+	lib_dir in config.py.
+	* qmdist/command/install_lib.py: New file.
+	* qmdist/command/install_scripts.py: Generalize prefix handling.
+
 2003-11-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* test/regress/xml1/asdfasdf.qmt: Do not hard-code path to test.

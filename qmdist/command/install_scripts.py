@@ -42,14 +42,15 @@ class install_scripts(base.install_scripts):
         # Encode the relative path from that script to the top of the
         # installation directory.
         i = self.distribution.get_command_obj('install')
-        rel_prefix = get_relative_path(self.install_dir, i.prefix)
+        prefix = i.root or i.prefix
+        rel_prefix = get_relative_path(self.install_dir, prefix)
         assignment = 'rel_prefix = "%s"' % rel_prefix
         qmtest_script = re.sub("rel_prefix = .*", assignment,
                                qmtest_script)
         # Encode the relative path from the prefix to the library
         # directory.
         il = self.distribution.get_command_obj('install_lib')
-        rel_libdir = get_relative_path(i.prefix, il.install_dir)
+        rel_libdir = get_relative_path(prefix, il.install_dir)
         assignment = 'rel_libdir = "%s"' % rel_libdir
         qmtest_script = re.sub("rel_libdir = .*", assignment,
                                qmtest_script)
