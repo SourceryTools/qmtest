@@ -52,11 +52,11 @@
    To remove elements, the <userinput>-=</userinput> symbol is used
    instead.  All of the commands to create and edit issues use the
    above three operators to specify new values for fields. Alternately,
-   you may specify the issue to be created or edited in its XML form 
+   you may specify the issue to be created or edited in its &xml; form 
    as described in Section <link linkend="sec-xml-repr"
    endterm="sec-xml-repr-title"/>. If you choose to perform operations on
    the issue in this way, simply give the command and then, on
-   <literal>stdin</literal>, give the XML of the issue to be created,
+   <literal>stdin</literal>, give the &xml; of the issue to be created,
    edited, or queried on.</para>
    <section id="sec-qmtrack-commands">
     <title id="sec-qmtrack-commands-title">&qmtrack-cmd commands</title>
@@ -213,163 +213,135 @@
    <para>To create, edit, and query issues via e-mail, simply construct an
    e-mail with the command as you would issue it on the command line and
    send it to the database. The database will respond with the information
-   in xml form. For example, to create a new issue, you can send an e-mail
+   in &xml; form. For example, to create a new issue, you can send an e-mail
    with this body:
-   <programlisting>
-<![CDATA[
-  create summary="My issue" categories+=foo categories+=bar
-]]>
-   </programlisting>
+    <programlisting>
+     create summary="My issue" categories+=foo categories+=bar
+    </programlisting>
    or with this body:
-   <programlisting>
-<![CDATA[
-  create
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <field-data>
-    <field name="summary">My issue</field>
-    <field name="categories">
-      <item>foo</item>
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-   </programlisting>
+    <programlisting><![CDATA[
+create
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <field-data>
+  <field name="summary">My issue</field>
+  <field name="categories">
+    <item>foo</item>
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
    Either way, you would receive an e-mail back containing the text:
-   <programlisting>
-<![CDATA[
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <iid>iss2</iid>
-   <field-data>
-    <field name="summary">My issue</field>
-    <field name="categories">
-      <item>foo</item>
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-   </programlisting>
+    <programlisting><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <iid>iss2</iid>
+ <field-data>
+  <field name="summary">My issue</field>
+  <field name="categories">
+    <item>foo</item>
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
    indicating that the issue has been created. To edit an issue, you
    may either give the command line for editing the issue or request
    that the issue be sent back to you for editing and subsequently
    send it back after you have edited it. For example, to remove the
    category, foo, from the issue we just created, you could send the
    following message:
-   <programlisting>
-<![CDATA[
-  edit iss2 categories-=foo
-  ]]>
-   </programlisting>
+    <programlisting>
+     edit iss2 categories-=foo
+    </programlisting>
    or you could send the following message:
-   <programlisting>
-<![CDATA[
-  edit iss2
-  ]]>
-  </programlisting>
+    <programlisting>
+     edit iss2
+    </programlisting>
+   with no arguments to the edit command except for the issue. Sending
+   an email of this form will cause the database to send you the
+   following message:
+    <programlisting><![CDATA[
+edit
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <iid>iss2</iid>
+ <field-data>
+  <field name="summary">My issue</field>
+  <field name="categories">
+    <item>foo</item>
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
+   which you would then edit to look like:
+    <programlisting><![CDATA[
+edit
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <iid>iss2</iid>
+ <field-data>
+  <field name="summary">My issue</field>
+  <field name="categories">
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
+   (removing the category "foo") and send back to the database.  If
+   you wish to add an attachment to this revision of the issue, you
+   can simply attach it to the email. In either case, you after the
+   edit is complete, you would receive a message that looked like
+   this: <programlisting><![CDATA[ <?xml version="1.0"?> <!DOCTYPE
+   issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <iid>iss2</iid>
+ <field-data>
+  <field name="summary">My issue</field>
+  <field name="categories">
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
+   </para>
 
-  with no arguments to the edit command except for the issue. Sending an
-  email of this form will cause the database to send you the following
-  message:
+   <para>As with creating and editing, you may also specify a query by
+   sending an e-mail to the database. If you issue the command as is
+   done on the command line, the syntax is identical to that on the
+   command line. However, if you choose to use an &xml; representation
+   for your query, you are more limited in the way you search. Imagine
+   the following body of an e-mail message to be sent to the database:
+    <programlisting><![CDATA[
+query
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+ <field-data>
+  <field name="categories">
+    <item>bar</item>
+  </field>
+ </field-data>
+</issue>
+    ]]></programlisting>
+   This will return the &xml; representation for any issues that have
+   <literal>bar</literal> in their category set. This would be
+   equivalent to sending a message containing the body:
+    <programlisting>
+     query 'bar in categories'
+    </programlisting>
+   </para>
 
-  <programlisting>
-<![CDATA[
-  edit
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <iid>iss2</iid>
-   <field-data>
-    <field name="summary">My issue</field>
-    <field name="categories">
-      <item>foo</item>
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-  </programlisting>
+   <para>For more information about the query syntax that is allowed
+   on the command line, see the section on <link linkend="sec-queries"
+   endterm="sec-queries-title"></link>.</para>
 
-  which you would then edit to look like:
-
-  <programlisting>
-<![CDATA[
-  edit
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <iid>iss2</iid>
-   <field-data>
-    <field name="summary">My issue</field>
-    <field name="categories">
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-  </programlisting>
-
-  (removing the category "foo") and send back to the database.  If you
-  wish to add an attachment to this revision of the issue, you can simply
-  attach it to the email. In either case, you after the edit is complete,
-  you would receive a message that looked like this:
-
-  <programlisting>
-<![CDATA[
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <iid>iss2</iid>
-   <field-data>
-    <field name="summary">My issue</field>
-    <field name="categories">
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-  </programlisting>
-
-  As with creating and editing, you may also specify a query by sending an
-  e-mail to the database. If you issue the command as is done on the
-  command line, the syntax is identical to that on the command
-  line. However, if you choose to use an xml representation for your
-  query, you are more limited in the way you search. Imagine the following
-  body of an e-mail message to be sent to the database:
-
-  <programlisting>
-<![CDATA[
-  query
-  <?xml version="1.0"?>
-  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
-  <issue>
-   <field-data>
-    <field name="categories">
-      <item>bar</item>
-    </field>
-   </field-data>
-  </issue>
-  ]]>
-  </programlisting>
-
-  This will return the xml representation for any issues that have
-  <literal>bar</literal> in their category set. This would be equivalent
-  to sending a message containing the body:
-
-  <programlisting>
-<![CDATA[
-  query 'bar in categories'
-  ]]>
-  </programlisting>
-
-  For more information about the query syntax that is allowed on the
-  command line, see the section on <link linkend="sec-queries"
-                                         endterm="sec-queries-title"></link>.
-  </para>
   </section>
 
   <section>

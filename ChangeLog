@@ -1,3 +1,7 @@
+2000-12-05  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtrack/user-interface.xml: Tidy up formatting.
+
 2000-12-05  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/user-interface.xml: Fix inconsistencies with
