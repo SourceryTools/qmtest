@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE targets PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "http://www.software-carpentry.com/qm/xml/targets.dtd">
+<targets>
+ <target>
+  <name>process</name>
+  <class>process_target.ProcessTarget</class>
+  <group>Group</group>
+  <property name="processes">4</property>
+  <property name="qmtest">qm/test/qmtest</property>
+ </target>
+</targets>
+

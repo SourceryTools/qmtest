@@ -28,7 +28,9 @@
 	(ThreadTarget.__init__): Expect "concurrency" to be a string.
 	* qm/test/share/dtml/dir.dtml: Fix grammar in displayed message.
 	* qm/test/share/messages/diagnostics.txt: Add message.
-
+	* tests/QMTest/thread_target: New file.
+	* tests/QMTest/process_target: New file.
+	
 2002-08-08  Zack Weinberg  <zack@codesourcery.com>
 
 	Revised test suite.
