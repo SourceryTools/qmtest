@@ -53,6 +53,7 @@
 <include file="sapcat_design.xml" target="sub"/>
 <include file="sapcat_devplan.xml" target="sub"/>
 <include file="sapcat_summary.xml" target="sub"/>
+<include file="sapcat_app_ideas.xml" target="sub"/>
 
 <footnotes/>
 

@@ -263,7 +263,7 @@ class DocHtml(docfmt.DocFormat):
         tag = self.start_contents_entry(2, tag)
         w('<h2><a href="#contents" name="' + EntityString(tag) + '">')
         if useLabel:
-            w(alabel + '</a>&nbsp;&nbsp;')
+            w('Appendix&nbsp;' + alabel + '</a>:&nbsp;&nbsp;')
         if key is not None:
             self._hdr_mapTarg[key] = EntityString(tag)
             self._hdr_mapName[key] = alabel

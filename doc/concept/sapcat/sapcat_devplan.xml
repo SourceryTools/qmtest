@@ -56,7 +56,7 @@
     include caching; the {:scSCAN:} and {:scADAPT:} modules need to be
     enhanced to work with C header files, and the {:scBUILD:} needs to
     developed to work with <code>Makefile</code>s.  During this time,
-    the {:scPD} system will also be expanded.
+    the {:scPD:} system will also be expanded.
 </p>
 
 <h3>Phase 3</h3>
