@@ -55,7 +55,11 @@ active_menu = null;
 function show_menu(event, id) {
     var base, menu, x, y;
     
-    base = event.currentTarget;
+    if (window.event) {
+        base = window.event.toElement;
+    } else {
+        base = event.currentTarget;
+    }
     x = get_left(base);
     y = get_bottom(base);
     menu = document.getElementById(id);
@@ -71,7 +75,11 @@ function show_menu(event, id) {
 function hide_menu(event) {
     var target;
   
-    target = event.relatedTarget;
+    if (window.event) {
+        target = window.event.toElement;
+    } else {
+        target = event.relatedTarget;
+    }
     if (!is_parent_of(this, target))
         this.style.visibility = "hidden";
 }
@@ -83,7 +91,11 @@ function hide_active_menu(event) {
     if (!active_menu)
         return;
   
-    target = event.relatedTarget;
+    if (window.event) {
+        target = window.event.toElement;
+    } else {
+        target = event.relatedTarget;
+    }
     if (!is_parent_of(active_menu, target))
         active_menu.style.visibility = "hidden";
 }

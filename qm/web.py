@@ -551,7 +551,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return
         # Open the file.
         try:
-            file = open(path, "r")
+            file = open(path, "rb")
         except IOError:
             # Send a generic 404 if there's a problem opening the file.
             self.send_error(404, "File not found.")

@@ -1,3 +1,13 @@
+2002-11-29    <Mark Mitchell <mark@codesourcery.com>>
+
+	* qm/web.py (WebRequestHandler.__HandleFileRequest): Open files in 
+	binary mode.
+	* qm/test/share/dtml/dir.dtml: Avoid constructs which IE does not 
+	like.
+	* qm/test/share/dtml/navigation-bar.dtml: Support IE event model.
+	* qm/test/share/web/images/logo.png: Remove.
+	* qm/test/share/web/images/logo.gif: New file.
+
 2002-11-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Note that Netscape 4 is no longer a supported browser.
