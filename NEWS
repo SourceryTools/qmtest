@@ -11,6 +11,13 @@ set up, the GUI now displays a link to the resource result from the
 test result.  (Previously, there was no way to get information about
 resource failures in the GUI.)
 
+The GUI now offers a choice of available prerequisite tests and
+resources when editing a test.
+
+The substitutions field for the FileContentsTest now works correctly
+in the GUI.  This is an incompatible change; tests that use this test
+class will require hand-editing.
+
 QM 2.0.1
 ========
 
