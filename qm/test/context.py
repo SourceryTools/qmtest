@@ -125,7 +125,7 @@ class Context(types.DictType):
 
         'key' -- A string.
 
-        'default' -- A default value.
+        'default' -- A default boolean value.
 
         returns -- The value associated with 'key' in the context,
         interpreted as a boolean.
@@ -144,7 +144,7 @@ class Context(types.DictType):
             if default is None:
                 raise ContextException(key)
             else:
-                valstr = default
+                return default
 
         try:
             return qm.common.parse_boolean(valstr)
