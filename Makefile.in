@@ -33,7 +33,8 @@
 
 TOPDIR		= @top_srcdir@
 
-SUBDIRS		= doc
+SUBDIRS		= doc \
+		  zope-dtml/ExtensionClass
 
 PYTHONDOCDIRS	= qm
 
@@ -43,11 +44,17 @@ include $(TOPDIR)/standard.mk
 # additional rules
 ########################################################################
 
-# The Gadfly module requires one-time setup.
-setup:		gadfly/sqlwhere.py
+# Some modules require one-time setup.
+setup:		gadfly/sqlwhere.py \
+		zope-dtml/ExtensionClass/Makefile
 
 # This follows the setup instructions in the Gadfly package.  The
 # target is a file generated in the setup procedure.  See
 # gadfly/index.html.
 gadfly/sqlwhere.py:
 	cd gadfly; python gfinstall.py
+
+zope-dtml/ExtensionClass/Makefile:
+	cd zope-dtml/ExtensionClass; \
+	cp /usr/lib/python1.5/config/Makefile.pre.in .; \
+        make -f Makefile.pre.in boot

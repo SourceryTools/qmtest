@@ -1,3 +1,16 @@
+2001-02-08  Alex Samuel  <samuel@codesourcery.com>
+
+	Module zope-dtml is now part of this module.  Add configury to set
+	up and use it.
+	
+	* configure.in (/usr/lib/python1.5/config/Makefile.pre.in): Check file.
+	* configure: Regenerate.
+	* Makefile.in (SUBDIRS): Add zope-dtml/ExtensionClass.
+	(setup): Add zope-dtml/ExtensionClass/Makefile.
+	(zope-dtml/ExtensionClass/Makefile): New rule.
+	* standard.mk.in (PYTHON): Build PYTHONPATH.
+	(PYTHONDIRS): New variable.
+
 2001-01-09  Benjamin Chelf  <chelf@mustangben.stanford.edu>
 
 	* qm/command_line.py: New file.

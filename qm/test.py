@@ -278,7 +278,6 @@ regression_tests = [
 if __name__ == "__main__":
     qm.regression_test.run_regression_test_driver(regression_tests)
 
-
 ########################################################################
 # Local Variables:
 # mode: python

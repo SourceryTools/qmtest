@@ -46,6 +46,11 @@
 #
 ########################################################################
 
+# This trick is necessary to create a make variable containing a
+# single space.  See the "(make)Flavors" info page.
+NULLSTRING	:=
+SPACE		:= $(NULLSTRING) # This comment needs to be here.
+
 ########################################################################
 # Configuration
 ########################################################################
@@ -58,7 +63,10 @@ BUILDDIR	= $(TOPDIR)/build
 DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
-PYTHON		= PYTHONPATH=$(TOPDIR) @PYTHON@
+PYTHON		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) /usr/bin/python
+PYTHONDIRS	= $(TOPDIR) \
+                  $(TOPDIR)/zope-dtml \
+                  $(TOPDIR)/zope-dtml/ExtensionClass
 
 # Tidy configuration.
 TIDY 		= @TIDY@
