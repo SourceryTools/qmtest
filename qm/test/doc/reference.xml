@@ -1633,11 +1633,15 @@
        <para><classname>command.ExecTest</classname> adds additional
        environment variables automatically.</para>
 
-       <para>In addition, every context property whose key does not
-       contain a &quot;.&quot; and whose value is a string is
-       accessible as an environment variable; the name of the
+       <para>In addition, every context property whose value is a string
+       is accessible as an environment variable; the name of the
        environment variable is the name of the context property,
-       prefixed with &quot;<envar>QMV_</envar>&quot;.</para>
+       prefixed with &quot;<envar>QMV_</envar>&quot; and with any dots
+       (&quot;.&quot;) replaced by a double underscore
+       (&quot;__&quot;).  For example, the value of the context property
+       &quot;CompilerTable.c_path&quot; is available as the value of the
+       environment variable
+       &quot;<envar>QMV_CompilerTable__c_path</envar>&quot;.</para>
       </glossdef>
      </glossentry>
 

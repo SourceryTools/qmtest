@@ -1,3 +1,27 @@
+2003-08-11  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/classes/command.py (ExecTestBase.MakeEnvironment):
+	Replace "." with "__" when turning context keys into environment
+	variables.  Document in class docstring.
+	(ExecTest.Run): Fix indentation.
+	* qm/test/doc/reference.xml: Document new handling of context
+	variables with "."s in them.
+	* tests/regress/QMTest/selftest.py: Import os.path.  Add more
+	documentation.
+	(RegTest.Run): Check for a context file, and if one is found,
+	use it.
+	* tests/regress/env_context1: New directory.
+	* tests/regress/env_context1/QMTest: New directory.
+	* tests/regress/env_context1/QMTest/configuration: New file.
+	* tests/regress/env_context1/context: New file.
+	* tests/regress/env_context1/results.qmr: New file.
+	* tests/regress/env_context1/exectest_nodot.qmt: New file.
+	* tests/regress/env_context1/exectest_dot.qmt: New file.
+	* tests/regress/env_context1/shellcommandtest_nodot.qmt: New file.
+	* tests/regress/env_context1/shellcommandtest_dot.qmt: New file.
+	* tests/regress/env_context1/shellscripttest_nodot.qmt: New file.
+	* tests/regress/env_context1/shellscripttest_dot.qmt: New file.
+	
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (get_lib_directory): Remove.

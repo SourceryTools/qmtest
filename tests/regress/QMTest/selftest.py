@@ -18,6 +18,7 @@
 ########################################################################
 
 import os
+import os.path
 import re
 import qm.executable
 from   qm.test.test import *
@@ -34,7 +35,13 @@ class RegTest(Test):
     directory.  Each such subdirectory is a complete test database in
     itself, such that running "qmtest -D . run -O results.qmr" in that
     directory should succeed, reporting all tests completed as
-    expected.  The test is judged to have succeeded if so."""
+    expected.  The test is judged to have succeeded if so.
+
+    The context key "qmtest_path" should contain the path to the qmtest
+    executable.  If the context key "qmtest_target" is defined, the
+    test database will be run using that target.  If the test database
+    contains a file "context", then the test database will be run with
+    it as a context file."""
 
     arguments = [
         qm.fields.TextField(
@@ -60,6 +67,7 @@ class RegTest(Test):
         path = self.path
         results = os.path.join(path, "results.qmr")
         output = os.path.join(path, "output.qmr")
+        context_file = os.path.join(path, "context")
 
         # Sanity check the target location.
         assert os.path.isdir(os.path.join(path, "QMTest"))
@@ -74,6 +82,10 @@ class RegTest(Test):
         # If the context also specifies a target, add that.
         if context.has_key("qmtest_target"):
             argv += ("-T", context["qmtest_target"])
+
+        # And if there is a context file, use it.
+        if os.path.exists(context_file):
+            argv += ("-C", context_file)
 
         e = qm.executable.RedirectedExecutable()
         status = e.Run(argv)

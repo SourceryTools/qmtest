@@ -79,7 +79,10 @@ class ExecTestBase(Test):
             of the environment variable is the name of the context
             property, prefixed with 'QMV_'.  For example, if the value
             of the context property named 'target' is available in the
-            environment variable 'QMV_target'.""" )),
+            environment variable 'QMV_target'.  Any dots in the context
+            key are replaced by a double-underscore; e.g.,
+            "CompilerTable.c_path" will become
+            "QMV_CompilerTable__c_path".""" )),
         
         qm.fields.IntegerField(
             name="exit_code",
@@ -137,8 +140,8 @@ class ExecTestBase(Test):
         environment = os.environ.copy()
         # Copy context variables into the environment.
         for key, value in context.items():
-            if "." not in key and type(value) == types.StringType:
-                name = "QMV_" + key
+            if  isinstance(value, str):
+                name = "QMV_" + key.replace(".", "__")
                 environment[name] = value
         # Extract additional environment variable assignments from the
         # 'Environment' field.
@@ -296,7 +299,7 @@ class ExecTest(ExecTestBase):
             return
 
         self.RunProgram(self.program, 
-			[ self.program ] + self.arguments,
+                        [ self.program ] + self.arguments,
                         context, result)
 
 
