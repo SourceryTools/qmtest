@@ -598,46 +598,6 @@ class Database(qm.extension.Extension):
         raise NoSuchTestError(test_id)
 
 
-    def WriteTest(self, test):
-        """Store 'test' in the database.
-
-        'test' -- A 'TestDescriptor' indicating the test that should
-        be stored.
-
-        'Attachment's associated with 'test' may be located in the
-        'AttachmentStore' associated with this database, or in some
-        other 'AttachmentStore'.  In the case that they are stored
-        elsewhere, they must be copied into the 'AttachmentStore'
-        associated with this database by use of the
-        'AttachmentStore.Store' method.  The caller, not this method,
-        is responsible for removing the original version of the
-        attachment, if necessary.
-         
-        The 'test' may be new, or it may be a new version of an existing
-        test.  If it is a new version of an existing test, the database
-        may wish to clear out any storage associated with the existing
-        test.  However, it is possible that 'Attachment's associated
-        with the existing test are still present in 'test', in which
-        case it would be a mistake to remove them.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
-
-
-    def RemoveTest(self, test_id):
-        """Remove the test named 'test_id' from the database.
-
-        'test_id' -- A label naming the test that should be removed.
-
-        raises -- 'NoSuchTestError' if there is no test in the database
-        named 'test_id'.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
-
-
     def HasTest(self, test_id):
         """Check whether or not the database has a test named 'test_id'.
 
@@ -700,38 +660,6 @@ class Database(qm.extension.Extension):
         raise NoSuchSuiteError(suite_id)
 
 
-    def WriteSuite(self, suite):
-        """Store 'suite' in the database.
-
-        'suite' -- An instance of 'Suite' (or a derived class of
-        'Suite') that should be stored.  The 'suite' will not be
-        implicit.
-
-        The 'suite' may be new, or it may be a new version of an
-        existing testsuite.  If 'suite' is a new version of an existing
-        suite, it may name fewer tests than the existing version.
-        However, this method should not remove any of the tests
-        themselves.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
-
-
-    def RemoveSuite(self, suite_id):
-        """Remove the suite named 'suite_id' from the database.
-
-        'suite_id' -- A label naming the suite that should be removed.
-        The suite will not be implicit.
-          
-        raises -- 'NoSuchSuiteError' if there is no suite in the
-        database named 'test_id'.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
-
-
     def HasSuite(self, suite_id):
         """Check whether or not the database has a suite named 'suite_id'.
 
@@ -789,34 +717,6 @@ class Database(qm.extension.Extension):
         database named 'resource_id'."""
 
         raise NoSuchResourceError(resource_id)
-
-
-    def WriteResource(self, resource):
-        """Store 'resource' in the database.
-
-        'resource' -- A 'ResourceDescriptor' indicating the resource that
-        should be stored.
-
-        The 'resource' may be new, or it may be a new version of an
-        existing resource.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
-
-
-    def RemoveResource(self, resource_id):
-        """Remove the resource named 'resource_id' from the database.
-
-        'resource_id' -- A label naming the resource that should be
-        removed.
-
-        raises -- 'NoSuchResourceError' if there is no resource in the
-        database named 'resource_id'.
-
-        Derived classes must override this method."""
-
-        raise NotImplementedError
 
 
     def HasResource(self, resource_id):
@@ -1043,11 +943,42 @@ class Database(qm.extension.Extension):
         return test_ids.keys(), suite_ids.keys()
 
 
+    def RemoveExtension(self, id, kind):
+        """Remove the extension 'id' from the database.
+
+        'id' -- A label for the 'Extension' instance stored in the
+        database.
+
+        'kind' -- The kind of 'Extension' stored with the given 'id'.
+        Some databases store different kinds of 'Extension' in different
+        namespaces so that it is possible for there to be more than one
+        'Extension' with the same 'id' in a single database."""
+
+        raise NotImplementedError
+        
+        
+    def WriteExtension(self, id, extension):
+        """Store 'extension' in the database, using the name 'id'.
+
+        'id' -- A label for the 'extension'.
+        
+        'extension' -- An instance of 'Extension'.
+
+        The 'extension' is stored in the database.  If there is a
+        previous item in the database with the same id', it is removed
+        and replaced with 'extension'.  Some databases may not be able
+        to store all 'Extension' instances; those database must throw an
+        exception when an attempt is made to store such an
+        'extension'."""
+
+        raise NotImplementedError
+        
+        
     def IsModifiable(self):
         """Returns true iff this database is modifiable.
 
         returns -- True iff this database is modifiable.  If the
-        database is modifiable, it supports operations like 'WriteTest'
+        database is modifiable, it supports operatings like 'Write'
         that make changes to the structure of the databaes itself.
         Otherwise, the contents of the database may be viewed, but not
         modified."""

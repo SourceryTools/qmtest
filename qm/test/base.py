@@ -397,6 +397,7 @@ extension_kinds = [ 'database',
                     'resource',
                     'result_reader',
                     'result_stream',
+                    'suite',
                     'target',
                     'test', ]
 """Names of different kinds of QMTest extension classes."""
@@ -416,6 +417,7 @@ import qm.label
 import qm.test.resource
 import qm.test.result_reader
 import qm.test.result_stream
+import qm.test.suite
 import qm.test.target
 import qm.test.test
 
@@ -425,6 +427,7 @@ __extension_bases = {
     'resource' : qm.test.resource.Resource,
     'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
+    'suite' : qm.test.suite.Suite,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test
     }

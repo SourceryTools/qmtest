@@ -1122,10 +1122,9 @@
     <envar>QMTEST_CLASS_PATH</envar>.</para>
 
     <para>The <replaceable>kind</replaceable> argument tells QMTest
-    what kind of extension class you are registering.  The
-    <replaceable>kind</replaceable> must be one of
-    <literal>test</literal>, <literal>resource</literal>,
-    <literal>target</literal>, or <literal>database</literal>.</para>
+    what kind of extension class you are registering.  If you invoke 
+    <command&qmtest-cmd; register</command> with no arguments it will
+    provide you with a list of the available extension kinds.</para>
 
     <para>The <replaceable>class-name</replaceable> argument gives the
     name of the class in the form
@@ -2374,14 +2373,13 @@
   instantiate an instance of the test class itself as
   appropriate.</para>
 
-  <para>The <function>WriteTest</function> is the inverse of
+  <para>The <function>Write</function> function is the inverse of
   <function>GetTest</function>.  The test database is responsible for
-  storing the <classname>TestDescriptor</classname> provided to
-  <function>WriteTest</function>.  The name of test can be obtained
-  by calling <function>TestDescriptor.GetId</function>.  When the
-  <function>RemoveTest</function> function is called the database is
-  responsible for removing the test named by the
-  <parameter>test_id</parameter> parameter.</para>
+  storing the <classname>Test</classname> provided.  The name of test
+  can be obtained by calling <function>GetId</function> on the
+  <classname>Test</classname>.  When the <function>Remove</function>
+  function is called the database is responsible for removing the test
+  named by the <parameter>id</parameter> parameter.</para>
 
   <para>The functions that handle resources are analogous to those
   for tests.  For exmaple, <function>GetResource</function> plays the

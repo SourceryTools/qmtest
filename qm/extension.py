@@ -112,6 +112,68 @@ class Extension(object):
         if field is None:
             raise AttributeError, name
         return field.GetDefaultValue()
+
+
+    def MakeDomElement(self, document, element = None):
+        """Create a DOM node for 'self'.
+
+        'document' -- The DOM document that will contain the new
+        element.
+        
+        'element' -- If not 'None' the extension element to which items
+        will be added.  Otherwise, a new element will be created by this
+        function.
+        
+        returns -- A new DOM element corresponding to an instance of the
+        extension class.  The caller is responsible for attaching it to
+        the 'document'."""
+
+        # Get all of the arguments.
+        arguments = get_class_arguments_as_dictionary(self.__class__)
+        import sys
+        print >> sys.stderr, arguments
+        # Determine which subset of the 'arguments' have been set
+        # explicitly.
+        explicit_arguments = {}
+        for name, field in arguments.items():
+            # Do not record computed fields.
+            if field.IsComputed():
+                continue
+            print >> sys.stderr, name
+            if self.__dict__.has_key(name):
+                explicit_arguments[name] = self.__dict__[name]
+
+        return make_dom_element(self.__class__, explicit_arguments,
+                                document, element)
+
+
+    def MakeDomDocument(self):
+        """Create a DOM document for 'self'.
+
+        'extension_class' -- A class derived from 'Extension'.
+
+        'arguments' -- The arguments to the extension class.
+        
+        returns -- A new DOM document corresponding to an instance of the
+        extension class."""
+        
+        document = qm.xmlutil.create_dom_document(
+            public_id = "Extension",
+            document_element_tag = "extension"
+            )
+        self.MakeDomElement(document, document.documentElement)
+        return document
+
+
+    def Write(self, file):
+        """Write an XML description of 'self' to a file.
+        
+        'file' -- A file object to which the data should be written."""
+        
+        document = self.MakeDomDocument()
+        document.writexml(file)
+                                
+        
                 
 ########################################################################
 # Functions

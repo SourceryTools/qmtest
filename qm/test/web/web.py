@@ -1695,7 +1695,13 @@ class QMTestServer(qm.web.WebServer):
             return NewSuitePage(self, suite_id, field_errors)(request)
         else:
             # Everything looks good.  Make an empty suite.
-            suite = Suite(self.__database, suite_id)
+            suite_class = qm.test.base.get_extension_class(
+               "explicit_suite.ExplicitSuite",
+               "suite",
+               self.GetDatabase())
+            extras = { suite_class.EXTRA_DATABASE : self.GetDatabase(),
+                       suite_class.EXTRA_ID : suite_id }
+            suite = suite_class({}, **extras)
             # Show the editing page.
             return ShowSuitePage(self, suite, edit=1, is_new_suite=1)(request)
 
@@ -1718,9 +1724,9 @@ class QMTestServer(qm.web.WebServer):
         # resource. 
         script_name = request.GetScriptName()
         if script_name == "delete-test":
-            database.RemoveTest(item_id)
+            database.RemoveExtension(item_id, database.TEST)
         elif script_name == "delete-resource":
-            database.RemoveResource(item_id)
+            database.RemoveExtension(item_id, database.RESOURCE)
         else:
             raise RuntimeError, "unrecognized script name"
         # Redirect to the main page.
@@ -1739,7 +1745,7 @@ class QMTestServer(qm.web.WebServer):
         database = self.__database
         # Extract the suite ID.
         suite_id = request["id"]
-        database.RemoveSuite(suite_id)
+        database.RemoveExtension(suite_id, database.SUITE)
         # Redirect to the main page.
         raise qm.web.HttpRedirect, qm.web.WebRequest("dir", base=request)
 
@@ -2304,10 +2310,7 @@ class QMTestServer(qm.web.WebServer):
 	    return ShowItemPage(self, item, 1, 0, type, field_errors)(request)
 
         # Store it in the database.
-        if type is "test":
-            database.WriteTest(item)
-        elif type is "resource":
-            database.WriteResource(item)
+        database.WriteExtension(item_id, item.GetItem())
 
         # Remove any attachments located in the temporary store as they
         # have now been copied to the store associated with the
@@ -2387,9 +2390,17 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite_ids = string.split(suite_ids, ",")
         # Construct a new suite.
-        suite = Suite(self, suite_id, test_ids=test_ids, suite_ids=suite_ids)
+        suite_class = qm.test.base.get_extension_class(
+            "explicit_suite.ExplicitSuite",
+            "suite",
+            self.GetDatabase())
+        extras = { suite_class.EXTRA_DATABASE : self.GetDatabase(),
+                   suite_class.EXTRA_ID : suite_id }
+        suite = suite_class({ "test_ids" : test_ids,
+                              "suite_ids" : suite_ids },
+                            **extras)
         # Store it.
-        database.WriteSuite(suite)
+        database.WriteExtension(suite_id, suite)
         # Redirect to a page that displays the newly-edited item.
         raise qm.web.HttpRedirect, \
               qm.web.WebRequest("show-suite", base=request, id=suite_id)

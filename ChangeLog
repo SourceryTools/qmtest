@@ -1,3 +1,51 @@
+2004-01-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (Extension.MakeDomElement): New method.
+	(Extension.MakeDomDocument): Likewise.
+	(Extension.Write): Likewise.
+	* qm/test/base.py (extension_kinds): Add "suite".
+	(qm.test.suite): Import it.
+	(__extension_bases): Mention "suite".
+	* qm/test/datbase.py (Database.WriteTest): Remove.
+	(Database.RemoveTest): Likewise.
+	(Database.WriteResource): Likewise.
+	(Database.RemoveResource): Likewise.
+	(Database.WriteSuite): Likewise.
+	(Database.RemoveSuite): Likewise.
+	(Database.IsModifiable): Adjust comment.
+	(Database.RemoveExtension): New method.
+	(Database.WriteExtension): Likewise.
+	* qm/test/directory_suite.py (DirectorySuite.__init__): Adjust for
+	the fact that 'Suite' is now an 'Extension.
+	(DirectorySuite.IsImplicit): New method.
+	* qm/test/file_database.py (FileDatabase.RemoveTest): Remove.
+	(FileDatabase.RemoveResource): Likewise.
+	(FileDatabase.RemoveSuite): Likewise.
+	(FileDatabase._GetPath): New method.
+	(FileDatabase._RemoveEntity): Remove.
+	(FileDatabase.RemoveExtension): New test.
+	* qm/test/suite.py (Suite): Derive from Extension.
+	* qm/test/classes/explicit_suite.py: New file.
+	* qm/test/classes/classes.qmc: Regenerate.
+	* qm/test/classes/mount_database.py (MountedSuite.__init__):
+	Adjust for the fact that 'Suite' is now an 'Extension.
+	(MountedSuite.IsImplicit): New method.
+	* qm/test/clasess/xml_database.py (XMLDatabase.WriteTest): Remove.
+	(XMLDatabase.WriteResource): Likewise.
+	(XMLDatabase.WriteSuite): Likewise.
+	(XMLDatabase.__StoreAdjustments): Rework to adjust for the fact
+	that actual extension instances are provided.
+	(XMLDatabase._GetSuiteFromPath): Deal with old and new suite
+	formats.
+	(XMLDatabse.WriteExtension): New method.
+	* qm/test/doc/reference.xml: Do not mention WriteTest or
+	RemoveTest.
+	* qm/test/web/web.py (QMTestServer.HandleCreateSuite): Adjust for
+	changes above.
+	(QMTestServer.HandleDeleteItem): Likewise.
+	(QMTestServer.HandleDeleteSuite): Likewise.
+	(QMTestServer.HandleSubmitItem): Likewise.
+
 2003-12-03  Mark Mitchell  <mark@codesourcery.com>
 
 	* setup.py: Use glob expressions for documentation.

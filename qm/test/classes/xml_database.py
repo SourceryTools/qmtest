@@ -19,6 +19,7 @@
 
 import os
 import qm.common
+from   qm.extension import get_class_arguments
 import qm.fields
 import qm.label
 import qm.structured_text
@@ -26,6 +27,7 @@ import qm.test.base
 from   qm.test.database import *
 from   qm.test.file_database import *
 from   qm.test.suite import *
+from   qm.test.classes.explicit_suite import ExplicitSuite
 import qm.xmlutil
 import shutil
 import string
@@ -67,22 +69,6 @@ class XMLDatabase(ExtensionDatabase):
             raise TestFileError, message
         
 
-    def WriteTest(self, test):
-
-        self.__StoreAttachments(test)
-                                
-        # Find the file system path for the test file.
-        test_path = self.GetTestPath(test.GetId())
-        # If the file is in a new subdirectory, create it.
-        containing_directory = os.path.dirname(test_path)
-        if not os.path.isdir(containing_directory):
-            os.makedirs(containing_directory)
-        # Write out the test.
-        qm.extension.write_extension_file(test.GetClass(),
-                                          test.GetArguments(),
-                                          open(test_path, "w"))
-
-
     def _GetResourceFromPath(self, resource_id, resource_path):
         try:
             return self.__LoadItem(resource_id, resource_path,
@@ -94,74 +80,24 @@ class XMLDatabase(ExtensionDatabase):
                                message=str(exception))
             raise TestFileError, message
         
-
-    def WriteResource(self, resource):
-
-        self.__StoreAttachments(resource)
-
-        # Find the file system path for the resource file.
-        resource_path = self.GetResourcePath(resource.GetId())
-        # If the file is in a new subdirectory, create it.
-        containing_directory = os.path.dirname(resource_path)
-        if not os.path.isdir(containing_directory):
-            os.makedirs(containing_directory)
-        # Write out the resource.
-        qm.extension.write_extension_file(resource.GetClass(),
-                                          resource.GetArguments(),
-                                          open(resource_path, "w"))
-
-
-    def WriteSuite(self, suite):
-        """Write 'suite' to the database as a suite file."""
-
-        # Don't write directory suites to suite file.
-        assert not suite.IsImplicit()
-
-        # Generate the document and document type for XML suite files.
-        document = qm.xmlutil.create_dom_document(
-            public_id="QMTest/Suite",
-            document_element_tag="suite"
-            )
-        # Construct the suite element node by adding children for test
-        # IDs and suite IDs.  Use the raw test and suite IDs, i.e. don't
-        # expand suites to their contained tests. 
-        suite_element = document.documentElement
-        for test_id in suite.GetTestIds():
-            test_id_element = qm.xmlutil.create_dom_text_element(
-                document, "test_id", test_id)
-            suite_element.appendChild(test_id_element)
-        for suite_id in suite.GetSuiteIds():
-            suite_id_element = qm.xmlutil.create_dom_text_element(
-                document, "suite_id", suite_id)
-            suite_element.appendChild(suite_id_element)
-        # Find the file system path for the suite file.
-        suite_path = self.GetSuitePath(suite.GetId())
-        # If the file is in a new subdirectory, create it.
-        containing_directory = os.path.dirname(suite_path)
-        if not os.path.isdir(containing_directory):
-            os.makedirs(containing_directory)
-        # Write out the suite.
-        document.writexml(open(suite_path, "w"))
-
     # Helper functions.
 
     def __StoreAttachments(self, item):
         """Store all attachments in 'item' in the attachment store.
 
-        'item' -- A 'TestDescriptor' or 'ResourceDescriptor'.  If any of
-        its fields contain attachments, add them to the
-        'AttachmentStore'."""
+        'item' -- A 'Test' or 'Resource'.  If any of its fields contain
+        attachments, add them to the 'AttachmentStore'."""
            
-        for field in item.GetClassArguments():
+        for field in get_class_arguments(item.__class__):
             if isinstance(field, qm.fields.AttachmentField):
-                attachment = item.GetArguments()[field.GetName()]
+                attachment = getattr(item, field.GetName())
                 if (attachment is not None
                     and attachment.GetStore() != self.__store):
                     location = \
                         self.__MakeDataFilePath(item.GetId(),
                                                 attachment.GetFileName())
-                    item.GetArguments()[field.GetName()] = \
-                         self.__store.Store(attachment, location)
+                    setattr(item, field.GetName(),
+                            self.__store.Store(attachment, location))
 
          
     def __MakeDataFilePath(self, item_id, file_name):
@@ -292,20 +228,51 @@ class XMLDatabase(ExtensionDatabase):
             raise NoSuchSuiteError, "no suite file %s" % path
         # Load and parse the suite file.
         document = qm.xmlutil.load_xml_file(path)
+        # For backwards compatibility, handle XML files using the
+        # "suite" tag.  New databases will have Suite files using the
+        # "extension" tag.
         suite = document.documentElement
-        assert suite.tagName == "suite"
-        # Extract the test and suite IDs.
-        test_ids = qm.xmlutil.get_child_texts(suite, "test_id")
-        suite_ids = qm.xmlutil.get_child_texts(suite, "suite_id")
-        # Make sure they're all valid.
-        for id_ in test_ids + suite_ids:
-            if not self.IsValidLabel(id_, is_component = 0):
-                raise RuntimeError, qm.error("invalid id", id=id_)
-        # Construct the suite.
-        return Suite(self, suite_id, implicit=0,
-                     test_ids=test_ids, suite_ids=suite_ids)
+        if suite.tagName == "suite":
+            assert suite.tagName == "suite"
+            # Extract the test and suite IDs.
+            test_ids = qm.xmlutil.get_child_texts(suite, "test_id")
+            suite_ids = qm.xmlutil.get_child_texts(suite, "suite_id")
+            # Make sure they're all valid.
+            for id_ in test_ids + suite_ids:
+                if not self.IsValidLabel(id_, is_component = 0):
+                    raise RuntimeError, qm.error("invalid id", id=id_)
+            # Construct the suite.
+            return ExplicitSuite({ "is_implicit" : 0,
+                                   "test_ids" : test_ids,
+                                   "suite_ids" : suite_ids },
+                                 self, suite_id)
+        else:
+            # Load the extension.
+            extension_class, arguments = \
+                qm.extension.parse_dom_element(
+                    suite,
+                    lambda n: get_extension_class(n, "suite", self),
+                    self.GetAttachmentStore())
+            # Construct the actual instance.
+            extras = { extension_class.EXTRA_ID : suite_id,
+                       extension_class.EXTRA_DATABASE : self }
+            return extension_class(arguments, **extras)
 
 
+    def WriteExtension(self, id, extension):
+
+        kind = extension.kind
+        if kind in ("resource", "test"):
+            self.__StoreAttachments(extension)
+        # Figure out what path should be used to store the test.
+        path = self._GetPath(kind, id)
+        # If the file is in a new subdirectory, create it.
+        containing_directory = os.path.dirname(path)
+        if not os.path.isdir(containing_directory):
+            os.makedirs(containing_directory)
+        extension.Write(open(path, "w"))
+        
+                 
     def GetAttachmentStore(self):
         """Returns the 'AttachmentStore' associated with the database.
 

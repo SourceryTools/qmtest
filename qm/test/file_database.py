@@ -58,20 +58,6 @@ class FileDatabase(Database):
         return self._GetTestFromPath(test_id, os.path.normpath(path))
 
 
-    def RemoveTest(self, test_id):
-        """Remove the test named 'test_id' from the database.
-
-        'test_id' -- A label naming the test that should be removed.
-
-        raises -- 'NoSuchTestError' if there is no test in the database
-        named 'test_id'.
-
-        Derived classes may override this method if they need to remove
-        additional information from the database."""
-
-        self.__RemoveEntity(self.GetTestPath(test_id), NoSuchTestError)
-
-
     def GetTestPath(self, test_id):
         """Return the file containing 'test_id'.
 
@@ -124,21 +110,6 @@ class FileDatabase(Database):
             return self._GetSuiteFromPath(suite_id, os.path.normpath(path))
 
         
-    def RemoveSuite(self, suite_id):
-        """Remove the suite named 'suite_id' from the database.
-
-        'suite_id' -- A label naming the suite that should be removed.
-        The suite will not be implicit.
-        
-        raises -- 'NoSuchSuiteError' if there is no suite in the database
-        named 'suite_id'.
-
-        Derived classes may override this method if they need to remove
-        additional information from the database."""
-
-        self.__RemoveEntity(self.GetSuitePath(suite_id), NoSuchSuiteError)
-
-
     def GetSuitePath(self, suite_id):
         """Return the file containing 'suite_id'.
 
@@ -189,21 +160,6 @@ class FileDatabase(Database):
             raise NoSuchResourceError, resource_id
 
         return self._GetResourceFromPath(resource_id, os.path.normpath(path))
-
-
-    def RemoveResource(self, resource_id):
-        """Remove the resource named 'resource_id' from the database.
-
-        'resource_id' -- A label naming the resource that should be removed.
-
-        raises -- 'NoSuchResourceError' if there is no resource in the database
-        named 'resource_id'.
-
-        Derived classes may override this method if they need to remove
-        additional information from the database."""
-
-        self.__RemoveEntity(self.GetResourcePath(resource_id),
-                            NoSuchResourceError)
 
 
     def GetResourcePath(self, resource_id):
@@ -281,6 +237,20 @@ class FileDatabase(Database):
                                lambda p: self._IsFile(kind, p))
 
 
+    def _GetPath(self, kind, id):
+        """Returns the file system path corresponding to 'id'.
+
+        'kind' -- An extension kind.
+
+        'id' -- The name of the entity.
+
+        returns -- The path in which the entity is stored."""
+
+        return { Database.RESOURCE : self.GetResourcePath,
+                 Database.TEST : self.GetTestPath,
+                 Database.SUITE : self.GetSuitePath } [kind] (id)
+        
+        
     def _IsFile(self, kind, path):
         """Returns true if 'path' is a file of the indicated 'kind'.
 
@@ -413,17 +383,14 @@ class FileDatabase(Database):
 
         return labels
         
-        
-    def __RemoveEntity(self, path, exception):
-        """Remove an entity.
 
-        'path' -- The name of the file containing the entity.
+    def RemoveExtension(self, id, kind):
 
-        'exception' -- The type of exception to raise if the file
-        is not present."""
-
+        path = self._GetPath(kind, id)
         if not os.path.isfile(path):
-            raise exception, entity_id
+            raise { Database.RESOURCE : NoSuchResourceError,
+                    Database.TEST: NoSuchTestError,
+                    Database.SUITE: NoSuchSuiteError }[kind], id
 
         os.remove(path)
 

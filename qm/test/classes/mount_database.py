@@ -43,11 +43,19 @@ class MountDatabase(Database):
 
         def __init__(self, database, suite_id, joiner, suite):
 
-            Suite.__init__(self, database, suite_id, suite.IsImplicit())
+            super(MountDatabase.MountedSuite, self).\
+                __init__({},
+                         qmtest_id = suite_id,
+                         qmtest_database = database)
             self.__suite = suite
             self.__joiner = joiner
 
 
+        def IsImplicit(self):
+
+            return self.__suite.IsImplicit()
+
+        
         def GetTestIds(self):
 
             return map(self.__joiner, self.__suite.GetTestIds())

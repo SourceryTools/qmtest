@@ -40,9 +40,9 @@ class DirectorySuite(Suite):
         this suite."""
 
         # Construct the base class.
-        Suite.__init__(self, database, directory, implicit=1)
-        # Remember the database.
-        self.__database = database
+        super(DirectorySuite, self).__init__({},
+                                             qmtest_id = directory,
+                                             qmtest_database = database)
 
 
     def GetTestIds(self):
@@ -53,7 +53,7 @@ class DirectorySuite(Suite):
         only because they are contained in a suite which is itself
         contained in this suite are not returned."""
 
-        return self.__database.GetTestIds(self.GetId(), scan_subdirs=0)
+        return self.GetDatabase().GetTestIds(self.GetId(), scan_subdirs=0)
     
 
     def GetSuiteIds(self):
@@ -64,8 +64,13 @@ class DirectorySuite(Suite):
         suite only because they are contained in a suite which is itself
         contained in this suite are not returned."""
 
-        return self.__database.GetSuiteIds(self.GetId(), scan_subdirs=0)
+        return self.GetDatabase().GetSuiteIds(self.GetId(), scan_subdirs=0)
 
+
+    def IsImplicit(self):
+
+        return 1
+    
 ########################################################################
 # Local Variables:
 # mode: python
