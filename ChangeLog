@@ -1,5 +1,10 @@
 2001-07-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* share/dtml/attachment.dtml: Use file name if description not
+	specified. 
+
+2001-07-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (Field.GetHtmlHelp): Don't print field name in
 	smaller font.
 	* qm/structured_text.py (TextFormatter.__init__): Add attributes.

@@ -136,9 +136,14 @@
    file_name = file_name.replace(/.*\//, "");
    file_name = file_name.replace(/.*\\/, "");
 
-   // Get the other data.
+   // Get the attachment description.
    description = document.upload_form.description.value;
+   // If the description is ommitted (or whitespace only), use the file name.
+   if(description.match(/^\s*$/) != null)
+     description = file_name;
+   // Get the on-server location of the uploaded attachment data.
    location = document.upload_form.location.value;
+   // Get the MIME type.
    if(document.upload_form.detect_mime_type[0].checked)
      mime_type = "";
    else
