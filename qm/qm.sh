@@ -164,7 +164,12 @@ if test x"${QM_HOME}" = x; then
 	QM_HOME=`dirname "${QM_HOME}"`
     done
 else
-    QM_PATH=$QM_HOME/bin/qmtest
+    # The QM_HOME variable was set.
+    if test ${QM_BUILD} -eq 0; then
+	QM_PATH=$QM_HOME/bin/qmtest
+    else
+	QM_PATH=$QM_HOME/qm/test/qmtest
+    fi
 fi
 
 # Export QM_HOME and QM_PATH so that we can find them from within Python.

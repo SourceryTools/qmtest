@@ -227,7 +227,8 @@ check-threads: all
 		thread thread_target.ThreadTarget
 	qm/test/qmtest -D tests run -T tests/QMTest/thread_target \
 		$(QMTESTFLAGS) \
-		-c qmtest_path=qm/test/qmtest
+		-c qmtest_path=qm/test/qmtest \
+		-c qmtest_target=tests/QMTest/thread_target
 
 check-processes: all
 	rm -f tests/QMTest/process_target
@@ -236,7 +237,8 @@ check-processes: all
 		process process_target.ProcessTarget
 	qm/test/qmtest -D tests run -T tests/QMTest/process_target \
 		$(QMTESTFLAGS) \
-		-c qmtest_path=qm/test/qmtest
+		-c qmtest_path=qm/test/qmtest \
+		-c qmtest_target=tests/QMTest/process_target
 
 check-rsh: all
 	rm -f tests/QMTest/rsh_target
@@ -246,7 +248,8 @@ check-rsh: all
 		rsh rsh_target.RSHTarget
 	qm/test/qmtest -D tests run -T tests/QMTest/rsh_target \
 		$(QMTESTFLAGS) \
-		-c qmtest_path=`pwd`/qm/test/qmtest
+		-c qmtest_path=`pwd`/qm/test/qmtest \
+		-c qmtest_target=`pwd`/tests/QMTest/rsh_target
 
 ########################################################################
 # Documentation Rules

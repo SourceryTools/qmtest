@@ -1,3 +1,32 @@
+2003-08-07  Nathaniel Smith  <njs@codesourcery.com>
+	    Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/execution_engine.py: Improve documentation.
+	(ExecutionEngine.__TARGET_IDLE): New variable.
+	(ExecutionEngine.__TARGET_BUSY): Likewise.
+	(ExecutionEngine.__TARGET_STARVING): Likewise.
+	(ExecutionEngine.__num_idle_targets): Replace with...
+	(ExecutionEngine.__has_idle_targets): ...this.
+	(ExecutionEngine._RunTests): Incorporate above changes.
+	(ExecutionEngine.__AddResult): Likewise.
+	(ExecutionEngine.__AddToTargetPatternQueue): Fix typo.
+	* GNUMakefile.in (check-threads): Set new context variable
+	qmtest_target.
+	(check-processes): Likewise.
+	(check-rsh): Likewise.
+	* qm/qm.sh: Correct handling of QM_PATH when both QM_HOME and
+	QM_BUILD are set.
+	* tests/regress/QMTest/selftest.py (RegTest.Run): Use context
+	variable qmtest_target if defined.
+	* tests/regress/bad_target1/bad_target.qmt: Use a target group
+	that does not match the empty string.
+	* tests/regress/bad_target2/bad_target.qmt: Use a target group
+	that does not match the empty string.
+
+	* qm/test/classes/xml_database.py: Do not import dircache.
+
+	* scripts/qm-release: Improve snapshot generation.
+	
 2003-08-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release: Add support for snapshot releases.

@@ -68,7 +68,12 @@ class RegTest(Test):
         # The QMTest binary to test is specified as a context variable.
         qmtest = context['qmtest_path']
 
+        # Set the basic argument vector.
         argv = (qmtest, "-D", path, "run", "-O", results, "-o", output)
+        
+        # If the context also specifies a target, add that.
+        if context.has_key("qmtest_target"):
+            argv += ("-T", context["qmtest_target"])
 
         e = qm.executable.RedirectedExecutable()
         status = e.Run(argv)

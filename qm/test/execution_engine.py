@@ -163,6 +163,14 @@ class ExecutionEngine:
                 self.dependants.append(test_id)
 
 
+    # Every target is in one of three states: busy, idle, or starving.
+    # A busy target is running tests, an idle target is ready to run
+    # tests, and a starving target is ready to run tests, but no tests
+    # are available for it to run.
+    __TARGET_IDLE = "IDLE"
+    __TARGET_BUSY = "BUSY"
+    __TARGET_STARVING = "STARVING"
+
 
     def __init__(self,
                  database,
@@ -312,17 +320,11 @@ class ExecutionEngine:
         # stack.  The names are the keys; the values are unused.
         self.__ids_on_stack = {}
 
-        # Every target is in one of three states: busy, idle, or
-        # starving.  A busy target is running tests, an idle target is
-        # ready to run tests, and a starving target is ready to run
-        # tests, but no tests are available for it to run.  The value
-        # recorded in the table is 'None' for a starving target, true
-        # for an idle target, and false for a busy target.
+        # All targets are initially idle.
         self.__target_state = {}
         for target in self.__targets:
-            self.__target_state[target] = 1
-        # The total number of idle targets.
-        self.__num_idle_targets = len(self.__targets)
+            self.__target_state[target] = self.__TARGET_IDLE
+        self.__has_idle_targets = 1
         
         # Figure out what target groups are available.
         self.__target_groups = {}
@@ -345,7 +347,7 @@ class ExecutionEngine:
                 pass
 
             # Now look for idle targets.
-            if self.__num_idle_targets == 0:
+            if not self.__has_idle_targets:
                 # Block until one of the running tests completes.
                 self._Trace("All targets are busy -- waiting.")
                 self.__CheckForResponse(wait=1)
@@ -354,19 +356,22 @@ class ExecutionEngine:
 
             # Go through each of the idle targets, finding work for it
             # to do.
-            self.__num_idle_targets = 0
+            self.__has_idle_targets = 0
             for target in self.__targets:
-                if self.__target_state[target] != 1:
+                if self.__target_state[target] != self.__TARGET_IDLE:
                     continue
                 # Try to find work for the target.  If there is no
                 # available work, the target is starving.
                 if not self.__FeedTarget(target):
-                    self.__target_state[target] = None
+                    self.__target_state[target] = self.__TARGET_STARVING
                 else:
-                    is_idle = target.IsIdle()
-                    self.__target_state[target] = is_idle
-                    if is_idle:
-                        self.__num_idle_targets += 1
+                    # We gave the target some work, which may have
+                    # changed its idle state, so update the status.
+                    if target.IsIdle():
+                        self.__target_state[target] = self.__TARGET_IDLE
+                        self.__has_idle_targets = 1
+                    else:
+                        self.__target_state[target] = self.__TARGET_BUSY
 
         # Now all tests have been started; we just have wait for them
         # all to finish.
@@ -384,20 +389,19 @@ class ExecutionEngine:
 
         self._Trace("Looking for a test for target %s" % target.GetName())
 
-        descriptor = None
-
         # See if there is already a ready-to-run test for this target.
         for pattern in self.__patterns.get(target.GetGroup(), []):
             tests = self.__target_pattern_queues.get(pattern, [])
             if tests:
                 descriptor = tests.pop()
                 break
-
-        # If there is no ready test, find one.
-        descriptor = self.__FindRunnableTest(target)
-        if descriptor is None:
-            # There are no more tests ready to run.
-            return 0
+        else:
+            # There was no ready-to-run test queued, so try to find one
+            # another one.
+            descriptor = self.__FindRunnableTest(target)
+            if descriptor is None:
+                # There really are no more tests ready to run.
+                return 0
                 
         target_name = target.GetName()
         test_id = descriptor.GetId()
@@ -451,8 +455,8 @@ class ExecutionEngine:
                 # A->B, A->C, B->C, where we can't know ahead of time
                 # that A's dependence on C is unnecessary.
                 if self.__statuses[new_test_id].HasBeenQueued():
-                    # This one is already in process.  This is also what
-                    # a dependency cycle looks like, so check for that
+                    # This one is already in process.  This might
+                    # indicate a dependency cycle, so check for that
                     # now.
                     if new_test_id in self.__ids_on_stack:
                         self._Trace("Cycle detected (%s)"
@@ -552,7 +556,7 @@ class ExecutionEngine:
             self.__pattern_ok[pattern] = 0
             for group in self.__target_groups:
                 if re.match(pattern, group):
-                    self.__pattern_ok[group] = 1
+                    self.__pattern_ok[pattern] = 1
                     patterns = self.__patterns.setdefault(group, [])
                     patterns.append(pattern)
         # If none of the targets can run this test, mark it untested.
@@ -581,7 +585,8 @@ class ExecutionEngine:
             try:
                 prereq_status = self.__statuses[prereq_id]
             except KeyError:
-                # This prerequisite is not being run at all.
+                # This prerequisite is not being run at all, so skip
+                # it.
                 continue
 
             if prereq_status.IsFinished():
@@ -634,8 +639,8 @@ class ExecutionEngine:
         if (target and target.IsIdle()):
             # Output a trace message.
             self._Trace("Target is now idle.\n")
-            self.__target_state[target] = 1
-            self.__num_idle_targets += 1
+            self.__target_state[target] = self.__TARGET_IDLE
+            self.__has_idle_targets = 1
             
         # Only tests have expectations or scheduling dependencies.
         if result.GetKind() == Result.TEST:
@@ -670,8 +675,8 @@ class ExecutionEngine:
             # Any targets that were starving may now be able to find
             # work.
             for t in self.__targets:
-                if self.__target_state[t] is None:
-                    self.__target_state[t] = 1
+                if self.__target_state[t] == self.__TARGET_STARVING:
+                    self.__target_state[t] = self.__TARGET_IDLE
             
         # Output a trace message.
         self._Trace("Writing result for %s to streams." % id)

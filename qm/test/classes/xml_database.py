@@ -17,7 +17,6 @@
 # imports
 ########################################################################
 
-import dircache
 import os
 import qm.common
 import qm.fields
