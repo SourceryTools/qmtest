@@ -1,5 +1,107 @@
 2002-08-08  Zack Weinberg  <zack@codesourcery.com>
 
+	Revised test suite.
+
+	* New files:
+	tests/QMTest/classes.qmc
+	tests/QMTest/selfdb.py
+	tests/QMTest/selftest.py
+	tests/regress/cycle1/QMTest/configuration
+	tests/regress/cycle1/a.qmt
+	tests/regress/cycle1/b.qmt
+	tests/regress/cycle1/results.qmr
+	tests/regress/cycle2/QMTest/configuration
+	tests/regress/cycle2/a.qmt
+	tests/regress/cycle2/b.qmt
+	tests/regress/cycle2/c.qmt
+	tests/regress/cycle2/results.qmr
+	tests/regress/cycle3/QMTest/configuration
+	tests/regress/cycle3/a.qmt
+	tests/regress/cycle3/b.qmt
+	tests/regress/cycle3/c.qmt
+	tests/regress/cycle3/results.qmr
+	tests/regress/cycle4/QMTest/configuration
+	tests/regress/cycle4/a.qmt
+	tests/regress/cycle4/b.qmt
+	tests/regress/cycle4/c.qmt
+	tests/regress/cycle4/d.qmt
+	tests/regress/cycle4/e.qmt
+	tests/regress/cycle4/f.qmt
+	tests/regress/cycle4/results.qmr
+	tests/regress/cycle5/QMTest/configuration
+	tests/regress/cycle5/a.qmt
+	tests/regress/cycle5/b.qmt
+	tests/regress/cycle5/results.qmr
+	tests/regress/gilles1/QMTest/configuration
+	tests/regress/gilles1/a.qmt
+	tests/regress/gilles1/b.qmt
+	tests/regress/gilles1/c.qmt
+	tests/regress/gilles1/results.qmr
+	tests/regress/noresource/QMTest/configuration
+	tests/regress/noresource/results.qmr
+	tests/regress/noresource/test.qmt
+	tests/regress/noresource/test2.qmt
+	tests/regress/xml1/QMTest/configuration
+	tests/regress/xml1/asdfasdf.qmt
+	tests/regress/xml1/fnord.qmt
+	tests/regress/xml1/results.qmr
+	tests/xmldb/.cvsignore
+	tests/xmldb/QMTest/configuration
+
+	* Renamed files from:
+	tests/unit.qms/common.qms/format_time1.qmt
+	tests/unit.qms/common.qms/graph_complete.qmt
+	tests/unit.qms/common.qms/graph_cycle.qmt
+	tests/unit.qms/common.qms/graph_pass.qmt
+	tests/unit.qms/common.qms/label_is_valid.qmt
+	tests/unit.qms/common.qms/label_thunk.qmt
+	tests/unit.qms/common.qms/parse_time1.qmt
+	tests/unit.qms/common.qms/parse_time2.qmt
+	tests/unit.qms/common.qms/parse_time3.qmt
+	tests/unit.qms/common.qms/parse_time4.qmt
+	tests/unit.qms/common.qms/parser_create.qmt
+	tests/unit.qms/common.qms/parser_dup_command_long.qmt
+	tests/unit.qms/common.qms/parser_dup_command_short.qmt
+	tests/unit.qms/common.qms/parser_help.qmt
+	tests/unit.qms/common.qms/parser_no_long.qmt
+	tests/unit.qms/common.qms/parser_parse.qmt
+	tests/unit.qms/common.qms/parser_two_char_short.qmt
+	tests/unit.qms/test.qms/classes.qms/scripttest1.qmt
+	tests/unit.qms/test.qms/classes.qms/tempdir1.qma
+	tests/unit.qms/test.qms/classes.qms/tempdir1.qmt
+
+	* to:
+	tests/xmldb/common.qms/format_time1.qmt
+	tests/xmldb/common.qms/graph_complete.qmt
+	tests/xmldb/common.qms/graph_cycle.qmt
+	tests/xmldb/common.qms/graph_pass.qmt
+	tests/xmldb/common.qms/label_is_valid.qmt
+	tests/xmldb/common.qms/label_thunk.qmt
+	tests/xmldb/common.qms/parse_time1.qmt
+	tests/xmldb/common.qms/parse_time2.qmt
+	tests/xmldb/common.qms/parse_time3.qmt
+	tests/xmldb/common.qms/parse_time4.qmt
+	tests/xmldb/common.qms/parser_create.qmt
+	tests/xmldb/common.qms/parser_dup_command_long.qmt
+	tests/xmldb/common.qms/parser_dup_command_short.qmt
+	tests/xmldb/common.qms/parser_help.qmt
+	tests/xmldb/common.qms/parser_no_long.qmt
+	tests/xmldb/common.qms/parser_parse.qmt
+	tests/xmldb/common.qms/parser_two_char_short.qmt
+	tests/xmldb/test.qms/classes.qms/scripttest1.qmt
+	tests/xmldb/test.qms/classes.qms/tempdir1.qma
+	tests/xmldb/test.qms/classes.qms/tempdir1.qmt
+
+	* Modified files:
+	GNUmakefile.in (check): Pass -c qmtest_path= to qmtest run.
+	tests/QMTest/configuration: Use QMSelftestDatabase.
+
+	* Deleted files:
+	tests/common.qms
+
+
+2002-08-08  Zack Weinberg  <zack@codesourcery.com>
+
 	* qm/test/target.py: Import NoSuchResourceError from
 	qm.test.database.
 	(Target._SetUpResource): If GetResource throws NoSuchResourceError,
