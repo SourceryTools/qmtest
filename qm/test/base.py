@@ -652,7 +652,14 @@ class Database:
     def HasTest(self, test_id):
         """Return true if the database has a test with ID 'test_id'."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.HasTest"
+        # The default implementation of this function uses 'GetTest'.
+
+        try:
+            self.GetTest(test_id)
+        except NoSuchTestError:
+            return 0
+        else:
+            return 1
 
 
     def GetTest(self, test_id):
@@ -688,7 +695,14 @@ class Database:
     def HasSuite(self, suite_id):
         """Return true if the database has a suite with ID 'suite_id'."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.HasSuite"
+        # The default implementation of this function uses 'GetSuite'.
+
+        try:
+            self.GetSuite(suite_id)
+        except NoSuchSuiteError:
+            return 0
+        else:
+            return 1
 
 
     def GetSuite(self, suite_id):
@@ -725,7 +739,14 @@ class Database:
     def HasResource(self, resource_id):
         """Return true if the database has a resource with 'resource_id'."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.HasResource"
+        # The default implementation of this funciton uses 'GetResource'.
+
+        try:
+            self.GetResource(resource_id)
+        except NoSuchResourceError:
+            return 0
+        else:
+            return 1
 
 
     def GetResource(self, resource_id):

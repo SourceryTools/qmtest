@@ -252,6 +252,10 @@ def to_path(label):
     """Return a relative file system path corresponding to 'label'."""
 
     label = normpath(label)
+    # 'normpath' returns a label that begins with 'sep' only in one
+    # case: if 'label' corresponds to the root label.  In this case, we
+    # should return a null path string, not the file system path
+    # separator, so handle this case specially.
     if label == sep:
         return ""
     else:

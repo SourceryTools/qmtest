@@ -37,21 +37,112 @@ AC_INIT(configure.in)
 
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
-AC_PATH_PROG(HAPPYDOC, happydoc, happydoc)
-AC_PATH_PROG(JADE, jade, jade)
-AC_PATH_PROG(PYTHON, python, python)
-AC_PATH_PROG(TIDY, tidy, tidy)
 
-AC_CHECK_FILE(/usr/doc/jade-1.2.1/pubtext/xml.dcl, , echo 'WARNING: Cannot build documentation.')
-AC_CHECK_FILE(/usr/lib/sgml/stylesheets/docbook, , echo 'WARNING: Cannot build documentation.')
 
-AC_OUTPUT(standard.mk
-	  Makefile
-	  doc/Makefile
- 	  doc/design/qmconfig/Makefile
-	  doc/design/qmtest/Makefile
-	  doc/design/qmtrack/Makefile
-	  doc/manual/Makefile
-	  qm/Makefile
-          sgmlop/Makefile
-          zope-dtml/ExtensionClass/Makefile)
+dnl ####################################################################
+dnl Find the Python interpreter.  If the user specified the 
+dnl --with-python option, use its value, after checking that it exists.
+dnl Otherwise, look in the PATH.
+dnl ####################################################################
+
+AC_ARG_WITH(
+  python, 
+  [  --with-python=PATH      specify the Python interpreter],
+  PYTHON="$with_python",
+  PYTHON=""
+)
+
+if test -n "$PYTHON" -a "$PYTHON" != yes; then
+  AC_CHECK_FILE(
+    $PYTHON, 
+    , 
+    echo "Cannot find Python interpreter $PYTHON."; exit 1
+  )
+else
+  AC_PATH_PROG(PYTHON, python, python)
+fi
+
+
+dnl ####################################################################
+dnl Look for HappyDoc, which we use to build source documentation.
+dnl ####################################################################
+
+AC_PATH_PROG(HAPPYDOC, happydoc, no)
+
+
+dnl ####################################################################
+dnl Jade and Tidy are used to generate documentation.  Without Jade,
+dnl documentation will not be built.
+dnl ####################################################################
+
+AC_PATH_PROG(JADE, jade, no)
+AC_PATH_PROG(TIDY, tidy, no)
+
+dnl ####################################################################
+dnl We XML declarations for Jade, in xml.dcl.  This file should be 
+dnl included with Jade.  Look for it in some usual places.
+dnl ####################################################################
+
+if test "$JADE" != no; then
+  AC_MSG_CHECKING(xml.dcl)
+  XML_DCL=no
+  for file in \
+    /usr/share/doc/jade*/pubtext/xml.dcl \
+    /usr/doc/jade*/pubtext/xml.dcl \
+  ; do
+    if test -r "$file"; then
+      XML_DCL=$file
+      break
+    fi
+  done
+  AC_MSG_RESULT($XML_DCL)
+  AC_SUBST(XML_DCL)
+fi
+
+dnl ####################################################################
+dnl To build documentation, we need DSSSL stylesheets for DocBook.  Look
+dnl for them in some usual places.
+dnl ####################################################################
+
+AC_MSG_CHECKING(DocBook stylesheets)
+DOCBOOK_STYLESHEETS=no
+for dir in \
+  /usr/lib/sgml/stylesheets/docbook \
+; do
+  if test -d $dir; then
+    DOCBOOK_STYLESHEETS=$dir
+    break
+  fi
+done
+AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
+AC_SUBST(DOCBOOK_STYLESHEETS)
+
+dnl ####################################################################
+dnl Warn if we don't have enough to build documentation
+dnl ####################################################################
+
+if test "$JADE" = no -o "$XML_DCL" = no; then
+  AC_MSG_WARN(Documentation will not be built.)
+  DOCUMENTATION=no
+else
+  DOCUMENTATION=yes
+fi
+AC_SUBST(DOCUMENTATION)
+
+
+dnl ####################################################################
+dnl Generate results
+dnl ####################################################################
+
+AC_OUTPUT(
+  standard.mk
+  Makefile
+  doc/Makefile
+  doc/design/qmconfig/Makefile
+  doc/design/qmtest/Makefile
+  doc/design/qmtrack/Makefile
+  doc/manual/Makefile
+  qm/Makefile
+  sgmlop/Makefile
+  zope-dtml/ExtensionClass/Makefile
+)

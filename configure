@@ -13,6 +13,8 @@
 ac_help=
 ac_default_prefix=/usr/local
 # Any additions from configure.in:
+ac_help="$ac_help
+  --with-python=PATH      specify the Python interpreter"
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -525,7 +527,7 @@ fi
 
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-echo "configure:529: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:531: checking whether ${MAKE-make} sets \${MAKE}" >&5
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -582,7 +584,7 @@ ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:586: checking for a BSD compatible install" >&5
+echo "configure:588: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -634,155 +636,24 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL_PROGRAM}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
-# Extract the first word of "happydoc", so it can be a program name with args.
-set dummy happydoc; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:641: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$HAPPYDOC" in
-  /*)
-  ac_cv_path_HAPPYDOC="$HAPPYDOC" # Let the user override the test with a path.
-  ;;
-  ?:/*)			 
-  ac_cv_path_HAPPYDOC="$HAPPYDOC" # Let the user override the test with a dos path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-  ac_dummy="$PATH"
-  for ac_dir in $ac_dummy; do 
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_HAPPYDOC="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_HAPPYDOC" && ac_cv_path_HAPPYDOC="happydoc"
-  ;;
-esac
-fi
-HAPPYDOC="$ac_cv_path_HAPPYDOC"
-if test -n "$HAPPYDOC"; then
-  echo "$ac_t""$HAPPYDOC" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
 
-# Extract the first word of "jade", so it can be a program name with args.
-set dummy jade; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:677: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$JADE" in
-  /*)
-  ac_cv_path_JADE="$JADE" # Let the user override the test with a path.
-  ;;
-  ?:/*)			 
-  ac_cv_path_JADE="$JADE" # Let the user override the test with a dos path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-  ac_dummy="$PATH"
-  for ac_dir in $ac_dummy; do 
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_JADE="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_JADE" && ac_cv_path_JADE="jade"
-  ;;
-esac
-fi
-JADE="$ac_cv_path_JADE"
-if test -n "$JADE"; then
-  echo "$ac_t""$JADE" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
 
-# Extract the first word of "python", so it can be a program name with args.
-set dummy python; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:713: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_PYTHON'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  case "$PYTHON" in
-  /*)
-  ac_cv_path_PYTHON="$PYTHON" # Let the user override the test with a path.
-  ;;
-  ?:/*)			 
-  ac_cv_path_PYTHON="$PYTHON" # Let the user override the test with a dos path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-  ac_dummy="$PATH"
-  for ac_dir in $ac_dummy; do 
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_PYTHON="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_PYTHON" && ac_cv_path_PYTHON="python"
-  ;;
-esac
-fi
-PYTHON="$ac_cv_path_PYTHON"
-if test -n "$PYTHON"; then
-  echo "$ac_t""$PYTHON" 1>&6
-else
-  echo "$ac_t""no" 1>&6
-fi
 
-# Extract the first word of "tidy", so it can be a program name with args.
-set dummy tidy; ac_word=$2
-echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:749: checking for $ac_word" >&5
-if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
+# Check whether --with-python or --without-python was given.
+if test "${with_python+set}" = set; then
+  withval="$with_python"
+  PYTHON="$with_python"
 else
-  case "$TIDY" in
-  /*)
-  ac_cv_path_TIDY="$TIDY" # Let the user override the test with a path.
-  ;;
-  ?:/*)			 
-  ac_cv_path_TIDY="$TIDY" # Let the user override the test with a dos path.
-  ;;
-  *)
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
-  ac_dummy="$PATH"
-  for ac_dir in $ac_dummy; do 
-    test -z "$ac_dir" && ac_dir=.
-    if test -f $ac_dir/$ac_word; then
-      ac_cv_path_TIDY="$ac_dir/$ac_word"
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -z "$ac_cv_path_TIDY" && ac_cv_path_TIDY="tidy"
-  ;;
-esac
-fi
-TIDY="$ac_cv_path_TIDY"
-if test -n "$TIDY"; then
-  echo "$ac_t""$TIDY" 1>&6
-else
-  echo "$ac_t""no" 1>&6
+  PYTHON=""
+
 fi
 
 
-# Extract the first word of "gcc", so it can be a program name with args.
+if test -n "$PYTHON" -a "$PYTHON" != yes; then
+  # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:786: checking for $ac_word" >&5
+echo "configure:657: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -812,7 +683,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:816: checking for $ac_word" >&5
+echo "configure:687: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -863,7 +734,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:867: checking for $ac_word" >&5
+echo "configure:738: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -895,7 +766,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:899: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:770: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -906,12 +777,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 910 "configure"
+#line 781 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:915: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:786: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -937,12 +808,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:941: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:812: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:946: checking whether we are using GNU C" >&5
+echo "configure:817: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -951,7 +822,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:955: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:826: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -970,7 +841,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:974: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:845: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1002,16 +873,16 @@ else
 fi
 
 
-ac_safe=`echo "/usr/doc/jade-1.2.1/pubtext/xml.dcl" | sed 'y%./+-%__p_%'`
-echo $ac_n "checking for /usr/doc/jade-1.2.1/pubtext/xml.dcl""... $ac_c" 1>&6
-echo "configure:1008: checking for /usr/doc/jade-1.2.1/pubtext/xml.dcl" >&5
+ac_safe=`echo "$PYTHON" | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for $PYTHON""... $ac_c" 1>&6
+echo "configure:879: checking for $PYTHON" >&5
 if eval "test \"`echo '$''{'ac_cv_file_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   if test "$cross_compiling" = yes; then
     { echo "configure: error: Cannot check for file existence when cross compiling" 1>&2; exit 1; }
 else
-  if test -r /usr/doc/jade-1.2.1/pubtext/xml.dcl; then
+  if test -r $PYTHON; then
     eval "ac_cv_file_$ac_safe=yes"
   else
     eval "ac_cv_file_$ac_safe=no"
@@ -1023,33 +894,205 @@ if eval "test \"`echo '$ac_cv_file_'$ac_safe`\" = yes"; then
   :
 else
   echo "$ac_t""no" 1>&6
-echo 'WARNING: Cannot build documentation.'
+echo "Cannot find Python interpreter $PYTHON."; exit 1
+  
 fi
 
-
-ac_safe=`echo "/usr/lib/sgml/stylesheets/docbook" | sed 'y%./+-%__p_%'`
-echo $ac_n "checking for /usr/lib/sgml/stylesheets/docbook""... $ac_c" 1>&6
-echo "configure:1033: checking for /usr/lib/sgml/stylesheets/docbook" >&5
-if eval "test \"`echo '$''{'ac_cv_file_$ac_safe'+set}'`\" = set"; then
+else
+  # Extract the first word of "python", so it can be a program name with args.
+set dummy python; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:906: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_path_PYTHON'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
-  if test "$cross_compiling" = yes; then
-    { echo "configure: error: Cannot check for file existence when cross compiling" 1>&2; exit 1; }
-else
-  if test -r /usr/lib/sgml/stylesheets/docbook; then
-    eval "ac_cv_file_$ac_safe=yes"
-  else
-    eval "ac_cv_file_$ac_safe=no"
-  fi
+  case "$PYTHON" in
+  /*)
+  ac_cv_path_PYTHON="$PYTHON" # Let the user override the test with a path.
+  ;;
+  ?:/*)			 
+  ac_cv_path_PYTHON="$PYTHON" # Let the user override the test with a dos path.
+  ;;
+  *)
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do 
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_path_PYTHON="$ac_dir/$ac_word"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_path_PYTHON" && ac_cv_path_PYTHON="python"
+  ;;
+esac
 fi
-fi
-if eval "test \"`echo '$ac_cv_file_'$ac_safe`\" = yes"; then
-  echo "$ac_t""yes" 1>&6
-  :
+PYTHON="$ac_cv_path_PYTHON"
+if test -n "$PYTHON"; then
+  echo "$ac_t""$PYTHON" 1>&6
 else
   echo "$ac_t""no" 1>&6
-echo 'WARNING: Cannot build documentation.'
 fi
+
+fi
+
+
+
+# Extract the first word of "happydoc", so it can be a program name with args.
+set dummy happydoc; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:946: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  case "$HAPPYDOC" in
+  /*)
+  ac_cv_path_HAPPYDOC="$HAPPYDOC" # Let the user override the test with a path.
+  ;;
+  ?:/*)			 
+  ac_cv_path_HAPPYDOC="$HAPPYDOC" # Let the user override the test with a dos path.
+  ;;
+  *)
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do 
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_path_HAPPYDOC="$ac_dir/$ac_word"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_path_HAPPYDOC" && ac_cv_path_HAPPYDOC="no"
+  ;;
+esac
+fi
+HAPPYDOC="$ac_cv_path_HAPPYDOC"
+if test -n "$HAPPYDOC"; then
+  echo "$ac_t""$HAPPYDOC" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+
+
+
+# Extract the first word of "jade", so it can be a program name with args.
+set dummy jade; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:985: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  case "$JADE" in
+  /*)
+  ac_cv_path_JADE="$JADE" # Let the user override the test with a path.
+  ;;
+  ?:/*)			 
+  ac_cv_path_JADE="$JADE" # Let the user override the test with a dos path.
+  ;;
+  *)
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do 
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_path_JADE="$ac_dir/$ac_word"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_path_JADE" && ac_cv_path_JADE="no"
+  ;;
+esac
+fi
+JADE="$ac_cv_path_JADE"
+if test -n "$JADE"; then
+  echo "$ac_t""$JADE" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+# Extract the first word of "tidyx", so it can be a program name with args.
+set dummy tidyx; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:1021: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  case "$TIDY" in
+  /*)
+  ac_cv_path_TIDY="$TIDY" # Let the user override the test with a path.
+  ;;
+  ?:/*)			 
+  ac_cv_path_TIDY="$TIDY" # Let the user override the test with a dos path.
+  ;;
+  *)
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do 
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_path_TIDY="$ac_dir/$ac_word"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_path_TIDY" && ac_cv_path_TIDY="no"
+  ;;
+esac
+fi
+TIDY="$ac_cv_path_TIDY"
+if test -n "$TIDY"; then
+  echo "$ac_t""$TIDY" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+
+
+if test "$JADE" != no; then
+  echo $ac_n "checking xml.dcl""... $ac_c" 1>&6
+echo "configure:1058: checking xml.dcl" >&5
+  XML_DCL=no
+  for file in \
+    /usr/share/doc/jade*/pubtext/xml.dcl \
+    /usr/doc/jade*/pubtext/xml.dcl \
+  ; do
+    if test -r "$file"; then
+      XML_DCL=$file
+      break
+    fi
+  done
+  echo "$ac_t""$XML_DCL" 1>&6
+  
+fi
+
+
+echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
+echo "configure:1075: checking DocBook stylesheets" >&5
+DOCBOOK_STYLESHEETS=no
+for dir in \
+  /usr/lib/sgml/stylesheets/docbook \
+; do
+  if test -d $dir; then
+    DOCBOOK_STYLESHEETS=$dir
+    break
+  fi
+done
+echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
+
+
+
+if test "$JADE" = no -o "$XML_DCL" = no; then
+  echo "configure: warning: Documentation will not be built." 1>&2
+  DOCUMENTATION=no
+else
+  DOCUMENTATION=yes
+fi
+
+
 
 
 trap '' 1 2 15
@@ -1166,15 +1209,16 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "standard.mk
-	  Makefile
-	  doc/Makefile
- 	  doc/design/qmconfig/Makefile
-	  doc/design/qmtest/Makefile
-	  doc/design/qmtrack/Makefile
-	  doc/manual/Makefile
-	  qm/Makefile
-          sgmlop/Makefile
-          zope-dtml/ExtensionClass/Makefile" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+  Makefile
+  doc/Makefile
+  doc/design/qmconfig/Makefile
+  doc/design/qmtest/Makefile
+  doc/design/qmtrack/Makefile
+  doc/manual/Makefile
+  qm/Makefile
+  sgmlop/Makefile
+  zope-dtml/ExtensionClass/Makefile
+" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -1210,11 +1254,14 @@ s%@SET_MAKE@%$SET_MAKE%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_SCRIPT@%$INSTALL_SCRIPT%g
 s%@INSTALL_DATA@%$INSTALL_DATA%g
+s%@CC@%$CC%g
+s%@PYTHON@%$PYTHON%g
 s%@HAPPYDOC@%$HAPPYDOC%g
 s%@JADE@%$JADE%g
-s%@PYTHON@%$PYTHON%g
 s%@TIDY@%$TIDY%g
-s%@CC@%$CC%g
+s%@XML_DCL@%$XML_DCL%g
+s%@DOCBOOK_STYLESHEETS@%$DOCBOOK_STYLESHEETS%g
+s%@DOCUMENTATION@%$DOCUMENTATION%g
 
 CEOF
 EOF
@@ -1257,15 +1304,16 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"standard.mk
-	  Makefile
-	  doc/Makefile
- 	  doc/design/qmconfig/Makefile
-	  doc/design/qmtest/Makefile
-	  doc/design/qmtrack/Makefile
-	  doc/manual/Makefile
-	  qm/Makefile
-          sgmlop/Makefile
-          zope-dtml/ExtensionClass/Makefile"}
+  Makefile
+  doc/Makefile
+  doc/design/qmconfig/Makefile
+  doc/design/qmtest/Makefile
+  doc/design/qmtrack/Makefile
+  doc/manual/Makefile
+  qm/Makefile
+  sgmlop/Makefile
+  zope-dtml/ExtensionClass/Makefile
+"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

@@ -1,3 +1,13 @@
+2001-09-04  Alex Samuel  <samuel@codesourcery.com>
+
+	* configure.in: Rewrite.
+	* configure: Regenerate.
+	* standard.mk.in: Rewrite documentation portions.
+	* qm/test/base.py (Database.HasTest): Implement here.
+	(Database.HasSuite): Likewise.
+	(Database.HasResource): Likewise.
+	* qm/label.py (to_path): Comment.
+
 2001-08-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* README.sources: Describe conventions for private names.

@@ -63,51 +63,55 @@ BUILDDIR	= $(TOPDIR)/build
 DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
-PYTHONBIN	= /usr/bin/python
-PYTHON		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
+PYTHONBIN	= @PYTHON@
+PYTHON		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
 PYTHONDIRS	= $(TOPDIR) \
                   $(TOPDIR)/zope-dtml \
                   $(TOPDIR)/zope-dtml/ExtensionClass
 
-# Tidy configuration.
-TIDY 		= @TIDY@
-TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
+DOCUMENTATION   = @DOCUMENTATION@
 
-# Jade configuration,
-JADE		= @JADE@
-JADEEXTRA	= /usr/doc/jade-1.2.1/pubtext/xml.dcl
+ifeq ($(DOCUMENTATION),yes)
+  # Jade configuration,
+  JADE		= @JADE@
+  JADEEXTRA	= @XML_DCL@
 
-# Modular DSSSL stylesheet configuration.  The system identifiers are
-# specified as relative paths, so the base of the stylesheet
-# installation needs to be provided.
-SGMLDIRS        += /usr/lib/sgml/stylesheets/docbook
+  # Modular DSSSL stylesheet configuration.  The system identifiers are
+  # specified as relative paths, so the base of the stylesheet
+  # installation needs to be provided.
+  SGMLDIRS      += @DOCBOOK_STYLESHEETS@
 
-# qm stylesheets.
-HTMLSS          = $(TOPDIR)/doc/qm-html.dsl
-PRINTSS         = $(TOPDIR)/doc/qm-print.dsl
+  # QM stylesheets.
+  HTMLSS        = $(TOPDIR)/doc/qm-html.dsl
+  PRINTSS       = $(TOPDIR)/doc/qm-print.dsl
 
-# Output directory, index HTML files, and manifest file for HTML
-# output.  These are controlled by the DSSSL stylesheet for HTML.
-HTMLDIR		= html
-HTMLINDEX	= $(HTMLDIR)/index.html
-HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
+  # Output directory, index HTML files, and manifest file for HTML
+  # output.  These are controlled by the DSSSL stylesheet for HTML.
+  HTMLDIR	= html
+  HTMLINDEX	= $(HTMLDIR)/index.html
+  HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
 
-# Tarball containing HTML output.
-HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
+  # Tarball containing HTML output.
+  HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
+
+  # Output directory and output files generated with the DSSSL stylesheet
+  # for TeX.
+  PRINTDIR	= print
+  ifneq ($(DOCBOOKMAIN),)
+    PRINTTEX	= $(DOCBOOKMAIN:.xml=.tex)
+    PRINTPDF	= $(DOCBOOKMAIN:.xml=.pdf)
+  else
+    PRINTTEX	= tex
+    PRINTPDF	= pdf
+  endif
+
+  # Tidy configuration.
+  TIDY 		= @TIDY@
+  TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
+endif
 
 # HappyDoc configuration.
 HAPPYDOC	= @HAPPYDOC@
-
-# Output directory and output files generated with the DSSSL stylesheet
-# for TeX.
-PRINTDIR	= print
-ifneq ($(DOCBOOKMAIN),)
-PRINTTEX	= $(DOCBOOKMAIN:.xml=.tex)
-PRINTPDF	= $(DOCBOOKMAIN:.xml=.pdf)
-else
-PRINTTEX	= tex
-PRINTPDF	= pdf
-endif
 
 # Flags to pass to the regression test driver script.
 TESTFLAGS	= -v -k
@@ -140,71 +144,89 @@ all:		doc subdirs
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
-	cd $@ && make
+	@cd $@ && make
 
-doc:		doc-html doc-print doc-python 
+doc:		doc-python
+	@for subdir in $(SUBDIRS); do \
+          (cd $${subdir} && make $@); \
+        done
 
-# Generate html and print documentation from DocBook source, if it was
-# specified. 
-ifneq ($(DOCBOOKMAIN),)
-doc-html:	docbook-html
-doc-print:	docbook-print
-else
-doc-html:	
-doc-print:	
+# Generate documentation from Python sources using HappyDoc.
+ifneq ($(PYTHONDOCDIRS),)
+  doc-python:	$(PYTHONDOCDIRS)
+	for dir in $(PYTHONDOCDIRS); do \
+	  $(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset $${dir}; \
+	done
 endif
 
-docbook-html:	$(HTMLINDEX) $(HTMLTARBALL)
+# Generate html and print documentation from DocBook source, if it was
+# specified.
+ifeq ($(DOCUMENTATION),yes)
+  doc:		doc-html doc-print
 
-docbook-print:	$(PRINTDIR)/$(PRINTPDF)
+  ifneq ($(DOCBOOKMAIN),)
+    doc-html:	docbook-html
+    doc-print:	docbook-print
+  else
+    doc-html:	
+    doc-print:	
+  endif
+
+  docbook-html:	$(HTMLINDEX) $(HTMLTARBALL) 
+
+  docbook-print: \
+		$(PRINTDIR)/$(PRINTPDF)
 
 
-# The DocBook modular stylesheets generate some sloppy HTML.  Process
-# it with tidy.  Unfortunately, tidy will emit copious warnings;
-# funnel them to /dev/null.  Also tidy returns non-zero indicating
-# warnings; supress this by running true.
-#
-# For each image file required by the HTML documentation output, copy
-# it into the output directory and also add the filename to the
-# manifest.
-$(HTMLMANIFEST) $(HTMLINDEX): \
-	 	$(DOCBOOKMAIN) $(DOCBOOK) $(DOCBITMAP)
+  # The DocBook modular stylesheets generate some sloppy HTML.  Process
+  # it with tidy.  Unfortunately, tidy will emit copious warnings;
+  # funnel them to /dev/null.  Also tidy returns non-zero indicating
+  # warnings; supress this by running true.
+  #
+  # For each image file required by the HTML documentation output, copy
+  # it into the output directory and also add the filename to the
+  # manifest.
+  $(HTMLMANIFEST) $(HTMLINDEX): \
+		$(DOCBOOKMAIN) $(DOCBOOK) $(DOCBITMAP)
 	mkdir -p $(HTMLDIR)
 	$(JADE) \
-	    $(foreach dir,$(SGMLDIRS),-D$(dir)) \
-	    -t sgml -d $(HTMLSS) \
-	    $(JADEEXTRA) \
-	    $(DOCBOOKMAIN)
+	  $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	  -t sgml -d $(HTMLSS) \
+	  $(JADEEXTRA) \
+	  $(DOCBOOKMAIN)
+  ifneq ($(TIDY),no)
 	for f in html/*.html; \
 	do \
-	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
-	    true; \
+	  $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
+	  true; \
 	done 
+  endif
 	for gr in $(DOCBITMAPS); \
 	do \
-	    cp $${gr} $(HTMLDIR)/; \
-	    echo $${gr##*/} >> $(HTMLMANIFEST); \
+	  cp $${gr} $(HTMLDIR)/; \
+	  echo $${gr##*/} >> $(HTMLMANIFEST); \
 	done
 
-# Build a tarball containing the whole HTML output.
-$(HTMLTARBALL):	$(HTMLMANIFEST)
+  # Build a tarball containing the whole HTML output.
+  $(HTMLTARBALL): \
+		$(HTMLMANIFEST)
 	tar zcf $(HTMLTARBALL) \
-	    $(foreach f,$(shell cat $(HTMLMANIFEST)),$(HTMLDIR)/$(f))
+	  $(foreach f,$(shell cat $(HTMLMANIFEST)),$(HTMLDIR)/$(f))
 
-# Jade places the output TeX source file in the current directory, so
-# move it where we want it afterwards.
-$(PRINTDIR)/$(PRINTTEX): \
+  # Jade places the output TeX source file in the current directory, so
+  # move it where we want it afterwards.
+  $(PRINTDIR)/$(PRINTTEX): \
 		$(DOCBOOKMAIN) $(DOCBOOK)
 	mkdir -p $(PRINTDIR)
 	$(JADE) \
-            $(foreach dir,$(SGMLDIRS),-D$(dir)) \
-	    -t tex -d $(PRINTSS) \
-	    $(JADEEXTRA) \
-	    $<
+	  $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	  -t tex -d $(PRINTSS) \
+	  $(JADEEXTRA) \
+	  $<
 	mv $(PRINTTEX) $(PRINTDIR)/
 
-# Process the TeX file to PDF, in the print directory.  
-$(PRINTDIR)/$(PRINTPDF): \
+  # Process the TeX file to PDF, in the print directory.  
+  $(PRINTDIR)/$(PRINTPDF): \
 		$(PRINTDIR)/$(PRINTTEX)
 	test "$(DOCBITMAPS)" && cp $(DOCBITMAPS) $(PRINTDIR)/ || true
 	cd $(PRINTDIR); \
@@ -212,12 +234,6 @@ $(PRINTDIR)/$(PRINTPDF): \
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) 
 
-# Generate documentation from Python sources using HappyDoc.
-ifneq ($(PYTHONDOCDIRS),)
-doc-python:	$(PYTHONDOCDIRS)
-	for dir in $(PYTHONDOCDIRS); do \
-	  $(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset $${dir}; \
-	done
 endif
 
 # Run regression tests.  Regression tests are stored in files named
