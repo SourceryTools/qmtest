@@ -1,3 +1,12 @@
+2004-05-25  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/execution_engine.py
+	(ExecutionEngine._WriteInitialAnnotations): Check that uname is
+	not None before trying to write it out.
+	* qm/test/qmtest (qm.sigmask): Import it in the global scope, not
+	...
+	(main): ... here.
+
 2004-05-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention improvements in 2.2.

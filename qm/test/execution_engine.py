@@ -841,7 +841,8 @@ class ExecutionEngine:
             if userid is not None:
                 rs.WriteAnnotation("qmtest.run.userid", userid)
             rs.WriteAnnotation("qmtest.run.version", qm.version)
-            rs.WriteAnnotation("qmtest.run.uname", uname)
+            if uname is not None:
+                rs.WriteAnnotation("qmtest.run.uname", uname)
             rs.WriteAnnotation("qmtest.run.command_line", args_str)
 
 
