@@ -1,3 +1,10 @@
+2005-01-05  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qmdist/command/build_scripts.py: Create new command to extend
+	the default build_scripts command.
+	* setup.py: Use the extended build_scripts command.
+	* GNUmakefile.in: Remove obsolete command.
+
 2004-12-16  Stefan Seefeld <seefeld@sympatico.ca>
 
 	* qm/test/web/web.py: Replace operator 'is' by '=='
