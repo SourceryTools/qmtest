@@ -1,3 +1,8 @@
+2003-11-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/file_database.py: Remove misleading comments about
+	methods that cannot be overridden.
+
 2003-11-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (fnctl): Import it.

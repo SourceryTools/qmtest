@@ -49,9 +49,7 @@ class FileDatabase(Database):
         returns -- A 'TestDescriptor' corresponding to 'test_id'.
         
         raises -- 'NoSuchTestError' if there is no test in the database
-        named 'test_id'.
-
-        Derived classes must not override this method."""
+        named 'test_id'."""
 
         path = self.GetTestPath(test_id)
         if not self._IsTestFile(path):
@@ -112,9 +110,7 @@ class FileDatabase(Database):
         'Suite') corresponding to 'suite_id'.
         
         raises -- 'NoSuchSuiteError' if there is no test in the database
-        named 'test_id'.
-
-        Derived classes must not override this method."""
+        named 'test_id'."""
 
         path = self.GetSuitePath(suite_id)
         if not self._IsSuiteFile(path):
@@ -186,9 +182,7 @@ class FileDatabase(Database):
         returns -- A 'ResourceDescriptor' corresponding to 'resource_id'.
         
         raises -- 'NoSuchResourceError' if there is no resource in the
-        database named 'resource_id'.
-
-        Derived classes must not override this method."""
+        database named 'resource_id'."""
 
         path = self.GetResourcePath(resource_id)
         if not self._IsResourceFile(path):
@@ -356,9 +350,7 @@ class FileDatabase(Database):
         'label' -- The id for a test, test suite, or similar entity.
 
         returns -- The absolute path for the corresponding entry in
-        the file system, but without any required extension.
-
-        Derived classes must not override this method."""
+        the file system, but without any required extension."""
 
         return os.path.join(self.GetRoot(),
                             self._GetRelativeLabelPath(label))
@@ -376,8 +368,6 @@ class FileDatabase(Database):
         return basename
 
 
-    # Derived classes must not override any methods below this point.
-
     def _GetLabels(self, directory, scan_subdirs, label, predicate):
         """Returns the labels of entities in 'directory'.
 
@@ -394,9 +384,7 @@ class FileDatabase(Database):
 
         returns -- Labels for all file names in 'directory'. that
         satisfy 'predicate'  If 'scan_subdirs' is true, subdirectories
-        are scanned as well.
-
-        Derived classes must not override this method."""
+        are scanned as well."""
 
         labels = []
 
@@ -432,9 +420,7 @@ class FileDatabase(Database):
         'path' -- The name of the file containing the entity.
 
         'exception' -- The type of exception to raise if the file
-        is not present.
-
-        Derived classes must not override this method."""
+        is not present."""
 
         if not os.path.isfile(path):
             raise exception, entity_id
