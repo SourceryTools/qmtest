@@ -1499,7 +1499,7 @@ class AttachmentField(Field):
     """A field containing a file attachment.
 
     Note that the 'FormatValueAsHtml' method uses a popup upload form
-    for uploading new attachment.  The web server must be configued to
+    for uploading new attachment.  The web server must be configured to
     handle the attachment submission requests.  See
     'attachment.register_attachment_upload_script'."""
 

@@ -1,5 +1,10 @@
 2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
+	* qm/fields.py (AttachmentField): Fix typo in introductory
+	comment.
+
+2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
+
 	* qm/test/target.py (Target._RecordResult): Always record the
 	target which the concurrent execution code assumes exists.
 
