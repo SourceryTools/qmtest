@@ -1,5 +1,8 @@
 2003-09-25  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (ExecTestBase.arguments): Improve
+	documentation for exit_code.
+	
 	* qm/executable.py (Executable.Kill): New method.
 	(Executable._GetChildPID): Improve documentation.
 	(TimeoutExecutable): Update documentation about timeouts on

@@ -90,10 +90,7 @@ class ExecTestBase(Test):
             description="""The expected exit code.
 
             Most programs use a zero exit code to indicate success and a
-            non-zero exit code to indicate failure.  Under Windows,
-            QMTest does not accurately report the exit code of the
-            program; all programs are treated as if they exited with
-            code zero."""
+            non-zero exit code to indicate failure."""
             ),
 
         qm.fields.TextField(
