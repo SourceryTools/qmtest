@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest ResultStream class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -52,7 +52,7 @@ class ResultStream:
 
         'result' -- A 'Result'."""
 
-        raise qm.MethodShouldBeOverriddenError, 'ResultStream.WriteResult'
+        raise NotImplementedError
 
 
     def Summarize(self):

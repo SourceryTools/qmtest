@@ -91,7 +91,7 @@ class ItemDescriptor:
         returns -- The Python class object for the entity.  For example,
         for a 'TestDescriptor', this method returns the test class."""
 
-        raise qm.MethodShouldBeOverriddenError, "ItemDescriptor.GetClass"
+        raise NotImplementedError
     
 
     def GetClassArguments(self):
@@ -637,7 +637,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetTest"
+        raise NotImplementedError
 
 
     def WriteTest(self, test):
@@ -664,7 +664,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
+        raise NotImplementedError
 
 
     def RemoveTest(self, test_id):
@@ -677,7 +677,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveTest"
+        raise NotImplementedError
 
 
     def HasTest(self, test_id):
@@ -717,7 +717,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetTestIds"
+        raise NotImplementedError
 
     # Methods that deal with suites.
 
@@ -740,7 +740,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSuite"
+        raise NotImplementedError
 
 
     def WriteSuite(self, suite):
@@ -758,7 +758,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteSuite"
+        raise NotImplementedError
 
 
     def RemoveSuite(self, suite_id):
@@ -772,7 +772,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveSuite"
+        raise NotImplementedError
 
 
     def HasSuite(self, suite_id):
@@ -818,7 +818,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
+        raise NotImplementedError
 
 
     # Methods that deal with resources.
@@ -835,7 +835,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetResource"
+        raise NotImplementedError
 
 
     def WriteResource(self, resource):
@@ -849,7 +849,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteResource"
+        raise NotImplementedError
 
 
     def RemoveResource(self, resource_id):
@@ -863,7 +863,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveResource"
+        raise NotImplementedError
 
 
     def HasResource(self, resource_id):
@@ -904,7 +904,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetResourceIds"
+        raise NotImplementedError
 
     # Miscellaneous methods.
 
@@ -920,7 +920,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetSubdirectories"
+        raise NotImplementedError
         
         
     def GetPath(self):
@@ -942,7 +942,7 @@ class Database:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
+        raise NotImplementedError
 
 
     def GetClassPaths(self):

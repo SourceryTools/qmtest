@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Resource class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -112,7 +112,7 @@ class Resource:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Resource.SetUp"
+        raise NotImplementedError
 
 
     def CleanUp(self, result):
@@ -127,4 +127,4 @@ class Resource:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Resource.CleanUp"
+        raise NotImplementedError

@@ -62,13 +62,6 @@ class QMException(Exception):
     pass
 
 
-class MethodShouldBeOverriddenError(QMException):
-    """Indicates a method was called that should have been overridden."""
-
-    pass
-
-
-
 class MutexError(QMException):
     """A problem occurred with a mutex."""
 

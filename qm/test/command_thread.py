@@ -127,8 +127,7 @@ class CommandThread(Thread):
 
         Derived classes must override this method."""
 
-        raise qm.common.MethodShouldBeOverriddenError, \
-              "CommandThread._RunTest"
+        raise NotImplementedError
 
 
     def _Stop(self):

@@ -42,7 +42,6 @@ program.  The 'temporary_store' global instance should be used."""
 ########################################################################
 
 import common
-from   common import MethodShouldBeOverriddenError
 import mimetypes
 import os
 import xmlutil
@@ -88,7 +87,7 @@ class AttachmentStore:
 
         returns -- A string containing the attachment data."""
 
-        raise MethodShouldBeOverriddenError, "AttachmentStore.GetData"
+        raise NotImplementedError
 
 
     def GetDataFile(self, location):
@@ -100,7 +99,7 @@ class AttachmentStore:
         The file is read-only, and may be a temporary file.  The caller
         should not modify the file in any way."""
 
-        raise MethodShouldBeOverriddenError, "AttachmentStore.GetDataFile"
+        raise NotImplementedError
 
 
     def GetSize(self, location):
@@ -137,7 +136,7 @@ class AttachmentStore:
 
         'data' -- The contents of the attachment."""
 
-        raise qm.MethodShouldBeOverriddenError, "AttachmentStore.Store"
+        raise NotImplementedError
         
         
 

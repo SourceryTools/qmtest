@@ -134,7 +134,7 @@ class Target:
 
         Derived classes must override this method."""
 
-        raise qm.common.MethodShouldBeOverriddenError, "Target.IsIdle"
+        raise NotImplementedError
 
 
     def IsInGroup(self, group_pattern):

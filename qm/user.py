@@ -257,7 +257,7 @@ class Authenticator:
 
         returns -- The user ID of the default user."""
 
-        raise qm.MethodShouldBeOverriddenError
+        raise NotImplementedError
 
 
     def AuthenticateWebRequest(self, request):
@@ -268,7 +268,7 @@ class Authenticator:
 
         returns -- The user ID of the authenticated user."""
 
-        raise qm.MethodShouldBeOverriddenError
+        raise NotImplementedError
 
 
 

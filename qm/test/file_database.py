@@ -404,8 +404,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, \
-              "FileDatabase._GetTestFromPath"
+        raise NotImplementedError
         
 
     def _GetSuiteFromPath(self, suite_id, path):
@@ -420,8 +419,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, \
-              "FileDatabase._GetSuiteFromPath"
+        raise NotImplementedError
         
 
     def _GetResourceFromPath(self, resource_id, path):
@@ -437,8 +435,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, \
-              "FileDatabase._GetResourceFromPath"
+        raise NotImplementedError
 
     # Derived classes must not override any methods below this point.
 

@@ -153,6 +153,11 @@ There is no test with the test ID "%(test_id)s".
 @ no target for group
 No target which matches the group pattern specified for this test.
 
+@ not implemented
+An extension class failed to override the method "%(method_name)s".
+
+The following traceback may be helpful to the extension class implementor.
+
 @ not test database
 "%(path)s" is not a test database.
 

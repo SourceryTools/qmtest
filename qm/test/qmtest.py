@@ -43,6 +43,7 @@ import qm.diagnostic
 import qm.platform
 import qm.structured_text
 import qm.test.cmdline
+import traceback
 
 ########################################################################
 # functions
@@ -86,6 +87,13 @@ except qm.cmdline.CommandError, msg:
     exit_code = 2
 except qm.common.QMException, msg:
     print_error_message(msg)
+    exit_code = 1
+except NotImplementedError:
+    exc_info = sys.exc_info()
+    method_name = traceback.extract_tb(exc_info[2])[-1][2]
+    print_error_message(qm.message("not implemented",
+                                   method_name = method_name))
+    sys.stderr.write(qm.common.format_traceback(exc_info))
     exit_code = 1
 except KeyboardInterrupt:
     # User killed it; that's OK.

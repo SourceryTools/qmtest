@@ -143,7 +143,7 @@ class Test:
 
         Derived classes must override this method."""
 
-        raise qm.MethodShouldBeOverriddenError, "Test.Run"
+        raise NotImplementedError
 
 
     def GetTargetGroup(self):

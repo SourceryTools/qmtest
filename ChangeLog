@@ -1,5 +1,21 @@
 2002-06-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (MethodShouldBeOverriddenError): Remove.
+	* qm/test/qmtest.py: Handle NotImplementedError specially.
+	* qm/test/share/messages/diagnostics.txt (not implemented): New
+	error message.
+	* qm/attachment.py: Use NotImplementedError, not
+	MethodShouldBeOverriddenError.
+	* qm/fields.py: Likewise.
+	* qm/user.py: Likewise.
+	* qm/test/command_thread.py: Likewise.
+	* qm/test/database.py: Likewise.
+	* qm/test/file_database.py: Likewise.
+	* qm/test/resource.py: Likewise.
+	* qm/test/result_stream.py: Likewise.
+	* qm/test/target.py: Likewise.
+	* qm/test/test.py: Likewise.
+	
 	* NEWS: Mention --version option.
 	* qm/test/doc/reference.xml: Add --version description.
 	* GNUmakefile.in: Fix typo in comment.

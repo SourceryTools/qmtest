@@ -283,7 +283,7 @@ class Field:
     def GetTypeDescription(self):
         """Return a structured text description of valid values."""
 
-        raise qm.MethodShouldBeOverriddenError
+        raise NotImplementedError
 
 
     def SetDefaultValue(self, value):
@@ -367,7 +367,7 @@ class Field:
 
         Implementations of this method must be idempotent."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.Validate"
+        raise NotImplementedError
 
 
     def CompareValues(self, value1, value2):
@@ -403,7 +403,7 @@ class Field:
 
         'columns' -- The maximum width of each line of text."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.FormatValueAsText"
+        raise NotImplementedError
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -419,7 +419,7 @@ class Field:
         containing the value of this field, if 'style' specifies the
         generation of form elements."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.FormatValueAsHtml"
+        raise NotImplementedError
 
 
     def ParseFormValue(self, value):
@@ -429,8 +429,7 @@ class Field:
 
         returns -- The corresponding field value."""
 
-        raise qm.MethodShouldBeOverriddenError, \
-              "Field.ParseForSubmittedValue"
+        raise NotImplementedError
 
 
     def FormEncodeValue(self, value):
@@ -440,13 +439,13 @@ class Field:
         an element in a set.  The options in the HTML list element
         representing the set store these encodings as their values."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.FormEncodeValue"
+        raise NotImplementedError
 
 
     def FormDecodeValue(self, encoding):
         """Decode the HTML form-encoded 'encoding' and return a value."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.FormDecodeValue"
+        raise NotImplementedError
 
 
     def GetValueFromDomNode(self, node, attachment_store):
@@ -464,7 +463,7 @@ class Field:
         raises -- 'DomNodeError' if the node's structure or contents are
         incorrect for this field."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.GetValueFromDomNode"
+        raise NotImplementedError
 
 
     def MakeDomNodeForValue(self, value, document):
@@ -474,13 +473,13 @@ class Field:
 
         'document' -- The containing DOM document node."""
 
-        raise qm.MethodShouldBeOverriddenError, "Field.MakeDomNodeForValue"
+        raise NotImplementedError
 
 
     def GetHelp(self):
         """Generate help text about this field in structured text format."""
 
-        raise qm.MethodShouldBeOverriddenError, "GetHelp"
+        raise NotImplementedError
         
 
     def GetHtmlHelp(self, edit=0):
