@@ -1,3 +1,28 @@
+2001-10-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/run.py (CommandThread.__init__): Initialize Queue
+	in a way that works with Python 1.5.2.
+	(test_run): Likewise.
+
+	* qm/test/result.py (Result.GetCause): New function.
+	(Result.keys): Fix typo.
+	* qm/test/web/run.py (TestResultsPage): Do not derived from
+	ResultStream.
+	(TestResultsPage.GetOutcomes): New function.
+	(TestResultsPage.GetTotal): Likewise.
+	(TestResultsPage.GetTotalUnexpected): Likewise.
+	(TestResultsPage.GetResultsWithOutcome): Likewise.
+	(TestResultsPage.GetCount): Likewise.
+	(TestResultsPage.GetUnexpectedCount): Likewise.
+	(TestResultsPage.GetRelativeResults): Likewise.
+	(TestResultsPage.GetDetailUrl): Likewise.
+	* qm/test/web/web.py (ResultPage): New class.
+	(StorageResultsStream): Likewise.
+	(QMTestServer.HandleRunTests): Use it.
+	(QMTestServer.HandleShowResult): New function.
+	* share/dtml/test/result.dtml: New file.
+	* share/dtml/test/results.dtml: Revise.
+
 2001-10-18  Alex Samuel  <samuel@codesourcery.com>
 
 	* README.sources: Mention quotes for string literals.

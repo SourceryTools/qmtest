@@ -104,7 +104,7 @@ class CommandThread(Thread):
 
 	# Create the queue to which the controlling thread will
 	# write commands.
-	self.__command_queue = Queue.Queue()
+	self.__command_queue = Queue.Queue(0)
 
 
     def run(self):
@@ -1287,7 +1287,7 @@ def test_run(test_ids,
     objects.  'resource_results' is a sequence of 'Result' objects for
     resource functions that were run."""
     
-    response_queue = Queue.Queue()
+    response_queue = Queue.Queue(0)
 
     targets = []
     # Set up the targets.
