@@ -318,6 +318,9 @@ class ExecutionEngine:
                              % (result.GetKind(), result.GetId()))
                 # Handle it.
                 self._AddResult(result)
+                if result.GetKind() == Result.TEST:
+                    assert self.__running > 0
+                    self.__running -= 1
                 # Output a trace message.
                 self._Trace("Recorded result.")
                 # If this was a test result, there may be other tests that
@@ -429,8 +432,6 @@ class ExecutionEngine:
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
-            assert self.__running > 0
-            self.__running -= 1
         elif result.GetKind() == Result.RESOURCE:
             self.__resource_results.append(result)
         else:
@@ -460,12 +461,6 @@ class ExecutionEngine:
 
         'annotations' -- A map from strings to strings giving
         additional annotations for the result."""
-
-        # Recording the result will decrement the count of tests
-        # running.  Since this test was never presented to a target,
-        # that would leave the count too low.  So, we pretend that the
-        # test is running now.
-        self.__running += 1
 
         # Create the result.
         result = Result(Result.TEST, test_name, self.__context,
