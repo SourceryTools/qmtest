@@ -1,5 +1,12 @@
 2003-06-23  Nathaniel Smith  <njs@codesourcery.com>
 
+	* qm/fields.py: Fix typo in comment.
+	
+	* qm/test/file_result_stream.py (FileResultStream.__doc__):
+	Fix typo.
+
+2003-06-23  Nathaniel Smith  <njs@codesourcery.com>
+
 	* templates/Makefile: It's 2003 now.
 	* templates/xml: Likewise.
 	* templates/py: Likewise.

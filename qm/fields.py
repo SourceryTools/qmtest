@@ -5,7 +5,7 @@
 # Date:   2001-03-05
 #
 # Contents:
-#   General type system for user-defied data constructs.
+#   General type system for user-defined data constructs.
 #
 # Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #

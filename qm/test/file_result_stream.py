@@ -29,7 +29,7 @@ class FileResultStream(ResultStream):
     A 'FileResultStream' is an abstract base class for other result
     stream classes that store results in a single file.  The file to
     which results should be written can be specified using either the
-    'filename' argument of the 'file' argument.  The latter is for use
+    'filename' argument or the 'file' argument.  The latter is for use
     by QMTest internally."""
 
     arguments = [
