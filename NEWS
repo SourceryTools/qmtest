@@ -6,6 +6,13 @@ This file describes user visible changes to QM.
 QM 2.1 (Not Yet Released)
 =========================
 
+QM 2.1 requires Python 2.2 or greater.
+
+There is a new executable.TimeoutExecutable class that can be used to
+run a child process with a timeout.  The "command" test classes now
+make use of this functionality to support running child processes with
+a timeout.
+
 There is now a "-O" or "--outcomes" option for setting the expected
 outcomes, even when working within in the GUI.
 

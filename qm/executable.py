@@ -698,7 +698,9 @@ class TimeoutExecutable(Executable):
 
         'timeout' -- The number of seconds that the child is permitted
         to run.  This value may be a floating-point value.  However,
-        the value may be rounded to an integral value on some systems."""
+        the value may be rounded to an integral value on some
+        systems.  If the 'timeout' is negative, this class behaves
+        like 'Executable'."""
 
         # This functionality is not yet supported under Windows.
         assert sys.platform != "win32"
@@ -712,58 +714,60 @@ class TimeoutExecutable(Executable):
         # performed in both the parent and the child; therefore both
         # processes can safely assume that the creation of the process
         # group has taken place.
-        os.setpgid(0, 0)
+        if self.__timeout >= 0:
+            os.setpgid(0, 0)
         
         return Executable._InitializeChild(self)
 
     
     def _DoParent(self):
 
-        # Put the child into its own process group.  This step is
-        # performed in both the parent and the child; therefore both
-        # processes can safely assume that the creation of the process
-        # group has taken place.
-        child_pid = self._GetChildPID()
-        try:
-            os.setpgid(child_pid, child_pid)
-        except:
-            # The call to setpgid may fail if the child has exited,
-            # or has already called 'exec'.  In that case, we are
-            # guaranteed that the child has already put itself in the
-            # desired process group.
-            pass
-                   
-        # Create the monitoring process.
-        #
-        # If the monitoring process is in parent's process group and
-        # kills the child after waitpid has returned in the parent, we
-        # may end up trying to kill a process group other than the one
-        # that we intend to kill.  Therefore, we put the monitoring
-        # process in the same process group as the child; that ensures
-        # that the process group will persist until the monitoring
-        # process kills it.
-        self.__monitor_pid = os.fork()
-        if self.__monitor_pid != 0:
-            # Make sure that the monitoring process is placed into the
-            # child's process group before the parent process calls
-            # 'waitpid'.  In this way, we are guaranteed that the process
-            # group as the child 
-            os.setpgid(self.__monitor_pid, child_pid)
-        else:
+        if self.__timeout >= 0:
+            # Put the child into its own process group.  This step is
+            # performed in both the parent and the child; therefore both
+            # processes can safely assume that the creation of the process
+            # group has taken place.
+            child_pid = self._GetChildPID()
             try:
-                # Put the monitoring process into the child's process
-                # group.  We know the process group still exists at this
-                # point because either (a) we are in the process
-                # group, or (b) the parent has not yet called waitpid.
-                os.setpgid(0, child_pid)
-                # Give the child time to run.
-                time.sleep (self.__timeout)
-                # Kill all processes in the child process group.
-                os.kill(0, signal.SIGKILL)
-            finally:
-                # Exit.  This code is in a finally clause so that
-                # we are guaranteed to get here no matter what.
-                os._exit(0)
+                os.setpgid(child_pid, child_pid)
+            except:
+                # The call to setpgid may fail if the child has exited,
+                # or has already called 'exec'.  In that case, we are
+                # guaranteed that the child has already put itself in the
+                # desired process group.
+                pass
+
+            # Create the monitoring process.
+            #
+            # If the monitoring process is in parent's process group and
+            # kills the child after waitpid has returned in the parent, we
+            # may end up trying to kill a process group other than the one
+            # that we intend to kill.  Therefore, we put the monitoring
+            # process in the same process group as the child; that ensures
+            # that the process group will persist until the monitoring
+            # process kills it.
+            self.__monitor_pid = os.fork()
+            if self.__monitor_pid != 0:
+                # Make sure that the monitoring process is placed into the
+                # child's process group before the parent process calls
+                # 'waitpid'.  In this way, we are guaranteed that the process
+                # group as the child 
+                os.setpgid(self.__monitor_pid, child_pid)
+            else:
+                try:
+                    # Put the monitoring process into the child's process
+                    # group.  We know the process group still exists at this
+                    # point because either (a) we are in the process
+                    # group, or (b) the parent has not yet called waitpid.
+                    os.setpgid(0, child_pid)
+                    # Give the child time to run.
+                    time.sleep (self.__timeout)
+                    # Kill all processes in the child process group.
+                    os.kill(0, signal.SIGKILL)
+                finally:
+                    # Exit.  This code is in a finally clause so that
+                    # we are guaranteed to get here no matter what.
+                    os._exit(0)
 
         return Executable._DoParent(self)
 
@@ -772,10 +776,13 @@ class TimeoutExecutable(Executable):
             path = None):
 
         # Run the process.
-        Executable.Run(self, arguments, environment, dir, path)
+        status = Executable.Run(self, arguments, environment, dir, path)
         # Clean up the monitoring program; it is no longer needed.
-        os.kill(self.__monitor_pid, signal.SIGKILL)
-        os.waitpid(self.__monitor_pid, 0)
+        if self.__timeout >= 0:
+            os.kill(self.__monitor_pid, signal.SIGKILL)
+            os.waitpid(self.__monitor_pid, 0)
+
+        return status
 
 
 

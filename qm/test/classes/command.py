@@ -113,20 +113,39 @@ class ExecTestBase(Test):
 
             If the output written by the program does not match this
             value, the test will fail."""
-            ) 
+            ),
+
+        qm.fields.IntegerField(
+            name="timeout",
+            title="Timeout",
+            description="""The number of seconds the child program will run.
+
+            If this field is non-negative, it indicates the number of
+            seconds the child program will be permitted to run.  If this
+            field is not present, or negative, the child program will be
+            permitted to run for ever.""",
+            default_value = -1,
+            ),
         ]
 
 
-    class InputExecutable(qm.executable.RedirectedExecutable):
+    class InputExecutable(qm.executable.TimeoutRedirectedExecutable):
         """An 'InputExecutable' receives a string on its standard input."""
 
-        def __init__(self, input):
+        def __init__(self, input, timeout):
             """Construct a new 'InputExecutable'.
 
             'input' -- The string to be provided the executable on its
-            standard input."""
+            standard input.
 
-            qm.executable.RedirectedExecutable.__init__(self)
+            'timeout' -- The number of seconds that the child is
+            permitted to run.  This value may be a floating-point value.
+            However, the value may be rounded to an integral value on
+            some systems.  If the 'timeout' is negative, this class
+            behaves like 'Executable'."""
+
+
+            qm.executable.TimeoutRedirectedExecutable.__init__(self, timeout)
             self.__input = input
             
 
@@ -186,7 +205,7 @@ class ExecTestBase(Test):
         # Construct the environment.
         environment = self.MakeEnvironment(context)
         # Create the executable.
-        e = ExecTestBase.InputExecutable(self.stdin)
+        e = ExecTestBase.InputExecutable(self.stdin, self.timeout)
         # Run it.
         exit_status = e.Run(arguments, environment, path = program)
 

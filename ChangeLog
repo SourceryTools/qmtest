@@ -14,6 +14,14 @@
 	* README: Note that Python 2.2 is now required.
 	* qm/setup_path.py.in: Reflect Python 2.2 requirement.
 
+	* qm/test/classes/command.py (ExecTestBase.arguments): Add timeout field.
+	(ExecTestBase.InputExecutable): Use
+	TimeoutRedirectedExecutable as a base class.
+	(ExecTestBase.InputExecutable.__init__): Adjust accordingly.
+	(ExecTestBase.Run): Likewise.
+
+	* qm/test/classes/mount_database.py (MountDatabase.GetIds): Fix thinko.
+	
 	* qm/test/classes/process_target.py (ProcessTarget.RunTest):
 	Handle unexpected death of the child process.
 	(ProcessTarget.__ReadResults): Likewise.

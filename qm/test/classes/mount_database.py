@@ -98,7 +98,7 @@ class MountDatabase(Database):
         
         database, joiner, directory = self._SelectDatabase(directory)
         return map(joiner,
-                   database.GetIds(self, kind, directory, scan_subdirs))
+                   database.GetIds(kind, directory, scan_subdirs))
 
 
     def GetTest(self, test_id):

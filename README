@@ -5,7 +5,7 @@
 
 1.  REQUIREMENTS
 
-    To run QM, you will need Python Python 2.1 (or greater).
+    To run QM, you will need Python Python 2.2 (or greater).
 
     You must use GNU Make to build QM.
 
