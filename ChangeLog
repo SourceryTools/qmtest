@@ -1,4 +1,8 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+	
+	* share/dtml/user.dtml: New file.
+	
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (create_dom_text_element): Don't add child for
 	empty string.

@@ -1,0 +1,53 @@
+<dtml-comment><!--
+
+  File:   user.dtml
+  Author: Alex Samuel
+  Date:   2001-06-10
+
+  Contents:
+    Page for displaying information about a user.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('User %s' % user_id)">
+ <body>
+
+ <h3>User <span class="userid"><dtml-var name="user_id"></span></h3>
+ <hr size="1" noshade>
+
+ <ul>
+  <dtml-if expr="user.GetInfoProperty('name') is not _.None">
+   <li>
+    <p><b>Name:</b> <dtml-var expr="user.GetInfoProperty('name')"></p>
+   </li>
+  </dtml-if>
+
+  <dtml-let email="user.GetInfoProperty('email')">
+  <dtml-if expr="email is not _.None">
+   <li>
+    <p><b>Email Address:</b> 
+    <a href="mailto:<dtml-var name="email">"><dtml-var name="email"></a></p>
+   </li>
+  </dtml-if>
+  </dtml-let>
+ </ul>
+
+ </body>
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
