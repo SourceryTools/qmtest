@@ -111,7 +111,7 @@ def copy_tree(src, dst, expand_symlinks=0):
         if os.path.exists(dst):
             raise RuntimeError, \
                   "%s exists but is not a directory" % dst
-        os.mkdir(dst)
+        os.makedirs(dst)
 
     # Scan over directory contents.
     entries = dircache.listdir(src)
@@ -265,17 +265,23 @@ if not os.path.exists(doc_dir):
 # Copy documentation files there.
 for doc_file in doc_files:
     dest = os.path.join(doc_dir, os.path.basename(doc_file))
-    print "installing %s" % dest
-    shutil.copy(doc_file, dest)
-    os.chmod(dest, 0644)
+    # Documentation may not have been built.  
+    if os.path.isfile(doc_file):
+        print "installing %s" % dest
+        shutil.copy(doc_file, dest)
+        os.chmod(dest, 0644)
+    else:
+        print "warning: missing documentation file %s" % doc_file
 for dir in doc_dirs:
+    # Documentation may not have been built.
     src = os.path.join("doc", dir)
-    dest = os.path.join(doc_dir, dir)
-    dest_dir = os.path.dirname(dest)
-    if not os.path.isdir(dest_dir):
-        os.makedirs(dest_dir, 0755)
-    print "copying %s" % src
-    copy_tree(src, dest)
+    if os.path.isdir(src):
+        dest = os.path.join(doc_dir, dir)
+        dest_dir = os.path.dirname(dest)
+        print "copying %s" % src
+        copy_tree(src, dest)
+    else:
+        print "warning: missing documentation directory %s" % dir
 
 ########################################################################
 # Local Variables:

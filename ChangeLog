@@ -1,5 +1,10 @@
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* install.py (copy_tree): Use makedirs.
+	Warn on missing documentation files.
+
+2001-09-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* install.py (copy_tree): New function.
 	Use it.
 	* qm/test/classes/python.py (ExecTest.__init__): Make sure source
