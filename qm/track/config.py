@@ -236,7 +236,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     # exception.
     raise qm.ConfigurationError, \
           "could not open IDB %s after %d attempts" \
-          % (path, attemps)
+          % (path, attempts)
 
 
 def close_idb():

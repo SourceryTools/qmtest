@@ -183,8 +183,8 @@ def execute(command, output_file, error_file):
                 error_file.write("Invoke %s --help for help with usage.\n"
                                  % script_name)
                 return 2
-            except RuntimeError, msg:
-                # A runtime error should come with a message that is
+            except qm.UserError, msg:
+                # A user error should come with a message that is
                 # comprehensible to the user.
                 error_file.write(str(msg) + "\n")
                 return 1

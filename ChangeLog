@@ -1,5 +1,25 @@
 2001-02-20  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/common.py (UserError): New class.
+	(get_host_name): Use gethostbyname_ex.
+	* qm/cmdline.py (CommandError): Derive from UserError.
+
+	* qm/track/sql_idb.py (SqlIdb.GetIssues): New method.
+	(SqlIdb.Query): Remove.
+	(SqlIdb.GetIssue): Allow none where clause.
+	* qm/track/server.py (execute): Catch UserError instead of
+	RuntimeError.
+	* qm/track/memory_idb.py (MemoryIdb.AddIssueClass): Raise KeyError
+	on duplicate.
+	(MemoryIdb.GetIssues): Support retrieval of all issues in a single
+	class.
+	* qm/track/gadfly_idb.py (GadflyIdb.__init__): Don't lock.
+	(GadflyIdb.__del__): Rename to...
+	(GadflyIdb.Close): ... this.  Don't unlock.
+	* qm/track/config.py (open_idb): Fix typo in exception code.
+
+2001-02-20  Alex Samuel  <samuel@codesourcery.com>
+
 	* templates/py: Set emacs fill-column.
 	
 	* Makefile.in (SUBDIRS): Remove doc.  Add sgmlop.

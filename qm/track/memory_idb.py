@@ -123,12 +123,12 @@ class MemoryIdb(qm.track.IdbBase):
     def AddIssueClass(self, issue_class):
         """Add 'issue_class' to the IDB.
 
-        raises -- 'RuntimeError' if there is already a class in the
+        raises -- 'KeyError' if there is already a class in the
         IDB with the same name as the name of 'issue_class'."""
 
         name = issue_class.GetName()
         if self.__issue_classes.has_key(name):
-            raise RuntimeError, "issue class name %s already exists" % name
+            raise KeyError, "issue class name %s already exists" % name
 
         self.__issue_classes[name] = issue_class
 
@@ -204,17 +204,29 @@ class MemoryIdb(qm.track.IdbBase):
         return self.__issues.keys()
 
 
-    def GetIssues(self):
+    def GetIssues(self, issue_class=None):
         """Return a list of all the issues.
 
-        This function is a hack to test the querying.  We want something
-        better for sure in the future.  Created by Benjamin Chelf.
-        FOR INTERNAL USE ONLY.
+        'issue_class' -- If an issue class name or 'IssueClass'
+        instance is provided, all issues in this class will be
+        returned.  If 'issue_class' is 'None', returns all issues in
+        all classes.
 
-        'returns' -- This function returns a list of all the issues in the
+        returns -- Returns a list of all the issues in the
         database."""
 
-        return map(lambda issue: issue[-1].Copy(), self.__issues.values())
+        # If 'issue_class' is the name of an issue class, look up the
+        # class itself.
+        if isinstance(issue_class, types.StringType):
+            issue_class = self.__issue_classes[issue_class]
+        # Get all the issues.
+        matching_issues = self.__issues.values()
+        # If we're restricted to one class, limit to those.
+        if issue_class is not None:
+            filter_fn = lambda i, cl=issue_class: i[0].GetClass() == cl
+            matching_issues = filter(filter_fn, matching_issues)
+        # Don't return the issues themselves -- return copies instead.
+        return map(lambda issue: issue[-1].Copy(), matching_issues)
 
     
     def GetIssue(self, iid, revision=None, issue_class=None):

@@ -194,9 +194,11 @@ class IdbBase:
     def GetIssues(self):
         """Return a list of all the issues.
 
-        FOR INTERNAL USE ONLY."""
+        *This method is deprecated and should not be used.*"""
+
+        
         # This function should be overridden by derived classes.
-        raise NotImplementedError, "__call__ method must be overridden"
+        raise NotImplementedError, "GetIssues method must be overridden"
 
     
     def Query(self, query_str, issue_class_name=None):

@@ -69,6 +69,12 @@ class ConfigurationError(RuntimeError):
 
 
 
+class UserError(Exception):
+
+    pass
+
+
+
 ########################################################################
 # classes
 ########################################################################
@@ -290,7 +296,7 @@ def get_host_name():
 
     global __host_name
     if __host_name is None:
-        __host_name = socket.gethostbyaddr(socket.gethostname())[0]        
+        __host_name = socket.gethostbyname_ex(socket.gethostname())[0]        
     return __host_name
 
 

@@ -33,10 +33,6 @@
 
 # To do:
 #
-#   * Make locking more granular.  (Careful: IDB configuration pickle
-#     has to be locked, and configuration kept coherent across
-#     processes.)
-#
 #   * Cache issue_class and current revision number per iid.
 
 ########################################################################
@@ -88,9 +84,6 @@ class GadflyIdb(sql_idb.SqlIdb):
         else:
             self.__Load()
 
-        # Create a lock, and lock immediately.
-        self.lock = qm.FileSystemMutex(self.__GetLockPath())
-        self.lock.Lock()
         # Connect to the Gadfly database.
         self.connection = gadfly.gadfly(GadflyIdb.idb_database_name, path)
         # Remember the SQL log file, if any.
@@ -130,11 +123,11 @@ class GadflyIdb(sql_idb.SqlIdb):
         pickle_file.close()
 
 
-    def __del__(self):
+    def Close(self):
         """Close the connection.
 
-        The database connection is closed, and persistent state is
-        written to disk.  The log file, if any, is not closed
+        Closes the database connection, and and writes persistent
+        state to disk.  The log file, if any, is not closed
         automatically (unless it is unreferenced and thus deleted)."""
 
         pickle_path = self.__GetPicklePath()
@@ -146,20 +139,12 @@ class GadflyIdb(sql_idb.SqlIdb):
         pickle_file = open(pickle_path, "w")
         cPickle.dump(self.issue_classes, pickle_file)
         pickle_file.close()
-        # Unlock the lock on the IDB.
-        self.lock.Unlock()
 
 
     def __GetPicklePath(self):
         """Return the path to the file containing the IDB pickle."""
 
         return os.path.join(self.path, "idb.pickle")
-
-
-    def __GetLockPath(self):
-        """Return the path to the IDB lock file."""
-
-        return os.path.join(self.path, "lock")
 
 
     def GetCursor(self):

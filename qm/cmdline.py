@@ -48,16 +48,17 @@
 # imports
 ########################################################################
 
-import getopt
-import string
 import copy
+import getopt
+import qm
+import string
 import sys
 
 ########################################################################
 # classes
 ########################################################################
 
-class CommandError(RuntimeError):
+class CommandError(qm.UserError):
 
     pass
 

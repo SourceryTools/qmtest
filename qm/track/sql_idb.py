@@ -188,6 +188,66 @@ class SqlIdb(qm.track.IdbBase):
         return self.issue_classes.values()
 
 
+    def GetIssues(self, issue_class=None):
+        """Return a list of all the issues.
+
+        'issue_class' -- If an issue class name or 'IssueClass'
+        instance is provided, all issues in this class will be
+        returned.  If 'issue_class' is 'None', returns all issues in
+        all classes.
+
+        returns -- Returns a list of all the issues in the
+        database."""
+
+        # If 'issue_class' is the name of an issue class, look up the
+        # class itself.
+        if isinstance(issue_class, types.StringType):
+            issue_class = self.GetIssueClass(issue_class)
+        # Make a list of one or many classes we'll scan over.
+        if issue_class is None:
+            # No classes specified, so use all of them.
+            classes_to_search = self.issue_classes.values()
+        else:
+            classes_to_search = [issue_class]
+
+        # FIXME: This is grotesquely inefficient.  Some caching of
+        # most recent revisions or something like that is definitely
+        # called for, if this function is going to stay around.
+        # Probably, we shouldn't even support this operation.
+
+        # We'll construct this list of all issues we find.
+        issues = []
+        # Loop over issue classes we care about.
+        for icl in classes_to_search:
+            # We'll construct a map from iid to the row corresponding
+            # to the most recent revision of this issue we've seen so far.
+            map_iid_to_row = {}
+            # Select all rows in this issue class.
+            for row in self.__SelectRows(icl, None):
+                # Fish out the iid.
+                iid = row[0]
+                # Keep this row, if it's the first row we've seen for
+                # this issue class, or if it has the larger revision
+                # number than the previous most-recent.
+                if not map_iid_to_row.has_key(iid) \
+                   or map_iid_to_row[iid][1] < row[1]:
+                    map_iid_to_row[iid] = row
+                
+            # The values of the map are the most recent revisions of
+            # all our issues.
+            for row in map_iid_to_row.values():
+                # Build an 'Issue' object.
+                issue = self.__BuildIssueFromRow(icl, row)
+                # Invoke get triggers on it.
+                result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
+                # Keep issues that pass the triggers.
+                if result:
+                    issues.append(issue)
+                # FIXME: Do something with outcomes.
+
+        return issues
+
+
     def GetIssue(self, iid, revision=None, issue_class=None):
         """Return the current revision of issue 'iid'.
 
@@ -329,16 +389,6 @@ class SqlIdb(qm.track.IdbBase):
         return self.GetIssue(iid).GetRevision()
 
 
-    def Query(self, query_record, current_revision_only=1):
-        """Return a sequence of issues matching 'query_record'.
-
-        'query_record' -- An instance of IssueRecord specifying the query.
-
-        'current_revision_only -- If true, don't match revisions other
-        than the current revision of each issue."""
-
-        raise NotImplementedError
-
 
     # Helper functions.
 
@@ -457,6 +507,7 @@ class SqlIdb(qm.track.IdbBase):
         'issue_class' -- The issue class to query.
 
         'where_clause' -- The WHERE clause of the SELECT statement.
+        If 'None', no WHERE clause is used.
 
         'revision' -- The revision number to request for each issue.
         If negative, the highest revision number is returned.  If
@@ -468,8 +519,11 @@ class SqlIdb(qm.track.IdbBase):
         # Construct an SQL SELECT statement.
         table_name = self.__GetTableName(issue_class)
         col_names = self.__GetColumnNames(issue_class)
-        sql_statement = "SELECT %s FROM %s WHERE %s" \
-                        % (col_names, table_name, where_clause)
+        sql_statement = "SELECT %s FROM %s" % (col_names, table_name)
+        # Add the WHERE clause, if specified.
+        if where_clause is not None:
+            sql_statement = sql_statement + " WHERE %s" % where_clause
+        
         # Run the query.
         cursor = self.GetCursor()
         cursor.execute(sql_statement)
