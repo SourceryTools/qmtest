@@ -49,6 +49,74 @@
  &D-tailor; may manually enter information into a configuration file
  in a &D-kit; to provide values to &qmconfig;.</para>
 
+ <para><programlisting>
+<![CDATA[
+class TailorDB:
+
+    """Instances of this class represent tailoring databases.  A
+    project may be tailored using a set of tailoring databases."""
+
+    def __init__(self, file_name):
+
+        """Constructor for a TailorDB object.
+
+        'file_name' -- Name of a file containing a tailoring
+        database."""
+
+
+    def AddBase(self, tdb):
+
+        """Add a base tailoring database to this database.
+
+        'tdb' -- The base tailoring interface to from which this
+        database will inherit entries."""
+
+
+    def DefineEntry(self, entry_name, entry_type, def_val, doc):
+        """Define a new entry for the tailoring database.
+
+        'entry_name' -- Name of the new entry.
+
+        'entry_type' -- Type of the new entry.
+        $$$ What are our basic types?
+
+        'def_val' -- Default value for this entry.
+
+        $$$ Do we want some sort of substitution to take place?  If
+        so, then ideally it is Pythonic.  But that implies we also
+        need to have a 
+
+        'doc' -- Brief description for this entry.
+
+        returns -- None"""
+
+
+    def SetValue(self, entry_name, value):
+
+        """Enter or change a value for an entry.
+
+        'entry_name' -- Entry being assigned a value.
+
+        'value' -- The value being assigned to the entry.
+
+        returns -- None"""
+
+
+    def GetValue(self, entry_name):
+
+        """Get the value of an entry."""
+
+
+    def Commit(self):
+
+        """Commit all changes to the file.
+
+        raises -- 'IOError' if the file cannot be written.
+
+        returns -- None"""
+]]></programlisting</para>
+
+
 </section>
 
 <!--
