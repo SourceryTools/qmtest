@@ -1,3 +1,8 @@
+2004-02-04  Anders Hasselqvist <Anders.Hasselqvist@tss.teleca.se>
+
+	* qm/fields.py (ChoiceField.FormatValueAsHtml): Make sure there is
+	a name for the field.
+
 2004-01-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/explicit_suite.py (ExplicitSuite.is_implicit):

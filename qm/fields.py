@@ -1476,10 +1476,9 @@ class ChoiceField(TextField):
         # For an editable field, give the user a choice of available
         # resources.
         items = self.GetItems()
-        result = "<select"
-        if name:
-            result += ' name="%s"' % name
-        result += ">\n"
+        if name is None:
+            name = self.GetHtmlFormFieldName()
+        result = '<select name="%s">\n' % name
         # HTML does not permit a "select" tag with no contained "option"
         # tags.  Therefore, we ensure that there is always one option to
         # choose from.
