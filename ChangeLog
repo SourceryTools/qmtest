@@ -1,5 +1,9 @@
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* install.py: Fix order.
+
+2001-03-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk.in (INSTALLDOCDIR): New variable.
 	* qm.spec (files): Include doc files.
 	* install.py (doc_files): New variable.

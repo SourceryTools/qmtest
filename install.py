@@ -201,8 +201,8 @@ if not os.path.exists(doc_dir):
     os.chmod(doc_dir, 0755)
 # Copy documentation files there.
 for doc_file in doc_files:
-    print "installing %s" % dest
     dest = os.path.join(doc_dir, os.path.basename(doc_file))
+    print "installing %s" % dest
     shutil.copy(doc_file, dest)
     os.chmod(dest, 0644)
 
