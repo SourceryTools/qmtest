@@ -88,6 +88,8 @@ import qm.diagnostic
 import qm.platform
 import qm.structured_text
 import qm.test.cmdline
+if sys.platform != "win32":
+    import qm.sigmask
 
 ########################################################################
 # Functions
@@ -131,7 +133,6 @@ def main():
 
     # Save the initial signal mask, as early as possible.
     if sys.platform != "win32":
-        import qm.sigmask
         qm.sigmask.save_mask()
 
     # Parse the command line.
