@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>&qmtest Core Implementation</title>
+<chapter><title>&qmtest; Core Implementation</title>
   
  <para>This chapter describes the Python implementation of the core
  qmtest components.  For some components, many implementations are

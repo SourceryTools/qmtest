@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>&qmtest Core Concepts</title>
+<chapter><title>&qmtest; Core Concepts</title>
 
  <para>This section described the core concepts of qmtest.  These
  include the definition of a test itself, the components of the system
