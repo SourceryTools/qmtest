@@ -203,9 +203,14 @@ if test ${QM_BUILD} -eq 0; then
 else
     qm_libdir="${QM_HOME}/qm"
 fi
-qm_script_dir=`basename $0`
-qm_script_dir=`expr "${qm_script_dir}" : 'qm\(.*\)'`
-qm_script="${qm_libdir}/${qm_script_dir}/`basename $0`.py"
+qm_script=`basename $0`
+
+case ${qm_script} in
+    qmtest | qmtest-remote) qm_script_dir=test;;
+    qmtrack) qm_script_dir=track;;
+esac
+
+qm_script="${qm_libdir}/${qm_script_dir}/${qm_script}.py"
 
 # Start the python interpreter, passing it all of the arguments
 # present on our command line.

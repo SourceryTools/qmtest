@@ -222,6 +222,8 @@ class ExecTest(Test):
         stdout_file_name = None
         stderr_file_name = None
         result_pipe_file = None
+	result_pipe_read = None
+	result_pipe_write = None
 
         # Construct the environment.
         self.environment = self.MakeEnvironment(context)
@@ -300,8 +302,7 @@ class ExecTest(Test):
 
             # Only the child process writes to the result pipe; we don't.
             os.close(result_pipe_write)
-            # We don't need the standard input file any longer.
-            os.close(stdin_fd)
+	    result_pipe_write = None
             # Wait for the child process to complete.
             pid, exit_status = os.waitpid(child_pid, 0)
             assert pid == child_pid
@@ -376,7 +377,10 @@ class ExecTest(Test):
             # Clean things up.
             if result_pipe_file is not None:
                 result_pipe_file.close()
+	    if result_pipe_write is not None:
+	        os.close(result_pipe_write)
             if stdin_file_name is not None:
+		os.close(stdin_fd)
                 os.remove(stdin_file_name)
             if stdout_file_name is not None:
                 os.close(stdout_fd)

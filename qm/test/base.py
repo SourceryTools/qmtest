@@ -1242,7 +1242,7 @@ def set_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(Result.RESOURCE, resource_id, context,
+    result = Result(Result.RESOURCE, resource_id, context, Result.PASS,
                     { "action" : "setup" } )
 
     # Set up the resoure.
@@ -1266,7 +1266,7 @@ def clean_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(Result.RESOURCE, resource_id, context,
+    result = Result(Result.RESOURCE, resource_id, context, Result.PASS,
                     { "action" : "cleanup" } )
     
     # Clean up the resource.

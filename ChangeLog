@@ -1,3 +1,31 @@
+2001-10-16  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/async.py: Remove.
+	* qm/common.py (parse_time): Handle Windows format for GMT.
+	* qm/qm.sh: Handle qmtest-remote correctly.
+	* qm/test/base.py (set_up_resource): Fix typo.
+	(clean_up_resource): Likewise.
+	* qm/test/qmtest-remote.py: Rework to avoid use of qm.async.
+	* qm/test/run.py (CommandThread): New class.
+	(Target.GetChannels): Remove.
+	(Target.EnqueueRunTest): Use EnqueueCommand, not _EnqueueCommand.
+	(Target.EnqueueSetUpResource): Likewise.
+	(Target.EnqueueCleanUpResource): Likewise.
+	(Target.OnReplyReady): Rename to ...
+	(Target.OnReply): ... this.  Rework.
+	(LocalThread): New class.
+	(SubprocessTarget): Use it throughout.
+	(RemoteThread): New class.
+	(RemoteShellTarget): Use it throughout.
+	(RemoteDemultiplexerTarget): Remove.
+	(TestRun.AddTestResult): Fold with ...
+	(TestRun.AddResourceResult): ... into ...
+	(TestRun.Result): ... this.
+	(test_run): Adjust.
+	(process_commands): Remove.
+	* qm/test/classes/command.py (ExecTest): Adjust file closing
+	for exception safety.
+
 2001-10-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/share/web/stylesheets/qm.css: Modify to work with Internet

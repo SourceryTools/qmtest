@@ -1222,6 +1222,10 @@ def parse_time(time_string, default_local_time_zone=1):
     time_string = string.strip(time_string)
     time_string = re.sub(" +", " ", time_string)
     time_string = re.sub("/", "-", time_string)
+    # On Windows, "UTC" is spelled "GMT Standard Time".  Change that
+    # to "UTC" so that we can process it with the same code we use 
+    # for UNIX.
+    time_string = re.sub("GMT Standard Time", "UTC", time_string)
     # Break it apart.
     components = string.split(time_string, " ")
 

@@ -68,14 +68,16 @@ execfile(os.path.join(setup_path_dir, 'setup_path.py'))
 # imports
 ########################################################################
 
-import qm.async
+import cPickle
 import qm.common
 import qm.cmdline
 import qm.platform
 import qm.structured_text
 import qm.test.base
 import qm.test.run
+import Queue
 import sys
+from   threading import *
 
 ########################################################################
 # functions
@@ -84,8 +86,7 @@ import sys
 def print_error_message(message):
     message = qm.structured_text.to_text(str(message))
     sys.stderr.write("%s: error:\n%s" % (program_name, message))
-
-
+    
 ########################################################################
 # script
 ########################################################################
@@ -111,10 +112,10 @@ try:
         # Load the test database,
         qm.test.base.load_database(database_path)
 
-        # Construct a channel for communicating via the standard I/O
-        # streams. 
-        channel = qm.async.Channel(sys.stdin.fileno(), sys.stdout.fileno())
-
+        # Create the queue that the local threads will use to write
+        # replies.
+        response_queue = Queue.Queue(0)
+        
         # Construct a proxy target specification for the target we'll
         # use to execute the tests locally.  Since this target is just a
         # proxy for commands sent to a remote-execution target on the
@@ -123,20 +124,52 @@ try:
         # subprocesses, and multiplex their replies.
         target_spec = qm.test.run.TargetSpec(
             name=None,
-            class_name="qm.test.run._RemoteDemultiplexerTarget",
+            class_name="qm.test.run.SubprocessTarget",
             group=None,
             concurrency=concurrency,
             properties={})
         # Instantiate the proxy target.
-        target = qm.test.run._RemoteDemultiplexerTarget(target_spec, channel)
-        # Run the proxy target's relay loop.  This relays commands and
-        # replies until the quit command is received.
-        try:
-            target.RelayCommands()
-        except:
-            sys.stderr.write("FOO\n")
-            target.Stop()
-            raise
+        target = qm.test.run.SubprocessTarget(target_spec, response_queue)
+
+        # Read commands from standard input, and reply to standard
+        # output.
+        while 1:
+            # The number of replies that we expect.
+            expected_replies = 0
+            
+            # Fill up the target's queue.
+            while target.GetQueueLength() < 0:
+                # Read a command.
+                command_type, id, context = cPickle.load(sys.stdin)
+                # Provide it to the target.
+                target.EnqueueCommand(command_type, id, context)
+                # If we got the quit command, exit.
+                if command_type == "quit":
+                    break
+                # We expect a reply to every command except "quit".
+                expected_replies = expected_replies + 1
+                
+            # Ask the target to process the queue.
+            target.ProcessQueue()
+
+            while expected_replies > 0:
+                # Read the result.
+                target, response = response_queue.get()
+                # Allow the local target to process the response.
+                target.OnReply(response, None)
+                # Pass the result back.
+                cPickle.dump(response[0], sys.stdout)
+                # We've gotten one reply.
+                expected_replies = expected_replies - 1
+
+            # The standard output stream is bufferred, but the master
+            # will block waiting for a response, so we must flush
+            # the buffer here.
+            sys.stdout.flush()
+            
+            if command_type == "quit":
+                break;
+                
         # All is well.
         exit_code = 0
 
