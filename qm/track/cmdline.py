@@ -189,6 +189,13 @@ class Command:
         "Open a browser window to the Web interface."
         )
 
+    force_option_spec = (
+        None,
+        "force",
+        None,
+        "Perform the command without confirmation."
+        )
+
     qmtrack_option_specs = [
         database_option_spec,
         help_option_spec,
@@ -215,12 +222,12 @@ class Command:
         
         ("destroy",
          "Destroy an IDB.",
-         "path",
+         "",
          """
          This command destroys an issue database and removes associated
          files.
          """,
-         [ help_option_spec ],
+         [ help_option_spec, force_option_spec ],
          ),
 
         ("edit",
@@ -248,7 +255,7 @@ class Command:
 
         ("initialize",
          "Initialize an IDB.",
-         "path",
+         "",
          """
          This command initializes a new issue database.
          The available IDB types are:
@@ -319,7 +326,7 @@ class Command:
          """,
          [ help_option_spec, format_option_spec, output_option_spec ]
          ),
-        
+
     ]
     """All the commands for qmtrack."""
 
@@ -342,7 +349,7 @@ class Command:
         # Build a map used to dispatch command names to handlers.
         self.__command_dispatch = {
             "create" : self.__PerformCreate,
-            "destroy ": self.__PerformDestroy,
+            "destroy" : self.__PerformDestroy,
             "edit" : self.__PerformEdit,
             "import" : self.__PerformImport,
             "initialize" : self.__PerformInitialize,
@@ -407,6 +414,30 @@ class Command:
         return default
 
 
+    def GetIdbPath(self):
+        """Figure out the path to the IDB to use for this invocation.
+
+        Consults command-line options and environment variables.
+
+        raises -- 'CommandError' if this function cannot figure out the
+        path to the IDB."""
+
+        # Was the path to the IDB specified via a command-line option?
+        idb_path = self.GetGlobalOption("idb", None)
+        if idb_path is None:
+            # No IDB path specified explicitly.  Try the environment
+            # variable.
+            env_var_name = qm.track.state["idb_env_var"]
+            try:
+                idb_path = os.environ[env_var_name]
+            except KeyError:
+                # The environment variable wasn't set, either.  Can't
+                # find the IDB, so give up.
+                raise qm.cmdline.CommandError, \
+                      qm.error("missing idb", envvar=env_var_name)
+        return idb_path
+
+
     def RequiresIdb(self):
         """Return true if this command requires an IDB connection."""
 
@@ -459,18 +490,13 @@ class Command:
             output.write(self.parser.GetCommandHelp(self.__command_name))
             return
 
-        if self.__command_name == '':
-            # The user did not specify a command so we report an error.
-            raise qm.cmdline.CommandError, \
-                  qm.track.error("missing command")
-        else:
-            # Look up a handler for the command.  The command parser
-            # should already have flagged the case where the command
-            # is unrecognized.
-            assert self.__command_dispatch.has_key(self.__command_name)
-            handler = self.__command_dispatch[self.__command_name]
-            # Call the command handler function.
-            handler(output)
+        # Look up a handler for the command.  The command parser
+        # should already have flagged the case where the command
+        # is unrecognized.
+        assert self.__command_dispatch.has_key(self.__command_name)
+        handler = self.__command_dispatch[self.__command_name]
+        # Call the command handler function.
+        handler(output)
 
         # Close the output file, if we opened it.
         if output_file is not None:
@@ -539,6 +565,13 @@ class Command:
           self.__command_options,
           self.__arguments
           ) = self.parser.ParseCommandLine(self.__argument_list)
+
+        # Make sure the user specified a command.
+        if self.__command_name == "" \
+           and not self.HasGlobalOption("help"):
+            # The user did not specify a command so we report an error.
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("missing command")
 
         # Did the user specify a format style?  If so, use it.
         self.format_name = self.GetCommandOption("format", None)
@@ -976,6 +1009,8 @@ class Command:
     def __PerformInitialize(self, output):
         """Process the initialize command."""
 
+        idb_path = self.GetIdbPath()
+
         # Determine the IDB class name from the command line or
         # default.
         # FIXME: Use the MemoryIdb implementation by default, for now.
@@ -987,17 +1022,6 @@ class Command:
             raise qm.ConfigurationError, \
                   qm.track.error("initialize invalid idb class", \
                                  type=idb_class_name)
-        # For this command, the IDB path is provided as an argument.
-        # Make sure the --idb flag wasn't specified, to make sure
-        # users aren't confused.
-        if self.HasGlobalOption("idb"):
-            raise qm.cmdline.CommandError, \
-                  qm.track.error("initialize wrong flag")
-        # Make sure the argument was provided.
-        if len(self.__arguments) != 1:
-            raise qm.cmdline.CommandError, \
-                  qm.track.error("initialize no idb path")
-        idb_path = self.__arguments[0]
 
         # Create the IDB.
         test_values = self.HasCommandOption("test-values")
@@ -1021,28 +1045,21 @@ class Command:
     def __PerformDestroy(self, output):
         """Process the destroy command."""
 
-        # For this command, the IDB path is provided as an argument.
-        # Make sure the --idb flag wasn't specified, to make sure
-        # users aren't confused.
-        if self.HasGlobalOption("idb"):
+        idb_path = self.GetIdbPath()
+        # Make sure there is something that looks like an IDB there.
+        if not os.path.isdir(idb_path):
             raise qm.cmdline.CommandError, \
-                  qm.track.error("initialize wrong flag")
-        # Make sure the argument was provided.
-        if len(self.__arguments) != 1:
-            raise qm.cmdline.CommandError, \
-                  qm.track.error("initialize no idb path")
-        idb_path = self.__arguments[0]
-
+                  qm.error("no idb at path", idb_path=idb_path)
         # Lock the IDB, to make sure we don't delete it under some
         # other process.
         lock = qm.track.config.get_idb_lock(idb_path)
         try:
             lock.Lock(0)
-        except qm.MutexLockError:
+        except qm.common.MutexLockError:
             raise RuntimeError, \
                   qm.track.error("idb locked", lock_path=lock.GetPath())
 
-        while 1:
+        while not self.HasCommandOption("force"):
             # Ask the user for for confirmation.
             sys.stdout.write("Are you sure you want to delete the IDB "
                              "at %s? [y/n] " % idb_path)

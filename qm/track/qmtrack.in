@@ -42,6 +42,7 @@ import os
 import qm.cmdline
 import qm.common
 import qm.platform
+import qm.structured_text
 import qm.track
 import qm.track.cmdline
 import qm.track.server
@@ -72,20 +73,7 @@ try:
             qm.track.set_remote_mode(command.GetGlobalOption("remote-idb"))
         else:
             # Find the path to the IDB.
-            idb_path = command.GetGlobalOption("idb", None)
-            if idb_path is None:
-                # The path to the IDB was not specified in the command.
-                # Try to get it from an environment variable.
-                environment_variable_name = qm.track.state["idb_env_var"]
-                try:
-                    idb_path = os.environ[environment_variable_name]
-                except KeyError:
-                    # The environment variable isn't set.  We don't know
-                    # where to find the IDB, so bail.
-                    raise qm.cmdline.CommandError, \
-                          qm.error("missing idb",
-                                   envvar=environment_variable_name)
-
+            idb_path = command.GetIdbPath()
             # Open a session to the IDB.
             qm.track.open_idb(idb_path)
             qm.common.print_message(2, "IDB at %s opened.\n" % idb_path)
@@ -100,7 +88,8 @@ try:
 
 except qm.cmdline.CommandError, msg:
     script_name = qm.track.state["script_name"]
-    sys.stderr.write("%s: %s\n" % (script_name, msg))
+    sys.stderr.write("%s error:\n" % script_name)
+    sys.stderr.write(qm.structured_text.to_text(str(msg)))
     sys.stderr.write("Invoke %s --help for help with usage.\n"
                      % script_name)
     exit_code = 2

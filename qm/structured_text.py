@@ -143,16 +143,25 @@ class TextFormatter(Formatter):
         # around the separator so that the resulting list contains
         # elements for the separators, too.
         words = re.split("( )", text)
+        # Remove empty strings.
+        words = filter(None, words)
         # Loop over words.
+        start_of_line = 0
         for word in words:
             # Does this word fit on the line?
             if self.__col + len(word) > self.__width:
                 # No.  Go to the next line.
                 self.__NextLine()
                 self.__IndentTo(self.__indent)
-                # Don't print spaces at the start of a line.
+                start_of_line = 1
+            # Are we at the beginning of a line?
+            if start_of_line:
                 if string.strip(word) == "":
+                    # Don't print spaces at the start of a line.
                     continue
+                else:
+                    # No longer.
+                    start_of_line = 0
             # Write the word.
             self.__Write(word)
 

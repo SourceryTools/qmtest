@@ -34,13 +34,13 @@
 ########################################################################
 #  Using the Command Parser
 #
-#  The command parser can be used by giving a list of flags and commands
-#  to be parsed. See the constructor below for the exact structure of
-#  those things. You can then use the parser to 1) generate help strings
-#  for the general program, 2) generate help strings for specific
-#  commands, and 3) parse command lines to split up which flags were
-#  passed, which command was given, and the arguments and flags to that
-#  command that were specified.
+#  The command parser can be used by giving a list of options and
+#  commands to be parsed. See the constructor below for the exact
+#  structure of those things. You can then use the parser to 1) generate
+#  help strings for the general program, 2) generate help strings for
+#  specific commands, and 3) parse command lines to split up which
+#  options were passed, which command was given, and the arguments and
+#  options to that command that were specified.
 #
 ########################################################################
 
@@ -77,19 +77,19 @@ class CommandParser:
         'name' -- The name of the executable that we are currently
         using.  This will normally be argv[0].
         
-        'options' -- A list of 4-tuples specifying flags that you wish
+        'options' -- A list of 4-tuples specifying options that you wish
         this parser to accept.  The 4-tuple has the following form:
-        (short_form, long_form, flags, description).  'short_form' must be
-        exactly one character.  'long_form' must be specified for every
-        flag in the list.  'arg_name' is a string representing the name of
-        the argument that is passed to this flag.  If it is 'None,' then
-        this flag doesn't take an argument.  'description' is a string
-        describing the flag.
+        (short_form, long_form, options, description).  'short_form'
+        must be exactly one character.  'long_form' must be specified
+        for every option in the list.  'arg_name' is a string
+        representing the name of the argument that is passed to this
+        option.  If it is 'None,' then this option doesn't take an
+        argument.  'description' is a string describing the option.
 
         'commands' -- A list of 5-tuples specifying commands to be
-        accepted after the command line flags.  The 5-tuple has the
+        accepted after the command line options.  The 5-tuple has the
         form '(name, short_description, args_string, long_description,
-        flags)'.
+        options)'.
 
           'name' -- The string for the command.
 
@@ -102,7 +102,7 @@ class CommandParser:
           'long_description' -- The long description to be printed out
           in the command specfic help.
 
-          'flags' -- A list of 4-tuples of the same form as the
+          'options' -- A list of 4-tuples of the same form as the
           'options' described above.
 
         'conflicting_options' -- A sequence of sets of conflicting
@@ -184,7 +184,7 @@ class CommandParser:
 
         returns -- 1 if the options are all valid, 0 otherwise."""
 
-        for short_option, long_option, flags, descripton in options:
+        for short_option, long_option, options, descripton in options:
             # The short form of the option must have exactly 1 character.
             if short_option != None and len(short_option) != 1:
                 raise ValueError, "short option must have exactly 1 character"
@@ -274,11 +274,11 @@ class CommandParser:
         arguments and commands."""
 
         help_string = "Usage: %s " % self.__name
-        help_string = help_string \
-                      + "[ FLAGS ] COMMAND [ COMMAND-FLAGS ] [ ARGUMENTS ]\n\n"
-        help_string = help_string + "flags:\n"
+        help_string = help_string + "[ OPTIONS ] COMMAND " \
+                      "[ COMMAND-OPTIONS ] [ ARGUMENTS ]\n\n"
+        help_string = help_string + "Options:\n"
         help_string = help_string + self.GetOptionsHelp(self.__options)
-        help_string = help_string + "\ncommands:\n"
+        help_string = help_string + "\nCommands:\n"
         # Print out the commands and their short descriptions.
         for command in self.__commands:
             help_add = "%-30s: %s"%(command[0], command[1])
@@ -286,7 +286,7 @@ class CommandParser:
         help_string = help_string \
                       + "\nInvoke\n  %s COMMAND --help\n" \
                       "for information about " \
-                      "COMMAND-FLAGS and ARGUMENTS.\n\n" % self.__name
+                      "COMMAND-OPTIONS and ARGUMENTS.\n\n" % self.__name
 
         return help_string
 
@@ -298,11 +298,11 @@ class CommandParser:
 
         returns -- A string of help for a given command."""
 
-        help_string = "Usage: %s %s [ FLAGS ] "%(self.__name, command)
+        help_string = "Usage: %s %s [ OPTIONS ] "%(self.__name, command)
         for command_item in self.__commands:
             if command_item[0] == command:
                 help_string = help_string + command_item[2] + "\n\n"
-                help_string = help_string + "Flags:\n"
+                help_string = help_string + "Options:\n"
                 help_string = help_string \
                               + self.GetOptionsHelp(command_item[4])
                 help_string = help_string + "\n"
@@ -319,36 +319,36 @@ class CommandParser:
         'argv' -- A string containing the command line starting with
         argv[1].  It should not contain the name of the executed program.
 
-        returns -- A 4-tuple of the flags given, the command given, the
-        command flags, and the command arguments.  Its form is this:
-        (flags, command, command_flags, command_args).  'flags' is a list
-        of 2-tuples indicating each flag specified and the argument given
-        to that flag (if applicable).  'command' is the command given.
-        'command_flags' is a list of 2-tuples indicating each flag given
+        returns -- A 4-tuple of the options given, the command given, the
+        command options, and the command arguments.  Its form is this:
+        (options, command, command_options, command_args).  'options' is a list
+        of 2-tuples indicating each option specified and the argument given
+        to that option (if applicable).  'command' is the command given.
+        'command_options' is a list of 2-tuples indicating each option given
         to the command and its possible argument.  'command-args' is a
         list of arguments as given to the command.  If no command is
         given, then the function will return '' for the command, [] for
-        the arguments, and [] for the command flags.
+        the arguments, and [] for the command options.
 
         raises -- 'CommandError' if the command is invalid."""
 
-        # Get the flags off of the front of the command line.
+        # Get the options off of the front of the command line.
         getopt_list = self.BuildGetoptList(self.__options)
 
         try:
-            flags, args = getopt.getopt(argv, self.__getopt_options,
+            options, args = getopt.getopt(argv, self.__getopt_options,
                                         getopt_list)
         except getopt.error, msg:
             raise CommandError, msg
         
-        for i in range(0, len(flags)):
-            flag = flags[i]
-            new_flag = (self.__option_to_long[flag[0]], flag[1])
-            flags[i] = new_flag
+        for i in range(0, len(options)):
+            option = options[i]
+            new_option = (self.__option_to_long[option[0]], option[1])
+            options[i] = new_option
         
-        # Did not specify anything on the command line except flags.
+        # Did not specify anything on the command line except options.
         if args == []:
-            return (flags, '', [], [])
+            return (options, '', [], [])
         
         # Get the command.
         command = args[0]
@@ -364,7 +364,8 @@ class CommandParser:
         if found == 0:
             # The command they specified does not exist; print out the
             # help and raise an exception.
-            raise CommandError, 'unrecognized command %s' % command
+            raise CommandError, \
+                  qm.error("unrecognized command", command=command)
             
         # Get the arguments to the command.
         args = string.join(args[1:])
@@ -377,30 +378,31 @@ class CommandParser:
         getopt_string = self.BuildGetoptString(command_options)
         getopt_list = self.BuildGetoptList(command_options)
         try:
-            command_flags, command_args = getopt.getopt(string.split(args),
-                                                        getopt_string,
-                                                        getopt_list)
+            command_options, command_args = getopt.getopt(string.split(args),
+                                                          getopt_string,
+                                                          getopt_list)
         except getopt.error, msg:
             raise CommandError, "%s: %s" % (command, msg)
 
-        for i in range(0, len(command_flags)):
-            flag = command_flags[i]
-            new_flag = (command_item[5][flag[0]], flag[1])
-            command_flags[i] = new_flag
+        for i in range(0, len(command_options)):
+            option = command_options[i]
+            new_option = (command_item[5][option[0]], option[1])
+            command_options[i] = new_option
             
         # Check for mutually exclusive options.  First generate a set of
         # all the options that were specified, both global options and
         # command options.
-        all_flags = map(lambda flag: flag[0], flags + command_flags)
+        all_options = map(lambda option: option[0],
+                          options + command_options)
         # Loop over sets of conflicting options.
         for conflict_set in self.__conflicting_options:
             # Generate sequence of names of the conflicting options.
             conflict_names = map(lambda opt_spec: opt_spec[1], conflict_set)
             # Filter out options that were specified that aren't in the
             # set of conflicting options.
-            conflict_filter = lambda flag, conflict_names=conflict_names: \
-                              flag in conflict_names and flag
-            matches = filter(conflict_filter, all_flags)
+            conflict_filter = lambda option, conflict_names=conflict_names: \
+                              option in conflict_names and option
+            matches = filter(conflict_filter, all_options)
             # Was more than one option from the conflicting set specified?
             if len(matches) > 1:
                 # Yes; that's a user error.
@@ -409,5 +411,5 @@ class CommandParser:
                                option1=matches[0],
                                option2=matches[1])
 
-        return (flags, command, command_flags, command_args)
+        return (options, command, command_options, command_args)
 

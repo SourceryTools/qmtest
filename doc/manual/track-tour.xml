@@ -36,7 +36,7 @@
   <para>To initialize an empty &idb;, invoke:</para>
 
   <screen>
-&prompt;<userinput>qmtrack initialize <replaceable>path</replaceable></userinput> 
+&prompt;<userinput>qmtrack --idb <replaceable>path</replaceable> initialize</userinput> 
   </screen>
 
   <para>&qmtrack; creates a new &idb; at the
@@ -252,6 +252,12 @@
     the "structured" attribute to true.  If the field will contain
     mostly code listings, formatted output, or screen dumps, set the
     "verbatim" attribute to true.</para>
+
+    <para>You may wish to require users of your issue database to
+    provide a description of each issue.  If you set the
+    <literal>not_empty_text</literal> attribute to true, &qmtrack; will
+    not allow the submission of an issue without a value for the
+    "Description" field.</para>
    </listitem>
   
    <listitem>

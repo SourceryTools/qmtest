@@ -1,5 +1,54 @@
 2001-07-13  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/structured_text.py (TextFormatter.WriteText): Don't print
+	spaces at the start of a line.
+	* qm/common.py (MutexError): New exception.
+	(MutexLockError): Update doc string.
+	(FileSystemMutex.Lock): Raise MutexError.
+	* qm/cmdline.py: Rename "flag" to "option" throughout.
+	* qm/track/server.py (execute): Don't handle CommandError here.
+	* qm/track/qmtrack.in: Use GetIdbPath.  Improve diagnostics.
+	* qm/track/config.py (initialize_idb): Improve diagnostics.
+	* qm/track/cmdline.py (Command.force_option_spec): New attribute.
+	(Command.qmtrack_commands): Use it.  Change flags for initialize
+	and destroy.
+	(Command.__init__): Fix dispatch map.
+	(Command.GetIdbPath): New method.
+	(Command.Execute): Don't check for missing command here.
+	(Command.__Parse): Do it here instead.
+	(Command.__PerformInitialize): Use GetIdbPath.
+	(Command.__PerformDestroy): Likewise.
+	* share/diagnostics/common.txt (invalid enum value): New
+	diagnostic. 
+	(missing command): Rewrite.
+	(unrecognized command): New diagnostic.
+	* share/diagnostics/track.txt (create field error): Fix
+	substitution. 
+	(create issue error): Likewise.
+	(create no equals): Likewise.
+	(edit issue error sem): Likewise.
+	(field exist): Likewise.
+	(field set use equal): Likewise.
+	(field set use plus): Likewise.
+	(idb locked): Likewise.  Adjust wording.
+	(idb parent directory inaccessible): New diagnostic.
+	(idb parent directory missing): Likewise.
+	(idb path exists): Likewise.
+	(initialize no idb path): Remove.
+	(initialize wrong flag): Likewise.
+	(invalid enum value): Likewise.
+	(join iid error sem): Fix substitution.
+	(join issue error sem): Likewise.
+	(join issue error syn): Likewise.
+	(no idb at path): New diagnostic.
+	(show no iid): Fix substitution.
+	(show wrong args): Likewise.
+	(split issue error sem): Likewise.
+	* doc/manual/track-tour.xml: Update for changes in initialize
+	syntax. 
+
+2001-07-13  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (TextField.property_declarations): Rename nonempty
 	to not_empty_text. 
 	(TextField.CompareValues): Re-compare strings case-sensitively. 

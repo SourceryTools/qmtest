@@ -70,6 +70,10 @@ You must specify a value for the "%(field_title)s" field.
 The string "%(key)s" is not a valid enumeral.  Enumeral names must be
 composed of lower-case letters, digits, and underscores.
 
+@ invalid enum value
+The value "%(value)s" is not allowed for field "%(field_title)s".  The
+field may take the values %(values)s.
+
 @ invalid integer field value
 The value of this field must be an integer.
 
@@ -77,7 +81,7 @@ The value of this field must be an integer.
 The user name or password you entered is invalid.  Please log in again.
 
 @ missing command
-You must specify a command.  Use the '--help' option to list commands.
+Specify a command.
 
 @ sendmail error
 Could not execute your mail transport agent, `%(sendmail_path)s'.
@@ -112,6 +116,9 @@ An error occured while creating the temporary file '%(file_name)s'.
 Please check that your temporary directory is configured correctly.
 
 '%(exc_class)s: %(exc_arg)s'
+
+@ unrecognized command
+%(program_name)s does not recognize the command "%(command)s".
 
 @ xml parse error
 The XML parser encountered an error at line %(line)d, character

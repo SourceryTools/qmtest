@@ -78,8 +78,15 @@ class MethodShouldBeOverriddenError(Exception):
 
 
 
+class MutexError(RuntimeError):
+    """A problem occurred with a mutex."""
+
+    pass
+
+
+
 class MutexLockError(Exception):
-    """Indicates that a file exists that wasn't expected to."""
+    """A lock was not obtained on the mutex."""
 
     pass
 
@@ -138,7 +145,9 @@ class FileSystemMutex:
         zero, this function returns immediately if a lock cannot be
         acquired.
 
-        raises - 'MutexLockError' if a lock was not acquired."""
+        raises -- 'MutexError' if there is a problem with the mutex.
+
+        raises -- 'MutexLockError' if a lock was not acquired."""
 
         # Don't allow double locks.
         if self.__locked:
@@ -149,7 +158,7 @@ class FileSystemMutex:
             parent_dir = os.path.dirname(self.__path)
             # Make sure the parent directory exists.
             if not os.path.isdir(parent_dir):
-                raise MutexLockError, \
+                raise MutexError, \
                       "parent directory %s doesn't exist" % parent_dir
             # Check if the directory exists.
             if not os.path.isdir(self.__path):

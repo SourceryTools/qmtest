@@ -1660,7 +1660,7 @@ class EnumerationField(TextField):
             raise ValueError, \
                   qm.error("invalid enum value",
                            value=value,
-                           field_name=self.GetTitle(),
+                           field_title=self.GetTitle(),
                            values=string.join(values, ", "))
 
 

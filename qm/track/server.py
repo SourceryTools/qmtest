@@ -262,13 +262,6 @@ def execute(command, output_file, error_file):
         elif not command.RequiresIdb() or mode == "local":
             command.Execute(output_file)
             return 0
-    except qm.cmdline.CommandError, msg:
-        script_name = qm.track.state["script_name"]
-        msg = qm.structured_text.to_text(str(msg))
-        error_file.write("%s: %s" % (script_name, msg))
-        error_file.write("Invoke %s --help for help with usage.\n"
-                         % script_name)
-        return 2
     except RuntimeError, msg:
         msg = qm.structured_text.to_text(str(msg))
         error_file.write(msg)
