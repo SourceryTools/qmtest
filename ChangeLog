@@ -1,3 +1,8 @@
+2004-03-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qmdist/command/install_scripts.py (install_scripts.run): Handle
+	pathnames that contain backslashes correctly.
+
 2004-03-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Under Windows, convert all
