@@ -25,6 +25,7 @@ from   os.path import join
 import string
 import glob
 from   qmdist.command.build import build
+from   qmdist.command.build_scripts import build_scripts
 from   qmdist.command.build_doc import build_doc
 from   qmdist.command.install_data import install_data
 from   qmdist.command.install_lib import install_lib
@@ -111,6 +112,7 @@ setup(name="qm",
       description="QMTest is an automated software test execution tool.",
       
       cmdclass={'build': build,
+                'build_scripts': build_scripts,
                 'build_doc': build_doc,
                 'install_data': install_data,
                 'install_lib': install_lib,
