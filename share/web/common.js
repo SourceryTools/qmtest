@@ -208,6 +208,13 @@ function property_add_or_change(select, contents, name, value)
   // No name?  Bail.
   if(name == "")
     return;
+  // If the state name isn't valid, complain and bail.
+  if(!label_is_valid(name)) {
+    popup_box("Error",
+              "A property name can consist only of lower-case letters, " +
+              "digits, and underscores, and cannot be empty.");
+    return;
+  }
 
   var options = select.options;
   // Construct the property as it will appear in the select input.

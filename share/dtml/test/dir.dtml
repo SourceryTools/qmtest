@@ -37,7 +37,7 @@
      <form>
       <dtml-var expr="MakeButton('New Test', 'new-test')">
       <dtml-var expr="MakeButton('New Suite', 'new-suite')">
-      <dtml-var expr="MakeButton('New Action', 'new-action')">
+      <dtml-var expr="MakeButton('New Resource', 'new-resource')">
      </form>
     </td>
    </tr>

@@ -25,6 +25,6 @@ qm.track.close_idb()
  <argument name='expression'>
   <text>1</text>
  </argument>
- <prerequisite outcome='PASS'>setup_idb</prerequisite>
- <action>idb</action>
+ <prerequisite outcome='PASS'>unit.track.export.setup_idb</prerequisite>
+ <resource>unit.track.export.idb</resource>
 </test>

@@ -55,8 +55,8 @@ test_file_extension = ".qmt"
 suite_file_extension = ".qms"
 """The file extension for files representing test suites."""
 
-action_file_extension = ".qma"
-"""The file extension for files representing actions."""
+resource_file_extension = ".qma"
+"""The file extension for files representing resources."""
 
 ########################################################################
 # classes
@@ -69,8 +69,8 @@ class UnknownTestClassError(RuntimeError):
 
 
 
-class UnknownActionClassError(RuntimeError):
-    """An unknown action class was specified."""
+class UnknownResourceClassError(RuntimeError):
+    """An unknown resource class was specified."""
     
     pass
 
@@ -129,7 +129,7 @@ class Database(base.Database, qm.common.MutexMixin):
         # '__NOT_LOADED'. 
         self.__tests = {}
         self.__suites = {}
-        self.__actions = {}
+        self.__resources = {}
 
 
     def GetClassPaths(self):
@@ -215,66 +215,67 @@ class Database(base.Database, qm.common.MutexMixin):
         return scan_dir_for_labels(dir_path, test_file_extension)
 
 
-    def HasAction(self, action_id):
-        """Return true if the database contains an action with 'action_id'."""
+    def HasResource(self, resource_id):
+        """Return true if we contain a resource with 'resource_id'."""
 
         lock = self.GetLock()
-        return self.__HasItem(action_id, self.__actions, action_file_extension)
+        return self.__HasItem(resource_id, self.__resources,
+                              resource_file_extension)
 
 
-    def GetAction(self, action_id):
+    def GetResource(self, resource_id):
         lock = self.GetLock()
-        if not self.HasAction(action_id):
-            raise base.NoSuchActionError, action_id
+        if not self.HasResource(resource_id):
+            raise base.NoSuchResourceError, resource_id
 
-        return self.__GetItem(action_id, self.__actions,
-                              action_file_extension,
-                              self.__ParseActionDocument)
+        return self.__GetItem(resource_id, self.__resources,
+                              resource_file_extension,
+                              self.__ParseResourceDocument)
         
 
-    def WriteAction(self, action, comments=0):
+    def WriteResource(self, resource, comments=0):
         lock = self.GetLock()
         # Invalidate the cache entry.
-        self.__InvalidateItem(action.GetId(), self.__actions)
-        # Generate the document and document type for XML action files.
+        self.__InvalidateItem(resource.GetId(), self.__resources)
+        # Generate the document and document type for XML resource files.
         document = qm.xmlutil.create_dom_document(
-            public_id=base.dtds["action"],
-            dtd_file_name="action.dtd",
-            document_element_tag="action"
+            public_id=base.dtds["resource"],
+            dtd_file_name="resource.dtd",
+            document_element_tag="resource"
             )
-        # Construct the action element node.
-        action_id = action.GetId()
-        self.__MakeDomNodeForAction(document, document.documentElement,
-                                    action, comments)
-        # Find the file system path for the action file.
-        action_path = self.IdToPath(action_id, absolute=1) \
-                      + action_file_extension
+        # Construct the resource element node.
+        resource_id = resource.GetId()
+        self.__MakeDomNodeForResource(document, document.documentElement,
+                                    resource, comments)
+        # Find the file system path for the resource file.
+        resource_path = self.IdToPath(resource_id, absolute=1) \
+                      + resource_file_extension
         # If the file is in a new subdirectory, create it.
-        containing_directory = os.path.dirname(action_path)
+        containing_directory = os.path.dirname(resource_path)
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
-        # Write out the action.
-        action_file = open(action_path, "w")
-        qm.xmlutil.write_dom_document(document, action_file)
-        action_file.close()
+        # Write out the resource.
+        resource_file = open(resource_path, "w")
+        qm.xmlutil.write_dom_document(document, resource_file)
+        resource_file.close()
 
 
-    def RemoveAction(self, action_id):
+    def RemoveResource(self, resource_id):
         lock = self.GetLock()
-        # Make sure there is such a action.
-        assert self.HasAction(action_id)
+        # Make sure there is such a resource.
+        assert self.HasResource(resource_id)
         # Invalidate the cache entry.
-        self.__InvalidateItem(action_id, self.__actions)
-        # Remove the action file.
-        action_path = self.IdToPath(action_id, absolute=1) \
-                      + action_file_extension
-        os.unlink(action_path)
+        self.__InvalidateItem(resource_id, self.__resources)
+        # Remove the resource file.
+        resource_path = self.IdToPath(resource_id, absolute=1) \
+                      + resource_file_extension
+        os.unlink(resource_path)
 
 
-    def GetActionIds(self, path="."):
+    def GetResourceIds(self, path="."):
         lock = self.GetLock()
         dir_path = self.IdToPath(path, absolute=1)
-        return scan_dir_for_labels(dir_path, action_file_extension)
+        return scan_dir_for_labels(dir_path, resource_file_extension)
 
 
     def HasSuite(self, suite_id):
@@ -310,7 +311,8 @@ class Database(base.Database, qm.common.MutexMixin):
         lock = self.GetLock()
 
         if not self.HasSuite(suite_id):
-            raise base.NoSuchSuiteError, "no test suite with ID %s" % suite_id
+            raise base.NoSuchSuiteError, \
+                  "no test suite with ID %s" % suite_id
 
         # Look in the cache.
         suite = self.__suites[suite_id]
@@ -350,8 +352,7 @@ class Database(base.Database, qm.common.MutexMixin):
             )
         # Construct the suite element node by adding children for test
         # IDs and suite IDs.  Use the raw test and suite IDs, i.e. don't
-        # expand suites to their contained tests.  These IDs are
-        # relative to the path of the suite.
+        # expand suites to their contained tests. 
         suite_element = document.documentElement
         for test_id in suite.GetRawTestIds():
             test_id_element = qm.xmlutil.create_dom_text_element(
@@ -423,7 +424,7 @@ class Database(base.Database, qm.common.MutexMixin):
     def SetAttachmentData(self, attachment, data, item_id):
         lock = self.GetLock()
         # Construct the path to the directory in which the test or
-        # action given by 'item_id' is written.  The attachment should
+        # resource given by 'item_id' is written.  The attachment should
         # be written to this directory.
         dir_path = self.IdToPath(qm.label.dirname(item_id), absolute=1)
         # Construct the file name to which the attachment data is
@@ -460,9 +461,9 @@ class Database(base.Database, qm.common.MutexMixin):
 
 
     def __HasItem(self, item_id, cache, file_extension):
-        """Return true if an item (a test or action) exits.
+        """Return true if an item (a test or resource) exits.
 
-        This function is used for logic common to tests and actions.
+        This function is used for logic common to tests and resources.
 
         'item_id' -- The ID of the item.
 
@@ -493,9 +494,9 @@ class Database(base.Database, qm.common.MutexMixin):
 
 
     def __GetItem(self, item_id, cache, file_extension, document_parser):
-        """Return an item (a test or action).
+        """Return an item (a test or resource).
 
-        This function is used for logic common to tests and actions.
+        This function is used for logic common to tests and resources.
 
         'item_id' -- The ID of the item to get.
 
@@ -554,45 +555,49 @@ class Database(base.Database, qm.common.MutexMixin):
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
         categories = qm.xmlutil.get_dom_children_texts(test_node,
                                                        "category")
-        prerequisites = self.__GetPrerequisitesFromDomNode(test_node,
-                                                           test_id)
-        actions = self.__GetActionsFromDomNode(test_node, test_id)
+        prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
+        resources = self.__GetResourcesFromDomNode(test_node)
+        properties = self.__GetPropertiesFromDomNode(test_node)
         # Construct a test wrapper around it.
         test = base.Test(test_id,
                          test_class_name,
                          arguments,
                          prerequisites,
                          categories,
-                         actions)
+                         resources,
+                         properties)
         return test
         
 
-    def __ParseActionDocument(self, action_id, document):
-        """Return an action object constructed from an action document.
+    def __ParseResourceDocument(self, resource_id, document):
+        """Return a resource object constructed from a resource document.
 
-        'action_id' -- The action ID of the action.
+        'resource_id' -- The resource ID of the resource.
 
-        'document' -- A DOM document node containing a single action
-        element from which the action object is constructed."""
+        'document' -- A DOM document node containing a single resource
+        element from which the resource object is constructed."""
 
         # Make sure the document contains only a single test element.
-        action_nodes = document.getElementsByTagName("action")
-        assert len(action_nodes) == 1
-        action_node = action_nodes[0]
+        resource_nodes = document.getElementsByTagName("resource")
+        assert len(resource_nodes) == 1
+        resource_node = resource_nodes[0]
         # Extract the pieces.
-        action_class_name = self.__GetClassNameFromDomNode(action_node)
+        resource_class_name = self.__GetClassNameFromDomNode(resource_node)
         # Obtain the test class.
         try:
-            action_class = base.get_class(action_class_name)
+            resource_class = base.get_class(resource_class_name)
         except KeyError:
-            raise UnknownActionClassError, class_name
-        arguments = self.__GetArgumentsFromDomNode(action_node, action_class)
+            raise UnknownResourceClassError, class_name
+        arguments = self.__GetArgumentsFromDomNode(resource_node,
+                                                   resource_class)
+        properties = self.__GetPropertiesFromDomNode(test_node)
         # Construct a test wrapper around it.
-        return base.Action(action_id, action_class_name, arguments)
+        return base.Resource(resource_id, resource_class_name,
+                             arguments, properties)
 
 
     def __GetClassNameFromDomNode(self, node):
-        """Return the name of the test or action class of a test.
+        """Return the name of the test or resource class of a test.
 
         'node' -- A DOM node for a test element.
 
@@ -608,11 +613,11 @@ class Database(base.Database, qm.common.MutexMixin):
 
 
     def __GetArgumentsFromDomNode(self, node, klass):
-        """Return the arguments of a test or action.
+        """Return the arguments of a test or resource.
 
-        'node' -- A DOM node for a test or action element.
+        'node' -- A DOM node for a test or resource element.
 
-        'klass' -- The test or action class.
+        'klass' -- The test or resource class.
 
         returns -- A mapping from argument names to corresponding
         values."""
@@ -651,12 +656,10 @@ class Database(base.Database, qm.common.MutexMixin):
         return result
 
 
-    def __GetPrerequisitesFromDomNode(self, test_node, test_id):
+    def __GetPrerequisitesFromDomNode(self, test_node):
         """Return the prerequisite tests for 'test_node'.
 
         'test_node' -- A DOM node for a test element.
-
-        'test_id' -- The corresponding test ID.
 
         returns -- A mapping from prerequisite test ID to the outcome
         required for that test."""
@@ -671,21 +674,34 @@ class Database(base.Database, qm.common.MutexMixin):
         return results
 
 
-    def __GetActionsFromDomNode(self, test_node, test_id):
-        """Return the actions for 'test_node'.
+    def __GetResourcesFromDomNode(self, test_node):
+        """Return the resources for 'test_node'.
 
         'test_node' -- A DOM node for a test element.
 
-        'test_id' -- The corresponding test ID.
-
-        returns -- A sequence of action IDs."""
+        returns -- A sequence of resource IDs."""
         
-        # Extract the contents of all action elements.
+        # Extract the contents of all resource elements.
         results = []
-        for child_node in test_node.getElementsByTagName("action"):
-            action_id = qm.xmlutil.get_dom_text(child_node)
-            results.append(action_id)
+        for child_node in test_node.getElementsByTagName("resource"):
+            resource_id = qm.xmlutil.get_dom_text(child_node)
+            results.append(resource_id)
         return results
+
+
+    def __GetPropertiesFromDomNode(self, item_node):
+        """Return the properties for an 'item_node'.
+
+        'item_node' -- A DOM node for a test or resource element.
+
+        returns -- A map from property names to values."""
+
+        properties = {}
+        for child_node in item_node.getElementsByTagName("property"):
+            name = child_node.getAttribute("name")
+            value = qm.xmlutil.get_dom_text(child_node)
+            properties[name] = value
+        return properties
 
 
     def __MakeDomNodeForTest(self, document, element, test, comments=0):
@@ -723,26 +739,30 @@ class Database(base.Database, qm.common.MutexMixin):
         containing_id = qm.label.split(test_id)[0]
         # Loop over prerequisites.
         for prerequisite_id, outcome in test.GetPrerequisites().items():
-            # The relative ID path to the prerequisite test is stored as
-            # the element contents.
+            # The ID of the prerequisite test is stored as the element
+            # contents.
             prq_element = qm.xmlutil.create_dom_text_element(
                 document, "prerequisite", prerequisite_id)
             # The outcome is stored as an attribute.
             prq_element.setAttribute("outcome", outcome)
             element.appendChild(prq_element)
 
-        # Build and add action elements.
-        for action in test.GetActions():
+        # Build and add resource elements.
+        for resource in test.GetResources():
             act_element = qm.xmlutil.create_dom_text_element(
-                document, "action", action)
+                document, "resource", resource)
             element.appendChild(act_element)
 
         # All done.
         return element
 
 
-    def __MakeDomNodeForAction(self, document, element, action, comments=0):
-        """Construct a DOM node for an action.
+    def __MakeDomNodeForResource(self,
+                                 document,
+                                 element,
+                                 resource,
+                                 comments=0):
+        """Construct a DOM node for a resource.
 
         'document' -- The DOM document in which the node is being
         constructed.
@@ -750,32 +770,32 @@ class Database(base.Database, qm.common.MutexMixin):
         'element' -- A test element DOM node in which the test is
         assembled.  If 'None', a new test element node is created.
 
-        'action' -- The action to write.
+        'resource' -- The resource to write.
 
         'comments' -- If true, add DOM comment nodes."""
 
         # Make an element node unless one was specified.
         if element is None:
-            element = document.createElement("action")
+            element = document.createElement("resource")
         else:
-            assert element.tagName == "action"
+            assert element.tagName == "resource"
         # Build common stuff.
-        self.__MakeDomNodeForItem(document, element, action, comments)
+        self.__MakeDomNodeForItem(document, element, resource, comments)
         # All done.
         return element
 
 
     def __MakeDomNodeForItem(self, document, element, item, comments=0):
-        """Construct common DOM node elements for a test or action.
+        """Construct common DOM node elements for a test or resource.
 
         'document' -- The DOM document in which the node is being
         constructed.
 
-        'element' -- An element DOM node in which the test or action is
+        'element' -- An element DOM node in which the test or resource is
         assembled.
 
-        'item' -- The test or action to write.  Only components common
-        to tests and actions are written.
+        'item' -- The test or resource to write.  Only components common
+        to tests and resources are written.
 
         'comments' -- If true, add DOM comment nodes."""
 
@@ -821,6 +841,13 @@ class Database(base.Database, qm.common.MutexMixin):
             value_node = field.MakeDomNodeForValue(value, document)
             arg_element.appendChild(value_node)
             element.appendChild(arg_element)
+
+        # Build and add property elements.
+        for name, value in item.GetProperties().items():
+            property_element = qm.xmlutil.create_dom_text_element(
+                document, "property", value)
+            property_element.setAttribute("name", name)
+            element.appendChild(property_element)
 
 
     def __GetSuite(self, suite_id):
@@ -890,14 +917,7 @@ class DirectorySuite(base.Suite):
 
 
     def GetTestIds(self):
-        # Since suites can specify only relative test IDs, a suite
-        # contained in this suite can only include tests contained in
-        # this suite.  So there's no need to expand suites to determine
-        # the test IDs in this suite.  However, we do need to make them
-        # relative to the top of the test database.
-        rel = qm.label.MakeRelativeTo(self.GetId())
-        result = map(rel, self.GetRawTestIds())
-        return result
+        return self.GetRawTestIds()
 
 
     # Helper methods.

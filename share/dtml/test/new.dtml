@@ -5,7 +5,7 @@
   Date:   2001-04-18
 
   Contents:
-    Document template for new test or new action page.
+    Document template for new test or new resource page.
 
   Copyright (C) 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -57,8 +57,8 @@
        <b>Test ID</b>
        <p>The test ID identifies the test.</p>
       <dtml-else>
-       <b>Action ID</b>
-       <p>The action ID identifies the action.</p>
+       <b>Resource ID</b>
+       <p>The resource ID identifies the resource.</p>
       </dtml-if>
      </td>
      <td>
@@ -78,7 +78,7 @@
         <dtml-if expr="type == 'test'">
          <dtml-var expr="web.make_help_link('test ID')">
         <dtml-else>
-         <dtml-var expr="web.make_help_link('action ID')">
+         <dtml-var expr="web.make_help_link('resource ID')">
         </dtml-if>
        </td></tr>
       </table>
@@ -99,10 +99,10 @@
        <p>The test class determines how the test is parameterized, and
        provides the mechanism by which the test is run.</p>
       <dtml-else>
-       <b>Action Class</b>
+       <b>Resource Class</b>
 
-       <p>The action class determines how the action is parameterized,
-       and provides the mechanism by which the action is run.</p>
+       <p>The resource class determines how the resource is parameterized,
+       and provides the mechanism by which the resource is run.</p>
       </dtml-if>
      </td>
      <td>
@@ -136,7 +136,7 @@
         <dtml-if expr="type == 'test'">
          <dtml-var expr="web.make_help_link('test class control')">
         <dtml-else>
-         <dtml-var expr="web.make_help_link('action class control')">
+         <dtml-var expr="web.make_help_link('resource class control')">
         </dtml-if>
        </td></tr>
       </table>

@@ -122,11 +122,6 @@ class ShowPage(web.DtmlPage):
         return qm.web.make_confirmation_dialog(message, delete_url)
 
 
-    def FormatSuiteId(self, id):
-        parent_id = qm.label.dirname(self.suite.GetId())
-        return web.DtmlPage.FormatSuiteId(self, id, within=parent_id)
-
-
 
 class NewPage(web.DtmlPage):
     """Page for creating a new test suite."""

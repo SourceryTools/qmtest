@@ -4,6 +4,6 @@ PUBLIC "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" "fields.mod"
 PUBLIC "-//Software Carpentry//QMTrack Issue V0.1//EN" "issue.dtd"
 
 PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "test.dtd"
-PUBLIC "-//Software Carpentry//QMTest Action V0.1//EN" "action.dtd"
+PUBLIC "-//Software Carpentry//QMTest Resource V0.1//EN" "resource.dtd"
 PUBLIC "-//Software Carpentry//QMTest Result V0.1//EN" "result.dtd"
 PUBLIC "-//Software Carpentry//QMTest Suite V0.1//EN" "suite.dtd"

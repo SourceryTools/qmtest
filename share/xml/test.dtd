@@ -33,7 +33,7 @@
 
 <!-- A single test.  -->
 <!ELEMENT test
-    (class, (argument | category | prerequisite | action)*)
+    (class, (argument | category | prerequisite | resource | property)*)
 >
 
 <!-- The name of a test class.  -->
@@ -53,9 +53,13 @@
 <!ELEMENT prerequisite (#PCDATA)>
 <!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
 
-<!-- The ID of an action that must be invoked before and after this test
+<!-- The ID of an resource that must be invoked before and after this test
      is run.  -->
-<!ELEMENT action (#PCDATA)>
+<!ELEMENT resource (#PCDATA)>
+
+<!-- A resource property.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 

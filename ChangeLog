@@ -1,8 +1,64 @@
 2001-07-17  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/base.py: Rename "action" to "resource" throughout.
+	(InstanceBase.__init__): Add properties parameter
+	(InstanceBase.SetProperty): New method.
+	(InstanceBase.GetProperty): Likewise.
+	(InstanceBase.GetProperties): Likewise.
+	(Test.__init__): Add properties parameter.
+	(Test.GetPrerequisites): Remove absolute parameter.
+	(Test.GetResources): Likewise.
+	(Resource.__init__): Add properties parameter.
+	(Suite.GetTestIds): Assume absolute IDs.
+	(Suite.GetRawTestIds): Likewise.
+	(Suite.GetRawSuiteIds): Likewise.
+	(PrerequisiteMapAdapter.__getitem__): Remove absolute argument.
+	(PrerequisiteMapAdapter.get): Likewise.
+	* qm/test/xmldb.py: Rename "action" to "resource" throughout.
+	(Database.WriteSuite): Assume absolute IDs.
+	(Database.__ParseTestDocument): Load properties.
+	(Database.__ParseResourceDocument): Likewise.
+	(Database.__GetPropertiesFromDomNode): New method.
+	(Database.__MakeDomNodeForItem): Include properties.
+	* qm/test/cmdline.py (Command.unexpected_sorter): Rename "action"
+	to "resource".
+	* qm/test/web/web.py: Rename "action" to "resource" throughout.
+	(DefaultDtmlPage.FormatTestId): Remove relative_to and within
+	parameters. 
+	(DefaultDtmlPage.FormatResourceId): Likwise.
+	(DefaultDtmlPage.FormatSuiteId): Remove within parameter.
+	* qm/test/web/dir.py: Rename "action" to "resource" throughout.
+	* qm/test/web/show.py: Likewise.
+	(handle_submit): Handle properties.
+	* qm/test/web/suite.py (ShowPage.FormatSuiteId): Remove.
+	* qm/test/classes/temporary.py: Rename "action" to "resource"
+	throughout.
+	* share/diagnostics/test-help.txt: Likewise.
+	* share/dtml/test/dir.dtml: Likewise.
+	* share/dtml/test/suite.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.  Show properties.  Adjust
+	formatting. 
+	* share/xml/test.dtd: Rename "action" to "resource" throughout.
+	* share/xml/CATALOG: Likewise.
+	* share/xml/action.dtd: Remove.
+	* share/xml/resource.dtd: New file.
+	* share/web/common.js (property_add_or_change): Check if name is
+	valid. 
+	* share/web/dtml/test/add-action.dtml: Remove.
+	* share/web/dtml/test/add-resource.dtml: New file.
+	* unit/common/parser_help.qmt: Make IDs absolute.
+	* unit/common/parser_parse.qmt: Likewise.
+	* unit/test/classes/tempdir1.qma: Likewise.
+	* unit/test/classes/tempdir1.qmt: Likewise.
+	* unit/track/export/export1.qmt: Likewise.
+	* unit/track/export/export2.qmt: Likewise.
+	* unit/track/export/idb.qma: Likewise.
+	* unit/track/export/setup_idb.qmt: Likewise.
+
+2001-07-17  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/config.py (setup_idb_for_internal_use): Make
 	description field multiline.
-	(setup_idb_for_internal_use): Likewise.
 	(setup_idb_for_test): Likewise.
 
 2001-07-17  Alex Samuel  <samuel@codesourcery.com>

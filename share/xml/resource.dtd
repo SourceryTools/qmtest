@@ -1,11 +1,11 @@
 <!--
 
-  File:   action.dtd
+  File:   resource.dtd
   Author: Alex Samuel
   Date:   2001-03-28
 
   Contents:
-    DTD for an action.
+    DTD for an resource.
 
   Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
 
@@ -31,18 +31,22 @@
 
 -->
 
-<!-- A single action.  -->
-<!ELEMENT action
-    (class, (argument)*)
+<!-- A single resource.  -->
+<!ELEMENT resource
+    (class, (argument | property)*)
 >
 
-<!-- The name of a action class.  -->
+<!-- The name of a resource class.  -->
 <!ELEMENT class (#PCDATA)>
 
-<!-- An argument to a action class.  -->
+<!-- An argument to a resource class.  -->
 <!ELEMENT argument (integer | text | set | attachment | enumeral)>
 <!ATTLIST argument name CDATA #REQUIRED 
                    eval ( yes | no ) "no">
+
+<!-- A resource property.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 

@@ -78,53 +78,32 @@ class DefaultDtmlPage(qm.web.DtmlPage):
         return self.MakeListingUrl()
 
 
-    def FormatTestId(self, test_id, relative_to=None, within=None):
+    def FormatTestId(self, test_id):
         """Return markup for 'test_id'."""
-
-        if relative_to is not None:
-            absolute_test_id = qm.label.join(qm.label.dirname(relative_to),
-                                             test_id)
-        elif within is not None:
-            absolute_test_id = qm.label.join(within, test_id)
-        else:
-            absolute_test_id = test_id
 
         request = qm.web.WebRequest("show-test",
                                     base=self.request,
-                                    id=absolute_test_id)
+                                    id=test_id)
         return '<a href="%s"><span class="test_id">%s</span></a>' \
                % (request.AsUrl(), test_id)
 
 
-    def FormatActionId(self, action_id, relative_to=None, within=None):
-        """Return markup for 'action_id'."""
+    def FormatResourceId(self, resource_id):
+        """Return markup for 'resource_id'."""
 
-        if relative_to is not None:
-            absolute_action_id = qm.label.join(qm.label.dirname(relative_to),
-                                               action_id)
-        elif within is not None:
-            absolute_action_id = qm.label.join(within, action_id)
-        else:
-            absolute_action_id = action_id
-
-        request = qm.web.WebRequest("show-action",
+        request = qm.web.WebRequest("show-resource",
                                     base=self.request,
-                                    id=absolute_action_id)
-        return '<a href="%s"><span class="action_id">%s</span></a>' \
-               % (request.AsUrl(), action_id)
+                                    id=resource_id)
+        return '<a href="%s"><span class="resource_id">%s</span></a>' \
+               % (request.AsUrl(), resource_id)
 
 
-    def FormatSuiteId(self, suite_id, within=None):
+    def FormatSuiteId(self, suite_id):
         """Return markup for 'suite_id'."""
-
-        if within is not None:
-            absolute_suite_id = qm.label.join(within, suite_id)
-        else:
-            absolute_suite_id = suite_id
 
         request = qm.web.WebRequest("show-suite",
                                     base=self.request,
-                                    id=absolute_suite_id)
+                                    id=suite_id)
         return '<a href="%s"><span class="suite_id">%s</span></a>' \
                % (request.AsUrl(), suite_id)
     
@@ -175,24 +154,24 @@ def make_server(port, address="", log_file=None):
     qm.attachment.register_attachment_upload_script(server)
     # Register all our web pages.
     for name, function in [
-        ( "create-action", qm.test.web.show.handle_show ),
+        ( "create-resource", qm.test.web.show.handle_show ),
         ( "create-suite", qm.test.web.suite.handle_create ),
         ( "create-test", qm.test.web.show.handle_show ),
-        ( "delete-action", qm.test.web.show.handle_delete ),
+        ( "delete-resource", qm.test.web.show.handle_delete ),
         ( "delete-suite", qm.test.web.suite.handle_delete ),
         ( "delete-test", qm.test.web.show.handle_delete ),
         ( "dir", qm.test.web.dir.handle_dir ),
-        ( "edit-action", qm.test.web.show.handle_show ),
+        ( "edit-resource", qm.test.web.show.handle_show ),
         ( "edit-suite", qm.test.web.suite.handle_edit ),
         ( "edit-test", qm.test.web.show.handle_show ),
-        ( "new-action", qm.test.web.show.handle_new_action ),
+        ( "new-resource", qm.test.web.show.handle_new_resource ),
         ( "new-suite", qm.test.web.suite.handle_new ),
         ( "new-test", qm.test.web.show.handle_new_test ),
-        ( "show-action", qm.test.web.show.handle_show ),
+        ( "show-resource", qm.test.web.show.handle_show ),
         ( "show-suite", qm.test.web.suite.handle_show ),
         ( "show-test", qm.test.web.show.handle_show ),
         ( "shutdown", handle_shutdown ),
-        ( "submit-action", qm.test.web.show.handle_submit ),
+        ( "submit-resource", qm.test.web.show.handle_submit ),
         ( "submit-suite", qm.test.web.suite.handle_submit ),
         ( "submit-test", qm.test.web.show.handle_submit ),
         ]:

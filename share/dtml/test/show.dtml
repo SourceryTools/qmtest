@@ -5,7 +5,7 @@
   Date:   2001-02-08
 
   Contents:
-    Document template for web page to display or edit a test or action.
+    Document template for web page to display or edit a test or resource.
 
   Copyright (C) 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -87,7 +87,7 @@
 
     <dtml-comment><!--
 
-      Display the test or action class, and its summary and
+      Display the test or resource class, and its summary and
       description. 
 
     --></dtml-comment>
@@ -104,7 +104,7 @@
 
     <dtml-comment><!--
 
-      Now the test or action arguments (field values).
+      Now the test or resource arguments (field values).
 
     --></dtml-comment>
     <tr><td colspan="2">&nbsp;</td></tr>
@@ -145,7 +145,8 @@
            </span>
           </dtml-if>
          </td><td>
-          <dtml-var expr="web.make_help_link_html(field.GetHtmlHelp(edit=edit))">
+          <dtml-var expr="web.make_help_link_html(
+                          field.GetHtmlHelp(edit=edit))">
          </td></tr>
         </table>  
        </td>
@@ -158,10 +159,43 @@
     </dtml-let>
     </dtml-in>
 
+    <tr><td colspan="2">&nbsp;</td></tr>
+
+    <tr class="heading">
+     <td colspan="2">
+      Properties
+     </td>
+    </tr>
+
+    <tr class="field" valign="top">
+     <td>
+      <b>Properties</b>
+      <p>A property specifies additional information not related to 
+      the <dtml-var name="type">'s execution.</p>
+     </td>
+     <td>
+      <dtml-if expr="edit">
+       <dtml-var expr="web.make_properties_control('form', 'properties',
+                                                   item.GetProperties())">
+      <dtml-else>
+       <dtml-if expr="_.len(item.GetProperties()) > 0">
+        <dtml-in expr="item.GetProperties().keys()">
+        <dtml-let name=sequence-item>
+         <li><dtml-var name="name">&nbsp;= 
+         <dtml-var expr="item.GetProperty(name)"></li>
+        </dtml-let>
+        </dtml-in>
+       <dtml-else>
+        None
+       </dtml-if>
+      </dtml-if>
+     </td>
+    </tr>
+
     <dtml-comment><!--
 
       For tests, there's additional information: prerequisite tests,
-      setup/cleanup actions, and categories.
+      setup/cleanup resources, and categories.
 
     --></dtml-comment>
     <dtml-if expr="type is 'test'">
@@ -194,7 +228,7 @@
         <dtml-if expr="_.len(prerequisites) > 0">
          <dtml-in expr="prerequisites.keys()">
          <dtml-let prerequisite=sequence-item>
-          <dtml-var expr="FormatTestId(prerequisite, item.GetId())"> 
+          <dtml-var expr="FormatTestId(prerequisite)"> 
           (<dtml-var expr="prerequisites[prerequisite]">)
           <br>
          </dtml-let>
@@ -208,23 +242,23 @@
 
      <tr class="field" valign="top">
       <td>
-       <b>Actions</b>
-       <p>An action specifies setup and cleanup operations for the test.</p>
+       <b>Resources</b>
+       <p>A resource specifies setup and cleanup operations for the test.</p>
       </td>
       <td>
        <dtml-if expr="edit">
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
          <tr valign="top"><td>
-          <dtml-var expr="MakeActionsControl()">
+          <dtml-var expr="MakeResourcesControl()">
          </td><td>
-          <dtml-var expr="web.make_help_link('actions control')">
+          <dtml-var expr="web.make_help_link('resources control')">
          </td></tr>
         </table>
        <dtml-else>
-        <dtml-if expr="_.len(actions) > 0">
-         <dtml-in name="actions">
-         <dtml-let action=sequence-item>
-          <dtml-var expr="action"> 
+        <dtml-if expr="_.len(resources) > 0">
+         <dtml-in name="resources">
+         <dtml-let resource=sequence-item>
+          <dtml-var expr="FormatResourceId(resource)"> 
           <br>
          </dtml-let>
          </dtml-in>
@@ -268,20 +302,21 @@
 
     </dtml-if>
 
-   <tr><td colspan="2">&nbsp;</td></tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
 
-    <tr class="heading">
+    <tr class="form-submit">
      <td colspan="2">
       <dtml-if expr="edit">
-         <input type="submit" value="  OK  "/>
-         <input type="button" 
-                value=" Cancel "
-               <dtml-if expr="new">
-                onclick="location = '<dtml-var expr="MakeListingUrl()">'"
-               <dtml-else>
-                onclick="location = '<dtml-var expr="MakeShowUrl()">'"
-               </dtml-if>
-                />
+       <dtml-var expr="web.make_submit_button()">
+       <input type="button" 
+              class="submit"
+              value=" Cancel "
+             <dtml-if expr="new">
+              onclick="location = '<dtml-var expr="MakeListingUrl()">'"
+             <dtml-else>
+              onclick="location = '<dtml-var expr="MakeShowUrl()">'"
+             </dtml-if>
+              />
       </dtml-if>
      </td>
     </tr>

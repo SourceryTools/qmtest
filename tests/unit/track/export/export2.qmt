@@ -45,6 +45,6 @@
 &lt;/histories>
 </text>
  </argument>
- <prerequisite outcome='PASS'>export1</prerequisite>
- <action>idb</action>
+ <prerequisite outcome='PASS'>unit.track.export.export1</prerequisite>
+ <resource>unit.track.export.idb</resource>
 </test>

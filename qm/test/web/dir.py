@@ -48,7 +48,7 @@ class DirItem:
 
     'DirItem' objects have two attributes:
 
-    'type' -- One of "test", "suite", or "action".
+    'type' -- One of "test", "suite", or "resource".
 
     'id' -- The item's ID."""
 
@@ -77,15 +77,15 @@ class DirPage(web.DtmlPage):
         
         database = qm.test.base.get_database()
 
-        # Construct 'DirItem' objects for tests, actions, and suites. 
+        # Construct 'DirItem' objects for tests, resources, and suites. 
         test_ids = map(lambda i: DirItem("test", i),
                        database.GetTestIds(path))
-        action_ids = map(lambda i: DirItem("action", i),
-                         database.GetActionIds(path))
+        resource_ids = map(lambda i: DirItem("resource", i),
+                           database.GetResourceIds(path))
         suite_ids = map(lambda i: DirItem("suite", i),
                         database.GetSuiteIds(path))
         # Mix them together and sort them by ID.
-        self.items = suite_ids + test_ids + action_ids
+        self.items = suite_ids + test_ids + resource_ids
         self.items.sort(lambda i1, i2: cmp(i1.id, i2.id))
 
 
@@ -96,8 +96,8 @@ class DirPage(web.DtmlPage):
             return self.FormatTestId(item.id)
         elif item.type == "suite":
             return self.FormatSuiteId(item.id)
-        elif item.type == "action":
-            return self.FormatActionId(item.id)
+        elif item.type == "resource":
+            return self.FormatResourceId(item.id)
 
 
 
@@ -112,10 +112,10 @@ def handle_dir(request):
 
     The request has these fields:
 
-    'path' -- A path in test/action/suite ID space.  If specified, only
-    tests and actions in this subtree are displayed, and their IDs are
-    displayed relative to this path.  If omitted, the entire contents of
-    the test database are shown."""
+    'path' -- A path in test/resource/suite ID space.  If specified,
+    only tests and resources in this subtree are displayed, and their
+    IDs are displayed relative to this path.  If omitted, the entire
+    contents of the test database are shown."""
 
     # Was a path specified?
     try:

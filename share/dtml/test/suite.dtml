@@ -91,7 +91,7 @@
          <ul>
           <dtml-in expr="test_ids">
           <dtml-let id=sequence-item>
-           <li><dtml-var expr="FormatTestId(id, within=suite.GetId())">
+           <li><dtml-var expr="FormatTestId(id)">
           </dtml-let>
           </dtml-in>
          </ul>
@@ -154,7 +154,7 @@
     <tr class="heading">
      <td colspan="2">
       <dtml-var expr="web.make_submit_button()">
-      <dtml-var expr="MakeButton('Cancel', 'show-suite', 'submit' 
+      <dtml-var expr="MakeButton('Cancel', 'show-suite', 'submit', 
                                  id=suite.GetId())">
    </dtml-if>
 

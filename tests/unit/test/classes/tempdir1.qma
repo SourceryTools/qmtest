@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE action PUBLIC "-//Software Carpentry//QMTest Action V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<action>
- <class>temporary.TempDirectoryAction</class>
-</action>
+<!DOCTYPE resource PUBLIC "-//Software Carpentry//QMTest Resource V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<resource>
+ <class>temporary.TempDirectoryResource</class>
+</resource>
 <!--
   Local Variables:
   mode: xml

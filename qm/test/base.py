@@ -64,20 +64,20 @@ standard_test_class_names = [
     ]
 """A list of names of standard test classes."""
 
-standard_action_class_names = [
-    "temporary.TempDirectoryAction",
+standard_resource_class_names = [
+    "temporary.TempDirectoryResource",
     ]
-"""A list of names of standard action classes."""
+"""A list of names of standard resource classes."""
 
 dtds = {
-    "action": "-//Software Carpentry//QMTest Action V0.1//EN",
+    "resource": "-//Software Carpentry//QMTest Resource V0.1//EN",
     "result": "-//Software Carpentry//QMTest Result V0.1//EN",
     "suite": "-//Software Carpentry//QMTest Suite V0.1//EN",
     "test": "-//Software Carpentry//QMTest Test V0.1//EN",
     }
 """A mapping for DTDs used by QMTest.
 
-Keys are DTD types ("action", "result", etc).  Values are the
+Keys are DTD types ("resource", "result", etc).  Values are the
 corresponding DTD public identifiers."""
 
 ########################################################################
@@ -98,8 +98,8 @@ class NoSuchSuiteError(Exception):
 
 
 
-class NoSuchActionError(Exception):
-    """The specified action does not exist."""
+class NoSuchResourceError(Exception):
+    """The specified resource does not exist."""
 
     pass
 
@@ -208,17 +208,19 @@ class Attachment(qm.attachment.Attachment):
 
 
 class InstanceBase:
-    """Common base class for test and action objects."""
+    """Common base class for test and resource objects."""
 
     def __init__(self,
                  instance_id,
                  class_name,
-                 arguments):
+                 arguments,
+                 properties):
         validate_id(instance_id)
         self.__id = instance_id
         self.__class_name = class_name
         self.__arguments = arguments
         self.__working_directory = None
+        self.__properties = properties.copy()
 
 
     def GetClassName(self):
@@ -263,10 +265,50 @@ class InstanceBase:
         return self.__working_directory
 
 
+    def SetProperty(self, name, value):
+        """Set a property.
+
+        'name' -- The property name.  Must be a valid label.
+
+        'value' -- The property value.  'value' is converted to a
+        string.
+
+        raises -- 'ValueError' if 'name' is not a valid label.
+
+        If there is already a property named 'name', its value is
+        replaced with 'value'."""
+
+        name = str(name)
+        value = str(value)
+        if not qm.label.is_valid(name):
+            raise ValueError, "%s is not a valid property name" % name
+        self.__properties[name] = value
+
+
+    def GetProperty(self, name, default=None):
+        """Get a property value.
+
+        'name' -- The property name.
+
+        'default' -- The value to return if there is no property named
+        'name'.
+
+        returns -- The value of the 'name' property, or 'default' if
+        there is no such property."""
+
+        return self.__properties.get(name, default)
+
+
+    def GetProperties(self):
+        """Return a map from property names to values."""
+
+        return self.__properties
+
+
     # Helper functions.
 
     def __MakeItem(self):
-        """Construct the underlying user test or action object."""
+        """Construct the underlying user test or resource object."""
 
         arguments = self.GetArguments().copy()
 
@@ -313,7 +355,8 @@ class Test(InstanceBase):
                  arguments,
                  prerequisites={},
                  categories=[],
-                 actions=[]):
+                 resources=[],
+                 properties={}):
         """Create a new test instance.
 
         'test_id' -- The test ID.
@@ -329,14 +372,18 @@ class Test(InstanceBase):
         'categories' -- A sequence of names of categories to which this
         test belongs.
 
-        'actions' -- A sequence of IDs of actions to run before and
-        after the test is run."""
+        'resources' -- A sequence of IDs of resources to run before and
+        after the test is run.
+
+        'properties' -- A map of name, value pairs for properties of the
+        test.  Names must be valid labels, and values must be strings."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, test_id, test_class_name, arguments)
+        InstanceBase.__init__(self, test_id, test_class_name, arguments,
+                              properties)
         self.__prerequisites = prerequisites
         self.__categories = categories
-        self.__actions = actions
+        self.__resources = resources
 
         # Don't instantiate the test yet.
         self.__test = None
@@ -364,35 +411,16 @@ class Test(InstanceBase):
         return category in self.__categories
 
 
-    def GetPrerequisites(self, absolute=0):
-        """Return a map from prerequisite test IDs to required outcomes.
+    def GetPrerequisites(self):
+        """Return a map from prerequisite test IDs to required outcomes."""
 
-        'absolute' -- If true, present the prerequisite test IDs as
-        absolute IDs.  Otherwise, the are presented as IDs relative to
-        this test."""
-
-        if absolute:
-            rel = qm.label.MakeRelativeTo(qm.label.dirname(self.GetId()))
-            prerequisites = {}
-            for test_id, outcome in self.__prerequisites.items():
-                prerequisites[rel(test_id)] = outcome
-            return prerequisites
-        else:
-            return self.__prerequisites
+        return self.__prerequisites
 
 
-    def GetActions(self, absolute=0):
-        """Return a sequence of IDs of actions.
+    def GetResources(self):
+        """Return a sequence of IDs of resources."""
 
-        'absolute' -- If true, present the prerequisite test IDs as
-        absolute IDs.  Otherwise, the are presented as IDs relative to
-        this test."""
-
-        if absolute:
-            rel = qm.label.MakeRelativeTo(qm.label.dirname(self.GetId()))
-            return map(rel, self.__actions)
-        else:
-            return self.__actions
+        return self.__resources
 
 
     def Run(self, context):
@@ -423,36 +451,41 @@ class Test(InstanceBase):
 
 
 
-class Action(InstanceBase):
-    """An action instance."""
+class Resource(InstanceBase):
+    """A resource instance."""
 
     def __init__(self,
-                 action_id,
-                 action_class_name,
-                 arguments):
-        """Create a new action instance.
+                 resource_id,
+                 resource_class_name,
+                 arguments,
+                 properties={}):
+        """Create a new resource instance.
 
-        'action_id' -- The action ID.
+        'resource_id' -- The resource ID.
 
-        'action_class_name' -- The name of the action class of which
+        'resource_class_name' -- The name of the resource class of which
         this is an instance.
 
-        'arguments' -- This test's arguments to the test class."""
+        'arguments' -- This test's arguments to the test class.
+
+        'properties' -- A map of name, value pairs for properties of the
+        test.  Names must be valid labels, and values must be strings."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, action_id, action_class_name, arguments)
-        # Don't instantiate the action yet.
-        self.__action = None
+        InstanceBase.__init__(self, resource_id, resource_class_name,
+                              arguments, properties)
+        # Don't instantiate the resource yet.
+        self.__resource = None
 
 
-    def GetAction(self):
-        """Return the underlying user action object."""
+    def GetResource(self):
+        """Return the underlying user resource object."""
 
         # Perform just-in-time instantiation.
-        if self.__action is None:
-            self.__action = self._InstanceBase__MakeItem()
+        if self.__resource is None:
+            self.__resource = self._InstanceBase__MakeItem()
 
-        return self.__action
+        return self.__resource
 
 
     def DoSetup(self, context):
@@ -464,7 +497,7 @@ class Action(InstanceBase):
 
 
     def __Do(self, context, mode):
-        """Execute a setup action.
+        """Execute a setup resource.
 
         'context' -- Information about the environment in which the test
         is being executed.
@@ -477,7 +510,7 @@ class Action(InstanceBase):
 
         working_directory = self.GetWorkingDirectory()
         old_working_directory = None
-        action = self.GetAction()
+        resource = self.GetResource()
 
         try:
             if working_directory is not None:
@@ -487,11 +520,11 @@ class Action(InstanceBase):
                 # Change to the working directory appropriate for this
                 # test.
                 os.chdir(working_directory)
-            # Run the action function.
+            # Run the resource function.
             if mode is "setup":
-                return action.DoSetup(context)
+                return resource.DoSetup(context)
             else:
-                return action.DoCleanup(context)
+                return resource.DoCleanup(context)
         finally:
             if old_working_directory is not None:
                 # Restore the working directory.
@@ -542,26 +575,23 @@ class Suite:
        returns -- A sequence of IDs of all tests in this suite.  If this
        suite contains other suites, these are expanded recursively to
        produce the full list of tests.  No test will appear more than
-       once.  Test IDs are relative to the top of the test database."""
+       once."""
 
        if self.__test_id_cache is None:
            database = get_database()
-           # 'rel' converts IDs relative to this suite to IDs relative to
-           # the top of the test database.
            if self.IsImplicit():
                dir_id = self.GetId()
            else:
                dir_id = qm.label.dirname(self.GetId())
-           rel = qm.label.MakeRelativeTo(dir_id)
            # Instead of keeping a list of test IDs, we'll build a map, to
            # assist with skipping duplicates.  The keys are test IDs (we
            # don't care about the values).
            ids = {}
            # Start by entering the tests explicitly part of this suite.
-           for test_id in map(rel, self.__test_ids):
-               ids[test_id] = None
+           for test_id in self.__test_ids:
+               ids[test_id] = test_id
            # Now loop over suites contained in this suite.
-           for suite_id in map(rel, self.__suite_ids):
+           for suite_id in self.__suite_ids:
                suite = database.GetSuite(suite_id)
                # Get the test IDs in the contained suite.
                test_ids_in_suite = suite.GetTestIds()
@@ -579,8 +609,7 @@ class Suite:
 
        returns -- A list of tests explicitly in this suite.  Does not
        include IDs of tests that are included in this suite via other
-       suites.  Test IDs are relative to the path containing this
-       suite."""
+       suites."""
 
        return self.__test_ids
 
@@ -609,7 +638,7 @@ class Database:
         """Return paths to search for class files.
 
         returns -- A sequence of paths to add to the classpath when
-        loading test and action classes."""
+        loading test and resource classes."""
 
         # Specify the '_classes' subdirectory, if it exists.
         class_dir = os.path.join(self.GetPath(), "_classes")
@@ -692,37 +721,37 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
 
 
-    def HasAction(self, action_id):
-        """Return true if the database has a action with ID 'action_id'."""
+    def HasResource(self, resource_id):
+        """Return true if the database has a resource with 'resource_id'."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.HasAction"
-
-
-    def GetAction(self, action_id):
-        """Return a 'Action' instance for action ID 'action_id'.
-
-        raises -- 'NoSuchActionError' if there is no action in the
-        database with ID 'action_id'."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.GetAction"
+        raise qm.MethodShouldBeOverriddenError, "Database.HasResource"
 
 
-    def WriteAction(self, action):
-        """Store a action in the database."""
+    def GetResource(self, resource_id):
+        """Return a 'Resource' instance for resource ID 'resource_id'.
 
-        raise qm.MethodShouldBeOverriddenError, "Database.WriteAction"
+        raises -- 'NoSuchResourceError' if there is no resource in the
+        database with ID 'resource_id'."""
 
-
-    def RemoveAction(self, action_id):
-        """Remove the action with ID 'action_id' from the database."""
-
-        raise qm.MethodShouldBeOverriddenError, "Database.RemoveAction"
+        raise qm.MethodShouldBeOverriddenError, "Database.GetResource"
 
 
-    def GetActionIds(self, path="."):
-        """Return action IDs of all actions relative to 'path'."""
+    def WriteResource(self, resource):
+        """Store a resource in the database."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetActionIds"
+        raise qm.MethodShouldBeOverriddenError, "Database.WriteResource"
+
+
+    def RemoveResource(self, resource_id):
+        """Remove the resource with ID 'resource_id' from the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.RemoveResource"
+
+
+    def GetResourceIds(self, path="."):
+        """Return resource IDs of all resources relative to 'path'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetResourceIds"
 
 
     def SetAttachmentData(self, attachment, data, item_id):
@@ -732,7 +761,8 @@ class Database:
 
         'data' -- The attachment data as a string.
 
-        'item_id' -- A test or action ID associated with this attachment."""
+        'item_id' -- A test or resource ID associated with this
+        attachment."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.SetAttachmentData"
 
@@ -1110,12 +1140,12 @@ class PrerequisiteMapAdapter:
         """Return a sequence of IDs of prerequisite tests of 'test_id'."""
 
         test = self.__database.GetTest(test_id)
-        return test.GetPrerequisites(absolute=1).keys()
+        return test.GetPrerequisites().keys()
 
 
     def get(self, test_id, default=[]):
         test = self.__database.GetTest(test_id)
-        return test.GetPrerequisites(absolute=1).keys()
+        return test.GetPrerequisites().keys()
         
 
 
@@ -1242,14 +1272,14 @@ class InProcessEngine(Engine):
         # This map associates a test with each test ID.
         tests = {}
 
-        qm.print_message(2, "Computing required actions.\n")
+        qm.print_message(2, "Computing required resources.\n")
 
-        # This map contains information about when cleanup actions should
-        # be run.  There is an entry for each action referenced by at
-        # least one of the tests that will be run.  The key is the action
-        # ID, and the value is the ID of the test after which the cleanup
-        # action must be run.
-        cleanup_action_map = {}
+        # This map contains information about when cleanup resources
+        # should be run.  There is an entry for each resource referenced
+        # by at least one of the tests that will be run.  The key is the
+        # resource ID, and the value is the ID of the test after which
+        # the cleanup resource must be run.
+        cleanup_resource_map = {}
 
         # Loop over all the tests, in the order that they will be run.
         for test_id in test_ids:
@@ -1257,19 +1287,19 @@ class InProcessEngine(Engine):
             test = database.GetTest(test_id)
             # Store it.
             tests[test_id] = test
-            # Loop over all the actions it references.
-            for action_id in test.GetActions(absolute=1):
-                # The cleanup action should be run after this test.
+            # Loop over all the resources it references.
+            for resource_id in test.GetResources():
+                # The cleanup resource should be run after this test.
                 # Another, earlier test may have been here, but this test
                 # will be run later, so reschedule the cleanup.
-                cleanup_action_map[action_id] = test_id
+                cleanup_resource_map[resource_id] = test_id
 
         # This map contains the context properties that were added by
-        # each setup action that has been run so far.  A key in this map
-        # is an action ID, and the corresponding value represents the
-        # properties that the setup action added to the context (as a map
-        # from property name to value).  If the setup action failed, the
-        # corresponding value is 'None'.
+        # each setup resource that has been run so far.  A key in this
+        # map is a resource ID, and the corresponding value represents
+        # the properties that the setup resource added to the context
+        # (as a map from property name to value).  If the setup resource
+        # failed, the corresponding value is 'None'.
         setup_attributes = {}
 
         qm.print_message(2, "Running tests.\n")
@@ -1281,9 +1311,9 @@ class InProcessEngine(Engine):
         for test_id in test_ids:
             test = tests[test_id]
             result = None
-            action_ids = test.GetActions(absolute=1)
+            resource_ids = test.GetResources()
 
-            # Prerequisite tests and setup actions may add additional
+            # Prerequisite tests and setup resources may add additional
             # properties to the context which are visible to this test.
             # Accumulate those properties in this map.
             extra_context_properties = {}
@@ -1293,7 +1323,7 @@ class InProcessEngine(Engine):
             # different outcome, generate an UNTESTED result and stop
             # processing prerequisites.
 
-            prerequisites = test.GetPrerequisites(absolute=1)
+            prerequisites = test.GetPrerequisites()
             for prerequisite_id, outcome in prerequisites.items():
                 # Because of the topological sort, the prerequisite
                 # should already have been run.
@@ -1307,99 +1337,100 @@ class InProcessEngine(Engine):
                                     failed_prerequisite=prerequisite_id)
                     break
                 else:
-                    # Properties added to the context by the prerequisite
-                    # test are to be available to this test.
+                    # Properties added to the context by the
+                    # prerequisite test are to be available to this
+                    # test.
                     extra_context_properties.update(
                         prerequisite_result.GetContextProperties())
 
-            # Do setup actions (unless a prerequisite failed).  This is
-            # done only for the first test that references the action.
-            # If a setup action fails, generate an UNTESTED result for
-            # this test and stop processing setup actions.
+            # Do setup resources (unless a prerequisite failed).  This
+            # is done only for the first test that references the
+            # resource.  If a setup resource fails, generate an UNTESTED
+            # result for this test and stop processing setup resources.
 
             if result is not None:
-                # Don't bother with setup actions if we already have a
+                # Don't bother with setup resources if we already have a
                 # test result indicating a failed prerequisite.
                 pass
             else:
-                # Loop over actions referenced by this test.
-                for action_id in action_ids:
-                    # Have we already done the setup for this action?
-                    if setup_attributes.has_key(action_id):
-                        # The action has already been run.  Look up the
+                # Loop over resources referenced by this test.
+                for resource_id in resource_ids:
+                    # Have we already done the setup for this resource?
+                    if setup_attributes.has_key(resource_id):
+                        # The resource has already been run.  Look up the
                         # context properties that the setup function
                         # generated.
-                        added_attributes = setup_attributes[action_id]
+                        added_attributes = setup_attributes[resource_id]
                         if added_attributes is None:
-                            # The action failed when it was run, so don't
+                            # The resource failed when it was run, so don't
                             # run this test.
                             result = Result(outcome=Result.UNTESTED,
-                                            failed_setup_action=action_id)
+                                            failed_setup_resource=resource_id)
                             break
                     else:
-                        # This is the first test to reference this action.
-                        # Look up the action.
+                        # This is the first test to reference this resource.
+                        # Look up the resource.
                         try:
-                            action = database.GetAction(action_id)
-                        except NoSuchActionError:
+                            resource = database.GetResource(resource_id)
+                        except NoSuchResourceError:
                             # Oops, it's missing.  Don't run the test.
                             result = Result(outcome=Result.UNTESTED,
-                                            missing_action=action_id)
+                                            missing_resource=resource_id)
                             break
 
                         # Make another context wrapper for the setup
                         # function.  The setup function shouldn't see any
                         # properties added by prerequisite tests or other
-                        # actions.  Also, we need to isolate the
+                        # resources.  Also, we need to isolate the
                         # properties added by this function.
                         wrapper = ContextWrapper(context)
 
-                        # Do the setup action.
-                        progress_callback("action %-43s: " % action_id)
+                        # Do the setup resource.
+                        progress_callback("resource %-43s: " % resource_id)
                         try:
-                            action.DoSetup(wrapper)
+                            resource.DoSetup(wrapper)
                         except:
-                            # The action raised an exception.  Don't run
+                            # The resource raised an exception.  Don't run
                             # the test.
                             progress_callback("SETUP ERROR\n")
                             result = Result(Result.UNTESTED,
-                                            failed_setup_action=action_id)
+                                            failed_setup_resource=resource_id)
                             # Add some information about the traceback.
                             exc_info = sys.exc_info()
-                            result["setup_exception_" + action_id] = \
+                            result["setup_exception_" + resource_id] = \
                                              "%s: %s" % exc_info[:2]
-                            result["setup_traceback_" + action_id] = \
+                            result["setup_traceback_" + resource_id] = \
                                              qm.format_traceback(exc_info)
-                            # Record 'None' for this action, indicating
+                            # Record 'None' for this resource, indicating
                             # that it failed.
-                            setup_attributes[action_id] = None
+                            setup_attributes[resource_id] = None
                             break
                         else:
-                            # The action completed successfully.
+                            # The resource completed successfully.
                             progress_callback("SETUP\n")
                             # Extract the context properties added by the
                             # setup function.
                             added_attributes = wrapper.GetAddedProperties()
                             # Store them for other tests that reference
-                            # this action.
-                            setup_attributes[action_id] = added_attributes
+                            # this resource.
+                            setup_attributes[resource_id] = added_attributes
 
                     # Accumulate the properties generated by this setup
-                    # action. 
+                    # resource. 
                     extra_context_properties.update(added_attributes)
 
-            # We're done with prerequisites and setup actions, and it's
+            # We're done with prerequisites and setup resources, and it's
             # time to run the test.
             progress_callback("test %-45s: " % test_id)
 
             # If we don't already have a result (all prerequisites
-            # checked out and setup actions succeeded), actually run the
+            # checked out and setup resources succeeded), actually run the
             # test.
             if result is None:
                 # Create a context wrapper that we'll use when running
                 # the test.  It includes the original context, plus
                 # additional properties added by prerequisite tests and
-                # setup actions.
+                # setup resources.
                 context_wrapper = ContextWrapper(context,
                                                  extra_context_properties)
                 try:
@@ -1427,29 +1458,29 @@ class InProcessEngine(Engine):
             # Invoke the callback.
             progress_callback(result.GetOutcome() + "\n")
 
-            # Finally, run cleanup actions for this test.  Run them no
+            # Finally, run cleanup resources for this test.  Run them no
             # matter what the test outcome is, even if prerequisites or
-            # setup actions failed.  If a cleanup action fails, try
-            # running the other cleanup actions anyway.
+            # setup resources failed.  If a cleanup resource fails, try
+            # running the other cleanup resources anyway.
 
-            # Loop over actions referenced by this test.
-            for action_id in action_ids:
-                if cleanup_action_map[action_id] != test_id:
+            # Loop over resources referenced by this test.
+            for resource_id in resource_ids:
+                if cleanup_resource_map[resource_id] != test_id:
                     # This is not the last test to require this cleanup
-                    # action, so don't do it yet.
+                    # resource, so don't do it yet.
                     continue
-                if not setup_attributes.has_key(action_id):
-                    # The setup action was never run, so don't run the
-                    # cleanup action.
+                if not setup_attributes.has_key(resource_id):
+                    # The setup resource was never run, so don't run the
+                    # cleanup resource.
                     continue
-                # Loop up the action.
-                action = database.GetAction(action_id)
+                # Loop up the resource.
+                resource = database.GetResource(resource_id)
 
                 # Create a context wrapper for running the cleanup
                 # method.  It includes the original context, plus any
                 # additional properties added by the setup method of the
-                # same action.
-                properties = setup_attributes[action_id]
+                # same resource.
+                properties = setup_attributes[resource_id]
                 if properties is None:
                     # The setup method failed, but we're running the
                     # cleanup method anyway.  Don't use any extra
@@ -1457,21 +1488,21 @@ class InProcessEngine(Engine):
                     properties = {}
                 wrapper = ContextWrapper(context, properties)
 
-                # Now run the cleanup action.
-                progress_callback("action %-43s: " % action_id)
+                # Now run the cleanup resource.
+                progress_callback("resource %-43s: " % resource_id)
                 try:
-                    action.DoCleanup(wrapper)
+                    resource.DoCleanup(wrapper)
                 except:
                     # It raised an exception.  No biggie; just record
                     # some information in the result.
                     progress_callback("CLEANUP ERROR\n")
                     exc_info = sys.exc_info()
-                    result["cleanup_exception_" + action_id] = \
+                    result["cleanup_exception_" + resource_id] = \
                                      "%s: %s" % exc_info[:2]
-                    result["cleanup_traceback_" + action_id] = \
+                    result["cleanup_traceback_" + resource_id] = \
                                      qm.format_traceback(exc_info)
                 else:
-                    # The cleanup action succeeded.
+                    # The cleanup resource succeeded.
                     progress_callback("CLEANUP\n")
 
             # Record the test ID and context by wrapping the result.
@@ -1915,7 +1946,7 @@ class RshEngine(CommandEngine):
 ########################################################################
 
 def validate_id(item_id):
-    """Validate a test or action ID.
+    """Validate a test or resource ID.
 
     raises -- 'RuntimeError' if 'item_id' is not a valid ID."""
 
@@ -1991,7 +2022,7 @@ def load_database(path):
 
 
 def get_class(class_name):
-    """Return the test or action class named 'class_name'.
+    """Return the test or resource class named 'class_name'.
 
     'class_name' -- A fully-qualified Python class name.
 
@@ -2056,30 +2087,30 @@ def make_new_test(test_class_name, test_id):
     return Test(test_id, test_class_name, arguments, {}, [])
 
 
-def make_new_action(action_class_name, action_id):
-    """Create a new action with default arguments.
+def make_new_resource(resource_class_name, resource_id):
+    """Create a new resource with default arguments.
 
-    'action_class_name' -- The name of the action class of which to
-    create a new action.
+    'resource_class_name' -- The name of the resource class of which to
+    create a new resource.
 
-    'action_id' -- The action ID of the new action.
+    'resource_id' -- The resource ID of the new resource.
 
-    returns -- A new 'Action' object."""
+    returns -- A new 'Resource' object."""
 
-    action_class = get_class(action_class_name)
-    # Make sure there isn't already such a action.
+    resource_class = get_class(resource_class_name)
+    # Make sure there isn't already such a resource.
     database = get_database()
-    if database.HasAction(action_id):
-        raise RuntimeError, qm.error("action already exists",
-                                     action_id=action_id)
+    if database.HasResource(resource_id):
+        raise RuntimeError, qm.error("resource already exists",
+                                     resource_id=resource_id)
     # Construct an argument map containing default values.
     arguments = {}
-    for field in action_class.fields:
+    for field in resource_class.fields:
         name = field.GetName()
         value = field.GetDefaultValue()
         arguments[name] = value
-    # Construct a default action instance.
-    return Action(action_id, action_class_name, arguments)
+    # Construct a default resource instance.
+    return Resource(resource_id, resource_class_name, arguments)
 
 
 def load_outcomes(path):
@@ -2206,12 +2237,12 @@ _database = None
 Use 'get_database' to access the global test database."""
 
 __loaded_classes = {}
-"""Cache of loaded test and action classes."""
+"""Cache of loaded test and resource classes."""
 
 __builtin_class_path = [
     qm.common.get_lib_directory("qm", "test", "classes"),
     ]
-"""Standard paths to search for test and action classes."""
+"""Standard paths to search for test and resource classes."""
 
 ########################################################################
 # initialization

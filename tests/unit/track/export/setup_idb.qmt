@@ -34,5 +34,5 @@ qm.track.close_idb()
  <argument name='expression'>
   <text>1</text>
  </argument>
- <action>idb</action>
+ <resource>unit.track.export.idb</resource>
 </test>

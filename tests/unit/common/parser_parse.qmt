@@ -2,7 +2,7 @@
 <!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
 <test>
  <class>python.ExecTest</class>
- <prerequisite>parser_create</prerequisite>
+ <prerequisite>unit.common.parser_create</prerequisite>
  <argument name='source'>
   <text>
 command_line = [

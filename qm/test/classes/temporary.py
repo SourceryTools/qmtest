@@ -5,7 +5,7 @@
 # Date:   2001-04-06
 #
 # Contents:
-#   Actions to manage temporary files and directories.
+#   Resource classes to manage temporary files and directories.
 #
 # Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -44,10 +44,10 @@ import tempfile
 # classes
 ########################################################################
 
-class TempDirectoryAction:
-    """Action class to manage a temporary directory.
+class TempDirectoryResource:
+    """Resource class to manage a temporary directory.
 
-    An instance of this action creates a temporary directory during
+    An instance of this resource creates a temporary directory during
     setup, and deletes it during cleanup.  The full path to the
     directory is available to tests via a context property."""
 

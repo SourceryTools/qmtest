@@ -33,66 +33,6 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
-@ action class control
-**Action Class**
-
-The action class determines how the action is parameterized, and
-provides the mechanism by which the action is run.
-
-%(program_name)s provides a collection of built-in action classes which
-you may use to create actions.  To use one of these, select it from the
-*Standard Classes* list.
-
-You may also create your own action classes.  An action class is
-represented by a Python class included in a Python module.  Specify the
-class in the text control, using the syntax *module-name.class-name*.
-
-So that %(program_name)s can find the Python module file, you must
-include the directory containing it in the environment variable
-'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
-'_classes' of your test database directory.
-
-
-@ action ID
-**Action ID**
-
-An action ID is a label that identifies an action.  Action IDs are
-unique within a single test database, but are distinct from test IDs and
-suite IDs.
-
-The action ID may be composed of lower-case letters, digits, and
-underscores.
-
-You may optionally organize actions in a hierarchy using a period as the
-path separator.  
-
-Bear in mind that a test's actions are always specified relative to the
-the test's path.  For example, the test with ID "core.test1" would
-specify the action "core.action1" simply as "action1".
-
-
-@ action popup
-**Specify an Action**
-
-Use this window to specify an action for a test.  An action specifies a
-setup behavior that must be executed before the test is run, and/or a
-cleanup behavior that must be executed after the test is run.  
-
-Actions are objects distinct from tests, but they reside in the same
-test database.  Each action has its own action ID.  
-
-Select an action ID an existing action from the list, or enter an action
-ID in the edit control.
-
-
-@ actions control
-**Actions**
-
-The list displays the action IDs of the actions specified for this
-test.  To add another action, click on *Add...*.  To remove an action,
-select it in the list and click on *Remove.*.
-
-
 @ category popup
 **Specify a Category**
 
@@ -134,12 +74,72 @@ another prerequisite, click on *Add...*.  To remove a prerequisite,
 select it in the list and click on *Remove*.
 
 
+@ resource class control
+**Resource Class**
+
+The resource class determines how the resource is parameterized, and
+provides the mechanism by which the resource is run.
+
+%(program_name)s provides a collection of built-in resource classes
+which you may use to create resources.  To use one of these, select it
+from the *Standard Classes* list.
+
+You may also create your own resource classes.  An resource class is
+represented by a Python class included in a Python module.  Specify the
+class in the text control, using the syntax *module-name.class-name*.
+
+So that %(program_name)s can find the Python module file, you must
+include the directory containing it in the environment variable
+'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
+'_classes' of your test database directory.
+
+
+@ resource ID
+**Resource ID**
+
+An resource ID is a label that identifies an resource.  Resource IDs are
+unique within a single test database, but are distinct from test IDs and
+suite IDs.
+
+The resource ID may be composed of lower-case letters, digits, and
+underscores.
+
+You may optionally organize resources in a hierarchy using a period as
+the path separator.
+
+Bear in mind that a test's resources are always specified relative to
+the the test's path.  For example, the test with ID "core.test1" would
+specify the resource "core.resource1" simply as "resource1".
+
+
+@ resource popup
+**Specify an Resource**
+
+Use this window to specify an resource for a test.  An resource
+specifies a setup behavior that must be executed before the test is run,
+and/or a cleanup behavior that must be executed after the test is run.
+
+Resources are objects distinct from tests, but they reside in the same
+test database.  Each resource has its own resource ID.
+
+Select an resource ID an existing resource from the list, or enter an
+resource ID in the edit control.
+
+
+@ resources control
+**Resources**
+
+The list displays the resource IDs of the resources specified for this
+test.  To add another resource, click on *Add...*.  To remove an
+resource, select it in the list and click on *Remove.*.
+
+
 @ suite ID
 **Test Suite ID**
 
 A test suite ID is a label that identifies a test suite.  Test suite IDs
 are unique within a single test database, but are distinct from test IDs
-and action IDs.
+and resource IDs.
 
 The test suite ID may be composed of lower-case letters, digits, and
 underscores.
@@ -228,8 +228,8 @@ in the *Included Tests* list and click on *Remove >>*.
 @ test class control
 **Test Class**
 
-The test class determines how the test is parameterized, and
-provides the mechanism by which the test is run.
+The test class determines how the test is parameterized, and provides
+the mechanism by which the test is run.
 
 %(program_name)s provides a collection of built-in test classes which
 you may use to create tests.  To use one of these, select it from the
@@ -249,10 +249,11 @@ include the directory containing it in the environment variable
 **Test ID**
 
 A test ID is a label that identifies a test.  Test IDs are unique within
-a single test database, but are distinct from action IDs and suite IDs.
+a single test database, but are distinct from resource IDs and suite
+IDs.
 
 The test ID may be composed of lower-case letters, digits, and
-underscores.  
+underscores.
 
 You may optionally organize tests in a hierarchy using a period as the
 path separator.  Paths specified this way define implicit test suites.
@@ -267,10 +268,10 @@ For example, if your test database contains tests with these three IDs
 %(program_name)s recognizes an implicit test suite named "core" which
 contains the two tests "test1" and "test2".
 
-In addition, a test's prerequisites and actions are always specified
+In addition, a test's prerequisites and resources are always specified
 relative to the test's path.  So, for instance, "core.test2" would
 specify "test1" as a prerequisite, not "core.test1".  This implies that
-a test cannot specify an action or prerequisite in a different path
+a test cannot specify an resource or prerequisite in a different path
 (except in subpaths).  For example, "core.test2" cannot specify "test3"
 as a prerequisite.
 

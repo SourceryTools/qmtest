@@ -716,9 +716,9 @@ class Command:
                     prerequisite_outcome = results[prerequisite].GetOutcome()
                     extra = "[%s was %s]" \
                             % (prerequisite, prerequisite_outcome)
-                elif result.has_key("failed_setup_action"):
-                    action_id = result["failed_setup_action"]
-                    extra = "[setup %s failed]" % action_id
+                elif result.has_key("failed_setup_resource"):
+                    resource_id = result["failed_setup_resource"]
+                    extra = "[setup %s failed]" % resource_id
             elif outcome == base.Result.FAIL \
                  or outcome == base.Result.ERROR:
                 # If the result has a cause property, use it.
