@@ -1,3 +1,14 @@
+2001-10-04  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/web.py (WebServer.__init__): Document meaning of using
+	0 as the port.
+	(WebServer.Bind): Handle port 0 specially.
+	* qm/test/cmdline.py (Command.__ExecuteServer): Use port 0
+	as the default port and 127.0.0.1 as the default address
+	for the web server.
+	* qm/test/web/web.py (make_server): Do not provide a default
+	argument for address.
+
 2001-10-03  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/attachment.py: Attempt to fix formatting.

@@ -739,7 +739,8 @@ class WebServer(HTTPServer):
                  xml_rpc_path=None):
         """Create a new web server.
 
-        'port' -- The port on which to accept connections.
+        'port' -- The port on which to accept connections.  If 'port'
+        is '0', then any port will do.
 
         'address' -- The local address to which to bind.  An empty
         string means bind to all local addresses.
@@ -925,7 +926,7 @@ class WebServer(HTTPServer):
         Does not start serving."""
 
         # Initialize the base class here.  This binds the server
-        # socket. 
+        # socket.
         try:
             # Base class initialization.  Unfortunately, the base
             # class's initializer function (actually, its own base
@@ -946,11 +947,15 @@ class WebServer(HTTPServer):
             # So that we can insert the call to 'setsockopt' between the
             # socket creation and bind, we duplicate the body of
             # 'TCPServer.__init__' here and add the call.
-            self.server_address = (self.__address, self.__port)
             self.RequestHandlerClass = WebRequestHandler
             self.socket = socket.socket(self.address_family,
                                         self.socket_type)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            # If no port was specified, find out what port the system
+            # assigned.
+            if self.__port == 0:
+                self.__port = self.socket.getsockname()[1]
+            self.server_address = (self.__address, self.__port)
             self.server_bind()
             self.server_activate()
             qm.common.print_message(2, "Web server active on %s:%d.\n"

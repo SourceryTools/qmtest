@@ -648,15 +648,16 @@ The summary is written to standard output.
 
         # Get the port number specified by a command option, if any.
         # Otherwise use a default value.
-        port_number = self.GetCommandOption("port", default=8000)
+        port_number = self.GetCommandOption("port", default=0)
         try:
             port_number = int(port_number)
         except ValueError:
             raise qm.cmdline.CommandError, qm.error("bad port number")
         # Get the local address specified by a command option, if any.
-        # If not was specified, use the empty string, which corresponds
-        # to all local addresses.
-        address = self.GetCommandOption("address", default="")
+        # If not was specified, use the loopback address.  The loopback
+        # address is used by default for security reasons; it restricts
+        # access to the QMTest server to users on the local machine.
+        address = self.GetCommandOption("address", default="127.0.0.1")
         # Was a log file specified?
         log_file_path = self.GetCommandOption("log-file")
         if log_file_path == "-":
@@ -671,7 +672,8 @@ The summary is written to standard output.
 
         # Set up the server.
         server = web.web.make_server(database, port_number, address, log_file)
-
+        port_number = server.GetServerAddress()[1]
+        
         # Construct the URL to the main page on the server.
         if address == "":
             url_address = qm.platform.get_host_name()

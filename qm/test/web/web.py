@@ -129,7 +129,7 @@ class DtmlPage(DefaultDtmlPage):
 # functions
 ########################################################################
 
-def make_server(database, port, address="", log_file=None):
+def make_server(database, port, address, log_file=None):
     """Create and bind an HTTP server.
 
     'database' -- The test database to serve.
