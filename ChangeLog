@@ -1,3 +1,15 @@
+2001-04-08  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/manual/: New directory.
+	* doc/manual/Makefile.in: New file.
+	* doc/manual/main.xml: Likewise.
+	* doc/manual/introduciton.xml: Likewise.
+	* doc/manual/test-manual.xml: Likewise.
+	* doc/manual/test-tour.xml: Likewise.
+	
+	* qm/test/base.py (Engine.null_function): Adjust handling of
+	action dependencies and context properties.
+
 2001-04-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/xmldb.py (action_file_extension): New variable.

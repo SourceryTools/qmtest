@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   test-tour.xml
+  Author: Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Grand tour/tutorial of QMTest.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-test-tour">
+ <title>Getting Started with &qmtest;</title>
+ 
+  <para>Until better tools for managing the test database are in place,
+  some manual work is required to set things up.</para>
+
+  <section>
+   <title>&qmtest; Concepts</title>
+
+   <section>
+    <title>Test Database Organization</title>
+
+    <para>Before you run &qmtest;, you'll have to set up a test database.
+    The database is a directory or directory tree containing tests and
+    test suites.  Tests are represented by files with the
+    <filename>.qmt</filename> extension.  Test suites are represented by
+    files with the <filename>.qms</filename> extension.  Each directory
+    in the test suite also corresponds to an implicit test suite.</para>
+
+    <para>Tests are referred to by test IDs.  These are simply the path
+    in the test database tree, using `.' as the path separator.  The file
+    extension is not part of the test ID.</para>
+
+    <para>For example, suppose your test database, rooted at
+    <filename>tdb</filename>, looks like this.</para>
+
+    <literallayout>
+tdb/core1.qmt
+tdb/core2.qmt
+tdb/gui/window.qmt
+tdb/gui/menu.qmt
+tdb/cmdline/help.qmt
+tdb/cmdline/verbose.qmt
+    </literallayout>
+
+    <para>The test IDs of the "core" tests are simply
+    <symbol>core1</symbol> and <symbol>core2</symbol>.  The test IDs of
+    the GUI tests are <symbol>gui.window</symbol> and
+    <symbol>gui.menu</symbol>.  You may refer to these latter two tests
+    together by specifying the (implicit) test suite
+    <symbol>gui</symbol>.</para>
+
+    <para>All tests in the database are part of the implicit test suite
+    <symbol>.</symbol>.</para>
+
+   </section>
+
+   <section>
+    <title>Test File Contents</title>
+
+    <para>A test file contains &xml;, using the <sgmltag
+    class="element">test</sgmltag> document element.</para>
+
+    <para>The most important elements are <sgmltag
+    class="element">class</sgmltag>, which specifies the test class, and
+    <sgmltag class="element">argument</sgmltag>, which specifies one of
+    the arguments to the (parameterized) test class.</para>
+
+    <para>Suppose, for example, test class <classname>Count</classname>
+    takes two arguments: an input string and an expected value.  The
+    test computes the string length of the argument, and compares it to
+    the expected value.</para>
+
+    <para>A test of class Foo might look like this:</para>
+
+    <programlisting>
+<![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//&qmtest; Test V0.1//EN" "">
+<test>
+ <class>count.Count</class>
+ <argument name="input">
+  <text>This is the input.</text>
+ </argument>
+ <argument name="expected_value">
+  <integer>18</integer>
+ </argument>
+</test>
+]]></programlisting>
+
+    <para>Note that there are two <sgmltag
+    class="element">argument</sgmltag> elements, one for each
+    argument.</para>
+
+    <para>Create a directory named <filename>tdb</filename>, and store
+    this &xml; source as <filename>tdb/test1.qmt</filename>.</para>
+
+   </section>
+
+   <section>
+    <title>Test Classes</title>
+
+    <para>A test class is represented by a Python class.  The Python
+    class needs three attributes:</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>An attribute named <property>fields</property>.  This
+      attribute is a declaration of the parameters to the test
+      class.</para>
+
+      <para>The parameters are represented by a sequence of objects,
+      each an instance of <classname>qm.fields.Field</classname>.  For
+      example, a text-valued field is an instance of
+      <classname>qm.fields.TextField</classname>, an integer-valued
+      field is an instance of
+      <classname>qm.fields.IntegerField</classname>, etc.  See
+      <filename>qm/fields.py</filename> and the corresponding
+      documentation for details about these.</para>
+
+      <para>The field names correspond to the argument names as
+      specified in the test &xml; file.  In the
+      <classname>Count</classname> example above, the field names are
+      <property>input</property> and
+      <property>expected_value</property>.</para>
+     </listitem>
+
+     <listitem>
+      <para>An <function>__init__</function> function.  The arguments to
+      this function must have the same names as the names of the
+      fields.</para>
+     </listitem>
+
+     <listitem>
+      <para>A <function>Run</function> function.  This function is
+      called with a single argument, an instance of
+      <classname>qm.test.base.Context</classname>.  It should return an
+      instance of <classname>qm.test.base.Result</classname>, indicating
+      the test result.</para>
+     </listitem>
+    </itemizedlist>
+
+    <para>For example, the Count class described above might look like
+    this.</para>
+
+    <programlisting><![CDATA[
+import qm.fields
+from   qm.test.base import Result
+
+class Count:
+    fields = [
+        qm.fields.TextField(
+            name="input",
+            description="The input string."),
+        qm.fields.IntegerField(
+            name="expected_value",
+            description="The expected length of the input string."),
+        ]
+
+    def __init__(self, input, expected_value):
+        # Store the arguments for later.
+        self.__input = input
+        self.__expected_value = expected_value
+
+    def Run(self, context):
+        # Compute the length.
+        length = len(self.__input)
+        # Compare it to the expected value.
+        if length == self.__expected_value:
+            return Result(Result.PASS)
+        else:
+            return Result(Result.FAIL)
+]]></programlisting>
+
+    <para>To use this class, create a file named
+    <filename>count.py</filename> and place this Python source in it.
+    The module name is <classname>count</classname> and the class name
+    is <classname>Count</classname>, so you must specify the class name
+    as <classname>count.Count</classname> in the <sgmltag
+    class="element">class</sgmltag> element of your test files, as
+    illustrated above.</para>
+
+    <para>Also, you must tell &qmtest; where to find the count module.
+    Set the environment variable <envar>QMTEST_CLASSPATH</envar> to the
+    directory containing <filename>count.py</filename>.</para>
+
+   </section>
+
+   <section>
+    <title>Running Tests</title>
+
+    <para>Now that you have a test and a test class, you can run tests.
+    Make sure your <envar>QMTEST_CLASSPATH</envar> environment variable
+    is set to the directory containing count.py.  Also set the
+    <envar>QMTEST_DB_PATH</envar> environment variable to your test
+    database directory (<filename>tdb</filename>, above).</para>
+
+    <para>For example,</para>
+
+    <screen>
+     <prompt>$</prompt> <userinput>ls -o /tmp/qmtest-demo/</userinput>
+     <computeroutput>count.py tdb</computeroutput>
+     <prompt>$</prompt> <userinput>ls -o /tmp/qmtest-demo/tdb/</userinput>
+     <computeroutput>test1.qmt</computeroutput>
+     <prompt>$</prompt> <userinput>export QMTEST_CLASSPATH=/tmp/qmtest-demo</userinput>
+     <prompt>$</prompt> <userinput>export QMTEST_DB_PATH=/tmp/qmtest-demo/tdb</userinput>
+    </screen>
+
+    <para>Now you can run tests using the qmtest run command.  Specify
+    the test IDs to run on the command line.</para>
+
+    <screen>
+     <prompt>$</prompt> <userinput>qmtest run test1</userinput>
+     <computeroutput>
+
+      --- STATISTICS ---------------------------------------------------------------
+
+	     1        tests total
+
+	     1 (100%) tests PASS
+
+      --- TESTS THAT DID NOT PASS --------------------------------------------------
+
+        (None)
+
+     </computeroutput>
+    </screen>
+
+    <para>&qmtest; runs <symbol>test1</symbol>, which passes.  To see
+    what happens if it fails, edit <filename>test1.qmt</filename> and
+    change the <property>expected_value</property> argument to some
+    other number.</para>
+
+   </section>
+
+   <section>
+    <title>Full Test Results</title>
+
+    <para>Specify the <option>--output</option> option to generate a
+    full test result listing in &xml; format.  For example,</para>
+
+    <screen>
+     <prompt>$</prompt> <userinput>qmtest run --output results.xml test1</userinput>
+    </screen>
+
+   </section>
+
+   <section>
+    <title>Expected Test Results</title>
+
+    <para>The full test result listing contains the outcome
+    (<symbol>PASS</symbol>, <symbol>FAIL</symbol>, etc.)  for each test
+    that was run.  It may also contain additional information, as
+    specified by the test class.</para>
+
+    <para>You can use the results from a previous test run as expected
+    outcomes for a subsequent run.  &qmtest; will report, in addition to
+    which tests passed or failed, which tests had outcomes different
+    from expected values.</para>
+
+    <para>To use an &xml; result file as the expected outcomes for a
+    subsequent test run, use the <option>--outcomes</option>
+    option.  For example,</para>
+
+    <screen>
+     <prompt>$</prompt> <userinput>qmtest run --outcomes results.xml test1</userinput>
+    </screen>
+
+   </section>
+
+   <section>
+    <title>Provided Test Classes</title>
+
+    <para>&qmtest; comes with a module <classname>command</classname>,
+    which contains three test classes for testing command-line programs.</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>The <classname>command.ExecTest</classname> test class runs
+      a program and compares its exit code, standard output, and
+      standard error to expected values.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <classname>command.CommandTest</classname> test class
+      runs a program via a shell command and performs similar
+      comparisons.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <classname>command.ScriptTest</classname> test class
+      runs a shell script and performs similar comparisons.</para>
+     </listitem>
+    </itemizedlist>
+
+    <para>Here's an example of a test using the second of these.</para>
+
+    <programlisting><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//&qmtest; Test V0.1//EN" "">
+<test>
+ <class>command.CommandTest</class>
+ <argument name="command">
+  <text>uname</text>
+ </argument>
+ <argument name="exit_code">
+  <integer>0</integer>
+ </argument>
+ <argument name="stdout">
+  <attachment>
+   <data>Linux
+</data>
+  </attachment>
+ </argument>
+ <argument name="stderr">
+  <attachment>
+   <data></data>
+  </attachment>
+ </argument>
+</test>
+]]></programlisting>
+
+    <para>The command argment specifies the command to run, in this case
+    <command>uname</command>.  The <property>exit_code</property>
+    argument specifies the expected exit code, in this case zero.  The
+    <property>stdout</property> and <property>stderr</property>
+    arguments specify the expected output to the respective streams.  In
+    this case, the expected standard output is
+    "<literal>Linux</literal>" followed by a newline, while no text is
+    expected on standard error.</para>
+
+    <para>To help you create new tests using more complicated test
+    classes such as these, &qmtest; can create a blank &xml; test file
+    for you.  Use the <command>template</command> command and specify a
+    test class name and the ID of the new test.  &qmtest; will create a
+    blank test file in the correct place, and launch your editor so that
+    you can modify it.</para>
+
+    <para>For example,</para>
+
+    <screen>
+     <prompt>$</prompt> <userinput>qmtest template command.ScriptTest mynewtest</userinput>
+    </screen>
+
+   </section>
+  </section>
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("main.xml" "book" "chapter")
+  End:
+-->

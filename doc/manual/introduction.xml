@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   introduction.xml
+  Author: Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Introduction to QM manual.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-introduction">
+ <title>Introduction</title>
+ 
+ <para>Welcome to &qm;!</para>
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("main.xml" "book" "chapter")
+  End:
+-->

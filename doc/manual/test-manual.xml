@@ -1,0 +1,435 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   test-manual.xml
+  Author: Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Manual for QMTest.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-test-manual">
+ <title>Using &qmtest;</title>
+ 
+ <section id="sec-qmtest-concepts">
+  <title>&qmtest; Concepts</title>
+
+  <para>This section describes the basic concepts of &qmtest;.</para>
+
+  <section>
+   <title>Context</title>
+
+   <para>The <firstterm>context</firstterm> encapsulates all external
+   information available to a test when it executes.  The context
+   contains information such as,
+    <itemizedlist>
+     <listitem>
+      <para>Information about the test execution environment, such as
+      which machine the test is running on and the current time of
+      day.</para>
+     </listitem>
+
+     <listitem>
+      <para>Global configuration information.</para>
+     </listitem>
+
+     <listitem>
+      <para>Information passed from setup actions and tests run in the
+      same test run.  There are, however, limitations on passing
+      information from setup actions and tests via the context.</para>
+     </listitem>
+    </itemizedlist>
+   </para>
+
+  </section> <!-- Context -->
+
+ </section> <!-- Concepts -->
+
+ <section id="sec-running-tests">
+  <title>Running Tests</title>
+
+  <para>Introduction...</para>
+
+  <section>
+   <title>Ordering and Dependencies</title>
+
+   <para>Given one or more input test IDs and test suite IDs, &qmtest;
+   employs the following procedure to determine which tests and actions
+   to run, and the order in which they are run.</para>
+
+   <orderedlist>
+    <listitem>
+     <para>&qmtest; resolves test IDs and test suite IDs.  Test suites
+     are expanded into the tests they contain.  Since test suites may
+     contain other test suites, this process is repeated until all test
+     suites have been expanded.  The result is a set of tests that are
+     to be run.</para>
+    </listitem>
+
+    <listitem>
+     <para>&qmtest; determines the prerequisites for each test in the
+     set.  If a test has a prerequisite test that is not an element of
+     the set, the prerequisite is added.  This process is repeated until
+     all required prerequisites have been added to the set.  The result
+     is a superset of the previous set of tests to be run.</para>
+    </listitem>
+
+    <listitem>
+     <para>&qmtest; computes a schedule for running the tests to be run
+     such that all of a test's prerequisites are run before the test
+     itself is run.  Outside of this condition, the order in which tests
+     are run is undefined.</para>
+    </listitem>
+
+    <listitem>
+     <para>&qmtest; determines the actions specified for the tests to be
+     run.  Even if a particular action is specified for more than one
+     test, its setup and cleanup methods are run only once.  &qmtest;
+     determines a schedule for running setup and cleanup methods such
+     that an action's setup method is run before the first test that
+     specifies that action is run, and an action's cleanup method is
+     run after the last test that specifies that action.  &qmtest; also
+     attempts to schedule setup methods as late as possible, and
+     cleanup methods as early as possible.</para>
+    </listitem>
+   </orderedlist>
+
+   <para>In some cases, a test or the setup or cleanup method of an
+   action is not run.</para>
+
+   <itemizedlist>
+    <listitem>
+     <para>A test specifies for each of its prerequisite tests an
+     expected outcome.  If the actual outcome of the prerequisite test
+     is different from the expected outcome, the test is not run.
+     Instead, it is given an <symbol>UNTESTED</symbol> outcome.</para>
+
+     <para>If one prerequisite of a test produces an unexpected outcome,
+     each of the other prerequisites of the test are still run, even if
+     they were not specified among the inputs of the test run.</para>
+    </listitem>
+
+    <listitem>
+     <para>If a test is not run because one or more of its prerequisites
+     produced an unexpected outcome, the setup methods of the test's
+     actions are not run.  However, some or all of the setup methods
+     may be run later, if other tests that are run specify the same
+     actions.</para>
+    </listitem>
+
+    <listitem>
+     <para>If a setup method for one of the actions specified by a
+     test fails, or failed previously, setup processing for that test is
+     ended, and other setup methods for that test may not be called.
+     The test is given an <symbol>UNTESTED</symbol> outcome.</para>
+    </listitem>
+
+    <listitem>
+     <para>The cleanup method for an action is run after the last test
+     that specifies that action, whether or not that test was run.  The
+     cleanup method is run even if the setup action failed.  However,
+     the cleanup method is not run if its setup method was never
+     run.</para>
+    </listitem>
+   </itemizedlist>
+
+  </section> <!-- Ordering and Dependencies -->
+
+  <section id="sec-the-context">
+   <title>The Context</title>
+
+   <para>&qmtest; passes a context object to the run method of a test
+   that is run, and to the setup and cleanup methods of an
+   action.</para>
+
+   <para>Most of the properties of the context are the same for all
+   tests and actions run during a single test run.  These properties
+   include... </para>
+
+   <para>In addition, a test or an action's setup method may add
+   additional properties to a context.  These added properties do not
+   become part of the common context; they are hidden from other tests
+   and actions except in the following cases:
+   </para>
+
+   <itemizedlist>
+    <listitem>
+     <para>The properties added to the context by an action's setup
+     method are visible to all tests that specify that action.</para>
+    </listitem>
+
+    <listitem>
+     <para>The properties added to the context by a test are visible to
+     other tests that specify the test as a prerequisite.</para>
+    </listitem>
+
+    <listitem>
+     <para>The properties added to the context by an action's setup
+     method are visible to the cleanup method of the same
+     action.</para>
+    </listitem>
+   </itemizedlist>
+
+   <para>Addition of properties to the context allows limited
+   communication among tests, between actions and tests, and between the
+   setup and cleanup methods of an action.  The restrictions above limit
+   the possibility of name collisions of properties added to the
+   context, and encourage the modular design of tests and
+   actions.</para>
+
+   <para>For instance, a likely use of an action is to allocate and
+   deallocate a resource used by one or more tests (a temporary
+   directory, a database session, etc.).  The action's setup method
+   would allocate the resource and place a handle to it (the temporary
+   directory name, the database session object) in the context as a
+   property.  Tests that specify the action have access to the temporary
+   resource via the handle stored in the context.  The action's cleanup
+   function also uses the handle to deallocate the resource (delete the
+   temporary directory, close the database session).</para>
+
+  </section> <!-- The Context -->
+
+  <section>
+   <title>Test Results</title>
+
+   <para>Write me.</para>
+
+  </section> <!-- Test Results -->
+
+ </section> <!-- Running Tests -->
+
+ <section id="sec-writing-test-and-action-classes">
+  <title>Writing Test Classes and Action Classes</title>
+
+  <para>Many tests can be implemented using the test classes supplied
+  with &qmtest;.  Test implementors will wish to create new test classes
+  to customize existing tests or implement new testing behavior.  In
+  addition, implementors will wish to create action classes, to add
+  customized setup and cleanup behavior to tests and groups of
+  tests.</para>
+
+  <section id="sec-writing-test-classes">
+   <title>Writing Test Classes</title>
+
+   <para>In &qmtest;, a test class is represented by a Python class.
+   The class need not be derived from any particular base classes.
+   However, the class must include the three particular
+   attributes: a <varname>field</varname> attribute, whose value is a
+   sequence of field objects, and <function>__init__</function> and
+   <function>Run</function> functions.</para>
+
+   <section>
+    <title>The <varname>field</varname> Attribute</title>
+
+    <para>The test class must include a <varname>field</varname>
+    attribute, indicating the types of the test class's parameters.  The
+    <varname>field</varname> attribute's value should be a sequence
+    consisting of field objects.  A field object is an instance of a
+    subclass of <classname>qm.fields.Field</classname>.  The names of
+    the fields are the names of the parameters of the test class.</para>
+
+    <para>For instance, this definition of the <varname>field</varname>
+    attribute declares two parameters for the test class.  One
+    parameter, called &quot;input_text&quot;, takes a text value.  The
+    other parameter, called &quot;value_list&quot;, takes as its value a
+    set of integers.</para>
+
+    <programlisting>
+<![CDATA[    fields = [
+        qm.fields.IssueFieldText(
+            name="input_text"),
+        qm.fields.IssueFieldSet(qm.fields.IssueFieldInteger(
+            name="value_list")),
+        ] ]]>
+    </programlisting>
+
+    <para>The field construction calls may of course specify other
+    attributes for the fields.  In particular, test classes should
+    initialize the <varname>title</varname> and
+    <varname>description</varname> attributes of each field.  The values
+    of these attributes help users of the test class identify the
+    purpose and semantics of each of the test class's parameters.</para>
+
+   </section> <!-- The field Attribute -->
+
+   <section>
+    <title>The <function>__init__</function> Function</title>
+
+    <para>The test class must provide an <function>__init__</function>
+    function.  The parameters of this function should have the same
+    names as the names of the fields declared in the
+    <varname>fields</varname> attribute.</para>
+
+    <para>When a test is loaded from the test database, &qmtest; creates
+    a test object by instantiating the test class.  When it does so,
+    &qmtest; passes arguments specified for the test as named arguments
+    to the test class's <function>__init__</function> function.  The
+    allowed names for test class arguments are the names of the fields
+    specified in the <varname>fields</varname> attribute, so the
+    parameters of the <function>__init__</function> function must have
+    the same names.</para>
+
+    <para>The <function>__init__</function> function may declare default
+    values for any or all of its parameters.  Tests are not required to
+    provide the corresponding arguments.  Tets must, however, provide
+    arguments for all other parameters of the test class.</para>
+
+    <para>For example, this <function>__init__</function> function
+    matches the <varname>fields</varname> declared above.</para>
+
+    <programlisting>
+<![CDATA[    def __init__(self, input_text, value_list=[17, 42]):
+        self.__input_text = input_text
+        self.__value_list = value_list]]>
+    </programlisting>
+
+    <para>Since a default value is provided for the
+    <parameter>value_list</parameter> parameter, tests of this test
+    class may optionally omit the &quot;value_list&quot; test argument.
+    However, since no default value is provided for the
+    <parameter>input_text</parameter> parameter, all tests of this test
+    class must provide an &quot;input_text&quot; test argument
+    value.</para>
+
+   </section> <!-- The __init__ Function -->
+
+   <section>
+    <title>The <function>Run</function> Function</title>
+
+    <para>The heart of the test class is the <function>Run</function>
+    function.  This function actually runs the test and produces a test
+    result.</para>
+
+    <para>The <function>Run</function> function takes a single argument:
+    a context object.  The context object satisfies the interface of the
+    <classname>qm.test.base.Context</classname> Python class (though it
+    may in actuality be an instance of a different Python class).</para>
+
+    <para>The return value of <function>Run</function> should be a
+    result object, an instance of
+    <classname>qm.test.base.Result</classname>.  The result should
+    reflect an outcome of <symbol>PASS</symbol> or
+    <symbol>FAIL</symbol> (represented by
+    <varname>qm.test.base.Result.PASS</varname> and
+    <varname>qm.test.base.Result.FAIL</varname>, respectively).</para>
+
+    <para>If the <function>Run</function> raises an unhandled exception,
+    &qmtest; creates a result for the test with the outcome
+    <symbol>ERROR</symbol>.  Test classes should be designed so that
+    they do not raise unhandled exceptions in the course of normal use
+    (including test failures).  An unhandled exception should reflect an
+    internal error in the implementation of the test class.</para>
+
+   </section> <!-- The Run Function -->
+
+   <section>
+    <title>Using the Context</title>
+
+    <para>A context object is simply a dictionary of properties.  Use
+    Python's map syntax to access a context's properties.  A property
+    key is always a strings composed of lower-case letters and
+    underscores.  A property value may be any Python value.</para>
+
+    <para>A test class's <function>Run</function> function may also add
+    new properties to the context object, or replace an existing
+    property's value, by using Python's map assignment syntax.  However,
+    property values set by a test's <function>Run</function> function
+    are only visible to other tests that specify the test as a
+    prerequisite.  See <xref linkend="sec-the-context"/> for more
+    information about the visibility of properties added to the
+    context.</para>
+
+    <para>A test's <function>Run</function> function only sees context
+    properties added by &qmtest; itself, properties added by tests that
+    are specified as prerequisites, and properties added by the setup
+    functions of specified actions.</para>
+
+   </section> <!-- Using the Context -->
+
+   <section>
+    <title>Creating Results</title>
+
+    <para>The result of a test is represented by an instance of
+    <classname>qm.test.base.Result</classname>.  A test class's
+    <function>Run</function> function should return such an instance to
+    indicate the tests's results.</para>
+
+    <para>When constructing a result object, specify the value of the
+    <parameter>outcome</parameter> parameter.  A test should specify
+    either <varname>qm.test.base.Result.PASS</varname> or
+    <varname>qm.test.base.Result.FAIL</varname>.  The
+    <function>Run</function> function may also specify additional
+    properties in the result object, either by passing additional
+    arguments to its initialization function, or by adding them using
+    Python's map assignment syntax.</para>
+
+    <para>In case of a <symbol>FAIL</symbol> result, it is conventional
+    to assign the &quot;cause&quot; property a string value providing a
+    description of why the test failed.</para>
+
+    <para>These two equivalent examples demonstrate returning a result
+    that indicates a test failure (both assume that the
+    <classname>Result</classname> class has been imported into the
+    module's global namespace).</para>
+
+    <programlisting>
+<![CDATA[        result = Result(Result.FAIL)
+        result["cause"] = "Unexpected end of input."
+        return result]]>
+    </programlisting>
+
+    <programlisting>
+<![CDATA[        return Result(Result.FAIL, cause="Unexpected end of input.")]]>
+    </programlisting>
+
+    <para>Sometimes, a <function>Run</function> function implementation
+    detects a failure by catching an exception.  The function
+    <function>qm.test.base.make_result_for_exception</function> provides
+    a convenient mechanism for creating a result that includes
+    information about the exception.  Call it passing the Python
+    exception information triplet, a cause, and the outcome.  For
+    example,</para>
+
+    <programlisting>
+<![CDATA[        try:
+            # ... run test code here ...
+        except EndOfFileError:
+            return qm.test.base.make_result_for_exception(
+                exc_info=sys.exc_info(),
+                cause="Unexpected end of file.",
+                outcome=Result.FAIL)
+]]>
+    </programlisting>
+
+   </section> <!-- Creating Results -->
+
+  </section> <!-- Writing Test Classes -->
+
+  <section id="sec-writing-action-classes">
+   <title>Writing Action Classes</title>
+
+   <para></para>
+
+  </section> <!-- Writing Action Classes -->
+
+ </section> <!-- Writing Test Classes and Action Classes -->
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("main.xml" "book" "chapter")
+  End:
+-->

@@ -907,13 +907,12 @@ class Engine:
        # This map associates a test with each test ID.
        tests = {}
 
-       # This map contains information about when actions should be run.
-       # There is an entry for each action referenced by at least one of
-       # the tests that will be run.  The key is the action ID, and the
-       # value is a pair of test IDs.  The first is the ID of the test
-       # before which the setup action must be run.  The second is the
-       # ID of the test after which the cleanup action must be run.
-       action_map = {}
+       # This map contains information about when cleanup actions should
+       # be run.  There is an entry for each action referenced by at
+       # least one of the tests that will be run.  The key is the action
+       # ID, and the value is the ID of the test after which the cleanup
+       # action must be run.
+       cleanup_action_map = {}
 
        # Loop over all the tests, in the order that they will be run.
        for test_id in test_ids:
@@ -923,16 +922,10 @@ class Engine:
            tests[test_id] = test
            # Loop over all the actions it references.
            for action_id in test.GetActions():
-               if action_map.has_key(action_id):
-                   # Another test referenced this action.  The other
-                   # test is run earlier, so leave the first element
-                   # alone.  This test is later, though, so replace the
-                   # second element so that the cleanup action is run
-                   # only after this test is run.
-                   action_map[action_id][1] = test_id
-               else:
-                   # No other test has referenced this action so far.
-                   action_map[action_id] = [test_id, test_id]
+               # The cleanup action should be run after this test.
+               # Another, earlier test may have been here, but this test
+               # will be run later, so reschedule the cleanup.
+               cleanup_action_map[action_id] = test_id
 
        # This map contains the context properties that were added by
        # each setup action that has been run so far.  A key in this map
@@ -992,11 +985,10 @@ class Engine:
                # Loop over actions referenced by this test.
                for action_id in action_ids:
                    # Have we already done the setup for this action?
-                   if action_map[action_id][0] != test_id:
-                       # This is not the first test to require this
-                       # action, so it should have already been run.
-                       # Look up the context properties that the setup
-                       # function generated.
+                   if setup_attributes.has_key(action_id):
+                       # The action has already been run.  Look up the
+                       # context properties that the setup function
+                       # generated.
                        added_attributes = setup_attributes[action_id]
                        if added_attributes is None:
                            # The action failed when it was run, so don't
@@ -1078,17 +1070,9 @@ class Engine:
                    # object for it.
                    result = make_result_for_exception(sys.exc_info())
                else:
-                   # The test ran to completion.  Let's be lenient with
-                   # the 'Run' function's return value.  What did it
-                   # return?
-                   if isinstance(result, qm.test.base.Result):
-                       # A 'Result' instance.  Good; keep it.
-                       pass
-                   elif result in Result.outcomes:
-                       # Just an outcome.  Construct a 'Result' instance
-                       # with it.
-                       result = Result(outcome=result)
-                   else:
+                   # The test ran to completion.  It should have
+                   # returned a 'Result' object.
+                   if not isinstance(result, qm.test.base.Result):
                        # Something else.  That's an error.
                        raise RuntimeError, \
                              qm.error("invalid result",
@@ -1106,17 +1090,33 @@ class Engine:
 
            # Loop over actions referenced by this test.
            for action_id in action_ids:
-               if action_map[action_id][1] != test_id:
+               if cleanup_action_map[action_id] != test_id:
                    # This is not the last test to require this cleanup
                    # action, so don't do it yet.
+                   continue
+               if not setup_attributes.has_key(action_id):
+                   # The setup action was never run, so don't run the
+                   # cleanup action.
                    continue
                # Loop up the action.
                action = self.__database.GetAction(action_id)
 
+               # Create a context wrapper for running the cleanup
+               # method.  It includes the original context, plus any
+               # additional properties added by the setup method of the
+               # same action.
+               properties = setup_attributes[action_id]
+               if properties is None:
+                   # The setup method failed, but we're running the
+                   # cleanup method anyway.  Don't use any extra
+                   # properties.
+                   properties = {}
+               wrapper = ContextWrapper(context, properties)
+
                # Now run the cleanup action.
                progress_callback("action %-43s: " % action_id)
                try:
-                   action.DoCleanup(context_wrapper)
+                   action.DoCleanup(wrapper)
                except:
                    # It raised an exception.  No biggie; just record
                    # some information in the result.
