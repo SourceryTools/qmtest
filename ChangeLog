@@ -1,3 +1,12 @@
+2003-09-09  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* setup.py: Factor out commands into ...
+	* qmdist/command/build_doc.py: ...this
+	* qmdist/command/install_data.py: ...and this.
+	* qmdist/__init__.py: New file.
+	* qmdist/command/__init__.py: New file.
+        * MANIFEST.in: Provide file list for source distribution.
+	
 2003-09-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (cStringIO): Do not import.
