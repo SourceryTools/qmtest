@@ -224,7 +224,7 @@ class InstanceBase:
         self.__working_directory = directory_path
         # Set the full path for each attachment in a test argument that
         # references attachment data by location.
-        self.__SetAttachmentPaths(self.__arguments.values())
+        self.__SetAttachmentPaths(self.GetArguments().values())
 
 
     def GetWorkingDirectory(self):
@@ -492,7 +492,8 @@ class Suite:
        self.__test_ids = list(test_ids)
        self.__suite_ids = list(suite_ids)
        self.__implicit = implicit
-       
+       self.__test_id_cache = None
+
 
    def GetId(self):
        """Return the ID for this test suite."""
@@ -516,31 +517,34 @@ class Suite:
        produce the full list of tests.  No test will appear more than
        once.  Test IDs are relative to the top of the test database."""
 
-       database = get_database()
-       # 'rel' converts IDs relative to this suite to IDs relative to
-       # the top of the test database.
-       if self.IsImplicit():
-           dir_id = self.GetId()
-       else:
-           dir_id = qm.label.dirname(self.GetId())
-       rel = qm.label.MakeRelativeTo(dir_id)
-       # Instead of keeping a list of test IDs, we'll build a map, to
-       # assist with skipping duplicates.  The keys are test IDs (we
-       # don't care about the values).
-       ids = {}
-       # Start by entering the tests explicitly part of this suite.
-       for test_id in map(rel, self.__test_ids):
-           ids[test_id] = None
-       # Now loop over suites contained in this suite.
-       for suite_id in map(rel, self.__suite_ids):
-           suite = database.GetSuite(suite_id)
-           # Get the test IDs in the contained suite.
-           test_ids_in_suite = suite.GetTestIds()
-           # Make note of them.
-           for test_id in test_ids_in_suite:
+       if self.__test_id_cache is None:
+           database = get_database()
+           # 'rel' converts IDs relative to this suite to IDs relative to
+           # the top of the test database.
+           if self.IsImplicit():
+               dir_id = self.GetId()
+           else:
+               dir_id = qm.label.dirname(self.GetId())
+           rel = qm.label.MakeRelativeTo(dir_id)
+           # Instead of keeping a list of test IDs, we'll build a map, to
+           # assist with skipping duplicates.  The keys are test IDs (we
+           # don't care about the values).
+           ids = {}
+           # Start by entering the tests explicitly part of this suite.
+           for test_id in map(rel, self.__test_ids):
                ids[test_id] = None
-       # All done.
-       return ids.keys()
+           # Now loop over suites contained in this suite.
+           for suite_id in map(rel, self.__suite_ids):
+               suite = database.GetSuite(suite_id)
+               # Get the test IDs in the contained suite.
+               test_ids_in_suite = suite.GetTestIds()
+               # Make note of them.
+               for test_id in test_ids_in_suite:
+                   ids[test_id] = None
+           # All done.
+           self.__test_id_cache = ids.keys()
+
+       return self.__test_id_cache
 
 
    def GetRawTestIds(self):
@@ -824,9 +828,14 @@ class ResultWrapper:
             property_element = document.createElement("property")
             # The property name is an attribute.
             property_element.setAttribute("name", str(key))
-            # The property value is contained in a text mode.
-            text = document.createTextNode(str(value))
-            property_element.appendChild(text)
+            if type(value) == types.StringType:
+                # The property value is contained in a text mode.
+                node = document.createTextNode(str(value))
+                property_element.appendChild(node)
+            else:
+                for text in value:
+                    node = document.createTextNode(str(text))
+                    property_element.appendChild(node)
             # Add the property element to the result node.
             element.appendChild(property_element)
 
@@ -1304,6 +1313,10 @@ class Engine:
                try:
                    # Run the test.
                    result = test.Run(context_wrapper)
+               except KeyboardInterrupt:
+                   # Let this propagate out, so the user can kill the
+                   # test run.
+                   raise
                except:
                    # The test raised an exception.  Create a result
                    # object for it.
@@ -1446,6 +1459,8 @@ def load_database(path):
         database_module = qm.common.load_module("database", classes_path)
     except ImportError, e:
         # Couldn't import the module.
+        qm.common.print_message(
+            "Warning: couldn't import database module:\n%s\n" % str(e), 2)
         pass
     else:
         # Look for a class named 'Database' in the module.

@@ -78,14 +78,16 @@ class PageInfo(qm.web.PageInfo):
 ''' % self.MakeListingUrl() 
 
 
-    def FormatTestId(self, test_id, relative_to=None):
+    def FormatTestId(self, test_id, relative_to=None, within=None):
         """Return markup for 'test_id'."""
 
-        if relative_to is None:
-            absolute_test_id = test_id
-        else:
+        if relative_to is not None:
             absolute_test_id = qm.label.join(qm.label.dirname(relative_to),
                                              test_id)
+        elif within is not None:
+            absolute_test_id = qm.label.join(within, test_id)
+        else:
+            absolute_test_id = test_id
 
         request = qm.web.WebRequest("show-test",
                                     base=self.request,
@@ -94,14 +96,16 @@ class PageInfo(qm.web.PageInfo):
                % (request.AsUrl(), test_id)
 
 
-    def FormatActionId(self, action_id, relative_to=None):
+    def FormatActionId(self, action_id, relative_to=None, within=None):
         """Return markup for 'action_id'."""
 
-        if relative_to is None:
-            absolute_action_id = action_id
-        else:
+        if relative_to is not None:
             absolute_action_id = qm.label.join(qm.label.dirname(relative_to),
                                                action_id)
+        elif within is not None:
+            absolute_action_id = qm.label.join(within, action_id)
+        else:
+            absolute_action_id = action_id
 
         request = qm.web.WebRequest("show-action",
                                     base=self.request,
@@ -110,12 +114,17 @@ class PageInfo(qm.web.PageInfo):
                % (request.AsUrl(), action_id)
 
 
-    def FormatSuiteId(self, suite_id):
+    def FormatSuiteId(self, suite_id, within=None):
         """Return markup for 'suite_id'."""
+
+        if within is not None:
+            absolute_suite_id = qm.label.join(within, suite_id)
+        else:
+            absolute_suite_id = suite_id
 
         request = qm.web.WebRequest("show-suite",
                                     base=self.request,
-                                    id=suite_id)
+                                    id=absolute_suite_id)
         return '<a href="%s"><span class="suite_id">%s</span></a>' \
                % (request.AsUrl(), suite_id)
     

@@ -53,10 +53,6 @@
 #
 ########################################################################
 
-@ address in use
-The address %(address)s is already in use by another process.  Specify
-a different port for running the server.
-
 @ cannot invoke remotely
 The IDB is currently in use by a QMTrack server, but the command you
 specified, "%(command)s", can only be performed directly on the IDB.

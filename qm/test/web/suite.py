@@ -102,6 +102,10 @@ class ShowPageInfo(web.PageInfo):
                 excluded_suite_ids)
 
 
+    def MakeAbsoluteId(self, raw_id):
+        return qm.label.join(self.suite.GetId(), raw_id)
+
+
     def MakeDeleteScript(self):
         """Make a script to confirm deletion of the suite.
 

@@ -1244,7 +1244,7 @@ class Session:
     A 'Session' object represents an ongoing user interaction with the
     web server."""
 
-    def __init__(self, request, user_id, expiration_timeout=3600):
+    def __init__(self, request, user_id, expiration_timeout=21600):
         """Create a new session.
 
         'request' -- A 'WebRequest' object in response to which this

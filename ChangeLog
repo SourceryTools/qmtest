@@ -1,3 +1,58 @@
+2001-05-24  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: Mention Distutils.
+	* qm/web.py (Session.__init__): Increase default timeout.
+	* qm/platform_linux.py (RunProgramError): New class.
+	(ProgramTerminateBySignalError): Likewise.
+	(ProgramStoppedError): Likewise.
+	(run_program_captured): Add doc string.  Use /dev/null for empty
+	stdin.  
+	(get_temp_directory): New function.
+	* qm/platform.py (RunProgramError): Remove.
+	(ProgramTerminateBySignalError): Likewise.
+	(ProgramStoppedError): Likewise.
+	* qm/label.py (thunk): Change + to x.
+	(normpath): Remove multiple separators.
+	(join): Normalize result.
+	(to_path): Handle root path.
+	(is_prefix): New function.
+	* qm/fields.py (IntegerField.FormatValueAsHtml): Implement hidden
+	style.
+	(TextField.FormatValueAsHtml): Likewise.  Convert value to
+	string.  Escape preformatted text.
+	(SetField.FormatValueAsHtml): Implement hidden style.
+	(EnumerationField.FormatValueAsHtml): Likewise.
+	* qm/common.py (Enumeral.__cmp__): Check that RHS is valid enumeral.
+	(load_module): Adjust Python path while loading module.
+	(ends_with): New function.
+	* share/dtml/test/suite.dtml: Adjust.
+	* share/diagnostics/track.txt (address in use): Remove.
+	* share/diagnostics/test.txt (unknown test or suite id): Adjust.
+	* share/diagnostics/common.txt (address in use): New diagnostic.
+	(could not read file): Likewise.
+	* qm/track/qmtrack.in: Write message if KeyboardInterrupt.
+	* qm/test/qmtest.in (program_name): Handle KeyboardInterrupt.
+	* qm/test/cmdline.py (Command.context_file_spec): New attribute.
+	(Command.commands_spec): Include it.
+	(Command.MakeContext): Handle context-file option.
+	(Command.__ParseContextAssignment): New method.
+	(Command.add_test_id): Extract results from profile context.
+	(Command.WriteSummary): Treat missing expected outcome as PASS.
+	Adjust formatting.
+	* qm/test/base.py (InstanceBase.SetWorkingDirectory): Use
+	GetArguments. 
+	(Suite.__init__): Initialize __test_id_cache.
+	(Suite.GetTestIds): Cache result.
+	(ResultWrapper.MakeDomNode): Handle sequence property values.
+	(Engine.RunTests): Pass through KeyboardInterrupt.
+	(load_database): Print warning when import fails.
+	* qm/test/web/web.py (PageInfo.FormatTestId): Add within parameter.
+	(PageInfo.FormatActionId): Likewise.
+	(PageInfo.FormatSuiteId): Likewise.
+	* qm/test/web/suite.py (ShowPageInfo.MakeAbsoluteId): New method.
+	* qm/test/web/show.py (ShowPageInfo.IsShowField): Remove.
+	(ShowPageInfo.FormatFieldValue): Handle hidden and read-only fields.
+
 2001-05-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod: Add note.

@@ -182,6 +182,7 @@ def thunk(label):
     # Lower capital letters.
     label = string.lower(label)
     # Replace all invalid characters with underscores.
+    label = string.replace(label, "+", "x")
     label = __thunk_regex.sub("_", label)
     # Trim leading underscores.
     while len(label) > 0 and label[0] == "_":
@@ -232,27 +233,29 @@ def normpath(label):
         label = label[1:]
     while len(label) > 0 and label[-1] == sep:
         label = label[:-1]
-    # Replace multiple separators with a single one.
-    
-    return label
+    # Anything left?
+    if label == "":
+        return sep
+    else:
+        # Replace multiple separators with a single one.
+        return __multiple_separators_regex.sub(sep, label)
 
 
 def join(*components):
     """Join components with the separator character."""
 
-    # Normalize the components.
-    components = map(normpath, components)
-    # Filter out empty strings.
-    components = filter(None, components)
     # Join the results.
-    return string.join(components, sep)
+    return normpath(string.join(components, sep))
 
 
 def to_path(label):
     """Return a relative file system path corresponding to 'label'."""
 
     label = normpath(label)
-    return string.replace(label, sep, os.sep)
+    if label == sep:
+        return ""
+    else:
+        return string.replace(label, sep, os.sep)
 
 
 def from_path(path):
@@ -263,6 +266,19 @@ def from_path(path):
 
     label = string.replace(path, os.sep, sep)
     return normpath(label)
+
+
+def is_prefix(path, path_prefix):
+    """Return true if 'path_prefix' is a path prefix of 'path'."""
+
+    path_prefix = normpath(path_prefix)
+    if path_prefix == sep:
+        # This is the top-level path, and therefore considered a prefix
+        # to any path.
+        return 1
+    else:
+        length = len(path_prefix)
+        return length <= len(path) and path[:length] == path_prefix
     
 
 ########################################################################

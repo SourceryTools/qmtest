@@ -161,7 +161,7 @@ found.
 There is no test with ID "%(test_id)s" in the database.
 
 @ unknown test or suite id
-There is no test or suite with ID %(id)s" in the database.
+There is no test or suite with ID "%(id)s" in the database.
 
 @ xml invalid arg name
 %(name)s is not the name of an argument of this test class.

@@ -118,6 +118,13 @@ class Command:
         "Add or override a context property."
         )
 
+    context_file_spec = (
+        "C",
+        "context-file",
+        "FILE",
+        "Read context from a file."
+        )
+
     port_option_spec = (
         "P",
         "port",
@@ -174,7 +181,8 @@ class Command:
          "suite IDs as arguments.",
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
-           outcomes_option_spec, context_option_spec, profile_option_spec )
+           outcomes_option_spec, context_option_spec, context_file_spec,
+           profile_option_spec )
          ),
 
         ("server",
@@ -266,7 +274,7 @@ class Command:
 
         # Handle the verbose option.  The verbose level is the number of
         # times the verbose option was specified.
-        qm.verbose = self.__global_options.count(("verbose", ""))
+        qm.common.verbose = self.__global_options.count(("verbose", ""))
 
         # Make sure a command was specified.
         if self.__command == "":
@@ -309,22 +317,46 @@ class Command:
         # Look for all occurrences of the '--context' option.
         for option, argument in self.__command_options:
             if option == "context":
-                # Make sure the argument is correctly-formatted.
-                if not "=" in argument:
-                    raise qm.cmdline.CommandError, \
-                          qm.error("invalid context assignment",
-                                   argument=argument)
-                # Parse the assignment.
-                name, value = string.split(argument, "=", 1)
+                self.__ParseContextAssignment(argument, context)
+
+        # Look for the '--context-file' option.
+        for option, argument in self.__command_options:
+            if option == "context-file":
                 try:
-                    # Insert it into the context.
-                    context[name] = value
-                except ValueError, msg:
-                    # The format of the context key is invalid, but
-                    # raise a 'CommandError' instead.
-                    raise qm.cmdline.CommandError, msg
+                    lines = open(argument, "r").readlines()
+                except:
+                    raise qm.cmdline.CommandError, \
+                          qm.error("could not read file", path=argument)
+                lines = map(string.strip, lines)
+                for line in lines:
+                    if line == "":
+                        # Blank line; skip it.
+                        pass
+                    elif qm.common.starts_with(line, "#"):
+                        # Comment line; skip it.
+                        pass
+                    else:
+                        self.__ParseContextAssignment(line, context)
 
         return context
+
+
+    def __ParseContextAssignment(self, assignment, context):
+        # Make sure the argument is correctly-formatted.
+        if not "=" in assignment:
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid context assignment",
+                           argument=assignment)
+        # Parse the assignment.
+        name, value = string.split(assignment, "=", 1)
+
+        try:
+            # Insert it into the context.
+            context[name] = value
+        except ValueError, msg:
+            # The format of the context key is invalid, but
+            # raise a 'CommandError' instead.
+            raise qm.cmdline.CommandError, msg
 
 
     def __ExecuteRun(self, output):
@@ -409,8 +441,11 @@ class Command:
                 # Profiling was requested.  Run in the profiler.
                 profile_file = self.GetCommandOption("profile")
                 p = profile.Profile()
-                p = p.runctx("results = engine.RunTests(test_ids, context, callback)",
-                             globals(), locals())
+                local_vars = locals()
+                p = p.runctx("results = "
+                             "engine.RunTests(test_ids, context, callback)",
+                             globals(), local_vars)
+                results = local_vars["results"]
                 p.dump_stats(profile_file)
             else:
                 results = engine.RunTests(test_ids, context, callback)
@@ -510,35 +545,31 @@ class Command:
         output.write("  %6d        tests total\n\n" % num_tests)
 
         if expected_outcomes is not None:
+            output.write("  Test results relative to expected outcomes:\n\n")
             # Initialize a map with which we will count the number of
             # tests with each unexpected outcome.
             count_by_unexpected = {}
             for outcome in base.Result.outcomes:
                 count_by_unexpected[outcome] = 0
             # Also, we'll count the number of tests that resulted in the
-            # expected outcome, and the number for which we have no
             # expected outcome.
             count_expected = 0
-            count_no_outcome = 0
             # Count tests by expected outcome.
             for test_id in results.keys():
                 result = results[test_id]
                 outcome = result.GetOutcome()
-                # Do we have an expected outcome for this test?
-                if expected_outcomes.has_key(test_id):
-                    # Yes.
-                    expected_outcome = expected_outcomes[test_id]
-                    if outcome == expected_outcome:
-                        # Outcome as expected.
-                        count_expected = count_expected + 1
-                    else:
-                        # Unexpected outcome.  Count by actual (not
-                        # expected) outcome.
-                        count_by_unexpected[outcome] = \
-                            count_by_unexpected[outcome] + 1
+                # Get the expected outcome for this test; if one isn't
+                # specified, assume PASS.
+                expected_outcome = expected_outcomes.get(test_id,
+                                                         base.Result.PASS)
+                if outcome == expected_outcome:
+                    # Outcome as expected.
+                    count_expected = count_expected + 1
                 else:
-                    # No expected outcome for this test.
-                    count_no_outcome = count_no_outcome + 1
+                    # Unexpected outcome.  Count by actual (not
+                    # expected) outcome.
+                    count_by_unexpected[outcome] = \
+                        count_by_unexpected[outcome] + 1
 
             output.write("  %6d (%3.0f%%) tests as expected\n"
                          % (count_expected,
@@ -549,12 +580,8 @@ class Command:
                     output.write("  %6d (%3.0f%%) tests unexpected %s\n"
                                  % (count, (100. * count) / num_tests,
                                     outcome))
-            if count_no_outcome > 0:
-                output.write("  %6d (%3.0f%%) tests with no "
-                             "expected outcomes\n"
-                             % (count_no_outcome,
-                                (100. * count_no_outcome) / num_tests))
             output.write("\n")
+            output.write("  Actual test results:\n\n")
 
         # Initialize a map with which we will count the number of tests
         # with each outcome.
@@ -582,10 +609,8 @@ class Command:
             for test_id in results.keys():
                 result = results[test_id]
                 outcome = result.GetOutcome()
-                if not expected_outcomes.has_key(test_id):
-                    # No expected outcome for this test; skip it.
-                    continue
-                expected_outcome = expected_outcomes[test_id]
+                expected_outcome = expected_outcomes.get(test_id,
+                                                         base.Result.PASS)
                 if outcome == expected_outcome:
                     # The outcome of this test is as expected; move on.
                     continue

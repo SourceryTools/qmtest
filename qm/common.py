@@ -130,11 +130,19 @@ class Enumeral:
 
     def __cmp__(self, other):
         try:
+            # Try to compare as an integer value.
             other_as_int = int(other)
         except TypeError:
+            # Didn't work.
             return 0
         except ValueError:
-            return cmp(self.__GetName(), other)
+            # Probably, it's a string.
+            other = str(other)
+            if other not in self.__enumeration.keys():
+                # It's a string that isn't in the enumeration.
+                raise ValueError, "\"%s\" isn't a valid enumeral" % other
+            else:
+                return cmp(self.__GetName(), other)
         else:
             return cmp(self.__value, other_as_int)
 
@@ -778,7 +786,16 @@ def load_module(name, path):
     file, file_name, description = imp.find_module(module_name, path)
     # Find the module.
     try:
+        # While loading the module, add 'path' to Python's module path,
+        # so that if the module references other modules, e.g. in the
+        # same directory, Python can find them.  But remember the old
+        # path so we can restore it afterwards.
+        old_python_path = sys.path[:]
+        sys.path = sys.path + path
+        # Load the module.
         module = imp.load_module(name, file, file_name, description)
+        # Restore the old path.
+        sys.path = old_python_path
         # Loaded successfully.  If it's contained in a package, put it
         # into that package's name space.
         if package is not None:
@@ -1009,6 +1026,13 @@ def starts_with(text, prefix):
            and text[:len(prefix)] == prefix
 
 
+def ends_with(text, suffix):
+    """Return true if 'suffix' is a suffix of 'text'."""
+
+    return len(text) >= len(suffix) \
+           and text[-len(suffix):] == suffix
+
+
 def add_exit_function(exit_function):
     """Register 'exit_function' to be called when the program exits.
 
@@ -1125,10 +1149,10 @@ def print_message(text, min_verbose=1):
     'text' -- The text of the message.
 
     'min_verbose' -- The minimum verbose level for which this message
-    will be printed."""
+    will be printed.  Must be greater than zero."""
 
     assert min_verbose > 0
-    if min_verbose >= verbose:
+    if verbose >= min_verbose:
         sys.stdout.write(text)
 
 

@@ -55,6 +55,27 @@ CLOSE_STREAM = common.Empty()
 # classes
 ########################################################################
 
+class RunProgramError(RuntimeError):
+    """An error while running an external program."""
+    
+    pass
+
+
+
+class ProgramStoppedError(RunProgramError):
+    """An external program was stopped by a signal."""
+
+    pass
+
+
+
+class ProgramTerminatedBySignalError(RunProgramError):
+    """An external program was terminated by a signal."""
+
+    pass
+
+
+
 class SignalException(Exception):
     """An exception raised in response to a signal."""
 
@@ -394,43 +415,79 @@ def run_program_captured(program,
                          arguments,
                          environment=None,
                          stdin=""):
+    """Execute 'program', capturing standard output and error.
+
+    'arguments' -- The argument list for the program, as a sequence of
+    strings.  Conventionally, the first element is the same as the value
+    of 'program'.
+
+    'environment' -- A map specifying the environment for the program.
+    If 'None' or omitted, this process's environment is used instead.
+
+    'stdin' -- The text to pass to this program on standard input.
+
+    returns -- A triplet '(exit_code, stdout, stderr)'.  The first is
+    the program's exit code; the other two are strings containing the
+    data that the program wrote to standard output and error,
+    respectively."""
 
     stdin_fd = -1
     stdout_fd = -1
     stderr_fd = -1
 
     try:
-        stdin_path, stdin_fd = common.open_temporary_file_fd()
-        os.unlink(stdin_path)
-        os.write(stdin_fd, stdin)
-        os.lseek(stdin_fd, 0, 0)
+        if stdin == "":
+            # No standard input; don't bother writing an empty temporary
+            # file. 
+            stdin_fd = os.open("/dev/null", os.O_RDONLY)
+        else:
+            # Write a temporary file containing the standard input text.
+            stdin_path, stdin_fd = common.open_temporary_file_fd()
+            os.unlink(stdin_path)
+            os.write(stdin_fd, stdin)
+            # Rewrind back to the start of it.
+            os.lseek(stdin_fd, 0, 0)
+        # Open a temporary file to catch standard output.
         stdout_path, stdout_fd = common.open_temporary_file_fd()
         os.unlink(stdout_path)
+        # Open a temporary file to catch standard error.
         stderr_path, stderr_fd = common.open_temporary_file_fd()
         os.unlink(stderr_path)
 
+        # Run the program.
         exit_code = run_program(program, arguments, environment,
                                 stdin=stdin_fd,
                                 stdout=stdout_fd,
                                 stderr=stderr_fd)
 
+        # Rewind to the beginning of the standard output file, and read
+        # in what the program wrote.
         os.lseek(stdout_fd, 0, 0)
         stdout_file = os.fdopen(stdout_fd, "r")
         stdout = stdout_file.read()
-
+        # Rewind to the beginning of the standard error file, and read
+        # in what the program wrote.
         os.lseek(stderr_fd, 0, 0)
         stderr_file = os.fdopen(stderr_fd, "r")
         stderr = stderr_file.read()
 
+        # All done.
         return exit_code, stdout, stderr
 
     finally:
+        # Close any files that were opened.
         if stdin_fd != -1:
             os.close(stdin_fd)
         if stdout_fd != -1:
             os.close(stdout_fd)
         if stderr_fd != -1:
             os.close(stderr_fd)
+
+
+def get_temp_directory():
+    """Return the full path to a directory for storing temporary files."""
+
+    return "/var/tmp"
 
 
 ########################################################################

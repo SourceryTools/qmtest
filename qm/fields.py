@@ -276,7 +276,7 @@ class Field:
         renders a default value (useful for blank forms).
 
         'style' -- The rendering style.  Can be "full" or "brief" (both
-        read-only), or "new" or "edit".
+        read-only), or "new" or "edit" or "hidden".
 
         'name' -- The name to use for the primary HTML form element
         containing the value of this field, if 'style' specifies the
@@ -407,6 +407,9 @@ class IntegerField(Field):
                    % (name, value)
         elif style == "full" or style == "brief":
             return '<tt>%d</tt>' % value
+        elif style == "hidden":
+            return '<input type="hidden" name="%s" value="%d"/>' \
+                   % (name, value)            
         else:
             raise ValueError, style
 
@@ -532,6 +535,8 @@ class TextField(Field):
         # Use default value if requested.
         if value is None:
             value = ""
+        else:
+            value = str(value)
         # Use the default field form field name if requested.
         if name is None:
             name = self.GetHtmlFormFieldName()
@@ -545,6 +550,10 @@ class TextField(Field):
             else:
                 return '<input type="text" size="40" name="%s" value="%s"/>' \
                        % (name, web.escape(value))
+
+        elif style == "hidden":
+            return '<input type="hidden" name="%s" value="%s"/>' \
+                   % (name, web.escape(value))            
 
         elif style == "brief":
             if self.IsAttribute("verbatim"):
@@ -568,7 +577,7 @@ class TextField(Field):
         elif style == "full":
             if self.IsAttribute("verbatim"):
                 # Place verbatim text in a <pre> element.
-                return '<pre>%s</pre>' % value 
+                return '<pre>%s</pre>' % web.escape(value)
             elif self.IsAttribute("structured"):
                 return web.format_structured_text(value)
             else:
@@ -782,13 +791,15 @@ class SetField(Field):
                 separator = "<br>\n"
             return string.join(formatted, separator)
 
-        elif style == "new" or style == "edit":
+        elif style in ["new", "edit", "hidden"]:
             field_name = self.GetName()
             select_name = "_set_" + name
+
             # Construct a list of (text, value) pairs for the set's
             # elements. 
             initial_elements = []
             for element in value:
+                element = str(element)
                 element_value = contained_field.FormEncodeValue(element)
                 if isinstance(contained_field, AttachmentField):
                     element_text = "%s (%s; %s)" \
@@ -798,6 +809,12 @@ class SetField(Field):
                 else:
                     element_text = element_value
                 initial_elements.append((element_text, element_value))
+
+            if style == "hidden":
+                initial_values = map(lambda x: x[1], initial_elements)
+                value = web.encode_set_control_contents(initial_values)
+                return '<input type="hidden" name="%s" value="%s"/>' \
+                       % (name, value) 
 
             if isinstance(contained_field, AttachmentField):
                 # Handle attachment fields specially.  For these, go
@@ -1357,6 +1374,10 @@ class EnumerationField(IntegerField):
             enumerals = self.__GetAvailableEnumerals(value)
             return qm.web.make_select(name, enumerals, value,
                                       str, self.FormEncodeValue)
+
+        elif style == "hidden":
+            return '<input type="hidden" name="%s" value="%s"/>' \
+                   % (name, str(value)) 
 
         elif style == "full" or style == "brief":
             return str(value)

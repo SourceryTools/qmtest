@@ -51,27 +51,6 @@ class MailError(RuntimeError):
 
 
 
-class RunProgramError(RuntimeError):
-    """An error while running an external program."""
-    
-    pass
-
-
-
-class ProgramTerminatedBySignalError(RunProgramError):
-    """An external program was terminated by a signal."""
-
-    pass
-
-
-
-class ProgramStoppedError(RunProgramError):
-    """An external program was stopped by a signal."""
-
-    pass
-
-
-
 ########################################################################
 # initialization
 ########################################################################

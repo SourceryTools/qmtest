@@ -27,6 +27,15 @@
     will be removed.
 
 
+    Additionally, if you are building QM yourself, you will need the
+    Distutils package.  You can get Distutils from
+
+      http://www.python.org/sigs/distutils-sig/download.html
+
+    This requirement, too, will be obviated when QM updates to a newer
+    version of Python.
+
+
 ------------------------------------------------------------------------
 
 2.  BUILDING QM

@@ -33,6 +33,10 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
+@ address in use
+The address %(address)s is already in use by another process.  Specify
+a different port for running the server.
+
 @ bad port number
 You must specify a numerical port number.
 
@@ -41,6 +45,9 @@ Could not execute your web browser, '%(browser_path)s'.
 
 @ conflicting options
 You may not specify both '--%(option1)s' and '--%(option2)s'.
+
+@ could not read file
+%(program_name)s could not read the file '%(path)s'.
 
 @ disabled account
 The account you specified is disabled.

@@ -122,12 +122,6 @@ class ShowPageInfo(web.PageInfo):
         return title
 
 
-    def IsShowField(self, field):
-        """Return true if 'field' should be shown."""
-
-        return 1
-
-
     def FormatFieldValue(self, field):
         """Return an HTML rendering of the value for 'field'."""
 
@@ -141,10 +135,19 @@ class ShowPageInfo(web.PageInfo):
             value = field.GetDefaultValue()
         # Format it appropriately.
         if self.edit:
-            style = "edit"
+            if field.IsAttribute("hidden"):
+                return field.FormatValueAsHtml(value, "hidden")
+            elif field.IsAttribute("read_only"):
+                # For read-only fields, we still need a form input, but
+                # the user shouldn't be able to change anything.  Use a
+                # hidden input, and display the contents as if this
+                # wasn't an editing form.
+                return field.FormatValueAsHtml(value, "hidden") \
+                       + field.FormatValueAsHtml(value, "full")
+            else:
+                return field.FormatValueAsHtml(value, "edit")
         else:
-            style = "full"
-        return field.FormatValueAsHtml(value, style)
+            return field.FormatValueAsHtml(value, "full")
 
 
     def GetClassDescription(self):

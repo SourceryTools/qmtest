@@ -102,6 +102,7 @@ except qm.cmdline.CommandError, msg:
 
 except KeyboardInterrupt:
     # User killed it; that's OK.
+    sys.stderr.write("\nInterrupted.\n")
     exit_code = 0
 
 except qm.platform.SignalException, exception:
