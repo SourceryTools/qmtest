@@ -1199,7 +1199,9 @@ trap 'rm -fr `echo "standard.mk
 	  doc/design/qmtest/Makefile
 	  doc/design/qmtrack/Makefile
 	  doc/manual/Makefile
-	  qm/Makefile" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+	  qm/Makefile
+          sgmlop/Makefile
+          zope-dtml/ExtensionClass/Makefile" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -1289,7 +1291,9 @@ CONFIG_FILES=\${CONFIG_FILES-"standard.mk
 	  doc/design/qmtest/Makefile
 	  doc/design/qmtrack/Makefile
 	  doc/manual/Makefile
-	  qm/Makefile"}
+	  qm/Makefile
+          sgmlop/Makefile
+          zope-dtml/ExtensionClass/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

@@ -50,9 +50,10 @@ doc:
 	cd $@ && make
 
 # Some modules require one-time setup.
-setup:		gadfly/sqlwhere.py \
-		zope-dtml/ExtensionClass/Makefile \
-		sgmlop/Makefile
+setup:		gadfly/sqlwhere.py
+#		sgmlop/Makefile
+#		zope-dtml/ExtensionClass/Makefile \
+
 
 # This follows the setup instructions in the Gadfly package.  The
 # target is a file generated in the setup procedure.  See

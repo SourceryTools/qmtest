@@ -1,3 +1,14 @@
+2001-04-18  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* Makefile.in (setup): Remove generation of extension modules.
+	* configure.in (AC_OUTPUT): Add sqmlop/Makefile and
+	zope-dtml/ExtensionClass/Makefile.
+	* configure: Regenerate.
+	* sgmlop/Makefile.in: New file.
+	* sgmlop/setup.py: Likewise.
+	* zope-dtml/ExtensionClass/Makefile.in: Likewise.
+	* zope-dtml/ExtensionClass/setup.py: Likewise.
+
 2001-04-13  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/label.py (thunk): Remove rand. Change to raise exception.

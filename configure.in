@@ -54,4 +54,6 @@ AC_OUTPUT(standard.mk
 	  doc/design/qmtest/Makefile
 	  doc/design/qmtrack/Makefile
 	  doc/manual/Makefile
-	  qm/Makefile)
+	  qm/Makefile
+          sgmlop/Makefile
+          zope-dtml/ExtensionClass/Makefile)
