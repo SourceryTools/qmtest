@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>&qmtest; Core Concepts</title>
+<chapter id="concepts"><title>Concepts</title>
 
  <para>This section described the core concepts and architecture of
  &qmtest;.  This material is primarily for implementers; &qmtest;'s
@@ -415,7 +415,7 @@
 
  </section>
 
- <section><title>The Test Database</title>
+ <section><title>Test Database</title>
 
  <para><emphasis>TBD</emphasis></para>
 

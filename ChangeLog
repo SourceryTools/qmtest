@@ -1,3 +1,11 @@
+2000-11-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/design/qmtest/qmtest.xml: Revise heavily, tightening
+	prose, clarifying concepts, etc.
+	* doc/design/qmtest/core.xml: Likewise.
+	* doc/design/qmtest/impl.xml: Likewise.
+	* doc/design/qmtest/req.xml: Likewise.
+
 2000-11-29  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml: Make acronyms upper-case.

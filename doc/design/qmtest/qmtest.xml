@@ -54,151 +54,67 @@
 
  <chapter><title>Introduction</title>
 
-  <para>Most programmers don't do enough testing today because:
+  <section><title>Overview</title>
+
+  <para>Many programmers do not test their code sufficiently because:
    <itemizedlist>
     <listitem>
-     <para>They aren't required to.</para>
+     <para>Existing tools are expensive and hard to use.</para>
     </listitem>
 
     <listitem>
-     <para>It's tedious.</para>
+     <para>Thus, testing is time-consuming and tedious.</para>
     </listitem>
 
     <listitem>
-     <para>Existing tools are hard to use, expensive, and don't
-     actually provide much help.</para>
-    </listitem>
-
-    <listitem>
-     <para>They don't know where to start, when to stop, or how to
-     tell whether the tests they've written are
-     meaningful.</para>
+     <para>Therefore, neither programmers nor their management see
+     testing as a cost-effective approach to software quality.</para>
     </listitem>
    </itemizedlist>
+   In addition, existing testing tools do little to inform testers
+   about how comprehensively their program has been tested, making it
+   difficult for testers to determine where to focus their efforts.
   </para>
 
-  <para>Software tools cannot solve the first problem, but
-  &qmtest; tries to solve the second by addressing the third and
-  fourth. In particular:
+  <para>&qmtest; is open-source software, available at no charge, and
+  is easy to use.  In particular:
    <itemizedlist>
     <listitem>
      <para>&qmtest; has a gentle learning curve, especially for
-     developers without software engineering training. &qmtest; does
-     this by:
-     <itemizedlist>
-     <listitem>
-      <para>being very simple to install and configure;</para>
-     </listitem>
-
-     <listitem>
-      <para>making it very easy for developers to create an empty
-      (skeletal) testsuite for a project;</para>
-     </listitem>
-
-     <listitem>
-      <para>making it equally easy for developers to create the first
-      real test for a project, or to add another test once N tests
-      have been written.</para>
-     </listitem>
-     </itemizedlist>
-     </para>
+     developers without software engineering training. &qmtest; is
+     easy to install and configure, and provides simple, powerful
+     interfaces for creating tests, running tests, and obtaining
+     reports.</para>
     </listitem>
 
     <listitem>
-     <para>&qmtest; provides a very simple workflow, so that tests can
-     easily and systematically be added, modified, inspected, and
-     summarized by developers, managers, and other
-     stakeholders.</para>
+     <para>&qmtest; is flexible.  &qmtest can handle almost any kind of
+     testing situation, from unit testing to full-scale integration
+     testing.  The programs tested can be large or small, written in
+     low-level or high-level languages.</para>
     </listitem>
 
     <listitem>
      <para>&qmtest; provides feedback regarding the quality and
-     thoroughness of testing so that developers will be able to tell
-     how much they have done, how much remains to be done, and how
-     well third party modules have been tested.</para>
+     thoroughness of testing.</para>
+    </listitem>
+
+    <listitem>
+     <para>&qmtest; is a high-performance testing tool.  &qmtest can 
+     automatically parallelize the execution of tests to take
+     advantage of parallel machines.</para>
     </listitem>
    </itemizedlist>
   </para>
 
-  <para>Some of the particular scenarios that &qmtest; handles are:
-   <itemizedlist>
-    <listitem>
-     <para>Static unit testing of functions, classes, and modules in
-     languages such as C, Python, and Java. (These three languages are
-     chosen as examples because they span the range from low-level to
-     high-level.)</para>
-    </listitem>
-
-    <listitem>
-     <para>Customizable reporting of test results, ranging from a
-     single-line command-line summary of the number of tests that
-     passed and failed, through to automatic creation of charts of
-     test statistics over time.</para>
-    </listitem>
-
-    <listitem>
-     <para>Scriptable control of testsuite execution, so that portions
-     can be executed selectively, executed repeatedly under different
-     load conditions, only executed at certain times of day, and so
-     on.</para>
-    </listitem>
-
-    <listitem>
-     <para>Parallel execution of testsuites.</para>
-    </listitem>
-   </itemizedlist>
-  </para>
-
-  <para>This document begins by describing six typical users, whose
+  <para>This document begins by describing three typical users, whose
   testing needs &qmtest; is designed to address. It then explores
   their <link linkend="req">requirements</link> in more detail, in
-  order to determine the features that &qmtest; must have. The last
-  section contains a description of &qmtest;'s <link
-  linkend="impl">internal architecture</link>.</para>
-
-  <section><title>What &qmtest; is Not</title>
-
-   <para>In order to bound the scope of this project, it is important
-   to understand that:</para>
-
-   <para>
-    <itemizedlist>
-     <listitem>
-      <para>&qmtest; is not a build system. It will not determine which
-      parts of the programs being tested need to be recompiled, or
-      which test programs need to be re-linked. It
-      <emphasis>may</emphasis> include support for re-running tests
-      whose last recorded result is older than the thing being
-      tested.</para>
-     </listitem>
-
-     <listitem>
-      <para>&qmtest; is not a version control system, or a relational
-      database. In particular, versioning of tests will be handled by
-      whatever version control system developers are already
-      using. Similarly, &qmtest; will log the results of tests, but will
-      rely on the capabilities of external systems to maintain
-      historical records. Note, however, that &qmtest;
-      <emphasis>will</emphasis> be able to retrieve information from
-      those archiving systems in order to create
-      reports.</para>
-     </listitem>
-
-     <listitem>
-      <para>&qmtest; is not a test creation wizard, although
-      tools for creating &qmtest;-compatible tests will be developed with
-      it.</para>
-     </listitem>
-
-     <listitem>
-      <para>&qmtest; is not a general program execution harness. Some
-      users may choose to run their programs via &qmtest; under non-test
-      circumstances (e.g. in order to obtain logging information), but
-      &qmtest; is not a replacement for distributed load-balancing
-      software, safe shells, or other tools.</para>
-     </listitem>
-    </itemizedlist>
-   </para>
+  order to determine the features that &qmtest; must have. This
+  analysis is followed by a discussion of the <link
+  linkend="concepts">concepts</link> that users will encounter when
+  using &qmtest;.  Finally, this document provides a design for
+  &qmtest;'s <link linkend="impl">implementation</link>.</para>
 
   </section>
 
@@ -294,7 +210,7 @@
     new test cases that exercise it.  (Many of these tests are
     actually not legal F00, since one of her goals is to improve the
     compiler's error messages.) Diana only starts implementing the
-    feature itself once all of his test cases are written and
+    feature itself once all of her test cases are written and
     failing&mdash;past experience has taught her that if she writes
     her tests <emphasis>after</emphasis> implementing the feature, she
     will test against her implementation, and not against the language
@@ -310,7 +226,7 @@
     (which is also embedded in the comment). The test is considered a
     pass if the compiler emits exactly the output expected.</para>
 
-    <para>Diana would like a tool to re-run his tests automatically,
+    <para>Diana would like a tool to re-run her tests automatically,
     and to collect statistics on how many tests have been executed,
     with what results.  She would also like some help generating
     tests: many are simple variations on a theme, such as using
