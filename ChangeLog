@@ -1,5 +1,9 @@
 2001-11-21  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/web/web.py (FormatId): Add documentation.
+	* share/dtml/test/result.dtml: Allow navigation on the
+	test id.
+
 	* README: Document --prefix.  Remove getting started
 	documentation.
 	* README.sources: Remove obsolete information.  Document

@@ -21,7 +21,8 @@
  <dtml-var expr="GenerateHtmlHeader('Result Detail')">
  <dtml-var expr="GenerateStartBody()">
 
- <h3><dtml-var expr="result.GetId()"></h3>
+ <h3><dtml-var expr="FormatId(result.GetId(), result.GetKind(), 
+                              'navigation')"></h3>
 
  <table border="0" cellpadding="4" cellspacing="4" width="100%">
   <tr class="heading">
