@@ -1,0 +1,66 @@
+<dtml-comment><!--
+
+  File:   results.dtml
+  Author: Alex Samuel
+  Date:   2001-09-08
+
+  Contents:
+    Document template for test run results.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Test Run Results')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Test Results</h3>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+  <dtml-in expr="GetTestIds()">
+  <dtml-let test_id=sequence-item
+            result="test_results[test_id]"
+            outcome="result.GetOutcome()">
+   <tr class="<dtml-var expr="GetClassForResult(result)">">
+    <td>
+     <a name="<dtml-var name="test_id">">
+     <span class="outcome">
+      <dtml-var expr="FormatId(test_id, 'test')">:
+      <dtml-var name="outcome">
+     </span>
+     <dtml-if expr="result.has_key('cause')">
+      : <span class="cause"><dtml-var 
+      expr="web.escape(result['cause'])"></span><br>
+     </dtml-if>
+     <dtml-in expr="result.keys()">
+     <dtml-let property_name=sequence-item>
+      <dtml-if expr="ShouldShowProperty(result, property_name)">
+       <li>
+       <dtml-var name="property_name">: 
+       <dtml-var expr="FormatProperty(result, property_name)">
+      </dtml-if>
+     </dtml-let>
+     </dtml-in>
+    </td>
+   </tr>
+  </dtml-let>
+  </dtml-in>
+ </table>  
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

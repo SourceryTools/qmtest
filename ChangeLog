@@ -1,5 +1,10 @@
 2001-09-26  Alex Samuel  <samuel@codesourcery.com>
 
+	* share/dtml/test/results.dtml: New file.
+	* share/dtml/track/configuration-navigation-bar.dtml: Likewise.
+	
+2001-09-26  Alex Samuel  <samuel@codesourcery.com>
+
 	* README: Update QMTRACK_DB_PATH name.
 	* doc/manual/track-tour.xml: Explain configuration server.
 	
