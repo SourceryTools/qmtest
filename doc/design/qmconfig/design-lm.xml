@@ -111,10 +111,10 @@ class LangServRegistry:
 ]]></programlisting>
  </figure>
 
- <para><xref linkend="mod.lang-serv.LangServRegistry" /> shows the
- interface to the <classname>LangServRegistry</classname> class.  This
- allows language services to be invoked using file names or language
- names.</para>
+ <para><xref linkend="mod.lang-serv.LangServRegistry"></xref> shows
+ the interface to the <classname>LangServRegistry</classname> class.
+ This allows language services to be invoked using file names or
+ language names.</para>
 
  <para>Language service instances are registered using the
  <methodname>Register</methodname> method. ($$$ We still need to
@@ -233,10 +233,10 @@ class LangServ:
 ]]></programlisting>
  </figure>
 
- <para><xref linkend="mod.lang-serv.LangServ" /> shows the interface
- to the <classname>LangServ</classname> class.  This is an abstract
- class whose methods should be overridden by classes implemented
- support for actual languages.</para>
+ <para><xref linkend="mod.lang-serv.LangServ"></xref> shows the
+ interface to the <classname>LangServ</classname> class.  This is an
+ abstract class whose methods should be overridden by classes
+ implemented support for actual languages.</para>
 
  <figure id="mod.lang-serv.Scanner">
   <title>Language Module: Scanner</title>
@@ -285,8 +285,8 @@ class Scanner:
 ]]></programlisting>
  </figure>
 
- <para><xref linkend="mod.lang-serv.Scanner" /> shows the interface to
- the <classname>Scanner</classname> class.</para>
+ <para><xref linkend="mod.lang-serv.Scanner"></xref> shows the
+ interface to the <classname>Scanner</classname> class.</para>
 
 </section>
 
