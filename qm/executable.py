@@ -7,7 +7,7 @@
 # Contents:
 #   Executable, RedirectedExecutable
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -94,13 +94,20 @@ class Executable(object):
 
         'exception_pipe' -- If not 'None', a pipe that the child can
         use to communicate an exception to the parent.  This pipe is
-        only used on UNIX systems.
+        only used on UNIX systems.  The write end of the pipe will be
+        closed by this function.
 
         returns -- The PID of the child.
 
         Before creating the child, the parent will call
         'self._InitializeParent'.  On UNIX systems, the child will
         call 'self._InitializeChild' after 'fork', but before 'exec'.
+        On non-UNIX systems, 'self._InitializeChild' will never be
+        called.
+
+        After creating the child, 'self._HandleChild' is called in the
+        parent.  This hook should be used to handle tasks that must be
+        performed after the child is running.
 
         If the path to the program is absolute, or contains no
         separator characters, it is not modified.  Otherwise the path
@@ -114,6 +121,7 @@ class Executable(object):
         # more than once.
         self.__has_initialize_child_run = 0
         self.__has_initialize_parent_run = 0
+        self.__has_handle_child_run = 1
         self.__has_do_parent_run = 0
         
         # Remember the directory in which the execution will occur.
@@ -193,6 +201,14 @@ class Executable(object):
                 # This code should never be reached.
                 assert None
 
+        # Nothing will be written to the exception pipe in the parent.
+        if exception_pipe:
+            os.close(exception_pipe[1])
+            
+        # Let the parent take any actions required after creating the
+        # child.
+        self._HandleChild()
+        
         return self.__child
 
 
@@ -238,14 +254,10 @@ class Executable(object):
             fcntl.fcntl(fd, F_SETFD, fcntl.fcntl(fd, F_GETFD) | FD_CLOEXEC)
         else:
             exception_pipe = None
-            
+
         # Start the program.
         child = self.Spawn(arguments, environment, dir, path, exception_pipe)
 
-        # Close the write end of the exception pipe.
-        if sys.platform != "win32":
-            os.close(exception_pipe[1])
-            
         # Give the parent a chance to do whatever it needs to do.
         self._DoParent()
         
@@ -279,12 +291,24 @@ class Executable(object):
         explaining how the child should be initialized.  On other
         systems, the return value is ignored."""
 
-        self.__has_initialize_parent_run = 1
+        if not self.__has_initialize_parent_run:
+            self.__has_initialize_parent_run = 1
+            if sys.platform == "win32":
+                return win32process.STARTUPINFO()
 
-        if sys.platform == "win32":
-            return win32process.STARTUPINFO()
 
+    def _HandleChild(self):
+        """Run in the parent process after the child has been created.
 
+        The child process has been spawned; its PID is avialable via
+        '_GetChildPID'.  Take any actions in the parent that are
+        required now that the child exists.
+
+        Derived class versions must call this method."""
+
+        self.__has_handle_child_run = 1
+    
+        
     def _InitializeChild(self):
         """Initialize the child process.
 
@@ -295,11 +319,11 @@ class Executable(object):
         This method is not used under Windows."""
 
         assert sys.platform != "win32"
-        
-        self.__has_initialize_child_run = 1
-        
-        if self.__dir:
-            os.chdir(self.__dir)
+
+        if not self.__has_initialize_child_run:
+            self.__has_initialize_child_run = 1
+            if self.__dir:
+                os.chdir(self.__dir)
 
 
     def _DoParent(self):
@@ -445,8 +469,10 @@ class RedirectedExecutable(Executable):
             os.close(2)
 
 
-    def _DoParent(self):
+    def _HandleChild(self):
 
+        Executable._HandleChild(self)
+        
         # Close the pipe ends that we do not need.
         if self._stdin_pipe:
             self._ClosePipeEnd(self._stdin_pipe[0])
@@ -454,6 +480,11 @@ class RedirectedExecutable(Executable):
             self._ClosePipeEnd(self._stdout_pipe[1])
         if self._stderr_pipe:
             self._ClosePipeEnd(self._stderr_pipe[1])
+
+        
+    def _DoParent(self):
+
+        Executable._DoParent(self)
 
         # Process the various redirected streams until none of the
         # streams remain open.
@@ -719,9 +750,11 @@ class TimeoutExecutable(Executable):
         
         return Executable._InitializeChild(self)
 
-    
-    def _DoParent(self):
 
+    def _HandleChild(self):
+
+        Executable._HandleChild(self)
+        
         if self.__timeout >= 0:
             # Put the child into its own process group.  This step is
             # performed in both the parent and the child; therefore both
@@ -769,19 +802,19 @@ class TimeoutExecutable(Executable):
                     # we are guaranteed to get here no matter what.
                     os._exit(0)
 
-        return Executable._DoParent(self)
-
 
     def Run(self, arguments=[], environment = None, dir = None,
             path = None):
 
         # Run the process.
-        status = Executable.Run(self, arguments, environment, dir, path)
-        # Clean up the monitoring program; it is no longer needed.
-        if self.__timeout >= 0:
-            os.kill(self.__monitor_pid, signal.SIGKILL)
-            os.waitpid(self.__monitor_pid, 0)
-
+        try:
+            status = Executable.Run(self, arguments, environment, dir, path)
+        finally:
+            # Clean up the monitoring program; it is no longer needed.
+            if self.__timeout >= 0:
+                os.kill(self.__monitor_pid, signal.SIGKILL)
+                os.waitpid(self.__monitor_pid, 0)
+                
         return status
 
 
@@ -802,7 +835,13 @@ class TimeoutRedirectedExecutable(TimeoutExecutable,
         RedirectedExecutable._InitializeParent(self)
 
 
-    def _DoParent(self):
+    def _HandleChild(self):
 
-        TimeoutExecutable._DoParent(self)
-        RedirectedExecutable._DoParent(self)
+        # Order is important.  The pipes created by
+        # 'RedirectedExecutable' must be closed before the monitor
+        # process (created by 'TimeoutExecutable') is created.
+        # Otherwise, if the child process dies, 'select' in the parent
+        # will not return if the monitor process may still have one of
+        # the file descriptors open.
+        RedirectedExecutable._HandleChild(self)
+        TimeoutExecutable._HandleChild(self)

@@ -129,16 +129,25 @@
    For example, in the case of a resource that sets up a database, the
    records to place in the database might be given as arguments.
    Every resource has a name, using the same format that is used for
-   tests.  It is possible to have a test and resource with the same
-   name; the test and resource namespaces are distinct.</para>
+   tests.</para>
 
    <para>Under some circumstances (such as running tests on multiple
    machines at once), &qmtest; may create more than one instance of
    the same resource.  Therefore, you should never depend on there
    being only one instance of a resource.  In addition, if you have
    asked &qmtest; to run tests concurrently, two tests may access the
-   same resource at the same time.</para>
+   same resource at the same time.  You can, however, be assured that
+   there will be only one instance of a particular resource on a
+   particular target at any one time.</para>
  
+   <para>Tests have limited access to the resources on which they
+   depend.  A resource may place additional information into the
+   context (<xref linnkend="sec-context"/>) that is visible to the
+   test.  However, the actual resource object itself is not available
+   to tests.  (The reason for this limitiation is that for a target
+   consisting of multiple processes, the resource object may not be
+   located in the process as the test that depends upon it.)</para>
+
    <para>Setting up or cleaning up a resource produces a result, just
    like those produced for tests.  &qmtest; will display these results
    in its summary output and record them in the results file.</para>
@@ -164,8 +173,8 @@
    In general, all tests in a given use of &qmtest; will have the same
    context.  However, when a resource is set up, it may place
    additional information in the context of those tests that depend
-   upon it; the tests can use this information to locate the resource.
-   The values inserted by the resource may have any types.</para>
+   upon it.  The values inserted by the resource may have any type, so
+   long as they can be &quot;pickled&quot; by Python.</para>
 
    <para>All context properties whose names begin with
    &quot;<literal>qmtest.</literal>&quot; are reserved for use by

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Resource class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -76,7 +76,9 @@ class Resource(qm.test.runnable.Runnable):
         """Set up the resource.
 
         'context' -- A 'Context' giving run-time parameters to the
-        test.
+        resource.  The resource may place additional variables into
+        the 'context'; these variables will be visible to tests that
+        depend on the resource.
 
         'result' -- A 'Result' object.  The outcome will be
         'Result.PASS' when this method is called.  The 'result' may be
@@ -100,6 +102,6 @@ class Resource(qm.test.runnable.Runnable):
 
         This method should not return a value.
 
-        Derived classes must override this method."""
+        Derived classes may override this method."""
 
-        raise NotImplementedError
+        pass

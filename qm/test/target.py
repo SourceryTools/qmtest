@@ -340,7 +340,7 @@ class Target(qm.extension.Extension):
             self.__SetUpResources(resource_desc, context)
             # Set up the resource itself.
             resource_desc.SetUp(context, result)
-            # Obtain the resource with the try-block so that if it
+            # Obtain the resource within the try-block so that if it
             # cannot be obtained the exception is handled below.
             resource = resource_desc.GetItem()
         except self.__ResourceSetUpException, e:

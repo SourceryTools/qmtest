@@ -1,3 +1,25 @@
+2003-04-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Spawn): Close the write end of the
+	exception_pipe here.  Call _HandleChild.
+	(Executable.Run): Do not close the write end of the
+	exception_pipe.
+	(Executable._InitializeChild): Fix thinko.
+	(Executable._HandleChild): New method.
+	(RedirectedExecutable._HandleChild): New method.
+	(RedirectedExecutable._DoParent): Do not close pipe ends here.
+	(TimeoutExecutable._DoParent): Rename to ...
+	(TimeoutExecutable._HandleChild): ... this.
+	(TimeoutExecutable.Run): Robustify.
+	(TimeoutRedirectedExecutable._DoParent): Remove.
+	(TimeoutRedirectedExecutable._HandleChild): New method.
+
+	* qm/test/database.py (TestDescriptor.__init__): Correct error in
+	doc-string.
+	* qm/test/resource.py (Resource.SetUp): Improve doc-string.
+	* qm/test/target.py (Target._SetUpResource): Fix typo in comment.
+	* qm/test/doc/reference.xml: Improve target documentation.
+	
 2003-04-15  Nathaniel Smith  <njs@pobox.com>
 
 	* qm/setup_path.py.in: Make warnings filtering more fine-grained.

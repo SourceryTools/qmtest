@@ -189,10 +189,7 @@ class TestDescriptor(ItemDescriptor):
         'test_class_name' -- The name of the test class of which this is
         an instance.
 
-        'arguments' -- This test's arguments to the test class.
-
-        'resources' -- A sequence of IDs of resources to run before and
-        after the test is run."""
+        'arguments' -- This test's arguments to the test class."""
 
         # Initialize the base class.
         ItemDescriptor.__init__(self, database,
