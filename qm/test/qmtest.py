@@ -43,7 +43,6 @@ import qm.diagnostic
 import qm.platform
 import qm.structured_text
 import qm.test.cmdline
-import sys
 
 ########################################################################
 # functions
@@ -73,18 +72,21 @@ program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
     # Parse the command line.
-    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
+    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:],
+                                     major_version, minor_version,
+                                     release_version)
     # Execute the command.
     command.Execute(sys.stdout)
     exit_code = 0
+except qm.cmdline.CommandError, msg:
+    print_error_message(msg)
+    sys.stderr.write(
+        "Run '%s --help' to get instructions about how to use QMTest.\n"
+        % program_name)
+    exit_code = 2
 except qm.common.QMException, msg:
     print_error_message(msg)
     exit_code = 1
-except qm.cmdline.CommandError, msg:
-    print_error_message(str(msg)
-                        + "\n\nInvoke %s --help for help with usage.\n"
-                        % program_name)
-    exit_code = 2
 except KeyboardInterrupt:
     # User killed it; that's OK.
     sys.stderr.write("\nqmtest: Interrupted.\n")

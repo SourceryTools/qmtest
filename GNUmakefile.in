@@ -56,7 +56,7 @@ COMMON_DTDS := $(wildcard share/xml/*.mod)
 TOOL_DTDS := $(foreach tool, \
 	       $(QM_TOOLS), \
                $(wildcard qm/$(tool)/share/dtds/*.dtd))
-# The tool-specifi DTDs, copied to the common XML directory.
+# The tool-specific DTDs, copied to the common XML directory.
 COPIED_TOOL_DTDS := $(foreach dtd,$(TOOL_DTDS),share/xml/$(notdir $(dtd)))
 # All the DTDs.
 DTDS := $(COMMON_DTDS) $(COPIED_TOOL_DTDS)

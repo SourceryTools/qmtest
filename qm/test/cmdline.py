@@ -78,6 +78,13 @@ class QMTest:
         "Display informational messages."
         )
 
+    version_option_spec = (
+        None,
+        "version",
+        None,
+        "Display version information."
+        )
+    
     db_path_option_spec = (
         "D",
         "tdb",
@@ -206,6 +213,7 @@ class QMTest:
     global_options_spec = [
         help_option_spec,
         verbose_option_spec,
+        version_option_spec,
         db_path_option_spec,
         ]
 
@@ -294,8 +302,18 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         ]
 
+    __version_output = \
+        ("QMTest %s\n" 
+         "Copyright (C) 2002 CodeSourcery, LLC\n"
+         "QMTest comes with ABSOLUTELY NO WARRANTY\n"
+         "For more information about QMTest visit http://www.qmtest.com\n")
+    """The string printed when the --version option is used.
 
-    def __init__(self, program_name, argument_list):
+    There is one fill-in, for a string, which should contain the version
+    number."""
+    
+    def __init__(self, program_name, argument_list,
+                 major_version, minor_version, release_version):
         """Initialize a command.
 
         Parses the argument list but does not execute the command.
@@ -304,7 +322,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         user.
 
         'argument_list' -- A sequence conaining the specified argument
-        list."""
+        list.
+
+        'major_version' -- The major version number.
+
+        'minor_version' -- The minor version number.
+
+        'release_version' -- The release version number."""
 
         global _the_qmtest
         
@@ -328,10 +352,26 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
           self.__arguments
           ) = components
 
+        # Record the version information.
+        self._major_version = major_version
+        self._minor_version = minor_version
+        self._release_version = release_version
+        
         # We have not yet computed the set of available targets.
         self.targets = None
 
 
+    def HasGlobalOption(self, option):
+        """Return true if 'option' was specified as a global command.
+
+        'command' -- The long name of the option, but without the
+        preceding "--".
+
+        returns -- True if the option is present."""
+
+        return option in map(lambda x: x[0], self.__global_options)
+    
+        
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
 
@@ -364,6 +404,12 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         'output' -- The file object to send output to."""
 
+        # If --version was given, print the version number and exit.
+        # (The GNU coding standards require that the program take no
+        # further action after seeing --version.)
+        if self.HasGlobalOption("version"):
+            sys.stdout.write(self.__version_output % self._GetVersionString())
+            return
         # If the global help option was specified, display it and stop.
         if self.GetGlobalOption("help") is not None:
             output.write(self.__parser.GetBasicHelp())
@@ -545,6 +591,19 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return context
 
 
+    def _GetVersionString(self):
+        """Return the version string for this version of QMTest.
+
+        returns -- The version string for this version of QMTest.  The
+        string returned does not contain the name of the application; it
+        contains only the version numbers."""
+
+        version_string = "%d.%d" % (self._major_version, self._minor_version)
+        if self._release_version:
+            version_string += ".%d" % self._release_version
+        return version_string
+        
+        
     def __ExecuteCreateTdb(self, output, db_path):
         """Handle the command for creating a new test database.
 

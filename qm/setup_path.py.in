@@ -110,6 +110,10 @@ os.environ["QM_LIB_PATH"] = os.path.normpath(__lib_dir)
 os.environ["QM_SHARE_PATH"] = os.path.normpath(__share_dir)
 os.environ["QM_DOC_PATH"] = os.path.normpath(__doc_dir)
 
+major_version = @QM_MAJOR_VER@
+minor_version = @QM_MINOR_VER@
+release_version = @QM_RELEASE_VER@
+
 #######################################################################
 # Local Variables:
 # mode: python

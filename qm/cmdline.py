@@ -99,13 +99,12 @@ class CommandParser:
 
         self.__option_to_long = {}
         for option in self.__options:
-            # Check for duplicate short options.
-            if self.__option_to_long.has_key('-' + option[0]):
-                raise ValueError, "duplicate short option -%s" % option[0]
-            self.__option_to_long['-' + option[0]] = option[1]
+            if option[0]:
+                # Check for duplicate short options.
+                assert not self.__option_to_long.has_key('-' + option[0])
+                self.__option_to_long['-' + option[0]] = option[1]
             # Check for duplicate long options.
-            if self.__option_to_long.has_key('--' + option[1]):
-                raise ValueError, "duplicate long option --%s" % option[1]
+            assert not self.__option_to_long.has_key('--' + option[1])
             self.__option_to_long['--' + option[1]] = option[1]
         
         # Check that the options for each command are ok.

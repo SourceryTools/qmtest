@@ -9,6 +9,7 @@ QM 2.0
 Tests are no longer run in a random order by default.  To run tests in
 a random order, you must now use the "--random" option to "qmtest run".
 
+QMTest now has a "--version" option.
 
 QM 1.1.5
 ========

@@ -1,5 +1,23 @@
 2002-06-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: Mention --version option.
+	* qm/test/doc/reference.xml: Add --version description.
+	* GNUmakefile.in: Fix typo in comment.
+	* qm/cmdline.py (CommandParser.__init__): Do not raise exceptions
+	on invalid input.
+	* qm/common.py (program_name): Initialize it to 'None'.
+	* qm/setup_path.py.in (major_version): New variable.
+	(minor_version): Likewise.
+	(release_version): Likewise.
+	* qm/test/cmdline.py (QMTest.version_option_spec): New variable.
+	(QMTest.global_options_spec): Add it.
+	(QMTest.__version_output): New variable.
+	(QMTest.__init__): Add version number parameters.
+	(QMTest.__Execute): Handle --version.
+	(QMTest._GetVersionString): New method.
+	* qm/test/qmtest.py: Remove duplicate import.  Reorder exception
+	handling clauses.
+
 	* NEWS: Mention that --random is no longer the default.
 	* qm/test/doc/reference.xml: Update accordingly.
 	

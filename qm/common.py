@@ -41,7 +41,7 @@ import types
 # program name
 ########################################################################
 
-program_name = "??"
+program_name = None
 """The name of the application program."""
 
 ########################################################################
