@@ -1,3 +1,10 @@
+2003-11-24  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm.spec.in: Remove.
+	* .cvsignore: Remove qm.spec.
+	* GNUmakefile.in (distclean): Do not remove qm.spec.
+	* configure.in: Do not generate it.
+
 2003-11-24  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qm/test/result.py: Replace 'property' by 'annotation'.

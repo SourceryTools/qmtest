@@ -85,7 +85,6 @@ clean::
 distclean: clean
 	rm -f GNUmakefile config.cache config.status config.log
 	rm -f qm/__version.py 
-	rm -f qm.spec
 
 ########################################################################
 # Installation Rules
