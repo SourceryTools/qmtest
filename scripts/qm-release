@@ -197,13 +197,24 @@ upload() {
   PLATFORM_FTP_DIRECTORY="${FTP_DIRECTORY}/${PLATFORM}"
 
   # Make sure the FTP directory exists.
-  ssh ${FTP_SERVER} mkdir -p ${FTP_DIRECTORY} || \
+  ssh ${FTP_SERVER} mkdir -p ${FTP_DIRECTORY} ${PLATFORM_FTP_DIRECTORY} || \
     error "Could not create FTP directory."
 
   # Upload the source distribution.
   if [ ${SOURCE} -ne 0 ]; then
     scp ${QM_SOURCE_TAR_GZ} "${FTP_SERVER}:${FTP_DIRECTORY}" || \
       error "Could not upload source distribution."
+    # Upload the manual as well.
+    tar xzf ${QM_SOURCE_TAR_GZ} \
+      qm-${QM_VERSION}/qm/test/doc/print/manual.pdf \
+      qm-${QM_VERSION}/qm/test/doc/html || \
+      error "Could not extract manuals."
+    scp qm-${QM_VERSION}/qm/test/doc/print/manual.pdf \
+      "${FTP_SERVER}:${FTP_DIRECTORY}" ||
+      error "Could not upload PDF manual."
+    scp -r qm-${QM_VERSION}/qm/test/doc/html \
+      "${FTP_SERVER}:${FTP_DIRECTORY}/manual.html" ||
+      error "Could not upload HTML manual."
   fi
   
   # Upload the RPM distribution.

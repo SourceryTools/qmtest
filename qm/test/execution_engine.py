@@ -158,7 +158,7 @@ class ExecutionEngine:
                 self.__descriptors[id] = descriptor
                 self.__descriptor_graph[descriptor] = [0, []]
             except:
-                self._AddUntestedResult(id, "Could not load test")
+                self._AddUntestedResult(id, "Could not load test.")
 
         # Create the edges.
         for descriptor in self.__descriptors.values():

@@ -1,5 +1,9 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Correct
+	punctuation in error message.
+	* scripts/qm-release (upload): Upload manuals, too.
+
 	* scripts/qm-release: Set the umask before building distributions.
 	
 	* scripts/qm-release (upload): New function.
