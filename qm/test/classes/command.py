@@ -170,7 +170,7 @@ class ExecTestBase(Test):
         
         qm.fields.TextField(
             name="stderr",
-            title="Expected Standard Error",
+            title="Standard Error",
             verbatim="true",
             multiline="true",
             description="""The expected contents of the standard error stream.
@@ -395,13 +395,15 @@ class ExecTestBase(Test):
                 # Check to see if the standard output matches.
                 if stdout != self.stdout:
                     causes.append("standard output")
-                    result["ExecTest.stdout"] = stdout
-                    result["ExecTest.expected_stdout"] = self.stdout
+                    result["ExecTest.stdout"] = "'''" + stdout + "'''"
+                    result["ExecTest.expected_stdout"] \
+                        = "'''" + self.stdout + "'''"
                 # Check to see that the standard error matches.
                 if stderr != self.stderr:
                     causes.append("standard error")
-                    result["ExecTest.stderr"] = stderr
-                    result["ExecTest.expected_stderr"] = self.stderr
+                    result["ExecTest.stderr"] = "'''" + stderr + "'''"
+                    result["ExecTest.expected_stderr"] \
+                        = "'''" + self.stderr + "'''"
                 # If anything went wrong, the test failed.
                 if causes:
                     result.Fail("Unexpected %s." % string.join(causes, ", ")) 

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Result class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -288,33 +288,6 @@ class Result:
 
         return element
 
-
-    def AsStructuredText(self, format):
-        """Format this result as structured text.
-
-        'format' -- A string indicating the desired output format,
-        either 'full' or 'brief'.
-
-        returns -- Structured text describing the result."""
-
-        text = ""
-        
-        # Print the cause of the failure.
-        if self.has_key(Result.CAUSE):
-            text = self[Result.CAUSE] + '\n'
-        
-        # In the "full" format, print all result properties.
-        if format == "full":
-	    keys = self.keys()
-	    keys.sort()
-            for name in keys:
-                # The CAUSE property has already been displayed."
-                if name == Result.CAUSE:
-                    continue
-                # Add an item to the list
-                text = text + "\n'%s' -- %s\n" % (name, self[name])
-
-        return text
 
     # These methods allow 'Result' to act like a dictionary of
     # annotations.

@@ -1,3 +1,19 @@
+2002-01-16  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/structured_text.py: Substantial changes to support a verbatim
+	markup.
+	* qm/test/result.py (Result.AsStructuredText): Remove.
+	* qm/test/text_result_stream.py (TextResultStream._DisplayResult): 
+	Do not use it.
+	* qm/test/classes/command.py (ExecTestBase): Change name of
+	"Expected Standard Error" field to "Standard Error".
+	(ExecTestBase.RunProgram): Use verbatim formatting for output
+	and standard error annotations.
+	* qm/test/doc/tour.xml: Update accordingly.
+	* qm/test/share/dtml/result.dtml: Adjust formatting.
+	* qm/test/web/web.py (TestResultsPage.FormatResult): Remove.
+	(QMTestServer.HandleSaveResults): Fix typos.
+	
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/xmldb.py (Database.WriteSuite): Fix typo.

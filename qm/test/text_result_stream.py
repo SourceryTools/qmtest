@@ -283,13 +283,24 @@ class TextResultStream(ResultStream):
 	else:
             self._WriteOutcome(id_, outcome)
 
-	# Get a description of the result as structured text.
-	description = result.AsStructuredText(format)
-	# Format it as plain text.
-	description = qm.structured_text.to_text(description, 72, 4)
-	# Write it out.
-	self.__file.write(description)
+        # Print the cause of the failure.
+        if result.has_key(Result.CAUSE):
+            self.__file.write('    ' + result[Result.CAUSE] + '\n')
+            
+        # In the "full" format, print all result properties.
+        if format == "full":
+	    keys = result.keys()
+	    keys.sort()
+            for name in keys:
+                # The CAUSE property has already been displayed."
+                if name == Result.CAUSE:
+                    continue
+                # Add an item to the list
+                value = qm.structured_text.to_text(result[name], 72, 6)
+                value = string.rstrip(value)
+                self.__file.write("\n    %s:\n%s\n" % (name, value))
 
+        self.__file.write('\n')
 
     def _WriteOutcome(self, name, outcome, expected_outcome=None):
         """Write a line indicating the outcome of a test or resource.

@@ -8,7 +8,7 @@
   Contents:
     Grand tour/tutorial of QMTest.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -133,14 +133,14 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <para>To run all the tests, choose <guibutton>All Tests</guibutton>
    from the <guilabel>Run</guilabel> menu.  &qmtest; will immediately
    display the test results page.  As the tests run, this page will be
-   automatically updated.  (If you are impatient, you can manually
-   reload the page in your browser to update the page more
-   frequently.)  After a few moments, &qmtest; will display the test
-   results for the three tests in the database.  The upper part of the
-   screen gives a statistical overview of the test results.  Of the
-   three tests, two passed.  However, one test failed.  You can use
-   this statistical information to get a quick overview of your
-   application's correctness.</para>
+   automatically updated.  (If you do not want to wait for QMTest to
+   update the page, you can manually reload the page in your browser.)
+   After a few moments, &qmtest; will display the test results for the
+   three tests in the database.  The upper part of the screen gives a
+   statistical overview of the test results.  Of the three tests, two
+   passed.  However, one test failed.  You can use this statistical
+   information to get a quick overview of your application's
+   correctness.</para>
 
    <para>In addition to showing you how many tests passed and how
    many failed, &qmtest; shows you whether how many tests had
@@ -195,9 +195,10 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <guibutton>Edit Expectations</guibutton> from the
    <guilabel>Edit</guilabel> menu.  &qmtest; displays a list of all
    the tests.  Set the expectation for <filename>exec1</filename> back
-   to <literal>PASS</literal> and rerun the tests.  You will see that
-   now the <filename>exec1</filename> failure is unexpected again.
-   You can save your expectations by choosing <guibutton>Save
+   to <literal>PASS</literal>, click the <guibutton>OK</guibutton>
+   button and rerun the tests.  You will see that now the
+   <filename>exec1</filename> failure is unexpected again.  You can
+   save your expectations by choosing <guibutton>Save
    Expectations</guibutton> from the <guilabel>File</guilabel>
    menu.</para>
 
@@ -385,7 +386,9 @@ QMTest running at http://127.0.0.1:1158/test/dir
 --- TEST RESULTS -------------------------------------------------------------
 
   exec2                                                          : PASS    
+
   exec0                                                          : PASS    
+
   exec1                                                          : FAIL    
     Expression evaluates to false. 
 
@@ -502,9 +505,14 @@ QMTest running at http://127.0.0.1:1158/test/dir
   exec1                                                          : FAIL    
     Expression evaluates to false. 
 
-    'qmtest.target' -- local 
+    ExecTest.expr:
+      x + x == 5
 
-    'ExecTest.value' -- 0 
+    ExecTest.value:
+      0 
+
+    qmtest.target:
+      local 
 
 ]]></computeroutput></screen>
 

@@ -7,7 +7,7 @@
   Contents:
     Document template for test result detail.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -23,8 +23,8 @@
 
  <table border="0" cellpadding="4" cellspacing="4" width="100%">
   <tr class="heading">
-   <td width="10%">Outcome</td>
-   <td width="90%">Cause</td>
+   <td width="30%">Outcome</td>
+   <td width="70%">Cause</td>
   </tr>
   <tr class ="field">
    <td><span class="outcome"><dtml-var expr="result.GetOutcome()"></span></td>
@@ -34,15 +34,15 @@
 
  <table border="0" cellpadding="4" cellspacing="4" width="100%">
   <tr class="heading">
-   <td width="20%">Annotation</td>
-   <td width="80%">Value</td>
+   <td width="30%">Annotation</td>
+   <td width="70%">Value</td>
   </tr>
   <dtml-in expr="result.keys()" sort>
    <dtml-let annotation=sequence-item>
     <dtml-if expr="annotation != result.CAUSE">
      <tr class="field">
       <td><dtml-var annotation></td>
-      <td><dtml-var expr="result[annotation]"></td>
+      <td><dtml-var expr="web.format_structured_text(result[annotation])"></td>
      </tr>
     </dtml-if>
    </dtml-let>
