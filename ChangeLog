@@ -1,5 +1,10 @@
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/cmdline.py (Command.__WriteSummary): Order results with
+	unexpected outcomes better.
+
+2001-06-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.common_javascript): Add popup_manual.
 	* qm/test/web/web.py (PageInfo.GenerateStartBody): Add manual link.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Likewise.

@@ -651,27 +651,50 @@ class Command:
 
         # If we have been provided with expected outcomes, report each
         # test whose outcome doesn't match the expected outcome.
-        unexpected_count = 0
         if expected_outcomes is not None:
-            output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
-            # Scan over tests.
-            for test_id in results.keys():
-                result = results[test_id]
+            unexpected_ids = []
+
+            # Filter function that keeps a test 'result' if its outcome
+            # is not as expected in 'expected_outcomes'.
+            def unexpected_filter(result, eo=expected_outcomes):
                 outcome = result.GetOutcome()
-                expected_outcome = expected_outcomes.get(test_id,
-                                                         base.Result.PASS)
-                if outcome == expected_outcome:
-                    # The outcome of this test is as expected; move on.
-                    continue
-                # Keep track of the number of tests with unexpected
-                # outcomes. 
-                unexpected_count = unexpected_count + 1
-                # This test produced an unexpected outcome, so report it.
-                output.write("  %-32s: %-8s [expected %s]\n"
-                             % (test_id, outcome, expected_outcome))
-            if unexpected_count == 0:
-                output.write("  (None)\n")
-            output.write("\n")
+                test_id = result.GetTestId()
+                expected_outcome = eo.get(test_id, base.Result.PASS)
+                return outcome != expected_outcome
+                
+            # Sort function for results.  The primary key is the
+            # expected outcome for the result.  The secondary key is the
+            # test ID.
+            def unexpected_sorter(r1, r2, eo=expected_outcomes):
+                tid1 = r1.GetTestId()
+                tid2 = r2.GetTestId()
+                o1 = eo.get(tid1, base.Result.PASS)
+                o2 = eo.get(tid2, base.Result.PASS)
+                if o1 != o2:
+                    return cmp(base.Result.outcomes.index(o1),
+                               base.Result.outcomes.index(o2))
+                else:
+                    return cmp(tid1, tid2)
+
+            # Find results with unexpected outcomes.
+            unexpected_results = filter(unexpected_filter, results.values())
+            # Put them in an order convenient for users.
+            unexpected_results.sort(unexpected_sorter)
+            # Count 'em up.
+            unexpected_count = len(unexpected_results)
+            
+            if unexpected_count > 0:
+                # Report IDs of tests with unexpected outcomes.
+                output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
+                for result in unexpected_results:
+                    test_id = result.GetTestId()
+                    # This test produced an unexpected outcome, so report it.
+                    outcome = result.GetOutcome()
+                    expected_outcome = expected_outcomes.get(test_id,
+                                                             base.Result.PASS)
+                    output.write("  %-32s: %-8s [expected %s]\n"
+                                 % (test_id, outcome, expected_outcome))
+                output.write("\n")
 
         output.write(divider("TESTS THAT DID NOT PASS"))
         non_passing_count = 0
