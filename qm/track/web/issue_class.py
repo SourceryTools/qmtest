@@ -7,7 +7,7 @@
 # Contents:
 #   Web GUI for viewing and editing an issue class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -139,6 +139,7 @@ class AddClassPage(web.DtmlPage):
                                 field_name=field_name,
                                 select_name=select_name)
         add_page = add_page(self.request)
+        url = qm.web.cache_page(add_page).AsUrl()
         # Are we redisplaying a form following an invalid submission?
         if len(self.errors) > 0:
             # Yes.  Extract the categories from the submission.
@@ -154,7 +155,7 @@ class AddClassPage(web.DtmlPage):
             form_name="form",
             field_name=field_name,
             select_name=select_name,
-            add_page=add_page,
+            add_page=url,
             initial_elements=initial_elements,
             request=self.request)
 
@@ -204,6 +205,7 @@ class NotificationPage(web.DtmlPage):
                                 field_name=field_name,
                                 select_name=select_name)
         add_page = add_page(self.request)
+        url = qm.web.cache_page(add_page).AsUrl()
         # If there already is a notification trigger, include recipients
         # specified in it.
         if self.trigger is not None:
@@ -216,7 +218,7 @@ class NotificationPage(web.DtmlPage):
             form_name="form",
             field_name=field_name,
             select_name=select_name,
-            add_page=add_page,
+            add_page=url,
             request=self.request,
             initial_elements=recipients)
 
@@ -233,6 +235,7 @@ class NotificationPage(web.DtmlPage):
                                 select_name=select_name,
                                 uids=qm.user.database.keys())
         add_page = add_page(self.request)
+        url = qm.web.cache_page(add_page).AsUrl()
         # If there is already a notification trigger, include recipient
         # users specified in it.
         if self.trigger is not None:
@@ -245,7 +248,7 @@ class NotificationPage(web.DtmlPage):
             form_name="form",
             field_name=field_name,
             select_name=select_name,
-            add_page=add_page,
+            add_page=url,
             request=self.request,
             initial_elements=recipients)
 

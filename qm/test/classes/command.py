@@ -295,7 +295,7 @@ class ExecTestBase(Test):
                         # to execute the program.
                         exc_info = sys.exc_info()
                         result = (Result.ERROR,
-                                  { Result.CAUSE : "Could not execut program",
+                                  { Result.CAUSE : "Could not execute program",
                                     Result.EXCEPTION : "%s: %s" % exc_info[:2],
                                     Result.TRACEBACK :
                                       qm.format_traceback(exc_info) })

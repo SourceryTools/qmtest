@@ -198,6 +198,13 @@ class QMTest:
         "Specify the test database class."
         )
 
+    attribute_option_spec = (
+        "a",
+        "attribute",
+        "KEY=VALUE",
+        "Set a database attribute."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -215,7 +222,9 @@ class QMTest:
          "Create a new test database.",
          "",
          "Create a new test database.",
-         ( help_option_spec, tdb_class_option_spec, )
+         ( help_option_spec,
+           tdb_class_option_spec,
+           attribute_option_spec)
          ),
 
         ("gui",
@@ -404,11 +413,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         else:
             # For the rest of the commands, we need to open the test
             # database first.
-            try:
-                # Create the database.
-                self.__database = base.load_database(db_path)
-            except ValueError, exception:
-                raise RuntimeError, str(exception)
+            self.__database = base.load_database(db_path)
 
             # Dispatch to the appropriate method.
             method = {
@@ -537,15 +542,33 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return context
 
 
-    def __ParseContextAssignment(self, assignment, context):
-        # Make sure the argument is correctly-formatted.
-        if not "=" in assignment:
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid context assignment",
-                           argument=assignment)
-        # Parse the assignment.
-        name, value = string.split(assignment, "=", 1)
+    def __ParseKeywordArgument(self, argument):
+        """Parse an 'argument' of the form 'name=value'.
 
+        'argument' -- A string.  The string should have the form
+        'name=value'.
+
+        returns -- A pair '(name, value)'."""
+
+        # Parse the assignment.
+        try:
+            (name, value) = string.split(argument, "=", 1)
+            return (name, value)
+        except:
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid keyword assignment",
+                           argument=argument)
+
+
+    def __ParseContextAssignment(self, assignment, context):
+        """Parse an assignment to the 'context'.
+
+        'assignment' -- A string indicating an assignment to a context
+        property."""
+        
+        # Parse the argument.
+        name, value = self.__ParseKeywordArgument(assignment)
+        
         try:
             # Insert it into the context.
             context[name] = value
@@ -560,12 +583,18 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         'db_path' -- The path at which to create the new test database."""
 
-        # Extract the test database class name.  Use the standard XML
-        # implementation, if none was specified.
-        class_name = self.GetCommandOption(
-            "class", "qm.test.xmldb.Database")
+        # Figure out what database class to use.
+        class_name \
+            = self.GetCommandOption("class", "qm.test.xmldb.Database")
+        # There are no attributes yet.
+        attributes = {}
+        # Process attributes provided on the command line.
+        for option, argument in self.__command_options:
+            if option == "attribute":
+                name, value = self.__ParseKeywordArgument(argument)
+                attributes[name] = value
         # Create the test database.
-        base.create_database(db_path, class_name)
+        base.create_database(db_path, class_name, attributes)
         # Print a helpful message.
         output.write(qm.message("new db message", path=db_path) + "\n")
 
@@ -598,7 +627,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 filter(lambda r: r.GetKind() == Result.RESOURCE,
                        results)
         except (IOError, qm.xmlutil.ParseError), exception:
-            raise RuntimeError, \
+            raise QMException, \
                   qm.error("invalid results file",
                            path=results_path,
                            problem=str(exception))

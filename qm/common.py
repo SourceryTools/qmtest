@@ -73,34 +73,42 @@ class Empty:
     pass
 
 
-class MethodShouldBeOverriddenError(Exception):
+class QMException(Exception):
+    """An exception generated directly by QM.
+
+    All exceptions thrown by QM should be derived from this class."""
+    
+    pass
+
+
+class MethodShouldBeOverriddenError(QMException):
     """Indicates a method was called that should have been overridden."""
 
     pass
 
 
 
-class MutexError(RuntimeError):
+class MutexError(QMException):
     """A problem occurred with a mutex."""
 
     pass
 
 
 
-class MutexLockError(Exception):
+class MutexLockError(QMException):
     """A lock was not obtained on the mutex."""
 
     pass
 
 
 
-class ConfigurationError(RuntimeError):
+class ConfigurationError(QMException):
 
     pass
 
 
 
-class UserError(Exception):
+class UserError(QMException):
 
     pass
 
@@ -673,7 +681,7 @@ def load_class(name, path=sys.path):
     # in a top-level module, so there should be at least one module path
     # separator. 
     if not "." in name:
-        raise ValueError, \
+        raise QMException, \
               "%s is not a fully-qualified class name" % name
     # Split the module path into components.
     components = string.split(name, ".")
@@ -688,11 +696,11 @@ def load_class(name, path=sys.path):
         klass = module.__dict__[class_name]
         if not isinstance(klass, types.ClassType):
             # There's something by that name, but it's not a class
-            raise ImportError, "%s is not a class" % name
+            raise QMException, "%s is not a class" % name
         return klass
     except KeyError:
         # There's no class with the requested name.
-        raise ImportError, \
+        raise QMException, \
               "no class named %s in module %s" % (class_name, module_name)
     
     
@@ -813,8 +821,6 @@ def make_temporary_directory():
     """Create a temporary directory.
 
     returns -- The path to the temporary directory."""
-
-    # FIXME: Security.
 
     dir_path = tempfile.mktemp()
     try:

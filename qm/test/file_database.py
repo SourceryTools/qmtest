@@ -58,7 +58,7 @@ class FileDatabase(Database):
 
     'FileDatabase' is an abstract class."""
 
-    def __init__(self, path, store,
+    def __init__(self, path, 
                  test_extension = '.qmt',
                  suite_extension = '.qms',
                  resource_extension = '.qma'):
@@ -67,9 +67,6 @@ class FileDatabase(Database):
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
-        'store' -- The attachment store that is used to store 
-        'Attachment's to tests or resources.
-        
         'test_extension' -- The extension (including the leading period)
         that indicates that a file is a test.
 
@@ -81,7 +78,7 @@ class FileDatabase(Database):
         period) that indicates that a file is a resource."""
         
 	# Initialize base classes.
-	qm.test.database.Database.__init__(self, path, store)
+	qm.test.database.Database.__init__(self, path)
         # Save the test extension and suite extension.
         self.__test_extension = test_extension
         self.__suite_extension = suite_extension

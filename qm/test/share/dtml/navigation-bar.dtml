@@ -15,11 +15,7 @@
 
 --></dtml-comment>
 <form action="get">
-<table width="100%" 
-       class="navbar"
-       border="0"
-       cellspacing="0"
-       cellpadding="0">
+<table class="navbar" cellspacing="0" cellpadding="0" border="0">
  <tr>
   <td width="14%" height="28">
    &nbsp;&nbsp;
@@ -28,7 +24,7 @@
   </td>
   
   <!-- File Menu -->
-  <td width="15%">
+  <td width="15%" class="navbar">
    <select onchange="handle_menu_select(this);">
     <option value="file">File</option>
     <dtml-in file_menu_items>

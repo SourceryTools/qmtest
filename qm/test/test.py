@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Test class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -174,6 +174,14 @@ class Test:
 
         return self.target_group
 
+
+    def GetId(self):
+        """Returns the name of this test.
+
+        returns -- A string giving the label naming this test."""
+
+        return self.id
+    
 ########################################################################
 # Local Variables:
 # mode: python

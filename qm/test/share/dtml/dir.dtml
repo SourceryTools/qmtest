@@ -7,7 +7,7 @@
   Contents:
     Document template for displaying test database contents.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -18,69 +18,272 @@
  <dtml-var expr="GenerateHtmlHeader('Test Database')">
  <dtml-var expr="GenerateStartBody()">
 
+ <dtml-unless expr="IsFinished()">
+ <p><span class="warning">All tests have not yet been run.  These
+ results will be updated every few seconds.</span></p>
+ </dtml-unless>
+ 
  <table border="0" width="100%">
   <tbody>
    <tr>
-    <td>
+    <td width="100%">
      <h3>
-       Directory for <dtml-var expr="FormatId(path, 'dir', 'navigation')">
+       Directory 
+        <dtml-if expr="path != '.'">
+          <a href="/test/dir"><span class="id">.</span></a>
+        </dtml-if>
+        <dtml-var expr="FormatId(path, 'dir', 'navigation')">
      </h3>
     </td>
    </tr>
-  </tbody>
- </table>
 
- <table border="0"
-        cellspacing="0"
-        cellpadding="2"
-        width="100%">
-  <tbody>
+   <!-- Result Summary -->
+
+   <dtml-let results="GetTestResultsForDirectory(path)"
+             total="_.len(results)"
+             rbo="GetResultsByOutcome(results)"
+             urbo="GetUnexpectedResultsByOutcome(results)"
+             total_unexp="CountUnexpected(urbo)">
+    <dtml-if results>
+     <tr><td><table class="data" width="100%">
+      <caption>
+        Result Summary for <span class="id"><dtml-var path></span> 
+      </caption>
+      </tr>
+      <tr class="heading">
+       <th width="16%">Outcome</td>
+       <th width="21%"># of Tests</td>
+       <th width="21%">% of Total</td>
+       <th width="21%"># Unexpected</td>
+       <th width="21%">% of Total</td>
+      </tr>
+      <dtml-in expr="outcomes">
+       <dtml-let outcome=sequence-item
+                 count="_.len(rbo[outcome])"
+                 unexp_count="_.len(urbo[outcome])">
+        <dtml-if count>
+         <tr class="<dtml-var expr="server.GetHTMLClassForOutcome(outcome)">">
+          <td><span class="outcome"><dtml-var sequence-item></span></td>
+          <td align="right"><dtml-var expr="count"></td>
+          <td align="right"><dtml-var 
+                             expr="'%3.0f' % ((100. * count) / total)"></td>
+          <td align="right" 
+              <dtml-if expr="unexp_count">class="qmtest_unexpected"</dtml-if>
+              ><dtml-var expr="unexp_count"></td>
+          <td align="right"
+              <dtml-if expr="unexp_count">class="qmtest_unexpected"</dtml-if>
+              ><dtml-var expr="'%3.0f' % ((100. * unexp_count) / total)"></td>
+         </tr>
+        </dtml-if>
+       </dtml-let>
+      </dtml-in>
+      <tr class="field">
+       <td><span class="outcome">Total</span></td>
+       <td align="right"><dtml-var total></td>
+       <td align="right">100</td>
+       <td align="right"
+           <dtml-if expr="total_unexp">class="qmtest_unexpected"</dtml-if>
+           ><dtml-var expr="total_unexp"></td>
+       <td align="right"        
+           <dtml-if expr="total_unexp">class="qmtest_unexpected"</dtml-if> >
+        <dtml-if total>           
+          <dtml-var expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
+        <dtml-else>
+         &nbsp;</td>
+        </dtml-if>
+      </tr>
+     </table></td></tr>
+    </dtml-if>
+   </dtml-let>
+
+   <!-- Subdirectories -->
+
    <dtml-if subdir_ids>
-    <tr><th width="100%">Subdirectories</th></tr>
-    <dtml-in expr="subdir_ids">
-     <dtml-let item=sequence-item>
-      <tr><td width="100%">
-       <dtml-var expr="FormatId(item, 'dir', 'tree')">
-      </td></tr>
-     </dtml-let>
-    </dtml-in>
+     <tr><td><table class="data" width="100%">
+      <caption>
+       Subdirectories of <span class="id"><dtml-var path></span>
+      </caption> 
+      <tbody>
+       </tr>
+       <tr class="heading">
+        <th width="25%">Directory</th>
+        <th width="25%"># Results</th>
+        <th width="25%">Outcomes</th>
+        <th width="25%">Expectations</th>
+       </tr>
+       <dtml-in expr="subdir_ids">
+        <dtml-let item=sequence-item
+                  results="GetTestResultsForDirectory(item)">
+         <tr>
+
+          <!-- The subdirectory. -->
+          <td width="25%" class="field">
+           <dtml-var expr="FormatId(item, 'dir', 'tree')">
+          </td>
+
+          <!-- The number of results available. -->
+          <td width="25%" class="field">
+           <dtml-if results>
+            <dtml-var expr="_.len(results)">
+           <dtml-else>
+            &nbsp;
+           </dtml-if>
+          </td>
+
+          <!-- The percentage of results for each outcome. -->
+          <td width="25%" class="field">
+           <dtml-if results>
+            <dtml-let rps="GetOutcomePercentages(results)">
+             <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+               <dtml-in expr="outcomes">
+                <dtml-let o=sequence-item>
+                 <dtml-if expr="rps[o]">
+                  <td class="<dtml-var 
+                               expr="server.GetHTMLClassForOutcome(o)">" 
+                      width="<dtml-var expr="_.int(100.0 * rps[o])">%"><img
+                        src="/images/clear.gif" height="12"
+                        hspace="0" vspace="0" border="0"></td>
+                 </dtml-if>
+                </dtml-let>
+               </dtml-in>
+              </tr>
+             </table>
+            </dtml-let>
+           <dtml-else>&nbsp;</dtml-if>
+          </td>
+
+          <!-- The percentage of unexpected results for each outcome. -->
+          <td width="25%" class="field">
+           <dtml-if results>
+            <dtml-let rps="GetUnexpectedOutcomePercentages(results)">
+             <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+               <dtml-in expr="EXPECTATION_KINDS">
+                <dtml-let o=sequence-item>
+                 <dtml-if expr="rps[o]">
+                  <td class="<dtml-var 
+                                expr="server.GetHTMLClassForOutcome(o)">" 
+                      width="<dtml-var expr="_.int(100.0 * rps[o])">%">
+                   <img src="/images/clear.gif" height="12"
+                        hspace="0" vspace="0" border="0"></td>
+                 </dtml-if>
+                </dtml-let>
+               </dtml-in>
+              </tr>
+             </table>
+            </dtml-let>
+           <dtml-else>&nbsp;</dtml-if>
+          </td>
+         </tr>
+        </dtml-let>
+       </dtml-in>
+      </tbody>
+     </table></td></tr>
    </dtml-if>
+
    <dtml-if test_ids>
-    <tr><th width="100%">Tests</th></tr>
-    <dtml-in expr="test_ids">
-      <dtml-let item=sequence-item>
-       <tr><td width="100%">
-        <dtml-var expr="FormatId(item, 'test', 'tree')">
-       </td></tr>
-      </dtml-let>
-    </dtml-in>
+    <tr><td><table class="data" width="100%">
+     <caption>Tests in <span class="id"><dtml-var path></span></caption>
+     <tbody>
+       </tr>
+       <tr class="heading">
+        <th align="left" width="60%"
+         ><a href="<dtml-var expr="GetSortURL(SORT_NAME)">">Test</a>
+        </th>
+        <th align="left" width="10%"
+         ><a href="<dtml-var expr="GetSortURL(SORT_OUTCOME)">">Outcome</a>
+        </th>
+        <th align="left" width="10%"
+         ><a href="<dtml-var expr="GetSortURL(SORT_EXPECTATION)">"
+           >Expectation</a>
+        </th>
+        <th align="center" width="10%">Details</th>
+       </tr>
+       <dtml-in expr="GetTests(request.get('sort', SORT_OUTCOME))">
+         <dtml-let item=sequence-item
+                   id="item.id"
+                   outcome="item.outcome"
+                   expectation="item.expectation"
+                   row_class="(outcome 
+                               and server.GetHTMLClassForOutcome(outcome)) 
+                              or 'field'"
+                   url="outcome and GetDetailURL(id)">
+          <tr class="<dtml-var row_class>">
+           <td><dtml-var expr="FormatId(id, 'test', 'tree')"></td>
+           <td>
+            <dtml-if outcome>
+             <span class="outcome"><dtml-var outcome></span>
+            <dtml-else>
+             &nbsp;
+            </dtml-if>
+           </td>
+           <td>
+             <span class="outcome">
+              <a href="javascript: void(0);" 
+                 onclick="set_expectation('<dtml-var
+                 "GetExpectationUrl(id, expectation)">')"
+              ><dtml-var "expectation or 'None'"></a>
+             </span>
+           </td>
+           <td>
+            <dtml-if outcome>
+             <a href="<dtml-var url>">Details</a>
+            <dtml-else>
+             &nbsp;
+            </dtml-if>
+           </td>
+          </tr>
+         </dtml-let>
+       </dtml-in>
+     </tbody>
+    </table></td></tr>
    </dtml-if>
+
    <dtml-if suite_ids>
-    <tr><th width="100%">Suites</th></tr>
-    <dtml-in expr="suite_ids">
-     <dtml-let item=sequence-item>
-      <tr><td width="100%">
-       <dtml-var expr="FormatId(item, 'suite', 'tree')">
-      </td></tr>
-     </dtml-let>
-    </dtml-in>
+    <tr><td><table class="data" width="100%">
+     <caption>Suites in <span class="id"><dtml-var path></span></caption>
+     <tbody>
+      <tr class="heading"><th width="60%">Suites</th></tr>
+      <dtml-in expr="suite_ids">
+       <dtml-let item=sequence-item>
+        <tr><td width="100%">
+         <dtml-var expr="FormatId(item, 'suite', 'tree')">
+        </td></tr>
+       </dtml-let>
+      </dtml-in>
+     </tbody> 
+    </table></td></tr>
    </dtml-if>
+
    <dtml-if resource_ids>
-    <tr><th width="100%">Resources</th></tr>
-    <dtml-in expr="resource_ids">
-     <dtml-let item=sequence-item>
-      <tr><td width="100%">
-       <dtml-var expr="FormatId(item, 'resource', 'tree')">
-      </td></tr>
-     </dtml-let>
-    </dtml-in>
+    <tr><td><table class="data" width="100%">
+     <caption>Resources in <span class="id"><dtml-var path></span></caption>
+     <tbody>
+      <tr class="heading"><th width="60%">Resources</th></tr>
+      <dtml-in expr="resource_ids">
+       <dtml-let item=sequence-item>
+        <tr><td width="60%">
+         <dtml-var expr="FormatId(item, 'resource', 'tree')">
+        </td></tr>
+       </dtml-let>
+      </dtml-in>
+     </tbody>
+    </table></td></tr>
    </dtml-if>
+
   </tbody>
  </table>
 
  <dtml-var expr="GenerateStartScript()">
    function run_dir() {
-    location = '<dtml-var "MakeRunUrl()">';
+    location = '<dtml-var "GetRunUrl()">';
+   }
+
+   function set_expectation(url) {
+    window.open(url, "set_expectation",
+                "dependent,height=200,width=640");
+
    }
  <dtml-var expr="GenerateEndScript()">
 

@@ -7,7 +7,7 @@
 # Contents:
 #   General type system for user-defied data constructs.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1260,11 +1260,12 @@ class SetField(Field):
                 # contained field type, which is the element that is
                 # being added to the set.
                 add_page = SetPopupPage(self, name, select_name)()
-            
+            # Get a URL for the page.
+            url = qm.web.cache_page(add_page).AsUrl()
             # Construct the controls for manipulating the set.
             form = web.make_set_control("form",
                                         field_name=name,
-                                        add_page=add_page,
+                                        add_page=url,
                                         select_name=select_name,
                                         initial_elements=initial_elements,
                                         window_width=600,
@@ -1572,10 +1573,11 @@ class AttachmentField(Field):
                    %s>''' % (summary_field_name, summary_value)
             # A button to pop up the upload form.  It causes the upload
             # page to appear in a popup window.
-            upload_button = qm.web.make_button_for_popup("Upload",
-                                                         upload_page,
-                                                         window_width=640,
-                                                         window_height=320)
+            upload_button \
+                = qm.web.make_button_for_cached_popup("Upload",
+                                                      upload_page,
+                                                      window_width=640,
+                                                      window_height=320)
             # A button to clear the attachment.
             clear_button = '''
             <input type="button"
@@ -1918,6 +1920,7 @@ class EnumerationField(TextField):
         add_page = web.DtmlPage("add-enumeral.dtml",
                                 field_name=field_name,
                                 select_name=select_name)()
+        url = qm.web.cache_page(add_page).AsUrl()
         # Start with the current set of enumerals.  'make_set_control'
         # expects pairs of elements.
         initial_elements = map(lambda e: (e, e), self.GetEnumerals())
@@ -1925,7 +1928,7 @@ class EnumerationField(TextField):
         controls["enumerals"] = web.make_set_control(
             form_name="form",
             field_name=field_name,
-            add_page=add_page,
+            add_page=url,
             initial_elements=initial_elements,
             ordered=1)
 

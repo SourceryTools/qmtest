@@ -42,6 +42,7 @@ import xml.dom
 import xml.dom.ext 
 import xml.dom.ext.reader.Sax
 import xml.dom.DOMImplementation
+import xml.dom.minidom
 
 ########################################################################
 # exceptions
@@ -93,18 +94,23 @@ def load_xml(file, whence="(input)", validate=1):
     # Construct the path to the DTD catalog.
     catalog_path = os.path.join(qm.get_share_directory(),
                                 "xml", "CATALOG")
-    # Create a validating DOM reader.
-    reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
-                                           catName=catalog_path)
-    try:
-        # Read and parse XML.
-        document = reader.fromStream(file)
-    except xml.sax._exceptions.SAXParseException, exception:
-        raise ParseError, qm.error("xml parse error",
-                                   line=exception.getLineNumber(),
-                                   character=exception.getColumnNumber(),
-                                   file_name=whence,
-                                   message=exception._msg)
+    if validate:
+        # Create a validating DOM reader.
+        reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
+                                               catName=catalog_path)
+        try:
+            # Read and parse XML.
+            document = reader.fromStream(file)
+        except xml.sax._exceptions.SAXParseException, exception:
+            raise ParseError, qm.error("xml parse error",
+                                       line=exception.getLineNumber(),
+                                       character=exception.getColumnNumber(),
+                                       file_name=whence,
+                                       message=exception._msg)
+    else:
+        # If not validating, use a faster implementation.
+        document = xml.dom.minidom.parse(file)
+        
     file.close()
     return document
 

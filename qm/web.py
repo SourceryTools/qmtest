@@ -136,7 +136,7 @@ class DtmlPage:
 
     common_javascript = "/common.js"
     
-    qm_bug_system_url = "http://qm.codesourcery.com:4224/track/"
+    qm_bug_system_url = "mailto:qmtest@codesourcery.com"
     """The public URL for the bug tracking system for the QM tools."""
 
 
@@ -837,7 +837,7 @@ class WebServer(HTTPServer):
         self.__xml_rpc_path = xml_rpc_path
         self.__shutdown_requested = 0
 
-        self.RegisterScript("/problems.html", _handle_problems)
+        self.RegisterScript("/problems.html", self._HandleProblems)
         self.RegisterScript("/", self._HandleRoot)
 
         # Register the common JavaScript.
@@ -1100,6 +1100,12 @@ class WebServer(HTTPServer):
         raise HttpRedirect(request)
 
 
+    def _HandleProblems(self, request):
+        """Handle internal errors."""
+        
+        return DtmlPage.default_class("problems.dtml")(request)
+
+    
     def _HandleRoot(self, request):
         """Handle the '/' URL."""
         
@@ -1805,8 +1811,8 @@ def make_set_control(form_name,
     elements of the set.  If 'None', a control name is generated
     automatically. 
 
-    'add_page' -- If not 'None', the HTML source for a popup web page
-    that is displayed in response to the "Add..." button.
+    'add_page' -- The URL for a popup web page that is displayed
+    in response to the "Add..." button.
 
     'initial_elements' -- The initial elements of the set.
 
@@ -1842,13 +1848,8 @@ def make_set_control(form_name,
 
     buttons = []
 
-    # Construct a unique name for the JavaScript function for responding
-    # to the "Add..." button.
-    global _counter
-    add_function = "_set_add_%d" % _counter
-    _counter = _counter + 1
     # Construct the "Add..." button.
-    buttons.append(make_button_for_popup("Add...", add_page, request,
+    buttons.append(make_button_for_popup("Add...", add_page,
                                          window_width, window_height))
     # Construct the "Remove" button.
     buttons.append('''
@@ -2481,15 +2482,41 @@ def make_choose_control(field_name,
 
 
 def make_button_for_popup(label,
-                          html_text,
-                          request=None,
+                          url,
                           window_width=480,
                           window_height=240):
     """Construct a button for displaying a popup page.
 
     'label' -- The button label.
 
-    'html_text' -- The HTML source of the popup page.
+    'url' -- The URL to display in the popup page.
+
+    returns -- HTML source for the button.  The button must be placed
+    within a form element."""
+
+    # Construct arguments for 'Window.open'.
+    window_args = "resizable,width=%d,height=%s" \
+                  % (window_width, window_height)
+    # Generate it.
+    return """
+    <input type="button"
+           value=" %(label)s "
+           onclick="window.open('%(url)s',
+                                'popup',
+                                '%(window_args)s');">
+    """ % locals()
+
+
+def make_button_for_cached_popup(label,
+                                 html_text,
+                                 request=None,
+                                 window_width=480,
+                                 window_height=240):
+    """Construct a button for displaying a cached popup page.
+
+    'label' -- The button label.
+
+    'html_text' -- The HTML source for the popup page.
 
     'window_width' -- The width, in pixels, of the popup window.
 
@@ -2505,19 +2532,10 @@ def make_button_for_popup(label,
         session_id = request.GetSessionId()
     page_url = cache_page(html_text, session_id).AsUrl()
 
-    # Construct arguments for 'Window.open'.
-    window_args = "resizable,width=%d,height=%s" \
-                  % (window_width, window_height)
-    # Generate it.
-    return """
-    <input type="button"
-           value=" %(label)s "
-           onclick="window.open('%(page_url)s',
-                                'popup',
-                                '%(window_args)s');">
-    """ % locals()
+    return make_button_for_popup(label, page_url, window_width,
+                                 window_height)
 
-
+        
 def cache_page(page_text, session_id=None):
     """Cache an HTML page.
 
@@ -2623,10 +2641,6 @@ def get_from_cache(request, session_id=None):
          </body>
         </html>
         """ % url
-
-
-# Nothing to do besdies generating the page.
-_handle_problems = DtmlPage.default_class("problems.dtml")
 
 
 def format_user_id(user_id):

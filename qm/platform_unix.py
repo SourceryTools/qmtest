@@ -7,7 +7,7 @@
 # Contents:
 #   Platform-specific function for UNIX and UNIX-like systems.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -71,7 +71,7 @@ CLOSE_STREAM = common.Empty()
 # classes
 ########################################################################
 
-class RunProgramError(RuntimeError):
+class RunProgramError(common.QMException):
     """An error while running an external program."""
     
     pass
@@ -92,7 +92,7 @@ class ProgramTerminatedBySignalError(RunProgramError):
 
 
 
-class SignalException(RuntimeError):
+class SignalException(common.QMException):
     """An exception raised in response to a signal."""
 
     def __init__(self, signal_number):

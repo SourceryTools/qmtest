@@ -1,3 +1,84 @@
+2002-03-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUMakefile.in (PYTHON_PACKAGES): Remove sgmlop.
+	* qm/attachment.py (AttachmentStore.HandleDownloadRequest): Update
+	documentation.
+	(AttachmentStore.Store): New method.
+	(FileAttachmentStore.Store): Likewise.
+	(TemporaryAttachmentStore.Add): Rename to ...
+	(TemporaryAttachmentStore.Store): ... this.
+	* qm/common.py (QMException): New class.
+	(MethodShouldBeOverridenError): Derive from it.
+	(MutexError): Likewise.
+	(MutexLockError): Likewise.
+	(ConfigurationError): Likewise.
+	(UserError): Likewise.
+	(load_class): Raise QMException, not ValueError.
+	(make_temporary_directory): Remove FIXME.
+	* qm/fields.py (SetField.FormatValueAsHtml): Tidy.
+	(AttachmentField.FormatValueAsHtml): Likewise.
+	(EnumerationField.MakePropertyControls): Likewise.
+	* qm/platform_unix.py (RunProgramError): Derived from QMException.
+	(SignalException): Likewise.
+	* qm/web.py (qm_bug_system_url): Use the mailing list address.
+	(WebServer.__init__): Register self._HandleProblems, not
+	_handle_problems.
+	(WebServer._HandleProblems): New method.
+	(make_set_control): Remove counter manipulations.
+	(make_button_for_popup): Don't cache it.
+	(make_button_for_cached_popup): New function.
+	(_handle_problems): Remove.
+	* qm/xmultil.py (xml.dom.minidom): Import it.
+	(load_xml): Use it.
+	* qm/test/base.py (valid_id): Raise QMException, not RuntimeError.
+	(load_database): Raise QMException, not ValueError.  Allow
+	attributes to be passed to the database.
+	(create_database): Allow attributes to be stored in the database
+	configuration file.
+	(get_extension_class): Turn ImportError into QMException.
+	(load_results): Do not validate the incoming results file.
+	* qm/test/cmdline.py (QMTest.attribute_option_spec): New member.
+	(QMTest.Execute): Simplify exception-handling.
+	(QMTest.__ParseContextAssignment): Break out ...
+	(QMTest.__ParseKeywordArgument): ... this method.
+	* qm/test/context.py (ContextException): New class.
+	(Context.__getitem__): Raise it instead of KeyError.
+	* qm/test/database.py (DatabaseError): Derived from QMException.
+	(__init__): Do not require an attachment store.
+	(Database.GetAttachmentStore): Require that it be overridden.
+	* qm/test/file_database.py (FileDatabase.__init__): Remove the
+	store parameter.
+	* qm/test/qmtest.py (print_errror_message): Indent the message.
+	* qm/test/result.py (Result.outcomes): Order from most 
+	interesting to least interesting.
+	* qm/test/target.py (Target.RunTest): Catch ContextException and
+	introduce appropriate failure notices.
+	* qm/test/test.py (Test.GetId): New method.
+	* qm/test/text_result_stream.py (TextResultStream.Summarize): Tidy
+	output.
+	* qm/test/xmldb.py (Database.__init__): Do not pass down the
+	attachment store.
+	(Database.GetAttachmentStore): New method.
+	* qm/test/classes/command.py (ExecTestBase): Robustify.
+	* qm/test/share/dtds/tdb-configuration.dtd: Allow database
+	attributes.
+	* qm/test/share/dtml/dir.dtml: Rework display.
+	* qm/test/share/dtml/navigation-bar.dtml: Simplify.
+	* qm/test/share/dtml/result.dtml: Likewise.
+	* qm/test/share/dtml/results.dtml: Rework display.
+	* qm/test/share/messages/diagnostics.txt (invalid context
+	assignment): Remove.
+	(invalid keyword assignment): Add.
+	(extension class not found): Likewise.
+	* qm/test/web/web.py: Rework substantially.
+	* scripts/.cvsignore: New file.
+	* share/dtml/problems.dtml: Rework to mention mailing list.
+	* share/web/common.js (property_add_or_change): Do not
+	restrict to valid labels.
+	* share/web/images/left-arrow.gif: New file.
+	* share/web/stylesheets/qm.css: Update and extend.
+	* qm/test/doc/reference.xml: Document -a option to create-tdb.
+
 2002-02-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/web.py (WebServer.Run): Remove exception-handling code.

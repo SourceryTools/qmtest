@@ -32,7 +32,7 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import qm
@@ -40,7 +40,7 @@ import sys
 import types
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class Result:
@@ -103,10 +103,10 @@ class Result:
     
     # Constants for outcomes.
 
-    PASS = "PASS"
     FAIL = "FAIL"
     ERROR = "ERROR"
     UNTESTED = "UNTESTED"
+    PASS = "PASS"
 
     # Constants for predefined annotations.
 
@@ -122,8 +122,12 @@ class Result:
     kinds = [ RESOURCE, TEST ]
     """A list of the possible kinds."""
     
-    outcomes = [ PASS, FAIL, ERROR, UNTESTED ]
-    """A list of the possible outcomes."""
+    outcomes = [ ERROR, FAIL, UNTESTED, PASS ]
+    """A list of the possible outcomes.
+
+    The order of the 'outcomes' is significant; they are ordered from
+    most interesting to least interesting from the point of view of
+    someone browsing results."""
 
     def __init__(self, kind, id, context, outcome=PASS, annotations={}):
         """Construct a new 'Result'.

@@ -136,7 +136,11 @@ class AttachmentStore:
 
         'request' -- A 'WebRequest' object.  The location of the
         attachment data is stored in the 'location' property, and the
-        MIME type in the 'mime_type' property."""
+        MIME type in the 'mime_type' property.
+
+        returns -- A pair '(mime_type, data)' where 'mime_type' is the
+        MIME type stored in the request and 'data' is the contents of
+        the attachment."""
 
         location = request["location"]
         mime_type = request["mime_type"]
@@ -144,6 +148,16 @@ class AttachmentStore:
         return (mime_type, data)
 
 
+    def Store(self, location, data):
+        """Add an attachment to the store.
+
+        'location' -- The location in which the data should be stored.
+
+        'data' -- The contents of the attachment."""
+
+        raise qm.MethodShouldBeOverriddenError, "AttachmentStore.Store"
+        
+        
 
 class FileAttachmentStore(AttachmentStore):
     """An attachment store based on the file system.
@@ -186,6 +200,21 @@ class FileAttachmentStore(AttachmentStore):
         read-only, and should not be modified in any way."""
 
         return location
+
+
+    def Store(self, location, data):
+        """Add an attachment to the store.
+
+        'location' -- The location in which the data should be stored.
+
+        'data' -- The contents of the attachment."""
+
+        # Create the file.
+        file = open(location, "w")
+        # Write the data.
+        file.write(data)
+        # Close the file.
+        file.close()
 
 
 
@@ -246,7 +275,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         return os.stat(path)[6]
 
 
-    def Add(self, location, data):
+    def Store(self, location, data):
         """Add attachment data.
 
         'location' -- The location at which to find the data.  The value
@@ -301,7 +330,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         location = request["location"]
         assert is_temporary_location(location)
         # Get the attachment data.
-        self.Add(location, request["file_data"])
+        self.Store(location, request["file_data"])
         # Return a page that closes the popup window from which the
         # attachment was submitted.
         return '''

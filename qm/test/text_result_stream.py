@@ -142,8 +142,9 @@ class TextResultStream(ResultStream):
                 bad_results = filter(
                     lambda r: r.GetOutcome() != Result.PASS,
                     self.__test_results)
-                self._DisplayHeading("TESTS THAT DID NOT PASS")
-                self._SummarizeResults(bad_results)
+                if bad_results:
+                    self._DisplayHeading("TESTS THAT DID NOT PASS")
+                    self._SummarizeResults(bad_results)
 
             # Sort resource results by ID.
             self.__resource_results.sort(compare_ids)

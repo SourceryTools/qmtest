@@ -86,10 +86,6 @@ the form 'module.class'.
 @ invalid concurrency
 Specify a positive integer with the '--parallel' option.
 
-@ invalid context assignment
-The context property "%(argument)s" is not valid.  Specify context
-properties using the syntax KEY=VALUE.
-
 @ invalid context key
 The context key "%(key)s" is not valid.  Context keys may contain
 letters, digits, hyphens, underscores, and periods.
@@ -109,6 +105,10 @@ problem was: %(problem)s.
 @ invalid id
 The name "%(id)s" is not valid.  Names may contain lower-case letters,
 digits, hyphens, underscores, and periods.
+
+@ invalid keyword assignment
+The option "%(argument)s" is not valid.  This option should have the
+form KEY=VALUE.
 
 @ invalid results format
 "%(format)s" is not a valid format for test results.  Possible formats are
@@ -133,6 +133,10 @@ You must specify the location of the test database.
 
   * Or, set the '%(envvar)s' environment variable to the path to the
     database. 
+
+@ extension class not found
+The extension class '%(klass)s' could not be found.  You may need
+to set the 'QMTEST_CLASS_PATH' environment variable.
 
 @ no id for edit
 You must specify the ID of the item to edit.

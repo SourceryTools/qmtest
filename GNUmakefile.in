@@ -60,7 +60,6 @@ PYTHONDIRS	= $(TOPDIR) \
 PYTHON_PACKAGES = \
 	qm \
 	PyXML \
-	sgmlop \
 	zope-dtml/DocumentTemplate \
 	zope-dtml/ExtensionClass \
 	xmlrpc

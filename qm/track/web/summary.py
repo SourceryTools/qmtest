@@ -7,7 +7,7 @@
 # Contents:
 #   Web form to summarize issues in a table.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -167,7 +167,7 @@ class SummaryPage(web.DtmlPage):
         display_options_page = display_options_page(self.request)
         # Construct the Display Options button, which pops up a window
         # showing this page.
-        return qm.web.make_button_for_popup(
+        return qm.web.make_button_for_cached_popup(
             "Change Display Options...",
             display_options_page,
             request=self.request,
@@ -188,7 +188,7 @@ class SummaryPage(web.DtmlPage):
             self.field_dictionary.get(self.lightness_field_name, None),
             self.field_dictionary.get(self.saturation_field_name, None)
             )
-        return qm.web.make_button_for_popup(
+        return qm.web.make_button_for_cached_popup(
             "Color Key",
             page(self.request),
             request=self.request,

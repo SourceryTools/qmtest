@@ -92,10 +92,12 @@ class Database(FileDatabase):
         the database."""
 
         # Initialize base classes.
-        FileDatabase.__init__(self, path, AttachmentStore(path, self))
+        FileDatabase.__init__(self, path)
+        # Create an AttachmentStore for this database.
+        self.__store = AttachmentStore(path, self)
         # Make sure the database path exists.
         if not os.path.isdir(path):
-            raise ValueError, \
+            raise qm.common.QMException, \
                   qm.error("db path doesn't exist", path=path)
 
 
@@ -567,6 +569,15 @@ class Database(FileDatabase):
                      test_ids=test_ids, suite_ids=suite_ids)
 
 
+    def GetAttachmentStore(self):
+        """Returns the 'AttachmentStore' associated with the database.
+
+        returns -- The 'AttachmentStore' containing the attachments
+        associated with tests and resources in this database."""
+
+        return self.__store
+
+    
 
 class AttachmentStore(qm.attachment.AttachmentStore):
     """The attachment store implementation to use with the XML database.

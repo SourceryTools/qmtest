@@ -37,6 +37,7 @@
 
 import os.path
 import qm
+from   qm.common import *
 import qm.test.base
 
 ########################################################################
@@ -396,7 +397,7 @@ class ResourceDescriptor(ItemDescriptor):
 
 
 
-class DatabaseError(Exception):
+class DatabaseError(QMException):
     """An exception relating to a 'Database'.
 
     All exceptions raised directly by 'Database', or its derived
@@ -537,15 +538,14 @@ class Database:
     simultaneously.  Therefore, you must take appropriate steps to
     ensure thread-safe access to shared data."""
 
-    def __init__(self, path, store):
+    def __init__(self, path, **attributes):
         """Construct a 'Database'.
 
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
-        'store' -- The attachment store that is used to store 
-        'Attachment's to tests or resources.
-
+        'attributes' -- A dictionary mapping attribute names to values.
+        
         Derived classes must call this method from their own '__init__'
         methods.  Evey derived class must have an '__init__' method that
         takes the path to the directory containing the database as its
@@ -554,13 +554,8 @@ class Database:
 
         # The path given must be an absolute path.
         assert os.path.isabs(path)
-        # The path must refer to a directory.
-        if not os.path.isdir(path):
-            raise DatabaseException, "%s is not a directory" % path
-
         self.__path = path
-        self.__store = store
-
+        
     # Methods that deal with tests.
     
     def GetTest(self, test_id):
@@ -878,9 +873,9 @@ class Database:
         returns -- The 'AttachmentStore' containing the attachments
         associated with tests and resources in this database.
 
-        Derived classes must not override this method."""
+        Derived classes must override this method."""
 
-        return self.__store
+        raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
 
 
     def GetClassPaths(self):

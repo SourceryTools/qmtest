@@ -68,8 +68,11 @@ import sys
 ########################################################################
 
 def print_error_message(message):
-    message = qm.structured_text.to_text(str(message))
-    sys.stderr.write("%s: error: %s" % (program_name, message))
+    prefix = "%s: error: " % program_name
+    message = qm.structured_text.to_text(str(message),
+                                         indent=len(prefix))
+    message = prefix + message[len(prefix):]
+    sys.stderr.write(message)
 
 ########################################################################
 # script
@@ -92,7 +95,7 @@ try:
     # Execute the command.
     command.Execute(sys.stdout)
     exit_code = 0
-except RuntimeError, msg:
+except qm.common.QMException, msg:
     print_error_message(msg)
     exit_code = 1
 except qm.cmdline.CommandError, msg:

@@ -7,7 +7,7 @@
 // Contents:
 //   Common JavaScript functions for web pages.
 //
-// Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+// Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation files
@@ -211,13 +211,6 @@ function property_add_or_change(select, contents, name_text, value_text)
   // No name?  Bail.
   if(name == "")
     return;
-  // If the state name isn't valid, complain and bail.
-  if(!label_is_valid(name)) {
-    popup_box("Error",
-              "A property name can consist only of lower-case letters, " +
-              "digits, periods, and underscores, and cannot be empty.");
-    return;
-  }
 
   var options = select.options;
   // Construct the property as it will appear in the select input.

@@ -647,6 +647,21 @@
     options:</para>
 
     <variablelist>
+     <varlistentry>
+      <term><option>-a</option> <replaceable>name=value</replaceable></term>
+      <term>
+       <option>&dashdash;attribute</option> 
+       <replaceable>name=value</replaceable>
+      </term>
+      <listitem>
+       <para>Set the database attribute
+       <replaceable>name</replaceable> to
+       <replaceable>value</replaceable>.  The set of attribute names
+       and valid values is dependent on the database class in use.
+       The default database class accepts no attributes.</para>
+      </listitem>
+     </varlistentry>
+
      <varlistentry> 
       <term><option>-c</option> <replaceable>class</replaceable></term>
       <term>
