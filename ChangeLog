@@ -3,9 +3,9 @@
 	* .cvsignore (standard.mk): Remove.
 	(Makefile): Likewise.
 	(GNUmakefile): Ignore it.
-	* Makefile.in: Issue an error message indicating that GNU Make is
-	required.
-	* GNUmakefile.in: New file.
+	* Makefile.in: Rename to ...
+	* GNUmakefile.in: ... this.
+	* Makefile: New file.
 	* standard.mk.in: Remove.
 	* doc/.cvsignore (Makefile): Remove.
 	* doc/Makefile.in: Remove.
