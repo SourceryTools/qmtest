@@ -1,5 +1,16 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (RELINCDIR): New variable.
+	(PYTHON_PACKAGES_INSTALL): Use it.
+	* standard.mk.in (INSTALLINCDIR): New variable.
+	(NATPREFIX): Likewise.
+
+	* Makefile.in (PYTHON_PACKAGES_INSTALL): Use relative paths.
+	* README: Document Distutils version required.
+
+	* Makefile.in (SCRIPTS): Fix typo.
+	* qm.spec (Release): Increment.
+
 	* Makefile.in (SCRIPTS): Generate files with DOS line-ending
 	convention under Windows.
 	* doc/manual/introduction.xml: Expand.
