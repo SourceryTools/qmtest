@@ -1,5 +1,7 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/Makefile.in (SCRIPTS): Add qmtest.
+
 	* Makefile.in (QM_TAR_GZ): Modify logic.
 	* install.py (bin_handler): Remove.
 
