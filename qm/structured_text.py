@@ -116,6 +116,14 @@ class Formatter:
 class TextFormatter(Formatter):
     """Formatter for generating plain text from structured text."""
 
+    __style_markers = {
+        "emphasized" :          "*",
+        "strong" :              "**",
+        "underlined" :          "_",
+        "verbatim" :            "'",
+        }
+
+        
     def __init__(self,
                  output_file=sys.stdout,
                  width=78,
@@ -208,8 +216,8 @@ class TextFormatter(Formatter):
     def StartItem(self, type, label=None):
         """Begin an element to the environment of type 'type'.
 
-        'definition_term' -- If 'type' is "definition list", this is
-        the defined term."""
+        'label' -- If type is "ordered list", this is the label for
+        this list element."""
 
         self.__IndentTo(self.__indent)
         # For list items, emit the appopriate item tag.
@@ -218,7 +226,13 @@ class TextFormatter(Formatter):
         elif type == "unordered list":
             self.__Write("%s " % self.__list_bullet)
         elif type == "definition list":
-            self.__Write("%s -- " % label)
+            pass
+
+
+    def FinishDefinedTerm(self):
+        """Finish the definition of a term in a definition list."""
+
+        self.__Write(" -- ");
 
 
     def EndItem(self, type):
@@ -236,13 +250,13 @@ class TextFormatter(Formatter):
     def StartStyle(self, style):
         """Start a new text style 'style'."""
 
-        pass
+        self.__Write(self.__style_markers[style])
 
 
     def EndStyle(self, style):
         """End the text style 'style'."""
 
-        pass
+        self.__Write(self.__style_markers[style])
 
 
     def StartLink(self, target):
@@ -313,7 +327,7 @@ class HtmlFormatter(Formatter):
         }
 
     __start_item_tags = {
-        "definition list":      "<dt>%s</dt><dd>\n",
+        "definition list":      "<dt>",
         "ordered list":         "<li>\n",
         "paragraph":            "<p>",
         "unordered list":       "<li>\n",
@@ -378,13 +392,16 @@ class HtmlFormatter(Formatter):
     def StartItem(self, type, label=None):
         """Begin an element to the environment of type 'type'.
 
-        'label' -- If 'type' is "definition list", this is the defined
-        term."""
+        'label' -- If type is "ordered list", this is the label for
+        this list element."""
 
-        tag = self.__start_item_tags[type]
-        if type == "definition list":
-            tag = tag % label
-        self.__Write(tag)
+        self.__Write(self.__start_item_tags[type])
+
+
+    def FinishDefinedTerm(self):
+        """Finish the definition of a term in a definition list."""
+
+        self.__Write("</dt>\n");
 
 
     def EndItem(self, type):
@@ -681,6 +698,9 @@ class StructuredTextProcessor:
 
         # Start a new item in the current environment.
         self.__formatter.StartItem(type, label)
+        if type == "definition list":
+            self.__WriteText(label)
+            self.__formatter.FinishDefinedTerm()
 
 
     def __WriteText(self, text):

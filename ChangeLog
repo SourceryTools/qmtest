@@ -1,5 +1,18 @@
 2001-09-26  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/structured_text.py (TextFormatter.__style_markers): New
+	variable.
+	(TextFormatter.StartItem): Remove label parameter.
+	(TextFormatter.StartStyle): Emit markers to indicate the style.
+	(TextFormatter.EndStyle): Emit markers to indicate the style.
+	(TextFormatter.FinishDefinedTerm): New
+	function.
+	(HtmlFormatter.__start_item_tags): Change definition list format.
+	(HtmlFormatter.StartItem): Remove label parameter.
+	(HtmlFormatter.FinishDefinedTerm): Likewise.
+	(StructuredTextProcessor): Use __WriteText to format the label in
+	a defined term.
+	
 	* configure.in (DOCBOOK_STYLESHEETS): Add another directory
 	in which to locate xml.dcl.
 	(--with-docbook-dtd): New option.
