@@ -1125,7 +1125,7 @@ class ContextWrapper:
     def items(self):
         items = []
         for key in self.keys():
-            items.append(( key, self.getitem(key) ))
+            items.append((key, self[key], ))
         return items
 
 

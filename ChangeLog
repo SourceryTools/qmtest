@@ -1,3 +1,12 @@
+2001-08-28  Alex Samuel  <samuel@indetermi.net>
+
+	* qm/test/base.py (ContextWrapper.items): Fix.
+	* qm/test/cmdline.py (Command.__init__): Reformat.
+	* qm/test/web/show.py (retrieve_attachment_data): Only process
+	temporary attachments.
+	* qm/test/classes/command.py (ExecTest.MakeEnvironment): Add
+	context variables to environment.
+
 2001-08-27  Alex Samuel  <samuel@indetermi.net>
 
 	* qm/setup_path.py.in (add_to_python_path): Prepend to path.

@@ -495,8 +495,10 @@ def retrieve_attachment_data(database, item_id, attachment):
 
     if attachment is None:
         return
-    data = qm.attachment.retrieve_temporary_attachment(attachment.location)
-    database.SetAttachmentData(attachment, data, item_id)
+    if qm.attachment.is_temporary_attachment_location(attachment.location):
+        data = qm.attachment.retrieve_temporary_attachment(
+            attachment.location)
+        database.SetAttachmentData(attachment, data, item_id)
 
 
 def handle_submit(request):

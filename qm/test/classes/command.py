@@ -96,11 +96,16 @@ class ExecTest:
             description="""The environment when executing the target
             program.  Each element is of the form 'variable=value'.
 
-            In addition, the following environment variables are
-            defined:
+            QMTest adds these environment variables:
 
               'PATH' -- The path from which executables are loaded, as
-              specified by the 'path' attribute in the test context."""
+              specified by the 'path' attribute in the test context.
+
+            Also, an environment variable is added for each context
+            property.  The name of the environment variable is the name
+            of the context property, prefixed with 'QMV_'.  For
+            instance, the value of the "target" context property is
+            accessible via the environment variable 'QMV_target'."""
             )),
         
         qm.fields.IntegerField(
@@ -154,6 +159,12 @@ class ExecTest:
         environment = {
             "PATH": context["path"],
             }
+        # Copy context variables into the environment.
+        for key, value in context.items():
+            name = "QMV_" + key
+            environment[name] = value
+        # Extract additional environment variable assignments from the
+        # 'Environment' field.
         for assignment in self.environment_list:
             if "=" in assignment:
                 # Break the assignment at the first equals sign.

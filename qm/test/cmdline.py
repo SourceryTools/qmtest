@@ -242,10 +242,11 @@ class Command:
         list."""
 
         # Build a command-line parser for this program.
-        self.__parser = qm.cmdline.CommandParser(program_name,
-                                                 self.global_options_spec,
-                                                 self.commands_spec,
-                                                 self.conflicting_option_specs)
+        self.__parser = qm.cmdline.CommandParser(
+            program_name,
+            self.global_options_spec,
+            self.commands_spec,
+            self.conflicting_option_specs)
         # Parse the command line.
         components = self.__parser.ParseCommandLine(argument_list)
         # Unpack the results.
