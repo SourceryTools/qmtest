@@ -77,6 +77,14 @@
     that use {:sapcat:} would leave some sort of standardized file
     containing tailoring information useful to other packages.  
 </p>
+<p>
+    A hierarchical registry could also be used to specify site
+    conventions and other system- or project-specific configuration
+    information.  For instance, a project may require that all
+    libraries, etc. use a <Sys>gcc</Sys> with specific options, maybe
+    to avoid a hardware bug.  We need to spend a bit more time
+    specifying this registry.
+</p>
 
 <h3>Portability Library</h3>
 <p>
