@@ -6,7 +6,7 @@
   Date:   2000-11-01
 
   Contents:
-    Master file for qmtest design document.
+    Master file for QMTest design document.
 
   Copyright (C) 2000 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -23,7 +23,7 @@
   this document.  -->
 
   <!ENTITY qmbuild "qmbuild">
-  <!ENTITY qmtest "qmtest">
+  <!ENTITY QMTest "QMTest">
 
   <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
 
@@ -36,7 +36,7 @@
 ]>
 <book>
  <bookinfo>
-  <title>&qmtest; Design</title>
+  <title>&QMTest; Design</title>
   <author>
    <firstname>Mark</firstname>
    <surname>Mitchell</surname>
@@ -77,12 +77,12 @@
   </para>
 
   <para>Software tools alone cannot solve the first problem, but
-  qmtest tries to solve the second by addressing the third and
+  QMTest tries to solve the second by addressing the third and
   fourth. In particular:
    <itemizedlist>
     <listitem>
-     <para>qmtest has a gentle learning curve, especially for
-     developers without software engineering training. qmtest does
+     <para>QMTest has a gentle learning curve, especially for
+     developers without software engineering training. QMTest does
      this by:
      <itemizedlist>
      <listitem>
@@ -104,14 +104,14 @@
     </listitem>
 
     <listitem>
-     <para>qmtest provides a very simple workflow, so that tests can
+     <para>QMTest provides a very simple workflow, so that tests can
      easily and systematically be added, modified, inspected, and
      summarized by developers, managers, and other
      stakeholders.</para>
     </listitem>
 
     <listitem>
-     <para>qmtest provides feedback regarding the quality and
+     <para>QMTest provides feedback regarding the quality and
      thoroughness of testing so that developers will be able to tell
      how much they have done, how much remains to be done, and how
      well third party modules have been tested.</para>
@@ -119,7 +119,7 @@
    </itemizedlist>
   </para>
 
-  <para>Some of the particular scenarios that qmtest handles are:
+  <para>Some of the particular scenarios that QMTest handles are:
    <itemizedlist>
     <listitem>
      <para>Static unit testing of functions, classes, and modules in
@@ -149,10 +149,10 @@
   </para>
 
   <para>This document begins by describing <link linkend="story">six
-  typical users</link>, whose testing needs qmtest is designed to
+  typical users</link>, whose testing needs QMTest is designed to
   address. It then explores their <link
   linkend="req">requirements</link> in more detail, in order to
-  determine the features that qmtest must have. qmtest's <link
+  determine the features that QMTest must have. QMTest's <link
   linkend="arch">architecture</link> and <link linkend="iface">user
   interface</link> are described next, along with some details of its
   <link linkend="impl">implementation</link> . These are followed by a
@@ -161,15 +161,15 @@
   faces. The document closes with pointers to other testing-related
   resources.</para>
 
-  <section><title>What qmtest is Not</title>
+  <section><title>What QMTest is Not</title>
 
    <para>In order to bound the scope of this project, it is important
-   to be specific about what qmtest will not try to provide.</para>
+   to be specific about what QMTest will not try to provide.</para>
 
    <para>
     <itemizedlist>
      <listitem>
-      <para>qmtest is not a build system. It will not determine which
+      <para>QMTest is not a build system. It will not determine which
       parts of the programs being tested need to be recompiled, or
       which test programs need to be re-linked. It
       <emphasis>may</emphasis> include support for re-running tests
@@ -178,28 +178,28 @@
      </listitem>
 
      <listitem>
-      <para>qmtest is not a version control system, or a relational
+      <para>QMTest is not a version control system, or a relational
       database. In particular, versioning of tests will be handled by
       whatever version control system developers are already
-      using. Similarly, qmtest will log the results of tests, but will
+      using. Similarly, QMTest will log the results of tests, but will
       rely on the capabilities of external systems to maintain
-      historical records. Note, however, that qmtest
+      historical records. Note, however, that QMTest
       <emphasis>will</emphasis> be able to retrieve information from
       those archiving systems in order to create
       reports.</para>
      </listitem>
 
      <listitem>
-      <para>qmtest is not a test creation wizard itself, although
-      tools for creating qmtest-compatible tests will be shipped with
+      <para>QMTest is not a test creation wizard itself, although
+      tools for creating QMTest-compatible tests will be shipped with
       it.</para>
      </listitem>
 
      <listitem>
-      <para>qmtest is not a general program execution harness. Some
-      users may choose to run their programs via qmtest under non-test
+      <para>QMTest is not a general program execution harness. Some
+      users may choose to run their programs via QMTest under non-test
       circumstances (e.g. in order to obtain logging information), but
-      qmtest is not a replacement for distributed load-balancing
+      QMTest is not a replacement for distributed load-balancing
       software, safe shells, or other tools.</para>
      </listitem>
     </itemizedlist>

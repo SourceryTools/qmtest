@@ -6,7 +6,7 @@
   Date:   2000-11-01
 
   Contents:
-    Core architecture of qmtest.
+    Core architecture of QMTest.
 
   Copyright (C) 2000 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -15,22 +15,22 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>&qmtest; Core Concepts</title>
+<chapter><title>&QMTest; Core Concepts</title>
 
- <para>This section described the core concepts of qmtest.  These
+ <para>This section described the core concepts of QMTest.  These
  include the definition of a test itself, the components of the system
  that store and execute tests, and the structure of the test
  results.</para>
 
  <para>After describing the test, the fundamental unit of behavior in
- qmtest, we present the concept of test database, the objects in which
+ QMTest, we present the concept of test database, the objects in which
  tests are stored, and the execution engine, the component of the
  system that selects and runs tests and collects their results.</para>
 
  <section><title>Tests</title>
 
   <para>A <firstterm>test</firstterm> is the basic unit of testing in
-  qmtest.  A test consists of the following components:
+  QMTest.  A test consists of the following components:
    <orderedlist>
     <listitem>
      <para>A test id.  This uniquely identifies the test among all the
@@ -411,7 +411,7 @@
  <section><title>Environmental state</title>
 
   <para>Each test result includes a block of <firstterm>environmental
-  state</firstterm> information.  For all qmtest implementations, the
+  state</firstterm> information.  For all QMTest implementations, the
   environmental state includes a wall-clock time stamp of when the
   test was run.  Implementations may add other data as well, such as
   the host on which the test was run, and the identity of the user who
@@ -429,6 +429,6 @@
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("qmtest.xml" "book" "chapter")
+  sgml-parent-document: ("QMTest.xml" "book" "chapter")
   End:
 -->
