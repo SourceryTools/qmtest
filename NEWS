@@ -9,7 +9,7 @@ QM 2.1
 QMTest requires Python 2.2 or greater.
 
 On Windows, we recommend that Mozilla be used with QMTest.  Internet
-Explorer appears to handle some forms that QMTest creates incorrectly.
+Explorer appears to handle incorrectly some forms that QMTest creates.
 CodeSourcery has validated the HTML using automated and manual
 methods, and believes that the problems lie with Internet Explorer and
 not with QMTest.
