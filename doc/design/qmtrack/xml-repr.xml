@@ -84,14 +84,16 @@
    <sgmltag>&lt;field-data&gt;</sgmltag> element.</para>
 
    <para>The <sgmltag>&lt;field&gt;</sgmltag> element is used for all
-   issue fields.  For set fields, the contents are zero or more item
-   tags, each corresponding to an element of the set.  For attachment
-   fields, the contents are an <sgmltag>&lt;attachment&gt;</sgmltag>
-   element.  Other field types are represented with CDATA.</para>
+   issue fields.  For set fields, the contents are zero or more
+   <sgmltag>&lt;item&gt;</sgmltag> elements, each corresponding to an
+   element of the set.  For attachment fields, the contents are an
+   <sgmltag>&lt;attachment&gt;</sgmltag> element.  Other field types
+   are represented with CDATA.</para>
 
-   <para>The second component of the
-   <sgmltag>&lt;attachment&gt;</sgmltag> element is the attachment's
-   MIME type.  The third component,
+   <para>The first component of the
+   <sgmltag>&lt;attachment&gt;</sgmltag> element contains the
+   description of the attachment.  The second component is the
+   attachment's MIME type.  The third component,
    <sgmltag>&lt;external-name&gt;</sgmltag>, is a file name or other
    identifier for the location of the attachment data.  For disk-based
    &idb; implementations, it will contain a relative path to a file.
@@ -122,7 +124,6 @@
       <item>C++</item>
     </field>
     <field name="severity">severe</field>
-    <field name="priority">4</field>
     <field name="description">"Internal Compiler Error" in parser.</field>
     <field name="input">
 <![CDATA[
@@ -151,14 +152,14 @@ int foo (char* p) {
    or reports of documentation errors).  The issue id is "17", and the
    issue is included in two categories: "back end" and "C++".</para>
 
-   <para>In addition to the standard "severity", "priority", and
-   "description" fields, the "bug" issue class includes two other
-   fields specifically added for recording information about compiler
-   bugs.  The "flags" field describes the command-line options that
-   should be specified when inoking the compiler to reproduce the
-   problem.  The "input" field contains the input source code.  Since
-   the "input" field contains program text that is likely to contain
-   special characters, the field contents are placed in a
+   <para>In addition to the standard "severity" and "description"
+   fields, the "bug" issue class includes two other fields
+   specifically added for recording information about compiler bugs.
+   The "flags" field describes the command-line options that should be
+   specified when inoking the compiler to reproduce the problem.  The
+   "input" field contains the input source code.  Since the "input"
+   field contains program text that is likely to contain special
+   characters, the field contents are placed in a
    <sgmltag>CDATA</sgmltag> element.</para>
 
    <para>The "attachment" field in the "bug" issue class contains a

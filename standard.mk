@@ -123,7 +123,12 @@ docbook-print:	$(PRINTDIR)/$(PRINTPDF)
 # it with tidy.  Unfortunately, tidy will emit copious warnings;
 # funnel them to /dev/null.  Also tidy returns non-zero indicating
 # warnings; supress this by running true.
-$(HTMLINDEX):  	$(DOCBOOKMAIN) $(DOCBOOK)
+#
+# For each image file required by the HTML documentation output, copy
+# it into the output directory and also add the filename to the
+# manifest.
+$(HTMLMANIFEST) $(HTMLINDEX): \
+	 	$(DOCBOOKMAIN) $(DOCBOOK) $(DOCBITMAP)
 	mkdir -p $(HTMLDIR)
 	$(JADE) \
 	    $(foreach dir,$(SGMLDIRS),-D$(dir)) \
@@ -135,12 +140,6 @@ $(HTMLINDEX):  	$(DOCBOOKMAIN) $(DOCBOOK)
 	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
 	    true; \
 	done 
-
-# For each image file required by the HTML documentation output, copy
-# it into the output directory and also add the filename to the
-# manifest.
-$(HTMLMANIFEST): \
-		$(HTMLINDEX) $(DOCBITMAPS)
 	for gr in $(DOCBITMAPS); \
 	do \
 	    cp $${gr} $(HTMLDIR)/; \

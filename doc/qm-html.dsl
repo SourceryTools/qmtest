@@ -71,6 +71,9 @@
 ;; Use element ids to generate chunk filena,es
 (define %use-id-as-filename% #t)
 
+;; Emit legal notices in a separate chunk.
+(define %generate-legalnotice-link% #t)
+
 </style-specification-body>
 </style-specification>
 <external-specification id="docbook" document="dbstyle">

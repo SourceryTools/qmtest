@@ -1,3 +1,40 @@
+2000-12-07  Alex Samuel  <samuel@codesourcery.com>
+
+	Tag "version-0-2" for delivery to LANL.
+	
+	* standard.mk ($(HTMLINDEX)): Process graphics here.
+	($(HTMLMANIFEST)): Remove separate target.
+	
+	* doc/qm-html.dsl (%generate-legalnotice-link%): Define true.
+	* doc/qm-print.dsl (%chapter-autolabel%): Likewise.
+	(%section-autolabel%): Likewise.
+	* doc/qm-opl.xml: New file.
+	* doc/qm.mod (qmbuild): Use <application> element.
+	(qmconfig): Likewise.
+	(qmtest): Likewise.
+	(qmtrack): Likewise.
+	(html): New entity.
+	(mime): Likewise.
+	(dashdash): Likewise.
+	(qmlicense): Likewise.
+
+	* doc/design/qmtest/core.xml: Edit for style, spelling,
+	consistency, and markup.
+	* doc/design/qmtest/iface.xml: Likewise.
+	* doc/design/qmtest/impl.xml: Likewise.
+	* doc/design/qmtest/qmtest.xml: Likewise.
+	* doc/design/qmtest/refs.xml: Likewise.
+	* doc/design/qmtest/req.xml: Likewise.
+	
+	* doc/design/qmtrack/concepts.xml: Likewise.
+	* doc/design/qmtrack/implementation.xml: Likewise.
+	* doc/design/qmtrack/introduction.xml: Likewise.
+	* doc/design/qmtrack/qmtrack.xml: Likewise.
+	* doc/design/qmtrack/requirements.xml: Likewise.
+	* doc/design/qmtrack/triggers.xml: Likewise.
+	* doc/design/qmtrack/user-interface.xml: Likewise.
+	* doc/design/qmtrack/xml-repr.xml: Likewise.
+	
 2000-12-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod (idb): Remove entity.

@@ -20,10 +20,10 @@
 
 <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
 
-<!ENTITY qmbuild "QMBuild">
-<!ENTITY qmconfig "QMConfig">
-<!ENTITY qmtest "QMTest">
-<!ENTITY qmtrack "QMTrack">
+<!ENTITY qmbuild "<application>QMBuild</application>">
+<!ENTITY qmconfig "<application>QMConfig</application>">
+<!ENTITY qmtest "<application>QMTest</application>">
+<!ENTITY qmtrack "<application>QMTrack</application>">
 
 <!-- Acronyms.  -->
 
@@ -31,6 +31,8 @@
 <!ENTITY dtd "<acronym>DTD</acronym>">
 <!ENTITY dtml "<acronym>DTML</acronym>">
 <!ENTITY faq "<acronym>FAQ</acronym>">
+<!ENTITY html "<acronym>HTML</acronym>">
+<!ENTITY mime "<acronym>MIME</acronym>">
 <!ENTITY rdbms "<acronym>RDBMS</acronym>">
 <!ENTITY sql "<acronym>SQL</acronym>">
 <!ENTITY xml "<acronym>XML</acronym>">
@@ -38,6 +40,11 @@
 <!-- Other commonly-used symbols and phrases.  -->
 
 <!ENTITY prompt "<prompt>$ </prompt>">
+<!ENTITY dashdash "&#45;&#45;">
+
+<!-- The Software Carpentry Open Publication License.  -->
+
+<!ENTITY qmlicense SYSTEM "qm-opl.xml">
 
 <!--
   Local Variables:

@@ -36,23 +36,37 @@
 <book>
  <bookinfo>
   <title>&qmtest; Design</title>
-  <author>
-   <firstname>Mark</firstname>
-   <surname>Mitchell</surname>
-  </author>
-  <author>
-   <firstname>Alex</firstname>
-   <surname>Samuel</surname>
-  </author>
-  <author>
-   <firstname>Greg</firstname>
-   <surname>Wilson</surname>
-  </author>
+  <authorgroup>
+   <author>
+    <firstname>Mark</firstname>
+    <surname>Mitchell</surname>
+   </author>
+   <author>
+    <firstname>Alex</firstname>
+    <surname>Samuel</surname>
+   </author>
+   <author>
+    <firstname>Greg</firstname>
+    <surname>Wilson</surname>
+   </author>
+  </authorgroup>
+  <copyright>
+   <year>2000</year>
+   <holder>CodeSourcery LLC</holder>
+  </copyright>
+  <legalnotice>&qmlicense;</legalnotice>
+  <releaseinfo>version 0.2</releaseinfo>
+  <revhistory>
+   <revision>
+    <revnumber>0.2&nbsp;</revnumber>
+    <date>2000 December 7</date>
+    <revremark>Initial revision.</revremark>
+   </revision>
+  </revhistory>
  </bookinfo>
 
- <chapter><title>Introduction</title>
-
-  <section><title>Overview</title>
+ <chapter id="chap-introduction">
+  <title id="chap-introduction-title">Introduction</title>
 
   <para>Many programmers do not test their code sufficiently because:
    <itemizedlist>
@@ -71,10 +85,9 @@
    </itemizedlist>
    In addition, existing testing tools do little to inform testers
    about how comprehensively their program has been tested, making it
-   difficult for testers to determine where to focus their efforts.
-  </para>
+   difficult for testers to determine where to focus their efforts.</para>
 
-  <para>&qmtest; is open-source software, available at no charge, and
+  <para>&qmtest; is open source software, available at no charge, and
   is easy to use.  In particular:
    <itemizedlist>
     <listitem>
@@ -110,11 +123,9 @@
   their <link linkend="req">requirements</link> in more detail, in
   order to determine the features that &qmtest; must have. This
   analysis is followed by a discussion of the <link
-  linkend="concepts">concepts</link> that users will encounter when
-  using &qmtest;.  Finally, this document provides a design for
+  linkend="chap-concepts">concepts</link> that users will encounter
+  when using &qmtest;.  Finally, this document provides a design for
   &qmtest;'s <link linkend="impl">implementation</link>.</para>
-
-  </section>
 
   <section><title>Acknowledgements</title>
 
@@ -147,7 +158,7 @@
     <para>Bhargan Basepair develops fuzzy DNA pattern-matching
     algorithms for a bio-technology firm called Genes'R'Us.  As a
     semi-official service for his colleagues, he runs an overnight DNA
-    sequence query service.  Researchers email DNA sequences to him;
+    sequence query service.  Researchers e-mail DNA sequences to him;
     Bhargan saves these messages in files called
     <filename>search/a</filename>, <filename>search/b</filename>, and
     so on, then edits them to add query directives. </para>
@@ -189,7 +200,7 @@
         <para>The test program shouldn't send mail to real people, or
         be sent mail from them.  The corporate IT department might be
         willing to set up dummy user accounts for Bhargan to use in
-        testing, but he'll probably see the millenium roll over again
+        testing, but he'll probably see the millennium roll over again
         before it actually gets done.</para>
       </listitem>
 

@@ -46,6 +46,10 @@
 
 ;; Customizations here.
 
+;; Number chapters and sections.
+(define %chapter-autolabel% #t)
+(define %section-autolabel% #t)
+
 </style-specification-body>
 </style-specification>
 <external-specification id="docbook" document="dbstyle">

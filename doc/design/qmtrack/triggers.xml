@@ -44,25 +44,29 @@
   the &idb; as one of three trigger types:
    <orderedlist>
     <listitem>
-     <para>A <literal>"get"</literal> trigger is called before an
-     issue is returned from a query or another issue retrieval
-     operation.  The trigger may produce side effects related to the
-     operation, such as gathering query statistics, or veto the
-     operation, for instance to implement access control.</para>
+     <para>A <firstterm id="def-get-trigger">get trigger</firstterm>
+     is called before an issue is returned from a query or another
+     issue retrieval operation.  The trigger may produce side effects
+     related to the operation, such as gathering query statistics, or
+     veto the operation, for instance to implement access
+     control.</para>
     </listitem>
 
     <listitem>
-     <para>A <literal>"preupdate"</literal> trigger is called before
-     an update to an issue takes place.  The trigger will usually not
-     produce any side effects, but may veto the update if it is
-     invalid, inappropriate, or unauthorized, or may modify the
-     updated record itself.</para>
+     <para>A <firstterm
+     id="def-preupdate-trigger">preupdate trigger</firstterm> is
+     called before an update to an issue takes place.  The trigger
+     will usually not produce any side effects, but may veto the
+     update if it is invalid, inappropriate, or unauthorized, or may
+     modify the updated record itself.</para>
     </listitem>
 
     <listitem>
-     <para>A <literal>"postupdate"</literal> trigger is called after
-     an update to an issue takes place.  The trigger takes actions
-     based on the update, such as notifying interested parties.</para>
+     <para>A <firstterm
+     id="def-postupdate-trigger">postupdate trigger</firstterm> is
+     called after an update to an issue takes place.  The trigger
+     takes actions based on the update, such as notifying interested
+     parties.</para>
     </listitem>
    </orderedlist>
   </para>
@@ -114,8 +118,8 @@
    <para>The state of an issue is represented by the
    <literal>state</literal> <link
    linkend="sec-mandatory-fields">mandatory field</link>.  This field
-   is an enumeration of allowed state values.  The state model is
-   enforced by a preupdate trigger, whiche examines the state of the
+   type is an enumeration of allowed state values.  The state model is
+   enforced by a preupdate trigger, which examines the state of the
    issue before the proposed update and after.  If the two states
    differ and the transition is not along an arc in the state model,
    the trigger vetoes the update.</para>
@@ -131,9 +135,9 @@
 
    <para>Even installations which do not impose an issue workflow that
    can be represented by a state model will use &qmtrack;'s state
-   mechanism.  For such users, a simple two-state model consisting of
-   "Active" and "Deleted" will allow bugs to be deleted as described
-   above.</para>
+   mechanism.  For such installations, a simple two-state model
+   consisting of "Active" and "Deleted" will allow bugs to be deleted
+   as described above.</para>
 
   </section>
 
@@ -154,7 +158,7 @@
    notification systems.)</para>
 
    <para>&qmtrack; supports traditional rule-based notification of
-   &idb; actions.  Using a "postupdate" trigger, &qmtrack; will notify
+   &idb; actions.  Using a postupdate trigger, &qmtrack; will notify
    one or several parties of changes to the &idb; by sending an e-mail
    message.  The trigger may be configured to notify users selectively
    based on which issue is updated or the nature of the update, using
@@ -162,17 +166,18 @@
    Graphical configuration will allow the &idb; administrator to
    specify notification rules without writing any code.</para>
 
-   <para>&qmtrack; can also supports a dynamic "<firstterm
-   id="def-nosy-list">nosy list</firstterm>" notification scheme.  A
-   nosy list is a list of &qmtrack; users who are interested in being
-   notified of changes to a particular issue.  The issue incorporates
-   a <literal>nosy_list</literal> <link
+   <para>&qmtrack; can also supports a dynamic <firstterm
+   id="def-nosy-list">notification list</firstterm> scheme.  A
+   notification list is a list of &qmtrack; users who are interested
+   in being notified of changes to a particular issue.  The issue
+   incorporates a <literal>notification_list</literal> <link
    linkend="sec-standard-fields">standard field</link>, which lists
-   these users' &uid;s.  The nosy list is implemented with a
-   "postupdate" trigger, which sends e-mail notification to users on
-   an issue's nosy list when the issue is updated.  The trigger may
-   also be configured to maintain the nosy list automatically, by
-   placing any user on the nosy list who modifies an issue.</para>
+   these users' &uid;s.  The notification list is implemented with a
+   postupdate trigger, which sends e-mail notification to users on
+   an issue's notification list when the issue is updated.  The
+   trigger may also be configured to maintain the nosy list
+   automatically, by placing any user on the notification list who
+   modifies an issue.</para>
 
   </section>
 
@@ -181,7 +186,7 @@
 
    <para>Often, an organization or project may wish to restrict access
    and modification of the issue database under certain
-   circumstances.  For instance,
+   circumstances.  For example,
     <itemizedlist>
      <listitem>
       <para>End-users may only create, but not modify, bug
@@ -215,14 +220,14 @@
    Such resrictions represent controls on the workflow in the project
    or organization, and must be enforced by &qmtrack;.</para>
 
-   <para>Access control is implemented in &qmtrack; via "get" and
-   "preupdate" triggers.  The "get" trigger examines each query for
+   <para>Access control is implemented in &qmtrack; via get and
+   preupdate triggers.  The get trigger examines each query for
    authorization, and vetoes any issues that the user is not allowed
    to access.  If the user is authorized to access some but not all
-   fields of the issue, the trigger removes the values of those fields
-   the user may not access.  The "update" trigger examines whether the
-   user is authorized to make the particlar update to the issue.  If
-   not, the trigger vetoes the update.</para>
+   fields of the issue, the trigger hides the values of those fields
+   the user may not access.  The preupdate trigger examines whether
+   the user is authorized to make the particlar update to the issue.
+   If not, the trigger vetoes the update.</para>
 
    <para>The authorization triggers will be configurable, without any
    programming, to enforce these types of authorization restrictions:

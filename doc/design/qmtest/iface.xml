@@ -18,116 +18,140 @@
 <chapter id="chap-iface">
  <title id="chap-iface-title">User Interface</title>
 
-<section><title>Overview</title>
+ <para>&qmtest; will provide both a command-line and a graphical
+ interface.  The graphical user interface will provide a much more
+ sophisticated interface than that given by the command-line interface
+ described here.  The graphical user interface design will be
+ completed after more experience has been gained with &qmtest;.</para>
 
-<para>&qmtest; will provide both a command-line and a graphical
-interface.  The graphical user interface will provide a much more
-sophisticated interface than that given by the command-line interface
-described here.  The graphical user interface design will be completed
-after more experience has been gained with &qmtest;.</para>
+ <section id="sec-command-line-interface">
+  <title>Command-Line Interface</title>
 
-</section>
+  <para>The <command>qmtest</command> command invokes the &qmtest;
+  execution engine.</para>
 
-<section><title>Command-Line Interface</title>
+  <synopsis>
+   qmtest [ options ] [ suites ]
+  </synopsis>
 
-<para>
-<programlisting>
-<![CDATA[
-Usage:
+  <table id="tab-qmtest-command-line">
+   <title><command>qmtest</command> command-line options</title>
+   <tgroup cols="3">
+    <colspec colnum="1" colwidth="5*"/>
+    <colspec colnum="2" colwidth="2*"/>
+    <colspec colnum="3" colwidth="10*"/>
+    <thead>
+     <row>
+      <entry>long option</entry>
+      <entry>short option</entry>
+      <entry>description</entry>
+     </row>
+    </thead>
+    <tbody>
+     <row>
+      <entry><option>&dashdash;compare</option>
+      <replaceable>file</replaceable>
+      <replaceable>file</replaceable></entry>
+      <entry><option>-c</option></entry> 
+      <entry>Compare two sets of test results.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;database</option>
+      <replaceable>database</replaceable></entry>
+      <entry><option>-d</option></entry>
+      <entry>Test database to use.  If not specified, use database
+      specified in <envar>QMTEST_DATABASE</envar> environment variable
+      (if it exists).</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;one-per-line</option></entry>
+      <entry><option>-1</option></entry> 
+      <entry>Report result of each test on a separate line.  By
+      default, &qmtest; produces a one-line summary of results for all
+      tests.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;filter</option>
+      <replaceable>test_filter</replaceable></entry>
+      <entry><option>-f</option></entry>
+      <entry>Filter expression(s) to apply to tests.  Only tests that
+      meet the filter criteria are executed.  If multiple test filters
+      are provided, tests must satisfy all (implicit and).  If no
+      filters are provided, all tests are run.  Note that allowing
+      users to specify test IDs directly is redundant (since these are
+      equivalent to "<userinput>-t 'id==name'</userinput>").  Direct
+      test ID specification is provided for convenience.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;hosts</option>
+      <replaceable>hostfile</replaceable></entry>
+      <entry><option>-H</option></entry>
+      <entry>Path to file containing names of remote hosts on which to
+      run tests.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;help</option></entry>
+      <entry><option>-h</option></entry>
+      <entry>Display usage information.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;report-filter</option>
+      <replaceable>report_filter</replaceable></entry>
+      <entry><option>-r</option></entry>
+      <entry>Filter expression(s) to apply to output.  Only test
+      results that meet the filter criteria are included in the
+      report.  If multiple filters are provided, test results must
+      satisfy all (implicit "and").</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;style</option>
+      <replaceable>report_style</replaceable></entry>
+      <entry><option>-s</option></entry>
+      <entry>Desired output format.  Options include
+      "<literal>text</literal>" and "<literal>html</literal>".</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;test</option>
+      <replaceable>test_id</replaceable></entry>
+      <entry><option>-t</option></entry>
+      <entry>Test IDs of the tests of interest.  This option is
+      strictly redundant (since tests can be selected using filters),
+      but the "-t" option is provided as a convenience.  This option
+      may be specified more than once.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;verbose</option></entry>
+      <entry><option>-v</option></entry>
+      <entry>Verbose output.  This option may be specified more than
+      once.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;output</option>
+      <replaceable>file</replaceable></entry>
+      <entry><option>-o</option></entry>
+      <entry>File in which to place &xml; representation of results.  If
+      this option is not specified, then &qmtest; will use a filename
+      based on the current time.</entry>
+     </row>
+     <row>
+      <entry><option>&dashdash;expected</option>
+      <replaceable>file</replaceable></entry>
+      <entry><option>-x</option></entry>
+      <entry>File containing expected outcomes.  The values provided
+      in this file override those contained in the test specification
+      itself.</entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
 
-qmtest [ options ] [ suites ]
+  <para>Names of test suites from which to execute tests are specified
+  as arguments.  If no suite is specified, all tests in the database
+  (that meet the filter specifications given by
+  <option>&dashdash;filter</option> and
+  <option>&dashdash;test</option> options.</para>
 
-]]>
-</programlisting>
-</para>
-
-<informaltable>
-<tgroup cols="2">
-<thead>
- <row>
-  <entry>flag</entry>
-  <entry>description</entry>
- </row>
-</thead>
-<tbody>
- <row>
-  <entry>-c file file</entry> 
-  <entry>Compare two sets of test results.</entry>
- </row>
- <row>
-  <entry>-d database</entry>
-  <entry>Test database to use.  If not specified, use database
-  specified in QMTEST_DATABASE environment variable (if it
-  exists).</entry>
- </row>
- <row>
-  <entry>-e</entry> 
-  <entry>Report result of each test on a separate line.  By default,
-  qmtest produces a one-line summary of results for all tests.</entry>
- </row>
- <row>
-   <entry>-f test_filter</entry>
-   <entry>Filter expression(s) to apply to tests.  Only tests that
-    meet the filter criteria are executed.  If multiple test filters
-    are provided, tests must satisfy all (implicit and).  If no
-    filters are provided, all tests are run.  Note that allowing users
-    to specify test IDs directly is redundant (since these are
-    equivalent to "-t 'id==name'").  Direct test ID specification is
-    provided for convenience.</entry>
- </row>
- <row>
-   <entry>-H hostfile</entry>
-   <entry>Path to file containing names of remote hosts on which to
- 	  run tests.</entry>
- </row>
- <row>
-   <entry>-h</entry>
-   <entry>Display usage information.</entry>
- </row>
- <row>
-  <entry>-r report_filter</entry>
-  <entry>Filter expression(s) to apply to output.  Only test results
-  that meet the filter criteria are included in the report.  If
-  multiple filters are provided, test results must satisfy all
-  (implicit and).</entry>
- </row>
- <row>
-  <entry>-s report_style</entry>
-  <entry>Desired output format.  Options include "text" and "html".</entry>
- </row>
- <row>
-  <entry>-t test_id+</entry>
-  <entry>Test IDs of the tests of interest.  This
-  option is strictly redundant (since tests can be selected using
-  filters), but the "-t" option is provided as a convenience.</entry>
- </row>
- <row>
-  <entry>-v [N]</entry>
-  <entry>verbose (optionally to level N)</entry>
- </row>
- <row>
-  <entry>-o file</entry>
-  <entry>File in which to place XML representation of results.  If
-  this option is not specified, then &qmtest; will use a filename
-  based on the current time.</entry>
- </row>
- <row>
-   <entry>-x file</entry>
-   <entry>File containing expected outcomes.  The values provided in
-   this file override those contained in the test specification
-   itself.</entry>
- </row>
- <row>
-   <entry>suites</entry>
-   <entry>Name(s) of test suites from which to execute tests.  If no
-   suite is specified, all tests in the database (that meet the filter 
-   specifications given by <literal>-f</literal> and
-   <literal>-t</literal> options.</entry>
-  </row>
-</tbody>
-</tgroup>
-</informaltable>
-</section>
+ </section>
 </chapter>
 
 <!--

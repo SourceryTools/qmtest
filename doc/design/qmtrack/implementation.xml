@@ -20,8 +20,13 @@
 <chapter id="chap-implementation">
  <title id="chap-implementation-title">Implementation</title>
 
- <section id="sec-issue-classe-api">
-  <title id="sec-issue-classe-api-title">Issue Classes</title>
+ <para>This section describes the Python &api;s which are satisfied by
+ the principal components of the &qmtrack; system.  These components
+ correspond to the concepts presented in <xref
+ linkend="chap-concepts"/>.</para>
+
+ <section id="sec-issue-class-api">
+  <title id="sec-issue-class-api-title">Issue Classes</title>
 
   <section>
    <title>Issue Fields</title>
@@ -41,10 +46,10 @@
     string values (the <literal>"contents"</literal> attribute of a
     set field, described <link
     linkend="sec-issuefieldset">below</link> is a special-case
-    exception).  An attribute applies to a field of an issue classe,
+    exception).  An attribute applies to a field of an issue class,
     not to the issues in that issue class or the issues' field values.
-    A single field of an issue class may have values for several
-    attributes.  For boolean attributes, the value is either
+    A single field of an issue class may include several attributes.
+    For boolean attributes, the value is either
     <literal>"true"</literal> or <literal>"false"</literal>.</para>
 
     <para>Modules written to extend &qmtest; may define additional
@@ -56,9 +61,9 @@
     Other attributes are used for various properties of other field
     types.  Some attributes are used as hints, providing information
     to the &qmtrack; user interface implementations and database
-    implmenetations about how the field value should be displayed and
-    stored, respectively.  User extensions to &qmtrack; may define and
-    use additional attributes as well.</para>
+    implementations about how the field value should be displayed and
+    stored, respectively.  Extensions to &qmtrack; may define and use
+    additional attributes as well.</para>
 
     <para>The "read-only" attribute may be defined for any field.  If
     defined to a true value, a user may not change the value of that
@@ -139,8 +144,9 @@ class IssueFieldInteger(IssueField):
     <programlisting>
 <![CDATA[
 class IssueFieldText(IssueField):
-    """A field that contains text.  A text field uses the following
-    attributes:
+    """A field that contains text.  
+
+    A text field uses the following attributes:
 
     '"multiline"' -- If true, the field may contain line breaks, and
     is presented to the user accordingly.
@@ -180,12 +186,12 @@ class IssueFieldText(IssueField):
     <title id="sec-issuefieldset"><classname>IssueFieldSet</classname></title>
 
     <para>An instance of <classname>IssueFieldSet</classname>
-    represents a set field.  A set field can be thought of as a
-    collection of zero or more instances of another field type.  All
-    contents of a set must be of the same type.  A set field may not
-    contain sets.  A values of this field type is represented in
-    memory as a Python sequence, with the type of sequence elements
-    given by the contained field type.</para>
+    represents a set field.  A set field is a collection of zero or
+    more instances of another field type.  All elements of a set must
+    be of the same type.  A set field may not contain sets.  A values
+    of this field type is represented in memory as a Python sequence,
+    with the type of sequence elements given by the contained field
+    type.</para>
 
     <programlisting>
 <![CDATA[
@@ -286,8 +292,8 @@ class IssueFieldEnumeration(IssueField):
   <section id="sec-issueclass">
    <title id="sec-issueclass-title"><classname>IssueClass</classname></title>
     
-   <para>An issue class is represented by an instance of
-   <classname>IssueClass</classname>.</para>
+   <para>An issue class is represented by an instance (<emphasis>not a
+   subclass!</emphasis>) of <classname>IssueClass</classname>.</para>
 
    <programlisting>
 <![CDATA[
@@ -331,21 +337,14 @@ class IssueClass:
   <title id="sec-idb-api-title">Issue database API</title>
 
   <para>The <classname id="class-IdbBase">IdbBase</classname> class is
-  the base class for idb implementations.</para>
-
-  <para>Creation and setup methods.</para>
+  the base class for &idb; implementations.</para>
 
   <programlisting>
 <![CDATA[
 class IdbBase:
     """Base class for idb implementations."""
-]]>
-  </programlisting>
 
-  <para>Methods for retrieving issues and revisions.</para>
 
-  <programlisting>
-<![CDATA[
     def GetIssueClass(self, name):
         """Return the issue class named by 'name'."""
 
@@ -540,8 +539,9 @@ class Attachment:
 
   <para>A <link linkend="def-trigger">trigger</link> is implemented as
   an instance of a subclass of <classname>Trigger</classname>.  The
-  principal method is <function>Invoke</function>, which is passed two
-  arguments, both <classname>IssueRecord</classname> instances.</para>
+  principal method is <function>__call__</function>, which is passed
+  two arguments, both <classname>IssueRecord</classname>
+  instances.</para>
 
   <programlisting>
 <![CDATA[
@@ -571,11 +571,10 @@ class Trigger:
 ]]>
   </programlisting>
 
-  <para>Triggers are registered with the &idb; instance.</para>
+  <para>Triggers are registered with the &idb; instance, via these
+  <classname>IdbBase</classname> methods.</para>
 
-  <programlisting>
-<![CDATA[ class IdbBase:
-
+  <programlisting><![CDATA[
     def RegisterTrigger(self, type, trigger):
         """Register a trigger.
 
@@ -653,7 +652,7 @@ class Trigger:
   <para>The &idb; implementation provided with &qmtrack; will be based
   on an &sql; &rdbms;.  In the database, each issue revision is
   represented by a rows in one or more tables.  The &rdbms;
-  implementation relies on ordinary disk files as well for auxiliary
+  implementation also relies on ordinary disk files for auxiliary
   storage, for such data as file attachment contents.</para>
 
   <para>The &sql; implementation provides the following advantages:
@@ -715,7 +714,7 @@ class Trigger:
 
    <para>Each issue class is implemented by a table in the database.
    Table columns correspond to fields in the issue class.  The issue
-   id and revision number fields will joinly comprise the primary key
+   ID and revision number fields will jointly comprise the primary key
    of each table.  Wherever possible, standard &sql; datatypes will be
    used to represent field types (<type>VARCHAR</type> columns for
    text fields, <type>TIMESTAMP</type> columns for time fields,
@@ -726,13 +725,13 @@ class Trigger:
    stored in the database; instead, the data for each attachment is
    stored in a separate file.  The first two attachment fields store
    the attachment description and MIME type, respectively.  The third
-   stored the name of a file containing the attachment data.  The file
+   stores the name of a file containing the attachment data.  The file
    name is automatically generated and not user-visible.</para>
 
    <para>Set fields are implemented with additional tables.  For each
    set field of each issue class, a new table is used.  Each row of a
    set table corresponds to a single element in a set field of a
-   specific issue revision.  The row contains an issue id and revision
+   specific issue revision.  The row contains an issue ID and revision
    number of the issue revision to which it belongs, plus any
    additional column value(s) necessary to represent the element
    itself.</para> 
@@ -902,6 +901,39 @@ class Trigger:
    by <filename>attachments/smith17/0000</filename>.</para>
 
   </section>
+
+ </section>
+
+ <section id="sec-web-ui-implementation">
+  <title>Web user interface implementation</title>
+
+  <para>&qmtrack; will <firstterm id="def-dtml">&dtml;</firstterm>
+  (Document Template Markup Language) to generate web pages in the
+  web-based user interface.  &dtml;, developed as part of the <ulink
+  url="http://www.zope.org">Zope project</ulink>, provides a mechaism
+  for server-side generation of web pages from an &html;-like syntax.
+  &dtml; can invoke Python functions directly during the generation
+  procedure.  For more information about &dtml; and the
+  <sgmltag>dtml-in</sgmltag> tag, see the <ulink
+  url="http://www.zope.org/Documentation/Guides/DTML">&dtml;
+  Reference</ulink> manual.</para>
+
+  <para>The &dtml; code to display the forms will be similar to the
+  following:
+   <programlisting><![CDATA[
+<html>
+ <head>
+  <title>QMTrack query form</title>
+ </head>
+ <body>
+  <h1>QMTrack query form</h1>
+  <dtml-expr "show_query_form()">
+ </body>
+</html>
+   ]]></programlisting>
+  Using &dtml;, the administrator will be able to specify headers and
+  footers and other configuration-type information simply so the web
+  interface looks and feels the way the administrator wishes.</para>
 
  </section>
 

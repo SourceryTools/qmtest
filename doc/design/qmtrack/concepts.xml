@@ -49,11 +49,11 @@
   database technologies such as,
    <itemizedlist>
     <listitem>
-     <para>a flat text file</para>
+     <para>flat text files</para>
     </listitem>
 
     <listitem>
-     <para>an XML file</para> 
+     <para>&xml; files</para> 
     </listitem>
 
     <listitem>
@@ -81,7 +81,7 @@
 
   <para>The issue database can be thought of as a set of one or more
   tables, each containing issues.  Each table may have a different
-  schema;.  Each table corresponds to one issue class, and all issues
+  schema.  Each table corresponds to one issue class, and all issues
   stored in that table are members of that issue class.</para>
 
   <section id="sec-issue-classes">
@@ -128,13 +128,13 @@
      <listitem>
       <para><constant>attachment</constant> fields contain an
       arbitrary file attachment.  The attachment consistes of a (text)
-      MIME type, a text description, and the binary data of the file
+      &mime; type, a text description, and the binary data of the file
       itself.</para>
      </listitem>
 
      <listitem>
       <para><constant>set</constant> fields contain zero or more
-      instances of another field type.</para>
+      instances of another field type other than a set.</para>
      </listitem>
     </orderedlist>
    </para>
@@ -178,11 +178,11 @@
       <para>The set of fields supported by &qmtrack; may be extended.
       However, each new field type must be based on one of the
       fundamental field types above.  This decouples &idb;
-      implementations from field type extensions by allowing &idb;
-      implementations to store custom field types using the underlying
-      field representation.  However, specific &idb; implementations
-      may understand a customized field type and handle it
-      differently, as an optimization.</para>
+      implementations from field type extensions by permitting
+      oblivious &idb; implementations to store custom field types
+      using the underlying field representation.  However, specific
+      &idb; implementations may understand a customized field type and
+      handle it differently, as an optimization.</para>
      </listitem>
     </orderedlist>
    </para>    
@@ -210,8 +210,8 @@
       and corresponds to an issue.  The &iid; of the issue is the
       period-delimited sequence of node names, starting from the
       direct children of the root node.  All interior and leaf node
-      names may contain any characters except for a period (".").
-      Absolute paths in the tree begin with a period.</para>
+      names are named as described in (1).  Absolute paths in the tree
+      begin with a period.</para>
 
       <!-- FIXME: How do we specify "up one directory"? -->
      </listitem>
@@ -250,28 +250,29 @@
    <para>The &idb; schema includes a <firstterm>revision
    number</firstterm> field.  The revision number value for a row
    indicates which revision of the issue it corresponds to.  When a
-   new issue is submitted to the &idb;, a new iid is assigned and a
+   new issue is submitted to the &idb;, a new &iid; is assigned and a
    new row is added to the &idb; with revision number zero.  When this
    issue is subsequently modified, another row is added containing the
    revised data, and an incremented sequece number.  Previous rows are
    never deleted.  For an issue, the &idb; row with the corresponding
-   iid and the highest revision number is the <firstterm>current
+   &iid; and the highest revision number is the <firstterm>current
    revision</firstterm>.  (When we refer to an issue in this document
    or in the &qmtrack; API, we're referring to the current revision
    unless we specify a revision number explicitly.)</para>
 
    <para>An audit trail for an issue is obtained by querying the &idb;
-   for all rows matching the corresponding &idb;, and sorting by
-   sequence number for chronological order.</para>
+   for all revisions of the issue, and sorting by revision number for
+   chronological order.</para>
 
-   <para>Issues may not be deleted.  Rows are generally not deleted
-   from the &idb;, during normal use.  However, they may be for
+   <para>Issue revisions are generally not deleted from the &idb;,
+   during normal use.  Issues that are no longer relevant and should
+   not appear in queries are moved to the "Deleted" state (see <xref
+   linkend="sec-state-model"/>).  However, they may be for
    housecleaning purposes; for instance, older revisions of retired
-   issues may be removed to reduce the size of the &idb;.  The current
-   revision of an issue may not be removed, though.  To maintain
-   referential integrity in the &idb;, there may be no persistent
-   reference to a particular revision of an issue.  All persistent
-   references are by &iid; only.</para>
+   issues may be removed to reduce the size of the &idb;.  To maintain
+   referential integrity in the &idb;, there may be no user-visible
+   persistent reference to a particular revision of an issue; users
+   refer to issues by &iid; only.</para>
 
   </section>
 
@@ -281,7 +282,7 @@
   <title id="sec-issues-title">Issues</title>
 
   <para>An <link linkend="def-issue">issue</link> is the principal
-  data record in &qmtrack;.  Each issue corresponds to a bug report,
+  data element in &qmtrack;.  Each issue corresponds to a bug report,
   feature request, or other process item in the &qmtrack;
   database.</para>
 
@@ -296,9 +297,7 @@
       <para><firstterm>Mandatory fields</firstterm> are present in any
       &idb; issue class and thus in every &qmtrack; issue.  The field
       type and semantics of a mandatory field is invariant; &qmtrack;
-      relies on the presence of these fields for its operation.  The
-      names of mandatory fields are prefixed with
-      "<symbol>qm_</symbol>".</para>
+      relies on the presence of these fields for its operation.</para>
      </listitem>
 
      <listitem>
@@ -308,13 +307,12 @@
       &qmtrack; features and modules may rely on standard fields for
       thier operation.  A component of &qmtrack; or a module which
       uses a standard field must always check first whether the field
-      is present, and degrade gracefully if it is not..</para>
+      is present, and degrade gracefully if it is not.</para>
      </listitem>
 
      <listitem>
       <para><firstterm>Custom fields</firstterm> are other fields
-      which are added to an issue class.  Custom fields may not begin
-      with the prefix "<symbol>qm_</symbol>".</para>
+      which are added to an issue class.</para>
      </listitem>
     </orderedlist>
    </para>
@@ -327,7 +325,10 @@
 
     <table id="tab-mandatory-fields">
      <title>Mandatory fields</title>
-     <tgroup cols="2">
+     <tgroup cols="3">
+      <colspec colnum="1" colwidth="1*"/>
+      <colspec colnum="2" colwidth="1*"/>
+      <colspec colnum="3" colwidth="2*"/>
       <thead>
        <row>
         <entry>field name</entry>
@@ -345,6 +346,11 @@
         <entry>revision</entry>
         <entry><constant>integer</constant></entry>
         <entry>revision number</entry>
+       </row>
+       <row>
+        <entry>user</entry>
+        <entry><constant>uid</constant></entry>
+        <entry>the user who created this revision</entry>
        </row>
        <row>
         <entry>timestamp</entry>
@@ -365,16 +371,16 @@
        <row>
         <entry>parents</entry>
         <entry><constant>iid set</constant></entry>
-        <entry>the single iid of the parent issue if this issue was
-        created in a split operation; the iid of all parent issues if
+        <entry>the single &iid; of the parent issue if this issue was
+        created in a split operation; the &iid; of all parent issues if
         this issue was created in a join operation; an empty set
         otherwise</entry>
        </row>
        <row>
         <entry>children</entry>
         <entry><constant>iid set</constant></entry>
-        <entry>the single iid of the child issue if this issue was
-        joined with other issues; the iid of all children if this issue
+        <entry>the single &iid; of the child issue if this issue was
+        joined with other issues; the &iid; of all children if this issue
         was split; an empty set otherwise</entry>
        </row>
        <row>
@@ -383,11 +389,6 @@
         <entry>the state in the issue data model for this class; see
         the <link linkend="sec-state-model">state model
         trigger</link></entry>
-       </row>
-       <row>
-        <entry>user</entry>
-        <entry><constant>uid</constant></entry>
-        <entry>the user who created this revision</entry>
        </row>
       </tbody>
      </tgroup>
@@ -403,7 +404,10 @@
 
     <table id="tab-standard-fields">
      <title>Standard fields</title>
-     <tgroup cols="2">
+     <tgroup cols="3">
+      <colspec colnum="1" colwidth="1*"/>
+      <colspec colnum="2" colwidth="1*"/>
+      <colspec colnum="3" colwidth="2*"/>
       <thead>
        <row>
         <entry>field name</entry>
@@ -419,7 +423,7 @@
         arbitrary data</entry>
        </row>
        <row>
-        <entry>nosy_list</entry>
+        <entry>notification_list</entry>
         <entry><literal>uid set</literal></entry>
         <entry>a collection of users who wish to be notified of
         changes to this issue; see <xref
@@ -457,7 +461,7 @@
      </listitem>
 
      <listitem>
-      <para>A MIME type, stored as a string.</para>
+      <para>A &mime; type, stored as a string.</para>
      </listitem>
 
      <listitem>
@@ -499,14 +503,14 @@
 
     <listitem>
      <para>Equality and inequality operators <function>==</function>
-     and <function>!=</function>, taking string, integer, or
-     enumerated operands.</para>
+     and <function>!=</function>, taking text, integer, or
+     enumeration operands.</para>
     </listitem>
 
     <listitem>
      <para>Comparison operarators <function>&lt;</function>,
      <function>&lt;=</function>, <function>&gt;=</function>, and
-     <function>&gt;</function>, taking integer, date, or enumeral
+     <function>&gt;</function>, taking integer, date, or enumeration
      operands.</para>
     </listitem>
 
@@ -529,15 +533,15 @@
     </listitem>
 
     <listitem>
-     <para>The <function>~</function> operator, taking string
+     <para>The <function>~</function> operator, taking text
      operands.  This operator denotes a regular expression match, ala
      Perl.</para>
     </listitem>
 
     <listitem>
-     <para>The <function>in</function> operator, taking string
-     operands.  The operation evaluates to true if the left-hand
-     keyword occurs in the right-hand string.</para>
+     <para>The <function>in</function> operator, taking text operands.
+     The operation evaluates to true if the left-hand keyword occurs
+     in the right-hand string.</para>
     </listitem>
    </itemizedlist>
   </para>
@@ -551,37 +555,37 @@
   <para>The same query interface is used for preparation of reports on
   the contents of the &idb;.</para>
 
-  <section>
+  <section id="sec-query-examples">
    <title>Query examples</title>
 
    <para>Below are some examples of &qmtrack; issue queries
-   incorporating operations on mandatory and sstandard fields.</para>
+   incorporating operations on mandatory and sstandard fields.
+    <segmentedlist>
+     <segtitle>Query</segtitle>
+     <segtitle>Interpretation</segtitle>
+     <seglistitem>
+      <seg>
+       <userinput>front_end in categories and severity ==
+       critical</userinput>
+      </seg>
+      <seg>
+       Select all issues in the "front_end" category and at critical
+       severity.
+      </seg>
+     </seglistitem>
 
-   <segmentedlist>
-    <segtitle>Query</segtitle>
-    <segtitle>Interpretation</segtitle>
-    <seglistitem>
-     <seg>
-      <userinput>"front-end" in categories and severity ==
-      critical</userinput>
-     </seg>
-     <seg>
-      Select all issues in the "front-end" category and at critical
-      severity.
-     </seg>
-    </seglistitem>
-
-    <seglistitem>
-     <seg>
-      <userinput>not "C++" in summary and timestamp &gt; "2000 Oct
-      31"</userinput>
-     </seg>
-     <seg>
-      Select all issues not containing the text "C++" in the summary
-      and last revised after October 31.
-     </seg>
-    </seglistitem>
-   </segmentedlist>
+     <seglistitem>
+      <seg>
+       <userinput>not "C++" in summary and timestamp &gt; "2000 Oct
+       31"</userinput>
+      </seg>
+      <seg>
+       Select all issues not containing the text "C++" in the summary
+       and last revised after October 31.
+      </seg>
+     </seglistitem>
+    </segmentedlist>
+   </para>
 
   </section>
 

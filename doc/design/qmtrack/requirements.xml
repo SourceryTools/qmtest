@@ -22,25 +22,27 @@
 
  <para>The guiding principles of the &qmtrack; design are listed here.</para> 
 
- <formalpara>
+ <section id="sec-req-simplicity">
   <title>Simplicity</title>
   
   <para>It is a strong requirement that the tool be accessible and
   understandable.  It should be fairly obvious what different parts of
   the interface do, and the inner mechanisms should operate in ways
   that most users can easily predict.</para>
- </formalpara>
 
- <formalpara>
+ </section>
+
+ <section id="sec-req-efficiency">
   <title>Efficiency</title>
 
   <para>We aim to optimize for minimum effort to do the most common
   operations, and best use of resources like screen real estate to
   maximize the amount of information that we summarize and
   present.</para>
- </formalpara>
 
- <formalpara>
+ </section>
+
+ <section id="sec-req-generality">
   <title>Generality</title>
 
   <para>We try to avoid making unnecessary assumptions that would
@@ -49,9 +51,9 @@
   design process, non-software projects, or organizational
   decisions.</para>
 
- </formalpara>
+ </section>
 
- <formalpara>
+ <section id="sec-req-persistence">
   <title>Persistence</title>
 
   <para>We prefer hiding or reclassifying information to deleting
@@ -60,110 +62,144 @@
   access to a larger community, and logging yields accountability,
   which may encourage better behaviour.</para>
 
- </formalpara>
+ </section>
 
- <para>The most important requirement on &qmtrack; is ease of use.
- <phrase id="ease-of-use">Users must be able to add, update, or find
- information quickly and easily, after only a brief introduction to
- the system.</phrase>.  If they cannot, then they will not use it.
- This will quickly lead to a vicious circle of starvation, in which
- people don't put information into the system because it never
- contains any useful information.  &qmtrack; must also <phrase
- id="use-legacy-editors">allow users to use their preferred auxiliary
- tools</phrase> (such as editors and mailers) for interaction, so as
- not to raise the barrier to adoption unnecessarily.  In practice,
- this means that &qmtrack; <phrase id="support-interaction">must
- support interaction via plain text</phrase> as a lowest common
- denominator, although other formats (e.g. XML) may also be
- supported.</para>
+ <section id="sec-req-ease-of-use">
+  <title>Ease-of-use</title>
 
- <para>Even in the same &qmtrack; installation, users and use cases
- will require different channels of interaction with the system.
- &qmtrack; will provide modular user interfaces, and will include web,
- e-mail, and command-line user interfaces in its initial
- implementation.  Significantly all features will be available through
- each user interface, and the system will be extensible to support
- other user interaction models if required,</para>
+  <para>The most important requirement on &qmtrack; is ease of use.
+  <phrase id="ease-of-use">Users must be able to add, update, or find
+  information quickly and easily, after only a brief introduction to
+  the system.</phrase>.  If they cannot, then they will not use it.
+  This will quickly lead to a vicious circle of starvation, in which
+  people don't put information into the system because it never
+  contains any useful information.  &qmtrack; must also <phrase
+  id="use-legacy-editors">allow users to use their preferred auxiliary
+  tools</phrase> (such as editors and mailers) for interaction, so as
+  not to raise the barrier to adoption unnecessarily.  In practice,
+  this means that &qmtrack; <phrase id="support-interaction">must
+  support interaction via plain text</phrase> as a lowest common
+  denominator, although other formats (e.g. &xml;) are be
+  supported.</para>
 
- <para>In order to make searching large collections of issue reports
- as accurate as possible, &qmtrack; <phrase id="add-info">must allow
- users to add information to issues</phrase> at any point in those
- issues' lives. In conjunction with this, &qmtrack; <phrase
- id="full-text-search">must support both full-text and keyword
- searching</phrase>.  Most computer users are now familiar enough with
- search engines such as <ulink
- url="http://www.google.com">Google</ulink> that they will expect this
- capability from any information repository.</para>
+  <para>Even in the same &qmtrack; installation, users and use cases
+  will require different channels of interaction with the system.
+  &qmtrack; will provide modular user interfaces, and will include
+  web, e-mail, and command-line user interfaces in its initial
+  implementation.  Significantly all features will be available
+  through each user interface, and the system will be extensible to
+  support other user interaction models if required.</para>
 
- <para>Finally, &qmtrack; <phrase id="readable-names">must allow users
- to give issues readable names</phrase>, just as they do variables,
- applications, and other parts of development.  A student who named a
- variable <literal>H347</literal> would probably be given a failing
- grade; an issue-tracking system should therefore not do this itself.
- As a corollary, <phrase id="hierarchical-names">hierarchical issue
- names may be used</phrase>, in order to minimize the chances of
- collisions.</para>
+  <para>In order to make searching large collections of issue reports
+  as accurate as possible, &qmtrack; <phrase id="add-info">must allow
+  users to add information to issues</phrase> at any point in those
+  issues' lives. In conjunction with this, &qmtrack; <phrase
+  id="full-text-search">must support both full-text and keyword
+  searching</phrase>.  Most computer users are now familiar enough
+  with search engines such as <ulink
+  url="http://www.google.com">Google</ulink> that they will expect
+  this capability from any information repository.</para>
 
- <para>An equally important aspect of usability is that <phrase
- id="easy-to-install">it must be possible to install and configure
- &qmtrack; with very little effort, a minimum of systems
- administration experience, and little or no impact on the rest of the
- development environment</phrase>.  In particular, it must not be
- necessary to install or administer a complex third-party database
- package, modify plug-ins for a web server, or anything of equivalent
- complexity.</para>
+  <para>Finally, &qmtrack; <phrase id="readable-names">must allow
+  users to give issues readable names</phrase>, just as they do
+  variables, applications, and other parts of development.  A student
+  who named a variable <literal>H347</literal> would probably be given
+  a failing grade; an issue-tracking system should therefore not do
+  this itself.  <phrase id="hierarchical-names">Hierarchical issue
+  names may be used</phrase>, to minimize the chances of
+  collisions.</para>
 
- <para>Since every development group has its own way of doing things,
- &qmtrack; must allow administrators to configure workflow.  In this
- context, "configuring workflow" means that <phrase
- id="define-states">administrators must be able to define the types,
- states, and state transitions of issues</phrase>, as well as <phrase
- id="define-roles">define priviles and permissions based on user IDs
- and user roles</phrase>.  For example, a site may want to allow
- developers to mark feature requests as impossible.  In order to do
- this, the &qmtrack; administrator at that site must be able to
- specify (a) that there is a role called "developer", (b) who does and
- does not belong to that group, (c) that issues can be "feature
- requests", and (d) that "pending consideration" and "impossible" are
- possible states for a feature request.</para>
+ </section>
 
- <para>One aspect of real-world issue tracking that many systems
- ignore is that users will often submit issues redundantly, or submit
- several issues in a single report.  (It is also often the case that
- what initially looks like a single issue turns out to contain several
- sub-problems.) If it is to support the way that people actually work,
- &qmtrack; must therefore <phrase id="split-merge">track issues as
- they split and merge</phrase>.</para>
+ <section id="sec-req-ease-of-installation">
+  <title>Ease of Installation</title>
 
- <para>Another real-world need that &qmtrack; must address is
- reporting.  &qmtrack; must be able to <phrase
- id="extract-info">summarize and report all information about items'
- contents, history, and state in commonly-used formats</phrase>.
- &qmtrack; may convert this information into viewable form
- (e.g. charts) itself, but it must also be able to generate
- comma-separated values and other interchange formats for use in
- third-party display tools.</para>
+  <para>An equally important aspect of usability is that <phrase
+  id="easy-to-install">it must be possible to install and configure
+  &qmtrack; with very little effort, a minimum of systems
+  administration experience, and little or no impact on the rest of
+  the development environment</phrase>.  In particular, it must not be
+  necessary to install or administer a complex third-party database
+  package, modify plug-ins for a web server, or anything of equivalent
+  complexity.</para>
 
- <para>As &qmtrack; will just be one part of a larger development
- environment, it must be able to interact with a variety of other
- tools.  Given the number and diversity of interfaces those tools may
- present (shell execution, scripting, COM, CORBA, SOAP, and so on), it
- is clearly not feasible to provide custom support for them all.
- Instead, &qmtrack; <phrase id="triggers">must be able to invoke
- arbitrary external applications or modules when specific state
- transitions occur</phrase>.  Note that we restrict "triggering" to
- state changes only, i.e. do not support triggering on invocations of
- reporting functions.</para>
+ </section>
 
- <para>Similarly, &qmtrack;'s environment is increasingly likely to be
- a distributed one: developers may be spread across many sites, in
- many time zones, and use a wide variety of host platforms.  Given
- this, and the fact that the information included in issue reports may
- be sensitive, &qmtrack; <phrase id="client-server">must support
- secure client/server operation</phrase>.  It also <phrase
- id="email-interaction">must support interaction via email</phrase>,
- since this is still the lowest common denominator for distributed
- development teams.</para>
+ <section id="sec-req-workflow">
+  <title>Workflow</title>
+
+  <para>Since every development group has its own way of doing things,
+  &qmtrack; must allow administrators to configure workflow.  In this
+  context, "configuring workflow" means that <phrase
+  id="define-states">administrators must be able to define the types,
+  states, and state transitions of issues</phrase>, as well as <phrase
+  id="define-roles">define priviles and permissions based on user IDs
+  and user roles</phrase>.  For example, a site may want to allow
+  developers to mark feature requests as impossible.  In order to do
+  this, the &qmtrack; administrator at that site must be able to
+  specify (a) that there is a role called "developer", (b) who does
+  and does not belong to that group, (c) that issues can be "feature
+  requests", and (d) that "pending consideration" and "impossible" are
+  possible states for a feature request.</para>
+
+ </section>
+
+ <section id="sec-req-split-join">
+  <title>Split and join</title>
+
+  <para>One aspect of real-world issue tracking that many systems
+  ignore is that users will often submit issues redundantly, or submit
+  several issues in a single report.  (It is also often the case that
+  what initially looks like a single issue turns out to contain
+  several sub-problems.) If it is to support the way that people
+  actually work, &qmtrack; must therefore <phrase
+  id="split-merge">track issues as they split and
+  merge</phrase>.</para>
+
+ </section>
+
+ <section id="sec-req-reporting">
+  <title>Reporting</title>
+
+  <para>Another real-world need that &qmtrack; must address is
+  reporting.  &qmtrack; must be able to <phrase
+  id="extract-info">summarize and report all information about items'
+  contents, history, and state in commonly-used formats</phrase>.
+  &qmtrack; may convert this information into viewable form
+  (e.g. charts) itself, but it must also be able to generate results
+  in other interchange formats for use in third-party display
+  tools.</para>
+
+ </section>
+
+ <section id="sec-req-conservativism">
+  <title>Conservativism</title>
+
+  <para>As &qmtrack; will just be one part of a larger development
+  environment, it must be able to interact with a variety of other
+  tools.  Given the number and diversity of interfaces those tools may
+  present (shell execution, scripting, COM, CORBA, SOAP, and so on),
+  it is clearly not feasible to provide custom support for them all.
+  Instead, &qmtrack; <phrase id="triggers">must be able to invoke
+  arbitrary external applications or modules when specific state
+  transitions occur</phrase>.</para>
+
+ </section>
+
+ <section id="sec-req-distribution">
+  <title>Distribution</title>
+
+  <para>Similarly, &qmtrack;'s environment is increasingly likely to
+  be a distributed one: developers may be spread across many sites, in
+  many time zones, and use a wide variety of host platforms.  Given
+  this, and the fact that the information included in issue reports
+  may be sensitive, &qmtrack; <phrase id="client-server">must support
+  secure client/server operation</phrase>.  It also <phrase
+  id="email-interaction">must support interaction via e-mail</phrase>,
+  since this is still the lowest common denominator and often the
+  preferred tool for distributed development teams.</para>
+
+ </section>
 
 </chapter>
 

@@ -24,13 +24,16 @@
   <!ENTITY % qm SYSTEM "../../qm.mod">
   %qm;
 
+  <!-- Abbreviations, phrases, and the like specific to this
+  document.  -->
+
   <!ENTITY idb "<acronym>IDB</acronym>">
   <!ENTITY iid "<acronym>IID</acronym>">
   <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
   <!ENTITY uid "<acronym>UID</acronym>">
 
-  <!-- Each chapter is contained in a separate file, and included by
-  entity reference.  -->
+  <!-- Each chapter, and certain sections too, are contained in a
+  separate file, and included by entity reference.  -->
 
   <!ENTITY introduction.xml SYSTEM "introduction.xml">
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
@@ -44,22 +47,37 @@
 <book>
  <bookinfo>
   <title>&qmtrack; Design</title>
-  <author>
-   <firstname>Benjamin</firstname>
-   <surname>Chelf</surname>
-  </author>
-  <author>
-   <firstname>Mark</firstname>
-   <surname>Mitchell</surname>
-  </author>
-  <author>
-   <firstname>Alex</firstname>
-   <surname>Samuel</surname>
-  </author>
-  <author>
-   <firstname>Greg</firstname>
-   <surname>Wilson</surname>
-  </author>
+  <authorgroup>
+   <author>
+    <firstname>Benjamin</firstname>
+    <surname>Chelf</surname>
+   </author>
+   <author>
+    <firstname>Mark</firstname>
+    <surname>Mitchell</surname>
+   </author>
+   <author>
+    <firstname>Alex</firstname>
+    <surname>Samuel</surname>
+   </author>
+   <author>
+    <firstname>Greg</firstname>
+    <surname>Wilson</surname>
+   </author>
+  </authorgroup>
+  <copyright>
+   <year>2000</year>
+   <holder>CodeSourcery LLC</holder>
+  </copyright>
+  <legalnotice>&qmlicense;</legalnotice>
+  <releaseinfo>version 0.2</releaseinfo>
+  <revhistory>
+   <revision>
+    <revnumber>0.2&nbsp;</revnumber>
+    <date>2000 December 7</date>
+    <revremark>Initial revision.</revremark>
+   </revision>
+  </revhistory>
  </bookinfo>
 
  &introduction.xml;
