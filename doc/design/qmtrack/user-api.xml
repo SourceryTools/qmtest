@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<!--
+
+ File:   user-api.xml
+ Author: Benjamin Chelf
+ Date:   2000-11-19
+
+ Contents:
+   Chapter `User Functionality API' of qmtrack design document.
+
+ This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter><title>User Functionality API</title>
+
+ <section><title>Concepts</title>
+
+  <para>The User Functionality API describes the set of functions any
+  application can use to interface with the database to create new issues,
+  edit existing issues, and perform queries on the database. The goal of
+  this API is to provide a simple means for performing these operations
+  regardless of the user interface (e.g., command line, email, web,
+  etc.).</para>
+
+  <para>We divide user functionality into three main categories:
+   <orderedlist>
+    <listitem>
+     <para>Creating and retiring issues.</para>
+    </listitem>
+
+    <listitem>
+     <para> Editing an issue to create new revisions of the issue.</para>
+    </listitem>
+    
+    <listitem>
+     <para>Querying the database for all issues that match certain
+     criteria.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+ </section>
+
+ <section><title>Creating and Retiring Issues</title> 
+   <para>This section describes the basics of creating and retiring an
+   issue (the beginning and ending of the life of an issue,
+   respectively). To create an issue, simply create an Issue object. You
+   pass it initial values for the `summary,' `categories,' and
+   `attachment' and the corresponding objects represents the first
+   revision of the new issue. To retire an issue, simply call the
+   RetireIssue method on an existing issue. This will render the issue
+   closed. Although not deleted, queries will no longer include this issue
+   unless specifically requested to.</para>
+
+   <para>Methods:
+   <programlisting>
+<![CDATA[
+class Issue:
+    """Base class for issues."""
+
+    def __init__(self, summary, categories, attachment):
+        """Create a new issue. Returns the issue ID."""
+
+    def RetireIssue(self):
+        """Retires an issue, thereby disallowing further edits to the
+        issue. This should only be done when issue is meant to be closed."""
+]]>
+   </programlisting>
+  </para>
+ </section>
+
+ <section><title>Editing Issues</title>
+    <para>This section describes the basics in editing an issue (i.e.,
+    creating a new revision of the issue). Because the user may wish to
+    edit more than one field of a given issue for a new revision, we
+    provide a mechanism that allows users to encapsulate multiple edits to
+    the issue under one revision. This also allows us to successfully lock
+    each issue upon editing as to avoid race conditions between multiple
+    users attempting to edit the same issue.</para>
+
+    <para>To edit an issue, simply call the BeginEdit method on the
+    issue. This will aquire the lock for that issue and only return once
+    the caller has exclusive rights to make changes to the issue. Also,
+    this function will return a key that must be made in future edits in
+    this revision to assure that other users cannot make edits while the
+    caller is making edits. After performing all edits, complete the
+    revision update by calling the EndEdit method on the issue with the
+    returned key from BeginEdit. This will complete the revision and store
+    it in the database.</para>
+
+    <para>Methods:
+    <programlisting>
+<![CDATA[
+class Issue:
+    """Base class for issues."""
+
+    def BeginEdit(self):
+        """Begins edits for a new revision of an issue. Blocks until
+        caller has exclusive rights to make edits. Returns the key to be
+        used in future edit calls. Acquires the edit lock on the issue."""
+
+    def EndEdit(self, key):
+        """Ends the editing process for an issue and
+        creates a new revision of the issue based on all the edits that
+        occured between the calls to BeginEdit and calls to
+        EndEdit. Releases the edit lock on the issue."""
+
+    def CancelEdit(self, key):
+        """Cancels the given edits since the last call to BeginEdit
+        without updating the issue. Release the edit lock on the issue."""
+
+    def EditSummary(self, key, new_summary):
+        """Changes the summary to `new_summary'."""
+
+    def AddCategory(self, key, new_category):
+        """Adds `new_category' to the list of categories of the issue."""
+
+    def RemoveCategory(self, key, old_category):
+        """Removes `old_category' from the list of categories of the
+        issue."""
+
+    def AddAttachment(self, key, attachment):
+        """Adds an attachment to the current revision of the issue."""
+
+    def Join(self, key1, issue, key2):
+        """Joins self and id together to form 1 issue from the two. `key2'
+           represents the edit key of the `issue.' Join must be called
+           on both issues involved."""
+
+    def Separate(self, key):
+        """Separates the current issue into two issues. The new issue
+           is a carbon copy of the old issue (with the same revision
+           history, etc.) and is returned from this function."""
+
+    def EditAux(self, key, field, value):
+        """Edits one of the auxillary fields, `field,' giving it the
+        new value, `value.'"""
+]]>
+   </programlisting>
+   </para>
+
+ </section>
+
+ <section><title>Queries</title>
+    <para>This section describes the basics of querying the database for
+    information about issues. For now, this only describes the basic
+    queries on the database.</para>
+
+    <para>Methods:
+    <programlisting>
+<![CDATA[
+    def CreatedAfterDate(date)
+        """Returns list of issues created after `date.'"""
+
+    def CreatedBeforeDate(date)
+        """Returns list of issues created before `date.'"""
+
+    def CreatedRangeDate(date1, date2)
+        """Returns list of issues created between dates `date1' and
+        `date2.'"""
+
+    def CreatedOnDate(date)
+        """Returns list of issues created on date `date.'"""
+
+    def SummaryContains(search_string)
+        """Returns list of issues whose summary contains the text in
+           `search_string.'"""
+
+    def SummaryExact(search_string)
+        """Returns list of issues whose summary matches exactly the
+           text in `search_string.'"""
+
+    def BelongsTo(category)
+        """Returns list of issues who belong to category `category.'"""
+
+    def NotBelongsTo(category) 
+        """Returns list of issues who do not belong to category
+        `category.'"""
+
+    def RelatedTo(issue)
+        """Returns list of issues related to `issue' through joins and
+        separates."""
+]]>
+    </programlisting>
+    </para>
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

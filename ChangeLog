@@ -1,3 +1,8 @@
+2000-11-20  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* doc/design/qmtrack/qmtrack.xml: Added user-api.xml.
+	* doc/design/qmtrack/user-api.xml: New file.
+
 2000-11-16  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/concept: New directory.
