@@ -31,15 +31,9 @@
 
 -->
 
-<!-- 
-		     FIXME FIXME FIXME FIXME FIXME
-	  Field elements should be placed in a common entity.
-		     FIXME FIXME FIXME FIXME FIXME
--->
-
 <!-- A single test.  -->
 <!ELEMENT test
-    (class, (argument | category | prerequisite | preaction | postaction)*)
+    (class, (argument | category | prerequisite | action)*)
 >
 
 <!-- The name of a test class.  -->
@@ -50,40 +44,6 @@
 <!ATTLIST argument name CDATA #REQUIRED 
                    eval ( yes | no ) "no">
 
-<!-- The value of an integer field.  -->
-<!ELEMENT integer (#PCDATA)>
-
-<!-- The value of a text field.  -->
-<!ELEMENT text (#PCDATA)>
-
-<!-- The value of a set field.  -->
-<!ELEMENT set ((integer | text | attachment | enumeral)*)>
-
-<!-- The value of an attachment field.  -->
-<!ELEMENT attachment ((description?, 
-                       mimetype?, 
-                       filename?, 
-                       (location | data))?)>
-
-<!-- A text description of an attachment.  -->
-<!ELEMENT description (#PCDATA)>
-
-<!-- The MIME type of an attachment.  -->
-<!ELEMENT mimetype (#PCDATA)>
-
-<!-- The file name from which an attachment was uploaded.  -->
-<!ELEMENT filename (#PCDATA)>
-
-<!-- The database-specific location where an attachment is stored.  -->
-<!ELEMENT location (#PCDATA)>
-
-<!-- Inline attachment data.  -->
-<!ELEMENT data (#PCDATA)>
-<!ATTLIST data encoding CDATA "none">
-
-<!-- The value of an enumeral field.  -->
-<!ELEMENT enumeral (#PCDATA)>
-
 <!-- The name of a category to which the test belongs.  -->
 <!ELEMENT category (#PCDATA)>
 
@@ -93,11 +53,14 @@
 <!ELEMENT prerequisite (#PCDATA)>
 <!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
 
-<!-- The ID of an action that must be invoked before this test is run.  -->
-<!ELEMENT preaction (#PCDATA)>
+<!-- The ID of an action that must be invoked before and after this test
+     is run.  -->
+<!ELEMENT action (#PCDATA)>
 
-<!-- The ID of an action that must be invoked after this test is run.  -->
-<!ELEMENT postaction (#PCDATA)>
+<!ENTITY % fields PUBLIC 
+    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
+    "fields.mod">
+%fields;
 
 <!-- 
   Local Variables:

@@ -1,11 +1,11 @@
 <!--
 
-  File:   issue.dtd
+  File:   action.dtd
   Author: Alex Samuel
-  Date:   2001-03-14
+  Date:   2001-03-28
 
   Contents:
-    DTD for a collection of issues.
+    DTD for an action.
 
   Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
 
@@ -31,22 +31,18 @@
 
 -->
 
-<!-- A colleciton of issues.  -->
-<!ELEMENT issues (issue*)>
-
-<!-- A single issue.  -->
-<!ELEMENT issue
-    (class, field*)
+<!-- A single action.  -->
+<!ELEMENT action
+    (class, (argument)*)
 >
-<!ATTLIST issue id CDATA #REQUIRED>
 
-<!-- The name of an issue class.  -->
+<!-- The name of a action class.  -->
 <!ELEMENT class (#PCDATA)>
 
-<!-- An argument to a test class.  -->
-<!ELEMENT field (integer | text | set | attachment | enumeral)>
-<!ATTLIST field name CDATA #REQUIRED 
-                eval ( yes | no ) "no">
+<!-- An argument to a action class.  -->
+<!ELEMENT argument (integer | text | set | attachment | enumeral)>
+<!ATTLIST argument name CDATA #REQUIRED 
+                   eval ( yes | no ) "no">
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 

@@ -33,6 +33,9 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
+@ context attribute cannot be deleted
+The attribute %(attribute)s cannot be deleted from this context.
+
 @ db path doesn't exist
 The path you specified for the test database, %(path)s, does not exist. 
 

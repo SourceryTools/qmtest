@@ -361,18 +361,12 @@ class Command:
             raise RuntimeError, qm.error("missing test id", test_id=test_id)
                                                     
 
-    def __ProgressCallback(self, test_id, result):
+    def __ProgressCallback(self, message):
         """Display testing progress.
 
-        'test_id' -- The ID of the test being run.
+        'message' -- A message indicating testing progress."""
 
-        'result' -- If 'None', the test is about to be run.  Otherwise
-        the result of running the test."""
-        
-        if result is None:
-            self.__output.write("%-38s: " % test_id)
-        else:
-            self.__output.write("%s\n" % result.GetOutcome())
+        self.__output.write(message)
         self.__output.flush()
 
 
@@ -432,7 +426,7 @@ class Command:
             raise qm.cmdline.CommandError, qm.error("missing arg for template")
         test_class_name, test_id = self.__arguments
         try:
-            test_class = base.get_test_class(test_class_name)
+            test_class = base.get_class(test_class_name)
         except ValueError:
             raise RuntimeError, qm.error("test class not fully specified")
         except ImportError:
@@ -581,10 +575,16 @@ class Command:
             # Keep count of how many didn't pass.
             non_passing_count = non_passing_count + 1
             if outcome == base.Result.UNTESTED:
-                # If the test was not run, print the failed prerequisite.
-                prerequisite = result["failed_prerequisite"]
-                prerequisite_outcome = results[prerequisite].GetOutcome()
-                extra = "[%s was %s]" % (prerequisite, prerequisite_outcome)
+                # If the test was not run, try to give some indication
+                # of why.
+                if result.has_key("failed_prerequisite"):
+                    prerequisite = result["failed_prerequisite"]
+                    prerequisite_outcome = results[prerequisite].GetOutcome()
+                    extra = "[%s was %s]" \
+                            % (prerequisite, prerequisite_outcome)
+                elif result.has_key("failed_setup_action"):
+                    action_id = result["failed_setup_action"]
+                    extra = "[setup %s failed]" % action_id
             elif outcome == base.Result.FAIL \
                  or outcome == base.Result.ERROR:
                 # If the result has a cause property, use it.

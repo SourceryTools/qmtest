@@ -1,3 +1,64 @@
+2001-04-07  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/xmldb.py (action_file_extension): New variable.
+	(UnknownActionClassError): New exception class.
+	(Database.__init__): Initialize __actions.
+	(Database.HasTest): Use __HasItem.
+	(Database.HasAction): New method.
+	(Database.GetTest): Use __GetItem.
+	(Database.GetAction): New method.
+	(Database.__HasItem): Likewise.
+	(Database.__GetItem): Likewise.
+	(Database.__ParseTestDocument): Parse actions.
+	(Database.__ParseActionDocument): New method.
+	(Database.__GetClassNameFromDomNode): Generalize.
+	(Database.__GetArgumentsFromDomNode): Likewise.
+	(Database.__GetActionsFromDomNode): New method.
+	* qm/test/cmdline.py (Command.__ProgressCallback): Simplify.
+	(Command.__ExecuteTemplate): Use get_class.
+	(Command.divider): Improve error messages.
+	* qm/test/base.py (NoSuchActionError): New class.
+	(InstanceBase): Likewise.
+	(Test): Derive from InstanceBase. 
+	(Test.__init__): Add some parameter defaults.  Add actions
+	parameter. 
+	(Test.GetClassName): Remove.
+	(Test.GetClass): Likewise.
+	(Test.GetArguments): Likewise.
+	(Test.GetId): Likewise.
+	(Test.GetActions): New method.
+	(Test.Run): Set working directory.
+	(Action): New class.
+	(Result.GetOutcome): New method.
+	(ResultWrapper.GetContextProperties): Likewise.
+	(Context): Don't validate values.
+	(Context.__ValidateKey): Rename to...
+	(Context.ValidateKey): ... this.
+	(Context.__ValidateValue): Remove.
+	(ContextWrapper): New class.
+	(Engine.RunTests): Reorganize.  Add actions.  Add context property
+	handling code. 
+	(make_result_for_exception): Add outcome parameter.
+	(get_test_class): Generalize to...
+	(get_class): ... this.
+	(__loaded_test_classes): Generalize to...
+	(__loaded_classes): ... this.
+	(__builtin_test_class_path): Generalize to...
+	(__builtin_class_path): ... this.
+	* qm/test/classes/temporary.py: New file. 
+	* qm/test/classes/python.py: Likewise.
+
+	* share/diagnostics/test.txt (context attribute cannot be deleted): 
+	New diagnostic.
+	* share/xml/CATALOG (fields.mod): New entry.
+	* share/xml/fields.mod: New DTD module.
+	* share/xml/issue.dtd: Use shared fields module.
+	* share/xml/test.dtd: Likewise.
+	* share/xml/action.dtd: New file.
+	
+	* tests/unit/test/classes/tempdir1.qmt: New file.
+	* tests/unit/test/classes/tempdir1.qma: Likewise.
+
 2001-04-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* README: Update.

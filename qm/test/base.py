@@ -44,7 +44,6 @@ import qm.xmlutil
 import string
 import sys
 import types
-import xml.dom.ext.reader.Sax
 
 ########################################################################
 # exceptions
@@ -59,6 +58,13 @@ class NoSuchTestError(Exception):
 
 class NoSuchSuiteError(Exception):
     """The specified suite does not exist."""
+
+    pass
+
+
+
+class NoSuchActionError(Exception):
+    """The specified action does not exist."""
 
     pass
 
@@ -144,60 +150,29 @@ class Attachment(qm.attachment.Attachment):
 
 
 
-class Test:
-    """A test instance."""
+class InstanceBase:
+    """Common base class for test and action objects."""
 
     def __init__(self,
-                 test_id,
-                 test_class_name,
-                 arguments,
-                 prerequisites,
-                 categories):
-        """Create a new test instance.
-
-        'test_id' -- The test ID.
-
-        'test_class_name' -- The name of the test class of which this is
-        an instance.
-
-        'arguments' -- This test's arguments to the test class.
-
-        'categories' -- A sequence of names of categories to which this
-        test belongs.
-
-        'prerequisites' -- A mapping from prerequisite test ID to
-        required outcomes."""
-
-        self.__id = test_id
-        self.__test_class_name = test_class_name
+                 instance_id,
+                 class_name,
+                 arguments):
+        self.__id = instance_id
+        self.__class_name = class_name
         self.__arguments = arguments
-        self.__prerequisites = prerequisites
-        self.__categories = categories
-
-        # Don't instantiate the test yet.
-        self.__test = None
-
-
-    def GetTest(self):
-        """Return the underlying user test object."""
-
-        # Perform just-in-time instantiation.
-        if self.__test is None:
-            self.__test = apply(self.GetClass(), [], self.__arguments)
-
-        return self.__test
+        self.__working_directory = None
 
 
     def GetClassName(self):
-        """Return the name of the test class of this test."""
+        """Return the name of the class of which this is an instance."""
 
-        return self.__test_class_name
+        return self.__class_name
 
 
     def GetClass(self):
         """Return the test class of this test."""
 
-        return get_test_class(self.GetClassName())
+        return get_class(self.GetClassName())
     
 
     def GetArguments(self):
@@ -210,6 +185,97 @@ class Test:
         """Return the ID for this instance."""
         
         return self.__id
+
+
+    def SetWorkingDirectory(self, directory_path):
+        """Set the working directory of the test to 'directory_path'."""
+
+        self.__working_directory = directory_path
+        # Set the full path for each attachment in a test argument that
+        # references attachment data by location.
+        self.__SetAttachmentPaths(self.__arguments.values())
+
+
+    def GetWorkingDirectory(self):
+        """Return the working directory to use when the test is run.
+
+        returns -- The working directory, or 'None' if none was
+        specified."""
+
+        return self.__working_directory
+
+
+    # Helper functions.
+
+    def __SetAttachmentPaths(self, value):
+        """Set full attachment paths.
+
+        If 'value' is an 'Attachment' instance, the 'path' attribute is
+        set.  If 'value' is a sequence type, the 'path' attribute is set
+        for any 'Attachment' elements in it."""
+
+        if type(value) == types.InstanceType \
+           and isinstance(value, Attachment) \
+           and hasattr(value, "location"):
+            # It's an attachment type, and has the 'location' attribute
+            # set, so set the path.
+            value.path = os.path.join(self.__working_directory,
+                                      value.location)
+        elif type(value) == types.ListType \
+             or type(value) == types.TupleType:
+            # It's a sequence.  Call ourselves recursively on its
+            # elements. 
+            for element in value:
+                self.__SetAttachmentPaths(element)
+
+
+
+class Test(InstanceBase):
+    """A test instance."""
+
+    def __init__(self,
+                 test_id,
+                 test_class_name,
+                 arguments,
+                 prerequisites={},
+                 categories=[],
+                 actions=[]):
+        """Create a new test instance.
+
+        'test_id' -- The test ID.
+
+        'test_class_name' -- The name of the test class of which this is
+        an instance.
+
+        'arguments' -- This test's arguments to the test class.
+
+        'prerequisites' -- A mapping from prerequisite test ID to
+        required outcomes.
+
+        'categories' -- A sequence of names of categories to which this
+        test belongs.
+
+        'actions' -- A sequence of IDs of actions to run before and
+        after the test is run."""
+
+        # Initialize the base class.
+        InstanceBase.__init__(self, test_id, test_class_name, arguments)
+        self.__prerequisites = prerequisites
+        self.__categories = categories
+        self.__actions = actions
+
+        # Don't instantiate the test yet.
+        self.__test = None
+
+
+    def GetTest(self):
+        """Return the underlying user test object."""
+
+        # Perform just-in-time instantiation.
+        if self.__test is None:
+            self.__test = apply(self.GetClass(), [], self.GetArguments())
+
+        return self.__test
 
 
     def GetCategories(self):
@@ -230,6 +296,12 @@ class Test:
         return self.__prerequisites
 
 
+    def GetActions(self):
+        """Return a sequence of IDs of actions."""
+
+        return self.__actions
+
+
     def Run(self, context):
         """Execute this test.
 
@@ -238,7 +310,99 @@ class Test:
         
         returns -- A 'Result' describing the outcome of the test."""
 
-        return self.GetTest().Run(context)
+        working_directory = self.GetWorkingDirectory()
+        if working_directory is not None:
+            # Remember the previous working directory so we can restore
+            # it.
+            old_working_directory = os.getcwd()
+            try:
+                # Change to the working directory appropriate for this
+                # test.
+                os.chdir(working_directory)
+                # Run the test.
+                return self.GetTest().Run(context)
+            finally:
+                # Restore the working directory.
+                os.chdir(old_working_directory)
+        else:
+            # Just run the test without mucking with directories.
+            return self.GetTest().Run(context)
+
+
+
+class Action(InstanceBase):
+    """An action instance."""
+
+    def __init__(self,
+                 action_id,
+                 action_class_name,
+                 arguments):
+        """Create a new action instance.
+
+        'action_id' -- The action ID.
+
+        'action_class_name' -- The name of the action class of which
+        this is an instance.
+
+        'arguments' -- This test's arguments to the test class."""
+
+        # Initialize the base class.
+        InstanceBase.__init__(self, action_id, action_class_name, arguments)
+        # Don't instantiate the action yet.
+        self.__action = None
+
+
+    def GetAction(self):
+        """Return the underlying user action object."""
+
+        # Perform just-in-time instantiation.
+        if self.__action is None:
+            self.__action = apply(self.GetClass(), [], self.GetArguments())
+
+        return self.__action
+
+
+    def DoSetup(self, context):
+        self.__Do(context, mode="setup")
+
+
+    def DoCleanup(self, context):
+        self.__Do(context, mode="cleanup")
+
+
+    def __Do(self, context, mode):
+        """Execute a setup action.
+
+        'context' -- Information about the environment in which the test
+        is being executed.
+        
+        'mode' -- Either "setup" or "cleanup".
+
+        returns -- A 'Result' describing the outcome of the test."""
+
+        assert mode is "setup" or mode is "cleanup"
+
+        working_directory = self.GetWorkingDirectory()
+        old_working_directory = None
+        action = self.GetAction()
+
+        try:
+            if working_directory is not None:
+                # Remember the previous working directory so we can
+                # restore it.
+                old_working_directory = os.getcwd()
+                # Change to the working directory appropriate for this
+                # test.
+                os.chdir(working_directory)
+            # Run the action function.
+            if mode is "setup":
+                return action.DoSetup(context)
+            else:
+                return action.DoCleanup(context)
+        finally:
+            if old_working_directory is not None:
+                # Restore the working directory.
+                os.chdir(old_working_directory)
 
 
 
@@ -339,6 +503,12 @@ class Result:
         return "Result(%s)" % string.join(parts, ", ")
 
 
+    def GetOutcome(self):
+        """Return the outcome of this test result."""
+
+        return self.__outcome
+
+
     # Methods to emulate a (write-only) map.
 
     def __setitem__(self, key, value):
@@ -396,6 +566,12 @@ class ResultWrapper:
         """Return the context in use when this result was generated."""
 
         return self.__context
+
+
+    def GetContextProperties(self):
+        """Return the attributes added to the context by this test."""
+
+        return self.__context.GetAddedProperties()
 
 
     def MakeDomNode(self, document):
@@ -462,8 +638,7 @@ class Context:
         the command line.
 
     A 'Context' object is effectively a mapping object whose keys must
-    be labels and values must be strings.
-    """
+    be labels and values must be strings."""
 
     def __init__(self, **initial_attributes):
         """Construct a new context.
@@ -473,17 +648,17 @@ class Context:
 
         self.__attributes = initial_attributes
         for key, value in self.__attributes.items():
-            self.__ValidateKey(key)
-            self.__ValidateValue(value)
+            self.ValidateKey(key)
 
         # Stuff everything in the RC configuration into the context.
         options = qm.rc.GetOptions()
         for option in options:
-            self.__ValidateKey(option)
+            self.ValidateKey(option)
             value = qm.rc.Get(option, None)
             assert value is not None
-            self.__ValidateValue(value)
             self.__attributes[option] = value
+
+        self.__temporaries = {}
 
 
     # Methods to simulate a map object.
@@ -493,13 +668,16 @@ class Context:
 
 
     def __setitem__(self, key, value):
-        self.__ValidateKey(key)
-        self.__ValidateValue(value)
+        self.ValidateKey(key)
         self.__attributes[key] = value
 
 
     def __delitem__(self, key):
         del self.__attributes[key]
+
+
+    def has_key(self, key):
+        return self.__attributes.has_key(key)
 
 
     def keys(self):
@@ -523,7 +701,7 @@ class Context:
 
     # Helper methods.
 
-    def __ValidateKey(self, key):
+    def ValidateKey(self, key):
         """Validate 'key'.
 
         raises -- 'ValueError' if 'key' is not a string.
@@ -538,13 +716,116 @@ class Context:
                   qm.error("invalid context key", key=key)
 
 
-    def __ValidateValue(self, value):
-        """Validate 'value'.
 
-        raises -- 'ValueError' if 'value' is not a string."""
+class ContextWrapper:
+    """Wrapper for 'Context' objects.
 
-        if not isinstance(value, types.StringType):
-            raise ValueError, "context value must be a string"
+    A 'ContextWrapper' allows additional properties to be added
+    temporarily to a context.  It also keeps new properties added to the
+    context separate from those that were specified when the context
+    wrapper was intialized.
+
+    There are three sets of properties in a context wrapper.
+
+      1. Properties of the wrapped 'Context' object.
+
+      2. Extra properties specified when the wrapper was created.
+
+      3. Properties added (using '__setitem__') after the wrapper was
+         created.
+
+    A property in 3 shadows a property with the same name in 1 or 2,
+    and a property in 2 similarly shadows a property with the same name
+    in 1."""
+
+    def __init__(self, context, extra_properties={}):
+        """Create a context wrapper.
+
+        'context' -- The wrapped 'Context' object.
+
+        'extra_properties' -- Additional properties."""
+
+        self.__context = context
+        self.__extra = extra_properties.copy()
+        self.__added = {}
+
+
+    def GetAddedProperties(self):
+        """Return the properties added after this wrapper was created."""
+
+        return self.__added
+
+
+    def __getitem__(self, key):
+        """Return a property value."""
+
+        # Check added properties first.
+        try:
+            return self.__added[key]
+        except KeyError:
+            pass
+        # Then check properties added during initialization.
+        try:
+            return self.__extra[key]
+        except KeyError:
+            pass
+        # Finally check properties of the wrapped context object.
+        return self.__context[key]
+
+
+    def __setitem__(self, key, value):
+        """Set a property value."""
+
+        self.__context.ValidateKey(key)
+        # All properties set via '__setitem__' are stored here.
+        self.__added[key] = value
+
+
+    def __delitem__(self, key):
+        try:
+            del self.__added[key]
+        except KeyError:
+            # A property cannot be deleted unless it was set with
+            # '__setitem__'.
+            if self.__extra.has_key(key) or self.__context.has_key(key):
+                raise RuntimeError, \
+                      qm.error("context attribute cannot be deleted",
+                               attribute=key)
+            else:
+                # The property didn't exist at all.
+                raise
+           
+
+    def has_key(self, key):
+        return self.__added.has_key(key) \
+               or self.__extra.has_key(key) \
+               or self.__context.has_key(key)
+
+
+    def keys(self):
+        return self.__added.keys() \
+               + self.__extra.keys() \
+               + self.__context.keys()
+
+
+    def values(self):
+        values = []
+        for key in self.keys():
+            values.append(self.getitem(key))
+        return values
+
+
+    def items(self):
+        items = []
+        for key in self.keys():
+            items.append(( key, self.getitem(key) ))
+        return items
+
+
+    def copy(self):
+        result = ContextWrapper(self.__context, self.__extra)
+        result.__added = self.__added.copy()
+        return result
 
 
 
@@ -608,6 +889,13 @@ class Engine:
        were run.  The tests that were run is a superset of
        'test_ids'."""
 
+       # For convenience, set 'progress_callback' to a do-nothing
+       # function if it is 'None'.
+       if progress_callback is None:
+           def null_function(message):
+               pass
+           progress_callback = null_function
+
        # Construct a map-like object for test prerequisites.
        prerequisite_map = PrerequisiteMapAdapter(self.__database)
        # Perform a topological sort to determine the tests that will be
@@ -615,10 +903,44 @@ class Engine:
        # superset of the original 'test_ids'.
        test_ids = qm.graph.topological_sort(test_ids,
                                             prerequisite_map)
-       # Construct a map from test IDs to test objects.
+
+       # This map associates a test with each test ID.
        tests = {}
+
+       # This map contains information about when actions should be run.
+       # There is an entry for each action referenced by at least one of
+       # the tests that will be run.  The key is the action ID, and the
+       # value is a pair of test IDs.  The first is the ID of the test
+       # before which the setup action must be run.  The second is the
+       # ID of the test after which the cleanup action must be run.
+       action_map = {}
+
+       # Loop over all the tests, in the order that they will be run.
        for test_id in test_ids:
-           tests[test_id] = self.__database.GetTest(test_id)
+           # Look up the test.
+           test = self.__database.GetTest(test_id)
+           # Store it.
+           tests[test_id] = test
+           # Loop over all the actions it references.
+           for action_id in test.GetActions():
+               if action_map.has_key(action_id):
+                   # Another test referenced this action.  The other
+                   # test is run earlier, so leave the first element
+                   # alone.  This test is later, though, so replace the
+                   # second element so that the cleanup action is run
+                   # only after this test is run.
+                   action_map[action_id][1] = test_id
+               else:
+                   # No other test has referenced this action so far.
+                   action_map[action_id] = [test_id, test_id]
+
+       # This map contains the context properties that were added by
+       # each setup action that has been run so far.  A key in this map
+       # is an action ID, and the corresponding value represents the
+       # properties that the setup action added to the context (as a map
+       # from property name to value).  If the setup action failed, the
+       # corresponding value is 'None'.
+       setup_attributes = {}
 
        # Run tests.  Store the results in an ordered map so that we can
        # retrieve results by test ID efficiently, and also preserve the
@@ -627,36 +949,138 @@ class Engine:
        for test_id in test_ids:
            test = tests[test_id]
            result = None
+           action_ids = test.GetActions()
 
-           # Invoke the callback.
-           if progress_callback is not None:
-               progress_callback(test_id, None)
-
-           # Check the test's prerequisites.
+           # Prerequisite tests and setup actions may add additional
+           # properties to the context which are visible to this test.
+           # Accumulate those properties in this map.
+           extra_context_properties = {}
+           
+           # Check that all the prerequisites of this test have produced
+           # the expected outcomes.  If a prerequisite produced a
+           # different outcome, generate an UNTESTED result and stop
+           # processing prerequisites.
+           
            for prerequisite_id, outcome in test.GetPrerequisites().items():
                # Because of the topological sort, the prerequisite
                # should already have been run.
                assert results.has_key(prerequisite_id)
                # Did the prerequisite produce the required outcome?
-               if results[prerequisite_id].GetOutcome() != outcome:
+               prerequisite_result = results[prerequisite_id]
+               if prerequisite_result.GetOutcome() != outcome:
                    # No.  As a result, we won't run this test.  Create
                    # a result object with the UNTESTED outcome.
                    result = Result(outcome=Result.UNTESTED,
                                    failed_prerequisite=prerequisite_id)
-                   # Don't look at other prerequisites.
                    break
+               else:
+                   # Properties added to the context by the prerequisite
+                   # test are to be available to this test.
+                   extra_context_properties.update(
+                       prerequisite_result.GetContextProperties())
+
+           # Do setup actions (unless a prerequisite failed).  This is
+           # done only for the first test that references the action.
+           # If a setup action fails, generate an UNTESTED result for
+           # this test and stop processing setup actions.
+
+           if result is not None:
+               # Don't bother with setup actions if we already have a
+               # test result indicating a failed prerequisite.
+               pass
+           else:
+               # Loop over actions referenced by this test.
+               for action_id in action_ids:
+                   # Have we already done the setup for this action?
+                   if action_map[action_id][0] != test_id:
+                       # This is not the first test to require this
+                       # action, so it should have already been run.
+                       # Look up the context properties that the setup
+                       # function generated.
+                       added_attributes = setup_attributes[action_id]
+                       if added_attributes is None:
+                           # The action failed when it was run, so don't
+                           # run this test.
+                           result = Result(outcome=Result.UNTESTED,
+                                           failed_setup_action=action_id)
+                           break
+                   else:
+                       # This is the first test to reference this action.
+                       # Look up the action.
+                       try:
+                           action = self.__database.GetAction(action_id)
+                       except NoSuchActionError:
+                           # Oops, it's missing.  Don't run the test.
+                           result = Result(outcome=Result.UNTESTED,
+                                           missing_action=action_id)
+                           break
+
+                       # Make another context wrapper for the setup
+                       # function.  The setup function shouldn't see any
+                       # properties added by prerequisite tests or other
+                       # actions.  Also, we need to isolate the
+                       # properties added by this function.
+                       wrapper = ContextWrapper(context)
+
+                       # Do the setup action.
+                       progress_callback("action %-43s: " % action_id)
+                       try:
+                           action.DoSetup(wrapper)
+                       except:
+                           # The action raised an exception.  Don't run
+                           # the test.
+                           progress_callback("SETUP ERROR\n")
+                           result = Result(Result.UNTESTED,
+                                           failed_setup_action=action_id)
+                           # Add some information about the traceback.
+                           exc_info = sys.exc_info()
+                           result["setup_exception_" + action_id] = \
+                                            "%s: %s" % exc_info[:2]
+                           result["setup_traceback_" + action_id] = \
+                                            qm.format_traceback(exc_info)
+                           # Record 'None' for this action, indicating
+                           # that it failed.
+                           setup_attributes[action_id] = None
+                           break
+                       else:
+                           # The action completed successfully.
+                           progress_callback("SETUP\n")
+                           # Extract the context properties added by the
+                           # setup function.
+                           added_attributes = wrapper.GetAddedProperties()
+                           # Store them for other tests that reference
+                           # this action.
+                           setup_attributes[action_id] = added_attributes
+
+                   # Accumulate the properties generated by this setup
+                   # action. 
+                   extra_context_properties.update(added_attributes)
+
+           # We're done with prerequisites and setup actions, and it's
+           # time to run the test.
+           progress_callback("test %-45s: " % test_id)
 
            # If we don't already have a result (all prerequisites
-           # checked out), actually run the test.
+           # checked out and setup actions succeeded), actually run the
+           # test.
            if result is None:
+               # Create a context wrapper that we'll use when running
+               # the test.  It includes the original context, plus
+               # additional properties added by prerequisite tests and
+               # setup actions.
+               context_wrapper = ContextWrapper(context,
+                                                extra_context_properties)
                try:
-                   result = test.Run(context)
+                   # Run the test.
+                   result = test.Run(context_wrapper)
                except:
                    # The test raised an exception.  Create a result
                    # object for it.
                    result = make_result_for_exception(sys.exc_info())
                else:
-                   # What did the test return?
+                   # The test ran to completion.  Let's be lenient with
+                   # the 'Run' function's return value.  What did it
+                   # return?
                    if isinstance(result, qm.test.base.Result):
                        # A 'Result' instance.  Good; keep it.
                        pass
@@ -672,13 +1096,42 @@ class Engine:
                                       test_class=test.GetClass().__name__,
                                       result=repr(result))
 
+           # Invoke the callback.
+           progress_callback(result.GetOutcome() + "\n")
+
+           # Finally, run cleanup actions for this test.  Run them no
+           # matter what the test outcome is, even if prerequisites or
+           # setup actions failed.  If a cleanup action fails, try
+           # running the other cleanup actions anyway.
+
+           # Loop over actions referenced by this test.
+           for action_id in action_ids:
+               if action_map[action_id][1] != test_id:
+                   # This is not the last test to require this cleanup
+                   # action, so don't do it yet.
+                   continue
+               # Loop up the action.
+               action = self.__database.GetAction(action_id)
+
+               # Now run the cleanup action.
+               progress_callback("action %-43s: " % action_id)
+               try:
+                   action.DoCleanup(context_wrapper)
+               except:
+                   # It raised an exception.  No biggie; just record
+                   # some information in the result.
+                   progress_callback("CLEANUP ERROR\n")
+                   exc_info = sys.exc_info()
+                   result["cleanup_exception_" + action_id] = \
+                                    "%s: %s" % exc_info[:2]
+                   result["cleanup_traceback_" + action_id] = \
+                                    qm.format_traceback(exc_info)
+               else:
+                   # The cleanup action succeeded.
+                   progress_callback("CLEANUP\n")
+
            # Record the test ID and context by wrapping the result.
-           result = ResultWrapper(test_id, context, result)
-
-           # Invoke the callback, if one was specified.
-           if progress_callback is not None:
-               progress_callback(test_id, result)
-
+           result = ResultWrapper(test_id, context_wrapper, result)
            # Store the test result.
            results[test_id] = result
 
@@ -705,7 +1158,7 @@ class Engine:
 # functions
 ########################################################################
 
-def make_result_for_exception(exc_info, cause=None):
+def make_result_for_exception(exc_info, cause=None, outcome=Result.ERROR):
     """Return a 'Result' object for a test that raised an exception.
 
     'exc_info' -- The exception triple as returned from 'sys.exc_info'.
@@ -723,26 +1176,25 @@ def make_result_for_exception(exc_info, cause=None):
                   traceback=qm.format_traceback(exc_info))
 
 
-def get_test_class(test_class_name, extra_paths=[]):
-    """Return the test class named 'test_class_name'.
+def get_class(class_name, extra_paths=[]):
+    """Return the test or action class named 'class_name'.
 
-    'test_class_name' -- A fully-qualified Python class name.
+    'class_name' -- A fully-qualified Python class name.
 
     'extra_paths' -- Additional file system paths in which to look for
-    test classes, analogous to 'PYTHONPATH'.  These paths are searched
-    after those specified in the 'QMTEST_CLASSPATH' environment
-    variable, but before the standard testa classes.
+    classes, analogous to 'PYTHONPATH'.  These paths are searched after
+    those specified in the 'QMTEST_CLASSPATH' environment variable, but
+    before the standard testa classes.
 
-    returns -- A class object for the subclass of 'Test' that
-    corresponds to the requested test class.
+    returns -- A class object for the requested class.
 
-    raises -- 'ImportError' if 'test_class_name' cannot be loaded."""
+    raises -- 'ImportError' if 'class_name' cannot be loaded."""
 
-    global __loaded_test_classes
+    global __loaded_classes
 
     # Have we already loaded this test class?
     try:
-        return __loaded_test_classes[test_class_name]
+        return __loaded_classes[class_name]
     except KeyError:
         # Nope; that's OK.
         pass
@@ -755,13 +1207,13 @@ def get_test_class(test_class_name, extra_paths=[]):
         # The environment variable isn't set.
         user_class_path = []
     # Construct the full set of paths to search in.
-    paths = user_class_path + extra_paths + __builtin_test_class_path
+    paths = user_class_path + extra_paths + __builtin_class_path
     # Load it.
-    test_class = qm.common.load_class(test_class_name, paths)
+    klass = qm.common.load_class(class_name, paths)
     # Cache it.
-    __loaded_test_classes[test_class_name] = test_class
+    __loaded_classes[class_name] = klass
     # All done.
-    return test_class
+    return klass
 
 
 def expand_and_validate_ids(database, content_ids, id_list):
@@ -888,13 +1340,13 @@ def __result_from_dom(result_node):
 # variables
 ########################################################################
 
-__loaded_test_classes = {}
-"""Cache of loaded test classes."""
+__loaded_classes = {}
+"""Cache of loaded test and action classes."""
 
-__builtin_test_class_path = [
+__builtin_class_path = [
     qm.common.get_lib_directory("qm", "test", "classes"),
     ]
-"""Standard paths to search for test classes."""
+"""Standard paths to search for test and action classes."""
 
 ########################################################################
 # initialization

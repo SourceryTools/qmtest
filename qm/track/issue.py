@@ -413,10 +413,6 @@ def __issue_from_dom(issue_node):
 
     'issue_node' -- A DOM issue element node.
 
-    'attachment_location_map' -- A map from attachment locations as they
-    appear in the DOM tree to the corresponding attachment locations in
-    the IDB.
-
     returns -- An 'Issue' instance."""
 
     assert issue_node.tagName == "issue"

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE action PUBLIC "-//Software Carpentry//QMTest Action V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<action>
+ <class>temporary.TempDirectoryAction</class>
+</action>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->

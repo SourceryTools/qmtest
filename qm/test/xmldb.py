@@ -42,7 +42,6 @@ import qm.label
 import qm.structured_text
 import qm.xmlutil
 import string
-import xml.dom.ext.reader.Sax
 
 ########################################################################
 # constants
@@ -54,12 +53,22 @@ test_file_extension = ".qmt"
 suite_file_extension = ".qms"
 """The file extension for files representing test suites."""
 
+action_file_extension = ".qma"
+"""The file extension for files representing actions."""
+
 ########################################################################
 # classes
 ########################################################################
 
 class UnkownTestClassError(Exception):
     """An unknown test class was specified."""
+    
+    pass
+
+
+
+class UnkownActionClassError(Exception):
+    """An unknown action class was specified."""
     
     pass
 
@@ -118,6 +127,7 @@ class Database(base.Database):
         # '__NOT_LOADED'. 
         self.__tests = {}
         self.__suites = {}
+        self.__actions = {}
 
 
     def GetPath(self):
@@ -129,49 +139,31 @@ class Database(base.Database):
     def HasTest(self, test_id):
         """Return true if the database contains a test with 'test_id'."""
 
-        try:
-            # Try looking it up in the cache.
-            return self.__tests[test_id] is not self.__DOES_NOT_EXIST
-        except KeyError:
-            # Not found in the cache, so check in the file system.  Turn
-            # the period-separated test ID into a file system path,
-            # relative to the top of the test database.
-            path = self.IdToPath(test_id, absolute=1) + test_file_extension
-            # Does the test file exist?
-            if os.path.isfile(path):
-                # Yes.  Enter into the cache that the test exists but is
-                # not loaded.
-                self.__tests[test_id] = self.__NOT_LOADED
-                return 1
-            else:
-                # No.  Enter into the cache that the test does not exist.
-                self.__tests[test_id] = self.__DOES_NOT_EXIST
-                return 0
+        return self.__HasItem(test_id, self.__tests, test_file_extension)
+
+
+    def HasAction(self, action_id):
+        """Return true if the database contains an action with 'action_id'."""
+
+        return self.__HasItem(action_id, self.__actions, action_file_extension)
 
 
     def GetTest(self, test_id):
         if not self.HasTest(test_id):
             raise base.NoSuchTestError, test_id
 
-        # Look in the cache.
-        test = self.__tests[test_id]
-        if test == self.__NOT_LOADED:
-            # The test exists, but hasn't been loaded, so we'll have to
-            # load it here.  Turn the period-separated test ID into a
-            # file system path, relative to the top of the test
-            # database.
-            path = self.IdToPath(test_id, absolute=1) + test_file_extension
-            # Load and parse the XML test representation.
-            test_document = qm.xmlutil.load_xml_file(path)
-            # Turn it into a test object.
-            test = self.__ParseTestDocument(test_id, test_document)
-            # Enter it into the cache.
-            self.__tests[test_id] = test
-            return test
-        else:
-            # Already loaded; return the cached value.
-            return test
+        return self.__GetItem(test_id, self.__tests,
+                              test_file_extension, self.__ParseTestDocument)
+        
 
+    def GetAction(self, action_id):
+        if not self.HasAction(action_id):
+            raise base.NoSuchActionError, action_id
+
+        return self.__GetItem(action_id, self.__actions,
+                              action_file_extension,
+                              self.__ParseActionDocument)
+        
 
     def WriteTest(self, test, comments=0):
         # Generate the document and document type for XML test files.
@@ -248,7 +240,7 @@ class Database(base.Database):
         else:
             # Already loaded; return cached value.
             return suite
-        
+
 
     def TestIdToPath(self, test_id, absolute=0):
         """Convert a test ID in the database to a path to the test file."""
@@ -271,6 +263,76 @@ class Database(base.Database):
 
     # Helper functions.
 
+    def __HasItem(self, item_id, cache, file_extension):
+        """Return true if an item (a test or action) exits.
+
+        This function is used for logic common to tests and actions.
+
+        'item_id' -- The ID of the item.
+
+        'cache' -- A cache map in which to look up the item ID, and to
+        update if the item is found.
+
+        'file_extension' -- The file extension that is used for files
+        representing this kind of item."""
+
+        try:
+            # Try looking it up in the cache.
+            return cache[item_id] is not self.__DOES_NOT_EXIST
+        except KeyError:
+            # Not found in the cache, so check in the file system.  Turn
+            # the period-separated test ID into a file system path,
+            # relative to the top of the test database.
+            path = self.IdToPath(item_id, absolute=1) + file_extension
+            # Does the test file exist?
+            if os.path.isfile(path):
+                # Yes.  Enter into the cache that the test exists but is
+                # not loaded.
+                cache[item_id] = self.__NOT_LOADED
+                return 1
+            else:
+                # No.  Enter into the cache that the test does not exist.
+                cache[item_id] = self.__DOES_NOT_EXIST
+                return 0
+
+
+    def __GetItem(self, item_id, cache, file_extension, document_parser):
+        """Return an item (a test or action).
+
+        This function is used for logic common to tests and actions.
+
+        'item_id' -- The ID of the item to get.
+
+        'cache' -- A cache map in which to look up the item ID, and if
+        the item is loaded, into which to enter it.
+
+        'file_extension' -- The file extension that is used for files
+        representing this kind of item.  The file contents are XML.
+
+        'document_parser' -- A function that takes an XML DOM document
+        as its argument and returns the constructed item object."""
+
+        # Look in the cache.
+        item = cache[item_id]
+        if item == self.__NOT_LOADED:
+            # The item exists, but hasn't been loaded, so we'll have to
+            # load it here.  Turn the period-separated ID into a file
+            # system path, relative to the top of the item database.
+            path = self.IdToPath(item_id, absolute=1) + file_extension
+            # Load and parse the XML item representation.
+            document = qm.xmlutil.load_xml_file(path)
+            # Turn it into an object.
+            item = document_parser(item_id, document)
+            # Set its working directory.
+            item.SetWorkingDirectory(os.path.dirname(path))
+            # Enter it into the cache.
+            cache[item_id] = item
+            return item
+        else:
+            # Already loaded; return the cached value.
+            return item
+
+
     def __ParseTestDocument(self, test_id, document):
         """Return a test object constructed from a test document.
 
@@ -287,53 +349,81 @@ class Database(base.Database):
         test_class_name = self.__GetClassNameFromDomNode(test_node)
         # Obtain the test class.
         try:
-            test_class = base.get_test_class(test_class_name)
+            test_class = base.get_class(test_class_name)
         except KeyError:
             raise UnknownTestClassError, class_name
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
-        categories = qm.xmlutil.get_dom_children_texts(test_node, "category")
-        prerequisites = self.__GetPrerequisitesFromDomNode(test_node, test_id)
+        categories = qm.xmlutil.get_dom_children_texts(test_node,
+                                                       "category")
+        prerequisites = self.__GetPrerequisitesFromDomNode(test_node,
+                                                           test_id)
+        actions = self.__GetActionsFromDomNode(test_node, test_id)
         # Construct a test wrapper around it.
         test = base.Test(test_id,
                          test_class_name,
                          arguments,
                          prerequisites,
-                         categories)
+                         categories,
+                         actions)
         return test
         
 
-    def __GetClassNameFromDomNode(self, test_node):
-        """Return the name of the test class of a test.
+    def __ParseActionDocument(self, action_id, document):
+        """Return an action object constructed from an action document.
 
-        'test_node' -- A DOM node for a test element.
+        'action_id' -- The action ID of the action.
+
+        'document' -- A DOM document node containing a single action
+        element from which the action object is constructed."""
+
+        # Make sure the document contains only a single test element.
+        action_nodes = document.getElementsByTagName("action")
+        assert len(action_nodes) == 1
+        action_node = action_nodes[0]
+        # Extract the pieces.
+        action_class_name = self.__GetClassNameFromDomNode(action_node)
+        # Obtain the test class.
+        try:
+            action_class = base.get_class(action_class_name)
+        except KeyError:
+            raise UnknownActionClassError, class_name
+        arguments = self.__GetArgumentsFromDomNode(action_node, action_class)
+        # Construct a test wrapper around it.
+        return base.Action(action_id, action_class_name, arguments)
+
+
+    def __GetClassNameFromDomNode(self, node):
+        """Return the name of the test or action class of a test.
+
+        'node' -- A DOM node for a test element.
 
         raises -- 'UnknownTestClassError' if the test class specified
         for the test is not among the registered test classes."""
 
         # Make sure it has a unique class element child.
-        class_nodes = test_node.getElementsByTagName("class")
+        class_nodes = node.getElementsByTagName("class")
         assert len(class_nodes) == 1
         class_node = class_nodes[0]
         # Extract the name of the test class.
         return qm.xmlutil.get_dom_text(class_node)
 
 
-    def __GetArgumentsFromDomNode(self, test_node, test_class):
-        """Return the arguments of a test.
+    def __GetArgumentsFromDomNode(self, node, klass):
+        """Return the arguments of a test or action.
 
-        'test_node' -- A DOM node for a test element.
+        'node' -- A DOM node for a test or action element.
 
-        'test_class' -- The test class for this test.
+        'klass' -- The test or action class.
 
         returns -- A mapping from argument names to corresponding
         values."""
 
         result = {}
         # The fields in the test class.
-        fields = test_class.fields
+        fields = klass.fields
 
         # Loop over argument child elements.
-        for arg_node in test_node.getElementsByTagName("argument"):
+        for arg_node in node.getElementsByTagName("argument"):
             # Extract the (required) name attribute.  
             name = arg_node.getAttribute("name")
             # Look for a field with the same name.
@@ -384,6 +474,28 @@ class Database(base.Database):
             # Get the required outcome.
             outcome = child_node.getAttribute("outcome")
             results[test_id] = outcome
+        return results
+
+
+    def __GetActionsFromDomNode(self, test_node, test_id):
+        """Return the actions for 'test_node'.
+
+        'test_node' -- A DOM node for a test element.
+
+        'test_id' -- The corresponding test ID.
+
+        returns -- A sequence of action IDs."""
+        
+        dir_id = qm.label.split(test_id)[0]
+        rel = qm.label.MakeRelativeTo(dir_id)
+        # Extract the contents of all action elements.
+        results = []
+        for child_node in test_node.getElementsByTagName("action"):
+            action_id = qm.xmlutil.get_dom_text(child_node)
+            # These action IDs are relative to the path containing this
+            # test.  Make them absolute.
+            action_id = rel(action_id)
+            results.append(action_id)
         return results
 
 

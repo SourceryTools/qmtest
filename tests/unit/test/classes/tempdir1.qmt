@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.PythonTest</class>
+ <action>tempdir1</action>
+ <argument name='source'>
+  <attachment>
+<data>
+import os.path
+
+# The action 'tempdir1' created a temporary directory for us.
+dir_path = context["temp_dir_path"]
+
+# The directory should exist.
+assert os.path.isdir(dir_path)
+
+# The directory should be empty.
+assert len(os.listdir(dir_path)) == 0
+</data>
+  </attachment>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->
