@@ -1,3 +1,14 @@
+2002-11-25  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/context.py (ContextException.__init__): Initialize the
+	base class.
+	* qm/test/result.py (ContextException): Import it.
+	(Result.NoteException): Handle ContextExceptions specially.
+	* qm/test/target.py (Target.RunTest): But don't do so here.
+	* qm/test/text_result_stream.py (TextResultStream.WriteResult):
+	Output annotations.
+	(TextResultStream._DisplayAnnotations): New method.
+
 2002-11-22  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Refine previous patch.

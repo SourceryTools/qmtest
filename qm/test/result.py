@@ -18,6 +18,7 @@
 ########################################################################
 
 import qm
+from   qm.test.context import ContextException
 import sys
 import types
 
@@ -215,16 +216,17 @@ class Result:
     
         
     def NoteException(self,
-                      exc_info=None,
-                      cause="An exception occurred.",
-                      outcome=ERROR):
+                      exc_info = None,
+                      cause = None,
+                      outcome = ERROR):
         """Note that an exception occurred during execution.
 
         'exc_info' -- A triple, in the same form as that returned
         from 'sys.exc_info'.  If 'None', the value of 'sys.exc_info()'
         is used instead.
 
-        'cause' -- The value of the 'Result.CAUSE' annotation.
+        'cause' -- The value of the 'Result.CAUSE' annotation.  If
+        'None', a default message is used.
 
         'outcome' -- The outcome of the test, now that the exception
         has occurred.
@@ -234,6 +236,20 @@ class Result:
 
         if not exc_info:
             exc_info = sys.exc_info()
+
+        exception_type = exc_info[0]
+        
+        # If no cause was specified, use an appropriate message.
+        if not cause:
+            if exception_type is ContextException:
+                cause = 'Missing context variable "%s".' % exc_info[1].key
+            else:
+                cause = "An exception occurred."
+
+        # For a 'ContextException', indicate which context variable
+        # was missing.
+        if exception_type is ContextException:
+            self["qmtest.missing_variable"] = exc_info[1].key
             
         self.SetOutcome(outcome)
         self[Result.CAUSE] = cause

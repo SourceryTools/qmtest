@@ -34,6 +34,7 @@ class ContextException(qm.common.QMException):
         'key' -- A string giving the context key for which no value
         was available."""
 
+        qm.common.QMException.__init__(self, "Missing context variable.")
         self.key = key
 
         

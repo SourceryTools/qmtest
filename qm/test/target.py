@@ -206,12 +206,6 @@ class Target(qm.extension.Extension):
         result = Result(Result.TEST, descriptor.GetId(), context)
         try:
             descriptor.Run(context, result)
-        except ContextException, ce:
-            # If the context was missing a variable, report that
-            # to the user.
-            result.SetOutcome(Result.ERROR)
-            result[Result.CAUSE] = "Missing context variable '%s'." % ce.key
-            result["qmtest.missing_variable"] = ce.key
         except KeyboardInterrupt:
             result.NoteException(cause = "Interrupted.")
             # We received a KeyboardInterrupt, indicating that the

@@ -81,6 +81,12 @@ class TextResultStream(ResultStream):
 	# Display the result.
 	self._DisplayResult(result, "brief")
 
+        # Display annotations associated with the test.
+        if (self.__format == "full"
+            or (self.__format == "brief"
+                and result.GetOutcome() != Result.PASS)):
+            self._DisplayAnnotations(result)
+
 
     def Summarize(self):
         """Output summary information about the results.
@@ -288,31 +294,35 @@ class TextResultStream(ResultStream):
         if result.has_key(Result.CAUSE):
             self.__file.write('    ' + result[Result.CAUSE] + '\n')
             
-        # In the "full" format, print all result properties.
-        if (format == "full"
-            or (format == "brief" and outcome != Result.PASS)):
-	    keys = result.keys()
-	    keys.sort()
-            for name in keys:
-                # The CAUSE property has already been displayed."
-                if name == Result.CAUSE:
-                    continue
-                # Add an item to the list
-                self.__file.write("\n    %s:\n" % name)
-                
-                # Convert the HTML to text.
-                s = StringIO.StringIO()
-                w = formatter.DumbWriter(s)
-                f = formatter.AbstractFormatter(w)
-                p = htmllib.HTMLParser(f)
-                p.feed(result[name])
-                p.close()
-
-                # Write out the text.
-                for l in s.getvalue().splitlines():
-                    self.__file.write("      " + l + "\n")
-        
         self.__file.write('\n')
+
+
+    def _DisplayAnnotations(self, result):
+        """Display the annotations associated with 'result'.
+
+        'result' -- The 'Result' to dispay."""
+
+        keys = result.keys()
+        keys.sort()
+        for name in keys:
+            # The CAUSE property has already been displayed."
+            if name == Result.CAUSE:
+                continue
+            # Add an item to the list
+            self.__file.write("    %s:\n" % name)
+
+            # Convert the HTML to text.
+            s = StringIO.StringIO()
+            w = formatter.DumbWriter(s)
+            f = formatter.AbstractFormatter(w)
+            p = htmllib.HTMLParser(f)
+            p.feed(result[name])
+            p.close()
+
+            # Write out the text.
+            for l in s.getvalue().splitlines():
+                self.__file.write("      " + l + "\n")
+            self.__file.write("\n")
         
 
     def _WriteOutcome(self, name, kind, outcome, expected_outcome=None):
