@@ -1,3 +1,8 @@
+2003-09-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (commands_spec): Add --help support for
+	"qmtest remote".
+
 2003-09-26  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Kill): Fix typo.

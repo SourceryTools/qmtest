@@ -418,7 +418,7 @@ Runs QMTest as a remote server.  This mode is only used by QMTest
 itself when distributing tests across multiple machines.  Users
 should not directly invoke QMTest with this option.
          """,
-         ()
+         (help_option_spec,)
          ),
 
         ("run",
