@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   introduction.xml
+  Author: Greg Wilson, Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Chapter `Introduction' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter>
+ <title>Introduction</title>
+
+ <para>This document outlines the design of &qmtrack;, an
+ Internet-enabled issue-tracking system which will manage a number of
+ issues (with properties such as "description", "priority", and so on)
+ and provide the ability to
+  <orderedlist>
+   <listitem>
+    <para>submit new issues,</para>
+   </listitem>
+
+   <listitem>
+    <para>find and edit existing issues, and</para>
+   </listitem>
+
+   <listitem>
+    <para>discuss issues with other participants.</para>
+   </listitem>
+  </orderedlist>
+ The system will facilitate communication among the participants by
+ managing discussions and notifying interested parties when issues are
+ edited.</para>
+
+ <para>This design draws on experience from an existing issue-tracking
+ system called <ulink
+ url="http://www.software-carpentry.com/entries/second-round/track/Roundup/">
+ Roundup</ulink>, and from the ideas discussed in Udell's <ulink
+ url="http://www.software-carpentry.com/Groupware/report.html"><citetitle
+ pubwork="article">Internet Groupware for Scientific
+ Collaboration</citetitle></ulink>.</para>
+
+ <para>This document incorporates material written by Ka-Ping Yee in
+ his <ulink
+ url="http://www.software-carpentry.com/entries/track/Roundup/Roundup.html">first
+ round</ulink> and <ulink
+ url="http://www.software-carpentry.com/entries/second-round/track/Roundup/">second
+ round</ulink> proposals to the &sc; project design
+ competitions.</para>
+
+ <section>
+  <title>Background</title>
+
+  <para>A typical software project requires the management of many
+  tasks, usually distributed among several collaborators.  In fact,
+  any project team could use a tool for sorting out and discussing all
+  the relevant issues.  A common approach is to set up some kind of
+  "to-do" list that people can share.</para>
+
+  <para>However, to address the overall problem we need much more than
+  just a shared to-do list; we need to manage a growing body of
+  knowledge and experience to help a team collaborate effectively on a
+  project.  If this is done well, an issue-tracking system can be a
+  collective memory for a development team, as well as a powerful
+  workflow management tool.</para>
+
+  <para>In order to achieve this, a good issue-tracking system should
+  have at least the following properties:
+   <orderedlist>
+    <listitem>
+     <para><emphasis>Low barrier to participation.</emphasis> The
+     usefulness of the tool depends entirely on the information people
+     contribute to it.  It must be made as easy as possible to submit
+     new issues and contribute information about existing
+     issues.</para>
+    </listitem>
+
+    <listitem>
+     <para><emphasis>Straightforward navigation.</emphasis> It should
+     be easy for users to extract information they need from the
+     system to direct their decisions and tasks.  They should be able
+     to get a decent overview of things as well as finding specific
+     information when they know what they're after.</para>
+    </listitem>
+
+    <listitem>
+     <para><emphasis>Controlled information flow.</emphasis> The users
+     must have control over how much information and what information
+     they get.  A common flaw of some issue-tracking systems is that
+     they inundate users with so much useless e-mail that people avoid
+     the system altogether.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+ </section>
+
+ <section>
+  <title>User Interface</title>
+
+  <para>The effective power of many systems is diminished or negated
+  by hard-to-use interfaces.  If it is tedious or difficult to enter,
+  search for, or summarize information, users will do it as little as
+  possible, which in turn reduces the payback for using the
+  system.</para>
+
+  <para>In order to avoid this vicious circle, &qmtrack; must give
+  users access through three modes of interaction: command-line,
+  e-mail, and web browsers.  (A fourth method, via scripts, is
+  possible by using the internal &api;s of the &qmtrack; system.)  We
+  see e-mail and web browsers as the most important, both because we
+  envisage &qmtrack; being used in widely-distributed environments,
+  and because they are the most constraining of the five modes.</para>
+
+  <para>E-mail is best suited for the submission of new items since
+  most people are most comfortable with composing long messages in
+  their own favourite e-mail client. E-mail also permits them to
+  mention URLs or attach files relevant to their submission.  Indeed,
+  in many cases people are already used to making requests by sending
+  e-mail to a mailing list of people; they can do exactly the same
+  thing to use Roundup without even thinking about it. Similarly,
+  people are already familiar with holding discussions in e-mail, and
+  plenty of valuable usage conventions and software tools already
+  exist for that medium.</para>
+
+  <para>Web browsers, on the other hand, are best suited for
+  summarizing and seeking information, because they can present an
+  interactive overview of items.  Since the Web has forms, it's also
+  the best place to edit items.</para>
+
+  <section>
+   <title>Editing</title>
+
+   <para>Since &qmtrack; is intended to support arbitrary user-defined
+   item properties, the item editing interface must be automatically
+   generated from those properties.  As with most configurable
+   systems, &qmtrack; will therefore include a small set of base types
+   (such as integer, string, date, and so on), and allow users to
+   specialize or combine these to create richer types.  The specifics
+   of these types are discussed in <link linkend="sec-fields"
+   endterm="sec-fields-title"></link>.</para>
+
+   <para>The configuration for &qmtrack; will include a template
+   describing how to lay out the web pages used to interact with the
+   &qmtrack; database.  &qmtrack; automatically generates web forms
+   suitable for read-only display, editing, and querying of issues.
+   Each type has its own appropriate editing widget.  For example,
+    <orderedlist>
+     <listitem>
+      <para>String properties appear as text fields.</para>
+     </listitem>
+
+     <listitem>
+      <para>Date properties appear as text fields.</para>
+     </listitem>
+
+     <listitem>
+      <para>Choice (enumerated) properties appear as selection
+      lists.</para>
+     </listitem>
+    </orderedlist>
+   Additional hints may be specified to tune the user interface
+   further.  For instance, a text field may be specified as
+   single-line or multi-line; the appropriate text fields are used
+   automatically for this field.</para>
+
+  </section>
+
+  <section>
+   <title>Browsing and Searching</title>
+
+   <para>The database of issues can grow quite large and complex in
+   many deployments, and sophisticated tools for querying the database
+   are important.  Issues may be selected using expressions from a
+   restricted subset of Python.  Fields in each issue are referred to
+   as if they are variables, and each issue is considered to match if
+   the expression would evaluate to a true boolean value.  Python's
+   expression syntax is sufficiently straightforward and similar to
+   plain English that the query syntax will be quite easy to master
+   even for those without previous Python experience.  The query
+   syntax will be available </para>
+
+   <para>Searching the issue database via the web interface should be
+   as much like browsing as possible.  The user should simply be able
+   to click on things that seem interesting, and the information
+   should narrow down comfortably until the goal is in sight.
+   Experience shows that while one-shot searches may be appropriate
+   when users are looking for specific items, and know exactly what
+   they want, it's not very helpful when users want an overview ("Are
+   there more high-priority items than there were last week?"), are
+   trying to do comparisons ("I have some time this week, so who is
+   busiest and could most use some help?"), or do not know exactly
+   what they are looking for ("Has anyone seen a problem like this
+   before?")  To support browsing and casual queries, &qmtrack; will
+   provide a "drill-down" model as well in the web interface, in which
+   query results may subsequently be narrowed down with additional
+   query restrictions.</para>
+
+  </section>
+
+  <section>
+   <title>Notification</title>
+
+   <para>A third significant feature of &qmtrack; is its use of <link
+   linkend="def-trigger">triggers</link> to support customized event
+   handling.  Triggers are operations that are invoked on certain
+   kinds of events.  Trigger parameters can be configured, and new
+   triggers created, during &qmtrack;'s installation, or after it is
+   in place.</para>
+
+   <para>When &qmtrack; is about to access, create, or modify an item,
+   it first calls any triggers that have been registered for that
+   operation on that class.  Any trigger may abort the operation if it
+   is invalid or unauthorized.</para>
+
+   <para>If none of the triggers raises an exception, &qmtrack;
+   completes the operation. After it's done, it then calls additional
+   triggers that have been registered for the operation.  Together,
+   these triggers allow sites to log extra information about issue
+   modification for auditing purposes, implement site-specific
+   security or authorization policies, interact with legacy issue
+   databases or reporting frameworks, and other important side
+   effects.</para>
+
+  </section>
+
+ </section>
+
+ &requirements.xml;
+
+</chapter>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

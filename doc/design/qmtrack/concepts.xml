@@ -20,8 +20,23 @@
 <chapter>
  <title>Conceptual Architecture</title>
 
- <para>This chapter describes the architecture of the core components
- of &qmtrack;.</para>
+ <para>The fundamental item of information in &qmtrack; is the <phrase
+ id="def-issue"><firstterm>issue</firstterm></phrase>.  Each issue has
+ a collection of data items associated with it called <phrase
+ id="def-field"><firstterm>fields</firstterm></phrase>.  Issues are
+ grouped into <link linkend="def-issue-class">issue classes</link> by
+ the fields they include; all issues in a single issue class have the
+ same fields.</para>
+
+ <para>&qmtrack; is item-based in order to avoid the rigidity that
+ often comes from forcing information to be classified into exactly
+ one of a number of categories, or to fit it into a rigid hierarchy.
+ In the real world, forcing each item into a single topic category is
+ not just suboptimal but counterproductive: seekers of that item may
+ expect to find it in a different category and conclude that the item
+ is not present in the database -- which has them
+ <emphasis>worse</emphasis> off than if the items were not categorized
+ at all.</para>
 
  <section><title>Issue Database</title>
 
@@ -70,11 +85,12 @@
 
   <section><title>Issue classes</title>
 
-   <para>An <firstterm>issue class</firstterm> is a set of issues that
-   share the same fields.  When a new issue is created, an issue class
-   is chosen for it, and once the issue is created, its class may not
-   be changed (though a new issue may be created in another issue
-   class by copying fields values).</para>
+   <para>An <phrase id="def-issue-class"><firstterm>issue
+   class</firstterm></phrase> is a set of issues that share the same
+   fields.  When a new issue is created, an issue class is chosen for
+   it, and once the issue is created, its class may not be changed
+   (though a new issue may be created in another issue class by
+   copying fields values).</para>
 
    <para>The set of available issue classes and the fields contained
    in each are part of the configuration of the &qmtrack; installation.
@@ -85,7 +101,8 @@
 
   </section>
 
-  <section><title>Fields</title>
+  <section id="sec-fields">
+   <title id="sec-fields-title">Fields</title>
 
    <para>The &idb; consists of a set of tables corresponding to issue
    classes.  Each row of this table corresponds to a single revision
@@ -300,10 +317,11 @@
         <entry>revision number</entry>
        </row>
        <row>
-        <entry>time</entry>
-        <entry><constant>date</constant></entry> 
-        <entry>the date and time at which this issue revision was
-        entered into the &idb;</entry>
+        <entry>timestamp</entry>
+        <entry><constant>date</constant></entry> <entry>the date and
+        time at which this issue revision was entered into the &idb;;
+        if this is the current revision, it corresponds to the last
+        modification time of this issue</entry>
        </row>
        <row>
         <entry>summary</entry>
@@ -407,13 +425,8 @@
   <para>The following Python constructs are allowed in queries:
    <itemizedlist>
     <listitem>
-     <para>Integer literals.</para>
-    </listitem>
-
-    <listitem>
-     <para>String literals, using the standard Python single- or
-     double-quote syntax and optonally the <literal>r</literal>
-     prefix.</para>
+     <para>Literals, including integers, strings, and
+     dates/times.</para>
     </listitem>
 
     <listitem>
@@ -498,7 +511,7 @@
 
     <seglistitem>
      <seg>
-      <userinput>not "C++" in summary and time &gt; "2000 Oct
+      <userinput>not "C++" in summary and timestamp &gt; "2000 Oct
       31"</userinput>
      </seg>
      <seg>

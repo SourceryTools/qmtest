@@ -1,6 +1,21 @@
+2000-11-30  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/qm-html.dsl (html-manifest): Set true.
+	(html-manifest-filename): Set to "docbook-html.manifest".
+	(%use-id-as-filename%): Set to true.
+	
+	* doc/design/qmtrack/qmtrack.xml (api): New entity.
+	(sc): Likewise.
+	(introduction.xml): Likewise.
+	Include introduction.
+	* doc/design/qmtrack/introduction.xml: New file.
+	* doc/design/qmtrack/requirements.xml: Make it a section.  Edit.
+	* doc/design/qmtrack/concepts.xml: Revise introductory text.
+	Add ids.  Rename time field.  
+	
 2000-11-30  Benjamin Chelf  <chelf@codesourcery.com>
 
-        * doc/desgin/qmtrack/create1.jpg: New file.
+	* doc/desgin/qmtrack/create1.jpg: New file.
 	* doc/desgin/qmtrack/create2.jpg: Likewise.
 	* doc/desgin/qmtrack/edit1.jpg: Likewise.
 	* doc/desgin/qmtrack/edit2.jpg: Likewise.
