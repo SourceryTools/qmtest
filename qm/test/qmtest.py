@@ -27,11 +27,7 @@ import sys
 # the same name.
 sys.path = sys.path[1:]
 
-if os.environ['QM_BUILD'] == '1':
-    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'qm')
-else:
-    setup_path_dir = os.path.join(os.environ['QM_HOME'], 'lib/qm/qm')
-execfile(os.path.join(setup_path_dir, 'setup_path.py'))
+execfile(os.path.join(os.environ["QM_TRUE_LIBDIR"], "setup_path.py"))
 
 ########################################################################
 # imports

@@ -114,6 +114,14 @@ else
 NATPREFIX       := $(shell cygpath -a -w $(prefix))
 endif
 
+PYTHON_PKG_PREFIX := $(shell $(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(prefix='$(NATPREFIX)')")
+
+# Distutils requires relative paths on Windows.  For consistency,
+# we use the same technique everywhere.
+RELLIBDIR := $(shell expr "$(PYTHON_PKG_PREFIX)" : '$(NATPREFIX)/\(.*\)')
+RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
+RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
+
 ifeq ($(PYTHON_PLATFORM),win32)
 SCRIPT_EXT = .bat
 else
@@ -150,7 +158,7 @@ $(PYTHON_PACKAGES):
 ifneq ($(PYTHON_PLATFORM),win32)
 $(SCRIPTS): qm/qm.sh
 	rm -rf $@
-	cp qm/qm.sh $@
+	sed -e "s#@@@RELLIBDIR@@@#$(RELLIBDIR)/qm#" < qm/qm.sh > $@
 	chmod a-w $@
 	chmod a+x $@
 else
@@ -316,12 +324,6 @@ install: \
 # Install Python packages that use distutils.
 .PHONY: $(PYTHON_PACKAGES_INSTALL)
 
-# Distutils requires relative paths on Windows.  For consistency,
-# we use the same technique everywhere.
-RELLIBDIR := $(shell expr "$(INSTALLLIBDIR)" : '$(prefix)/\(.*\)')
-RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
-RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
-
 # Unfortunately, Python's Distutils do not set permissons on on the
 # installed files appropriately.  There is little we can do about this.
 #
@@ -380,9 +382,9 @@ scripts-install:
 lib-install:
 	for tool in $(QM_TOOLS); do \
 	  if test -f qm/$$tool/classes/classes.qmc; then \
-	    $(INSTALL_DIR) "$(INSTALLLIBDIR)/qm/$$tool/classes"; \
+	    $(INSTALL_DIR) "$(PYTHON_PKG_PREFIX)/qm/$$tool/classes"; \
 	    $(INSTALL_DATA) qm/$$tool/classes/classes.qmc \
-	      "$(INSTALLLIBDIR)/qm/$$tool/classes/classes.qmc"; \
+	      "$(PYTHON_PKG_PREFIX)/qm/$$tool/classes/classes.qmc"; \
 	  fi; \
 	done
 

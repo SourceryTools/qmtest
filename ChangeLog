@@ -1,3 +1,20 @@
+2003-06-08  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/base.py (get_extension_directories): Search for
+	builtin extension classes relative to __file__ rather than
+	QM_LIB_DIR.
+	* GNUmakefile.in (PYTHON_PKG_PREFIX): New variable.
+	(RELLIBDIR): Base on PYTHON_PKG_PREFIX, not @libdir@.
+	(RELLIBDIR, RELSHAREDIR, RELINCDIR): Move up in file, so
+	$(SCRIPTS) rule can see RELLIBDIR.
+	(lib-install): Install classes.qmc into PYTHON_PKG_PREFIX.
+	($(SCRIPTS)): Bake library directory into installed scripts.
+	* qm/qm.sh (qm_rel_libdir): New variable to hold baked-in
+	library directory.  Use it.
+	(QM_TRUE_LIBDIR): New exported variable to help qmtest.py find
+	setup_path.py.
+	* qm/test/qmtest.py: Use it.
+
 2003-06-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (FieldEditPage.__init__): Add server parameter.

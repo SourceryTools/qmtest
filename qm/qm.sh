@@ -34,6 +34,13 @@
 #   true
 
 ########################################################################
+# Variables
+########################################################################
+
+# Set by the makefile:
+qm_rel_libdir=@@@RELLIBDIR@@@
+
+########################################################################
 # Functions
 ########################################################################
 
@@ -84,13 +91,13 @@ qm_split_path() {
 #    the PATH environment variable just as the shell would do.
 #
 #    Having located this script, iterate up through the directories
-#    that contain $0 until we find a directory containing `lib/qm' or
-#    file called `qm/qm.sh'.  (It is not sufficient to simply apply
-#    'dirname' twice because of pathological cases like
-#    `./././bin/qmtest.sh'.)  This directory is the root of the
-#    installation.  In the former case, we have found an installed
-#    QM; in the latter we have found a build directory where QM
-#    is being developed.
+#    that contain $0 until we find a directory containing
+#    $qm_rel_libdir or file called `qm/qm.sh'.  (It is not sufficient
+#    to simply apply 'dirname' twice because of pathological cases
+#    like `./././bin/qmtest.sh'.)  This directory is the root of the
+#    installation.  In the former case, we have found an installed QM;
+#    in the latter we have found a build directory where QM is being
+#    developed.
 #
 # After determining the root of the QM installation, set the QM_HOME
 # environment variable to that value.  If we have found QM in the
@@ -137,9 +144,9 @@ if test x"${QM_HOME}" = x; then
     # Iterate through the directories containing this script.
     QM_HOME=`dirname "${QM_PATH}"`
     while true; do
-	# If there is a subdirectory called `lib/qm', then 
+	# If there is a subdirectory called $qm_rel_libdir, then 
 	# we have found the root of the QM installation.
-	if test -d "${QM_HOME}/lib/qm"; then
+	if test -d "${QM_HOME}/${qm_rel_libdir}"; then
 	    break
 	fi
 	# Alternatively, if we have find a file called `qm/qm.sh',
@@ -206,11 +213,13 @@ fi
 
 # Figure out where to find the main Python script.
 if test ${QM_BUILD} -eq 0; then
-    qm_libdir="${QM_HOME}/lib/qm/qm"
+    qm_libdir="${QM_HOME}/${qm_rel_libdir}"
 else
     qm_libdir="${QM_HOME}/qm"
 fi
 qm_script=`basename $0`
+
+export QM_TRUE_LIBDIR=${qm_libdir}
 
 case ${qm_script} in
     qmtest) qm_script_dir=test;;

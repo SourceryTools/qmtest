@@ -133,7 +133,7 @@ def get_extension_directories(kind, database, database_path = None):
                     (database_path))
         
     # Search the builtin directory, too.
-    dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
+    dirs.append(os.path.join(os.path.dirname(__file__), "classes"))
 
     return dirs
 
