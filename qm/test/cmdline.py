@@ -167,10 +167,18 @@ class Command:
         "Execute tests in COUNT concurrent threads."
         )
 
+    remote_option_spec = (
+        "r",
+        "remote-hosts",
+        "HOST,...",
+        "Execute test on HOSTs."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
         ( summary_option_spec, no_summary_option_spec ),
+        ( concurrent_option_spec, remote_option_spec ),
         )
 
     global_options_spec = [
@@ -189,7 +197,8 @@ class Command:
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
            outcomes_option_spec, context_option_spec, context_file_spec,
-           profile_option_spec, concurrent_option_spec )
+           profile_option_spec, concurrent_option_spec,
+           remote_option_spec, )
          ),
 
         ("server",
@@ -437,10 +446,20 @@ class Command:
             test_ids = test_ids.keys()
 
             # Set up a test engine for running tests.
+            remote_hosts = self.GetCommandOption("remote-hosts", None)
             concurrency = self.GetCommandOption("threads", None)
-            if concurrency is None:
-                engine = base.InProcessEngine()
-            else:
+            
+            if remote_hosts is not None:
+                # The user specified remote hosts.  Run tests there.
+                remote_hosts = string.split(remote_hosts, ",")
+                remote_hosts = map(lambda host_name:
+                                       base.RemoteTestHost(host_name),
+                                   remote_hosts)
+                engine = base.MultiRshEngine(remote_hosts)
+
+            elif concurrency is not None:
+                # The user specified concurrent testing.  Use the
+                # multiprocess engine.
                 try:
                     concurrency = int(concurrency)
                 except:
@@ -448,6 +467,10 @@ class Command:
                 if concurrency < 1:
                     raise CommandError, qm.error("invalid concurrency")
                 engine = base.MultiProcessEngine(concurrency)
+
+            else:
+                # Nothing special; execute tests serially, in-process.
+                engine = base.InProcessEngine()
 
             context = self.MakeContext()
             self.__output = output

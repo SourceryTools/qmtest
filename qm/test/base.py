@@ -1096,6 +1096,44 @@ class PrerequisiteMapAdapter:
         
 
 
+class RemoteTestHost:
+    """A remote host on which to run tests.
+
+    Instances of this class have the following attributes, which may be
+    set manually or with the '__init__' function:
+
+      'host_name' -- The name of the remote host.
+
+      'user_name' -- The name of the user account on the remote host on
+      which to run tests.  May be 'None', in which case the remote
+      invocation mechanism's default is used.
+
+      'qmtest_path' -- The path to the 'qmtest' executable on the remote
+      host.
+
+      'db_path' -- The path to the test database on the remote host.  If
+      'None', the local test database is used.
+
+      'extra_args' -- Additional command-line options and arguments to
+      pass to the 'qmest' command on the remote host."""
+
+    def __init__(self,
+                 host_name,
+                 user_name=None,
+                 qmtest_path="/usr/local/qm/bin/qmtest",
+                 db_path=None,
+                 extra_args=[]):
+        self.host_name = host_name
+        self.user_name = user_name
+        self.qmtest_path = qmtest_path
+        if db_path is None:
+            self.db_path = get_database().GetPath()
+        else:
+            self.db_path = db_path
+        self.extra_args = extra_args
+
+
+
 class Engine:
    """Base class for a test execution engine."""
 
@@ -1418,7 +1456,7 @@ class InProcessEngine(Engine):
             # Store the test result.
             results[test_id] = result
 
-        return results
+        return results.AsMap()
 
 
 
@@ -1490,14 +1528,21 @@ class ConcurrentEngine(Engine):
 
 
 
-class MultiProcessEngine(ConcurrentEngine):
-    """An engine that runs tests in several concurrent local processes."""
-
+class SubprocessEngine(ConcurrentEngine):
     # Note that there is no test database locking across processes,
     # currently.  This implementation assumes that the database is not
     # modified, so locking is unnecessary.
 
+    def __init__(self, engines):
+        ConcurrentEngine.__init__(self, len(engines))
+        self.__engines = engines
+
+
     def _Run(self, schedule, context):
+        # Make sure there is one element in 'schedule' for each of our
+        # subprocess engines.
+        assert len(self.__engines) == len(schedule)
+
         qmtest_executable = sys.argv[0]
         database = get_database()
         db_path = database.GetPath()
@@ -1507,7 +1552,10 @@ class MultiProcessEngine(ConcurrentEngine):
         # its results. 
         children = []
         # Spawn the children.
-        for test_ids_for_process in schedule:
+        for i in range(0, len(schedule)):
+            test_ids_for_process = schedule[i]
+            engine = self.__engines[i]
+
             # Create a temporary file name, into which the child process
             # will write its results.
             results_file_name = tempfile.mktemp()
@@ -1524,12 +1572,11 @@ class MultiProcessEngine(ConcurrentEngine):
             else:
                 # This is the child process.  Run the tests in an
                 # ordinary in-process engine.
-                engine = InProcessEngine()
                 results = engine.RunTests(test_ids_for_process, context)
                 # Write the results to a file.  Use Python pickle format
                 # instead of XML since it's faster.
                 results_file = open(results_file_name, "w")
-                cPickle.dump(results.AsMap(), results_file)
+                cPickle.dump(results, results_file)
                 results_file.close()
                 # End this process unceremoniously.
                 os._exit(0)
@@ -1554,6 +1601,23 @@ class MultiProcessEngine(ConcurrentEngine):
 
 
 
+class MultiProcessEngine(SubprocessEngine):
+    """An engine that runs tests in several concurrent local processes."""
+
+    def __init__(self, concurrency):
+        """Create a new engine.
+
+        'concurrency' -- The number of concurrent subprocesses in which
+        to run tests."""
+
+        # Make a set of 'concurrency' instances of 'InProcessEngine'.
+        # These are the engines we'll run in each process.
+        engines = map(lambda x: InProcessEngine(), concurrency * (None, ))
+        # Initialize the base class.
+        SubprocessEngine.__init__(self, engines)
+
+
+
 class MultiThreadEngine(ConcurrentEngine):
     """An engine that runs tests in concurrent Python threads.
 
@@ -1562,8 +1626,9 @@ class MultiThreadEngine(ConcurrentEngine):
     does not work reliably on some systems.  Particularly, some test
     classes may use 'os.fork' to execute a tested program in a separate
     process.  The bug may cause the Python interpreter to hang
-    unpredictably when calls to 'os.fork' are made from Python
-    threads."""
+    unpredictably when calls to 'os.fork' are made from Python threads.
+
+    Therefore, this class is currently not used."""
 
     def _Run(self, schedule, context):
         import threading
@@ -1611,8 +1676,6 @@ class MultiThreadEngine(ConcurrentEngine):
         # Run the tests using an ordinary 'InProcessEngine'.
         engine = InProcessEngine()
         results = engine.RunTests(test_ids, context)
-        # Convert the results to an ordinary Python map.
-        results = results.AsMap()
         # Append it to the provided list.
         threading.currentThread().__results = results
 
@@ -1715,8 +1778,26 @@ class LocalCommandEngine(CommandEngine):
 
 
 
+class MultiRshEngine(SubprocessEngine):
+
+    def __init__(self, hosts, rsh_program="/usr/bin/ssh"):
+        """Create a new engine.
+
+        'hosts' -- A sequence of 'RemoteTestHost' instances describing
+        the remote hosts on which to run tests.
+
+        'rsh_program' -- The remote shell program to use to invoke
+        'qmtest' on the remote host."""
+
+        engines = map(lambda host, rsh=rsh_program: RshEngine(host, rsh),
+                      hosts)
+        # Initialize the base class.
+        SubprocessEngine.__init__(self, engines)
+        
+
+
 class RshEngine(CommandEngine):
-    """Command engine to invoke 'qmtest' remotely via a remote shell
+    """Command engine to invoke 'qmtest' remotely via a remote shell.
 
     This engine uses a remote shell connection to invoke the 'qmtest'
     command on another host.  The remote shell is implemented using a
@@ -1728,46 +1809,30 @@ class RshEngine(CommandEngine):
 
     def __init__(self,
                  remote_host,
-                 remote_user=None,
-                 remote_qmtest_executable="/usr/local/bin/qmtest",
-                 remote_db_path=None,
-                 remote_args=[],
                  rsh_program="/usr/bin/ssh"):
         """Create a new engine.
 
-        'remote_host' -- The name of the remote host.
+        'remote_host' -- A 'RemoteTestHost' instance describing the
+        remote host on which to run tests.
 
-        'remote_user' -- The name of user account on the remote host in
-        which to run 'qmtest'.  If 'None', don't specify the user name
-        explicitly; use whatever is the default for the remote shell
-        program. 
+        'rsh_program' -- The remote shell program to use to invoke
+        'qmtest' on the remote host."""
 
-        'remote_db_path' -- The path to the test database on the remote
-        host.  If 'None', the local test database path is used.
-
-        'remote_args' -- Additional command-line options to pass to the
-        remote 'qmtest' invocation. 
-
-        'remote_qmtest_executable' -- The path to 'qmtest'"""
-
-        # Use the local test database path if none is specified.
-        if remote_db_path is None:
-            remote_db_path = get_database().GetPath()
         # Initialize the base class.
         CommandEngine.__init__(self,
-                               remote_qmtest_executable,
-                               remote_db_path,
-                               remote_args)
+                               remote_host.qmtest_path,
+                               remote_host.db_path,
+                               remote_host.extra_args)
         self.__remote_host = remote_host
-        self.__remote_user = remote_user
         self.__rsh_program = rsh_program
         
 
     def _Run(self, args, stdin):
+        remote_host = self.__remote_host
         # Construct the command line for the remote program.
-        ssh_args = [self.__rsh_program, self.__remote_host]
+        ssh_args = [self.__rsh_program, remote_host.host_name]
         # Should we specify the remote user name?
-        if self.__remote_user is not None:
+        if remote_host.user_name is not None:
             # Yes.  Use the '-l' option.
             ssh_args.append("-l")
             ssh_args.append(self.__remote_user)

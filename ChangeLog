@@ -1,5 +1,20 @@
 2001-05-31  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/cmdline.py (Command.remote_option_spec): New attribute.
+	(Command.conflicting_options_spec): Update.
+	(Command.commands_spec): Add --remote-hosts option.
+	(Command.add_test_id): Handle --remote-hosts option.
+	* qm/test/base.py (RemoteTestHost): New class.
+	(MultiProcessEngine): Generalize to...
+	(SubprocessEngine): ... this new class.
+	(MultiProcessEngine): New class.
+	(MultiThreadEngine._Run): Don't call AsMap.
+	(MultiRshEngine): New class.
+	(RshEngine.__init__): Use RemoteTestHost instances.
+	(RshEngine._Run): Likewise.
+
+2001-05-31  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/xmlutil.py (load_xml_file): Split into...
 	(load_xml): ... this new function.
 	* qm/platform_linux.py (get_user_name): New function.
