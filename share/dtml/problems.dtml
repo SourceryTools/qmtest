@@ -39,7 +39,7 @@
   </li>
  </ul>
 
- <dtml-var expr="GenerateEndBody(decorations=0)">
+ <dtml-var expr="GenerateEndBody()">
 </html>
 
 <dtml-comment><!-- 

@@ -6,6 +6,11 @@ This file describes user visible changes to QM.
 QM 2.0
 ======
 
+Netscape 4 is no longer supported by the QMTest GUI.  Mozilla 1.x and
+Internet Explorer 6 are the recommended browsers for use with the
+QMTest GUI.  On UNIX-like systems, QMTest will now try to run
+"mozilla", rather than "netscape", by default.
+
 Tests are no longer run in a random order by default.  To run tests in
 a random order, you must now use the "--random" option to "qmtest run".
 

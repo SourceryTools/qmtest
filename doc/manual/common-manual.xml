@@ -8,7 +8,7 @@
   Contents:
     Manual for common QM components.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -40,7 +40,7 @@
  <screen>
 &prompt;<userinput>cat ~/.qmrc</userinput>
 <computeroutput>[common]
-browser=/usr/local/bin/netscape
+browser=/usr/local/bin/mozilla
 </computeroutput></screen>
 
  <section id="sec-rc-common">
@@ -58,7 +58,9 @@ browser=/usr/local/bin/netscape
     </glossterm>
     <glossdef>
      <para>The path to your preferred web browser.  If omitted, &qm;
-     makes an attempt to locate a browser on your computer.</para>
+     attempts to run <filename>mozilla</filename>.  The &qm; GUI does
+     not correctly with Netscape 4 due to limitations in the support
+     for JavaScript and DOM in that browser.</para>
     </glossdef>
    </glossentry>
 

@@ -88,7 +88,7 @@ def open_in_browser(url):
     # Escape single quotes in the URL.
     url = string.replace(url, "'", "%27")
     # Which browser to use?
-    browser = common.rc.Get("browser", "netscape", "common")
+    browser = common.rc.Get("browser", "mozilla", "common")
     # Invoke the browser.
     os.system("%s '%s' &" % (browser, url))
 

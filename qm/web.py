@@ -238,12 +238,7 @@ class DtmlPage:
         result = """
         <br /><br />
         """
-        if decorations:
-            result = result + """
-        <div align="right"><font size="-1">
-         Problems?  Frustrations? <a href="/problems.html">Click here.</a>
-        </font></div>
-        """
+
         return result + self.GenerateStartScript(self.common_javascript) \
                + self.GenerateEndScript() + "</body>"
 
@@ -332,18 +327,6 @@ class DtmlPage:
         return make_button_for_request(title, request, css_class)
 
 
-    def MakeMenuItem(self, description, url):
-        """Generate HTML for a menu item.
-
-        'description' -- The name of the menu item.
-        
-        'url' -- The URL to which the user will be sent if this item
-        is selected."""
-        
-        return ('''<option value="%s">%s</option>'''
-                % (url, description))
-    
-        
     def MakeImageUrl(self, image):
         """Generate a URL for an image."""
 
@@ -523,7 +506,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return
         except SystemExit:
             self.server.RequestShutdown()
-            script_output = ("<html><b>Thank you for using %s.</b></html>"
+            script_output = ("<html><b>%s shutdown.</b></html>"
                              % qm.common.program_name)
         except:
             # Oops, the script raised an exception.  Show

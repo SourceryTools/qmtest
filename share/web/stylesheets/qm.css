@@ -41,31 +41,40 @@ a:hover {
     color: #500060;
 }
 
-/* Navigation bar.  */
+/* Menus.  */
 
-table.navbar {
-    background-color: black;
+*.menu_bar, *.menu_item {
+    background-color: #e8e8e8;
+}
+
+table.menu_bar {
     width: 100%;
+    border-style: groove;
+    border-width: medium;
 }
 
-td.navbar {
-    color: white;
+a.menu_bar, a.menu_item {
+    text-decoration: none;
+    display: block;
 }
 
-a.navbar:link {
-    color: white;
+a.menu_item {
+    display: block;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
-a.navbar:visited {
-    color: white;
+a.menu_item:hover {
+    background-color: #f0f8ff;
 }
 
-a.navbar:active {
-    color: white;
-}
-
-a.navbar:hover {
-    color: white;
+div.menu {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    visibility: hidden;
+    border-width: medium;
+    border-style: inset;
 }
 
 /* Tables.  */
@@ -129,7 +138,7 @@ span.error, span.warning {
     color: #c00000;
 }
 
-.field {
+*.field {
     background-color: #f0f8ff;
 }
 

@@ -381,6 +381,46 @@ function get_selected_value(select)
     return select.options[select.selectedIndex].value;
 }
 
+// Return the absolute left coordinate of o.
+
+function get_left(o) {
+    return (o.offsetParent == null ?
+            o.offsetLeft : 
+            o.offsetLeft + get_left(o.offsetParent));
+}
+
+
+// Return the absolute right coordinate of o.
+
+function get_right(o) {
+    return get_left(o) + o.offsetWidth;
+}
+
+
+// Return the absolute top coordinate of o.
+
+function get_top(o) {
+    return (o.offsetParent == null ?
+            o.offsetTop : 
+            o.offsetTop + get_top(o.offsetParent));
+}
+
+// Return the absolute bottom coordinate of o.
+
+function get_bottom(o) {
+    return get_top(o) + o.offsetHeight;
+}
+
+// Return true if parent contains child.
+
+function is_parent_of(parent, child) {
+    while (child) {
+        if (child == parent)
+            return true;
+        child = child.parentNode;
+    }
+    return false;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // Local Variables:

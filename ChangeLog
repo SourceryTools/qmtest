@@ -1,3 +1,27 @@
+2002-11-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Note that Netscape 4 is no longer a supported browser.
+	* doc/manual/common-manual.xml: Likewise.
+	* qm/platform_unix.py (open_in_browser): Default to mozilla.
+	* qm/web.py (DTMLPage.GenerateEndBody): Remove Problems? link.
+	(DTMLPage.MakeMenuItem): Remove.
+	(WebRequestHandler.__HandleScriptRequest): Change shutdown
+	message.
+	* qm/test/share/dtml/dir.dtml: Add logo.
+	* qm/test/share/dtml/navigation-bar.dtml: Rework menu logic.
+	* qm/test/web/web.py (QMTestPage.__init__): Update menu items to
+	use URLs, not JavaScript code.
+	* share/dtml/problems.dtml: Remove second parameter to
+	GenerateEndBody.
+	* share/dtml/user.dtml: Likewise.
+	* share/web/common.js (get_left): New function.
+	(get_right): Likewise.
+	(get_top): Likewise.
+	(get_bottom): Likewise.
+	(is_parent_of): Likewise.
+	* share/web/images/logo.png: New file.
+	* share/web/stylesheets/qm.css: Update style for menus.
+	
 2002-11-27  Vladimir Prus <ghost@cs.msu.su>
 
 	* qm/test/web/web.py (ResultPage.__init__): Add "This Test" to run

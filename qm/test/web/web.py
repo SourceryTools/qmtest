@@ -100,35 +100,36 @@ class QMTestPage(DefaultDtmlPage):
         # Set up the menus first; the attributes might override them.
         if server.GetDatabase().IsModifiable():
             self.file_menu_items = [
-            ('New Test', "location = 'new-test';"),
-            ('New Suite', "location = 'new-suite';"),
-            ('New Resource', "location = 'new-resource';"),
+            ('New Test', "new-test"),
+            ('New Suite', "new-suite"),
+            ('New Resource', "new-resource"),
             ]
         else:
             self.file_menu_items = []
         self.file_menu_items.extend([
-            ('Load Results', "load_results();"),
-            ('Save Results',
-             "location = '%s';" % qm.test.cmdline.QMTest.results_file_name),
-            ('Load Expectations', "load_expected_results();"),
+            ('Load Results', "javascript:load_results();"),
+            ('Save Results', qm.test.cmdline.QMTest.results_file_name),
+            ('Load Expectations', "javascript:load_expected_results();"),
             ('Save Expectations',
-             "location = '%s';"
-             % qm.test.cmdline.QMTest.expectations_file_name),
-            ('Load Context', "load_context();"),
-            ('Save Context',
-             "location = '%s';"
-             % qm.test.cmdline.QMTest.context_file_name),
+             qm.test.cmdline.QMTest.expectations_file_name),
+            ('Load Context', "javascript:load_context();"),
+            ('Save Context', qm.test.cmdline.QMTest.context_file_name),
             ('Exit', 'shutdown')
             ])
         self.edit_menu_items = [
-            ('Clear Results', "location ='clear-results';"),
-            ('Edit Context', "location = 'edit-context';"),
+            ('Clear Results', "clear-results"),
+            ('Edit Context', "edit-context"),
             ]
         self.view_menu_items = [
-            ('View Results', "location = 'show-results';")
+            ('Directory', "/test/dir"),
+            ('Results', "show-results")
             ]
         self.run_menu_items = [
-            ('All Tests', "location = 'run-tests';")
+            ('All Tests', "run-tests")
+            ]
+        self.help_menu_items = [
+            ('Manual', "javascript:popup_manual();"),
+            ('QMTest Web Site', "http://www.qmtest.com")
             ]
 
         # Initialize the base class.
@@ -206,7 +207,7 @@ class QMTestPage(DefaultDtmlPage):
                 edit_menu_items = self.edit_menu_items[0:2]
                 # The run model should have no options.
                 run_menu_items = [
-                    ('Stop Tests', "location = 'stop-tests';")
+                    ('Stop Tests', "stop-tests")
                     ]
             # Otherwise, just use the values specified.
             else:
@@ -218,7 +219,8 @@ class QMTestPage(DefaultDtmlPage):
                               file_menu_items=self.file_menu_items,
                               edit_menu_items=edit_menu_items,
                               view_menu_items=self.view_menu_items,
-                              run_menu_items=run_menu_items)
+                              run_menu_items=run_menu_items,
+                              help_menu_items=self.help_menu_items)
             return "<body>%s<br />" % navigation_bar(self.request)
         else:
             return "<body>"
@@ -384,7 +386,7 @@ class DirPage(QMTestPage):
         
         # Provide a menu choice to allow running all of the tests in
         # this directory.
-        self.run_menu_items.append(("This Directory", "run_dir();"))
+        self.run_menu_items.append(("This Directory", "javascript:run_dir();"))
 
 
     def GetExpectationUrl(self, id, expectation):
@@ -873,7 +875,7 @@ class ResultPage(QMTestPage):
 
         QMTestPage.__init__(self, "result.dtml", server)
         self.result = result
-        self.run_menu_items.append(("This Test", "run_test();"))
+        self.run_menu_items.append(("This Test", "javascript:run_test();"))
 
 
     def MakeRunUrl(self):
@@ -938,12 +940,12 @@ class ShowItemPage(QMTestPage):
 
         if self.__database.IsModifiable():
             self.edit_menu_items.append(("Edit %s" % string.capitalize(type),
-                                         "edit_item();"))
+                                         "javascript:edit_item();"))
             self.edit_menu_items.append(("Delete %s" % string.capitalize(type),
-                                         "delete_item();"))
+                                         "javascript:delete_item();"))
 
         if type == "test" and not edit:
-            self.run_menu_items.append(("This Test", "run_test();"))
+            self.run_menu_items.append(("This Test", "javascript:run_test();"))
 
 
     def GetTitle(self):
@@ -1089,11 +1091,14 @@ class ShowSuitePage(QMTestPage):
         self.is_new_suite = is_new_suite
         
         if not suite.IsImplicit() and database.IsModifiable():
-            self.edit_menu_items.append(("Edit Suite", "edit_suite();"))
-            self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
+            self.edit_menu_items.append(("Edit Suite",
+                                         "javascript:edit_suite();"))
+            self.edit_menu_items.append(("Delete Suite",
+                                         "javascript:delete_suite();"))
 
         if not edit:
-            self.run_menu_items.append(("This Suite", "run_suite();"))
+            self.run_menu_items.append(("This Suite",
+                                        "javascript:run_suite();"))
             
         if edit:
             # Find the directory path containing this suite.
