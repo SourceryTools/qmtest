@@ -127,6 +127,16 @@ class build_doc(build.build):
         # install the documentation as data files (in "share") rather
         # than as program files (in "lib").
         
+        # 
+        # Write the version to a file so the manual can refer to it.  This
+        # file contains exactly the version number -- there must be no
+        # trailing newline, for example.
+        #
+        self.announce("writing version file")
+        f = open(os.path.join("doc", "qm-version"), "w")
+        f.write(self.distribution.get_version())
+        f.close()
+
         #
         # Build html output.
         #

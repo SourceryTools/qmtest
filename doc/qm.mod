@@ -16,6 +16,10 @@
 
 -->
 
+<!-- Version number. -->
+
+<!ENTITY qm_version SYSTEM "qm-version">
+
 <!-- Names of the project components.  -->
 
 <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">

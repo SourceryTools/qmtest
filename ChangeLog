@@ -1,3 +1,11 @@
+2004-05-24  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qmdist/command/build_doc.py (build_doc.run): Create
+	'doc/qm-version' file.
+	* doc/qm.mod: Define entity 'qm_version' to its contents.
+	* qm/test/doc/manual.xml (internal_doc_url): Use
+	'qm_version_entity' in definition.
+
 2004-05-21  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/target.py (Target.Start): Add instance variable

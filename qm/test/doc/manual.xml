@@ -32,7 +32,7 @@
   <!ENTITY tour.xml SYSTEM "tour.xml">
   <!ENTITY reference.xml SYSTEM "reference.xml">
 
-  <!ENTITY internal_doc_url "http://www.codesourcery.com/qm/qmtest_internals_docs/qm">
+  <!ENTITY internal_doc_url "http://www.codesourcery.com/public/qmtest/qm-&qm_version;/internals/qm">
 
   <!ENTITY context_class "<ulink url=&#34;&internal_doc_url;/test/context/Context.html&#34;><classname>Context</classname></ulink>">
   <!ENTITY result_class "<ulink url=&#34;&internal_doc_url;/test/result/Result.html&#34;><classname>Result</classname></ulink>">
