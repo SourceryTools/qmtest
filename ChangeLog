@@ -1,3 +1,7 @@
+2002-07-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (lib-install): Improve portability.
+
 2002-07-09  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/thread_target.py: Remove tabs.

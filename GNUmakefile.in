@@ -342,7 +342,7 @@ scripts-install:
 # Create the extension class directories.
 lib-install:
 	for tool in $(QM_TOOLS); do \
-	  if test -e qm/$$tool/classes/classes.qmc; then \
+	  if test -f qm/$$tool/classes/classes.qmc; then \
 	    $(INSTALL_DIR) "$(INSTALLLIBDIR)/qm/$$tool/classes"; \
 	    $(INSTALL_DATA) qm/$$tool/classes/classes.qmc \
 	      "$(INSTALLLIBDIR)/qm/$$tool/classes/classes.qmc"; \
