@@ -173,10 +173,14 @@ class Compiler:
         return command
         
 
-    def ParseOutput(self, output):
+    def ParseOutput(self, output, ignore_regexps = ()):
         """Turn the 'output' into a sqeuence of 'Diagnostic's.
 
         'output' -- A string containing the compiler's output.
+
+        'ignore_regexps' -- A sequence of regular expressions.  If a
+        diagnostic message matches one of these regular expressions,
+        it will be ignored.
 
         returns -- A list of 'Diagnostic's corresponding to the
         messages indicated in 'output', in the order that they were
@@ -375,17 +379,6 @@ class GPP(Compiler):
     regular expression matches a line in the compiler output, then that
     line indicates a diagnostic with the indicated severity."""
 
-    _ignore_regexps = [
-        re.compile('^.*: In (.*function|method|.*structor)'),
-        re.compile('^.*: In instantiation of'),
-        re.compile('^.*:   instantiated from'),
-        re.compile('^.*: At (top level|global scope)'),
-        re.compile('^.*file path prefix .* never used'),
-        re.compile('^.*linker input file unused since linking not done'),
-        re.compile('^collect: re(compiling|linking)'),
-        re.compile('^collect2: ld returned.*'),
-        ]
-    
     _internal_error_regexp = re.compile('Internal (compiler )?error')
     """A compiled regular expression.  When an error message is matched
     by this regular expression, the error message indicates an
@@ -416,11 +409,15 @@ class GPP(Compiler):
                    source_files)
             
         
-    def ParseOutput(self, output):
+    def ParseOutput(self, output, ignore_regexps = ()):
         """Return the 'Diagnostic's indicated in the 'output'.
 
         'output' -- A string giving the output from the compiler.
 
+        'ignore_regexps' -- A sequence of regular expressions.  If a
+        diagnostic message matches one of these regular expressions,
+        it will be ignored.
+        
         returns -- A list of 'Diagnostic's corresponding to the
         messages indicated in 'output', in the order that they were
         emitted."""
@@ -439,39 +436,40 @@ class GPP(Compiler):
 
                 # Some error messages are ignored.
                 ignore = 0
-                for ignore_regexp in self._ignore_regexps:
+                for ignore_regexp in ignore_regexps:
                     if ignore_regexp.match(match.group()):
                         ignore = 1
                         break
+                if ignore:
+                    continue
 
-                if not ignore:
-                    # An internal error is an error that indicates that
-                    # the compiler crashed.
-                    message = match.group('message')
-                    if (severity == 'error'
-                        and self._internal_error_regexp.search(message)):
-                        severity = 'internal_error'
+                # An internal error is an error that indicates that
+                # the compiler crashed.
+                message = match.group('message')
+                if (severity == 'error'
+                    and self._internal_error_regexp.search(message)):
+                    severity = 'internal_error'
 
-                    # If there is no line number, then we will not be
-                    # able to convert it to an integer.
-                    try:
-                        line_number = int(match.group('line'))
-                    except:
-                        line_number = 0
+                # If there is no line number, then we will not be
+                # able to convert it to an integer.
+                try:
+                    line_number = int(match.group('line'))
+                except:
+                    line_number = 0
 
-                    # See if there is a column number.
-                    try:
-                        column_number = int(match.group('column'))
-                    except:
-                        column_number = 0
-                        
-                    source_position = SourcePosition(match.group('file'),
-                                                     line_number,
-                                                     column_number)
-                    diagnostic = Diagnostic(source_position,
-                                            severity,
-                                            message)
-                    diagnostics.append(diagnostic)
-                    break
+                # See if there is a column number.
+                try:
+                    column_number = int(match.group('column'))
+                except:
+                    column_number = 0
+
+                source_position = SourcePosition(match.group('file'),
+                                                 line_number,
+                                                 column_number)
+                diagnostic = Diagnostic(source_position,
+                                        severity,
+                                        message)
+                diagnostics.append(diagnostic)
+
 
         return diagnostics

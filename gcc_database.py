@@ -19,6 +19,7 @@ import dircache
 import errno
 from   executable import *
 import fnmatch
+import glob
 import os
 from   qm.attachment import *
 from   qm.common import *
@@ -70,10 +71,28 @@ class GCCTest(CompilerTest):
             name="source_file",
             title="Source File",
             description="""The source file."""),
+        qm.fields.TextField(
+            name="options",
+            title="Options",
+            description="""Compiler command-line options.""",
+            default="(None)"),
     ]
 
     _severities = [ 'warning', 'error' ]
     """The diagnostic severities used by GCC."""
+
+    _ignored_diagnostic_regexps = CompilerTest._ignored_diagnostic_regexps \
+        + (re.compile("^.*: In (function|member|method|constructor"
+                      "|instantiation|program|subroutine|block-data)"),
+           re.compile("^.*: At (top level|global scope)"),
+           re.compile("^collect2: ld returned .*"),
+           re.compile("^Please submit.*instructions"),
+           re.compile("^.*: warning -f(pic|PIC) ignored for target"),
+           re.compile("^.*file path prefix .* never used"),
+           re.compile("^.*linker input file unused since linking not done"),
+           )
+    """A sequence of regular expressions matching diagnostics to ignore."""
+
     
     def __init__(self, **arguments):
         """Construct a new 'GCCTest'."""
@@ -108,7 +127,16 @@ class GCCTest(CompilerTest):
             CompilerTest.Run(self, context, result)
             return 1
         
-            
+
+    def _GetSourcePath(self):
+        """Return the patch to the primary source file.
+
+        returns -- A string giving the path to the primary source
+        file."""
+
+        return self.source_file.GetDataFile()
+
+    
     def _GetSource(self):
         """Return the contents of the primary source file.
 
@@ -117,7 +145,7 @@ class GCCTest(CompilerTest):
 
         if not self._source:
             # The file has not already been read, so read it now.
-            f = open(self.source_file.GetDataFile())
+            f = open(self._GetSourcePath())
             self._source = f.read()
             f.close()
 
@@ -150,7 +178,7 @@ class GCCTest(CompilerTest):
 
         # On DOS/Windows the executable name must end with ".exe", and
         # it is harmless to add this extension on UNIX platforms.
-        return self.GetId() + ".exe"
+        return qm.label.split(self.GetId())[1] + ".exe"
 
 
     def _IsExpectedToFail(self, context):
@@ -489,10 +517,13 @@ class GPPTest(GCCTest):
         
         # See what compiler options are specified by the test.
         match = self._options_regexp.search(contents)
-        if not match:
-            return self._default_options
+        if match:
+            return string.split(match.group("options"))
 
-        return string.split(match.group("options"))
+        if self.options != "(None)":
+            return string.split(self.options)
+
+        return self._default_options
 
 
     def _IsExecutionRequired(self):
@@ -543,6 +574,18 @@ class OldDejaGNUTest(GPPTest):
     """A compiled regular expression.  When this expression matches
     part of the input file, the 'platforms' match group indicates GNU
     platform tripletsfor which the test is expected to fail."""
+
+    _ignored_diagnostic_regexps = GPPTest._ignored_diagnostic_regexps \
+        + (re.compile('^.*: In (.*function|method|.*structor)'),
+           re.compile('^.*: In instantiation of'),
+           re.compile('^.*:   instantiated from'),
+           re.compile('^.*: At (top level|global scope)'),
+           re.compile('^.*file path prefix .* never used'),
+           re.compile('^.*linker input file unused since linking not done'),
+           re.compile('^collect: re(compiling|linking)'),
+           re.compile('^collect2: ld returned.*'),
+           )
+    """A sequence of regular expressions matching diagnostics to ignore."""
     
     def Run(self, context, result):
         """Run the test.
@@ -583,8 +626,15 @@ class OldDejaGNUTest(GPPTest):
                     = string.join(skip_platforms)
                 return
 
-        # Just run the test.
-        GCCTest.Run(self, context, result)
+        # So that we are thread safe, all work is done in a directory
+        # corresponding to this test.
+        self._EnterDirectoryForTest()
+        try:
+            # Run the test.
+            GCCTest.Run(self, context, result)
+        finally:
+            self._ExitDirectoryForTest()
+
 
 
     def _IsExpectedToFail(self, context):
@@ -766,6 +816,116 @@ class DGTest(GPPTest):
     prefix), while the 'arguments' match group gives any arguments
     to the command, as a single string."""
 
+    _line_count_regexp \
+         = re.compile(r'^ *(?P<actual>[0-9]+).*count\((?P<expected>[0-9]+)\)')
+    """A compiled regular expression that maches lines in gcov output
+    that indicate line number execution counts."""
+
+    _branch_start_regexp = re.compile(r'branch\((?P<probs>[0-9 ]+)\)')
+    """A compiled regulard expression that matches the start of a
+    branch probability group."""
+
+    _branch_end_regexp = re.compile(r'branch\(end\)')
+    """A compiled regulard expression that matches the end of a
+    branch probability group."""
+         
+    _branch_regexp \
+        = re.compile(r'branch [0-9]+ taken = (?P<prob>-?[0-9]+)%')
+    """A compiled regular expression that matches a branch probability line."""
+    
+    def Run(self, context, result):
+        """Run the test.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
+
+        # Get the contents of the source file.
+        contents = self._GetSource()
+        # Figure out on what target the test is running.
+        target = self._GetTargetPlatform(context)
+        # Process all the commands therein.
+        self._ProcessCommands(contents, target,
+                              self._GetHostPlatform(context))
+
+        # Perhaps the test is not meant to be run on this platform.
+        if self._mode is None:
+            result.SetOutcome(Result.UNTESTED)
+            result[Result.CAUSE] = "Test skipped on %s." % target
+            return
+
+        # So that we are thread safe, all work is done in a directory
+        # corresponding to this test.
+        self._EnterDirectoryForTest()
+        try:
+            # If checking coverage information, make sure there are no
+            # stale coverage files around.
+            if self._check_coverage:
+                for f in glob.glob("*.da"):
+                    os.remove(f)
+                    
+            # Run the test.
+            if not GCCTest.Run(self, context, result):
+                return
+
+            # If the test isn't passing at this point, there's no point in
+            # doing additional work.
+            if result.GetOutcome() != Result.PASS:
+                return
+
+            # See if there are assembly patterns for which to look.
+            if (self._assembly_patterns
+                or self._demangled_assembly_patterns
+                or self._forbidden_assembly_patterns):
+                # Get the basename for the source file.
+                file_name \
+                    = os.path.split(self.source_file.GetDataFile())[1]
+                # Get the assembly file in which we are supposed to look.
+                file_name = os.path.splitext(file_name)[0] + ".s"
+                # Read the contents of the file.
+                file = open(file_name)
+                asm_contents = file.read()
+                file.close()
+
+                # See if all the desired patterns are there.
+                for p in self._assembly_patterns:
+                    if not re.search(p, asm_contents):
+                        result.Fail("Assembly file does not contain '%s'."
+                                    % p,
+                                    { "DGTest.pattern" : p })
+                        return
+
+                # Make sure that the forbidden patterns are not there.
+                for p in self._forbidden_assembly_patterns:
+                    if re.search(p, asm_contents):
+                        result.Fail("Assembly file contains '%s'." % p,
+                                    { "DGTest.pattern" : p})
+                        
+                # If we have to demangle the contents, do it.
+                if self._demangled_assembly_patterns:
+                    demangler = Demangler(context["DGTest.demangler"],
+                                          asm_contents)
+                    demangler.Run([demangler.GetPath()])
+                    asm_contents = demangler.stdout
+
+                # See if all the patterns are there.
+                for p in self._demangled_assembly_patterns:
+                    if not re.search(p, asm_contents):
+                        result.Fail("Assembly file does not contain '%s'."
+                                    % p,
+                                    { "DGTest.pattern" : p })
+                        return
+
+            # Check the coverage data.
+            self._CheckCoverage(context, result)
+        finally:
+            self._ExitDirectoryForTest()
+
+
     def _GetCompilationSteps(self):
         """Return the compilation steps for this test.
 
@@ -908,16 +1068,25 @@ class DGTest(GPPTest):
         # Assume that only compilation is required.
         self._mode = "compile"
         # And that the default options should be used.
-        self._options = self._default_options
+        if self.options != "(None)":
+            self._options = []
+        else:
+            self._options = self._default_options
         # And there are no patterns that we need to find in the .s
         # file.
         self._assembly_patterns = []
         self._demangled_assembly_patterns = []
+        self._forbidden_assembly_patterns = []
+        # And there is no coverage testing.
+        self._check_coverage = 0
+        self._check_branches = 0
+        self._check_calls = 0
+        self._coverage_arguments = []
         # And there are no expected diagnostics.
         self._expected_diagnostics = []
         # And the test is not expected to fail.
         self._is_expected_to_fail = 0
-        
+
         # Create a file-like object to run through the contents.
         f = StringIO.StringIO(contents)
         # Keep track of the current line.
@@ -982,14 +1151,33 @@ class DGTest(GPPTest):
                 arguments = words[1:]
                 # See if it's an assembly-scanning command. 
                 if (command == "scan-assembler"
-                    or command == "scan-assembler-dem"):
+                    or command == "scan-assembler-dem"
+                    or command == "scan-assembler-not"):
                     if len(arguments) != 1:
                         raise QMException, "Incorrect usage of %s." % command
                     pattern = arguments[0]
                     if command == "scan-assembler":
                         self._assembly_patterns.append(pattern)
-                    else:
+                    elif command == "scan-assembler-dem":
                         self._demangled_assembly_patterns.append(pattern)
+                    else:
+                        self._forbidden_assembly_patterns.append(pattern)
+                elif command == "run-gcov":
+                    self._check_coverage = 1
+                    self._coverage_arguments = arguments
+                    # Load the .x file -- if present.
+                    x_file = (os.path.splitext(self._GetSourcePath())[0]
+                              + ".x")
+                    try:
+                        x_contents = open(x_file).read()
+                        if x_file.find("xfail") != -1:
+                            self._is_expected_to_fail = 1
+                        if x_file.find("gcov_verify_branches") != -1:
+                            self._check_branches = 1
+                        if x_file.find("gcov_verify_calls") != -1:
+                            self._check_calls = 1
+                    except:
+                        pass
                 else:
                     raise QMException, \
                           "Unsupported dg-final command '%s'" % command
@@ -1035,7 +1223,12 @@ class DGTest(GPPTest):
                 self._expected_diagnostics.append(diagnostic)
             else:
                 raise QMException, "Unsupported command 'dg-%s'." % command
-              
+
+        # Add options from the multi-option directory case to the list
+        # of options.
+        if self.options != "(None)":
+            self._options = self._options + string.split(self.options)
+
 
     def _IsExpectedToFail(self, context):
         """Return true if this test is expected to fail.
@@ -1047,84 +1240,111 @@ class DGTest(GPPTest):
         
         return self._is_expected_to_fail
 
-        
-    def Run(self, context, result):
-        """Run the test.
 
-        'context' -- A 'Context' giving run-time parameters to the
-        test.
+    def _CheckCoverage(self, context, result):
+        """Run 'gcov' and examine the results.
 
-        'result' -- A 'Result' object.  The outcome will be
-        'Result.PASS' when this method is called.  The 'result' may be
-        modified by this method to indicate outcomes other than
-        'Result.PASS' or to add annotations."""
+        'result' -- The 'Result' object to update."""
 
-        # Get the contents of the source file.
-        contents = self._GetSource()
-        # Figure out on what target the test is running.
-        target = self._GetTargetPlatform(context)
-        # Process all the commands therein.
-        self._ProcessCommands(contents, target,
-                              self._GetHostPlatform(context))
-
-        # Perhaps the test is not meant to be run on this platform.
-        if self._mode is None:
-            result.SetOutcome(Result.UNTESTED)
-            result[Result.CAUSE] = "Test skipped on %s." % target
+        if not self._check_coverage:
             return
 
-        # So that we are thread safe, all work is done in a directory
-        # corresponding to this test.
-        self._EnterDirectoryForTest()
-        try:
-            # Run the test.
-            if not GCCTest.Run(self, context, result):
+        # Run "gcov".
+        gcov = RedirectedExecutable(context.get("GCCTest.gcov", "gcov"))
+        status = gcov.Run(["gcov"] + self._coverage_arguments)
+        prefix = self._GetAnnotationPrefix() + "gcov_"
+        if not self._CheckStatus(result, prefix, "Coverage tool", status):
+            return
+
+        # Get the contents of the gcov output file.
+        lines = open(self._coverage_arguments[-1] + ".gcov").readlines()
+        
+        # Check line execution counts.
+        line_number = 0
+        for line in lines:
+            line_number += 1
+            match = self._line_count_regexp.match(line)
+            if not match:
+                continue
+            actual = match.group("actual")
+            expected = match.group("expected")
+
+            if actual != expected:
+                result.Fail("Incorrect line count for line %d." % line_number)
+                result[prefix + "actual"] = actual
+                result[prefix + "expected"] = expected
                 return
 
-            # If the test isn't passing at this point, there's no point in
-            # doing additional work.
-            if result.GetOutcome() != Result.PASS:
-                return
-
-            # See if there are assembly patterns for which to look.
-            if self._assembly_patterns or self._demangled_assembly_patterns:
-                # Get the basename for the source file.
-                file_name \
-                    = os.path.split(self.source_file.GetDataFile())[1]
-                # Get the assembly file in which we are supposed to look.
-                file_name = os.path.splitext(file_name)[0] + ".s"
-                # Read the contents of the file.
-                file = open(file_name)
-                asm_contents = file.read()
-                file.close()
-
-                # See if all the patterns are there.
-                for p in self._assembly_patterns:
-                    if not re.search(p, asm_contents):
-                        result.Fail("Assembly file does not contain '%s'."
-                                    % p,
-                                    { "DGTest.pattern" : p })
-                        return
-
-                # If we have to demangle the contents, do it.
-                if self._demangled_assembly_patterns:
-                    demangler = Demangler(context["DGTest.demangler"],
-                                          asm_contents)
-                    demangler.Run([demangler.GetPath()])
-                    asm_contents = demangler.stdout
-
-                # See if all the patterns are there.
-                for p in self._demangled_assembly_patterns:
-                    if not re.search(p, asm_contents):
-                        result.Fail("Assembly file does not contain '%s'."
-                                    % p,
-                                    { "DGTest.pattern" : p })
-                        return
-        finally:
-            self._ExitDirectoryForTest()
-                
+        if self._CheckBranches(result, lines):
+            return
+        
+        if self._check_calls:
+            raise QMException, "Checking call results is unsupported."
+        
             
+    def _CheckBranches(self, result, lines):
+        """Check that the branch probabilities are correct.
 
+        'result' -- The 'Result' to update.
+
+        'lines' -- A sequence of lines from the gcov output.
+
+        returns -- False if the test failed."""
+
+        if not self._check_branches:
+            return 1
+        
+        prefix = self._GetAnnotationPrefix() + "gcov_"
+        branch_line = 0
+        expected_probs = []
+        line_number = 0
+        for line in lines:
+            line_number += 1
+            check_no_remaining_probs = 0
+            match = self._branch_end_regexp.match(line)
+            if match:
+                check_no_remaining_probs = 1
+                remaining_probs = expected_probs
+
+            match = self._branch_start_regexp.match(line)
+            if match:
+                # If there are branches that we have not seen, fail.
+                check_no_remaining_probs = 1
+                remaining_probs = expected_probs
+                expected_probs = map(lambda s : int(s),
+                                     string.split(match.group("probs")))
+                # Normalize all probabilities into the range 0 - 50.
+                expected_probs = map(lambda p : ((p < 50) and p) or (100 - p),
+                                     expected_probs)
+
+            match = self._branch_regexp.match(line)
+            if match:
+                prob = int(match.group("prob"))
+                if prob < 0 or prob > 100:
+                    result.Fail("Invalid branch probability at line %d."
+                                % line_number)
+                    result[prefix + "probability"] = prob
+                    # Normalize all probabilities into the range 0 - 50.
+                    if prob > 50:
+                        prob = 100 - prob
+                        # It's OK if some branch probabilities are not
+                        # listed.  
+                        if prob in expected_probs:
+                            expected_probs.remove(prob)
+
+            if check_no_remaining_probs and remaining_probs:
+                # If there are branches that we have not seen, fail.
+                result.Fail("Missing branch probabilities for line %d."
+                            % branch_line)
+                result[prefix + "missing_probabilities"] \
+                              = string.join(map(lambda i : str(i),
+                                                remaining_probs))
+                return 0
+
+        return 1
+
+
+                    
 class InitPriorityTest(DGTest):
     """An 'InitPriorityTest' tests the 'init_priority' attribute."""
 
@@ -1188,10 +1408,76 @@ class InitPriorityTest(DGTest):
         return map(lambda f, p=path: os.path.join(os.path.split(p)[0], f),
                    files)
 
-    
 
+
+class GPPBprobTest(GPPTest):
+    """A 'GPPBranchProbTest' is a G++ test for branch probabilities."""
+
+    def Run(self, context, result):
+        """Run the test.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
+
+        self._EnterDirectoryForTest()
+        try:
+            # Remove any stale profiling files.
+            for f in glob.glob("*.da"):
+                os.remove(f)
+                
+            compiler = self._GetCompiler(context)
+            path = self.source_file.GetDataFile()
+            options = string.split(self.options)
+            
+            # Build the test with "-fprofile-arcs"
+            base = qm.label.split(self.GetId())[1]
+            profiled_exe_path = os.path.join(".", base + "1.exe")
+            (status, output, command) \
+                = compiler.Compile(Compiler.MODE_LINK,
+                                   [path],
+                                   options + ["-fprofile-arcs"],
+                                   profiled_exe_path)
+            prefix = self._GetAnnotationPrefix() + "profile_arcs_"
+            result[prefix + "output"] = output
+            result[prefix + "command"] = string.join(command)
+            if not self._CheckStatus(result, prefix, "Compiler", status):
+                return
+            
+            # Run the program.
+            executable = \
+                CompiledExecutable(profiled_exe_path,
+                                   self._GetLibraryDirectories(context),
+                                   context.get("CompilerTest.interpreter"))
+            status = executable.Run([profiled_exe_path])
+            prefix = self._GetAnnotationPrefix() + "execution_"
+            if not self._CheckStatus(result, prefix, "Executable", status):
+                return
+            
+            # Build the test with "-fbranch-probabilities"
+            profiled_exe_path = os.path.join(".", base + "2.exe")
+            (status, output, command) \
+                = compiler.Compile(Compiler.MODE_LINK,
+                                   [path],
+                                   options + ["-fbranch-probabilities"],
+                                   profiled_exe_path)
+            prefix = self._GetAnnotationPrefix() + "branch_probs_"
+            result[prefix + "output"] = output
+            result[prefix + "command"] = string.join(command)
+            if not self._CheckStatus(result, prefix, "Compiler", status):
+                return
+            
+        finally:
+            self._ExitDirectoryForTest()
+
+        
+    
 class GCCDatabase(Database):
-    """A 'GPPDatabase' is a G++ test database."""
+    """A 'GCCDatabase' is a G++ test database."""
 
     class InvalidTestNameException(QMException):
         """An 'InvalidTestNameException' indicates an invalid test name.
@@ -1213,6 +1499,7 @@ class GCCDatabase(Database):
 
     _prefix_map = (
         ("gpp.old-deja.",  "gcc_database.OldDejaGNUTest"),
+        ("gpp.dg.bprob.", "gcc_database.GPPBprobTest"),
         ("gpp.dg.special.", "gcc_database.InitPriorityTest"),
         ("gpp.dg.", "gcc_database.DGTest"),
     )
@@ -1249,6 +1536,8 @@ class GCCDatabase(Database):
 
     _suite_predicates = (
         ("gpp.old-deja", "_IsOldDejaSuite"),
+        ("gpp.dg.bprob", "_IsMultioptionSuite"),
+        ("gpp.dg.debug", "_IsMultioptionSuite"),
         ("gpp.dg", "_IsGPPDGSuite"),
     )
     """A sequence of pairs '(label, function)'.  When determining
@@ -1277,7 +1566,17 @@ class GCCDatabase(Database):
     relative labels.  The relative labels give the tests present in
     that directory.  If there is no entry in this map, then the file
     system is searched for appropriate source files."""
-    
+
+    _multioption_directories = (
+        "gpp.dg.bprob",
+        "gpp.dg.debug",
+    )
+    """A sequence of directory labels.  These directories contain
+    test files, but each test is supposed to be run with multiple
+    compiler options.  Therefore, the test is considered a
+    subdirectory; the subdirectory will contain variants of the test
+    corresponding to each of the sets of compiler options."""
+
     def __init__(self, path, **attributes):
         """Construct a 'GPPDatabase'.
 
@@ -1292,6 +1591,14 @@ class GCCDatabase(Database):
         # root of the testsuite.  Otherwise, use the path.
         self.__testsuite_root \
             = attributes.get("GCCDatabase.testsuite_root", path)
+        self._debug_options = []
+        for opt in string.split(attributes.get("GCCDatabase.debug_options",
+                                               "-g")):
+            for level in ("1", "", "3"):
+                self._debug_options.append((opt + level,))
+                self._debug_options.append((opt + level, "-O2"))
+                self._debug_options.append((opt + level, "-O3"))
+            
         # Call the base class constructor.
         apply(Database.__init__, (self, path), attributes)
         # Create an attachment store for the database.
@@ -1310,7 +1617,7 @@ class GCCDatabase(Database):
 
         'returns' -- A list of all tests located within 'directory',
         as absolute labels."""
-
+        
         # Look for special tests.
         test_names = self._tests_in_directory.get(directory, [])
         # If there is a special list, return it.
@@ -1318,31 +1625,22 @@ class GCCDatabase(Database):
             return map(lambda n, d=directory: qm.label.join(d, n),
                        test_names)
 
+        # Handle directories that correspond to tests that are run
+        # with multiple options.
+        (parent, base) = qm.label.split(directory)
+        if parent in self._multioption_directories:
+            for x in range(len(self._GetMultipleOptions(parent))):
+                test_names.append(qm.label.join(directory,
+                                                base + ("_%d" % x)))
+            return test_names
+                
         # Compute the path name of the directory in which to start.
         path = self._GetPathFromDirectory(directory)
         
-        # Iterate through all the files in the directory.
-        for entry in dircache.listdir(path):
-            # Split the file name into its components.
-            (base, extension) = os.path.splitext(entry)
-
-            # See if it is a test file.
-            if extension == self._test_extension:
-                # Skip tests with invalid names.
-                if not qm.label.is_valid(base):
-                    # Perhaps the name has a upper-case letter in it.  
-                    # Translate upper-case to lower-case and try
-                    # again.
-                    if qm.label.is_valid(base.lower()):
-                        # If that worked, use the lower-case name.
-                        base = base.lower()
-                    else:
-                        print "Invalid test %s" % base
-                        continue
-                # Add this test to the list.
-                test_names.append(qm.label.join(directory, base))
-                # Go on to the next entry in the directory.
-                continue
+        # Add the files from this directory.
+        if directory not in self._multioption_directories:
+            for n in self._GetTestFilesInDirectory(path):
+                test_names.append(qm.label.join(directory, n))
 
         # If requested, iterate through all of the subdirectories.
         if scan_subdirs:
@@ -1350,8 +1648,7 @@ class GCCDatabase(Database):
                 # Compute the absolute name of the subdirectory.
                 absolute = qm.label.join(directory, subdirectory)
                 # Recurse on the subdirectory.
-                test_names.extend(self.GetTestIds(absolute,
-                                                  scan_subdirs))
+                test_names.extend(self.GetTestIds(absolute, 1))
 
         return test_names
                 
@@ -1368,22 +1665,10 @@ class GCCDatabase(Database):
 
         # Compute the path to the primary source file.
         path = self._GetTestPath(test_id)
-
+        
         # If the file does not exist, then there is no such test.
         if not os.path.exists(path):
-            # Except that we may have translated names with upper-case
-            # letters to lower-case.  Look through the directory to
-            # see if we can find the test.  Fortunately, this is not
-            # fast-path code.
-            (dir, base) = os.path.split(path)
-            path = None
-            for entry in dircache.listdir(dir):
-                (name, ext) = os.path.splitext(entry)
-                if name.lower() + ext == base:
-                    path = os.path.join(dir, entry)
-                    break
-            if not path:
-                raise NoSuchTestError, test_id
+            raise NoSuchTestError, test_id
         
         # Construct the attachment for the primary source file.
         basename = os.path.basename(path)
@@ -1392,48 +1677,24 @@ class GCCDatabase(Database):
                                 self.GetAttachmentStore())
         # Get the test class associated with this test.
         test_class = self._GetTestClass(test_id)
+
+        directory, base  = qm.label.split(test_id)
+        parent = qm.label.split(directory)[0]
+        if parent in self._multioption_directories:
+            variant = int(base[base.rfind("_") + 1:])
+            options = self._GetMultipleOptions(parent)[variant]
+            options = string.join(self._GetMultipleOptions(parent)[variant])
+        else:
+            options = "(None)"
         
-        # Create the TestDescriptor.
+        # Create the TestDescriptor
         descriptor = TestDescriptor(self, test_id, test_class,
-                                    { 'source_file' : attachment })
+                                    { 'source_file' : attachment,
+                                      'options' : options })
 
         return descriptor
         
 
-    def WriteTest(self, test):
-        """Store 'test' in the database.
-
-        'test' -- A 'TestDescriptor' indicating the test that should
-        be stored.
-
-        'Attachment's associated with 'test' may be located in the
-        'AttachmentStore' associated with this database, or in some
-        other 'AttachmentStore'.  In the case that they are stored
-        elsewhere, they must be copied into the 'AttachmentStore'
-        associated with this database by use of the
-        'AttachmentStore.Store' method.  The caller, not this method,
-        is responsible for removing the original version of the
-        attachment, if necessary.
-         
-        The 'test' may be new, or it may be a new version of an existing
-        test.  If it is a new version of an existing test, the database
-        may wish to clear out any storage associated with the existing
-        test.  However, it is possible that 'Attachment's associated
-        with the existing test are still present in 'test', in which
-        case it would be a mistake to remove them."""
-
-        # Compute the path to the source file.
-        path = self._GetTestPath(test.GetId())
-
-        # Get the attachment.
-        attachment = test.GetArguments()['source_file']
-
-        # If the attachment is in a different store, move it to the
-        # one associated with this database.
-        if attachment.GetStore() is not self.GetAttachmentStore():
-            self.GetAttachmentStore().Store(path, attachment.GetData())
-
-        
     def RemoveTest(self, test_id):
         """Remove the test named 'test_id' from the database.
 
@@ -1471,9 +1732,30 @@ class GCCDatabase(Database):
             
         # Split the test name into its components.
         (directory, test_name) = qm.label.split(test_id)
+
+        # If the parent of the directory is a multioption directory,
+        # then directory itself gives us the path to the test.
+        parent = qm.label.split(directory)[0]
+        if parent in self._multioption_directories:
+            return self._GetTestPath(directory)
+        
         # Compute the file system path corresponding to the test.
-        return os.path.join(self._GetPathFromDirectory(directory),
-                            test_name + self._test_extension)
+        dirpath = self._GetPathFromDirectory(directory)
+        path = test_name + self._test_extension
+
+        files = dircache.listdir(dirpath)
+        if path not in files:
+            # We may have translated names with upper-case letters to
+            # lower-case.  Look through the directory to
+            # see if we can find the test.  Fortunately, this is not
+            # fast-path code.
+            for entry in files:
+                (name, ext) = os.path.splitext(entry)
+                if name.lower() + ext == path:
+                    path = entry
+                    break
+
+        return os.path.join(dirpath, path)
 
 
     def _GetTestClass(self, test_id):
@@ -1491,7 +1773,29 @@ class GCCDatabase(Database):
         # We should never get here; a test with an invalid prefix
         # should not be allowed to exist in the first place.
         assert None
+        
     
+    def _GetMultipleOptions(self, directory):
+        """Return the sequence of options to use for tests in 'directory'.
+
+        'directory' -- An absolute label for a directory.  This value
+        must appear in '_multioption_directories'.
+
+        returns -- A sequence of sequences.  Each component sequence
+        gives a set of compiler options, as strings.  Each test in
+        'directory' should be run with each of the sets of compiler
+        options given.  For example, if the sequence returned is
+        '(("-O", "-fno-builtin"), ("-O2"))', the test should be run
+        once with '-O -fno-builtin' and once with '-O2'."""
+
+        if directory == "gpp.dg.bprob":
+            return (("-g",), ("-O0",), ("-O1",), ("-O2",), ("-O3",),
+                    ("-O3", "-g"), ("-Os",))
+        elif directory == "gpp.dg.debug":
+            return self._debug_options
+
+        assert None
+        
         
     # Methods that deal with suites.
 
@@ -1510,12 +1814,16 @@ class GCCDatabase(Database):
         contains all tests in the database."""
 
         # Compute the path corresponding to the 'suite_id'.
-        path = self._GetPathFromDirectory(suite_id)
-        
-        # If it's a subdirectory, return a 'DirectorySuite'.
-        if os.path.isdir(path):
-            return DirectorySuite(self, suite_id)
-
+        (parent, base) = qm.label.split(suite_id)
+        if parent in self._multioption_directories:
+            path = self._GetTestPath(suite_id)
+            if os.path.exists(path):
+                return DirectorySuite(self, suite_id)
+        else:
+            path = self._GetPathFromDirectory(suite_id)
+            if os.path.isdir(path):
+                return DirectorySuite(self, suite_id)
+            
         # Otherwise the suite does not exist.
         raise NoSuchSuiteError, suite_id
     
@@ -1638,6 +1946,11 @@ class GCCDatabase(Database):
 
         # Add any special-case subdirectories.
         subdirectories.extend(self._extra_subdirectories.get(directory, []))
+
+        # Also, if this directory contains tests that are run with
+        # multiple options, make each of them into a subdirectory.
+        if directory in self._multioption_directories:
+            subdirectories.extend(self._GetTestFilesInDirectory(path))
         
         return subdirectories
             
@@ -1710,6 +2023,39 @@ class GCCDatabase(Database):
         return None
 
 
+    def _GetTestFilesInDirectory(self, path):
+        """Return the (relative) labels for test files in 'path'.
+
+        'path' -- The (file system) directory in which to search.
+
+        returns -- A list of (relative) labels for test files in 'path'."""
+
+        test_names = []
+        
+        # Iterate through all the files in the directory.
+        for entry in dircache.listdir(path):
+            # Split the file name into its components.
+            (base, extension) = os.path.splitext(entry)
+
+            # See if it is a test file.
+            if extension == self._test_extension:
+                # Skip tests with invalid names.
+                if not qm.label.is_valid(base):
+                    # Perhaps the name has a upper-case letter in it.  
+                    # Translate upper-case to lower-case and try
+                    # again.
+                    if qm.label.is_valid(base.lower()):
+                        # If that worked, use the lower-case name.
+                        base = base.lower()
+                    else:
+                        print "Invalid test %s" % base
+                        continue
+                # Add this test to the list.
+                test_names.append(base)
+
+        return test_names
+
+        
     def _IsOldDejaSuite(self, directory, dirpath, path):
         """Return true if 'path' names a suite within 'directory'.
 
@@ -1731,6 +2077,27 @@ class GCCDatabase(Database):
         return None
         
     
+    def _IsMultioptionSuite(self, directory, dirpath, path):
+        """Return true if 'path' names a suite within 'directory'.
+
+        'directory' -- The label of the directory in which 'path' is
+        contained.
+
+        'dirpath' -- The file system directory corresponding to
+        'directory'.
+
+        'path' -- The (relative) name of a file within the directory.
+
+        returns -- The (relative) label corresponding to the suite, if
+        'path' names a suite, or None if it does not."""
+
+        (base, extension) = os.path.splitext(path)
+        if extension == self._test_extension:
+            return base
+
+        return None
+    
+
     def _IsGPPDGSuite(self, directory, dirpath, path):
         """Return true if 'path' names a suite within 'directory'.
 

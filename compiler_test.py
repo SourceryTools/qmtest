@@ -16,6 +16,7 @@
 from   compiler import *
 from   qm.test.result import *
 from   qm.test.test import *
+from   qm.label import *
 
 ########################################################################
 # Classes
@@ -126,10 +127,13 @@ class CompilationStep:
         self.output = output
         self.diagnostics = diagnostics
 
-        
+
         
 class CompilerTest(Test):
     """A 'CompilerTest' tests a compiler."""
+
+    _ignored_diagnostic_regexps = ()
+    """A sequence of regular expressions matching diagnostics to ignore."""
 
     def Run(self, context, result):
         """Run the test.
@@ -177,27 +181,9 @@ class CompilerTest(Test):
                 is_execution_required = 0
             
             # Check the output status.
-            if os.WIFEXITED(status):
-                # Obtain the exit code.
-                exit_code = os.WEXITSTATUS(status)
-                # Record the exit code in the result.
-                result[prefix + "exit_code"] = str(exit_code)
-                # If there were no expected diagnostics, then the
-                # compiler should exit with code zero.
-                if not step.diagnostics and exit_code != 0:
-                    result.Fail("Compiler exited with code %d." % exit_code)
-                    return
-            elif os.WIFSIGNALED(status):
-                # Obtain the signal number.
-                signal = os.WTERMSIG(status)
-                # The compiler should never exit with a signal.
-                result.Fail("Compiler received signal %d." % status)
-                result[prefix + "signal"] = str(signal)
+            if not self._CheckStatus(result, prefix, "Compiler", status,
+                                     step.diagnostics):
                 return
-            else:
-                # A process should only be able to stop by exiting, or
-                # by being terminated with a signal.
-                assert None
 
             # If this compilation generated an executable, remember
             # that fact.
@@ -286,26 +272,7 @@ class CompilerTest(Test):
         result[prefix + "stdout"] = "'''" + executable.stdout + "'''"
         result[prefix + "stderr"] = "'''" + executable.stderr + "'''"
         # Check the output status.
-        if os.WIFEXITED(status):
-            # Obtain the exit code.
-            exit_code = os.WEXITSTATUS(status)
-            # Record the exit code in the result.
-            result[prefix + "exit_code"] = str(exit_code)
-            # If the exit code is non-zero, the test fails.
-            if exit_code != 0:
-                result.Fail("Executable exited with code %d." % exit_code)
-                return
-        elif os.WIFSIGNALED(status):
-            # Obtain the signal number.
-            signal = os.WTERMSIG(status)
-            # If the program gets a fatal signal, the test fails .
-            result.Fail("Executable received fatal signal %d." % status)
-            result[prefix + "signal"] = str(signal)
-            return
-        else:
-            # A process should only be able to stop by exiting, or
-            # by being terminated with a signal.
-            assert None
+        self._CheckStatus(result, prefix, "Executable", status)
 
 
     def _CheckOutput(self, context, result, prefix, output, diagnostics):
@@ -334,7 +301,8 @@ class CompilerTest(Test):
         compiler = self._GetCompiler(context)
         
         # Parse the output.
-        emitted_diagnostics = compiler.ParseOutput(output)
+        emitted_diagnostics \
+            = compiler.ParseOutput(output, self._ignored_diagnostic_regexps)
 
         # Diagnostics that were not emitted, but should have been.
         missing_diagnostics = []
@@ -386,10 +354,10 @@ class CompilerTest(Test):
 
             # Add annotations showing the problem.
             if spurious_diagnostics:
-                result['CompilerTest.spurious_diagnostics'] \
+                result[self._GetAnnotationPrefix() + "spurious_diagnostics"] \
                   = self._DiagnosticsToString(spurious_diagnostics)
             if missing_diagnostics:
-                result['CompilerTest.missing_diagnostics'] \
+                result[self._GetAnnotationPrefix() + "missing_diagnostics"] \
                   = self._DiagnosticsToString(missing_diagnostics)
 
         # If errors occurred, there is no point in trying to run
@@ -397,6 +365,48 @@ class CompilerTest(Test):
         return not errors_occurred
 
 
+    def _CheckStatus(self, result, prefix, desc, status,
+                     non_zero_exit_ok = 0):
+        """Check the exit status from a command.
+
+        'result' -- The 'Result' object to update.
+
+        'prefix' -- The prefix that should be used when creating
+        result annotations.
+
+        'desc' -- A description of the executing program.
+        
+        'status' -- The exit status, as returned by 'waitpid'.
+
+        'non_zero_exit_ok' -- True if a non-zero exit code is not
+        considered failure.
+
+        returns -- False is the test failed, true otherwise."""
+
+        if os.WIFEXITED(status):
+            # Obtain the exit code.
+            exit_code = os.WEXITSTATUS(status)
+            # Record the exit code in the result.
+            result[prefix + "exit_code"] = str(exit_code)
+            # If the exit code is non-zero, the test fails.
+            if exit_code != 0 and not non_zero_exit_ok:
+                result.Fail("%s exited with code %d." % (desc, exit_code))
+                return 0
+        elif os.WIFSIGNALED(status):
+            # Obtain the signal number.
+            signal = os.WTERMSIG(status)
+            # If the program gets a fatal signal, the test fails .
+            result.Fail("%s received fatal signal %d." % (desc, status))
+            result[prefix + "signal"] = str(signal)
+            return 0
+        else:
+            # A process should only be able to stop by exiting, or
+            # by being terminated with a signal.
+            assert None
+
+        return 1
+    
+        
     def _IsDiagnosticExpected(self, emitted, expected):
         """Returns true if 'emitted' matches 'expected'.
 
@@ -445,4 +455,3 @@ class CompilerTest(Test):
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
         return "'''" + string.join(diagnostic_strings, '\n') + "'''"
-

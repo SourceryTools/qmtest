@@ -1,3 +1,31 @@
+2002-05-01  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* compiler.py (Compiler.ParseOutput): Add ignore_regexps
+	parameter. 
+	(GPP._ignore_regexps): Remove.
+	(GPP.ParseOutput): Add ignore_regexps parameter.
+	* compiler_test.py (qm.test.label): Import.
+	(CompilerTest._ignored_diagostic_regexps): New variable.
+	(CompilerTest._CheckStatus): New method.
+	(CompilerTest.Run): Use it.  Pass the ignored diagnostic regexps
+	to Compiler.ParseOutput.
+	(CompilerTest._RunExecutable): Use _CheckStatus.
+	* gcc_database.py (glob): Import it.
+	(GCCTest.arguments): Add "options" field.
+	(GCCTest._ignored_diagnostic_regexps): New variable.
+	(GCCTest._GetSourcePath): New method.
+	(GCCTest._GetSource): Use it.
+	(GCCTest._GetExecutable): Simplify.
+	(GCCTest._GetCompilationOptions): Test the "options" argument.
+	(OldDejaGNUTest._ignored_diagnostic_regexps): New variable.
+	(OldDejaGNUTest.Run): Enter the test directory before running the
+	test.
+	(DGTest): Rework substantially to add support for coverage testing.
+	(GPPBprobTest): New class.
+	(GCCDatabase): Rework substantially to support running a single
+	test with multiple options.
+	* .cvsignore: New file.
+
 2002-03-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* executable.py: New file.
