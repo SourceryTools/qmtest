@@ -1173,6 +1173,21 @@ def sequence_difference(seq1, seq2):
     return result
 
 
+def split_argument_list(command):
+    """Split a command into an argument list.
+
+    'command' -- A string containing a shell or similar command.
+
+    returns -- An argument list obtained by splitting the command."""
+
+    # Strip leading and trailing whitespace.
+    command = string.strip(command)
+    # Split the command into argument list elements at spaces.
+    # FIXME: Honor additional quoting rules?
+    argument_list = re.split(" +", command)
+    return argument_list
+
+
 # No 'time.strptime' on non-UNIX systems, so use this instead.  This
 # version is more forgiving, anyway, and uses our standardized timestamp
 # format. 

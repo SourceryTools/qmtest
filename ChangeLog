@@ -1,3 +1,31 @@
+2001-09-17  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/platform_linux.py: Rename to...
+	* qm/platform_unix.py: ... this.
+	(default_shell): New variable.
+	(get_shell_for_command): New function.
+	(get_shell_for_script): Likewise.
+	* qm/platform.py: Adjust accordingly.
+	* qm/common.py (split_argument_list): New function.
+	* qm/test/classes/command.py (CommandTest): Rename too...
+	(ShellCommandTest): ... this.
+	(ShellCommandTest.fields): Remove interpreter field.
+	(ShellCommandTest.__init__): Adjust accordingly.
+	(ShellCommandTest.RunProgram): Likewise.
+	(ScriptTest): Rename to...
+	(ShellScriptTest): ... this.
+	(ShellScriptTest.fields): Remove interpreter field.
+	(ShellScriptTest.__init__): Adjust accordingly.
+	(ShellScriptTest.RunProgram): Likewise.
+	* qm/test/base.py (standard_test_class_names): Adjust accordingly.
+	* doc/manual/common-manual.xml (sec-rc-common): Document
+	command_shell and script_shell.xo
+	* share/diagnostics/test.txt (no shell executable): New diagnostic.
+	* tests/unit/test/classes/commandtest1.qmt: New test.
+	* tests/unit/test/classes/scripttest1.qmt: Adjust.
+	* tests/unit/test/classes/scripttest2.qmt: Likewise.
+	* tests/unit/test/classes/scripttest3.qmt: Likewise.
+
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* install-sh: Restore, with corrected permissions.

@@ -125,6 +125,9 @@ You must specify the ID of the item to show.
 @ no id for submit
 You must speicfy the ID of the item to submit.
 
+@ no shell executable
+Cannot execute the shell interpreter.
+
 @ no such action
 There is no action with the action ID you specified, "%(action_id)s".
 

@@ -413,13 +413,26 @@ class ExecTest:
         assert 0
 
 
-class CommandTest(ExecTest):
+class ShellCommandTest(ExecTest):
     """Invoke a shell command and check its output and exit code.
 
     A 'CommandTest' test invokes a shell command, optionally passing it
     standard input, and checks its exit code, standard output, and
     standard error.  The test does not test any side effects of the
-    script."""
+    script
+
+    QMTest determines which shell to use by the following method:
+
+      - If the context contains the property 'command_shell', its value
+        is split into an argument list and used.
+
+      - Otherwise, if the '.qmrc' configuration file contains the common
+        property 'command_shell', its value is split into an argument
+        list and used.
+
+      - Otherwise, the default shell for the target system is used.
+
+    """
 
     fields = [
         qm.fields.TextField(
@@ -428,41 +441,17 @@ class CommandTest(ExecTest):
             description="The command to run."
             ),
 
-        qm.fields.TextField(
-            name="interpreter",
-            title="Command Interpreter",
-            description="The command interpreter (shell) with which to run "
-            "the command.  This value may contain options and/or " 
-            "arguments with which to invoke the interpreter; the command "
-            "itself is placed at the end.  If empty, the system's "
-            "default command shell is used."
-            )
-
         ] + ExecTest.fields[2:]
 
     
     def __init__(self,
                  command,
-                 interpreter,
                  stdin,
                  environment,
                  exit_code,
                  stdout,
                  stderr):
-        self.__command = command
-        if interpreter != "":
-            # A custom interpreter.  Break it into an argument list.
-            self.__interpreter = string.split(interpreter, " ")
-        else:
-            # Use the default shell.
-            # FIXME: Do something for Windows and other platforms here.
-            self.__interpreter = [
-                "/bin/bash",
-                "-norc",
-                "-noprofile",
-                "-c",
-                ]
-        # Store other stuff.
+        self.command = command
         self.stdin = stdin
         self.environment_list = environment
         self.exit_code = exit_code
@@ -471,17 +460,24 @@ class CommandTest(ExecTest):
 
 
     def RunProgram(self, context):
-        interpreter = self.__interpreter[0]
+        # If the context specifies a shell, use it.
+        if context.has_key("command_shell"):
+            # Split the context value to build the argument list.
+            shell = qm.common.split_argument_list(
+                context["command_shell"])
+        else:
+            # Otherwise, use a platform-specific default.
+            shell = qm.platform.get_shell_for_command()
         # Make sure the interpreter exists.
-        if not qm.is_executable(interpreter):
+        if not qm.is_executable(shell[0]):
             return Result(Result.ERROR,
-                          cause="Cannot execute command interpreter '%s'."
-                          % interpreter)
+                          cause=qm.message("no shell executable"),
+                          executable=shell_executable)
         # Append the command at the end of the argument list.
-        arguments = self.__interpreter + [ self.__command ]
+        arguments = shell + [ self.command ]
         try: 
             # Run the interpreter.
-            os.execve(interpreter, arguments, self.environment)
+            os.execve(arguments[0], arguments, self.environment)
         except:
             return qm.test.base.make_result_for_exception(
                 sys.exc_info(), cause="Exception invoking command.")
@@ -490,13 +486,26 @@ class CommandTest(ExecTest):
 
 
 
-class ScriptTest(ExecTest):
-    """Invoke a script and check its output and exit code.
+class ShellScriptTest(ExecTest):
+    """Invoke a shell script and check its output and exit code.
 
     A 'ScriptTest' test runs a script (which can be a shell script or
     any other interpreted language), optionally passing it command line
     arguments and standard input.  The exit code, standard output, and
-    standard error are compared to expected values, if specified."""
+    standard error are compared to expected values, if specified.
+
+    QMTest determines which shell to use by the following method:
+
+      - If the context contains the property 'script_shell', its value
+        is split into an argument list and used.
+
+      - Otherwise, if the '.qmrc' configuration file contains the common
+        property 'script_shell', its value is split into an argument
+        list and used.
+
+      - Otherwise, the default shell for the target system is used.
+
+    """
 
     fields = [
         qm.fields.TextField(
@@ -507,21 +516,10 @@ class ScriptTest(ExecTest):
             multiline="true",
             ),
 
-        qm.fields.TextField(
-            name="interpreter",
-            title="Script Interpreter",
-            description="The interpreter in which to run the script. "
-            "This value may contain options and/or arguments with which "
-            "to invoke the interpreter; the name of a (temporary) file "
-            "containing the script itself is placed at the end, followed "
-            "by any arguments.  If omitted, the system's default shell "
-            "is used."
-            ),
         ] + ExecTest.fields[1:]
 
     def __init__(self,
                  script,
-                 interpreter=None,
                  arguments=[],
                  stdin=None,
                  environment=[],
@@ -529,18 +527,6 @@ class ScriptTest(ExecTest):
                  stdout=None,
                  stderr=None):
         self.script = script
-        interpreter = string.strip(interpreter)
-        if interpreter != "":
-            self.__interpreter = string.split(interpreter, " ")
-        else:
-            # Use the default shell.
-            # FIXME: Do something for Windows and other platforms here.
-            self.__interpreter = [
-                "/bin/bash",
-                "-norc",
-                "-noprofile",
-                ]
-        # Store other stuff.
         self.arguments = arguments
         self.stdin = stdin
         self.environment_list = environment
@@ -565,10 +551,23 @@ class ScriptTest(ExecTest):
         
 
     def RunProgram(self, context):
+        # If the context speciifes a shell, use it.
+        if context.has_key("script_shell"):
+            # Split the context value to build the argument list.
+            shell = qm.common.split_argument_list(
+                context["script_shell"])
+        else:
+            # Otherwise, use a platform-specific default.
+            shell = qm.platform.get_shell_for_script()
+        # Make sure the interpreter exists.
+        if not qm.is_executable(shell[0]):
+            return Result(Result.ERROR,
+                          cause=qm.message("no shell executable"),
+                          executable=shell_executable)
         # Construct the argument list.  The argument list for the
         # interpreter is followed by the name of the script
         # temporary file, and then the arguments to the script.
-        arguments = self.__interpreter \
+        arguments = shell \
                     + [ self.__script_file_name ] \
                     + self.arguments
         try: 

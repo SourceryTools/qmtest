@@ -73,6 +73,42 @@ path=/usr/bin:/bin
 
     <glossentry>
      <glossterm>
+      <property>command_shell</property>
+     </glossterm>
+     <glossdef>
+      <para>The shell program to run a single shell command.  The value
+      of this property is the path to the shell executable, optionally
+      followed by command-line options to pass to the shell, separated
+      by spaces.  The shell command to run is appended to the
+      command.</para>
+
+      <para>On GNU/Linux systems, the default is
+      <filename>/bin/bash&nbsp;-norc&nbsp;-noprofile&nbsp;-c</filename>.
+      On other UNIX-like systems, the default is
+      <filename>/bin/sh&nbsp;-c</filename>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <property>script_shell</property>
+     </glossterm>
+     <glossdef>
+      <para>The shell program to run a shell script.  The value of this
+      property is the path to the shell executable, optionally followed
+      by command-line options to pass to the shell, separated by spaces.
+      The filename of the shell command is appended to the
+      command.</para>
+
+      <para>On GNU/Linux systems, the default is
+      <filename>/bin/bash&nbsp;-norc&nbsp;-noprofile</filename>.  On
+      other UNIX-like systems, the default is
+      <filename>/bin/sh</filename>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
       <property>sendmail</property> (UNIX-like platforms only)
      </glossterm>
      <glossdef>

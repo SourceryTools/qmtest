@@ -55,8 +55,8 @@ import types
 
 standard_test_class_names = [
     "command.ExecTest",
-    "command.CommandTest",
-    "command.ScriptTest",
+    "command.ShellCommandTest",
+    "command.ShellScriptTest",
     "file.FileContentsTest",
     "python.ExecTest",
     "python.ExceptionTest",
