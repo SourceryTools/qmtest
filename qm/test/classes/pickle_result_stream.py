@@ -181,7 +181,7 @@ class PickleResultReader(FileResultReader):
         # Check for a version number
         try:
             version = self.__unpickler.load()
-        except (EOFError, cPickle.UnpicklingError):
+        except EOFError:
             # This file is empty, no more handling needed.
             return
         
@@ -190,7 +190,7 @@ class PickleResultReader(FileResultReader):
             # holding a 'Result'.  So we have no metadata to load and
             # should just rewind.
             self.file.seek(0)
-            self._ResetPickler()
+            self._ResetUnpickler()
         elif version == 1:
             self._ReadMetadata()
         else:
@@ -250,9 +250,6 @@ class PickleResultReader(FileResultReader):
             try:
                 thing = self.__unpickler.load()
             except EOFError:
-                return None
-            except cPickle.UnpicklingError:
-                # This is raised at EOF if file is a StringIO.
                 return None
             else:
                 if thing is _annotation_sentinel:

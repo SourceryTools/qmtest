@@ -1,3 +1,12 @@
+2003-07-14  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/classes/pickle_result_stream.py
+	(PickleResultReader.GetResult): Don't catch UnpicklingError;
+	it's not necessary with Python 2.2.
+	(PickleResultReader.__init__): Likewise.
+	Also, fix typo (call self._ResetUnpickler, not
+	self._ResetPickler).
+	
 2003-07-09  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/context.py (Context.items): New method.
