@@ -331,7 +331,7 @@
 
     <listitem>
      <para><literal>FAILED_DEPENDENCY</literal>: The test was not run
-     because a dependency failed---either a preaction did not run
+     because a dependency failed&mdash;either a preaction did not run
      successfully, or a prerequisite test produced an unexpected
      outcome.</para>
     </listitem>

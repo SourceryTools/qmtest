@@ -69,8 +69,8 @@
   users: without it, it could be necessary to repeatedly re-run a test
   that reported an error or failure in order to isolate the fault.
   Note that this does not mean that the test result is exactly
-  reproducible --- some tests of network software and user interfaces
-  are intrinsically non-deterministic --- but random number generator
+  reproducible&mdash;some tests of network software and user interfaces
+  are intrinsically non-deterministic&mdash;but random number generator
   seeds, file sizes, and the like must be stored in a re-executable
   way.</para>
 
@@ -531,7 +531,7 @@
 
   <para>The single most important aspect of &qmtest;'s design is how
   users actually create individual tests.  If this is difficult, then
-  it doesn't matter how elegant the rest of &qmtest; is --- it will
+  it doesn't matter how elegant the rest of &qmtest; is&mdash;it will
   not be widely used.  Some of the particular input formats which
   &qmtest; be able to support are listed below.</para>
 

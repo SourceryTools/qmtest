@@ -289,7 +289,7 @@
        <para>Each night's run of the program should append summary
        results to a log file.  Previous results should not be
        overwritten.  Bhargan has to be able to read and edit this file
-       while the program is running --- he spends a lot of time at
+       while the program is running&mdash;spends a lot of time at
        conferences and customer sites, and due to the time
        differences, this means it's often 2:00 a.m. in the office when
        he logs in.</para>
@@ -334,7 +334,7 @@
     error messages.)</para>
 
     <para>Daryl only starts adding the new feature to the parser once
-    all of his test cases are written and failing --- past experience
+    all of his test cases are written and failing&mdash;past experience
     has taught him that if he writes his tests
     <emphasis>after</emphasis> implementing the feature, he will test
     against his implementation, and not against the language standard.
@@ -352,7 +352,7 @@
     expected diagnostic messages.</para>
 
     <para>A single source file may be used as a fixture in several
-    tests --- for example, it maybe compiled several times at
+    tests&mdash;for example, it maybe compiled several times at
     different warning levels.  Control information for each test is
     embedded in specially-formatted comments in the source files,
     which are scattered throughout the source tree.  A simple Awk
