@@ -19,7 +19,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
  <dtml-var expr="GenerateHtmlHeader('Specify an Action Test')">
- <dtml-var expr="GenerateStartBody()">
+ <dtml-var expr="GenerateStartBody(decorations=0)">
 
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
    <tr valign="top"><td width="100%">
@@ -94,7 +94,7 @@
   }
   </script>
 
- <dtml-var expr="GenerateEndBody()">
+ <dtml-var expr="GenerateEndBody(decorations=0)">
 </html>
 
 <dtml-comment><!-- 

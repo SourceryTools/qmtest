@@ -136,7 +136,7 @@ class DtmlPage:
     """The public URL for the bug tracking system for the QM tools."""
 
 
-    def __init__(self, dtml_template, show_decorations=1, **attributes):
+    def __init__(self, dtml_template, **attributes):
         """Create a new page.
 
         'dtml_template' -- The file name of the DTML template from which
@@ -149,7 +149,6 @@ class DtmlPage:
         self.__dtml_template = dtml_template
         for key, value in attributes.items():
             setattr(self, key, value)
-        self.show_decorations = show_decorations
 
 
     def __call__(self, request=None):
@@ -217,19 +216,19 @@ class DtmlPage:
        self.GetProgramName(), description)
 
 
-    def GenerateStartBody(self):
+    def GenerateStartBody(self, decorations=1):
         """Return markup to start the body of the HTML document."""
 
         return "<body>"
 
 
-    def GenerateEndBody(self):
+    def GenerateEndBody(self, decorations=1):
         """Return markup to end the body of the HTML document."""
 
         result = """
         <br><br>
         """
-        if self.show_decorations:
+        if decorations:
             result = result + """
         <div align="right"><font size="-1">
          Problems?  Frustrations? <a href="/problems.html">Click here.</a>
@@ -278,16 +277,7 @@ class DtmlPage:
         return form
 
 
-    def MakeSubmitButton(self, title="OK"):
-        """Generate HTML for a button to submit the current form.
-
-        'title' -- The button title."""
-
-        return '<input type="button" value=" %s " onclick="submit();">' \
-               % (title)
-
-
-    def MakeButton(self, title, script_url, **fields):
+    def MakeButton(self, title, script_url, css_class=None, **fields):
         """Generate HTML for a button to load a URL.
 
         'title' -- The button title.
@@ -296,10 +286,12 @@ class DtmlPage:
 
         'fields' -- Additional fields to add to the script request.
 
+        'css_class' -- The CSS class to use for the button, or 'None'.
+
         The resulting HTML must be included in a form."""
 
         request = apply(WebRequest, [script_url, self.request], fields)
-        return make_button_for_request(title, request)
+        return make_button_for_request(title, request, css_class)
 
 
     def MakeImageUrl(self, image):
@@ -1450,10 +1442,11 @@ def format_exception(exc_info):
     # Format the traceback, with a newline separating elements.
     traceback_listing = string.join(traceback.format_tb(trace), "\n")
     # Construct a page info object to generate an exception page.
-    page = DtmlPage("exception.dtml",
-                    exception_type=type,
-                    exception_value=value,
-                    traceback_listing=traceback_listing)
+    page = DtmlPage.default_class(
+        "exception.dtml",
+        exception_type=type,
+        exception_value=value,
+        traceback_listing=traceback_listing)
     # Generate the page.
     return page()
 
@@ -1511,7 +1504,7 @@ def make_url(script_name, base_request=None, **fields):
     return request.AsUrl()
 
 
-def make_button_for_request(title, request):
+def make_button_for_request(title, request, css_class=None):
     """Generate HTML for a button.
 
     Note that the caller is responsible for making sure the resulting
@@ -1520,12 +1513,14 @@ def make_button_for_request(title, request):
     'title' -- The button label.
 
     'request' -- A 'WebRequest' object to be invoked when the button is
-    clicked."""
+    clicked.
 
-    return make_button_for_url(title, request.AsUrl())
+    'css_class' -- The CSS class to use for the button, or 'None'."""
+
+    return make_button_for_url(title, request.AsUrl(), css_class)
 
 
-def make_button_for_url(title, url):
+def make_button_for_url(title, url, css_class=None):
     """Generate HTML for a button.
 
     Note that the caller is responsible for making sure the resulting
@@ -1533,13 +1528,20 @@ def make_button_for_url(title, url):
 
     'title' -- The button label.
 
-    'url' -- The URL to load when the button is clicked.."""
+    'url' -- The URL to load when the button is clicked..
+
+    'css_class' -- The CSS class to use for the button, or 'None'."""
+
+    if css_class is None:
+        class_attribute = ""
+    else:
+        class_attribute = 'class="%s"' % css_class
 
     return '''
-    <input type="button"
+    <input type="button" %s
            value=" %s "
            onclick="location = '%s';"/>
-    ''' % (title, url)
+    ''' % (class_attribute, title, url)
 
 
 def get_session(request, session_id):
@@ -1665,7 +1667,7 @@ def generate_error_page(request, error_text):
 
     returns -- The generated HTML source for the page."""
 
-    page = DtmlPage("error.dtml", error_text=error_text)
+    page = DtmlPage.default_class("error.dtml", error_text=error_text)
     return page(request)
 
 
@@ -1674,9 +1676,8 @@ def generate_login_form(redirect_request, message=None):
 
     'message' -- If not 'None', a message to display to the user."""
 
-    page = DtmlPage(
+    page = DtmlPage.default_class(
         "login_form.dtml",
-        show_decorations=0,
         message=message,
         default_user_id=qm.user.database.GetDefaultUserId())
     return page(redirect_request)
@@ -2587,9 +2588,8 @@ def format_user_id(user_id):
         # for this user?
         if not hasattr(user_item, "__page_cache_request"):
             # No.  Generate it now.
-            user_page = DtmlPage(
+            user_page = DtmlPage.default_class(
                 "user.dtml",
-                show_decorations=0,
                 user_id=user_id,
                 user=user_item)()
             # Put it in the page cache.
@@ -2648,6 +2648,19 @@ def unescape(text):
     """Equivalent to the JavaScript 'unescape' built-in function."""
 
     return urllib.unquote(text)
+
+
+def make_submit_button(title="OK"):
+    """Generate HTML for a button to submit the current form.
+
+    'title' -- The button title."""
+
+    return '''
+    <input type="button"
+           class="submit"
+           value=" %s "
+           onclick="submit();"
+    />''' % title
 
 
 ########################################################################

@@ -203,8 +203,6 @@
    </dtml-let>
    </dtml-in>
 
-   <tr><td colspan="2">&nbsp;</td></tr>
-
 <dtml-comment><!--
    <tr class="heading">
     <td colspan="2">
@@ -225,22 +223,28 @@
    </dtml-in>   
 --></dtml-comment>
 
-  </table>
+   <tr class="form-submit">
+    <td colspan="2">
+     <input type="button"
+            class="submit"
+            value=" Commit Changes "
+            onclick="<dtml-var expr="web.make_confirmation_dialog(
+                'Are you sure you want to commit these changes to the '
+                'issue database?',
+                request.copy('submit-issue-class').AsUrl())">"
+     />
+     <input type="button"
+            class="submit"
+            value=" Discard Changes "
+            onclick="<dtml-var expr="web.make_confirmation_dialog(
+                'Are you sure you want to discard your changes?',
+                request.copy('config-idb').AsUrl())">"
+     />
 
-  <br>
-  <input type="button"
-         value=" Commit Changes "
-         onclick="<dtml-var expr="web.make_confirmation_dialog(
-             'Are you sure you want to commit these changes to the '
-             'issue database?',
-             request.copy('submit-issue-class').AsUrl())">"
-  />
-  <input type="button"
-         value=" Discard Changes "
-         onclick="<dtml-var expr="web.make_confirmation_dialog(
-             'Are you sure you want to discard your changes?',
-             request.copy('config-idb').AsUrl())">"
-  />
+    </td>
+   </tr>
+
+  </table>
 
   </form>
 

@@ -49,8 +49,6 @@
    </td>
   </tr>
 
-  <tr><td colspan="2">&nbsp;</td></tr>
-
   <tr class="field" valign="top">
    <td>
     <b>Default Value</b>
@@ -101,14 +99,18 @@
    </td>
   </tr>
 
- </table>
+  <tr><td colspan="2">&nbsp;</td></tr>
 
- <br>
- <input type="button"
-        value=" OK "
-        onclick="document.form.submit();"/>
- <dtml-var expr="MakeButton('Cancel', 
-                            web.WebRequest('show-issue-class').AsUrl())">
+  <tr class="form-submit">
+   <td colspan="2">
+    <dtml-var expr="web.make_submit_button()">
+    <dtml-var expr="MakeButton('Cancel',
+                               web.WebRequest('show-issue-class').AsUrl(),
+                               'submit')">
+   </td>
+  </tr>
+
+ </table>
 
  </form>
 

@@ -225,7 +225,7 @@ class ShowPage(web.DtmlPage):
         # Encode the current categories.
         options = map(lambda cat: (cat, cat), self.categories)
         # Generate the page for selecting the category to add.
-        add_page = web.DtmlPage("add-category.dtml", show_decorations=0)
+        add_page = web.DtmlPage("add-category.dtml")
         add_page = add_page(self.request) 
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
@@ -264,8 +264,7 @@ class AddPrerequisitePage(web.DtmlPage):
 
     def __init__(self, base_path):
         # Initialize the base class.
-        web.DtmlPage.__init__(self, "add-prerequisite.dtml",
-                              show_decorations=0)
+        web.DtmlPage.__init__(self, "add-prerequisite.dtml")
         # Extract a list of all test IDs in the specified path. 
         db = qm.test.base.get_database()
         test_ids = db.GetTestIds(base_path)
@@ -280,7 +279,7 @@ class AddActionPage(web.DtmlPage):
 
     def __init__(self, action_path):
         # Initialize the base class.
-        web.DtmlPage.__init__(self, "add-action.dtml", show_decorations=0)
+        web.DtmlPage.__init__(self, "add-action.dtml")
         # Extract a list of all action IDs in the specified path.
         db = qm.test.base.get_database()
         action_ids = db.GetActionIds(action_path)

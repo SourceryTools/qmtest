@@ -97,6 +97,10 @@ tr.field-error {
     background-color: fff0f8;
 }
 
+tr.form-submit {
+    background-color: f8ffe8;
+}
+
 tr.heading {
     background-color: e8e8e8;
 }
@@ -124,4 +128,8 @@ td.navbar {
 
 a.navbar {
     color: white;
+}
+
+input.submit {
+    background-color: e0e0e0;
 }

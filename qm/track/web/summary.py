@@ -277,7 +277,6 @@ class DisplayOptionsPage(web.DtmlPage):
         # Initialize the base class.
         web.DtmlPage.__init__(self,
                               "summary-display-options.dtml",
-                              show_decorations=0,
                               hue_field_name=hue_field_name,
                               lightness_field_name=lightness_field_name,
                               saturation_field_name=saturation_field_name)
@@ -411,8 +410,7 @@ class ColorKeyPage(web.DtmlPage):
         this channel."""
 
         # Initialize the base class.
-        web.DtmlPage.__init__(self, "summary-color-key.dtml",
-                              show_decorations=0)
+        web.DtmlPage.__init__(self, "summary-color-key.dtml")
         # This little class represents one item in a color chart,
         # composed of an HTML-formatted color value, and its label.
         class Color:

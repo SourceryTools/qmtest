@@ -55,6 +55,78 @@ matches all issues for which the last modifying user is "jones" and
 which is in the category "GUI".
 
 
+@ state model help
+**State Model**
+
+%(program_name)s allows you to specify a state model for each issue
+class.  The state model helps you specify and control the procedure your
+organization follows for dealing with each issue.
+
+The state model consists of a set of *states*.  Each issue is in exactly
+one state at any given time.  In addition, the state model includes
+*transitions* connecting the states.  Each transition leads from one
+state to another state.  A user may change the state of an issue only if
+the state model includes a transition from the issue's current state to
+the new state.
+
+Each state is identified by its name, which must be unique in the state
+model, and can consist of lower-case letters, digits, and underscores.
+A state can also include a more complete description, which helps users
+understand what the state signifies.  Some states are also flagged as
+*open states*; an issue not in an open state is considered no longer to
+be under consideration.  The *initial state* is the state assigned to
+all new issues.
+
+Some typical states that might be included in a bug-tracking state model
+are,
+
+  *submitted* -- The bug has been reported, but not yet examined.
+
+  *active* -- The bug is currently being fixed.
+
+  *fixed* -- The bug has been fixed.
+
+  *tested* -- The system has been tested, and the bug no longer occurs.
+
+  *unreproducible* -- The system's developers were not able to reproduce
+   the reported bug.
+
+Each transition is identified by the names of its starting and ending
+states.  In addition, a transition may also include a *condition*.  The
+condition is a Python expression that is evaluated on each issue whose
+state is changed according to this transition.  The change of state is
+allowed only if the expression evaluates to true.
+
+For example, using the typical states listed above, you may wish to
+restrict your state model so that only testers, Mr. Smith and Ms. Jones,
+may change a bug's state from *fixed* to *tested*.  To implement this,
+you might specify the condition 
+
+  'user in ["smith", "jones"]'
+
+for that transition.  If you omit the condition, the transition is
+always allowed.
+
+**Editing the State Model**
+
+To add a new state, enter a name and description in the text inputs, 
+check or uncheck the **Open** checkbox to indicate whether this is an
+open state, and click on the **Add** button.  To remove a state, select
+it in the list of states and click on the **Remove** button.  Note that
+when you remove a state, all transitions leading either from or two that
+state are also removed.  
+
+To adjust a state's description or change whether it is an open state,
+select the state, make the changes, and click on the **Change** button.
+The name of an existing state cannot be changed.
+
+To add a new transition, select the starting and ending states from the
+combo box inputs.  Optionally, specify a Python expression for the
+transition condition, or leave that input empty.  Click **Add** to add
+the new transition.  To remove a transition, select it in the list of
+transitions and click on the **Remove** button.
+
+
 @ summary display options help
 **Summary Display Options**
 

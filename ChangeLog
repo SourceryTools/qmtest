@@ -1,5 +1,51 @@
 2001-07-16  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (DtmlPage.__init__): Remove show_decorations parameter.
+	(DtmlPage.GenerateStartBody): Add decorations parameter.
+	(DtmlPage.GenerateEndBody): Likewise.
+	(DtmlPage.MakeSubmitButton): Remove.
+	(DtmlPage.MakeButton): Add css_class parameter.
+	(format_exception): Use DtmlPage.default_class.
+	(make_button_for_request): Add css_class parameter.
+	(make_button_for_url): Likewise.
+	(generate_error_page): Use DtmlPage.default_class.
+	(generate_login_form): Likewise.
+	(make_submit_button): New function.
+	* qm/track/web/web.py (DtmlPage): Split off...
+	(DefaultDtmlPage): ... this base class.
+	(DefaultDtmlPage.GenerateStartBody): Add decorations parameter.
+	(_initialize_module): Use DefaultDtmlPage as default_class.
+	* qm/track/web/summary.py (DisplayOptionsPage.__init__): Remove
+	show_decorations argument.
+	(ColorKeyPage.__init__): Likewise.
+	* qm/track/issue_class.py (StateField.MakePropertyControls):
+	Adjust popup size.
+	* qm/test/web/web.py (DtmlPage): Split off...
+	(DefaultDtmlPage): ... this base class.
+	(__initialize_module): Use DefaultDtmlPage as default_class.
+	* qm/test/web/show.py (ShowPage.MakeCategoriesControl): Remove
+	show_decorations argument.
+	(AddPrerequisitePage.__init__): Likewise.
+	(AddActionPage.__init__): Likewise.
+	* share/web/stylesheets/qm.css (tr.form-submit): New class.
+	(input.submit): Likewise.
+	* share/dtml/field.dtml: Adjust formatting.
+	* share/dtml/problems.dtml: Likewise.
+	* share/dtml/track/summary-display-options.dtml: Likewise.
+	* share/dtml/track/summary-color-key.dtml: Likewise.
+	* share/dtml/track/show.dtml: Likewise.
+	* share/dtml/track/issue-class.dtml: Likewise.
+	* share/dtml/test/suite.dtml: Likewise.
+	* share/dtml/test/add-prerequisite.dtml: Likewise.
+	* share/dtml/test/add-category.dtml: Likewise.
+	* share/dtml/test/add-action.dtml: Likewise.
+	* share/dtml/user.dtml: Likewise.
+	* share/dtml/track/state-model.dtml: Likewise.  Add help link.
+	* share/diagnostics/track-help.txt (state model help): New help
+	page.
+
+2001-07-16  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (escape): New function.
 	(unescape): Likewise.
 	* qm/fields.py (Field.UpdateFromRequest): Remove debugging output.

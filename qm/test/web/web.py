@@ -44,15 +44,13 @@ import qm.web
 # classes
 ########################################################################
 
-class DtmlPage(qm.web.DtmlPage):
+class DefaultDtmlPage(qm.web.DtmlPage):
     """Subclass of DTML page class for QMTest pages."""
 
     html_generator = "QMTest"
 
 
     def __init__(self, dtml_template, **attributes):
-        # QMTest DTML templates are in the 'test' subdirectory.
-        dtml_template = os.path.join("test", dtml_template)
         # Initialize the base class.
         apply(qm.web.DtmlPage.__init__, (self, dtml_template), attributes)
 
@@ -67,8 +65,8 @@ class DtmlPage(qm.web.DtmlPage):
         return qm.web.WebRequest("dir", base=self.request).AsUrl()
 
 
-    def GenerateStartBody(self):
-        if self.show_decorations:
+    def GenerateStartBody(self, decorations=1):
+        if decorations:
             # Include the navigation bar.
             navigation_bar = DtmlPage("navigation-bar.dtml")
             return "<body>%s<br>" % navigation_bar(self.request)
@@ -130,6 +128,20 @@ class DtmlPage(qm.web.DtmlPage):
         return '<a href="%s"><span class="suite_id">%s</span></a>' \
                % (request.AsUrl(), suite_id)
     
+
+
+class DtmlPage(DefaultDtmlPage):
+    """Convenience DTML subclass that finds QMTest page templates.
+
+    Use this 'DtmlPage' subclass for QMTest-specific pages.  This class
+    automatically looks for template files in the 'test' subdirectory."""
+
+    def __init__(self, dtml_template, **attributes):
+        # QMTest DTML templates are in the 'test' subdirectory.
+        dtml_template = os.path.join("test", dtml_template)
+        # Initialize the base class.
+        apply(DefaultDtmlPage.__init__, (self, dtml_template), attributes)
+
 
 
 ########################################################################
@@ -219,7 +231,7 @@ def handle_shutdown(request):
 def __initialize_module():
     # Use our 'DtmlPage' subclass even when generating generic
     # (non-QMTest) pages.
-    qm.web.DtmlPage.default_class = DtmlPage
+    qm.web.DtmlPage.default_class = DefaultDtmlPage
 
 
 __initialize_module()

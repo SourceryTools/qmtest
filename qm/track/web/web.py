@@ -68,15 +68,13 @@ import urllib
 # classes
 ########################################################################
 
-class DtmlPage(qm.web.DtmlPage):
+class DefaultDtmlPage(qm.web.DtmlPage):
     """Subclass of DTML page class for QMTrack pages."""
 
     html_generator = "QMTrack"
 
 
     def __init__(self, dtml_template, **attributes):
-        # QMTrack DTML templates are in the 'track' subdirectory.
-        dtml_template = os.path.join("track", dtml_template)
         # Initialize the base class.
         apply(qm.web.DtmlPage.__init__, (self, dtml_template), attributes)
 
@@ -87,8 +85,8 @@ class DtmlPage(qm.web.DtmlPage):
         return qm.track.get_name()
 
 
-    def GenerateStartBody(self):
-        if self.show_decorations:
+    def GenerateStartBody(self, decorations=1):
+        if decorations:
             # Include the navigation bar.
             navigation_bar = DtmlPage("navigation-bar.dtml")
             return "<body>%s<br>" % navigation_bar(self.request)
@@ -102,6 +100,21 @@ class DtmlPage(qm.web.DtmlPage):
 
     def MakeIndexUrl(self):
         return qm.web.WebRequest("index", base=self.request).AsUrl()
+
+
+
+class DtmlPage(DefaultDtmlPage):
+    """Convenience DTML subclass that finds QMTrack page templates.
+
+    Use this 'DtmlPage' subclass for QMTrack-specific pages.  This class
+    automatically looks for template files in the 'track' subdirectory."""
+
+    def __init__(self, dtml_template, **attributes):
+        # QMTrack DTML templates are in the 'track' subdirectory.
+        dtml_template = os.path.join("track", dtml_template)
+        # Initialize the base class.
+        apply(DefaultDtmlPage.__init__, (self, dtml_template), attributes)
+        
 
 
 
@@ -244,7 +257,7 @@ def _initialize_module():
     qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
     # Use our 'DtmlPage' subclass even when generating generic
     # (non-QMTrack) pages.
-    qm.web.DtmlPage.default_class = DtmlPage
+    qm.web.DtmlPage.default_class = DefaultDtmlPage
 
 
 _initialize_module()

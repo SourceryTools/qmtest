@@ -26,6 +26,9 @@
     <td>
      <h3>State Model</h3>
     </td>
+    <td align="right">
+     <dtml-var expr="web.make_help_link('state model help')">
+    </td>
    </tr>
   </table>
 
@@ -179,19 +182,25 @@
     </table>
    </td>
   </tr>
- </table>  
 
- <input type="button"
-        value=" OK "
-		onclick="window.opener.document.form.
-                     <dtml-var expr="request['input']">.value
-                     = encode_state_model();
-                 window.close();"
- />
- <input type="button"
-        value=" Close "
-        onclick="window.close();"
- />
+  <tr class="form-submit">
+   <td colspan="2">
+	<input type="button"
+		   class="submit"
+		   value=" OK "
+		   onclick="window.opener.document.form.
+						<dtml-var expr="request['input']">.value
+						= encode_state_model();
+					window.close();"
+	/>
+	<input type="button"
+		   class="submit"
+		   value=" Close "
+		   onclick="window.close();"
+	/>
+   </td>
+  </tr>
+ </table>  
 
  </form>
 

@@ -153,8 +153,9 @@
    <dtml-if expr="edit">
     <tr class="heading">
      <td colspan="2">
-      <dtml-var expr="MakeSubmitButton()">
-      <dtml-var expr="MakeButton('Cancel', 'show-suite', id=suite.GetId())">
+      <dtml-var expr="web.make_submit_button()">
+      <dtml-var expr="MakeButton('Cancel', 'show-suite', 'submit' 
+                                 id=suite.GetId())">
    </dtml-if>
 
   </tbody>

@@ -19,7 +19,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xhtmlns="http://www.w3.org/1999/xhtml">
  <dtml-var expr="GenerateHtmlHeader('Summary Color Key')">
- <dtml-var expr="GenerateStartBody()">
+ <dtml-var expr="GenerateStartBody(decorations=0)">
 
   <h3>Issue Summary Color Key</h3>
 
@@ -80,7 +80,7 @@
   </tr>
   </table>
 
- <dtml-var expr="GenerateEndBody()">
+ <dtml-var expr="GenerateEndBody(decorations=0)">
 </html>
 
 <dtml-comment><!-- 

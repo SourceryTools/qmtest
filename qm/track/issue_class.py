@@ -788,7 +788,7 @@ class StateField(qm.fields.EnumerationField):
         <input type="button"
                value=" Edit... "
                onclick="window.open('%s', 'popup',
-                        'width=480,height=480,resizeable,scrollbars');"
+                        'width=540,height=640,resizeable,scrollbars');"
         />''' % request.AsUrl()
         # Use these controls for the 'state_model' attribute.
         controls["state_model"] = hidden + button
