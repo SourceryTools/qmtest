@@ -181,17 +181,21 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     # Make sure another session isn't open.
     assert state["mode"] == "none"
 
-    # Make sure the directory containing 'path' exists and is
-    # accessible.
-    parent_path = os.path.dirname(path)
-    if not os.path.isdir(parent_path):
-        raise qm.ConfigurationError, \
-              "directory %s containing IDB path does not exit" \
-              % parent_path
-    if not os.access(parent_path, os.R_OK | os.X_OK):
-        raise qm.ConfigurationError, \
-              "directory %s containing IDB path is not accesible" \
-              % parent_path
+    # Make sure the IDB directory exists and is accessible.
+    if not os.access(path, os.R_OK | os.X_OK):
+        parent_path = os.path.dirname(path)
+        if os.access(parent_path, os.R_OK | os.X_OK):
+            # 'exists' and 'isdir' are relevant only if the parent path
+            # is accessible.
+            if not os.path.exists(path):
+                raise qm.ConfigurationError, \
+                      qm.error("idb directory missing", path=path)
+            elif not os.path.isdir(path):
+                raise qm.ConfigurationError, \
+                      qm.error("idb path wrong", path=path)
+        else:
+            raise qm.ConfigurationError, \
+                  qm.error("idb path inaccessible", path=path)
     
     # Set up a mutex instance.
     _global_lock = get_idb_lock(path)
@@ -217,7 +221,11 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
                 # Load the configuration.
                 configuration_path = __get_configuration_path(path)
                 __configuration = qm.Configuration(configuration_path)
-                __configuration.Load()
+                try:
+                    __configuration.Load()
+                except IOError, error:
+                    raise RuntimeError, \
+                          qm.error("idb problem", problem=str(error))
                 # Load the user database.
                 user_db_path = os.path.join(path, "users.xml")
                 qm.user.load_xml_database(user_db_path)

@@ -104,6 +104,14 @@ The operators += and -= are not allowed for a non-set field
 Unknown format "%(format)s". You must specify a valid format to display the
 issues.
 
+@ idb directory missing
+The IDB path '%(path)s' doesn't exist.
+
+@ idb problem
+%(program_name)s encountered a problem accessing the IDB:
+
+  %(problem)s
+
 @ idb locked
 The IDB is currently locked by another QMTrack process.  Please try
 this command again later.  
@@ -127,6 +135,12 @@ initializing an IDB there.
 
 If there already is an IDB at this path, remove it first with the
 "destroy" command.
+
+@ idb path inaccessible
+The IDB path '%(path)s' is not accessible.
+
+@ idb path wrong
+The path '%(path)s' does not appear to point to an IDB.
 
 @ iid already used
 There is already an issue in the IDB with the issue ID "%(iid)s".

@@ -80,6 +80,14 @@
   </tr>
   </table>
 
+ <form>
+  <div align="right">
+   <input type="button"
+          value=" Close "
+          onclick="window.close();" />
+  </div>
+ </form>
+
  <dtml-var expr="GenerateEndBody(decorations=0)">
 </html>
 
