@@ -266,7 +266,7 @@ $(TEX_MANUALS): \
 
 doc-python: $(PYTHONDOCDIRS)
 	for dir in $(PYTHONDOCDIRS); do \
-	    $(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset $${dir}; \
+	    $(PYTHON) $(HAPPYDOC) $${dir}; \
 done
 
 ########################################################################
