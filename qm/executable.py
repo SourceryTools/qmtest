@@ -601,14 +601,14 @@ class RedirectedExecutable(TimeoutExecutable):
         # exec the new process anyway, but it is polite to close fds as
         # soon as possible.
         if self._stdin_pipe:
-                os.close(self._stdin_pipe[0])
-                os.close(self._stdin_pipe[1])
+            os.close(self._stdin_pipe[0])
+            os.close(self._stdin_pipe[1])
         if self._stdout_pipe:
-                os.close(self._stdout_pipe[0])
-                os.close(self._stdout_pipe[1])
+            os.close(self._stdout_pipe[0])
+            os.close(self._stdout_pipe[1])
         if self._stderr_pipe:
-                os.close(self._stderr_pipe[0])
-                os.close(self._stderr_pipe[1])
+            os.close(self._stderr_pipe[0])
+            os.close(self._stderr_pipe[1])
 
 
     def _HandleChild(self):

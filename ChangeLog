@@ -1,3 +1,8 @@
+2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/executable.py (RedirectedExecutable._InitializeChild): Fix
+	indentation.
+
 2003-08-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (TimeoutExecutable.__init__): Document -2 value
