@@ -174,6 +174,8 @@ script = open(setup_path_script_template_path, "r").read()
 script = re.sub("@qm_lib_path@", lib_dir, script)
 script = re.sub("@qm_share_path@", share_dir, script)
 script = re.sub("@qm_doc_path@", doc_dir, script)
+script = re.sub("@python_version@", __python_version, script)
+script = re.sub("@python_platform@", __python_platform, script)
 open(setup_path_script_path, "w").write(script)
 os.chmod(setup_path_script_path, 0644)
 

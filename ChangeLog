@@ -1,3 +1,7 @@
+2001-09-07  Alex Samuel  <samuel@codesourcery.com>
+
+	* install.py: Substitute @python_version@ and @python_platform@.
+
 2001-09-06  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py: Exec setup_path.py.
