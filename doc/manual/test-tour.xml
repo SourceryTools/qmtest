@@ -45,18 +45,22 @@
     <screen>
      &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb tdb</userinput>
     </screen>
-   On a Windows system, use this command instead:
+   On a Windows system, use this command at a DOS 
+     <footnote><para>Under Windows, you must use the standard Windows
+     command shell (DOS) to run &qmtest;; alternative shells (such as Cygwin)
+     will not work with &qmtest;.</para></footnote>
+   prompt:
     <screen>
      &prompt;<userinput>xcopy c:\progra~1\qm\share\qm\tutorial\test\tdb tdb\ /s</userinput>
     </screen>
-   Of course, If you installed &qmtest; in another directory,
+   If you installed &qmtest; in another directory,
    substitute that directory for <filename>/usr/local</filename> or
    <filename>c:\progra~1\qm</filename> in the commands above.</para>
 
    <para>Then, enter the new directory you have created.  On both UNIX
    and Windows systems, you can do this with this command:
     <screen>
-&prompt;<userinput>cd tdb</userinput>
+     &prompt;<userinput>cd tdb</userinput>
     </screen>
    </para>
 

@@ -30,6 +30,29 @@
   these applications revolves around keeping track of issues: defect 
   reports, tasks, or leads.</para>
 
+  <para>Code that has not been tested adequately generally does not
+  work.  Yet, many applications are deployed without adequate testing,
+  often with catastrophic results.  It is much more costly to find
+  defects at the end of the release cycle than at the beginning.  By
+  making it easy to develop tests, and execute those tests to validate
+  the application, &qmtest; makes it easy to find problems easier,
+  rather than later.</para>
+
+  <para>&qmtest; can be extended to handle any application domain and
+  any test format.  &qmtest; works with existing testsuites, no matter
+  how they work or how they are stored.  &qmtest;'s open and pluggable
+  architecture supports a wide variety of applications.</para>
+
+  <para>&qmtest; features both an intuitive graphical user interface
+  and a conventional command-line interface.  &qmtest; can run tests
+  in serial, in parallel on a single machine, or across a farm of
+  possibly heterogeneous machines.</para>
+
+  <para>CodeSourcery provides support for &qmtest;.  CodeSourcery can
+  help you install, integrate, and customize &qmtest;.  For more
+  information, visit <ulink
+  url="http://www.qmtest.com">the QMTest web site</ulink>.</para>
+
 </chapter>
 <!--
   Local Variables:
