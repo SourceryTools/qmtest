@@ -257,16 +257,20 @@ class State:
 
     See 'StateModel' for more information."""
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, open=1):
         """Create a new state.
 
         'name' -- The name of this state.
 
         'description' -- A description of the significance of this
-        state."""
+        state.
+
+        'open' -- If true, this is considered an open state.  If false,
+        this is considered a closed state."""
         
         self.__name = name
         self.__description = description
+        self.__open = open
 
 
     def GetName(self):
@@ -279,6 +283,13 @@ class State:
         """Return a description of this state."""
 
         return self.__description
+
+
+    def IsOpen(self):
+        """Return true if this is an open state."""
+
+        return self.__open
+
 
 
 class TransitionCondition:
@@ -443,7 +454,7 @@ class StateModel:
         the state model."""
 
         try:
-            return self.__states[state_name]
+            return self.__states[str(state_name)]
         except KeyError:
             raise KeyError, "unknown state %s" % state_name
 
@@ -452,6 +463,13 @@ class StateModel:
         """Return a sequence of names of the states in the state model."""
 
         return self.__states.keys()
+
+
+    def GetOpenStateNames(self):
+        """Return a sequence of names of open states in the state model."""
+
+        open_states = filter(lambda s: s.IsOpen(), self.__states.values())
+        return map(lambda s: s.GetName(), open_states)
 
 
     def AddState(self, state):
@@ -1070,45 +1088,52 @@ def _initialize_module():
         State(name="submitted",
               description="""
               The issue has been submitted, but has not been verified.
-              """
+              """,
+              open=1
               ),
 
         State(name="active",
               description="""
               The issue has been verified, and is scheduled for
               resolution.
-              """
+              """,
+              open=1
               ),
 
         State(name="unreproducible",
               description="""
               The issue could not be reproduced.
-              """
+              """,
+              open=0
               ),
 
         State(name="will_not_fix",
               description="""
               The issue has been verified, but there are no plans to
               resolve it.
-              """
+              """,
+              open=0
               ),
 
         State(name="resolved",
               description="""
               The issue has been resolved.
-              """
+              """,
+              open=1,
               ),
 
         State(name="tested",
               description="""
               The resolution of the issue has been tested and verified.
-              """
+              """,
+              open=1
               ),
 
         State(name="closed",
               description="""
               The issue is no longer under consideration.
-              """
+              """,
+              open=0
               ),
         ]
 

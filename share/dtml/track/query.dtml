@@ -58,47 +58,58 @@
     <td>
      <h4>Browse Issues</h4>
   
-     <dtml-var expr="MakeQueryForm(name='browse_category')">
-      Show All Issues in Category:
-      <dtml-var expr="MakeCategorySelect()">
-      <input type="button"
-             value=" Show "
-             onclick="make_category_query();
-                      document.browse_category.submit();"/>
-      <input type="hidden"
-             name="query"/>
-      <script language="JavaScript">
-      function make_category_query()
-      {
-        var form = document.browse_category;
-        form.query.value = "'" + form.category.value + "' in categories";
-      }
-      </script>
-     </form>
+     <table border="0" cellpadding="0" cellspacing="4">
+      <tr>
+      <dtml-var expr="MakeQueryForm(name='browse_category')">
+       <td>Show All Issues in Category:</td>
+       <td><dtml-var expr="MakeCategorySelect()"></td>
+       <td><input type="button"
+                  value=" Show "
+                  onclick="make_category_query();
+                           document.browse_category.submit();"/>
+           <input type="hidden"
+                  name="query"/></td>
+       <script language="JavaScript">
+       function make_category_query()
+       {
+         var form = document.browse_category;
+         form.query.value = "'" + form.category.value + "' in categories";
+       }
+       </script>
+      </form>
+      </tr>
 
-     <dtml-var expr="MakeQueryForm(name='browse_state')">
-      Show All Issues in State:
-      <dtml-var expr="MakeStateSelect()">
-      <input type="button"
-             value=" Show "
-             onclick="make_state_query(); document.browse_state.submit();"/>
-      <input type="hidden"
-             name="query"/>
-      <script language="JavaScript">
-      function make_state_query()
-      {
-        var form = document.browse_state;
-        form.query.value = "state == '" + form.state.value + "'";
-      }
-      </script>
-     </form>
+      <tr>
+      <dtml-var expr="MakeQueryForm(name='browse_state')">
+       <td>Show All Issues in State:</td>
+       <td><dtml-var expr="MakeStateSelect()"></td>
+       <td><input type="button"
+                  value=" Show "
+                  onclick="make_state_query(); 
+                           document.browse_state.submit();"/>
+           <input type="hidden"
+                  name="query"/></td>
+       <script language="JavaScript">
+       function make_state_query()
+       {
+         var form = document.browse_state;
+         form.query.value = "state == '" + form.state.value + "'";
+       }
+       </script>
+      </form>
+      </tr>
 
-     <dtml-var expr="MakeQueryForm(name='browse')">
-      Show All Issues:
-      <input type="button"
-             value=" Show "
-             onclick="document.browse.submit();"/>
-     </form>
+      <tr>
+      <dtml-var expr="MakeQueryForm(name='browse')">
+       <td>Show All Issues:</td>
+       <td>&nbsp;</td>
+       <td><input type="button"
+                  value=" Show "
+                  onclick="document.browse.submit();"/></td>
+      </form>
+      </tr>
+     </table>
+
     </td>
     <td>&nbsp;</td>
    </tr>

@@ -272,13 +272,13 @@ class Issue:
         return field.FormatValueAsText(value)
 
 
-    def IsDeleted(self):
-        """Return true if this issue has been deleted.
+    def IsOpen(self):
+        """Return true if this issue is in an open state."""
 
-        An issue is considered to be deleted if its state value is
-        negative."""
-
-        return self.GetField("state") < 0
+        state_name = self.GetField("state")
+        state_model = self.GetClass().GetField("state").GetStateModel()
+        state = state_model.GetState(state_name)
+        return state.IsOpen()
 
 
     def MakeDomElement(self, document):
@@ -613,6 +613,7 @@ def eval_revision_expression(expression,
         changed_fn = lambda name: 1
         changed_to_fn = lambda name, val: 1
 
+    extra_locals["_issue"] = revision
     extra_locals["_previous"] = previous
     extra_locals["_changed"] = changed_fn
     extra_locals["_changed_to"] = changed_to_fn

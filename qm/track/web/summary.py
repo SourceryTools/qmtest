@@ -42,7 +42,10 @@ The form recognizes the following query arguments:
 with a hyphen for reverse sort.
 
 'query' -- If specified, show the issues matching this query.
-Otherwise, show all issues."""
+Otherwise, show all issues.
+
+'open_only' -- Either 0 or 1, indicating whether only open issues should
+be shown.  If omitted, the value 0 is impled."""
 
 ########################################################################
 # imports
@@ -63,7 +66,12 @@ class SummaryPageInfo(web.PageInfo):
 
     'issues' -- A sequence of issues to display in the table."""
 
-    def __init__(self, request, issues, field_names, sort_order):
+    def __init__(self,
+                 request,
+                 issues,
+                 field_names,
+                 sort_order,
+                 open_only=0):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
@@ -75,11 +83,17 @@ class SummaryPageInfo(web.PageInfo):
         display.
 
         'sort_order' -- The name of the field by which to sort entries.
-        If prefixed with a minus sign, sort in reverse order."""
+        If prefixed with a minus sign, sort in reverse order.
+
+        'open_only' -- If true, show only issues in an open state."""
 
         qm.web.PageInfo.__init__(self, request)
 
         self.field_names = field_names
+
+        # If requested, limit the issues to open issues only.
+        if open_only:
+            issues = filter(lambda i: i.IsOpen(), issues)
 
         # Partition issues by issue class.  'self.issue_map' is a map
         # from issue class onto a sequence of issues.
@@ -117,7 +131,8 @@ class SummaryPageInfo(web.PageInfo):
         display_options_page_info = DisplayOptionsPageInfo(
             request,
             self.issue_map.keys(),
-            self.field_names)
+            self.field_names,
+            open_only)
         display_options_page = web.generate_html_from_dtml(
             "summary-display-options.dtml",
             display_options_page_info)
@@ -199,7 +214,11 @@ class DisplayOptionsPageInfo(web.PageInfo):
 
     'base_url' -- The base URL to redisplay the issue summary."""
 
-    def __init__(self, request, issue_classes, included_field_names):
+    def __init__(self,
+                 request,
+                 issue_classes,
+                 included_field_names,
+                 open_only):
         """Create a new page info context.
 
         'request' -- A 'WebRequest' object.
@@ -208,7 +227,10 @@ class DisplayOptionsPageInfo(web.PageInfo):
         the issue summary.
 
         'included_field_names' -- A sequence of names of all fields
-        currently included in the issue summary display."""
+        currently included in the issue summary display.
+
+        'open_only' -- True if only open issues are currently
+        displayed."""
 
         # Initialize the base class.
         qm.web.PageInfo.__init__(self, request)
@@ -250,9 +272,16 @@ class DisplayOptionsPageInfo(web.PageInfo):
         # options selected in the form.  Blank out the fields that the
         # form will add.
         redisplay_request = request.copy()
-        if redisplay_request.has_key("fields"):
-            del redisplay_request["fields"]
+        for field_name in ["fields", "open_only"]:
+            if redisplay_request.has_key(field_name):
+                del redisplay_request[field_name]
         self.base_url = redisplay_request.AsUrl()
+
+        self.open_only = open_only
+        # Construct a list of names of open states in the state model
+        # for this issue class.
+        state_model = issue_class.GetField("state").GetStateModel()
+        self.open_state_names = state_model.GetOpenStateNames()
 
 
 
@@ -294,10 +323,8 @@ def handle_summary(request):
             return qm.web.generate_error_page(request, msg)
 
     else:
-        # No query was specified; show all issues...
+        # No query was specified; show all issues.
         issues = idb.GetIssues()
-        # ... that aren't deleted.
-        issues = filter(lambda iss: not iss.IsDeleted(), issues)
 
     # The request may specify the fields to display in the summary.  Are
     # they specified?
@@ -319,9 +346,22 @@ def handle_summary(request):
         # Save it for next time.
         user.SetConfigurationProperty("summary_sort", sort_order)
     else:
-        # No.  Retrieve the sort order from the user record, os use a
+        # No.  Retrieve the sort order from the user record, or use a
         # default if it's not listed there.
         sort_order = user.GetConfigurationProperty("summary_sort", "iid")
+
+    # The request may specify that only open issues are to be
+    # displayed.  Is the flag specified?
+    if request.has_key("open_only"):
+        # Yes; use it.
+        open_only = int(request["open_only"])
+        # Save it for next time.
+        user.SetConfigurationProperty("summary_open_only", str(open_only))
+    else:
+        # No.  Retrieve the state from the user record, or use a default
+        # if it's not listed there.
+        open_only = int(
+            user.GetConfigurationProperty("summary_open_only", 0))
 
     # Split field names into a sequence.
     field_names = string.split(field_names, ",")
@@ -329,7 +369,8 @@ def handle_summary(request):
     if not "iid" in field_names:
         field_names.insert(0, "iid")
 
-    page_info = SummaryPageInfo(request, issues, field_names, sort_order)
+    page_info = SummaryPageInfo(request, issues, field_names,
+                                sort_order, open_only)
     return web.generate_html_from_dtml("summary.dtml", page_info)
 
 

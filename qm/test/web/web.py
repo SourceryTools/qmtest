@@ -81,6 +81,10 @@ class PageInfo(qm.web.PageInfo):
 ''' % self.MakeListingUrl() 
 
 
+    def GetMainPageUrl(self):
+        return self.MakeListingUrl()
+
+
     def FormatTestId(self, test_id, relative_to=None, within=None):
         """Return markup for 'test_id'."""
 
@@ -202,6 +206,8 @@ def make_server(port, address="", log_file=None):
         "/stylesheets", qm.get_share_directory("web", "stylesheets"))
     server.RegisterPathTranslation(
         "/images", qm.get_share_directory("web", "images"))
+    server.RegisterPathTranslation(
+        "/static", qm.get_share_directory("web", "static"))
     # Register the QM manual.
     server.RegisterPathTranslation(
         "/manual", qm.get_doc_directory("manual", "html"))

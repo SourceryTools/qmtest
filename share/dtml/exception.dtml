@@ -1,0 +1,70 @@
+<dtml-comment><!--
+
+  File:   exception.dtml
+  Author: Alex Samuel
+  Date:   2001-06-07
+
+  Contents:
+    Page in response to an internal error.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Internal Error')">
+ <body>
+
+ <h3>You Have Found a Bug in <dtml-var expr="GetProgramName()">!</h3>
+ 
+ <p>This page indicates that <dtml-var expr="GetProgramName()"> has
+ encountered an internal error.  This probably is caused by a bug in the
+ program.</p>
+
+ <p>Please visit the <a href="javascript: popup_qm_bug_system();">QM
+ Tools bug tracking system</a> and check whether someone else has
+ already reported this bug.  If no one has, please submit a bug report,
+ including the information on this page and as much additional
+ information as possible.  If you can, include step-by-step instructions
+ for reproducing the problem.  Your assistance with this will help us
+ make <dtml-var expr="GetProgramName()"> even better.</p>
+
+ <p>When you are done, <a href="<dtml-var
+ expr="GetMainPageUrl()">">click here to start over</a>.</p>
+
+ <script language="JavaScript">
+ function popup_qm_bug_system()
+ {
+   window.open("<dtml-var name="qm_bug_system_url">", "qm_bug_system");
+ }
+ </script>
+
+ <hr size="1" noshade>
+
+ <p><b>Exception type:</b>
+ <tt><dtml-var expr="_.str(exception_type)"></tt></p>
+
+ <p><b>Exception value:</b> 
+ <tt><dtml-var expr="_.str(exception_value)"></tt></p>
+
+ <p><b>Stack trace:</b></p>
+ <pre>
+<dtml-var expr="traceback_listing">
+ </pre>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

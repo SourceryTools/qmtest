@@ -1,3 +1,33 @@
+2001-06-08  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.qm_bug_system_url): New variable.
+	(PageInfo.GetMainPageUrl): New method.
+	(PageInfo.GenerateEndBody): Add link to problems page.
+	(WebServer.__init__): Register problems.html.
+	(format_exception): Rewrite.
+	(handle_problems): New function.
+	* qm/track/web/web.py (PageInfo.GetMainPageUrl): New method.
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Add
+	open_only parameter.
+	(DisplayOptionsPageInfo.__init__): Likewise.
+	(handle_summary): Don't use IsDeleted.  Handle open_only field.
+	* qm/track/server.py (start_server): Register /static.
+	* qm/track/issue_class.py (State.__init__): Add open parameter.
+	(State.IsOpen): New method.
+	(StateModel.GetState): Convert state_name to string.
+	(StateModel.GetOpenStateNames): New method.
+	(_initialize_module): Set open flag for states.
+	* qm/track/issue.py (Issue.IsDeleted): Remove.
+	(Issue.IsOpen): New method.
+	* qm/test/web/web.py (PageInfo.GetMainPageUrl): New method.
+	(make_server): Register /static.
+	* share/dtml/exception.dtml: New template.
+	* share/dtml/problems.dtml: Likewise.
+	* share/dtml/track/query.dtml: Align controls better.
+	* share/dtml/track/summary-display-options.dtml: Add check box for
+	open issues only.
+	(do_ok): Process it.
+
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/cmdline.py (Command.__WriteSummary): Order results with

@@ -122,6 +122,8 @@ class PageInfo:
 
     html_stylesheet = "/stylesheets/qm.css"
 
+    qm_bug_system_url = "http://intranet.codesourcery.com:4242/track/"
+
     common_javascript = '''
     <script language="JavaScript">
     function remove_from_set(select, contents)
@@ -235,6 +237,12 @@ class PageInfo:
         return common.program_name
 
 
+    def GetMainPageUrl(self):
+        """Return the URL for the main page."""
+
+        return "/"
+
+
     def FormatStructuredText(self, text):
         """Return 'text' rendered as HTML."""
 
@@ -279,7 +287,13 @@ class PageInfo:
     def GenerateEndBody(self):
         """Return markup to end the body of the HTML document."""
 
-        return self.common_javascript + "</body>"
+        return self.common_javascript + """
+        <br><br>
+        <div align="right"><font size="-1">
+         Problems?  Frustrations? <a href="/problems.html">Click here.</a>
+        </font></div>
+        </body>
+        """
 
 
     def MakeLoginForm(self, redirect_request=None):
@@ -806,6 +820,8 @@ class WebServer(HTTPServer):
         self.__xml_rpc_methods = {}
         self.__xml_rpc_path = xml_rpc_path
         self.__shutdown_requested = 0
+
+        self.RegisterScript("/problems.html", handle_problems)
 
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
@@ -1444,22 +1460,17 @@ def format_exception(exc_info):
 
     # Break up the exection info tuple.
     type, value, trace = exc_info
+    # Construct a page info object to generate an exception page.
+    page_info = PageInfo.default_class(WebRequest(""))
+    page_info.exception_type = type
+    page_info.exception_value = value
     # Format the traceback, with a newline separating elements.
-    traceback_listing = string.join(traceback.format_tb(trace), "\n")
-    # Generate HTML.
-    return \
-"""
-<html>
- <body>
-  <p>An error has occurred: <b>%s : %s</b></p>
-  <p>Stack trace follows:</p>
-  <pre>
-%s
-  </pre>
- </body>
-</html>
-""" % (type, value, traceback_listing)
+    page_info.traceback_listing = \
+        string.join(traceback.format_tb(trace), "\n")
+    # Generate the page.
+    return generate_html_from_dtml("exception.dtml", page_info)
 
+    
 
 def escape(text):
     """Escape special characters in 'text' for formatting as HTML."""
@@ -2425,6 +2436,13 @@ def get_from_cache(request, session_id=None):
          </body>
         </html>
         """ % url
+
+
+def handle_problems(request):
+    """Generate and return the problems page in response to a web request."""
+
+    page_info = PageInfo.default_class(request)
+    return generate_html_from_dtml("problems.dtml", page_info)
 
 
 ########################################################################

@@ -100,6 +100,10 @@ class PageInfo(qm.web.PageInfo):
 ''' % (self.MakeIndexUrl(), "Main Page")
 
 
+    def GetMainPageUrl(self):
+        return "/track/"
+
+
     def MakeIndexUrl(self):
         return qm.web.WebRequest("index", base=self.request).AsUrl()
 

@@ -38,6 +38,23 @@
      </td>
     </tr>
 
+    <tr class="field" valign="top">
+     <td>
+      <b>Open Issues?</b>
+     </td>
+     <td>
+      <input type="checkbox" name="open_only" value="1"
+       <dtml-if name="open_only">checked</dtml-if>
+      />
+      Show only open issues.
+      <br>
+      <font size="-1">
+       An issue is open if it is in one of the following states:
+       <dtml-var expr="_.string.join(open_state_names, ',')">
+      </font>
+     </td>
+    </tr>
+     
     <tr>
      <td colspan="2" align="right">
       <input type="button" 
@@ -60,6 +77,7 @@
    // display options.
    var url = "<dtml-var name="base_url">";
    url += "&fields=" + document.form.fields.value;
+   url += "&open_only=" + (document.form.open_only.checked ? "1" : "0");
    // Show it.
    window.opener.document.location = url;
    // Close this popup window.
