@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>import cStringIO
+import os
+import qm.track
+import qm.track.issue
+
+idb_path = context["idb_path"]
+qm.track.open_idb(idb_path)
+
+idb = qm.track.get_idb()
+issue = idb.GetIssue("issue0")
+issue_export_path = os.path.join(idb_path, "issues.export")
+output = open(issue_export_path, "w")
+qm.track.issue.export_issues([issue], output)
+output.close()
+
+context["issue_export_path"] = issue_export_path
+qm.track.close_idb()
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>1</text>
+ </argument>
+ <prerequisite outcome='PASS'>setup_idb</prerequisite>
+ <action>idb</action>
+</test>

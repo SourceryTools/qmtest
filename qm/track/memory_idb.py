@@ -187,7 +187,7 @@ class MemoryIdb(qm.track.IdbBase):
         # Retrieve the current list of revisions of the issue.
         iid = issue.GetId()
         revisions = self.__issues[iid]
-        prevision_revision = revisions[-1]
+        previous_revision = revisions[-1]
         # Make sure the new revision is in the same issue class.
         if issue.GetClass() != revisions[0].GetClass():
             raise ValueError, "revision in different issue class"

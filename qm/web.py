@@ -1715,7 +1715,7 @@ def make_set_control(form_name,
     # Add an option for each initial element.
     for text, value in initial_elements:
         select = select + \
-                 '<option value="%s">%s</option>\n' % (value, text)
+                 '<option value="%s">%s</option>\n' % (value, escape(text))
     select = select + '</select>\n'
 
     # Construct the hidden control contianing the set's elements.  Its

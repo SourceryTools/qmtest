@@ -566,7 +566,7 @@ class Command:
             # a browser at it safely.
             qm.platform.open_in_browser(url)
         else:
-            qm.common.message(2, "QMTest server running at %s .\n" % url)
+            qm.common.print_message(2, "QMTest server running at %s .\n" % url)
 
         # Accept requests.
         server.Run()

@@ -491,10 +491,11 @@ class ScriptTest(ExecTest):
     standard error are compared to expected values, if specified."""
 
     fields = [
-        qm.fields.AttachmentField(
+        qm.fields.TextField(
             name="script",
             title="Script",
-            description="The text of the script to run."
+            description="The text of the script to run.",
+            verbatim="true"
             ),
 
         qm.fields.TextField(
@@ -543,7 +544,7 @@ class ScriptTest(ExecTest):
         self.__script_file_name, script_file = qm.open_temporary_file() 
         try:
             # Write the script to the temporary file.
-            script_file.write(self.script.GetData())
+            script_file.write(self.script)
             script_file.close()
             # Run the script.
             result = ExecTest.Run(self, context)

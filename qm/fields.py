@@ -824,8 +824,21 @@ class TextField(Field):
 
         elif style == "full":
             if self.IsAttribute("verbatim"):
+                # Wrap lines before escaping special characters for
+                # HTML.  Use a special tag to indicate line breaks.  If
+                # we were to escape first, line lengths would be
+                # computed using escape codes rather than visual
+                # characters. 
+                value = common.wrap_lines(value, columns=80,
+                                          break_delimiter="#@LINE$BREAK@#")
+                # Now escape special characters.
+                value = web.escape(value)
+                # Replace the line break tag with visual indication of
+                # the break.
+                value = string.replace(value,
+                                       "#@LINE$BREAK@#", r"<blink>\</blink>")
                 # Place verbatim text in a <pre> element.
-                return '<pre>%s</pre>' % web.escape(value)
+                return '<pre>%s</pre>' % value
             elif self.IsAttribute("structured"):
                 return web.format_structured_text(value)
             else:
@@ -1072,7 +1085,8 @@ class SetField(Field):
                                       element.file_name,
                                       element.mime_type)
                 else:
-                    element_text = element_value
+                    element_text = \
+                        contained_field.FormatValueAsText(element)
                 initial_elements.append((element_text, element_value))
 
             if style == "hidden":

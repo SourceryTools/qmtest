@@ -1,3 +1,26 @@
+2001-06-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (make_set_control): Escape text.
+	* qm/fields.py (TextField.FormatValueAsHtml): Adjust verbatim output.
+	(SetField.FormatValueAsHtml): Use FormatValueAsText for contents.
+	* qm/track/memory_idb.py (MemoryIdb.AddRevision): Fix typo.
+	* qm/test/web/suite.py (ShowPageInfo.FormatSuiteId): New method.
+	* qm/test/classes/file.py: New file.
+	* qm/test/classes/command.py (ScriptTest.fields): Make script
+	field a text field. 
+	(ScriptTest.__init__): Adjust correspondingly.
+	* qm/test/cmdline.py (Command.__ExecuteServer): Use print_message.
+	* qm/test/base.py (standard_test_class_names): Add
+	file.FileContentsTest.
+	* share/dtml/test/suite.dtml: Use FormatSuiteId.
+	* share/diagnostics/test.txt (file invalid pattern): New
+	diagnostic.
+	(file invalid substitution): Likewise.
+	* tests/unit/track/export/idb.qma: New action.
+	* tests/unit/track/export/export1.qmt: New test.
+	* tests/unit/track/export/export2.qmt: Likewise.
+	* tests/unit/track/export/setup_idb.qmt: Likewise.
+
 2001-06-15  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (decode_properties): Handle empty properties.

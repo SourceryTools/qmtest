@@ -52,6 +52,14 @@ The path you specified for the test database, %(path)s, already exists.
 A problem occurred while loading the XML test "%(test_id)s":
 %(message)s.
 
+@ file invalid pattern
+The substitution pattern "%(pattern)s" is invalid: %(msg)s.  The pattern
+should be a valid Python regular expression.
+
+@ file invalid substitution
+The substitution "%(substitution)s" is invalid.  A substitution should
+have the form "/*pattern*/*replacement*/".
+
 @ invalid class
 There is no test class "%(class_name)s".
 

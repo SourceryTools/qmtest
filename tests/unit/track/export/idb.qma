@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE action PUBLIC "-//Software Carpentry//QMTest Action V0.1//EN" "http://www.software-carpentry.com/qm/xml/action.dtd">
+<action>
+ <class>temporary.TempDirectoryAction</class>
+ <argument name='delete_recursively'>
+  <integer>1</integer>
+ </argument>
+ <argument name='dir_path_property'>
+  <text>idb_path</text>
+ </argument>
+</action>

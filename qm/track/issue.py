@@ -164,7 +164,7 @@ class IssueDifference:
 
 
     def SetField(self, name, value):
-        """Set the value for field 'name' to 'value'.""""
+        """Set the value for field 'name' to 'value'."""
 
         self.__fields[name] = value
 
@@ -237,7 +237,7 @@ class Issue:
         # same field values.  The issue class itself and field values
         # should not be copied, but the field mapping should.
         return apply(Issue, (self.GetClass(), ), self.__fields)
-
+    
 
     def GetClass(self):
         """Return the issue class of this issue."""

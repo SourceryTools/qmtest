@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>import os
+import qm.track
+import qm.track.issue
+import qm.track.memory_idb
+import time
+
+idb_path = context["idb_path"]
+os.rmdir(idb_path)
+
+qm.track.initialize_idb(idb_path, "MemoryIdb")
+qm.track.open_idb(idb_path)
+qm.track.setup_idb_for_test()
+
+idb = qm.track.get_idb()
+issue_class = idb.GetIssueClass("test_class")
+issue = qm.track.Issue(issue_class,
+                       iid="issue0",
+                       summary="Initial Summary")
+idb.AddIssue(issue)
+
+# Sleep a second, so the next revision has a different timestamp.
+time.sleep(1)
+issue.SetField("summary", "Modified Summary")
+idb.AddRevision(issue)
+
+qm.track.close_idb()
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>1</text>
+ </argument>
+ <action>idb</action>
+</test>

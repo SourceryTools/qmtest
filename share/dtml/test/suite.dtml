@@ -131,7 +131,7 @@
           <ul>
            <dtml-in expr="suite_ids">
            <dtml-let id=sequence-item>
-            <li><dtml-var expr="FormatSuiteId(id, within=self.GetSuiteId())">
+            <li><dtml-var expr="FormatSuiteId(id)">
            </dtml-let>
            </dtml-in>
           </ul>

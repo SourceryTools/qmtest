@@ -122,6 +122,11 @@ class ShowPageInfo(web.PageInfo):
         return qm.web.make_confirmation_dialog(message, delete_url)
 
 
+    def FormatSuiteId(self, id):
+        parent_id = qm.label.dirname(self.suite.GetId())
+        return web.PageInfo.FormatSuiteId(self, id, within=parent_id)
+
+
 
 class NewPageInfo(web.PageInfo):
     """DTML context for generating DTML template new-suite.dtml."""
