@@ -1,3 +1,18 @@
+2001-01-09  Benjamin Chelf  <chelf@mustangben.stanford.edu>
+
+	* qm/command_line.py: New file.
+
+	* qm/test.py (test_parser_create): Define.
+	(test_paresr_parse): Likewise.
+	(test_parser_help): Likewise.
+	(test_parser_duplicate_long): Likewise.
+	(test_parser_duplicate_short): Likewise.
+	(test_parser_two_char_short): Likewise.
+	(test_parser_no_long): Likewise.
+	(test_parser_dup_command_short): Likewise.
+	(test_parser_dup_command_long): Likewise.
+	(regession_tests): Add above tests.
+
 2001-01-09  Alex Samuel  <samuel@codesourcery.com>
 
 	* Makefile.in (PYTHONDOCDIRS): New variable.
