@@ -35,9 +35,35 @@ divert(0)
 
 AC_INIT(configure.in)
 
+dnl ####################################################################
+dnl Set the version numbers for QM.  These values should be set here 
+dnl and nowhere else in QM.
+dnl ####################################################################
+
+QM_MAJOR_VER=1
+QM_MINOR_VER=0
+QM_RELEASE_VER=0
+
+AC_SUBST(QM_MAJOR_VER)
+AC_SUBST(QM_MINOR_VER)
+AC_SUBST(QM_RELEASE_VER)
+
+# For a dot release, the release is named "X.Y.Z"; for other releases
+# the name is just "X.Y".
+if test ${QM_RELEASE_VER} -ne 0; then
+    QM_VERSION=${QM_MAJOR_VER}.${QM_MINOR_VER}.${QM_RELEASE_VER}
+else
+    QM_VERSION=${QM_MAJOR_VER}.${QM_MINOR_VER}
+fi
+
+AC_SUBST(QM_VERSION)
+
+dnl ####################################################################
+dnl Find some common programs.
+dnl ####################################################################
+
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
-
 
 dnl ####################################################################
 dnl Find the Python interpreter.  If the user specified the 
@@ -62,7 +88,6 @@ else
   AC_PATH_PROG(PYTHON, python, python)
 fi
 
-
 dnl ####################################################################
 dnl Determine the Python version, installation prefix, and and platform.
 dnl ####################################################################
@@ -82,13 +107,11 @@ PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_pla
 AC_MSG_RESULT($PYTHON_PLATFORM)
 AC_SUBST(PYTHON_PLATFORM)
 
-
 dnl ####################################################################
 dnl Look for HappyDoc, which we use to build source documentation.
 dnl ####################################################################
 
 AC_PATH_PROG(HAPPYDOC, happydoc, no)
-
 
 dnl ####################################################################
 dnl Jade and Tidy are used to generate documentation.  Without Jade,
@@ -99,7 +122,7 @@ AC_PATH_PROG(JADE, jade, no)
 AC_PATH_PROG(TIDY, tidy, no)
 
 dnl ####################################################################
-dnl We XML declarations for Jade, in xml.dcl.  This file should be 
+dnl We need XML declarations for Jade, in xml.dcl.  This file should be 
 dnl included with Jade.  Look for it in some usual places.
 dnl ####################################################################
 
@@ -138,30 +161,21 @@ done
 AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
 AC_SUBST(DOCBOOK_STYLESHEETS)
 
-dnl ####################################################################
-dnl Allow the user to specify the location of the DocBook DTD.
-dnl ####################################################################
+dnl #####################
+dnl Find the Docbook DTD.
+dnl #####################
 
-DOCBOOK_DTD=no
+DOCBOOK_DTD=
+AC_MSG_CHECKING(for dobook DTD)
 AC_ARG_WITH(docbook-dtd, 
-            [  --with-docbook-dtd=PATH directory containing the docbook DTD.])
-case $with_docbook_dtd in
-    yes) ;;
-    no)  DOCBOOK_DTD=no;;
-    *)   DOCBOOK_DTD=$with_docbook_dtd;;
-esac
-
-# Look for it in the standard place (for newer Red Hat distributions),
-# if not specified.
-if test -z "$DOCBOOK_DTD"; then
-  AC_MSG_CHECKING(Docbook DTD)
-  if test -d /usr/share/sgml/docbook/xml-dtd-4.1.2 \
-          -a -d /usr/share/sgml/sgml-iso-entities-8879.1986; then
-    DOCBOOK_DTD="/usr/share/sgml/docbook/xml-dtd-4.1.2 /usr/share/sgml/sgml-iso-entities-8879.1986"
-  fi
-  AC_MSG_RESULT($DOCBOOK_DTD)
-fi
-
+            [  --with-docbook-dtd=PATH directory containing the docbook DTD.],
+            [case $withval in
+               yes) DOCBOOK_DTD=/usr/lib/sgml;;
+               no)  ;;
+               *)   DOCBOOK_DTD=$withval;;
+             esac],
+            DOCBOOK_DTD=/usr/lib/sgml)
+AC_MSG_RESULT($DOCBOOK_DTD)
 AC_SUBST(DOCBOOK_DTD)
 
 dnl ####################################################################
@@ -176,7 +190,6 @@ else
 fi
 AC_SUBST(DOCUMENTATION)
 
-
 dnl ####################################################################
 dnl Generate results
 dnl ####################################################################
@@ -184,6 +197,7 @@ dnl ####################################################################
 AC_OUTPUT(
   standard.mk
   Makefile
+  qm.spec
   doc/Makefile
   doc/design/qmconfig/Makefile
   doc/design/qmtest/Makefile

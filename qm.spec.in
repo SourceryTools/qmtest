@@ -1,16 +1,15 @@
 Summary: The CodeSourcery QM (Quality Management) tools.
 Name: qm
-Version: @version@
-Release: @release@
+Version: @QM_VERSION@
+Release: 1
 Copyright: Copyright (C) CodeSourcery LLC.
 Group: Development/Tools
-Source0: qm-@version@.tgz
+Source0: qm-@QM_VERSION@.tar.gz
 Url: http://www.codesourcery.com/qm
 Provides: qm
 
 %description
-QM contains CodeSourcery's testing tool (QMTest) and 
-bug-tracking tool (QMTrack).
+QM is CodeSourcery's Quality Management toolset.
 
 %prep
 %setup

@@ -1,5 +1,29 @@
 2001-11-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (QM_MAJOR_VER): New variable.
+	(QM_MINOR_VER): Likewise.
+	(QM_VERSION): Likewise.
+	(QM_TAR_GZ): Likewise.
+	(CVS_SERVER): Likewise.
+	(CVS_REPOSITORY): Likewise.
+	(CVS): Likewise.
+	(RPM_ARCH): Likewise.
+	(RPM_BASE): Likewise.
+	(QM_RPM): Likewise.
+	(QM_SRPM): Likewise.
+	(dist): New target.
+	(rpm): Likewise.
+	(release): Likewise.
+	* configure.in (QM_MAJOR_VER): Substitute it.
+	(QM_MINOR_VER): Likewise.
+	(QM_RELEASE_VER): Likewise.
+	(QM_VERSION): Likewise.
+	(DOCBOOK_DTD): Revisit logic.
+	(AC_OUTPUT): Generate qm.spec.
+	* configure: Regenerated.
+	* qm.spec: Remove.
+	* qm.spec.in: New file.
+	
 	* share/dtml/track: Remove contents in preparation for 1.0
 	release.
 
