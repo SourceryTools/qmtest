@@ -107,6 +107,27 @@ class SignalException(Exception):
 # functions
 ########################################################################
 
+def find_in_path(file_name):
+    """Look for a program in the execution path.
+
+    Searches the directories in the 'PATH' environment variable for an
+    executable named 'file_name'.
+
+    returns -- The path to the executable, or 'None' if none is
+    found."""
+
+    # Get the path, and split it into directories.
+    path = os.environ["PATH"]
+    path = string.split(path, ":")
+    # Look for the file in each directory.
+    for directory in path:
+        file_path = os.path.join(directory, file_name)
+        if os.access(file_path, os.X_OK):
+            return file_path
+    # No luck.
+    return None
+
+
 def open_in_browser(url):
     """Open a browser window and point it at 'url'.
 
@@ -116,7 +137,8 @@ def open_in_browser(url):
     url = string.replace(url, "'", r"\'")
     # Which browser to use?
     browser = common.rc.Get("browser", "netscape", "common")
-    if not os.access(browser, os.X_OK):
+    browser = find_in_path(browser)
+    if browser is None:
         raise RuntimeError, \
               qm.error("browser error", browser_path=browser)
     # Invoke the browser.
@@ -161,7 +183,7 @@ def send_email(body,
         raise NotImplementedError, "attachments not implemented"
 
     # Figure out which sendmail (or equivalent) to use.
-    sendmail_path = common.rc.Get("sendmail", "/usr/sbin/sendmail",
+    sendmail_path = common.rc.Get("sendmail", "/usr/lib/sendmail",
                                   "common")
     # Make sure it exists and is executable.
     if not os.access(sendmail_path, os.X_OK):

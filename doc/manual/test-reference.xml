@@ -216,8 +216,9 @@
       additional user interaction, and to pass standard input to and
       standard output from the remote command.  The default program to
       use is <filename>/usr/bin/ssh</filename>.  This may be overridden
-      by the <literal>remoate_shell</literal> configuration variable in
-      the &fixme; xref user's QM configuration file.</para>
+      by the <literal>remote_shell</literal> configuration variable in
+      the user's <link linkend="sec-rc-common">QM configuration
+      file</link>.</para>
      </glossdef>
     </glossentry>
 

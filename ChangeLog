@@ -1,5 +1,14 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/platform_linux.py (find_in_path): New function.
+	(open_in_browser): Use it.
+	(send_email): Use /usr/lib/sendmail as default.
+	* doc/manual/common-manual.xml (sec-rc): New section.
+	* doc/manual/test-reference.xml: Add link.
+	* doc/manual/test-tour.xml: Likewise.
+
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* configure.in (AC_CONFIG_SUBDIRS): Remove.
 	* configure: Regenerate.
 	

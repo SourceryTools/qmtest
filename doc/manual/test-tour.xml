@@ -211,10 +211,10 @@
    <para>If all goes well, &qmtest; starts the server and then points
    your web browser at it.  On some systems, &qmtest; may be unable to
    start a web browser automatically.  In this case, you can configure
-   &qmtest; to find your browser (see &fixme;).  Or, you can start the
-   server separately by omitting the <option>-b</option> option;
-   &qmtest; will print out the appropriate URL, and you can copy it into
-   your web browser manually.</para>
+   &qmtest; to find your browser (see <xref linkend="sec-rc-common"/>).
+   Or, you can start the server separately by omitting the
+   <option>-b</option> option; &qmtest; will print out the appropriate
+   URL, and you can copy it into your web browser manually.</para>
 
    <para>The page you should see in your browser lists the contents of
    the test database (three tests), plus buttons for adding new tests,
