@@ -432,12 +432,6 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         # Store the client's IP address with the request.
         request.client_address = self.client_address[0]
         self.__HandleRequest(request)
-        self.wfile.flush()
-        try:
-            self.connection.shutdown(1)
-        except:
-            # Probably a network error.
-            pass
 
 
     def do_POST(self):
@@ -472,12 +466,6 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_response(400,
                                "Unexpected request (POST of %s)."
                                % content_type)
-        try:
-            self.wfile.flush()
-            self.connection.shutdown(1)
-        except:
-            # Probably a network error.
-            pass
 
 
     def __HandleScriptRequest(self, request):
@@ -2288,7 +2276,7 @@ def make_select(field_name,
         # Specify the 'select' attribute if this item represents the
         # default value.
         if item == default_value:
-            is_selected = "selected"
+            is_selected = 'selected="selected"'
         else:
             is_selected = ""
         result = result + '<option value="%s" %s>%s</option>\n' \

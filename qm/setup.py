@@ -43,7 +43,7 @@ def find_packages_r(packages, dirname, names):
         # Replace path separators with periods.
         d = string.replace(d, os.sep, ".")
         if os.altsep:
-            d = string.replace(dirname, os.altsep, ".")
+            d = string.replace(d, os.altsep, ".")
         packages.append(d)
     # Exclude directories named "build"; they are created by Distutils.
     if "build" in names:

@@ -902,25 +902,28 @@ class SetField(Field):
             return string.join(formatted, separator)
 
         elif style in ["new", "edit", "hidden"]:
-            # Create a table to represent the set.
-            html = '''<table border="0" cellpadding="0" cellspacing="0">
-                        <tbody>\n'''
-            element_number = 0
-            for element in value:
-                html += "<tr><td>"
-                element_name = name + "_%d" % element_number
-                checkbox_name = element_name + "_remove"
-                if style == "edit":
-                    html += \
-                       ('''<input type="checkbox" name="%s" /></td><td>'''
-                        % checkbox_name)
-                html += contained_field.FormatValueAsHtml(server,
-                                                          element,
-                                                          style,
-                                                          element_name)
-                html += "</td></tr>\n"
-                element_number += 1
-            html += "</tbody></table>\n"
+            html = ""
+            # Create a table to represent the set -- but only if the set is
+	    # non-empty.  A table with no body is invalid HTML.
+	    if value:
+		html += '''<table border="0" cellpadding="0" cellspacing="0">
+			    <tbody>\n'''
+		element_number = 0
+		for element in value:
+		    html += "<tr><td>"
+		    element_name = name + "_%d" % element_number
+		    checkbox_name = element_name + "_remove"
+		    if style == "edit":
+			html += \
+			   ('''<input type="checkbox" name="%s" /></td><td>'''
+			    % checkbox_name)
+		    html += contained_field.FormatValueAsHtml(server,
+							      element,
+							      style,
+							      element_name)
+		    html += "</td></tr>\n"
+		    element_number += 1
+		html += "</tbody></table>\n"
             if style == "edit":
                 # The action field is used to keep track of whether the
                 # "Add" or "Remove" button has been pushed.  It would be
@@ -928,8 +931,10 @@ class SetField(Field):
                 # table, but Netscape 4, and even Mozilla 1.0, do not
                 # permit that.  Therefore, we have to go back to the server.
                 action_field \
-                    = '''<input type="hidden" name="%s" value=""
-                            default_value=""  />''' % name
+                    = '''<input type="hidden" name="%s" value="" />''' % name
+                count_field \
+                    = ('<input type="hidden" name="%s_count" value="%d" />'
+	               % (name, len(value)))
                 add_button \
                     = '''<input type="button" value="Add Another"
                             onclick="%s.value = 'add'; submit();" />''' \
@@ -944,7 +949,7 @@ class SetField(Field):
                        + " <tr><td>" + add_button + "</td></tr>\n"
                        + " <tr><td>" + remove_button + "</td></tr>\n"
                        + "</tbody></table>")
-                html += action_field + button_table
+                html += action_field + "\n" + count_field + "\n" + button_table
             return html
 
 
@@ -989,10 +994,8 @@ class SetField(Field):
         # Loop over the entries for each of the elements, adding them to
         # the set.
         element = 0
-        while 1:
+	for element in xrange(int(request[name + "_count"])):
             element_name = name + "_%d" % element
-            if not request.has_key(element_name):
-                break
             if not (action == "remove"
                     and request.get(element_name + "_remove") == "on"):
                 v, r = contained_field.ParseFormValue(request,
@@ -1002,7 +1005,7 @@ class SetField(Field):
                 if r:
                     redisplay = 1
             element += 1
-
+	
         # Remove entries from the request that might cause confusion
         # when the page is redisplayed.
         names = []

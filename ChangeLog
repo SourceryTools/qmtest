@@ -1,3 +1,22 @@
+2003-07-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (RELLIBDIR): Set correctly under Windows.
+	(PYTHON_PKG_PREFIX): Likewise.
+	(SCRIPTS): Update generation of Windows batch files accordingly.
+	(scripts-install): Robustify.
+	* install-sh: Update to newer version.
+	* install.bat: Remove.
+	* qm/setup.py (find_packages_r): Fix typo.
+	* qm/fields.py (SetField.FormatValueAsHtml): Do not generate empty
+	tables.
+	(SetField.ParseFormValue): Update accordingly.
+	* qm/web.py (WebRequestHandler.do_GET): Simplify.
+	(WebRequestHandler.do_POST): Likewise.
+	(make_select): Correct HTML generation.
+	* qm/test/.cvsignore: Add qmtest.bat.
+	* qm/test/web/web.py (QMTestServer.HandleSubmitItem): Generate
+	valid URLs for next submission when redisplaying.
+
 2003-07-24  Nathaniel Smith  <njs@codesourcery.com>
 
 	* GNUmakefile.in (RELLIBDIR): Don't add slashes to prefix when
@@ -408,7 +427,7 @@
 	(IntegerField.FormatValueAsHtml): Add server parameter.
 	(TextField.FormatValueAsHtml): Likewise.
 	(TextField.MakePropertyControls): Likewise.
-	(TupleField.FormaatValueAsHtml): Likewise.
+	(TupleField.FormatValueAsHtml): Likewise.
 	(SetField.FormaatValueAsHtml): Likewise.
 	(SetField.MakePropertyControls): Likewise.
 	(AttachmentField.FormatValueAsHtml): Likewise.

@@ -35,6 +35,7 @@ from   qm.test.suite import *
 import qm.web
 import string
 import StringIO
+import sys
 import time
 
 ########################################################################
@@ -2297,8 +2298,9 @@ class QMTestServer(qm.web.WebServer):
 
         # If necessary, redisplay the form.
         if redisplay:
-            request = request.copy(url="edit-" + type)
-            return ShowItemPage(self, item, 1, 0, type, field_errors)(request)
+	    request = qm.web.WebRequest("edit-" + type, base=request, 
+                                        id=item_id)
+	    return ShowItemPage(self, item, 1, 0, type, field_errors)(request)
 
         # Store it in the database.
         if type is "test":
