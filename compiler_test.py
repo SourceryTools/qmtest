@@ -342,9 +342,12 @@ class CompilerTest(Test):
 
         returns -- False is the test failed, true otherwise."""
 
-        if os.WIFEXITED(status):
+        if sys.platform == "win32" or os.WIFEXITED(status):
             # Obtain the exit code.
-            exit_code = os.WEXITSTATUS(status)
+            if sys.platform == "win32":
+                exit_code = status
+            else:
+                exit_code = os.WEXITSTATUS(status)
             # If the exit code is non-zero, the test fails.
             if exit_code != 0 and not non_zero_exit_ok:
                 result.Fail("%s failed with exit code %d." % (desc, exit_code))

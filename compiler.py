@@ -18,8 +18,9 @@ import os
 import os.path
 import StringIO
 import re
-import resource
 import sys
+if sys.platform != "win32":
+    import resource
 
 ########################################################################
 # Classes
