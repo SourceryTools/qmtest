@@ -1,5 +1,9 @@
 2001-06-08  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm.spec (%files): Add /usr/local/share/web/static/*.
+
+2001-06-08  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.qm_bug_system_url): New variable.
 	(PageInfo.GetMainPageUrl): New method.
 	(PageInfo.GenerateEndBody): Add link to problems page.
