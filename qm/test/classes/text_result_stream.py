@@ -83,7 +83,41 @@ class TextResultStream(FileResultStream):
 
             In the "stats" format only the summary statistics are
             displayed.""",
-            enumerals = ["brief", "batch", "full", "stats"])
+            enumerals = ["brief", "batch", "full", "stats"]),
+        qm.fields.TextField(
+            name = "statistics_format",
+            title = "Statistics Format",
+            verbatim = "true",
+            multiline = "true",
+            description = """The format string used to display statistics.
+
+            The format string is an ordinary Python format string.
+            The following fill-ins are available:
+
+            'TOTAL' -- The total number of tests.
+
+            'EXPECTED' -- The total number of tests that had an
+            expected outcome.
+
+            'EXPECTED_PERCENT' -- The percentage of tests with
+            expected outcomes.
+
+            'UNEXPECTED' -- The total number of tests that had an 
+            unexpected outcome.
+
+            For each outcome 'O', there are additional fill-ins:
+
+            'O' -- The total number of tests with outcome 'O'.
+            
+            'O_PERCENT' -- The percentage of tests with outcome 'O' to
+            total tests, as a floating point value.
+
+            'O_UNEXPECTED' -- The total number of tests with an
+            unexpected outcome of 'O'.
+
+            'O_UNEXEPECTED_PERCENT' -- The ratio of tests without an
+            unexpected outcome of 'O' to total tests, as a floating
+            point value."""),
         ]
     
     def __init__(self, arguments):
@@ -209,11 +243,10 @@ class TextResultStream(FileResultStream):
 
         Write out statistical information about the results."""
 
-        self.file.write("\n")
-        self._DisplayHeading("STATISTICS")
-
         # Summarize the test statistics.
-        if self.expected_outcomes:
+        if self.statistics_format:
+            self._FormatStatistics(self.statistics_format)
+        elif self.expected_outcomes:
             self._SummarizeRelativeTestStats()
         else:
             self._SummarizeTestStats()
@@ -222,50 +255,82 @@ class TextResultStream(FileResultStream):
     def _SummarizeTestStats(self):
         """Generate statistics about the overall results."""
 
-        num_tests = self.__num_tests
-        self.file.write("  %6d        tests total\n" % num_tests)
-
-        # If there are no tests, there is no need to go into detail.
-        if num_tests == 0:
-            return
-
-        for outcome in Result.outcomes:
-            count = self.__outcome_counts[outcome]
-            if count > 0:
-                self.file.write("  %6d (%3.0f%%) tests %s\n"
-                                % (count, (100. * count) / num_tests,
-                                   outcome))
+        # Print a header.
         self.file.write("\n")
+        self._DisplayHeading("STATISTICS")
+
+        # Build the format string.  If there are no tests we do not
+        # provide any output.
+        if self.__num_tests != 0:
+            # Indicate the total number of tests.
+            format = "  %(TOTAL)6d        tests total\n"
+            # Include a line for each outcome.
+            for o in Result.outcomes:
+                if self.__outcome_counts[o] != 0:
+                    format += ("  %%(%s)6d (%%(%s)3.0f%%%%) tests %s\n"
+                               % (o, o + "_PERCENT", o))
+            format += "\n"
+        else:
+            format = ""
+
+        self._FormatStatistics(format)
 
         
     def _SummarizeRelativeTestStats(self):
         """Generate statistics showing results relative to expectations."""
 
-        # Indicate the total number of tests.
-        num_tests = self.__num_tests
-        self.file.write("  %6d        tests total\n" % num_tests)
-
-        # If there are no tests, there is no need to go into detail.
-        if num_tests == 0:
-            return
-
-        # Report the number that produced expected outcomes.
-        unexpected_count = len(self.__unexpected_test_results)
-        expected_count = num_tests - unexpected_count
-        self.file.write("  %6d (%3.0f%%) tests as expected\n"
-                        % (expected_count,
-                           (100. * expected_count) / num_tests))
-        # For results that produced unexpected outcomes, break them down by
-        # actual outcome.
-        for outcome in Result.outcomes:
-            count = self.__unexpected_outcome_counts[outcome]
-            if count > 0:
-                self.file.write("  %6d (%3.0f%%) tests unexpected %s\n"
-                                % (count, (100. * count) / num_tests,
-                                   outcome))
+        # Print a header.
         self.file.write("\n")
+        self._DisplayHeading("STATISTICS")
+
+        # Build the format string.  If there are no tests we do not
+        # provide any output.
+        if self.__num_tests != 0:
+            # Indicate the total number of tests.
+            format = ("  %(EXPECTED)6d (%(EXPECTED_PERCENT)3.0f%%) "
+                      "tests as expected\n")
+            # Include a line for each outcome.
+            for o in Result.outcomes:
+                if self.__unexpected_outcome_counts[o] != 0:
+                    format += ("  %%(%s)6d (%%(%s)3.0f%%%%) tests "
+                               "unexpected %s\n"
+                               % (o + "_UNEXPECTED",
+                                  o + "_UNEXPECTED_PERCENT",
+                                  o))
+            format += "\n"
+        else:
+            format = ""
+
+        self._FormatStatistics(format)
 
 
+    def _FormatStatistics(self, format):
+        """Output statistical information.
+
+        'format' -- A format string with (optional) fill-ins
+        corresponding to statistical information.
+
+        The formatted string is written to the result file."""
+
+        # Build the dictionary of format fill-ins.
+        num_tests = self.__num_tests
+        unexpected = len(self.__unexpected_test_results)
+        expected = num_tests - unexpected
+        values = { "TOTAL" : num_tests,
+                   "EXPECTED" : expected,
+                   "EXPECTED_PERCENT" : (100. * expected) / num_tests,
+                   "UNEXPECTED" : unexpected }
+        for o in Result.outcomes:
+            count = self.__outcome_counts[o]
+            values[o] = count
+            values[o + "_PERCENT"] = (100. * count) / num_tests
+            count = self.__unexpected_outcome_counts[o]
+            values[o + "_UNEXPECTED"] = count
+            values[o + "_UNEXPECTED_PERCENT"] = (100. * count) / num_tests
+
+        self.file.write(format % values)
+
+        
     def _SummarizeResults(self, results):
         """Summarize each of the results.
 

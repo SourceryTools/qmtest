@@ -1,3 +1,13 @@
+2003-11-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream.arguments): Add statistics_format.
+	(TextResultStream._DisplayArguments): Do not write out the
+	heading here.  Honor the statistics_format, if provided.
+	(TextResultStream._SummarizeTestStats): Use _FormatStatistics.
+	(TextResultStream._SummarizeRelativeTestStats): Likewise.
+	(TextResultStream._FormatStatistics): New function.
+
 2003-11-09  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (.PHONY): Add build and doc.
