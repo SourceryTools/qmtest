@@ -1,3 +1,7 @@
+2002-01-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (SCRIPTS): Add $(SCRIPT_EXT).
+
 2002-01-16  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/structured_text.py: Substantial changes to support a verbatim

@@ -68,7 +68,7 @@ PYTHON_PACKAGES = \
 PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
 
 # The scripts that are run to start QM.
-SCRIPTS = $(foreach tool,$(QM_TOOLS),qm/$(tool)/qm$(tool))
+SCRIPTS = $(foreach tool,$(QM_TOOLS),qm/$(tool)/qm$(tool)$(SCRIPT_EXT))
 
 # The DTD catalog.
 DTD_CATALOG := share/xml/CATALOG
