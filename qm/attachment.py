@@ -186,12 +186,6 @@ class AttachmentStore(object):
     for retrieving attachment data only; not for storing it.  The
     interface for storing may be defined in any way by implementations."""
 
-    def __init__(self):
-        """Create a new 'AttachmentStore'."""
-
-        pass
-
-    
     def GetData(self, location):
         """Return the data for an attachment.
 
@@ -258,6 +252,17 @@ class FileAttachmentStore(AttachmentStore):
 
     The locations are the names of files in the file system."""
 
+    def __init__(self, root = None):
+        """Construct a new 'FileAttachmentStore'
+
+        'root' -- If not 'None', the root directory for the store.  All
+        locations are relative to this directory.  If 'None', all
+        locations are relative to the current directory."""
+        
+        super(AttachmentStore, self).__init__()
+        self.__root = root
+        
+        
     def GetData(self, location):
 
         # Open the file.
@@ -272,7 +277,10 @@ class FileAttachmentStore(AttachmentStore):
 
     def GetDataFile(self, location):
 
-        return location
+        if root is not None:
+            return os.path.join(root, location)
+        else:
+            return location
 
 
     def GetSize(self, location):
@@ -320,17 +328,12 @@ class TemporaryAttachmentStore(FileAttachmentStore):
 
         The store is initially empty."""
 
-        # Initialize the base class.
-        super(TemporaryAttachmentStore, self).__init__()
         # Construct a temporary directory in which to store attachment
         # data.
         self.__tmpdir = temporary_directory.TemporaryDirectory()
-        self.__path = self.__tmpdir.GetPath()
-
-
-    def GetDataFile(self, location):
-
-        return os.path.join(self.__path, location)
+        # Initialize the base class.
+        path = self.__tmpdir.GetPath()
+        super(TemporaryAttachmentStore, self).__init__(path)
 
 
     def HandleUploadRequest(self, request):

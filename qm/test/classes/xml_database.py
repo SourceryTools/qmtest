@@ -53,7 +53,7 @@ class XMLDatabase(ExtensionDatabase):
         # Initialize base classes.
         ExtensionDatabase.__init__(self, path, arguments)
         # Create an AttachmentStore for this database.
-        self.__store = qm.attachment.FileAttachmentStore()
+        self.__store = qm.attachment.FileAttachmentStore(path)
 
 
     def _GetTestFromPath(self, test_id, test_path):

@@ -1,4 +1,15 @@
 2003-07-15  Vladimir Prus <ghost@cs.msu.su>
+	    Mark Mitchell <mark@codesourcery.com>
+
+	* qm/attachment.py (AttachmentStore.__init__): Remove.
+	(FileAttachmentStore.__init__): New method.
+	(FileAttachmentStore.GetDataFile): Support relative paths.
+	(TemporaryAttachmentStore.__init__): Adjust accordingly.
+	(TemporaryAttachmentStore.GetDataFile): Remove.
+	* qm/test/classes/xml_database.py (XMLDatabase.__init__): Use the
+	database root when creating the attachment store.
+
+2003-07-15  Vladimir Prus <ghost@cs.msu.su>
 
 	* qm/test/web/web.py (DirPage.GetTestResultsForDirectory): Call
 	__IsLabelInDirectory with two parameters.  Fix typo.
