@@ -163,12 +163,10 @@ $(PRINTDIR)/$(PRINTTEX): \
 	    $<
 	mv $(PRINTTEX) $(PRINTDIR)/
 
-# Process the TeX file to PDF, in the print directory.  TEXINPUTS and
-# TEXPSHEADERS (for older, broken pdfLaTeX versions) must be set to
-# the DocBook source directory so that TeX can find the image files
-# referenced in the document.
+# Process the TeX file to PDF, in the print directory.  
 $(PRINTDIR)/$(PRINTPDF): \
 		$(PRINTDIR)/$(PRINTTEX)
-	cd $(PRINTDIR) \
-	    && TEXINPUTS=..: TEXPSHEADERS=..: pdfjadetex $(PRINTTEX) 
+	cp $(DOCBITMAPS) $(PRINTDIR)/
+	cd $(PRINTDIR); \
+	    pdfjadetex $(PRINTTEX) 
 

@@ -1,5 +1,14 @@
 2000-12-13  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Copy bitmaps into print
+	dir instead of setting paths. 
+	* doc/design/qmconfig/design-probe.xml: Scale images.
+	* doc/design/qmconfig/design-td.xml: Likewise.
+	* doc/design/qmconfig/design.xml: Likewise.
+	* doc/design/qmconfig/requirements.xml: Likewise.
+
+2000-12-13  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk ($(HTMLMANIFEST)): Put graphics filename in manifest
 	only.
 	* doc/design/qmconfig/design-probe.xml: Adjust image filenames.

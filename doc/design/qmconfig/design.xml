@@ -30,7 +30,7 @@
    <mediaobject>
 
     <imageobject>
-     <imagedata align="center" width="6in" scalefit="1"
+     <imagedata align="center" width="6in" scale="50" scalefit="1"
                 fileref="pkg_qmconfig.png"></imagedata>
     </imageobject>
 
@@ -95,7 +95,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scalefit="1"
+        <imagedata align="center" width="6in" scale="50" scalefit="1"
                    fileref="pkg_build.png" />
        </imageobject>
 
@@ -130,7 +130,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scalefit="1"
+        <imagedata align="center" width="6in" scale="50" scalefit="1"
                    fileref="pkg_bdist.png" />
        </imageobject>
 
@@ -154,7 +154,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scalefit="1"
+        <imagedata align="center" width="6in" scale="50" scalefit="1"
                    fileref="pkg_boot.png" />
        </imageobject>
 
@@ -196,7 +196,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center" width="6in" scalefit="1"
+        <imagedata align="center" width="6in" scale="50" scalefit="1"
                    fileref="pkg_lang.png" />
        </imageobject>
 
@@ -311,7 +311,7 @@
     <mediaobject>
 
      <imageobject>
-      <imagedata align="center" width="6in" scalefit="1"
+      <imagedata align="center" width="6in" scale="50" scalefit="1"
                  fileref="cl_pdd.png" />
      </imageobject>
 
