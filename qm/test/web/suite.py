@@ -92,6 +92,23 @@ class ShowPageInfo(web.PageInfo):
             self.encoded_suite_ids = string.join(self.suite_ids, ",")
 
 
+    def MakeDeleteScript(self):
+        """Make a script to confirm deletion of the suite.
+
+        returns -- JavaScript source for a function, 'delete_script',
+        which shows a popup confirmation window."""
+
+        suite_id = self.suite.GetId()
+        delete_url = qm.web.make_url("delete-suite",
+                                     base_request=self.request,
+                                     id=suite_id)
+        message = """
+        <p>Are you sure you want to delete the suite %s?</p>
+        """ % suite_id
+        return qm.web.make_confirmation_dialog_script(
+            "delete_script", message, delete_url)
+
+
 
 class NewPageInfo(web.PageInfo):
     """DTML context for generating DTML template new-suite.dtml."""
@@ -234,6 +251,23 @@ def handle_create(request):
         # Show the editing page.
         page_info = ShowPageInfo(request, suite, edit=1)
         return web.generate_html_from_dtml("suite.dtml", page_info)
+
+
+def handle_delete(request):
+    """Handle delete requests.
+
+    'request' -- A 'WebRequest' object.
+
+    The ID of the suite to delete is specified in the 'id' field of the
+    request."""
+
+    database = qm.test.base.get_database()
+    # Extract the suite ID.
+    suite_id = request["id"]
+    database.RemoveSuite(suite_id)
+    # Redirect to the main page.
+    request = qm.web.WebRequest("dir", base=request)
+    raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
 
 
 ########################################################################

@@ -1,5 +1,26 @@
 2001-04-29  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/web/web.py (start_server): Register delete-test,
+	delete-action, and delete-suite scripts.
+	* qm/test/web/suite.py (ShowPageInfo.MakeDeleteScript): New method.
+	(handle_delete): New function.
+	* qm/test/web/show.py (ShowPageInfo.MakeDeleteScript): New method.
+	(handle_delete): New function.
+	* qm/test/xmldb.py (Database.RemoveTest): New method.
+	(Database.RemoveAction): Likewise.
+	(Database.RemoveSuite): Likewise.
+	* qm/test/base.py (Database.RemoveTest): New method.
+	(Database.RemoveSuite): Likewise.
+	(Database.RemoveAction): Likewise.
+	* qm/web.py (make_popup_dialog_script): New function.
+	(make_confirmation_dialog_script): Likewise.
+	(make_popup_page): Likewise.
+	* share/web/stylesheets/qm.css (body.popup): New class.
+	* share/dtml/test/show.dtml: Add Delete button.
+	* share/dtml/test/suite.dtml: Likewise.
+
+2001-04-29  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (make_help_link_html): Use a.help-link CSS class.
 	* qm/test/xmldb.py (Database.__GetSuite): Don't make IDs absolute.
 	* qm/test/web/web.py (start_server): Register create-suite and

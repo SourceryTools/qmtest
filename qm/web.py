@@ -1832,6 +1832,122 @@ def make_help_link_html(help_text, label):
     ''' % (help_variable_name, label, help_variable_name, help_page)
 
 
+def make_popup_dialog_script(function_name, message, buttons, title=""):
+    """Generate JavaScript to show a popup dialog box.
+
+    The popup dialog box displays a message and one or more buttons.
+    Each button can have a JavaScript statement (or statements)
+    associated with it; if the button is clicked, the statement is
+    invoked.  After any button is clicked, the popup window is closed as
+    well.
+
+    'function_name' -- The name of the JavaScript function to generate.
+
+    'message' -- HTML source of the message to display in the popup
+    window.
+
+    'buttons' -- A sequence of button specifications.  Each is a pair
+    '(caption, script)'.  'caption' is the button caption.  'script' is
+    the JavaScript statement to invoke when the button is clicked, or
+    'None'.
+
+    'title' -- The popup window title.
+
+    returns -- JavaScript source including the function named in
+    'function_name'.  The JavaScript is not encased in a '<script>'
+    element.
+
+    To use the script, create a button which invokes the function named
+    by 'function_name' as its 'onclick' handler."""
+
+    # Construct a name for the JavaScript variable that will hold the
+    # HTML source of the popup page.
+    variable_name = "_page_" + function_name
+    # Construct the popup page.
+    page = make_popup_page(message, buttons, title)
+    # Construct the JavaScript variable and function.
+    return """
+    var %s = %s;
+    function %s()
+    {
+      window.open('javascript: window.opener.%s;', 'popup',
+                  'width=480,height=200,resizable');
+    }
+    """ % (variable_name,
+           make_javascript_string(page),
+           function_name,
+           variable_name)
+
+
+def make_confirmation_dialog_script(function_name, message, url):
+    """Generate JavaScript for a confirmation dialog box.
+
+    'url' -- The location in the main browser window is set to the URL
+    if the user confirms the action.
+
+    See 'make_popup_dialog_script' for a description of 'function_name'
+    and 'message' and information on how to use the return value."""
+
+    # If the user clicks the "Yes" button, advance the main browser
+    # page. 
+    open_script = "window.opener.document.location = %s;" \
+                  % make_javascript_string(url)
+    # Two buttons: "Yes" and "No".  "No" doesn't do anything.
+    buttons = [
+        ( "Yes", open_script ),
+        ( "No", None ),
+        ]
+    return make_popup_dialog_script(function_name,
+                                    message, buttons, title="Confirm")
+
+
+def make_popup_page(message, buttons, title=""):
+    """Generate a popup dialog box page.
+
+    See 'make_popup_dialog_script' for an explanation of the
+    parameters."""
+    
+    page = \
+    '''<html>
+     <head>
+      <title>%s</title>
+      <meta http-equiv="Content-Style-Type" content="text/css"/>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/qm.css"/>
+     </head>
+     <body class="popup">
+      <table border="0" cellpadding="0" cellspacing="8" width="100%%">
+       <tr><td>
+        %s
+       </td></tr>
+       <tr><td align="right">
+        <form name="navigation">
+    ''' % (title, message)
+    # Generate the buttons.
+    for caption, script in buttons:
+        page = page + '''
+        <input type="button"
+               value=" %s "''' % caption
+        # Whether a script was specified for the button, close the popup
+        # window. 
+        if script is None:
+            page = page + '''
+               onclick="window.close();"'''
+        else:
+            page = page + '''
+               onclick="%s; window.close();"''' % script
+        page = page + '''
+               />'''
+    # End the page.
+    page = page + '''
+        </form>
+       </td></tr>
+      </table>
+     </body>
+    </html>
+    '''
+    return page
+
+
 ########################################################################
 # variables
 ########################################################################

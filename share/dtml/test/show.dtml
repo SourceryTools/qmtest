@@ -43,10 +43,12 @@
       <dtml-if expr="not edit">
        <form>
         <dtml-var expr="MakeButton('Edit', 'edit-' + type, id=item.GetId())">
-        <dtml-comment><!--
-        <dtml-var 
-              expr="MakeButton('Delete', 'delete-' + type, id=item.GetId())">
-        --></dtml-comment>
+        <input type="button"
+               value=" Delete "
+               onclick="delete_script();"/>
+        <script language="JavaScript">
+         <dtml-var expr="MakeDeleteScript()">
+        </script>
        </form>
       </dtml-if>
      </td>

@@ -185,6 +185,16 @@ class Database(base.Database):
         test_file.close()
 
 
+    def RemoveTest(self, test_id):
+        # Make sure there is such a test.
+        assert self.HasTest(test_id)
+        # Invalidate the cache entry.
+        self.__InvalidateItem(test_id, self.__tests)
+        # Remove the test file.
+        test_path = self.TestIdToPath(test_id, absolute=1)
+        os.unlink(test_path)
+
+
     def GetTestIds(self, path="."):
         dir_path = self.IdToPath(path, absolute=1)
         return scan_dir_for_labels(dir_path, test_file_extension)
@@ -229,6 +239,17 @@ class Database(base.Database):
         action_file = open(action_path, "w")
         qm.xmlutil.write_dom_document(document, action_file)
         action_file.close()
+
+
+    def RemoveAction(self, action_id):
+        # Make sure there is such a action.
+        assert self.HasAction(action_id)
+        # Invalidate the cache entry.
+        self.__InvalidateItem(action_id, self.__actions)
+        # Remove the action file.
+        action_path = self.IdToPath(action_id, absolute=1) \
+                      + action_file_extension
+        os.unlink(action_path)
 
 
     def GetActionIds(self, path="."):
@@ -327,6 +348,20 @@ class Database(base.Database):
         suite_file = open(suite_path, "w")
         qm.xmlutil.write_dom_document(document, suite_file)
         suite_file.close()
+
+
+    def RemoveSuite(self, suite_id):
+        # Make sure there is such a suite.
+        assert self.HasSuite(suite_id)
+        # Make sure it's not an implicit test suite.
+        suite = self.GetSuite(suite_id)
+        assert not suite.IsImplicit()
+        # Invalidate the cache entry.
+        self.__InvalidateItem(suite_id, self.__suites)
+        # Remove the suite file.
+        suite_path = self.IdToPath(suite_id, absolute=1) \
+                     + suite_file_extension
+        os.unlink(suite_path)
 
 
     def GetSuiteIds(self, path=".", implicit=0):

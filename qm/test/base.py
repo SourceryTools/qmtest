@@ -570,6 +570,12 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
 
 
+    def RemoveTest(self, test_id):
+        """Remove the test with ID 'test_id' from the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.RemoveTest"
+
+
     def GetTestIds(self, path="."):
         """Return test IDs of all tests relative to 'path'."""
 
@@ -592,9 +598,15 @@ class Database:
 
 
     def WriteSuite(self, suite):
-        """Store a suite in the database."""
+        """Store a test suite in the database."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.WriteSuite"
+
+
+    def RemoveSuite(self, suite_id):
+        """Remove the test suite with ID 'suite_id' from the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.RemoveSuite"
 
 
     def GetSuiteIds(self, path=".", implicit=0):
@@ -626,6 +638,12 @@ class Database:
         """Store a action in the database."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.WriteAction"
+
+
+    def RemoveAction(self, action_id):
+        """Remove the action with ID 'action_id' from the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.RemoveAction"
 
 
     def GetActionIds(self, path="."):

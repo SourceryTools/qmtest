@@ -240,6 +240,24 @@ class ShowPageInfo(web.PageInfo):
                                        window_height=240)
 
 
+    def MakeDeleteScript(self):
+        """Make a script to confirm deletion of the test or action.
+
+        returns -- JavaScript source for a function, 'delete_script',
+        which shows a popup confirmation window."""
+
+        item_id = self.item.GetId()
+        delete_url = qm.web.make_url("delete-" + self.type,
+                                     base_request=self.request,
+                                     id=item_id)
+        message = """
+        <p>Are you sure you want to delete the %s %s?</p>
+        """ % (self.type, item_id)
+        return qm.web.make_confirmation_dialog_script(
+            "delete_script", message, delete_url)
+
+
+
 
 class AddPrerequisitePageInfo(qm.web.PageInfo):
     """DTML context for generating DTML template add-prerequisite.dtml."""
@@ -697,6 +715,34 @@ def handle_new_action(request):
 
     page_info = NewItemPageInfo(request, type="action")
     return web.generate_html_from_dtml("new.dtml", page_info)
+
+
+def handle_delete(request):
+    """Handle delete requests.
+
+    This function handles the script requests 'delete-test' and
+    'delete-action'.
+
+    'request' -- A 'WebRequest' object.
+
+    The ID of the test or action to delete is specified in the 'id'
+    field of the request."""
+
+    database = qm.test.base.get_database()
+    # Extract the item ID.
+    item_id = request["id"]
+    # The script name determines whether we're deleting a test or an
+    # action. 
+    script_name = request.GetScriptName()
+    if script_name == "delete-test":
+        database.RemoveTest(item_id)
+    elif script_name == "delete-action":
+        database.RemoveAction(item_id)
+    else:
+        raise RuntimeError, "unrecognized script name"
+    # Redirect to the main page.
+    request = qm.web.WebRequest("dir", base=request)
+    raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
 
 
 ########################################################################

@@ -19,6 +19,10 @@ body.help {
     background: #ffffd0;
 }
 
+body.popup {
+    background: #c0c0c0;
+}
+
 /* Links.  */
 
 a:link {
