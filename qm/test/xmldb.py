@@ -38,6 +38,7 @@
 import base
 import os
 import qm.fields
+import qm.label
 import string
 import xml.dom.ext.reader.Sax
 
@@ -141,7 +142,7 @@ class Database(base.Database):
             raise
         file.close()
         # Turn it into a test object.
-        return self.__ParseTestDocument(id, test_document)
+        return self.__ParseTestDocument(test_id, test_document)
         
 
     def HasSuite(self, suite_id):
@@ -185,22 +186,21 @@ class Database(base.Database):
         itself.  Otherwise, the path is relative to the top of the test
         database."""
 
-        path_components = string.split(id_, ".")
+        path = qm.label.to_path(id_)
         if absolute:
-            path_components.insert(0, self.__path)
-        return apply(os.path.join, path_components)
-
+            path = os.path.join(self.__path, path)
+        return path
 
 
     # Helper functions.
 
-    def __ParseTestDocument(self, id, document):
+    def __ParseTestDocument(self, test_id, document):
         """Return a test object constructed from a test document.
 
-        'id' -- The test ID of the test.
+        'test_id' -- The test ID of the test.
 
-        'document' -- A DOM document containing a single '<test>'
-        element from which the test is constructed."""
+        'document' -- A DOM document containing a single test element
+        from which the test is constructed."""
         
         # Make sure the document contains only a single test element.
         test_nodes = document.getElementsByTagName("test")
@@ -209,14 +209,19 @@ class Database(base.Database):
         # Extract the pieces.
         test_class = self.__GetClass(test_node)
         arguments = self.__GetArguments(test_node, test_class)
+        categories = qm.common.get_dom_children_texts(test_node, "categories")
+        prerequisites = self.__GetPrerequisites(test_node, test_id)
         # Construct the test object.
-        return apply(test_class, [ id ], arguments)
+        test = apply(test_class, [ test_id ], arguments)
+        for category in categories:
+            test.AddCategory(category)
+        return test
         
 
     def __GetClass(self, test_node):
         """Return the test class of a test.
 
-        'test_node' -- A DOM node for a '<test>' element.
+        'test_node' -- A DOM node for a test element.
 
         raises -- 'UnknownTestClassError' if the test class specified
         for the test is not among the registered test classes."""
@@ -237,7 +242,7 @@ class Database(base.Database):
     def __GetArguments(self, test_node, test_class):
         """Return the arguments of a test.
 
-        'test_node' -- A DOM node for a '<test>' element.
+        'test_node' -- A DOM node for a test element.
 
         'test_class' -- The test class for this test.
 
@@ -274,6 +279,20 @@ class Database(base.Database):
         return result
 
 
+    def __GetPrerequisites(self, test_node, test_id):
+        """Return IDs of prerequisite tests.
+
+        'test_node' -- A DOM node for a test element.
+
+        'test_id' -- The corresponding test ID."""
+        
+        # Extract the contents of all prerequisite elements.
+        results = qm.common.get_dom_children_texts(test_node, "prerequisite")
+        # These test IDs are relative to the path containing this test.
+        # Make them absolute.
+        return map(qm.label.MakeRelativeTo(label=test_id), results)
+
+
 
 class FileSuite(base.Suite):
     """A test suite whose elements are listed in a file.
@@ -294,9 +313,9 @@ class FileSuite(base.Suite):
         base.Suite.__init__(self, suite_id)
         self.__ids = []
 
-        db_path = database.GetPath()
-        sub_path = database.IdToPath(suite_id) + suite_file_extension
-        path = os.path.join(db_path, sub_path)
+        path = os.path.join(database.GetPath(),
+                            database.IdToPath(suite_id)) \
+               + suite_file_extension
         # Make sure there is a file by that name.
         if not os.path.isfile(path):
             raise base.NoSuchSuiteError, "no suite file %s" % path
@@ -310,26 +329,17 @@ class FileSuite(base.Suite):
         content_ids = map(string.strip, content_ids)
         # Make sure they're all valid.
         for id in content_ids:
-            if not qm.is_valid_label(id, allow_periods=1):
+            if not qm.label.is_valid(id, allow_separator=1):
                 raise RuntimeError, \
                       qm.error("invalid test id", id=id)
 
-        # Is the directory containing the test suite beneath the top
-        # directory of the database?
-        components = qm.split_path_fully(sub_path)
-        if len(components) > 1:
-            # The IDs in the suite are relative to the directory
-            # containing the suite file; we need to convert these to IDs
-            # relative to the top of the test database.
-
-            # Generate the ID component corresponding to this
-            # directory.
-            id_prefix = string.join(components[:-1], ".")
-            # Glue it on to the front of each test ID.
-            prefixer = lambda id, id_prefix=id_prefix: \
-                       id_prefix + "." + id
-            content_ids = map(prefixer, content_ids)
+        # The content IDs are relative to the location of the suite.
+        # Construct absolute IDs.
+        content_ids = map(qm.label.MakeRelativeTo(label=suite_id),
+                          content_ids)
         
+        # Validate the IDs, and expand any suite IDs that may be among
+        # them. 
         try:
             base.expand_and_validate_ids(database,
                                          content_ids,
@@ -365,18 +375,17 @@ class DirectorySuite(base.Suite):
 
         base.Suite.__init__(self, suite_id)
 
-        db_path = database.GetPath()
-        dir_path = database.IdToPath(suite_id)
         # Make sure the path exists.
-        path = os.path.join(db_path, dir_path)
+        path = os.path.join(database.GetPath(),
+                            database.IdToPath(suite_id))
         if not os.path.isdir(path):
             raise base.NoSuchSuiteError, "no directory at %s" % path
-        self.__db_path = db_path
-        self.__dir_path = dir_path
-        # Generate the ID fragment corresponding to the top of the suite.
-        self.__dir_components = qm.split_path_fully(dir_path)
-        # Don't look up the test IDs yet.
+
         self.__ids = None
+        self.__suite_id = suite_id
+        self.__suite_path = path
+
+        # Don't look up the test IDs yet.
 
 
     def GetTestIds(self):
@@ -385,7 +394,7 @@ class DirectorySuite(base.Suite):
         if self.__ids is None:
             # We need to determine the IDs of tests under our directory. 
             self.__ids = []
-            self.__AddTestsInDirectory([])
+            self.__AddTestsInDirectory("")
 
         return self.__ids
 
@@ -395,48 +404,32 @@ class DirectorySuite(base.Suite):
     def __AddTestsInDirectory(self, sub_path):
         """Scan the tests in directory 'path'.
 
+        'sub_path' -- Path relative to top of suite directory from which
+        to add tests.
+
         This method calls itself recursively for subdirectories."""
 
-        # The path elements between the top of the test database and the
-        # top of the test suite.
-        dir_elements = qm.split_path_fully(self.__dir_path)
+        sub_id = qm.label.from_path(sub_path)
+        dir_id = qm.label.join(self.__suite_id, sub_id)
+        rel = qm.label.MakeRelativeTo(path=dir_id)
         # Generate the full path to the directory being scanned.
-        path = apply(os.path.join,
-                     [ self.__db_path, self.__dir_path ] + sub_path)
+        path = os.path.join(self.__suite_path, sub_path)
         # Loop over its contents.
         for entry in os.listdir(path):
             entry_path = os.path.join(path, entry)
             # Is it a directory?
             if os.path.isdir(entry_path):
                 # Yes; scan recursively.
-                self.__AddTestsInDirectory(sub_path + [ entry ])
+                self.__AddTestsInDirectory(os.path.join(sub_path, entry))
             else:
                 # Look at its extension.
                 name, extension = os.path.splitext(entry)
                 if extension == test_file_extension:
-                    # It looks like a test file.
-                    test_id = string.join(dir_elements \
-                                          + sub_path \
-                                          + [ name ],
-                                          ".")
+                    test_id = rel(name)
                     self.__ids.append(test_id)
 
 
 
-########################################################################
-# functions
-########################################################################
-
-########################################################################
-# initialization
-########################################################################
-
-# Load QMTest diagnostics.
-qm.diagnostic.diagnostic_set.ReadFromFile("test", "diagnostics.txt")
-
-# Load RC options.
-qm.rc.Load("test")
-                                                       
 ########################################################################
 # Local Variables:
 # mode: python

@@ -377,65 +377,6 @@ def get_base_directory():
     return os.environ["QM_BASE_PATH"]
 
 
-__label_regex = re.compile("[a-z0-9_]+$")
-__label_regex_with_dot = re.compile("[a-z0-9_.]+$")
-
-def is_valid_label(label, user=1, allow_periods=0):
-    """Test whether 'label' is a valid label.
-
-    A valid label is a string consisting of lower-case letters,
-    digits, and underscores.
-
-    'label' -- The string to validate.
-
-    'user' -- If true, labels reserved for internal use are also
-    rejected.  Labels beginning with an underscore are reserved for
-    internal use.
-
-    'allow_periods' -- If true, allow a period in the label, as a path
-    separator. 
-
-    returns -- True if 'label' is valid."""
-
-    # Choose the appropriate regular expression.
-    if allow_periods:
-        regex = __label_regex_with_dot
-    else:
-        regex = __label_regex
-    # Try to match.
-    if not regex.match(label):
-        return 0
-    # The regex doesn't match empty strings, so this indexing is OK.
-    if user and label[0] == '_':
-        return 0
-    return 1
-
-
-__label_thunk_regex = re.compile("[^a-z0-9_]")
-
-def thunk_to_label(label):
-    """Sanitize and convert 'label' to a valid label.
-
-    Makes a best-effort attempt to keep 'label' recognizable during
-    the conversion.
-
-    returns -- A valid label."""
-
-    # Strip leading and trailing whitespace.
-    label = string.strip(label)
-    # Lower capital letters.
-    label = string.lower(label)
-    # Replace all invalid characters with underscores.
-    label = __label_thunk_regex.sub("_", label)
-    # Trim leading underscores.
-    while len(label) > 0 and label[0] == "_":
-        label = label[1:]
-    # Make sure the label isn't empty.
-    if label == "":
-        label = "x"
-    return label
-
-
 __host_name = None
 
 def get_host_name():
@@ -589,6 +530,22 @@ def get_child_dom_node_text(node, child_tag):
     children = node.getElementsByTagName(child_tag)
     assert len(children) == 1
     return get_dom_node_text(children[0])
+
+
+def get_dom_children_texts(node, child_tag):
+    """Return a sequence of text contents of children.
+
+    'node' -- A DOM node.
+
+    returns -- The text contained in all child nodes of 'node' which
+    have tag 'child_tag'.  Each child must have exactly one child of its
+    own, which must be a text node."""
+
+    results = []
+    for child_node in node.getElementsByTagName(child_tag):
+        text = get_dom_node_text(child_node)
+        results.append(text)
+    return results
 
 
 def load_module(name, path):

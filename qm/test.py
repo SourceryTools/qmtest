@@ -36,33 +36,34 @@
 ########################################################################
 
 import qm
-import qm.regression_test
 import qm.command_line
 import qm.graph
+import qm.label
+import qm.regression_test
 import string
 
 ########################################################################
 # tests
 ########################################################################
 
-def test_is_valid_label():
-    return qm.is_valid_label("abcde") \
-           and qm.is_valid_label("ab_xz_efg_0912_bjd__f_") \
-           and qm.is_valid_label("_foo_bar", user=0) \
-           and not qm.is_valid_label("_foo_bar") \
-           and not qm.is_valid_label("") \
-           and not qm.is_valid_label("Hello") \
-           and not qm.is_valid_label("hello world")
+def test_label_is_valid():
+    return qm.label.is_valid("abcde") \
+           and qm.label.is_valid("ab_xz_efg_0912_bjd__f_") \
+           and qm.label.is_valid("_foo_bar", user=0) \
+           and not qm.label.is_valid("_foo_bar") \
+           and not qm.label.is_valid("") \
+           and not qm.label.is_valid("Hello") \
+           and not qm.label.is_valid("hello world")
 
 
-def test_thunk_to_label():
-    return qm.is_valid_label(qm.thunk_to_label("")) \
-           and qm.is_valid_label(qm.thunk_to_label("abcyz_12390_")) \
-           and qm.is_valid_label(qm.thunk_to_label("   abc 123   ")) \
-           and qm.is_valid_label(qm.thunk_to_label("hello world!")) \
-           and qm.is_valid_label(qm.thunk_to_label("(*@KAJD)92809  kj!")) \
-           and qm.is_valid_label(qm.thunk_to_label("____foo bar____")) \
-           and qm.is_valid_label(qm.thunk_to_label("This is a test."))
+def test_label_thunk():
+    return qm.label.is_valid(qm.label.thunk("")) \
+           and qm.label.is_valid(qm.label.thunk("abcyz_12390_")) \
+           and qm.label.is_valid(qm.label.thunk("   abc 123   ")) \
+           and qm.label.is_valid(qm.label.thunk("hello world!")) \
+           and qm.label.is_valid(qm.label.thunk("(*@KAJD)92809  kj!")) \
+           and qm.label.is_valid(qm.label.thunk("____foo bar____")) \
+           and qm.label.is_valid(qm.label.thunk("This is a test."))
 
 
 def test_parser_create():
@@ -315,8 +316,8 @@ def test_graph_pass():
     
     
 regression_tests = [
-    test_is_valid_label,
-    test_thunk_to_label,
+    test_label_is_valid,
+    test_label_thunk,
     test_parser_create,
     test_parser_parse,
     test_parser_help,

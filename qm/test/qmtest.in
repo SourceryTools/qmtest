@@ -39,6 +39,7 @@ execfile("@qm_setup_path_script@")
 ########################################################################
 
 import cmdline
+import qm
 import qm.cmdline
 import sys
 
@@ -46,7 +47,7 @@ import sys
 # functions
 ########################################################################
 
-def print_error_message(self, message):
+def print_error_message(message):
     sys.stderr.write("%s: %s\n" % (program_name, message))
 
 
@@ -54,6 +55,12 @@ def print_error_message(self, message):
 # script
 ########################################################################
 
+# Load QMTest diagnostics.
+qm.diagnostic.diagnostic_set.ReadFromFile("test", "diagnostics.txt")
+
+# Load RC options.
+qm.rc.Load("test")
+                                                       
 program_name = sys.argv[0]
 
 try:
@@ -68,8 +75,9 @@ except RuntimeError, msg:
     exit_code = 1
 
 except qm.cmdline.CommandError, msg:
-    print_error_message(msg
-                        + "\n\nInvoke %s --help for help with usage.\n")
+    print_error_message(str(msg)
+                        + "\n\nInvoke %s --help for help with usage.\n"
+                        % program_name)
     exit_code = 2
 
 # End the program.

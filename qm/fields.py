@@ -36,6 +36,7 @@
 ########################################################################
 
 import common
+import label
 import mimetypes
 import qm
 import diagnostic
@@ -149,7 +150,7 @@ class Field:
         'attributes' -- A mapping of additional attribute assignments
         to set."""
 
-        if not qm.is_valid_label(name):
+        if not label.is_valid(name):
             raise ValueError, \
                   qm.track.error("invalid field name", field_name=name)
 
@@ -1148,7 +1149,7 @@ class EnumerationField(IntegerField):
             key = str(key)
             value = int(value)
             # Make sure the name is OK.
-            if not qm.is_valid_label(key):
+            if not label.is_valid(key):
                 raise ValueError, \
                       qm.track.error("invalid enum key", key=key)
             # Store it.

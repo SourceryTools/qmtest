@@ -37,8 +37,9 @@
 
 import issue
 import qm
-import string
 import qm.fields
+import qm.label
+import string
 
 ########################################################################
 # constants
@@ -87,7 +88,7 @@ class IidField(qm.fields.TextField):
 
     def Validate(self, value):
         value = str(value)
-        if not qm.is_valid_label(value):
+        if not qm.label.is_valid(value):
             raise ValueError, \
                   qm.track.error("invalid iid", iid=value) 
         return value

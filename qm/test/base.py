@@ -37,6 +37,7 @@
 
 import os
 import qm
+import qm.label
 import sys
 import types
 
@@ -71,6 +72,7 @@ class Test:
        'id' -- The test ID."""
 
        self.__id = id
+       self.__categories = []
 
 
    def GetId(self):
@@ -82,6 +84,19 @@ class Test:
    # The fields in this test class.  A mapping from field names to
    # 'Field' instances."""
    fields = {}
+
+
+   def IsInCategory(self, category):
+       """Return true if this test is in 'category'."""
+
+       return category in self.__categories
+
+
+   def AddCategory(self, category):
+       """Add 'category' to the list of categories of this test."""
+
+       if not category in self.__categories:
+           self.__categories.append(category)
 
 
    def Run(self, context):
@@ -287,7 +302,7 @@ class Context:
 
         if not isinstance(key, types.StringType):
             raise ValueError, "context key must be a string"
-        if not qm.common.is_valid_label(key, allow_periods=1):
+        if not qm.label.is_valid(key, allow_separator=1):
             raise RuntimeError, \
                   qm.error("invalid context key", key=key)
 

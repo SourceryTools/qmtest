@@ -1,3 +1,30 @@
+2001-03-17  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/common.py (__label_regex): Remove.
+	(__Label_regex_with_dot): Likewise.
+	(is_valid_label): Likewise.
+	(__label_thunk_regex): Likewise.
+	(thunk_to_label): Likewise.
+	(get_dom_children_texts): New function.
+	* qm/label.py: New file.
+	* qm/fields.py: Use qm.label.
+	* qm/test.py: Likewise.
+	* qm/test/xmldb.py: Use qm.label.
+	(Database.GetTest): Fix typo.
+	(Database.__ParseTestDocument): Rename parameter.  Read categories
+	and prerequisites.
+	(Database.__GetPrerequisites): New method.
+	(FileSuite.__init__): Improve path handling.
+	(DirectorySuite.__init__): Likewise.
+	(DirectorySuite.__AddTestsInDirectory): Likewise.
+	Don't load diagnostics.  Don't load RC.
+	* qm/test/qmtest.in (print_error_message): Remove self parameter.
+	Initialize qmtest diagnostics.  Load RC.  Fix error message.
+	* qm/test/base.py: Use qm.label.
+	(Test.IsInCategory): New method.
+	(Test.AddCategory): Likewise.
+	* qm/track/issue_class.py: Use qm.label.
+
 2001-03-16  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/Makefile.in (SCRIPTS): New variable.
