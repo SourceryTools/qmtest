@@ -275,48 +275,60 @@ class ExecutionEngine:
             if result.GetKind() == Result.TEST:
                 # Get the descriptor for this test.
                 descriptor = self.__descriptors[result.GetId()]
-                # Get the graph node corresponding to this test.
-                node = self.__descriptor_graph[descriptor]
                 # Iterate through each of the dependent tests.
-                for (d, outcome) in node[1]:
-                    # Find the node for the dependent test.
-                    n = self.__descriptor_graph[d]
-                    # If some other prerequisite has already had
-                    # an undesired outcome, there is nothing more to do.
-                    if n[0] == 0:
-                        continue
-                    
-                    # If the actual outcome is not the outcmoe that
-                    # was expected, the dependent test cannot be run.
-                    if result.GetOutcome() != outcome:
-                        self._AddUntestedResult(
-                            d.GetId(),
-                            qm.message("failed prerequisite"),
-                            { 'qmtest.prequisite' :
-                                result.GetId(),
-                              'qmtest.outcome' : 
-                                result.GetOutcome(),
-                              'qmtest.expected_outcome' :
-                                outcome })
-                        # This test will never be run.
-                        n[0] = 0
-                        self.__pending.remove(d)
-                    else:
-                        # Decrease the count associated with the node, if
-                        # the test has not already been declared a failure.
-                        n[0] = n[0] - 1
-                        # If this was the last prerequisite, this test
-                        # is now ready.
-                        if n[0] == 0:
-                            self.__ready.append(d)
-
+                self._UpdateDependentTests(descriptor, result.GetOutcome())
             return result
         except qm.queue.Empty:
             # If wait is zero, and there is nothing in the queue, then
             # this exception will be thrown.  Just return.
             return None
 
-        
+
+    def _UpdateDependentTests(self, descriptor, outcome):
+        """Update the status of tests that depend on 'node'.
+
+        'descriptor' -- A test descriptor.
+
+        'outcome' -- The outcome associated with the test.
+
+        If tests that depend on 'descriptor' required a particular
+        outcome, and 'outcome' is different, mark them as untested.  If
+        tests that depend on 'descriptor' are now eligible to run, add
+        them to the '__ready' queue."""
+
+        node = self.__descriptor_graph[descriptor]
+        for (d, o) in node[1]:
+            # Find the node for the dependent test.
+            n = self.__descriptor_graph[d]
+            # If some other prerequisite has already had an undesired
+            # outcome, there is nothing more to do.
+            if n[0] == 0:
+                continue
+
+            # If the actual outcome is not the outcome that was
+            # expected, the dependent test cannot be run.
+            if outcome != o:
+                self._AddUntestedResult(d.GetId(),
+                                        qm.message("failed prerequisite"),
+                                        { 'qmtest.prequisite' :
+                                          descriptor.GetId(),
+                                          'qmtest.outcome' : outcome,
+                                          'qmtest.expected_outcome' : o })
+                # This test will never be run.
+                n[0] = 0
+                self.__pending.remove(d)
+                # Recursively remove tests that depend on d.
+                self._UpdateDependentTests(d, Result.UNTESTED)
+            else:
+                # Decrease the count associated with the node, if
+                # the test has not already been declared a failure.
+                n[0] -= 1
+                # If this was the last prerequisite, this test
+                # is now ready.
+                if n[0] == 0:
+                    self.__ready.append(d)
+                    
+    
     def _AddResult(self, result):
         """Report the result of running a test or resource.
 
