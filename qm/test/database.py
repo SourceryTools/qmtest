@@ -182,10 +182,17 @@ class ItemDescriptor:
             name = field.GetName()
 
             # Use a default value for each field for which an argument
+
             # was not specified.
             if not arguments.has_key(name):
                 arguments[name] = field.GetDefaultValue()
 
+        # Record the test or resource name.  Logically, this
+        # should be a paramter passed in to the test class
+        # constructor, but that would require changing all the
+        # existing test classes.
+        arguments["id"] = self.GetId()
+        
         return apply(self.GetClass(), [], arguments)
 
     

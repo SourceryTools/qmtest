@@ -1,5 +1,8 @@
 2002-01-29  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/database.py (ItemDescriptor._MakeItem): Tell a newly
+	created test or resource what its name is.
+
 	* qm/xmlutil.py (discard_node): Remove.
 	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult):
 	Do not use it.
