@@ -181,6 +181,18 @@ class FieldEditPage(web.DtmlPage):
             return qm.web.format_structured_text(doc_string)
 
 
+    def MakeDefaultValueControl(self, field):
+        """Return a control for editing the default value of a field."""
+
+        if field.IsAttribute("read_only"):
+            style = "full"
+        else:
+            style = "new"
+        default_value = field.GetDefaultValue()
+        return field.FormatValueAsHtml(default_value, style,
+                                       name="_default_value")
+
+
 
 class Field:
     """Base class for field types."""
@@ -597,6 +609,14 @@ class Field:
         postconditions -- The state of this field is updated according
         to the form fields in 'request'."""
         
+        # Set the default value, if specified.
+        new_default_value = request.get("_default_value", None)
+        if new_default_value is not None:
+            print new_default_value
+            new_default_value = self.ParseFormValue(new_default_value)
+            if new_default_value != self.GetDefaultValue():
+                self.SetDefaultValue(new_default_value)
+
         for name, value in request.items():
             # Does this query field look like a field property?
             if qm.common.starts_with(name, query_field_property_prefix):
@@ -853,6 +873,9 @@ class TextField(Field):
             if self.IsAttribute("verbatim"):
                 # Put verbatim text in a <tt> element.
                 return '<tt>%s</tt>' % web.escape(value)
+            elif self.IsAttribute("structured"):
+                # It's already formatted as HTML; don't escape it.
+                return value
             else:
                 # Other text set normally.
                 return web.escape(value)
@@ -1722,7 +1745,7 @@ class EnumerationField(TextField):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            enumerals = self._GetAvailableEnumerals(value)
+            enumerals = self.GetEnumerals()
             if len(enumerals) == 0:
                 # No available enumerals.  Don't let the user change
                 # anything. 
@@ -1775,12 +1798,6 @@ class EnumerationField(TextField):
         The default value of this field is "%s".
         ''' % str(self.GetDefaultValue())
         return help
-
-
-    def _GetAvailableEnumerals(self, value):
-        """Return a limited sequence of enumerals."""
-
-        return self.GetEnumerals()
 
 
     def MakePropertyControls(self):

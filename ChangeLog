@@ -1,5 +1,20 @@
 2001-07-13  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/fields.py (FieldEditPage.MakeDefaultValueControl): New method.
+	(Field.UpdateFromRequest): Process default value.
+	(TextField.FormatValueAsHtml): Don't escape structured text HTML.
+	(EnumerationField.FormatValueAsHtml): Don't use
+	_GetAvailableEnumerals. 
+	(EnumerationField._GetAvailableEnumerals): Remove.
+	* qm/track/issue_class.py (StateField.FormatValueAsHtml): New
+	method.
+	(IssueClass.__init__): Make some more mandatory fields read-only.
+	* share/web/stylesheets/qm.css (th): Make background black.
+	(a#colhead): Likewise.
+	* share/dtml/field.dtml: Add control for default value.
+
+2001-07-13  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/structured_text.py (TextFormatter.WriteText): Don't print
 	spaces at the start of a line.
 	* qm/common.py (MutexError): New exception.

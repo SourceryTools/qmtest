@@ -692,11 +692,34 @@ class StateField(qm.fields.EnumerationField):
         return help
 
 
-    def _GetAvailableEnumerals(self, value):
-        # We override this method to show users only those states that
-        # are accessible from the current one (plus, of course, the
-        # current state itself).
+    def FormatValueAsHtml(self, value, style, name=None):
+        # Use default value if requested.
+        if value is None:
+            value = self.GetDefaultValue()
+        # Use the default field form field name if requested.
+        if name is None:
+            name = self.GetHtmlFormFieldName()
 
+        if style == "edit":
+            # Use a restricted select control showing only values for
+            # reachable states.
+            enumerals = self._GetAvailableEnumerals(value)
+            return qm.web.make_select(name, enumerals, value,
+                                      str, self.FormEncodeValue)
+        else:
+            # Use the base-class implementation.
+            return qm.fields.EnumerationField.FormatValueAsHtml(
+                self, value, style, name)
+
+
+    def _GetAvailableEnumerals(self, value):
+        """Return enumerals corresponding to available states.
+
+        'value' -- The value representing the current state.
+
+        returns -- A list of enumeral values representing states
+        reachable from the current state."""
+        
         # Start with all enumerals, i.e. all the states in the state
         # model. 
         enumerals = self.GetEnumerals()
@@ -876,7 +899,8 @@ class IssueClass:
             name="revision",
             title="Revision Number",
             description="The cardinality of this revision of the issue.",
-            hidden="true")
+            hidden="true",
+            read_only="true")
         self.AddField(field)
 
         # The revision timestamp field.
@@ -939,7 +963,8 @@ the particular component."""
             description=
 """The issue ID of the issue from which this issue was split, or the
 issue IDs of the issues from which this issue was joined.""",
-            hidden="true")
+            hidden="true",
+            read_only="true")
         field = qm.fields.SetField(field)
         self.AddField(field)
 
@@ -951,7 +976,8 @@ issue IDs of the issues from which this issue was joined.""",
 """The issue IDs of issues into which this issue was split, or the issue
 ID of the issue which resulted when this issue was joined with other
 issues.""",
-            hidden="true")
+            hidden="true",
+            read_only="true")
         field = qm.fields.SetField(field)
         self.AddField(field)
 

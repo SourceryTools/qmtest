@@ -49,7 +49,6 @@
    </td>
   </tr>
 
-<dtml-comment><!--
   <tr><td colspan="2">&nbsp;</td></tr>
 
   <tr class="field" valign="top">
@@ -58,12 +57,9 @@
     <p>The default value for this field.</p>
    </td>
    <td>
-    <dtml-var expr="field.FormatValueAsHtml(field.GetDefaultValue(), 'full')">
+    <dtml-var expr="MakeDefaultValueControl(field)">
    </td>
   </tr>
-
-  <tr><td colspan="2">&nbsp;</td></tr>
---></dtml-comment>
 
   <tr><td colspan="2">&nbsp;</td></tr>
 

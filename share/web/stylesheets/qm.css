@@ -46,7 +46,7 @@ table {
 
 th {
     color: white;
-    background-color: #808080;
+    background-color: black;
     text-align: left;
     text-decoration: bold;
 }
@@ -68,7 +68,7 @@ span#colhead {
 
 a#colhead {
     color: white;
-    background-color: #808080;
+    background-color: black;
 }
 
 a.reverse {
