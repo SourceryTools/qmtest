@@ -1,0 +1,86 @@
+<dtml-comment><!--
+
+  File:   query.dtml
+  Author: Alex Samuel
+  Date:   2001-02-21
+
+  Contents:
+    Document template for query page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Page Title Here!')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Search Issues</h3>
+
+ <table border="0" 
+        cellpadding="4" 
+        cellspacing="4" 
+        bgcolor="#f0f0f0"
+        width="100%">
+  <tbody>
+   <tr>
+    <td>
+     <h4>Python Query</h4>
+
+     <p>Enter a Python query expression.  <dtml-var expr="GetName()">
+     will find all issues for which the expression is true.</p>
+
+     <dtml-var expr="MakeQueryForm()">
+      Query Expression: <input type="text" size="40" name="query"/>
+      <input type="submit" value="Search">
+     </form>
+
+     <p>The expression may refer to the values of following fields, as
+     if they were ordinary variables:</p>
+
+     <center>
+     <table>
+      <thead>
+       <tr>
+        <th>Field Name</th>
+        <th>Value Type</th>
+       </tr>
+      </thead>
+      <tbody>
+       <dtml-in expr="fields">
+       <dtml-let field=sequence-item>
+        <tr>
+         <td>
+          <tt><dtml-var expr="field.GetName()"></tt>
+         </td>
+         <td>
+          <dtml-var expr="GetFieldTypeDescription(field)">
+         </td>
+        </tr>
+       </dtml-let>
+       </dtml-in>
+      </tbody>
+     </table>
+     </center>
+
+    </tr>
+   </tr>
+  </tbody>
+ </table>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

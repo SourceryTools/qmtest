@@ -58,7 +58,6 @@ edit -- Edit an existing issue."""
 # imports
 ########################################################################
 
-import cgi
 import qm.web
 import string
 import web
@@ -220,13 +219,22 @@ def handle_show(request):
     iid = request["iid"]
     idb = qm.track.get_idb()
 
-    # Get the issue.
-    if request.has_key("revision"):
-        # A specific revision was requested.
-        issue = idb.GetIssue(iid, int(request["revision"]))
-    else:
-        # Use the current revision.
-        issue = idb.GetIssue(iid)
+    try:
+        # Get the issue.
+        if request.has_key("revision"):
+            # A specific revision was requested.
+            issue = idb.GetIssue(iid, int(request["revision"]))
+        else:
+            # Use the current revision.
+            issue = idb.GetIssue(iid)
+    except KeyError:
+        # An issue with the specified iid was not fount.  Show a page
+        # indicating the error.
+        msg = """
+        The issue database does not contain an issue with the ID you
+        specified, "%s".""" \
+        % iid
+        return web.generate_error_page(request, msg)
 
     page_info = ShowPageInfo(request, issue)
     # If we're be showing a revision history, we need to provide all

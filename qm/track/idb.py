@@ -37,6 +37,8 @@
 
 import rexec
 import qm
+import issue_class
+import string
 import types
 
 ########################################################################
@@ -233,9 +235,8 @@ class IdbBase:
                     field_name = field.GetName()
                     # Set each field to be its current value in the issue.
                     field_value = issue.GetField(field_name)
-                    if type(field_value) == types.StringType:
-                        field_value = "'" + field_value + "'"
-                    query_env.r_exec("%s = %s" % (field_name, field_value))
+                    query_env.r_exec("%s = %s"
+                                     % (field_name, repr(field_value)))
                     # We have to check to see if this class is an
                     # enumeration.  If it is, grab the mapping and use
                     # that.  Alternately, it might be a set of
@@ -355,6 +356,34 @@ def get_idb_class(idb_type):
         return qm.track.gadfly_idb.GadflyIdb
     else:
         raise ValueError, "unknown IDB type %s" % idb_type
+
+
+def get_field_type_description_for_query(field):
+    """Return a summary of how to use 'field' in Python query expressions."""
+
+    if isinstance(field, issue_class.IssueFieldEnumeration):
+        enumerals = field.GetEnumerals()
+        enumerals = map(lambda x: "'%s'" % x[0], enumerals)
+        return "an enumeration of %s" % string.join(enumerals, ", ")
+    elif isinstance(field, issue_class.IssueFieldTime):
+        return "a date/time (right now, it is %s)" % field.GetCurrentTime()
+    elif isinstance(field, issue_class.IssueFieldIid):
+        return "a valid issue ID"
+    elif isinstance(field, issue_class.IssueFieldUid):
+        return "a valid user ID"
+    elif isinstance(field, issue_class.IssueFieldInteger):
+        return "an integer"
+    elif isinstance(field, issue_class.IssueFieldText):
+        return "a string"
+    elif isinstance(field, issue_class.IssueFieldSet):
+        contained_field = field.GetContainedField()
+        return "a sequence; each element is %s" \
+               % get_field_type_description_for_query(contained_field)
+    elif isinstance(field, issue_class.IssueFieldAttachment):
+        # FIXME.
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
 
 
 ########################################################################

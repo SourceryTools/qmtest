@@ -1,11 +1,11 @@
 <dtml-comment><!--
 
-  File:   Fill me in!
-  Author: Fill me in!
-  Date:   YYYY-MM-DD
+  File:   error.dtml
+  Author: Alex Samuel
+  Date:   2001-02-22
 
   Contents:
-    Fill me in!
+    Document template for page indicating a user error.
 
   Copyright (C) 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -18,8 +18,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xhtmlns="http://www.w3.org/1999/xhtml">
- <dtml-var expr="GenerateHtmlHeader('Page Title Here!')">
+ <dtml-var expr="GenerateHtmlHeader('Issue Summary')">
  <dtml-var expr="GenerateStartBody()">
+
+ <h3>Error</h3>
+
+ <pre><dtml-var name="error_text"></pre>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

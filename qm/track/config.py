@@ -78,6 +78,12 @@ __idb = None
 # functions
 ########################################################################
 
+def get_name():
+    """Return the name of the application."""
+
+    return "QMTrack"
+
+
 def get_configuration():
     """Return the loaded 'Configuration' object.
 
@@ -325,6 +331,13 @@ def initialize_idb(path, idb_class_name):
     idb = idb_class(path, create_idb=1)
     # Close it immediately.
     idb.Close()
+
+
+def get_default_class():
+    """Return the default issue class for the current IDB."""
+
+    default_class_name = get_configuration()["default_class"]
+    return get_idb().GetIssueClass(default_class_name)
 
 
 def setup_idb_for_test():

@@ -38,7 +38,10 @@ code in this module.
 
 The form recognizes the following query arguments:
 
-'sort' -- The name of the field by which to sort the issues."""
+'sort' -- The name of the field by which to sort the issues.
+
+'query' -- If specified, show the issues matching this query.
+Otherwise, show all issues."""
 
 ########################################################################
 # imports
@@ -62,7 +65,7 @@ class SummaryPageInfo(web.PageInfo):
 
     'issues' -- A sequence of issues to display in the table."""
 
-    def __init__(self, request):
+    def __init__(self, request, issues):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
@@ -73,9 +76,7 @@ class SummaryPageInfo(web.PageInfo):
         # FIXME: For now, show these fields.
         self.field_names = [ "iid", "summary", "timestamp", "state" ]
 
-        # FIXME: For now, summarize all issues (in all casses!).
-        idb = qm.track.get_idb()
-        self.issues = idb.GetIssues()
+        self.issues = issues
 
         # Did the request specify a sort order?
         if self.request.has_key("sort"):
@@ -154,7 +155,34 @@ def handle_summary(request):
 
     'request' -- A 'WebRequest' object."""
 
-    page_info = SummaryPageInfo(request)
+    idb = qm.track.get_idb()
+    if request.has_key("query"):
+        # This page is a response to a query.
+        query = request["query"]
+
+        try:
+            issues = idb.Query(query)
+        except NameError, name:
+            msg = """
+            %s cannot understand the name %s in the query you specified:
+
+              '%s'
+            """ % (qm.track.get_name(), name, query)
+            return web.generate_error_page(request, msg)
+        except SyntaxError:
+            msg = """
+            %s encountered a syntax error while processing the query
+            you specified:
+
+              '%s'
+            """ % (qm.track.get_name(), query)
+            return web.generate_error_page(request, msg)
+
+    else:
+        # No query was specified; show all issues.
+        issues = idb.GetIssues()
+
+    page_info = SummaryPageInfo(request, issues)
     return web.generate_html_from_dtml("summary.dtml", page_info)
 
 

@@ -1,3 +1,31 @@
+2001-02-22  Alex Samuel  <samuel@codesourcery.com>
+
+	* templates/dtml: Adjust.
+	* qm/web.py (make_form_for_request): New function.
+	* qm/track/sql_idb.py: Fix imports.
+	(SqlIdb.__FilterCurrentRows): New function.
+	(SqlIdb.GetIssues): Use it.
+	* qm/track/issue_class.py: Fix imports.
+	* qm/track/server.py (start_server): Add index and query pages.
+	* qm/track/idb.py (IdbBase.Query): Use repr instead of quoting
+	strings. 
+	(get_field_type_description_for_query): New function.
+	* qm/track/config.py (get_name): New function.
+	(get_default_class): Likewise.
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Add stuff to
+	nav bar.
+	(PageInfo.GetName): New method.
+	(generate_error_page): New function.
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Accept
+	issues as argument.
+	(handle_summary): Handle query arguments.
+	* qm/track/web/show.py (handle_show): Use generate_error_page.
+	* qm/track/web/index.py: New file.
+	* qm/track/web/query.py: Likewise.
+	* qm/track/web/templates/error.dtml: New file.
+	* qm/track/web/templates/index.dtml: Likewise.
+	* qm/track/web/templates/query.dtml: Likewise.
+
 2001-02-21  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.MakeUrlButton): New method.

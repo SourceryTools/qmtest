@@ -805,6 +805,37 @@ def make_url_for_request(request):
         return "%s?%s" % (request.GetUrl(), urllib.urlencode(request))
     
 
+def make_form_for_request(request, method="get"):
+    """Generate an opening form tag for 'request'.
+
+    'request' -- A 'WebRequest' object.
+
+    'method' -- The HTTP method for this form, either "get" or "post".
+
+    returns -- An opening form tag for the request, plus hidden input
+    elements for arguments to the request.
+
+    The caller must add additional inputs, the submit input, and close
+    the form tag."""
+
+    # Generate the form tag.
+    if method == "get":
+        result = '<form method="get" action="%s">\n' % request.GetUrl()
+    elif method == "post":
+        result = '''<form method="post"
+                          enctype="multipart/form-data"
+                          action="%s">\n''' % request.GetUrl()
+    else:
+        raise ValueError, "unknown method %s" % method
+    # Add hidden inputs for the request arguments.
+    for name, value in request.items():
+        result = result \
+                 + '<input type="hidden" name="%s" value="%s">\n' \
+                 % (name, value)
+
+    return result
+
+
 ########################################################################
 # Local Variables:
 # mode: python

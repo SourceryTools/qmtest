@@ -65,10 +65,17 @@ import string
 ########################################################################
 
 class PageInfo(qm.web.PageInfo):
+    """Subclass of DTML context class, for generating pages from DTML."""
 
     html_generator = "QMTrack"
 
     html_stylesheet = "stylesheets/qmtrack.css"
+
+
+    def GetName(self):
+        """Return the name of the application."""
+
+        return qm.track.get_name()
 
 
     def GenerateStartBody(self):
@@ -77,18 +84,20 @@ class PageInfo(qm.web.PageInfo):
 <body>
 <table width="100%%" %s>
  <tr bgcolor="black">
-  <td><font color="white">
-   <b>QMTrack</b>
-  </font></td>
+  <td>
+   <a href="/track/"><span id="colhead"><b>%s</b></span></a>
+  </td>
   <td align="right"><font color="white">
    <a href="/track/new"><span id="colhead">New Issue</span></a>
    &nbsp;&nbsp;
    <a href="/track/summary"><span id="colhead">All Issues</span></a>
+   &nbsp;&nbsp;
+   <a href="/track/query"><span id="colhead">Query</span></a>
   </font></td>
  </tr>
 </table>
 <br>
-''' % qm.web.PageInfo.table_attributes
+''' % (qm.web.PageInfo.table_attributes, self.GetName(), )
 
 
 
@@ -310,6 +319,21 @@ def generate_html_from_dtml(template_name, page_info):
     # Generate HTML from the template.
     html_file = DocumentTemplate.HTMLFile(template_path)
     return html_file(page_info)
+
+
+def generate_error_page(request, error_text):
+    """Generate a page to indicate a user error.
+
+    'request' -- The request that was being processed when the error
+    was encountered.
+
+    'error_text' -- A description of the error, as structured text.
+
+    returns -- The generated HTML source for the page."""
+
+    page_info = PageInfo(request)
+    page_info.error_text = qm.web.format_structured_text(error_text)
+    return generate_html_from_dtml("error.dtml", page_info)
 
 
 ########################################################################

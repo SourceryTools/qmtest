@@ -40,6 +40,10 @@ import qm
 import qm.track.cmdline
 import qm.track.config
 import qm.track.web
+import qm.track.web.index
+import qm.track.web.query
+import qm.track.web.show
+import qm.track.web.summary
 import qm.web
 import StringIO
 import sys
@@ -104,10 +108,12 @@ def start_server(port, log_file=None):
                               xml_rpc_path="/xml-rpc")
     # Register all our web pages.
     for name, function in [
-        ( "show", qm.track.web.handle_show ),
-        ( "submit", qm.track.web.handle_submit ),
-        ( "summary", qm.track.web.handle_summary ),
-        ( "new", qm.track.web.handle_new ),
+        ( "", qm.track.web.index.handle_index ),
+        ( "query", qm.track.web.query.handle_query ),
+        ( "show", qm.track.web.show.handle_show ),
+        ( "submit", qm.track.web.show.handle_submit ),
+        ( "summary", qm.track.web.summary.handle_summary ),
+        ( "new", qm.track.web.show.handle_new ),
         ]:
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",

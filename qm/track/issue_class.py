@@ -35,8 +35,8 @@
 # imports
 ########################################################################
 
+import issue
 import qm
-import qm.track
 import string
 import time
 import types
@@ -314,7 +314,7 @@ class IssueFieldAttachment(IssueField):
 
     def Validate(self, value):
         # The value should be a triplet.
-        if value != None and not isinstance(value, qm.track.Attachment):
+        if value != None and not isinstance(value, issue.Attachment):
             raise TypeError, \
                   "the value of an attachment field must be an 'Attachment'"
         return value

@@ -64,16 +64,16 @@ SQL-based implementation of the issue database.
 # imports
 ########################################################################
 
+import idb
 from   issue import *
 from   issue_class import *
-import qm.track
 import string
 
 ########################################################################
 # classes
 ########################################################################
 
-class SqlIdb(qm.track.IdbBase):
+class SqlIdb(idb.IdbBase):
     """Generic SQL IDB implementation.
 
     An instance of this class represents a connections to an IDB.  Any
@@ -91,11 +91,24 @@ class SqlIdb(qm.track.IdbBase):
        'IssueClass' instances.
     
     """
+
+    # Many of the operations in this implementation use issues
+    # represented by tuples of field values rather than 'Issue'
+    # instances.  These tuples are what is returned by the RDBMS from
+    # selects on the issue tables.  Since we'll often filter out many
+    # of these rows immediately after selecting, when possible we
+    # filter the rows directly rather than converting them all to
+    # 'Issue' instances.
+    #
+    # To facilitate this, the issue id is always the first column in
+    # an issue table, and therefore each row contains the issue id in
+    # the first position.  Similarly, the revision number is always
+    # second. 
     
 
     def __init__(self):
         # Perform base class initialization.
-        qm.track.IdbBase.__init__(self)
+        idb.IdbBase.__init__(self)
 
 
     def GetIssueClass(self, name):
@@ -219,23 +232,14 @@ class SqlIdb(qm.track.IdbBase):
         issues = []
         # Loop over issue classes we care about.
         for icl in classes_to_search:
-            # We'll construct a map from iid to the row corresponding
-            # to the most recent revision of this issue we've seen so far.
-            map_iid_to_row = {}
-            # Select all rows in this issue class.
-            for row in self.__SelectRows(icl, None):
-                # Fish out the iid.
-                iid = row[0]
-                # Keep this row, if it's the first row we've seen for
-                # this issue class, or if it has the larger revision
-                # number than the previous most-recent.
-                if not map_iid_to_row.has_key(iid) \
-                   or map_iid_to_row[iid][1] < row[1]:
-                    map_iid_to_row[iid] = row
+            # Get all revisions.
+            rows = self.__SelectRows(icl, None)
+            # Keep current revisions only.
+            rows = self.__FilterCurrentRows(rows)
                 
             # The values of the map are the most recent revisions of
             # all our issues.
-            for row in map_iid_to_row.values():
+            for row in rows:
                 # Build an 'Issue' object.
                 issue = self.__BuildIssueFromRow(icl, row)
                 # Invoke get triggers on it.
@@ -387,7 +391,6 @@ class SqlIdb(qm.track.IdbBase):
         """Return the current revision number for issue 'iid'."""
 
         return self.GetIssue(iid).GetRevision()
-
 
 
     # Helper functions.
@@ -607,6 +610,28 @@ class SqlIdb(qm.track.IdbBase):
         # Join the column names into a list.
         result = string.join(col_names, ", ")
         return result
+
+
+    def __FilterCurrentRows(self, rows):
+        """Filter 'rows', keeping only the latest revision of each issue.
+
+        'row' -- A sequence of tuples representing issues."""
+
+        # We'll construct a map from iid to the row corresponding
+        # to the most recent revision of this issue we've seen so far.
+        map_iid_to_row = {}
+        # Select all rows in this issue class.
+        for row in rows:
+            # Fish out the iid.
+            iid = row[0]
+            # Keep this row, if it's the first row we've seen for
+            # this issue class, or if it has the larger revision
+            # number than the previous most-recent.
+            if not map_iid_to_row.has_key(iid) \
+               or map_iid_to_row[iid][1] < row[1]:
+                map_iid_to_row[iid] = row
+
+        return map_iid_to_row.values()
 
 
     def __BuildIssueFromRow(self, issue_class, row):

@@ -1,0 +1,94 @@
+<dtml-comment><!--
+
+  File:   index.dtml
+  Author: Alex Samuel
+  Date:   2001-02-21
+
+  Contents:
+    Document template for main QMTrack page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ <dtml-var expr="GenerateHtmlHeader('Issue Summary')">
+ <dtml-var expr="GenerateStartBody()">
+
+  <h3>Welcome to <dtml-var expr="GetName()">!</h3>
+
+  <!-- Main menu.  -->
+  <table border="0" 
+         cellpadding="4" 
+         cellspacing="4"
+         bgcolor="#f0f0f0">
+   <tbody>
+    <tr>
+     <td>
+      Create a new issue.
+      <dtml-var expr="MakeNewForm()">
+       <input type="submit" value="New"/>
+      </form>
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      Show an existing issue.
+      <dtml-var expr="MakeShowForm()">
+       Issue Id: <input type="text" size="8" name="iid"/>
+       <input type="submit" value="Show"/>
+      </form>
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      Edit an issue.
+      <dtml-var expr="MakeEditForm()">
+       Issue ID: <input type="text" size="8" name="iid"/>
+       <input type="submit" value="Edit"/>
+      </form>
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      Show all issues.
+      <dtml-var expr="MakeShowAllForm()">
+       <input type="submit" value="Show All"/>
+      </form>
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      Search for issues.
+      <dtml-var expr="MakeQueryForm()">
+       Query: <input type="text" size="40" name="query"/>
+       <input type="submit" value="Search"/>
+      </form>
+      See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
+      for instructions.
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
