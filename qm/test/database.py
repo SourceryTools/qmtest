@@ -538,16 +538,18 @@ class Database:
         For a given database, this method should always return the same
         value; callers are permitted to cache the value returned.
 
-        Derived classes may override this method.  The sequence
-        returned by the derived class need not be a superset of the
-        value returned by the default implementation."""
+        Derived classes may override this method.  The sequence returned
+        by the derived class need not be a superset of the value
+        returned by the default implementation (but probably should
+        be)."""
 
-        # Specify the '_classes' subdirectory, if it exists.
-        class_dir = os.path.join(self.GetPath(), "_classes")
-        if os.path.isdir(class_dir):
-            return [class_dir]
-        else:
-            return []
+        # Specify the configuration subdirectory.
+        config_dir = qm.test.base.get_db_configuration_directory(
+            self.GetPath())
+        # It should exist.
+        assert os.path.isdir(config_dir)
+        # That's where test and resources classes go.
+        return [config_dir]
 
 
     def GetTestClasses(self):

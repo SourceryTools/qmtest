@@ -1,5 +1,14 @@
 2001-10-19  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/base.py (_get_db_configuration_directory): Rename to...
+	(get_db_configuration_directory): ... this.
+	Update accordingly throughout.
+	* qm/test/database.py (Database.GetClassPaths): Rewrite.
+	* qm/test/xmldb.py (Database.GetClassPaths): Use base class
+	implementation. 
+
+2001-10-19  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/xmlutil.py (load_xml_file): Don't handle exceptions here.
 	* qm/web.py (WebRequestHandler.do_POST): Expand fields here.
 	(WebRequestHandler.__HandleXmlRpcRequest): Dump exception if

@@ -113,12 +113,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
 
     def GetClassPaths(self):
         lock = self.GetLock()
-        # Specify the '_classes' subdirectory, if it exists.
-        class_dir = os.path.join(self.GetPath(), "_classes")
-        if os.path.isdir(class_dir):
-            return [class_dir]
-        else:
-            return []
+        # Use the base class implementation.
+        return FileDatabase.GetClassPaths(self)
 
 
     def _GetTestFromPath(self, test_id, test_path):

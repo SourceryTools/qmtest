@@ -845,7 +845,7 @@ def get_database():
     return _database
 
 
-def _get_db_configuration_directory(db_path):
+def get_db_configuration_directory(db_path):
     """Return the path to the test database's configuration directory."""
     
     return os.path.join(db_path, "QMTest")
@@ -856,7 +856,7 @@ def _get_db_configuration_path(db_path):
 
     'db_path' -- The path to the test database."""
 
-    return os.path.join(_get_db_configuration_directory(db_path),
+    return os.path.join(get_db_configuration_directory(db_path),
                         "configuration")
 
 
@@ -867,7 +867,7 @@ def is_database(db_path):
     if not os.path.isdir(db_path):
         return 0
     # A test database contains a configuration subdirectory.
-    if not os.path.isdir(_get_db_configuration_directory(db_path)):
+    if not os.path.isdir(get_db_configuration_directory(db_path)):
         return 0
     # It probably is OK.
     return 1
@@ -922,7 +922,7 @@ def create_database(db_path, class_name):
     # Create an empty directory.
     os.mkdir(db_path)
     # Create the configuration directory.
-    os.mkdir(_get_db_configuration_directory(db_path))
+    os.mkdir(get_db_configuration_directory(db_path))
 
     # Now create an XML document for the configuration file.
     document = qm.xmlutil.create_dom_document(
