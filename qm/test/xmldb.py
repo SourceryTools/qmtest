@@ -590,7 +590,7 @@ class Database(base.Database, qm.common.MutexMixin):
             raise UnknownResourceClassError, class_name
         arguments = self.__GetArgumentsFromDomNode(resource_node,
                                                    resource_class)
-        properties = self.__GetPropertiesFromDomNode(test_node)
+        properties = self.__GetPropertiesFromDomNode(resource_node)
         # Construct a test wrapper around it.
         return base.Resource(resource_id, resource_class_name,
                              arguments, properties)

@@ -1,3 +1,8 @@
+2001-07-20  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/xmldb.py (Database.__ParseResourceDocument): Fix wrong
+	variabel name.
+
 2001-07-17  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py: Rename "action" to "resource" throughout.
