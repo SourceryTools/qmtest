@@ -277,8 +277,8 @@ class FileAttachmentStore(AttachmentStore):
 
     def GetDataFile(self, location):
 
-        if root is not None:
-            return os.path.join(root, location)
+        if self.__root is not None:
+            return os.path.join(self.__root, location)
         else:
             return location
 

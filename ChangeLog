@@ -1,3 +1,15 @@
+2003-07-21  Vladimir Prus <ghost@cs.msu.su>
+	    Mark Mitchell <mark@codesourcery.com>
+
+	* qm/attachment.py (FileAttachmentStore.GetDataFile): Fix typo.
+	* tests/regress/attachment1/attachment1: New file.
+	* tests/regress/attachment1/results.qmr: Likewise.
+	* tests/regress/attachment1/test.qmt: Likewise.
+	* tests/regress/attachment1/QMTest/.cvsignore: Likewise.
+	* tests/regress/attachment1/QMTest/attachment_test.py: Likewise.
+	* tests/regress/attachment1/QMTest/classes.qmc: Likewise.
+	* tests/regress/attachment1/QMTest/configuration: Likewise.
+
 2003-07-15  Vladimir Prus <ghost@cs.msu.su>
 	    Mark Mitchell <mark@codesourcery.com>
 
