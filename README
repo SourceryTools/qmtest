@@ -5,7 +5,16 @@
 
 1.  REQUIREMENTS
 
-    To run QM, you will need Python Python 2.2 (or greater).
+    To run QM, you will need Python Python 2.2 (or greater).  Visit
+
+      http://www.python.org
+
+    to obtain source and binary distributions of Python.
+
+    If you are using Windows, you must also install the Python Win32
+    extensions.  Visit:
+
+      http://starship.python.net/crew/mhammond/win32/Downloads.html
 
     You must use GNU Make to build QM.
 
@@ -16,12 +25,12 @@
     QM is licensed under the GNU General Public License.  See the file
     COPYING for the exact text of the license.
 
-    The zope-dtml module incorporated in QM is software provided by 
-    Digital Creations.  See:
+    The DocumentTemplate module is Copyright Zope Corporation and
+    Contributors.  See:
 
-      zope-dtml/ExtensionClass/COPYRIGHT.txt
+      qm/external/DocumentTemplate/LICENSE.txt
 
-    for Digital Creations' copyright notice.
+    for the exact text of that license.
 
 ------------------------------------------------------------------------
 

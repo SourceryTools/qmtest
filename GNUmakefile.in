@@ -212,7 +212,9 @@ distclean: clean
 # Run tests.
 .PHONY: check check-serial check-threads check-processes check-rsh
 
-check: check-serial check-threads check-processes check-rsh
+# The check-rsh target is not included here because it requires
+# networking support.
+check: check-serial check-threads check-processes
 
 check-serial: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS) \

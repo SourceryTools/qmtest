@@ -1,3 +1,10 @@
+2003-08-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (check): Remove dependency on check-rsh.
+
+	* README: Mention Win32 extensions and update reference to ZPL.
+	* qm/external/DocumentTemplate/LICENSE.txt: New file.
+	
 2003-08-28  Stefan Seefeld  <stefan.seefeld@orthosoft.ca>
 
 	* setup.py: Make documentation compliant with qmtest's standard.
