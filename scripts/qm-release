@@ -49,7 +49,7 @@ error() {
 
 usage() {
 cat <<EOF
-qm-release version [source] [rpm] [binary]
+qm-release version [source] [rpm] [binary] [exec]
 EOF
     exit 1
 }
@@ -68,8 +68,10 @@ build_qm() {
 
     # Remove any old source distribution.
     rm -rf qm-${QM_VERSION}
-    # Untar the source distribution.
-    tar xzf ${QM_SOURCE_TAR_GZ} || \
+    # Untar the source distribution.  Under Windows there seem
+    # to be cases where "tar xzf" will crash, but separating the
+    # decompression and untarring steps works reliably.
+    (gunzip -c ${QM_SOURCE_TAR_GZ} | tar xf -) || \
       error "Could not unpack source distribution"
     changedir qm-${QM_VERSION}
     # Create an installation directory.
@@ -151,25 +153,18 @@ build_binary() {
 
 build_exec() {
     build_qm --with-python=/cygdrive/c/Python21/Python.exe
-    # Fix the qmtest.bat to use the default prefix.
-    (sed -e "s|${QM_INSTALL_DIR}|c:\\\\Program Files\\\\QM|g" \
-      < ${QM_INSTALL_DIR}/bin/qmtest.bat \
-      > ${QM_INSTALL_DIR}/bin/qmtest.bat.new && 
-      mv ${QM_INSTALL_DIR}/bin/qmtest.bat.new \
-         ${QM_INSTALL_DIR}/bin/qmtest.bat) ||
-      error "Could not fix batch file"
     echo "Building ZIP file..."
     changedir ${QM_INSTALL_DIR}
     rm -f ${QM_BINARY_ZIP}
-    zip -q ${QM_BINARY_ZIP} . || \
+    zip -q ${QM_BINARY_ZIP} -r . || \
       error "Could not create zip file"
     changedir ${QM_RELEASE_DIR}
     rm -f ${QM_BINARY_EXE}
     # The makesfx.exe exit code is apparently non-zero even on 
     # success, so we do not check the result.
     "c:/Program Files/FreeExtractor/makesfx.exe" \
-      /zip=${QM_BINARY_ZIP} \
-      /sfx=${QM_BINARY_EXE} \
+      /zip="`cygpath -w ${QM_BINARY_ZIP}`" \
+      /sfx="`cygpath -w ${QM_BINARY_EXE}`" \
       /title="QM ${QM_VERSION}" \
       /website="http://www.codesourcery.com" \
       /intro="Thank you for installing QMTest!" \
