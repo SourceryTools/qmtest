@@ -68,28 +68,38 @@ class ShowPageInfo(web.PageInfo):
         if edit:
             # Find the directory path containing this suite.
             dir_id = qm.label.split(suite.GetId())[0]
+
             # Construct a list of all test IDs, relative to the suite,
             # that are not explicitly included in the suite.
-            excluded = database.GetTestIds(path=dir_id)
+            excluded_test_ids = database.GetTestIds(path=dir_id)
             for test_id in self.test_ids:
-                if test_id in excluded:
-                    excluded.remove(test_id)
-            self.excluded_test_ids = excluded
+                if test_id in excluded_test_ids:
+                    excluded_test_ids.remove(test_id)
+            # Make controls for adding or removing test IDs.
+            self.test_id_controls = qm.web.make_choose_control(
+                "test_ids",
+                "Included Tests",
+                self.test_ids,
+                "Available Tests",
+                excluded_test_ids)
+
             # Likewise for suite IDs.
-            excluded = database.GetSuiteIds(path=dir_id, implicit=1)
+            excluded_suite_ids = database.GetSuiteIds(path=dir_id, implicit=1)
             for suite_id in self.suite_ids:
-                if suite_id in excluded:
-                    excluded.remove(suite_id)
+                if suite_id in excluded_suite_ids:
+                    excluded_suite_ids.remove(suite_id)
             # Don't show the suite as a candidate for inclusion in
             # itself. 
             self_suite_id = qm.label.split(suite.GetId())[1]
-            if self_suite_id in excluded:
-                excluded.remove(self_suite_id)
-            self.excluded_suite_ids = excluded
-            # Construct the form-encoded lists of selected test and
-            # suite IDs.
-            self.encoded_test_ids = string.join(self.test_ids, ",")
-            self.encoded_suite_ids = string.join(self.suite_ids, ",")
+            if self_suite_id in excluded_suite_ids:
+                excluded_suite_ids.remove(self_suite_id)
+            # Make controls for adding or removing suite IDs.
+            self.suite_id_controls = qm.web.make_choose_control(
+                "suite_ids",
+                "Included Suites",
+                self.suite_ids,
+                "Available Suites",
+                excluded_suite_ids)
 
 
     def MakeDeleteScript(self):

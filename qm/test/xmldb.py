@@ -975,7 +975,12 @@ def scan_dir_for_suite_dirs(dir):
         entry_path = os.path.join(dir, entry)
         # Is it a subdirectory?
         if os.path.isdir(entry_path):
-            # Yes.  Add the directory itself.
+            # Yes.  If it's called 'CVS', though, skip it, so that we
+            # don't get confused by CVS-controlled test suite directory
+            # hierarchies.
+            if entry == "CVS":
+                continue
+            # Add the directory itself.
             # FIXME: Check if it's empty?
             results.append(entry)
             # Call ourselves recursively.

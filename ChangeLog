@@ -1,5 +1,14 @@
 2001-05-11  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/xmldb.py (scan_dir_for_suite_dirs): Skip directories
+	named CVS.
+	* qm/test/web/suite.py (ShowPageInfo.__init__): Construct controls
+	for tests and suites here.
+	* share/dtml/test/suite.dtml: Use test and suite controls from
+	page info.
+
+2001-05-11  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.common_javascript): Rename update_set to
 	update_from_select_list.  Add move_option and swap_option.
 	(__counter): Remove.
