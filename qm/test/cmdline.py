@@ -43,6 +43,7 @@ import qm
 import qm.cmdline
 import qm.platform
 from   qm.test.context import *
+from   qm.test.execution_thread import *
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
 import qm.xmlutil
@@ -719,21 +720,22 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         qm.common.shuffle(test_ids, generator=generator)
 
         # Run the tests.
+        t = ExecutionThread(database, test_ids, context, targets,
+                            result_streams)
         if self.HasCommandOption("profile"):
             # Profiling was requested.  Run in the profiler.
             profile_file = self.GetCommandOption("profile")
             p = profile.Profile()
             local_vars = locals()
-            p = p.runctx(
-                "run.TestRun(test_ids, context, "
-                "target_specs, result_streams).Run()",
-                globals(), local_vars)
+            p = p.runctx("t.start()", globals(), local_vars)
             results = local_vars["results"]
             p.dump_stats(profile_file)
         else:
-            run.TestRun(database, test_ids, context, targets,
-                        result_streams).Run()
+            t.start()
 
+        # Wait for the execution thread to finish.
+        t.join()
+        
         # Close the result file.
         if close_result_file:
             result_file.close()

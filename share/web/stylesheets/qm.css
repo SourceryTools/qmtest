@@ -85,7 +85,7 @@ span#button {
     background-color: black;
 }
 
-span.error {
+span.error, span.warning {
     color: c00000;
 }
 

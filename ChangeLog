@@ -1,3 +1,55 @@
+2001-12-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* standard.mk.in (PRINTTEX): Fix -- problem with TeX formatting.
+	* doc/qm.mod (dashdash): Remove FIXME comment.
+	* doc/manual/common-manual.xml: Update.
+	* doc/manual/text-manual.xml: Fix command-line reference.
+	Spell-check.
+	* doc/manual/test-tour.xml: Spell-check.
+	* qm/cmdline.py (CommandParser.GetOptionsHelp): Tweak help
+	string formatting.
+	* qm/platform_unix.py (SignalException): Derive from
+	RuntimeError.
+	* qm/web.py (DtmlPage.GenerateHtmlHeader): Allow pages to
+	insert additional headers.
+	(WebServer.Run): Handle exceptions.
+	(_handle_root): Fix typo.
+	* qm/test/base.py (create_database): Raise a RuntimeError,
+	not a ValueError, when something goes wrong.
+	* qm/test/cmdline.py (Command._ExecuteRun): Create an
+	ExecutionThread to run the tests.
+	* qm/test/execution_thread.py: New file.
+	* qm/test/run.py: Remove.
+	* qm/test/web/web.py (DefaultDtmlPage.__init__): Remove
+	menu logic.
+	(DefaultDtmlPage.GenerateStartBody): Likewise.
+	(DtmlPage): Rename to ...
+	(QMTestPage): ... this.
+	(QMTestPage.__init__): Include menu logic.
+	(QMTestPage.GetServer): New method.
+	(QMTestPage.GenerateStartBody): Likewise.
+	(AddPrerequisitePage): Adjust to use QMTestPage.
+	(AddResourcePage): Likewise.
+	(ContextPage): Likewise.
+	(DirPage): Likewise.
+	(ExpectationsPage): Likewise.
+	(LoadExpectedResultsPage): Likewise.
+	(LoadResultsPage): Likewise.
+	(NewItemPage): Likewise.
+	(NewSuitePage): Likewise.
+	(ResultPage): Likewise.
+	(ShowItemPage): Likewise.
+	(ShowSuitePage): Likewise.
+	(StorageResultStream.__init__): Create lock to guard
+	to __test_results and __resource_results.
+	(TestResultsPage): Adjust to use QMTestPage.
+	(QMTestServer): Pass server to page constructors.
+	(QMTestServer.HandleStopTests): New method.
+	* share/diagnostics/test.txt: Add execution terminated diagnostic.
+	* share/dtml/test/results.dtml: Indicate incomplete vs.
+	complete test results.
+	* share/web/stylesheets/qm.css (span.warning): New class.
+	
 2001-11-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/qm.mod (prompt): Reformat as >, not $.

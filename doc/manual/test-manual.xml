@@ -52,7 +52,7 @@
   <section id="sec-qmtest-concepts">
   <title>&qmtest; Concepts</title>
 
-  <para>This section the concepts that underly &qmtest;'s design.  By
+  <para>This section the concepts that underlie &qmtest;'s design.  By
   understanding these concepts, you will be able to better understand
   how &qmtest; works.  In addition, you will find it easier to extend
   &qmtest; to new application domains.</para>
@@ -81,7 +81,7 @@
    directory <filename>a</filename>.</para>
 
    <para>Every test is an instance of some test class.  The test class
-   dictates how the test is run, what consistutes success, and what
+   dictates how the test is run, what constitutes success, and what
    constitutes failure.  For example, the
    <classname>command.ExecTest</classname> class that comes with
    &qmtest; executes the target application and looks at its output.
@@ -148,7 +148,7 @@
   <section id="sec-context">
    <title>Context</title>
 
-   <para>When you createa a test, you choose arguments for the test.
+   <para>When you create a test, you choose arguments for the test.
    The test class uses this information to run the test.  However, the
    test class may sometimes need information that is not available
    when the test is created.  For example, if you are writing compiler
@@ -410,7 +410,7 @@
      <para>If &qmtest; is invoked to run tests in parallel or
      distributed across several <link
      linkend="def-target">targets</link>, the tests are distributed
-     among them as well.  &qmtest; does not gaurantee that a test's
+     among them as well.  &qmtest; does not guarantee that a test's
      prerequisites are run on the same target, though.  On each target,
      tests are assigned to the next available concurrent process or
      thread.</para>
@@ -510,7 +510,7 @@
   <title>Test Database Contents</title>
 
   <para>The default &qmtest; test database implementation stores the
-  database as a directory hierarcy containing XML files.  Each component
+  database as a directory hierarchy containing XML files.  Each component
   of a test, suite, or resource name is represented by a subdirectory.  A
   test, suite, or resource is represented by an XML file.  These files
   have file extensions <filename>.qmt</filename>,
@@ -532,378 +532,576 @@
  <section id="sec-test-command-line">
   <title>Invoking &qmtest;</title>
 
-  <para>The &qmtest-cmd; program understands these general options.
-  They can be used with any command, and should precede the command name
-  on the command line.</para>
+  <para>All &qmtest; functionality is available using the &qmtest-cmd; 
+  command.</para>
 
-  <para>All options are available in a "long form" prefixed with
-  "&dashdash;" (two hyphens).  Some options also may be specified in a
-  "short form" consisting of a single hyphen and a one-letter
-  abbreviation (listed below in parentheses).  Short-form options may be
-  combined in the manner typical for UNIX programs; for example,
-  <command>-abc</command> is equivalent to <command>-a -b
-  -c</command>.</para>
+  <section>
+   <title>&qmtest-cmd;</title>
 
-  <glosslist>
-   <glossentry>
-    <glossterm>
-     <option>&dashdash;help</option> (<option>-h</option>)
-    </glossterm>
-    <glossdef>
-     <para>Display help information, listing commands and general
-     options for the &qmtest-cmd; command.</para>
-    </glossdef>
-   </glossentry>
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd;</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <arg choice="plain">
+      <replaceable>command</replaceable>
+     </arg>
+     <arg choice="opt" rep="repeat">
+      <replaceable>command-option</replaceable>
+     </arg>
+     <arg choice="opt" rep="repeat">
+      <replaceable>argument</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
 
-   <glossentry>
-    <glossterm>
-     <option>&dashdash;verbose</option> (<option>-v</option>)
-    </glossterm>
-    <glossdef>
-     <para>Generate progress and status messages while executing.  This
-     option may be specified more than once; the more times it is
-     specified, the higher the verbose level, and the more messages are
-     printed.</para>
-    </glossdef>
-   </glossentry>
+   <section>
+    <title>Options</title>
 
-   <glossentry>
-    <glossterm>
-     <option>&dashdash;tdb</option> <replaceable>PATH</replaceable> 
-     (<option>-D</option>)
-    </glossterm>
-    <glossdef>
-     <para>Use the test database located at
-     <replaceable>PATH</replaceable>.  This flag overrides the value of
-     the environment variable <envar>QMTEST_DB_PATH</envar>.  If
-     neither this flag nor the environment variable is specified,
-     &qmtest; assumes that the current directory should be used as the
-     database.  See <xref linkend="sec-test-database"/>.</para>
-    </glossdef>
-   </glossentry>
+    <para>These options can be used with any &qmtest; command, and must
+    precede the command name on the command line.</para>
 
-  </glosslist>
+    <para>All options are available in a "long form" prefixed with
+    "&dashdash;" (two hyphens).  Some options also may be specified in
+    a "short form" consisting of a single hyphen and a one-letter
+    abbreviation (listed below in parentheses).  Short-form options may
+    be combined; for example, <command>-abc</command> is equivalent to
+    <command>-a -b -c</command>.</para>
 
-  <para>Additional options are available for specific commands; these
-  are presented with each command.  Options specific to a command must
-  follow the command on the command line.  Specify the
-  <option>&dashdash;help</option> (<option>-h</option>) option after the
-  command for a description of the command and a list of of available
-  options for that command.</para>
+    <variablelist>
+     <varlistentry>
+      <term><option>-D</option> <replaceable>path</replaceable></term>
+      <term>
+       <option>&dashdash;tdb</option> <replaceable>path</replaceable> 
+      </term>
+      <listitem>
+       <para>Use the test database located in the directory given by
+       <replaceable>path</replaceable>.  This flag overrides the value of
+       the environment variable <envar>QMTEST_DB_PATH</envar>.  If
+       neither this flag nor the environment variable is specified,
+       &qmtest; assumes that the current directory should be used as the
+       database.  See <xref linkend="sec-test-database"/>.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-h</option></term>
+      <term><option>&dashdash;help</option></term>
+      <listitem>
+       <para>Display help information, listing commands and general
+       options for the &qmtest-cmd; command.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-v</option></term>
+      <term><option>&dashdash;verbose</option></term>
+      <listitem>
+       <para>Generate progress and status messages while executing.  This
+       option may be specified more than once; the more times it is
+       specified, the higher the verbose level, and the more messages are
+       printed.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+
+    <para>Additional options are available for specific commands; these
+    are presented with each command.  Options specific to a command must
+    follow the command on the command line.  Specify the
+    <option>&dashdash;help</option> (<option>-h</option>) option after the
+    command for a description of the command and a list of of available
+    options for that command.</para>
+   </section>
+  </section>
 
   <section id="sec-testcmd-create-tdb">
-   <title>The <command>&qmtest-cmd; create-tdb</command> Command</title>
+   <title><command>&qmtest-cmd; create-tdb</command></title>
 
-   <para>The <command>&qmtest-cmd; create-tdb</command> command
-   creates a new, empty test database.  A test database consists of a
-   directory in which &qmtest; stores configuration files, tests, and
-   other data.  (Certain test database implementations may also store
-   data elsewhere, such as in an external relational database.)</para>
+   <section>
+    <title>Summary</title>
+    <para>Create a new test database.</para>
+   </section>
 
-   <para>When you create a new test database, you must specify the
-   path you wish to use by using the <option>&dashdash;tdb</option>
-   (<option>-D</option>) option or by setting the
-   <envar>QMTEST_DB_PATH</envar> environment variable.  The path you
-   specify for the new test database must not exist.</para>
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; create-tdb</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
 
-   <para>By default, &qmtest; creates a new test database that uses the
-   standard XML-based implementation.  (See <xref
-   linkend="sec-ref-writing-database-classes"></xref> for information
-   about writing a test database class.)</para>
+   <section>
+    <title>Description</title>
+    <para>The <command>&qmtest-cmd; create-tdb</command> command
+    creates a new, empty test database.  A test database is a
+    directory in which &qmtest; stores configuration files, tests, and
+    other data.  Certain test database classes may also store data
+    elsewhere, such as in an external relational database.</para>
 
-   <para>The <command>create-tdb</command> accepts these options:</para>
+    <para>The test database is created in the directory specified by
+    <option>&dashdash;tdb</option> (<option>-D</option>) option or by
+    setting the <envar>QMTEST_DB_PATH</envar> environment variable.
+    The path you specify for the new test database must not exist.
+    (If no database path is specified, &qmtest; assumes that the
+    current directory is the test database.  Since the current
+    directory already exists, &qmtest; will issue an error.
+    Therefore, when using the <command>create-tdb</command> command,
+    the database directory must be explicitly specified.</para>
 
-   <glosslist>
-    <glossentry> 
-     <glossterm>
-      <option>&dashdash;class</option> <replaceable>CLASS</replaceable>
-      (<option>-c</option>) 
-     </glossterm>
-     <glossdef>
-      <para>Use the test database class given by
-      <replaceable>CLASS</replaceable>.  Once you create a test
-      database, you may not change the test database implementation it
-      uses.  If you do not use this option, &qmtest; will use the 
-      default test database implementation, which uses an XML file
-      format to store tests.</para>
-     </glossdef>
-    </glossentry>
+    <para>By default, &qmtest; creates a new test database that uses the
+    standard XML-based implementation.  (See <xref
+    linkend="sec-ref-writing-database-classes"></xref> for information
+    about writing a test database class.)</para>
 
-   </glosslist>
+    <para>The <command>create-tdb</command> command accepts these
+    options:</para>
 
+    <variablelist>
+     <varlistentry> 
+      <term><option>-c</option> <replaceable>class</replaceable></term>
+      <term>
+       <option>&dashdash;class</option> <replaceable>class</replaceable>
+      </term>
+      <listitem>
+       <para>Use the test database class given by
+       <replaceable>class</replaceable>.  Once you create a test
+       database, you cannot change the test database implementation
+       it uses.  If you do not use this option, &qmtest; will use the
+       default test database implementation, which uses an XML file
+       format to store tests.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </section>
   </section> <!-- sec-testcmd-create-tdb -->
 
+  <section id="sec-testcmd-gui">
+   <title><command>&qmtest-cmd; gui</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>Start the graphical user interface.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; gui</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+
+     <para>The <command>&qmtest-cmd; gui</command> starts the
+     graphical user interface.  The graphical user interface is
+     accessed through a web browser.  You must have a web browser that
+     supports JavaScript to use the graphical interface.  &qmtest; has
+     been tested with recent versions of Internet Explorer and
+     Netscape Navigator.  Other web browsers may or may nor work with
+     &qmtest;.</para>
+
+     <para>The <command>gui</command> command accepts these
+     options:</para>
+
+     <variablelist>
+      <varlistentry>
+       <term><option>-A</option> <replaceable>address</replaceable></term>
+       <term>
+        <option>&dashdash;address</option> <replaceable>address</replaceable>
+       </term>
+       <listitem>
+        <para>Bind the server to the indicated internet
+         <replaceable>address</replaceable>, which should be a dotted
+         quad.  By default, the server binds itself to the address
+         <literal>127.0.0.1</literal>, which is the address of the local
+         machine.  If you specify another address, the server will
+         be accessible to users on other machines.  QMTest does not
+         perform any authentication of remote users, so you should
+         not use this option unless you have a firewall in place that
+         blocks all untrusted users.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term><option>-c</option> <replaceable>name=value</replaceable></term>
+       <term>
+        <option>&dashdash;context</option> 
+        <replaceable>name=value</replaceable>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term><option>-C</option> <replaceable>file</replaceable></term>
+       <term>
+        <option>&dashdash;load-context</option> <replaceable>file</replaceable>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term><option>-j</option> <replaceable>count</replaceable></term>
+       <term>
+        <option>&dashdash;concurrency</option> <replaceable>count</replaceable>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term>
+        <option>&dashdash;no-browser</option>
+       </term>
+       <listitem>
+        <para>Do not attempt to start a web browser when starting the
+        GUI.  &qmtest; will still print out the URL at which the server
+        can be accessed.  You can then connect to this URL
+        manually using the browser of your choice.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term>
+        <option>&dashdash;port <replaceable>port</replaceable></option>
+       </term>
+       <listitem>
+        <para>Specify the <replaceable>port</replaceable> on which the
+        &qmtest; GUI will listen for connections.  If this option is not
+        provided, &qmtest; will select an available port
+        automatically.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term><option>-T</option> <replaceable>file</replaceable></term>
+       <term>
+        <option>&dashdash;targets</option> <replaceable>file</replaceable>
+       </term>
+       <listitem>
+        <para>For details about this option, see the description of the 
+        <command>qmtest run</command> command.</para>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </section>
+   </section> <!-- sec-testcmd-gui -->
+
   <section id="sec-testcmd-run">
-   <title>The <command>&qmtest-cmd; run</command> Command</title>
+   <title><command>&qmtest-cmd; run</command></title>
 
-   <para>The <command>&qmtest-cmd; run</command> command runs tests.
-   Specify one or more test and/or test suite IDs on the command line,
-   or omit additional arguments to run all the tests in the test
-   database.  Tests listed more than once (directly or by inclusion in a
-   test suite) are run only once.  Tests may not be run in the order
-   listed.</para>
+   <section>
+    <title>Summary</title>
+    <para>Run tests or test suites.</para>
+   </section>
 
-   <para>The <command>run</command> command accepts these
-   options:</para>
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; run</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <group choice="opt" rep="repeat">
+      <arg choice="plain"><replaceable>test-name</replaceable></arg>
+      <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+     </group>
+    </cmdsynopsis>
+   </section>
 
-   <glosslist>
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;output</option> <replaceable>FILE</replaceable> 
-      (<option>-o</option>)
-     </glossterm>
-     <glossdef>
-      <para>Write full test results to <replaceable>FILE</replaceable>.
-      Specify "<literal>-</literal>" (a hyphen) to write results to
-      standard output.  If neither this option, nor the
-      <option>&dashdash;no-output</option> is specified, the results
-      are written to the file named <filename>results.qmr</filename>
-      in the current directory.</para>
-     </glossdef>
-    </glossentry>
+   <section>
+    <title>Description</title>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;no-output</option>
-     </glossterm>
-     <glossdef>
-      <para>Do not produce a test results file.</para>
-     </glossdef>
-    </glossentry>
+    <para>The <command>&qmtest-cmd; run</command> command runs tests
+    and displays the results.  If no test or suite names are
+    specified, &qmtest; runs all of the tests in the test database.
+    If test or suite names are specified, only those tests or suites
+    are run.  Tests listed more than once (directly or by inclusion in
+    a test suite) are run only once.</para>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;summary</option> <replaceable>FILE</replaceable> 
-      (<option>-s</option>)
-     </glossterm>
-     <glossdef>
-      <para>Write a summary of the test run to
-      <replaceable>FILE</replaceable>.  Specify "<literal>-</literal>"
-      (a hyphen) to write results to standard output (the default).  </para>
+    <para>The <command>run</command> command accepts these
+    options:</para>
 
-      <para>&qmtest; prints a summary of test results, including
-      statistics and the test IDs of tests that did not pass.  If
-      expected outcomes were specified, test IDs of tests that produced
-      unexpected outcomes.</para>
-     </glossdef>
-    </glossentry>
+    <variablelist>
+     <varlistentry id="opt-test-run-context">
+      <term>
+       <option>-c</option>
+       <replaceable>name</replaceable>=<replaceable>value</replaceable>
+      </term>
+      <term>
+       <option>&dashdash;context</option> 
+       <replaceable>name</replaceable>=<replaceable>value</replaceable>
+      </term>
+      <listitem>
+       <para>Add a property to the <link linkend="sec-the-context">test
+       execution context</link>.  The name of the property is
+       <replaceable>name</replaceable>, and its value is set to the string
+       <replaceable>value</replaceable>.</para>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;no-summary</option> (<option>-S</option>)
-     </glossterm>
-     <glossdef>
-      <para>Do not produce a summary of the test run.</para>
-     </glossdef>
-    </glossentry>
+       <para>This option may be specified multiple times.</para>
+      </listitem>
+     </varlistentry>
 
-    <glossentry id="opt-test-run-context">
-     <glossterm>
-      <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
-      (<option>-c</option>)
-     </glossterm>
-     <glossdef>
-      <para>Add a property to the <link linkend="sec-the-context">test
-      execution context</link>.  The name of the property is
-      <replaceable>NAME</replaceable>, and its value is set to the string
-      <replaceable>VALUE</replaceable>.</para>
+     <varlistentry id="opt-test-run-context-file">
+      <term><option>-C</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;load-context</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>Read properties for the <link linkend="sec-the-context">test
+       execution context</link> from the file
+       <replaceable>file</replaceable>.</para>
 
-      <para>This option may be specified multiple times.</para>
-     </glossdef>
-    </glossentry>
+       <para>The file should be a text file with one context property on
+       each line, in the format <replaceable>name=value</replaceable>.
+       Leading and trailing whitespace on each line are ignored.  Also,
+       blank lines and lines that begin with "#" (a hash mark) are
+       ignored as comments.</para>
 
-    <glossentry id="opt-test-run-context-file">
-     <glossterm>
-      <option>&dashdash;load-context</option> <replaceable>FILE</replaceable>
-      (<option>-C</option>)
-     </glossterm>
-     <glossdef>
-      <para>Read properties for the <link linkend="sec-the-context">test
-      execution context</link> from the file
-      <replaceable>FILE</replaceable>.</para>
+       <para>This option may be specified more than once, and used in
+       conjunction with the <option>&dashdash;context</option> option.</para>
+      </listitem>
+     </varlistentry>
 
-      <para>The file should be a text file with one context property on
-      each line, in the format <replaceable>NAME=VALUE</replaceable>.
-      Leading and trailing whitespace on each line are ignored.  Also,
-      blank lines and lines that begin with "#" (a hash mark) are
-      ignored as comments.</para>
+     <varlistentry>
+      <term><option>-f</option> <replaceable>format</replaceable></term>
+      <term>
+       <option>&dashdash;format</option> 
+       <replaceable>format</replaceable>
+      </term>
+      <listitem>
+       <para>Control the format used when displaying results.  The
+       format specified must be one of <literal>full</literal>,
+       <literal>brief</literal>, <literal>stats</literal>, or
+       <literal>none</literal>.  The <literal>brief</literal> format
+       is the default.  In the <literal>full</literal> format,
+       &qmtest; displays any annotations provided in test results.  In
+       the <literal>brief</literal> mode only the causes of failures
+       are shown; detailed annotations are not shown.  In the
+       <literal>stats</literal> format, no details about failing tests
+       are displayed; only statistics showing the number of passing
+       and failing tests are displayed.  In the
+       <literal>none</literal> mode, no results are displayed, but a
+       results file is still created, unless the
+       <option>&dashdash;no-output</option> option is also provided.</para>
+      </listitem>
+     </varlistentry>
 
-      <para>This option may be specified more than once, and used in
-      conjunction with the <option>&dashdash;context</option> option.</para>
-     </glossdef>
-    </glossentry>
+     <varlistentry>
+      <term><option>-j</option> <replaceable>count</replaceable></term>
+      <term>
+       <option>&dashdash;concurrency</option> <replaceable>count</replaceable>
+      </term>
+      <listitem>
+       <para>Run tests in multiple <replaceable>count</replaceable>
+       concurrent processes on the local computer.  On multiprocessor
+       machines, the processes may be scheduled to run in parallel on
+       different processors.  &qmtest; automatically collects results
+       from the processes and presents combines test results and summary.
+       By default, one process is used.</para>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
-      (<option>-j</option>)
-     </glossterm>
-     <glossdef>
-      <para>Run tests in multiple <replaceable>COUNT</replaceable>
-      concurrent processes on the local computer.  On multiprocessor
-      machines, the processes may be scheduled to run in parallel on
-      different processors.  &qmtest; automatically collects results
-      from the processes and presents combines test results and summary.
-      By default, one process is used.</para>
+       <para>This option may not be combined with the <link
+       linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+       (<option>-T</option>) option</link>.</para>
+      </listitem>
+     </varlistentry>
 
-      <para>This option may not be combined with the <link
-      linkend="opt-test-run-targets"><option>&dashdash;targets</option>
-      (<option>-T</option>) option</link>.</para>
-     </glossdef>
-    </glossentry>
+     <varlistentry>
+      <term>
+       <option>&dashdash;no-output</option>
+      </term>
+      <listitem>
+       <para>Do not produce a test results file.</para>
+      </listitem>
+     </varlistentry>
 
-    <glossentry id="opt-test-run-targets">
-     <glossterm>
-      <option>&dashdash;targets</option> 
-      <replaceable>FILE</replaceable> (<option>-T</option>)
-     </glossterm>
-     <glossdef>
-      <para>Use targets specified in target specification file
-      <replaceable>FILE</replaceable>.  See <xref
-      linkend="sec-target-files"/> for a description of the target file
-      syntax.</para>
-     </glossdef>
-    </glossentry>
+     <varlistentry>
+      <term><option>-o</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;output</option> <replaceable>file</replaceable> 
+      </term>
+      <listitem>
+       <para>Write full test results to <replaceable>file</replaceable>.
+       Specify "<literal>-</literal>" (a hyphen) to write results to
+       standard output.  If neither this option, nor the
+       <option>&dashdash;no-output</option> is specified, the results
+       are written to the file named <filename>results.qmr</filename>
+       in the current directory.</para>
+      </listitem>
+     </varlistentry>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;seed</option> <replaceable>INTEGER</replaceable>
-     </glossterm>
-     <glossdef>
-      <para>For each test run, &qmtest; randomizes the order in which
-      tests are run, subject to the constraints described in <xref
-      linkend="sec-ordering-and-dependencies"/>.  The random number
-      generator is seeded using the system time.  This maximizes the
-      chance of detecting unanticipated dependencies among tests across
-      multiple test runs.</para>
+     <varlistentry>
+      <term><option>-O</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;option</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>Treat <replaceable>file</replaceable> as a set of
+       expected outcomes.  The <replaceable>file</replaceable> must
+       have be a results file created either by <command>&qmtest-cmd;
+       run</command>, by saving results in graphical user interface,
+       or by saving expectations in the graphical user interface.
+       &qmtest; will expect the results of the current test run to
+       match those specified in the <replaceable>file</replaceable>
+       and will highlight differences from those results.</para>
+      </listitem>
+     </varlistentry> 
 
-      <para>For debugging purposes, it is sometimes necessary to obtain
-      a reproducable sequence of tests.  Use the
-      <option>&dashdash;seed</option> option to specify the seed for the
-      random number generator.</para>
+     <varlistentry>
+      <term><option>-s</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;summary</option> <replaceable>file</replaceable> 
+      </term>
+      <listitem>
+       <para>Write a summary of the test run to
+       <replaceable>file</replaceable>.  Specify "<literal>-</literal>"
+       (a hyphen) to write results to standard output (the
+       default).</para>
 
-      <para>Note that even with the same random number seed, if tests
-      are run on targets with a concurrency greater than one, scheduling
-      uncertainty may still produce variation in the order in which
-      tests are run.</para>
-     </glossdef>
-    </glossentry>
+       <para>&qmtest; prints a summary of test results, including
+       statistics and the names of tests that did not pass.  If
+       expected outcomes were specified, the the names of tests that
+       had unexpected results are printed, instead of the names of
+       tests that did not pass.</para>
+      </listitem>
+     </varlistentry>
 
-   </glosslist>
-   
+     <varlistentry>
+      <term><option>-S</option></term>
+      <term><option>&dashdash;no-summary</option></term>
+      <listitem> 
+       <para>Do not produce a summary of the test run.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;seed</option> <replaceable>integer</replaceable>
+      </term>
+      <listitem>
+       <para>For each test run, &qmtest; randomizes the order in which
+       tests are run, subject to the constraints described in <xref
+       linkend="sec-ordering-and-dependencies"/>.  The random number
+       generator is seeded using the system time.  This maximizes the
+       chance of detecting unanticipated dependencies among tests across
+       multiple test runs.</para>
+
+       <para>For debugging purposes, it is sometimes necessary to obtain
+       a reproducible sequence of tests.  Use the
+       <option>&dashdash;seed</option> option to specify the seed for the
+       random number generator.</para>
+
+       <para>Note that even with the same random number seed, if tests
+       are run on targets with a concurrency greater than one, scheduling
+       uncertainty may still produce variation in the order in which
+       tests are run.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry id="opt-test-run-targets">
+      <term><option>-T</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;targets</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>Use targets specified in target specification file
+       <replaceable>file</replaceable>.  See <xref
+       linkend="sec-target-files"/> for a description of the target file
+       syntax.</para>
+      </listitem>
+     </varlistentry>
+
+    </variablelist>
+   </section>
   </section> <!-- sec-testcmd-run -->
 
-  <section id="sec-testcmd-gui">
-   <title>The <command>&qmtest-cmd; gui</command> Command</title>
+  <section id="sec-testcmd-summarize">
+   <title><command>&qmtest-cmd; summarize</command></title>
 
-   <para>The <command>&qmtest-cmd; gui</command> command starts QMTest's
-   web-based graphical user interface.</para>
+   <section>
+    <title>Summary</title>
+    <para>The <command>&qmtest-cmd; summarize</command> displays
+    information stored in a results file.</para>
+   </section>
 
-   <para>The <command>gui</command> command accepts these
-   options:</para>
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; summarize</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <group choice="opt" rep="repeat">
+      <arg choice="plain"><replaceable>test-name</replaceable></arg>
+      <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+     </group>
+    </cmdsynopsis>
+   </section>
 
-   <glosslist>
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;address</option> <replaceable>ADDRESS</replaceable>
-      (<option>-A</option>)
-     </glossterm>
-     <glossdef>
-      <para>Bind the server to the indicated internet
-       <replaceable>ADDRESS</replaceable>, which should be a dotted
-       quad.  By default, the server binds itself to the address
-       <literal>127.0.0.1</literal>, which is the address of the local
-       machine.  If you specify another address, the server will
-       be accessible to users on other machines.  QMTest does not
-       perform any authentication of remote users, so you should
-       not use this option unless you have a firewall in place that
-       blocks all untrusted users.</para>
-     </glossdef>
-    </glossentry>
-       
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
-      (<option>-j</option>)
-     </glossterm>
-     <glossdef>
-      <para>For details about this option, see the description of the 
-      <command>qmtest run</command> command.</para>
-     </glossdef>
-    </glossentry>
+   <section>
+    <title>Description</title>
+    <para>The <command>&qmtest-cmd; summarize</command> extracts
+    information stored in a results file and displays this information
+    on the console.  The information is formatted just as if the tests
+    had just been run, but &qmtest; does not actually run the
+    tests.</para>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
-      (<option>-c</option>)
-     </glossterm>
-     <glossdef>
-      <para>For details about this option, see the description of the 
-      <command>qmtest run</command> command.</para>
-     </glossdef>
-    </glossentry>
+    <para>The <command>summarize</command> command accepts the
+    following options:</para>
 
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;load-context</option> <replaceable>FILE</replaceable>
-      (<option>-C</option>)
-     </glossterm>
-     <glossdef>
-      <para>For details about this option, see the description of the 
-      <command>qmtest run</command> command.</para>
-     </glossdef>
-    </glossentry>
-
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;no-browser</option>
-     </glossterm>
-     <glossdef>
-      <para>Do not attempt to start a web browser when starting the
-      GUI.  &qmtest; will still print out the URL at which the server
-      can be accessed.  You can then connect to this URL
-      manually using the browser of your choice.</para>
-     </glossdef>
-    </glossentry>
-
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;port <replaceable>PORT</replaceable></option>
-     </glossterm>
-     <glossdef>
-      <para>Specify the <replaceable>PORT</replaceable> on which the
-      &qmtest; GUI will listen for connections.  If this option is not
-      provided, &qmtest; will select an available port
-      automatically.</para>
-     </glossdef>
-    </glossentry>
-
-    <glossentry>
-     <glossterm>
-      <option>&dashdash;targets</option> 
-      <replaceable>FILE</replaceable> (<option>-T</option>)
-     </glossterm>
-     <glossdef>
-      <para>For details about this option, see the description of the 
-      <command>qmtest run</command> command.</para>
-     </glossdef>
-    </glossentry>
-
-   </glosslist>
-
-  </section> <!-- sec-testcmd-gui -->
+    <variablelist>
+     <varlistentry>
+      <term><option>-f</option> <replaceable>format</replaceable></term>
+      <term>
+       <option>&dashdash;format</option> 
+       <replaceable>format</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry>
+  
+     <varlistentry>
+      <term><option>-O</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;option</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry> 
+    </variablelist>
+   </section>
+  </section> <!-- sec-testcmd-summarize -->
 
   <section id="sec-env-vars">
   <title>Environment Variables</title>
 
   <para>&qmtest; recognizes the following environment variables:</para>
 
-  <glosslist>
-   <glossentry>
-    <glossterm>
+  <variablelist>
+   <varlistentry>
+    <term>
      <envar>QM_PYTHON</envar>
-    </glossterm>
-    <glossdef>
+    </term>
+    <listitem>
      <para>If this environment variable is set, &qmtest; uses it as as
      the path to the Python interpreter.  If this environment variable
      is not set, &qmtest; looks for a file named
@@ -912,37 +1110,37 @@
      &qmtest; searches for <filename>python</filename> in the
      directories listed in the <envar>PATH</envar> environment
      variable.</para>
-    </glossdef>
-   </glossentry>
+    </listitem>
+   </varlistentry>
 
-   <glossentry>
-    <glossterm>
+   <varlistentry>
+    <term>
      <envar>QMTEST_CLASS_PATH</envar>
-    </glossterm>
-    <glossdef>
+    </term>
+    <listitem>
      <para>If this environment variable is set, it should contain a
      list of directories, in the same format as used for the system's
      <envar>PATH</envar> environment variable.  These directories
      are searched (before the directories that &qmtest; searches by
      default) when looking for extension classes such as test classes
      and database classes.</para>
-    </glossdef>
-   </glossentry>
+    </listitem>
+   </varlistentry>
 
-   <glossentry>
-    <glossterm>
+   <varlistentry>
+    <term>
      <envar>QMTEST_DB_PATH</envar>
-    </glossterm>
-    <glossdef>
+    </term>
+    <listitem>
      <para>If this environment variable is set, its value is used as
      the location of the test database, unless the
      <option>&dashdash;tdb</option> (<option>-D</option>) option is
      used.  If this environment variable is not set, and the
      <option>&dashdash;tdb</option> option is not used, the current
      directory is used as the test database.</para>
-    </glossdef>
-   </glossentry>
-  </glosslist>
+    </listitem>
+   </varlistentry>
+  </variablelist>
     
   </section> <!-- sec-env-vars -->
   
@@ -1037,7 +1235,7 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Expected Standard Ouptut</property>
+      <glossterm><property>Expected Standard Output</property>
       (text field)</glossterm>
       <glossdef>
        <para>The text or data which the program is expected to produce
@@ -1099,7 +1297,7 @@
       <glossdef>
        <para>The command to run.  The command is delivered verbatim to
        the shell.  The shell interprets the command according to its own
-       quoting rules andd syntax.</para>
+       quoting rules and syntax.</para>
       </glossdef>
      </glossentry>
     </glosslist>
@@ -1175,9 +1373,9 @@
      the module name and the class name.</para>
 
      <para>For example,
-     <classname>qm.test.run.SubprocessTarget</classname> is the name of
-     a target class, provided by &qmtest;, which runs tests in multiple
-     subprocesses on the local computer.</para>
+     <classname>thread_target.ThreadTarget</classname> is the name of
+     a target class, provided by &qmtest;, which runs tests in
+     multiple threads on the local computer.</para>
 
      <para>&qmtest; includes several target class implementations.  See
      <xref linkend="sec-target-classes"/> for details.</para>
@@ -1247,13 +1445,13 @@
 <targets>
  <target>
   <name>local</name>
-  <class>qm.test.run.SubprocessTarget</class>
+  <class>thread_target.ThreadTarget</class>
   <group>i386-pc-linux-gnu</group>
   <concurrency>1</concurrency>
  </target>
  <target>
   <name>remote</name>
-  <class>qm.test.run.RemoteShellTarget</class>
+  <class>rsh_target.RSHTarget</class>
   <group>sparc-sun-solaris2.5.1</group>
   <concurrency>2</concurrency>
   <property name="host">sunshine</property>
@@ -1279,12 +1477,12 @@
    <para>&qmtest; includes these target class implementations.</para>
 
    <section id="sec-subprocess-target">
-    <title>Local Subprocess Target</title>
+    <title>Thread Target</title>
 
-    <para>The <classname>qm.test.run.SubprocessTarget</classname> target
-    class runs tests in one or more subprocesses on the local computer
+    <para>The <classname>thread_target.ThreadTarget</classname> target
+    class runs tests in one or more threads on the local computer
     (the computer on which the &qmtest-cmd; command is invoked).  The
-    number of subprocesses is the degree of concurrency specified for
+    number of threads is the degree of concurrency specified for
     the target.</para>
 
    </section> <!-- sec-subprocess-target -->
@@ -1292,7 +1490,7 @@
    <section id="sec-remote-shell-target">
     <title>Remote Shell Target</title>
 
-    <para>The <classname>qm.test.run.RemoteShellTarget</classname>
+    <para>The <classname>rsh_target.RSHTarget</classname>
     target class runs tests on a remote computer via a remote shell
     invocation (<command>rsh</command>, <command>ssh</command>, or
     similar).  This target uses a remote shell to invoke a program
@@ -1300,7 +1498,7 @@
     remote program accepts test commands and responds with results from
     running these tests.</para>
 
-    <para>To use <classname>RemoteShellTarget</classname>, the remote
+    <para>To use <classname>RSHTarget</classname>, the remote
     computer must have &qmtest; installed, and must contain an identical
     copy of the test database.  &qmtest; does not transfer entire tests
     over the remote shell connection; instead, it relies on the remote
@@ -1319,7 +1517,7 @@
     processes used on the remote host is one (the controlling process)
     plus the concurrency value.</para>
 
-    <para>The <classname>RemoteShellTarget</classname> target class
+    <para>The <classname>RSHTarget</classname> target class
     takes its configuration from the following target properties:</para>
 
     <itemizedlist>
@@ -1400,7 +1598,7 @@
 
     <para>The test class must include a <varname>arguments</varname>
     attribute, indicating the types of the test class's parameters.  The
-    <varname>arguments</varname> attribute's value should be a sequence
+    <varname>arguments</varname> attributes value should be a sequence
     consisting of field objects.  A field object is an instance of a
     subclass of <classname>qm.fields.Field</classname>.  The names of
     the arguments (specified by the "name" attribute of the field object)
@@ -1439,7 +1637,7 @@
 
     <para>The <function>Run</function> function takes two arguments:
     the context and the result.  The context object satisfies the
-    interface of the <classname>qm.test.base.Context</classname>
+    interface of the <classname>qm.test.context.Context</classname>
     Python class (though it may in actuality be an instance of a
     different Python class).</para>
 
@@ -1532,7 +1730,7 @@
    possible.</para>
 
    <para>The setup function may add additional properties to the
-   context.  These properties will be visibile only to the
+   context.  These properties will be visible only to the
    <function>CleanUp</function> function called for the same resource,
    and to tests that require this resource.  To insert a context
    property, use Python's map assignment syntax.</para>
@@ -1636,10 +1834,10 @@
   server.</para>
 
   <para>A test database class is a Python class that is derived from
-  <classname>qm.test.base.Database</classname>.  You must define
+  <classname>qm.test.database.Database</classname>.  You must define
   methods that handle retrieving a test from the database, writing a
   test to the database, and other related tasks.  Read the code for
-  <classname>qm.test.base.Database</classname> to see what methods
+  <classname>qm.test.database.Database</classname> to see what methods
   need to be overridden.
   </para>
   

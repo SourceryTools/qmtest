@@ -18,7 +18,7 @@
 <chapter id="chap-test-tour">
  <title>Getting Started with &qmtest;</title>
  
-  <para>QMTest is an ogeneral-purpose, cross-platform software testing
+  <para>QMTest is an general-purpose, cross-platform software testing
   tool.  QMTest can be used to test compilers, databases, graphical
   user interfaces, or embedded systems.  QMTest provides a convenient
   graphical user interface for creating, managing, and executing
@@ -76,7 +76,7 @@
     </screen>
    In order to avoid having to retype these commands every time you
    want to use &qmtest;, you can set up your system so that these
-   commmands are executed automatically when you log in.  Consult your
+   commands are executed automatically when you log in.  Consult your
    system's manuals to find out how to do this.
    </para>
  
@@ -125,12 +125,16 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <title>Running Tests</title>
 
    <para>To run all the tests, choose <guibutton>All Tests</guibutton>
-   from the <guilabel>Run</guilabel> menu.  After a moment, &qmtest;
-   will display the test results for the three tests in the database.
-   The upper part of the screen gives a statistical overview of the
-   test results.  Of the three tests, two passed.  However, one test
-   failed.  You can use this statistical information to get a quick
-   overview of your application's correctness.</para>
+   from the <guilabel>Run</guilabel> menu.  &qmtest; will immediately
+   display the test results page.  As the tests run, this page will be
+   automatically updated.  (If you are impatient, you can manually
+   reload the page in your browser to update the page more
+   frequently.)  After a few moments, &qmtest; will display the test
+   results for the three tests in the database.  The upper part of the
+   screen gives a statistical overview of the test results.  Of the
+   three tests, two passed.  However, one test failed.  You can use
+   this statistical information to get a quick overview of your
+   application's correctness.</para>
 
    <para>In addition to showing you how many tests passed and how
    many failed, &qmtest; shows you whether how many tests had
@@ -206,18 +210,18 @@ QMTest running at http://127.0.0.1:1158/test/dir
    expression evaluates to true.</para>
 
    <para>For more details about the test class, you can click on the
-   <guilabel>Help</guilabel> link to the right of the desription.
+   <guilabel>Help</guilabel> link to the right of the description.
    &qmtest; will pop up a window that describes the test in more
    detail.  In summary, a <classname>python.ExecTest</classname>
    executes some setup code.  Then, a Python expression is evaluated.
-   If the expression evalutes to true, the test passes; otherwise, it
+   If the expression evaluates to true, the test passes; otherwise, it
    fails.</para>
 
    <para>The set up code and the expression are the
    <firstterm>arguments</firstterm> to the test class.  Every test
    class takes arguments; the arguments are what differentiate one
    instance of a test class from another.  &qmtest; displays the
-   argumenst for the <filename>exec1</filename> test in the GUI.  In
+   arguments for the <filename>exec1</filename> test in the GUI.  In
    this case, the sequence of statements is simply the single
    statement <literal>x = 2</literal>, which assigns
    <literal>2</literal> to the variable <varname>x</varname>.  The
@@ -240,7 +244,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <guilabel>Edit</guilabel> menu.  &qmtest; will display a form that
    allows you to change the arguments to the test.</para>
 
-   <para>Change the second argument, labelled "Python Expression," to
+   <para>Change the second argument, labeled "Python Expression," to
    <literal>x + x == 4</literal>.  Then click on the
    <guibutton>OK</guibutton> button at the bottom of the page to save
    your changes.  Choose <guibutton>This Test</guibutton> from the
@@ -344,7 +348,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
    the path to the test database, or by setting the environment
    variable <envar>QMTEST_DB_PATH</envar> to the test database
    path.  If you do not specify a test database, &qmtest; assumes that
-   you want to use the current directoy as the test database.</para>
+   you want to use the current directory as the test database.</para>
 
    <para>If you're using the Bourne shell under UNIX, you can use
    these commands To set the <envar>QMTEST_DB_PATH</envar> environment
@@ -407,7 +411,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
   </section> <!-- sec-testtut-cmdline -->
 
   <section id="sec-testtut-expected-outcomes">
-   <title>Expectatations on the Command Line</title>
+   <title>Expectations on the Command Line</title>
 
    <para>When you run &qmtest; on the command line, it automatically
    creates a results file called <filename>results.qmr</filename>.
@@ -468,7 +472,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
    results file name is <filename>results.qmr</filename> and is placed
    in the directory where you ran &qmtest;.</para>
   
-   <para>To exaine the results file, use the
+   <para>To examine the results file, use the
    <command>summarize</command> command, like this:
  
    <screen>

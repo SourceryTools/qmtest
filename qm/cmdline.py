@@ -274,8 +274,8 @@ class CommandParser:
         arguments and commands."""
 
         help_string = "Usage: %s " % self.__name
-        help_string = help_string + "[ OPTIONS ] COMMAND " \
-                      "[ COMMAND-OPTIONS ] [ ARGUMENTS ]\n\n"
+        help_string = help_string + "[ OPTION... ] COMMAND " \
+                      "[ COMMAND-OPTION... ] [ ARGUMENT... ]\n\n"
         help_string = help_string + "Options:\n"
         help_string = help_string + self.GetOptionsHelp(self.__options)
         help_string = help_string + "\nCommands:\n"

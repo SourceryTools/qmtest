@@ -18,8 +18,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xhtmlns="http://www.w3.org/1999/xhtml">
- <dtml-var expr="GenerateHtmlHeader('Test Run Results')">
+ <dtml-if expr="is_finished">
+  <dtml-var expr="GenerateHtmlHeader('Test Results')">
+ <dtml-else>
+  <dtml-var expr="GenerateHtmlHeader('Incomplete Test Results',
+                  '<meta http-equiv=\x22refresh\x22 content=\04210\x22 />')">
+ </dtml-if>
  <dtml-var expr="GenerateStartBody()">
+
+ <dtml-unless expr="is_finished">
+ <p><span class="warning">All tests have not yet been run.  These
+ results will be updated every few seconds.</span></p>
+ </dtml-unless>
 
  <h3>Statistics</h3>
 
@@ -57,9 +67,12 @@
     <td><span class="outcome">Total</span></td>
     <td align="right"><dtml-var total></td>
     <td align="right">100</td>
-    <td align="right"><dtml-var total_unexp></td>
-    <td align="right">
-     <dtml-if total>
+    <td align="right"
+        <dtml-if expr="total_unexp">class="unexpected"</dtml-if>
+        ><dtml-var expr="total_unexp"></td>
+    <td align="right"        
+        <dtml-if expr="total_unexp">class="unexpected"</dtml-if> >
+     <dtml-if total>           
        <dtml-var expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
      <dtml-else>
       &nbsp;</td>
