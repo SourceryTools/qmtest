@@ -1,3 +1,7 @@
+2003-08-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* scripts/qm-release: Add support for snapshot releases.
+
 2003-08-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (split_results_by_expected_outcome): Remove.

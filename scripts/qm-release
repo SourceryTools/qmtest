@@ -31,7 +31,7 @@ error() {
 
 usage() {
 cat <<EOF
-qm-release version [-u] [source] [rpm] [binary] [exec] [tag]
+qm-release [-v version] [-u] [source] [rpm] [binary] [exec] [tag]
 EOF
     exit 1
 }
@@ -43,6 +43,24 @@ changedir() {
 	error "Could not change directory to $1"
 }
 
+# Determine the current version of QM by checking out the mainline
+# version file.  Set QM_VERSION, QM_MAJOR_VER, QM_MINOR_VER, and
+# QM_RELEASE_VER accordingly.
+
+get_qm_version() {
+    echo "Determining QM version..."
+
+    # Remove any old source distribution.
+    rm -rf qm-${DATE}
+    # Check out the source distribution.
+    ${CVS} co -d qm-${DATE} qm/version || \
+	error "Could not check out version file"
+    . qm-${DATE}/version || \
+	error "Could not read version file"
+    # Clean up.
+    rm -rf qm-${DATE}
+}
+
 # Tag the sources.
 
 tag_qm() {
@@ -51,8 +69,7 @@ tag_qm() {
     # Remove any old source distribution.
     rm -rf qm-${QM_VERSION}
     # Check out the source distribution.
-    ${CVS} co -d qm-${QM_VERSION} \
-      -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
+    ${CVS} co -d qm-${QM_VERSION} -r ${BRANCH} qm || \
       error "Could not check out QM"
     changedir qm-${QM_VERSION}
     # Create the version file.
@@ -277,11 +294,16 @@ QM_BINARY_EXE=
 # The RPM distribution.
 QM_RPM=
 
+# True if we are building a development snapshot, rather than a release.
+SNAPSHOT=1
+
 # Options to use with tar when creating an archive.
 TAR_OPTS="--owner=root --group=root --mode=u+w,go-w,a+rX,a-st"
 
 # The CVS binary.
 CVS="cvs -f -z9 -Q"
+# The QMTest branch to use.
+BRANCH=HEAD
 
 # The FTP server.
 FTP_SERVER="ftp.codesourcery.com"
@@ -304,28 +326,39 @@ UPLOAD=0
 umask 002
 
 # Parse options.
-while getopts "u" ARG; do
+while getopts "uv:" ARG; do
     case $ARG in
-    u)  UPLOAD=1;;
-    \?) usage;;
+    u) 
+	UPLOAD=1
+	;;
+    v)  
+	QM_VERSION=$OPTARG
+	# Compute the components of the version number.
+	QM_MAJOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $1; }'`
+	QM_MINOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $2; }'`
+	QM_RELEASE_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $3; }'`
+	if test -z "$QM_RELEASE_VER"; then
+	    QM_RELEASE_VER=0
+	fi
+	# Use the release branch.
+	BRANCH="release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch"
+	# Because a version was explicitly specified, we are not building 
+	# a snapshot. 
+	SNAPSHOT=0
+	;;
+    \?) 
+        usage
+	;;
     esac
 done
 shift `expr ${OPTIND} - 1`
 
-# Parse the version number.
-if [ $# -eq 0 ]; then
-  usage
-fi
-
-QM_VERSION=$1
-shift
-
-# Compute the components of the version number.
-QM_MAJOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $1; }'`
-QM_MINOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $2; }'`
-QM_RELEASE_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $3; }'`
-if test -z "$QM_RELEASE_VER"; then
-    QM_RELEASE_VER=0
+# Set up a snapshot.
+if [ $SNAPSHOT -ne 0 ]; then
+    DATE=`date +%Y%m%d`
+    get_qm_version
+    # Add the date to the version name.
+    QM_VERSION="${QM_VERSION}-${DATE}"
 fi
 
 QM_RELEASE_DIR=`pwd`
