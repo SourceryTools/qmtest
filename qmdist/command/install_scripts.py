@@ -49,14 +49,20 @@ class install_scripts(base.install_scripts):
             i = self.distribution.get_command_obj('install')
             prefix = i.root or i.prefix
             rel_prefix = get_relative_path(self.install_dir, prefix)
-            assignment = 'rel_prefix = "%s"' % rel_prefix
+            assignment = 'rel_prefix = ' + repr(rel_prefix)
+	    # Because re.sub processes backslash escapes in the
+	    # replacement string, we must double up any backslashes.
+	    assignment = assignment.replace("\\", "\\\\")
             qmtest_script = re.sub("rel_prefix = .*", assignment,
                                    qmtest_script)
             # Encode the relative path from the prefix to the library
             # directory.
             il = self.distribution.get_command_obj('install_lib')
             rel_libdir = get_relative_path(prefix, il.install_dir)
-            assignment = 'rel_libdir = "%s"' % rel_libdir
+            assignment = 'rel_libdir = ' + repr(rel_libdir)
+	    # Because re.sub processes backslash escapes in the
+	    # replacement string, we must double up any backslashes.
+	    assignment = assignment.replace("\\", "\\\\")
             qmtest_script = re.sub("rel_libdir = .*", assignment,
                                    qmtest_script)
 

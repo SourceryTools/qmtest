@@ -1,4 +1,9 @@
-2004-01-14  Nathaniel Smith  <njs@codesourcery.com>
+2004-03-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qmdist/command/install_scripts.py (install_scripts.run): Handle
+	pathnames that contain backslashes correctly.
+
+2004-03-02  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/dg_test.py (DGTest._RunDGTest): Fix formatting
 	of paths to match DejaGNU.
