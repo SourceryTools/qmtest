@@ -1,5 +1,8 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in: Remove references to Gadfly.
+	* configure: Regenerated.
+
 	* scripts/qm-release: New file.
 
 	* instally.py (packages): Remove gadfly.

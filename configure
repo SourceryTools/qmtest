@@ -1454,5 +1454,3 @@ rm -fr confdefs* $ac_clean_files
 test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 
 
-
-(cd gadfly; $PYTHON gfinstall.py)
