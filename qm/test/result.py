@@ -264,7 +264,7 @@ class Result:
             property_element = document.createElement("property")
             # The property name is an attribute.
             property_element.setAttribute("name", str(key))
-            if type(value) == types.StringType:
+            if type(value) in qm.common.string_types:
                 # The property value is contained in a text mode.
                 node = document.createTextNode(str(value))
                 property_element.appendChild(node)
@@ -282,28 +282,28 @@ class Result:
     # annotations.
     
     def __getitem__(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations[key]
 
 
     def __setitem__(self, key, value):
-        assert type(key) == types.StringType
-        assert type(value) == types.StringType
+        assert type(key) in qm.common.string_types
+        assert type(value) in qm.common.string_types
         self.__annotations[key] = value
 
 
     def __delitem__(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         del self.__annotations[key]
 
 
     def get(self, key, default=None):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations.get(key, default)
 
 
     def has_key(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations.has_key(key)
 
 

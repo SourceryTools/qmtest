@@ -144,7 +144,7 @@ class Context:
 
         raises -- 'RuntimeError' if 'key' is not valid."""
 
-        if not isinstance(key, types.StringType):
+        if type(key) not in qm.common.string_types:
             raise ValueError, "context key must be a string"
         if not re.match("[-A-Za-z0-9_.]+", key):
             raise ValueError, \

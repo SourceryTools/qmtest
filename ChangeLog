@@ -1,5 +1,10 @@
 2002-03-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/context.py: Permit Unicode strings throughout.
+	* qm/test/result.py: Likewise.
+
+2002-03-10  Mark Mitchell  <mark@codesourcery.com>
+
 	* qm/test/doc/tour.xml: Update tutorial instructions to reflect
 	changes in QMTest 1.1.2.
 	* qm/test/share/dtml/set-expectations.dtml: Clarify form.
