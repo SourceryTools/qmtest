@@ -136,13 +136,14 @@ class TextResultStream(FileResultStream):
             # Remember tests with unexpected results so that we can
             # display them at the end of the run.
             test_id = result.GetId()
-            expected_outcome = self.expected_outcomes.get(result.GetId(),
-                                                          Result.PASS)
-            if outcome != expected_outcome:
+            expected_outcome \
+                = self.expected_outcomes.get(result.GetId(), Result.PASS)
+            if self.format != "stats" and outcome != expected_outcome:
                 self.__unexpected_outcome_counts[outcome] += 1
                 self.__unexpected_test_results.append(result)
         else:
-            if result.GetOutcome() != result.PASS:
+            if (self.format != "stats"
+                and result.GetOutcome() != result.PASS):
                 self.__unexpected_resource_results.append(result)
             
         # In some modes, no results are displayed as the tests are run.

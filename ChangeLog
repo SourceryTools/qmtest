@@ -1,3 +1,9 @@
+2003-08-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream.WriteResult): Don't save results when using the
+	"stats" format.
+
 2003-08-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/command.py (ExecTestBase.RunProgram): Use the
