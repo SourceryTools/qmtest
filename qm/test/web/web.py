@@ -433,7 +433,8 @@ class DirPage(QMTestPage):
         if directory == "":
             return self.test_results.values()
         
-        return filter(lambda r: self.__IsLabelInDirectory(r.GetId()),
+        return filter(lambda r: self.__IsLabelInDirectory(r.GetId(),
+                                                          directory),
                       self.test_results.values())
                       
 
@@ -706,12 +707,12 @@ class DirPage(QMTestPage):
 
         returns -- True if 'id' indicates a test contained in
         'directory', or one of its subdirectories."""
-        
-        while len(id) >= directory:
+
+        while len(id) >= len(directory):
             if id == directory:
                 return 1
             id = self.GetDatabase().SplitLabel(id)[0]
-
+            
         return 0
 
 

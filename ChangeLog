@@ -1,5 +1,8 @@
 2003-07-15  Vladimir Prus <ghost@cs.msu.su>
 
+	* qm/test/web/web.py (DirPage.GetTestResultsForDirectory): Call
+	__IsLabelInDirectory with two parameters.  Fix typo.
+	
 	* qm/test/web/web.py (QMTestServer.HandleSaveExpectations): Do not
 	pass 'context' parameter to Result.__init__.
 	
