@@ -101,7 +101,7 @@
  <input type="button"
         value=" OK "
         onclick="document.form.submit();"/>
- <dtml-var expr="MakeUrlButton('Cancel',
+ <dtml-var expr="web.make_button_for_url('Cancel',
                      request.copy('show-issue-class').AsUrl())">
 
  </form>

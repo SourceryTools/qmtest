@@ -106,7 +106,7 @@
  <input type="button"
         value=" Create "
         onclick="document.form.submit();"/>
- <dtml-var expr="MakeUrlButton('Cancel',
+ <dtml-var expr="web.make_button_for_url('Cancel',
                      request.copy('config-idb').AsUrl())">
 
  </form>

@@ -62,12 +62,12 @@ import web
 # classes
 ########################################################################
 
-class ShowPageInfo(web.PageInfo):
+class ShowPage(web.DtmlPage):
     """DTML context for generating DTML template show.dtml.
 
     See 'handle_show' for more information."""
 
-    def __init__(self, request, item, edit, new, type, field_errors={}):
+    def __init__(self, item, edit, new, type, field_errors={}):
         """Construct a new DTML context.
         
         These parameters are also available in DTML under the same name:
@@ -87,7 +87,7 @@ class ShowPageInfo(web.PageInfo):
         "_categories" may also be used as keys."""
 
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "show.dtml")
         # Set up attributes.
         self.item = item
         self.fields = item.GetClass().fields
@@ -158,7 +158,7 @@ class ShowPageInfo(web.PageInfo):
         # Extract the class's doc string.
         doc_string = self.item.GetClass().__doc__
         if doc_string is not None:
-            return self.FormatStructuredText(doc_string)
+            return qm.web.format_structured_text(doc_string)
         else:
             return "&nbsp;"
 
@@ -190,9 +190,7 @@ class ShowPageInfo(web.PageInfo):
                             "%s;%s" % (test_id, outcome)))
         # Generate the page for selecting the prerequisite test to add.
         test_path = qm.label.dirname(self.item.GetId())
-        page_info = AddPrerequisitePageInfo(self.request, test_path)
-        add_page = web.generate_html_from_dtml("add-prerequisite.dtml",
-                                               page_info)
+        add_page = AddPrerequisitePage(test_path)(self.request)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="prerequisites",
@@ -210,8 +208,7 @@ class ShowPageInfo(web.PageInfo):
         options = map(lambda ac: (ac, ac), self.actions)
         # Generate the page for selecting the action to add.
         test_path = qm.label.dirname(self.item.GetId())
-        page_info = AddActionPageInfo(self.request, test_path)
-        add_page = web.generate_html_from_dtml("add-action.dtml", page_info)
+        add_page = AddActionPage(test_path)(self.request)
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="actions",
@@ -228,8 +225,8 @@ class ShowPageInfo(web.PageInfo):
         # Encode the current categories.
         options = map(lambda cat: (cat, cat), self.categories)
         # Generate the page for selecting the category to add.
-        page_info = qm.web.PageInfo(self.request)
-        add_page = web.generate_html_from_dtml("add-category.dtml", page_info)
+        add_page = web.DtmlPage("add-category.dtml", show_decorations=0)
+        add_page = add_page(self.request) 
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="categories",
@@ -258,15 +255,17 @@ class ShowPageInfo(web.PageInfo):
 
 
 
-class AddPrerequisitePageInfo(qm.web.PageInfo):
-    """DTML context for generating DTML template add-prerequisite.dtml."""
+class AddPrerequisitePage(web.DtmlPage):
+    """Page for specifying a prerequisite test to add."""
 
     outcomes = qm.test.base.Result.outcomes
     """The list of possible test outcomes."""
 
-    def __init__(self, request, base_path):
+
+    def __init__(self, base_path):
         # Initialize the base class.
-        qm.web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "add-prerequisite.dtml",
+                              show_decorations=0)
         # Extract a list of all test IDs in the specified path. 
         db = qm.test.base.get_database()
         test_ids = db.GetTestIds(base_path)
@@ -276,12 +275,12 @@ class AddPrerequisitePageInfo(qm.web.PageInfo):
 
 
 
-class AddActionPageInfo(qm.web.PageInfo):
-    """DTML context for generating DTML template add-action.dtml."""
+class AddActionPage(web.DtmlPage):
+    """Page for specifying an action to add."""
 
-    def __init__(self, request, action_path):
+    def __init__(self, action_path):
         # Initialize the base class.
-        qm.web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "add-action.dtml", show_decorations=0)
         # Extract a list of all action IDs in the specified path.
         db = qm.test.base.get_database()
         action_ids = db.GetActionIds(action_path)
@@ -291,11 +290,10 @@ class AddActionPageInfo(qm.web.PageInfo):
         
 
 
-class NewItemPageInfo(web.PageInfo):
-    """DTML context for generating DTML template new.dtml."""
+class NewItemPage(web.DtmlPage):
+    """Page for creating a new test or action."""
 
     def __init__(self,
-                 request,
                  type,
                  item_id="",
                  class_name="",
@@ -312,7 +310,7 @@ class NewItemPageInfo(web.PageInfo):
         may be "_id" or "_class"."""
 
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "new.dtml")
         # Set up attributes.
         assert type in ["test", "action"]
         self.type = type
@@ -346,6 +344,14 @@ class NewItemPageInfo(web.PageInfo):
 ########################################################################
 # functions
 ########################################################################
+
+# No need to do anything besides generate the page.
+handle_new_test = NewItemPage(type="test")
+
+
+# No need to do anything besides generate the page.
+handle_new_action = NewItemPage(type="action")
+
 
 def handle_show(request):
     """Generate the show test page.
@@ -438,12 +444,11 @@ def handle_show(request):
         if len(field_errors) > 0:
             # Yes.  Instead of showing the edit page, re-show the new
             # item page.
-            page_info = NewItemPageInfo(request,
-                                        type=type,
-                                        item_id=item_id,
-                                        class_name=class_name,
-                                        field_errors=field_errors)
-            return web.generate_html_from_dtml("new.dtml", page_info)
+            page = NewItemPage(type=type,
+                               item_id=item_id,
+                               class_name=class_name,
+                               field_errors=field_errors)
+            return page(request)
             
         # Construct an test with default argument values, as the
         # starting point for editing.
@@ -472,8 +477,7 @@ def handle_show(request):
                 return qm.web.generate_error_page(request, message)
 
     # Generate HTML.
-    page_info = ShowPageInfo(request, item, edit, create, type)
-    return web.generate_html_from_dtml("show.dtml", page_info)
+    return ShowPage(item, edit, create, type)(request)
 
 
 def retrieve_attachment_data(database, item_id, attachment):
@@ -635,8 +639,7 @@ def handle_submit(request):
         # Yes.  Instead of processing the submission, redisplay the form
         # with error messages.
         request = request.copy(url="edit-" + type)
-        page_info = ShowPageInfo(request, item, 1, 0, type, field_errors)
-        return web.generate_html_from_dtml("show.dtml", page_info)
+        return ShowPage(item, 1, 0, type, field_errors)(request)
 
     # Store it in the database.
     if type is "test":
@@ -647,26 +650,6 @@ def handle_submit(request):
     # Redirect to a page that displays the newly-edited item.
     request = qm.web.WebRequest("show-" + type, base=request, id=item_id)
     raise qm.web.HttpRedirect, request.AsUrl()
-
-
-def handle_new_test(request):
-    """Handle the 'new-test' script.
-
-    This page is for choosing the test class and entering the test ID
-    for a new test."""
-
-    page_info = NewItemPageInfo(request, type="test")
-    return web.generate_html_from_dtml("new.dtml", page_info)
-
-
-def handle_new_action(request):
-    """Handle the 'new-action' script.
-
-    This page is for choosing the action class and entering the action
-    ID for a new action."""
-
-    page_info = NewItemPageInfo(request, type="action")
-    return web.generate_html_from_dtml("new.dtml", page_info)
 
 
 def handle_delete(request):

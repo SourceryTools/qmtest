@@ -65,7 +65,7 @@
      <tr><th>Create a New Issue</th></tr>
      <tr>
       <td>
-       <dtml-var expr="MakeNewForm()">
+       <dtml-var expr="request.copy('new').AsForm(name='new_form')">
         <dtml-comment><!--
           Show a select control to choose the issue class, if there is
           more than one available.
@@ -98,7 +98,7 @@
      <tr><th>Show or Edit an Existing Issue</th></tr>
      <tr>
       <td>
-       <dtml-var expr="MakeShowForm()">
+       <dtml-var expr="request.copy('show').AsForm(name='show_form')">
         Issue ID: <input type="text" size="8" name="iid"/>
         <input type="hidden" name="style">
         <input type="button" 
@@ -118,15 +118,16 @@
      <tr><th>Search and Browse Issues</th></tr>
      <tr>
       <td>
-       <dtml-var expr="MakeQueryForm()">
+       <dtml-var expr="request.copy('summary').AsForm(name='query_form')">
         Query Expression: 
         <input type="text" size="40" name="query"/>
         <input type="button" 
                onclick="document.query_form.submit();" 
                value=" Search "/>
        </form>
-       See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
-       for instructions and more options.
+       See the <a href="<dtml-var
+       expr="request.copy('query').AsUrl()">">search page</a> for
+       instructions and more options.
       </td>
      </tr>
 

@@ -49,21 +49,19 @@ import web
 # classes
 ########################################################################
 
-class QueryPageInfo(web.PageInfo):
-    """DTML context for generating 'query.dtml'."""
+class QueryPage(web.DtmlPage):
+    """Page for initiating queries."""
 
-    def __init__(self, request):
-        # Perform base class initialization.
-        web.PageInfo.__init__(self, request)
+    def __init__(self):
+        # Initialize the base class.
+        web.DtmlPage.__init__(self, "query.dtml")
 
 
-    def MakeQueryForm(self, name):
-        """Construct a form for submitting a query.
-
-        'name' -- The HTML name of the form."""
+    def MakeQueryForm(self, form_name):
+        """Generate HTML markup to open a query form."""
 
         request = self.request.copy("summary")
-        return request.AsForm(name=name)
+        return request.AsForm(name=form_name)
 
 
     def MakePythonQueryHelp(self):
@@ -152,12 +150,8 @@ class QueryPageInfo(web.PageInfo):
 # functions
 ########################################################################
 
-def handle_query(request):
-    """Generate the query page."""
-
-    page_info = QueryPageInfo(request)
-    return web.generate_html_from_dtml("query.dtml", page_info)
-
+# Nothing to do other than generate the query page.
+handle_query = QueryPage()
 
 ########################################################################
 # Local Variables:

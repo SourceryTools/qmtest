@@ -63,23 +63,19 @@ import web
 # classes
 ########################################################################
 
-class SummaryPageInfo(web.PageInfo):
-    """DTML context for generating 'summary.dtml'.
+class SummaryPage(web.DtmlPage):
+    """Page summarizing multiple issues in a table, as for query results.
 
     The following attributes are available as DTML variables.
 
-    'issues' -- A sequence of issues to display in the table."""
+      'issues' -- A sequence of issues to display in the table."""
 
     def __init__(self,
-                 request,
                  issues,
                  field_names,
                  sort_order,
                  open_only=0):
         """Create a new page.
-
-        'request' -- A 'WebRequest' object containing the page
-        request.
 
         'issues' -- A sequence of issues to summarize.
 
@@ -91,9 +87,11 @@ class SummaryPageInfo(web.PageInfo):
 
         'open_only' -- If true, show only issues in an open state."""
 
-        qm.web.PageInfo.__init__(self, request)
-
-        self.field_names = field_names
+        # Initialize the base class.
+        web.DtmlPage.__init__(self,
+                              "summary.dtml",
+                              field_names=field_names,
+                              open_only=open_only)
 
         # If requested, limit the issues to open issues only.
         if open_only:
@@ -130,19 +128,20 @@ class SummaryPageInfo(web.PageInfo):
                          cmp(cl1.GetTitle(), cl2.GetTitle())
         self.issue_classes.sort(sort_predicate)
 
+
+    def MakeDisplayOptionsButton(self):
+        """Construct the button that pops up the display options page."""
+
         # Generate the HTML page for the popup window for selecting
         # display options.
-        display_options_page_info = DisplayOptionsPageInfo(
-            request,
+        display_options_page = DisplayOptionsPage(
             self.issue_map.keys(),
             self.field_names,
-            open_only)
-        display_options_page = web.generate_html_from_dtml(
-            "summary-display-options.dtml",
-            display_options_page_info)
+            self.open_only)
+        display_options_page = display_options_page(self.request)
         # Construct the Display Options button, which pops up a window
         # showing this page.
-        self.display_options_button = qm.web.make_button_for_popup(
+        return qm.web.make_button_for_popup(
             "Change Display Options...",
             display_options_page,
             request=self.request,
@@ -214,24 +213,21 @@ class SummaryPageInfo(web.PageInfo):
 
 
 
-class DisplayOptionsPageInfo(web.PageInfo):
-    """DTML context for generating 'summary-display-options.dtml'.
+class DisplayOptionsPage(web.DtmlPage):
+    """Popup page for setting summary display options.
 
     The following attributes are availablet as DTML variables.
 
-    'field_controls' -- The HTML controls for selecting the fields to
-    display.
+      'field_controls' -- The HTML controls for selecting the fields to
+      display.
 
-    'base_url' -- The base URL to redisplay the issue summary."""
+      'base_url' -- The base URL to redisplay the issue summary."""
 
     def __init__(self,
-                 request,
                  issue_classes,
                  included_field_names,
                  open_only):
         """Create a new page info context.
-
-        'request' -- A 'WebRequest' object.
 
         'issue_classes' -- A sequence of all issue classes available in
         the issue summary.
@@ -243,7 +239,9 @@ class DisplayOptionsPageInfo(web.PageInfo):
         displayed."""
 
         # Initialize the base class.
-        qm.web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self,
+                              "summary-display-options.dtml",
+                              show_decorations=0)
 
         # Construct a map from field name to field object for all fields
         # in all issue classes.
@@ -277,16 +275,6 @@ class DisplayOptionsPageInfo(web.PageInfo):
             item_to_text=get_title,
             ordered=1)
 
-        # Build the base URL for redisplaying the issue summary.  The
-        # form will add fields to this URL to reflect the display
-        # options selected in the form.  Blank out the fields that the
-        # form will add.
-        redisplay_request = request.copy()
-        for field_name in ["fields", "open_only"]:
-            if redisplay_request.has_key(field_name):
-                del redisplay_request[field_name]
-        self.base_url = redisplay_request.AsUrl()
-
         self.open_only = open_only
         # Construct a list of names of open states in the state model
         # for these issue classes.
@@ -296,6 +284,20 @@ class DisplayOptionsPageInfo(web.PageInfo):
             self.open_state_names = state_model.GetOpenStateNames()
         else:
             self.open_state_names = []
+
+
+    def MakeBaseUrl(self):
+        """Build the base URL for redisplaying the issue summary.
+
+        The form will add fields to this URL to reflect the display
+        options selected in the form."""
+
+        redisplay_request = self.request.copy()
+        # Blank out the fields that the form will add.
+        for field_name in ["fields", "open_only"]:
+            if redisplay_request.has_key(field_name):
+                del redisplay_request[field_name]
+        return redisplay_request.AsUrl()
 
 
 
@@ -389,9 +391,8 @@ def handle_summary(request):
     if not "iid" in field_names:
         field_names.insert(0, "iid")
 
-    page_info = SummaryPageInfo(request, issues, field_names,
-                                sort_order, open_only)
-    return web.generate_html_from_dtml("summary.dtml", page_info)
+    page = SummaryPage(issues, field_names, sort_order, open_only)
+    return page(request)
 
 
 ########################################################################

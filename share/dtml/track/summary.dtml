@@ -28,7 +28,7 @@
     </td>
     <td align="right">
      <form name="navigation">
-      <dtml-var name="display_options_button">
+      <dtml-var expr="MakeDisplayOptionsButton()">
      </form>
     </td>
    </tr>
@@ -36,7 +36,9 @@
 
   <dtml-if expr="issue_map != {}">
 
-   <table <dtml-var name="table_attributes">
+   <table cellspacing="0" 
+          border="0" 
+          cellpadding="4"
           width="100%" 
           columns="<dtml-var expr="_.len(field_names)">">
 
@@ -116,7 +118,6 @@
 
   </dtml-if>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

@@ -45,7 +45,7 @@
        <tr valign="top"><td width="100%">
         <dtml-var expr="MakeElementControl()">
        </td><td>
-        <dtml-var expr="MakeHelpLinkHtml(field.GetContainedField().GetHtmlHelp(edit=1))">
+        <dtml-var expr="web.make_help_link_html(field.GetContainedField().GetHtmlHelp(edit=1))">
        </td></tr>
       </table>
      </td>

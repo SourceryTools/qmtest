@@ -110,8 +110,8 @@ class FieldPropertyDeclaration:
 
 
 
-class FieldEditPageInfo(web.PageInfo):
-    """Context for generating HTML from DTML template 'field.dtml'.
+class FieldEditPage(web.DtmlPage):
+    """DTML page for editing a field.
 
     The DTML template 'field.dtml' is used to generate a page for
     displaying and editing the configuration of a field.  The field's
@@ -119,7 +119,7 @@ class FieldEditPageInfo(web.PageInfo):
 
     See 'Field.GenerateEditWebPage'."""
 
-    def __init__(self, request, field, submit_request):
+    def __init__(self, field, submit_request):
         """Create a new page info object.
 
         'request' -- The 'WebRequest' in response to which the page is
@@ -131,7 +131,7 @@ class FieldEditPageInfo(web.PageInfo):
         edit form is submitted."""
         
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "field.dtml")
         # Store attributes for later.
         self.field = field
         self.property_controls = field.MakePropertyControls()
@@ -502,8 +502,7 @@ class Field:
         The 'UpdateFromRequest' method should generally be used to
         process the submission request."""
 
-        page_info = FieldEditPageInfo(request, self, submit_request)
-        return web.generate_html_from_dtml("field.dtml", page_info)
+        return FieldEditPage(self, submit_request)(request)
 
 
     def _MakeTextPropertyControl(self, property_name):
@@ -933,8 +932,8 @@ class TextField(Field):
 
 ########################################################################
 
-class SetPopupPageInfo(web.PageInfo):
-    """DTML context for generating HTML from template set.dtml.
+class SetPopupPage(web.DtmlPage):
+    """Page for specifying an element to add to a set field.
 
     The template 'set.dtml' is used to generate a popup HTML page for
     specifying a new element to add to a set field."""
@@ -952,12 +951,11 @@ class SetPopupPageInfo(web.PageInfo):
         displaying the set contents."""
         
         # Construct a null 'WebRequest' object, since we don't need it.
-        request = web.WebRequest("")
-        web.PageInfo.__init__(self, request)
-        # Set attributes.
-        self.field = set_field
-        self.field_name = control_name
-        self.select_name = select_name
+        web.DtmlPage.__init__(self,
+                              "set.dtml",
+                              field=set_field,
+                              field_name=control_name,
+                              select_name=select_name)
 
 
     def MakeElementControl(self):
@@ -1104,18 +1102,17 @@ class SetField(Field):
             if isinstance(contained_field, AttachmentField):
                 # Handle attachment fields specially.  For these, go
                 # straight to the upload attachment popup page.
-                page_info = UploadAttachmentPageInfo(
-                    self.GetTitle(), name, select_name, in_set=1)
-                add_page = qm.web.generate_html_from_dtml(
-                    "attachment.dtml", page_info)
+                add_page = UploadAttachmentPage(self.GetTitle(),
+                                                name,
+                                                select_name,
+                                                in_set=1)()
             else:
                 # Generate the page to show when the user clicks the
                 # "Add..." button.  Generate a popup page that contains
                 # controls for designating a single value of the
                 # contained field type, which is the element that is
                 # being added to the set.
-                page_info = SetPopupPageInfo(self, name, select_name)
-                add_page = web.generate_html_from_dtml("set.dtml", page_info)
+                add_page = SetPopupPage(self, name, select_name)()
             
             # Construct the controls for manipulating the set.
             form = web.make_set_control("form",
@@ -1220,7 +1217,7 @@ class SetField(Field):
 
 ########################################################################
 
-class UploadAttachmentPageInfo(web.PageInfo):
+class UploadAttachmentPage(web.DtmlPage):
     """DTML context for generating upload-attachment.dtml."""
 
     __next_temporary_location = 0
@@ -1230,7 +1227,7 @@ class UploadAttachmentPageInfo(web.PageInfo):
                  encoding_name,
                  summary_field_name,
                  in_set=0):
-        """Create a new 'PageInfo' object.
+        """Create a new page object.
 
         'field_name' -- The user-visible name of the field for which an
         attachment is being uploaded.
@@ -1244,8 +1241,7 @@ class UploadAttachmentPageInfo(web.PageInfo):
         'in_set' -- If true, the attachment is being added to an
         attachment set field."""
 
-        request = web.WebRequest("")
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "attachment.dtml")
         # Use a brand-new location for the attachment data.
         self.location = attachment.get_temporary_location()
         # Set up attributes.
@@ -1369,10 +1365,9 @@ class AttachmentField(Field):
             field_value = 'value="%s"' % self.GenerateFormValue(value)
 
             # Generate the popup upload page.
-            page_info = UploadAttachmentPageInfo(self.GetTitle(), name,
-                                                 summary_field_name)
-            upload_page = qm.web.generate_html_from_dtml("attachment.dtml",
-                                                         page_info)
+            upload_page = UploadAttachmentPage(self.GetTitle(),
+                                               name,
+                                               summary_field_name)()
             
             # Generate controls for this form.
             
@@ -1725,10 +1720,9 @@ class EnumerationField(TextField):
         field_name = query_field_property_prefix + "enumerals"
         select_name = "_set_" + field_name
         # Generate the page for entering a new enumeral name.
-        page_info = qm.web.PageInfo()
-        page_info.field_name = field_name
-        page_info.select_name = select_name
-        add_page = web.generate_html_from_dtml("add-enumeral.dtml", page_info)
+        add_page = web.DtmlPage("add-enumeral.dtml",
+                                field_name=field_name,
+                                select_name=select_name)()
         # Start with the current set of enumerals.  'make_set_control'
         # expects pairs of elements.
         initial_elements = map(lambda e: (e, e), self.GetEnumerals())

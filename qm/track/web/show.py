@@ -72,54 +72,63 @@ import web
 # classes
 ########################################################################
 
-class ShowPageInfo(web.PageInfo):
-    """DTML context for generationg 'show.dtml'.
+class ShowPage(web.DtmlPage):
+    """Page for displaying or editing an issue.
 
     The following attributes are available as DTML variables.
 
-    'issue' -- The 'Issue' instance to display.
+      'issue' -- The 'Issue' instance to display.
 
-    'fields' -- A sequence of 'Field' objects representing the fields of
-    the issue class containing 'issue', in the order they are to be
-    displayed.
+      'fields' -- A sequence of 'Field' objects representing the fields
+      of the issue class containing 'issue', in the order they are to be
+      displayed.
 
-    'style' -- A string representing the style of the page to
-    generate.
+      'style' -- A string representing the style of the page to
+      generate.
 
-    'request' -- The 'WebRequest' object for which this page is being
-    generated."""
+      'request' -- The 'WebRequest' object for which this page is being
+      generated."""
     
 
-    def __init__(self, request, issue, errors={}):
+    def __init__(self,
+                 issue,
+                 style="full",
+                 show_history=0,
+                 errors={}):
         """Create a new page.
 
-        To show or edit an existing page, pass it as 'issue'.  To
-        create a new issue, pass a freshly-made 'Issue' instance as
+        'issue' -- To show or edit an existing page, pass it as 'issue'.
+        To create a new issue, pass a freshly-made 'Issue' instance as
         'issue', and specify the style "new" in 'request'.
+
+        'style' -- The style in which to display the issue.  May be
+        "full" for a read-only display, "edit" to edit an existing
+        issue, or "new" to edit a new issue.
+
+        'show_history' -- If true, show the revision history.
 
         'errors' -- A mapping from field names to error messages.
         If non-empty, the error messages are shown with the
         corresponding fields."""
 
         # Initialize the base class.
-        qm.web.PageInfo.__init__(self, request)
-        # Set up attributes.
-        self.issue = issue
+        web.DtmlPage.__init__(self,
+                              "show.dtml",
+                              style=style,
+                              issue=issue,
+                              show_history=show_history)
         # Convert the error messages in 'errors' from structured text to
         # HTML. 
         for key, value in errors.items():
             errors[key] = qm.structured_text.to_html(value)
         self.errors = errors
         self.fields = self.issue.GetClass().GetFields()
-        if request.has_key("style"):
-            self.style = request["style"]
-        else:
-            # Default style is "full".
-            self.style = "full"
-        if request.has_key("history"):
-            self.show_history = int(request["history"])
-        else:
-            self.show_history = 0
+        # If we're showing the revision history, get the previous
+        # revisions. 
+        if show_history:
+            idb = qm.track.get_idb()
+            self.revisions = idb.GetAllRevisions(issue.GetId(),
+                                                 issue.GetClass())
         if self.style == "edit":
             # Since we're editing the issue, show it with an
             # incremented revision number.
@@ -174,13 +183,12 @@ class ShowPageInfo(web.PageInfo):
 
         result = field.FormatValueAsHtml(value, style)
 
-        if field.GetName() == "revision" \
-           and self.request.has_key("revision"):
+        if field.GetName() == "revision" and self.show_history:
             # Doctor the value of the result field slightly to
             # indicate we're not showing the current revision.
             result = result \
                      + " (current revision is %d)" \
-                     % self.current_revision.GetRevision()
+                     % self.revisions[-1].GetRevision()
 
         return result
 
@@ -237,10 +245,10 @@ class ShowPageInfo(web.PageInfo):
     def FormatHistory(self):
         """Generate HTML for the revision history of this issue."""
 
-        page_info = web.HistoryPageInfo(self.revisions,
-                                        self.issue.GetRevision())
-        page_info.MakeShowRevisionUrl = self.MakeShowRevisionUrl
-        return web.generate_html_from_dtml("history.dtml", page_info)
+        fragment = web.HistoryPageFragment(self.revisions,
+                                           self.issue.GetRevision())
+        fragment.MakeShowRevisionUrl = self.MakeShowRevisionUrl
+        return fragment()
 
 
 
@@ -280,16 +288,11 @@ def handle_show(request):
         % iid
         return qm.web.generate_error_page(request, msg)
 
-    page_info = ShowPageInfo(request, issue)
-    # If we're be showing a revision history, we need to provide all
-    # previous revisions too 
-    if request.has_key("history"):
-        page_info.revisions = idb.GetAllRevisions(iid, issue.GetClass())
-    # If we're showing an old revision, grab the current revision too.
-    if request.has_key("revision"):
-        page_info.current_revision = idb.GetIssue(iid)
+    style = request.get("style", "full")
+    show_history = int(request.get("history", 0))
+    page = ShowPage(issue, style, show_history)
     # Generate HTML.
-    return web.generate_html_from_dtml("show.dtml", page_info)
+    return page(request)
 
 
 def handle_new(request):
@@ -307,10 +310,7 @@ def handle_new(request):
     # Create a new issue.
     issue = qm.track.Issue(issue_class)
 
-    request["style"] = "new"
-
-    page_info = ShowPageInfo(request, issue)
-    return web.generate_html_from_dtml("show.dtml", page_info)
+    return ShowPage(issue, "new")(request)
 
 
 def retrieve_attachment_data(attachment):
@@ -438,21 +438,17 @@ def handle_submit(request):
             trigger_result = exception.GetResult()
             errors["_issue"] = trigger_result.GetMessage()
 
-    # If there were errors, redisplay the edit form instead of
-    # processing the submission.
     if len(errors) > 0:
+        # There were errors, so redisplay the edit form.
         if is_new:
-            new_request = qm.web.WebRequest("show",
-                                            base=request,
-                                            style="new")
+            style = "new"
         else:
-            new_request = qm.web.WebRequest("show",
-                                            base=request,
-                                            style="edit",
-                                            iid=request["iid"])
+            style = "edit"
+        page = ShowPage(issue, style, errors=errors)
+        new_request = qm.web.WebRequest("show", base=request)
+        # We need to use this syntax since 'class' is a keyword.
         new_request["class"] = request["class"]
-        page_info = ShowPageInfo(new_request, issue, errors=errors)
-        return web.generate_html_from_dtml("show.dtml", page_info)
+        return page(new_request)
     else:
         # The issue or revision was entered successfully.  Redirect
         # to the show page for the newly-created or -modified issue.
@@ -460,7 +456,6 @@ def handle_submit(request):
         # the issue form will not be resubmitted.
         request = qm.web.WebRequest("show", base=request, iid=iid)
         raise qm.web.HttpRedirect, request.AsUrl()
-
 
 
 ########################################################################

@@ -1,3 +1,73 @@
+2001-07-10  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo): Rename to...
+	(DtmlPage): ... this.
+	(DtmlPage.html_header): Remove.
+	(DtmlPage.html_footer): Likewise.
+	(DtmlPage.table_attributes): Likewise.
+	(DtmlPage.__init__): Remove request parameter.
+	(DtmlPage.__call__): New method.
+	(DtmlPage.FormatStructuredText): Remove.
+	(DtmlPage.MakeUrl): Likewise.
+	(DtmlPage.WebRequest): New method.
+	(DtmlPage.GenerateHtmlHeader): Put application name in title.
+	(DtmlPage.GenerateEndBody): Conditionalize "problems" message.
+	(DtmlPage.MakeSubmitButton): New method.
+	(DtmlPage.MakeUrlButton): Remove.
+	(DtmlPage.MakeHelpLink): Likewise.
+	(DtmlPage.MakeHelpLinkHtml): Likewise.
+	(format_exception): Use DtmlPage.
+	(generate_html_from_dtml): Remove.
+	(generate_error_page): Use DtmlPage.
+	(generate_login_form): Likewise.
+	(make_help_link): Add default for label parameter.
+	(make_help_link_html): Likewise.  Use DtmlPage.
+	(make_choose_control): Adjust button spacing.
+	(_handle_problems): Convert to DtmlPage object.
+	(format_user_id): Use DtmlPage.
+	* qm/fields.py: Adjust throughout for DtmlPage.
+
+	* qm/track/web/web.py (PageInfo): Rename to...
+	(DtmlPage): ... this, and convert. 
+	Adjust accordingly throughout.
+	(DtmlPage.GenerateStartBody): Use document template.
+	(generate_html_from_dtml): Remove.
+	* qm/track/web/index.py: Adjust throughout for DtmlPage.
+	* qm/track/web/issue_class.py: Likewise.
+	* qm/track/web/query.py: Likewise.
+	* qm/track/web/show.py: Likewise.
+	* qm/track/web/summary.py: Likewise.
+	
+	* qm/test/web/web.py (PageInfo): Rename to...
+	(DtmlPage): ... this, and convert.
+	(generate_html_from_dtml): Remove.
+	* qm/test/web/dir.py: Adjust throughout for DtmlPage.
+	* qm/test/web/show.py: Likewise.
+	* qm/test/web/suite.py: Likewise.
+	
+	* share/dtml/attachment.dtml: Adjust for DtmlPage.
+	* share/dtml/set.dtml: Likewise.
+	* share/dtml/test/add-action.dtml: Likewise.
+	* share/dtml/test/add-category.dtml: Likewise.
+	* share/dtml/test/add-prerequisite.dtml: Likewise.
+	* share/dtml/test/new-suite.dtml: Likewise.
+	* share/dtml/test/new.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.
+	* share/dtml/test/suite.dtml: Likewise.
+	* share/dtml/test/navigation-bar.dtml: New file.
+	* share/dtml/track/add-issue-class.dtml: Adjust for DtmlPage.
+	* share/dtml/track/add-issue-field.dtml: Likewise.
+	* share/dtml/track/config-idb.dtml: Likewise.
+	* share/dtml/track/history.dtml: Likewise.
+	* share/dtml/track/index.dtml: Likewise.
+	* share/dtml/track/issue-class.dtml: Likewise.
+	* share/dtml/track/notification.dtml: Likewise.
+	* share/dtml/track/query.dtml: Likewise.
+	* share/dtml/track/show.dtml: Likewise.
+	* share/dtml/track/subscription.dtml: Likewise.
+	* share/dtml/track/summary-display-options.dtml: Likewise.
+	* share/dtml/track/summary.dtml: Likewise.
+
 2001-07-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod (iid): New entity.

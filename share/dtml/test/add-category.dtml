@@ -25,7 +25,7 @@
    <tr valign="top"><td width="100%">
     <h3>Specify a Category</h3>
    </td><td>
-    <dtml-var expr="MakeHelpLink('category popup')">
+    <dtml-var expr="web.make_help_link('category popup')">
    </td></tr>
   </table>
 
@@ -74,7 +74,6 @@
   }
   </script>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

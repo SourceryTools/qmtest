@@ -132,7 +132,7 @@
           >
        <td>
         <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
-        <dtml-var expr="FormatStructuredText(field.GetDescription())">
+        <dtml-var expr="web.format_structured_text(field.GetDescription())">
        </td>
        <td width="25%">
         <table border="0" cellpadding="0" cellspacing="4" width="100%">
@@ -145,7 +145,7 @@
            </span>
           </dtml-if>
          </td><td>
-          <dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp(edit=edit))">
+          <dtml-var expr="web.make_help_link_html(field.GetHtmlHelp(edit=edit))">
          </td></tr>
         </table>  
        </td>
@@ -187,7 +187,7 @@
          <tr valign="top"><td>
           <dtml-var expr="MakePrerequisitesControl()">
          </td><td>
-          <dtml-var expr="MakeHelpLink('prerequisites control')">
+          <dtml-var expr="web.make_help_link('prerequisites control')">
          </td></tr>
         </table>
        <dtml-else>
@@ -217,7 +217,7 @@
          <tr valign="top"><td>
           <dtml-var expr="MakeActionsControl()">
          </td><td>
-          <dtml-var expr="MakeHelpLink('actions control')">
+          <dtml-var expr="web.make_help_link('actions control')">
          </td></tr>
         </table>
        <dtml-else>
@@ -248,7 +248,7 @@
          <tr valign="top"><td>
           <dtml-var expr="MakeCategoriesControl()">
          </td><td>
-          <dtml-var expr="MakeHelpLink('categories control')">
+          <dtml-var expr="web.make_help_link('categories control')">
          </td></tr>
         </table>
        <dtml-else>
@@ -292,7 +292,6 @@
    </form>
   </dtml-if>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

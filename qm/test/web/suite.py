@@ -45,10 +45,10 @@ import web
 # classes
 ########################################################################
 
-class ShowPageInfo(web.PageInfo):
-    """DTML context for generating DTML template suite.dtml."""
+class ShowPage(web.DtmlPage):
+    """Page for displaying the contents of a test suite."""
 
-    def __init__(self, request, suite, edit):
+    def __init__(self, suite, edit):
         """Construct a new DTML context.
 
         'suite' -- The 'Suite' instance to display.
@@ -58,7 +58,7 @@ class ShowPageInfo(web.PageInfo):
         database = qm.test.base.get_database()
 
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "suite.dtml")
         # Set up attributes.
         self.suite = suite
         self.test_ids = suite.GetRawTestIds()
@@ -124,14 +124,14 @@ class ShowPageInfo(web.PageInfo):
 
     def FormatSuiteId(self, id):
         parent_id = qm.label.dirname(self.suite.GetId())
-        return web.PageInfo.FormatSuiteId(self, id, within=parent_id)
+        return web.DtmlPage.FormatSuiteId(self, id, within=parent_id)
 
 
 
-class NewPageInfo(web.PageInfo):
-    """DTML context for generating DTML template new-suite.dtml."""
+class NewPage(web.DtmlPage):
+    """Page for creating a new test suite."""
 
-    def __init__(self, request, suite_id="", field_errors={}):
+    def __init__(self, suite_id="", field_errors={}):
         """Create a new DTML context.
 
         'request' -- A 'WebRequest' object.
@@ -142,7 +142,7 @@ class NewPageInfo(web.PageInfo):
         empty, there are no errors."""
 
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "new-suite.dtml")
         # Set up attributes.
         self.suite_id = suite_id
         self.field_errors = field_errors
@@ -152,6 +152,10 @@ class NewPageInfo(web.PageInfo):
 ########################################################################
 # functions
 ########################################################################
+
+# Nothing to do besides generating the page.
+handle_new = NewPage()
+
 
 def handle_show(request, edit=0):
     """Generate the page for displaying or editing a test suite.
@@ -177,8 +181,7 @@ def handle_show(request, edit=0):
     else:
         suite = database.GetSuite(suite_id)
     # Generate HTML.
-    page_info = ShowPageInfo(request, suite, edit)
-    return web.generate_html_from_dtml("suite.dtml", page_info)
+    return ShowPage(suite, edit)(request)
     
 
 def handle_edit(request):
@@ -227,15 +230,6 @@ def handle_submit(request):
           qm.web.make_url("show-suite", id=suite_id)
 
 
-def handle_new(request):
-    """Handle a request for the new test suite page.
-
-    'request' -- A 'WebRequest' object."""
-
-    page_info = NewPageInfo(request)
-    return web.generate_html_from_dtml("new-suite.dtml", page_info)
-
-
 def handle_create(request):
     """Handle a submission of a new test suite.
 
@@ -261,14 +255,12 @@ def handle_create(request):
     if len(field_errors) > 0:
         # Yes.  Instead of showing the page for editing the suite,
         # redisplay the new suite page with error messages.
-        page_info = NewPageInfo(request, suite_id, field_errors)
-        return web.generate_html_from_dtml("new-suite.dtml", page_info)
+        return NewPage(suite_id, field_errors)(request)
     else:
         # Everything looks good.  Make an empty test.
         suite = qm.test.base.Suite(suite_id)
         # Show the editing page.
-        page_info = ShowPageInfo(request, suite, edit=1)
-        return web.generate_html_from_dtml("suite.dtml", page_info)
+        return ShowPage(suite, edit=1)(request)
 
 
 def handle_delete(request):

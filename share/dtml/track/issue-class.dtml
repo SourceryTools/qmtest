@@ -48,7 +48,7 @@
          width="100%">
    <tr class="heading">
     <td colspan="2">
-     <dtml-var expr="FormatStructuredText(issue_class.GetDescription())">     
+     <dtml-var expr="web.format_structured_text(issue_class.GetDescription())">     
     </td>
    </tr>
 
@@ -71,7 +71,7 @@
         custom types.</p>
        </td>
        <td align="right">
-        <dtml-var expr="MakeUrlButton('Add a New Field...',
+        <dtml-var expr="web.make_button_for_url('Add a New Field...',
                                   request.copy('add-issue-field').AsUrl())">
        </td>
       </tr>
@@ -97,7 +97,7 @@
         predetermined list of recipients when an issue changes.
        </td>
        <td align="right">
-        <dtml-var expr="MakeUrlButton('Configure...',
+        <dtml-var expr="web.make_button_for_url('Configure...',
                         request.copy('show-notification').AsUrl())">
        </td>
       </tr>
@@ -108,7 +108,7 @@
         messages for specific issues.
        </td>
        <td align="right">
-        <dtml-var expr="MakeUrlButton('Configure...',
+        <dtml-var expr="web.make_button_for_url('Configure...',
                         request.copy('show-subscription').AsUrl())">
        </td>
       </tr>
@@ -123,7 +123,7 @@
                        issue_class.GetTrigger('discussion')">
          (already present)
         <dtml-else>
-         <dtml-var expr="MakeUrlButton('Add',
+         <dtml-var expr="web.make_button_for_url('Add',
                          request.copy('add-discussion').AsUrl())">
         </dtml-if>
        </td>
@@ -149,12 +149,12 @@
         <td><b>Title:</b></td>
         <td width="100%"><dtml-var expr="field.GetTitle()"></td>
         <td rowspan="4">
-         <dtml-var expr="MakeUrlButton('Edit...',
+         <dtml-var expr="web.make_button_for_url('Edit...',
                          web.WebRequest('show-issue-field', 
                                         base=request,
                                         field=field.GetName()).AsUrl())">
          <dtml-if expr="field.GetName() not in mandatory_field_names">
-          <dtml-var expr="MakeUrlButton('Delete',
+          <dtml-var expr="web.make_button_for_url('Delete',
                           web.WebRequest('delete-issue-field', 
                                          base=request,
                                          field=field.GetName()).AsUrl())">
@@ -172,7 +172,7 @@
        <tr valign="top">
         <td><b>Description:&nbsp;&nbsp;&nbsp;</b></td>
         <td>
-         <dtml-var expr="FormatStructuredText(field.GetDescription())">
+         <dtml-var expr="web.format_structured_text(field.GetDescription())">
         </td>
        </tr>
       </table>

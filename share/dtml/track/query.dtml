@@ -37,7 +37,7 @@
      <p>Enter a Python query expression.  <dtml-var expr="GetName()">
      will find all issues for which the expression is true.</p>
 
-     <dtml-var expr="MakeQueryForm(name='expr_query')">
+     <dtml-var expr="MakeQueryForm(form_name='expr_query')">
       Query Expression: 
       <input type="text" 
              size="40" 
@@ -60,7 +60,7 @@
   
      <table border="0" cellpadding="0" cellspacing="4">
       <tr>
-      <dtml-var expr="MakeQueryForm(name='browse_category')">
+      <dtml-var expr="MakeQueryForm(form_name='browse_category')">
        <td>Show All Issues in Category:</td>
        <td><dtml-var expr="MakeCategorySelect()"></td>
        <td><input type="button"
@@ -80,7 +80,7 @@
       </tr>
 
       <tr>
-      <dtml-var expr="MakeQueryForm(name='browse_state')">
+      <dtml-var expr="MakeQueryForm(form_name='browse_state')">
        <td>Show All Issues in State:</td>
        <td><dtml-var expr="MakeStateSelect()"></td>
        <td><input type="button"
@@ -100,7 +100,7 @@
       </tr>
 
       <tr>
-      <dtml-var expr="MakeQueryForm(name='browse')">
+      <dtml-var expr="MakeQueryForm(form_name='browse')">
        <td>Show All Issues:</td>
        <td>&nbsp;</td>
        <td><input type="button"

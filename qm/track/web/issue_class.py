@@ -31,6 +31,10 @@
 #
 ########################################################################
 
+# FIXME security: Check authorization throughout -- make sure the user
+# is in the administrators group before displaying edit pages or
+# processing any IDB modifications.
+
 ########################################################################
 # imports
 ########################################################################
@@ -51,15 +55,16 @@ import web
 # classes
 ########################################################################
 
-class ShowPageInfo(web.PageInfo):
-    """DTML context for displaying an issue class."""
+class ShowPage(web.DtmlPage):
+    """Page for displaying and editing an issue class."""
 
     mandatory_field_names = qm.track.issue_class.mandatory_field_names
 
-    def __init__(self, request, issue_class):
+    def __init__(self, issue_class):
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
-        self.issue_class = issue_class
+        web.DtmlPage.__init__(self,
+                              "issue-class.dtml",
+                              issue_class=issue_class)
 
 
     def GetFieldType(self, field):
@@ -73,8 +78,8 @@ class ShowPageInfo(web.PageInfo):
 
 
 
-class NewFieldPageInfo(web.PageInfo):
-    """DTML context for the form to add a field to an issue class."""
+class AddFieldPage(web.DtmlPage):
+    """Form to add a field to an issue class."""
 
     field_types = [
         ("integer field", "qm.fields.IntegerField"),
@@ -88,12 +93,11 @@ class NewFieldPageInfo(web.PageInfo):
 
 
     def __init__(self,
-                 request,
                  field_name="",
                  field_class_name="",
                  is_set=0,
                  errors={}):
-        """Create a new 'PageInfo' context.
+        """Create a new page.
 
         'errors' -- A map of field errors.  If not empty, we're
         redisplaying the new field form to display errors from an
@@ -103,11 +107,11 @@ class NewFieldPageInfo(web.PageInfo):
         value of that field."""
         
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
-        # Store attributes for use in DTML.
-        self.field_name = field_name
-        self.field_class_name = field_class_name
-        self.is_set = is_set
+        web.DtmlPage.__init__(self,
+                              "add-issue-field.dtml",
+                              field_name=field_name,
+                              field_class_name=field_class_name,
+                              is_set=is_set)
         # Convert the error messages in 'errors' from structured text to
         # HTML. 
         for key, value in errors.items():
@@ -116,12 +120,12 @@ class NewFieldPageInfo(web.PageInfo):
 
 
 
-class AddClassPageInfo(web.PageInfo):
-    """DTML context for the form to add a new issue class."""
+class AddClassPage(web.DtmlPage):
+    """Form for adding a new issue class."""
 
-    def __init__(self, request, errors={}):
+    def __init__(self, errors={}):
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "add-issue-class.dtml")
         # Convert the error messages in 'errors' from structured text to
         # HTML. 
         for key, value in errors.items():
@@ -136,11 +140,10 @@ class AddClassPageInfo(web.PageInfo):
         field_name = "categories"
         select_name = "_set_" + field_name
         # Generate the popup page to specify each additional category.
-        page_info = qm.web.PageInfo(self.request)
-        page_info.field_name = field_name
-        page_info.select_name = select_name
-        add_page = web.generate_html_from_dtml("add-category-name.dtml",
-                                               page_info)
+        add_page = web.DtmlPage("add-category-name.dtml",
+                                field_name=field_name,
+                                select_name=select_name)
+        add_page = add_page(self.request)
         # Are we redisplaying a form following an invalid submission?
         if len(self.errors) > 0:
             # Yes.  Extract the categories from the submission.
@@ -162,14 +165,37 @@ class AddClassPageInfo(web.PageInfo):
 
 
 
-class NotificationPageInfo(web.PageInfo):
-    """DTML context for the form to add notification to an issue class."""
+class ConfigIdbPage(web.DtmlPage):
+    """Page for configuring the issue database."""
 
-    def __init__(self, request, trigger):
+    def __init__(self):
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
-        # Set attributes.
-        self.trigger = trigger
+        web.DtmlPage.__init__(self, "config-idb.dtml")
+
+
+    def GetIssueClasses(self):
+        """Return a sequence of issue classes in the IDB."""
+
+        # Generate a list of issue classes in the IDB.
+        idb = qm.track.get_idb()
+        issue_classes = idb.GetIssueClasses()
+        # Put them into dictionary order.
+        issue_classes.sort(lambda c1, c2: cmp(c1.GetName(), c2.GetName()))
+        return issue_classes
+
+
+
+class NotificationPage(web.DtmlPage):
+    """Page for configuring automatic email notification."""
+
+    def __init__(self, trigger):
+        """Create a new page object.
+
+        'trigger' -- If modifying an existing 'NotifyFixedTrigger'
+        instance, that instance.  Otherwise 'None'."""
+
+        # Initialize the base class.
+        web.DtmlPage.__init__(self, "notification.dtml", trigger=trigger)
 
 
     def MakeRecipientAddressesControl(self):
@@ -179,11 +205,10 @@ class NotificationPageInfo(web.PageInfo):
         field_name = "recipient_addresses"
         select_name = "_set_" + field_name
         # Make the popup page for specifying a new address.
-        page_info = qm.web.PageInfo(self.request)
-        page_info.field_name = field_name
-        page_info.select_name = select_name
-        add_page = web.generate_html_from_dtml(
-            "add-notification-address.dtml", page_info)
+        add_page = web.DtmlPage("add-notification-address.dtml",
+                                field_name=field_name,
+                                select_name=select_name)
+        add_page = add_page(self.request)
         # If there already is a notification trigger, include recipients
         # specified in it.
         if self.trigger is not None:
@@ -208,12 +233,11 @@ class NotificationPageInfo(web.PageInfo):
         field_name = "recipient_uids"
         select_name = "_set_" + field_name
         # Make the popup page for selecting a UID to add.
-        page_info = qm.web.PageInfo(self.request)
-        page_info.field_name = field_name
-        page_info.select_name = select_name
-        page_info.uids = qm.user.database.keys()
-        add_page = web.generate_html_from_dtml(
-            "add-notification-uid.dtml", page_info)
+        add_page = web.DtmlPage("add-notification-uid.dtml",
+                                field_name=field_name,
+                                select_name=select_name,
+                                uids=qm.user.database.keys())
+        add_page = add_page(self.request)
         # If there is already a notification trigger, include recipient
         # users specified in it.
         if self.trigger is not None:
@@ -286,8 +310,7 @@ def handle_show_class(request):
         del request["issue_class"]
         raise qm.web.HttpRedirect, request.AsUrl()
 
-    page_info = ShowPageInfo(request, issue_class)
-    return web.generate_html_from_dtml("issue-class.dtml", page_info)
+    return ShowPage(issue_class)(request)
 
 
 def handle_show_field(request):
@@ -329,21 +352,8 @@ def handle_submit_field(request):
     raise qm.web.HttpRedirect, show_field_request.AsUrl()
 
 
-def handle_config_idb(request):
-    """Handle a request for the IDB configuration page."""
-
-    # FIXME: Check authorization.
-    request.GetSession()
-
-    page_info = qm.track.web.PageInfo(request)
-    idb = qm.track.get_idb()
-    # Generate a list of issue classes in the IDB.
-    page_info.issue_classes = idb.GetIssueClasses()
-    # Put them into dictionary order.
-    page_info.issue_classes.sort(
-        lambda c1, c2: cmp(c1.GetName(), c2.GetName()))
-    return qm.track.web.generate_html_from_dtml("config-idb.dtml",
-                                                page_info)
+# Nothing to do besides generate the page.
+handle_config_idb = ConfigIdbPage()
 
 
 def handle_submit_class(request):
@@ -402,15 +412,8 @@ def handle_delete_field(request):
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
-def handle_add_field(request):
-    """Handle an 'add-issue-field' request.
-
-    This request shows a form for adding a new field to the issue class
-    currently being edited in the request's session."""
-
-    issue_class = _get_issue_class_for_session(request)
-    page_info = NewFieldPageInfo(request)
-    return web.generate_html_from_dtml("add-issue-field.dtml", page_info)
+# Nothing to do besides generate the page.
+handle_add_field = AddFieldPage()
 
 
 def handle_new_field(request):
@@ -457,10 +460,8 @@ def handle_new_field(request):
         # There were errors.  Redisplay the form for adding a new field,
         # showing the values already entered, and the appropriate error
         # messages. 
-        page_info = NewFieldPageInfo(request, field_name,
-                                     field_class_name, is_set, errors)
-        return web.generate_html_from_dtml("add-issue-field.dtml",
-                                           page_info)
+        page = AddFieldPage(field_name, field_class_name, is_set, errors)
+        return page(request)
     else:
         # Good to go.  Instantiate a field object.
         field = field_class(field_name, title=field_name)
@@ -476,15 +477,10 @@ def handle_new_field(request):
         raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
-def handle_add_class(request):
-    """Handle a 'add-issue-class' request.
+# Nothing to do besides generate the page.
+handle_add_class = AddClassPage()
 
-    This request shows a form for adding a new issue class to the IDB."""
 
-    page_info = AddClassPageInfo(request)
-    return web.generate_html_from_dtml("add-issue-class.dtml", page_info)
-
-   
 def handle_new_class(request):
     """Handle a 'new-issue-class' request.
 
@@ -511,8 +507,7 @@ def handle_new_class(request):
     # Were there any validation errors?
     if len(errors) > 0:
         # Yes.  Redisplay the form, listing the errors.
-        page_info = AddClassPageInfo(request, errors)
-        return web.generate_html_from_dtml("add-issue-class.dtml", page_info)
+        return AddClassPage(errors)(request)
     
     # Construct the issue class.
     issue_class = qm.track.IssueClass(name=class_name,
@@ -536,9 +531,7 @@ def handle_show_notification(request):
 
     issue_class = _get_issue_class_for_session(request)
     notification_trigger = issue_class.GetTrigger("notification")
-    page_info = NotificationPageInfo(request, trigger=notification_trigger)
-    return web.generate_html_from_dtml("notification.dtml",
-                                       page_info)
+    return NotificationPage(trigger=notification_trigger)(request)
 
 
 def handle_submit_notification(request):
@@ -581,14 +574,15 @@ def handle_show_subscription(request):
     trigger."""
 
     issue_class = _get_issue_class_for_session(request)
-    page_info = web.PageInfo(request)
     try:
-        page_info.field = issue_class.GetField("subscribers")
+        field = issue_class.GetField("subscribers")
     except KeyError:
-        page_info.field = None
-    page_info.trigger = issue_class.GetTrigger("subscription")
-    return web.generate_html_from_dtml("subscription.dtml", page_info)
-
+        field = None
+    page = web.DtmlPage("subscription.dtml",
+                        field=field,
+                        trigger=issue_class.GetTrigger("subscription"))
+    return page(request)
+    
 
 def handle_submit_subscription(request):
     """Handle submission of a change to the subscription trigger.
@@ -644,9 +638,7 @@ def handle_add_discussion(request):
     """Handle a 'add-discussion' request.
 
     This request adds a discussion field to the issue class being modified.""" 
-
     issue_class = _get_issue_class_for_session(request)
-    page_info = web.PageInfo(request)
     # Construct the field, if it doesn't exist.
     if not issue_class.HasField("discussion"):
         discussion_field = qm.track.issue_class.DiscussionField(

@@ -49,7 +49,7 @@
    </td>
   </tr>
 
-  <dtml-in expr="issue_classes">
+  <dtml-in expr="GetIssueClasses()">
   <dtml-let issue_class=sequence-item>
    <tr class="field">
     <td width="100%">

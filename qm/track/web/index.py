@@ -44,12 +44,12 @@ import web
 # classes
 ########################################################################
 
-class IndexPageInfo(web.PageInfo):
-    """DTML context for generating DTML template index.dtml."""
+class IndexPage(web.DtmlPage):
+    """Main QMTrack index page."""
 
-    def __init__(self, request):
+    def __init__(self):
         # Initialize the base class.
-        qm.web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "index.dtml")
 
         # Retrieve and store all the issues available in this issue
         # class.
@@ -59,25 +59,6 @@ class IndexPageInfo(web.PageInfo):
         if len(self.issue_classes) > 0:
             default_name = qm.track.get_configuration()["default_class"]
             self.default_issue_class = idb.GetIssueClass(default_name)
-
-
-    def MakeNewForm(self):
-        request = self.request.copy("new")
-        return request.AsForm(name="new_form")
-
-
-    def MakeShowForm(self):
-        request = self.request.copy("show")
-        return request.AsForm(name="show_form")
-
-
-    def MakeQueryForm(self):
-        request = self.request.copy("summary")
-        return request.AsForm(name="query_form")
-
-
-    def MakeQueryUrl(self):
-        return self.request.copy("query").AsUrl()
 
 
     def MakeLogoutForm(self):
@@ -91,14 +72,7 @@ class IndexPageInfo(web.PageInfo):
 # functions
 ########################################################################
 
-def handle_index(request):
-    """Generate the index page.
-
-    'request' -- A 'WebRequest' object."""
-
-    page_info = IndexPageInfo(request)
-    return web.generate_html_from_dtml("index.dtml", page_info)
-
+handle_index = IndexPage()
 
 ########################################################################
 # Local Variables:

@@ -25,7 +25,7 @@
    <tr valign="top"><td width="100%">
     <h3>Specify an Action</h3>
    </td><td>
-    <dtml-var expr="MakeHelpLink('action popup')">
+    <dtml-var expr="web.make_help_link('action popup')">
    </td></tr>
   </table>
 
@@ -94,7 +94,6 @@
   }
   </script>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

@@ -43,7 +43,7 @@
       <span class="fieldname"><dtml-var name="field_name"></span>
      </h3>
     </td><td>
-     <dtml-var expr="MakeHelpLink('attachment form')">
+     <dtml-var expr="web.make_help_link('attachment form')">
     </td></tr>
    </table>
 

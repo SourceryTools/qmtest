@@ -16,8 +16,7 @@
 
 --></dtml-comment>
 
-<table <dtml-var name="table_attributes"> 
-       width="100%">
+<table cellspacing="0" border="0" cellpadding="4" width="100%">
  <tbody>
    <dtml-in expr="revisions">
    <dtml-let revision=sequence-item

@@ -75,7 +75,7 @@
  {
    // Construct the URL to redisplay the summary page with the new
    // display options.
-   var url = "<dtml-var name="base_url">";
+   var url = "<dtml-var expr="MakeBaseUrl()">";
    url += "&fields=" + document.form.fields.value;
    url += "&open_only=" + (document.form.open_only.checked ? "1" : "0");
    // Show it.

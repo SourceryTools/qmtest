@@ -98,47 +98,81 @@ class InvalidSessionError(RuntimeError):
 # classes
 ########################################################################
 
-class PageInfo:
-    """Common base class for page info classes.
+class DtmlPage:
+    """Base class for classes to generate web pages from DTML.
 
-    We pass page info objects as context when generating HTML from
-    DTML.  Members of the page info object are available as DTML
-    variables.
+    The 'DtmlPage' object is used as the variable context when
+    generating HTML from DTML.  Attributes and methods are available as
+    variables in DTML expressions.
 
-    This class contains common variables and functions that are
+    This base class contains common variables and functions that are
     available when generating all DTML files.
 
+    To generate HTML from a DTML template, instantiate a 'DtmlPage'
+    object, passing the name of the DTML template file to the
+    initializer function (or create a subclass which does this
+    automatically).  Additional named attributes specified in the
+    initializer functions are set as attributes of the 'DtmlPage'
+    object, and thus available as variables in DTML Python expressions.
+
+    To generate HTML from the template, use the '__call__' method,
+    passing a 'WebRequest' object representing the request in response
+    to which the HTML page is being generated.  The request set as the
+    'request' attribute of the 'DtmlPage' object.  The 'WebRequest'
+    object may be omitted, if the generated HTML page is generic and
+    requires no information specific to the request or web session; in
+    this case, an empty request object is used.
+
     This class also has an attribute, 'default_class', which is the
-    default 'PageInfo' subclass to use when generating HTML.  By
-    default, it is initialized to 'PageInfo' itself, but applications
-    may derive a 'PageInfo' subclass and point 'default_class' to it to
-    obtain customized behavior."""
-
-    # Nothing special about 'InvalidSessionError' here; we just need any
-    # class defined in this module, to extract the module name.  We
-    # can't use 'PageInfo', since it's not defined yet.
-    web = sys.modules[InvalidSessionError.__module__]
-    """Make the functions in this module accessible."""
-
-    html_header = ""
-
-    html_footer = ""
-
-    table_attributes = 'cellspacing="0" border="0" cellpadding="4"'
+    default 'DtmlPage' subclass to use when generating HTML.  By
+    default, it is initialized to 'DtmlPage' itself, but applications
+    may derive a 'DtmlPage' subclass and point 'default_class' to it to
+    obtain customized versions of standard pages."""
 
     html_stylesheet = "/stylesheets/qm.css"
+    """The URL for the cascading stylesheet to use with generated pages."""
 
     qm_bug_system_url = "http://qm.software-carpentry.com:4224/track/"
+    """The public URL for the bug tracking system for the QM tools."""
 
-    def __init__(self, request=None):
+
+    def __init__(self, dtml_template, show_decorations=1, **attributes):
         """Create a new page.
 
-        'request' -- A 'WebRequest' object containing the page
-        request."""
+        'dtml_template' -- The file name of the DTML template from which
+        the page is generated.  The file is assumed to reside in the
+        'dtml' subdirectory of the configured share directory.
 
+        '**attributes' -- Additional attributes to include in the
+        variable context."""
+
+        self.__dtml_template = dtml_template
+        for key, value in attributes.items():
+            setattr(self, key, value)
+        self.show_decorations = show_decorations
+
+
+    def __call__(self, request=None):
+        """Generate an HTML page from the DTML template.
+
+        'request' -- A 'WebRequest' object containing a page request in
+        response to which an HTML page is being generated.  Session
+        information from the request may be used when generating the
+        page.  The request may be 'None', if none is available.
+
+        returns -- The generated HTML text."""
+
+        # Use an empty request if none was specified.
         if request is None:
             request = WebRequest("?")
         self.request = request
+        # Construct the path to the template file.  DTML templates are
+        # stored in the 'dtml' subdirectory of the share directory.
+        template_path = os.path.join(qm.get_share_directory(), "dtml", 
+                                     self.__dtml_template)
+        # Generate HTML from the template.
+        html_file = DocumentTemplate.HTMLFile(template_path)
+        return html_file(self)
 
 
     def GetProgramName(self):
@@ -153,20 +187,14 @@ class PageInfo:
         return "/"
 
 
-    def FormatStructuredText(self, text):
-        """Return 'text' rendered as HTML."""
+    def WebRequest(self, script_url, **fields):
+        """Convenience constructor for 'WebRequest' objects.
 
-        return structured_text.to_html(text)
+        Constructs a 'WebRequest' using the specified 'script_url' and
+        'fields', using the request associated with this object as the
+        base request."""
 
-
-    def MakeUrl(self, script_name, **fields):
-        """Create a request and return a URL to it.
-
-        'script_name' -- The script name for the request.
-
-        'fields' -- Additional fields for the request."""
-
-        return apply(make_url, (script_name, self.request), fields)
+        return apply(WebRequest, (script_url, self.request), fields)
 
 
     def GenerateHtmlHeader(self, description):
@@ -183,9 +211,10 @@ class PageInfo:
        href="%s"/>
  <meta name="Generator" 
        content="%s"/>
- <title>%s</title>
+ <title>%s: %s</title>
 </head>
-''' % (self.html_stylesheet, self.GetProgramName(), description)
+''' % (self.html_stylesheet, self.GetProgramName(),
+       self.GetProgramName(), description)
 
 
     def GenerateStartBody(self):
@@ -197,14 +226,20 @@ class PageInfo:
     def GenerateEndBody(self):
         """Return markup to end the body of the HTML document."""
 
-        return """
+        result = """
         <br><br>
+        """
+        if self.show_decorations:
+            result = result + """
         <div align="right"><font size="-1">
          Problems?  Frustrations? <a href="/problems.html">Click here.</a>
         </font></div>
+        """
+        result = result + """
         <script language="JavaScript">\n%s\n</script>
         </body>
         """ % _common_javascript
+        return result
 
 
     def MakeLoginForm(self, redirect_request=None, default_user_id=""):
@@ -243,6 +278,15 @@ class PageInfo:
         return form
 
 
+    def MakeSubmitButton(self, title="OK"):
+        """Generate HTML for a button to submit the current form.
+
+        'title' -- The button title."""
+
+        return '<input type="button" value=" %s " onclick="submit();">' \
+               % (title)
+
+
     def MakeButton(self, title, script_url, **fields):
         """Generate HTML for a button to load a URL.
 
@@ -256,23 +300,6 @@ class PageInfo:
 
         request = apply(WebRequest, [script_url, self.request], fields)
         return make_button_for_request(title, request)
-
-
-    def MakeUrlButton(self, title, url):
-        """Generate HTML for an action button.
-
-        The resulting HTML must be included in a form.  See
-        'make_url_button'."""
-
-        return make_button_for_url(title, url)
-
-
-    def MakeHelpLink(self, tag, label="Help", **substitutions):
-        return apply(make_help_link, (tag, label), substitutions)
-
-
-    def MakeHelpLinkHtml(self, help_text, label="Help"):
-        return make_help_link_html(help_text, label)
 
 
     def MakeImageUrl(self, image):
@@ -326,7 +353,12 @@ class PageInfo:
 
 
 
-PageInfo.default_class = PageInfo
+DtmlPage.default_class = DtmlPage
+"""Set the default DtmlPage implementation to the base class."""
+
+DtmlPage.web = sys.modules[DtmlPage.__module__]
+"""Make the functions in this module accessible."""
+
 
 
 class HttpRedirect(Exception):
@@ -1414,15 +1446,15 @@ def format_exception(exc_info):
 
     # Break up the exection info tuple.
     type, value, trace = exc_info
-    # Construct a page info object to generate an exception page.
-    page_info = PageInfo.default_class(WebRequest(""))
-    page_info.exception_type = type
-    page_info.exception_value = value
     # Format the traceback, with a newline separating elements.
-    page_info.traceback_listing = \
-        string.join(traceback.format_tb(trace), "\n")
+    traceback_listing = string.join(traceback.format_tb(trace), "\n")
+    # Construct a page info object to generate an exception page.
+    page = DtmlPage("exception.dtml",
+                    exception_type=type,
+                    exception_value=value,
+                    traceback_listing=traceback_listing)
     # Generate the page.
-    return generate_html_from_dtml("exception.dtml", page_info)
+    return page()
 
     
 
@@ -1622,24 +1654,6 @@ def handle_logout(request, default_redirect_url="/"):
     raise HttpRedirect, redirect_request.AsUrl()
 
 
-def generate_html_from_dtml(template_name, page_info):
-    """Return HTML generated from a DTML tempate.
-
-    'template_name' -- The name of the DTML template file.
-
-    'page_info' -- A 'PageInfo' instance to use as the DTML namespace.
-
-    returns -- The generated HTML source."""
-    
-    # Construct the path to the template file.  DTML templates are
-    # stored in qm/qm/track/web/templates. 
-    template_path = os.path.join(qm.get_share_directory(), "dtml", 
-                                 template_name)
-    # Generate HTML from the template.
-    html_file = DocumentTemplate.HTMLFile(template_path)
-    return html_file(page_info)
-
-
 def generate_error_page(request, error_text):
     """Generate a page to indicate a user error.
 
@@ -1650,9 +1664,8 @@ def generate_error_page(request, error_text):
 
     returns -- The generated HTML source for the page."""
 
-    page_info = PageInfo(request)
-    page_info.error_text = qm.web.format_structured_text(error_text)
-    return generate_html_from_dtml("error.dtml", page_info)
+    page = DtmlPage.default_class("error.dtml", error_text=error_text)
+    return page(request)
 
 
 def generate_login_form(redirect_request, message=None):
@@ -1660,10 +1673,12 @@ def generate_login_form(redirect_request, message=None):
 
     'message' -- If not 'None', a message to display to the user."""
 
-    page_info = PageInfo.default_class(redirect_request)
-    page_info.message = message
-    page_info.default_user_id = qm.user.database.GetDefaultUserId()
-    return generate_html_from_dtml("login_form.dtml", page_info)
+    page = DtmlPage.default_class(
+        "login_form.dtml",
+        show_decorations=0,
+        message=message,
+        default_user_id=qm.user.database.GetDefaultUserId())
+    return page(redirect_request)
 
 
 def make_set_control(form_name,
@@ -1952,7 +1967,7 @@ def make_javascript_string(text):
     return "'" + text + "'"
 
 
-def make_help_link(help_text_tag, label, **substitutions):
+def make_help_link(help_text_tag, label="Help", **substitutions):
     """Make a link to pop up help text.
 
     'help_text_tag' -- A message tag for the help diagnostic.
@@ -1971,7 +1986,7 @@ def make_help_link(help_text_tag, label, **substitutions):
     return make_help_link_html(help_text, label)
 
 
-def make_help_link_html(help_text, label):
+def make_help_link_html(help_text, label="Help"):
     """Make a link to pop up help text.
 
     'help_text' -- HTML source for the help text.
@@ -1981,9 +1996,7 @@ def make_help_link_html(help_text, label):
     global _counter
 
     # Wrap the help text in a complete HTML page.
-    page_info = PageInfo(WebRequest(""))
-    page_info.help_text = help_text
-    help_page = generate_html_from_dtml("help.dtml", page_info)
+    help_page = DtmlPage("help.dtml", help_text=help_text)()
     # Embed the page in a JavaScript string literal.
     help_page = make_javascript_string(help_page)
 
@@ -2278,11 +2291,12 @@ def make_choose_control(field_name,
 
     # The Remove button.
     button = '''
-    <input type="button"
+    &nbsp;<input
+           type="button"
            value=" Remove >> "
            onclick="move_option(document.form.%s, document.form.%s);
                     update_from_select_list(document.form.%s,
-                                            document.form.%s);">
+                                            document.form.%s);">&nbsp;
     ''' % (included_select_name, excluded_select_name,
            included_select_name, field_name)
     buttons.append(button)
@@ -2530,11 +2544,8 @@ def get_from_cache(request, session_id=None):
         """ % url
 
 
-def _handle_problems(request):
-    """Generate and return the problems page in response to a web request."""
-
-    page_info = PageInfo.default_class(request)
-    return generate_html_from_dtml("problems.dtml", page_info)
+# Nothing to do besdies generating the page.
+_handle_problems = DtmlPage.default_class("problems.dtml")
 
 
 def _handle_root(requets):
@@ -2557,10 +2568,11 @@ def format_user_id(user_id):
         # for this user?
         if not hasattr(user_item, "__page_cache_request"):
             # No.  Generate it now.
-            page_info = PageInfo()
-            page_info.user_id = user_id
-            page_info.user = user_item
-            user_page = generate_html_from_dtml("user.dtml", page_info)
+            user_page = DtmlPage.default_class(
+                "user.dtml",
+                show_decorations=0,
+                user_id=user_id,
+                user=user_item)()
             # Put it in the page cache.
             user_page_request = cache_page(user_page)
             # Attach it to the user item.

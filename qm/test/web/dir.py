@@ -58,8 +58,8 @@ class DirItem:
 
 
 
-class DirPageInfo(web.PageInfo):
-    """DTML contect for generating DTML template dir.dtml.
+class DirPage(web.DtmlPage):
+    """Main directory page for a test database.
 
     These attributes are available in DTML:
 
@@ -69,9 +69,9 @@ class DirPageInfo(web.PageInfo):
     'items' -- A sorted list of 'DirItem' objects representing the items
     to display."""
 
-    def __init__(self, request, path):
+    def __init__(self, path):
         # Initialize the base class.
-        web.PageInfo.__init__(self, request)
+        web.DtmlPage.__init__(self, "dir.dtml")
         # Set up attributes.
         self.path = path
         
@@ -123,10 +123,8 @@ def handle_dir(request):
     except:
         # No.  Use the root path.
         path = "."
-
     # Generate HTML.
-    page_info = DirPageInfo(request, path)
-    return web.generate_html_from_dtml("dir.dtml", page_info)
+    return DirPage(path)(request)
 
 
 ########################################################################

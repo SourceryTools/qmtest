@@ -47,13 +47,16 @@
     <td align="right">
      <form name="navigation">
       <dtml-if name="show_history">
-       <dtml-var expr="MakeUrlButton('Hide History', MakeHistoryUrl(show=0))">
+       <dtml-var expr="web.make_button_for_url('Hide History', 
+                                               MakeHistoryUrl(show=0))">
       </dtml-if>
       <dtml-if expr="style == 'full' and not show_history">
-       <dtml-var expr="MakeUrlButton('Show History', MakeHistoryUrl(show=1))">
+       <dtml-var expr="web.make_button_for_url('Show History', 
+                                               MakeHistoryUrl(show=1))">
       </dtml-if>
       <dtml-if expr="style == 'full' or style == 'history'">
-       <dtml-var expr="MakeUrlButton('Edit Issue...', MakeEditUrl())">
+       <dtml-var expr="web.make_button_for_url('Edit Issue...', 
+                                               MakeEditUrl())">
       <dtml-else>
        &nbsp;
       </dtml-if>
@@ -124,7 +127,7 @@
            </span>
           </dtml-if>
          </td><td>
-          &nbsp;&nbsp;<dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp())">
+          &nbsp;&nbsp;<dtml-var expr="web.make_help_link_html(field.GetHtmlHelp())">
          </td></tr>
         </table>  
        </td>
@@ -142,10 +145,8 @@
    <input type="button" 
           value=" OK "
           onclick="document.form.submit();"/>
-   <input type="button" 
-          value=" Cancel "
-          onclick="document.location = 
-                   '<dtml-var expr="MakeUrl('show', iid=issue.GetId())">';"/>
+   <dtml-var expr="MakeButton('Cancel', WebRequest('show', 
+                   iid=issue.GetId()).AsUrl())">
    </form>
   </dtml-if>
 
@@ -155,7 +156,6 @@
    <dtml-var expr="FormatHistory()">
   </dtml-if>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

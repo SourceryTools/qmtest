@@ -25,7 +25,7 @@
    <tr valign="top"><td width="100%">
     <h3>Specify a Prerequisite Test</h3>
    </td><td>
-    <dtml-var expr="MakeHelpLink('prerequisite popup')">
+    <dtml-var expr="web.make_help_link('prerequisite popup')">
    </td></tr>
   </table>
 
@@ -117,7 +117,6 @@
   }
   </script>
 
-  <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>
 

@@ -44,10 +44,17 @@ import qm.web
 # classes
 ########################################################################
 
-class PageInfo(qm.web.PageInfo):
-    """Subclass of DTML context class, for generating pages from DTML."""
+class DtmlPage(qm.web.DtmlPage):
+    """Subclass of DTML page class for QMTest pages."""
 
     html_generator = "QMTest"
+
+
+    def __init__(self, dtml_template, **attributes):
+        # QMTest DTML templates are in the 'test' subdirectory.
+        dtml_template = os.path.join("test", dtml_template)
+        # Initialize the base class.
+        apply(qm.web.DtmlPage.__init__, (self, dtml_template), attributes)
 
 
     def GetName(self):
@@ -61,24 +68,12 @@ class PageInfo(qm.web.PageInfo):
 
 
     def GenerateStartBody(self):
-        return \
-'''
-<body>
-<table width="100%%" border="0" cellspacing="0" cellpadding="0" bgcolor="black">
- <tr bgcolor="black">
-  <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
-  src="/images/sc-logo.png"></a></td>
-  <td align="right">
-   <a href="javascript: popup_manual();"><font
-     color="white">QM Manual</font></a>
-   &nbsp;&nbsp;
-   <a href="%s" class="reverse">Full Listing</a>
-   &nbsp;&nbsp;
-  </td>
- </tr>
-</table>
-<br>
-''' % self.MakeListingUrl() 
+        if self.show_decorations:
+            # Include the navigation bar.
+            navigation_bar = DtmlPage("navigation-bar.dtml")
+            return "<body>%s<br>" % navigation_bar(self.request)
+        else:
+            return "<body>"
 
 
     def GetMainPageUrl(self):
@@ -140,19 +135,6 @@ class PageInfo(qm.web.PageInfo):
 ########################################################################
 # functions
 ########################################################################
-
-def generate_html_from_dtml(template_name, page_info):
-    """Return HTML generated from a DTML tempate.
-
-    'template_name' -- The name of the DTML template file.
-
-    'page_info' -- A 'PageInfo' instance to use as the DTML namespace.
-
-    returns -- The generated HTML source."""
-    
-    template_path = os.path.join("test", template_name)
-    return qm.web.generate_html_from_dtml(template_path, page_info)
-
 
 def make_server(port, address="", log_file=None):
     """Create and bind an HTTP server.
@@ -235,9 +217,9 @@ def handle_shutdown(request):
 ########################################################################
 
 def __initialize_module():
-    # Use our 'PageInfo' subclass even when generating generic
+    # Use our 'DtmlPage' subclass even when generating generic
     # (non-QMTest) pages.
-    qm.web.PageInfo.default_class = PageInfo
+    qm.web.DtmlPage.default_class = DtmlPage
 
 
 __initialize_module()

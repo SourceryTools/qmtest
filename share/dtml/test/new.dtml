@@ -76,9 +76,9 @@
         </dtml-if>
        </td><td align="right">
         <dtml-if expr="type == 'test'">
-         <dtml-var expr="MakeHelpLink('test ID')">
+         <dtml-var expr="web.make_help_link('test ID')">
         <dtml-else>
-         <dtml-var expr="MakeHelpLink('action ID')">
+         <dtml-var expr="web.make_help_link('action ID')">
         </dtml-if>
        </td></tr>
       </table>
@@ -134,9 +134,9 @@
         </dtml-if>
        </td><td align="right">
         <dtml-if expr="type == 'test'">
-         <dtml-var expr="MakeHelpLink('test class control')">
+         <dtml-var expr="web.make_help_link('test class control')">
         <dtml-else>
-         <dtml-var expr="MakeHelpLink('action class control')">
+         <dtml-var expr="web.make_help_link('action class control')">
         </dtml-if>
        </td></tr>
       </table>

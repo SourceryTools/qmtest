@@ -68,10 +68,17 @@ import urllib
 # classes
 ########################################################################
 
-class PageInfo(qm.web.PageInfo):
-    """Subclass of DTML context class, for generating pages from DTML."""
+class DtmlPage(qm.web.DtmlPage):
+    """Subclass of DTML page class for QMTrack pages."""
 
     html_generator = "QMTrack"
+
+
+    def __init__(self, dtml_template, **attributes):
+        # QMTrack DTML templates are in the 'track' subdirectory.
+        dtml_template = os.path.join("track", dtml_template)
+        # Initialize the base class.
+        apply(qm.web.DtmlPage.__init__, (self, dtml_template), attributes)
 
 
     def GetName(self):
@@ -81,8 +88,12 @@ class PageInfo(qm.web.PageInfo):
 
 
     def GenerateStartBody(self):
-        navigation_bar = generate_html_from_dtml("navigation-bar.dtml", self)
-        return '<body>%s<br>' % navigation_bar
+        if self.show_decorations:
+            # Include the navigation bar.
+            navigation_bar = DtmlPage("navigation-bar.dtml")
+            return "<body>%s<br>" % navigation_bar(self.request)
+        else:
+            return "<body>"
 
 
     def GetMainPageUrl(self):
@@ -94,11 +105,8 @@ class PageInfo(qm.web.PageInfo):
 
 
 
-class HistoryPageInfo(PageInfo):
-    """Context for genering revision history HTML fragment.
-
-    This 'PageInfo' class is used with 'history.dtml', which generates
-    an HTML fragment displaying the revision history of an issue."""
+class HistoryPageFragment(DtmlPage):
+    """Revision history HTML fragment."""
     
 
     def __init__(self, revisions, current_revision_number=None):
@@ -112,11 +120,14 @@ class HistoryPageInfo(PageInfo):
 
         # We want the revisions from newest to oldest, so reverse the
         # list. 
-        revisions = revisions[:]
+        revisions = list(revisions)
         revisions.reverse()
-        # Store stuff.
-        self.revisions = revisions
-        self.current_revision_number = current_revision_number
+        # Initialize the base class.
+        DtmlPage.__init__(
+            self,
+            "history.dtml",
+            revisions=revisions,
+            current_revision_number=current_revision_number)
     
 
     def GetRevisionTime(self, revision):
@@ -206,19 +217,6 @@ def handle_download_attachment(request):
     return (mime_type, data)
 
 
-def generate_html_from_dtml(template_name, page_info):
-    """Return HTML generated from a DTML tempate.
-
-    'template_name' -- The name of the DTML template file.
-
-    'page_info' -- A 'PageInfo' instance to use as the DTML namespace.
-
-    returns -- The generated HTML source."""
-    
-    template_path = os.path.join("track", template_name)
-    return qm.web.generate_html_from_dtml(template_path, page_info)
-
-
 def make_url_for_attachment(field, attachment):
     """Return a URL to download 'attachment'."""
 
@@ -243,9 +241,9 @@ def _initialize_module():
     # The generic 'AttachmentField' implementation needs to know about
     # our URLs for downloading attachments.
     qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
-    # Use our 'PageInfo' subclass even when generating generic
-    # (non-QMTest) pages.
-    qm.web.PageInfo.default_class = PageInfo
+    # Use our 'DtmlPage' subclass even when generating generic
+    # (non-QMTrack) pages.
+    qm.web.DtmlPage.default_class = DtmlPage
 
 
 _initialize_module()
