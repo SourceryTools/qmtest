@@ -1,5 +1,12 @@
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/qm.mod (idb): New entity.
+	* doc/manual/manual.xml (track-tour.xml): New entity.
+	Use it.
+	* doc/manual/track-tour.xml: New file.
+
+2001-07-03  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/web/issue_class.py (NotificationPageInfo): New class.
 	(handle_show_notification): New function.
 	(handle_submit_notification): Likewise.

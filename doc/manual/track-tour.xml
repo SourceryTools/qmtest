@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   track-tour.xml
+  Author: Alex Samuel
+  Date:   2001-08-02
+
+  Contents:
+    Grand tour/tutorial of QMTrack.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-track-tour">
+ <title>Getting Started with &qmtrack;</title>
+ 
+ <para>This chapter will help you get &qmtrack; up and running by
+ showing you how to create and configure an issue database, and perform
+ basic operations.</para>
+
+ <para>The sections on issue database configuration are primarily of
+ interest to administrators and maintiners; users can skip directly to
+ ... to learn how to work with issues in &qmtrack;.</para>
+
+ <section id="sec-tracktut-idb">
+  <title>Creating an &idb;</title>
+
+  <para>&qmtrack; stores information about bugs and other issues in an
+  issue database (&idb;).  Before you begin using &qmtrack;, you must
+  instruct it to create and initialize a new &idb;.</para>
+
+  <para>To initialize an empty &idb;, invoke:</para>
+
+  <screen>
+&prompt;<userinput>qmtrack initialize <replaceable>path</replaceable></userinput> 
+  </screen>
+
+  <para>&qmtrack; creates a new &idb; at the
+  <replaceable>path</replaceable> you specified, and prints some
+  explanatory information.  The &idb; is a directory containing various
+  files that &qmtrack; uses to store configuration information and the
+  issues themselves.</para>
+
+  <para>Once you've initialized a new &idb;, you must let &qmtrack; know
+  where it is.  To do this, either set the environment variable
+  <envar>QMTEST_IDB_PATH</envar> to the &idb; path, or specify the
+  <option>&dashdash;idb</option> (<option>-D</option>) option when you
+  invoke the &qmtrack-cmd; command.</para>
+
+ </section> <!-- sec-tracktut-idb -->
+
+ <section id="sec-tracktut-user-db">
+  <title>Configuring Users</title>
+
+  <para>When &qmtrack; created the new &idb;, it included a user
+  database file.  This file specifies information about the &qmtrack;'s
+  user accounts, since &qmtrack; doesn't automatically use the user
+  accounts on your system.  The default user database contains a single
+  user account named "guest", which is the default account that it used
+  when accessing &qmtrack; through its Web user interface.</para>
+
+  <para>To create additional user accounts, you must modify the user
+  database file by hand.  The database file is named
+  <filename>users.xml</filename>, and is in the directory that &qmtrack;
+  made at the &idb; path you specified.  The user database file is an
+  XML file.</para>
+
+  <para>To create a new user, add a paragraph similar to this
+  one:</para>
+
+   <programlisting>
+<![CDATA[ <user id="johndoe" disabled="no">
+  <info>
+   <property name="name">John Doe</property>
+   <property name="email">john@doe.org</property>
+  </info>
+  <authentication>
+   <property name="password">!h@rd2guesSs</property>
+  </authentication>
+ </user>
+]]></programlisting>
+
+  <para>You should also add at least one user to the "administrators"
+  group.  Only users in this group are allowed to change the &idb;
+  configuration.  To add a user to the "administrators" group, add a
+  line to the administrators <sgmltag class="element">group</sgmltag>
+  element, so that it looks similar to this:</para>
+
+  <programlisting>
+<![CDATA[ <group id="administrators">
+  <user-id>johndoe</user-id>
+ </group>
+]]></programlisting>
+
+  <para>Specify a user ID of one of the users in your user database
+  instead of "johndoe".  You may add more than one user to the
+  "administrators" group, if you wish.</para>
+
+  <para>See <xref linkend="sec-user-database"/> for more information
+  about the user database.</para>
+
+ </section> <!-- sec-tracktut-user-db -->
+
+ <section id="sec-tracktut-server">
+  <title>Starting the Server</title>
+
+  <para>&qmtrack; provides a Web-based user interface and remote access
+  capabilities through a built-in Web server.  While &qmtrack; does
+  support a command-line interface, you can perform most tasks,
+  including configuration, from the Web interface.</para>
+
+  <para>To start the server, use the <command>qmtrack server</command>
+  command.  Specify the TCP port number on which to run the server with
+  the <option>&dashdash;port</option> (<option>-P</option>) option.
+  Don't forget to specify the path to the &idb;.</para>
+
+  <para>For example, if you created an &idb; at the path
+  <filename>~/idb</filename>, run the &qmtrack; server on port 8000 by
+  invoking:</para>
+
+  <screen>
+&prompt;<userinput>export QMTRACK_IDB_PATH=~/idb</userinput>
+&prompt;<userinput>qmtrack server -P 8000</userinput>
+  </screen>
+
+  <para>Once the server is running, you may access the &qmtrack; Web
+  user interface by pointing your browser at this URL:</para>
+
+  <programlisting>
+   http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/track/
+  </programlisting>
+
+  <para>Replace <replaceable>hostname</replaceable> with the host name
+  of your computer, and <replaceable>port</replaceable> with the port
+  number you specified.</para>
+
+ </section> <!-- sec-tracktut-server -->
+
+ <section id="sec-tracktut-issue-class">
+  <title>Creating an Issue Class</title>
+
+  <para>You must perform one additional step before using &qmtrack; to
+  track bugs and issues.  To use an &idb;, you must create an issue
+  class, which specifies the information stored for each issue.  An
+  issue class is like a blank form that includes preprinted fields.
+  When you create or modify an issue, you specify the values for these
+  fields.</para>
+
+  <para>&qmtrack; allows you to use more than one issue class in your
+  &idb;.  However, for simple cases, one issue class is generally
+  sufficient.  If later you find you need more than one, simply repeat
+  the steps here to create additional issue classes.</para>
+
+  <para>To create an issue class, you must log in to the &qmtrack; Web
+  interface with a user account in the "administrators" group.  Enter
+  the user name and password on the left side of the main &qmtrack;
+  page, and click on the <guibutton>Log In</guibutton> button.  If you
+  configured your user database correctly, the main &qmtrack; page
+  should now include a category labelled
+  <guilabel>Administrative</guilabel> in the bottom right, including a
+  <guibutton>Configure IDB...</guibutton> button.  Click on this button
+  to start configuring your &idb;</para>
+
+  <para>From the <guilabel>Configure Issue Database</guilabel> page,
+  select the <guibutton>Add a New Class...</guibutton> button.  Enter a
+  name and title for your issue class.  The name is used internally by
+  &qmtrack;, while the title will be visible to users.  Both may be the
+  same.  For example, specify "bug" for both.  The
+  <guilabel>Categories</guilabel> control allows you to specify a list
+  of names for categorizing your issues.  A category is simply a
+  non-exclusive set of issues; i.e. an issue may belong to zero, one, or
+  more categoires.  If you're happy with the default category names
+  provided by &qmtrack;, simply leave them.  When you're all done, click
+  on the <guibutton>Create</guibutton> button.</para>
+
+  <para>&qmtrack; returns you to the <guilabel>Configure Issue
+  Database</guilabel> page, which now shows your new issue class.  Click
+  on its <guibutton>Edit...</guibutton> button to examine its details.
+  You'll notice that &qmtrack; has included a several fields
+  automatically; these fields are included in all issue classes, and
+  cannot be deleted.  From this page, you can add additional fields,
+  modify the settings of existing fields, and configure other special
+  features.  When you're done, be sure to click on the <guibutton>Commit
+  Changes</guibutton> button at the bottom of the form; &qmtrack; does
+  not change the issue in the &idb; until you do this.</para>
+
+  <para>When you are done editing your issue class, click on the
+  <guilabel>Main Page</guilabel> link on the title bar at the top of the
+  page to return to the main page.</para>
+
+ </section> <!-- sec-tracktut-issue-class -->
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("manual.xml" "book" "chapter")
+  End:
+-->

@@ -40,6 +40,7 @@
   <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
   <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
   <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
+  <!ENTITY track-tour.xml SYSTEM "track-tour.xml">
   <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
 ]>
 <book>
@@ -71,6 +72,7 @@
  <part>
   <title>A Tour of &qm;</title>
   &test-tour.xml;
+  &track-tour.xml;
  </part>
 
  <part>
