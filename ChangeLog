@@ -1,5 +1,11 @@
 2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
 
+	* qm/command_line.py: Fix formatting issue.
+	* qm/track/qmtrack.py: Likewise. Fix bug to catch exception when
+	Validate fails on a SetField.
+
+2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
+
 	* qm/command_line.py: Fix coding standards issues.
 	* qm/track/idb.py (IdbBase::PerformQuery): Define.
 	* qm/track/qmtrack.py: Fix split up strings to use 'printf' syntax.

@@ -134,7 +134,7 @@ class CommandLine:
     create_issue_error = 'An issue with that iid already exists.'
     create_no_equals_error = 'Must specify a field and a value.'
     edit_issue_error_syn = 'Must specify an issue id to edit.'
-    edit_issue_error_sem = 'Cannot find issue to edit in database.'
+    edit_issue_error_sem = 'Cannot find issue "%s" to edit in database.'
     split_issue_error_syn = 'Must specify an issue id to split.'
     split_issue_error_sem = 'Cannot find isue to split in database.'
     split_iid_error_sem \
@@ -422,7 +422,7 @@ class CommandLine:
             # operator in a create will not do us much good for setting
             # a field with no default value.
             if not hash.has_key(field) and not hash.has_key(field + '+'):
-                missing.append[field]
+                missing.append(field)
 
         # If some mandatory fields were missing, report an error.
         if missing != []:
@@ -435,11 +435,14 @@ class CommandLine:
         new_issue = qm.track.Issue(icl, hash['iid'])
         for key, value in hash.items():
             if key != 'iid':
-                if string.rfind(key, '+') == len(key) - 1:
-                    new_issue.SetField(string.replace(key, '+', ''), value)
-                elif string.rfind(key, '-') != len(key) - 1:
-                    new_issue.SetField(key, value)
-
+                try:
+                    if string.rfind(key, '+') == len(key) - 1:
+                        new_issue.SetField(string.replace(key, '+', ''), value)
+                    elif string.rfind(key, '-') != len(key) - 1:
+                        new_issue.SetField(key, value)
+                except ValueError, msg:
+                    self.parser.ErrorHandler(1, str(msg), 0, '')
+            
         # Add the issue to the database.  Check to see if the issue
         # with that 'iid' already exists.  If so, report an error.
         try:
@@ -472,7 +475,8 @@ class CommandLine:
         try:
             issue = self.idb.GetIssue(iid)
         except KeyError:
-            self.parser.ErrorHandler(1, self.edit_issue_error_sem, 0, '')
+            self.parser.ErrorHandler(1, self.edit_issue_error_sem % iid,
+                                     0, '')
             return 1
 
         # Split arguments up into pairs.
@@ -745,7 +749,7 @@ class CommandLine:
                 self.output.write('summary:  ' + issue.GetField('summary'))
                 self.output.write('\n\n')
         elif self.format_name == 'xml':
-            self.output.write('Unimplemented output format.')
+            self.output.write('Unimplemented output format.\n')
             return 1
 
         return 0

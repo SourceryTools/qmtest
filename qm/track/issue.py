@@ -105,7 +105,7 @@ class Issue:
 
         field = self.__issue_class.GetField(name)
         self.__fields[name] = field.Validate(value)
-
+        
 
     def DiagnosticPrint(self, file):
         """Print a debugging summary to 'file'."""

@@ -254,7 +254,7 @@ class CommandParser:
         returns -- A string to be printed with basic functionality of
         arguments and commands."""
 
-        help_string = "Usage: %s"%(self.__name)
+        help_string = "Usage: %s "%(self.__name)
         help_string = help_string \
                       + "[ flags ] command [ command-flags ] [ arguments ]\n\n"
         help_string = help_string + "Flags:\n"
