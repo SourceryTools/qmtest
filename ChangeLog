@@ -1,5 +1,10 @@
 2003-08-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (ExecTestBase.RunProgram): Use the
+	exit code returned by Filter.Run on Windows.
+
+2003-08-11  Mark Mitchell  <mark@codesourcery.com>
+
 	* qm/platform_unix.py (SignalException.__init__): Tweak message
 	formatting.
 	(_initialize): Tidy.
