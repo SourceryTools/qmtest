@@ -356,7 +356,7 @@ def get_differing_fields(iss1, iss2):
     for field in issue_class.GetFields():
         field_name = field.GetName()
         # Ignore these fields when checking for differences.
-        if field_name in [ "revision", "timestamp" ]:
+        if field_name in [ "revision", "timestamp", "user" ]:
             continue
         # Extract the values.
         value1 = iss1.GetField(field_name)
@@ -486,51 +486,109 @@ def issues_to_xml(issues, output):
     qm.xmlutil.write_dom_document(document, output)
     
 
-def eval_expression(expression, issue, previous_issue=None):
+def eval_issue_expression(expression, issue, extra_locals={}):
     """Evaluate a user expression on an issue.
 
     The Python expression 'expression' is evlauated using a special
     variable context that makes it easy to refer to fields of an issue.
     The fields of 'issue' can be referred to as if they are local
-    variables of the same name.  If 'previous_issue' is supplied, the
-    special local variable '_previous' is also visible; it looks like a
-    class whose attributes are the fields of the previous issue.  A
-    limited subset of Python built-in functions and other functions are
-    availabe as well.
+    variables of the same name.
 
     'expression' -- The Python text of the expression.
 
-    'issue' -- The current issue.
+    'issue' -- The issue.
 
-    'previous_issue' -- A past revision of the issue that can be
-    referenced in the expression, or 'None'.
+    'extra_locals' -- A map from name to corresponding value for
+    extra additions to the local namespace when the expression is
+    evaluated. 
 
     returns -- The evaluated result of the expression."""
 
     # FIXME: Security.
     globals = { "__builtins__": allowed_builtins }
-    locals = {}
+    locals = extra_locals.copy()
 
     issue_class = issue.GetClass()
     fields = issue_class.GetFields()
+    # Add a local variable for each field.  The variable's value is the
+    # value of that field in 'issue'.
     for field in fields:
         field_name = field.GetName()
         value = issue.GetField(field_name)
         locals[field_name] = value
+    # Do it.
+    return eval(expression, globals, locals)
 
-    if previous_issue is not None:
+
+def eval_revision_expression(expression,
+                             revision,
+                             previous_revision,
+                             extra_locals={}):
+    """Evaluate a user expression on a revision to an issue.
+
+    The Python expression 'expression' is evlauated using a special
+    variable context that makes it easy to refer to fields of an issue.
+    The fields of 'issue' can be referred to as if they are local
+    variables of the same name.  
+
+    The special local variable '_previous' is also visible; it looks
+    like a class whose attributes are the fields of the previous issue.
+    The functions '_changed' and '_changed_to' make it easier to test
+    when a field has changed since the previous revision.
+
+    A limited subset of Python built-in functions and other functions
+    are available as well.
+
+    'expression' -- The Python text of the expression.
+
+    'revision' -- The modified issue revision..
+
+    'previous_revision' -- A previous revision of the issue, before the
+    modificaiton.
+
+    'extra_locals' -- A map from name to corresponding value for
+    extra additions to the local namespace when the expression is
+    evaluated. 
+
+    returns -- The evaluated result of the expression."""
+
+    issue_class = revision.GetClass()
+    assert previous_revision is None \
+           or issue_class is previous_revision.GetClass()
+    fields = issue_class.GetFields()
+
+    if previous_revision is not None:
+        # An empty class used as an attribute container.
         class Field:
             pass
-
+        # Construct an object with an attribute for each field; the
+        # value of each attribute is the field's value in
+        # 'previous_issue'.
         previous = Field()
         for field in fields:
             field_name = field.GetName()
-            value = previous_issue.GetField(field_name)
+            value = previous_revision.GetField(field_name)
             setattr(previous, field_name, value)
 
-        locals["_previous"] = previous
+        # Add two additional functions.  '_changed' makes it easier to
+        # ask whether the value of a particular field has changed.
+        changed_fn = lambda name, rev=revision, prev=previous_revision: \
+                     rev.GetField(name) != prev.GetField(name)
+        # '_changed_to' also checks that the new value is as specified.
+        changed_to_fn = lambda name, val, \
+                        rev=revision, prev=previous_revision: \
+                        rev.GetField(name) != prev.GetField(name) \
+                        and rev.GetField(name) == val
+    else:
+        previous = None
+        changed_fn = lambda name: 1
+        changed_to_fn = lambda name, val: 1
 
-    return eval(expression, globals, locals)
+    extra_locals["_previous"] = previous
+    extra_locals["_changed"] = changed_fn
+    extra_locals["_changed_to"] = changed_to_fn
+
+    return eval_issue_expression(expression, revision, extra_locals)
 
 
 ########################################################################

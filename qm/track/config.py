@@ -480,11 +480,22 @@ def setup_idb_for_test():
 
     idb.AddIssueClass(icl)
 
+    field = qm.fields.SetField(qm.fields.UidField(
+        name="notify",
+        title="People to Notify"))
+    icl.AddField(field)
+
     for counter in range(1, 10):
         i = qm.track.Issue(icl, "iss%02d" % counter)
         i.SetField("summary",
                    "This is issue number %d." % counter)
         idb.AddIssue(i)
+
+    import triggers.notification
+    trigger = triggers.notification.NotifyByUidFieldTrigger(
+        "notification", "_changed('state')", "notify")
+    trigger.SetAutomaticSubscription("user != 'guest'")
+    icl.RegisterTrigger(trigger)
     
 
 # Local helper functions.

@@ -51,6 +51,9 @@ import sys
 # Store the path to the command, in case someone wants it later.
 qm.track.state["script_name"] = sys.argv[0]
 
+# Load RC options.
+qm.rc.Load("track")
+                                                       
 try:
     # Parse the command line.
     command = qm.track.cmdline.Command(sys.argv[1:])

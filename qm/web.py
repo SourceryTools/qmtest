@@ -1774,9 +1774,6 @@ def make_javascript_string(text):
     # Escape less-than signs so browsers don't look for HTML tags
     # inside the literal. 
     text = string.replace(text, "<", r"\074")
-    # Escape forward slashes since some browsers mistake them for regex
-    # replace syntax.
-    text = string.replace(text, "/", r"\057")
     return "'" + text + "'"
 
 

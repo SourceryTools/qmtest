@@ -94,9 +94,8 @@ class Trigger(qm.track.issue_class.Trigger):
             for condition in transition.GetConditions():
                 # Evaluate the condition's expression.
                 expression = condition.GetExpression()
-                result = qm.track.issue.eval_expression(expression,
-                                                        issue,
-                                                        previous_issue)
+                result = qm.track.issue.eval_revision_expression(
+                    expression, issue, previous_issue)
                 if not result:
                     # It evaluated to false, so the transition is
                     # rejected.

@@ -42,6 +42,16 @@ import string
 import sys
 
 ########################################################################
+# classes
+########################################################################
+
+class MailError(RuntimeError):
+
+    pass
+
+
+
+########################################################################
 # Linux
 ########################################################################
 
@@ -71,6 +81,78 @@ if sys.platform[:5] == "linux":
                   qm.error("browser error", browser_path=browser)
         # Invoke the browser.
         exit_code = os.system("%s '%s' &" % (browser, url))
+
+
+    def send_email(body,
+                   subject,
+                   recipients,
+                   ccs=[],
+                   bccs=[],
+                   from_address=None,
+                   attachments=[],
+                   headers={}):
+        """Send an email message.
+
+        'body' -- The message body text.
+
+        'subject' -- The message subject.
+
+        'recipients' -- A sequence of email addresses of message
+        recipients.
+
+        'ccs' -- A sequence of email addresses of recipients of carbon
+        copies.
+
+        'bccs' -- A sequence of email addresses of recipients of blind
+        carbon copies.
+
+        'from_address' -- The message's originating address.  If 'None',
+        the system will fill in the sending user's address.
+
+        'attachments' -- A sequence of email attachments.  Each
+        attachment is a triplet of '(description, MIME type,
+        attachment_data)'. 
+
+        'headers' -- Additional RFC 822 headers in a map.  Keys are
+        header names and values are corresponding header contents."""
+
+        if len(attachments) > 0:
+            # FIXME: implement this.
+            raise NotImplementedError, "attachments not implemented"
+            
+        # Figure out which sendmail (or equivalent) to use.
+        sendmail_path = common.rc.Get("sendmail", "/usr/sbin/sendmail",
+                                      "common")
+        # Make sure it exists and is executable.
+        if not os.access(sendmail_path, os.X_OK):
+            raise RuntimeError, \
+                  qm.error("sendmail error",
+                           sendmail_path=sendmail_path)
+
+        # Start a sendmail process.
+        addresses = map(lambda a: "'%s'" % a, recipients + ccs + bccs)
+        sendmail_command = sendmail_path + " " + string.join(addresses, " ")
+        sendmail = os.popen(sendmail_command, "w")
+
+        # Construct and send the entire RFC 822 message.
+        if from_address is not None:
+            sendmail.write("From: %s\n" % from_address)
+        sendmail.write("To: %s\n" % string.join(recipients, ", "))
+        if len(ccs) > 0:
+            sendmail.write("Cc: %s\n" % string.join(ccs, ", "))
+        if len(bccs) > 0:
+            sendmail.write("Bcc: %s\n" % string.join(bccs, ", "))
+        for name, value in headers.items():
+            sendmail.write("%s: %s\n" % (name, value))
+        sendmail.write("Subject: %s\n" % subject)
+        sendmail.write("\n")
+        sendmail.write(body)
+        
+        # Finish up.
+        exit_code = sendmail.close()
+        if exit_code is not None:
+            raise MailError, "%s returned with exit code %d" \
+                  % (sendmail_path, exit_code)
 
 
 ########################################################################

@@ -400,7 +400,14 @@ class RcConfiguration:
 
         precondition -- The RC configuration must be loaded."""
 
-        assert self.__parser is not None
+        if self.__parser is None:
+            # No RC file was ever loaded.  Print a warning the first
+            # time. 
+            if not hasattr(self, "no_rc_loaded_warning"):
+                sys.stderr.write("Warning: No RC configuration file loaded.\n")
+                self.no_rc_loaded_warning = 1
+            # Use the default.             
+            return default
         
         # Use the previously-specified default section, if one wasn't
         # specified explicitly.

@@ -47,6 +47,7 @@ import structured_text
 import sys
 import time
 import urllib
+import user
 import web
 import xml.dom
 import xmlutil
@@ -259,6 +260,12 @@ class Field:
             return self.form_field_prefix + self.GetName()
 
 
+    def FormatValueAsText(self, value):
+        """Return a plain text rendering of a 'value' for this field."""
+
+        raise qm.MethodShouldBeOverriddenError, "Field.FormatValueAsText"
+
+
     def FormatValueAsHtml(self, value, style, name=None):
         """Return an HTML rendering of a 'value' for this field.
 
@@ -378,6 +385,10 @@ class IntegerField(Field):
     def Validate(self, value):
         return int(value)
 
+
+    def FormatValueAsText(self, value):
+        return str(value)
+    
 
     def FormatValueAsHtml(self, value, style, name=None):
         # Use default value if requested.
@@ -505,6 +516,10 @@ class TextField(Field):
                   qm.error("empty field value", field_name=self.GetTitle()) 
         return value
 
+
+    def FormatValueAsText(self, value):
+        return value
+    
 
     def FormatValueAsHtml(self, value, style, name=None):
         # Use default value if requested.
@@ -711,6 +726,14 @@ class SetField(Field):
         """Returns the field instance of the contents of the set."""
 
         return self.__contained
+
+
+    def FormatValueAsText(self, value):
+        # Format each element of the set, and join them into a
+        # comma-separated list. 
+        contained_field = self.GetContainedField()
+        value = map(contained_field.FormatValueAsText, value)
+        return string.join(value, ", ")
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -952,6 +975,10 @@ class AttachmentField(Field):
             raise ValueError, \
                   "the value of an attachment field must be an 'Attachment'"
         return value
+
+
+    def FormatValueAsText(self, value):
+        return self.FormatSummary(value)
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -1321,6 +1348,10 @@ class EnumerationField(IntegerField):
         return common.Enumeral(self.__enumeration, encoding)
 
 
+    def FormatValueAsText(self, value):
+        return str(value)
+    
+
     def FormatValueAsHtml(self, value, style, name=None):
         # Use default value if requested.
         if value is None:
@@ -1472,7 +1503,7 @@ class UidField(TextField):
     """A field containing a user ID."""
 
     def __init__(self, name, **attributes):
-        attributes["default_value"] = None
+        attributes["default_value"] = user.database.GetDefaultUserId()
         apply(TextField.__init__, (self, name), attributes)
 
 

@@ -181,7 +181,7 @@ class IdbBase:
             # We should only do the query if the issue is of the correct
             # class.
             if issue.GetClass().GetName() == issue_class_name \
-               and qm.track.issue.eval_expression(query_str, issue):
+               and qm.track.issue.eval_issue_expression(query_str, issue):
                 results.append(issue)
                     
         return results

@@ -60,6 +60,9 @@ The value of this field must be an integer.
 @ missing command
 You must specify a command.  Use the '--help' option to list commands.
 
+@ sendmail error
+Could not execute your mail transport agent, `%(sendmail_path)s'.
+
 @ session expired
 Your session has expired.  Please log in again to start a new session.
 

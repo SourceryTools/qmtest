@@ -1,3 +1,28 @@
+2001-05-10  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (make_javascript_string): Don't escape slashes.
+	* qm/platform.py: New class.
+	(MailError.send_email): New function.
+	* qm/fields.py (Field.FormatValueAsText): New method.
+	(IntegerField.FormatValueAsText): Likewise.
+	(TextField.FormatValueAsText): Likewise.
+	(SetField.FormatValueAsText): Likewise.
+	(AttachmentField.FormatValueAsText): Likewise.
+	(EnumerationField.FormatValueAsText): Likewise.
+	(UidField.__init__): Use default user ID as default value.
+	* qm/common.py (RcConfiguration.Get): Return default if no rc file
+	loaded. 
+	* share/diagnostics/common.txt (sendmail error): New diagnostic.
+	* qm/track/triggers/state.py (Trigger.Preupdate): Call
+	eval_revision_expression. 
+	* qm/track/triggers/notification.py: New file.
+	* qm/track/qmtrack.in: Load rc file.
+	* qm/track/issue.py (eval_expression): Replace with...
+	(eval_issue_expression): ... this.
+	(eval_revision_expression): New function.
+	* qm/track/idb.py (IdbBase.Query): Call eval_issue_expression.
+	* qm/track/config.py (setup_idb_for_test): Add notification stuff.
+	
 2001-05-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (parse_url_query): Unquote the script URL.
