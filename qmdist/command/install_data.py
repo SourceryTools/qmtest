@@ -71,9 +71,6 @@ class install_data(base.install_data):
         data_dir = os.path.join(self.install_dir, "qm")
         outf.write("data_dir='%s'\n"
                    % get_relative_path (prefix, data_dir))
-        # And do the library directory.
-        lib_dir = os.path.join(il.install_dir, "qm")
-        outf.write("lib_dir='%s'\n"
-                   % get_relative_path (prefix, lib_dir))
-        outf.write("\n")
+
+        outf.close()
         self.outfiles.append(config)

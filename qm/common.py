@@ -194,7 +194,9 @@ class RcConfiguration(ConfigParser.ConfigParser):
 def get_lib_directory(*components):
     """Return the path to a file in the QM library directory."""
 
-    return os.path.join(qm.prefix, qm.lib_dir, *components)
+    # This is a file in the top-level QM library directory, so we can
+    # just return a path relative to ourselves.
+    return os.path.join(os.path.dirname(__file__), *components)
 
 
 def get_share_directory(*components):

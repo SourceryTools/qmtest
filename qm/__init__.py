@@ -39,16 +39,15 @@ try:
     if sys.platform != "win32":
         # On non-Windows platforms, the values written out at
         # installation time are accurate.
-        from qm.config import data_dir, lib_dir
+        from qm.config import data_dir
     else:
         # On Windows, Distutils does a mock installation and then
         # creates a binary installer.  Unfortunately, at the time
         # the mock installation is performed there is no way to know
-        # the eventual paths.  Therefore, the values indicated in
-        # config.py are incorrect.  The values given below correspond
+        # the eventual paths.  Therefore, the value indicated in
+        # config.py are incorrect.  The value given below corresponds
         # to the behavior of the binary installer.
         data_dir = "qm"
-        lib_dir = os.path.join("Lib", "site-packages", "qm")
 except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0
