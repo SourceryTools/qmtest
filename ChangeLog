@@ -1,5 +1,9 @@
 2000-10-22  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtest/design.html: Import.
+	
+2000-10-22  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/design: New directory.
 	* doc/design/qmconfig: Likewise.
 	* doc/design/qmbuild: Likewise.
