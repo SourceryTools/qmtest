@@ -1,3 +1,9 @@
+2004-03-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Spawn): Under Windows, convert all
+	environment variables to Unicode if any of them are Unicode.
+	* NEWS: Mention this improvement.
+
 2004-02-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* setup.py: Install both "qmtest" and "qmtest.py" on all systems.

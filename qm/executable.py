@@ -132,6 +132,30 @@ class Executable(object):
             # string as the command line, rather than an array of
             # arguments.
             command_line = self.__CreateCommandLine(arguments)
+
+            # Windows supports wide-characters in the environment, but
+            # the Win32 extensions to Python require that all of the
+            # entries in the environment be of the same type,
+            # i.e,. that either all of them be of type StringType or
+            # of type UnicodeType.  Therefore, if we find any elements
+            # that are Unicode strings, convert all of them to Unicode
+            # strings.
+            if environment is not None:
+                # See if there any Unicode strings in the environment.
+                uses_unicode = 0
+                for (k, v) in environment.iteritems():
+                    if (isinstance(k, unicode)
+                        or isinstance(v, unicode)):
+                        uses_unicode = 1
+                        break
+                # If there are Unicode strings in the environment,
+                # convert all of the key-value pairs to Unicode.
+                if uses_unicode:
+                    new_environment = {}
+                    for (k, v) in environment.iteritems():
+                        new_environment[unicode(k)] = unicode(v)
+                    environment = new_environment
+                        
             # Create the child process.
             self.__child \
                 = win32process.CreateProcess(path,

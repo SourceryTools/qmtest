@@ -1,10 +1,24 @@
 NEWS
 ====
 
-This file describes user visible changes to QM.
+This file describes user-visible changes to QM.
 
-QM 2.1.1 (Not Yet Released)
-===========================
+QM 2.1.3
+========
+
+Under Windows, tests derived from command.ExecTestBase that explicitly
+set environment variables for the child process did not operate
+correctly.  This problem has been corrected.
+
+QM 2.1.2
+========
+
+A problem with the Windows packaging script that resulted in qmtest.py
+not being installed in the Python Scripts directory has been
+corrected.
+
+QM 2.1.1
+========
 
 A problem that prevent ShellScriptTest from working on Windows with
 the native Windows command-interpreter has been fixed.
