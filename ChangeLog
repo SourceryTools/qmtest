@@ -1,3 +1,13 @@
+2004-01-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/python.py (BaseExceptionTest.Run): Use
+	has_exception_argument to keep track of whether or not an argument
+	was provided.
+	(BaseExceptionTest.CheckArgument): Use it.
+	(ExceptionTest.CheckArgument): Likewise.  Handle the case of a
+	class that does not provide the "args" interface.
+	* tests/regress/exception_test/arg1.qmt: New test.
+	
 2004-01-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/doc/reference.xml: Fix typo.

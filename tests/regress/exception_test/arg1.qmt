@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<extension class="python.ExceptionTest" kind="test">
+  <argument name="exception_class">
+    <text>MyExc</text>
+  </argument>
+  <argument name="exception_argument">
+    <text>'this is the arg'</text>
+  </argument>
+  <argument name="source">
+    <text>class MyExc(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+raise MyExc('this is the arg')
+</text>
+  </argument>
+  <argument name="prerequisites">
+    <set/>
+  </argument>
+  <argument name="target_group">
+    <text>.*</text>
+  </argument>
+  <argument name="resources">
+    <set/>
+  </argument>
+</extension>

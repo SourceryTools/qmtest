@@ -153,7 +153,10 @@ class BaseExceptionTest(Test):
         # Adjust the exception argument.
         if string.strip(self.exception_argument) != "":
             self.exception_argument = eval(self.exception_argument, {}, {})
-
+            self.has_exception_argument = 1
+        else:
+            self.has_exception_argument = 0
+            
         global_namespace, local_namespace = make_namespaces(context)
         try:
             # Execute the test code.
@@ -177,7 +180,7 @@ class BaseExceptionTest(Test):
         'result' -- The result object for this test."""
 
         # Was an expected exception argument specified?
-        if hasattr(self, "exception_argument"):
+        if self.has_exception_argument:
             # Yes.  Extract the exception argument.
             argument = exc_info[1]
             if cmp(argument, self.exception_argument):
@@ -240,10 +243,19 @@ class ExceptionTest(BaseExceptionTest):
         'result' -- The result object for this test."""
 
         # Was an expected argument specified?
-        if hasattr(self, "exception_argument"):
-            # Extract the actual argument from the exception object.  
-            argument = exc_info[1].args
-
+        if self.has_exception_argument:
+            # Extract the actual argument from the exception object.
+            try:
+                argument = exc_info[1].args
+            except:
+                # If the "args" were not available, then the exception
+                # object does not use the documented interface given
+                # for Exception.
+                result.Fail("Exception object does not provide access "
+                            "to arguments provided to 'raise'",
+                            { "ExceptionTest.type" : str(exc_info[0]) })
+                return
+                
             # Now the expected argument.
             expected_argument = self.exception_argument
             # Python wraps the arguments to class exceptions in strange
