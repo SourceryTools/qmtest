@@ -1,3 +1,8 @@
+2004-05-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/qmtest (check_python_version): Rework to avoid using
+	newer Python features.
+
 2004-05-26  Mark Mitchell  <mark@codesourcery.com>
 
 	* MANIFEST.in (qm/test/doc/html/qm.css): Include it.

@@ -16,6 +16,49 @@
 ########################################################################
 
 ########################################################################
+# Check Python Version
+########################################################################
+
+# Before doing anything else, check that the version of Python in use
+# is sufficiently recent.  All code in this section should be portable
+# even to old versions of Python.
+
+import sys
+
+def check_python_version():
+    """Check to see if the Python interpreter in use is acceptable.
+
+    If the Python interpreter is not sufficiently recent, issue an
+    error message and exit."""
+
+    required_python_version = (2, 2)
+
+    # Get the version of Python in use.
+    try:
+        actual_version = sys.version_info
+    except:
+        # Older versions of Python do not have "sys.version_info".
+        actual_version = (0, 0, 0, 0)
+
+    old = 0
+    for i in range(len(required_python_version)):
+        if required_python_version[i] > actual_version[i]:
+            old = 1
+
+    if old:
+        if len(required_python_version) == 2:
+            version = "%d.%d" % required_python_version
+        else:
+            version = "%d.%d.%d" % required_python_version
+        sys.stderr.write(
+            ("QMTest requires Python %s or later.\n"
+             "Set the QM_PYTHON environment variable to an appropriate "
+             "Python interpreter.\n") % version)
+        sys.exit(1)
+
+check_python_version()
+
+########################################################################
 # Imports
 ########################################################################
 
@@ -23,7 +66,6 @@ import errno
 import gc
 import os
 import os.path
-import sys
 import string
 import traceback
 
@@ -96,30 +138,17 @@ if sys.platform != "win32":
 ########################################################################
 
 def print_error_message(message):
+    """Output an error message.
+
+    'message' -- Structured text for the error message to emit.  The
+    messing is emitted to the standard error stream with an
+    identifying prefix."""
+    
     prefix = "qmtest: error: "
     message = qm.structured_text.to_text(str(message),
                                          indent=len(prefix))
     message = prefix + message[len(prefix):]
     sys.stderr.write(message)
-
-
-_required_python_version = (2, 2)
-def check_python_version():
-    """Check to see if the Python interpreter in use is acceptable.
-
-    If the Python interpreter is not sufficiently recent, issue an
-    error message and exit."""
-
-    version_str = ".".join([str(num) for num in _required_python_version])
-    message = "Python " + version_str + " or higher is required.\n"
-    message += "Set QM_PYTHON to an appropriate Python interpreter.\n"
-    try:
-        if sys.version_info < _required_python_version:
-            print_error_message(message)
-            sys.exit(1)
-    except AttributeError:
-        print_error_message(message)
-        sys.exit(1)
 
 
 def main():
@@ -128,9 +157,6 @@ def main():
     returns -- The exit code that should be provided to the operating
     system."""
     
-    # Make sure our Python is recent enough.
-    check_python_version()
-
     # Save the initial signal mask, as early as possible.
     if sys.platform != "win32":
         qm.sigmask.save_mask()
