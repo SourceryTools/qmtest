@@ -1,3 +1,7 @@
+2001-10-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py: Attempt to fix formatting.
+
 2001-10-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (Field.GetValueFromDomNode): Rename store parameter

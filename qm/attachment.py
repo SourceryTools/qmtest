@@ -142,6 +142,7 @@ class AttachmentStore:
         return (mime_type, data)
 
 
+
 class TemporaryAttachmentStore(AttachmentStore):
     """Temporary storage for attachment data.
 
@@ -279,6 +280,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         common.rmdir_recursively(self.__path)
 
 
+
 class Attachment:
     """An arbitrary file attachment.
 
@@ -402,6 +404,7 @@ class Attachment:
 ########################################################################
 
 _temporary_location_prefix = "_temporary"
+
 
 def make_temporary_location():
     """Return a unique location for temporary attachment data."""
