@@ -1,5 +1,5 @@
 *.pyc
 Makefile
-version.py
+__version.py
 *.pyo
 build

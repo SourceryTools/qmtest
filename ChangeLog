@@ -1,4 +1,14 @@
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
+	
+	* qm/version.py.in: Rename to...
+	* qm/__version.py.in: ...this.
+	* qm/__init__.py: Adjust for new name.
+	* qm/.cvsignore: Likewise.
+	* qm/GNUMakefile.in: Likewise.
+	* qm/configure.in: Likewise.
+	* qm/configure: Regenerate.
+	
+2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/version.py.in: New file.
 	* qm/setup_path.py.in: Remove version handling, and rename to...

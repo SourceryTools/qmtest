@@ -217,5 +217,5 @@ dnl ####################################################################
 AC_OUTPUT(
   GNUmakefile
   qm.spec
-  qm/version.py
+  qm/__version.py
 )

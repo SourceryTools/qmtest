@@ -1,6 +1,6 @@
 ########################################################################
 #
-# File:   version.py
+# File:   __version.py.in
 # Author: Nathaniel Smith
 # Date:   2003-08-10
 #
