@@ -75,7 +75,6 @@ dnl Find some common programs.
 dnl ####################################################################
 
 AC_PROG_MAKE_SET
-AC_PROG_INSTALL
 
 dnl ####################################################################
 dnl Find the Python interpreter.  If the user specified the 

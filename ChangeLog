@@ -1,5 +1,45 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/web.py (make_button_for_popup): Spell "resizeable" without
+	the "e" in JavaScript code.
+	(format_user_id): Likewise.
+	* share/dtml/help.dtml (popup_manual): Likewise.
+	* share/web/common.js (show_help): Likewise.
+	(popup_manual): Likewise.
+	
+	* share/dtml/test/result.dtml: Sort the annotations.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (doc-install): Do not assume $(INSTALL) understands
+	wildcards.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (SCRIPTS): Use backslashes on Windows.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (install): Don't depend on install -D.
+	(share-install): Likewise.
+	* configure.in (AC_PROG_INSTALL): Remove.
+	* configure: Regenerated.
+	* standard.mk.in (INSTALL): Define explicitly.
+	(INSTALL_DATA): Likewise.
+	(INSTALL_PROGRAM): Likewise.
+	(INSTALL_SCRIPT): Likewise.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (SCRIPTS): Hardwire destination path.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (PYTHON_PACKAGES_INSTALL): Do not attempt
+	to set permissions on installed files.
+
+2001-12-11  Mark Mitchell  <mark@codesourcery.com>
+
 	* Makefile.in (RELINCDIR): New variable.
 	(PYTHON_PACKAGES_INSTALL): Use it.
 	* standard.mk.in (INSTALLINCDIR): New variable.

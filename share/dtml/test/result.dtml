@@ -37,7 +37,7 @@
    <td width="20%">Annotation</td>
    <td width="80%">Value</td>
   </tr>
-  <dtml-in expr="result.keys()">
+  <dtml-in expr="result.keys()" sort>
    <dtml-let annotation=sequence-item>
     <dtml-if expr="annotation != result.CAUSE">
      <tr class="field">
