@@ -33,8 +33,8 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
-@ missing command
-You must specify a command.  Use the '--help' option to list commands.
+@ conflicting options
+You may not specify both '--%(option1)s' and '--%(option2)s'.
 
 @ dom bad integer
 The value "%(value)s" is not an integer.  The contents of an '<integer>'
@@ -43,6 +43,9 @@ node must be an integer.
 @ dom wrong tag for field
 A '<%(wrong_tag)s>' element is not allowed for field %(field)s.  Only a
 '<%(right_tag)s>' element may be used.
+
+@ missing command
+You must specify a command.  Use the '--help' option to list commands.
 
 ########################################################################
 # Local Variables:

@@ -39,6 +39,7 @@ import common
 import label
 import mimetypes
 import qm
+import qm.xmlutil
 import diagnostic
 import string
 import time
@@ -418,7 +419,7 @@ class IntegerField(Field):
                                    right_tag="integer",
                                    wrong_tag=node.tagName)
         # Retrieve the contained text.
-        value = common.get_dom_node_text(node)
+        value = qm.xmlutil.get_dom_text(node)
         # Convert it to an integer.
         try:
             return int(value)
@@ -560,7 +561,7 @@ class TextField(Field):
                                    right_tag="text",
                                    wrong_tag=node.tagName)
         # Just the text, ma'am.
-        return common.get_dom_node_text(node)
+        return qm.xmlutil.get_dom_text(node)
 
 
 
@@ -1104,13 +1105,13 @@ class AttachmentField(Field):
         # There should be only four child nodes.
         assert len(node.childNodes) == 4
         # One is the description.
-        description = common.get_child_dom_node_text(node, "description")
+        description = qm.xmlutil.get_dom_child_text(node, "description")
         # One is the MIME type.
-        mime_type = common.get_child_dom_node_text(node, "mime_type")
+        mime_type = qm.xmlutil.get_dom_child_text(node, "mime_type")
         # One is the file name.
-        file_name = common.get_child_dom_node_text(node, "file_name")
+        file_name = qm.xmlutil.get_dom_child_text(node, "file_name")
         # One is the location.
-        location = common.get_child_dom_node_text(node, "location")
+        location = qm.xmlutil.get_dom_child_text(node, "location")
         # Construct the resulting attachment.
         return Attachment(location=location,
                           mime_type=mime_type,
@@ -1284,7 +1285,7 @@ class EnumerationField(IntegerField):
                                    right_tag="enumeral",
                                    wrong_tag=node.tagName)
         # Extract the value.
-        value = common.get_dom_node_text(node)
+        value = qm.xmlutil.get_dom_text(node)
         try:
             # The value might be a number.
             return int(value)

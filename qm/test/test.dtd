@@ -1,46 +1,94 @@
+<!--
+
+  File:   test.dtd
+  Author: Alex Samuel
+  Date:   2001-03-14
+
+  Contents:
+    DTD for a test case.
+
+  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation files
+  (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge,
+  publish, distribute, sublicense, and/or sell copies of the Software,
+  and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+-->
+
+<!-- A single test.  -->
 <!ELEMENT test
-    ( class, 
-      ( argument | category | prerequisite | preaction | postaction )* 
-    )
+    (class, (argument | category | prerequisite | preaction | postaction)*)
 >
 
+<!-- The name of a test class.  -->
 <!ELEMENT class (#PCDATA)>
 
+<!-- An argument to a test class.  -->
 <!ELEMENT argument (integer | text | set | attachment | enumeral)>
-<!ATTLIST argument
-    name CDATA #REQUIRED
-    eval ( yes | no ) "no"
->
+<!ATTLIST argument name CDATA #REQUIRED eval ( yes | no ) "no">
 
+<!-- The value of an integer field.  -->
 <!ELEMENT integer (#PCDATA)>
 
+<!-- The value of a text field.  -->
 <!ELEMENT text (#PCDATA)>
 
-<!ELEMENT set ( ( integer | text | attachment | enumeral )* )>
+<!-- The value of a set field.  -->
+<!ELEMENT set ((integer | text | attachment | enumeral)*)>
 
-<!ELEMENT attachment ( description,
-                       mime_type,
-                       file_name,
-                       location
-                     )>
+<!-- The value of an attachment field.  -->
+<!ELEMENT attachment (description, mime_type, file_name, location)>
 
+<!-- A text description of an attachment.  -->
 <!ELEMENT description (#PCDATA)>
 
+<!-- The MIME type of an attachment.  -->
 <!ELEMENT mime_type (#PCDATA)>
 
+<!-- The file name from which an attachment was uploaded.  -->
 <!ELEMENT file_name (#PCDATA)>
 
+<!-- The database-specific location where an attachment is stored.  -->
 <!ELEMENT location (#PCDATA)>
 
+<!-- The value of an enumeral field.  -->
 <!ELEMENT enumeral (#PCDATA)>
 
+<!-- The name of a category to which the test belongs.  -->
 <!ELEMENT category (#PCDATA)>
 
+<!-- The test ID of another test that must be run before this one is. 
+     The outcome attribute is the outcome that the other test must produce
+     for this one to be run.  -->
 <!ELEMENT prerequisite (#PCDATA)>
-<!ATTLIST prerequisite
-    outcome ( PASS | FAIL | ERROR | UNTESTED ) "PASS"
->
+<!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
 
+<!-- The ID of an action that must be invoked before this test is run.  -->
 <!ELEMENT preaction (#PCDATA)>
 
+<!-- The ID of an action that must be invoked after this test is run.  -->
 <!ELEMENT postaction (#PCDATA)>
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

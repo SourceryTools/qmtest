@@ -40,6 +40,8 @@ import os
 import qm.cmdline
 import string
 import sys
+import xml.dom.ext 
+import xml.dom.DOMImplementation
 import xmldb
 
 ########################################################################
@@ -58,6 +60,13 @@ class Command:
         "Display usage summary."
         )
 
+    verbose_option_spec = (
+        "v",
+        "verbose",
+        None,
+        "Display informational messages."
+        )
+
     db_path_option_spec = (
         "D",
         "db-path",
@@ -65,16 +74,50 @@ class Command:
         "Path to the test database."
         )
 
-    all_results_option_spec = (
-        "A",
-        "all-results",
+    output_option_spec = (
+        "o",
+        "output",
+        "FILE",
+        "Write test results to FILE (- for stdout)."
+        )
+
+    no_output_option_spec = (
         None,
-        "Display results of all tests, including those not explicitly "
-        "requested."
+        "no-output",
+        None,
+        "Don't generate test results."
+        )
+
+    summary_option_spec = (
+        "s",
+        "summary",
+        "FILE",
+        "Write test summary to FILE (- for stdout)."
+        )
+
+    no_summary_option_spec = (
+        "S",
+        "no-summary",
+        None,
+        "Don't generate test summary."
+        )
+
+    outcomes_option_spec = (
+        "O",
+        "outcomes",
+        "FILE",
+        "Load expected outcomes from FILE."
+        )
+
+    # Groups of options that should not be used together.
+    conflicting_option_specs = (
+        ( output_option_spec, no_output_option_spec ),
+        ( summary_option_spec, no_summary_option_spec ),
         )
 
     global_options_spec = [
         help_option_spec,
+        verbose_option_spec,
         db_path_option_spec,
         ]
 
@@ -85,7 +128,9 @@ class Command:
          "This command runs tests, prints their outcomes, and writes "
          "test results.  Specify one or more test IDs and "
          "suite IDs as arguments.",
-         ( help_option_spec, all_results_option_spec )
+         ( help_option_spec, output_option_spec, no_output_option_spec,
+           summary_option_spec, no_summary_option_spec,
+           outcomes_option_spec )
          ),
 
         ]
@@ -105,7 +150,8 @@ class Command:
         # Build a command-line parser for this program.
         self.__parser = qm.cmdline.CommandParser(program_name,
                                                  self.global_options_spec,
-                                                 self.commands_spec)
+                                                 self.commands_spec,
+                                                 self.conflicting_option_specs)
         # Parse the command line.
         components = self.__parser.ParseCommandLine(argument_list)
         # Unpack the results.
@@ -114,9 +160,6 @@ class Command:
           self.__command_options,
           self.__arguments
           ) = components
-
-        # Set defaults.
-        self.__show_all_results = 0
 
 
     def GetGlobalOption(self, option):
@@ -151,6 +194,10 @@ class Command:
             output.write(self.__parser.GetCommandHelp(self.__command))
             return
 
+        # Handle the verbose option.  The verbose level is the number of
+        # times the verbose option was specified.
+        self.__verbose = self.__global_options.count(("verbose", ""))
+
         # Make sure a command was specified.
         if self.__command == "":
             raise qm.cmdline.CommandError, qm.error("missing command")
@@ -168,10 +215,6 @@ class Command:
                                envvar=self.db_path_environment_variable)
         self.__database = xmldb.Database(db_path)
 
-        # Handle other configuration.
-        if self.GetCommandOption("all-results") is not None:
-            self.__show_all_results = 1
-
         # Dispatch to the appropriate method.
         method = {
             "run" : self.__ExecuteRun,
@@ -188,56 +231,262 @@ class Command:
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""
         
+        # Handle result options.
+        result_file_name = self.GetCommandOption("output")
+        if result_file_name is None:
+            # By default, no result output.
+            result_file = None
+        elif result_file_name == "-":
+            # Use standard output.
+            result_file = sys.stdout
+        else:
+            # A named file.
+            result_file = open(result_file_name, "w")
+
+        # Handle summary options.
+        summary_file_name = self.GetCommandOption("summary")
+        # The default is generate a summary to standard output.
+        if self.GetCommandOption("no-summary") is not None:
+            # User asked to supress summary.
+            summary_file = None
+        elif summary_file_name is None:
+            # User didn't specify anything, so by default write summary
+            # to standard output.
+            summary_file = sys.stdout
+        elif summary_file_name == "-":
+            # User specified standard output explicitly.
+            summary_file = sys.stdout
+        else:
+            summary_file = open(summary_file_name, "w")
+
+        # Handle the outcome option.
+        outcomes_file_name = self.GetCommandOption("outcomes")
+        if outcomes_file_name is not None:
+            outcomes = base.load_outcomes(outcomes_file_name)
+        else:
+            outcomes = None
+
         database = self.GetDatabase()
         # Make sure some arguments were specified.  The arguments are
         # the IDs of tests and suites to run.
         if len(self.__arguments) == 0:
-            raise CommandError, qm.error("no ids specified")
+            raise qm.cmdline.CommandError, qm.error("no ids specified")
         try:
             test_ids = []
             # Validate test IDs and expand test suites in the arguments.
             base.expand_and_validate_ids(database,
                                          self.__arguments,
                                          test_ids)
-            # Run the tests.
+
+            # Set up a test engine for running tests.
             engine = base.Engine(database)
             context = base.Context()
-            results = engine.RunTests(test_ids, context)
-
-            if self.__show_all_results:
-                # Show results for all the tests that were run, in the
-                # order they were run.
-                show_test_ids = results.keys()
+            self.__output = output
+            if self.__verbose > 0:
+                # If running verbose, specify a callback function to
+                # display test results while we're running.
+                callback = self.__ProgressCallback
             else:
-                # Show only tests that were run, in the order they were
-                # specified.
-                show_test_ids = test_ids
-                # FIXME: Should we perhaps show tests in the order they
-                # were actually run instead?
-            # Summarize outcomes.
-            self.__WriteOutcomes(show_test_ids, results, output)
+                # Otherwise no progress messages.
+                callback = None
+                
+            # Run the tests.
+            results = engine.RunTests(test_ids, context, callback)
 
+            run_test_ids = results.keys()
+            # Summarize outcomes.
+            if summary_file is not None:
+                self.__WriteSummary(test_ids, results, outcomes, summary_file)
+                # Close it unless it's standard output.
+                if summary_file is not sys.stdout:
+                    summary_file.close()
+            # Write out results.
+            if result_file is not None:
+                self.__WriteResults(test_ids, results, result_file)
+                # Close it unless it's standard output.
+                if result_file is not sys.stdout:
+                    result_file.close()
         except:
+            # FIXME: What exceptions need to be handled here?
             raise
                                                     
 
-    def __WriteOutcomes(self, test_ids, results, output):
-        # Find the width of the longest test ID.
-        width = apply(max, (map(len, test_ids), ))
-        # Throttle it.
-        width = min(60, width + 1)
-        # Generate a format string for printing test outcomes.
-        format = "%%-%ds: %%s\n" % width
+    def __ProgressCallback(self, test_id, result):
+        """Display testing progress.
 
-        for test_id in test_ids:
+        'test_id' -- The ID of the test being run.
+
+        'result' -- If 'None', the test is about to be run.  Otherwise
+        the result of running the test."""
+        
+        if result is None:
+            self.__output.write("%-38s: " % test_id)
+        else:
+            self.__output.write("%s\n" % result.GetOutcome())
+        self.__output.flush()
+
+
+    def __WriteSummary(self, test_ids, results, expected_outcomes, output):
+        """Generate test result summary.
+
+        'test_ids' -- The test IDs that were requested for the test run.
+
+        'results' -- A mapping from test ID to result for tests that
+        were actually run.
+
+        'expected_outcomes' -- A map from test IDs to expected outcomes,
+        or 'None' if there are no expected outcomes.
+
+        'output' -- A file object to which to write the summary."""
+
+        def divider(text):
+            return "--- %s %s\n\n" % (text, "-" * (73 - len(text)))
+
+        output.write("\n")
+        output.write(divider("STATISTICS"))
+        num_tests = len(results)
+        output.write("  %6d        tests total\n\n" % num_tests)
+
+        if expected_outcomes is not None:
+            # Initialize a map with which we will count the number of
+            # tests with each unexpected outcome.
+            count_by_unexpected = {}
+            for outcome in base.Result.outcomes:
+                count_by_unexpected[outcome] = 0
+            # Also, we'll count the number of tests that resulted in the
+            # expected outcome, and the number for which we have no
+            # expected outcome.
+            count_expected = 0
+            count_no_outcome = 0
+            # Count tests by expected outcome.
+            for test_id in results.keys():
+                result = results[test_id]
+                outcome = result.GetOutcome()
+                # Do we have an expected outcome for this test?
+                if expected_outcomes.has_key(test_id):
+                    # Yes.
+                    expected_outcome = expected_outcomes[test_id]
+                    if outcome == expected_outcome:
+                        # Outcome as expected.
+                        count_expected = count_expected + 1
+                    else:
+                        # Unexpected outcome.  Count by actual (not
+                        # expected) outcome.
+                        count_by_unexpected[outcome] = \
+                            count_by_unexpected[outcome] + 1
+                else:
+                    # No expected outcome for this test.
+                    count_no_outcome = count_no_outcome + 1
+
+            output.write("  %6d (%3.0f%%) tests as expected\n"
+                         % (count_expected,
+                            (100. * count_expected) / num_tests))
+            for outcome in base.Result.outcomes:
+                count = count_by_unexpected[outcome]
+                if count > 0:
+                    output.write("  %6d (%3.0f%%) tests unexpected %s\n"
+                                 % (count, (100. * count) / num_tests,
+                                    outcome))
+            if count_no_outcome > 0:
+                output.write("  %6d (%3.0f%%) tests with no "
+                             "expected outcomes\n"
+                             % (count_no_outcome,
+                                (100. * count_no_outcome) / num_tests))
+            output.write("\n")
+
+        # Initialize a map with which we will count the number of tests
+        # with each outcome.
+        count_by_outcome = {}
+        for outcome in base.Result.outcomes:
+            count_by_outcome[outcome] = 0
+        # Count tests by outcome.
+        for result in results.values():
+            outcome = result.GetOutcome()
+            count_by_outcome[outcome] = count_by_outcome[outcome] + 1
+        # Summarize these counts.
+        for outcome in base.Result.outcomes:
+            count = count_by_outcome[outcome]
+            if count > 0:
+                output.write("  %6d (%3.0f%%) tests %s\n"
+                             % (count, (100. * count) / num_tests, outcome))
+        output.write("\n")
+
+        # If we have been provided with expected outcomes, report each
+        # test whose outcome doesn't match the expected outcome.
+        if expected_outcomes is not None:
+            output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
+            # Scan over tests.
+            for test_id in results.keys():
+                result = results[test_id]
+                outcome = result.GetOutcome()
+                if not expected_outcomes.has_key(test_id):
+                    # No expected outcome for this test; skip it.
+                    continue
+                expected_outcome = expected_outcomes[test_id]
+                if outcome == expected_outcome:
+                    # The outcome of this test is as expected; move on.
+                    continue
+                # This test produced an unexpected outcome, so report it.
+                output.write("  %-32s: %-8s [expected %s]\n"
+                             % (test_id, outcome, expected_outcome))
+            output.write("\n")
+
+        output.write(divider("TESTS THAT DID NOT PASS"))
+        for test_id in results.keys():
             result = results[test_id]
-            output.write(format % (test_id, result.GetOutcome()))
+            outcome = result.GetOutcome()
+            extra = ""
+            if outcome == base.Result.PASS:
+                # Don't list tests that passed.
+                continue
+            elif outcome == base.Result.UNTESTED:
+                # If the test was not run, print the failed prerequisite.
+                prerequisite = result["failed_prerequisite"]
+                prerequisite_outcome = results[prerequisite].GetOutcome()
+                extra = "[%s was %s]" % (prerequisite, prerequisite_outcome)
+            elif outcome == base.Result.FAIL:
+                # If the result has a cause property, use it.
+                if result.has_key("cause"):
+                    extra = "[%s]" % result["cause"]
+            output.write("  %-32s: %-8s %s\n" % (test_id, outcome, extra))
+        output.write("\n")
 
 
+    def __WriteResults(self, test_ids, results, output):
+        """Generate full test results in XML format.
 
-########################################################################
-# script
-########################################################################
+        'test_ids' -- The test IDs that were requested for the test run.
+
+        'results' -- A mapping from test ID to result for tests that
+        were actually run.
+
+        'output' -- A file object to which to write the results."""
+
+        implementation = xml.dom.DOMImplementation.DOMImplementation()
+        # Create the document type for the XML document.
+        document_type = implementation.createDocumentType(
+            qualifiedName="results",
+            publicId=None,
+            systemId="results.dtd"
+            )
+        # Create a new XML document.
+        document = implementation.createDocument(
+            namespaceURI=None,
+            qualifiedName="results",
+            doctype=document_type
+            )
+        # Add a result element for each test that was run.
+        for test_id in results.keys():
+            result = results[test_id]
+            result_element = result.MakeDomElement(document)
+            document.documentElement.appendChild(result_element)
+        # Generate output.
+        xml.dom.ext.PrettyPrint(document,
+                                stream=output,
+                                indent=" ",
+                                encoding="ISO-8859-1")
+
+
 
 ########################################################################
 # Local Variables:

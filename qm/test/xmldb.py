@@ -39,6 +39,7 @@ import base
 import os
 import qm.fields
 import qm.label
+import qm.xmlutil
 import string
 import xml.dom.ext.reader.Sax
 
@@ -268,7 +269,7 @@ class Database(base.Database):
         # Extract the pieces.
         test_class = self.__GetClass(test_node)
         arguments = self.__GetArguments(test_node, test_class)
-        categories = qm.common.get_dom_children_texts(test_node, "category")
+        categories = qm.xmlutil.get_dom_children_texts(test_node, "category")
         prerequisites = self.__GetPrerequisites(test_node, test_id)
         # Construct the test object.
         test = apply(test_class, [], arguments)
@@ -294,7 +295,7 @@ class Database(base.Database):
         assert len(class_nodes) == 1
         class_node = class_nodes[0]
         # Extract the name of the test class.
-        class_name = qm.common.get_dom_node_text(class_node)
+        class_name = qm.xmlutil.get_dom_text(class_node)
         # Obtain the test class.
         try:
             return base.get_test_class(class_name)
@@ -360,7 +361,7 @@ class Database(base.Database):
         # Extract the contents of all prerequisite elements.
         results = {}
         for child_node in test_node.getElementsByTagName("prerequisite"):
-            test_id = qm.common.get_dom_node_text(child_node)
+            test_id = qm.xmlutil.get_dom_text(child_node)
             # These test IDs are relative to the path containing this
             # test.  Make them absolute.
             test_id = rel(test_id)

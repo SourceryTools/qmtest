@@ -71,7 +71,7 @@ class CommandParser:
     The command parser is used to easily specify a list of command line
     options and commands to be parsed from an argument list."""
     
-    def __init__(self, name, options, commands):
+    def __init__(self, name, options, commands, conflicting_options=()):
         """Create a new command parser.
 
         'name' -- The name of the executable that we are currently
@@ -104,7 +104,10 @@ class CommandParser:
 
           'flags' -- A list of 4-tuples of the same form as the
           'options' described above.
-        """
+
+        'conflicting_options' -- A sequence of sets of conflicting
+        options.  Each element is a sequence of option specifiers in the
+        same form as 'options', above."""
 
         self.__name = name
         
@@ -149,6 +152,29 @@ class CommandParser:
 
         # Build the options string for getopt.
         self.__getopt_options = self.BuildGetoptString(self.__options)
+
+        # Check that all options in the conflicting options set are
+        # included somewhere.
+        for conflict_set in conflicting_options:
+            # Check each option in each set.
+            for option_spec in conflict_set:
+                found = 0
+                # Check in the global options.
+                if option_spec in options:
+                    found = 1
+                    break
+                if not found:
+                    # Check in the command options for each command.
+                    for command in commands:
+                        if option in command[4]:
+                            found = 1
+                            break
+                if not found:
+                    # This option spec wasn't found anywhere.
+                    raise ValueError, \
+                          "unknown option --%s in conflict set", option[1]
+        # Store for later.
+        self.__conflicting_options = conflicting_options
 
 
     def CheckOptions(self, options):
@@ -362,5 +388,26 @@ class CommandParser:
             new_flag = (command_item[5][flag[0]], flag[1])
             command_flags[i] = new_flag
             
+        # Check for mutually exclusive options.  First generate a set of
+        # all the options that were specified, both global options and
+        # command options.
+        all_flags = map(lambda flag: flag[0], flags + command_flags)
+        # Loop over sets of conflicting options.
+        for conflict_set in self.__conflicting_options:
+            # Generate sequence of names of the conflicting options.
+            conflict_names = map(lambda opt_spec: opt_spec[1], conflict_set)
+            # Filter out options that were specified that aren't in the
+            # set of conflicting options.
+            conflict_filter = lambda flag, conflict_names=conflict_names: \
+                              flag in conflict_names and flag
+            matches = filter(conflict_filter, all_flags)
+            # Was more than one option from the conflicting set specified?
+            if len(matches) > 1:
+                # Yes; that's a user error.
+                raise qm.cmdline.CommandError, \
+                      qm.error("conflicting options",
+                               option1=matches[0],
+                               option2=matches[1])
+
         return (flags, command, command_flags, command_args)
 

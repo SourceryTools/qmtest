@@ -47,7 +47,6 @@ import sys
 import time
 import traceback
 import types
-import xml.dom
 
 ########################################################################
 # exceptions
@@ -414,6 +413,10 @@ class OrderedMap:
             self.__values[index] = value
 
 
+    def __len__(self):
+        return len(self.__keys)
+    
+
     def has_key(self, key):
         return self.__key_map.has_key(key)
 
@@ -594,53 +597,6 @@ def convert_from_dos_text(text):
     """Replace CRLF with LF in 'text'."""
 
     return string.replace(text, "\n\r", "\n")
-
-
-def get_dom_node_text(node):
-    """Return the text contained in DOM 'node'.
-
-    'node' -- A DOM element node.
-
-    prerequisites -- 'node' is an element node with exactly one child,
-    which is a text node."""
-
-    assert node.nodeType == xml.dom.Node.ELEMENT_NODE
-    assert len(node.childNodes) == 1
-    child = node.childNodes[0]
-    assert child.nodeType == xml.dom.Node.TEXT_NODE
-    return child.data
-
-
-def get_child_dom_node_text(node, child_tag):
-    """Return the text contained in a child of DOM 'node'.
-
-    'child_tag' -- The tag of the child node whose text is to be
-    retrieved.
-
-    prerequisites -- 'node' is an element node with exactly one child
-    with the tag 'child_tag'.  That child has exactly one child, which
-    is a text node."""
-
-    assert node.nodeType == xml.dom.Node.ELEMENT_NODE
-    children = node.getElementsByTagName(child_tag)
-    assert len(children) == 1
-    return get_dom_node_text(children[0])
-
-
-def get_dom_children_texts(node, child_tag):
-    """Return a sequence of text contents of children.
-
-    'node' -- A DOM node.
-
-    returns -- The text contained in all child nodes of 'node' which
-    have tag 'child_tag'.  Each child must have exactly one child of its
-    own, which must be a text node."""
-
-    results = []
-    for child_node in node.getElementsByTagName(child_tag):
-        text = get_dom_node_text(child_node)
-        results.append(text)
-    return results
 
 
 def load_module(name, path):

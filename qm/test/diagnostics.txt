@@ -33,10 +33,6 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
-@ class is not test class
-The class %(class_name)s is not a test class.  A test class must be a
-subclass of 'qm.test.base.Test'.
-
 @ db path doesn't exist
 The path you specified for the test database, %(path)s, does not exist. 
 

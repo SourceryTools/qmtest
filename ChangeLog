@@ -1,3 +1,47 @@
+2001-03-20  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py: New file.
+	* qm/fields.py: Use it throughout.
+	* qm/common.py (OrderedMap.__len__): New method.
+	(get_dom_node_text): Remove.
+	(get_child_dom_node_text): Likewise.
+	(get_dom_children_texts): Likewise.
+	* qm/cmdline.py (CommandParser.__init__): Add conflicting_options
+	parameter.
+	(CommandParser.ParseCommandLine): Check for conflicting options.
+	* qm/diagnostics.txt (conflicting options): New diagnostic.
+
+	* qm/test/xmldb.py: Use qm.xmlutil throughout.
+	* qm/test/cmdline.py (Command.all_results_option_spec): Remove.
+	(Command.verbose_option_spec): New attribute.
+	(Command.output_option_spec): Likewise.
+	(Command.no_output_option_spec): Likewise.
+	(Command.summary_option_spec): Likewise.
+	(Command.no_summary_option_spec): Likewise.
+	(Command.outcomes_option_spec): Likewise.
+	(Command.conflicting_option_specs): Likewise.
+	(Command.commands_spec): Add options.
+	(Command.__init__): Use conflicting_option_specs.
+	(Command.Execute): Handle verbose option.
+	(Command.__ExecuteRun): Handle summary, output, and outcome
+	options.
+	(Command.__ProgressCallback): New method.
+	(Command.__WriteSummary): Likewise.
+	(Command.__WriteResults): Rewrite.
+	* qm/test/base.py (Result.__init__): Remove context parameter.
+	(Result.__getitem__): Remove.
+	(Result.get): Likewise.
+	(ResultWrapper): New class.
+	(Engine.RunTests): Add progress_callback parameter.  Wrap results
+	in ResultWrapper.
+	(load_outcomes): New function.
+	(load_results): Likewise.
+	(__results_from_dom): Likewise.
+	(__result_from_dom): Likewise.
+	* qm/test/diagnostics.txt (class is not test class): Remove.
+	* qm/test/results.dtd: New file.
+	* qm/test/test.dtd: Add comments.
+
 2001-03-20  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/sql_idb.py (SqlIdb.GetIssues): import types. 
