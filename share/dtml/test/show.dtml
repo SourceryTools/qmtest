@@ -281,39 +281,6 @@
 
     </dtml-if>
 
-    <dtml-comment><!--
-
-      For both tests and resources, allow users to associate 
-      additional properties with the item.
-
-    --></dtml-comment>
-
-    <tr class="field" valign="top">
-     <td>
-      <b>Properties</b>
-      <dtml-if expr="edit">
-        <p>Properties of the <dtml-var name="type">.</p>
-      </dtml-if>
-     </td>
-     <td>
-      <dtml-if expr="edit">
-       <dtml-var expr="web.make_properties_control('form', 'properties',
-                                                   item.GetProperties())">
-      <dtml-else>
-       <dtml-if expr="_.len(item.GetProperties()) > 0">
-        <dtml-in expr="item.GetProperties().keys()">
-        <dtml-let name=sequence-item>
-         <li><dtml-var name="name">&nbsp;= 
-         <dtml-var expr="item.GetProperty(name)"></li>
-        </dtml-let>
-        </dtml-in>
-       <dtml-else>
-        None
-       </dtml-if>
-      </dtml-if>
-     </td>
-    </tr>
-
     <tr><td colspan="2">&nbsp;</td></tr>
 
     <tr class="form-submit">

@@ -363,10 +363,10 @@ class Database(FileDatabase, qm.common.MutexMixin):
                            test_id=test_id)
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
         categories = qm.xmlutil.get_child_texts(test_node,
-                                                       "category")
+                                                "category")
         prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
         resources = self.__GetResourcesFromDomNode(test_node)
-        properties = self.__GetPropertiesFromDomNode(test_node)
+        target_group = test_node.getAttribute("target-group")
         # Construct a test descriptor for it.
         test = base.TestDescriptor(self,
                                    test_id,
@@ -375,7 +375,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
                                    prerequisites,
                                    categories,
                                    resources,
-                                   properties)
+                                   target_group)
         return test
         
 
@@ -401,11 +401,10 @@ class Database(FileDatabase, qm.common.MutexMixin):
             raise UnknownResourceClassError, class_name
         arguments = self.__GetArgumentsFromDomNode(resource_node,
                                                    resource_class)
-        properties = self.__GetPropertiesFromDomNode(resource_node)
         # Construct a ResourceDescriptor for it.
         return base.ResourceDescriptor(self, resource_id,
                                        resource_class_name,
-                                       arguments, properties)
+                                       arguments)
 
 
     def __GetClassNameFromDomNode(self, node):
@@ -526,7 +525,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
         'element' -- A test element DOM node in which the test is
         assembled.  If 'None', a new test element node is created.
 
-        'test' -- The test to write.
+        'test' -- The 'TestDescriptor' for the test for which we are to
+        create a DOM node.
 
         'comments' -- If true, add DOM comment nodes."""
 
@@ -540,7 +540,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
 
         # Build common stuff.
         self.__MakeDomNodeForItem(document, element, test, comments)
-
+        element.setAttribute("target-group", test.GetTargetGroup())
+        
         # Build and add category elements.
         for category in test.GetCategories():
             cat_element = qm.xmlutil.create_dom_text_element(
@@ -651,13 +652,6 @@ class Database(FileDatabase, qm.common.MutexMixin):
             value_node = field.MakeDomNodeForValue(value, document)
             arg_element.appendChild(value_node)
             element.appendChild(arg_element)
-
-        # Build and add property elements.
-        for name, value in item.GetProperties().items():
-            property_element = qm.xmlutil.create_dom_text_element(
-                document, "property", value)
-            property_element.setAttribute("name", name)
-            element.appendChild(property_element)
 
 
     def __LoadSuiteFile(self, suite_id, path):

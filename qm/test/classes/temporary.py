@@ -40,13 +40,14 @@ import qm.common
 import qm.fields
 from   qm.test.result import *
 from   qm.test.test import *
+from   qm.test.resource import *
 import tempfile
 
 ########################################################################
 # classes
 ########################################################################
 
-class TempDirectoryResource:
+class TempDirectoryResource(Resource):
     """Resource class to manage a temporary directory.
 
     An instance of this resource creates a temporary directory during
@@ -71,7 +72,7 @@ class TempDirectoryResource:
             default_value=0
             ),
 
-        ]
+        ] + Resource.arguments
 
 
     def __init__(self,

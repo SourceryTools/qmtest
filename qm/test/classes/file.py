@@ -181,7 +181,7 @@ class SubstitutionField(qm.fields.TextField):
 
 
 
-class FileContentsTest:
+class FileContentsTest(Test):
     """Check that the contents of a file match the expected value.
 
     A 'FileContentsTest' examines the contents of a file.  The test
@@ -226,14 +226,17 @@ class FileContentsTest:
             performed after the substitutions have been performed.
 
             You can use substitutions to ignore insignificant
-            differences between the expected and autual contents.""")),
-        ]
+            differences between the expected and autual contents."""))
+        ] + Test.arguments
 
 
     def __init__(self,
                  path_property,
                  expected_contents,
-                 substitutions):
+                 substitutions,
+                 target_group):
+        Test.__init__(self, target_group)
+        
         self.__path_property = path_property
         self.__substitutions = substitutions
         # Might as well perform substitutions on the expected contents here.

@@ -1,6 +1,6 @@
 ########################################################################
 #
-# File:   result.py
+# File:   test.py
 # Author: Mark Mitchell
 # Date:   2001-10-10
 #
@@ -69,31 +69,51 @@ class Test:
     like to report more detailed information about passing and failing
     tests, you may wish to create a new test class.
 
-    To create your own database implementation, you must create a
-    Python class derived (directly or indirectly) from 'Test'.  The
-    documentation for each method of 'Test' indicates whether you must
-    override it in your database implementation.  Some methods may be
+    To create your own test class, you must create a Python class
+    derived (directly or indirectly) from 'Test'.  The documentation
+    for each method of 'Test' indicates whether you must override it
+    in your test class implementation.  Some methods may be
     overridden, but do not need to be.  You might want to override
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version.
 
-    If QMTest calls a method on a database and that method raises an
+    If QMTest calls a method on a test and that method raises an
     exception that is not caught within the method itself, QMTest will
     catch the exception and continue processing."""
 
-    arguments = []
+    arguments = [
+        qm.fields.TextField(
+            name="target_group",
+            title="Target Group Pattern",
+            description="""The targets on which this test can run.
+
+            A regular expression that indicates the targets on which
+            this test can be run.  If the pattern matches a particular
+            group name, the test can be run on targets in that
+            group.""",
+            default_value=".*"
+            )
+    ]
     """A list of the arguments to the test class.
 
     Each element of this list should be an instance of 'Field'.  When
     QMTest prompts the user for arguments to create a new test, it
     will prompt in the order that the fields are provided here.
 
-    Derived classes must redefine this class variable."""
+    Derived classes must redefine this class variable.  Each derived
+    class should contain all of the arguments in this base class.  One
+    way to accomplish that is to add '+ Test.arguments' to the end of
+    the arguments initializer in the derived class."""
 
 
-    def __init__(self):
+    def __init__(self, target_group):
         """Construct a new 'Test'.
 
+        'target_group' -- A regular expression (represented as a
+        string) that indicates the targets on which this test can be
+        run.  If the pattern matches a particular group name, the test
+        can be run on targets in that group.
+        
         Derived classes must override this method.  The derived
         class method should have one argument for each element
         of 'arguments'.  The names of the arguments to the derived
@@ -104,8 +124,8 @@ class Test:
 
         The Derived class method should begin by calling this
         method."""
-        
-        pass
+
+        self.__target_group = target_group
 
 
     def Run(self, context, result):
@@ -124,3 +144,15 @@ class Test:
         Derived classes must override this method."""
 
         raise qm.MethodShouldBeOverriddenError, "Test.Run"
+
+
+    def GetTargetGroup(self):
+        """Returns the pattern for the targets that can run this test.
+
+        returns -- A regular expression (represented as a string) that
+        indicates the targets on which this test can be run.  If the
+        pattern matches a particular group name, the test can be run
+        on targets in that group."""
+
+        return self.__target_group
+        

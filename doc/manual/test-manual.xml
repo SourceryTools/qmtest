@@ -117,7 +117,7 @@
    <para>You can use a <firstterm>resource</firstterm> to gain this
    efficiency.  If a test depends on a resource, &qmtest; will ensure
    that the resource is available before the test runs.  Once all
-   tests that depend on the resource have been run, &qmtest; will
+   tests that depend on the resource have been run &qmtest; will
    destroy the resource.</para>
 
    <para>Just as every test is an instance of a <firstterm>test

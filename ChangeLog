@@ -1,3 +1,60 @@
+2001-10-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/test-manual.xml: Fix typo.
+	* qm/test/base.py (InstanceBase.__init__): Remove properties
+	parameter.
+	(InstanceBase.SetProperty): Remove.
+	(InstanceBase.GetProperty): Remove.
+	(InstanceBase.GetProperties): Likewise.
+	(InstanceBase.MakeItem): Add target_group parameter.
+	(TestDescriptor.__init__): Adjust accordingly.
+	(TestDescriptor.GetTargetGroup): New method.
+	(ResourceDescriptor.__init__): Remove properties parameter.
+	* qm/test/run.py (Target.Stop): Adjust comment.
+	(SubprocessTarget.Stop): Remove assertion.
+	(RemoteShellTarget.Stop): Likewise.
+	(TestRun.Schedule): Use GetTargetGroup, not properties, to 
+	get the tests target group.
+	(TestRun.GetTestResults): Remove.
+	(TestRun.GetResourceResults): Remove.
+	(TestRun.__ValidateTest): Always check the target group.
+	(TestRun.__FindBestTarget): Adjust documentation.  Simplify
+	handling of target groups.
+	(test_run): Adjust documentation.  Do not return results.
+	Terminate targets in the event of an exception.
+	* qm/test/test.py: Fix comments.
+	(Test.arguments): Add target_group field.
+	(Test.__init__): Adjust accordingly.
+	(Test.GetTargetGroup): New method.
+	* qm/test/xmldb.py (Database.__ParseTestDocument): Retrieve
+	the target group.  Do not look for properties.
+	(Database.__ParseResourceDocument): Likewise.
+	(Database.__MakeDomNodeForItem): Do not write out properties.
+	* qm/test/classes/command.py (ExecTest.arguments): Include
+	Test.arguments.
+	(ExecTest.__init__): Adjust accordingly.
+	(ShellCommandTest.__init__): Likewise.
+	(ShellScriptTest.__init__): Likewise.
+	* qm/test/classes/file.py (FileContentsTest): Derived from Test.
+	(FileContentsTest.arguments): Include Test.arguments.
+	(FileContentsTest.__init__): Adjust accordingly.
+	* qm/test/classes/python.py (ExecTest.arguments): Include
+	Test.arguments.
+	(ExecTest.__init__): Adjust accordingly.
+	(BaseExceptionTest.arguments): Include Test.arguments.
+	(BaseExceptionTest.__init__): Adjust accordingly.
+	(ExceptionTest.arguments): Include Test.arguments.
+	(BaseExceptionTest.__init__): Adjust accordingly.
+	* qm/test/classes/temporary.py (TempDirectoryResource): Derive
+	from Resource.
+	* qm/test/web/web.py (QMTestServer.HandleSubmitItem): Do not
+	deal with properties.
+	* share/dtml/test/show.dtml: Remove properties handling.
+	* share/xml/resource.dtd: Remove properties.
+	* share/xml/test.dtd: Likewise.  Add target-group.
+	
+	* qm/test/qmtest.py: Remove the first directory from sys.path.
+	
 2001-10-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/track-manual.xml: Revise section on issue IDs.

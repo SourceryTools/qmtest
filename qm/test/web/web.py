@@ -1600,8 +1600,6 @@ class QMTestServer(qm.web.WebServer):
                 # All is well with this field.
                 arguments[field_name] = value
 
-        properties = qm.web.decode_properties(request["properties"])
-
         if type is "test":
             # Extract prerequisite tests.  
             preqs = request["prerequisites"]
@@ -1626,21 +1624,24 @@ class QMTestServer(qm.web.WebServer):
             categories = request["categories"]
             categories = qm.web.decode_set_control_contents(categories)
 
+            # Extract the target group pattern.
+            target_group = request["target_group"]
+            
             # Create a new test.
-            item = qm.test.base.TestDescriptor(test_id=item_id,
-                                               test_class_name=item_class_name,
-                                               arguments=arguments,
-                                               prerequisites=prerequisites,
-                                               categories=categories,
-                                               resources=resources,
-                                               properties=properties)
+            item = qm.test.base.TestDescriptor(
+                    test_id=item_id,
+                    test_class_name=item_class_name,
+                    arguments=arguments,
+                    prerequisites=prerequisites,
+                    categories=categories,
+                    resources=resources,
+                    target_group=target_group)
 
         elif type is "resource":
             # Create a new resource.
             item = qm.test.base.ResourceDescriptor(item_id,
                                                    item_class_name,
-                                                   arguments,
-                                                   properties)
+                                                   arguments)
 
         # Were there any validation errors?
         if len(field_errors) > 0:

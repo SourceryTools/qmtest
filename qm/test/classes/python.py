@@ -86,12 +86,14 @@ class ExecTest(Test):
             verbatim="true",
             multiline="true",
             default_value="1"
-            ),
+            )
+        ] + Test.arguments
+
+
+    def __init__(self, source, expression, target_group):
+
+        Test.__init__(self, target_group)
         
-        ]
-
-
-    def __init__(self, source, expression):
         # Store stuff for later.
         if source is None:
             self.__source = ""
@@ -166,12 +168,14 @@ class BaseExceptionTest(Test):
             If this field is left blank, the value of the exception is
             ignored.""",
             default_value=""
-            ),
+            )
+        ]  + Test.arguments
 
-        ]
 
+    def __init__(self, source, exception_argument, target_group):
 
-    def __init__(self, source, exception_argument):
+        Test.__init__(self, target_group)
+        
         # Store stuff for later.
         self.__source = source
         if string.strip(exception_argument) != "":
@@ -263,14 +267,15 @@ class ExceptionTest(BaseExceptionTest):
             exception raised is not an instance of this class, the
             test fails.""",
             default="Exception"
-            ),
+            )
+        ] + Test.arguments
 
-        ]
 
-
-    def __init__(self, source, exception_class, exception_argument):
+    def __init__(self, source, exception_class, exception_argument,
+                 target_group):
         # Initialize the base class.
-        BaseExceptionTest.__init__(self, source, exception_argument)
+        BaseExceptionTest.__init__(self, source, exception_argument,
+                                   target_group)
         # Store stuff for later.
         self.__exception_class_name = exception_class
                  
@@ -340,9 +345,11 @@ class StringExceptionTest(BaseExceptionTest):
         ]
 
 
-    def __init__(self, source, exception_text, exception_argument):
+    def __init__(self, source, exception_text, exception_argument,
+                 target_group):
         # Initialize the base class.
-        BaseExceptionTest.__init__(self, source, exception_argument)
+        BaseExceptionTest.__init__(self, source, exception_argument,
+                                   target_group)
         # Store stuff for later.
         self.__exception_text = exception_text
 

@@ -32,9 +32,8 @@
 -->
 
 <!-- A single test.  -->
-<!ELEMENT test
-    (class, (argument | category | prerequisite | resource | property)*)
->
+<!ELEMENT test (class, (argument | category | prerequisite | resource)*)>
+<!ATTLIST test target-group CDATA ".*">
 
 <!-- The name of a test class.  -->
 <!ELEMENT class (#PCDATA)>
@@ -56,10 +55,6 @@
 <!-- The ID of an resource that must be invoked before and after this test
      is run.  -->
 <!ELEMENT resource (#PCDATA)>
-
-<!-- A resource property.  -->
-<!ELEMENT property (#PCDATA)>
-<!ATTLIST property name CDATA #REQUIRED>
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 

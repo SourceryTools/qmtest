@@ -300,8 +300,6 @@ class Target:
     def Stop(self):
         """Stop the target.
 
-        preconditions -- The target must be idle.
-
         postconditions -- The target may no longer be used."""
         
         raise qm.common.MethodShouldBeOverriddenError, "Target.Stop"
@@ -468,8 +466,6 @@ class SubprocessTarget(Target):
 
 
     def Stop(self):
-        # Make sure we're not doing anything.
-        assert self.IsIdle()
         # Send each child a "quit" command.
         for child in self._children:
 	    child.GetCommandQueue().put(("quit", None, None))
@@ -730,8 +726,6 @@ class RemoteShellTarget(Target):
             
             
     def Stop(self):
-        assert self.IsIdle()
-        # Send a single "quit" command to the remote program.
         self.__thread.GetCommandQueue().put(("quit", None, None))
         # Wait for the remote shell process to terminate.
         os.waitpid(self.__child_pid, 0)
@@ -957,7 +951,7 @@ class TestRun:
                 # this test.  We therefore can't run this test.  Add an
                 # 'UNTESTED' result for it.
                 cause = qm.message("no target for group")
-                group_pattern = test.GetProperty("group")
+                group_pattern = test.GetTargetGroup()
                 result = Result(test_id, Result.TEST,
                                 self.__context, Result.UNTESTED,
                                 { Result.CAUSE : cause,
@@ -1109,23 +1103,6 @@ class TestRun:
         # Report the result.
         self.__ReportResult(result)
 
-
-    def GetTestResults(self):
-        """Return the test results from the run.
-
-        returns -- A map from test ID to corresponding results."""
-
-        return self.__test_results
-
-
-    def GetResourceResults(self):
-        """Return the resource function results from the run.
-
-        returns -- A sequence of resource function results."""
-
-        return self.__resource_results
-
-
     # Helper functions.
 
     def __ReportResult(self, result):
@@ -1162,21 +1139,18 @@ class TestRun:
         if self.__valid_tests.has_key(test_id):
             return
 
-        # Was a group pattern specified for the test?
-        group_pattern = test.GetProperty("group", None)
-        if group_pattern is not None:
-            # Yes.  Check whether there is a target in a matching
-            # group. 
-            match = 0
-            for target in self.__targets:
-                if is_group_match(group_pattern, target.GetGroup()):
-                    # Found a match.
-                    match = 1
-                    break
-            if not match:
-                # No target is in a matching group.  This test can't be
-                # run with the specified set of targets.
-                raise NoTargetForGroupError, test_id
+        # Find a target in the correct group.
+        group_pattern = test.GetTargetGroup()
+        match = 0
+        for target in self.__targets:
+            if is_group_match(group_pattern, target.GetGroup()):
+                # Found a match.
+                match = 1
+                break
+        if not match:
+            # No target is in a matching group.  This test can't be
+            # run with the specified set of targets.
+            raise NoTargetForGroupError, test_id
         
         # Mark the test as checked, so it isn't re-checked next time.
         self.__valid_tests[test_id] = None
@@ -1239,7 +1213,7 @@ class TestRun:
     def __FindBestTarget(self, test, targets):
         """Determine the best target for running 'test'.
 
-        'test' -- The test to consider.
+        'test' -- The 'Test' to consider.
 
         'targets' -- A sequence of targets from which to choose the
         best.
@@ -1247,15 +1221,13 @@ class TestRun:
         returns -- The target on which to run the test."""
         
         test_resource_ids = test.GetResources()
-        group_pattern = test.GetProperty("group", None)
+        group_pattern = test.GetTargetGroup()
 
         best_target = None
         # Scan over targets to find the best one.
         for target in targets:
-            # If the test has a group pattern specified, disqualify this
-            # target if its group does not match.
-            if group_pattern is not None \
-               and not is_group_match(group_pattern, target.GetGroup()):
+            # Disqualify this target if its group does not match.
+            if not is_group_match(group_pattern, target.GetGroup()):
                 continue
             # Count the number of resources required by the test that
             # aren't currently active on this target.
@@ -1309,12 +1281,7 @@ def test_run(database,
     the targets on which to run the tests.
 
     'result_streams' -- A sequence of 'ResultStream' objects.  Each
-    stream will be provided with results as they are available.
-
-    returns -- A pair '(test_results, resource_results)'.
-    'test_results' is a map from test IDs to corresponding 'Result'
-    objects.  'resource_results' is a sequence of 'Result' objects for
-    resource functions that were run."""
+    stream will be provided with results as they are available."""
     
     response_queue = Queue.Queue(0)
 
@@ -1333,43 +1300,41 @@ def test_run(database,
 
     # Schedule all the tests and resource functions in the test run.
 
-    # Schedule the first batch of work.
-    count = run.Schedule()
-    # Loop until done scheduling everything in the test run.
-    while count:
-        targets_busy = 0
-        for target in targets:
-            # Give each target a chance to feed its threads some work
-            # that was queued up by the scheduler.
-            target.ProcessQueue()
-            # Remember whether there's at least one target that's not
-            # idle, i.e. that's working on a test or resource function.
-            if not target.IsIdle():
-                targets_busy = 1
-
-	# Loop until we've received responses for all of the tests
-	# and resources that have been scheduled.
-	while count > 0:
-	    # Read a reply from the response_queue.
-	    target, response = response_queue.get()
-	    # Process the response.
-	    target.OnReply(response, run)
-	    # We're waiting for one less test.
-	    count = count - 1
-
-        # Schedule some more work.
+    try:
+        # Schedule the first batch of work.
         count = run.Schedule()
+        # Loop until done scheduling everything in the test run.
+        while count:
+            targets_busy = 0
+            for target in targets:
+                # Give each target a chance to feed its threads some work
+                # that was queued up by the scheduler.
+                target.ProcessQueue()
+                # Remember whether there's at least one target that's not
+                # idle, i.e. that's working on a test or resource function.
+                if not target.IsIdle():
+                    targets_busy = 1
 
-    # All targets are now idle.  Stop them.
-    for target in targets:
-        target.Stop()
+            # Loop until we've received responses for all of the tests
+            # and resources that have been scheduled.
+            while count > 0:
+                # Read a reply from the response_queue.
+                target, response = response_queue.get()
+                # Process the response.
+                target.OnReply(response, run)
+                # We're waiting for one less test.
+                count = count - 1
 
-    # Let all of the result streams know that the test run is complete.
-    for rs in result_streams:
-        rs.Summarize()
-        
-    # Return the results we've accumulated.
-    return run.GetTestResults(), run.GetResourceResults()
+            # Schedule some more work.
+            count = run.Schedule()
+    finally:
+        # Stop the targets.
+        for target in targets:
+            target.Stop()
+
+        # Let all of the result streams know that the test run is complete.
+        for rs in result_streams:
+            rs.Summarize()
 
 
 def is_group_match(group_pattern, group):

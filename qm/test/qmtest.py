@@ -35,6 +35,14 @@
 
 import os
 import os.path
+import sys
+
+# The Python interpreter will place the directory containing this
+# script in the default path to search for modules.  That is
+# unncessary for QMTest, and harmful, since then "import resource"
+# imports the resource module in QMTest, not the global module of
+# the same name.
+sys.path = sys.path[1:]
 
 if os.environ['QM_BUILD'] == '1':
     setup_path_dir = os.path.join(os.environ['QM_HOME'], 'qm')
@@ -60,7 +68,6 @@ import sys
 def print_error_message(message):
     message = qm.structured_text.to_text(str(message))
     sys.stderr.write("%s: error:\n%s" % (program_name, message))
-
 
 ########################################################################
 # script

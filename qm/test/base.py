@@ -104,15 +104,13 @@ class InstanceBase:
                  database,
                  instance_id,
                  class_name,
-                 arguments,
-                 properties):
+                 arguments):
         validate_id(instance_id)
         self.__database = database
         self.__id = instance_id
         self.__class_name = class_name
         self.__arguments = arguments
         self.__working_directory = None
-        self.__properties = properties.copy()
 
 
     def GetClassName(self):
@@ -161,50 +159,9 @@ class InstanceBase:
 
         return self.__working_directory
 
-
-    def SetProperty(self, name, value):
-        """Set a property.
-
-        'name' -- The property name.  Must be a valid label.
-
-        'value' -- The property value.  'value' is converted to a
-        string.
-
-        raises -- 'ValueError' if 'name' is not a valid label.
-
-        If there is already a property named 'name', its value is
-        replaced with 'value'."""
-
-        name = str(name)
-        value = str(value)
-        if not qm.label.is_valid(name):
-            raise ValueError, "%s is not a valid property name" % name
-        self.__properties[name] = value
-
-
-    def GetProperty(self, name, default=None):
-        """Get a property value.
-
-        'name' -- The property name.
-
-        'default' -- The value to return if there is no property named
-        'name'.
-
-        returns -- The value of the 'name' property, or 'default' if
-        there is no such property."""
-
-        return self.__properties.get(name, default)
-
-
-    def GetProperties(self):
-        """Return a map from property names to values."""
-
-        return self.__properties
-
-
     # Helper functions.
 
-    def __MakeItem(self):
+    def _MakeItem(self):
         """Construct the underlying user test or resource object."""
 
         arguments = self.GetArguments().copy()
@@ -234,7 +191,7 @@ class TestDescriptor(InstanceBase):
                  prerequisites={},
                  categories=[],
                  resources=[],
-                 properties={}):
+                 target_group=".*"):
         """Create a new test instance.
 
         'database' -- The 'Database' containing this test.
@@ -255,17 +212,19 @@ class TestDescriptor(InstanceBase):
         'resources' -- A sequence of IDs of resources to run before and
         after the test is run.
 
-        'properties' -- A map of name, value pairs for properties of the
-        test.  Names must be valid labels, and values must be strings."""
+        'target_group' -- A regular expression (represented as a string)
+        that indicates the targets on which this test can be run.  If
+        the pattern matches a particular group name, the test can be run
+        on targets in that group."""
 
         # Initialize the base class.
         InstanceBase.__init__(self, database,
-                              test_id, test_class_name, arguments,
-                              properties)
+                              test_id, test_class_name, arguments)
         self.__prerequisites = prerequisites
         self.__categories = categories
         self.__resources = resources
-
+        self.__target_group = target_group
+        
         # Don't instantiate the test yet.
         self.__test = None
 
@@ -275,7 +234,7 @@ class TestDescriptor(InstanceBase):
 
         # Perform just-in-time instantiation.
         if self.__test is None:
-            self.__test = self._InstanceBase__MakeItem()
+            self.__test = self._MakeItem()
 
         return self.__test
 
@@ -304,6 +263,17 @@ class TestDescriptor(InstanceBase):
         return self.__resources
 
 
+    def GetTargetGroup(self):
+        """Returns the pattern for the targets that can run this test.
+
+        returns -- A regular expression (represented as a string) that
+        indicates the targets on which this test can be run.  If the
+        pattern matches a particular group name, the test can be run
+        on targets in that group."""
+
+        return self.__target_group
+    
+        
     def Run(self, context, result):
         """Execute this test.
 
@@ -341,8 +311,7 @@ class ResourceDescriptor(InstanceBase):
                  database,
                  resource_id,
                  resource_class_name,
-                 arguments,
-                 properties={}):
+                 arguments):
         """Create a new resource instance.
 
         'database' -- The 'Database' containing this resource.
@@ -352,14 +321,11 @@ class ResourceDescriptor(InstanceBase):
         'resource_class_name' -- The name of the resource class of which
         this is an instance.
 
-        'arguments' -- This resource's arguments to the resource class.
-
-        'properties' -- A map of name, value pairs for properties of the
-        resource.  Names must be valid labels, and values must be strings."""
+        'arguments' -- This resource's arguments to the resource class."""
 
         # Initialize the base class.
         InstanceBase.__init__(self, database, resource_id,
-                              resource_class_name, arguments, properties)
+                              resource_class_name, arguments)
         # Don't instantiate the resource yet.
         self.__resource = None
 
@@ -369,7 +335,7 @@ class ResourceDescriptor(InstanceBase):
 
         # Perform just-in-time instantiation.
         if self.__resource is None:
-            self.__resource = self._InstanceBase__MakeItem()
+            self.__resource = self._MakeItem()
 
         return self.__resource
 

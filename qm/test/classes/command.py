@@ -176,8 +176,8 @@ class ExecTest(Test):
 
             If the output written by the program does not match this
             value, the test will fail."""
-            ),
-        ]
+            ) 
+        ] + Test.arguments
 
 
     def __init__(self,
@@ -187,7 +187,11 @@ class ExecTest(Test):
                  environment=[],
                  exit_code=None,
                  stdout=None,
-                 stderr=None):
+                 stderr=None,
+                 target_group=".*"):
+
+        Test.__init__(self, target_group)
+        
         # Just store everything away for later.
         self.program = program
         self.arguments = arguments
@@ -492,7 +496,10 @@ class ShellCommandTest(ExecTest):
                  environment,
                  exit_code,
                  stdout,
-                 stderr):
+                 stderr,
+                 target_group):
+        Test.__init__(self, target_group)
+        
         self.command = command
         self.stdin = stdin
         self.environment_list = environment
@@ -574,7 +581,11 @@ class ShellScriptTest(ExecTest):
                  environment=[],
                  exit_code=None,
                  stdout=None,
-                 stderr=None):
+                 stderr=None,
+                 target_group=".*"):
+        
+        Test.__init__(self, target_group)
+        
         self.script = script
         self.arguments = arguments
         self.stdin = stdin
