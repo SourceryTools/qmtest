@@ -254,66 +254,6 @@ class TestRecord:
    store.  The preferred text-based format for doing this is
    XML.</para>
 
-   <para>An XML DTD for storing tests can be quite simple.  Arguments
-   are stored as CDATA, and are evaluated as Python expressions or
-   treated as text literals.  Below is the canonical DTD for storing
-   test records.
-    <programlisting>
-<![CDATA[
-<!ELEMENT test
-    ( class, 
-      ( argument | category | prerequisite | preaction | postaction )* 
-    )
->
-
-<!ELEMENT class (#PCDATA)>
-
-<!ELEMENT argument (#PCDATA)>
-<!ATTLIST argument
-    name CDATA #REQUIRED
-    type ( expression | text ) #IMPLIED
->
-
-<!ELEMENT category (#PCDATA)>
-
-<!ELEMENT prerequisite (#PCDATA)>
-
-<!ELEMENT preaction (#PCDATA)>
-
-<!ELEMENT postaction (#PCDATA)>
-]]>
-    </programlisting>
-   </para>
-
-
-   <!-- The following is ugly since we want to put a literal 
-        <![CDATA[ ... ]]> marked section inside the marked section of 
-        this document.  -->
-   <para>For example, a test record might be stored like this:
-    <programlisting>
-<![CDATA[
-<?xml version="1.0"?>
-<&qmtest;.test>
- <class>compile_link_run</class>
- <argument name="input" type="text">
-<![CDATA[
-int main ()
-{
-  volatile int x = 2;
-  return x - 2;
-}]]>
-]]&gt;<![CDATA[
- </argument>
- <argument name="flags">'-O%d -fpic' % get_optimization_level ()</argument>
- <category>C</category>
- <category>back end</category>
- <category>PIC</category>
- <category>optimization</category>
- <prerequisite>torture.link.test123</prerequisite>
-</&qmtest;.test>
-]]>
-   </programlisting></para>
-
   </section>
 
   <section><title>Test instances</title>
