@@ -186,18 +186,6 @@ class CompilerBase:
         return os.path.splitext(basename)[0] + object_extension
     
 
-    def _QuoteForHTML(self, text):
-
-        for t, h in (('&', '&amp;'),
-                     ('<', '&lt;'),
-                     ('>', '&gt;'),
-                     ('"', "&quot;")):
-            if text.find(t) >= 0:
-                text = h.join(text.split(t))
-
-        return text
-    
-
 
 class CompilerTest(Test, CompilerBase):
     """A 'CompilerTest' tests a compiler."""
@@ -374,8 +362,8 @@ class CompilerTest(Test, CompilerBase):
                                 environment = environment,
                                 dir = self._GetDirectory())
         # Remember the output streams.
-        result[prefix + "stdout"] = "<pre>" + executable.stdout + "</pre>"
-        result[prefix + "stderr"] = "<pre>" + executable.stderr + "</pre>"
+        result[prefix + "stdout"] = result.Quote(executable.stdout)
+        result[prefix + "stderr"] = result.Quote(executable.stderr)
         # Check the output status.
         self._CheckStatus(result, prefix, "Executable", status)
 
@@ -402,7 +390,7 @@ class CompilerTest(Test, CompilerBase):
         # Annotate the result with the output.
         if output:
             result[prefix + "output"] \
-                = "<pre>" + self._QuoteForHTML(output) + "</pre>"
+                = result.Quote(output)
 
         # Get the compiler to use to parse the output.
         compiler = self._GetCompiler(context)
@@ -519,4 +507,4 @@ class CompilerTest(Test, CompilerBase):
         # Compute the string representation of each diagnostic.
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
-        return "<pre>" + string.join(diagnostic_strings, '\n') + "</pre>"
+        return Result.Quote("\n".join(diagnostic_strings))
