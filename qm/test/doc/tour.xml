@@ -8,7 +8,7 @@
   Contents:
     Grand tour/tutorial of QMTest.
 
-  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002, 2003 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -392,7 +392,15 @@ QMTest running at http://127.0.0.1:1158/test/dir
     ExecTest.value:
       0
 
+    qmtest.target:
+      local
+
   exec2                                         : PASS    
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
 
 
 --- STATISTICS ---------------------------------------------------------------
@@ -400,11 +408,6 @@ QMTest running at http://127.0.0.1:1158/test/dir
        3        tests total
        1 ( 33%) tests FAIL
        2 ( 67%) tests PASS
-
---- TESTS THAT DID NOT PASS --------------------------------------------------
-
-  exec1                                         : FAIL    
-    Expression evaluates to false.
 
 ]]></computeroutput></screen>
 
@@ -459,17 +462,20 @@ QMTest running at http://127.0.0.1:1158/test/dir
     ExecTest.value:
       0
 
+    qmtest.target:
+      local
+
   exec2                                         : PASS    
+
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  None.
 
 
 --- STATISTICS ---------------------------------------------------------------
 
        3        tests total
        3 (100%) tests as expected
-
---- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
-
-  None.
 
 ]]></computeroutput></screen>
 
@@ -505,6 +511,9 @@ QMTest running at http://127.0.0.1:1158/test/dir
 
   exec0                                         : PASS    
 
+    qmtest.target:
+      local
+
   exec1                                         : FAIL    
     Expression evaluates to false.
 
@@ -514,7 +523,18 @@ QMTest running at http://127.0.0.1:1158/test/dir
     ExecTest.value:
       0
 
+    qmtest.target:
+      local
+
   exec2                                         : PASS    
+
+    qmtest.target:
+      local
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
 
 
 --- STATISTICS ---------------------------------------------------------------
@@ -522,11 +542,6 @@ QMTest running at http://127.0.0.1:1158/test/dir
        3        tests total
        1 ( 33%) tests FAIL
        2 ( 67%) tests PASS
-
---- TESTS THAT DID NOT PASS --------------------------------------------------
-
-  exec1                                         : FAIL    
-    Expression evaluates to false.
 
 ]]></computeroutput></screen>
 

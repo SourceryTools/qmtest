@@ -1831,7 +1831,8 @@ class QMTestServer(qm.web.WebServer):
         test_ids.sort()
         self.__execution_thread = \
           ExecutionThread(self.__database, test_ids, self.__context,
-                          self.__targets, [self.__results_stream])
+                          self.__targets, [self.__results_stream],
+                          self.__expected_outcomes)
         # Start the thread.
         self.__execution_thread.start()
 

@@ -51,7 +51,8 @@ class ExecutionThread(Thread, ExecutionEngine):
                  test_ids,
                  context,
                  targets,
-                 result_streams = None):
+                 result_streams = None,
+                 expectations = None):
         """Set up a test run.
 
         'database' -- The 'Database' containing the tests that will be
@@ -69,11 +70,14 @@ class ExecutionThread(Thread, ExecutionEngine):
         stream will be provided with results as they are available.
         This thread will not perform any locking of these streams as
         they are written to; each stream must provide its own
-        synchronization if it will be accessed before 'run' returns."""
+        synchronization if it will be accessed before 'run' returns.
+
+        'expectations' -- If not 'None', a dictionary mapping test IDs
+        to expected outcomes."""
 
         Thread.__init__(self, None, None, None)
         ExecutionEngine.__init__(self, database, test_ids, context,
-                                 targets, result_streams)
+                                 targets, result_streams, expectations)
 
         # This is a deamon thread; if the main QMTest thread exits,
         # this thread should not prolong the life of the process.

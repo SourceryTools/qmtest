@@ -22,49 +22,92 @@ import htmllib
 import StringIO
 from   qm.test.base import *
 from   qm.test.result import *
-from   qm.test.result_stream import *
+from   qm.test.file_result_stream import FileResultStream
 
 ########################################################################
 # classes
 ########################################################################
 
-class TextResultStream(ResultStream):
+class TextResultStream(FileResultStream):
     """A 'TextResultStream' displays test results textually.
 
     A 'TextResultStream' displays information textually, in human
     readable form.  This 'ResultStream' is used when QMTest is run
     without a graphical user interface."""
 
-    def __init__(self, file, format, expected_outcomes, database,
-                 suite_ids):
+    arguments = [
+        qm.fields.EnumerationField(
+            name = "format",
+            title = "Format",
+            description = """The output format used by this result stream.
+
+            There are three sections to the output:
+
+            (S) Summary statistics.
+
+            (I) Individual test-by-test results.
+
+            (U) Individual test-by-test results for tests with unexpected
+                outcomes.
+
+            For each of the sections of individual test-by-test results, the
+            results can be shown either in one of three modes:
+
+            (A) Show all annotations.
+
+            (N) Show no annotations.
+
+            (U) Show annotations only if the test has an unexpected outcome.
+
+            In the "brief" format, results for all tests are shown as
+            they execute, with unexpected results displayed in full
+            detail, followed by a list of all the tests with
+            unexpected results in full detail, followed by the summary
+            information.  This format is useful for interactive use:
+            the user can see that the tests are running as they go,
+            can attempt to fix failures while letting the remainder of
+            the tests run, and can easily see the summary of the
+            results later if the window in which the run is occurring
+            is left unattended.
+
+            In the "batch" format, statistics are displayed first
+            followed by full results for tests with unexpected
+            outcomes.  The batch format is useful when QMTest is run
+            in batch mode, such as from an overnight job.  The first
+            few lines of the results (often presented by email) give
+            an overview of the results; the remainder of the file
+            gives details about any tests with unexpected outcomes.
+
+            The "full" format is like "brief" except that all
+            annotations are shown for tests as they are run.
+
+            The "stats" format is omits the failing tests section is
+            omitted."""),
+        ]
+    
+    def __init__(self, arguments):
         """Construct a 'TextResultStream'.
 
-        'file' -- The file object to which the results should be
-        written.
+        'arguments' -- The arguments to this result stream.
 
-        'format' -- A string indicating the format to use when
-        displaying results.
-
-        'expected_outcomes' -- A map from test IDs to expected outcomes,
-        or 'None' if there are no expected outcomes.
-
-        'database' -- The 'Database' out of which the tests will be
-        run.
-        
         'suite_ids' -- The suites that will be executed during the
         test run."""
 
         # Initialize the base class.
-        ResultStream.__init__(self, {})
-        
-        self.__file = file
-        self.__format = format
-        self.__expected_outcomes = expected_outcomes
-        self.__suite_ids = suite_ids
-        self.__database = database
+        super(TextResultStream, self).__init__(arguments)
+
+        # Pick a default format.
+        if not self.format:
+            self.format = "batch"
+            try:
+                if self.file.isatty():
+                    self.format = "brief"
+            except:
+                pass
+            
         self.__test_results = []
         self.__resource_results = []
-        self._DisplayHeading("TEST RESULTS")
+        self.__first_test = 1
         
         
     def WriteResult(self, result):
@@ -78,12 +121,21 @@ class TextResultStream(ResultStream):
         else:
             self.__resource_results.append(result)
 
+        # In batch mode, no results are displayed as tests are run.
+        if self.format == "batch":
+            return
+        
+        # Display a heading before the first result.
+        if self.__first_test:
+            self._DisplayHeading("TEST RESULTS")
+            self.__first_test = 0
+        
 	# Display the result.
-	self._DisplayResult(result, self.__format)
+	self._DisplayResult(result, self.format)
 
         # Display annotations associated with the test.
-        if (self.__format == "full"
-            or (self.__format == "brief"
+        if (self.format == "full"
+            or (self.format == "brief"
                 and result.GetOutcome() != Result.PASS)):
             self._DisplayAnnotations(result)
 
@@ -95,36 +147,24 @@ class TextResultStream(ResultStream):
         information should be displayed for the user, if appropriate.
         Any finalization, such as the closing of open files, should
         also be performed at this point."""
-        
-        self.__file.write("\n")
-        self._DisplayHeading("STATISTICS")
 
-        # Summarize the test statistics.
-        if self.__expected_outcomes:
-            self._SummarizeRelativeTestStats(self.__test_results)
-        else:
-            self._SummarizeTestStats(self.__test_results)
+        if self.format == "batch":
+            self._DisplayStatistics()
 
-        # Summarize test results by test suite.
-        if self.__format in ("full", "stats") \
-           and len(self.__suite_ids) > 0:
-            # Print statistics by test suite.
-            self._DisplayHeading("STATISTICS BY TEST SUITE")
-            self._SummarizeTestSuiteStats()
-
-        if self.__format in ("full", "brief"):
+        # Show results for tests with unexpected outcomes.
+        if self.format in ("full", "brief", "batch"):
             compare_ids = lambda r1, r2: cmp(r1.GetId(), r2.GetId())
 
             # Sort test results by ID.
             self.__test_results.sort(compare_ids)
             # Print individual test results.
-            if self.__expected_outcomes:
+            if self.expected_outcomes:
                 # Show tests that produced unexpected outcomes.
                 bad_results = split_results_by_expected_outcome(
-                    self.__test_results, self.__expected_outcomes)[1]
+                    self.__test_results, self.expected_outcomes)[1]
                 self._DisplayHeading("TESTS WITH UNEXPECTED OUTCOMES")
                 self._SummarizeResults(bad_results)
-            if not self.__expected_outcomes or self.__format == "full":
+            if not self.expected_outcomes or self.format == "full":
                 # No expected outcomes were specified, so show all tests
                 # that did not pass.
                 bad_results = filter(
@@ -144,17 +184,42 @@ class TextResultStream(ResultStream):
                 self._DisplayHeading("RESOURCES THAT DID NOT PASS")
                 self._SummarizeResults(bad_results)
 
+        if self.format != "batch":
+            self._DisplayStatistics()
+        
         # Invoke the base class method.
-        ResultStream.Summarize(self)
+        super(TextResultStream, self).Summarize()
 
 
+    def _DisplayStatistics(self):
+        """Write out statistical information about the results.
+
+        Write out statistical information about the results."""
+
+        self.file.write("\n")
+        self._DisplayHeading("STATISTICS")
+
+        # Summarize the test statistics.
+        if self.expected_outcomes:
+            self._SummarizeRelativeTestStats(self.__test_results)
+        else:
+            self._SummarizeTestStats(self.__test_results)
+
+        # Summarize test results by test suite.
+        if self.format in ("full", "stats") \
+           and len(self.suite_ids) > 0:
+            # Print statistics by test suite.
+            self._DisplayHeading("STATISTICS BY TEST SUITE")
+            self._SummarizeTestSuiteStats()
+
+        
     def _SummarizeTestStats(self, results):
         """Generate statistics about the overall results.
 
         'results' -- The sequence of 'Result' objects to summarize."""
 
         num_tests = len(results)
-        self.__file.write("  %6d        tests total\n" % num_tests)
+        self.file.write("  %6d        tests total\n" % num_tests)
 
         # If there are no tests, there is no need to go into detail.
         if num_tests == 0:
@@ -164,10 +229,10 @@ class TextResultStream(ResultStream):
         for outcome in Result.outcomes:
             count = counts_by_outcome[outcome]
             if count > 0:
-                self.__file.write("  %6d (%3.0f%%) tests %s\n"
-                                  % (count, (100. * count) / num_tests,
-                                     outcome))
-        self.__file.write("\n")
+                self.file.write("  %6d (%3.0f%%) tests %s\n"
+                                % (count, (100. * count) / num_tests,
+                                   outcome))
+        self.file.write("\n")
 
         
     def _SummarizeRelativeTestStats(self, results):
@@ -177,7 +242,7 @@ class TextResultStream(ResultStream):
 
         # Indicate the total number of tests.
         num_tests = len(results)
-        self.__file.write("  %6d        tests total\n" % num_tests)
+        self.file.write("  %6d        tests total\n" % num_tests)
 
         # If there are no tests, there is no need to go into detail.
         if num_tests == 0:
@@ -187,21 +252,21 @@ class TextResultStream(ResultStream):
         # those that didn't.
         expected, unexpected = \
             split_results_by_expected_outcome(results,
-                                              self.__expected_outcomes)
+                                              self.expected_outcomes)
         # Report the number that produced expected outcomes.
-        self.__file.write("  %6d (%3.0f%%) tests as expected\n"
-                          % (len(expected),
-                             (100. * len(expected)) / num_tests))
+        self.file.write("  %6d (%3.0f%%) tests as expected\n"
+                        % (len(expected),
+                           (100. * len(expected)) / num_tests))
         # For results that produced unexpected outcomes, break them down by
         # actual outcome.
         counts_by_outcome = self._CountOutcomes(unexpected)
         for outcome in Result.outcomes:
             count = counts_by_outcome[outcome]
             if count > 0:
-                self.__file.write("  %6d (%3.0f%%) tests unexpected %s\n"
-                                  % (count, (100. * count) / num_tests,
-                                     outcome))
-        self.__file.write("\n")
+                self.file.write("  %6d (%3.0f%%) tests unexpected %s\n"
+                                % (count, (100. * count) / num_tests,
+                                   outcome))
+        self.file.write("\n")
 
 
     def _CountOutcomes(self, results):
@@ -224,11 +289,9 @@ class TextResultStream(ResultStream):
     def _SummarizeTestSuiteStats(self):
         """Generate statistics showing results by test suite."""
 
-        database = self.__database
-
-        for suite_id in self.__suite_ids:
+        for suite_id in self.suite_ids:
             # Expand the contents of the suite.
-            suite = database.GetSuite(suite_id)
+            suite = self.database.GetSuite(suite_id)
             ids_in_suite = suite.GetAllTestAndSuiteIds()[0]
             # Determine the results belonging to tests in the suite.
             results_in_suite = []
@@ -239,8 +302,8 @@ class TextResultStream(ResultStream):
             if len(results_in_suite) == 0:
                 continue
 
-            self.__file.write("  %s\n" % suite.GetId())
-            if self.__expected_outcomes is None:
+            self.file.write("  %s\n" % suite.GetId())
+            if self.expected_outcomes is None:
                 self._SummarizeTestStats(results_in_suite)
             else:
                 self._SummarizeRelativeTestStats(results_in_suite)
@@ -252,12 +315,12 @@ class TextResultStream(ResultStream):
         'results' -- The sequence of 'Result' objects to summarize."""
 
         if len(results) == 0:
-            self.__file.write("  None.\n\n")
+            self.file.write("  None.\n\n")
             return
 
         # Generate them.
 	for result in results:
-            self._DisplayResult(result, self.__format)
+            self._DisplayResult(result, self.format)
 
 
     def _DisplayResult(self, result, format):
@@ -272,11 +335,11 @@ class TextResultStream(ResultStream):
 	outcome = result.GetOutcome()
 
 	# Print the ID and outcome.
-	if self.__expected_outcomes:
+	if self.expected_outcomes:
 	    # If expected outcomes were specified, print the expected
 	    # outcome too.
 	    expected_outcome = \
-	        self.__expected_outcomes.get(id_, Result.PASS)
+	        self.expected_outcomes.get(id_, Result.PASS)
             if (outcome == Result.PASS
                 and expected_outcome == Result.FAIL):
                 self._WriteOutcome(id_, kind, "XPASS")
@@ -292,9 +355,9 @@ class TextResultStream(ResultStream):
 
         # Print the cause of the failure.
         if result.has_key(Result.CAUSE):
-            self.__file.write('    ' + result[Result.CAUSE] + '\n')
+            self.file.write('    ' + result[Result.CAUSE] + '\n')
             
-        self.__file.write('\n')
+        self.file.write('\n')
 
 
     def _DisplayAnnotations(self, result):
@@ -309,7 +372,7 @@ class TextResultStream(ResultStream):
             if name == Result.CAUSE:
                 continue
             # Add an item to the list
-            self.__file.write("    %s:\n" % name)
+            self.file.write("    %s:\n" % name)
 
             # Convert the HTML to text.
             s = StringIO.StringIO()
@@ -321,8 +384,8 @@ class TextResultStream(ResultStream):
 
             # Write out the text.
             for l in s.getvalue().splitlines():
-                self.__file.write("      " + l + "\n")
-            self.__file.write("\n")
+                self.file.write("      " + l + "\n")
+            self.file.write("\n")
         
 
     def _WriteOutcome(self, name, kind, outcome, expected_outcome=None):
@@ -342,10 +405,10 @@ class TextResultStream(ResultStream):
             name = "Cleanup " + name
         
         if expected_outcome:
-	    self.__file.write("  %-46s: %-8s, expected %-8s\n"
-			      % (name, outcome, expected_outcome))
+	    self.file.write("  %-46s: %-8s, expected %-8s\n"
+                            % (name, outcome, expected_outcome))
 	else:
-	    self.__file.write("  %-46s: %-8s\n" % (name, outcome))
+	    self.file.write("  %-46s: %-8s\n" % (name, outcome))
 
             
     def _DisplayHeading(self, heading):
@@ -354,5 +417,5 @@ class TextResultStream(ResultStream):
         'heading' -- The string to use as a heading for the next
         section of the report."""
 
-        self.__file.write("--- %s %s\n\n" %
-                          (heading, "-" * (73 - len(heading))))
+        self.file.write("--- %s %s\n\n" %
+                        (heading, "-" * (73 - len(heading))))

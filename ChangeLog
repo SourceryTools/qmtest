@@ -1,3 +1,32 @@
+2003-05-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py: Import result_stream.
+	(QMTest.summary_formats): Add "batch".
+	(QMTest.__init__): Set __expected_outcomes to None.
+	(QMTest.__ExecuteSummarize): Simplify.
+	(QMTest.__ExecuteRun): Likewise.
+	(QMTest.__ExecuteGUI): Likewise.
+	(QMTest.__FilterTestsToRun): Remove expectations parameter; use
+	__GetExpectedOutcomes.
+	(QMTest.__GetExpectedOutcomes): Cache results.
+	(QMTest.__GetResultStreams): Create the TextResultStream here.
+	* qm/test/execution_engine.py (ExecutionEngine.__init__): Add
+	expectations parameter.
+	(ExecutionEngine.Run): Return a value.
+	(ExecutionEngine._AddResult): Set any_unexpected_outcomes if
+	appropriate.
+	* qm/test/execution_thread.py (ExecutionThread.__init__): Add
+	expectations parameter.
+	* qm/test/result_stream.py (ResultStream.arguments): New
+	variable.
+	* qm/test/text_result_stream.py (TextResultStream): Inherit from
+	FileResultStream.
+	(TextResultStream.__init__): Remove parameters.
+	* qm/test/web/web.py (QMTestServer.HandleRunTests): Update
+	creation of ExecutionThread.
+	* qm/test/doc/reference.xml: Document "batch" output format.
+	* qm/test/doc/tour.xml: Update sample output.
+	
 2003-05-09  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/attachment.py (atexit): Do not import it.

@@ -27,6 +27,7 @@ import qm.cmdline
 import qm.platform
 from   qm.test.context import *
 from   qm.test.execution_engine import *
+from   qm.test.result_stream import ResultStream
 from   qm.test.text_result_stream import *
 from   qm.trace import *
 import qm.test.web.web
@@ -96,7 +97,7 @@ class QMTest:
     db_path_environment_variable = "QMTEST_DB_PATH"
     """The environment variable specifying the test database path."""
 
-    summary_formats = ("full", "brief", "stats", "none")
+    summary_formats = ("full", "brief", "stats", "batch", "none")
     """Valid formats for result summaries."""
 
     context_file_name = "context"
@@ -554,6 +555,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             = "pickle_result_stream.PickleResultStream"
         # We haven't loaded the actual class yet.
         self.__file_result_stream_class = None
+        # The expected outcomes have not yet been loaded.
+        self.__expected_outcomes = None
 
 
     def HasGlobalOption(self, option):
@@ -1178,17 +1181,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     def __ExecuteSummarize(self):
         """Read in test run results and summarize."""
 
-        # Look up the specified format.
-        format = self.GetCommandOption("format", "brief")
-        if format not in self.summary_formats:
-            # Invalid format.  Complain.
-            valid_format_string = string.join(
-                map(lambda f: '"%s"' % f, self.summary_formats), ", ")
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid results format",
-                           format=format,
-                           valid_formats=valid_format_string)
-
         # If no results file is specified, use a default value.
         if len(self.__arguments) == 0:
             results_path = "results.qmr"
@@ -1207,9 +1199,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                            path=results_path,
                            problem=str(exception))
 
-        # Get the expected outcomes.
-        outcomes = self.__GetExpectedOutcomes()
-            
         # The remaining arguments, if any, are test and suite IDs.
         id_arguments = self.__arguments[1:]
         # Are there any?
@@ -1239,15 +1228,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Compute the list of result streams to which output should be
         # written.
-        streams = []
-        # Add the streams explicitly specified by the user.
-        streams.extend(self.__GetResultStreams())
-        # Add the text output stream.
-        if format != "none":
-            stream = TextResultStream(self._stdout, format, outcomes,
-                                      self.GetDatabase(), suite_ids)
-            streams.append(stream)
+        streams = self.__GetResultStreams(suite_ids)
         
+        # Get the expected outcomes.
+        outcomes = self.__GetExpectedOutcomes()
         # Simulate the events that would have occurred during an
         # actual test run.
         for r in test_results:
@@ -1324,20 +1308,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         database = self.GetDatabase()
 
-        # Look up the summary format.
-        format = self.GetCommandOption("format", "brief")
-        if format not in self.summary_formats:
-            # Invalid format.  Complain.
-            valid_format_string = string.join(
-                map(lambda f: '"%s"' % f, self.summary_formats), ", ")
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid results format",
-                           format=format,
-                           valid_formats=valid_format_string)
-
-        # Get the expected outcomes.
-        expectations = self.__GetExpectedOutcomes()
-
         # Handle the 'seed' option.  First create the random number
         # generator we will use.
         seed = self.GetCommandOption("seed")
@@ -1369,55 +1339,16 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Filter the set of tests to be run, eliminating any that should
         # be skipped.
-        test_ids = self.__FilterTestsToRun(test_ids, expectations)
+        test_ids = self.__FilterTestsToRun(test_ids)
         
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
-        class UnexpectedOutcomesStream(ResultStream):
-            """An 'UnexpectedOutcomesStream' notices unexpected results.
-
-            An 'UnexpectedOutcomesStream' sets a flag if any unexpected
-            results occur."""
-            
-            def __init__(self, expected_outcomes):
-                """Construct an 'UnexpectedOutcomesStream'.
-
-                'expected_outcomes' -- A map from test IDs to expected
-                outcomes."""
-
-                ResultStream.__init__(self, {})
-
-                self.__expected_outcomes = expected_outcomes
-                self.__any_unexpected_outcomes = 0
-                
-
-            def WriteResult(self, result):
-
-                if (result.GetKind() == result.TEST
-                    and (result.GetOutcome()
-                         != self.__expected_outcomes.get(result.GetId(),
-                                                         Result.PASS))):
-                    self.__any_unexpected_outcomes = 1
-
-
-            def AnyUnexpectedOutcomes(self):
-                """Returns true if any unexpected outcomes have occurred.
-
-                returns -- True if any unexpected outcomes have
-                occurred."""
-
-                return self.__any_unexpected_outcomes
-                
         # Create ResultStreams for textual output and for generating
         # a results file.
         result_streams = []
-        if format != "none":
-            stream = TextResultStream(self._stdout, format, expectations,
-                                      database, test_suites)
-            result_streams.append(stream)
 
         # Handle the --output option.
         if self.HasCommandOption("no-output"):
@@ -1435,12 +1366,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             result_streams.append(rs)
 
         # Handle the --result-stream options.
-        result_streams.extend(self.__GetResultStreams())
-        
-        # Keep track of whether or not any unexpected outcomes have
-        # occurred.
-        unexpected_outcomes_stream = UnexpectedOutcomesStream(expectations)
-        result_streams.append(unexpected_outcomes_stream)
+        result_streams.extend(self.__GetResultStreams(test_suites))
         
         if self.HasCommandOption("random"):
             # Randomize the order of the tests.
@@ -1450,9 +1376,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Run the tests.
         engine = ExecutionEngine(database, test_ids, context, targets,
-                                 result_streams)
-        engine.Run()
-        return unexpected_outcomes_stream.AnyUnexpectedOutcomes()
+                                 result_streams,
+                                 self.__GetExpectedOutcomes())
+        return engine.Run()
                                                     
 
     def __ExecuteServer(self):
@@ -1506,13 +1432,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
-        # Get the expected outcomes.
-        expectations = self.__GetExpectedOutcomes()
-        
         # Set up the server.
         server = qm.test.web.web.QMTestServer(database, port_number, address,
                                               log_file, targets, context,
-                                              expectations)
+                                              self.__GetExpectedOutcomes())
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.
@@ -1581,24 +1504,25 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         expected outcome files are provided, an empty map is
         returned."""
 
-        outcomes_file_name = self.GetCommandOption("outcomes")
-        if not outcomes_file_name:
-            return {}
+        if self.__expected_outcomes is None:
+            outcomes_file_name = self.GetCommandOption("outcomes")
+            if not outcomes_file_name:
+                self.__expected_outcomes = {}
+            else:
+                try:
+                    self.__expected_outcomes \
+                         = base.load_outcomes(open(outcomes_file_name, "rb"))
+                except IOError, e:
+                    raise qm.cmdline.CommandError, str(e)
 
-        try:
-            return base.load_outcomes(open(outcomes_file_name, "rb"))
-        except IOError, e:
-            raise qm.cmdline.CommandError, str(e)
+        return self.__expected_outcomes
         
         
-    def __FilterTestsToRun(self, test_names, expectations):
+    def __FilterTestsToRun(self, test_names):
         """Return those tests from 'test_names' that should be run.
 
         'test_names' -- A sequence of test names.
 
-        'expectations' -- A map from test names to expected outcomes, or
-        'None' if there are no expected outcomes.
-        
         returns -- Those elements of 'test_names' that are not to be
         skipped.  If 'a' precedes 'b' in 'test_names', and both 'a' and
         'b' are present in the result, 'a' will precede 'b' in the
@@ -1610,6 +1534,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if rerun_file_name:
             # Load the outcomes from the file specified.
             outcomes = base.load_outcomes(open(rerun_file_name, "rb"))
+            expectations = self.__GetExpectedOutcomes()
             # We can avoid treating the no-expectation case as special
             # by creating an empty map.
             if expectations is None:
@@ -1637,15 +1562,38 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                            kind = kind)
 
                        
-    def __GetResultStreams(self):
+    def __GetResultStreams(self, test_suites):
         """Return the result streams to use.
 
         returns -- A list of 'ResultStream' objects, as indicated by the
         user."""
 
+        database = self.GetDatabase()
+
         result_streams = []
 
-        database = self.GetDatabase()
+        arguments = {
+            "expected_outcomes" : self.__GetExpectedOutcomes(),
+            "database" : database,
+            "suite_ids" : test_suites
+            }
+        
+        # Look up the summary format.
+        format = self.GetCommandOption("format", "")
+        if format and format not in self.summary_formats:
+            # Invalid format.  Complain.
+            valid_format_string = string.join(
+                map(lambda f: '"%s"' % f, self.summary_formats), ", ")
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid results format",
+                           format=format,
+                           valid_formats=valid_format_string)
+        if format != "none":
+            as = { "format" : format }
+            as.update(arguments)
+            stream = TextResultStream(as)
+            result_streams.append(stream)
+        
         f = lambda n: qm.test.base.get_extension_class(n,
                                                        "result_stream",
                                                        database)
@@ -1654,6 +1602,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         for opt, opt_arg in self.__command_options:
             if opt == "result-stream":
                 ec, as = qm.extension.parse_descriptor(opt_arg, f)
+                as.update(arguments)
                 result_streams.append(ec(as))
 
         return result_streams

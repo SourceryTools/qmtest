@@ -1216,18 +1216,23 @@
       <listitem>
        <para>Control the format used when displaying results.  The
        format specified must be one of <literal>full</literal>,
-       <literal>brief</literal>, <literal>stats</literal>, or
-       <literal>none</literal>.  The <literal>brief</literal> format
-       is the default.  In the <literal>full</literal> format,
+       <literal>brief</literal>, <literal>stats</literal>,
+       <literal>batch</literal>, or <literal>none</literal>.  The
+       <literal>brief</literal> format is the default if &qmtest; was
+       invoked interactively; the <literal>batch</literal> format is
+       the default otherwise.  In the <literal>full</literal> format,
        &qmtest; displays any annotations provided in test results.  In
        the <literal>brief</literal> mode only the causes of failures
        are shown; detailed annotations are not shown.  In the
        <literal>stats</literal> format, no details about failing tests
        are displayed; only statistics showing the number of passing
        and failing tests are displayed.  In the
-       <literal>none</literal> mode, no results are displayed, but a
-       results file is still created, unless the
-       <option>&dashdash;no-output</option> option is also provided.</para>
+       <literal>batch</literal> mode, the summary is displayed first,
+       followed by detailed results for tests with unexpected
+       outcomes.  In the <literal>none</literal> mode, no results are
+       displayed, but a results file is still created, unless the
+       <option>&dashdash;no-output</option> option is also
+       provided.</para>
       </listitem>
      </varlistentry>
 

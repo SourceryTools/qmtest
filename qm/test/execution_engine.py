@@ -51,7 +51,8 @@ class ExecutionEngine:
                  test_ids,
                  context,
                  targets,
-                 result_streams = None):
+                 result_streams = None,
+                 expectations = None):
         """Set up a test run.
 
         'database' -- The 'Database' containing the tests that will be
@@ -66,7 +67,10 @@ class ExecutionEngine:
         targets on which tests may be run.
 
         'result_streams' -- A sequence of 'ResultStream' objects.  Each
-        stream will be provided with results as they are available."""
+        stream will be provided with results as they are available.
+
+        'expectations' -- If not 'None', a dictionary mapping test IDs
+        to expected outcomes."""
 
         self.__database = database
         self.__test_ids = test_ids
@@ -76,7 +80,11 @@ class ExecutionEngine:
             self.__result_streams = result_streams
         else:
             self.__result_streams = []
-
+        if expectations is not None:
+            self.__expectations = expectations
+        else:
+            self.__expectations = {}
+            
         # There are no input handlers.
         self.__input_handlers = {}
         
@@ -96,7 +104,8 @@ class ExecutionEngine:
         # There are no results yet.
         self.__test_results = {}
         self.__resource_results = []
-
+        self.__any_unexpected_outcomes = 0
+        
         # Termination has not yet been requested.
         self.__terminated = 0
         
@@ -123,7 +132,9 @@ class ExecutionEngine:
         """Run the tests.
 
         This method runs the tests specified in the __init__
-        function."""
+        function.
+
+        returns -- True if any tests had unexpected outcomes."""
 
         # Start all of the targets.
         for target in self.__targets:
@@ -147,6 +158,8 @@ class ExecutionEngine:
             # complete.
             for rs in self.__result_streams:
                 rs.Summarize()
+
+        return self.__any_unexpected_outcomes
 
 
     def AddInputHandler(self, fd, function):
@@ -432,6 +445,9 @@ class ExecutionEngine:
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
+            if (self.__expectations.get(result.GetId(), Result.PASS)
+                != result.GetOutcome()):
+                self.__any_unexpected_outcomes = 1
         else:
             self.__resource_results.append(result)
             

@@ -19,6 +19,7 @@
 
 import qm
 import qm.extension
+import qm.fields
 
 ########################################################################
 # classes
@@ -41,6 +42,15 @@ class ResultStream(qm.extension.Extension):
     file format."""
 
     kind = "result_stream"
+
+    arguments = [
+        qm.fields.PythonField(
+           name = "expected_outcomes"),
+        qm.fields.PythonField(
+           name = "database"),
+        qm.fields.PythonField(
+           name = "suite_ids"),
+        ]
     
     def WriteResult(self, result):
         """Output a test result.
