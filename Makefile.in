@@ -80,7 +80,7 @@ $(SCRIPTS):
 	echo -e "@echo off\r" > $@
 	echo -e "set QM_HOME=$(prefix)\r" >> $@
 	echo -e "set QM_BUILD=0\r" >> $@
-	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\r" " >> $@
+	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\r\" " >> $@
 	echo -e "%1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
 endif
 
