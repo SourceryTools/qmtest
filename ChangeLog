@@ -1,3 +1,29 @@
+2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/base.py (CouldNotLoadExtensionError.__init__): Save
+	'exc_info' value for later use.
+	* qm/test/target.py (qm.test.base): Import it.
+	(Target._SetUpResource): Check for
+	'CouldNotLoadExtensionError'.
+
+	* qm/test/classes/dg_test.py (DGTest._RunDGTest): Clarify
+	comment.
+	Convert to pass tool arguments as a list, not a string.
+	Support 'dg-excess-errors'.
+	(DGTest._RunTool): Convert docstring to describe new argument
+	passing conventions.
+	(DGTest._DGoptions): Convert options immediately from string to
+	list.
+	(DGTest._DGexcess_errors): New method.
+	
+	* qm/test/classes/tet_stream.py (TETStream): Add detailed
+	description of TET/LSB and DejaGNU result codes.  Fix mapping
+	between them.
+	
+	* qm/test/classes/dejagnu_test.py
+	(DejaGNUTest.TargetExecutable._StdinPipe): Don't override.
+	(DejaGNUTest.BuildExecutable._StdinPipe): Don't override.
+
 2004-03-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* qmdist/command/install_scripts.py (install_scripts.run): Handle

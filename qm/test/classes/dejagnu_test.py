@@ -88,12 +88,6 @@ class DejaGNUTest(Test, DejaGNUBase):
         Classes derived from 'DejaGNUTest' may provide derived
         versions of this class."""
 
-        def _StdinPipe(self):
-
-            # No input is provided to the program.
-            return None
-
-        
         def _StderrPipe(self):
 
             # Combine stdout/stderr into a single stream.
@@ -106,12 +100,6 @@ class DejaGNUTest(Test, DejaGNUBase):
         Classes derived from 'DejaGNUTest' may provide derived
         versions of this class."""
 
-        def _StdinPipe(self):
-
-            # No input is provided to the program.
-            return None
-
-        
         def _StderrPipe(self):
 
             # Combine stdout/stderr into a single stream.

@@ -87,13 +87,13 @@ class DGTest(DejaGNUTest):
                    keep_output = 0):
         """Run a 'dg' test.
 
-        'tool_flags' -- A string giving a set of options to be
+        'tool_flags' -- A list of strings giving a set of options to be
         provided to the tool being tested.
         
-        'default_options' -- A string giving a default set of options
-        to be provided to the tool being tested.  These options can be
-        overridden by an embedded 'dg-options' command in the test
-        itself.
+        'default_options' -- A list of strings giving a default set of
+        options to be provided to the tool being tested.  These options
+        can be overridden by an embedded 'dg-options' command in the
+        test itself.
         
         'context' -- The 'Context' in which this test is running.
 
@@ -116,8 +116,9 @@ class DGTest(DejaGNUTest):
         self._kind = default_kind
         self._selected = None
         self._expectation = None
-        self._options = default_options
+        self._options = list(default_options)
         self._diagnostics = []
+        self._excess_errors_expected = False
         self._final_commands = []
         # Iterate through the test looking for embedded commands.
         line_num = 0
@@ -127,7 +128,7 @@ class DGTest(DejaGNUTest):
         if path.startswith(root):
             self._name = path[len(root) + 1:]
         else:
-            # We prepend "./" for compatibility with DejaGNU.
+            # We prepend "./" for output compatibility with DejaGNU.
             self._name = os.path.join(".", os.path.basename(path))
         for l in open(path).xreadlines():
             line_num += 1
@@ -147,7 +148,7 @@ class DGTest(DejaGNUTest):
 
         # Run the tool being tested.
         output, file = self._RunTool(path, self._kind,
-                                     tool_flags + " " + self._options,
+                                     tool_flags + self._options,
                                      context,
                                      result)
 
@@ -191,11 +192,17 @@ class DGTest(DejaGNUTest):
         output = re.sub(r"\n+", "", output)
         # If there's any output left, the test fails.
         message = self._name + " (test for excess errors)"
+        if self._excess_errors_expected:
+            expected = self.FAIL
+        else:
+            expected = self.PASS
         if output != "":
-            self._RecordDejaGNUOutcome(result, self.FAIL, message)
+            self._RecordDejaGNUOutcome(result, self.FAIL,
+                                       message, expected)
             result["DGTest.excess_errors"] = "<pre>" + output + "</pre>"
         else:
-            self._RecordDejaGNUOutcome(result, self.PASS, message)
+            self._RecordDejaGNUOutcome(result, self.PASS,
+                                       message, expected)
 
         # Run the generated program.
         if self._kind == "run":
@@ -258,8 +265,8 @@ class DGTest(DejaGNUTest):
         
         'kind' -- The kind of test to perform.
 
-        'options' -- A string giving command-line options to provide
-        to the tool.
+        'options' -- A list of strings giving command-line options to
+        provide to the tool.
 
         'context' -- The 'Context' for the test execution.
 
@@ -338,11 +345,11 @@ class DGTest(DejaGNUTest):
         if len(args) >= 2:
             code = self._ParseTargetSelector(args[1], context)
             if code == "S":
-                self._options = args[0]
+                self._options = self._ParseTclWords(args[0])
             elif code != "N":
                 self._Error("'dg-options': 'xfail' not allowed here")
         else:
-            self._options = args[0]
+            self._options = self._ParseTclWords(args[0])
 
 
     def _DGbogus(self, line_num, args, context):
@@ -382,6 +389,27 @@ class DGTest(DejaGNUTest):
         'context' -- The 'Context' in which the test is running."""
 
         self.__ExpectDiagnostic(self.__DIAG_ERROR, line_num, args, context)
+
+
+    def _DGexcess_errors(self, line_num, args, context):
+        """Emulate the 'dg-excess-errors' command.
+
+        'line_num' -- The line number at which the command was found.
+
+        'args' -- The arguments to the command, as a list of
+        strings.
+
+        'context' -- The 'Context' in which the test is running."""
+
+        if len(args) > 2:
+            self._Error("'dg-excess-errors': too many arguments")
+
+        if len(args) >= 2:
+            code = self._ParseTargetSelector(args[1], context)
+            if code in ("F", "S"):
+                self._excess_errors_expected = True
+        else:
+            self._excess_errors_expected = True
 
 
     def __ExpectDiagnostic(self, kind, line_num, args, context):

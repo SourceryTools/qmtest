@@ -30,24 +30,102 @@ import time
 
 class TETStream(FileResultStream):
     """A 'TETStream' formats results as a TET journal.
-
-    Provides special handling for 'DejaGNUTest' results.
     
+    Provides special handling for 'DejaGNUTest' results.
+
     TET: http://tetworks.opengroup.org/
     TET journal format: see appendix C and D of
        http://tetworks.opengroup.org/documents/3.7/uguide.pdf
 
-    """
+    For the meaning of TET result codes, we use as guidelines the LSB
+    test faq, question Q1.11:
+        * PASS - a test result belonging to this group is considered to
+          be a pass for compliance testing purposes:
+              o Pass - the test has been executed correctly and to
+                completion without any kind of problem
+              o Warning - the functionality is acceptable, but you
+                should be aware that later revisions of the relevant
+                standards or specification may change the requirements
+                in this area.
+              o FIP - additional information is provided which needs to
+                be checked manually.
+              o Unsupported - an optional feature is not available or
+                not supported in the implementation under test.
+              o Not in Use - some tests may not be required in certain
+                test modes or when an interface can be implemented by a
+                macro or function and there are two versions of the test
+                only one is used.
+              o Untested - no test written to check a particular feature
+                or an optional facility needed to perform a test is not
+                available on the system.
+          [There are also "notimp" and "unapproved" cases mentioned in
+          the LSB-FHS README, but they are otherwise undocumented, and
+          don't correspond to any DejaGNU or QMTest outcomes anyway.]
+        * FAIL - a test result belonging to this group is considered to
+          be a fail for compliance testing purposes (unless the failure
+          has been waived by an agreed Problem Report in the
+          Certification Problem Reporting database):
+              o Fail - the interface did not behave as expected.
+              o Uninitiated - the particular test in question did not
+                start to execute.
+              o Unresolved - the test started but did not reach the
+                point where the test was able to report success or
+                failure.
+              o Unreported - a major error occurred during the testset
+                execution.  (The TET manual calls this NORESULT.)
+    (From http://www.linuxbase.org/test/lsb-runtime-test-faq.html )
+    
+    DejaGNU test results are described as:
+        * PASS - A test has succeeded.
+        * FAIL - A test has produced the bug it was intended to
+          capture.
+        * WARNING - Declares detection of a minor error in the test case
+          itself.  Use WARNING rather than ERROR for cases (such as
+          communication failure to be followed by a retry) where the
+          test case can recover from the error.  Note that sufficient
+          warnings will cause a test to go from PASS/FAIL to
+          UNRESOLVED.
+        * ERROR - Declares a severe error in the testing framework
+          itself.  An ERROR also causes a test to go from PASS/FAIL to
+          UNRESOLVED.
+        * UNRESOLVED - A test produced indeterminate results.  Usually,
+          this means the test executed in an unexpected fashion; this
+          outcome requires that a human being go over results, to
+          determine if the test should have passed or failed.  This
+          message is also used for any test that requires human
+          intervention because it is beyond the abilities of the testing
+          framework.  Any unresolved test should be resolved to PASS or
+          FAIL before a test run can be considered finished.
 
+          Examples:
+              - a test's execution is interrupted
+              - a test does not produce a clear result (because of
+                WARNING or ERROR messages)
+              - a test depends on a previous test case which failed
+        * UNTESTED - a test case that isn't run for some technical
+          reason.  (E.g., a dummy test created as a placeholder for a
+          test that is not yet written.)
+        * UNSUPPORTED - Declares that a test case depends on some
+          facility that does not exist in the testing environment; the
+          test is simply meaningless.
+    (From a combination of DejaGNU manual sections "Core Internal
+    Procedures", "C Unit Testing API", and "A POSIX conforming test
+    framework".)
+
+    """
+    
     # TET result codes:
     PASS = (0, "PASS")
-    FAIL = (1, "FAIL")
-    UNRESOLVED = (2, "UNRESOLVED")
-    NOTINUSE = (3, "NOTINUSE")
+    WARNING = (101, "WARNING")
+    FIP = (102, "FIP")
     UNSUPPORTED = (4, "UNSUPPORTED")
+    NOTINUSE = (3, "NOTINUSE")
     UNTESTED = (5, "UNTESTED")
+
+    FAIL = (1, "FAIL")
     UNINITIATED = (6, "UNINITIATED")
-    NORESULT = (7, "NORESULT")
+    UNRESOLVED = (2, "UNRESOLVED")
+    UNREPORTED = (7, "UNREPORTED")
 
 
     def __init__(self, arguments):
@@ -238,25 +316,6 @@ class TETStream(FileResultStream):
                             "%i %i %s"
                             % (self._tcc_number, purpose, start_time),
                             "")
-            outcome_num, outcome_name \
-                         = { DejaGNUTest.PASS: self.PASS,
-                             DejaGNUTest.XPASS: self.PASS,
-                             DejaGNUTest.FAIL: self.FAIL,
-                             DejaGNUTest.XFAIL: self.FAIL,
-                             DejaGNUTest.WARNING: self.NORESULT,
-                             DejaGNUTest.ERROR: self.NORESULT,
-                             DejaGNUTest.UNTESTED: self.UNTESTED,
-                             DejaGNUTest.UNRESOLVED: self.UNRESOLVED,
-                             DejaGNUTest.UNSUPPORTED: self.UNSUPPORTED,
-                           }[outcome]
-            # Test purpose result
-            # 220 | activity_number tp_number result time | result-name
-            data = "%i %i %i %s" % (self._tcc_number,
-                                    purpose,
-                                    outcome_num,
-                                    end_time)
-            self._WriteLine(220, data, outcome_name)
-            
             if outcome == DejaGNUTest.WARNING:
                 # Test case information
                 # 520 | activity_num tp_num context block sequence | text
@@ -265,16 +324,37 @@ class TETStream(FileResultStream):
                                 "%i %i 0 1 1" % (self._tcc_number,
                                                  purpose),
                                 "WARNING")
-            if outcome == DejaGNUTest.ERROR:
-                # Test case controller message
-                # 50 || text describing problem
+            elif outcome == DejaGNUTest.ERROR:
+                # Test case information
+                # 520 | activity_num tp_num context block sequence | text
                 # (see _WriteResultAnnotations for details)
                 self._WriteLine(520,
                                 "%i %i 0 1 1" % (self._tcc_number,
                                                  purpose),
                                 "ERROR")
+            else:
+                outcome_num, outcome_name \
+                    = { DejaGNUTest.PASS: self.PASS,
+                        DejaGNUTest.XPASS: self.PASS,
+                        DejaGNUTest.FAIL: self.FAIL,
+                        DejaGNUTest.XFAIL: self.FAIL,
+                        DejaGNUTest.UNTESTED: self.UNTESTED,
+                        DejaGNUTest.UNRESOLVED: self.UNRESOLVED,
+                        # TET's UNSUPPORTED is like a FAIL for tests
+                        # that check for optional features; UNTESTED is
+                        # the correct correspondent for DejaGNU's
+                        # UNSUPPORTED.
+                        DejaGNUTest.UNSUPPORTED: self.UNTESTED,
+                        }[outcome]
+                # Test purpose result
+                # 220 | activity_number tp_number result time | result-name
+                data = "%i %i %i %s" % (self._tcc_number,
+                                        purpose,
+                                        outcome_num,
+                                        end_time)
+                self._WriteLine(220, data, outcome_name)
 
-            purpose += 1
+                purpose += 1
             
         # Test case end
         # 80 | activity_number completion_status time | text
@@ -297,8 +377,8 @@ class TETStream(FileResultStream):
 
         outcome_num, outcome_name = { Result.FAIL: self.FAIL,
                                       Result.PASS: self.PASS,
-                                      Result.UNTESTED: self.UNTESTED,
-                                      Result.ERROR: self.NORESULT,
+                                      Result.UNTESTED: self.UNINITIATED,
+                                      Result.ERROR: self.UNREPORTED,
                                     }[result.GetOutcome()]
         # Test purpose result
         # 220 | activity_number tp_number result time | result-name
@@ -307,8 +387,8 @@ class TETStream(FileResultStream):
         self._WriteLine(220, data, outcome_name)
 
         if result.GetOutcome() == Result.ERROR:
-            # Test case controller message
-            # 50 || text describing problem
+            # Test case information
+            # 520 | activity_num tp_num context block sequence | text
             # (see _WriteResultAnnotations for details)
             self._WriteLine(520,
                             "%i 0 0 1 1" % self._tcc_number,

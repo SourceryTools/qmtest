@@ -47,6 +47,7 @@ class CouldNotLoadExtensionError(QMException):
 
         'exc_info' -- An exception tuple, as returned by 'sys.exc_info'."""
         
+        self.exc_info = exc_info
         message = qm.common.format_exception(exc_info)
         message += "\n" + qm.error("could not load extension class",
                                    class_name = class_name)

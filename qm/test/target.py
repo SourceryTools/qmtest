@@ -21,6 +21,7 @@ import qm
 import qm.common
 import qm.extension
 import qm.platform
+import qm.test.base
 from   qm.test.context import *
 from   qm.test.result import *
 from   qm.test.database import NoSuchResourceError
@@ -390,6 +391,9 @@ class Target(qm.extension.Extension):
             result.NoteException(cause="Resource is missing from the database.")
             self._RecordResult(result)
             return (None, result, None)
+        except qm.base.CouldNotLoadExtensionError, e:
+            result.NoteException(e.exc_info,
+                                 cause = "Could not load extension class")
         except KeyboardInterrupt:
             result.NoteException()
             # We received a KeyboardInterrupt, indicating that the
