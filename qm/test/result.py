@@ -338,28 +338,28 @@ class Result:
     # annotations.
     
     def __getitem__(self, key):
-        assert type(key) in qm.common.string_types
+        assert type(key) in types.StringTypes
         return self.__annotations[key]
 
 
     def __setitem__(self, key, value):
-        assert type(key) in qm.common.string_types
-        assert type(value) in qm.common.string_types
+        assert type(key) in types.StringTypes
+        assert type(value) in types.StringTypes
         self.__annotations[key] = value
 
 
     def __delitem__(self, key):
-        assert type(key) in qm.common.string_types
+        assert type(key) in types.StringTypes
         del self.__annotations[key]
 
 
     def get(self, key, default=None):
-        assert type(key) in qm.common.string_types
+        assert type(key) in types.StringTypes
         return self.__annotations.get(key, default)
 
 
     def has_key(self, key):
-        assert type(key) in qm.common.string_types
+        assert type(key) in types.StringTypes
         return self.__annotations.has_key(key)
 
 

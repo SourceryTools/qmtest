@@ -1,5 +1,17 @@
 2004-02-11  Nathaniel Smith  <njs@codesourcery.com>
 
+	* qm/fields.py: Use types.StringTypes instead of
+	qm.common.string_types.  Also remove tabs.
+	* qm/test/result.py: Likewise.
+	* qm/common.py (string_types): Remove.
+	(Empty): Remove.
+	(MutexError): Remove.
+	(MutexLockError): Remove.
+	(ConfigurationError): Remove.
+	(indent_lines): Remove.
+	
+2004-02-11  Nathaniel Smith  <njs@codesourcery.com>
+
 	* qm/common.py: Import getpass.  
 	(get_username): New function.
 	* qm/test/execution_engine.py

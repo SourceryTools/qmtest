@@ -54,13 +54,6 @@ program_name = None
 # exceptions
 ########################################################################
 
-class Empty:
-    """An empty class."""
-
-    pass
-
-
-
 class QMException(Exception):
     """An exception generated directly by QM.
 
@@ -74,26 +67,6 @@ class QMException(Exception):
         'message' will be displayed as an error message."""
 
         Exception.__init__(self, message)
-
-
-
-class MutexError(QMException):
-    """A problem occurred with a mutex."""
-
-    pass
-
-
-
-class MutexLockError(QMException):
-    """A lock was not obtained on the mutex."""
-
-    pass
-
-
-
-class ConfigurationError(QMException):
-
-    pass
 
 
 
@@ -588,18 +561,6 @@ def copy(object):
         return object
 
 
-def indent_lines(text, indent):
-    """Indent each line of 'text' by 'indent' spaces."""
-
-    indentation = ' ' * indent
-    # Break into lines.
-    lines = string.split(text, "\n")
-    # Indent each.
-    lines = map(lambda line, ind=indentation: ind + line, lines)
-    # Rejoin.
-    return string.join(lines, "\n")
-
-
 def wrap_lines(text, columns=72, break_delimiter="\\", indent=""):
     """Wrap lines in 'text' to 'columns' columns.
 
@@ -918,12 +879,6 @@ rc = RcConfiguration()
 
 # The next number to be used when handing out unqiue tag strings.
 _unique_tag = 0
-
-# The string types available in this implementation of Python.
-try:
-    string_types = (types.StringType, types.UnicodeType)
-except AttributeError:
-    string_types = (types.StringType,)
 
 ########################################################################
 # Local Variables:

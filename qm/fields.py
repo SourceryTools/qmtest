@@ -646,7 +646,7 @@ class TextField(Field):
 
     def Validate(self, value):
 
-        if not isinstance(value, qm.common.string_types):
+        if not isinstance(value, types.StringTypes):
             raise ValueError, value
         
         # Clean up unless it's a verbatim string.
@@ -1062,7 +1062,7 @@ class SetField(Field):
         # the set.
         contained_field = self.__contained
         element = 0
-	for element in xrange(int(request[name + "_count"])):
+        for element in xrange(int(request[name + "_count"])):
             element_name = name + "_%d" % element
             if not (action == "remove"
                     and request.get(element_name + "_remove") == "on"):
@@ -1073,7 +1073,7 @@ class SetField(Field):
                 if r:
                     redisplay = 1
             element += 1
-	
+        
         # Remove entries from the request that might cause confusion
         # when the page is redisplayed.
         names = []
@@ -1535,8 +1535,8 @@ class EnumerationField(ChoiceField):
         if not default_value in enumerals and len(enumerals) > 0:
             default_value = enumerals[0]
         # Perform base class initialization.
-	super(EnumerationField, self).__init__(name, default_value, 
-					       **properties)
+        super(EnumerationField, self).__init__(name, default_value, 
+                                               **properties)
         # Remember the enumerals.
         self.__enumerals = enumerals
 
@@ -1571,7 +1571,7 @@ class EnumerationField(ChoiceField):
 
         # Store the name of the enumeral.
         return xmlutil.create_dom_text_element(document, "enumeral", 
-	                                       str(value))
+                                               str(value))
 
 
     ### Input methods.
