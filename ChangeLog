@@ -1,5 +1,13 @@
 2005-03-21  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/extension.py: Use metaclass to manipulate 'Field' members.
+	* qm/fields.py: Make fields more convenient to use in the context of
+	Extensions.
+	* tests/xmldb/api.xms/test.qms/fields.qmt: New unit test for this feature.
+	* tests/xmldb/api.xms/test.qms/test_inheritance.qmt: Adjust test to new
+	feature.
+	* qm/test/classes/python.py: Work around a python bug.
+
 	* qm/test/classes/command.py: Generalize ExecTestBase's output
 	validation.
 
