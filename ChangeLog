@@ -1,5 +1,9 @@
 2003-07-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/cmdline.py (QMTest.GetVersion): New method.
+
+2003-07-24  Mark Mitchell  <mark@codesourcery.com>
+
 	* version: Update.
 
 2003-07-23  Nathaniel Smith  <njs@codesourcery.com>

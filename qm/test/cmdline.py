@@ -556,6 +556,18 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         self.__expected_outcomes = None
 
 
+    def GetVersion(self):
+        """Returns the version of QMTest being used.
+
+        returns -- A tuple of the form '(major, minor, release)'.  Each
+        of the entries in the tuple is an integer.  For version X.Y.Z,
+        'major' will be X, 'minor' will be 'Y', and 'release' will be
+        'Z'."""
+
+        return (self._major_version, self._minor_version,
+                self._release_version)
+
+        
     def HasGlobalOption(self, option):
         """Return true if 'option' was specified as a global command.
 
