@@ -1,3 +1,14 @@
+2000-12-05  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* doc/design/qmtrack/user-interface.xml: Fix inconsistencies with
+	other sections.
+	* doc/design/qmtrack/create1.jpg: Update.
+	* doc/design/qmtrack/edit1.jpg: Likewise.
+	* doc/design/qmtrack/edit2.jpg: Likewise.
+	* doc/design/qmtrack/query1.jpg: Likewise.
+	* doc/design/qmtrack/query2.jpg: Likewise.
+	* doc/design/qmtrack/query3.jpg: Likewise.
+
 2000-12-05  R. Lindsay Todd  <toddr@rpi.edu>
 
 	* doc/design/qmconfig/design-td.xml: New file

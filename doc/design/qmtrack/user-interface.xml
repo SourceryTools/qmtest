@@ -51,8 +51,13 @@
    <userinput><replaceable>field</replaceable>+=<replaceable>value</replaceable></userinput>.
    To remove elements, the <userinput>-=</userinput> symbol is used
    instead.  All of the commands to create and edit issues use the
-   above three operators to specify new values for fields.</para>
-
+   above three operators to specify new values for fields. Alternately,
+   you may specify the issue to be created or edited in its XML form 
+   as described in Section <link linkend="sec-xml-repr"
+   endterm="sec-xml-repr-title"/>. If you choose to perform operations on
+   the issue in this way, simply give the command and then, on
+   <literal>stdin</literal>, give the XML of the issue to be created,
+   edited, or queried on.</para>
    <section id="sec-qmtrack-commands">
     <title id="sec-qmtrack-commands-title">&qmtrack-cmd commands</title>
 
@@ -205,15 +210,11 @@
   <section id="sec-email">
    <title id="sec-email-title">E-mail</title>
 
-   <para>To create, edit, and query issues via e-mail, simply
-   construct an e-mail with the command as you would issue it on the
-   command line and send it to the database. You may also write an
-   issue in xml as shown below and send the message to the
-   database. In both cases, the database will respond with the
-   information in xml form. For the xml representation, place the name
-   of the command in the first line of the body and then the xml
-   representation starting on the second line. For example, to create
-   a new issue, you can send an e-mail with this body:
+   <para>To create, edit, and query issues via e-mail, simply construct an
+   e-mail with the command as you would issue it on the command line and
+   send it to the database. The database will respond with the information
+   in xml form. For example, to create a new issue, you can send an e-mail
+   with this body:
    <programlisting>
 <![CDATA[
   create summary="My issue" categories+=foo categories+=bar
@@ -223,21 +224,33 @@
    <programlisting>
 <![CDATA[
   create
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <summary>My issue</summary>
-    <categories>foo</categories>
-    <categories>bar</categories>
+   <field-data>
+    <field name="summary">My issue</field>
+    <field name="categories">
+      <item>foo</item>
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
    </programlisting>
    Either way, you would receive an e-mail back containing the text:
    <programlisting>
 <![CDATA[
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <id>iss2</id>
-    <summary>My issue</summary>
-    <categories>foo</categories>
-    <categories>bar</categories>
+   <iid>iss2</iid>
+   <field-data>
+    <field name="summary">My issue</field>
+    <field name="categories">
+      <item>foo</item>
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
    </programlisting>
@@ -266,11 +279,17 @@
   <programlisting>
 <![CDATA[
   edit
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <id>iss2</id>
-    <summary>My issue</summary>
-    <categories>foo</categories>
-    <categories>bar</categories>
+   <iid>iss2</iid>
+   <field-data>
+    <field name="summary">My issue</field>
+    <field name="categories">
+      <item>foo</item>
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
   </programlisting>
@@ -280,10 +299,16 @@
   <programlisting>
 <![CDATA[
   edit
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <id>iss2</id>
-    <summary>My issue</summary>
-    <categories>bar</categories>
+   <iid>iss2</iid>
+   <field-data>
+    <field name="summary">My issue</field>
+    <field name="categories">
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
   </programlisting>
@@ -295,10 +320,16 @@
 
   <programlisting>
 <![CDATA[
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <id>iss2</id>
-    <summary>My issue</summary>
-    <categories>bar</categories>
+   <iid>iss2</iid>
+   <field-data>
+    <field name="summary">My issue</field>
+    <field name="categories">
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
   </programlisting>
@@ -313,8 +344,14 @@
   <programlisting>
 <![CDATA[
   query
+  <?xml version="1.0"?>
+  <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
   <issue>
-    <categories>bar</categories>
+   <field-data>
+    <field name="categories">
+      <item>bar</item>
+    </field>
+   </field-data>
   </issue>
   ]]>
   </programlisting>
