@@ -1,3 +1,23 @@
+2003-07-22  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (Field._GetHtmlFormFieldName): Rename to ...
+	(Field.GetHtmlFormFieldName): ... this.
+	(IntegerField.FormatValueAsHtml): Adjust accordingly.
+	(TextField.FormatValueAsHtml): Likewise.
+	(TupleField.FormatValueAsHtml): Likewise.
+	(SetField.FormatValueAsHtml): Likewise.
+	(SetField.ParseFormValue): Do not validate newly added values.
+	(AttachmentField.FormatValueAsHtml): Adjust use of
+	_GetHtmlFormFieldName.
+	(EnumerationField.FormatValueAsHtml): Likewise.
+	(ChoiceField.FormatValueAsHtml): Always have at least one choice.
+	(ChoiceField.Validate): New method.
+	* qm/test/test.py (Test.arguments): Adjust the test_id field to
+	allow creation from the GUI.
+	* qm/test/web/web.py (QMTestServer.HandleSubmitItem): Simplify.
+
+	* tests/regress/tuple1: New test.	
+	
 2003-07-21  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/fields.py (TupleField.Validate): Return the computed

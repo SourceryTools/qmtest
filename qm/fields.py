@@ -263,7 +263,7 @@ class Field(object):
         'name' -- The name to use for the primary HTML form element
         containing the value of this field, if 'style' specifies the
         generation of form elements.  If 'name' is 'None', the value
-        returned by '_GetHtmlFormFieldName()' should be used.
+        returned by 'GetHtmlFormFieldName()' should be used.
 
         returns -- A string containing the HTML representation of
         'value'."""
@@ -356,7 +356,7 @@ class Field(object):
 
     # Other methods.
     
-    def _GetHtmlFormFieldName(self):
+    def GetHtmlFormFieldName(self):
         """Return the form field name corresponding this field.
 
         returns -- A string giving the name that should be used for this
@@ -409,7 +409,7 @@ class IntegerField(Field):
             value = self.GetDefaultValue()
         # Use the default field form field name if requested.
         if name is None:
-            name = self._GetHtmlFormFieldName()
+            name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             return '<input type="text" size="8" name="%s" value="%d"/>' \
@@ -545,7 +545,7 @@ class TextField(Field):
             value = str(value)
         # Use the default field form field name if requested.
         if name is None:
-            name = self._GetHtmlFormFieldName()
+            name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             if self.__multiline:
@@ -724,21 +724,20 @@ class TupleField(Field):
 
     def FormatValueAsHtml(self, server, value, style, name = None):
 
+        # Use the default name if none is specified.
+        if name is None:
+            name = self.GetHtmlFormFieldName()
+            
         # Format the field as a multi-column table.
         html = '<table border="0" cellpadding="0"><tr>'
         for f, v in map(None, self.__fields, value):
-            if name is not None:
-                element_name = name + "_" + f.GetName()
-            else:
-                element_name = None
+            element_name = name + "_" + f.GetName()
             html += "<td><b>" + f.GetTitle() + "</b>:</td>"
             html += ("<td>" 
                      + f.FormatValueAsHtml(server, v, style, element_name)
                      + "</td>")
         html += "</tr></table>"
-        # Add a dummy field with the desired 'name'.
-        if name is not None:
-            html += '<input type="hidden" name="%s" />' % name
+
         return html
 
 
@@ -882,7 +881,7 @@ class SetField(Field):
             value = []
         # Use the default field form field name if requested.
         if name is None:
-            name = self._GetHtmlFormFieldName()
+            name = self.GetHtmlFormFieldName()
 
         contained_field = self.GetContainedField()
 
@@ -1004,15 +1003,6 @@ class SetField(Field):
                     redisplay = 1
             element += 1
 
-        # If the user requested another element, add to the set.
-        if action == "add":
-            redisplay = 1
-            values.append(contained_field.GetDefaultValue())
-        elif action == "remove":
-            redisplay = 1
-        else:
-            redisplay = 0
-
         # Remove entries from the request that might cause confusion
         # when the page is redisplayed.
         names = []
@@ -1021,8 +1011,26 @@ class SetField(Field):
                 names.append(n)
         for n in names:
             del request[n]
-            
-        return (self.Validate(values), redisplay)
+
+        # Validate the values.
+        values = self.Validate(values)
+        
+        # If the user requested another element, add to the set.
+        if action == "add":
+            redisplay = 1
+            # There's no need to validate this new value and it may in
+            # fact be dangerous to do so.  For example, the default
+            # value for a ChoiceField might be the "nothing selected"
+            # value, which is not a valid selection.  If the user does
+            # not actually select something, the problem will be
+            # reported when the form is submitted.
+            values.append(contained_field.GetDefaultValue())
+        elif action == "remove":
+            redisplay = 1
+        else:
+            redisplay = 0
+
+        return (values, redisplay)
 
 
     def GetValueFromDomNode(self, node, attachment_store):
@@ -1185,7 +1193,7 @@ class AttachmentField(Field):
 
         # Use the default field form field name if requested.
         if name is None:
-            name = self._GetHtmlFormFieldName()
+            name = self.GetHtmlFormFieldName()
 
         if style == "full" or style == "brief":
             if value is None:
@@ -1442,7 +1450,7 @@ class EnumerationField(TextField):
             value = self.GetDefaultValue()
         # Use the default field form field name if requested.
         if name is None:
-            name = self._GetHtmlFormFieldName()
+            name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             enumerals = self.GetEnumerals()
@@ -1531,10 +1539,16 @@ class ChoiceField(TextField):
 
         # For an editable field, give the user a choice of available
         # resources.
+        items = self.GetItems()
         result = "<select"
         if name:
             result += ' name="%s"' % name
         result += ">"
+        # HTML does not permit a "select" tag with no contained "option"
+        # tags.  Therefore, we ensure that there is always one option to
+        # choose from.
+        result += '<option value="">--Select--</option>'
+        # Add the choices for the ordinary options.
         for r in self.GetItems():
             result += '<option value="%s"' % r
             if r == value:
@@ -1552,6 +1566,16 @@ class ChoiceField(TextField):
         presented as a choice for the user."""
 
         raise NotImplementedError
+
+
+    def Validate(self, value):
+
+        value = super(ChoiceField, self).Validate(value)
+        if value == "":
+            raise ValueError, "No choice specified for %s." % self.GetTitle()
+        return value
+
+        
         
 ########################################################################
 

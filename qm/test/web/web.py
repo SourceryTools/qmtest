@@ -2264,16 +2264,10 @@ class QMTestServer(qm.web.WebServer):
         # Loop over fields of the class, looking for arguments in the
         # submitted request.
         arguments = {}
-        field_prefix = qm.fields.Field.form_field_prefix
         for field in fields:
             # Construct the name we expect for the corresponding argument.
             field_name = field.GetName()
-            form_field_name = field_prefix + field_name
-            if not request.has_key(form_field_name):
-                # The value for this field is missing.
-                message = qm.error("missing argument",
-                                   title=field.GetTitle())
-                return qm.web.generate_error_page(request, message)
+            form_field_name = field.GetHtmlFormFieldName()
             # Parse the value for this field.
             try:
                 value, r = field.ParseFormValue(request, form_field_name,

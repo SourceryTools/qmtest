@@ -139,7 +139,7 @@ class Test(qm.test.runnable.Runnable):
                     name = "test_id",
                     title = "Test",
                     description = """The name of the prerequisite test.""",
-                    not_empty_text = "true",
+                    default_value = "",
                     ),
                  OutcomeField(
                     name = "outcome",
