@@ -172,7 +172,7 @@
      that the test author did not anticipate).  While
      <literal>FAIL</literal> usually signals an error in the system
      being tested, <literal>ERROR</literal> usually signals an error
-     or incompleteness in the test itself.
+     or incompleteness in the test itself.</para>
     </listitem>
 
     <listitem>
@@ -285,7 +285,7 @@
   <classname>Engine</classname> class traverses the tree of suites and
   tests specified by the user.  It performs setup and teardown,
   filters tests based on the users' criteria (if any), runs tests, and
-  collates their results.  Users do <emph>not</emph> override the
+  collates their results.  Users do <emphasis>not</emphasis> override the
   <classname>Engine</classname> class. </para>
 
   <para>The <classname>Suite</classname> and
@@ -306,7 +306,7 @@
   iteration protocol.  This allows dynamic generation of large numbers
   (millions) of tests without excessive memory requirements; it also
   simplifies task farming of parallelizable tests. Note that the
-  engine does <emph>not</emph> guarantee to execute tests in the order
+  engine does <emphasis>not</emphasis> guarantee to execute tests in the order
   in which the suite provides them, as it may need to delay execution
   of a test until its prerequisites have been run. </para>
 
@@ -355,9 +355,9 @@
    test classes to run shell commands, invoke Python or COM functions
    with specific arguments, and so on.</para>
 
-   <para><emph>Are files implicitly suites?  This would mean that a if
+   <para><emphasis>Are files implicitly suites?  This would mean that a if
    a single file contained a single test, that test would be a.b,
-   rather than just plain b. </emph></para>
+   rather than just plain b. </emphasis></para>
 
    <para>All test arguments (constructor parameters for test objects)
    are evaluated in an environment constructed by the engine.  This
@@ -417,7 +417,7 @@
 
  <section><title>The Test Database</title>
 
- <para><emph>TBD</emph></para>
+ <para><emphasis>TBD</emphasis></para>
 
  </section>
 

@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>Requirements</title>
+<chapter id="req"><title>Requirements</title>
 
  <para>This section lists requirements derived from the use cases
  presented above, and from the discussions on the Software Carpentry
@@ -268,7 +268,7 @@
   tests are not binary: there is no sensible way in which to classify
   an arbitrary combination of pass, fail, error, and deferred into a
   scalar result.  However, as discussed below, <link
-  linkend="req-summary">summary reporting</link> will be
+  linkend="req-summary-reporting">summary reporting</link> will be
   provided.</para>
 
  </section>
@@ -305,8 +305,8 @@
 
  </section>
 
- <section id="req-summary">
-  <title id="req-summary-title">Summary Reporting</title>
+ <section id="req-summary-reporting">
+  <title id="req-summary-reporting-title">Summary Reporting</title>
 
   <para>&qmtest; must <phrase id="discuss-summarize-results">summarize
   the results of tests</phrase>, i.e. produce a count of the number of
@@ -645,10 +645,9 @@
      <para>As well as reading test specifications from its own
      configuration files, &qmtest; must be able to extract test
      specifications from arbitrary pre-existing files.  For example,
-     <link linkend="story-daryl">Daryl Dowhile</link> already has 1200
-     test specifications embedded as specially-formatted comments in
-     program source files; &qmtest; must allow him to recycle those
-     files.</para>
+     if Daryl Dowhile already has 1200 test specifications embedded as
+     specially-formatted comments in program source files; &qmtest;
+     must allow him to recycle those files.</para>
     </glossdef>
    </glossentry>
 
@@ -784,451 +783,452 @@
 
   <listitem>
   <!-- phrase id="discuss-false-positives"-- >
-  No false positives.
+  <para>No false positives.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-false-negatives" -->
-  No false negatives.
+  <para>No false negatives.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-execute-all" -->
-  Always execute at least all of the tests requested by the user.
+  <para>Always execute at least all of the tests requested by the user.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-small-use" -->
-  Small-scale testing must be easier to do with &qmtest; than by hand.
+  <para>Small-scale testing must be easier to do with &qmtest; 
+        than by hand.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-reproducible" -->
-  Test execution must be reproducible.
+  <para>Test execution must be reproducible.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-recycle" -->
-  Must use existing standards, syntax, conventions, and tools.
+  <para>Must use existing standards, syntax, conventions, and tools.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-not-all-cmdline" -->
-  Must not require all tests to be command-line applications.
+  <para>Must not require all tests to be command-line applications.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-specify-dependency" -->
-  Allow programmers to specify dependencies between tests.
+  <para>Allow programmers to specify dependencies between tests.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-track-dependency" -->
-  Prevent dependent tests from being executed if an error occurred in
-  an antecedent.
+  <para>Prevent dependent tests from being executed if an error occurred in
+  an antecedent.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-cyclic-dependency" -->
-  detect and
-  Report cyclic dependencies.
+  <para>detect and
+  Report cyclic dependencies.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-separate-prep" -->
-  Separate setup and teardown from particular tests.
+  <para>Separate setup and teardown from particular tests.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-trace-dependency" -->
-  Trace dependencies between tests.
+  <para>Trace dependencies between tests.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-expect-failure" -->
-  Specify that some tests are expected to fail.
+  <para>Specify that some tests are expected to fail.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-reported-expected-failures" -->
-  Report expected failures separately from passes, unexpected
-  failures, and other results.
+  <para>Report expected failures separately from passes, unexpected
+  failures, and other results.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-readable-report" -->
-  Report test results in textual, human-readable form.
+  <para>Report test results in textual, human-readable form.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-report-xml" -->
-  Report and store test results as XML.
+  <para>Report and store test results as XML.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-format-function" -->
-  Provide test result formatting and reporting functions in all
-  programming languages of interest.
+  <para>Provide test result formatting and reporting functions in all
+  programming languages of interest.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-format-switch" -->
-  Format in which these functions report results must be controlled by
-  a single switch.
+  <para>Format in which these functions report results must be controlled by
+  a single switch.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-gen-results" -->
-  Generate, or re-generate, reference test results using exactly the
-  same settings and specifications used for testing.
+  <para>Generate, or re-generate, reference test results using exactly the
+  same settings and specifications used for testing.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-test-suites" -->
-  Aggregate tests into test suites.
+  <para>Aggregate tests into test suites.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-suite-prep" -->
-  Test suites must support setup and teardown.
+  <para>Test suites must support setup and teardown.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-whole-part" -->
-  Make tests and test suites members of suites.
+  <para>Make tests and test suites members of suites.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-suites-not-tests" -->
-  Test suites do not generate test results.
+  <para>Test suites do not generate test results.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-unique-id" -->
-  Every test must be uniquely identified.
+  <para>Every test must be uniquely identified.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-id-long-lived" -->
-  Test identifiers must be long-lived.
+  <para>Test identifiers must be long-lived.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-hierarchical-names" -->
-  Require every test or test suite to be uniquely named below its
-  parent.
+  <para>Require every test or test suite to be uniquely named below its
+  parent.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-summarize-results" -->
-  Summarize the results of tests.
+  <para>Summarize the results of tests.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-hierarchical-reporting" -->
-  Reporting must be hierarchical.
+  <para>Reporting must be hierarchical.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-summary-reporting-hierarchy" -->
-  Summary reporting must mirror the test suite hierarchy
+  <para>Summary reporting must mirror the test suite hierarchy</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-report-record" -->
-  Reporting and recording must be independent.
+  <para>Reporting and recording must be independent.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-extra-values" -->
-  Must allow tests to contain and report extra named values.
+  <para>Must allow tests to contain and report extra named values.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-summarize-extra-values" -->
-  Summary reporting system must allow extra named values to be
-  combined hierarchically.
+  <para>Summary reporting system must allow extra named values to be
+  combined hierarchically.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-explain-deferral" -->
-  Explain why specific tests were deferred.
+  <para>Explain why specific tests were deferred.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-override-engine" -->
-  Override all aspects of the execution engine's internal operation.
+  <para>Override all aspects of the execution engine's internal operation.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-report-changes" -->
-  Report test results in a manner that draws attention to recent
-  changes.
+  <para>Report test results in a manner that draws attention to recent
+  changes.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-temporary-records" -->
-  Temporarily record the results of recent test runs.
+  <para>Temporarily record the results of recent test runs.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-permanent-records" -->
-  Permanently record the results of selected test runs.
+  <para>  Permanently record the results of selected test runs.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-user-recording-control" -->
-  Distinction between temporary and permanent recording must be under
-  developers' control.
+  <para>Distinction between temporary and permanent recording must be under
+  developers' control.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-automatic-traversal" -->
-  Automatically traverse test suites by default.
+  <para>Automatically traverse test suites by default.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-user-control-traversal" -->
-  Specify tests or suites to be executed or omitted.
+  <para>Specify tests or suites to be executed or omitted.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-include-omit" -->
-  Specify that one or more tests are to be included or omitted.
+  <para>Specify that one or more tests are to be included or omitted.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-log-filtering" -->
-  Filtering must be logged.
+  <para>Filtering must be logged.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-filter-by-result" -->
-  Re-execute only those tests that produced specific results during a
-  previous run.
+  <para>Re-execute only those tests that produced specific results during a
+  previous run.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-access-temporary-results" -->
-  Must have access to the temporary and permanent results of previous
-  test runs while executing.
+  <para>Must have access to the temporary and permanent results of previous
+  test runs while executing.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-interrupt" -->
-  Must be able to pause and re-start test execution.
+  <para>Must be able to pause and re-start test execution.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-physical-structure" -->
-  Cannot mandate a physical structure for projects.
+  <para>Cannot mandate a physical structure for projects.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-specify-locations" -->
-  Separately specify the location of tests, temporary files, transient
-  results, and permanent results.
+  <para>Separately specify the location of tests, temporary files, transient
+  results, and permanent results.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-default-locations" -->
-  Cannot require explicit specification of object locations.
+  <para>Cannot require explicit specification of object locations.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-no-redundancy" -->
-  Must not require redundant specification.
+  <para>Must not require redundant specification.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-parallel" -->
-  Must be able to execute tests concurrently.
+  <para>Must be able to execute tests concurrently.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-out-of-order" -->
-  Unordered execution should be the default.
+  <para>Unordered execution should be the default.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-in-order" -->
-  Specifying test order must be simple.
+  <para>Specifying test order must be simple.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-heterogeneous" -->
-  Run programs on many different kinds of platforms simultaneously.
+  <para>Run programs on many different kinds of platforms simultaneously.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-platform-log" -->
-  Log platform information automatically as part of test results.
+  <para>Log platform information automatically as part of test results.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-platform-placement" -->
-  Keep results from sequential or concurrent runs on different
-  platforms separate.
+  <para>Keep results from sequential or concurrent runs on different
+  platforms separate.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
-  <!-- phrase id="discuss-timeout"
-  > Specify timeouts and resource limits on tests for particular tes --t
-  runs.
+  <!-- phrase id="discuss-timeout" -- > 
+  <para>Specify timeouts and resource limits on tests for particular test
+  runs.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-translate-exit-code" -->
-  Translate a program's exit status code into a test result.
+  <para>Translate a program's exit status code into a test result.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-translate-file-diff" -->
-  Compare the program's output to a reference copy..
+  <para>Compare the program's output to a reference copy..</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-translate-custom-diff" -->
-  Must be able to use an user-specified comparator to determine
-  whether a program's output matches a reference result.
+  <para>Must be able to use an user-specified comparator to determine
+  whether a program's output matches a reference result.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-translate-side-effect" -->
-  Inspect one or more of the side effects of the program's execution.
+  <para>Inspect one or more of the side effects of the program's execution.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-translate-monitor" -->
-  Construct a report based on the output of a monitoring program.
+  <para>Construct a report based on the output of a monitoring program.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-arg-calls" -->
-  Must be able to specify repetition.
+  <para>Must be able to specify repetition.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-arg-calls-id" -->
-  Must be able to uniquely identify members of a repetition set.
+  <para>Must be able to uniquely identify members of a repetition set.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-tag-tests" -->
-  Add arbitrary tags to filter tests.
+  <para>Add arbitrary tags to filter tests.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-test-generator" -->
-  Specify that a test specification is actually a test specification
-  generator.
+  <para>Specify that a test specification is actually a test specification
+  generator.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-recursion-limit" -->
-  Have a default limit on the depth of test generation recursion.
+  <para>Have a default limit on the depth of test generation recursion.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-override-recursion-limit" -->
-  Allow users to override the test generation recursion limit.
+  <para>Allow users to override the test generation recursion limit.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-prep-in-spec" -->
-  Setup and teardown must be specified in the test specification.
+  <para>Setup and teardown must be specified in the test specification.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-log-prep" -->
-  Setup and teardown operations must be logged.
+  <para>Setup and teardown operations must be logged.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-test-after-setup" -->
-  Tests are only executed if their setup operations complete
-  successfully.
+  <para>Tests are only executed if their setup operations complete
+  successfully.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-first-error" -->
-  Only report significant setup errors by default.
+  <para>Only report significant setup errors by default.</para>
   <!-- /phrase -->
   </listitem>
 
   <listitem>
   <!-- phrase id="discuss-record-build-options" -->
-  Must be able to record the build options of all tests.
+  <para>Must be able to record the build options of all tests.</para>
   <!-- /phrase -->
   </listitem>
 

@@ -40,7 +40,7 @@
 
    <para>The <ulink
     url="http://www.visualizationtoolkit.org">Visualization
-    Toolkit</ulink project places a lot of emphasis on testing, and
+    Toolkit</ulink> project places a lot of emphasis on testing, and
     has a well-developed framework for doing it systematically.  This
     is described in the paper at <ulink
     url="ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf">ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf</ulink>.</para>

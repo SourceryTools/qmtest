@@ -33,6 +33,7 @@
   <!ENTITY req.xml SYSTEM "req.xml">
   <!ENTITY core.xml SYSTEM "core.xml">
   <!ENTITY impl.xml SYSTEM "impl.xml">
+  <!ENTITY refs.xml SYSTEM "refs.xml">
 ]>
 <book>
  <bookinfo>
@@ -148,17 +149,12 @@
    </itemizedlist>
   </para>
 
-  <para>This document begins by describing <link linkend="story">six
-  typical users</link>, whose testing needs &qmtest; is designed to
-  address. It then explores their <link
-  linkend="req">requirements</link> in more detail, in order to
-  determine the features that &qmtest; must have. &qmtest;'s <link
-  linkend="arch">architecture</link> and <link linkend="iface">user
-  interface</link> are described next, along with some details of its
-  <link linkend="impl">implementation</link>. These are followed by a
-  provisional <link linkend="devplan">development plan</link> and an
-  analysis of the <link linkend="risk">risks</link> the project
-  faces. </para>
+  <para>This document begins by describing six typical users, whose
+  testing needs &qmtest; is designed to address. It then explores
+  their <link linkend="req">requirements</link> in more detail, in
+  order to determine the features that &qmtest; must have. The last
+  section contains a description of &qmtest;'s <link
+  linkend="impl">internal architecture</link>.</para>
 
   <section><title>What &qmtest; is Not</title>
 

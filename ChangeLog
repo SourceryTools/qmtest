@@ -1,3 +1,12 @@
+2000-11-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/design/qmtest/core.xml: Fix DocBook syntax errors.
+	* doc/design/qmtest/impl.xml: Likewise.
+	* doc/design/qmtest/qmtest.xml: Likewise.
+	* doc/design/qmtest/refs.xml: Likewise.
+	* doc/design/qmtest/req.xml: Likewise.
+	* doc/design/qmtest/design.html: Remove.
+
 2000-11-27  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml: Add user-interface.xml.
