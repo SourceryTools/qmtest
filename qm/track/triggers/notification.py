@@ -140,10 +140,14 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
                 return
             # Write the notification message.
             message = self.__MakeMessage(issue, previous_issue)
-            # Construct the message subject, containing the IID.
-            subject = "%s modification to issue %s" \
-                      % (self.__subject_prefix, issue.GetId())
-            # Send it off.
+            # Construct the subject.
+            if previous_issue is None:
+                subject = "new issue %s" % issue.GetId()
+            else:
+                subject = "modification to issue %s" % issue.GetId()
+            # Add the prefix.
+            subject = self.__subject_prefix + " " + subject.
+            # Send the message.
             qm.platform.send_email(message,
                                    subject=subject,
                                    recipients=subscribers,

@@ -1,5 +1,10 @@
 2001-05-17  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/triggers/notification.py (_NotifyTrigger.Postupdate):
+	Set subject differently for new issues.
+
+2001-05-17  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (escape): Don't handle empty strings specially.
 	(make_help_link_html): Adjust spacing.
 	* qm/fields.py (Field.FormatValueAsText): Add columns parameter.
