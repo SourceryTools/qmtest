@@ -645,16 +645,11 @@ class StateField(qm.fields.EnumerationField):
         # the default value (which is the initial state) to be a member
         # of it.
         initial_state_name = state_model.GetInitialStateName()
-        enumeration = { initial_state_name: 0 }
+        enumerals = state_model.GetStateNames()
         # Initialize the base class.
         apply(qm.fields.EnumerationField.__init__,
-              (self, name, enumeration, initial_state_name),
+              (self, name, enumerals, initial_state_name),
               attributes)
-        # Keep a counter with which to assign enumeral values to
-        # states. 
-        self.__next_enum_value = 1
-        # Construct the rest of the enumeration for the other states.
-        self.UpdateEnumeration()
 
         
     def GetStateModel(self):
@@ -678,23 +673,8 @@ class StateField(qm.fields.EnumerationField):
         self.__state_model.Validate()
         # Extract the names of states in the state model.
         states_in_model = self.__state_model.GetStateNames()
-        # Extract the names of states from the enumeration.
-        enumeration = self.GetEnumeration()
-        states_in_enum = enumeration.keys()
-
-        # Make sure the states in the enumeration are a subset of the
-        # states in the state model, i.e. that no states were removed
-        # from the state model.
-        for state in states_in_enum:
-            assert state in states_in_model
-        # Add any state to the enum that isn't there yet.
-        for state in states_in_model:
-            if state not in states_in_enum:
-                value = self.__next_enum_value
-                enumeration[state] = value
-                self.__next_enum_value = value + 1
-        # Replace the old enumeration with the new.
-        self._EnumerationField__enumeration = enumeration
+        # Store them.
+        self.SetEnumerals(states_in_model)
 
 
     def GetHelp(self):
@@ -727,7 +707,7 @@ class StateField(qm.fields.EnumerationField):
         return help
 
 
-    def _EnumerationField__GetAvailableEnumerals(self, value):
+    def _GetAvailableEnumerals(self, value):
         # We override this method to show users only those states that
         # are accessible from the current one (plus, of course, the
         # current state itself).
@@ -954,14 +934,10 @@ procedures by which an issue is normally resolved.""",
             nonempty="true")
         self.AddField(field)
 
-        # The categories field.  First create an enumeration map from
-        # the list of categories provided.
-        categories_enum = {}
-        for i in range(0, len(categories)):
-            categories_enum[categories[i]] = i
+        # The categories field.
         field = qm.fields.EnumerationField(
             name="categories",
-            enumeration=categories_enum,
+            enumerals=categories,
             title="Categories",
             description=
 """The names of categories to which this issue belongs.  A category is a

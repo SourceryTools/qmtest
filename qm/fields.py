@@ -1526,7 +1526,7 @@ class AttachmentField(Field):
 
 ########################################################################
 
-class EnumerationField(IntegerField):
+class EnumerationField(TextField):
     """A field that contains an enumeral value.
 
     The enumeral value is selected from an enumerated set of values.
@@ -1538,91 +1538,69 @@ class EnumerationField(IntegerField):
     ordered -- If non-zero, the enumerals are presented to the user
     ordered by value."""
 
-    def __init__(self, name, enumeration, default_value=None, **attributes):
-        """Create an enumeral field.
+    def __init__(self, name, enumerals, default_value=None, **attributes):
+        """Create an enumeration field.
 
-        'enumeration' -- A mapping from names to integer values.
+        'enumerals' -- A sequence of strings of available enumerals.
 
         'default_value' -- The default value for this enumeration.  If
-        'None', the lowest-valued enumeral is used."""
+        'None', the first enumeral is used."""
 
-        # Copy the enumeration mapping, and canonicalize it so that
-        # keys are strings and values are integers.
-        self.__enumeration = {}
-        for key, value in enumeration.items():
-            # Turn them into the right types.
-            key = str(key)
-            value = int(value)
-            # Make sure the name is OK.
-            if not label.is_valid(key):
-                raise ValueError, qm.error("invalid enum key", key=key)
-            # Store it.
-            self.__enumeration[key] = value
-        if len(self.__enumeration) == 0:
-            raise ValueError, qm.error("empty enum")
-        # If 'default_value' is 'None', use the lowest-numbered enumeral.
-        if default_value == None:
-            default_value = min(self.__enumeration.values())
-            default_value = common.Enumeral(self.__enumeration, default_value)
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, default_value), attributes)
-        # Store the enumeration as an attribute.
-        self.SetAttribute("enumeration", repr(enumeration))
+        apply(TextField.__init__, (self, name), attributes)
+        # Set the enumerals.
+        self.SetEnumerals(enumerals)
+        # If 'default_value' is 'None', use the first enumeral.
+        if default_value == None:
+            default_value = self.GetEnumerals()[0]
+        # Reset the default value.
+        self.SetDefaultValue(default_value)
 
 
     def GetTypeDescription(self):
-        enumerals = map(str, self.GetEnumerals())
+        enumerals = self.GetEnumerals()
         return 'an enumeration of "%s"' % string.join(enumerals, '," "')
 
 
     def Validate(self, value):
-        try:
-            return common.Enumeral(self.__enumeration, value)
-        except ValueError:
-            values = string.join(map(lambda (k, v): "%s (%d)" % (k, v),
-                                     self.__enumeration.items()),
-                                 ", ")
+        value = str(value)
+        enumerals = self.GetEnumerals()
+        if value in enumerals:
+            return value
+        else:
+            values = map(lambda (k, v): "%s (%d)" % (k, v), enumerals)
             raise ValueError, \
                   qm.error("invalid enum value",
                            value=value,
                            field_name=self.GetTitle(),
-                           values=values)
+                           values=string.join(values, ", "))
+
+
+    def SetEnumerals(self, enumerals):
+        # Make sure some enumerals were specified.
+        if len(enumerals) == 0:
+            raise ValueError, qm.error("empty enum")
+        # Make sure all the enumerals are strings.
+        enumerals = map(lambda e: str(e), enumerals)
+        # Check for duplicates.
+        for enumeral in enumerals:
+            if enumerals.count(enumeral) != 1:
+                raise ValueError, "duplicate enumeral: %s" % enumeral
+        # Store the list of enumerals as an attribute.
+        self.SetAttribute("enumerals", repr(enumerals))
 
 
     def GetEnumerals(self):
         """Return a sequence of enumerals.
 
-        returns -- A sequence consisting of 'Enumeration' objects, in
-        the appropriate order.
+        returns -- A sequence consisting of string enumerals objects, in
+        the appropriate order."""
 
-        To obtain a map from enumeral name to value, use
-        'GetEnumeration'."""
-
-        # Obtain a list of (name, value) pairs for enumerals.
-        enumerals = []
-        for name in self.__enumeration.keys():
-            enumerals.append(common.Enumeral(self.__enumeration, name))
-        # How should they be sorted?
-        if self.IsAttribute("ordered"):
-            # Sort by the second element, the enumeral value.
-            sort_function = lambda e1, e2: cmp(int(e1), int(e2))
-        else:
-            # Sort by the first element, the enumeral name.
-            sort_function = lambda e1, e2: cmp(str(e1), str(e2))
-        enumerals.sort(sort_function)
-        return enumerals
-
-
-    def GetEnumeration(self):
-        """Get the enumeration mapping from this class.
-
-        returns -- A mapping from enumerals to their integer values."""
-
-        return self.__enumeration
+        return eval(self.GetAttribute("enumerals"))
 
 
     def ParseFormValue(self, value):
-        return common.Enumeral(self.__enumeration, value)
+        return value
 
 
     def FormEncodeValue(self, encoding):
@@ -1630,7 +1608,7 @@ class EnumerationField(IntegerField):
 
 
     def FormDecodeValue(self, encoding):
-        return common.Enumeral(self.__enumeration, encoding)
+        return str(encoding)
 
 
     def FormatValueAsText(self, value, columns=72):
@@ -1646,7 +1624,7 @@ class EnumerationField(IntegerField):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            enumerals = self.__GetAvailableEnumerals(value)
+            enumerals = self._GetAvailableEnumerals(value)
             return qm.web.make_select(name, enumerals, value,
                                       str, self.FormEncodeValue)
 
@@ -1671,39 +1649,32 @@ class EnumerationField(IntegerField):
                                    right_tag="enumeral",
                                    wrong_tag=node.tagName)
         # Extract the value.
-        value = qm.xmlutil.get_dom_text(node)
-        try:
-            # The value might be a number.
-            return int(value)
-        except ValueError:
-            # Not a number; assume it's an enumeral name.
-            return value
+        return qm.xmlutil.get_dom_text(node)
 
 
     def MakeDomNodeForValue(self, value, document):
         # Store the name of the enumeral.
-        return qm.xmlutil.create_dom_text_element(document, "enumeral",
-                                                  str(value))
+        return qm.xmlutil.create_dom_text_element(
+            document, "enumeral", str(value))
 
 
     def GetHelp(self):
+        enumerals = self.GetEnumerals()
         help = """
         An enumeration field.  The value of this field must be one of a
         preselected set of enumerals.  The enumerals for this field are,
 
         """
-        for name, value in self.__enumeration.items():
-            help = help + '            * "%s" (%d)\n\n' % (name, value)
-        help = help + """
-        An enumeral may be specified either by its name (a string) or by
-        its numerical value.
+        for enumeral in enumerals:
+            help = help + '            * "%s"\n\n' % enumeral
+        help = help + '''
 
         The default value of this field is "%s".
-        """ % str(self.GetDefaultValue())
+        ''' % str(self.GetDefaultValue())
         return help
 
 
-    def __GetAvailableEnumerals(self, value):
+    def _GetAvailableEnumerals(self, value):
         """Return a limited sequence of enumerals."""
 
         return self.GetEnumerals()

@@ -121,7 +121,7 @@ class QueryPageInfo(web.PageInfo):
             return "&nbsp;"
         else:
             field = default_class.GetField("categories")
-            categories = field.GetContainedField().GetEnumeration().keys()
+            categories = field.GetContainedField().GetEnumerals() 
             categories.sort()
             return qm.web.make_select(field_name="category",
                                       form_name="browse_category",
@@ -139,7 +139,7 @@ class QueryPageInfo(web.PageInfo):
             return "&nbsp;"
         else:
             field = default_class.GetField("state")
-            states = field.GetEnumeration().keys()
+            states = field.GetEnumerals()
             states.sort()
             return qm.web.make_select(field_name="state",
                                       form_name="browse_state",

@@ -1,5 +1,17 @@
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/common.py (Enumeral): Remove.
+	* qm/fields.py (EnumerationField): Reimplement as TextField subclass.
+	* qm/track/issue_class.py (StateField.__init__): Adjust accordingly.
+	(StateField.UpdateEnumeration): Likewise.
+	(StateField._EnumerationField__GetAvailableEnumerals): Rename to...
+	(StateField._GetAvailableEnumerals): ... this.
+	* qm/track/web/query.py (QueryPageInfo.MakeCategorySelect): Adjust
+	accordingly.
+	(QueryPageInfo.MakeStateSelect): Likewise.
+
+2001-07-03  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/qm.mod (idb): New entity.
 	* doc/manual/manual.xml (track-tour.xml): New entity.
 	Use it.
