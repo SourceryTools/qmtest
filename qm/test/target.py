@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Target class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -229,8 +229,7 @@ class Target(qm.extension.Extension):
         execution."""
 
         # Record the target in the result.
-        if self.GetName() != "local":
-            result[Result.TARGET] = self.GetName()
+        result[Result.TARGET] = self.GetName()
         # Put the result into the response queue.
         self.__response_queue.put(result)
             
