@@ -218,4 +218,6 @@ dnl target is a file generated in the setup procedure.  See
 dnl gadfly/index.html.
 dnl ####################################################################
 
-(cd gadfly; $PYTHON gfinstall.py)
+if test -d gadfly; then
+  cd gadfly && $PYTHON gfinstall.py
+fi
