@@ -1,3 +1,11 @@
+2002-12-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/file.py (SubstitutionField): Rework, using
+	TupleField as a base class.
+	(FileContentsTest.Run): Remove exception-handling code.
+	(FileContentsTest.__PerformSubstitutions): Correct.
+	* NEWS: Mention change.
+	
 2002-12-18  Vladimir Prus <ghost@cs.msu.su>
             Mark Mitchell  <mark@codesourcery.com>
 
