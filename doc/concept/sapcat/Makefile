@@ -24,7 +24,8 @@ sapcat_final.htm: \
     sapcat_over.xml \
     sapcat_design.xml \
     sapcat_devplan.xml \
-    sapcat_app_ideas.xml
+    sapcat_app_ideas.xml \
+    sapcat_app_decisions.xml
 	rm -f out.htm sapcat_final.htm
 	doccvt/doccvt.py sapcat_final.xml
 	$(TIDY) -n out.htm > sapcat_final.htm
@@ -49,6 +50,21 @@ sapcat_design.htm: sapcat_design.xml sapcat.css sapcat_abbrevs
 	doccvt/doccvt.py sapcat_design.xml
 	$(TIDY) -n out.htm > sapcat_design.htm
 
+sapcat_devplan.htm: sapcat_devplan.xml sapcat.css sapcat_abbrevs
+	rm -f out.htm sapcat_devplan.htm
+	doccvt/doccvt.py sapcat_devplan.xml
+	$(TIDY) -n out.htm > sapcat_devplan.htm
+
+sapcat_app_ideas.htm: sapcat_app_ideas.xml sapcat.css sapcat_abbrevs
+	rm -f out.htm sapcat_app_ideas.htm
+	doccvt/doccvt.py sapcat_app_ideas.xml
+	$(TIDY) -n out.htm > sapcat_app_ideas.htm
+
+sapcat_app_decisions.htm: sapcat_app_decisions.xml sapcat.css sapcat_abbrevs
+	rm -f out.htm sapcat_app_decisions.htm
+	doccvt/doccvt.py sapcat_app_decisions.xml
+	$(TIDY) -n out.htm > sapcat_app_decisions.htm
+
 realclean: clean
 	rm -rf SapCat
 
@@ -59,5 +75,8 @@ clean:
 	rm -f sapcat_req.htm
 	rm -f sapcat_over.htm
 	rm -f sapcat_design.htm
+	rm -f sapcat_devplan.htm
+	rm -f sapcat_app_ideas.htm
+	rm -f sapcat_app_decisions.htm
 	rm -f out.htm
 	rm -f *~
