@@ -125,11 +125,15 @@ class Context(types.DictType):
 
         'key' -- A string.
 
-        'default' -- A default value, used if 'key' has no assicated
-        value.
+        'default' -- A default value.
 
         returns -- The value associated with 'key' in the context,
         interpreted as a boolean.
+
+        If there is no value associated with 'key' and default is not
+        'None', then the boolean value associated with default is
+        used.  If there is no value associated with 'key' and default
+        is 'None', an exception is raised.
 
         The value associated with 'key' must be a string.  If not, an
         exception is raised.  If the value is a string, but does not
@@ -137,7 +141,10 @@ class Context(types.DictType):
 
         valstr = self.get(key)
         if valstr is None:
-            raise ContextException(key)
+            if default is None:
+                raise ContextException(key)
+            else:
+                valstr = default
 
         try:
             return qm.common.parse_boolean(valstr)

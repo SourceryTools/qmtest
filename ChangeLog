@@ -1,3 +1,9 @@
+2003-11-13  Jeffrey D. Oldham  <oldham@codesourcery.com>
+
+	* qm/test/context.py (Context.GetBoolean): Fix typos in
+	introductory comment.  Modify documentation of 'default'
+	parameter.  Use 'default' parameter.
+
 2003-11-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/context.py (Context.DB_PATH_CONTEXT_PROPERTY): New
