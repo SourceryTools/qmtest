@@ -73,11 +73,11 @@ build_qm() {
       error "Could not unpack source distribution"
     changedir qm-${QM_VERSION}
     # Create an installation directory.
-    rm -rf ../qm-${QM_VERSION}-install
-    mkdir ../qm-${QM_VERSION}-install || \
+    rm -rf ../${QM_INSTALL_DIR}
+    mkdir -p ../${QM_INSTALL_DIR} || \
       error "Could not create installation directory"
     # Configure QM.
-    ./configure --prefix=../qm-${QM_VERSION}-install "$@" || \
+    ./configure --prefix=../${QM_INSTALL_DIR} "$@" || \
       error "Could not configure QM"
     # Build it.
     make || error "Could not build QM"
@@ -96,7 +96,7 @@ build_source() {
     cvs -f -z9 -Q export -d qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
-    tar czf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION} || \
+    tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
       error "Could not create tar file"
     # Build QM to obtain documentation files.
     build_qm --enable-maintainer_mode
@@ -105,14 +105,14 @@ build_source() {
     rm -rf qm-${QM_VERSION}
     tar xzf ${QM_SOURCE_TAR_GZ} || \
       error "Could not unpack source distribution"
-    cp -r qm-${QM_VERSION}-install/share/doc/qm/manual/html \
+    cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual/html \
           qm-${QM_VERSION}/doc/manual/html || \
       error "Could not copy HTML manual"
     (mkdir qm-${QM_VERSION}/doc/manual/print && \
-     cp -r qm-${QM_VERSION}-install/share/doc/qm/manual.pdf \
+     cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual.pdf \
           qm-${QM_VERSION}/doc/manual/print) || \
       error "Could not copy PDF manual"
-    tar czf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION} || \
+    tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
       error "Could not create tar file"
 }
 
@@ -135,9 +135,9 @@ build_rpm() {
 build_binary() {
     build_qm
     echo "Building binary distribution..."
-    changedir qm-${QM_VERSION}-install
+    changedir ${QM_INSTALL_DIR}/..
     rm -f ../${QM_BINARY_TAR_GZ}
-    tar czf ../${QM_BINARY_TAR_GZ} . || \
+    tar czf ../${QM_BINARY_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
       error "Could not create tar file"
     changedir ..
 }
@@ -147,18 +147,18 @@ build_binary() {
 build_exec() {
     build_qm --with-python=/cygdrive/c/Python21/Python.exe
     # Fix the qmtest.bat to use the default prefix.
-    (sed -e "s|../qm-${QM_VERSION}-install|c:\\\\Program Files\\\\QM|g" \
-      < qm-${QM_VERSION}-install/bin/qmtest.bat \
-      > qm-${QM_VERSION}-install/bin/qmtest.bat.new && 
-      mv qm-${QM_VERSION}-install/bin/qmtest.bat.new \
-         qm-${QM_VERSION}-install/bin/qmtest.bat) ||
+    (sed -e "s|../${QM_INSTALL_DIR}|c:\\\\Program Files\\\\QM|g" \
+      < ${QM_INSTALL_DIR}/bin/qmtest.bat \
+      > ${QM_INSTALL_DIR}/bin/qmtest.bat.new && 
+      mv ${QM_INSTALL_DIR}/bin/qmtest.bat.new \
+         ${QM_INSTALL_DIR}/bin/qmtest.bat) ||
       error "Could not fix batch file"
     echo "Building ZIP file..."
-    changedir qm-${QM_VERSION}-install
-    rm -f ../${QM_BINARY_ZIP}
-    zip -q -r ../${QM_BINARY_ZIP} . || \
+    changedir ${QM_INSTALL_DIR}
+    rm -f ${QM_BINARY_ZIP}
+    zip -q ${QM_BINARY_ZIP} . || \
       error "Could not create zip file"
-    changedir ..
+    changedir ${QM_RELEASE_DIR}
     rm -f ${QM_BINARY_EXE}
     # The makesfx.exe exit code is apparently non-zero even on 
     # success, so we do not check the result.
@@ -203,6 +203,9 @@ QM_BINARY_ZIP=
 # The executable file.
 QM_BINARY_EXE=
 
+# Options to use with tar when creating an archive.
+TAR_OPTS="--owner=0 --group=0 --mode=u+w,go-w,a+rX,a-st"
+
 # Modes of operation.
 SOURCE=0
 RPM=0
@@ -222,12 +225,14 @@ fi
 QM_VERSION=$1
 shift
 
+QM_RELEASE_DIR=`pwd`
 QM_MAJOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $1; }'`
 QM_MINOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $2; }'`
 QM_SOURCE_TAR_GZ=qm-${QM_VERSION}.tar.gz
 QM_BINARY_TAR_GZ=qm-${QM_VERSION}-binary.tar.gz
-QM_BINARY_ZIP=qm-${QM_VERSION}.zip
-QM_BINARY_EXE=qm-${QM_VERSION}.exe
+QM_BINARY_ZIP=${QM_RELEASE_DIR}/qm-${QM_VERSION}.zip
+QM_BINARY_EXE=${QM_RELEASE_DIR}/qm-${QM_VERSION}.exe
+QM_INSTALL_DIR=install/qm-${QM_VERSION}
 
 # Handle the major modes.
 while [ $# -ne 0 ]; do

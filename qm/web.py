@@ -409,6 +409,11 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     request.  Instead, store the information in the server instance,
     available through the 'server' attribute."""
 
+    # Update the extensions_map so that stylesheets get the correct
+    # Content-Type.
+    SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map['.css'] \
+      = 'text/css'
+    
     def do_GET(self):
         """Process HTTP GET requests."""
 

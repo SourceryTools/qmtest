@@ -64,7 +64,8 @@ DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
 PYTHONBIN	= @PYTHON@
-PYTHON		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
+PYTHON 		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
+		  $(PYTHONBIN) -O
 PYTHON_VERSION	= @PYTHON_VERSION@
 PYTHON_PREFIX   = @PYTHON_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -124,6 +125,10 @@ TESTFLAGS	= -v -k
 
 # The install program.
 INSTALL		= @INSTALL@
+INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_DIR     = $(INSTALL) -d
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT  = @INSTALL_SCRIPT@
 
 # Places to install things.
 prefix		= @prefix@
@@ -142,10 +147,13 @@ INSTALLDOCDIR   = @datadir@/doc/qm
 # Rules
 ########################################################################
 
-NULLSTRING	:=
-SPACE		:= $(NULLSTRING) # Leave this comment here.
+ifeq ($(PYTHON_PLATFORM),win32)
+SCRIPT_EXT = .bat
+else
+SCRIPT_EXT =
+endif
 
-all:		doc subdirs
+all::		doc subdirs
 
 subdirs:	$(SUBDIRS)
 

@@ -73,6 +73,9 @@ def add_to_python_path(*components):
 # script
 ########################################################################
 
+__python_version = "@PYTHON_VERSION@"
+__python_platform = "@PYTHON_PLATFORM@"
+
 # The root of the QM installation.
 __home_dir = os.environ['QM_HOME']
 
@@ -80,23 +83,20 @@ if os.environ['QM_BUILD'] == '1':
     __lib_dir = __home_dir
     __share_dir = os.path.join(__home_dir, 'share')
     __doc_dir = os.path.join(__home_dir, 'doc')
+    add_to_python_path("PyXML/build/lib.%s-%s" %
+       (__python_platform, __python_version))
 else:
     __lib_dir = os.path.join(__home_dir, 'lib/qm')
     __share_dir = os.path.join(__home_dir, 'share/qm')
     __doc_dir = os.path.join(__home_dir, 'share/doc/qm')
 
-__python_version = "@PYTHON_VERSION@"
-__python_platform = "@PYTHON_PLATFORM@"
-
 # Add things to the Python search path that we'll need.
 add_to_python_path()
-add_to_python_path("zope-dtml")
-add_to_python_path("zope-dtml", "ExtensionClass")
 add_to_python_path("sgmlop")
+add_to_python_path("zope-dtml", "ExtensionClass")
+add_to_python_path("zope-dtml")
 add_to_python_path("xmlrpc")
-add_to_python_path("PyXML/build/lib.%s-%s" %
-                   (__python_platform, __python_version))
-
+    
 # Now store the QM directories in the environment, so that other modules
 # can access them.
 os.environ["QM_LIB_PATH"] = os.path.normpath(__lib_dir)

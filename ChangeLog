@@ -1,3 +1,39 @@
+2001-12-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in: Completely rework installation logic.
+	* README: Document requirement that GNU Make be used.
+	* configure.in (AC_OUTPUT): Do not generate sgmlop/Makefile
+	or zope-dtml/ExtensionClass/Makefile.
+	* configure: Regenerated.
+	* install-sh: Replace contents with the version that comes
+	with autoconf.
+	* install.py: Remove.
+	* standard.mk.in (PYTHON): Add -O.
+	(INSTALL_DATA): New variable.
+	(INSTALL_DIR): Likewise.
+	(INSTALL_PROGRAM): Likewise.
+	(INSTALL_SCRIPT): Likewise.
+	(SCRIPT_EXT): Likewise.
+	(all): Use a double-colon rule.
+	* qm/Makefile.in (SCRIPTS): Use SCRIPT_EXT.
+	* qm/setup.py: New file.
+	* qm/setup_path.py.in: Adjust for new installation location of
+	PyXML.
+	* qm/web.py (WebRequestHandler): Update extensions_map to
+	map .css to text/css.
+	* qm/test/classes/classes.qmc: List target classes.
+	* scripts/qm-release: Adjust location of installation directory.
+	Create tar files with appropriate modes and owners.
+	* sgmlop/Makefile.in: Remove.
+	* sgmlop/setup.py: List Python modules.
+	* share/dtml/test/new-suite.dtml: Fix typo.
+	* share/dtml/test/new.dtml: Likewise.
+	* share/web/images/sc-logo.png: Remove.
+	* xmlrpc/setup.py: New file.
+	* zope-dtml/DocumentTemplate/setup.py: Likewise.
+	* zope-dtml/ExtensionClass/Makefile.in: Remove.
+	* zope-dtml/ExtensionClass/setup.py: Set ext_package.
+
 2001-12-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-tour.xml: Tweak explanation of saving

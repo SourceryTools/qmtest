@@ -33,13 +33,24 @@
 
 TOPDIR		= @top_srcdir@
 
-SUBDIRS		= zope-dtml/ExtensionClass \
-		  sgmlop \
-		  PyXML \
-		  qm \
-		  doc
+SUBDIRS		= doc
 
 PYTHONDOCDIRS	= qm
+
+# Python packages with installation scripts.
+PYTHON_PACKAGES = \
+	qm \
+	PyXML \
+	sgmlop \
+	zope-dtml/DocumentTemplate \
+	zope-dtml/ExtensionClass \
+	xmlrpc
+# The names of rules to install the PYTHON_PACKAGES.
+PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
+
+# The scripts that are run to start QM.
+SCRIPTS = qm/test/qmtest$(SCRIPT_EXT) \
+	  qm/test/qmtest-remote$(SCRIPT_EXT)
 
 include $(TOPDIR)/standard.mk
 
@@ -47,31 +58,86 @@ include $(TOPDIR)/standard.mk
 # additional rules
 ########################################################################
 
-# Build documentation.
-doc:
-	cd $@ && make
+all:: $(PYTHON_PACKAGES)
 
-# Build the sgmlop package Makefile.
-sgmlop/Makefile:
-	cd sgmlop; \
-	cp $(MAKEFILE_PRE_IN) ./Makefile.pre.in; \
-	make -f Makefile.pre.in boot
+# Build the Python packages.
+.PHONY: $(PYTHON_PACKAGES)
 
-# Build the PyXML package.
-PyXML:
-	cd PyXML; $(PYTHON) ./setup.py build
-
-# Run the install.py script to install everything.
-install:
-	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
-	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) -O install.py \
-	    "$(INSTALLBINDIR)" "$(INSTALLLIBDIR)" \
-	    "$(INSTALLSHAREDIR)" "$(INSTALLDOCDIR)"
+$(PYTHON_PACKAGES):
+	cd $@ && $(PYTHON) ./setup.py build
 
 clean::
-	cd PyXML; $(PYTHON) ./setup.py clean
+	for x in $(PYTHON_PACKAGES); do \
+		pushd $$x; $(PYTHON) ./setup.py clean; popd; \
+	done
 
 # Run tests.
 check: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS)
 
+########################################################################
+# installation
+########################################################################
+
+# Install everything.
+install: \
+	$(PYTHON_PACKAGES_INSTALL) \
+	doc-install \
+	scripts-install \
+	share-install
+	$(INSTALL_DATA) -D qm/test/classes/classes.qmc \
+		"$(INSTALLLIBDIR)/qm/test/classes/classes.qmc"
+
+# Install Python packages that use distutils.
+.PHONY: $(PYTHON_PACKAGES_INSTALL)
+
+# Unfortunately, some versions of Python's Distutils do not set modes
+# on the installed files so we have to do it manually here.  There is
+# no easy way to get the permissions set correctly on the directories
+# created; the directories are not output by Distutils.
+$(PYTHON_PACKAGES_INSTALL):
+	cd $(@:-install=) && \
+		MANIFEST=$(notdir $(@:-install=))-manifest && \
+		$(PYTHON) ./setup.py install -O1 \
+	        --prefix="$(prefix)" \
+		--install-purelib="$(INSTALLLIBDIR)" \
+                --install-platlib="$(INSTALLLIBDIR)" \
+                --install-scripts="$(INSTALLSHAREDIR)" \
+		--install-data="$(INSTALLSHAREDIR)" \
+		--record=$$MANIFEST && \
+		for x in `cat $$MANIFEST`; do \
+			test -x $$x && chmod 0755 $$x || \
+				chmod 0644 $$x; \
+		done && \
+		rm $$MANIFEST
+
+# Install documentation.
+.PHONY: doc-install
+
+doc-install:
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)"
+	$(INSTALL_DATA) README COPYING "$(INSTALLDOCDIR)"
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/html"
+	$(INSTALL_DATA) doc/manual/html/*.html "$(INSTALLDOCDIR)/manual/html"
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/print"
+	$(INSTALL_DATA) doc/manual/print/manual.pdf \
+		"$(INSTALLDOCDIR)/manual/print"
+
+# Install scripts.
+.PHONY: scripts-install
+
+scripts-install:
+	$(INSTALL_DIR) "$(INSTALLBINDIR)"
+	$(INSTALL_SCRIPT) $(SCRIPTS) "$(INSTALLBINDIR)"
+
+# Install the share directory by recursively copying its contents.
+.PHONY: share-install
+
+share-install:
+	cd share && \
+		find . \( -name '*.txt' -o -name '*.dtml' \
+			  -o -name '*.qmt' -o -name 'configuration' \
+			  -o -name '*.css' -o -name '*.js' \
+			  -o -name '*.gif' -o -name 'CATALOG' \
+			  -o -name '*.dtd' -o -name '*.mod' \) \
+		-exec $(INSTALL_DATA) -D {} "$(INSTALLSHAREDIR)/{}" \;
