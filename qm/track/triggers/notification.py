@@ -158,18 +158,27 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         'issue' -- The issue following the update.
 
         'previous_issue' -- The previous revision of the issue, before
-        the update."""
+        the update, or 'None' if this is a new issue."""
         
         # Write a summary of who changed the issue and when.
         user = issue.GetField("user")
         timestamp = issue.GetField("timestamp")
-        message = "The issue %s was changed by %s on %s.\n\n" \
-                  % (issue.GetId(), user, timestamp)
-        # Find the fields that have been changed in the new revision.
-        changed_fields = qm.track.issue.get_differing_fields(
-            previous_issue, issue)
+        if previous_issue is None:
+            message = "The issue %s was created by %s on %s.\n\n" \
+                      % (issue.GetId(), user, timestamp)
+            # Show all fields in the notification.
+            fields_to_show = issue.GetClass().GetFields()
+        else:
+            message = "The issue %s was changed by %s on %s.\n\n" \
+                      % (issue.GetId(), user, timestamp)
+            # Find the fields that have been changed in the new revision.
+            fields_to_show = qm.track.issue.get_differing_fields(
+                previous_issue, issue)
         # Briefly summarize the change to each field.
-        for field in changed_fields:
+        for field in fields_to_show:
+            # Skip hidden fields.
+            if field.IsAttribute("hidden"):
+                continue
             name = field.GetName()
             value = issue.GetField(name)
             message = message + \

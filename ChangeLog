@@ -1,5 +1,15 @@
 2001-05-15  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/issue_class.py (IssueClass.__init__): Adjust default
+	state model.
+	* qm/track/issue.py (eval_revision_expression): Improve doc
+	string.  Add _new to namespace.
+	* qm/track/config.py (setup_idb_for_internal_use): Adjust.
+	* qm/track/triggers/notification.py
+	(_NotifyTrigger.__MakeMessage): Handle new issues correctly.
+
+2001-05-15  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/platform.py: Remove contents and split it into...
 	* qm/platform_linux.py: ... this new file, and...
 	* qm/platform_win32.py: ... this, likewise.

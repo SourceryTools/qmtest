@@ -382,18 +382,14 @@ def setup_idb_for_internal_use():
 
     precondition -- A local session is open."""
 
+    import triggers.notification
+
     idb = get_idb()
 
     categories = {
         "common"    : 0,
         "qmtest"    : 1,
         "qmtrack"   : 2,
-        }
-    states = {
-        "submitted" : 0,
-        "active"    : 1,
-        "resolved"  : 2,
-        "deleted"   : 3
         }
     priority = {
         "high"      : 3,
@@ -403,45 +399,99 @@ def setup_idb_for_internal_use():
 
     icl = qm.track.IssueClass(name="bug",
                               title="Bug Report",
-                              categories=categories,
-                              states=states)
+                              categories=categories)
 
     icl.GetField("state").SetDefaultValue("submitted")
 
-    field = qm.fields.TextField("description")
-    field.SetAttribute("title", "Description")
-    field.SetAttribute("structured", "true")
+    field = qm.fields.TextField(
+        name="description",
+        title="Description",
+        description="A complete description of the issue.",
+        structured="true")
     icl.AddField(field)
 
-    field = qm.fields.EnumerationField("priority", priority, "medium")
-    field.SetAttribute("title", "Priority")
-    field.SetAttribute("ordered", "true")
+    field = qm.fields.EnumerationField(
+        name="priority",
+        enumeration=priority,
+        default_value="medium",
+        title="Priority",
+        description="The priority for resolving this issue.",
+        ordered="true")
     icl.AddField(field)
 
-    field = qm.fields.AttachmentField("attachments")
-    field.SetAttribute("title", "File Attachments")
+    field = qm.fields.AttachmentField(
+        name="attachments",
+        title="File Attachments",
+        description="""
+        Files useful for analyzing or reproducing the issue.
+        """)
     field = qm.fields.SetField(field)
     icl.AddField(field)
+
+    field = qm.fields.SetField(qm.fields.UidField(
+        name="subscribers",
+        title="Subscribers",
+        description="""
+        User IDs of users subscribed to receive automatic notification
+        of changes to this issue.
+        """,
+        hidden="true"))
+    icl.AddField(field)
+
+    trigger = triggers.notification.NotifyByUidFieldTrigger(
+        name="subscriber_notification",
+        condition="1",
+        uid_field_name="subscribers")
+    trigger.SetAutomaticSubscription("user != 'guest'")
+    icl.RegisterTrigger(trigger)
+
+    trigger = triggers.notification.NotifyFixedTrigger(
+        name="new_issue_notification",
+        condition="_new",
+        subscriber_addresses=["samuel-qmtrack@codesourcery.com"])
+    icl.RegisterTrigger(trigger)
 
     idb.AddIssueClass(icl)
     get_configuration()["default_class"] = "bug"
 
     icl = qm.track.IssueClass(name="enhancement",
                               title="Enhancement Request",
-                              categories=categories,
-                              states=states)
+                              categories=categories)
 
     icl.GetField("state").SetDefaultValue("submitted")
 
-    field = qm.fields.TextField("description")
-    field.SetAttribute("title", "Description")
-    field.SetAttribute("structured", "true")
+    field = qm.fields.TextField(
+        name="description",
+        title="Description",
+        description="A complete description of the issue.",
+        structured="true")
     icl.AddField(field)
 
-    field = qm.fields.EnumerationField("priority", priority, "medium")
-    field.SetAttribute("title", "Priority")
-    field.SetAttribute("ordered", "true")
+    field = qm.fields.EnumerationField(
+        name="priority",
+        enumeration=priority,
+        default_value="medium",
+        title="Priority",
+        description="The priority for resolving this issue.",
+        ordered="true")
     icl.AddField(field)
+
+    field = qm.fields.SetField(qm.fields.UidField(
+        name="subscribers",
+        title="Subscribers",
+        description="""
+        User IDs of users subscribed to receive automatic notification
+        of changes to this issue.
+        """,
+        hidden="true"))
+    icl.AddField(field)
+
+    trigger = triggers.notification.NotifyByUidFieldTrigger(
+        name="subscriber_notification",
+        condition="1",
+        uid_field_name="subscribers")
+    trigger.SetAutomaticSubscription("user != 'guest'")
+    icl.RegisterTrigger(trigger)
 
     idb.AddIssueClass(icl)
 

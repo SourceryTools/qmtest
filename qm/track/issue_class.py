@@ -1002,7 +1002,7 @@ def _initialize_module():
 
         State(name="closed",
               description="""
-              The issue is resolved, tested, and closed.
+              The issue is no longer under consideration.
               """
               ),
         ]
@@ -1014,11 +1014,15 @@ def _initialize_module():
         Transition("submitted", "active", [ condition ]),
         Transition("submitted", "unreproducible"),
         Transition("submitted", "will_not_fix"),
+        Transition("active", "submitted"),
         Transition("active", "resolved"),
-        Transition("resolved", "tested"),
         Transition("resolved", "active"),
+        Transition("resolved", "tested"),
+        Transition("tested", "resolved"),
         Transition("tested", "closed"),
+        Transition("unreproducible", "submitted"),
         Transition("unreproducible", "closed"),
+        Transition("will_not_fix", "submitted"),
         Transition("will_not_fix", "closed"),
         ]
 

@@ -531,20 +531,29 @@ def eval_revision_expression(expression,
     The fields of 'issue' can be referred to as if they are local
     variables of the same name.  
 
-    The special local variable '_previous' is also visible; it looks
-    like a class whose attributes are the fields of the previous issue.
-    The functions '_changed' and '_changed_to' make it easier to test
-    when a field has changed since the previous revision.
+    Some special namespace attributes that are also visible:
+
+      '_previous' -- This object looks like a class whose attributes are
+      the fields of the previous issue.
+
+      '_changed' -- A function that takes the name of a field and
+      returns true if the field's value has been changed.
+
+      '_changed_to' -- A function that takes the name of a field and a
+      value, and returns if the field's value was changed to that value
+      from a different value.
+
+      '_new' -- A true value if this is a new revision.
 
     A limited subset of Python built-in functions and other functions
     are available as well.
 
     'expression' -- The Python text of the expression.
 
-    'revision' -- The modified issue revision..
+    'revision' -- The modified issue revision.
 
     'previous_revision' -- A previous revision of the issue, before the
-    modificaiton.
+    modificaiton, or 'None' if this is a new issue.
 
     'extra_locals' -- A map from name to corresponding value for
     extra additions to the local namespace when the expression is
@@ -587,6 +596,7 @@ def eval_revision_expression(expression,
     extra_locals["_previous"] = previous
     extra_locals["_changed"] = changed_fn
     extra_locals["_changed_to"] = changed_to_fn
+    extra_locals["_new"] = previous_revision is None
 
     return eval_issue_expression(expression, revision, extra_locals)
 
