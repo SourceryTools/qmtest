@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   intro.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-10
+
+  Contents:
+    Chapter `Introduction' of qmconfig design document.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter><title>Introduction</title>
+
+ <para>The &qmconfig; system is a tool supporting <quote>platform
+ investigation and program configuration</quote>, a process variously
+ called <firstterm>configuration</firstterm>,
+ <firstterm>customization</firstterm>, or
+ <firstterm>tailoring</firstterm>.  It is intended to be an
+ improvement over other such tools, like &Q-GNU; &QFLautoconf;.</para>
+
+ <section><title>Motivation</title>
+
+  <para>We would like to be able to write software that is portable
+  across computer platforms, where a <firstterm>platform</firstterm>
+  is the combination of hardware architecture, operating system, and
+  applications installed on a computer.  By
+  <firstterm>portable</firstterm>, we mean that at most minor changes
+  need to be made to the software to successfully compile and install
+  it on any given platform.</para>
+
+  <para>But making software portable is difficult, because different
+  platforms vary dramatically.  For instance, &QFunix; and &QFwindows;
+  are very different.  Even the various flavors of &Qunix; have
+  differences, although standards such as &QFposix; have helped
+  considerably to reduce these differences.  Programs written in
+  lower-level languages, such as C, must deal with the widely
+  disparate features of different platforms.  Higher-level languages,
+  such as &QFpython;, &QFperl;, or &QFtcl;, can hide some but not all
+  of the feature differences.</para>
+
+  <para>Apart from the feature differences of the computing platforms,
+  systems administrators use diverse <firstterm>site
+  conventions</firstterm>, the local rules specifying where software
+  is installed,<footnote>
+
+    <para>For example, on many &Qunix; systems, programs are installed
+    into the <filename>/usr/local/bin</filename> directory, or some
+    other common location.  But some sites store every program in its
+    own directory.  See, for instance, how &QF-RPI; stores
+    applications individually in its &QFafs; cell in a structure
+    called <ulink
+    url="http://www.rpi.edu/~toddr/Archives/1991/a01g-cfs/"><filename>/campus</filename></ulink>.</para>
+
+   </footnote>how email is retrieved, which web browser is preferred,
+   etc.  Robust portable software must cope with these different site
+   conventions.</para>
+
+  <para>These factors conspire to make the development of portable
+  software difficult.  But installing portable software can be
+  difficult, too.  Often much of the burden of porting the software
+  falls to the person trying installing it on a computer.  This person
+  may not necessarily be a programmer ready and willing to spend time
+  on a porting project.  This is especially true when software must be
+  ported to a less common platform, or if the computer is administered
+  with different site conventions than the software developer
+  expected.</para>
+
+  <para>Sometimes software comes with tools to help port, adapt, or
+  install it.  These tools, if not carefully designed, can actually
+  get in the way.  Often these tools get any information they need to
+  perform their functions through a &Qgui;.  While a &Qgui; may be
+  fine for someone who only occasionally installs software, they tend
+  to be a real nuisance for someone who must install dozens of
+  software systems on several different platforms.</para>
+
+  <para>Given the difficulties with porting software, we might ask
+  ourselves, <quote>Is it worth it?</quote> The answer is a qualified
+  <quote>Yes.</quote> By making software portable, it becomes
+  available on more platforms than if it had to be individually
+  developed for each platform.  Software that does not interact
+  directly with the operating system can often be easily ported; most
+  of the porting details will have to do with compilers and site
+  conventions.  But other software is more difficult to port.  The
+  operating system interface supporting graphical user interfaces is
+  vastly different between &Qwindows; and &Qunix;; so different, in
+  fact, that any source code relating to the native &Qgui; will have
+  very little in common between these platform.  But we hasten to
+  observe that there is very much useful software can be written
+  portably.  Furthermore, a system to deal with different site
+  conventions would be useful even when the software is not being
+  ported.</para>
+
+  <para>The &qmconfig; system deals with the specific problem of
+  customizing software for different platforms.  It will generate
+  probes to determine what features are available on different
+  platforms, and make this information available to the software's
+  build procedures.  Our system will also provide mechanisms to
+  specify site conventions.  For the software developer, our system
+  will make it easier to provide these features than if they had to be
+  developed afresh.  For the software installer, our system will
+  provide flexible and simple ways to reliably adapt to the software
+  platform and customize for the site.</para>
+
+  <para>Note that there are other pieces that should be provided to
+  enhance our prospects of successfully porting software.  One is a
+  common <quote>build</quote> system, such as &qmbuild;.  The
+  availability of common programming languages is essential.
+  Libraries providing common &Qapi;s to inherently non-portable system
+  interfaces, such as the &Qgui;, can also go a long way to aiding
+  portability.  While these area go beyond the scope of &qmconfig;, we
+  hope to see further work along these lines.</para>
+
+ </section>
+
+ <section><title>Related systems</title>
+
+  <para>The idea of creating a tool to assist in adapting software is
+  not new.  As mentioned above, there have been other systems (like
+  &Qautoconf;) developed to assist in adapting software to different
+  platforms.  There have also been many ad hoc schemes devices.
+  Originally, portable Unix software came with a Makefile (or build
+  scripts) and one or more header files that were to be edited by the
+  installer.  When this was not enough, more complex systems were
+  devised.  In some cases, these systems took on a life of their own
+  (like &QFLimake;, described below).</para>
+
+  <para>We are not familiar with tools developed for the &Qwindows;
+  platform.  Because &Qwindows; provides a widespread and consistent
+  platform, it has been common practice to simply distribute binaries
+  rather than source code.</para>
+
+  <para>In this section, we will survey a few of these systems porting
+  aides.</para>
+
+
+  <section><title>&QRimake;</title>
+
+   <para>The &QFimake; system comes with the &QF-Xwin; source
+   distribution.  It converts platform-independent
+   <filename>Imakefile</filename>s into site-specific
+   <filename>Makefile</filename>s by first determining what sort of
+   system it is running on.  Then, central configuration files for
+   that system type are used.  These files provide the details needed
+   to build &Q-X; for a particular platform.</para>
+
+   <para>The central configuration files can be adapted for different
+   site conventions, but this is limited by certain assumptions, such
+   as that all &Q-X; programs are installed in the same location.
+   This assumption may not be bad for &Q-X; alone, but it becomes a
+   hindrance when &Qimake; is used with programs outside the &Q-X;
+   distribution.</para>
+
+   <para>The suggested technique for creating an
+   <filename>Imakefile</filename> is to find an existing
+   <filename>Imakefile</filename> that almost does the right thing,
+   and edit that.  Using this technique, it is fairly easy to do
+   otherwise difficult tasks, like building shared libraries.  But it
+   can be daunting to build an <filename>Imakefile</filename> from
+   scratch, particularly since it is hard to find all the
+   documentation needed.</para>
+
+   <para>The most serious weakness of &Qimake; is its requirement that
+   there be configuration files for each platform type.  These files
+   are tedious to prepare when new new platforms or new platform
+   dependencies are needed.  Consequently, programs end up riddled
+   with tests based on platform names rather than feature
+   availability.</para>
+
+  </section>
+
+  <section><title>&QRiffe;</title>
+
+   <para>The &QFiffe; system<link
+   linkend="bib.iffe"><citation>iffe</citation></link> is a language
+   and programming style to facilitate software portability.  Feature
+   test files are run by the &Qiffe; script, which interprets
+   <firstterm>feature test files</firstterm>.  From these, header
+   files are generated which encapsulate the platform feature
+   information as macros.  Source code can include these header file,
+   parameterized with these macros.  The &Qiffe; script, which with
+   the necessary feature test files usually ships with each package
+   using it, does note appear to affect the
+   <filename>Makefile</filename>s or otherwise support site
+   conventions.</para>
+
+  </section>
+
+  <section><title>Larry Wall's &QRmetaconfig;</title>
+
+   <para><ulink url="http://www.wall.org/~larry/">Larry Wall's</ulink>
+   &QFmetaconfig; (part of a larger package called <ulink
+   url="http://search.cpan.org/search?mode=dist&amp;query=dist"
+   ><command>dist</command></ulink>) creates the
+   <filename>Configure</filename> script found with &Qperl;.  Where
+   &Qiffe; had feature test files, &Qmetaconfig; has
+   <firstterm>units</firstterm>, shell code that tests for platform
+   features.  The results of a unit are expressed as shell symbols and
+   C macros.  The &Qmetaconfig; command scans source files for
+   occurrences of these macros and symbols, choosing the units needed
+   to define these (which in turn may depend on other units).  The
+   selected units become the bulk of the
+   <filename>Configure</filename> script.</para>
+
+   <para>The resulting <filename>Configure</filename> script is
+   powerful and highly interactive.  It is possible to define the
+   values of symbols on the command line and suppress the
+   interactivity, but it is difficult to determine what symbols are
+   used by a particular <filename>Configure</filename> script or what
+   those symbols mean.  This makes the <filename>Configure</filename>
+   scripts a nuisance to a systems administrator who does not have the
+   time to sit and interact with the script.</para>
+
+   <para>The fact that &Qmetaconfig; automatically scans source code
+   for symbols is a very nice feature.  There are also tools to help
+   wrap shell scripts, header files, and other items that may need
+   symbols substituted into them.  We find it surprising that
+   &Qmetaconfig; has not seen more widespread use.</para>
+
+  </section>
+
+  <section><title>&QRautoconf;</title>
+
+   <para>Similar in spirit to &Qmetaconfig; is the &QFautoconf;
+   system, and its companions &Qautomake; and &Qlibtool;.  &Qautoconf;
+   builds a non-interactive Bourne shell script called
+   <filename>configure</filename> which accepts options to tailor the
+   build system for site conventions, compilation environment, etc.
+   Like &Qiffe; and &Qmetaconfig; <filename>Configure</filename>,
+   <filename>configure</filename> compiles and runs probes to discover
+   operating system features.  It defines symbols representing
+   features it discovers, and uses these values to transform template
+   header files and <filename>Makefile</filename>s.</para>
+
+   <para>The developer must write a file,
+   <filename>configure.in</filename>, consisting of &QFm4; macros, to
+   specify the feature probes it needs; &Qautoconf; does not scan
+   source code.<footnote>
+
+     <para>The &Qautoconf; tool does include a script called
+     <command>autoscan</command>, but currently this usually does only
+     part of the job.</para>
+
+    </footnote> The <filename>configure.in</filename> file is also
+    where the developer can specify searches for other software
+    packages, indicate optional features of the software, and
+    generally perform any other operations neeed to adapt the
+    software.</para>
+
+   <para>The related &QFlibtool; package adds support for shared
+   libraries, otherwise very difficult to do portably.  The
+   &QFautomake; package eases development of the complex
+   <filename>Makefile.in</filename> templates used by
+   <filename>configure</filename>.</para>
+
+   <para>&Qautoconf; and its companions constitute by far the most
+   successful general customization system.  We can identify a number
+   of factors for their sucess:</para>
+
+   <itemizedlist>
+    <listitem><para>&Qautoconf; uses tools, like Bourne shell and
+    <command>make</command>, that are already familiar to most &Qunix;
+    developers.  (Most &Qautoconf; scripts do not actually require &Qm4;
+    programming.  Those that do generally need only a little bit, what
+    is documented in the &Qautoconf; manual).</para></listitem>
+
+    <listitem><para>The &Qautomake; system allows very complicated
+    <filename>Makefile</filename>s to be constructed with relatively
+    little effort.  It really is easier to write the
+    <filename>Makefile.am</filename> files used by &Qautomake; than to
+    write reasonably useful
+    <filename>Makefile</filename>s.</para></listitem>
+
+    <listitem><para>The generated <filename>configure</filename>
+    scripts are ideal for busy systems administrators, as they both
+    provide help and do not need continual interactive responses.
+    They are not particularly difficult for the casual user,
+    especially on common platforms where the defaults for options and
+    site conventions are appropriate.</para></listitem>
+
+    <listitem><para>The &Qautoconf; manual is thorough enough to be
+    useful.</para></listitem>
+
+    <listitem><para>&Qautoconf; works well enough to be very
+    useful.</para></listitem>
+
+    <listitem><para>The &QF-GNU; project strongly encouraged the use
+    of &Qautoconf;.</para></listitem>
+   </itemizedlist>
+
+   <para>Nonetheless, there are a few deficiencies with
+   &Qautoconf;:</para>
+
+   <itemizedlist>
+    <listitem><para>There is no automatic scanning of source files to
+    determine what feature probes are needed.  This is despite the
+    fact that C macros are needed to program in response to probe
+    results.  (Last we checked, <command>autoscan</command> would
+    overwrite the <filename>configure.in</filename> file if used later
+    in project development.)  This is an added burden on the
+    programmer.</para></listitem>
+
+    <listitem><para>Hidden dependencies mean that some probes are
+    executed more than once, through both explicit and implicit
+    invocations.  Caching can help, but the result is still a bloated
+    <filename>configure</filename> script.</para></listitem>
+
+    <listitem><para>The order of probes in
+    <filename>configure.in</filename> can be
+    important.</para></listitem>
+
+    <listitem><para>When additional probes are needed, they require
+    the use of &Qm4; macros with arcane quoting
+    rules.</para></listitem>
+
+    <listitem><para>It is difficult to debug a
+    probe.</para></listitem>
+   </itemizedlist>
+
+   <para>Both &Qimake; and &Qautoconf; have their proponents, but sane
+   developers have been moving toward &Qautoconf;.  The need to have
+   produce specialized configuration platforms is too burdensome; it
+   requires the software developer to have access to every platform on
+   which his or her software will be used.  But with &Qautoconf;, it
+   often happens that a program will build and work the first time it
+   is attempted on a new platform.  When there are problems, the
+   solutions usually improve the general portability of the
+   program.</para>
+  </section>
+ </section>
+
+ <section><title>&qmconfig;</title>
+
+  <para>The &qmconfig; system (a) uses <firstterm>project description
+  files</firstterm> to identify source files, parameterized source
+  files, the products of processing source files, installation
+  locations, and any additional options affecting customization of the
+  package, (b) scans the parameterized source files for
+  <firstterm>tailoring symbols</firstterm>, used to tailor for
+  platform features, (c) determines the probes needed to define these
+  tailoring symbols, arranging the probes in correct order, (d)
+  provides an execution environment for conducting those probes, (e)
+  processes parameterized files, sustituting the values determined for
+  the customization symbols, and (f) prepares the files needed by
+  build system.  In many ways our system resembles &Qmetaconfig;, with
+  additional features drawn from &Qiffe; and &Qautoconf;.</para>
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter")
+  End:
+-->

@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design-probe.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-15
+
+  Contents:
+    Design of the probe database.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<section><title>&M-PD;</title>
+
+ <para>From a study of &Qautoconf;, we believe that several basic
+ categories of probes are needed:</para>
+
+ <variablelist>
+  <varlistentry>
+   <term>Checking for a command</term>
+   <listitem>
+    <para>Frequently we need to determine whether or not a command
+    exists.  For example, if we are building a library on &Qunix;,
+    some systems require us to use <command>ranlib</command>.
+    However, some &Qunix; systems do not need or even have
+    <command>ranlib</command>.</para>
+
+    <para>Other times, we may need to test if one of several command
+    exists, perhaps choosing the <quote>best</quote>, based on some
+    metric.  For example, many systems have several C compilers.  It
+    may matter which one is used, so we need to be able to supply
+    tests.  The &D-tailor; may have an opinion to offer, too, in which
+    case we may still want to test the chosen compiler for
+    sanity.</para>
+
+    <para>An annoying reality is that our ability to test a program
+    may depend on the privileges of the &D-tailor;.</para></listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Checking for a file or database</term>
+   <listitem>
+    <para>We may need to see if certain files or databases are present.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for libraries and functions</term>
+   <listitem>
+    <para>The &Qautoconf; system does this by building test programs
+    and compiling them.  &Qmetaconfig; does this by using
+    <command>nm</command> to build a list of the entry points in an
+    archive, and parsing the output.  While this is faster, it is
+    sensitive to changes in the output of <command>nm</command>.
+    Given that even inexpensive computers are fast these days, it is
+    probably best to use the compilation approach.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for header files</term>
+   <listitem>
+    <para>The &Qautoconf; system does this by attempting to compile a
+    small program using the header file.  Since some systems use
+    precompiled header files, this is superior to simply searching
+    under, say, <filename>/usr/include</filename> on &Qunix;.
+    Furthermore, different compilers or compiler switches may alter
+    where header files are found.  Compiling verifies that a header
+    file is actually available.</para>
+
+    <para>It would be good to test the usability of header files,
+    including compatibility with other header files.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for functions, types, structure members</term>
+   <listitem>
+    <para>In rare cases, permissions of the caller may affect probe
+    results.  For instance, can arbitrary users change ownership of
+    files with <function>chown</function> (as in AIX, for files in
+    &Qafs;), or is this restricted to the superuser?  These cases can
+    probably be handled by "guessing" based on platform, using a
+    default that won't cause major problems if wrong, and using site
+    conventions (which could perhaps be determined using a script,
+    verifiable by the system administrator or system integrator, that
+    actually performs probes under superuser privileges).</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Determine compiler characteristics</term>
+   <listitem>
+    <para>Some of the characteristics that need checking have to do
+    with language dialects.  For instance, does the C compiler provide
+    some sort of useful <type>inline</type> keyword?  Most platforms
+    now provide ANSI C, but we want to test characteristics of
+    prototypes anyway.  C++ provides even more room for variation.</para>
+
+    <para>Some compiler characteristics may seem, at first glance, to
+    be system characteristics.  For instance, in C or C++, how big are
+    <type>int</type>, <type>long</type>, and <type>float</type>?  How
+    many bits of precision does a <type>float</type> or a
+    <type>double</type> have?  Is there a usable Fortran
+    <type>REAL*16</type> type?  We might consider some of these to be
+    <quote>system</quote> characteristics, but in reality, different
+    compilers (perhaps the same compiler with different options) may
+    implement these features in different ways.</para>
+   </listitem>
+  </varlistentry>
+
+
+
+ </variablelist>
+
+ <figure id="fig-cl-probe" float="1">
+  <title>Probe Database</title>
+  <mediaobject>
+
+   <imageobject>
+    <imagedata align="center"
+               fileref="figures/cl_probe.eps" />
+   </imageobject>
+
+   <imageobject>
+    <imagedata align="center"
+               fileref="figures/cl_probe.png" />
+   </imageobject>
+
+   <textobject>
+    <phrase>Probe database</phrase>
+   </textobject>
+
+  </mediaobject>
+ </figure>
+
+
+ <para><xref linkend="fig-cl-probe"/> shows the &M-PDD;.  Probes can
+ be selected on the basis of symbol names, operating system class, and
+ programming language.  (Operating system class is a very general
+ category, such as &Qunix;, &Qwindows;, etc.)  The probe contains a
+ test program to test for some feature.</para>
+
+ <para>The difficulty of designing the probe database is that we
+ cannot assume any particular scripting language is available to help
+ us to interpret probe results.  This difficulty arises from the need
+ to support bootstrap scripts.  We might be able to divide probes into
+ two categories: those that can be used by bootstrap scripts, and
+ those that cannot (but may use &Qpython; scripting).</para>
+
+ <para>We have not chosen an actual syntax for probes.  We expect each
+ probe to be a file residing in a directory on a search path; perhaps
+ each probe file will be described in &Q-XML;.  We should point out
+ that our &Q-LDAP; advocate believes that &Q-LDAP; would form a better
+ basis for the probe database, and this could lead to a distributed
+ system wherein the latest available versions of probes are always
+ used.</para>
+
+</section>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("design.xml" "book" "section")
+  End:
+-->

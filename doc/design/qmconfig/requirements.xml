@@ -1,0 +1,1307 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   requirements.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-11
+
+  Contents:
+    Requirements for the qmconfig design documents.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="qmReq"><title>Requirements</title>
+
+ <para>In this chapter, we present the requirements we have identified
+ for &qmconfig;.</para>
+
+ <section><title>Terminology</title>
+
+  <para>The process of preparing software to run on a particular
+  platform has been variously called configuring, tailoring, or
+  customizing.  Wordsmiths may debate how to best use these terms.
+  Our preference (after studying dictionary definitions) is to call
+  this process of specifying site conventions, specifying local
+  preferences for options, and adapting to the platform, <firstterm
+  id="D-tailoring">tailoring</firstterm> or
+  <firstterm>customization</firstterm>.<footnote><para>We recognize
+  that <quote>configuration</quote> would be a fine term for this
+  process.  But our choice of terminology now will affect our natural
+  choices of file names, etc. later.  We thought it desirable to
+  ultimately use different names than &Qautoconf; and &Qmetaconfig;
+  had used.  It also leads to a nice noun, <quote>tailor</quote>, to
+  refer to a person who is is tailoring the
+  software.</para></footnote> We will call the process of setting up
+  site-wide files, e.g., the <filename>sendmail.cf</filename> file
+  needed by &QFsendmail;, <firstterm
+  id="D-configure">configuration</firstterm>.  Finally, we will call
+  the process of setting a user's personal preferences, <firstterm
+  id="D-personalize">personalizing</firstterm>.</para>
+
+  <para>We call a deliverable unit of software source code a
+  <firstterm id="D-kit">source kit</firstterm> (or frequently, just a
+  <firstterm>kit</firstterm>).  A kit is generally distributed in some
+  bundled manner, such as in a &QFzip;, &QFrpm;, or compressed &QFtar;
+  archive.  Such a bundled kits is called a <firstterm
+  id="D-srcdist">source distribution</firstterm>.  A source
+  distribution can be unpacked into a kit, which in turn can be
+  tailored, compiled, and installed on a platform.  Alternatively, the
+  installation step can be omitted, and the files that would have been
+  installed instead archived with a tool like &Qrpm;, yielding a
+  <firstterm id="D-bindist">binary distribution</firstterm>.  We could
+  also partially or fully tailor a kit, bundle it up, and produce a
+  <firstterm id="D-tsrcdist">tailored source distribution</firstterm>.
+  It may be possible to generate more than one binary or tailored
+  source distribution from a single kit, e.g., to separate the
+  run-time components from development components created from a
+  compiler kit.</para>
+
+  <para>The person who is tailoring some software is a <firstterm
+  id="D-tailor">tailor</firstterm> (with respect to that software).  Since
+  this person will typically also compile and install the software, we
+  may also call him or her the <firstterm>installer</firstterm>.  A
+  person who uses software after it has been installed is an
+  <firstterm id="D-enduser">end user</firstterm>.  Finally, a
+  <firstterm id="D-softdev">software developer</firstterm> is a person
+  who creates the software that goes into a &D-kit;.</para>
+
+  <para>From a &D-softdev;'s perspective, a &D-kit; or &D-srcdist; is
+  created from a <firstterm id="D-project">project</firstterm>.  The
+  project consists of all the files in the kit that are not generated
+  by &qmconfig;, as well any other files needed to support
+  development, such as for version control, etc.  Some projects may
+  generate more than one kit.  Projects may be composed from other
+  projects.</para>
+
+  <para>The term <firstterm id="D-package">package</firstterm> is
+  often used when talking about software entitites.  We use this term
+  to refer to a deliverable unit of software in any of its forms,
+  whether that be a &D-kit;, a &D-srcdist;, or a &D-bindist;.  Often
+  the context will clarify which form of the software is meant.</para>
+
+ </section>
+
+ <section id="actors"><title>The Actors and their Use Cases</title>
+
+  <para>We have already introduced a couple actors, the tailor and the
+  software developer.  In this section, we will study these actors in
+  more depth.  This will help us identify a set of use cases we must
+  satisfy.</para>
+
+  <section id="actors-tailors"><title>Tailors</title>
+
+   <para>As we said earlier, a &D-tailor; is an actor that customizes
+   a &D-kit;.  While both &D-tailors; and &D-softdevs; are
+   &D-endusers; of the &qmconfig; system, we give preference to
+   meeting the needs of &D-tailors;, since while we can assume a
+   &D-softdev; has some computer expertise, the same cannot be said of
+   the &D-tailor;.</para>
+
+   <para>&D-Tailors; range from the <firstterm id="D-casinst">casual
+   installer</firstterm> is only interested in acquiring a handful of
+   packages and probably does not want to extensively customize them,
+   to the <firstterm id="D-proinst">professional systems
+   administrator</firstterm>, who may need to tailor and install
+   hundreds of packages, perhaps with extensive customization, perhaps
+   for several different operating system platforms, perhaps repeating
+   this process regularly.  A third kind of &D-tailor; is the
+   <firstterm id="D-sysint">systems integrator</firstterm>,
+   responsible for producing &D-bindists; and &D-tsrcdists; for
+   operating system bundles or other purposes.</para>
+
+   <section><title>&D-CasInsts-;</title>
+
+    <para>The &D-casinst; probably wishes to know as little as
+    possible about the details of tailoring.  The self-installing
+    executable wizards prevalent with Windows packages, such as
+    produced by &QFinstallshield;, are almost ideal for the
+    &D-casinst;.  A &Qgui; is a great help, as are intelligent
+    defaults, completely automated probing of the system, and (when
+    possible) simple suggestions for resolving problems.  &D-Bindists;
+    or &D-tsrcdists; may be preferred by &D-casinsts; over pure
+    &D-srcdists;.</para>
+
+    <para>Perhaps surprisingly to those who are not professional
+    systems administrators, the system administered by &D-casinsts;
+    are likely to be the most poorly maintained.  Any tool that relied
+    on an accurate database of what other packages have been installed
+    is likely to be inadequate for the &D-casinst;.</para>
+
+    <para>The &D-casinst; is also going to be least equipped to create
+    adequate bug reports, whether the failure be in tailoring,
+    compilation, installation, or execution.  We need to be able to
+    automatically report as much tailoring information as
+    possible.</para>
+
+    <para>The sort of things a &D-casinst; is likely to need to do
+    are:</para>
+
+    <itemizedlist>
+
+     <listitem><para><xref linkend="ucInstWiz"
+     endterm="ucInstWiz-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucGUI"
+     endterm="ucGUI-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucRepTP"
+     endterm="ucRepTP-f"/></para></listitem>
+
+    </itemizedlist>
+
+   </section>
+
+   <section><title>&D-ProInsts-;</title>
+
+    <para>The &D-proinst; is likely to be someone who needs to tailor,
+    build, and install hundreds of packages for many different
+    platforms, sometimes without fully understanding what the package
+    is supposed to do.  Often this person is using very specialized
+    site conventions.  This person needs to be able to tailor software
+    repeatedly with as little interaction as possible.  Being able to
+    script the entire tailoring step is a major convenience.
+    Conversely, a &Qgui; is a major hindrance, unless it can help
+    with scripting.  Great flexibility is needed; the &D-proinst; may
+    need to override defaults and probe results.  Useful documentation
+    for &qmconfig; is essential.</para>
+
+    <para>The &D-proinst; will appreciate a flexible scheme for
+    specifying common site conventions.  Since site conventions may be
+    complicated, extension modules (needed at tailoring time) might be
+    needed.  Since many packages are being customized and built, it
+    would be useful if there were a way to build and maintain a
+    system-wide cache of &qmconfig; probe results.</para>
+
+    <para>If parallel computing facilities<footnote><para>We are using
+    the term loosely here to describe both true multiprocessing
+    parallel systems and loosely-coupled clusters of very similar
+    systems.</para></footnote> are available, then we will want to be
+    able to exploit this parallelism for both conducting system probes
+    and building the system.  We may need to be able to specify what
+    hosts are available, and how remote commands can be started.
+    These conventions may be complicated, and extension modules might
+    be needed to fully exploit parallelism.</para>
+
+    <para>The &Qautoconf; tool supports a mechanism using the
+    <envar>VPATH</envar> variable, common to <command>make</command>,
+    to allow one to tailor and build a package in a directory tree
+    other than where the source code is located.  This makes it easy
+    to build a package for several different platforms at the same
+    time, a feature very useful to the &D-proinst;.  We want to
+    support this feature in &qmconfig;.</para>
+
+    <para>A &D-proinst; is likely to be someone who will need to debug
+    any problems encountered during tailoring.  A common sort of
+    failure is likely to be a feature probe that gave an erroneous
+    result.  (Well, hopefully not too common!)  The &D-proinst; will
+    want to simply "repair" the result of that test and
+    re-tailor.</para>
+
+    <para>So we can identify a few needs of the &D-proinst;, in
+    addition to those of the &D-casinst;:</para>
+
+    <itemizedlist>
+
+     <listitem><para><xref linkend="ucInstQMCPre"
+     endterm="ucInstQMCPre-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucInstQMC"
+     endterm="ucInstQMC-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucUpdtQMC"
+     endterm="ucUpdtQMC-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucUpdtQMCComp"
+     endterm="ucUpdtQMCComp-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucUpdtPC"
+     endterm="ucUpdtPC-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucScript"
+     endterm="ucScript-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCfgSite"
+     endterm="ucCfgSite-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCfgPara"
+     endterm="ucCfgPara-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCfgOver"
+     endterm="ucCfgOver-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucInstTest"
+     endterm="ucInstTest-f"/></para></listitem>
+
+    </itemizedlist>
+
+   </section>
+
+
+   <section><title>&D-SysInts-;</title>
+
+    <para>A &D-sysint; is a &D-tailor; who builds &D-bindists; that
+    can be easily installed by a &D-casinst;.  These may go into a
+    binary collection of software, such as one of the many &QFlinux;
+    distributions.  A &D-sysint; may also prepare &D-tsrcdists; for an
+    organization.</para>
+
+    <para>In addition to the needs of &D-proinsts;, a &D-sysint; has
+    these additional requirements:</para>
+
+    <itemizedlist>
+
+     <listitem><para><xref linkend="ucPartial"
+     endterm="ucPartial-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCreBinDist"
+     endterm="ucCreBinDist-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCfgXPlat"
+     endterm="ucCfgXPlat-f"/></para></listitem>
+
+    </itemizedlist>
+
+   </section>
+
+  </section>
+
+  <section><title>&D-SoftDevs-;</title>
+
+   <para>As we said earlier, a &D-softdev; is an actor who creates a
+   &D-srcdist;.  We assume they are wise enough to use &qmconfig;.
+   There are a number of different kinds of &D-softdevs;, each with
+   slightly different needs.</para>
+
+   <para>One sort of developer is the generic <firstterm
+   id="D-packdev">package developer</firstterm>, an actor creating an
+   arbitrary package tailored with &qmconfig;.  A special sort of
+   &D-packdev; is the <firstterm id="D-qmcdev">qmconfig
+   developer</firstterm>.</para>
+
+
+   <section><title>&D-PackDevs-;</title>
+
+    <para>A &D-packdev; is generally interested in creating a
+    particular application.  This actor may not be expert in the
+    details of software portability or large-scale systems
+    administration; the actor's focus may be on a particular problem
+    domain.  But we necessarily require the &D-packdev; to accommodate
+    the requirements of &qmconfig;, which must not be too burdensome.
+    We can facilitate compliance by providing mechanisms that will
+    both simplify the software development task and guarantee
+    compliance.</para>
+
+    <para>The &D-packdev; may discover that platform-specific compiler
+    bugs require special options with certain source files.  We need a
+    way to express this sort of information.  (The &D-tailor; will
+    also need to be able to specify exceptions, and override internal
+    exceptions.  Locating these execeptions easily will be
+    important.)</para>
+
+    <para>The &D-packdev; needs to be able to produce &D-srcdists; of
+    all or part of the project.  It is important that timestamps on
+    archived files be sane.  There may be some changes to source files
+    that should be done when the source distribution is built, like
+    inserting copyrights, licenses, etc.</para>
+
+    <para>We need to be able to interface with version control
+    systems.  This may require extension modules.</para>
+
+    <itemizedlist>
+
+     <listitem><para><xref linkend="ucMakeFiles"
+     endterm="ucMakeFiles-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCreProj"
+     endterm="ucCreProj-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucAddProbe"
+     endterm="ucAddProbe-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucTestProbe"
+     endterm="ucTestProbe-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCreKit"
+     endterm="ucCreKit-f"/></para></listitem>
+
+     <listitem><para><xref linkend="ucCreSrc"
+     endterm="ucCreSrc-f"/></para></listitem>
+
+    </itemizedlist>
+
+   </section>
+
+   <section><title>&D-QmcDevs-;</title>
+
+    <para>A &D-qmcdev; is involved in creating or maintaining
+    &qmconfig;.  All the use cases of other &D-softdevs; apply, as
+    well as these additional cases:</para>
+
+    <itemizedlist>
+
+     <listitem><para>Update &qmconfig; Probe
+     Documentation</para></listitem>
+
+     <listitem><para>Test Probe Collection</para></listitem>
+
+    </itemizedlist>
+
+   </section>
+
+  </section>
+
+  <section><title>Use Cases</title>
+
+   <para>We will now discuss the use cases we have developed for
+   &qmconfig;.  Our design will try to satisfy these use cases.  This
+   list tries to be broad, but is undoubtedly incomplete.</para>
+
+   <section><title>Maintaining &qmconfig; Software</title>
+
+
+    <figure id="fig-uc-maint" float="1">
+     <title>&qmconfig; Maintenance Use Cases</title>
+     <mediaobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_maint.eps" />
+      </imageobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_maint.png" />
+      </imageobject>
+
+      <textobject>
+       <phrase>&qmconfig; maintainance use cases</phrase>
+      </textobject>
+
+     </mediaobject>
+    </figure>
+
+    <para>Several use cases are concerned with installing and
+    maintaining the &qmconfig; software and its configuration on a
+    system.  Since &qmconfig; has prerequisites, these also must be
+    considered.  <xref linkend="fig-uc-maint" /> shows the
+    relationships between these use cases.</para>
+
+    <anchor id="ucInstQMCPre"/><variablelist>
+
+     <title id="ucInstQMCPre-f">UC1: Install &qmconfig;
+     Prerequisite</title>
+     <titleabbrev id="ucInstQMCPre-a">UC1</titleabbrev>
+
+     <varlistentry><term>Description</term>
+
+      <listitem>
+       <para>It must be possible to tailor and install prerequisites
+       to &qmconfig;, such as &Qpython;, on systems.</para>
+      </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+
+       <para>This is probably the most difficult use case of all.
+       Assuming the developers of &Qpython;, and its prerequisites
+       like &Qtcl;, all adopt &qmconfig; as their customization
+       system, how do we then initially tailor these packages on a
+       system on which &qmconfig; has not yet been installed?  We
+       cannot simply install &qmconfig;, since it needs these
+       prerequisites!  We call this difficulty the
+       <firstterm>bootstrap problem</firstterm>.</para>
+
+       <para>One possible solution is to insist that all &qmconfig;
+       prerequisites will already be installed, or easily available as
+       &D-bindists;.  For common platforms, this may be true.  But it
+       will not be true for older or less common systems, such as
+       legacy &Qunix;.</para>
+
+       <para>Another possible solution is to require these
+       prerequisite packages be cross-tailored, using a different
+       system.  But this is inconvenient, and requires the extensive
+       knowledge of the target platform that &qmconfig; is supposed to
+       replace.</para>
+
+       <para>The &Qautoconf; tool is successful because the Bourne
+       shell scripts it generates are portable to most &Qunix;
+       systems.  These scripts can even be run on &Qwindows; systems,
+       using a &Qunix;-compatibility tool like &QFcygwin;.  The
+       drawback to using a &Qunix;-compatibility tool is that, if we
+       are not careful, it can lead to run-time dependencies on this
+       tool in our tailored software.  Sadly, the native batch
+       language on &Qwindows; is simply not rich enough to support the
+       customization process, so obvious solution of producing both a
+       Bourne shell and a batch script is not an
+       option.<footnote><para>If there is a good way to run scripts on
+       native &Qwindows;, I would love to hear about it.  Neither I
+       nor my associates are familiar with any such
+       features.</para></footnote></para>
+
+       <para>Our solution is to provide an extendible mechanism for
+       building boot-strap scripts.  Initially, we will provide the
+       mechanism necessary build Bourne shell boot-strap
+       scripts.</para>
+
+       <para>We emphasize that using boot-strap scripts is a very
+       specialized use case.  For the near future, we expect most
+       &qmconfig; users will be running on either &Qwindows; or
+       &Qlinux;, for which all of &qmconfig;'s prerequisites will
+       already be available in binary form.  Users of legacy &Qunix;
+       systems generally will either be professional installers, or
+       will have the services of a professional installer
+       available.</para>
+
+       <para>How important is this use case?  Guido van Rossum,
+       Technical Director of the Python Consortium, wrote:</para>
+
+       <blockquote><attribution><ulink
+       url="http://www.software-carpentry.com/sc_config/">Guido van
+       Rossum</ulink></attribution>
+
+        <para>Nine years ago, when I first released Python to the
+        world, I distributed it with a Makefile for BSD Unix. The most
+        frequent questions and suggestions I received in response to
+        these early distributions were about building it on different
+        Unix platforms. Someone pointed me to &Qautoconf;, which
+        allowed me to create a configure script that figured out
+        platform idiosyncracies Unfortunately, &Qautoconf; is painful
+        to use &mdash; its grouping, quoting and commenting
+        conventions don't match those of the target language, which
+        makes scripts hard to write and even harder to debug. I hope
+        that this competition comes up with a better solution &mdash;
+        it would make porting Python to new platforms a lot
+        easier!</para>
+       </blockquote>
+
+       <para>Meeting this use case has a number of consequences.
+       First, we must be able to interoperate with a variety of build
+       systems; &qmbuild; may also be unavailable when &Qpython; and
+       its prerequisites are first tailored and compiled.  Second, we
+       will not be able to specify probes using any scripting
+       language, since we cannot count on any particular scripting
+       language being available.  This is disappointing, since it
+       would be nice to use &Qpython; for this purpose.</para>
+
+      </listitem></varlistentry>
+
+     <varlistentry><term>Sequence</term>
+
+      <listitem><procedure>
+
+        <step><para>Unpack &D-srcdist; into a &D-kit;.</para></step>
+
+        <step><para>Execute a bootstrap script with the
+        <quote>help</quote> option.</para></step>
+
+        <step><para>Determine options that need to be customized.  If
+        there are many, it may be desirable to create an
+        <quote>options file</quote>.</para></step>
+
+        <step><para>Execute the bootstrap script, either with options
+        or specifying the options file.</para></step>
+
+        <step><para>Use the build system to build and install the
+        package.</para></step>
+
+       </procedure> </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucInstQMC"/><variablelist>
+
+     <title id="ucInstQMC-f">UC2: Install &qmconfig;</title>
+     <titleabbrev id="ucInstQMC-a">UC2</titleabbrev>
+
+     <varlistentry><term>Description</term>
+
+      <listitem>
+       <para>There must be a way to tailor and install &qmconfig; on a
+       system.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+
+      <listitem>
+       <para>This is a specialized case of installing a &qmconfig;
+       prerequisite.  Some help may be needed to locate &Qpython; and
+       other &qmconfig; prerequisites, but since a &qmconfig; D-kit;
+       contains the &qmconfig; system code, it should be possible to
+       use this code to control tailoring and installation.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Sequence</term>
+
+      <listitem><procedure>
+
+        <step><para>Unpack &qmconfig; &D-srcdist; into a
+        &D-kit;.</para></step>
+
+        <step><para>Execute the installer script using &Qpython;,
+        passing any options needed to tailor the local
+        installation.</para></step>
+
+        <step><para>Create any extension modules needed for site
+        conventions.</para></step>
+
+        <step><para>Enjoy!</para></step>
+       </procedure>
+      </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucUpdtQMC"/><variablelist>
+
+     <title id="ucUpdtQMC-f">UC3: Update &qmconfig;</title>
+     <titleabbrev id="ucUpdtQMC-a">UC3</titleabbrev>
+
+     <varlistentry><term>Description</term>
+
+      <listitem><para>There must be a way to update a &qmconfig;
+      installation on a system.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+
+      <listitem><para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+
+      <listitem>
+       <para>We would like a way to update a &qmconfig; installation
+       in a convenient manner, perhaps from a central web site.</para>
+
+       <para>Since one should be able to use &Qrpm; or other
+       mechanisms to reinstall &qmconfig;, we will defer consideration
+       of this use case.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucUpdtQMCComp"/><variablelist>
+
+     <title id="ucUpdtQMCComp-f">UC4: Update &qmconfig;
+     Components</title>
+     <titleabbrev id="ucUpdtQMCComp-a">UC4</titleabbrev>
+
+     <varlistentry><term>Description</term>
+
+      <listitem>
+       <para>It is desirable to be able to update components of
+       &qmconfig;, such as probes.</para> </listitem></varlistentry>
+
+      <varlistentry><term>Priority</term>
+
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+      <varlistentry><term>Discussion</term>
+
+      <listitem>
+       <para>&qmconfig; has many components.  We expect the collection
+       of operating system feature probes to be expanding and
+       improving rapidly, especially at first.  It should be possible
+       to update the collection of probes from a central repository,
+       without completely updating or reinstalling &qmconfig;.</para>
+
+       <para>We expect early versions of &qmconfig; to directions on
+       how to update probes.  Later versions will look towards better
+       methods of updating probes, perhaps using an &QF-LDAP; database
+       of available probes.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucUpdtPC"/><variablelist>
+
+     <title id="ucUpdtPC-f">UC5: Update &qmconfig; Probe Cache</title>
+     <titleabbrev id="ucUpdtPC-a">UC5</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>&qmconfig; can maintain a cache of probe results on a
+       system.  This cache should be updated whenever operating system
+       components are changed.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Inspired by &Qautoconf;, &qmconfig; supports a cache of
+       probe results.  But changes to the operating system,
+       application software, etc. can invalidate this cache without
+       detection.  It must be possible to regenerate this
+       cache.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Sequence</term>
+
+      <listitem><procedure>
+
+        <step>
+         <para>Start &qmconfig; tool, invoking the <quote>regenerate
+         probe database</quote> command.</para></step>
+
+        <step>
+         <para>Wait until it finishes.  Report any
+         problems.</para></step>
+
+       </procedure> </listitem></varlistentry>
+    </variablelist>
+
+   </section>
+
+   <section><title>Tailoring &D-SrcDists-;</title>
+
+    <figure id="fig-uc-tailor" float="1">
+     <title>&qmconfig; Tailoring Use Cases</title>
+     <mediaobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_tailor.eps" />
+      </imageobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_tailor.png" />
+      </imageobject>
+
+      <textobject>
+       <phrase>&qmconfig tailoring use cases</phrase>
+      </textobject>
+
+     </mediaobject>
+    </figure>
+
+    <para>The main goal of &qmconfig; is to facilitate software
+    tailoring, so we have use cases relating to the tailoring process.
+    <xref linkend="fig-uc-tailor" /> shows the relationships between
+    several of these use cases.  A few additional use cases are listed
+    below.</para>
+
+    <anchor id="ucInstWiz"/><variablelist>
+
+     <title id="ucInstWiz-f">UC6: Install with Wizard</title>
+     <titleabbrev id="ucInstWiz-a">UC6</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>For &D-casinsts;, it is ideal to be able to install a
+       package in one fell swoop, without any interaction beyond what
+       is truly necessary (such as to enter a user or organization
+       name).</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>We expect to satisfy this use case as we continue
+       developing &qmconfig;.  Ideally, it would be wonderful if any
+       missing packages could also be obtained.  <xref
+       linkend="instwiz"/> gives a detailed scenario of how the wizard
+       should work.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucGUI"/><variablelist>
+
+     <title id="ucGUI-f">UC7: GUI-controlled Tailoring</title>
+     <titleabbrev id="ucGUI-a">UC7</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Control tailoring through a &Qgui;.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>This use case generalizes <xref linkend="ucInstWiz"
+       endterm="ucInstWiz-a"/>.  Complete control of customization
+       options is available from the &Qgui;, including overriding
+       probe results.  However, while we do not want to hinder the
+       &D-proinst;, we do not wish to confuse or overwhelm the
+       &D-casinst; either.  So we arrange for the options that will be
+       most useful to casual users to be the most easily accessible.
+       Help text will be available.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucScript"/><variablelist>
+
+     <title id="ucScript-f">UC8: Script-controlled Tailoring</title>
+     <titleabbrev id="ucScript-a">UC8</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Support tailoring through a command line
+       interface.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>A &D-proinst; needs to be able to completely control the
+       tailoring process.  &qmconfig; can be run from the command
+       line.  Tailoring can be controlled either through command line
+       options or a configuration file.</para>
+       </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucPartial"/><variablelist>
+
+     <title id="ucPartial-f">UC9: Partial Tailoring</title>
+     <titleabbrev id="ucPartial-a">UC9</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Allow some, but not all, aspects of tailoring to be
+       completed.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>To create a &D-tsrcdist;, it is necessary to partially
+       (but not fully) tailor a &D-kit;.  This use case is not yet
+       fully developed.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucCfgSite"/><variablelist>
+
+     <title id="ucCfgSite-f">UC10: Configure &qmconfig; for Site
+     Conventions</title>
+     <titleabbrev id="ucCfgSite-a">UC10</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>We need to be able to configure site conventions into
+       &qmconfig;, so they do not need to be specified each time a
+       package is tailored.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Site conventions can be either simple or complex.
+       Implementation of complex conventions may require programming.
+       So we should have an interface to extension modules.  This
+       interface would not be usable to bootstrap scripts.</para>
+       </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucCfgPara"/><variablelist>
+
+     <title id="ucCfgPara-f">UC11: Configure &qmconfig; for
+     Parallelism</title>
+     <titleabbrev id="ucCfgPara-a">UC11</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Set up &qmconfig; to support parallel probing.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Probing can take a very long time.  While some probes
+       have dependencies on the results of earlier probes, others do
+       not.  We would like to be able to exploit parallelism to run
+       several probes simultaneously.  It might also be possible to
+       exploit this parallelism while building a &D-kit;.</para>
+
+       <para>Depending on the system, it might be reasonable to run
+       several probes at once.  This is most likely to be the case on
+       SMP system.  In many environments, another option is to
+       remotely execute probes on a different but identical
+       machine.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucCfgOver"/><variablelist>
+
+     <title id="ucCfgOver-f">UC12: Configure Overrides</title>
+     <titleabbrev id="ucCfgOver-a">UC12</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Configure overrides to the results of probes.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Sometimes probes will give unexpected results on uncommon
+       or new platforms.  If tailoring is to be successful, it will be
+       necessary to override some probe results.</para>
+
+       <para>&qmconfig; must provide a mechanism to determine what
+       probes will be executed to tailor a package.</para>
+       </listitem></varlistentry>
+    </variablelist>
+
+
+    <!-- Another figure here? -->
+
+    <anchor id="ucInstTest"/><variablelist>
+
+     <title id="ucInstTest-f">UC13: Install Package for
+     Testing</title>
+     <titleabbrev>UC13</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>A &D-proinst; frequently needs to be able to install a
+       package in a temporary <quote>test</quote> configuration,
+       without disrupting a <quote>production</quote> version of the
+       package.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>New releases of software often have bugs or
+       incompatibilities with other interrelated software that are not
+       known until the software is installed and used.  When that
+       software is mission-critical, it is essential that it can be
+       installed in some sort of <quote>test</quote>
+       configuration.</para>
+
+       <para>This can be accomplished with &qmconfig; by installing
+       the package into a separate directory tree.  It may be
+       necessary to install other packages into this tree, too.</para>
+       </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucCreBinDist"/><variablelist>
+
+     <title id="ucCreBinDist-f">UC14: Create a Binary
+     Distribution</title>
+     <titleabbrev id="ucCreBinDist-a">UC14</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>A &D-sysint; may wish to create one or more &D-bindists;
+       from a &D-kit;.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>We think that the developer of a package is best able to
+       determine how it can be divided into separate binary packages.
+       This avoids the problem of forgetting necessary programs or
+       data files.  However, it is the &D-sysint; who actually creates
+       the &D-bindists;, and we need to pass on information from the
+       &D-softdev;.  Furthermore, what actually goes into a
+       &D-bindist; may depend on how the &D-kit; was tailored.</para>
+
+       <para>While creating &D-bindists; goes beyond the scope of the
+       most tailoring tools, we think &qmconfig; must at least
+       cooperate in this activity.</para> </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucCfgXPlat"/><variablelist>
+
+     <title id="ucCfgXPlat-f">UC15: Configure Cross-platform
+     Tailoring</title>
+     <titleabbrev id="ucCfgXPlat-a">UC15</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Use &qmconfig; to tailor software on one platform to
+       operate on another.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Sometimes cross-development tools are available to allow
+       software to be built on one platform that will run on another
+       (perhaps lacking a development environment).  Normal tailoring,
+       however, will tailor for the platform on which
+       cross-development is taking place, not the target.  There is a
+       need to be able to tailor for different platforms.</para>
+
+       <para>Since &qmconfig; allows the results of every probe to be
+       overwritten, one way to accomplish this is to create a separate
+       cache of probe results, to be used only for cross-tailoring.
+       This will not help if a &D-kit; includes its own probes, so
+       additional support will be needed to detect this case.</para>
+       </listitem></varlistentry>
+
+    </variablelist>
+
+   </section>
+
+   <section><title>Software Development</title>
+
+    <figure id="fig-uc-softdev" float="1">
+     <title>Software Developer Use Cases</title>
+     <mediaobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_softdev.eps" />
+      </imageobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_softdev.png" />
+      </imageobject>
+
+      <textobject>
+       <phrase>Software developer use cases</phrase>
+      </textobject>
+
+     </mediaobject>
+    </figure>
+
+    <para><xref linkend="fig-uc-softdev"/> shows some of the use cases
+    involved with developing software to work with &qmconfig;.  These
+    are discussed below.</para>
+
+
+    <anchor id="ucMakeFiles"/><variablelist>
+
+     <title id="ucMakeFiles-f">UC16: Make Tailorable Source
+     Files</title>
+     <titleabbrev id="ucMakeFiles-a">UC16</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Source files must be constructed to support
+       tailoring.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Source code that is going to be adapted by the tailoring
+       process needs to be written to react to tailoring.  This is
+       done by parameterizing the code on symbols or macros.  In some
+       cases, templates are written, with symbols indicated; at
+       customization time, these templates will be transformed into
+       the real files.  In other cases, such as with C, a header file
+       will be created with macro definitions in it corresponding to
+       the results of feature probes.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Sequence</term>
+      <listitem>
+       <procedure>
+        <step><para>Determine what operating system features need to
+        be probed.  The &qmconfig; probe documentation will provide a
+        wealth of information on operating system
+        features.</para></step>
+
+        <step><para>Determine which macros or symbols indicate results
+        of testing for this feature.  The &qmconfig; probe
+        documentation can provide this information.</para></step>
+
+        <step><para>Determine optional package features, and the
+        associated macro or symbol names.</para></step>
+
+        <step><para>Modify the source code to be parameterize on these
+        symbols or macros.  Make sure there are no occurrences of
+        symbols or macros that may misleadingly indicate a feature
+        probe result.</para></step>
+
+        <step><para>Modify the package description database to contain
+        information about the optional package feature.  Note that
+        there is no need to directly include information about
+        operating system probes.</para></step>
+
+        <step><para>Make sure every source file appears in the package
+        description database.</para></step>
+
+       </procedure>
+      </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucCreProj"/><variablelist>
+
+     <title id="ucCreProj-f">UC17: Create or Modify Package
+     Description</title>
+     <titleabbrev id="ucCreProj-a">UC17</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Create or modify the &M-PDD; file.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>&qmconfig; depends on a database to describe the project.
+       This database is distributed in one or more files.  For large
+       projects, it may become important to have tools to navigate
+       this database.  However, in the early stages of &qmconfig;, we
+       will expect these files to be created by the &D-softdev;,
+       perhaps using a text editor.</para>
+
+       <para>It has been suggested that for very large projects, a
+       database service like &Q-LDAP; would be preferable to a
+       file-based database like &QF-XML;.  Using &Q-LDAP; would allow
+       projects to be distributed over multiple sites.  We expect to
+       look more into the possibilities of distributed projects in the
+       future.</para> </listitem></varlistentry>
+    </variablelist>
+
+
+    <anchor id="ucAddProbe"/><variablelist>
+
+     <title id="ucAddProbe-f">UC18: Add a Probe</title>
+     <titleabbrev id="ucAddProbe-a">UC18</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Some packages require special probes.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>When a package requires an operating system feature test
+       not contained in the &qmconfig; probe collection, it needs to
+       be added to the project.  One or more directories containing
+       special probes can be added to the &M-PDD;.</para>
+       </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucTestProbe"/><variablelist>
+
+     <title id="ucTestProbe-f">UC19: Test a Probe</title>
+     <titleabbrev id="ucTestProbe-a">UC19</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Test how a probe works.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>If a probe is added to a &D-kit;, there must be a way to
+       test it.  (This is one of the shortcomings of &Qautoconf;.)  We
+       need to be able to quickly test any &qmconfig; probe.</para>
+       </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucIntegrate"/><variablelist>
+
+     <title id="ucIntegrate-f">UC20: Integrate Legacy Packages</title>
+     <titleabbrev id="ucIntegrate-a">UC20</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Integrate a package that does not use &qmconfig; into a
+       package that does.</para> </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Desirable</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>&qmconfig; probes can search for installed packages, but
+       sometimes there is a need to incorporate an old package
+       directly into a new package.  For instance, sometime encumbered
+       code cannot legally be modified, even though it is freely
+       obtainable, and is only useful in conjunction with another
+       package.  We need a way to be able to adapt that other
+       package's build system into &qmconfig;'s.</para>
+
+       <para>This is a difficult problem, and we do not have a
+       solution yet.</para> </listitem></varlistentry>
+
+    </variablelist>
+
+
+   </section>
+
+   <section><title>Creating &D-Kits-; and &D-SrcDists-;</title>
+
+    <figure id="fig-uc-kit" float="1">
+     <title>&qmconfig; Source Distribution Creation</title>
+     <mediaobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_kit.eps" />
+      </imageobject>
+
+      <imageobject>
+       <imagedata align="center"
+                  fileref="figures/uc_kit.png" />
+      </imageobject>
+
+      <textobject>
+       <phrase>&qmconfig; Source Distribution Creation</phrase>
+      </textobject>
+
+     </mediaobject>
+    </figure>
+
+    <para>A &D-softdev; needs to create the &D-srcdists; needed by
+    &D-tailors;.  <xref linkend="fig-uc-kit"/> shows the relationships
+    between these use cases.</para>
+
+    <anchor id="ucCreKit"/><variablelist>
+
+     <title id="ucCreKit-f">UC21: Create Kit</title>
+     <titleabbrev id="ucCreKit-a">UC21</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Create a &D-kit; for a project.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Essential</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>Prior to creating a &D-srcdist;, all the components of a
+       &D-kit; must be ready.  This use case allows &qmconfig; to use
+       the build system to create any files that must be distributed
+       with a &D-srcdist;.  (For instance, some files may be generated
+       by special tools that are not necessarily available to
+       recipients of a &D-srcdist;.)</para> </listitem></varlistentry>
+
+    </variablelist>
+
+
+    <anchor id="ucCreSrc"/><variablelist>
+
+     <title id="ucCreSrc-f">UC22: Create Source Distribution</title>
+     <titleabbrev id="ucCreSrc-a">UC22</titleabbrev>
+
+     <varlistentry><term>Description</term>
+      <listitem>
+       <para>Create a &D-srcdist; for a project.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>The &M-PDD; contains information about what should go
+       into the &D-kit; and the &D-srcdists;.  &qmconfig; can be used
+       to create the actual distribution.</para>
+       </listitem></varlistentry>
+
+    </variablelist>
+
+   </section>
+
+   <section><title>Problem Reporting</title>
+
+    <para>Problems may be encountered as &qmconfig; is developed and
+    new platforms (with new features and bugs) are introduced.
+    &qmconfig; needs a problem reporting mechanism.</para>
+
+
+    <anchor id="ucRepTP"/><variablelist>
+
+     <title id="ucRepTP-f">UC23: Report Tailoring Problem</title>
+     <titleabbrev id="ucRepTP-a">UC23</titleabbrev>
+
+    <varlistentry><term>Description</term>
+      <listitem>
+       <para>Report problems with the tailoring process.</para>
+       </listitem></varlistentry>
+
+     <varlistentry><term>Priority</term>
+      <listitem>
+       <para>Important</para> </listitem></varlistentry>
+
+     <varlistentry><term>Discussion</term>
+      <listitem>
+       <para>If tailoring fails, e.g., a probe gives a completely
+       unexpected result, then a problem report needs to be sent.  It
+       probably should go to the maintainer of the package, who can
+       then forward it to the &qmconfig; development team.</para>
+       </listitem></varlistentry>
+    </variablelist>
+
+   </section>
+
+  </section>
+
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter")
+  End:
+-->
