@@ -1,5 +1,7 @@
 2001-10-29  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/resource.py: New file.
+
 	* doc/manual/test-manual.xml: Fix typo.
 	* qm/test/base.py (InstanceBase.__init__): Remove properties
 	parameter.
