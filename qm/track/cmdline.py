@@ -881,8 +881,8 @@ class Command:
                 output.write(issue.GetId() + '\n')
         elif self.format_name == 'summary':
             for issue in issues:
-                output.write('id: ' + issue.GetId() + '\n')
-                output.write('summary:  ' + issue.GetField('summary'))
+                output.write('ID: ' + issue.GetId() + '\n')
+                output.write('Summary:  ' + issue.GetField('summary'))
                 output.write('\n\n')
         # We will make the 'short' format the same as 'iid-single' format
         # for now.
@@ -891,10 +891,13 @@ class Command:
                 output.write(issue.GetId() + '\n')
         # We will make the 'full' format the same as the 'summary' format
         # for now.
-        elif self.format_name == 'full':
+        elif self.format_name == 'long' or self.format_name == "full":
             for issue in issues:
-                output.write('id: ' + issue.GetId() + '\n')
-                output.write('summary:  ' + issue.GetField('summary'))
+                for field in issue.GetClass().GetFields():
+                    if field.IsAttribute("hidden"):
+                        continue
+                    value = str(issue.GetField(field.GetName()))
+                    output.write("%-24s: %s\n" % (field.GetTitle(), value))
                 output.write('\n\n')
         elif self.format_name == 'xml':
             raise UnimplementedError

@@ -584,7 +584,7 @@ class IssueClass:
 
         # The summary field.
         field = IssueFieldText("summary")
-        field.SetAttribute("title", "Description")
+        field.SetAttribute("title", "Summary")
         field.SetAttribute("nonempty", "true")
         self.AddField(field)
 

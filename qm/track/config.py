@@ -370,7 +370,7 @@ def setup_idb_for_test():
     icl.AddField(field)
 
     field = qm.track.IssueFieldText("description")
-    field.SetAttribute("title", "Full Description")
+    field.SetAttribute("title", "Description")
     field.SetAttribute("structured", "true")
     icl.AddField(field)
 

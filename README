@@ -58,7 +58,7 @@
      export QMTRACK_IDB_PATH=/path/to/idb
 
    You should then be able to poke around at the IDB.  For instance,
-   to list the issue ids of all issues,
+   to list the issue IDs of all issues in the IDB,
 
      qmtrack query --format iid 1
 
@@ -66,6 +66,11 @@
    match.  Without the --format iid option, QMTrack displays more
    information about each issue.  Use the --help option to learn more
    about using the qmtrack command.
+
+   To show more information about one issue, for instance the issue with
+   ID "iss03",
+
+     qmtrack show --format full iss03
 
 
    To start the web server, use the qmtrack server command.  For
@@ -76,7 +81,7 @@
 
    Point your web browser at
 
-     http://my.host:9000/track/summary
+     http://my.host:9000/track/
 
    and click around.
 

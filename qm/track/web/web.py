@@ -87,7 +87,7 @@ class PageInfo(qm.web.PageInfo):
 <table width="100%%" border="0" cellspacing="0" cellpadding="0" bgcolor="black">
  <tr bgcolor="black">
   <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
-  width="204" height="28" src="/images/sc-logo.png"></a></td>
+  src="/images/sc-logo.png"></a></td>
   <td align="right"><font color="white">
    <a href="/track/"><span id="colhead">%s</span></a>
    &nbsp;&nbsp;
