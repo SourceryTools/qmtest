@@ -63,8 +63,6 @@ class TargetGroupField(TextField):
         for g in groups:
             desc = desc + "  * " + g + "\n"
 
-        print desc
-        
         return desc
     
         

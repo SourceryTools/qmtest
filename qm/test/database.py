@@ -249,12 +249,7 @@ class TestDescriptor(ItemDescriptor):
         test belongs.
 
         'resources' -- A sequence of IDs of resources to run before and
-        after the test is run.
-
-        'target_group' -- A regular expression (represented as a string)
-        that indicates the targets on which this test can be run.  If
-        the pattern matches a particular group name, the test can be run
-        on targets in that group."""
+        after the test is run."""
 
         # Initialize the base class.
         ItemDescriptor.__init__(self, database,

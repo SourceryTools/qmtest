@@ -33,7 +33,6 @@
 
 <!-- A single test.  -->
 <!ELEMENT test (class, (argument | category | prerequisite | resource)*)>
-<!ATTLIST test target-group CDATA ".*">
 
 <!-- The name of a test class.  -->
 <!ELEMENT class (#PCDATA)>

@@ -1,5 +1,20 @@
 2001-11-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/database.py (TestDescriptor.__init__): Correct
+	documentation.
+	* qm/test/test.py (TargetGroupField.GetDescription): Remove
+	debugging statement.
+	* qm/test/xmldb.py (Database.__MakeDomNodeForTest): Remove
+	unncessary creation of target-group element.
+	(Database.__ParseTestDocument): Do not restore it, either.
+	(AttachmentStore.Adopt): Remove.
+	* qm/test/web/web.py (QMTestServer.HandeSubmitItem): Remove
+	category code.
+	* share/dtml/test/show.dtml: Do not display categories.
+	* share/xml/test.dtd: Remove target-group attribute.
+	* qm/test/classes/command.py (ExecTestBase.RunProgram): Clarify
+	error message.
+	
 	* PyXML/xml/parsers/xmlproc/xmlproc.py (XMLProcessor.parse_start_tag):
 	Handle out-of-data condition correctly.
 

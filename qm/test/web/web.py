@@ -1559,9 +1559,7 @@ class QMTestServer(qm.web.WebServer):
         prerequisites.  Each prerequisite is of the format
         'test_id;outcome'.
 
-        'resources' -- For tests, a set-encoded collection of resource IDs.
-
-        'categories' -- For tests, a set-encoded collection of categories."""
+        'resources' -- For tests, a set-encoded collection of resource IDs."""
 
         if request.GetScriptName() == "submit-test":
             type = "test"
@@ -1636,9 +1634,9 @@ class QMTestServer(qm.web.WebServer):
             resources = request["resources"]
             resources = qm.web.decode_set_control_contents(resources)
 
-            # Extract categories.
-            categories = request["categories"]
-            categories = qm.web.decode_set_control_contents(categories)
+            # At present, categories are not used in QMTest, even
+            # though they are stored in the test database.
+            categories = []
 
             # Create a new test.
             item = TestDescriptor(

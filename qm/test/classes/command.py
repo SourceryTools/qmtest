@@ -319,7 +319,7 @@ class ExecTestBase(Test):
                         # Perhaps something went wrong while setting up
                         # the standard stream files.
                         result = _make_result_for_exception(
-                            "Exception setting up test.")
+                            "Could not execute program.")
                         cPickle.dump(result, os.fdopen(result_w, "w"))
                         # Exit.
                         os._exit(1)
