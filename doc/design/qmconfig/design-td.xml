@@ -15,20 +15,17 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<section><title>&M-TD;</title>
+<section>
+ <title>&M-TD;</title>
 
  <figure id="fig-cl-tailor" float="1">
   <title>Tailoring Database</title>
+
   <mediaobject>
 
    <imageobject>
-    <imagedata align="center"
-               fileref="figures/cl_tailor.eps" />
-   </imageobject>
-
-   <imageobject>
-    <imagedata align="center"
-               fileref="figures/cl_tailor.png" />
+    <imagedata align="center" width="6in" scalefit="1"
+               fileref="figures/cl_tailor.png"></imagedata>
    </imageobject>
 
    <textobject>
@@ -38,23 +35,405 @@
   </mediaobject>
  </figure>
 
- <para><xref linkend="fig-cl-tailor" /> shows the &M-TD;.  Before a
- probe is conducted, the &M-TD; is consulted.  Likewise, the &M-ADAPT;
- uses the &M-TD; to extract symbol values.</para>
+ <para><xref linkend="fig-cl-tailor"></xref> shows the &M-TD;.  The
+ actual &M-TD; used to tailor a kit may be composed from several
+ databases.  This allows the &D-tailor; to use central system-wide or
+ personal databases to share tailoring information across a number of
+ &D-kits;, while still individually tailoring a particular
+ &D-kit;.</para>
 
- <para>In reality, the &M-TD; is implemented over several databases.
- There is a system-wide cache, which should be protected so that only
- trusted users can regenerate it.  When a &D-kit; is tailored, probe
- information is cached in the &D-kit; directory.  Finally, a
- &D-tailor; may manually enter information into a configuration file
- in a &D-kit; to provide values to &qmconfig;.</para>
+ <para>The &M-TD; contains both metadata about the different tailoring
+ symbols needed to tailor an application, and the values of those
+ symbols.  Static metadata includes they type of the symbol, text
+ describing the symbol, what requires the symbol's value, and what
+ probe provides a symbol (for symbols derived from probe results).
+ Dynamic metadata indicates from when a symbol's value came &mdash;
+ from the &D-tailor;, or from a probe.</para>
+
+ <para>In normal operation, &qmconfig; creates a &M-TD;, sans values,
+ by scanning source files and the &M-PDD; for <firstterm
+ id="D-dirsym">direct symbols</firstterm>, those that are directly
+ used by the &D-kit;.  Some of these &D-dirsyms; may be the results of
+ probes, which in turn may depend on additional symbols; these
+ additional symbols will be added to the &M-TD;. This empty &M-TD; is
+ distributed as part of the &D-kit;.</para>
+
+ <para>At tailoring time, &qmconfig; must make sure that all
+ &D-dirsyms; have values.  If necessary, probes are executed to get
+ values for symbols.  We always prefer values provided by the
+ &D-tailor; and we only execute a probe if one of its results does not
+ have a value.  Once all &D-dirsyms; have values, the &M-ADAPT; can
+ modify and create tailored files.</para>
+
+ <para>We expect the &M-TD; to be stored in &Q-XML; files.  However,
+ centralized tailoring databases may be more appropriately referenced
+ by a <acronym>URL</acronym>, or stored in an &Q-LDAP; database.
+ &D-Kits; tailored using bootstrap scripts will use a small C
+ program<footnote> <para>Why C?  We reason that the only time we
+ <emphasis>must</emphasis> run a bootstrap script is to tailor
+ &Q-python; or one of its prerequisites, and these are programmed in C
+ &mdash; so C must be available, or the exercise is moot.</para>
+  </footnote>
+ to access the &M-TD; and adapt files, so we expect these to
+ <emphasis>only</emphasis> support the &Q-XML; local file
+ format.</para>
 
  <para><programlisting>
 <![CDATA[
 class TailorDB:
 
-    """Instances of this class represent tailoring databases.  A
-    project may be tailored using a set of tailoring databases."""
+    """Base class for tailoring databases.  Instances of these classes
+    represent tailoring databases.  Project may be tailored using a
+    set of tailoring databases."""
+
+
+    # Basic operations.
+
+    def DeriveFrom(self, tdb):
+
+        """Add a base tailoring database to this database.  This
+        relationship persists until 'self' is closed.  Any symbol in
+        'self' that has not been assigned a value will inherit its
+        value from 'tdb', if the corresponding symbol in 'tdb' has the
+        same symbol type and has an assigned value.  (If the value is
+        defaulted in both 'self' and 'tdb', then the default in 'self'
+        prevails.)
+
+        'tdb' -- The base tailoring database from which this database
+        will inherit values."""
+
+
+    def Update(self, tdb):
+
+        """Update the values stored in 'self' from 'tdb'.  Only values
+        in 'self' for which there are definitions will be updated, and
+        only if the type of a symbol in 'self' matches the type from
+        'tdb', and only if the value of a symbol in 'self' is the
+        default, but is an assigned value in 'tdb'.
+
+        'tdb' -- The tailoring database from which this database will
+        obtain values.
+
+        returns -- None"""
+
+
+    def Clear(self):
+
+        """Empty this tailoring database, including all definitions.
+        This does not break any "DeriveFrom" relationships, but it
+        does remove the effects of any "Update" operations.  This
+        operation is needed if the tailoring database must be
+        recreated."""
+
+
+    def ResetAllSymbols(self):
+
+        """Reset the values of all symbols to their defaults.
+
+        returns -- None"""
+
+
+    def ResetAllProbeResults(self):
+
+        """Reset the values of all symbols that were set as the result
+        of a probe operation.
+
+        returns -- None"""
+
+
+    def Commit(self):
+
+        """Commit all changes to the actual database representing
+        'self'.
+
+        raise 'IOError' -- The database cannot be written.
+
+        returns -- None"""
+
+
+    # Operations on symbol values.
+
+    
+    def SetValueFromTailor(self, symbol_name, value):
+
+        """Enter or change a value for a symbol, where the value is
+        assigned by the tailor.
+
+        'symbol_name' -- Symbol being assigned a value.
+
+        'value' -- The value being assigned to the symbol.
+
+        raise 'KeyError' -- No definition for 'symbol_name' in 'self'.
+
+        raise 'TypeError' -- The type of 'symbol_name' is not
+        compatible with 'value'.
+
+        returns -- None"""
+
+
+    def SetValueFromProbe(self, symbol_name, value):
+
+        """Enter or change a value for a symbol, where the value is a
+        result of executing the probe associated with this symbol.
+        This has not affect if the value of the symbol was already set
+        by the tailor.
+
+        'symbol_name' -- Symbol being assigned a value.
+
+        'value' -- The value being assigned to the symbol.
+
+        raise 'KeyError' -- No definition for 'symbol_name' in 'self'.
+
+        raise 'IndexError' -- The symbol 'symbol_name' is not
+        associated with a probe.
+
+        raise 'TypeError' -- The type of 'symbol_name' is not
+        compatible with 'value'.
+
+        returns -- None"""
+
+
+    def GetValue(self, symbol_name):
+
+        """Get the value of an symbol.
+
+        'symbol_name' -- Name of the symbol whose value should be
+        returned.
+
+        raise 'KeyError' -- No value, not even a default, is found for
+        'symbol_name' in 'self'.
+
+        returns -- Value of 'symbol_name'."""
+
+
+    def ResetValue(self, symbol_name):
+
+        """Reset the value of a symbol to its default.  If there are
+        probes that depend on those symbols, then the results of those
+        probes are also reset.
+
+        'symbol_name' -- Name of the symbol whose value should be
+        reset.
+
+        raise 'KeyError' -- No symbol names 'symbol_name' (when this
+        is not None).
+
+        returns -- None"""
+
+
+    def ResetProbeResults(self, probe_name, probe_dp={}):
+
+        """Reset the values of symbols set by a probe, unless those
+        symbols received their values from the tailor.  If there are
+        other probes that depend on these symbols, the results of
+        those probes are also reset.
+
+        'probe_name' -- Probe whose values are being reset.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        returns -- None"""
+
+
+    # General queries.
+
+
+    def IsSymbolRequired(self, symbol_name):
+
+        """Determine whether or not a symbol must be assigned a value.
+        If a symbol is only required for probes that will not be
+        executed, then no value need be assigned to that symbol in
+        order to tailor.
+
+        'symbol_name' -- Symbol being tested.
+
+        raise 'KeyError' -- There is no symbol named 'symbol_name'.
+
+        returns -- 1 if the symbol is required, 0 otherwise."""
+
+
+    def IsProbeRequired(self, probe_name, probe_dp={}):
+
+        """Determine whether or not the probe must be executed for the
+        tailoring database to be usable.  A probe need not be executed
+        if there are values for each of the symbols it specifies.
+
+        'probe_name' -- Probe being queried.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        returns -- 1 if the probe is required, 0 otherwise."""
+
+
+    # Operations of symbols and their metadata.
+
+
+    def DefineSymbol(self, symbol_name, symbol_type, def_val,
+    short_doc, long_doc):
+
+        """Define a new symbol for the tailoring database.
+
+        'symbol_name' -- Name of the new symbol.
+
+        'symbol_type' -- Type of the new symbol.  $$$ What are our
+        types?  Need to be able to include enumerations!
+
+        'def_val' -- Default value for this symbol.  $$$ Do we want
+        some sort of substitution to take place?  If so, then ideally
+        it is Pythonic.  But that implies we also need to have a
+
+        'short_doc' -- Brief description for this symbol.
+
+        'long_doc' -- Longer description for this symbol.
+
+        returns -- None"""
+
+
+    def AddSymbolCollector(self, symbol_name, file_name):
+
+        """Add a collector file, 'file_name', for 'symbol_name'.  A
+        collector file holds symbol assignments. For example, a header
+        file may be created to hold symbol assignments for a
+        collection of related files.
+
+        'symbol_name' -- Name of the symbol.
+
+        'file_name' -- Name of the file to collect the symbol
+        definition.
+
+        returns -- None"""
+
+
+    def AddSymbolDescription(self, symbol_name, lang, short_doc,
+    long_doc=None):
+
+        """Add a description for a symbol for some natural language.
+
+        'symbol_name' -- Name of the symbol being described.
+
+        'lang' -- Designator for a natural language.
+
+        'short_doc' -- Short documentation string for 'symbol_name',
+        presumably written in the natural language indicated by
+        'lang'.  (The 'short_doc' string used when 'symbol_name' was
+        defined is a fallback description.)
+
+        'long_doc' -- Longer documentation string for 'symbol_name',
+        again presumably written in the natural language indicated by
+        'lang'.  If 'long_doc' is None, then there is no longer
+        documentation string."""
+
+
+    def MakeSymbolDirect(self, symbol_name):
+
+        """Indicate that a symbol is directly required by the project.
+        This means that it is used in one of the source files, build
+        files, etc.  The project cannot be constructed unless a value
+        is assigned to this symbol.
+
+        'symbol_name' -- Name of the symbol.
+
+        raise 'KeyError' -- No symbol named 'symbol_name'.
+
+        returns -- None"""
+
+
+    def MakeSymbolProbeResult(self, symbol_name, probe_name,
+    probe_dp={}):
+
+        """Indicate a symbol is the result of a probe. If all symbols
+        whose source are the same probe have values, then that probe
+        need not be executed.
+
+        'symbol_name' -- Name of the symbol being set.
+
+        'probe_name' -- Name of the probe being specified as the
+        source.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        raise 'KeyError' -- No symbol named 'symbol_name'.
+
+        returns -- None"""
+
+
+    def MakeSymbolProbeRequirement(self, symbol_name, probe_name,
+    probe_dp={}):
+
+        """Indicate that a probe requires a symbol to be defined
+        before it can be executed.  If analysis of the tailoring
+        database indicates that the probe need not be executed, then
+        this symbol need not be defined, unless it is also directly
+        required.
+
+        'symbol_name' -- Name of the symbol whose dependents are being
+        added.
+
+        'probe_name' -- Name of the probe requiring this symbol.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        raise 'KeyError' -- No symbol named 'symbol_name'.
+
+        returns -- None"""
+
+
+    def GetShortDescription(self, symbol_name, lang=None):
+
+        """Get the short documentation string for 'symbol_name'.
+        Inheritance is used, if necessary, to find a description in
+        the natural language indicated by 'lang'.  If no short
+        documentation string can be found, fall back to the
+        'short_doc' specified when 'symbol_name' was defined.
+
+        'symbol_name' -- The symbol for which a description is sought.
+
+        'lang' -- Indicate the natural language.
+
+        raise 'KeyError' -- No symbol names 'symbol_name'.
+
+        return -- A short description."""
+
+
+    def GetLongDescription(self, symbol_name, lang=None):
+
+        """Get the long documentation string for 'symbol_name'.
+        Inheritance is used, if necessary, to find a description in
+        the natural language indicated by 'lang'.  If no long
+        documentation string can be found, fall back to the 'long_doc'
+        specified when 'symbol_name' was defined.
+
+        'symbol_name' -- The symbol for which a description is sought.
+
+        'lang' -- Indicate the natural language.
+
+        raise 'KeyError' -- No symbol names 'symbol_name'.
+
+        return -- A long description."""
+
+
+    def GetCollectedSymbols(self, file_name):
+
+        """Get the list of symbols in a collection.  Note that a
+        symbol may belong to more than one collection.
+
+        'file_name' -- Name of the file holding the symbol collection.
+
+        return -- A list containing the symbol names."""
+
+
+class TailorDBXML(TailorDB):
+
+    """Tailoring databases stored as XML."""
+
+
+class TailorDBXMLFile(TailorDBXML):
+
+    """Tailoring databases, stored as XML, in simple files."""
 
     def __init__(self, file_name):
 
@@ -62,59 +441,7 @@ class TailorDB:
 
         'file_name' -- Name of a file containing a tailoring
         database."""
-
-
-    def AddBase(self, tdb):
-
-        """Add a base tailoring database to this database.
-
-        'tdb' -- The base tailoring interface to from which this
-        database will inherit entries."""
-
-
-    def DefineEntry(self, entry_name, entry_type, def_val, doc):
-        """Define a new entry for the tailoring database.
-
-        'entry_name' -- Name of the new entry.
-
-        'entry_type' -- Type of the new entry.
-        $$$ What are our basic types?
-
-        'def_val' -- Default value for this entry.
-
-        $$$ Do we want some sort of substitution to take place?  If
-        so, then ideally it is Pythonic.  But that implies we also
-        need to have a 
-
-        'doc' -- Brief description for this entry.
-
-        returns -- None"""
-
-
-    def SetValue(self, entry_name, value):
-
-        """Enter or change a value for an entry.
-
-        'entry_name' -- Entry being assigned a value.
-
-        'value' -- The value being assigned to the entry.
-
-        returns -- None"""
-
-
-    def GetValue(self, entry_name):
-
-        """Get the value of an entry."""
-
-
-    def Commit(self):
-
-        """Commit all changes to the file.
-
-        raises -- 'IOError' if the file cannot be written.
-
-        returns -- None"""
-]]></programlisting</para>
+]]></programlisting></para>
 
 
 </section>

@@ -115,8 +115,6 @@
    </listitem>
   </varlistentry>
 
-
-
  </variablelist>
 
  <figure id="fig-cl-probe" float="1">
@@ -124,13 +122,8 @@
   <mediaobject>
 
    <imageobject>
-    <imagedata align="center"
-               fileref="figures/cl_probe.eps" />
-   </imageobject>
-
-   <imageobject>
-    <imagedata align="center"
-               fileref="figures/cl_probe.png" />
+    <imagedata align="center" width="6in" scalefit="1"
+               fileref="figures/cl_probe.png"></imagedata>
    </imageobject>
 
    <textobject>
@@ -140,10 +133,9 @@
   </mediaobject>
  </figure>
 
-
- <para><xref linkend="fig-cl-probe"/> shows the &M-PDD;.  Probes can
- be selected on the basis of symbol names, operating system class, and
- programming language.  (Operating system class is a very general
+ <para><xref linkend="fig-cl-probe"></xref> shows the &M-PDD;.  Probes
+ can be selected on the basis of symbol names, operating system class,
+ and programming language.  (Operating system class is a very general
  category, such as &Qunix;, &Qwindows;, etc.)  The probe contains a
  test program to test for some feature.</para>
 

@@ -54,12 +54,12 @@
 
   <!ENTITY QR-GNU '<acronym>GNU</acronym>'>
   <!ENTITY QFL-GNU '<ulink url="http://www.gnu.org/">&QR-GNU;</ulink>'>
-  <!ENTITY QF-GNU '<anchor id="Q-GNU" />&QFL-GNU;'>
+  <!ENTITY QF-GNU '<anchor id="Q-GNU"></anchor>&QFL-GNU;'>
   <!ENTITY Q-GNU '<link linkend="Q-GNU">&QR-GNU;</link>'>
 
   <!ENTITY QR-RPI 'Rensselaer Polytechnic Institute'>
   <!ENTITY QFL-RPI '<ulink url="http://www.rpi.edu/">&QR-RPI;</ulink>'>
-  <!ENTITY QF-RPI '<anchor id="Q-RPI" />&QFL-RPI;'>
+  <!ENTITY QF-RPI '<anchor id="Q-RPI"></anchor>&QFL-RPI;'>
   <!ENTITY Q-RPI '<link id="Q-RPI">&QR-RPI;</link>'>
 
   <!-- Genuine abbreviations, jargon, etc. -->
@@ -71,127 +71,127 @@
 
   <!ENTITY QRafs '<productname class="trade">AFS</productname>'>
   <!ENTITY QFLafs '<ulink url="http://www.openafs.org/">&QRafs;</ulink>'>
-  <!ENTITY QFafs '<anchor id="Q-afs" />&QFLafs;'>
+  <!ENTITY QFafs '<anchor id="Q-afs"></anchor>&QFLafs;'>
   <!ENTITY Qafs '<link linkend="Q-afs">&QRafs;</link>'>
 
   <!ENTITY QRautoconf '<application>autoconf</application>'>
   <!ENTITY QFLautoconf '<ulink url="http://sourceware.cygnus.com/autoconf/">&QRautoconf;</ulink>'>
-  <!ENTITY QFautoconf '<anchor id="Q-autoconf" />&QRautoconf;'>
+  <!ENTITY QFautoconf '<anchor id="Q-autoconf"></anchor>&QRautoconf;'>
   <!ENTITY Qautoconf '<link linkend="Q-autoconf">&QRautoconf;</link>'>
 
   <!ENTITY QRautomake '<application>automake</application>'>
   <!ENTITY QFLautomake '<ulink url="http://sourceware.cygnus.com/automake/">&QRautomake;</ulink>'>
-  <!ENTITY QFautomake '<anchor id="Q-automake" />&QFLautomake;'>
+  <!ENTITY QFautomake '<anchor id="Q-automake"></anchor>&QFLautomake;'>
   <!ENTITY Qautomake '<link linkend="Q-automake">&QRautoconf;</link>'>
 
   <!ENTITY QRcygwin '<productname>Cygwin</productname>'>
   <!ENTITY QFLcygwin '<ulink url="http://sourceware.cygwin.com/cygwin/">&QRcygwin;</ulink>'>
-  <!ENTITY QFcygwin '<anchor id="Q-cygwin" />&QFLcygwin;'>
+  <!ENTITY QFcygwin '<anchor id="Q-cygwin"></anchor>&QFLcygwin;'>
   <!ENTITY Qcygwin '<link linkend="Q-cygwin">&QRcygwin;</link>'>
 
   <!ENTITY QRiffe '<application>iffe</application>'>
   <!ENTITY QFLiffe '<link linkend="Q-iffe">&QRiffe</link>'>
-  <!ENTITY QFiffe '<anchor id="Q-iffe" />&QRiffe'>
+  <!ENTITY QFiffe '<anchor id="Q-iffe"></anchor>&QRiffe'>
   <!ENTITY Qiffe '<link linkend="Q-iffe">&QRiffe;</link>'>
 
   <!ENTITY QRimake '<application>imake</application>'>
   <!ENTITY QFLimake '<ulink url="http://www.primate.wisc.edu/software/imake-book/index.html">&QRimake;</ulink>'>
-  <!ENTITY QFimake '<anchor id="Q-imake" />&QFLimake;'>
+  <!ENTITY QFimake '<anchor id="Q-imake"></anchor>&QFLimake;'>
   <!ENTITY Qimake '<link linkend="Q-imake">&QRimake;</link>'>
 
   <!ENTITY QRinstallshield '<productname>InstallShield</productname>'>
   <!ENTITY QFLinstallshield '&QRinstallshield;'>
-  <!ENTITY QFinstallshield '<anchor id="Q-installshield" />&QFLinstallshield;'>
+  <!ENTITY QFinstallshield '<anchor id="Q-installshield"></anchor>&QFLinstallshield;'>
   <!ENTITY Qinstallshield '<link linkend="Q-installshield">&QRinstallshield;</link>'>
 
   <!ENTITY QR-LDAP '<abbrev>LDAP</abbrev>'>
   <!ENTITY QFL-LDAP '&QR-LDAP;'>
-  <!ENTITY QF-LDAP '<anchor id="Q-LDAP" />&QFL-LDAP;'>
+  <!ENTITY QF-LDAP '<anchor id="Q-LDAP"></anchor>&QFL-LDAP;'>
   <!ENTITY Q-LDAP '<link linkend="Q-LDAP">&QR-LDAP;</link>'>
 
   <!ENTITY QRlibtool '<application>libtool</application>'>
   <!ENTITY QFLlibtool '<ulink url="http://www.gnu.org/software/libtool/libtool.html">&QRlibtool;</ulink>'>
-  <!ENTITY QFlibtool '<anchor id="Q-libtool" />&QFLlibtool;'>
+  <!ENTITY QFlibtool '<anchor id="Q-libtool"></anchor>&QFLlibtool;'>
   <!ENTITY Qlibtool '<link linkend="Q-libtool">&QRlibtool;</link>'>
 
   <!ENTITY QRlinux '<productname>Linux</productname>'>
   <!ENTITY QFLlinux '<ulink url="http://www.linux.org/">QRlinux;</ulink>'>
-  <!ENTITY QFlinux '<anchor id="Q-linux" />&QFLlinux;'>
+  <!ENTITY QFlinux '<anchor id="Q-linux"></anchor>&QFLlinux;'>
   <!ENTITY Qlinux '<link linkend="Q-linux">&QRlinux;</link>'>
 
   <!ENTITY QRm4 '<application>&QR-GNU; m4</application>'>
   <!ENTITY QFLm4 '<ulink url="http://www.gnu.org/software/m4/m4.html">&QRm4;</ulink>'>
-  <!ENTITY QFm4 '<anchor id="Q-m4" />&QFLm4;'>
+  <!ENTITY QFm4 '<anchor id="Q-m4"></anchor>&QFLm4;'>
   <!ENTITY Qm4 '<link linkend="Q-m4">&QRm4;</link>'>
 
   <!ENTITY QRmetaconfig '<application>metaconfig</application>'>
   <!ENTITY QFLmetaconfig '<ulink url="http://search.cpan.org/search?mode=dist&amp;query=dist">&QRmetaconfig;</ulink>'>
-  <!ENTITY QFmetaconfig '<anchor id="Q-metaconfig" />&QFLmetaconfig;'>
+  <!ENTITY QFmetaconfig '<anchor id="Q-metaconfig"></anchor>&QFLmetaconfig;'>
   <!ENTITY Qmetaconfig '<link linkend="Q-metaconfig">&QRmetaconfig;</link>'>
 
   <!ENTITY QRperl '<application>Perl</application>'>
   <!ENTITY QFLperl '<ulink url="http://www.perl.com/">&QRperl;</ulink>'>
-  <!ENTITY QFperl '<anchor id="Q-perl" />&QFLperl;'>
+  <!ENTITY QFperl '<anchor id="Q-perl"></anchor>&QFLperl;'>
   <!ENTITY Qperl '<link linkend="Q-perl">&QRperl;</link>'>
 
   <!ENTITY QRposix 'Posix'>
   <!ENTITY QFLposix '&QRposix;'>
-  <!ENTITY QFposix '<anchor id="Q-posix" />&QFLposix;'>
+  <!ENTITY QFposix '<anchor id="Q-posix"></anchor>&QFLposix;'>
   <!ENTITY Qposix '<link linkend="Q-posix">&QRPosix;</link>'>
 
   <!ENTITY QRpython '<application>Python</application>'>
   <!ENTITY QFLpython '<ulink url="http://www.python.org/">&QRpython;</ulink>'>
-  <!ENTITY QFpython '<anchor id="Q-python" />&QFLpython;'>
+  <!ENTITY QFpython '<anchor id="Q-python"></anchor>&QFLpython;'>
   <!ENTITY Qpython '<link linkend="Q-python">&QRpython;</link>'>
 
   <!ENTITY QRrpm '<application>rpm</application>'>
   <!ENTITY QFLrpm '<ulink url="http://www.rpm.org/">&QRrpm;</ulink>'>
-  <!ENTITY QFrpm '<anchor id="Q-rpm" />&QFLrpm;'>
+  <!ENTITY QFrpm '<anchor id="Q-rpm"></anchor>&QFLrpm;'>
   <!ENTITY Qrpm '<link linkend="Q-rpm">&QRrpm;</link>'>
 
   <!ENTITY QRsendmail '<application>sendmail</application>'>
   <!ENTITY QFLsendmail '<ulink url="http://www.sendmail.com/">&QRsendmail;</ulink>'>
-  <!ENTITY QFsendmail '<anchor id="Q-sendmail" />&QFLsendmail;'>
+  <!ENTITY QFsendmail '<anchor id="Q-sendmail"></anchor>&QFLsendmail;'>
   <!ENTITY Qsendmail '<link linkend="Q-sendmail">&QRsendmail;</link>'>
 
   <!ENTITY QRtar '<command>tar</command>'>
   <!ENTITY QFLtar '&QRtar;'>
-  <!ENTITY QFtar '<anchor id="Q-tar" />&QFLtar;'>
+  <!ENTITY QFtar '<anchor id="Q-tar"></anchor>&QFLtar;'>
   <!ENTITY Qtar '<link linkend="Q-tar">&QRtar;</link>'>
 
   <!ENTITY QRtcl '<application>Tcl</application>'>
   <!ENTITY QFLtcl '<ulink url="http://www.scriptics.com/">&QRtcl;</ulink>'>
-  <!ENTITY QFtcl '<anchor id="Q-tcl" />&QFLtcl;'>
+  <!ENTITY QFtcl '<anchor id="Q-tcl"></anchor>&QFLtcl;'>
   <!ENTITY Qtcl '<link linkend="Q-tcl">&QRtcl;</link>'>
 
   <!ENTITY QRunix '<productname>Unix</productname>'>
   <!ENTITY QFLunix '<ulink url="http://www.UNIX-systems.org/">&QRunix;</ulink>'>
-  <!ENTITY QFunix '<anchor id="Q-unix" />&QFLunix;'>
+  <!ENTITY QFunix '<anchor id="Q-unix"></anchor>&QFLunix;'>
   <!ENTITY Qunix '<link linkend="Q-unix">&QRunix;</link>'>
 
   <!ENTITY QRwindows '<productname class="trade">Windows</productname>'>
   <!ENTITY QFLwindows '<ulink url="http://www.microsoft.com/windows/">&QRwindows;</ulink>'>
-  <!ENTITY QFwindows '<anchor id="Q-windows" />&QFLwindows;'>
+  <!ENTITY QFwindows '<anchor id="Q-windows"></anchor>&QFLwindows;'>
   <!ENTITY Qwindows '<link linkend="Q-windows">&QRwindows;</link>'>
 
   <!-- Link X, Xwin together. -->
   <!ENTITY QR-X '<abbrev>X</abbrev>'>
   <!ENTITY QFL-X '<ulink url="http://www.x.org/">&QR-X;</ulink>'>
-  <!ENTITY QF-X '<anchor id="Q-X" />&QFL-X;'>
+  <!ENTITY QF-X '<anchor id="Q-X"></anchor>&QFL-X;'>
   <!ENTITY Q-X '<link linkend="Q-X">&QR-X;</link>'>
   <!ENTITY QR-Xwin '<application>X&nbsp;Window System</application>'>
   <!ENTITY QFL-Xwin '<ulink url="http://www.x.org/">&QR-Xwin;</ulink>'>
-  <!ENTITY QF-Xwin '<anchor id="Q-X" />&QFL-Xwin;'>
+  <!ENTITY QF-Xwin '<anchor id="Q-X"></anchor>&QFL-Xwin;'>
   <!ENTITY Q-Xwin '<link linkend="Q-X">&QR-Xwin;</link>'>
 
   <!ENTITY QR-XML '<abbrev>XML</abbrev>'>
   <!ENTITY QFL-XML '<ulink url="http://www.xml.com">&QR-XML;</ulink>'>
-  <!ENTITY QF-XML '<anchor id="Q-XML" />&QFL-XML;'>
+  <!ENTITY QF-XML '<anchor id="Q-XML"></anchor>&QFL-XML;'>
   <!ENTITY Q-XML '<link linkend="Q-XML">&QR-XML;</link>'>
 
   <!ENTITY QRzip '<application>Zip</application>'>
   <!ENTITY QFLzip '&QRzip;'>
-  <!ENTITY QFzip '<anchor id="Q-zip" />&QFLzip;'>
+  <!ENTITY QFzip '<anchor id="Q-zip"></anchor>&QFLzip;'>
   <!ENTITY Qzip '<link linkend="Q-zip">&QRzip;</link>'>
 
   <!-- Terms specific to this system.
@@ -211,6 +211,9 @@
   <!ENTITY D-casinsts '<link linkend="D-casinst">casual installers</link>'>
   <!ENTITY D-Casinsts '<link linkend="D-casinst">Casual installers</link>'>
   <!ENTITY D-CasInsts- 'Casual Installers'>
+
+  <!ENTITY D-dirsym '<link linkend="D-dirsym">direct symbol</link>'>
+  <!ENTITY D-dirsyms '<link linkend="D-dirsym">direct symbols</link>'>
 
   <!ENTITY D-enduser '<link linkend="D-enduser">end user</link>'>
   <!ENTITY D-endusers '<link linkend="D-enduser">end users</link>'>

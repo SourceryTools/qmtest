@@ -15,7 +15,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="qmDesign"><title>Design</title>
+<chapter id="qmDesign">
+ <title>Design</title>
 
  <para>In this chapter, we present a design for the &qmconfig; system.
  We start with a high-level overview of the different packages that
@@ -29,13 +30,8 @@
    <mediaobject>
 
     <imageobject>
-     <imagedata align="center"
-                fileref="figures/pkg_qmconfig.eps" />
-    </imageobject>
-
-    <imageobject>
-     <imagedata align="center"
-                fileref="figures/pkg_qmconfig.png" />
+     <imagedata align="center" width="6in" scalefit="1"
+                fileref="figures/pkg_qmconfig.png"></imagedata>
     </imageobject>
 
     <textobject>
@@ -44,7 +40,7 @@
 
    </mediaobject>
   </figure>
-
+  
   <para>The &qmconfig; system is composed of several components, as
   shown in <xref linkend="fig-pkg-qmconfig"/>.  The functions of the
   main components are:</para>
@@ -61,17 +57,18 @@
    <varlistentry><term>&M-PDD;</term>
     <listitem>
      <para>The &M-PDD; module provides the interface from various
-     component to the actual package database.  We show this as a
+     components to the actual package database.  We show this as a
      single module, but expect that alternative implementations will
      arise.  For instance, the actual database can be stored in
      &Q-XML;, a &Qpython;-like language, or &Q-LDAP;.</para>
-     </listitem></varlistentry>
+    </listitem></varlistentry>
 
    <varlistentry><term>&M-MGR;</term>
     <listitem>
-     <para>The &M-MGR; component is the main component.  It
-     interacts with the various databases, probes the operating
-     system, modifies files, etc.</para>
+
+     <para>The &M-MGR; component is the main component.  It interacts
+     with the various databases, probes the operating system, modifies
+     files, etc.</para>
     </listitem></varlistentry>
 
    <varlistentry><term>&M-TD;</term>
@@ -98,12 +95,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center"
-                   fileref="figures/pkg_build.eps" />
-       </imageobject>
-
-       <imageobject>
-        <imagedata align="center"
+        <imagedata align="center" width="6in" scalefit="1"
                    fileref="figures/pkg_build.png" />
        </imageobject>
 
@@ -138,12 +130,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center"
-                   fileref="figures/pkg_bdist.eps" />
-       </imageobject>
-
-       <imageobject>
-        <imagedata align="center"
+        <imagedata align="center" width="6in" scalefit="1"
                    fileref="figures/pkg_bdist.png" />
        </imageobject>
 
@@ -167,12 +154,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center"
-                   fileref="figures/pkg_boot.eps" />
-       </imageobject>
-
-       <imageobject>
-        <imagedata align="center"
+        <imagedata align="center" width="6in" scalefit="1"
                    fileref="figures/pkg_boot.png" />
        </imageobject>
 
@@ -214,12 +196,7 @@
       <mediaobject>
 
        <imageobject>
-        <imagedata align="center"
-                   fileref="figures/pkg_lang.eps" />
-       </imageobject>
-
-       <imageobject>
-        <imagedata align="center"
+        <imagedata align="center" width="6in" scalefit="1"
                    fileref="figures/pkg_lang.png" />
        </imageobject>
 
@@ -242,17 +219,19 @@
 
   <section><title>Tailoring</title>
 
-   <para>The &M-PDD; and the &M-PD; form the heart of &qmconfig;.
-   From the &M-PDD;, &qmconfig; determines the source files.  The
-   &M-SCAN; is used to find what symbols or macros are defined are
-   defined in these files.  From this list of symbols, the &M-MGR;
-   module can assemble a list of probes and the order in which they
-   must execute.</para>
+   <para>The &M-PDD;, the &M-PD;, and the &M-TD; form the heart of
+   &qmconfig;.  From the &M-PDD;, &qmconfig; determines the source
+   files.  The &M-SCAN;, in conjunction with the &M-PD; is used to
+   find what symbols or macros are defined are defined in these files.
+   Information about these symbols is stored in the &M-TD;.  From
+   information in the &M-TD; the &M-MGR; module assembles a list of
+   probes and orders their execution.</para>
 
    <para>The &M-MGR; examines command line switches and options files,
-   then begins evaluating probes.  When possible, probe results come
-   from the probe results cache, through the &M-TD;; otherwise the
-   probe is executed, and the result stored in the &M-TD;.</para>
+   storing information into the &M-TD;.  Then probes are executed for
+   any undefined symbols.  When possible, probe results come from the
+   probe results cache, also stored in the &M-TD;; otherwise the probe
+   is executed, and the result stored in the &M-TD;.</para>
 
    <para>When probing is completed, the &M-PDD; is scanned for files
    that need to be adapted, and the &M-ADAPT; module actually creates
@@ -332,12 +311,7 @@
     <mediaobject>
 
      <imageobject>
-      <imagedata align="center"
-                 fileref="figures/cl_pdd.eps" />
-     </imageobject>
-
-     <imageobject>
-      <imagedata align="center"
+      <imagedata align="center" width="6in" scalefit="1"
                  fileref="figures/cl_pdd.png" />
      </imageobject>
 
