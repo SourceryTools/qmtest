@@ -1,5 +1,7 @@
 2001-12-06  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release: Update documentation copying rules.
+
 	* README: Remove stale link.
 	* doc/manual/test-tour.xml: Fix typos.
 	* qm/Makefile.in (SCRIPTS): Do not hard code prefix.
