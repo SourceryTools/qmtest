@@ -31,7 +31,7 @@
 
 -->
 
-<!-- NAME: QMTest Result V0.1 -->
+<!-- NAME: QMTest Result V0.3 -->
 
 <!-- The results of a test run.  -->
 <!ELEMENT results (result*)>
