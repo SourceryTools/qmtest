@@ -1,5 +1,9 @@
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* install-sh: Remove.
+	
+2001-09-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* install.py (copy_tree): Use makedirs.
 	Warn on missing documentation files.
 
