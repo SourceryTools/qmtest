@@ -932,8 +932,8 @@ class DirectorySuite(base.Suite):
 
         This method calls itself recursively for subdirectories."""
 
+        suite_id = self.GetId()
         sub_id = qm.label.from_path(sub_path)
-        rel = qm.label.MakeRelativeTo(sub_id)
         # Generate the full path to the directory being scanned.
         path = os.path.join(self.__suite_path, sub_path)
         # Loop over its contents.
@@ -948,7 +948,8 @@ class DirectorySuite(base.Suite):
                 name, extension = os.path.splitext(entry)
                 if extension == test_file_extension:
                     # It looks like a test file.
-                    test_ids[rel(name)] = None
+                    test_id = qm.label.join(suite_id, sub_id, name)
+                    test_ids[test_id] = None
                     
 
 

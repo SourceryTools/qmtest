@@ -125,9 +125,6 @@ You must specify the ID of the item to show.
 @ no id for submit
 You must speicfy the ID of the item to submit.
 
-@ no ids specified
-You must specify one or more test or suite IDs.
-
 @ no such action
 There is no action with the action ID you specified, "%(action_id)s".
 

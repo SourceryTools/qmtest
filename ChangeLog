@@ -1,3 +1,25 @@
+2001-08-22  Alex Samuel  <samuel@indetermi.net>
+
+	* qm/test/xmldb.py (DirectorySuite.__ScanDirectory): Construct
+	absolute test IDs.
+	* qm/test/run.py (RemoteShellTarget.__init__): Use arguments
+	property. 
+	(TestRun.AddResourceResult): Immediately try to clean up after
+	failed setup.
+	* qm/test/cmdline.py (Command.commands_spec): Put ID in brackets.
+	(Command.__ExecuteRun): Run all tests if none specified.  Collect
+	explicit test suites.
+	(Command.__WriteSummary): Print statistics by suite.  Supress null
+	output. 
+	* share/diagnostics/test.txt (no ids specified): Remove.
+	* doc/qm.mod (PASS): New entity.
+	(FAIL): Likewise.
+	(ERROR): Likewise.
+	(UNTESTED): Likewise.
+	* doc/manual/test-manual.xml: Update and expand.
+	* doc/manual/test-reference.xml: Likewise.
+	* doc/manual/test-tour.xml: Likewise.
+
 2001-08-19  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py (scripts): Add qmtrack-remote.

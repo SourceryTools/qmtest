@@ -440,7 +440,12 @@ class RemoteShellTarget(Target):
       database.  If omitted, the local test database path is used.
 
       'qmtest_remote' -- The path to the 'qmtest_remote' command on the
-      remote computer.  The default is '/usr/local/bin/qmtest'.
+      remote computer.  The default is '/usr/local/bin/qmtest_remote'.
+
+      'arguments' -- Additional command-line arguments to pass to the
+      remote shell program.  The value of this property is split at
+      space characters, and the arguments are added to the command line
+      before the name of the remote host.
 
     """
 
@@ -487,9 +492,21 @@ class RemoteShellTarget(Target):
                 remote_shell_program = qm.rc.Get("remote_shell",
                                                  default="/usr/bin/ssh",
                                                  section="common")
+            # Extra command-line arguments to the remote shell program
+            # may be specified with the "arguments" property. 
+            extra_arguments = self.GetProperty("arguments", None)
+            if extra_arguments is None:
+                # None specified.
+                extra_arguments = []
+            else:
+                # Split them at spaces.
+                extra_arguments = string.split(extra_arguments, " ")
             # Construct the remote shell command.
             arg_list = [
                 remote_shell_program,
+                ] \
+                + extra_arguments \
+                + [
                 self.__host_name,
                 string.join(remote_arg_list, " ")
                 ]
@@ -804,7 +821,8 @@ class TestRun:
                     # functions' context.
                     context_wrapper = \
                         base.ContextWrapper(self.__context, properties)
-                    target.EnqueueCleanUpResource(resource_id, context_wrapper)
+                    target.EnqueueCleanUpResource(resource_id,
+                                                  context_wrapper)
             # That's it for the test run.
             return 1
 
@@ -891,7 +909,8 @@ class TestRun:
                 # required by this test.
                 properties = {}
                 for resource_id in test.GetResources():
-                    resource_properties = self.__resources[target][resource_id]
+                    resource_properties = \
+                        self.__resources[target][resource_id]
                     properties.update(resource_properties)
                 # These properties are made available to the test
                 # through its context.
@@ -965,13 +984,18 @@ class TestRun:
             # target combination, store the context properties that were
             # added by the resource setup function, so that tese can be
             # made available to tests that use the resource.
-            added_properties = result_wrapper.GetContext().GetAddedProperties()
+            added_properties = \
+                result_wrapper.GetContext().GetAddedProperties()
             self.__resources[target][resource_id] = added_properties
 
         elif action == "setup" and outcome != base.Result.PASS:
             # A resource's setup function failed.  Note this, so that
             # the resource setup is not reattempted.
             self.__failed_resources[resource_id] = None
+            # Schedule the cleanup function for this resource
+            # immediately. 
+            context_wrapper = base.ContextWrapper(self.__context)
+            target.EnqueueCleanUpResource(resource_id, context_wrapper)
 
         elif action == "cleanup" and outcome == base.Result.PASS:
             # A resource has successfully been cleaned up.  Remove it

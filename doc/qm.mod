@@ -52,6 +52,11 @@
 <!ENTITY fixme "<emphasis role=&#34;fixme&#34;>FIXME</emphasis>">
 <!ENTITY prompt "<prompt>$ </prompt>">
 
+<!ENTITY PASS "<symbol>PASS</symbol>">
+<!ENTITY FAIL "<symbol>FAIL</symbol>">
+<!ENTITY ERROR "<symbol>ERROR</symbol>">
+<!ENTITY UNTESTED "<symbol>UNTESTED</symbol>">
+
 <!-- FIXME: The TeX stylesheets smush this into a single dash.  -->
 <!ENTITY dashdash "&#45;&#45;">
 

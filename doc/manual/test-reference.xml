@@ -80,12 +80,14 @@
   options for that command.</para>
 
   <section id="sec-testcmd-run">
-   <title>The <command>run</command> Command</title>
+   <title>The <command>&qmtest-cmd; run</command> Command</title>
 
-   <para>The <command>run</command> command runs tests.  Specify one or
-   more test and/or test suite IDs on the command line.  Tests listed
-   more than once (directly or by inclusion in a test suite) are run
-   only once.  Tests may not be run in the order listed.</para>
+   <para>The <command>&qmtest-cmd; run</command> command runs tests.
+   Specify one or more test and/or test suite IDs on the command line,
+   or omit additional arguments to run all the tests in the test
+   database.  Tests listed more than once (directly or by inclusion in a
+   test suite) are run only once.  Tests may not be run in the order
+   listed.</para>
 
    <para>The <command>run</command> accepts these options:</para>
 
@@ -138,7 +140,7 @@
      </glossdef>
     </glossentry>
 
-    <glossentry>
+    <glossentry id="opt-test-run-context">
      <glossterm>
       <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
       (<option>-c</option>)
@@ -153,7 +155,7 @@
      </glossdef>
     </glossentry>
 
-    <glossentry>
+    <glossentry id="opt-test-run-context-file">
      <glossterm>
       <option>&dashdash;context-file</option> <replaceable>FILE</replaceable>
       (<option>-C</option>)
@@ -176,49 +178,57 @@
 
     <glossentry>
      <glossterm>
-      <option>&dashdash;threads</option> <replaceable>COUNT</replaceable>
+      <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
       (<option>-j</option>)
      </glossterm>
      <glossdef>
-      <para>Run tests in multiple concurrent threads of exection.
-      &qmtest; divides the tests in the test run into
-      <replaceable>COUNT</replaceable> groups, and each group is
-      executed in a separate thread.  On multiprocessor machines, these
-      threads may be scheduled to run in parallel on different
-      processors.  &qmtest; automatically collects results from the
-      threads and presents combines test results and summary.</para>
+      <para>Run tests in multiple <replaceable>COUNT</replaceable>
+      concurrent processes on the local computer.  On multiprocessor
+      machines, the processes may be scheduled to run in parallel on
+      different processors.  &qmtest; automatically collects results
+      from the processes and presents combines test results and summary.
+      By default, one process is used.</para>
 
-      <para>Note that "threads" is used in a generic sense.  On some
-      platforms, &qmtest; may use multiple processes instead of Python
-      threads or another thread implementation.</para>
+      <para>This option may not be combined with the <link
+      linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+      (<option>-T</option>) option</link>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry id="opt-test-run-targets">
+     <glossterm>
+      <option>&dashdash;targets</option> 
+      <replaceable>FILE</replaceable> (<option>-T</option>)
+     </glossterm>
+     <glossdef>
+      <para>Use targets specified in target specification file
+      <replaceable>FILE</replaceable>.  See <xref
+      linkend="sec-target-files"/> for a description of the target file
+      syntax.</para>
      </glossdef>
     </glossentry>
 
     <glossentry>
      <glossterm>
-      <option>&dashdash;remote-hosts</option> 
-      <replaceable>HOST,...</replaceable> (<option>-r</option>)
+      <option>&dashdash;seed</option> <replaceable>INTEGER</replaceable>
      </glossterm>
      <glossdef>
-      <para>Run tests on one or more remote hosts, instead of locally.
-      <replaceable>HOST,...</replaceable> is a comma-delimited list of
-      host names.  &qmtest; divides the test runs into groups, one for
-      each host, and runs those tests on the corresponding hosts.</para>
+      <para>For each test run, &qmtest; randomizes the order in which
+      tests are run, subject to the constraints described in <xref
+      linkend="sec-ordering-and-dependencies"/>.  The random number
+      generator is seeded using the system time.  This maximizes the
+      chance of detecting unanticipated dependencies among tests across
+      multiple test runs.</para>
 
-      <para>Each remote host must have the &qmtest-cmd; command
-      installed in the default location, and must have an identical copy
-      of the test database accessible at the same path as on the local
-      host.</para>
+      <para>For debugging purposes, it is sometimes necessary to obtain
+      a reproducable sequence of tests.  Use the
+      <option>&dashdash;seed</option> option to specify the seed for the
+      random number generator.</para>
 
-      <para>On Linux, &qmtest; uses an <command>rsh</command>-like
-      program to run tests remotely.  That program must be configured to
-      invoke commands remotely on the specified hosts without any
-      additional user interaction, and to pass standard input to and
-      standard output from the remote command.  The default program to
-      use is <filename>/usr/bin/ssh</filename>.  This may be overridden
-      by the <literal>remote_shell</literal> configuration variable in
-      the user's <link linkend="sec-rc-common">QM configuration
-      file</link>.</para>
+      <para>Note that even with the same random number seed, if tests
+      are run on targets with a concurrency greater than one, scheduling
+      uncertainty may still produce variation in the order in which
+      tests are run.</para>
      </glossdef>
     </glossentry>
 
@@ -228,12 +238,245 @@
 
  </section>
 
- <section id="sec-test-configuration">
-  <title>Configuration Reference</title>
+ <section id="sec-ref-classes">
+  <title>Test and Resource Classes</title>
 
-  <para>Write me.</para>
+  <para>This section describes test classes and resource classes
+  included with &qmtest;.  <xref linkend="sec-writing-test-classes"/>
+  provides instructions for writing your own test classes, <xref
+  linkend="sec-writing-resource-classes"/> for resource classes.</para>
 
- </section>
+  <para>&fixme; Write this.</para>
+
+ </section> <!-- sec-ref-classes -->
+
+ <section id="sec-ref-targets">
+  <title>Test Targets</title>
+
+  <para>Test targets represent entities that &qmtest; uses to run
+  tests.  See <xref linkend="sec-targets"/> for an overview of how
+  &qmtest; uses targets.</para>
+
+  <section id="sec-target-specification">
+   <title>Target Specification</title>
+
+   <para>Each target specification includes the following:</para>
+
+   <orderedlist>
+    <listitem>
+     <para>The name of the target.  This is a name identifying the
+     target, such as the host name of the computer which will run the
+     tests.  Target names should be unique in a single target
+     file.</para>
+    </listitem>
+
+    <listitem>
+     <para>The <firstterm id="def-target-class">target
+     class</firstterm>.  Similar to a test class, a target class is a
+     Python class which implements a type of target.  As with test
+     classes, a target class is identified by its name, which includes
+     the module name and the class name.</para>
+
+     <para>For example,
+     <classname>qm.test.run.SubprocessTarget</classname> is the name of
+     a target class, provided by &qmtest;, which runs tests in multiple
+     subprocesses on the local computer.</para>
+
+     <para>&qmtest; includes several target class implementations.  See
+     <xref linkend="sec-target-classes"/> for details.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <link linkend="def-target-group">target group</link> name.
+     The test implementor may choose the syntax of target group names in
+     a test implementation.  Target groups may be used to encode
+     information about target attributes, such as architecture and
+     operating system, and capabilities.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <firstterm
+     id="def-target-concurrency">concurrency</firstterm> value, which
+     must be a positive integer.  Most target classes support concurrent
+     execution of multiple tests on the target.  This number allows the
+     target specification to control how many tests are executed
+     simultaneously.</para>
+    </listitem>
+
+    <listitem>
+     <para>Optionally, a target specification may include additional
+     properties.  Properties are named and have string values.  Some
+     target classes may use property information to control their
+     configuration.  For instance, a target class which executes tests
+     on a remote computer would extract the network address of the
+     remote computer from a target property.</para>
+    </listitem>
+   </orderedlist>
+
+  </section> <!-- sec-target-specifation -->
+
+  <section id="sec-target-files">
+   <title>Target Files</title>
+
+   <para>In a <firstterm id="def-target-file">target file</firstterm>,
+   you specify the computers or other test targets on which &qmtest; runs
+   tests.  Use the <link
+   linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+   (<option>-T</option>) option</link> to the <command>&qmtest-cmd;
+   run</command> command to specify the target file.</para>
+
+   <para>A target file is an XML document containing elements
+   representing <link linkend="sec-target-specification">target
+   specifications</link>.  The document type is
+   <literal>-//Software&nbsp;Carpentry//QMTest&nbsp;Target&nbsp;V0.1//EN</literal>,
+   and the document element is <sgmltag
+   class="element">targets</sgmltag>.</para>
+
+   <para>Each target specification is represented by a 
+   <sgmltag class="element">target</sgmltag> element, and includes
+   <sgmltag class="element">name</sgmltag>, 
+   <sgmltag class="element">class</sgmltag>, 
+   <sgmltag class="element">group</sgmltag>, and 
+   <sgmltag class="element">concurrency</sgmltag> elements.  Additional
+   <sgmltag class="element">property</sgmltag> elements may provide
+   target properties.</para>
+
+   <para>For example, the following target file specifies two targets
+   for running tests.</para>
+
+   <programlisting>
+<![CDATA[<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE targets PUBLIC "-//Software Carpentry//QMTest Target V0.1//EN" "http://www.software-carpentry.com/qm/xml/target.dtd">
+<targets>
+ <target>
+  <name>local</name>
+  <class>qm.test.run.SubprocessTarget</class>
+  <group>i386-pc-linux-gnu</group>
+  <concurrency>1</concurrency>
+ </target>
+ <target>
+  <name>remote</name>
+  <class>qm.test.run.RemoteShellTarget</class>
+  <group>sparc-sun-solaris2.5.1</group>
+  <concurrency>2</concurrency>
+  <property name="host">sunshine</property>
+  <property name="arguments">-l test</property>
+ </target>
+</targets>
+]]>
+  </programlisting>
+
+  <para>The first target is the <link
+  linkend="sec-subprocess-target">local</link> Linux computer.  The
+  second target is a remote computer running SPARC Solaris.  &qmtest;
+  invokes tests on the remote target using a <link
+  linkend="sec-remote-shell-target">remote shell</link> invocation.  The
+  remote computer's name is "sunshine", and two tests are run
+  concurrently on that target.</para>
+
+  </section> <!-- sec-target-files -->
+
+  <section id="sec-target-classes">
+   <title>Target Classes</title>
+
+   <para>&qmtest; includes these target class implementations.</para>
+
+   <section id="sec-subprocess-target">
+    <title>Local Subprocess Target</title>
+
+    <para>The <classname>qm.test.run.SubprocessTarget</classname> target
+    class runs tests in one or more subprocesses on the local computer
+    (the computer on which the &qmtest-cmd; command is invoked).  The
+    number of subprocesses is the degree of concurrency specified for
+    the target.</para>
+
+   </section> <!-- sec-subprocess-target -->
+
+   <section id="sec-remote-shell-target">
+    <title>Remote Shell Target</title>
+
+    <para>The <classname>qm.test.run.RemoteShellTarget</classname>
+    target class runs tests on a remote computer via a remote shell
+    invocation (<command>rsh</command>, <command>ssh</command>, or
+    similar).  This target uses a remote shell to invoke a program
+    similar to the &qmtest-cmd; command on the remote computer.  This
+    remote program accepts test commands and responds with results from
+    running these tests.</para>
+
+    <para>To use <classname>RemoteShellTarget</classname>, the remote
+    computer must have &qmtest; installed, and must contain an identical
+    copy of the test database.  &qmtest; does not transfer entire tests
+    over the remote shell connection; instead, it relies on the remote
+    test database for loading tests.</para>
+
+    <para>In addition, the remote shell program must be configured to
+    allow a remote login without additional intervention (such as typing
+    a password).  If you use <command>rsh</command>, you can use an
+    <filename>.rhosts</filename> file to set this up.  If you use
+    <command>ssh</command>, you can use an SSH public key and the
+    <command>ssh-agent</command> program for this.  See the
+    corresponding manual pages for details.</para>
+
+    <para>The concurrency value of the target specification controls the
+    number of concurrent tests to run on the remote host.  The number of
+    processes used on the remote host is one (the controlling process)
+    plus the concurrency value.</para>
+
+    <para>The <classname>RemoteShellTarget</classname> target class
+    takes its configuration from the following target properties:</para>
+
+    <itemizedlist>
+     <listitem>
+      <para>The <property>remote_shell</property> property specifies the
+      path to the remote shell program.  If omitted, the configuration
+      variable <property>remote_shell</property> is used instead.  If
+      neither is specified, the default is
+      <filename>/usr/bin/ssh</filename>.  The remote shell program must
+      accept the same command-line syntax as
+      <command>rsh</command>.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>host</property> property specifies the remote
+      host name.  If omitted, the target name is used.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>database_path</property> property specifies
+      the path to the test database on the remote computer.  The test
+      database must be identical to the local test database.  If
+      omitted, the local test database path is used.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <property>arguments</property> property specifies
+      additional command-line arguments for the remote shell program.
+      The value of this property is split at space characters, and the
+      arguments are added to the command line before the name of the
+      remote host.</para>
+
+      <para>For example, if you are using the <command>ssh</command>
+      remote shell program and wish to log in to the remote computer
+      using a different user account, specify the <literal>-l
+      username</literal> option using the <property>arguments</property>
+      property.</para>
+     </listitem>
+
+     <listitem>
+      <para>&qmtest; uses the remote shell to invoke the
+      <command>qmtest_remote</command> program on the remote host.  This
+      program is installed by default in
+      <filename>/usr/local/bin/qmtest_remote</filename>.  You may
+      override this and use a version in a different place by specifying
+      the <property>qmtest_remote</property> property.</para>
+     </listitem>
+    </itemizedlist>
+
+   </section> <!-- sec-remote-shell-target -->
+
+  </section> <!-- sec-target-classes -->
+
+ </section> <!-- sec-ref-targets -->
 
 </chapter>
 <!--

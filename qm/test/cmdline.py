@@ -199,10 +199,10 @@ class Command:
     commands_spec = [
         ("run",
          "Run one or more tests.",
-         "ID ...",
+         "[ ID ... ]",
          "This command runs tests, prints their outcomes, and writes "
-         "test results.  Specify one or more test IDs and "
-         "suite IDs as arguments.",
+         "test results.  You may specify test IDs and test suite IDs "
+         "to run; omit arguments to run the entire test database.",
          (
            concurrent_option_spec,
            context_file_spec,
@@ -459,10 +459,12 @@ class Command:
         # Make sure some arguments were specified.  The arguments are
         # the IDs of tests and suites to run.
         if len(self.__arguments) == 0:
-            raise qm.cmdline.CommandError, qm.error("no ids specified")
+            # No IDs specified; run the entire test database.
+            self.__arguments.append(".")
 
         # We'll collect all the tests to run in this map. 
         test_ids = {}
+        test_suites = []
         # This function adds a test to 'test_ids'.
         def add_test_id(test_id, test_ids=test_ids):
             test_ids[test_id] = None
@@ -473,6 +475,11 @@ class Command:
                 # suite. 
                 suite = database.GetSuite(argument)
                 map(add_test_id, suite.GetTestIds())
+                # Accumulate a list of all test suites specified
+                # explicitly, except for the suite representing the
+                # entire test database.
+                if argument != ".":
+                    test_suites.append(argument)
             elif database.HasTest(argument):
                 # It's a test.  Add it.
                 add_test_id(argument)
@@ -547,7 +554,7 @@ class Command:
 
         # Summarize outcomes.
         if summary_file is not None:
-            self.__WriteSummary(test_ids, test_results,
+            self.__WriteSummary(test_ids, test_suites, test_results,
                                 resource_results, outcomes, summary_file)
             # Close it unless it's standard output.
             if summary_file is not sys.stdout:
@@ -618,11 +625,19 @@ class Command:
         server.Run()
     
     
-    def __WriteSummary(self, test_ids, test_results, resource_results,
-                       expected_outcomes, output):
+    def __WriteSummary(self,
+                       test_ids,
+                       test_suites,
+                       test_results,
+                       resource_results,
+                       expected_outcomes,
+                       output):
         """Generate test result summary.
 
         'test_ids' -- The test IDs that were requested for the test run.
+
+        'test_suites' -- IDs of test suites to report separately for the
+        run. 
 
         'test_results' -- A mapping from test ID to result for tests that
         were actually run.
@@ -634,11 +649,13 @@ class Command:
 
         'output' -- A file object to which to write the summary."""
 
+        database = base.get_database()
+
         def divider(text):
             return "--- %s %s\n\n" % (text, "-" * (73 - len(text)))
 
         output.write("\n")
-        output.write(divider("STATISTICS"))
+        output.write(divider("TEST RUN STATISTICS"))
         num_tests = len(test_results)
         output.write("  %6d        tests total\n\n" % num_tests)
 
@@ -691,12 +708,37 @@ class Command:
             outcome = result.GetOutcome()
             count_by_outcome[outcome] = count_by_outcome[outcome] + 1
         # Summarize these counts.
-        for outcome in base.Result.outcomes:
-            count = count_by_outcome[outcome]
+        for outcome, count in count_by_outcome.items():
             if count > 0:
                 output.write("  %6d (%3.0f%%) tests %s\n"
                              % (count, (100. * count) / num_tests, outcome))
-        output.write("\n\n")
+        output.write("\n")
+
+        # Report results for test suites.
+        if len(test_suites) > 0:
+            output.write(divider("STATISTICS BY TEST SUITE"))
+            for suite_id in test_suites:
+                tests_in_suite = database.GetSuite(suite_id).GetTestIds()
+                # Initialize a map with which we will count the number
+                # of tests with each outcome.
+                count_by_outcome = {}
+                for outcome in base.Result.outcomes:
+                    count_by_outcome[outcome] = 0
+                # Count tests by outcome.
+                for test_id in tests_in_suite:
+                    result = test_results[test_id]
+                    outcome = result.GetOutcome()
+                    count_by_outcome[outcome] = count_by_outcome[outcome] + 1
+                # Print results.
+                output.write("  %s\n" % suite_id)
+                suite_size = len(tests_in_suite)
+                for outcome, count in count_by_outcome.items():
+                    if count > 0:
+                        output.write("  %6d (%3.0f%%) tests %s\n"
+                                     % (count,
+                                        (100. * count) / suite_size,
+                                        outcome))
+                output.write("\n")
 
         # If we have been provided with expected outcomes, report each
         # test whose outcome doesn't match the expected outcome.
@@ -746,49 +788,21 @@ class Command:
                                  % (test_id, outcome, expected_outcome))
                 output.write("\n")
 
+        # Count the number of tests that didn't pass.
+        not_passing_count = len(filter(
+            lambda r: r.GetOutcome() != base.Result.PASS,
+            test_results.values()))
+
         # Summarize tests that didn't pass.
-        output.write(divider("TESTS THAT DID NOT PASS"))
-        non_passing_count = 0
-        for test_id in test_results.keys():
-            result = test_results[test_id]
-            outcome = result.GetOutcome()
-            if outcome == base.Result.PASS:
-                # Don't list tests that passed.
-                continue
-            # Keep count of how many didn't pass.
-            non_passing_count = non_passing_count + 1
-            # Print the test's ID and outcome.
-            output.write("  %-63s: %-8s\n" % (test_id, outcome))
-            # If a cause was specified, print it too.
-            cause = result.get("cause", None)
-            if cause is not None:
-                # Abbreviate the cause, if necessary.
-                if len(cause) > 70:
-                    cause = cause[:67] + "..."
-                output.write("      %s\n\n" % cause)
-
-        if non_passing_count == 0:
-            output.write("  (None)\n")
-        output.write("\n")
-
-        # Summarize failed resource functions.
-        output.write(divider("RESOURCES THAT DID NOT PASS"))
-        non_passing_count = 0
-        for result in resource_results:
-            outcome = result.GetOutcome()
-            if outcome != base.Result.PASS:
-                # Keep count of how many didn't pass.
-                non_passing_count = non_passing_count + 1
-                # Extract information from the result.
-                resource_id = result.GetId()
-                action = resource_id + " " + result["action"]
-                # If the name of the target on which the function ran is
-                # specified, include that in the output.
-                target = result.get("target", None)
-                if target is not None:
-                    action = action + " on " + target
-                # Print the resource ID and outcome.
-                output.write("  %-63s: %-8s\n" % (action, outcome))
+        if not_passing_count > 0:
+            output.write(divider("TESTS THAT DID NOT PASS"))
+            for test_id, result in test_results.items():
+                outcome = result.GetOutcome()
+                if outcome == base.Result.PASS:
+                    # Don't list tests that passed.
+                    continue
+                # Print the test's ID and outcome.
+                output.write("  %-63s: %-8s\n" % (test_id, outcome))
                 # If a cause was specified, print it too.
                 cause = result.get("cause", None)
                 if cause is not None:
@@ -796,10 +810,37 @@ class Command:
                     if len(cause) > 70:
                         cause = cause[:67] + "..."
                     output.write("      %s\n\n" % cause)
-                
-        if non_passing_count == 0:
-            output.write("  (None)\n")
-        output.write("\n")
+            output.write("\n")
+
+        # Count the number of failing resource functions.
+        not_passing_count = len(filter(
+            lambda r: r.GetOutcome() != base.Result.PASS,
+            resource_results))
+
+        # Summarize failed resource functions.
+        if not_passing_count > 0:
+            output.write(divider("RESOURCES THAT DID NOT PASS"))
+            for result in resource_results:
+                outcome = result.GetOutcome()
+                if outcome != base.Result.PASS:
+                    # Extract information from the result.
+                    resource_id = result.GetId()
+                    action = resource_id + " " + result["action"]
+                    # If the name of the target on which the function ran is
+                    # specified, include that in the output.
+                    target = result.get("target", None)
+                    if target is not None:
+                        action = action + " on " + target
+                    # Print the resource ID and outcome.
+                    output.write("  %-63s: %-8s\n" % (action, outcome))
+                    # If a cause was specified, print it too.
+                    cause = result.get("cause", None)
+                    if cause is not None:
+                        # Abbreviate the cause, if necessary.
+                        if len(cause) > 70:
+                            cause = cause[:67] + "..."
+                        output.write("      %s\n\n" % cause)
+            output.write("\n")
 
 
  
