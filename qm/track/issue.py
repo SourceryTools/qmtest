@@ -68,15 +68,11 @@ class Issue:
         for field in issue_class.GetFields():
             name = field.GetName()
             if name == "iid":
-                value = iid
+                self.__fields[name] = iid
             elif field_values.has_key(name):
-                value = field.Validate(field_values[name])
-            elif field.HasDefaultValue() != None:
-                value = field.GetDefaultValue()
-            else:
-                raise IssueFieldError, \
-                      "value for field %s must be specified" % field.GetName()
-            self.__fields[name] = value
+                self.__fields[name] = field.Validate(field_values[name])
+            elif field.HasDefaultValue():
+                self.__fields[name] = field.GetDefaultValue()
 
 
     def Copy(self):
@@ -105,7 +101,14 @@ class Issue:
 
         field = self.__issue_class.GetField(name)
         self.__fields[name] = field.Validate(value)
-        
+
+
+    def StampTime(self):
+        """Set the timestamp to now."""
+
+        timestamp_field = self.GetClass().GetField("timestamp")
+        self.SetField("timestamp", timestamp_field.GetCurrentTime())
+
 
     def DiagnosticPrint(self, file):
         """Print a debugging summary to 'file'."""
@@ -161,6 +164,35 @@ class Attachment:
         """Returns a description of the attachment."""
 
         return self.description
+
+
+
+class IssueSortPredicate:
+    """Predicate function to sort issues by a given field value."""
+
+    def __init__(self, field_name, reverse=0):
+        """Initialize a sort predicate.
+
+        'field_name' -- The name of the field to sort by.
+
+        'reverse' -- If true, sort in reverse order."""
+
+        self.__field_name = field_name
+        self.__reverse = reverse
+
+
+    def __call__(self, iss1, iss2):
+        """Compare two issues."""
+
+        # Use built-in comparison on the field values.
+        result = cmp(iss1.GetField(self.__field_name),
+                     iss2.GetField(self.__field_name))
+        # If a reverse sort was specified, flip the sense.
+        if self.__reverse:
+            return -result
+        else:
+            return result
+        
 
 
 ########################################################################

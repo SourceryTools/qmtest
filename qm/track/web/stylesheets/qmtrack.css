@@ -1,0 +1,66 @@
+/* Document body.  */
+
+body {
+    margin-top: 16;
+    margin-left: 16;
+    margin-right: 16;
+    margin-bottom: 16;
+    color: black;
+    background: white;
+}
+
+/* Links.  */
+
+:link {
+    color: "#500060";
+    background-color: white;
+    text-decoration: none;
+}
+
+:visited {
+    color: "#500060";
+    background-color: white;
+    text-decoration: none;
+}
+
+:active {
+    color: "#500060";
+    background-color: "#f4f0ff";
+    text-decoration: none;
+}
+
+:hover {
+    color: "#500060";
+    background-color: "#f4f0ff";
+    text-decoration: none;
+}
+
+table {
+    background-color: "#efefef";
+}
+
+th {
+    color: white;
+    background-color: black;
+    text-align: left;
+    text-decoration: bold;
+}
+
+td {
+}
+
+span#colhead {
+    background-color: black;
+    color: white;
+}
+
+a#colhead {
+    color: white;
+    background-color: black;
+}
+
+
+span#fieldname {
+    text-decoration: bold;
+    color: red;
+}

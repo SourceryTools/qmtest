@@ -1,3 +1,71 @@
+2001-02-18  Alex Samuel  <samuel@codesourcery.com>
+
+	* Makefile.in (SUBDIRS): Add qm.
+	(README): Update.
+	* configure.in (AC_OUTPUT): Add qm/Makefile.
+	* configure: Regenerate.	
+	* standard.mk.in (PYTHONBIN): New macro.
+	(PYTHON): Use it.
+
+	* qm/Makefile.in: New file.
+	* qm/command_line.py: Rename to...
+	* qm/cmdline.py: ... this, with heavy modifications.
+	* qm/common.py (FileSystemMutex.MutexLockError): Remove.
+	(FileSystemMutex.Lock): Make sure parnet directory exists.
+	(FileSystemMutex.IsLocked): New method.
+	(Configuration): New class.
+	(base_directory): New variable.
+	(get_base_directory): New function.
+	* qm/setup_path.py.in: New file.
+	* qm/web.py: Likewise.
+
+	* qm/track/qmtrack.in: New file.
+	* qm/track/__init__.py: Update imports.
+	* qm/track/qmtrack.py: Rename to...
+	* qm/track/cmdline.py: ... this, with heavy modifications.
+	* qm/track/config.py: New file.
+	* qm/track/idb.py: Clean up imports and comments.
+	(IdbBase.PerformQuery): Rename to...
+	(IdbBase.Query): ... this.  Adjust.
+	(get_ib_class): New function.
+	* qm/track/issue.py (Issue.__init__): Don't object to missing
+	field values. 
+	(Issue.StampTime): New method.
+	(IssueSortPredicate): New class.
+	* qm/track/issue_class.py (IssueField.__init__): Initialize more
+	attributes. 
+	(IssueField.IsAttribute): New method.
+	(IssueFieldText): Rename multiline attribute to structured.
+	(IssueFieldEnumeration.Validate): Try int conversion.
+	(IssueFieldEnumeration.GetEnumerals): New method.
+	(IssueFieldEnumeration.ValueToName): Likewise.
+	(IssueClass.__init__): Adjust mandatory fields.
+	(IssueClass): Redefine __fields attribute and add
+	__fields_by_name.  Use throughout.
+	* qm/track/memory_idb.py (MemoryIdb.__init__): Don't lock.
+	(MemoryIdb.__del__): Rename to...
+	(MemoryIdb.Close): ... this.
+	(MemoryIdb.AddIssue): Stamp time.
+	(MemoryIdb.AddRevision): Likewise.
+	(MemoryIdb.GetIids): New method.
+	(MemoryIdb.GetIssues): Return copies of current revisions only.
+	(MemoryIdb.GetAllRevisions): Return copies.
+	(MemoryIdb.Query): Remove.
+	* qm/track/server.py: New file.
+	* qm/track/sql_idb.py (SqlIdb.AddIssue): Stamp time.
+	(SqlIdb.AddRevision): Likewise.
+
+	* qm/track/web: New directory.
+	* qm/track/web/__init__.py: New file.
+	* qm/track/web/show.py: Likewise.
+	* qm/track/web/summary.py: Likewise.
+	* qm/track/web/web.py: Likewise.
+	* qm/track/web/stylesheets: New directory.
+	* qm/track/web/stylesheets/qmtrack.css: New file.
+	* qm/track/web/templates: New directory.
+	* qm/track/web/templates/show.dtml: New file.
+	* qm/track/web/templates/summary.dtml: Likewise.
+	
 2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/command_line.py: Fix formatting issue.

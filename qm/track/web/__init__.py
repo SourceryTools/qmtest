@@ -1,13 +1,13 @@
-######################################################### -*-Makefile-*-
+########################################################################
 #
-# File:   Makefile
+# File:   __init__.py
 # Author: Alex Samuel
-# Date:   2000-12-20
+# Date:   2001-02-08
 #
 # Contents:
-#   Top-level qm makefile.
-# 
-# Copyright (C) 2001 CodeSourcery LLC
+#   Initialization for module qm.track.web.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,32 +31,15 @@
 #
 ########################################################################
 
-TOPDIR		= @top_srcdir@
-
-SUBDIRS		= doc \
-		  zope-dtml/ExtensionClass \
-		  qm
-
-PYTHONDOCDIRS	= qm
-
-include $(TOPDIR)/standard.mk
-
 ########################################################################
-# additional rules
+# imports
 ########################################################################
 
-# Some modules require one-time setup.
-setup:		gadfly/sqlwhere.py \
-		zope-dtml/ExtensionClass/Makefile
+from show import handle_show, handle_new, handle_submit
+from summary import handle_summary
 
-# This follows the setup instructions in the Gadfly package.  The
-# target is a file generated in the setup procedure.  See
-# gadfly/index.html.
-gadfly/sqlwhere.py:
-	cd gadfly; python gfinstall.py
-
-# Build the ExtensionClass package Makefile.
-zope-dtml/ExtensionClass/Makefile:
-	cd zope-dtml/ExtensionClass; \
-	cp /usr/lib/python1.5/config/Makefile.pre.in .; \
-        make -f Makefile.pre.in boot
+########################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# End:

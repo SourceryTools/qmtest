@@ -1,0 +1,99 @@
+<dtml-comment><!--
+
+  File:   show.dtml
+  Author: Alex Samuel
+  Date:   2001-02-08
+
+  Contents:
+    Document template for web page to display an issue.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <dtml-var expr="GenerateHtmlHeader('Show Issue')">
+ <dtml-var expr="GenerateStartBody()">
+
+  <dtml-comment><!--
+    If we're generating a form, start it here.
+  --></dtml-comment>
+  <dtml-if expr="IsForm()">
+   <form method="post"
+         action="<dtml-var expr="MakeSubmitUrl()">"
+         enctype="multipart/form-data"/>
+   <dtml-comment><!--
+     In a form, iid and revision may not be represented as form
+     controls.  Nevertheless, we need the values of these fields to be
+     accessible in a submitted form, so put them in hidden controls.
+   --></dtml-comment>
+   <dtml-if expr="style == 'edit'">
+    <input type="hidden" 
+           name="iid" 
+           value="<dtml-var expr="issue.GetId()">">
+   </dtml-if>
+   <input type="hidden" 
+          name="revision" 
+          value="<dtml-var expr="issue.GetRevision()">">
+  </dtml-if>
+
+  <table <dtml-var name="table_attributes">
+         width="100%"
+         columns="2">
+   <tbody>
+    <dtml-in name="fields">
+    <dtml-with expr="_.namespace(field=_['sequence-item'])">
+     <dtml-if expr="IsShowField(field)">
+      <tr>
+       <td><span id="fieldname"><dtml-var expr="field.GetName()"></span></td>
+       <td><dtml-var expr="FormatFieldValue(field)"></td>
+      </tr>
+     </dtml-if>
+    </dtml-with>
+    </dtml-in>
+   </tbody>
+  </table>
+
+  <dtml-comment><!--
+    End the form, if necessary.
+  --></dtml-comment>
+  <dtml-if expr="IsForm()">
+   <input type="submit" value="submit"/>
+   </form>
+  </dtml-if>
+
+  <dtml-comment><!-- FIXME: Enable this later.
+  <dtml-if name="show_history">
+   <p><b>REVISION HISTORY HERE</b></p>
+  </dtml-if>
+  --></dtml-comment>
+
+  <dtml-if expr="style == 'full' or style == 'history'">
+   <p><a href="<dtml-var expr="MakeEditUrl()">">Click here to edit this
+   issue.</a></p>
+  </dtml-if>
+
+  <dtml-comment><!-- FIXME: Enable this later.
+  <dtml-if expr="style == 'full' and not show_history">
+   <p><a href="<dtml-var expr="MakeHistoryUrl()">">Click here to show
+   revision history.</a></p>
+  </dtml-if>
+  --></dtml-comment>
+
+  <dtml-var name="html_footer">
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

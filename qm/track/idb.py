@@ -36,9 +36,8 @@
 ########################################################################
 
 import rexec
-from types import *
 import qm
-from qm.track import *
+import types
 
 ########################################################################
 # classes
@@ -124,12 +123,16 @@ class TriggerOutcome:
         """Return the name of the trigger that created this outcome."""
         
         return self.__trigger_name
-    
 
 
 
 class IdbBase:
     """Base class for IDB implementations."""
+
+    # Subclasses of 'IdbBase' should be added to 'get_idb_class',
+    # below, so that they can be referred to by name in the persistent
+    # configuration.
+
 
     def __init__(self):
         """Create a new IDB connection."""
@@ -196,15 +199,16 @@ class IdbBase:
         raise NotImplementedError, "__call__ method must be overridden"
 
     
-    def PerformQuery(self, query_str, class_name):
-        """Perform a query on the database.
+    def Query(self, query_str, issue_class_name=None):
+        """Query on the database.
         
         query_str -- The string with the python expression to be evaluated
         on each issue to determine if the issue matches.
         
-        class_name -- The name of the class of which you wish to query
-        issues.  Only issues of that class will be queried.  If this
-        argument is '', all issues in the database will be queried.
+        issue_class_name -- The name of the class of which you wish to
+        query issues.  Only issues of that class will be queried.  If
+        this argument is 'None', all issues in the database will be
+        queried.
         
         returns -- This function returns a list of issues that match a
         query.
@@ -213,8 +217,6 @@ class IdbBase:
 
         self.results = [ ]
         for issue in self.GetIssues():
-            # We have a list of revisions; we want only the last one.
-            issue = issue[len(issue) - 1]
             query_env = rexec.RExec()
             # Import string operations so that they may be used in
             # a query.
@@ -223,13 +225,13 @@ class IdbBase:
 
             # We should only do the query if the issue is of the correct
             # class.
-            if class_name == '' or c.GetName() == class_name:
+            if issue_class_name is None or c.GetName() == class_name:
                 # Set up the execution environment for the expression.
                 for field in c.GetFields():
                     field_name = field.GetName()
                     # Set each field to be its current value in the issue.
                     field_value = issue.GetField(field_name)
-                    if type(field_value) == StringType:
+                    if type(field_value) == types.StringType:
                         field_value = "'" + field_value + "'"
                     query_env.r_exec("%s = %s" % (field_name, field_value))
                     # We have to check to see if this class is an
@@ -331,6 +333,26 @@ class IdbBase:
         except KeyError:
             raise ValueError, "invalid trigger type: %s" % type
 
+
+
+########################################################################
+# functions
+########################################################################
+
+def get_idb_class(idb_type):
+    """Return the IDB class corresponding to the name 'idb_type'."""
+
+    # Import modules conditionally, so we don't drag in lots of stuff
+    # we won't need.
+
+    if idb_type == "MemoryIdb":
+        import qm.track.memory_idb
+        return qm.track.memory_idb.MemoryIdb
+    elif idb_type == "GadflyIdb":
+        import qm.track.gadfly_idb
+        return qm.track.gadfly_idb.GadflyIdb
+    else:
+        raise ValueError, "unknown IDB type %s" % idb_type
 
 
 ########################################################################

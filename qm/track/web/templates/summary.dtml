@@ -1,0 +1,85 @@
+<dtml-comment><!--
+
+  File:   summary.dtml
+  Author: Alex Samuel
+  Date:   2001-02-08
+
+  Contents:
+    Document template for issue summary form.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <dtml-var expr="GenerateHtmlHeader('Issue Summary')">
+ <dtml-var expr="GenerateStartBody()">
+  <p>Click on a column heading to sort by that field.</p>
+
+  <dtml-if name="issues">
+   <table <dtml-var name="table_attributes">
+          width="100%" 
+          columns="<dtml-var expr="_.len(field_names)">">
+
+    <!-- The row containing column headings. -->
+    <thead>
+     <tr>
+      <dtml-in name="field_names">
+      <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
+       <th><a href="<dtml-var expr="MakeResortUrl(field_name)">"><span
+       id="colhead"><dtml-var name="field_name"></span></a></th>
+      </dtml-with>
+      </dtml-in>
+     </tr>
+    </thead>
+
+    <!-- Rows corresponding to issues. -->
+    <tbody>
+     <dtml-in name="issues">
+     <dtml-with expr="_.namespace(issue=_['sequence-item'])">
+      <dtml-if expr="IsShowIssue(issue)">
+       <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
+        <dtml-in name="field_names">
+        <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
+         <td>
+          <dtml-if expr="IsLinkToIssue(issue, field_name)">
+           <a href="<dtml-var expr="MakeIssueUrl(issue)">">
+          </dtml-if>
+          <font color="<dtml-var expr="GetForegroundColor(issue)">">
+           <dtml-var expr="FormatFieldValue(issue, field_name)">
+          </font>
+          <dtml-if expr="IsLinkToIssue(issue, field_name)">
+           </a>
+          </dtml-if>
+         </td>
+        </dtml-with>
+        </dtml-in>
+       </tr>
+      </dtml-if>
+     </dtml-with>
+     </dtml-in>
+    </tbody>
+
+   </table>
+
+  <dtml-else>
+   <p><i>No issues.</i></p>
+
+  </dtml-if>
+  <dtml-var name="html_footer">
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

@@ -1,13 +1,13 @@
 ########################################################################
 #
-# File:   __init__.py
+# File:   setup_path.py
 # Author: Alex Samuel
-# Date:   2000-12-20
+# Date:   2001-02-08
 #
 # Contents:
-#   Initialization for module qm.track.
+#   Python fragment to set up the Python lookup path to find QM modules.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,17 +31,50 @@
 #
 ########################################################################
 
+"""Execute this file with 'execfile' to set up the Python path for QM."""
+
 ########################################################################
 # imports
 ########################################################################
 
-from config import *
-from idb import *
-from issue import *
-from issue_class import *
-from server import execute, start_server
+import os.path
+import sys
 
 ########################################################################
+# functions
+########################################################################
+
+def add_to_python_path(*components):
+    """Add a QM path to the Python module lookup path.
+
+    Constructs the added path by appending the directory names in
+    'components' to the base QM Python directory."""
+
+    path = apply(os.path.join, (__base_dir, ) + components)
+    path = os.path.normpath(path)
+    if path not in sys.path:
+        sys.path.append(path)
+
+
+########################################################################
+# script
+########################################################################
+
+# The path to the directory under which the QM Python files are
+# installed.
+__base_dir = "@qm_top_directory@"
+
+# Add things to the Python search path that we'll need.
+add_to_python_path()
+add_to_python_path("zope-dtml")
+add_to_python_path("zope-dtml", "ExtensionClass")
+
+# Now store the top QM Python directory where other modules can access
+# it.
+import qm.common
+qm.common.base_directory = os.path.normpath(os.path.join(__base_dir, "qm"))
+
+#######################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil

@@ -66,18 +66,35 @@ default_states = {
 ########################################################################
 
 class IssueField:
-    """Base class for issue field types."""
+    """Base class for issue field types.
+
+    The following attributes are recognized for all field types.
+
+    read_only -- If true, the field may not be modified by users.
+
+    initialize_only -- If true, the field may only be modified by a
+    user when a new issue is created.
+
+    hidden -- If true, the field is for internal purposes, and not
+    shown in user interfaces."""
 
     def __init__(self, name):
         """Create a new (generic) field.
 
         'name' -- The value of the name attribute.  Must be a valid
-        label."""
+        label.
+
+        'attributes' -- Additional attribute assignments to set."""
 
         if not qm.is_valid_label(name):
             raise ValueError, "%s is not a valid field name" % name
 
-        self.__attributes = { "name" : name }
+        self.__attributes = {
+            "name" : name,
+            "read_only" : "false",
+            "initialize_only" : "false",
+            "hidden" : "false",
+            }
 
 
     def GetName(self):
@@ -126,6 +143,12 @@ class IssueField:
             return self.__attributes[attribute_name]
         else:
             return default_value
+
+
+    def IsAttribute(self, attribute_name):
+        """Return a true value if an attribute has the value "true"."""
+
+        return self.GetAttribute(attribute_name) == "true"
 
 
     def SetAttribute(self, attribute_name, value):
@@ -188,8 +211,8 @@ class IssueFieldText(IssueField):
 
     A text field uses the following attributes:
 
-    multiline -- If true, the field may contain line breaks, and is
-    presented to the user accordingly.
+    structured -- If true, the field contains multiline structured
+    text.
 
     verbatim -- If true, the contents of the field are quoted as a
     block when the field is externalized; otherwise, individual
@@ -205,7 +228,7 @@ class IssueFieldText(IssueField):
         # Perform base class initialization.
         IssueField.__init__(self, name)
         # Set default attribute values.
-        self.SetAttribute("multiline", "false")
+        self.SetAttribute("structured", "false")
         self.SetAttribute("verbatim", "false")
         self.SetAttribute("big", "false")
         # Set the default field value.
@@ -333,10 +356,41 @@ class IssueFieldEnumeration(IssueFieldInteger):
         if self.__enumeration.has_key(value):
             return self.__enumeration[value]
         # Also accept a value, i.e. an integer mapped by an enumeral.
-        elif value in self.__enumeration.values():
-            return value
+        elif int(value) in self.__enumeration.values():
+            return int(value)
         else:
             raise ValueError, "invalid enumeration value: %s" % str(value)
+
+
+    def GetEnumerals(self):
+        """Return a sequence of enumerals.
+
+        returns -- A sequence consisting of (name, value) pairs, in
+        the appropriate order.
+
+        To obtain a map from enumeral name to value, use the
+        enumeration attribute."""
+
+        # Obtain a list of (name, value) pairs for enumerals.
+        enumerals = self.__enumeration.items()
+        # How should they be sorted?
+        if self.IsAttribute("ordered"):
+            # Sort by the second element, the enumeral value.
+            sort_function = lambda e1, e2: cmp(e1[1], e2[1])
+        else:
+            # Sort by the first element, the enumeral name.
+            sort_function = lambda e1, e2: cmp(e1[0], e2[0])
+        enumerals.sort(sort_function)
+        return enumerals
+
+
+    def ValueToName(self, value):
+        """Return the enumeral name corresponding to 'value'."""
+
+        for en_name, en_val in self.__enumeration.items():
+            if value == en_val:
+                return en_name
+        raise ValueError, "invalid enumeration value: %d" % value
 
 
     def GetEnumeration(self):
@@ -422,27 +476,35 @@ class IssueClass:
         first two fields added, and as returned by 'GetFields()'."""
 
         self.__name = name
-        self.__fields = {}
+        # Maintain both a list of fields and a mapping from field
+        # names to fields.  The list is to preserve the order of the
+        # fields; the mapping is for fast lookups by field name.
+        self.__fields = []
+        self.__fields_by_name = {}
 
         # Create mandatory fields.
         
         # The issue id field.
         field = IssueFieldText("iid")
+        field.SetAttribute("initialize_only", "true")
         # We do not want the iid to have a default value. It
-        # always must be specified (Benjamin Chelf). ?
+        # always must be specified.
         field.UnsetDefaultValue()
         self.AddField(field)
 
         # The revision number field.
         field = IssueFieldInteger("revision")
-        self.AddField(field)
-
-        # The user id field.
-        field = IssueFieldUid("user")
+        field.SetAttribute("hidden", "true")
         self.AddField(field)
 
         # The revision timestamp field.
         field = IssueFieldTime("timestamp")
+        field.SetAttribute("read_only", "true")
+        self.AddField(field)
+
+        # The user id field.
+        field = IssueFieldUid("user")
+        field.SetAttribute("read_only", "true")
         self.AddField(field)
 
         # The summary field.
@@ -456,14 +518,17 @@ class IssueClass:
 
         # The parents field.
         field = IssueFieldSet(IssueFieldIid("parents"))
+        field.SetAttribute("hidden", "true")
         self.AddField(field)
 
         # The children field.
         field = IssueFieldSet(IssueFieldIid("children"))
+        field.SetAttribute("hidden", "true")
         self.AddField(field)
 
         # The state field.
-        field = IssueFieldEnumeration("state", states)
+        field = IssueFieldEnumeration("state", states,
+                                      default_value="active")
         self.AddField(field)
 
 
@@ -476,16 +541,16 @@ class IssueClass:
     def GetFields(self):
         """Return the fields in this class.
 
-        returns -- A sequence of fields.  Nothing is gauranteed about
-        the order of the fields."""
+        returns -- A sequence of fields.  The order of the fields is
+        the order in which they were added to the class."""
 
-        return self.__fields.values()
+        return self.__fields
 
 
     def HasField(self, name):
         """Return true if there is a field named 'name'."""
 
-        return self.__fields.has_key(name)
+        return self.__fields_by_name.has_key(name)
 
 
     def GetField(self, name):
@@ -495,7 +560,7 @@ class IssueClass:
         this issue class."""
 
         try:
-            return self.__fields[name]
+            return self.__fields_by_name[name]
         except KeyError:
             raise KeyError, "%s is not a field of issue class %s" \
                   % (name, self.GetName())
@@ -514,14 +579,16 @@ class IssueClass:
         Otherwise, must be a valid field value."""
 
         name = field.GetName()
-        self.__fields[name] = field
+        self.__fields_by_name[name] = field
+        self.__fields.append(field)
 
 
     def DiagnosticPrint(self, file):
         """Print a debugging summary to 'file'."""
 
         file.write("IssueClass %s\n" % self.GetName())
-        for name, field in self.__fields.items():
+        for field in self.__fields:
+            name = field.GetName()
             file.write("  -- %s: %s, default = %s\n"
                        % (name, field.__class__.__name__,
                           repr(self.__default_values[name])))

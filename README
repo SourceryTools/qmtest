@@ -10,3 +10,27 @@
       http://www.software-carpentry.com/dev
 
     for more information on obtaining the tools.
+
+
+2.  BUILDING QM
+
+    From the top of the source tree, first configure the sources:
+
+      ./configure
+
+    You'll have to do a one-time setup as well:
+
+      make setup
+
+    To build the QM programs, simply
+
+      make qm
+
+    and to build documentation,
+
+      make doc
+
+
+3. GETTING STARTED WITH QMTRACK
+
+   The qmtrack executable is in qm/qm/track.

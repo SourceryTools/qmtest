@@ -35,11 +35,13 @@
 # imports
 ########################################################################
 
+import cPickle
 import os
 import os.path
 import re
 import string
 import time
+import types
 
 ########################################################################
 # exceptions
@@ -59,6 +61,12 @@ class MutexLockError(Exception):
 
 
 
+class ConfigurationError(RuntimeError):
+
+    pass
+
+
+
 ########################################################################
 # classes
 ########################################################################
@@ -68,11 +76,6 @@ class FileSystemMutex:
 
     retry_interval = 0.1
     """The interval, in seconds, at which to retry a lock."""
-
-    class MutexLockError(Exception):
-        """Indicates that a lock could not be acquired."""
-
-        pass
 
 
     def __init__(self, path):
@@ -107,7 +110,12 @@ class FileSystemMutex:
 
         start_time = time.time()
         while 1:
-            # First check if the directory exists.
+            parent_dir = os.path.dirname(self.__path)
+            # Make sure the parent directory exists.
+            if not os.path.isdir(parent_dir):
+                raise MutexLockError, \
+                      "parent directory %s doesn't exist" % parent_dir
+            # Check if the directory exists.
             if not os.path.isdir(self.__path):
                 # If not, attempt to create it.
                 try:
@@ -126,7 +134,8 @@ class FileSystemMutex:
             if timeout != None \
                and (time.time() - start_time) >= timeout:
                 # Timed out.  Raise an exception.
-                raise self.MutexLockError, "lock timed out"
+                raise MutexLockError, \
+                      "lock on %s timed out" % self.__path
             # Sleep for a while before trying again.
             time.sleep(self.retry_interval)
 
@@ -146,12 +155,82 @@ class FileSystemMutex:
         os.unlink(self.__pid_filename)
         os.rmdir(self.__path)
         self.__locked = 0
+
+
+    def IsLocked(self):
+        """Return true if a lock is held on the mutex."""
+
+        return self.__locked
         
         
+
+class Configuration:
+    """A persistent set of program configuration variables.
+
+    A 'Configuration' object acts as a map of configuration variables.
+    The configuration is associated with a file path.  It can be made
+    persistent by invoking 'Save', which writes it to that file."""
+
+    def __init__(self, path, **initialization):
+        """Create or load a configuration.
+
+        'path' -- The path to the configuration file.
+
+        'initialization' -- Initial configuration values."""
+
+        self.__path = path
+        self.__fields = {}
+        # Initialize the fields using our '__setitem__' method.
+        for key, value in initialization.items():
+            self[key] = value
+
+
+    def Save(self):
+        """Save the configuration."""
+        
+        # Write the configuration to a pickle.
+        pickle_file = open(self.__path, "w")
+        cPickle.dump(self.__fields, pickle_file)
+        pickle_file.close()
+
+
+    def Load(self):
+        """Load the configuration.
+
+        raise -- 'ConfigurationError' if the configuration cannot be
+        loaded."""
+
+        # Unpickle the configuration.
+        pickle_file = open(self.__path, "r")
+        self.__fields = cPickle.load(pickle_file)
+        pickle_file.close()
+
+
+    def __getitem__(self, key):
+        return self.__fields[key]
+
+
+    def __setitem__(self, key, value):
+        self.__fields[key] = value
+
+
+    def __delitem__(self, key):
+        del self.__fields[key]
+
+
 
 ########################################################################
 # functions
 ########################################################################
+
+base_directory = None
+
+def get_base_directory():
+    """Return the absolute path to the top QM Python directory."""
+
+    assert base_directory is not None
+    return base_directory
+
 
 label_regex = re.compile("[a-z0-9_]+$")
 

@@ -51,4 +51,5 @@ AC_OUTPUT(standard.mk
 	  doc/Makefile
  	  doc/design/qmconfig/Makefile
 	  doc/design/qmtest/Makefile
-	  doc/design/qmtrack/Makefile)
+	  doc/design/qmtrack/Makefile
+	  qm/Makefile)

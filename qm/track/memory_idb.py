@@ -45,7 +45,6 @@ Persistance is via standard Python pickling.
 
 import cPickle
 import os
-import os.path
 import qm
 import types
 
@@ -81,11 +80,6 @@ class MemoryIdb(qm.track.IdbBase):
         if create_idb and not os.path.isdir(path):
             os.mkdir(path)
 
-        # Create a lock, and lock immediately.
-        lock_path = os.path.join(path, "lock")
-        self.lock = qm.FileSystemMutex(lock_path)
-        self.lock.Lock()
-
         if create_idb:
             # Initially there are no issues and issue classes.
             self.__issue_classes = {}
@@ -97,9 +91,9 @@ class MemoryIdb(qm.track.IdbBase):
             pickle_file.close()
             # The pickle contains a tuple of these two items.
             self.__issue_classes, self.__issues = persistent
-        
 
-    def __del__(self):
+
+    def Close(self):
         """Close an IDB connection and write out the IDB state."""
         
         # Open a pickle file.
@@ -112,9 +106,6 @@ class MemoryIdb(qm.track.IdbBase):
             )
         cPickle.dump(persistent, pickle_file)
         pickle_file.close()
-
-        # Unlock the IDB.
-        self.lock.Unlock()
 
 
     def __GetPicklePath(self):
@@ -168,6 +159,8 @@ class MemoryIdb(qm.track.IdbBase):
             raise ValueError, "iid is already used"
         # Set the initial revision number to zero.
         issue.SetField("revision", 0)
+        # Set the timestamp to now.
+        issue.StampTime()
         # Store the new issue.
         return self.__InsertIssue(issue)
 
@@ -193,6 +186,8 @@ class MemoryIdb(qm.track.IdbBase):
         # Assign the next revision number.
         next_revision = len(revisions)
         issue.SetField("revision", next_revision)
+        # Set the timestamp to now.
+        issue.StampTime()
         # Store the new revision.
         return self.__InsertIssue(issue)
 
@@ -201,6 +196,12 @@ class MemoryIdb(qm.track.IdbBase):
         """Return a sequence of issue classes in this IDB."""
 
         return self.__issue_classes.values()
+
+
+    def GetIids(self):
+        """Return a sequence containing all the IIDs in this IDB."""
+
+        return self.__issues.keys()
 
 
     def GetIssues(self):
@@ -213,7 +214,7 @@ class MemoryIdb(qm.track.IdbBase):
         'returns' -- This function returns a list of all the issues in the
         database."""
 
-        return self.__issues.values()
+        return map(lambda issue: issue[-1].Copy(), self.__issues.values())
 
     
     def GetIssue(self, iid, revision=None, issue_class=None):
@@ -256,7 +257,7 @@ class MemoryIdb(qm.track.IdbBase):
             raise KeyError, "no revision with IID '%s' found" % iid
         # FIXME: Do something with outcomes.
         # All done.
-        return issue
+        return issue.Copy()
 
 
     def GetAllRevisions(self, iid, issue_class=None):
@@ -288,7 +289,7 @@ class MemoryIdb(qm.track.IdbBase):
             result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
             # Keep the revision only if the trigger passed it.
             if result:
-                issues.append(issue)
+                issues.append(issue.Copy())
             # FIXME: Do something with outcomes.
         # Return the full list of revisions.
         return issues
@@ -302,17 +303,6 @@ class MemoryIdb(qm.track.IdbBase):
         # The current revision number is the revision number of the
         # last (most recent) revision.
         return revisions[-1].GetRevision()
-
-
-    def Query(self, query_record, current_revision_only=1):
-        """Return a sequence of issues matching 'query_record'.
-
-        'query_record' -- An instance of IssueRecord specifying the query.
-
-        'current_revision_only -- If true, don't match revisions other
-        than the current revision of each issue."""
-
-        raise NotImplementedError
 
 
     # Helper functions.

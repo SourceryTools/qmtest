@@ -63,7 +63,8 @@ BUILDDIR	= $(TOPDIR)/build
 DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
-PYTHON		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) /usr/bin/python
+PYTHONBIN	= /usr/bin/python
+PYTHON		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
 PYTHONDIRS	= $(TOPDIR) \
                   $(TOPDIR)/zope-dtml \
                   $(TOPDIR)/zope-dtml/ExtensionClass

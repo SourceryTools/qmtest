@@ -151,6 +151,8 @@ class SqlIdb(qm.track.IdbBase):
         issue_class = issue.GetClass()
         # Set the revision number to zero.
         issue.SetField("revision", 0)
+        # Set the timestamp to now.
+        issue.StampTime()
         # Make sure the issue's class is in this IDB.
         if not self.__HasIssueClass(issue_class):
             raise ValueError, "new issue in a class not in this IDB"
@@ -174,6 +176,8 @@ class SqlIdb(qm.track.IdbBase):
         current = self.GetIssue(issue.GetId(), issue_class=issue_class)
         next_revision_number = current.GetRevision() + 1
         issue.SetField("revision", next_revision_number)
+        # Set the timestamp to now.
+        issue.StampTime()
         # Insert the revision.
         return self.__InsertIssue(issue_class, issue, current)
 

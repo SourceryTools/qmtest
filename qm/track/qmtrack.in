@@ -1,0 +1,102 @@
+########################################################################
+#
+# File:   qmtrack
+# Author: Alex Samuel
+# Date:   2001-02-17
+#
+# Contents:
+#   QMTrack command line application
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+# Set up the Python module lookup path to find QMTrack.
+execfile("@qm_setup_path_script@")
+
+########################################################################
+# imports
+########################################################################
+
+import os
+import qm.cmdline
+import qm.track
+import qm.track.cmdline
+import sys
+
+########################################################################
+# script
+########################################################################
+
+script_name = sys.argv[0]
+
+try:
+    # First parse the command line.
+    command = qm.track.cmdline.Command(sys.argv[1:])
+
+    # If the command needs an IDB, set it up.
+    if command.RequiresIdb():
+        # Find the path to the IDB.
+        try:
+            # Was an IDB specified in the command?
+            idb_path = command.GetGlobalOptions()["idb"]
+
+        except KeyError:
+            # Wasn't specified in the command.  Try to get it from an
+            # environment variable.
+            environment_variable_name = qm.track.state["idb_env_var"]
+            try:
+                idb_path = os.environ[environment_variable_name]
+            except KeyError:
+                # The environment variable isn't set.  We don't know where to
+                # find the IDB, so bail.
+                raise qm.cmdline.CommandError, \
+"""Could not find the issue database (IDB).
+
+You may specify the path to the issue base by
+  * using the '--idb' command option
+  * or setting the %s environment variable to the IDB path.
+""" % environment_variable_name
+
+        # Open a session to the IDB.
+        qm.track.open(idb_path)
+
+    try:
+        # Execute the command.
+        qm.track.execute(command, sys.stdout)
+
+    finally:
+        # Close the session, if one's open.
+        qm.track.close()
+
+except qm.cmdline.CommandError, msg:
+    sys.stderr.write("%s: %s\n" % (script_name, msg))
+    sys.stderr.write("Invoke %s --help for help with usage.\n"
+                     % script_name)
+    sys.exit(1)
+
+########################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# End:
