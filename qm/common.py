@@ -660,7 +660,13 @@ def load_module(name, search_path=sys.path, load_path=sys.path):
             old_python_path = sys.path[:]
             sys.path = load_path + sys.path
             # Load the module.
-            module = imp.load_module(name, file, file_name, description)
+            try:
+                module = imp.load_module(name, file, file_name, description)
+            except:
+                # Don't leave a broken module object in sys.modules.
+                if sys.modules.has_key(name):
+                    del sys.modules[name]
+                raise
             # Restore the old path.
             sys.path = old_python_path
             # Loaded successfully.  If it's contained in a package, put it
