@@ -124,7 +124,11 @@ class XMLResultReader(FileResultReader):
 
         assert node.tagName == "result"
         # Extract the outcome.
-        outcome = qm.xmlutil.get_child_text(node, "outcome").strip()
+        outcome = node.getAttribute("outcome")
+        # If the outcome doesn't exist as an attribute, fall back
+        # to the outcome child node.
+        if not outcome:
+            outcome = qm.xmlutil.get_child_text(node, "outcome").strip()
         # Extract the test ID.
         test_id = node.getAttribute("id")
         kind = node.getAttribute("kind")

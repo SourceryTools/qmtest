@@ -23,3 +23,9 @@ format.
        -- More complicated file layout containing metadata.
        -- 'Result's no longer use the standard pickling mechanism.
      -> result_class_v1-file_format_v1-pickling_format_v1.qmr
+  -- XML result file format v2.
+     -> xml_results_v2.qmr
+  -- XML result file format v3.
+       -- The 'outcome' is now provided as an attribute of the
+          'result' element.
+     -> xml_results_v3.qmr

@@ -315,11 +315,7 @@ class Result:
         element = document.createElement("result")
         element.setAttribute("id", self.GetId())
         element.setAttribute("kind", self.GetKind())
-        # Create and add an element for the outcome.
-        outcome_element = document.createElement("outcome")
-        text = document.createTextNode(str(self.GetOutcome()))
-        outcome_element.appendChild(text)
-        element.appendChild(outcome_element)
+        element.setAttribute("outcome", str(self.GetOutcome()))
         # Add a property element for each property.
         keys = self.keys()
         keys.sort()

@@ -23,12 +23,10 @@
 <!ATTLIST annotation key CDATA #REQUIRED>
 
 <!-- The result of executing a test or resource.  -->
-<!ELEMENT result (outcome, property*)>
+<!ELEMENT result property*>
 <!ATTLIST result id CDATA #REQUIRED
-                 kind (test | resource) #REQUIRED>
-
-<!-- The outcome of a test or resource.  -->
-<!ELEMENT outcome (#PCDATA)>
+                 kind (test | resource) #REQUIRED
+                 outcome (PASS | FAIL | ERROR | UNTESTED) #REQUIRED>
 
 <!-- An additional annotation to the result.  -->
 <!ELEMENT annotation (#PCDATA)>
