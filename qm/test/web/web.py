@@ -113,6 +113,18 @@ class DefaultDtmlPage(qm.web.DtmlPage):
 
 
     def FormatId(self, id, type, style="basic"):
+        """Format 'id' as HTML.
+
+        'id' -- The name of a test or resource.
+
+        'type' -- The kind of item named by 'id'.  Either 'resource',
+        'suite', or 'test'.
+
+        'style' -- The formatting style to use.  One of 'plain',
+        'basic', 'navigation', or 'tree'.
+
+        returns -- A string containing HTML to use for 'id'."""
+        
         script = "show-" + type
         request = qm.web.WebRequest(script, base=self.request, id=id)
         url = request.AsUrl()
