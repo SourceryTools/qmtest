@@ -132,7 +132,8 @@ class ExecTest(Test):
                     # the expression's value is boolean true.
                     if not value:
                         result.Fail("Expression evaluates to false.",
-                                    { "ExecTest.value" : repr(value) })
+                                    { "ExecTest.expr" : self.expression,
+                                      "ExecTest.value" : repr(value) })
             else:
                 # No expression provided; if we got this far, the test
                 # passes. 

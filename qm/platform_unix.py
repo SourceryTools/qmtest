@@ -123,27 +123,6 @@ class SignalException(RuntimeError):
 # functions
 ########################################################################
 
-def find_in_path(file_name):
-    """Look for a program in the execution path.
-
-    Searches the directories in the 'PATH' environment variable for an
-    executable named 'file_name'.
-
-    returns -- The path to the executable, or 'None' if none is
-    found."""
-
-    # Get the path, and split it into directories.
-    path = os.environ["PATH"]
-    path = string.split(path, ":")
-    # Look for the file in each directory.
-    for directory in path:
-        file_path = os.path.join(directory, file_name)
-        if os.access(file_path, os.X_OK):
-            return file_path
-    # No luck.
-    return None
-
-
 def open_in_browser(url):
     """Open a browser window and point it at 'url'.
 
@@ -153,12 +132,8 @@ def open_in_browser(url):
     url = string.replace(url, "'", r"\'")
     # Which browser to use?
     browser = common.rc.Get("browser", "netscape", "common")
-    browser_executable = find_in_path(browser)
-    if browser_executable is None:
-        raise RuntimeError, \
-              qm.error("browser error", browser_path=browser)
     # Invoke the browser.
-    os.system("%s '%s' &" % (browser_executable, url))
+    os.system("%s '%s' &" % (browser, url))
 
 
 def send_email(body_text,

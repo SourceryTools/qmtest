@@ -1926,6 +1926,12 @@ class QMTestServer(qm.web.WebServer):
         return ResourceDescriptor(self.GetDatabase(), resource_id,
                                   resource_class_name, arguments)
 
+
+    def _HandleRoot(self, request):
+        """Handle the '/' URL."""
+
+        raise qm.web.HttpRedirect, qm.web.WebRequest("/test/dir")
+        
 ########################################################################
 # initialization
 ########################################################################

@@ -796,7 +796,7 @@ class WebServer(HTTPServer):
         self.__shutdown_requested = 0
 
         self.RegisterScript("/problems.html", _handle_problems)
-        self.RegisterScript("/", _handle_root)
+        self.RegisterScript("/", self._HandleRoot)
 
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
@@ -1055,6 +1055,12 @@ class WebServer(HTTPServer):
         # Redirect to the same page but using the new session ID.
         request.SetSessionId(session.GetId())
         raise HttpRedirect(request)
+
+
+    def _HandleRoot(self, request):
+        """Handle the '/' URL."""
+        
+        raise HttpRedirect, WebRequest("/static/index.html")
 
 
 
@@ -2611,12 +2617,6 @@ def get_from_cache(request, session_id=None):
 
 # Nothing to do besdies generating the page.
 _handle_problems = DtmlPage.default_class("problems.dtml")
-
-
-def _handle_root(request):
-    """Respond to a request for the root page on this server."""
-
-    raise HttpRedirect, WebRequest("/static/index.html")
 
 
 def format_user_id(user_id):

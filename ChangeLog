@@ -1,5 +1,28 @@
 2001-12-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* standard.mk.in (all): Remove doc.
+	(doc): Rename to ...
+	(doc-all): ... this.
+	* doc/manual/Makefile.in (all): Depend on doc-all.
+	* doc/manual/test-tour.xml: Clarify.
+	* qm/platform_unix.py (find_in_path): Remove.
+	(open_in_browser): Do not use it.
+	* qm/web.py (WebServer.__init__): Point '/' at self._HandleRoot.
+	(WebServer._HandleRoot): New method.
+	(_handle_root): Remove.
+	* qm/test/result.py (Result.AsStructuredText): Sort annotations.
+	* qm/test/classes/python.py (ExecTest.Run): Give the expression
+	for a failing test.
+	* qm/test/web/web.py (QMTestServer._HandleRoot): Redirect '/' to
+	'/test/dir'.
+	* share/diagnostics/common.txt (browser error): Tidy.
+	* share/dtml/help.dtml: Arrange for the manual to appear in a
+	separate window.
+	* share/web/common.js (show_help): Do not create the toolbar.
+	* share/web/static/index.html: Remove.
+	* share/xml/class-directory.dtd (class): Add target to the list
+	of allowed class kinds.
+	
 	* configure.in (AC_OUTPUT): Do not create qm/Makefile.
 	* configure: Regenerated.
 	* scripts/qm-release (QM_INSTALL_DIR): Use an absolute path.

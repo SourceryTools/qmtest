@@ -153,19 +153,12 @@ else
 SCRIPT_EXT =
 endif
 
-all::		doc subdirs
+all::		subdirs
 
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
 	@cd $@ && make
-
-doc:		
-ifneq ($(SUBDIRS),)
-	@for subdir in $(SUBDIRS); do \
-          (cd $${subdir} && make $@); \
-        done
-endif
 
 # Generate documentation from Python sources using HappyDoc.
 ifneq ($(PYTHONDOCDIRS),)
@@ -178,7 +171,7 @@ endif
 # Generate html and print documentation from DocBook source, if it was
 # specified.
 ifeq ($(DOCUMENTATION),yes)
-  doc:		doc-html doc-print
+  doc-all:	doc-html doc-print
 
   ifneq ($(DOCBOOKMAIN),)
     doc-html:	docbook-html
@@ -253,7 +246,8 @@ ifeq ($(DOCUMENTATION),yes)
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) 
-
+else
+  doc-all:
 endif
 
 clean::
