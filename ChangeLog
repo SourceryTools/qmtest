@@ -1,3 +1,7 @@
+2001-11-08  Mark Mitchell  <mark@codesourcery.com>
+
+	* COPYING: Fix typo.
+
 2001-11-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Fix typos.
