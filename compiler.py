@@ -62,8 +62,6 @@ class TimeoutRedirectedExecutable(RedirectedExecutable):
             version = (0, 0, 0)
         # Timeouts were first supported in version 2.1.
         if version[0] > 2 or (version[0] == 2 and version[1] == 1):
-            if timeout == -2:
-                raise
             RedirectedExecutable.__init__(self, timeout)
         else:
             RedirectedExecutable.__init__(self)

@@ -1,3 +1,8 @@
+2003-09-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (TimeoutRedirectedExecutable.__init__): Remove
+	debugging code.
+
 2003-09-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (TimeoutRedirectedExecutable): New class.
