@@ -102,7 +102,7 @@ def start_server(port, address="", log_file=None):
     # FIXME.  Can we hard code less stuff here?
 
     # Path to the QMTrack web subdirectory.
-    web_directory = os.path.join(qm.get_base_directory(), "track", "web")
+    web_directory = qm.get_share_directory("web")
     # Base URL path for QMTrack stuff.
     script_base = "/track/"
 
@@ -117,6 +117,7 @@ def start_server(port, address="", log_file=None):
         ( "download-attachment", qm.track.web.handle_download_attachment ),
         ( "index", qm.track.web.index.handle_index ),
         ( "login", qm.web.handle_login ),
+        ( "logout", qm.web.handle_logout ),
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
@@ -127,10 +128,10 @@ def start_server(port, address="", log_file=None):
         ( "upload-attachment", qm.track.web.handle_upload_attachment ),
         ]:
         server.RegisterScript(script_base + name, function)
-    server.RegisterPathTranslation(script_base + "stylesheets",
-                                   os.path.join(web_directory, "stylesheets"))
-    server.RegisterPathTranslation("/images",
-                                   os.path.join(web_directory, "images"))
+    server.RegisterPathTranslation(
+        "/stylesheets", qm.get_share_directory("web", "stylesheets"))
+    server.RegisterPathTranslation(
+        "/images", qm.get_share_directory("web", "images"))
     # Register the remote command handler.
     server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 

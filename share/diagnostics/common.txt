@@ -50,6 +50,22 @@ A '<%(wrong_tag)s>' element is not allowed for field %(field)s.  Only a
 @ missing command
 You must specify a command.  Use the '--help' option to list commands.
 
+@ session expired
+Your session has expired.  Please log in again to start a new session.
+
+@ session invalid
+Your login session is invalid.  Please log in again.
+
+@ session required
+To access the page you have requested, you must log in first.
+
+@ session wrong IP
+You have attempted to use a session from a network address different
+from that from which the session originated.  A session may only be used
+from a single network address.  
+
+Please log in again to start a new session.
+
 @ xml parse error
 The XML parser encountered an error at line %(line)d, character
 %(character)d of the file %(file_name)s:

@@ -39,6 +39,7 @@
 
 import BaseHTTPServer
 import cgi
+import DocumentTemplate
 import errno
 import htmlentitydefs
 import md5
@@ -104,13 +105,23 @@ class PageInfo:
     variables.
 
     This class contains common variables and functions that are
-    available when generating all DTML files."""
+    available when generating all DTML files.
+
+    This class also has an attribute, 'default_class', which is the
+    default 'PageInfo' subclass to use when generating HTML.  By
+    default, it is initialized to 'PageInfo' itself, but applications
+    may derive a 'PageInfo' subclass and point 'default_class' to it to
+    obtain customized behavior."""
 
     html_header = ""
 
     html_footer = ""
 
     table_attributes = 'cellspacing="0" border="0" cellpadding="4"'
+
+    html_stylesheet = "/stylesheets/qm.css"
+
+    html_generator = ""
 
 
     def __init__(self, request):
@@ -159,7 +170,7 @@ class PageInfo:
             # No redirection specified, so redirect back to this page.
             redirect_request = self.request
         request = redirect_request.copy("login")
-        request["_login_url"] = redirect_request.GetUrl()
+        request["_redirect_url"] = redirect_request.GetUrl()
         # Use a POST method to submit the login form, so that passwords
         # don't appear in web logs.
         return qm.web.make_form_for_request(request, method="post") \
@@ -219,6 +230,9 @@ class PageInfo:
 
         return '<span class="userid">%s</span>' % user_id
 
+
+
+PageInfo.default_class = PageInfo
 
 
 class HttpRedirect(Exception):
@@ -308,7 +322,12 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         try:
             # Execute the script.  The script returns the HTML
             # text to return to the client.
-            script_output = self.server.ProcessScript(request)
+            try:
+                script_output = self.server.ProcessScript(request)
+            except NoSessionError, msg:
+                script_output = self.server.HandleNoSessionError(request, msg)
+            except InvalidSessionError, msg:
+                script_output = generate_login_form(request, msg)
         except HttpRedirect, location:
             # The script requested an HTTP redirect response to
             # the client.
@@ -782,6 +801,24 @@ class WebServer(HTTPServer):
         return (self.server_name, self.server_port)
 
 
+    def HandleNoSessionError(self, request, message):
+        """Handler when session is absent."""
+
+        # There's no session specified in this request.  Try to
+        # create a session for the default user.
+        try:
+            user_id = user.authenticator.AuthenticateDefaultUser()
+        except user.AuthenticationError:
+            # Couldn't get a default user session, so bail.
+            return generate_login_form(request, message)
+        # Authenticating the default user succeeded.  Create an implicit
+        # session with the default user ID.
+        session = Session(request, user_id)
+        # Redirect to the same page but using the new session ID.
+        request.SetSessionId(session.GetId())
+        raise HttpRedirect, make_url_for_request(request)
+
+
 
 class WebRequest:
     """An object representing a request from the web server.
@@ -849,18 +886,7 @@ class WebRequest:
 
         session_id = self.GetSessionId()
         if session_id is None:
-            # There's no session specified in this request.  Try to
-            # create a session for the default user.
-            try:
-                user_id = user.authenticator.AuthenticateDefaultUser()
-            except user.AuthenticationError:
-                # Couldn't get a default user session, so bail.
-                raise NoSessionError, "no sesison for request"
-            # Create an implicit session with the default user ID.
-            session = Session(self, user_id)
-            # Redirect to the same page but using the new session ID.
-            self.SetSessionId(session.GetId())
-            raise HttpRedirect, make_url_for_request(self)
+            raise NoSessionError, qm.error("session required")
         else:
             return get_session(self, session_id)
 
@@ -1051,10 +1077,10 @@ class Session:
         # Make sure the client IP address in the request matches that
         # for this session.
         if self.__client_address != request.client_address:
-            raise InvalidSessionError, "wrong client address"
+            raise InvalidSessionError, qm.error("session wrong IP")
         # Make sure the session hasn't expired.
         if self.IsExpired():
-            raise InvalidSessionError, "session expired"
+            raise InvalidSessionError, qm.error("session expired")
 
 
 
@@ -1307,7 +1333,7 @@ def get_session(request, session_id):
         session = sessions[session_id]
     except KeyError:
         # No session for this ID (note that it may have expired).
-        raise InvalidSessionError, "invalid session ID"
+        raise InvalidSessionError, qm.error("session invalid")
     # Make sure the session is valid for this request.
     session.Validate(request)
     # Update the last access time.
@@ -1331,10 +1357,10 @@ def handle_login(request, default_redirect_url="/"):
     respectively.
 
     If authentication succeeds, redirect to the URL stored in the
-    '_login_url' request field by raising an 'HttpRedirect', passing all
-    other request fields along as well.
+    '_redirect_url' request field by raising an 'HttpRedirect', passing
+    all other request fields along as well.
 
-    If '_login_url' is not specified in the request, the value of
+    If '_redirect_url' is not specified in the request, the value of
     'default_redirect_url' is used instead."""
 
     user_id = qm.user.authenticator.AuthenticateWebRequest(request)
@@ -1344,7 +1370,7 @@ def handle_login(request, default_redirect_url="/"):
 
     # The URL of the page to which to redirect on successful login is
     # stored in the request.  Extract it.
-    redirect_url = request.get("_login_url", default_redirect_url)
+    redirect_url = request.get("_redirect_url", default_redirect_url)
     # Generate a new request for that URL.  Copy other fields from the
     # old request.
     redirect_request = request.copy(redirect_url)
@@ -1352,13 +1378,68 @@ def handle_login(request, default_redirect_url="/"):
     # redirecting URL.
     del redirect_request["_login_user_name"]
     del redirect_request["_login_password"]
-    del redirect_request["_login_url"]
+    if redirect_request.has_key("_redirect_url"):
+        del redirect_request["_redirect_url"]
     # Add the ID of the new session to the request.
     redirect_request.SetSessionId(session_id)
     # Generate a URL for the redirected page.
     url = make_url_for_request(redirect_request)
     # Redirect the client to this URL.
     raise HttpRedirect, url
+
+
+def handle_logout(request, default_redirect_url="/"):
+    """Handle a logout request.
+
+    prerequisite -- 'request' must be in a valid session, which is
+    ended.
+
+    After ending the session, redirect to the URL specified by the
+    '_redirect_url' field of 'request'.  If '_redirect_url' is not
+    specified in the request, the value of 'default_redirect_url' is
+    used instead."""
+
+    # Delete the session.
+    session_id = request.GetSessionId()
+    del sessions[session_id]
+    # Construct a redirecting URL.  The target is contained in the
+    # '_redirect_url' field.
+    redirect_url = request.get("_redirect_url", default_redirect_url)
+    redirect_request = request.copy(redirect_url)
+    if redirect_request.has_key("_redirect_url"):
+        del redirect_request["_redirect_url"]
+    del redirect_request[session_id_field]
+    # Redirect to the specified URL.
+    url = make_url_for_request(redirect_request)
+    raise HttpRedirect, url
+
+
+def generate_html_from_dtml(template_name, page_info):
+    """Return HTML generated from a DTML tempate.
+
+    'template_name' -- The name of the DTML template file.
+
+    'page_info' -- A 'PageInfo' instance to use as the DTML namespace.
+
+    returns -- The generated HTML source."""
+    
+    # Construct the path to the template file.  DTML templates are
+    # stored in qm/qm/track/web/templates. 
+    template_path = os.path.join(qm.get_share_directory(), "dtml", 
+                                 template_name)
+    # Generate HTML from the template.
+    html_file = DocumentTemplate.HTMLFile(template_path)
+    return html_file(page_info)
+
+
+def generate_login_form(redirect_request, message=None):
+    """Show a form for user login.
+
+    'message' -- If not 'None', a message to display to the user."""
+
+    page_info = PageInfo.default_class(redirect_request)
+    page_info.message = message
+    return generate_html_from_dtml("login_form.dtml", page_info)
 
 
 ########################################################################

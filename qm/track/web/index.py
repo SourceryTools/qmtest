@@ -98,6 +98,7 @@ class IndexPageInfo(web.PageInfo):
 
     def MakeLogoutForm(self):
         request = qm.web.WebRequest("logout", base=self.request)
+        request["_redirect_url"] = self.request.GetUrl()
         return qm.web.make_form_for_request(request)
 
 

@@ -94,15 +94,11 @@ class DiagnosticSet:
         self.__diagnostics = {}
 
 
-    def ReadFromFile(self, *path_components):
+    def ReadFromFile(self, path):
         """Load diagnostics from a file.
 
-        'path_components' -- Path components, relative to the base QM
-        directory, to the file containing diagnostics."""
+        'path' -- Path to the file containing diagnostics."""
 
-        # Construct the path to the diagnostics file.
-        path = apply(os.path.join,
-                     ( common.get_base_directory(), ) + path_components)
         # Read the file.
         file = open(path, "r")
         contents = file.read()
@@ -183,8 +179,13 @@ diagnostic_set = DiagnosticSet()
 # initialization
 ########################################################################
 
-# Load common diagnostics.
-diagnostic_set.ReadFromFile("diagnostics.txt")
+def __initialize_module():
+    # Load common diagnostics.
+    diagnostic_file = common.get_share_directory("diagnostics", "common.txt")
+    diagnostic_set.ReadFromFile(diagnostic_file)
+
+
+__initialize_module()
 
 ########################################################################
 # Local Variables:

@@ -58,7 +58,7 @@ class ParseError(Exception):
 def make_system_id(name):
     """Construct a system ID for the file 'name'."""
 
-    return "http://www.software-carpentry.com/qm/dtds/%s" % name
+    return "http://www.software-carpentry.com/qm/xml/%s" % name
 
 
 def load_xml_file(path):
@@ -75,8 +75,8 @@ def load_xml_file(path):
         # FIXME.  Any errors that need to be handled here?
         raise
     # Construct the path to the DTD catalog.
-    catalog_path = os.path.join(qm.get_base_directory(),
-                                "dtds", "CATALOG")
+    catalog_path = os.path.join(qm.get_share_directory(),
+                                "xml", "CATALOG")
     # Create a validating DOM reader.
     reader = xml.dom.ext.reader.Sax.Reader(validate=1, catName=catalog_path)
     try:

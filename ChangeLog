@@ -1,3 +1,88 @@
+2001-03-26  Alex Samuel  <samuel@codesourcery.com>
+
+	Reorganize data files into share directory.
+
+	* qm/xmlutil.py (make_system_id): Adjust.
+	(load_xml_file): Use get_share_directory.
+	* qm/web.py (PageInfo.html_stylesheet): New attribute.
+	(PageInfo.html_generator): Likewise.
+	Rename _login_url request field to _redirect_url throughout.
+	(PageInfo.default_class): Set it.
+	(WebRequestHandler.__HandleScriptRequest): Catch NoSessionError
+	and InvalidSessionError.
+	(WebServer.HandleNoSessionError): New method.
+	(WebRequest.GetSession): Raise NoSessionError.
+	(Session.Validate): Raise InvalidSessionError.
+	(get_session): Likewise.
+	(handle_logout): New function.
+	(generate_html_from_dtml): Likewise.
+	(generate_login_form): Likewise.
+	* qm/diagnostic.py (DiagnosticSet.ReadFromFile): Change path
+	parameter. 
+	(__initialize_module): New function.  Call it.
+	* qm/diagnostics.txt: Remove.
+	* qm/common.py (get_base_directory): Add components parameter.
+	(get_share_directory): New function.
+	* qm/track/web/web.py (PageInfo.html_stylesheet): Remove.
+	(__initialize_module): New function.  Call it.
+	(generate_html_from_dtml): Use generioc generate_html_from_path.
+	* qm/track/web/index.py (IndexPageInfo.MakeLogoutForm): Set
+	_redirect_url. 
+	* qm/track/server.py (start_server): Use get_share_directory.
+	Register logout.  
+	* qm/track/config.py (__initialize_module): New function.  Call
+	it. 
+	* qm/test/qmtest.in: Use get_share_directory.
+
+	* qm/dtds/CATALOG: Remove.
+	* qm/dtds/issue.dtd: Likewise.
+	* qm/dtds/result.dtd: Likewise.
+	* qm/dtds/test.dtd: Likewise.
+	* qm/dtds/user.dtd: Likewise.
+	* qm/test/diagnostics.txt: Likewise.
+	* qm/track/diagnostics.txt: Likewise.
+	* qm/track/web/images/clear.gif: Likewise.
+	* qm/track/web/images/sc-logo.png: Likewise.
+	* qm/track/web/stylesheets/qmtrack.css: Likewise.
+	* qm/track/web/templates/error.dtml: Likewise.
+	* qm/track/web/templates/history.dtml: Likewise.
+	* qm/track/web/templates/index.dtml: Likewise.
+	* qm/track/web/templates/query.dtml: Likewise.
+	* qm/track/web/templates/show.dtml: Likewise.
+	* qm/track/web/templates/summary.dtml: Likewise.
+	* qm/track/web/templates/upload-attachment.dtml: Likewise.
+	* qm/dtds/: Remove directory.
+	* qm/track/web/images/: Likewise.
+	* qm/track/web/templates/: Likewise.
+	
+	* share/: New directory.
+	* share/diagnostics/: Likewise.
+	* share/dtml/: Likewise.
+	* share/dtml/track/: Likewise.
+	* share/web/: Likewise.
+	* share/web/images/: Likewise.
+	* share/web/stylesheets/: Likewise.
+	* share/xml/: Likewise.
+	* share/diagnostics/common.txt: New file.
+	* share/diagnostics/test.txt: Likewise.
+	* share/diagnostics/track.txt: Likewise.
+	* share/dtml/login_form.dtml: Likewise.
+	* share/dtml/track/error.dtml: Likewise.
+	* share/dtml/track/history.dtml: Likewise.
+	* share/dtml/track/index.dtml: Likewise.
+	* share/dtml/track/query.dtml: Likewise.
+	* share/dtml/track/show.dtml: Likewise.
+	* share/dtml/track/summary.dtml: Likewise.
+	* share/dtml/track/upload-attachment.dtml: Likewise.
+	* share/web/images/clear.gif: Likewise.
+	* share/web/images/sc-logo.png: Likewise.
+	* share/web/stylesheets/qm.css: Likewise.
+	* share/xml/CATALOG: Likewise.
+	* share/xml/issue.dtd: Likewise.
+	* share/xml/result.dtd: Likewise.
+	* share/xml/test.dtd: Likewise.
+	* share/xml/user.dtd: Likewise.
+	
 2001-03-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py (load_results): Use load_xml_file.

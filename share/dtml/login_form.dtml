@@ -1,0 +1,44 @@
+<dtml-comment><!--
+
+  File:   login_form.dtml
+  Author: Alex Samuel
+  Date:   2001-03-21
+
+  Contents:
+    User login page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Login')">
+ <dtml-var expr="GenerateStartBody()">
+ <table border="0" cellspacing="8" cellpadding="4">
+  <dtml-if expr="message">
+   <tr bgcolor="#fff0f8">
+    <td><b><dtml-var expr="message"></b></td>
+   </tr>
+  </dtml-if>
+  <tr>
+   <td>
+    <dtml-var expr="MakeLoginForm()">
+   </td>
+  </tr>
+ </table>
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

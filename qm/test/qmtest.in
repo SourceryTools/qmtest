@@ -56,7 +56,8 @@ def print_error_message(message):
 ########################################################################
 
 # Load QMTest diagnostics.
-qm.diagnostic.diagnostic_set.ReadFromFile("test", "diagnostics.txt")
+diagnostic_file = qm.get_share_directory("diagnostics", "test.txt")
+qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
 
 # Load RC options.
 qm.rc.Load("test")

@@ -72,8 +72,6 @@ class PageInfo(qm.web.PageInfo):
 
     html_generator = "QMTrack"
 
-    html_stylesheet = "stylesheets/qmtrack.css"
-
 
     def GetName(self):
         """Return the name of the application."""
@@ -244,14 +242,8 @@ def generate_html_from_dtml(template_name, page_info):
 
     returns -- The generated HTML source."""
     
-    # Construct the path to the template file.  DTML templates are
-    # stored in qm/qm/track/web/templates. 
-    template_path = os.path.join(qm.get_base_directory(),
-                                 "track", "web", "templates",
-                                 template_name)
-    # Generate HTML from the template.
-    html_file = DocumentTemplate.HTMLFile(template_path)
-    return html_file(page_info)
+    template_path = os.path.join("track", template_name)
+    return qm.web.generate_html_from_dtml(template_path, page_info)
 
 
 def generate_error_page(request, error_text):
@@ -278,10 +270,20 @@ def make_url_for_attachment(field, attachment):
     return qm.web.make_url_for_request(request)
 
 
-# The generic 'AttachmentField' implementation needs to know about our
-# URLs for downloading attachments.
-qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
+########################################################################
+# initialization
+########################################################################
 
+def __initialize_module():
+    # The generic 'AttachmentField' implementation needs to know about
+    # our URLs for downloading attachments.
+    qm.fields.AttachmentField.MakeDownloadUrl = make_url_for_attachment
+    # Use our 'PageInfo' subclass even when generating generic
+    # (non-QMTest) pages.
+    qm.web.PageInfo.default_class = PageInfo
+
+
+__initialize_module()
 
 ########################################################################
 # Local Variables:

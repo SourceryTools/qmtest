@@ -487,8 +487,13 @@ def __get_configuration_path(path):
 # initialization
 ########################################################################
 
-# Load QMTrack diagnostics.
-qm.diagnostic.diagnostic_set.ReadFromFile("track", "diagnostics.txt")
+def __initialize_module():
+    # Load QMTrack diagnostics.
+    diagnostic_file = qm.get_share_directory("diagnostics", "track.txt")
+    qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
+
+
+__initialize_module()
 
 ########################################################################
 # Local Variables:
