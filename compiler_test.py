@@ -343,7 +343,7 @@ class CompilerTest(Test, CompilerBase):
         # Compute the command line for the executable.
         interpreter = context.get("CompilerTest.interpreter")
         if interpreter:
-            arguments = [interpreter, path]
+            arguments = interpreter.split() + [path]
         else:
             arguments = [path]
         # Compute the environment.
