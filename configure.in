@@ -108,7 +108,11 @@ AC_MSG_RESULT($PYTHON_PREFIX)
 AC_SUBST(PYTHON_PREFIX)
 
 AC_MSG_CHECKING(Python platform)
-PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()"`
+PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()" 2>/dev/null`
+if test $? -ne 0; then
+  AC_MSG_RESULT(could not be determined)
+  AC_MSG_ERROR(Python distutils module is not installed)
+fi
 AC_MSG_RESULT($PYTHON_PLATFORM)
 AC_SUBST(PYTHON_PLATFORM)
 
