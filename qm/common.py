@@ -94,6 +94,87 @@ class UserError(Exception):
 # classes
 ########################################################################
 
+class Enumeral:
+    """A value in an enumeration.
+
+    An enumeral represents one value of an enumeration, a one-to-one
+    mapping between string names and values.  Either the string or
+    numerical value may be used."""
+
+    def __init__(self, enumeration, value):
+        """Create a new enumeral.
+
+        'enumeration' -- A mapping from names to values representing the
+        enumeration of which this enumeral is a value.
+
+        'value' -- The enumeral value.  Must be a member of
+        'enumeration'."""
+
+        self.__enumeration = enumeration
+        self.__Set(value)
+
+
+    def __repr__(self):
+        return "<enumral %s %d>" % (self.__GetName(), self.__value)
+
+
+    def __str__(self):
+        return self.__GetName()
+
+
+    def __cmp__(self, other):
+        try:
+            other_as_int = int(other)
+        except ValueError:
+            return cmp(self.__GetName(), other)
+        else:
+            return cmp(self.__value, other_as_int)
+
+
+    def __hash__(self):
+        return hash(self.__value)
+
+
+    def __nonzero__(self):
+        return 1
+
+
+    def __int__(self):
+        return self.__value
+
+
+    def GetEnumeration(self):
+        """Return a map of the enumeration of which this is a value."""
+
+        return self.__enumeration
+
+
+    # Helper methods.
+
+    def __GetName(self):
+        """Return the string representation."""
+
+        for name, value in self.__enumeration.items():
+            if value == self.__value:
+                return name
+
+
+    def __Set(self, value):
+        """Set the enumeral value.
+
+        'value' -- Either a string or an integer, represeting a value in
+        the enumeration."""
+
+        try:
+            self.__value = self.__enumeration[value]
+        except KeyError:
+            if value in self.__enumeration.values():
+                self.__value = value
+            else:
+                raise ValueError, "invalid enumeral value: %s" % repr(value)
+
+
+
 class FileSystemMutex:
     """A mutual exclusion lock residing in the file system."""
 

@@ -65,6 +65,7 @@ SQL-based implementation of the issue database.
 ########################################################################
 
 from   issue import *
+import issue_class
 import idb
 import parser
 import qm.fields
@@ -264,11 +265,13 @@ class SqlIdb(idb.IdbBase):
                 # Build an 'Issue' object.
                 issue = self.__BuildIssueFromRow(icl, row)
                 # Invoke get triggers on it.
-                result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
-                # Keep issues that pass the triggers.
-                if result:
+                try:
+                    self._IdbBase__InvokeGetTriggers(issue)
+                except idb.TriggerRejectError:
+                    pass
+                else:
+                    # Keep issues that pass the triggers.
                     issues.append(issue)
-                # FIXME: Do something with outcomes.
 
         return issues
 
@@ -342,13 +345,13 @@ class SqlIdb(idb.IdbBase):
         # Found it; construct the issue.
         issue = self.__BuildIssueFromRow(found_in_issue_class, result)
         # Invoke get triggers.
-        trigger_result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
-        # Check the trigger result.
-        if not trigger_result:
-            # The trigger vetoed the retrieval, so behave as if the
+        try:
+            self._IdbBase__InvokeGetTriggers(issue)
+        except idb.TriggerReject:
+            # The trigger rejected the retrieval, so behave as if the
             # issue was nout found.
             raise KeyError, "no revision with IID '%s' found" % iid
-        # FIXME: Do something with outcomes.
+
         # All done.
         return issue
 
@@ -400,11 +403,14 @@ class SqlIdb(idb.IdbBase):
         for row in rows:
             issue = self.__BuildIssueFromRow(found_in_issue_class, row)
             # Invoke get triggers.
-            trigger_result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
-            # Keep the issue only if the trigger passed it.
-            if trigger_result:
+            try:
+                self._IdbBase__InvokeGetTriggers(issue)
+            except idb.TriggerRejectError:
+                pass
+            else:
+                # Keep the issue only if the trigger passed it.
                 issues.append(issue)
-            # FIXME: Do something with outcomes.
+
         return issues
 
 
@@ -530,13 +536,7 @@ class SqlIdb(idb.IdbBase):
         value if it was vetoed by a trigger."""
 
         # Invoke preupdate triggers.
-        result, outcomes = \
-                self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
-        # FIXME: Do something with outcomes.
-        # Did a trigger veto the update?
-        if not result:
-            # Yes; bail.
-            return 0
+        self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
 
         # The name of the table containing this class.
         table_name = self.__GetTableName(issue_class)
@@ -563,9 +563,8 @@ class SqlIdb(idb.IdbBase):
         del cursor
 
         # Invoke postupdate triggers.
-        outcomes = self._IdbBase__InvokePostupdateTriggers(issue,
-                                                           previous_issue)
-        # FIXME: Do something with outcomes.
+        self._IdbBase__InvokePostupdateTriggers(issue, previous_issue)
+
         return 1
 
 
@@ -1184,22 +1183,6 @@ def unescape_for_sql(s):
 
     s = string.replace(s, "\r", "\n")
     return s
-
-
-def remap (t): 
-  import types
-  if type(t) == types.IntType:
-    if token.ISNONTERMINAL(t):
-      return symbol.sym_name[t]
-    else:
-      return token.tok_name[t]
-  elif type(t) == types.TupleType:
-    return pprint_ast (t)
-  else:
-    return t
-
-def pprint_ast (t):
-  return map (remap, t)
 
 
 ########################################################################

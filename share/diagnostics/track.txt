@@ -116,6 +116,24 @@ A new user account database has been created in %(userdb)s, containing a
 single guest user only.  Edit this file to add additional user accounts,
 or to disable the guest account.
 
+@ no changes
+You have specified no changes to the issue.  A new revision has not been
+created. 
+
+@ no transition
+The transition from state "%(starting_state_name)s" to state
+"%(ending_state_name)s" is not allowed.
+
+@ not initial state
+A new issue must have the initial state "%(initial_state_name)s".
+
+@ transition condition failed
+The transition from state "%(starting_state_name)s" to state
+"%(ending_state_name)s" is not permitted.  This condition %(name)s,
+required for the transition, was not satisfied:
+
+  '%(expression)s'
+
 @ xml file unknown class
 The issue file contains issues of unknown issue class %(class_name)s.
 

@@ -44,6 +44,8 @@ Persistance is via standard Python pickling.
 ########################################################################
 
 import cPickle
+import idb
+import issue_class
 import os
 import qm
 import types
@@ -230,28 +232,28 @@ class MemoryIdb(qm.track.IdbBase):
         return map(lambda issue: issue[-1].Copy(), matching_issues)
 
     
-    def GetIssue(self, iid, revision=None, issue_class=None):
+    def GetIssue(self, iid, revision=None, icl=None):
         """Return the current revision of issue 'iid'.
 
         'revision' -- The revision number to retrieve.  If 'None', the
         current revision is returned.
 
-        'issue_class' -- If 'None', all issue classes are searched for
-        'iid'.  If an issue class name or 'IssueClass' instance are
-        given, only that issue class is used.
+        'icl' -- If 'None', all issue classes are searched for 'iid'.
+        If an issue class name or 'IssueClass' instance are given,
+        only that issue class is used.
 
         raises -- 'KeyError' if an issue with 'iid' cannot be found."""
 
         # If 'issue_class' is the name of an issue class, look up the
         # class itself.
         if isinstance(issue_class, types.StringType):
-            issue_class = self.__issue_classes[issue_class]
+            icl = self.__issue_classes[icl]
         # Look up the list of revisions of the issue.
         revisions = self.__issues[iid]
         # If an issue class was provided, make sure the issue is in
         # that class.  Otherwise, consider the issue not found.
-        if issue_class != None \
-           and revisions[0].GetClass() != issue_class:
+        if icl != None \
+           and revisions[0].GetClass() != icl:
             raise KeyError, "issue not found in specified issue class"
         if revision == None:
             # The current revision was requested; it's at the end of
@@ -261,14 +263,9 @@ class MemoryIdb(qm.track.IdbBase):
             # Index into the list to retrieve the requested revision.
             issue = revisions[revision]
 
-        # Found an issue.  Inoke get triggers.
-        result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
-        # Did the trigger veto the get?
-        if not result:
-            # The trigger vetoed the retrieval, so behave as if the
-            # issue was nout found.
-            raise KeyError, "no revision with IID '%s' found" % iid
-        # FIXME: Do something with outcomes.
+        # Found an issue.  Invoke get triggers.
+        self._IdbBase__InvokeGetTriggers(issue)
+
         # All done.
         return issue.Copy()
 
@@ -299,12 +296,15 @@ class MemoryIdb(qm.track.IdbBase):
         # Invoke get triggers on each resulting revision.
         issues = []
         for issue in revisions:
-            result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
-            # Keep the revision only if the trigger passed it.
-            if result:
+            try:
+                self._IdbBase__InvokeGetTriggers(issue)
+            except idb.TriggerRejectError:
+                pass
+            else:
+                # Keep the revision only if the trigger passed it.
                 issues.append(issue.Copy())
-            # FIXME: Do something with outcomes.
-        # Return the full list of revisions.
+
+        # Return the list of revisions that were accepted.
         return issues
 
 
@@ -338,12 +338,7 @@ class MemoryIdb(qm.track.IdbBase):
             previous_issue = None
 
         # Invoke preupdate triggers.
-        result, outcomes = \
-                self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
-        # FIXME: Do something with outcomes.
-        # Did a trigger veto the update?
-        if not result:
-            return 0
+        self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
 
         if revisions != None:
             # This is not the first revision of the issue.  Append
@@ -355,9 +350,8 @@ class MemoryIdb(qm.track.IdbBase):
             self.__issues[iid] = [issue]
 
         # Invoke postupdate triggers.
-        outcomes = self._IdbBase__InvokePostupdateTriggers(issue,
-                                                           previous_issue)
-        # FIXME: Do something with outcomes.
+        self._IdbBase__InvokePostupdateTriggers(issue, previous_issue)
+
         return 1
 
 
@@ -366,4 +360,5 @@ class MemoryIdb(qm.track.IdbBase):
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

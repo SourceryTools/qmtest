@@ -43,6 +43,7 @@ import qm.track.cmdline
 import qm.track.config
 import qm.track.web
 import qm.track.web.index
+import qm.track.web.issue_class
 import qm.track.web.query
 import qm.track.web.show
 import qm.track.web.summary
@@ -123,6 +124,7 @@ def start_server(port, address="", log_file=None):
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
+        ( "show-issue-class", qm.track.web.issue_class.handle_show ),
         ( "shutdown", handle_shutdown ),
         ( "submit", qm.track.web.show.handle_submit ),
         ( "summary", qm.track.web.summary.handle_summary ),

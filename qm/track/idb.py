@@ -7,7 +7,7 @@
 # Contents:
 #   Generic issue database (IDB) code.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2000, 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,101 +36,39 @@
 ########################################################################
 
 import cPickle
-import rexec
 import qm
-import issue
+import qm.track.issue
 import issue_class
+from   issue_class import TriggerResult
 import os
 import qm.fields
 import string
 import types
 
 ########################################################################
-# classes
+# exceptions
 ########################################################################
 
-class Trigger:
-    """Base class for triggers.
+class TriggerRejectError(RuntimeError):
+    """An exception indicating that a trigger has rejected an operation.
 
-    Triggers are represented by instances of subclasses of this
-    class.  Each subclass must override the '__call__()' method to
-    perform the trigger action and return an outcome."""
+    This exception is thrown when a trigger was invoked and returned a
+    'REJECT' outcome while proccessing a read or write operation on an
+    issue database.
 
-    def __init__(self, name):
-        """Create a new trigger instance."""
-
-        self.__name = name
-
-
-    def GetName(self):
-        """Return the name of this trigger instance."""
-
-        return self.__name
-
-
-    def __call__(self, issue, previous_issue):
-        """Invoke the trigger.
-
-        'issue' -- An 'Issue' instance.  For a "get" trigger, the
-         issue being retrieved.  For update triggers, the state of the
-         issue as it will be or is after the update.
-
-        'previous_issue' -- An 'Issue' instance.  For a "get" trigger,
-        'None'.  For update triggers, the state of the issue before
-        the update.
-
-        returns -- A 'TriggerOutcome' object.  The result is ignored
-        for postupdate triggers."""
-
-        # This function should be overridden by derived classes.
-        raise NotImplementedError, "__call__ method must be overridden"
-
-
-
-class TriggerOutcome:
-    """The outcome of invoking a trigger."""
-
-    def __init__(self, trigger, result, message=None):
-        """Create a new outcome instance.
-
-        'trigger' -- The 'Trigger' subclass instance of the trigger
-        that created this outcome.
-
-        'result' -- A boolean value indicating the result of the
-        trigger.  A false value indicates a veto of the current
-        operation (ignored for postupdate triggers).
-
-        'message' -- A string describing the trigger's action or
-        decision in structured text."""
-        
-        self.__trigger_name = trigger.GetName()
-        self.__result = result
-        self.__message = message
+    The exception argument is a 'TriggerResult' object."""
 
 
     def GetResult(self):
-        """Return the result of this trigger action.
+        """Return the accompanying trigger result."""
 
-        A false value indicates the operation was vetoed by the
-        trigger.""" 
-
-        return self.__result
+        return self.args[0]
 
 
-    def GetMessage(self):
-        """Return a message describing the outcome.
 
-        returns -- A string containing structured text, or 'None'."""
-
-        return self.__message
-
-
-    def GetTriggerName(self):
-        """Return the name of the trigger that created this outcome."""
-        
-        return self.__trigger_name
-
-
+########################################################################
+# classes
+########################################################################
 
 class IdbBase:
     """Base class for IDB implementations."""
@@ -154,12 +92,6 @@ class IdbBase:
                     os.mkdir(path)
             attachment_path = self.__GetAttachmentPath("")
             os.mkdir(attachment_path)
-        # Initialize trigger lists.
-        self.__triggers = {
-            "get" : [],
-            "preupdate" : [],
-            "postupdate" : []
-            }
 
         if create_idb:
             # Start numbering attachments from zero
@@ -222,53 +154,6 @@ class IdbBase:
         return os.stat(path)[6]
 
 
-    def RegisterTrigger(self, type, trigger):
-        """Register a trigger.
-
-        'type' -- The type is a string indicating the trigger type.
-
-           * '"get"' triggers are invoked on issue records that are
-             retrieved or returned as query results.  
-
-           * '"preupdate"' triggers are invoked before an issue is
-             updated.  
-
-           * '"postupdate"' triggers are invoked after an issue is
-             updated.  
-
-        'trigger' -- The trigger, a callable object.  The trigger
-        takes two arguments, both instances of 'IssueRecord'.
-
-        The same trigger may be registered more than once for each
-        type, or for multiple types."""
-
-        trigger_list = self.__GetTriggerListForType(type)
-        trigger_list.append(trigger)
-
-
-    def UnregisterTrigger(self, type, trigger):
-        """Unregister a trigger.
-
-        'type' -- If 'None', all instances of 'trigger' are
-        unregistered.  Otherwise, only instances matching 'type' are
-        unregistered.
-
-        'trigger' -- The trigger to unregister."""
-
-        trigger_list = self.__GetTriggerListForType(type)
-        try:
-            trigger_list.remove(trigger)
-        except ValueError:
-            raise ValueError, "trigger was not registered"
-
-
-    def GetTriggers(self, type):
-        """Return a sequence registered triggers of type 'type'."""
-
-        # Copy the list, so callers don't fool around with it.
-        return self.__GetTriggerListForType(type)[:]
-
-
     def GetIssues(self):
         """Return a list of all the issues.
 
@@ -289,67 +174,17 @@ class IdbBase:
         query issues.  Only issues of that class will be queried.  
         
         returns -- This function returns a list of issues that match a
-        query.
+        query."""
 
-        raises -- Any error that can be raised by the 'rexec' function."""
-
-        self.results = [ ]
+        results = [ ]
         for issue in self.GetIssues():
-            query_env = rexec.RExec()
-            # Import string operations so that they may be used in
-            # a query.
-            query_env.r_exec("import string");
-            c = issue.GetClass()
-
             # We should only do the query if the issue is of the correct
             # class.
-            if c.GetName() == issue_class_name:
-                # Set up the execution environment for the expression.
-                for field in c.GetFields():
-                    # Queries aren't supported on attachment fields;
-                    # skip those.
-                    if isinstance(field, qm.fields.AttachmentField) \
-                       or (isinstance(field, qm.fields.SetField) \
-                           and isinstance(field.GetContainedField(),
-                                          qm.fields.AttachmentField)):
-                        continue
-                    field_name = field.GetName()
-                    # Set each field to be its current value in the issue.
-                    field_value = issue.GetField(field_name)
-                    query_env.r_exec("%s = %s"
-                                     % (field_name, repr(field_value)))
-                    # We have to check to see if this class is an
-                    # enumeration.  If it is, grab the mapping and use
-                    # that.  Alternately, it might be a set of
-                    # enumerations, in which case we need to fish
-                    # into the set to get the mapping of each thing
-                    # that could be in the set.
-                    enum_type = qm.fields.EnumerationField
-                    enum = None
-                    if not isinstance(field, enum_type):
-                        try:
-                            contained = field.GetContainedField()
-                            if isinstance(contained, enum_type):
-                                enum = contained.GetEnumeration()
-                        except:
-                            pass
-                    else:
-                        enum = field.GetEnumeration()
-
-                    # Set all the enumerals to be their value.
-                    if enum != None:
-                        for key, value in enum.items():
-                            query_env.r_exec("%s = %d" % (str(key),
-                                                          int(value)))
-
-                # Execute the expression.  If it's true, add this issue to
-                # the results to be printed.  For exceptions that are raised,
-                # we don't catch them; the calling function must handle
-                # the errors.  We might want to change this in the future.
-                if query_env.r_eval(query_str):
-                    self.results.append(issue)
-                
-        return self.results
+            if issue.GetClass().GetName() == issue_class_name \
+               and qm.track.issue.eval_expression(query_str, issue):
+                results.append(issue)
+                    
+        return results
 
         
     # Functions for derived classes.
@@ -361,67 +196,66 @@ class IdbBase:
     
 
     def __InvokeGetTriggers(self, issue):
+        """Run "get" triggers on 'issue'.
 
-        # Retrieve all the get triggers.
-        trigger_list = self.__GetTriggerListForType("get")
+        Invokes the 'Get' method of any triggers registered in the issue
+        class of 'issue'.
 
-        # For each issue, we'll construct a list of trigger
-        # outcomes. 
-        outcomes = []
+        raises -- 'TriggerRejectError' if a trigger rejects the get
+        operation."""
+
+        # Invoke all triggers for this issue class.
+        trigger_list = issue.GetClass().GetTriggers()
         for trigger in trigger_list:
             # Invoke the trigger.  
-            outcome = trigger(issue, None)
-            outcomes.append(outcome)
-            if not outcome.GetResult():
-                # The trigger vetoed this issue.  Stop processing the
+            result = trigger.Get(issue)
+            if result.GetOutcome() == TriggerResult.REJECT:
+                # The trigger rejected this issue.  Stop processing the
                 # issue.
-                return (0, outcomes)
-
-        return (1, outcomes)
+                raise TriggerRejectError, result
             
 
     def __InvokePreupdateTriggers(self, issue, previous_issue):
+        """Run "preupdate" triggers for an issue update.
 
-        # Retrieve all the get triggers.
-        trigger_list = self.__GetTriggerListForType("preupdate")
-        outcomes = []
+        Invokes the 'Preupdate' method of any triggers registered in the
+        issue class of 'issue'.
 
+        raises -- 'TriggerRejectError' if a trigger rejects the get
+        operation.
+
+        'issue' -- The issue after the update.
+
+        'previous_issue' -- The previous revision of the same issue,
+        before the update."""
+
+        # Invoke all triggers for this issue class.
+        trigger_list = issue.GetClass().GetTriggers()
         for trigger in trigger_list:
             # Invoke the trigger.
-            outcome = trigger(issue, previous_issue)
-            outcomes.append(outcome)
-            if not outcome.GetResult():
+            result = trigger.Preupdate(issue, previous_issue)
+            if result.GetOutcome() == TriggerResult.REJECT:
                 # The trigger vetoed the update.  Return immediately
                 # without invoking further triggers.
-                return (0, outcomes)
-
-        return (1, outcomes)
+                raise TriggerRejectError, result
 
 
     def __InvokePostupdateTriggers(self, issue, previous_issue):
+        """Run "postupdate" triggers for an issue update.
 
-        trigger_list = self.__GetTriggerListForType("postupdate")
-        outcomes = []
+        Invokes the 'Postupdate' method of any triggers registered in
+        the issue class of 'issue'.
 
+        'issue' -- The issue after the update.
+
+        'previous_issue' -- The previous revision of the same issue,
+        before the update."""
+
+        # Invoke all triggers for this issue class.
+        trigger_list = issue.GetClass().GetTriggers()
         for trigger in trigger_list:
             # Invoke the trigger.
-            outcome = trigger(issue, previous_issue)
-            outcomes.append(outcome)
-
-        return outcomes
-
-
-    # Helper functions.
-
-    def __GetTriggerListForType(self, type):
-        """Return the list of triggers of 'type'.
-
-        raises -- 'ValueError' if 'type' is not a valid type."""
-
-        try:
-            return self.__triggers[type]
-        except KeyError:
-            raise ValueError, "invalid trigger type: %s" % type
+            trigger.Postupdate(issue, previous_issue)
 
 
 

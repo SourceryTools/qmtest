@@ -1238,6 +1238,7 @@ def parse_url_query(url):
         script_url = url
         fields = {}
 
+    script_url = urllib.unquote(script_url)
     return (script_url, fields)
 
 
@@ -1770,7 +1771,12 @@ def make_javascript_string(text):
     text = string.replace(text, "'", r"\'")
     text = string.replace(text, "\"", r'\"')
     text = string.replace(text, "\n", r"\n")
+    # Escape less-than signs so browsers don't look for HTML tags
+    # inside the literal. 
     text = string.replace(text, "<", r"\074")
+    # Escape forward slashes since some browsers mistake them for regex
+    # replace syntax.
+    text = string.replace(text, "/", r"\057")
     return "'" + text + "'"
 
 

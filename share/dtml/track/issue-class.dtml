@@ -1,0 +1,129 @@
+<dtml-comment><!--
+
+  File:   issue-class.dtml
+  Author: Alex Samuel
+  Date:   2001-05-02
+
+  Contents:
+    Document template for page for viewing and editing an issue class
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Issue Class')">
+ <dtml-var expr="GenerateStartBody()">
+
+  <form name="form">
+
+  <table border="0" 
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tr>
+    <td colspan="2">
+     <h3>
+      Issue Class <dtml-var expr="issue_class.GetTitle()">
+     </h3>
+
+     <p><font size="-1">Refer to this issue class as 
+     <tt><dtml-var expr="issue_class.GetName()"></tt> in Python
+     expressions.</font></p>
+    </td>
+   </tr>
+
+   <tr class="heading">
+    <td colspan="2">
+     <dtml-var expr="FormatStructuredText(issue_class.GetDescription())">     
+    </td>
+   </tr>
+
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr class="heading">
+    <td colspan="2">
+     <b>Fields</b>
+    </td>
+   </tr>
+
+   <dtml-in expr="issue_class.GetFields()">
+   <dtml-let field=sequence-item>
+
+    <tr class="field" valign="top">
+     <td>
+      <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
+      <dtml-var expr="FormatStructuredText(field.GetDescription())">
+     </td>     
+
+     <td>
+      <dtml-var expr="FormatStructuredText(field.GetTypeDescription())">
+
+      <dtml-comment><!--
+      <dtml-if expr="field.HasDefaultValue()">
+       <p>
+        The default value is 
+        <dtml-var expr="field.FormatValueAsHtml(field.GetDefaultValue(), 'full')">.
+       </p>
+      <dtml-else>
+       <p>No default value.</p>
+      </dtml-if>
+      --></dtml-comment>
+
+      <ul>
+       <dtml-in expr="field.GetAttributeNames()">
+       <dtml-let name=sequence-item>
+        <dtml-if expr="name not in ['name', 'title', 'description']">
+         <li>
+          <dtml-var expr="name"> = 
+          <dtml-var expr="_.str(field.GetAttribute(name))">
+         </li>
+        </dtml-if>
+       </dtml-let>
+       </dtml-in>
+      </ul>
+     </td>
+    </tr> 
+
+   </dtml-let>
+   </dtml-in>
+
+   <tr><td colspan="2">&nbsp;</td></tr>
+
+   <tr class="heading">
+    <td colspan="2">
+     <b>Triggers</b>
+    </td>
+   </tr>
+
+   <dtml-in expr="issue_class.GetTriggers()">
+   <dtml-let trigger=sequence-item>
+
+    <tr class="field" valign="top">
+     <td colspan="2">
+      <b><dtml-var expr="trigger.GetName()"></b>
+     </td>
+    </tr>
+
+   </dtml-let>
+   </dtml-in>   
+  </table>
+
+  </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

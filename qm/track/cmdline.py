@@ -39,13 +39,14 @@ import config
 import issue
 import os
 import os.path
-import sys
-import rexec
 import qm
-import qm.track
-import qm.fields
 import qm.cmdline
+import qm.fields
+import qm.structured_text
+import qm.track
+import rexec
 import string
+import sys
 
 ########################################################################
 # classes
@@ -864,10 +865,12 @@ class Command:
             qm.track.close_idb()
 
         # Print a helpful message.
-        print qm.warning("new idb message",
-                         path=idb_path,
-                         envvar=qm.track.state["idb_env_var"],
-                         userdb=os.path.join(idb_path, "users.xml"))
+        message = qm.warning("new idb message",
+                             path=idb_path,
+                             envvar=qm.track.state["idb_env_var"],
+                             userdb=os.path.join(idb_path, "users.xml"))
+        message = qm.structured_text.to_text(message)
+        output.write(message + "\n")
 
 
     def __PerformDestroy(self, output):

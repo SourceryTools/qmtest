@@ -32,9 +32,16 @@
        (<dtml-var expr="issue.GetClass().GetTitle()">)
       </dtml-if>
      </font></b>
-     <dtml-if expr="field_errors != {}">
+     <dtml-if expr="errors != {}">
       <p>Your issue submission contained errors.  Please correct them and
       resubmit.</p>
+      <dtml-if expr="errors.has_key('_issue')">
+       <p>Your issue submission was rejected for the following reason:<br>
+        <span class="error">
+         <dtml-var expr="errors['_issue']">
+        </span>
+       </p>
+      </dtml-if>
      </dtml-if>
     </td>
     <td align="right">
@@ -46,7 +53,7 @@
        <dtml-var expr="MakeUrlButton('Show History', MakeHistoryUrl(show=1))">
       </dtml-if>
       <dtml-if expr="style == 'full' or style == 'history'">
-       <dtml-var expr="MakeUrlButton('Edit Issue', MakeEditUrl())">
+       <dtml-var expr="MakeUrlButton('Edit Issue...', MakeEditUrl())">
       <dtml-else>
        &nbsp;
       </dtml-if>
@@ -93,7 +100,7 @@
         Show a row with the field label and a rendering of its value.
       --></dtml-comment>
       <tr valign="top"
-          <dtml-if expr="field_errors.has_key(field_name)">
+          <dtml-if expr="errors.has_key(field_name)">
           class="field-error"
           <dtml-else>
           class="field"
@@ -110,10 +117,10 @@
             If there's an error message associated with this issue,
             display it on the next row.
           --></dtml-comment>
-          <dtml-if expr="field_errors.has_key(field_name)">
+          <dtml-if expr="errors.has_key(field_name)">
            <br>
            <span class="error">
-            <dtml-var expr="field_errors[field_name]">
+            <dtml-var expr="errors[field_name]">
            </span>
           </dtml-if>
          </td><td>
@@ -132,7 +139,11 @@
     End the form, if necessary.
   --></dtml-comment>
   <dtml-if expr="IsForm()">
-   <input type="submit" value="submit"/>
+   <input type="submit" value=" OK "/>
+   <input type="button" 
+          value=" Cancel "
+          onclick="document.location = 
+                   '<dtml-var expr="MakeUrl('show', iid=issue.GetId())">';"/>
    </form>
   </dtml-if>
 

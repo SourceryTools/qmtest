@@ -35,6 +35,7 @@
 # imports
 ########################################################################
 
+import issue_class
 import os
 import qm
 import qm.diagnostic

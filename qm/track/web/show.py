@@ -60,6 +60,8 @@ edit -- Edit an existing issue."""
 
 import mimetypes
 import qm.fields
+import qm.structured_text
+import qm.track.idb
 import qm.web
 import string
 import sys
@@ -88,14 +90,14 @@ class ShowPageInfo(web.PageInfo):
     generated."""
     
 
-    def __init__(self, request, issue, field_errors={}):
+    def __init__(self, request, issue, errors={}):
         """Create a new page.
 
         To show or edit an existing page, pass it as 'issue'.  To
         create a new issue, pass a freshly-made 'Issue' instance as
         'issue', and specify the style "new" in 'request'.
 
-        'field_errors' -- A mapping from field names to error messages.
+        'errors' -- A mapping from field names to error messages.
         If non-empty, the error messages are shown with the
         corresponding fields."""
 
@@ -103,7 +105,11 @@ class ShowPageInfo(web.PageInfo):
         qm.web.PageInfo.__init__(self, request)
         # Set up attributes.
         self.issue = issue
-        self.field_errors = field_errors
+        # Convert the error messages in 'errors' from structured text to
+        # HTML. 
+        for key, value in errors.items():
+            errors[key] = qm.structured_text.to_html(value)
+        self.errors = errors
         self.fields = self.issue.GetClass().GetFields()
         if request.has_key("style"):
             self.style = request["style"]
@@ -148,6 +154,9 @@ class ShowPageInfo(web.PageInfo):
            and (style == "new" or style == "edit"):
             style = "full"
         if field.IsAttribute("initialize_only") and style == "edit":
+            style = "full"
+        if field.IsAttribute("initialize_to_default") \
+           and style == "new":
             style = "full"
 
         value = self.issue.GetField(field.GetName())
@@ -340,7 +349,7 @@ def handle_submit(request):
             """
             return qm.web.generate_error_page(request, msg)
 
-    field_errors = {}
+    errors = {}
 
     field_prefix = qm.fields.Field.form_field_prefix
     # Loop over query arguments in the submission.
@@ -361,7 +370,7 @@ def handle_submit(request):
             # Something went wrong parsing the value.  Associate an
             # error message with this field.
             message = str(sys.exc_info()[1])
-            field_errors[field_name] = message
+            errors[field_name] = message
         else:
             # If the field is an attachment field, or a set of
             # attachments field, we have to process the values.  The
@@ -390,11 +399,35 @@ def handle_submit(request):
         # through, reshow the form, indicating the problems.
         for field_name, exc_info in invalid_fields.items():
             msg = qm.web.format_structured_text(str(exc_info[1]))
-            field_errors[field_name] = msg
+            errors[field_name] = msg
+
+    # If this is a new revision of an existing issue, find the changes
+    # made relative to the previous revision.
+    if requested_revision > 0:
+        previous_revision = idb.GetIssue(iid)
+        differences = qm.track.get_differing_fields(
+            issue, previous_revision)
+        # Has anything at all changed?
+        if len(differences) == 0:
+            # No, so don't update.
+            errors["_issue"] = qm.warning("no changes")
+
+    # Submit the issue or revision if there are no errors so far.
+    if len(errors) == 0:
+        try:
+            if requested_revision == 0:
+                # Add the new issue.
+                idb.AddIssue(issue)
+            else:
+                # Add the new revision.
+                idb.AddRevision(issue)
+        except qm.track.idb.TriggerRejectError, exception:
+            trigger_result = exception.GetResult()
+            errors["_issue"] = trigger_result.GetMessage()
 
     # If there were errors, redisplay the edit form instead of
     # processing the submission.
-    if len(field_errors) > 0:
+    if len(errors) > 0:
         if is_new:
             new_request = qm.web.WebRequest("show",
                                             base=request,
@@ -403,32 +436,18 @@ def handle_submit(request):
             new_request = qm.web.WebRequest("show",
                                             base=request,
                                             style="edit",
-                                            iid=request["iid"],)
+                                            iid=request["iid"])
         new_request["class"] = request["class"]
-        page_info = ShowPageInfo(new_request, issue,
-                                 field_errors=field_errors)
+        page_info = ShowPageInfo(new_request, issue, errors=errors)
         return web.generate_html_from_dtml("show.dtml", page_info)
-
-    if requested_revision == 0:
-        # Add the new issue.
-        idb.AddIssue(issue)
     else:
-        previous_revision = idb.GetIssue(iid)
-        differences = qm.track.get_differing_fields(issue, previous_revision)
-        if len(differences) == 0:
-            # Nothing has changed, so don't update.
-            # FIXME: Would it be polite to inform the user here?
-            pass
-        else:
-            # Add the new revision.
-            idb.AddRevision(issue)
+        # The issue or revision was entered successfully.  Redirect
+        # to the show page for the newly-created or -modified issue.
+        # That way, if the user reloads the page or backs up to it,
+        # the issue form will not be resubmitted.
+        request = qm.web.WebRequest("show", base=request, iid=iid)
+        raise qm.web.HttpRedirect, qm.web.make_url_for_request(request)
 
-    # Don't respond directly with the show page for the newly-created
-    # or -modified issue.  Instead, redirect to it.  That way, if the
-    # user reloads the page or backs up to it, the issue form will not
-    # be resubmitted.
-    request = qm.web.WebRequest("show", base=request, iid=iid)
-    raise qm.web.HttpRedirect, (qm.web.make_url_for_request(request))
 
 
 ########################################################################

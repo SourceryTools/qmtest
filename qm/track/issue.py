@@ -486,11 +486,81 @@ def issues_to_xml(issues, output):
     qm.xmlutil.write_dom_document(document, output)
     
 
+def eval_expression(expression, issue, previous_issue=None):
+    """Evaluate a user expression on an issue.
+
+    The Python expression 'expression' is evlauated using a special
+    variable context that makes it easy to refer to fields of an issue.
+    The fields of 'issue' can be referred to as if they are local
+    variables of the same name.  If 'previous_issue' is supplied, the
+    special local variable '_previous' is also visible; it looks like a
+    class whose attributes are the fields of the previous issue.  A
+    limited subset of Python built-in functions and other functions are
+    availabe as well.
+
+    'expression' -- The Python text of the expression.
+
+    'issue' -- The current issue.
+
+    'previous_issue' -- A past revision of the issue that can be
+    referenced in the expression, or 'None'.
+
+    returns -- The evaluated result of the expression."""
+
+    # FIXME: Security.
+    globals = { "__builtins__": allowed_builtins }
+    locals = {}
+
+    issue_class = issue.GetClass()
+    fields = issue_class.GetFields()
+    for field in fields:
+        field_name = field.GetName()
+        value = issue.GetField(field_name)
+        locals[field_name] = value
+
+    if previous_issue is not None:
+        class Field:
+            pass
+
+        previous = Field()
+        for field in fields:
+            field_name = field.GetName()
+            value = previous_issue.GetField(field_name)
+            setattr(previous, field_name, value)
+
+        locals["_previous"] = previous
+
+    return eval(expression, globals, locals)
+
+
+########################################################################
+# variables
+########################################################################
+
+allowed_builtins = {}
+"""Builtin functions permitted for field expressions.
+
+A map from names of builtin functions to the actual Python builtin
+function objects."""
+
 ########################################################################
 # initialization
 ########################################################################
 
-qm.attachment.attachment_class = Attachment
+def _initialize_module():
+    qm.attachment.attachment_class = Attachment
+
+    global allowed_builtins
+    for name in [ 'None', 'abs', 'buffer', 'chr', 'cmp', 'coerce',
+                  'complex', 'divmod', 'filter', 'float', 'getattr',
+                  'hasattr', 'hash', 'hex', 'id', 'int', 'isinstance',
+                  'issubclass', 'len', 'list', 'long', 'map', 'max',
+                  'min', 'oct', 'ord', 'pow', 'range', 'reduce', 'repr',
+                  'round', 'slice', 'str', 'tuple', 'type', 'xrange' ]:
+        allowed_builtins[name] = __builtins__[name]
+
+
+_initialize_module()
 
 ########################################################################
 # Local Variables:

@@ -1,3 +1,84 @@
+2001-05-07  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (parse_url_query): Unquote the script URL.
+	(make_javascript_string): Escape forward slashes.
+	* qm/common.py (Enumeral): New class.
+	* qm/fields.py (Field.__init__): Add initialze_to_default attribute. 
+	(Field.GetAttributeNames): New method.
+	(EnumerationField.__init__): Make an Enumeral.
+	(EnumerationField.GetTypeDescription): Use enumeral strings.
+	(EnumerationField.Validate): Rewrite.
+	(EnumerationField.GetEnumerals): Modify for Enumeral.
+	(EnumerationField.ValueToName): Remove.
+	(EnumerationField.ParseFormValue): Make an Enumeral.
+	(EnumerationField.FormEncodeValue): Use enumeral string.
+	(EnumerationField.FormDecodeValue): Make an Enumeral.
+	(EnumerationField.FormatValueAsHtml): Modify for Enumeral.
+	(EnumerationField.MakeDomNodeForValue): Likewise.
+	(EnumerationField.GetHelp): Likewise.
+	(EnumerationField.__GetAvailableEnumerals): New method.
+
+	* qm/track/web/show.py (ShowPageInfo.__init__): Rename
+	field_errors to errors.  Process structured text.
+	(ShowPageInfo.FormatFieldValue): Handle initialize_to_default
+	attribute. 
+	(handle_submit): Handle trigger rejections.
+	* qm/track/triggers: New directory.
+	* qm/track/triggers/__init__.py: New file.
+	* qm/track/triggers/state.py: Likewise.
+	* qm/track/web/issue_class.py: Likewise.
+	* qm/track/server.py (start_server): Register show-issue-class.
+	* qm/track/memory_idb.py (MemoryIdb.GetIssue): Fix parameter name
+	collision.  Adjust trigger treatment.
+	(MemoryIdb.GetAllRevisions): Likewise.
+	(MemoryIdb.__InsertIssue): Likewise.
+	* qm/track/sql_idb.py (SqlIdb.GetIssues): Likewise.
+	(SqlIdb.GetIssue): Likewise.
+	(SqlIdb.GetAllRevisions): Likewise.
+	(remap): Remove crud.
+	(pprint_ast): Likewise.
+	* qm/track/issue_class.py (default_states): Remove.
+	(default_state_model): New variable.
+	(default_state_model): New class.
+	(default_state_model): Likewise.
+	(TriggerResult): Likewise.
+	(Trigger): Likewise.
+	(State): Likewise.
+	(TransitionCondition): Likewise.
+	(Transition): Likewise.
+	(StateModel): Likewise.
+	(StateField): Likewise.
+	(IssueClass.__init__): Replace states parameter with state_model.
+	Initialize __triggers.  Create the state field.
+	(IssueClass.RegisterTrigger): New method.
+	(IssueClass.GetTriggers): Likewise.
+	(_initialize_module): New function.
+	Call it.
+	* qm/track/issue.py (eval_expression): New function.
+	(allowed_builtins): New variable.
+	(_initialize_module): New function.
+	Call it.
+	* qm/track/idb.py (Trigger): Remove.
+	(TriggerOutcome): Likewise.
+	(TriggerRejectError): New class.
+	(IdbBase.__init__): Remove __triggers attribute.
+	(IdbBase.RegisterTrigger): Remove.
+	(IdbBase.UnregisterTrigger): Likewise.
+	(IdbBase.GetTriggers): Likewise.
+	(IdbBase.Query): Call eval_expression instead of rexec stuff.
+	(IdbBase.__InvokeGetTriggers): Rewrite.
+	(IdbBase.__InvokePreupdateTriggers): Likewise.
+	(IdbBase.__InvokePostupdateTriggers): Likewise.
+	* qm/track/cmdline.py (Command.__PerformInitialize): Process
+	structured text message. 
+
+	* share/dtml/track/show.dtml: Adjust markup to show errors.
+	* share/dtml/track/issue-class.dtml: New file.
+	* share/diagnostics/track.txt (no changes): New diagonstic.
+	(no transition): Likewise.
+	(not initial state): Likewise.
+	(transition condition failed): Likewise.
+
 2001-05-01  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (RcConfiguration.Get): Remove mention of DEFAULT.

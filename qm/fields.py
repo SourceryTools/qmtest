@@ -78,6 +78,10 @@ class Field:
     initialize_only -- If true, the field may only be modified by a
     user when a new issue is created.
 
+    initialize_to_default -- Only the default value is available when
+    the issue is created.  Other values may subsequently be specified
+    when additional revisions are created.
+
     hidden -- If true, the field is for internal purposes, and not
     shown in user interfaces."""
 
@@ -99,6 +103,7 @@ class Field:
             "title" : name,
             "read_only" : "false",
             "initialize_only" : "false",
+            "initialize_to_default": "false",
             "hidden" : "false",
             }
         self.__attributes.update(attributes)
@@ -181,6 +186,12 @@ class Field:
         """Return a true value if an attribute has the value "true"."""
 
         return self.GetAttribute(attribute_name) == "true"
+
+
+    def GetAttributeNames(self):
+        """Return a sequence of names of attributes defined for this field."""
+
+        return self.__attributes.keys()
 
 
     def SetAttribute(self, attribute_name, value):
@@ -1237,6 +1248,7 @@ class EnumerationField(IntegerField):
         # If 'default_value' is 'None', use the lowest-numbered enumeral.
         if default_value == None:
             default_value = min(self.__enumeration.values())
+            default_value = common.Enumeral(self.__enumeration, default_value)
         # Perform base class initialization.
         apply(Field.__init__, (self, name, ), attributes)
         # Store the enumeration as an attribute.
@@ -1247,19 +1259,14 @@ class EnumerationField(IntegerField):
 
     def GetTypeDescription(self):
         enumerals = self.GetEnumerals()
-        enumerals = map(lambda en: "'%s'" % en[0], enumerals)
+        enumerals = map(lambda en: '"%s"' % str(en), enumerals)
         return "an enumeration of " + string.join(enumerals, ", ")
 
 
     def Validate(self, value):
-        # First check whether value is an enumeration key, i.e. the
-        # name of an enumeral.
-        if self.__enumeration.has_key(value):
-            return self.__enumeration[value]
-        # Also accept a value, i.e. an integer mapped by an enumeral.
-        elif int(value) in self.__enumeration.values():
-            return int(value)
-        else:
+        try:
+            return common.Enumeral(self.__enumeration, value)
+        except ValueError:
             values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
                                      self.__enumeration.items()),
                                  ", ")
@@ -1273,39 +1280,25 @@ class EnumerationField(IntegerField):
     def GetEnumerals(self):
         """Return a sequence of enumerals.
 
-        returns -- A sequence consisting of (name, value) pairs, in
+        returns -- A sequence consisting of 'Enumeration' objects, in
         the appropriate order.
 
         To obtain a map from enumeral name to value, use
         'GetEnumeration'."""
 
         # Obtain a list of (name, value) pairs for enumerals.
-        enumerals = self.__enumeration.items()
+        enumerals = []
+        for name in self.__enumeration.keys():
+            enumerals.append(common.Enumeral(self.__enumeration, name))
         # How should they be sorted?
         if self.IsAttribute("ordered"):
             # Sort by the second element, the enumeral value.
-            sort_function = lambda e1, e2: cmp(e1[1], e2[1])
+            sort_function = lambda e1, e2: cmp(int(e1), int(e2))
         else:
             # Sort by the first element, the enumeral name.
-            sort_function = lambda e1, e2: cmp(e1[0], e2[0])
+            sort_function = lambda e1, e2: cmp(str(e1), str(e2))
         enumerals.sort(sort_function)
         return enumerals
-
-
-    def ValueToName(self, value):
-        """Return the enumeral name corresponding to 'value'."""
-
-        for en_name, en_val in self.__enumeration.items():
-            if value == en_val:
-                return en_name
-        # No match was found; value must be invalid.
-        values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
-                                 self.__enumeration.items()),
-                             ", ")
-        raise ValueError, qm.error("invalid enum value",
-                                   value=str(value),
-                                   field_name=self.GetTitle(),
-                                   values=values)
 
 
     def GetEnumeration(self):
@@ -1317,25 +1310,22 @@ class EnumerationField(IntegerField):
 
 
     def ParseFormValue(self, value):
-        return self.__enumeration[value]
-        
+        return common.Enumeral(self.__enumeration, value)
+
 
     def FormEncodeValue(self, encoding):
-        if self.__enumeration.has_key(encoding):
-            return encoding
-        else:
-            return self.ValueToName(encoding)
+        return str(encoding)
 
 
     def FormDecodeValue(self, encoding):
-        return encoding
+        return common.Enumeral(self.__enumeration, encoding)
 
 
     def FormatValueAsHtml(self, value, style, name=None):
-        # Use the default field form field name if requested.
-        if value is None:
-            value = self.GetEnumerals()[0][1]
         # Use default value if requested.
+        if value is None:
+            value = self.GetDefaultValue()
+        # Use the default field form field name if requested.
         if name is None:
             name = self.GetHtmlFormFieldName()
 
@@ -1354,21 +1344,22 @@ class EnumerationField(IntegerField):
             # Generate a '<select>' control droplist.
             result = result + '<select name="%s" onchange="%s">\n' \
                      % (select_name, on_change)
-            # Generate an '<option>' element for each enumeral.
-            for en_name, en_val in self.GetEnumerals():
+            # Generate an '<option>' element for each available enumeral.
+            enumerals = self.__GetAvailableEnumerals(value)
+            for enumeral in enumerals:
                 # Specify the 'select' attribute if this enumeral
                 # corresponds to the current field value.
-                if en_val == value:
+                if enumeral == value:
                     is_selected = "selected"
                 else:
                     is_selected = ""
                 result = result + '<option value="%s" %s>%s</option>\n' \
-                         % (en_name, is_selected, en_name)
+                         % (str(enumeral), is_selected, str(enumeral))
             result = result + '</select>\n'
             return result
 
         elif style == "full" or style == "brief":
-            return self.ValueToName(value)
+            return str(value)
 
         else:
             raise ValueError, style
@@ -1395,9 +1386,8 @@ class EnumerationField(IntegerField):
 
     def MakeDomNodeForValue(self, value, document):
         # Store the name of the enumeral.
-        enumeral_name = self.ValueToName(value)
         return qm.xmlutil.create_dom_text_element(document, "enumeral",
-                                                  enumeral_name)
+                                                  str(value))
 
 
     def GetHelp(self):
@@ -1407,17 +1397,23 @@ class EnumerationField(IntegerField):
 
         """
         for name, value in self.__enumeration.items():
-            help = help + "            * %s (%d)\n\n" % (name, value)
+            help = help + '            * "%s" (%d)\n\n' % (name, value)
         help = help + """
-        An enumeral may be specified either by its name or by its
-        numerical value.
+        An enumeral may be specified either by its name (a string) or by
+        its numerical value.
         """
         if self.HasDefaultValue():
             default_value = self.GetDefaultValue()
-            help = help + """
-        The default value of this field is %s.
-            """ % self.ValueToName(default_value)
+            help = help + '''
+        The default value of this field is "%s".
+            ''' % str(default_value)
         return help
+
+
+    def __GetAvailableEnumerals(self, value):
+        """Return a limited sequence of enumerals."""
+
+        return self.GetEnumerals()
 
 
 
