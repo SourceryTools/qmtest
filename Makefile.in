@@ -112,15 +112,13 @@ clean::
 .PHONY: dist
 
 # The RPM.
-rpm:	$(QM_SRPM)
-
-$(QM_SRPM): $(QM_RPM)
-	mv $(RPM_BASE)/SRPMS/$(RPM_ARCH)/$(QM_SRPM) $@
+rpm:	$(RPM)
 
 $(QM_RPM): $(QM_TAR_GZ)
 	cp $(QM_TAR_GZ) $(RPM_BASE)/SOURCES
 	rpm --quiet -ba --rmsource qm.spec
 	mv $(RPM_BASE)/RPMS/$(RPM_ARCH)/$(QM_RPM) $@
+	mv $(RPM_BASE)/SRPMS/$(QM_SRPM) $@
 
 clean::
 	rm -rf $(QM_RPM) $(QM_SRPM)
