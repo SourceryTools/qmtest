@@ -1,3 +1,15 @@
+2003-09-25  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Kill): New method.
+	(Executable._GetChildPID): Improve documentation.
+	(TimeoutExecutable): Update documentation about timeouts on
+	Windows.
+	(TimeoutExecutable.__init__): Do not ignore timeouts on Windows.
+	(TimeoutExecutable._HandleChild): Create a monitoring thread on
+	Windows.
+	(TimeoutExecutable.Run): Wiat for the monitoring thread to exit.
+	(TimeoutExecutable.__Monitor): New method.
+
 2003-09-21  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/xmlutil.py (get_children): Remove.

@@ -267,6 +267,20 @@ class Executable(object):
             return win32process.STARTUPINFO()
 
 
+    def Kill(self):
+        """Kill the child process.
+
+        The child process is killed in a way that does not permit an
+        orderly shutdown.  In other words, 'SIGKILL' is used under
+        UNIX, not 'SIGTERM'.  On Windows, 'TerminateProcess' is used,
+        and the exit code from the child process will be '1'."""
+        
+        if sys.platform == "win32":
+            win32process.TerminateProcess(self._GetChildPID(), 1)
+        else:
+            os.kill(signal.SIGKILL)
+
+                
     def _HandleChild(self):
         """Run in the parent process after the child has been created.
 
@@ -303,8 +317,8 @@ class Executable(object):
     def _GetChildPID(self):
         """Return the process ID for the child process.
 
-        returns -- The process ID for the child process, in the native
-        operating system format."""
+        returns -- The process ID for the child process.  (On Windows,
+        the value returned is the process handle.)"""
 
         return self.__child
     
@@ -370,16 +384,25 @@ class Executable(object):
 class TimeoutExecutable(Executable):
     """A 'TimeoutExecutable' runs for a limited time.
 
-    If the timer expires, the child process is killed.
+    If the timer expires, the child process is killed and
+    self.timedout is set to 1.  Otherwise, self.timedout is set to 0.
 
-    In order to implement this functionality, the child process is
-    placed into its own process group.  An additional monitoring
-    process is created whose sole job is to kill the primary child's
-    process group if the timeout expires.  Process groups are used
-    so that if the child process spawns additional processes they
-    are killed too.  A separate monitoring process is used so as not
-    to block the parent.
+    In order to implement this functionality under UNIX, the child
+    process is placed into its own process group.  An additional
+    monitoring process is created whose sole job is to kill the
+    primary child's process group if the timeout expires.  Process
+    groups are used so that if the child process spawns additional
+    processes they are killed too.  A separate monitoring process is
+    used so as not to block the parent.
 
+    Under Windows, a monitoring thread is created.  When the timer
+    expires, the child process is terminated.  However, the child
+    process is not placed into a separate process group, so
+    granchildren kare not terminated.  In the future, when Python
+    provides access to 'CreateJobObject' and related functions, jobs
+    will be used to provide functionality similar to UNIX process
+    groups.
+    
     The 'Run' method will automatically start the monitoring process.
     The 'Spawn' method does not start the monitoring process.  User's
     of 'Spawn' should invoke '_DoParent' in order to start the
@@ -399,18 +422,10 @@ class TimeoutExecutable(Executable):
         process group is killed.
         
         If the 'timeout' is -1, this class behaves exactly like
-        'Executable'.
-
-        At present, the 'timeout' parameter is ignored under Windows.
-        In the future, it will have the same meaning that it does on
-        UNIX systems."""
+        'Executable'."""
 
         super(TimeoutExecutable, self).__init__()
-
-        if sys.platform == "win32":
-            self.__timeout = 0
-        else:
-            self.__timeout = float(timeout)
+        self.__timeout = float(timeout)
         
 
     def _InitializeChild(self):
@@ -496,6 +511,10 @@ class TimeoutExecutable(Executable):
                     # Exit.  This code is in a finally clause so that
                     # we are guaranteed to get here no matter what.
                     os._exit(0)
+        elif self.__timeout >= 0 and sys.platform == "win32":
+            # Create a monitoring thread.
+            self.__monitor_thread = Thread(target = self.__Monitor)
+            self.__monitor_thread.start()
 
 
     def Run(self, arguments=[], environment = None, dir = None,
@@ -508,10 +527,13 @@ class TimeoutExecutable(Executable):
                                                         dir,
                                                         path)
         finally:
-            # Clean up the monitoring program; it is no longer needed.
             if self.__UseSeparateProcessGroupForChild():
+                # Clean up the monitoring program; it is no longer needed.
                 os.kill(-self._GetChildPID(), signal.SIGKILL)
                 os.waitpid(self.__monitor_pid, 0)
+            elif self.__timeout >= 0 and sys.platform == "win32":
+                # Join the monitoring thread.
+                self.__monitor_thread.join()
                 
         return status
 
@@ -523,8 +545,35 @@ class TimeoutExecutable(Executable):
         group.  In that case, a separate monitoring process will also
         be created."""
 
+        if sys.platform == "win32":
+            # In Windows 2000 (or later), we should use "jobs" by
+            # analogy with UNIX process groups.  However, that
+            # functionality is not (yet) provided by the Python Win32
+            # extensions.
+            return 0
+        
         return self.__timeout >= 0 or self.__timeout == -2
 
+
+    if sys.platform == "win32":
+
+        def __Monitor(self):
+            """Kill the child if the timeout expires.
+
+            This function is run in the monitoring thread."""
+        
+            # The timeout may be expressed as a floating-point value
+            # on UNIX, but it must be an integer number of
+            # milliseconds when passed to WaitForSingleObject.
+            timeout = int(self.__timeout * 1000)
+            # Wait for the child process to terminate or for the
+            # timer to expire.
+            result = win32event.WaitForSingleObject(self._GetChildPID(),
+                                                    timeout)
+            # If the timeout occurred, kill the child process.
+            if result == win32con.WAIT_TIMEOUT:
+                self.Kill()
+            
 
 
 class RedirectedExecutable(TimeoutExecutable):
@@ -732,7 +781,7 @@ class RedirectedExecutable(TimeoutExecutable):
 
         # Read some data.
         data = os.read(self._stdout_pipe[0], 64 * 1024)
-
+        
         if not data:
             # If there is no new data, end-of-file has been reached.
             os.close(self._stdout_pipe[0])
