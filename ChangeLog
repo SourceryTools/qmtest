@@ -28,16 +28,13 @@
 
 2001-03-01  Alex Samuel  <samuel@codesourcery.com>
 
+	* README: Adjust tutorial.
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust
 	navigation bar. 
-
 	* qm/track/config.py (setup_idb_for_test): Ajust titles.
 	* qm/track/issue_class.py (IssueClass.__init__): Likewise.
-
 	* qm/track/cmdline.py (Command.__PrintResults): Add full format
 	style.
-
-	* README: Adjust tutorial.
 
 2001-03-01  Alex Samuel  <samuel@codesourcery.com>
 
