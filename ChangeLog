@@ -1,3 +1,17 @@
+2003-04-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/context.py (Context.GetAddedProperties): New method.
+	(ContextWrapper.GetAddedProperties): Recur.
+	* qm/test/target.py (Target._SetUpResource): Handle resources
+	dependent on other resources.
+
+	* qm/test/file_database.py (ExtensionDatabase._IsFile): Handle
+	empty extensions more gracefully.
+
+	* qm/test/result.py (Result.SetOutcome): Add cause and annotations
+	parameters.
+	(Result.Fail): Use it.
+
 2003-04-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Close the write end of the

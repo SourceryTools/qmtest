@@ -455,7 +455,11 @@ class FileDatabase(Database):
 
 class ExtensionDatabase(FileDatabase):
     """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
-    entity (test, suite, resource) has a particular extension.
+    entity (test, suite, resource) has a particular extension.  For
+    examples, if tests have the extension '.qmt', then all files ending
+    with '.qmt' are considered tests.  If an extension for a particular
+    kind of entity is not specified is the empty string, then all files
+    will be considered to be that kind of entity.
 
     'ExtensionDatabase' is an abstract class."""
 
@@ -554,9 +558,11 @@ class ExtensionDatabase(FileDatabase):
         if kind == Database.SUITE and path == self.GetRoot():
             return 1
 
-        extension = os.path.splitext(path)[1]
-        if extension != self._extensions[kind]:
-            return 0
+        kind_extension = self._extensions[kind]
+        if kind_extension:
+            extension = os.path.splitext(path)[1]
+            if extension != kind_extension:
+                return 0
 
         return (os.path.isfile(path)
                 or (kind == Database.SUITE and os.path.isdir(path)))

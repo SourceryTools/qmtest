@@ -164,13 +164,22 @@ class Result:
         return self.__outcome
     
         
-    def SetOutcome(self, outcome):
+    def SetOutcome(self, outcome, cause = None, annotations = {}):
         """Set the outcome associated with the test.
 
-        'outcome' -- One of the 'Result.outcomes'."""
+        'outcome' -- One of the 'Result.outcomes'.
+
+        'cause' -- If not 'None', this value becomes the value of the
+        'Result.CAUSE' annotation.
+
+        'annotations' -- The annotations are added to the current set
+        of annotations."""
 
         assert outcome in Result.outcomes
         self.__outcome = outcome
+        if cause:
+            self[Result.CAUSE] = cause
+        self.Annotate(annotations)
 
 
     def Annotate(self, annotations):
@@ -178,7 +187,7 @@ class Result:
         self.__annotations.update(annotations)
 
 
-    def Fail(self, cause=None, annotations={}):
+    def Fail(self, cause = None, annotations = {}):
         """Mark the test as failing.
 
         'cause' -- If not 'None', this value becomes the value of the
@@ -187,10 +196,7 @@ class Result:
         'annotations' -- The annotations are added to the current set
         of annotations."""
 
-        self.SetOutcome(Result.FAIL)
-        if cause:
-            self[Result.CAUSE] = cause
-        self.Annotate(annotations)
+        self.SetOutcome(Result.FAIL, cause, annotations)
 
         
     def GetId(self):

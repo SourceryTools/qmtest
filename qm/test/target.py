@@ -293,8 +293,9 @@ class Target(qm.extension.Extension):
         'context' -- The 'Context' in which the resources will be
         executed.
 
-        returns -- A list of additional context properties that should
-        be available to the test."""
+        returns -- A tuple of the same form as is returned by
+        '_BeginResourceSetUp' when the resource has already been set
+        up."""
         
         # See if there are resources that need to be set up.
         properties = {}
@@ -329,17 +330,21 @@ class Target(qm.extension.Extension):
         if rop:
             return rop
         # Set up the context.
-        context = ContextWrapper(context)
-        result = Result(Result.RESOURCE_SETUP, resource_name, context,
+        wrapper = ContextWrapper(context)
+        result = Result(Result.RESOURCE_SETUP, resource_name, wrapper,
                         Result.PASS)
         resource = None
         # Get the resource descriptor.
         try:
             resource_desc = self.GetDatabase().GetResource(resource_name)
             # Set up the resources on which this resource depends.
-            self.__SetUpResources(resource_desc, context)
+            properties = self.__SetUpResources(resource_desc, context)
+            # Add the context properties from those resources to the
+            # context for the resource that is now being set up.
+            for k, v in properties.items():
+                wrapper[k] = v
             # Set up the resource itself.
-            resource_desc.SetUp(context, result)
+            resource_desc.SetUp(wrapper, result)
             # Obtain the resource within the try-block so that if it
             # cannot be obtained the exception is handled below.
             resource = resource_desc.GetItem()

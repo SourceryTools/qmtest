@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Context class
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -170,6 +170,15 @@ class Context:
 
     # Helper methods.
 
+    def GetAddedProperties(self):
+        """Return the properties added to this context by resources.
+
+        returns -- A map from strings to values indicating properties
+        that were added to this context by resources."""
+        
+        return {}
+
+    
     def ValidateKey(self, key):
         """Validate 'key'.
 
@@ -219,11 +228,26 @@ class ContextWrapper:
 
 
     def GetAddedProperties(self):
-        """Return the properties added after this wrapper was created."""
+        """Return the properties added to this context by resources.
 
-        return self.__added
+        returns -- A map from strings to values indicating properties
+        that were added to this context by resources."""
+
+        added = self.__context.GetAddedProperties()
+        added.update(self.__added)
+        return added
 
 
+    def ValidateKey(self, key):
+        """Validate 'key'.
+
+        raises -- 'ValueError' if 'key' is not a string.
+
+        raises -- 'RuntimeError' if 'key' is not valid."""
+
+        return self.__context.ValidateKey(key)
+
+    
     def __getitem__(self, key):
         """Return a property value."""
 
