@@ -8,7 +8,7 @@
   Contents:
     Manual for common QM components.
 
-  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002, 2003 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -127,18 +127,6 @@ browser=/usr/local/bin/mozilla
      <filename>/bin/bash&nbsp;-norc&nbsp;-noprofile</filename>.  On
      other UNIX-like systems, the default is
      <filename>/bin/sh</filename>.</para>
-    </glossdef>
-   </glossentry>
-
-   <glossentry>
-    <glossterm>
-     <property>sendmail</property> (UNIX-like platforms only)
-    </glossterm>
-    <glossdef>
-     <para>The path to the <filename>sendmail</filename> program, or a
-     compatible replacement.  This program is used for sending email
-     messages.  The default value is
-     <filename>/usr/lib/sendmail</filename>.</para>
     </glossdef>
    </glossentry>
 

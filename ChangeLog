@@ -1,3 +1,8 @@
+2003-02-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/common-manual.xml: Remove documentation about
+	sendmail configuration option.
+
 2003-01-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (Field.class_name): Remove.
