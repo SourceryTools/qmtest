@@ -41,9 +41,14 @@ import re
 import shutil
 import sys
 
+execfile("qm/setup_path.py")
+
 ########################################################################
 # configuration
 ########################################################################
+
+# The template from which the setup path script is created.
+setup_path_script_template_path = "qm/setup_path.py.in"
 
 # Package directories containing Python files that need to be installed
 # in the lib area.
@@ -52,12 +57,9 @@ packages = [
     "zope-dtml",
     "sgmlop",
     "xmlrpc",
-    "PyXML/build/lib.linux-i686-1.5",
+    "PyXML/build/lib.%s-%s" % (__python_platform, __python_version),
     "qm"
     ]
-
-# The template from which the setup path script is created.
-setup_path_script_template_path = "qm/setup_path.py.in"
 
 # Scripts that must be generated.  The key is the script name, and the
 # value is template from which it's created.

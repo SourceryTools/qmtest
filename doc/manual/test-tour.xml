@@ -340,8 +340,8 @@
 ]]></computeroutput></screen>
 
    <para>Now, even though one test fails, &qmtest; reports that 100% of
-   tests produced outcomes as expected&mdash;the expected outcome for
-   test <literal>exec1</literal> was &FAIL;, which matched its actual
+   tests produced outcomes as expected -- the expected outcome for test
+   <literal>exec1</literal> was &FAIL;, which matched its actual
    outcome.</para>
 
   </section> <!-- sec-testtut-expected-outcomes -->
@@ -413,7 +413,7 @@
    <para>&qmtest; includes several useful standard test classes, with
    which you can write a variety of useful tests.  However, for many
    applications you may need to write new test classes, or adapt
-   existing test classes to suit your needs.  To do this requires a
+   existing test classes to suit your needs.  To do this requires
    moderate facility with Python.</para>
 
    <para>A test class is represented by a Python class.  The Python

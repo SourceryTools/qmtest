@@ -1,8 +1,14 @@
+2001-09-06  Alex Samuel  <samuel@codesourcery.com>
+
+	* install.py: Exec setup_path.py.
+	(packages): Build PyXML path.
+	* doc/manual/test-tour.xml: Fix typos.
+
 2001-09-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk.in (doc): Check for empty SUBDIRS.
 	($(HTMLMANIFEST)): Likewise.
-
+g
 2001-09-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/Makefile.in (setup_path.py): Use left-quotes.
