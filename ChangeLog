@@ -1,5 +1,8 @@
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (build_source): Change destination for
+	PDF manual.
+
 	* configure.in (QM_MINOR_VER): Increment.
 	* configure: Regenerated.
 

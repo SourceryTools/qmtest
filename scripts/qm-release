@@ -117,9 +117,9 @@ build_source() {
     cp -r ${QM_INSTALL_DIR}/share/doc/qm/test/html \
           qm-${QM_VERSION}/qm/test/doc/html || \
       error "Could not copy HTML manual"
-    (mkdir qm-${QM_VERSION}/qm/test/doc/pdf && \
+    (mkdir qm-${QM_VERSION}/qm/test/doc/print && \
      cp -r ${QM_INSTALL_DIR}/share/doc/qm/test/pdf/manual.pdf \
-          qm-${QM_VERSION}/qm/test/doc/pdf) || \
+          qm-${QM_VERSION}/qm/test/doc/print) || \
       error "Could not copy PDF manual"
     tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
       error "Could not create tar file"
