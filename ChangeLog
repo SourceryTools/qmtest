@@ -1,3 +1,8 @@
+2001-11-16  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (QM_TAR_GZ): Modify logic.
+	* install.py (bin_handler): Remove.
+
 2001-11-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* Makefile.in (QM_MAJOR_VER): New variable.

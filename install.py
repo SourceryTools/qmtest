@@ -210,9 +210,6 @@ if len(arguments) != 4:
 # Unpack them.
 bin_dir, lib_dir, share_dir, doc_dir = arguments
 
-# This is the first line that's added to generated scripts.
-bin_handler = "#!%s\n" % sys.executable
-
 # Install all packages.
 for directory in packages:
     install_package(directory, os.path.join(lib_dir, directory))
