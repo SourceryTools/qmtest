@@ -290,7 +290,7 @@ class ExecutionEngine:
             self._CheckForResponse(wait=wait)
 
             # Output a trace message.
-            self._Trace("Done checking.")
+            self._Trace("Done checking for responses.")
 
         # Any tests that are still pending are untested, unless there
         # has been an explicit request that we exit immediately.
@@ -312,13 +312,10 @@ class ExecutionEngine:
         while 1:
             try:
                 # Read a reply from the response_queue.
-                if self.__input_handlers:
-                    result = self.__response_queue.get(0)
-                else:
-                    result = self.__response_queue.get(wait)
+                result = self.__response_queue.get(0)
                 # Output a trace message.
-                self._Trace(("Got response for %s from queue."
-                             % result.GetId()))
+                self._Trace("Got %s result for %s from queue."
+                             % (result.GetKind(), result.GetId()))
                 # Handle it.
                 self._AddResult(result)
                 # Output a trace message.
@@ -411,7 +408,8 @@ class ExecutionEngine:
         a test or resource."""
 
         # Output a trace message.
-        self._Trace("Recording result for %s." % result.GetId())
+        self._Trace("Recording %s result for %s."
+                    % (result.GetKind(), result.GetId()))
 
         # Find the target with the name indicated in the result.
         if result.has_key(Result.TARGET):
@@ -431,6 +429,7 @@ class ExecutionEngine:
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
+            assert self.__running > 0
             self.__running -= 1
         elif result.GetKind() == Result.RESOURCE:
             self.__resource_results.append(result)
@@ -462,6 +461,13 @@ class ExecutionEngine:
         'annotations' -- A map from strings to strings giving
         additional annotations for the result."""
 
+        # Recording the result will decrement the count of tests
+        # running.  Since this test was never presented to a target,
+        # that would leave the count too low.  So, we pretend that the
+        # test is running now.
+        self.__running += 1
+
+        # Create the result.
         result = Result(Result.TEST, test_name, self.__context,
                         Result.UNTESTED, annotations)
         result[Result.CAUSE] = cause

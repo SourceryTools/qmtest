@@ -1,5 +1,21 @@
 2002-08-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (load_database): Add documentation.  Adjust call
+	to get_extension_class.
+	(get_extension_directories): Add database_path parameter.  Search
+	the QMTest subdirectory of that directory as well.
+	(get_extension_class_names): Add database_path parameter.
+	(get_extension_class): Likewise.
+	* qm/test/cmdline.py (QMTest.__ExecuteExtensions): Pass it.
+	(QMTest.__ExecuteRegister): Likewise.
+
+	* qm/test/execution_engine.py
+	(ExecutionEngine._CheckForResponse): Update trace message.  Do
+	not block.
+	(ExecutionEngine._AddResult): Add consistency check.
+	(ExecutionEngine._AddUntestedResult): Mark untested tests as
+	running before they are marked as untested.
+	
 	* qm/test/base.py (get_extension_directories): Make sure the
 	QMTest subdirectory of the database is searched
 	* qm/test/datbase.py (Database.GetClassPaths): Do not search it

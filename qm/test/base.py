@@ -89,6 +89,8 @@ def is_database(db_path):
 def load_database(db_path):
     """Load the database from 'db_path'.
 
+    'db_path' -- The path to the directory containing the database.
+    
     returns -- The new 'Database'."""
 
     # Make sure it is a directory.
@@ -117,7 +119,7 @@ def load_database(db_path):
         database_class_name = "xml_database.XMLDatabase"
     # Get the database class.
     database_class = get_extension_class(database_class_name,
-                                         "database", None)
+                                         "database", None, db_path)
     # Get attributes to pass to the constructor.
     for node in qm.xmlutil.get_children(database, "attribute"):
         name = node.getAttribute("name")
@@ -173,7 +175,7 @@ def create_database(db_path, class_name, attributes={}):
     qm.xmlutil.write_dom_document(document, open(configuration_path, "w"))
 
 
-def get_extension_directories(kind, database):
+def get_extension_directories(kind, database, database_path = None):
     """Return the directories to search for QMTest extensions.
 
     'kind' -- A string giving kind of extension for which we are looking.
@@ -181,6 +183,9 @@ def get_extension_directories(kind, database):
 
     'database' -- The 'Database' with which the extension class will be
     used, or 'None'.
+
+    'database_path' -- The path from which the database will be loaded.
+    If 'None', 'database.GetPath()' is used.
     
     returns -- A sequence of strings.  Each string is the path to a
     directory that should be searched for QMTest extensions.  The
@@ -216,9 +221,13 @@ def get_extension_directories(kind, database):
     # Search directories specified by the database.
     if database:
         dirs = dirs + database.GetClassPaths()
-        # Search the database configuration directory.
+        
+    # Search the database configuration directory.
+    if database:
         dirs.append(get_db_configuration_directory(database.GetPath()))
-
+    elif database_path:
+        dirs.append(get_db_configuration_directory(database_path))
+        
     # Search the builtin directory, too.
     dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
 
@@ -271,7 +280,7 @@ def get_extension_class_names_in_directory(directory):
     return extensions
 
 
-def get_extension_class_names(kind, database):
+def get_extension_class_names(kind, database, database_path = None):
     """Return the names of extension classes.
 
     'kind' -- The kind of extension class.  This value must be one
@@ -280,10 +289,13 @@ def get_extension_class_names(kind, database):
     'database' -- The 'Database' with which the extension class will be
     used, or 'None' if 'kind' is 'database'.
 
+    'database_path' -- The path from which the database will be loaded.
+    If 'None', 'database.GetPath()' is used.
+
     returns -- A sequence of strings giving the names of the extension
     classes with the indicated 'kind', in the form 'module.class'."""
 
-    dirs = get_extension_directories(kind, database)
+    dirs = get_extension_directories(kind, database, database_path)
     names = []
     for d in dirs:
         names.extend(get_extension_class_names_in_directory(d)[kind])
@@ -336,7 +348,7 @@ def get_extension_class_from_directory(class_name, kind, directory, path):
     return klass
 
                                      
-def get_extension_class(class_name, kind, database):
+def get_extension_class(class_name, kind, database, database_path = None):
     """Return the extension class named 'class_name'.
 
     'class_name' -- The name of the class, in the form 'module.class'.
@@ -346,6 +358,9 @@ def get_extension_class(class_name, kind, database):
 
     'database' -- The 'Database' with which the extension class will be
     used, or 'None' if 'kind' is 'database'.
+
+    'database_path' -- The path from which the database will be loaded.
+    If 'None', 'database.GetPath()' is used.
 
     returns -- The class object with the indicated 'class_name'."""
 
@@ -357,7 +372,7 @@ def get_extension_class(class_name, kind, database):
         return cache[class_name]
 
     # Look for the class in each of the extension directories.
-    directories = get_extension_directories(kind, database)
+    directories = get_extension_directories(kind, database, database_path)
     directory = None
     for d in directories:
         if class_name in get_extension_class_names_in_directory(d)[kind]:

@@ -723,7 +723,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         for kind in kinds:
             # Get the available classes.
-            names = qm.test.base.get_extension_class_names(kind, database)
+            names = qm.test.base.get_extension_class_names(kind,
+                                                           database,
+                                                           self.__db_path)
             # Build structured text describing the classes.
             description = "** Available %s classes **\n\n" % kind
             for n in names:
@@ -777,7 +779,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Hunt through all of the extension class directories looking
         # for an appropriately named module.
         found = None
-        directories = get_extension_directories(kind, database)
+        directories = get_extension_directories(kind, database,
+                                                self.__db_path)
         for directory in directories:
             for ext in (".py", ".pyc", ".pyo"):
                 file_name = os.path.join(directory, module + ext)
