@@ -546,6 +546,15 @@ class Suite:
 class Database:
     """A database containing tests."""
 
+    def GetClassPaths(self):
+        """Return paths to search for class files.
+
+        returns -- A sequence of paths to add to the classpath when
+        loading test and action classes."""
+
+        return []
+
+
     def HasTest(self, test_id):
         """Return true if the database has a test with ID 'test_id'."""
 
@@ -1381,15 +1390,10 @@ def get_database():
     return _database
 
 
-def get_class(class_name, extra_paths=[]):
+def get_class(class_name):
     """Return the test or action class named 'class_name'.
 
     'class_name' -- A fully-qualified Python class name.
-
-    'extra_paths' -- Additional file system paths in which to look for
-    classes, analogous to 'PYTHONPATH'.  These paths are searched after
-    those specified in the 'QMTEST_CLASSPATH' environment variable, but
-    before the standard testa classes.
 
     returns -- A class object for the requested class.
 
@@ -1413,6 +1417,9 @@ def get_class(class_name, extra_paths=[]):
     except KeyError:
         # The environment variable isn't set.
         user_class_path = []
+    # The test database may also provide places for class files.
+    database = get_database()
+    extra_paths = database.GetClassPaths()
     # Construct the full set of paths to search in.
     paths = user_class_path + extra_paths + __builtin_class_path
     # Load it.

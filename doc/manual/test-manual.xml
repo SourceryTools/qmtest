@@ -641,6 +641,53 @@
 
   </section> <!-- Writing Action Classes -->
 
+  <section>
+   <title>Specifying the Class</title>
+
+   <para>To use your tet class, you must place the Python module file
+   containing it in a location where &qmtest; can find it.  &qmtest;
+   looks in three places when loading module files for test
+   classes:</para>
+
+   <itemizedlist>
+    <listitem>
+     <para>If the environment variable <envar>QMTEST_CLASSPATH</envar>
+     is defined, &qmtest first checks any directories listed in it.
+     This value of this environment variable should be a list of
+     directories to check for the module file, in the same format as the
+     standard Python <envar>PYTHONPATH</envar> environment
+     variable.</para>
+    </listitem>
+
+    <listitem>
+     <para>A test database may specify locations to check for module
+     files when loading a test class.  The standard &qmtest; test
+     database implementation specifies the subdirectory named
+     <filename>_classes</filename> in the top test database directory,
+     if this directory exists.  Module files containing test classes may
+     be placed in this directory.</para>
+    </listitem>
+
+    <listitem>
+     <para>Finally, &qmtest; checks a standard directory.  This
+     directory, installed with &qmtest;, contains modules with the
+     standard test classes described <!--FIXME-->elsewhere in this
+     document.</para>
+    </listitem>
+   </itemizedlist>
+
+   <para>You should generally place module files containing your test
+   classes in the test database's test class directory, unless you plan
+   to use the test classes in more than one test database.</para>
+
+   <para>Assuming the Python module file containing the test class is
+   located in one of the directories specified above, you can refer to
+   it using the syntax <classname>module.Class</classname>, where
+   <classname>module</classname> is the name of the module and
+   <classname>Class</classname> is the name of the class.</para>
+
+  </section> <!-- Specifying the Class -->
+
  </section> <!-- Writing Test Classes and Action Classes -->
 
 </chapter>

@@ -1,3 +1,35 @@
+2001-05-01  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/common.py (RcConfiguration.Get): Remove mention of DEFAULT.
+	Use section parameter correctly.
+	* qm/platform.py: New file.
+	* qm/test/web/web.py (start_server): Rename to...
+	(make_server): ... this.  Return server instead of running it.
+	* qm/test/xmldb.py (Database.GetClassPaths): New method.
+	* qm/test/cmdline.py (Command.start_browser_option_spec): New
+	variable. 
+	(Command.commands_spec): Use it.  Remove edit and template
+	commands. 
+	(Command.HasGlobalOption): New method.
+	(Command.HasCommandOption): Likewise.
+	(Command.__ExecuteEdit): Remove.
+	(Command.__EditTest): Likewise.
+	(Command.__ExecuteTemplate): Likewise.
+	(Command.__ExecuteServer): Start browser if requested.
+	* qm/test/base.py (Database.GetClassPaths): New method.
+	(get_class): Remove extra_paths parameter.  Use the database's
+	class paths.
+	* share/tutorial/test/tdb/_classes/: New directory.
+	* share/tutorial/test/count.py: Move to...
+	* share/tutorial/test/tdb/_classes/count.py: ... here.
+	* share/diagnostics/test-help.txt (action class control): Mention
+	_classes subdirectory.
+	(test class control): Likewise.
+	* share/diagnostics/common.txt (browser error): New diagnostic.
+	* doc/manual/manual.xml: Include test-reference.xml.
+	* doc/manual/test-manual.xml: Add section on specifying test classes. 
+	* doc/manual/test-reference.xml: New file.
+	
 2001-04-30  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* install.bat: New file.

@@ -49,7 +49,8 @@ class in the text control, using the syntax *module-name.class-name*.
 
 So that %(program_name)s can find the Python module file, you must
 include the directory containing it in the environment variable
-'QMTEST_CLASSPATH'.
+'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
+'_classes' of your test database directory.
 
 
 @ action ID
@@ -240,7 +241,8 @@ text control using the syntax *module-name.class-name*.
 
 So that %(program_name)s can find the Python module file, you must
 include the directory containing it in the environment variable
-'QMTEST_CLASSPATH'.
+'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
+'_classes' of your test database directory.
 
 
 @ test ID 

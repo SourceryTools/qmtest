@@ -38,6 +38,7 @@
 import base
 import os
 import qm.cmdline
+import qm.platform
 import qm.xmlutil
 import string
 import sys
@@ -138,6 +139,13 @@ class Command:
         "Log file name."
         )
 
+    start_browser_option_spec = (
+        "b",
+        "start-browser",
+        None,
+        "Start a browser and point it at the server."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -151,13 +159,6 @@ class Command:
         ]
 
     commands_spec = [
-        ("edit",
-         "Edit a test.",
-         "ID",
-         "This command edits a test.",
-         ( help_option_spec, )
-         ),
-
         ("run",
          "Run one or more tests.",
          "ID ...",
@@ -174,14 +175,7 @@ class Command:
          '',
          "Start the QMTest web GUI server.",
          [ help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec ]
-         ),
-
-        ("template",
-         "Create a template for a new test.",
-         "CLASS ID",
-         "Creates a template for a new class, and starts editing it.",
-         ( help_option_spec, )
+           log_file_option_spec, start_browser_option_spec ]
          ),
 
         ]
@@ -213,6 +207,15 @@ class Command:
           ) = components
 
 
+    def HasGlobalOption(self, option):
+        """Return true if global 'option' was specified."""
+
+        for opt, opt_arg in self.__global_options:
+            if opt == option:
+                return 1
+        return 0
+
+
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
 
@@ -221,6 +224,15 @@ class Command:
                 return opt_arg
         return default
 
+
+    def HasCommandOption(self, option):
+        """Return true if command 'option' was specified."""
+
+        for opt, opt_arg in self.__command_options:
+            if opt == option:
+                return 1
+        return 0
+    
 
     def GetCommandOption(self, option, default=None):
         """Return the value of command 'option', or 'default' if ommitted."""
@@ -268,10 +280,8 @@ class Command:
 
         # Dispatch to the appropriate method.
         method = {
-            "edit": self.__ExecuteEdit,
             "run" : self.__ExecuteRun,
             "server": self.__ExecuteServer,
-            "template": self.__ExecuteTemplate,
             }[self.__command]
         method(output)
 
@@ -416,54 +426,6 @@ class Command:
         self.__output.flush()
 
 
-    def __ExecuteEdit(self, output):
-        """Handle the edit command."""
-        
-        # FIXME: This assumes the database is an 'XmlDatabase'.  That's
-        # OK for now, since we'll have a GUI editing system later.
-
-        database = self.GetDatabase()
-
-        # Make sure an argument was specified.  The argument is the ID
-        # of test to edit.
-        if len(self.__arguments) != 1:
-            raise qm.cmdline.CommandError, qm.error("no id for edit")
-        # Make sure the argument corresponds to an existing test.
-        test_id = self.__arguments[0]
-        if not database.HasTest(test_id):
-            raise qm.cmdline.CommandError, qm.error("unknown test id",
-                                                    test_id=test_id)
-        self.__EditTest(test_id)
-
-
-    def __EditTest(self, test_id):
-        """Start an editing operation on test 'test_id'."""
-        
-        database = self.GetDatabase()
-        # Obtain the full path to the test file.
-        test_path = database.TestIdToPath(test_id, absolute=1)
-
-        # If the user specified an 'xml_editor' in the rc file, use
-        # that.
-        editor = qm.rc.Get("xml_editor", None)
-        if editor is not None:
-            pass
-        # Extract the user's perferred editor from the environment, if
-        # it's specified there.
-        elif os.environ.has_key("EDITOR"):
-            # FIXME: Do something else on Windows?  Perhaps look up the
-            # association with .txt or .xml files in the registry?
-            editor = os.environ["EDITOR"]
-        else:
-            # Otherwise use the One True Program.
-            # FIXME: Use notepad for Windows?
-            editor = "/usr/bin/emacs"
-
-        # Invoke the editor in the usual way, passing the edited file's
-        # path as the command argument.
-        os.system("%s %s" % (editor, test_path))
-
-
     def __ExecuteServer(self, output):
         """Process the server command."""
 
@@ -489,31 +451,28 @@ class Command:
         else:
             # Otherwise, it's a file name.  Open it for append.
             log_file = open(log_file_path, "a+")
-        # Start the server.
-        web.web.start_server(port_number, address, log_file)
+
+        # Set up the server.
+        server = web.web.make_server(port_number, address, log_file)
+
+        # Construct the URL to the main page on the server.
+        if address == "":
+            url_address = qm.common.get_host_name()
+        else:
+            url_address = address
+        url = "http://%s:%d/test/dir" % (url_address, port_number)
+
+        if self.HasCommandOption("start-browser"):
+            # Now that the server is bound to its address, we can point
+            # a browser at it safely.
+            qm.platform.open_in_browser(url)
+        else:
+            print "Point your browser at:\n  %s\n" % url
+
+        # Accept requests.
+        server.Run()
     
     
-    def __ExecuteTemplate(self, output):
-        database = self.GetDatabase()
-        # Make sure two arguments were specified.  The arguments are the
-        # class name and the ID of the new test.
-        if len(self.__arguments) != 2:
-            raise qm.cmdline.CommandError, qm.error("missing arg for template")
-        test_class_name, test_id = self.__arguments
-        try:
-            # Construct an empty test instance.
-            test = base.make_new_test(test_class_name, test_id)
-        except ValueError:
-            raise RuntimeError, qm.error("test class not fully specified")
-        except ImportError:
-            raise RuntimeError, qm.error("invalid class",
-                                         class_name=test_class_name)
-        # Write it out.
-        database.WriteTest(test, comments=1)
-        # Let the user edit it immediately.
-        self.__EditTest(test_id)
-
-
     def __WriteSummary(self, test_ids, results, expected_outcomes, output):
         """Generate test result summary.
 

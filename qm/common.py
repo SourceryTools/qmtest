@@ -315,8 +315,7 @@ class RcConfiguration:
 
         'section' -- The section from which to retrieve the option.
         'None' indicates the section specified to the 'Load' method for
-        this instance.  Use '"DEFAULT"' for the default section, i.e. to
-        access options declared outside of another section.
+        this instance.  
 
         precondition -- The RC configuration must be loaded."""
 
@@ -329,7 +328,7 @@ class RcConfiguration:
 
         try:
             # Try to get the requested option.
-            return self.__parser.get(self.__section, option)
+            return self.__parser.get(section, option)
         except ConfigParser.NoSectionError:
             # Couldn't find the section.
             return default

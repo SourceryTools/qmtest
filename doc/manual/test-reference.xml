@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   test-reference.xml
+  Author: Alex Samuel
+  Date:   2001-04-30
+
+  Contents:
+    Reference guide for QMTest.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-test-reference">
+ <title>&qmtest; Reference</title>
+
+ <section id="sec-test-command-line">
+  <title>Command Line Reference</title>
+
+  <para>Write me.</para>
+
+ </section>
+
+ <section id="sec-test-configuration">
+  <title>Configuration Reference</title>
+
+  <para>Write me.</para>
+
+ </section>
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("manual.xml" "book" "chapter")
+  End:
+-->

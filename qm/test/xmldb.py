@@ -132,6 +132,15 @@ class Database(base.Database):
         self.__actions = {}
 
 
+    def GetClassPaths(self):
+        # Specify the '_classes' subdirectory, if it exists.
+        class_dir = os.path.join(self.__path, "_classes")
+        if os.path.isdir(class_dir):
+            return [class_dir]
+        else:
+            return []
+
+
     def GetPath(self):
         """Return the path to the database."""
 

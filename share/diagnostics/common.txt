@@ -36,6 +36,9 @@
 @ bad port number
 You must specify a numerical port number.
 
+@ browser error
+Could not execute your web browser, '%(browser_path)s'.
+
 @ conflicting options
 You may not specify both '--%(option1)s' and '--%(option2)s'.
 

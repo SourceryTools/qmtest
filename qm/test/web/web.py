@@ -130,8 +130,8 @@ def generate_html_from_dtml(template_name, page_info):
     return qm.web.generate_html_from_dtml(template_path, page_info)
 
 
-def start_server(port, address="", log_file=None):
-    """Start an HTTP server.
+def make_server(port, address="", log_file=None):
+    """Create and bind an HTTP server.
 
     'port' -- The port number on which to accept HTTP requests.
 
@@ -141,7 +141,8 @@ def start_server(port, address="", log_file=None):
     'log_file' -- A file object to which the server will log requests.
     'None' for no logging.
 
-    Does not return until the server shuts down."""
+    returns -- A web server.  The server is bound to the specified
+    address.  Call its 'Run' method to start accepting requests."""
 
     import qm.test.web.dir
     import qm.test.web.show
@@ -195,12 +196,7 @@ def start_server(port, address="", log_file=None):
     except qm.web.PrivilegedPortError:
         raise RuntimeError, qm.error("privileged port", port=port)
 
-    try:
-        # Start the server.
-        server.Run()
-    finally:
-        # Clean up the URL file.
-        os.remove(url_path)
+    return server
 
 
 ########################################################################
