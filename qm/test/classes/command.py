@@ -506,7 +506,8 @@ class ScriptTest(ExecTest):
             name="script",
             title="Script",
             description="The text of the script to run.",
-            verbatim="true"
+            verbatim="true",
+            multiline="true",
             ),
 
         qm.fields.TextField(
@@ -531,7 +532,8 @@ class ScriptTest(ExecTest):
                  stdout=None,
                  stderr=None):
         self.script = script
-        if interpreter is not None:
+        interpreter = string.strip(interpreter)
+        if interpreter != "":
             self.__interpreter = string.split(interpreter, " ")
         else:
             # Use the default shell.

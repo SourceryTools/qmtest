@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>command.ScriptTest</class>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='stdin'>
+  <attachment/>
+ </argument>
+ <argument name='interpreter'>
+  <text/>
+ </argument>
+ <argument name='stdout'>
+  <attachment/>
+ </argument>
+ <argument name='script'>
+  <text># Make sure the environment variable is set correctly.
+test ${MY_ENV_VAR} = "Hello"
+</text>
+ </argument>
+ <argument name='stderr'>
+  <attachment/>
+ </argument>
+ <argument name='arguments'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set>
+   <text>MY_ENV_VAR=Hello</text>
+  </set>
+ </argument>
+</test>

@@ -246,7 +246,217 @@
   provides instructions for writing your own test classes, <xref
   linkend="sec-writing-resource-classes"/> for resource classes.</para>
 
-  <para>&fixme; Write this.</para>
+  <section id="sec-ref-test-classes">
+   <title>Test Classes</title>
+
+   <section id="sec-exectest">
+    <title><classname>command.ExecTest</classname></title>
+
+    <para>The <classname>command.ExecTest</classname> test class runs a
+    program from an ordinary executable file.  Each test specifies the
+    program executable to run, its full command line, and the data to
+    feed to its standard input stream.  <classname>ExecTest</classname>
+    collects the complete text of the program's standard output and
+    standard error streams and the program's exit code, and compares
+    these to expected values specified in the test.  If the standard
+    output and error text and the exit code match the expected values,
+    the test passes.</para>
+
+    <para>A <classname>command.ExecTest</classname> test supplies the
+    following arguments:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Program</property> (text field)</glossterm>
+      <glossdef>
+       <para>The name of the executable file to run.
+       <classname>command.ExecTest</classname> attempts to locate the
+       program executable in the path specified by the
+       <property>path</property> property of the test context.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Argument List</property> (set field of text
+      items)</glossterm>
+      <glossdef>
+       <para>The argument list for the program.  The elements of this
+       set are sequential items from which the program's argument list
+       is constructed.  <classname>command.ExecTest</classname>
+       automatically prepends an implicit zeroth element, the full path
+       of the program.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Standard Input</property> (attachment
+      field)</glossterm>
+      <glossdef>
+       <para>Text or data to pass to the program's standard input
+       stream.  This data is written to a temporary file, and this file
+       is connected to the program's standard input.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Environment</property> (set field of text
+      items)</glossterm>
+      <glossdef>
+       <para>The environment (i.e. the set of environment variables)
+       available to the executing program.  Each element of this
+       argument is a string of the form
+       "<replaceable>VARIABLE</replaceable>=<replaceable>VALUE</replaceable>".</para>
+
+       <para><classname>command.ExecTest</classname> adds additional
+       environment variables automatically.  Each context property is
+       accessible as an environment variable; the name of the
+       environment variable is the name of the context property,
+       prefixed with "<envar>QMV_</envar>".  Also, <envar>PATH</envar>
+       contains the execution path specified in the
+       <property>path</property> context variable.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Exit Code</property> (integer
+      field)</glossterm>
+      <glossdef>
+       <para>The exit code value expected from the program.  If the
+       program produces an exit code value different from this one, the
+       test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Ouptut</property>
+      (attachment field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard output stream.  The actual text or data written
+       to standard output is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Input</property>
+      (attachment field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard error stream.  The actual text or data written to
+       standard error is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+    </glosslist>
+
+   </section> <!-- sec-exectest -->
+
+   <section id="sec-commandtest">
+    <title><classname>command.CommandTest</classname></title>
+
+    <para><classname>command.CommandTest</classname> is very similar to
+    <classname>command.ExecTest</classname>, except that it runs a
+    program via a shell script invocation rather than directly.  Instead
+    of specifying an executable to run and the elements of its argument
+    list, a test provides a single command line.  The shell is
+    responsible for finding the executable and constructing its argument
+    list.</para>
+
+    <para>Standard input and the environment is specified in the test.
+    The test passes if the command produces the expected standard
+    output, standard error, and exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.CommandTest</classname>, including the contents
+    of the test context, are directly accessible via shell variables.
+    The syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.CommandTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> and <property>Argument List</property>
+    properties are replaced with these:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Command</property></glossterm>
+      <glossdef>
+       <para>The command to run.  The command is delivered verbatim to
+       the shell.  The shell interprets the command according to its own
+       quoting rules andd syntax.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Command Interpreter</property></glossterm>
+      <glossdef>
+       <para>The path to the shell or command interpreter program with
+       which to interpret the command.  If this field is left empty, the
+       system's default shell is used.  On UNIX-like systems, the
+       default is "<filename>/bin/sh -norc -noprofile
+       -c</filename>".</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- sec-commandtest -->
+
+   <section id="sec-scripttest">
+    <title><classname>command.ScriptTest</classname></title>
+
+    <para><classname>command.ScriptTest</classname> is an extension of
+    <classname>command.CommandTest</classname> that lets a test specify
+    an entire shell script instead of a single command.  The script
+    specified in the test is written to a temporary file, and this file
+    is interpreted by the specified shell or command interpreter
+    program.</para>
+
+    <para>Standard input, the environment, and the argument list to pass
+    to the script are specified in the test.  The test passes if the
+    script produces the expected standard output, standard error, and
+    exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.ScriptTest</classname>, including the contents of
+    the test context, are directly accessible via shell variables.  The
+    syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.ScriptTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> property is replaced with these:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Script</property></glossterm>
+      <glossdef>
+       <para>The text of the script to run.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Script Interpreter</property></glossterm>
+      <glossdef>
+       <para>The path to the shell or command interpreter program with
+       which to interpret the script.  If this field is left empty, the
+       system's default shell is used.  On UNIX-like systems, the
+       default is "<filename>/bin/sh -norc
+       -noprofile</filename>".</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- sec-scripttest -->
+
+  </section> <!-- sec-ref-test-classes -->
 
  </section> <!-- sec-ref-classes -->
 

@@ -1,4 +1,15 @@
-2001-08-28  Alex Samuel  <samuel@indetermi.net>
+2001-08-28  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/classes/command.py (ScriptTest.fields): Make script
+	field multiline.
+	(ScriptTest.__init__): Test for empty string intepreter field.
+	* tests/unit/test/classes/scripttest1.qmt: New test.
+	* tests/unit/test/classes/scripttest2.qmt: Likewise.
+	* tests/unit/test/classes/scripttest3.qmt: Likewise.
+	* doc/manual/test-tour.xml: Fix typo.
+	* doc/manual/test-reference.xml: Document some test classes. 
+
+2001-08-28  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py (ContextWrapper.items): Fix.
 	* qm/test/cmdline.py (Command.__init__): Reformat.
@@ -7,23 +18,23 @@
 	* qm/test/classes/command.py (ExecTest.MakeEnvironment): Add
 	context variables to environment.
 
-2001-08-27  Alex Samuel  <samuel@indetermi.net>
+2001-08-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/setup_path.py.in (add_to_python_path): Prepend to path.
 
-2001-08-22  Alex Samuel  <samuel@indetermi.net>
+2001-08-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm.spec (files): Add qmtest-remote.
 
-2001-08-22  Alex Samuel  <samuel@indetermi.net>
+2001-08-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py (scripts): Fix qmtest-remote script.
 
-2001-08-22  Alex Samuel  <samuel@indetermi.net>
+2001-08-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_win32.py (get_host_name): Fix syntax error.
 
-2001-08-22  Alex Samuel  <samuel@indetermi.net>
+2001-08-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/xmldb.py (DirectorySuite.__ScanDirectory): Construct
 	absolute test IDs.

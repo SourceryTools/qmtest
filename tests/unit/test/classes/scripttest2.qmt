@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>command.ScriptTest</class>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='stdin'>
+  <attachment/>
+ </argument>
+ <argument name='interpreter'>
+  <text/>
+ </argument>
+ <argument name='stdout'>
+  <attachment/>
+ </argument>
+ <argument name='script'>
+  <text># The "path" context property contains the execution path.
+# Make sure a corresponding environment variable is created.
+test -n "${QMV_path}"
+</text>
+ </argument>
+ <argument name='stderr'>
+  <attachment/>
+ </argument>
+ <argument name='arguments'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+</test>

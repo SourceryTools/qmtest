@@ -351,7 +351,7 @@
 
    <para>Let's fix test <literal>exec1</literal> so it passes.</para>
 
-   <para>Start he server again with the <command>&qmtest-cmd;
+   <para>Start the server again with the <command>&qmtest-cmd;
    server</command> command.  Click on the <guibutton>Edit</guibutton>
    button towards the upper-right corner of the page for test
    <literal>exec1</literal>.  &qmtest; shows a similar form, but now the
