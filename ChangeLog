@@ -1,3 +1,11 @@
+2000-10-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* templates/html: Use Open Publication License.
+	* doc/design/qmtest/design.html: Likewise.
+	* doc/design/qmtrack/index.xhtml: Likewise.
+	* doc/design/qmtrack/architecture.xhtml: Likewise.
+	* doc/design/qmtrack/requirements.xhtml: Likewise.
+	
 2000-10-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/process-xhtml.py: Convert to coding standards.
