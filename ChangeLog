@@ -1,5 +1,11 @@
 2001-05-28  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/manual/manual.xml: Include track-manual.xml.
+	* doc/manual/track-manual.xml: New file.
+	* doc/manual/test-manual.xml: Adjust.
+	
+2001-05-28  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/graph.py: Add doc string.
 	(CycleError): New class.
 	(__sort_helper): Handle node missing from edges map.

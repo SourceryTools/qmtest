@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   track-manual.xml
+  Author: Alex Samuel
+  Date:   2001-05-25
+
+  Contents:
+    Manual for QMTrack.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-track-manual">
+ <title>Using &qmtrack;</title>
+ 
+ <section id="sec-qmtrack-concepts">
+  <title>&qmtrack; Concepts</title>
+
+  <para>This section describes the basic concepts of &qmtrack;.</para>
+
+  <section id="sec-issues">
+   <title>Issues</title>
+
+   <para>An <firstterm>issue</firstterm> is the fundamental record of
+   information in &qmtrack;.  An issue represents a single bug,
+   problem report, enhancement request, etc. stored in &qmtrack;'s
+   database.</para>
+
+   <para>An issue is usually represented in &qmtrack;'s user
+   interfaces as a form.  The form is made of fields, and the issue
+   has a value for each field.  The value may, for some fields, be
+   empty.  Like the blanks of a preprinted form, the fields in an
+   issue define a standard set of information that is provided for
+   each issue.</para>
+
+  </section> <!-- sec-issues -->
+
+  <section id="sec-issue-classes">
+   <title>Issue Classes</title>
+
+   <para>Not all issues need have the same fields.  An
+   <firstterm>issue classes</firstterm> defines a schema of fields
+   that may be used for an issue.  Each issue belongs to a single
+   issue class, which defines the fields that are present in the
+   issue.  Issue classes are configured as part of the &qmtrack;
+   database.</para>
+
+   <para>When you create a new issue, you must choose one of the
+   available issue classes for the new issue.  Once an issue has been
+   created, its issue class cannot be changed.</para>
+
+  </section> <!-- sec-issue-classes -->
+
+  <section id="sec-revisions">
+   <title>Revisions</title>
+
+   <para>An issue is typically modified over the course of its
+   lifetime.  For example, as a bug is analyzed and subsequently
+   fixed, information and annotations are added to the bug report, and
+   finally the bug is closed.</para>
+
+   <para>When you change an issue, &qmtrack; does not simply discard
+   the old version.  In fact, &qmtrack; preserves all the versions of
+   each issue since its creation.  These versions are called
+   <firstterm>revisions</firstterm>.  This allows you to view an
+   issue's complete revision history.</para>
+
+   <para>Revisions are numbered sequentially, starting with zero for
+   an issue's initial revision.  Most users need not concern
+   themselves with revision numbers, though, since they will generally
+   be interested only with the highest-numbered revision of any issue,
+   the <firstterm>current revision</firstterm>.</para>
+
+  </section> <!-- sec-revisions -->
+
+ </section> <!-- sec-qmtrack-concepts -->
+
+</chapter> <!-- chap-track-manual -->
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("manual.xml" "book" "chapter")
+  End:
+-->

@@ -40,6 +40,7 @@
   <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
   <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
   <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
+  <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
 ]>
 <book>
  <bookinfo>
@@ -76,6 +77,7 @@
   <title>Using &qm;</title>
   &test-manual.xml;
   &test-reference.xml;
+  &track-manual.xml;
   &common-manual.xml;
  </part>  
 

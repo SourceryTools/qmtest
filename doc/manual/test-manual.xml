@@ -32,8 +32,12 @@
    failure.  A test consists of:
     <orderedlist>
      <listitem>
-      <para>A <firstterm>test ID</firstterm> that uniquely identifies
-      the test in the test database.</para>
+      <para>A <firstterm>test ID</firstterm>, which uniquely
+      identifies the test in the test database.  A test ID may be
+      composed of lower-case letters, digits, and underscores.
+      &qmtest; imposes no other restrictions on test IDs; the user who
+      creates the test is free to choose an ID evocative of the tests
+      role or purpose.</para>
      </listitem>
 
      <listitem>
