@@ -606,11 +606,11 @@ class OldDejaGNUTest(GPPTest):
 
         # So that we are thread safe, all work is done in a directory
         # corresponding to this test.
-        self._MakeDirectoryForTest()
+        self._MakeDirectory()
         # Run the test.
         GCCTest.Run(self, context, result)
         # Remove the temporary directory.
-        self._RemoveDirectoryForTest(result)
+        self._RemoveDirectory(result)
 
 
     def _IsExpectedToFail(self, context):
@@ -648,7 +648,7 @@ class OldDejaGNUTest(GPPTest):
             pos = match.end()
                 
         
-    def _GetCompilationSteps(self):
+    def _GetCompilationSteps(self, context):
         """Return the compilation steps for this test.
 
         returns -- A sequence of 'CompilationStep' objects."""
@@ -836,11 +836,11 @@ class DGTest(GPPTest):
 
         # So that we are thread safe, all work is done in a directory
         # corresponding to this test.
-        self._MakeDirectoryForTest()
+        self._MakeDirectory()
         # If checking coverage information, make sure there are no
         # stale coverage files around.
         if self._check_coverage:
-            for f in glob.glob(os.path.join(self._GetDirectoryForTest(),
+            for f in glob.glob(os.path.join(self._GetDirectory(),
                                             "*.da")):
                 os.remove(f)
 
@@ -862,7 +862,7 @@ class DGTest(GPPTest):
             file_name \
                 = os.path.split(self.source_file.GetDataFile())[1]
             # Get the assembly file in which we are supposed to look.
-            file_name = os.path.join(self._GetDirectoryForTest(),
+            file_name = os.path.join(self._GetDirectory(),
                                      os.path.splitext(file_name)[0] + ".s")
             # Read the contents of the file.
             file = open(file_name)
@@ -888,7 +888,7 @@ class DGTest(GPPTest):
                 or self._forbidden_demangled_assembly_patterns):
                 demangler = Demangler(asm_contents)
                 demangler.Run(context["DGTest.demangler"],
-                              self._GetDirectoryForTest())
+                              self._GetDirectory())
                 asm_contents = demangler.stdout
 
             # See if all the patterns are there.
@@ -908,10 +908,10 @@ class DGTest(GPPTest):
         # Check the coverage data.
         self._CheckCoverage(context, result)
         # Remove the temporary directory.
-        self._RemoveDirectoryForTest(result)
+        self._RemoveDirectory(result)
         
 
-    def _GetCompilationSteps(self):
+    def _GetCompilationSteps(self, context):
         """Return the compilation steps for this test.
 
         returns -- A sequence of 'CompilationStep' objects."""
@@ -1241,14 +1241,14 @@ class DGTest(GPPTest):
 
         # Run "gcov".
         gcov = RedirectedExecutable(context.get("GCCTest.gcov", "gcov"),
-                                    self._GetDirectoryForTest())
+                                    self._GetDirectory())
         status = gcov.Run(["gcov"] + self._coverage_arguments)
         prefix = self._GetAnnotationPrefix() + "gcov_"
         if not self._CheckStatus(result, prefix, "Coverage tool", status):
             return
 
         # Get the contents of the gcov output file.
-        filename = os.path.join(self._GetDirectoryForTest(),
+        filename = os.path.join(self._GetDirectory(),
                                 self._coverage_arguments[-1] + ".gcov")
         lines = open(filename).readlines()
         
@@ -1370,7 +1370,7 @@ class InitPriorityTest(DGTest):
             # Compile the file.
             compiler = self._GetCompiler(context)
             output = compiler.Compile(Compiler.MODE_COMPILE, [filename],
-                                      self._GetDirectoryForTest())[1]
+                                      self._GetDirectory())[1]
             # If there are any diagnostics, the compiler does not
             # understand the attribute.
             if (compiler.ParseOutput(output)):
@@ -1418,9 +1418,9 @@ class GPPBprobTest(GPPTest):
         modified by this method to indicate outcomes other than
         'Result.PASS' or to add annotations."""
 
-        self._MakeDirectoryForTest()
+        self._MakeDirectory()
         # Remove any stale profiling files.
-        for f in glob.glob(os.path.join(self._GetDirectoryForTest(),
+        for f in glob.glob(os.path.join(self._GetDirectory(),
                                         "*.da")):
             os.remove(f)
 
@@ -1435,7 +1435,7 @@ class GPPBprobTest(GPPTest):
         (status, output, command) \
             = compiler.Compile(Compiler.MODE_LINK,
                                [path],
-                               self._GetDirectoryForTest(),
+                               self._GetDirectory(),
                                options + ["-fprofile-arcs"],
                                profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "profile_arcs_"
@@ -1447,7 +1447,7 @@ class GPPBprobTest(GPPTest):
         # Run the program.
         executable = \
             CompiledExecutable(profiled_exe_path,
-                               self._GetDirectoryForTest(),
+                               self._GetDirectory(),
                                self._GetLibraryDirectories(context),
                                context.get("CompilerTest.interpreter"))
         status = executable.Run([profiled_exe_path])
@@ -1460,7 +1460,7 @@ class GPPBprobTest(GPPTest):
         (status, output, command) \
             = compiler.Compile(Compiler.MODE_LINK,
                                [path],
-                               self._GetDirectoryForTest(),
+                               self._GetDirectory(),
                                options + ["-fbranch-probabilities"],
                                profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "branch_probs_"
@@ -1469,7 +1469,7 @@ class GPPBprobTest(GPPTest):
         self._CheckStatus(result, prefix, "Compiler", status)
 
         # Remove the temporary directory.
-        self._RemoveDirectoryForTest(result)
+        self._RemoveDirectory(result)
         
     
 class GCCDatabase(Database):

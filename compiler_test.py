@@ -62,8 +62,133 @@ class CompilationStep:
         self.diagnostics = diagnostics
 
 
+
+class CompilerBase:
+    """A 'CompilerBase' is used by compilation test and resource clases."""
+
+    def _CheckStatus(self, result, prefix, desc, status,
+                     non_zero_exit_ok = 0):
+        """Check the exit status from a command.
+
+        'result' -- The 'Result' object to update.
+
+        'prefix' -- The prefix that should be used when creating
+        result annotations.
+
+        'desc' -- A description of the executing program.
         
-class CompilerTest(Test):
+        'status' -- The exit status, as returned by 'waitpid'.
+
+        'non_zero_exit_ok' -- True if a non-zero exit code is not
+        considered failure.
+
+        returns -- False is the test failed, true otherwise."""
+
+        if sys.platform == "win32" or os.WIFEXITED(status):
+            # Obtain the exit code.
+            if sys.platform == "win32":
+                exit_code = status
+            else:
+                exit_code = os.WEXITSTATUS(status)
+            # If the exit code is non-zero, the test fails.
+            if exit_code != 0 and not non_zero_exit_ok:
+                result.Fail("%s failed with exit code %d." % (desc, exit_code))
+                # Record the exit code in the result.
+                result[prefix + "exit_code"] = str(exit_code)
+                return 0
+        elif os.WIFSIGNALED(status):
+            # Obtain the signal number.
+            signal = os.WTERMSIG(status)
+            # If the program gets a fatal signal, the test fails .
+            result.Fail("%s received fatal signal %d." % (desc, signal))
+            result[prefix + "signal"] = str(signal)
+            return 0
+        else:
+            # A process should only be able to stop by exiting, or
+            # by being terminated with a signal.
+            assert None
+
+        return 1
+    
+
+    def _GetDirectory(self):
+        """Get the name of the directory in which to run.
+
+        'returns' -- The name of the directory in which this test or
+        resource will execute."""
+
+        return os.path.join(".", "build",
+                            self.GetDatabase().LabelToPath(self.GetId()))
+    
+        
+    def _MakeDirectoryRecursively(self, directory):
+        """Create 'directory' and its parents.
+
+        'directory' -- The name of the directory to create.  It must
+        be a relative path"""
+
+        (parent, base) = os.path.split(directory)
+        # Make sure the parent directory exists.
+        if parent and not os.path.isdir(parent):
+            self._MakeDirectoryRecursively(parent)
+        # Create the final directory.
+        try:
+            os.mkdir(directory)
+        except EnvironmentError, e:
+            # It's OK if the directory already exists.
+            if e.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+            
+            
+    def _MakeDirectory(self):
+        """Create a directory in which to place generated files.
+
+        returns -- The name of the directory."""
+
+        # Get the directory name.
+        directory = self._GetDirectory()
+        # Create it.
+        self._MakeDirectoryRecursively(directory)
+
+        return directory
+
+
+    def _RemoveDirectory(self, result):
+        """Remove the directory in which generated files are placed.
+
+        'result' -- The 'Result' of the test or resource.  If the
+        'result' indicates success, the directory is removed.
+        Otherwise, the directory is left behind to allow investigation
+        of the reasons behind the test failure."""
+
+        if result.GetOutcome() == Result.PASS:
+            try:
+                qm.common.rmdir_recursively(self._GetDirectory())
+            except:
+                # If the directory cannot be removed, that is no
+                # reason for the test to fail.
+                pass
+
+
+    def _GetObjectFileName(self, source_file_name, object_extension):
+        """Return the default object file name for 'soruce_file_name'.
+
+        'source_file_name' -- A string giving the name of a source
+        file.
+
+        'object_extension' -- The extension used for object files.
+
+        returns -- The name of the object file that will be created by
+        compiling 'source_file_name'."""
+
+        basename = os.path.basename(source_file_name)
+        return os.path.splitext(basename)[0] + object_extension
+    
+
+
+class CompilerTest(Test, CompilerBase):
     """A 'CompilerTest' tests a compiler."""
 
     _ignored_diagnostic_regexps = ()
@@ -87,7 +212,7 @@ class CompilerTest(Test):
         # the generated path.
         executable_path = None
         # See what we need to run this test.
-        steps = self._GetCompilationSteps()
+        steps = self._GetCompilationSteps(context)
         # See if we need to run this test.
         is_execution_required = self._IsExecutionRequired()
         
@@ -103,7 +228,7 @@ class CompilerTest(Test):
             # Run the compiler.
             (status, output, command) \
                 = compiler.Compile(step.mode, step.files,
-                                   self._GetDirectoryForTest(),
+                                   self._GetDirectory(),
                                    step.options, step.output)
             # Remember the command used to perform the compilation.
             result[prefix + "command"] = \
@@ -146,9 +271,12 @@ class CompilerTest(Test):
         raise NotImplementedError
         
         
-    def _GetCompilationSteps(self):
+    def _GetCompilationSteps(self, context):
         """Return the compilation steps for this test.
 
+        'context' -- The 'Context' in which this test is being
+        executed.
+        
         returns -- A sequence of 'CompilationStep' objects."""
 
         raise NotImplementedError
@@ -221,9 +349,10 @@ class CompilerTest(Test):
         else:
             # Use the default values.
             environment = None
+
         status = executable.Run(arguments,
                                 environment = environment,
-                                dir = self._GetDirectoryForTest())
+                                dir = self._GetDirectory())
         # Compute the result annotation prefix.
         prefix = self._GetAnnotationPrefix() + "execution_"
         # Remember the output streams.
@@ -324,51 +453,6 @@ class CompilerTest(Test):
         return not errors_occurred
 
 
-    def _CheckStatus(self, result, prefix, desc, status,
-                     non_zero_exit_ok = 0):
-        """Check the exit status from a command.
-
-        'result' -- The 'Result' object to update.
-
-        'prefix' -- The prefix that should be used when creating
-        result annotations.
-
-        'desc' -- A description of the executing program.
-        
-        'status' -- The exit status, as returned by 'waitpid'.
-
-        'non_zero_exit_ok' -- True if a non-zero exit code is not
-        considered failure.
-
-        returns -- False is the test failed, true otherwise."""
-
-        if sys.platform == "win32" or os.WIFEXITED(status):
-            # Obtain the exit code.
-            if sys.platform == "win32":
-                exit_code = status
-            else:
-                exit_code = os.WEXITSTATUS(status)
-            # If the exit code is non-zero, the test fails.
-            if exit_code != 0 and not non_zero_exit_ok:
-                result.Fail("%s failed with exit code %d." % (desc, exit_code))
-                # Record the exit code in the result.
-                result[prefix + "exit_code"] = str(exit_code)
-                return 0
-        elif os.WIFSIGNALED(status):
-            # Obtain the signal number.
-            signal = os.WTERMSIG(status)
-            # If the program gets a fatal signal, the test fails .
-            result.Fail("%s received fatal signal %d." % (desc, signal))
-            result[prefix + "signal"] = str(signal)
-            return 0
-        else:
-            # A process should only be able to stop by exiting, or
-            # by being terminated with a signal.
-            assert None
-
-        return 1
-    
-        
     def _IsDiagnosticExpected(self, emitted, expected):
         """Returns true if 'emitted' matches 'expected'.
 
@@ -417,59 +501,3 @@ class CompilerTest(Test):
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
         return "<pre>" + string.join(diagnostic_strings, '\n') + "</pre>"
-
-
-    def _GetDirectoryForTest(self):
-        """Get the name of the directory in which this test is run.
-
-        'returns' -- The name of the directory."""
-
-        return os.path.join(".", "build",
-                            self.GetDatabase().LabelToPath(self.GetId()))
-    
-        
-    def _MakeDirectoryRecursively(self, directory):
-        """Create 'directory' and its parents.
-
-        'directory' -- The name of the directory to create.  It must
-        be a relative path"""
-
-        (parent, base) = os.path.split(directory)
-        # Make sure the parent directory exists.
-        if parent and not os.path.isdir(parent):
-            self._MakeDirectoryRecursively(parent)
-        # Create the final directory.
-        try:
-            os.mkdir(directory)
-        except EnvironmentError, e:
-            # It's OK if the directory already exists.
-            if e.errno == errno.EEXIST:
-                pass
-            else:
-                raise
-            
-            
-    def _MakeDirectoryForTest(self):
-        """Create a directory in which to place generated files."""
-
-        # Get the directory name.
-        directory = self._GetDirectoryForTest()
-        # Create it.
-        self._MakeDirectoryRecursively(directory)
-
-
-    def _RemoveDirectoryForTest(self, result):
-        """Remove the directory in which generated files are placed.
-
-        'result' -- The 'Result' of the test.  If the test has passed,
-        the directory is removed.  Otherwise, the directory is left
-        behind to allow investigation of the reasons behind the test
-        failure."""
-
-        if result.GetOutcome() == Result.PASS:
-            try:
-                qm.common.rmdir_recursively(self._GetDirectoryForTest())
-            except:
-                # If the directory cannot be removed, that is no
-                # reason for the test to fail.
-                pass
