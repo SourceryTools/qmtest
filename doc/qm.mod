@@ -43,6 +43,8 @@
 <!-- Other commonly-used symbols and phrases.  -->
 
 <!ENTITY prompt "<prompt>$ </prompt>">
+
+<!-- FIXME: The TeX stylesheets smush this into a single dash.  -->
 <!ENTITY dashdash "&#45;&#45;">
 
 <!-- The Software Carpentry Open Publication License.  -->

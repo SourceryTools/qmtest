@@ -58,7 +58,7 @@ tdb/cmdline/verbose.qmt
     <symbol>gui</symbol>.</para>
 
     <para>All tests in the database are part of the implicit test suite
-    <symbol>.</symbol>.</para>
+    with the ID ``<symbol>.</symbol>''.</para>
 
    </section>
 
@@ -68,10 +68,11 @@ tdb/cmdline/verbose.qmt
     <para>A test file contains &xml;, using the <sgmltag
     class="element">test</sgmltag> document element.</para>
 
-    <para>The most important elements are <sgmltag
-    class="element">class</sgmltag>, which specifies the test class, and
-    <sgmltag class="element">argument</sgmltag>, which specifies one of
-    the arguments to the (parameterized) test class.</para>
+    <para>The most important XML elements are <sgmltag
+    class="element">&lt;class&gt;</sgmltag>, which specifies the test
+    class, and <sgmltag class="element">&lt;argument&gt;</sgmltag>,
+    which specifies one of the arguments to the (parameterized) test
+    class.</para>
 
     <para>Suppose, for example, test class <classname>Count</classname>
     takes two arguments: an input string and an expected value.  The
@@ -243,11 +244,12 @@ class Count:
    <section>
     <title>Full Test Results</title>
 
-    <para>Specify the <option>--output</option> option to generate a
-    full test result listing in &xml; format.  For example,</para>
+    <para>Specify the <option>&dashdash;output</option> option to
+    generate a full test result listing in &xml; format.  For
+    example,</para>
 
     <screen>
-     <prompt>$</prompt> <userinput>qmtest run --output results.xml test1</userinput>
+     <prompt>$</prompt> <userinput>qmtest run &dashdash;output results.xml test1</userinput>
     </screen>
 
    </section>
@@ -266,11 +268,11 @@ class Count:
     from expected values.</para>
 
     <para>To use an &xml; result file as the expected outcomes for a
-    subsequent test run, use the <option>--outcomes</option>
+    subsequent test run, use the <option>&dashdash;outcomes</option>
     option.  For example,</para>
 
     <screen>
-     <prompt>$</prompt> <userinput>qmtest run --outcomes results.xml test1</userinput>
+     <prompt>$</prompt> <userinput>qmtest run &dashdash;outcomes results.xml test1</userinput>
     </screen>
 
    </section>
@@ -283,20 +285,50 @@ class Count:
 
     <itemizedlist>
      <listitem>
-      <para>The <classname>command.ExecTest</classname> test class runs
-      a program and compares its exit code, standard output, and
-      standard error to expected values.</para>
+      <para>The <classname>command.ExecTest</classname> test class
+      runs a program and compares its exit code, standard output, and
+      standard error to expected values.  The program is invoked
+      directly, without a command shell, and is passed command-line
+      arguments specified in the test.  The test may also specify text
+      or data to pass to the program as standard input.</para>
      </listitem>
 
      <listitem>
-      <para>The <classname>command.CommandTest</classname> test class
-      runs a program via a shell command and performs similar
-      comparisons.</para>
+      <para>The <classname>command.CommandTest</classname> is similar
+      to <classname>command.ExecText</classname>, but runs the program
+      via a command shell.  The command shell's escaping and
+      substitution rules apply to the executed command.</para>
+
+      <para>Since command shell syntaxes vary across platforms, tests
+      written using this test class are not in general portable.</para>
      </listitem>
 
      <listitem>
-      <para>The <classname>command.ScriptTest</classname> test class
-      runs a shell script and performs similar comparisons.</para>
+      <para>The <classname>command.ScriptTest</classname> extends this
+      by running an entire shell script, rather than a single shell
+      command.  All the features of the command shell are available in
+      the script.</para>
+
+      <para>As with <classname>command.CommandTest</classname>, tests
+      written with this class are not in general portable.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <classname>python.ExecTest</classname> test class runs
+      a test by executing Python code.  A test can include either or
+      both of a sequence of Python statements, as in an ordinary
+      Python script, and a Python expression.  If the expression is
+      provided, the test passes if and only if the expression
+      evaluates to a true value.</para>
+     </listitem>
+
+     <listitem>
+      <para>The <classname>python.ExeceptionTest</classname> test
+      class runs a test by executing a sequence of Python statements.
+      The test passes if the statements raises an exception.
+      Optionally, the exception type and arguments may be specified in
+      the test; if so, the exception raised by the Python code must
+      match these for the test to pass.</para>
      </listitem>
     </itemizedlist>
 
@@ -336,19 +368,6 @@ class Count:
     "<literal>Linux</literal>" followed by a newline, while no text is
     expected on standard error.</para>
 
-    <para>To help you create new tests using more complicated test
-    classes such as these, &qmtest; can create a blank &xml; test file
-    for you.  Use the <command>template</command> command and specify a
-    test class name and the ID of the new test.  &qmtest; will create a
-    blank test file in the correct place, and launch your editor so that
-    you can modify it.</para>
-
-    <para>For example,</para>
-
-    <screen>
-     <prompt>$</prompt> <userinput>qmtest template command.ScriptTest mynewtest</userinput>
-    </screen>
-
    </section>
   </section>
 </chapter>
@@ -360,6 +379,6 @@ class Count:
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("main.xml" "book" "chapter")
+  sgml-parent-document: ("manual.xml" "book" "chapter")
   End:
 -->

@@ -500,7 +500,7 @@
 
     <para>The <function>__init__</function> function may declare default
     values for any or all of its parameters.  Tests are not required to
-    provide the corresponding arguments.  Tets must, however, provide
+    provide the corresponding arguments.  Tests must, however, provide
     arguments for all other parameters of the test class.</para>
 
     <para>For example, this <function>__init__</function> function
@@ -556,7 +556,7 @@
 
     <para>A context object is simply a dictionary of properties.  Use
     Python's map syntax to access a context's properties.  A property
-    key is always a strings composed of lower-case letters and
+    key is always a string composed of lower-case letters and
     underscores.  A property value may be any Python value.</para>
 
     <para>A test class's <function>Run</function> function may also add
@@ -644,7 +644,7 @@
   <section>
    <title>Specifying the Class</title>
 
-   <para>To use your tet class, you must place the Python module file
+   <para>To use your test class, you must place the Python module file
    containing it in a location where &qmtest; can find it.  &qmtest;
    looks in three places when loading module files for test
    classes:</para>
