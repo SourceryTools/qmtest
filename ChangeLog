@@ -1,5 +1,8 @@
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/manual/test-reference.xml: Add section on writing database
+	classes.
+
 	* qm/test/base.py (load_database): Rework.
 	(get_extension_directories): New function.
 	(get_class): Use it.

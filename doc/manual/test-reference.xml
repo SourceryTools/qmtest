@@ -691,6 +691,53 @@
 
  </section> <!-- sec-ref-targets -->
 
+ <section id="sec-ref-writing-database-classes">
+  <title>Writing a Database Class</title>
+
+  <para>The database class controls the format in which tests are
+  stored.  &qmtest's default database class stores each test as an XML
+  file, but you might want to use a format that is particularly well
+  suited to your application domain or to your organization's
+  arrangment of computing resources.</para>
+
+  <para>For example, if you were testing a compiler, you might want to
+  represent tests as source files with special embedded comments
+  indicating what errors are expected when compiling the test.  You
+  could write a test database class that can read and write tests
+  in that format.</para>
+
+  <para>Or, if you wanted to share a single test database with many
+  people in such a way that everyone automatically saw updates to the
+  database, you might want to put all of the tests on a central HTTP
+  server.  You could write a test database class that retrieves tests
+  from the server and creates new tests by uploading them to the
+  server.</para>
+
+  <para>A test database class is a Python class that is derived from
+  <classname>qm.test.base.Database</classname>.  You must define
+  methods that handle retrieving a test from the database, writing a
+  test to the database, and other related tasks.  Read the code for
+  <classname>qm.test.base.Database</classname> to see what methods
+  need to be overridden.
+  </para>
+  
+  <para>To use your new database class, create a file called
+  <filename>configuration</filename> in the directory containing 
+  your test database.  This file should look like:
+   <programlisting>
+<![CDATA[<?xml version='1.0'?>
+<!DOCTYPE tdb-configuration PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "http://www.software-carpentry.com/qm/xml/tdb_configuration.dtd">
+<tdb-configuration>
+  <class_name>mydatabase.Database</class_name>
+</tdb-configuration>
+]]>
+  </programlisting>
+  Replace <classname>mydatabase.Database</classname> with the name of
+  your database class, including the module in which it is
+  located.</para>
+  
+ </section> <!-- sec-ref-writing-database-classes -->
+
 </chapter>
 <!--
   Local Variables:
