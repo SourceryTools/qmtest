@@ -1,3 +1,11 @@
+2001-09-26  Mark Mitchell  <mark@codesourcery.com>
+
+	* configure.in (DOCBOOK_STYLESHEETS): Add another directory
+	in which to locate xml.dcl.
+	(--with-docbook-dtd): New option.
+	* configure: Regenerated.
+	* standard.mk.in (SGMLDIRS): Add @DOCBOOK_STYLESHEETS@.
+
 2001-09-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* share/dtml/test/results.dtml: New file.

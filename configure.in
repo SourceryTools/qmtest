@@ -108,6 +108,7 @@ if test "$JADE" != no; then
   XML_DCL=no
   for file in \
     /usr/share/doc/jade*/pubtext/xml.dcl \
+    /usr/share/doc/openjade*/pubtext/xml.dcl \
     /usr/doc/jade*/pubtext/xml.dcl \
   ; do
     if test -r "$file"; then
@@ -136,6 +137,20 @@ for dir in \
 done
 AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
 AC_SUBST(DOCBOOK_STYLESHEETS)
+
+dnl ####################################################################
+dnl Allow the user to specify the location of the docbook DTD.
+dnl ####################################################################
+
+DOCBOOK_DTD=
+AC_ARG_WITH(docbook-dtd, 
+            [  --with-docbook-dtd=PATH directory containing the docbook DTD.])
+case $with_docbook_dtd in
+    yes) ;;
+    no)  DOCUMENTATION=no ;;
+    *)   DOCBOOK_DTD=$with_docbook_dtd;;
+esac
+AC_SUBST(DOCBOOK_DTD)
 
 dnl ####################################################################
 dnl Warn if we don't have enough to build documentation

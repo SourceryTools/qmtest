@@ -15,6 +15,8 @@ ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
   --with-python=PATH      specify the Python interpreter"
+ac_help="$ac_help
+  --with-docbook-dtd=PATH directory containing the docbook DTD."
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -527,7 +529,7 @@ fi
 
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-echo "configure:531: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:533: checking whether ${MAKE-make} sets \${MAKE}" >&5
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -584,7 +586,7 @@ ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:588: checking for a BSD compatible install" >&5
+echo "configure:590: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -653,7 +655,7 @@ if test -n "$PYTHON" -a "$PYTHON" != yes; then
   # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:657: checking for $ac_word" >&5
+echo "configure:659: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -683,7 +685,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:687: checking for $ac_word" >&5
+echo "configure:689: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -734,7 +736,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:738: checking for $ac_word" >&5
+echo "configure:740: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -766,7 +768,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:770: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:772: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -777,12 +779,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 781 "configure"
+#line 783 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:786: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:788: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -808,12 +810,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:812: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:814: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:817: checking whether we are using GNU C" >&5
+echo "configure:819: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -822,7 +824,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:826: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:828: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -841,7 +843,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:845: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:847: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -875,7 +877,7 @@ fi
 
 ac_safe=`echo "$PYTHON" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $PYTHON""... $ac_c" 1>&6
-echo "configure:879: checking for $PYTHON" >&5
+echo "configure:881: checking for $PYTHON" >&5
 if eval "test \"`echo '$''{'ac_cv_file_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -902,7 +904,7 @@ else
   # Extract the first word of "python", so it can be a program name with args.
 set dummy python; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:906: checking for $ac_word" >&5
+echo "configure:908: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_PYTHON'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -940,19 +942,19 @@ fi
 
 
 echo $ac_n "checking Python version""... $ac_c" 1>&6
-echo "configure:944: checking Python version" >&5
+echo "configure:946: checking Python version" >&5
 PYTHON_VERSION=`$PYTHON -c "import sys; import string; print string.split(sys.version, ' ')[0][:3]"`
 echo "$ac_t""$PYTHON_VERSION" 1>&6
 
 
 echo $ac_n "checking Python prefix""... $ac_c" 1>&6
-echo "configure:950: checking Python prefix" >&5
+echo "configure:952: checking Python prefix" >&5
 PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
 echo "$ac_t""$PYTHON_PREFIX" 1>&6
 
 
 echo $ac_n "checking Python platform""... $ac_c" 1>&6
-echo "configure:956: checking Python platform" >&5
+echo "configure:958: checking Python platform" >&5
 PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()"`
 echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 
@@ -962,7 +964,7 @@ echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 # Extract the first word of "happydoc", so it can be a program name with args.
 set dummy happydoc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:966: checking for $ac_word" >&5
+echo "configure:968: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1001,7 +1003,7 @@ fi
 # Extract the first word of "jade", so it can be a program name with args.
 set dummy jade; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1005: checking for $ac_word" >&5
+echo "configure:1007: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1037,7 +1039,7 @@ fi
 # Extract the first word of "tidy", so it can be a program name with args.
 set dummy tidy; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1041: checking for $ac_word" >&5
+echo "configure:1043: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1074,10 +1076,11 @@ fi
 
 if test "$JADE" != no; then
   echo $ac_n "checking xml.dcl""... $ac_c" 1>&6
-echo "configure:1078: checking xml.dcl" >&5
+echo "configure:1080: checking xml.dcl" >&5
   XML_DCL=no
   for file in \
     /usr/share/doc/jade*/pubtext/xml.dcl \
+    /usr/share/doc/openjade*/pubtext/xml.dcl \
     /usr/doc/jade*/pubtext/xml.dcl \
   ; do
     if test -r "$file"; then
@@ -1091,7 +1094,7 @@ fi
 
 
 echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
-echo "configure:1095: checking DocBook stylesheets" >&5
+echo "configure:1098: checking DocBook stylesheets" >&5
 DOCBOOK_STYLESHEETS=no
 for dir in \
   /usr/lib/sgml/stylesheets/docbook \
@@ -1102,6 +1105,21 @@ for dir in \
   fi
 done
 echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
+
+
+
+DOCBOOK_DTD=
+# Check whether --with-docbook-dtd or --without-docbook-dtd was given.
+if test "${with_docbook_dtd+set}" = set; then
+  withval="$with_docbook_dtd"
+  :
+fi
+
+case $with_docbook_dtd in
+    yes) ;;
+    no)  DOCUMENTATION=no ;;
+    *)   DOCBOOK_DTD=$with_docbook_dtd;;
+esac
 
 
 
@@ -1284,6 +1302,7 @@ s%@JADE@%$JADE%g
 s%@TIDY@%$TIDY%g
 s%@XML_DCL@%$XML_DCL%g
 s%@DOCBOOK_STYLESHEETS@%$DOCBOOK_STYLESHEETS%g
+s%@DOCBOOK_DTD@%$DOCBOOK_DTD%g
 s%@DOCUMENTATION@%$DOCUMENTATION%g
 
 CEOF

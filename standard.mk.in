@@ -80,10 +80,12 @@ ifeq ($(DOCUMENTATION),yes)
   JADE		= @JADE@
   JADEEXTRA	= @XML_DCL@
 
+  # The directory containing the Docbook DTD.
+  SGMLDIRS      += @DOCBOOK_DTD@
   # Modular DSSSL stylesheet configuration.  The system identifiers are
   # specified as relative paths, so the base of the stylesheet
   # installation needs to be provided.
-  SGMLDIRS      += @DOCBOOK_STYLESHEETS@
+  SGMLDIRS      += @DOCBOOK_STYLESHEETS@ 
 
   # QM stylesheets.
   HTMLSS        = $(TOPDIR)/doc/qm-html.dsl
