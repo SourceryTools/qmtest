@@ -1,7 +1,12 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
-	* qm/test/cmdline.py (Command.divider): Always show non-relative
-	stats in full format.
+	* qm/test/cmdline.py (Command.__SummarizeResults): Only show
+	resource results section if there are some failing.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/cmdline.py (Command.__SummarizeResults): Always show
+	non-relative stats in full format.
 	* tests/unit.qms/track.qms/export.qms/export2.qmt: Fix.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>

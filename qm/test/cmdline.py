@@ -764,12 +764,13 @@ The summary is written to standard output.
 
             # Sort resource results by ID.
             resource_results.sort(compare_ids)
-            # Print individual resource results.
-            output.write(divider("NON-PASSING RESOURCES"))
             bad_results = filter(
                 lambda r: r.GetOutcome() != base.Result.PASS,
                 resource_results)
-            base.summarize_results(output, format, bad_results, None)
+            if len(bad_results) > 0:
+                # Print individual resource results.
+                output.write(divider("NON-PASSING RESOURCES"))
+                base.summarize_results(output, format, bad_results, None)
 
 
     def __WriteResults(self, test_ids, test_results, resource_results, output):
