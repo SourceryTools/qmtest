@@ -1,3 +1,9 @@
+2004-01-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/xml_database.py
+	(XMLDatabase.__MakeDataFilePath): Use a relative, rather than
+	absolute, path for the file location.
+
 2004-01-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/attachment.py (Attachment.Move): New method.

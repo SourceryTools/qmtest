@@ -295,6 +295,11 @@ class FileAttachmentStore(AttachmentStore):
     def GetDataFile(self, location):
 
         if self.__root is not None:
+            # It might seem sensible to assert that the location be a
+            # relative path, but that would break backwards
+            # compatibility with older versions fo QMTest.  In those
+            # older versions, the XMLDatabase sometimes used an absolute
+            # path for attachment locations.
             return os.path.join(self.__root, location)
         else:
             return location

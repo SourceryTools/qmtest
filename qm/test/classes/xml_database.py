@@ -129,34 +129,34 @@ class XMLDatabase(ExtensionDatabase):
         # Convert the item's containing suite to a path.
         parent_suite_path \
             = os.path.dirname(self._GetPathFromLabel(item_id))
+        # The relative part of the eventual full file name will be
+        # the part after the parent_suite_path and the directory
+        # name separator character(s).
+        abs_len = len(parent_suite_path) + len(os.sep)
         
         # Construct a file name free of suspicious characters.
         base, extension = os.path.splitext(file_name)
         safe_file_name = qm.label.thunk(base) + extension
 
         data_file_path = os.path.join(parent_suite_path, safe_file_name)
-        full_data_file_path = os.path.join(self.GetRoot(), data_file_path)
         # Is the file name by itself OK in this directory?  It must not
         # have a file extension used by the XML database itself, and
         # there must be no other file with the same name there.
         if extension not in [self.GetTestExtension(),
                              self.GetSuiteExtension(),
                              self.GetResourceExtension()] \
-           and not os.path.exists(full_data_file_path):
-            return data_file_path
+           and not os.path.exists(data_file_path):
+            return data_file_path[abs_len:]
 
         # No good.  Construct alternate names by appending numbers
         # incrementally.
         index = 0
         while 1:
-            data_file_path = os.path.join(parent_suite_path, safe_file_name) \
-                             + ".%d" % index
-            full_data_file_path = os.path.join(self.GetRoot(), data_file_path)
-            if os.path.exists(full_data_file_path):
-                index = index + 1
-                continue
-            else:
-                return data_file_path
+            data_file_path = os.path.join(parent_suite_path,
+                                          safe_file_name + ".%d" % index)
+            if not os.path.exists(data_file_path):
+                return data_file_path[abs_len:]
+            index = index + 1
 
 
     def __LoadItem(self, item_id, path, document_parser):
