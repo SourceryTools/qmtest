@@ -1,3 +1,8 @@
+2001-06-11  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Use self as
+	page info.
+
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.common_javascript): Remove.

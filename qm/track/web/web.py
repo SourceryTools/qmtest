@@ -81,9 +81,7 @@ class PageInfo(qm.web.PageInfo):
 
 
     def GenerateStartBody(self):
-        page_info = PageInfo()
-        navigation_bar = generate_html_from_dtml("navigation-bar.dtml",
-                                                 page_info)
+        navigation_bar = generate_html_from_dtml("navigation-bar.dtml", self)
         return '<body>%s<br>' % navigation_bar
 
 
