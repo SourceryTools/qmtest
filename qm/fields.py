@@ -1506,7 +1506,9 @@ class TimeField(IntegerField):
 
 
     def GetCurrentTime(self):
-        return time.time()
+        """Return a field value corresponding to the current time."""
+
+        return int(time.time())
 
 
     def GetHelp(self):

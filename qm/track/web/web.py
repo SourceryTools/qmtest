@@ -134,6 +134,14 @@ class HistoryPageInfo(PageInfo):
         self.current_revision_number = current_revision_number
     
 
+    def GetRevisionTime(self, revision):
+        """Return the timestamp on 'revision', formatted as HTML."""
+
+        timestamp_field = revision.GetClass().GetField("timestamp")
+        timestamp_value = revision.GetField("timestamp")
+        return timestamp_field.FormatValueAsHtml(timestamp_value, "full")
+
+
     def FormatRevisionDiff(self, revision1, revision2):
         """Generate HTML fir differences between two revisions.
 

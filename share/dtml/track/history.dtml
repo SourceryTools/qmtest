@@ -41,7 +41,7 @@
      </td>
      <td>
       <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
-       <dtml-var expr="revision.GetField('timestamp')">
+       <dtml-var expr="GetRevisionTime(revision)">
        &nbsp;&nbsp;&nbsp;
        by <dtml-var expr="revision.GetField('user')">
       </a>

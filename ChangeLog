@@ -1,5 +1,11 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/fields.py (TimeField.GetCurrentTime): Return an int.
+	* qm/track/web/web.py (HistoryPageInfo.GetRevisionTime): New method.
+	* share/dtml/track/history.dtml: Use it.
+
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* share/diagnostics/track.txt: Alphabetize.
 
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
