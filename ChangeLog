@@ -44,15 +44,15 @@
 	New file.
 	* tests/results_files/result_class_v1-file_format_v1-pickling_format_v1.qmr:
 	New file.
-	* tests/results_file/tdb: New directory.
-	* tests/results_file/tdb/QMTest: New directory.
-	* tests/results_file/tdb/QMTest/configuration: New file.
-	* tests/results_file/tdb/pass.qmt: New file.
-	* tests/results_file/tdb/fail.qmt: New file.
-	* tests/results_file/tdb/error.qmt: New file.
-	* tests/results_file/tdb/untested.qmt: New file.
-	* tests/results_file/tdb/tmpdir_resource.qma: New file.
-	* tests/results_file/tdb/fail_with_tmpdir.qmt: New file.
+	* tests/results_files/tdb: New directory.
+	* tests/results_files/tdb/QMTest: New directory.
+	* tests/results_files/tdb/QMTest/configuration: New file.
+	* tests/results_files/tdb/pass.qmt: New file.
+	* tests/results_files/tdb/fail.qmt: New file.
+	* tests/results_files/tdb/error.qmt: New file.
+	* tests/results_files/tdb/untested.qmt: New file.
+	* tests/results_files/tdb/tmpdir_resource.qma: New file.
+	* tests/results_files/tdb/fail_with_tmpdir.qmt: New file.
 	
 2003-08-07  Nathaniel Smith  <njs@codesourcery.com>
 	    Mark Mitchell  <mark@codesourcery.com>
