@@ -93,7 +93,7 @@ build_source() {
     echo "Building source distribution..."
     # Remove the old version of the source distribution.
     rm -rf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION}
-    cvs -f -z9 -Q export -d qm-${QM_VERSION} \
+    cvs -f -z9 -Q export -d -P qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
     tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \

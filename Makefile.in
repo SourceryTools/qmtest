@@ -58,13 +58,31 @@ include $(TOPDIR)/standard.mk
 # additional rules
 ########################################################################
 
-all:: $(PYTHON_PACKAGES)
+all:: $(PYTHON_PACKAGES) $(SCRIPTS)
 
 # Build the Python packages.
 .PHONY: $(PYTHON_PACKAGES)
 
 $(PYTHON_PACKAGES):
 	cd $@ && $(PYTHON) ./setup.py build
+
+# Generate executable scripts.
+ifneq ($(PYTHON_PLATFORM),win32)
+$(SCRIPTS): qm/qm.sh
+	rm -rf $@
+	cp qm.sh $@
+	chmod a-w $@
+	chmod a+x $@
+else
+PYTHONEXE = `@PYTHON@ -c "import sys; print sys.prefix"`\\python
+$(SCRIPTS): 
+	rm -rf $@
+	echo "@echo off" > $@
+	echo "set QM_HOME=$(prefix)" >> $@
+	echo "set QM_BUILD=0" >> $@
+	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\" " >> $@
+	echo "%1 %2 %3 %4 %5 %6 %7 %8 %9" >> $@
+endif
 
 clean::
 	for x in $(PYTHON_PACKAGES); do \

@@ -1,5 +1,10 @@
 2001-12-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (SCRIPTS): Generate them here.
+	* qm/Makefile.in: Remove.
+	* scripts/qm-release (build_source): Tell CVS not to export 
+	empty directorieds.
+
 	* Makefile.in: Completely rework installation logic.
 	* README: Document requirement that GNU Make be used.
 	* configure.in (AC_OUTPUT): Do not generate sgmlop/Makefile
