@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -295,7 +277,7 @@ class ExecTestBase(Test):
                         # to execute the program.
                         exc_info = sys.exc_info()
                         result = (Result.ERROR,
-                                  { Result.CAUSE : "Could not execut program",
+                                  { Result.CAUSE : "Could not execute program",
                                     Result.EXCEPTION : "%s: %s" % exc_info[:2],
                                     Result.TRACEBACK :
                                       qm.format_traceback(exc_info) })
@@ -390,7 +372,8 @@ class ExecTestBase(Test):
                 # Check to see if the exit code matches.
                 if exit_code != self.exit_code:
                     causes.append("exit_code")
-                    result["ExecTest.expected_exit_code"] = self.exit_code
+                    result["ExecTest.expected_exit_code"] \
+                        = str(self.exit_code)
                     result["ExecTest.exit_code"] = str(exit_code)
                 # Check to see if the standard output matches.
                 if stdout != self.stdout:

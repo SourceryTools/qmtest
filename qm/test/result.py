@@ -9,30 +9,12 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import qm
@@ -40,7 +22,7 @@ import sys
 import types
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class Result:
@@ -103,10 +85,10 @@ class Result:
     
     # Constants for outcomes.
 
-    PASS = "PASS"
     FAIL = "FAIL"
     ERROR = "ERROR"
     UNTESTED = "UNTESTED"
+    PASS = "PASS"
 
     # Constants for predefined annotations.
 
@@ -122,8 +104,12 @@ class Result:
     kinds = [ RESOURCE, TEST ]
     """A list of the possible kinds."""
     
-    outcomes = [ PASS, FAIL, ERROR, UNTESTED ]
-    """A list of the possible outcomes."""
+    outcomes = [ ERROR, FAIL, UNTESTED, PASS ]
+    """A list of the possible outcomes.
+
+    The order of the 'outcomes' is significant; they are ordered from
+    most interesting to least interesting from the point of view of
+    someone browsing results."""
 
     def __init__(self, kind, id, context, outcome=PASS, annotations={}):
         """Construct a new 'Result'.
@@ -271,11 +257,14 @@ class Result:
         outcome_element.appendChild(text)
         element.appendChild(outcome_element)
         # Add a property element for each property.
-        for key, value in self.items():
+        keys = self.keys()
+        keys.sort()
+        for key in keys:
+            value = self[key]
             property_element = document.createElement("property")
             # The property name is an attribute.
             property_element.setAttribute("name", str(key))
-            if type(value) == types.StringType:
+            if type(value) in qm.common.string_types:
                 # The property value is contained in a text mode.
                 node = document.createTextNode(str(value))
                 property_element.appendChild(node)
@@ -293,28 +282,28 @@ class Result:
     # annotations.
     
     def __getitem__(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations[key]
 
 
     def __setitem__(self, key, value):
-        assert type(key) == types.StringType
-        assert type(value) == types.StringType
+        assert type(key) in qm.common.string_types
+        assert type(value) in qm.common.string_types
         self.__annotations[key] = value
 
 
     def __delitem__(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         del self.__annotations[key]
 
 
     def get(self, key, default=None):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations.get(key, default)
 
 
     def has_key(self, key):
-        assert type(key) == types.StringType
+        assert type(key) in qm.common.string_types
         return self.__annotations.has_key(key)
 
 

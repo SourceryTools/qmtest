@@ -7,7 +7,7 @@
   Contents:
     Solutions to QM problems.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -34,16 +34,8 @@
 
   <li>
    <p>If you think you've found a bug, or would like to request a
-   change, enhancement, or new feature, visit the <a href="javascript:
-   popup_qm_bug_system();">QM Tools bug tracking system</a>.  You can
-   also browse the bug tracking system to check whether someone else has
-   reported the problem you are encountering.</p>
-   <dtml-var expr="GenerateStartScript()">
-   function popup_qm_bug_system()
-   {
-     window.open("<dtml-var name="qm_bug_system_url">", "qm_bug_system");
-   }
-   <dtml-var expr="GenerateEndScript()">
+   change, enhancement, or new feature, send an email to <a
+   href="mailto:qmtest@codesourcery.com">qmtest@codesourcery.com</a>.</p>
   </li>
  </ul>
 

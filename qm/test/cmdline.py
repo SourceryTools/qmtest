@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -45,6 +27,7 @@ from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
+from   qm.trace import *
 import qm.xmlutil
 import Queue
 from   result import *
@@ -72,6 +55,15 @@ class QMTest:
     summary_formats = ("full", "brief", "stats", "none")
     """Valid formats for result summaries."""
 
+    context_file_name = "context"
+    """The default name of a context file."""
+    
+    expectations_file_name = "expectations.qmr"
+    """The default name of a file containing expectations."""
+    
+    results_file_name = "results.qmr"
+    """The default name of a file containing results."""
+    
     help_option_spec = (
         "h",
         "help",
@@ -191,6 +183,13 @@ class QMTest:
         "Specify the test database class."
         )
 
+    attribute_option_spec = (
+        "a",
+        "attribute",
+        "KEY=VALUE",
+        "Set a database attribute."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -208,7 +207,9 @@ class QMTest:
          "Create a new test database.",
          "",
          "Create a new test database.",
-         ( help_option_spec, tdb_class_option_spec, )
+         ( help_option_spec,
+           tdb_class_option_spec,
+           attribute_option_spec)
          ),
 
         ("gui",
@@ -301,6 +302,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         _the_qmtest = self
         
+        # Build a trace object.
+        self.__tracer = Tracer()
+
         # Build a command-line parser for this program.
         self.__parser = qm.cmdline.CommandParser(
             program_name,
@@ -318,7 +322,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # We have not yet computed the set of available targets.
         self.targets = None
-        
+
 
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
@@ -394,11 +398,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         else:
             # For the rest of the commands, we need to open the test
             # database first.
-            try:
-                # Create the database.
-                self.__database = base.load_database(db_path)
-            except ValueError, exception:
-                raise RuntimeError, str(exception)
+            self.__database = base.load_database(db_path)
 
             # Dispatch to the appropriate method.
             method = {
@@ -481,60 +481,60 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             
         return self.targets
         
-        
+
+    def GetTracer(self):
+        """Return the 'Tracer' associated with this instance of QMTest.
+
+        returns -- The 'Tracer' associated with this instance of QMTest."""
+
+        return self.__tracer
+
+    
     def MakeContext(self):
         """Construct a 'Context' object for running tests."""
 
         context = Context()
 
         for option, argument in self.__command_options:
-            # Look for the '--context-file' option.
-            if option == "context-file":
+            # Look for the '--load-context' option.
+            if option == "load-context":
                 if argument == "-":
                     # Read from standard input.
-                    lines = sys.stdin.readlines()
+                    file = sys.stdin
                 else:
-                    # Read from a file.
+                    # Read from a named file.
                     try:
-                        lines = open(argument, "r").readlines()
+                        file = open(argument, "r")
                     except:
                         raise qm.cmdline.CommandError, \
                               qm.error("could not read file",
                                        path=argument)
-                lines = map(string.strip, lines)
-                for line in lines:
-                    if line == "":
-                        # Blank line; skip it.
-                        pass
-                    elif qm.common.starts_with(line, "#"):
-                        # Comment line; skip it.
-                        pass
-                    else:
-                        self.__ParseContextAssignment(line, context)
+                # Read the assignments.
+                assignments = qm.common.read_assignments(file)
+                # Add them to the context.
+                for (name, value) in assignments.items():
+                    try:
+                        # Insert it into the context.
+                        context[name] = value
+                    except ValueError, msg:
+                        # The format of the context key is invalid, but
+                        # raise a 'CommandError' instead.
+                        raise qm.cmdline.CommandError, msg
 
             # Look for the '--context' option.
             elif option == "context":
-                self.__ParseContextAssignment(argument, context)
+                # Parse the argument.
+                name, value = qm.common.parse_assignment(argument)
+            
+                try:
+                    # Insert it into the context.
+                    context[name] = value
+                except ValueError, msg:
+                    # The format of the context key is invalid, but
+                    # raise a 'CommandError' instead.
+                    raise qm.cmdline.CommandError, msg
 
         return context
-
-
-    def __ParseContextAssignment(self, assignment, context):
-        # Make sure the argument is correctly-formatted.
-        if not "=" in assignment:
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid context assignment",
-                           argument=assignment)
-        # Parse the assignment.
-        name, value = string.split(assignment, "=", 1)
-
-        try:
-            # Insert it into the context.
-            context[name] = value
-        except ValueError, msg:
-            # The format of the context key is invalid, but
-            # raise a 'CommandError' instead.
-            raise qm.cmdline.CommandError, msg
 
 
     def __ExecuteCreateTdb(self, output, db_path):
@@ -542,12 +542,18 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         'db_path' -- The path at which to create the new test database."""
 
-        # Extract the test database class name.  Use the standard XML
-        # implementation, if none was specified.
-        class_name = self.GetCommandOption(
-            "class", "qm.test.xmldb.Database")
+        # Figure out what database class to use.
+        class_name \
+            = self.GetCommandOption("class", "qm.test.xmldb.Database")
+        # There are no attributes yet.
+        attributes = {}
+        # Process attributes provided on the command line.
+        for option, argument in self.__command_options:
+            if option == "attribute":
+                name, value = qm.common.parse_assignment(argument)
+                attributes[name] = value
         # Create the test database.
-        base.create_database(db_path, class_name)
+        base.create_database(db_path, class_name, attributes)
         # Print a helpful message.
         output.write(qm.message("new db message", path=db_path) + "\n")
 
@@ -580,7 +586,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 filter(lambda r: r.GetKind() == Result.RESOURCE,
                        results)
         except (IOError, qm.xmlutil.ParseError), exception:
-            raise RuntimeError, \
+            raise QMException, \
                   qm.error("invalid results file",
                            path=results_path,
                            problem=str(exception))

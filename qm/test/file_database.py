@@ -7,27 +7,9 @@
 # Contents:
 #   QMTest FileDatabase class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -58,7 +40,7 @@ class FileDatabase(Database):
 
     'FileDatabase' is an abstract class."""
 
-    def __init__(self, path, store,
+    def __init__(self, path, 
                  test_extension = '.qmt',
                  suite_extension = '.qms',
                  resource_extension = '.qma'):
@@ -67,9 +49,6 @@ class FileDatabase(Database):
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
-        'store' -- The attachment store that is used to store 
-        'Attachment's to tests or resources.
-        
         'test_extension' -- The extension (including the leading period)
         that indicates that a file is a test.
 
@@ -81,7 +60,7 @@ class FileDatabase(Database):
         period) that indicates that a file is a resource."""
         
 	# Initialize base classes.
-	qm.test.database.Database.__init__(self, path, store)
+	qm.test.database.Database.__init__(self, path)
         # Save the test extension and suite extension.
         self.__test_extension = test_extension
         self.__suite_extension = suite_extension
@@ -521,7 +500,7 @@ class FileDatabase(Database):
                 and self._IsSuiteFile(entry_path)):
                 labels.extend(self._GetLabels(entry_path,
                                               scan_subdirs,
-                                              as_absolute(root),
+                                              qm.label.join(label, root),
                                               predicate))
 
         return labels

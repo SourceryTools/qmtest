@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -38,8 +20,11 @@
 import os
 import qm
 import qm.attachment
+import qm.common
 import qm.fields
+import qm.label
 import qm.test.base
+from   qm.test.cmdline import *
 from   qm.test.context import *
 from   qm.test.database import *
 from   qm.test.execution_thread import *
@@ -50,6 +35,7 @@ from   qm.test.xml_result_stream import *
 import qm.web
 import string
 import StringIO
+import time
 
 ########################################################################
 # classes
@@ -159,14 +145,19 @@ class QMTestPage(DefaultDtmlPage):
             ('New Suite', "location = 'new-suite';"),
             ('New Resource', "location = 'new-resource';"),
             ('Load Results', "load_results();"),
-            ('Save Results', "location = 'save-results';"),
+            ('Save Results',
+             "location = '%s';" % QMTest.results_file_name),
             ('Load Expectations', "load_expected_results();"),
-            ('Save Expectations', "location = 'save-expectations';"),
+            ('Save Expectations',
+             "location = '%s';" % QMTest.expectations_file_name),
+            ('Load Context', "load_context();"),
+            ('Save Context',
+             "location = '%s';" % QMTest.context_file_name),
             ('Exit', 'shutdown')
             ]
         self.edit_menu_items = [
+            ('Clear Results', "location ='clear-results';"),
             ('Edit Context', "location = 'edit-context';"),
-            ('Edit Expectations', "location = 'edit-expectations';")
             ]
         self.view_menu_items = [
             ('View Results', "location = 'show-results';")
@@ -179,7 +170,9 @@ class QMTestPage(DefaultDtmlPage):
         DefaultDtmlPage.__init__(self, os.path.join("test", dtml_template))
         # Remember the server.
         self.server = server
-
+        # Make the QMTest object available to the DTML pages.
+        self.qmtest = get_qmtest()
+        
         
     def GetServer(self):
         """Returns the 'QMTestServer' serving this page.
@@ -217,6 +210,46 @@ class QMTestPage(DefaultDtmlPage):
 
 
 
+    def IsFinished(self):
+        """Returns true if tests are still running.
+
+        returns -- True if the data on this page should be considered
+        incomplete due to the fact that tests are still running."""
+
+        return 1
+
+
+    def GetRefreshDelay(self):
+        """Returns the number of seconds to wait before refreshing the page.
+
+        returns -- The number of seconds to wait before refreshing this
+        page.  A value of zero means that te page should never be
+        refreshed.  This function is only called if 'IsFinished' returns
+        true."""
+
+        return 0
+    
+        
+    def GenerateHtmlHeader(self, description, headers=""):
+        """Return the header for an HTML document.
+
+        'description' -- A string describing this page.
+
+        'headers' -- Any additional HTML headers to place in the
+        '<head>' section of the HTML document."""
+
+        # If the page isn't finished, automatically refresh it
+        # every few seconds.y
+        if not self.IsFinished():
+            headers = (headers
+                       + ('<meta http-equiv="refresh" content="%d" />'
+                          % self.GetRefreshDelay()))
+
+        return DefaultDtmlPage.GenerateHtmlHeader(self, description,
+                                                  headers)
+
+    
+        
 class AddPrerequisitePage(QMTestPage):
     """Page for specifying a prerequisite test to add."""
 
@@ -286,7 +319,52 @@ class DirPage(QMTestPage):
 
     'resource_ids' -- A sequence of labels giving the resources in
     this directory."""
+    
+    SORT_NAME = 'name'
+    """Sort by name."""
 
+    SORT_OUTCOME = 'outcome'
+    """Sort by outcome."""
+
+    SORT_EXPECTATION = 'expectation'
+    """Sort by expectation.  In other words, put unexpected outcomes
+    before expected outcomes."""
+    
+    SORT_KINDS = [ SORT_NAME, SORT_OUTCOME, SORT_EXPECTATION ]
+    """The kinds of sorting available."""
+
+    NEGATIVE_UNEXPECTED = Result.FAIL
+    """A test's result was unfavorably unexpected."""
+    
+    POSITIVE_UNEXPECTED = Result.PASS
+    """A test's result was favorably unexpected."""
+    
+    EXPECTED = "EXPECTED"
+    """A test's result was as expected."""
+
+    EXPECTATION_KINDS \
+        = [ NEGATIVE_UNEXPECTED, EXPECTED, POSITIVE_UNEXPECTED ]
+    """The kinds of expectations."""
+    
+    class _TestInformation:
+        """A 'TestInfo' stores information about a single test."""
+
+        def __init__(self, id, outcome, expectation):
+            """Construct a new 'TestInformation'.
+
+            'id' -- The name of the test.
+
+            'outcome' -- A string giving the test outcome, or 'None'
+            if the test has not been run.
+
+            'expectation' -- A string giving the expected outcome of the
+            test, or 'None' if there is no expected outcome."""
+
+            self.id = id
+            self.outcome = outcome
+            self.expectation = expectation
+
+        
     def __init__(self, server, path):
         """Construct a 'DirPage'.
 
@@ -311,61 +389,407 @@ class DirPage(QMTestPage):
                                 self.suite_ids)
         self.resource_ids = database.GetResourceIds(path, scan_subdirs=0)
 
+        # Get the results to date.
+        results_stream = server.GetResultsStream()
+        # It is important that we ask for IsFinished before asking
+        # for GetTestResults.  The stream could be finished between
+        # the two calls, and it is better to show all the results but
+        # claim they are incomplete than to show only some of the
+        # results and claim they are complete.
+        self.__is_finished = results_stream.IsFinished()
+        self.test_results = results_stream.GetTestResults()
+        self.expected_outcomes = server.GetExpectedOutcomes()
+
+        # Make it easy for the DTML page to get at all the outcomes.
+        self.outcomes = Result.outcomes + [self.EXPECTED]
+        
         # Provide a menu choice to allow running all of the tests in
         # this directory.
         self.run_menu_items.append(("This Directory", "run_dir();"))
 
 
-    def MakeRunUrl(self):
+    def GetExpectationUrl(self, id, expectation):
+        """Return the URL for setting the expectation associated with 'id'.
+
+        'id' -- The name of a test.
+
+        'expectation' -- The current expectation associated with the
+        test, or 'None' if there is no associated expectation."""
+        
+        return qm.web.WebRequest("set-expectation",
+                                 base=self.request,
+                                 id=id,
+                                 expectation=expectation or "None",
+                                 url=self.request.AsUrl()).AsUrl()
+
+    
+    def GetRunUrl(self):
         """Return the URL for running this directory."""
 
         return qm.web.WebRequest("run-tests",
                                  base=self.request,
                                  ids=self.path) \
                .AsUrl()
+
+
+    def GetTestResultsForDirectory(self, directory):
+        """Return all of the test results for tests in 'directory'.
+
+        'directory' -- A string giving the label for a directory.
+
+        returns -- A sequence of 'Result' instances corresponding to
+        results for tests from the indicated directory."""
+
+        # If the directory is the root, just return all the results.
+        if directory == "." or directory == "":
+            return self.test_results.values()
+        
+        # If the directory is not the root, add a trailing ".".
+        if directory[-1] != qm.label.sep:
+            directory += qm.label.sep
+            
+        return filter(lambda r, d=directory: \
+                        r.GetId()[:len(d)] == d,
+                      self.test_results.values())
+                      
+
+    def GetResultsByOutcome(self, results):
+        """Compute the tests in 'results' with each outcome.
+
+        'results' -- A sequence of 'Result' instances.
+
+        returns -- A dictionary mapping outcomes to the sequence of
+        tests that have the indicated outcome in 'results'."""
+
+        results_by_outcome = {}
+        # At first, there are no results for any outcome.
+        for o in self.outcomes:
+            results_by_outcome[o] = []
+
+        # Iterate through the results, adding each one to
+        # 'results_by_outcome'.
+        for r in results:
+            results_by_outcome[r.GetOutcome()].append(r)
+
+        return results_by_outcome
+
+
+    def GetOutcomePercentages(self, results):
+        """Compute the percentage (by outcome) of the 'results'.
+
+        'results' -- A sequence of 'Result' instances.
+        
+        returns -- A dictionary mapping outcomes to the percentage (as
+        a floating point number) of tests in 'results' that have
+        that outcome."""
+
+        # Compute the total number of tests for which results are
+        # available.
+        total = len(results)
+
+        # Get the test results, organized by outcome.
+        results = self.GetResultsByOutcome(results)
+
+        # Compute the percentages.
+        percentages = {}
+        for o in self.outcomes:
+            if total:
+                percentages[o] = float(len(results[o])) / float(total)
+            else:
+                percentages[o] = 0.0
+
+        return percentages
     
 
-class ExpectationsPage(QMTestPage):
-    """DTML page for editing expected outcomes."""
+    def GetUnexpectedResultsByOutcome(self, results):
+        """Compute the tests in 'results' with each outcome.
 
+        'results' -- A sequence of 'Result' instances.
+
+        returns -- A dictionary mapping outcomes to the results with
+        that outcome -- and for which that outcome is unexpected.
+        The (fake) outcome 'self.EXPECTED' is mapped to expected
+        results."""
+
+        results_by_outcome = {}
+        # At first, there are no results for any outcome.
+        for o in self.outcomes:
+            results_by_outcome[o] = []
+
+        for r in results:
+            # See what outcome was expected.
+            expectation = self.GetExpectation(r.GetId()) or Result.PASS
+            # Update results_by_outcome.
+            if r.GetOutcome() != expectation:
+                results_by_outcome[r.GetOutcome()].append(r)
+            else:
+                results_by_outcome[self.EXPECTED].append(r)
+
+        return results_by_outcome
+
+
+    def GetUnexpectedOutcomePercentages(self, results):
+        """Compute percentages of unexpected 'results'.
+
+        'results' -- A sequence of 'Result' instances.
+        
+        returns -- A dictionary mapping the 'EXPECTATION_KINDS' to the
+        percentage (as a floating point number) of tests in 'results'
+        that have that expectation."""
+        
+        # Compute the total number of tests for which results are
+        # available.
+        total = len(results)
+
+        # Get the test results, organized by outcome.
+        results_by_outcome \
+            = self.GetUnexpectedResultsByOutcome(results)
+        
+        # Compute the absolute number of tests in each category.
+        percentages = {}
+        percentages[self.POSITIVE_UNEXPECTED] \
+            = len(results_by_outcome[Result.PASS]) 
+        percentages[self.NEGATIVE_UNEXPECTED] \
+            = (len(results_by_outcome[Result.FAIL]) 
+               + len(results_by_outcome[Result.ERROR])
+               + len(results_by_outcome[Result.UNTESTED]))
+        percentages[self.EXPECTED] \
+            = len(results_by_outcome[self.EXPECTED])
+
+        # And the corresponding percentages.
+        for e in self.EXPECTATION_KINDS:
+            if percentages[e]:
+                percentages[e] = float(percentages[e]) / float(total)
+            else:
+                percentages[e] = 0.0
+                
+        return percentages
+
+
+    def CountUnexpected(self, results):
+        """Count the unexpected 'results'.
+
+        'results' -- A dictionary of the form returned by
+        'GetUnexpectedResultsByOutcome'.
+
+        returns -- The total number of unexpected results."""
+
+        total = 0
+        # Go through all the outcomes except 'EXPECTED'.
+        for o in Result.outcomes:
+            total += len(results[o])
+
+        return total
+
+
+    def GetTests(self, sort):
+        """Return information about all of the tests.
+
+        'sort' -- One of the 'SORT_KINDS' indicating how the results
+        should be sorted.
+        
+        returns -- A sequence of '_TestInformation' instances
+        corresponding to all of the tests in this diretory."""
+
+        # There is no information yet.
+        tests = []
+        
+        # Iterate through each of the tests.
+        for id in self.test_ids:
+            outcome = self.GetTestOutcome(id)
+            expectation = self.GetExpectation(id)
+            tests.append(self._TestInformation(id, outcome, expectation))
+
+        if sort == self.SORT_NAME:
+            # The tests are already sorted by name.
+            pass
+        elif sort == self.SORT_OUTCOME:
+            # Sort the test by outcome; interesting outcomes come first.
+            buckets = {}
+            for o in Result.outcomes + [None]:
+                buckets[o] = []
+                
+            # Go through the tests dropping each in the right bucket.
+            for t in tests:
+                buckets[t.outcome].append(t)
+                
+            # Combine the buckets.
+            tests = []
+            for o in Result.outcomes + [None]:
+                tests += buckets[o]
+        elif sort == self.SORT_EXPECTATION:
+            # Sort the test by expectations; unexpected outcomes come
+            # first.
+            buckets = {}
+            for o in ['UNEXPECTED', self.EXPECTED, None]:
+                buckets[o] = []
+                
+            # Go through the tests dropping each in the right bucket.
+            for t in tests:
+                if (t.outcome == (t.expectation or Result.PASS)):
+                    buckets[self.EXPECTED].append(t)
+                elif t.outcome:
+                    buckets['UNEXPECTED'].append(t)
+                else:
+                    buckets[None].append(t)
+                
+            # Combine the buckets.
+            tests = []
+            for o in ['UNEXPECTED', self.EXPECTED, None]:
+                tests += buckets[o]
+        else:
+            # Ignore the sort request.  (We cannot assert that this case
+            # never happens because users can type any URL they like
+            # into their web browser.)
+            pass
+
+        return tests
+
+    
+    def GetTestOutcome(self, test_id):
+        """Return the 'Result' for 'test_id'.
+
+        'test_id' -- The name of the test whose result is requested.
+
+        'result' -- The result associated with the 'test_id', or
+        'None' if no result is available."""
+
+        result = self.test_results.get(test_id)
+        return result and result.GetOutcome()
+
+
+    def GetDetailURL(self, test_id):
+        """Return the detail URL for 'test_id'.
+
+        'test_id' -- The name of the test.
+
+        returns -- The URL that contains details about the 'test_id'."""
+
+        return qm.web.WebRequest("show-result",
+                                 base=self.request,
+                                 id=test_id).AsUrl()
+
+
+    def GetExpectation(self, test_id):
+        """Return the expected outcome for 'test_id'.
+
+        'test_id' -- The name of the test.
+                
+        returns -- A string giving the expected outcome for 'test_id',
+        or 'None' if there is no expectation."""
+
+        return self.expected_outcomes.get(test_id)
+
+
+    def GetSortURL(self, sort):
+        """Get the URL for this page, but sorted as indicated.
+
+        'sort' -- One of the 'SORT_KINDS'.
+
+        returns -- A URL indicating this page, but sorted as
+        indicated."""
+
+        return qm.web.WebRequest("show-dir",
+                                 base=self.request,
+                                 id=self.path,
+                                 sort=sort).AsUrl()
+    
+    def IsFinished(self):
+        """Returns true if tests are still running.
+
+        returns -- True if the data on this page should be considered
+        incomplete due to the fact that tests are still running."""
+
+        return self.__is_finished
+
+
+    def GetRefreshDelay(self):
+        """Returns the number of seconds to wait before refreshing the page.
+
+        returns -- The number of seconds to wait before refreshing this
+        page.  A value of zero means that te page should never be
+        refreshed.  This function is only called if 'IsFinished' returns
+        true."""
+
+        if len(self.test_results.items()) < 50:
+            return 10
+        else:
+            return 30
+
+
+    
+class LoadContextPage(QMTestPage):
+    """DTML page for uploading a context."""
+
+    title = "Load Context"
+    """The title for the page."""
+    
+    heading = "Load the context from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load the context."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-context-file"
+    """The URL to which the file should be submitted."""
+    
     def __init__(self, server):
-        """Construct a new 'ExpectationsPage'.
+        """Construct a new 'LoadContextPage'.
 
         'server' -- The 'QMTestServer' creating this page."""
 
-        QMTestPage.__init__(self, "expectations.dtml", server)
-        
-        self.expected_outcomes = server.GetExpectedOutcomes()
-        self.outcomes = Result.outcomes
-        self.test_ids = server.GetDatabase().ExpandIds(".")[0]
-        self.test_ids.sort()
-
+        QMTestPage.__init__(self, "load.dtml", server)
 
         
-class LoadExpectedResultsPage(QMTestPage):
-    """DTML page for uploading expected results."""
+        
+class LoadExpectationsPage(QMTestPage):
+    """DTML page for uploading a context."""
 
+    title = "Load Expectations"
+    """The title for the page."""
+    
+    heading = "Load expectations from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load expectations."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-expectations"
+    """The URL to which the file should be submitted."""
+    
     def __init__(self, server):
-        """Construct a new 'LoadExpectedResultsPage'.
+        """Construct a new 'LoadExpectationsPage'.
 
         'server' -- The 'QMTestServer' creating this page."""
 
-        QMTestPage.__init__(self, "load-expected-results.dtml", server)
+        QMTestPage.__init__(self, "load.dtml", server)
 
 
-
+        
 class LoadResultsPage(QMTestPage):
-    """DTML page for uploading results."""
+    """DTML page for uploading a context."""
 
+    title = "Load Results"
+    """The title for the page."""
+    
+    heading = "Load results from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load the results."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-results"
+    """The URL to which the file should be submitted."""
+    
     def __init__(self, server):
-        """Construct a new 'LoadResultsPage'.
+        """Construct a new 'LoadContextPage'.
 
         'server' -- The 'QMTestServer' creating this page."""
 
-        QMTestPage.__init__(self, "load-results.dtml", server)
+        QMTestPage.__init__(self, "load.dtml", server)
 
 
-        
+
 class NewItemPage(QMTestPage):
     """Page for creating a new test or resource."""
 
@@ -470,6 +894,21 @@ class ResultPage(QMTestPage):
 
         QMTestPage.__init__(self, "result.dtml", server)
         self.result = result
+        
+
+
+class SetExpectationPage(QMTestPage):
+    """DTML page for setting the expectation associated with a test."""
+
+    def __init__(self, server, id):
+        """Construct a new 'SetExpectationPage'.
+
+        'server' -- The 'QMTestServer' creating this page.
+
+        'id' -- The name of the test whose expectation is being set."""
+
+        QMTestPage.__init__(self, "set-expectation.dtml", server)
+        self.outcomes = ["None"] + Result.outcomes
         
         
 class ShowItemPage(QMTestPage):
@@ -632,15 +1071,16 @@ class ShowItemPage(QMTestPage):
         for test_id, outcome in self.prerequisites.items():
             options.append(("%s (%s)" % (test_id, outcome),
                             "%s;%s" % (test_id, outcome)))
-        # Generate the page for selecting the prerequisite test to add.
-        test_path = qm.label.dirname(self.item.GetId())
-        add_page = AddPrerequisitePage(self.GetServer(),
-                                       test_path)(self.request)
+        # Compute the URL for the popup window that allows the addition
+        # of more prerequisite tests.
+        url = qm.web.WebRequest("add-prerequisite",
+                                base=self.request,
+                                id=self.item.GetId()).AsUrl()
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="prerequisites",
                                        select_name="_set_prerequisites",
-                                       add_page=add_page,
+                                       add_page=url,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=480)
@@ -655,11 +1095,12 @@ class ShowItemPage(QMTestPage):
         test_path = qm.label.dirname(self.item.GetId())
         add_page = AddResourcePage(self.GetServer(),
                                    test_path)(self.request)
+        url = qm.web.cache_page(add_page).AsUrl()
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="resources",
                                        select_name="_set_resources",
-                                       add_page=add_page,
+                                       add_page=url,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=360)
@@ -671,13 +1112,13 @@ class ShowItemPage(QMTestPage):
         # Encode the current categories.
         options = map(lambda cat: (cat, cat), self.categories)
         # Generate the page for selecting the category to add.
-        add_page = QMTestPage("add-category.dtml")
-        add_page = add_page(self.request) 
+        add_page = QMTestPage("add-category.dtml")(self.request)
+        url = qm.web.cache_page(add_page).AsUrl()
         # Generate the controls.
         return qm.web.make_set_control(form_name="form",
                                        field_name="categories",
                                        select_name="_set_categories",
-                                       add_page=add_page,
+                                       add_page=url,
                                        initial_elements=options,
                                        rows=4,
                                        window_height=240)
@@ -703,26 +1144,35 @@ class ShowItemPage(QMTestPage):
 class ShowSuitePage(QMTestPage):
     """Page for displaying the contents of a test suite."""
 
-    def __init__(self, server, suite, edit):
+    def __init__(self, server, suite, edit, is_new_suite):
         """Construct a new DTML context.
 
         'server' -- The 'QMTestServer' creating this page.
         
         'suite' -- The 'Suite' instance to display.
 
-        'edit' -- If true, display controls for editing the suite."""
-        
+        'edit' -- If true, display controls for editing the suite.
+
+        'is_new_suite' -- If true, the suite being displayed is being
+        created at this time."""
+
         # Initialize the base class.
         QMTestPage.__init__(self, "suite.dtml", server)
+
+        # It does not make sense to display a new suite without being
+        # able to edit it; there is nothing to show.
+        assert edit or not new_suite 
+        
         # Set up attributes.
         database = server.GetDatabase()
         self.suite = suite
         self.test_ids = suite.GetTestIds()
         self.suite_ids = suite.GetSuiteIds()
         self.edit = edit
-
+        self.is_new_suite = is_new_suite
+        
         if not suite.IsImplicit():
-            self.edit_menu_items.append(("Edit Suite", "edit_isuite();"))
+            self.edit_menu_items.append(("Edit Suite", "edit_suite();"))
             self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
 
         if not edit:
@@ -802,8 +1252,8 @@ class ShowSuitePage(QMTestPage):
         """ % suite_id
         return qm.web.make_confirmation_dialog(message, delete_url)
 
-
-
+        
+        
 class StorageResultsStream(ResultStream):
     """A 'StorageResultsStream' stores results.
 
@@ -815,6 +1265,7 @@ class StorageResultsStream(ResultStream):
 
         ResultStream.__init__(self)
         self.__test_results = {}
+        self.__test_results_in_order = []
         self.__resource_results = {}
         # The stream is not finished yet.
         self.__is_finished = 0
@@ -824,7 +1275,7 @@ class StorageResultsStream(ResultStream):
         # 'Summarize') and the GUI thread (which will call
         # 'GetTestResults' and 'IsFinished').
         self.__lock = Lock()
-        
+
 
     def WriteResult(self, result):
         """Output a test result.
@@ -835,6 +1286,7 @@ class StorageResultsStream(ResultStream):
         try:
             if result.GetKind() == Result.TEST:
                 self.__test_results[result.GetId()] = result
+                self.__test_results_in_order.append(result)
             else:
                 self.__resource_results[result.GetId()] = result
         finally:
@@ -859,6 +1311,28 @@ class StorageResultsStream(ResultStream):
         self.__lock.release()
         
 
+    def Start(self, test_ids):
+        """Start collecting results.
+
+        'test_ids' -- The names of the tests that we are about to run.
+        
+        Start collecting new results.  Discard results for the
+        'test_ids', but not for other tests."""
+
+        self.__lock.acquire()
+        self.__is_finished = 0
+        # Go through all of the tests we are about to run and remove
+        # corresponding results.
+        for id in test_ids:
+            if self.__test_results.has_key(id):
+                del self.__test_results[id]
+            self.__test_results_in_order \
+                = filter(lambda r, rs=self.__test_results: \
+                             rs.has_key(r.GetId()),
+                         self.__test_results_in_order)
+        self.__lock.release()
+        
+        
     def IsFinished(self):
         """Return true iff no more results are forthcoming.
 
@@ -878,6 +1352,18 @@ class StorageResultsStream(ResultStream):
 
         self.__lock.acquire()
         results = self.__test_results
+        self.__lock.release()
+        return results
+    
+
+    def GetTestResultsInOrder(self):
+        """Return the test results in the order they appeared.
+
+        returns -- A sequence of test results, in the order that they
+        appeared."""
+
+        self.__lock.acquire()
+        results = self.__test_results_in_order
         self.__lock.release()
         return results
     
@@ -912,25 +1398,10 @@ class TestResultsPage(QMTestPage):
         # the two calls, and it is better to show all the results but
         # claim they are incomplete than to show only some of the
         # results and claim they are complete.
-        self.is_finished = results_stream.IsFinished()
-        self.test_results = results_stream.GetTestResults()
+        self.__is_finished = results_stream.IsFinished()
+        self.test_results = results_stream.GetTestResultsInOrder()
         self.expected_outcomes = server.GetExpectedOutcomes()
         
-
-    def GetClassForResult(self, result):
-        """Return the CSS class for displaying a 'result'.
-
-        returns -- The name of a CSS class.  These are used with <span>
-        elements.  See 'qm.css'."""
-
-        outcome = result.GetOutcome()
-        return {
-            Result.PASS: "pass",
-            Result.FAIL: "fail",
-            Result.UNTESTED: "untested",
-            Result.ERROR: "error",
-            }[outcome]
-
 
     def GetOutcomes(self):
         """Return the list of result outcomes.
@@ -953,8 +1424,7 @@ class TestResultsPage(QMTestPage):
 
         returns -- The total number of unexpected results."""
 
-        return len(self.GetRelativeResults(self.test_results.values(),
-                                           0))
+        return len(self.GetRelativeResults(self.test_results, 0))
 
 
     def GetResultsWithOutcome(self, outcome):
@@ -965,7 +1435,7 @@ class TestResultsPage(QMTestPage):
         returns -- The results with the given 'outcome'."""
 
         return filter(lambda r, o=outcome: r.GetOutcome() == o,
-                          self.test_results.values())
+                      self.test_results)
     
         
     def GetCount(self, outcome):
@@ -991,17 +1461,6 @@ class TestResultsPage(QMTestPage):
         return len(results)
 
     
-    def GetTestIds(self, expected):
-        """Return a sequence of test IDs whose results are to be shown.
-
-        returns -- The test ids for tests whose outcome is as expected,
-        if 'expected' is true, or unexpected, if 'expected' is false."""
-
-        results = self.GetRelativeResults(self.test_results.values(),
-                                          expected)
-        return map(lambda r: r.GetId(), results)
-
-
     def GetRelativeResults(self, results, expected):
         """Return the results that match, or fail to match, expectations.
 
@@ -1030,10 +1489,30 @@ class TestResultsPage(QMTestPage):
         returns -- The URL that contains details about the 'test_id'."""
 
         return qm.web.WebRequest("show-result",
-                                 base = self.request,
+                                 base=self.request,
                                  id=test_id).AsUrl()
 
 
+    def IsFinished(self):
+        """Returns true if tests are still running.
+
+        returns -- True if the data on this page should be considered
+        incomplete due to the fact that tests are still running."""
+
+        return self.__is_finished
+
+
+    def GetRefreshDelay(self):
+        """Returns the number of seconds to wait before refreshing the page.
+
+        returns -- The number of seconds to wait before refreshing this
+        page.  A value of zero means that te page should never be
+        refreshed.  This function is only called if 'IsFinished' returns
+        true."""
+
+        return 10
+
+    
     
 class QMTestServer(qm.web.WebServer):
     """A 'QMTestServer' is the web GUI interface to QMTest."""
@@ -1067,6 +1546,8 @@ class QMTestServer(qm.web.WebServer):
         script_base = "/test/"
         # Register all our web pages.
         for name, function in [
+            ( "add-prerequisite", self.HandleAddPrerequisite ),
+            ( "clear-results", self.HandleClearResults ),
             ( "create-resource", self.HandleShowItem ),
             ( "create-suite", self.HandleCreateSuite ),
             ( "create-test", self.HandleShowItem ),
@@ -1075,18 +1556,17 @@ class QMTestServer(qm.web.WebServer):
             ( "delete-test", self.HandleDeleteItem ),
             ( "dir", self.HandleDir ),
             ( "edit-context", self.HandleEditContext ),
-            ( "edit-expectations", self.HandleEditExpectations ),
             ( "edit-resource", self.HandleShowItem ),
             ( "edit-suite", self.HandleEditSuite ),
             ( "edit-test", self.HandleShowItem ),
-            ( "load-expected-results", self.HandleLoadExpectedResults ),
+            ( "load-context", self.HandleLoadContext ),
+            ( "load-expectations", self.HandleLoadExpectations ),
             ( "load-results", self.HandleLoadResults ),
             ( "new-resource", self.HandleNewResource ),
             ( "new-suite", self.HandleNewSuite ),
             ( "new-test", self.HandleNewTest ),
             ( "run-tests", self.HandleRunTests ),
-            ( "save-expectations", self.HandleSaveExpectations ),
-            ( "save-results", self.HandleSaveResults ),
+            ( "set-expectation", self.HandleSetExpectation ),
             ( "show-dir", self.HandleDir ),
             ( "show-resource", self.HandleShowItem ),
             ( "show-result", self.HandleShowResult ),
@@ -1096,12 +1576,17 @@ class QMTestServer(qm.web.WebServer):
             ( "shutdown", self.HandleShutdown ),
             ( "stop-tests", self.HandleStopTests ),
             ( "submit-context", self.HandleSubmitContext ),
+            ( "submit-context-file", self.HandleSubmitContextFile ),
+            ( "submit-expectation", self.HandleSubmitExpectation ),
             ( "submit-resource", self.HandleSubmitItem ),
             ( "submit-expectations", self.HandleSubmitExpectations ),
             ( "submit-expectations-form", self.HandleSubmitExpectationsForm ),
             ( "submit-results", self.HandleSubmitResults ),
             ( "submit-suite", self.HandleSubmitSuite ),
             ( "submit-test", self.HandleSubmitItem ),
+            ( QMTest.context_file_name, self.HandleSaveContext ),
+            ( QMTest.expectations_file_name, self.HandleSaveExpectations ),
+            ( QMTest.results_file_name, self.HandleSaveResults ),
             ]:
             self.RegisterScript(script_base + name, function)
         self.RegisterPathTranslation(
@@ -1167,6 +1652,23 @@ class QMTestServer(qm.web.WebServer):
         return self.__expected_outcomes
 
 
+    def GetHTMLClassForOutcome(self, outcome):
+        """Return the CSS class for the 'outcome'.
+
+        'outcome' -- One of the result outcomes.
+        
+        returns -- The name of a CSS class.  These are used with <span>
+        elements.  See 'qm.css'."""
+
+        return {
+            Result.PASS: "qmtest_pass",
+            Result.FAIL: "qmtest_fail",
+            Result.UNTESTED: "qmtest_untested",
+            Result.ERROR: "qmtest_error",
+            "EXPECTED" : "qmtest_expected"
+            }[outcome]
+
+
     def GetResultsStream(self):
         """Return the 'StorageResultsStream' containing test results.
 
@@ -1175,7 +1677,32 @@ class QMTestServer(qm.web.WebServer):
 
         return self.__results_stream
     
-        
+
+    def HandleAddPrerequisite(self, request):
+        """Handle a request to add a prerequisite.
+
+        'request' -- A 'WebRequest' object."""
+
+        page = AddPrerequisitePage(self, qm.label.dirname(request["id"]))
+        return page(request)
+    
+
+    def HandleClearResults(self, request):
+        """Handle a request to clear the current test results.
+
+        'request' -- A 'WebRequest' object."""
+
+        # Eliminate the old results stream.
+        del self.__results_stream
+        # And create a new one.
+        self.__results_stream = StorageResultsStream()
+        self.__results_stream.Summarize()
+
+        # Redirect to the main page.
+        request = qm.web.WebRequest("dir", base=request)
+        raise qm.web.HttpRedirect, request
+    
+
     def HandleCreateSuite(self, request):
         """Handle a submission of a new test suite.
 
@@ -1206,7 +1733,7 @@ class QMTestServer(qm.web.WebServer):
             # Everything looks good.  Make an empty suite.
             suite = Suite(self.__database, suite_id)
             # Show the editing page.
-            return ShowSuitePage(self, suite, edit=1)(request)
+            return ShowSuitePage(self, suite, edit=1, is_new_suite=1)(request)
 
 
     def HandleDeleteItem(self, request):
@@ -1278,26 +1805,26 @@ class QMTestServer(qm.web.WebServer):
         return context_page(request)
         
 
-    def HandleEditExpectations(self, request):
-        """Handle a request to edit the context.
-
-        'request' -- The 'WebRequest' that caused the event."""
-
-        return ExpectationsPage(self)(request)
-
-
     def HandleEditSuite(self, request):
         """Generate the page for editing a test suite."""
 
         return self.HandleShowSuite(request, edit=1)
 
 
-    def HandleLoadExpectedResults(self, request):
+    def HandleLoadContext(self, request):
+        """Handle a request to upload a context file.
+        
+        'request' -- The 'WebRequest' that caused the event."""
+
+        return LoadContextPage(self)(request)
+    
+        
+    def HandleLoadExpectations(self, request):
         """Handle a request to upload results.
         
         'request' -- The 'WebRequest' that caused the event."""
 
-        return LoadExpectedResultsPage(self)(request)
+        return LoadExpectationsPage(self)(request)
 
         
     def HandleLoadResults(self, request):
@@ -1351,11 +1878,10 @@ class QMTestServer(qm.web.WebServer):
             ids = ["."]
         test_ids, suite_ids = self.GetDatabase().ExpandIds(ids)
 
-        context = self.__context
-
-        # Create a new results stream.
-        del self.__results_stream
-        self.__results_stream = StorageResultsStream()
+        # Let the results stream know that we are going to start
+        # providing it with results.
+        self.__results_stream.Start(test_ids)
+        
         # Create the thread that will run all of the tests.
         del self.__execution_thread
         self.__execution_thread = \
@@ -1363,12 +1889,31 @@ class QMTestServer(qm.web.WebServer):
                           self.__targets, [self.__results_stream])
         # Start the thread.
         self.__execution_thread.start()
+
+        # Sleep for a few seconds so that if we're only running one
+        # test there's a good chance that it will finish before we
+        # show the results page.
+        time.sleep(5)
         
         # Redirect to the results page.
         request = qm.web.WebRequest("show-results", base=request)
         raise qm.web.HttpRedirect, request
 
 
+    def HandleSaveContext(self, request):
+        """Handlea  request to save the context to a file.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Start with the empty string.
+        s = ""
+        # Run through all of the context variables.
+        for (name, value) in self.__context.items():
+            s = s + "%s=%s\n" % (name, value)
+            
+        return ("application/x-qmtest-context", s)
+    
+        
     def HandleSaveExpectations(self, request):
         """Handle a request to save expectations to a file.
 
@@ -1415,7 +1960,15 @@ class QMTestServer(qm.web.WebServer):
         
         return ("application/x-qmtest-results", data)
     
-                
+
+    def HandleSetExpectation(self, request):
+        """Handle a request to set expectations.
+
+        'request' -- A 'WebRequest' object."""
+
+        return SetExpectationPage(self, request["id"])(request)
+    
+        
     def HandleShowItem(self, request):
         """Handle a request to show a test or resource.
 
@@ -1588,7 +2141,7 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite = database.GetSuite(suite_id)
         # Generate HTML.
-        return ShowSuitePage(self, suite, edit)(request)
+        return ShowSuitePage(self, suite, edit, is_new_suite=0)(request)
 
 
     def HandleShutdown(self, request):
@@ -1628,22 +2181,54 @@ class QMTestServer(qm.web.WebServer):
         raise qm.web.HttpRedirect, request
 
 
+    def HandleSubmitContextFile(self, request):
+        """Handle a context file submission..
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # The context data.
+        data = request["file"]
+        # Create a file objet to read from.
+        file = StringIO.StringIO(data)
+        # Parse the assignments in the context file.
+        assignments = qm.common.read_assignments(file)
+        # Add them to the context.
+        for (name, value) in assignments.items():
+            try:
+                self.__context[name] = value
+            except ValueError:
+                # Skip any invalid assignments.
+                pass
+        # Redirect to the main page.
+        return self._ClosePopupAndRedirect("dir")
+
+
+    def HandleSubmitExpectation(self, request):
+        """Handle setting a single expectation.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        id = request["id"]
+        outcome = request["outcome"]
+        self.__expected_outcomes[id] = outcome
+        # Close the upload popup window, and reload the main window.
+        return self._ClosePopupAndRedirect(request["url"])
+        
+        
     def HandleSubmitExpectations(self, request):
         """Handle uploading expected results.
 
         'request' -- The 'WebRequest' that caused the event."""
 
         # Get the results file data.
-        data = request["expected_results"]
+        data = request["file"]
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
         self.__expected_outcomes = qm.test.base.load_outcomes(f)
         # Close the upload popup window, and redirect the main window
-        # to a view of the results.
-        return """<html><body><script language="JavaScript">
-                  window.opener.location = 'edit-expectations';
-                  window.close();</script></body></html>"""
+        # to the root of the database.
+        return self._ClosePopupAndRedirect("dir")
         
 
     def HandleSubmitExpectationsForm(self, request):
@@ -1797,19 +2382,21 @@ class QMTestServer(qm.web.WebServer):
             database.WriteResource(item)
 
         # Remove any attachments located in the temporary store as they
-        # have now been copied to the store associated with the database.
+        # have now been copied to the store associated with the
+        # database.
+        temporary_store = qm.attachment.temporary_store
         for field in fields:
             if isinstance(field, qm.fields.AttachmentField):
                 attachment = arguments[field.GetName()]
                 if attachment is not None \
-                   and attachment.GetStore() == temporary_store:
+                   and attachment.GetStore() is temporary_store:
                     temporary_store.Remove(attachment.GetLocation())
             elif isinstance(field, qm.fields.SetField) \
                  and isinstance(field.GetContainedField(),
                                 qm.fields.AttachmentField):
                 for attachment in arguments[field.GetName()]:
                     if attachment is not None \
-                       and attachment.GetStore() == temporary_store:
+                       and attachment.GetStore() is temporary_store:
                         temporary_store.Remove(attachment.GetLocation())
 
         # Redirect to a page that displays the newly-edited item.
@@ -1823,7 +2410,7 @@ class QMTestServer(qm.web.WebServer):
         'request' -- The 'WebRequest' that caused the event."""
 
         # Get the results file data.
-        data = request["results"]
+        data = request["file"]
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
@@ -1835,9 +2422,7 @@ class QMTestServer(qm.web.WebServer):
         self.__results_stream.Summarize()
         # Close the upload popup window, and redirect the main window
         # to a view of the results.
-        return """<html><body><script language="JavaScript">
-                  window.opener.location = 'show-results';
-                  window.close();</script></body></html>"""
+        return self._ClosePopupAndRedirect("show-results")
 
 
     def HandleSubmitSuite(self, request):
@@ -1939,6 +2524,20 @@ class QMTestServer(qm.web.WebServer):
         """Handle the '/' URL."""
 
         raise qm.web.HttpRedirect, qm.web.WebRequest("/test/dir")
+
+
+    def _ClosePopupAndRedirect(self, url):
+        """Close the current window.  Redirect the main window to 'url'.
+
+        'url' -- A string giving the URL to which the main window should
+        be redirected.
+
+        returns -- A string giving HTML that will close the current
+        window and redirect the main window to 'url'."""
+
+        return """<html><body><script language="JavaScript">
+                  window.opener.location = '%s';
+                  window.close();</script></body></html>""" % url
         
 ########################################################################
 # initialization

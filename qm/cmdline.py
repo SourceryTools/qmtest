@@ -7,27 +7,9 @@
 # Contents:
 #   Code for command line interface.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -326,7 +308,7 @@ class CommandParser:
         and the argument given to that option (if applicable).
         'command' is the command given.  'command_options' is a list of
         2-tuples indicating each option given to the command and its
-        possible argument.  'command-args' is a list of arguments as
+        possible argument.  'command_args' is a list of arguments as
         given to the command.  If no command is given, then the function
         will return '' for the command, [] for the arguments, and [] for
         the command options.
@@ -369,7 +351,6 @@ class CommandParser:
                   qm.error("unrecognized command", command=command)
             
         # Get the arguments to the command.
-        args = string.join(args[1:])
         command_options = []
 
         for command_item in self.__commands:
@@ -379,7 +360,7 @@ class CommandParser:
         getopt_string = self.BuildGetoptString(command_options)
         getopt_list = self.BuildGetoptList(command_options)
         try:
-            command_options, command_args = getopt.getopt(string.split(args),
+            command_options, command_args = getopt.getopt(args[1:],
                                                           getopt_string,
                                                           getopt_list)
         except getopt.error, msg:

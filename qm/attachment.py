@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -136,7 +118,11 @@ class AttachmentStore:
 
         'request' -- A 'WebRequest' object.  The location of the
         attachment data is stored in the 'location' property, and the
-        MIME type in the 'mime_type' property."""
+        MIME type in the 'mime_type' property.
+
+        returns -- A pair '(mime_type, data)' where 'mime_type' is the
+        MIME type stored in the request and 'data' is the contents of
+        the attachment."""
 
         location = request["location"]
         mime_type = request["mime_type"]
@@ -144,6 +130,16 @@ class AttachmentStore:
         return (mime_type, data)
 
 
+    def Store(self, location, data):
+        """Add an attachment to the store.
+
+        'location' -- The location in which the data should be stored.
+
+        'data' -- The contents of the attachment."""
+
+        raise qm.MethodShouldBeOverriddenError, "AttachmentStore.Store"
+        
+        
 
 class FileAttachmentStore(AttachmentStore):
     """An attachment store based on the file system.
@@ -186,6 +182,21 @@ class FileAttachmentStore(AttachmentStore):
         read-only, and should not be modified in any way."""
 
         return location
+
+
+    def Store(self, location, data):
+        """Add an attachment to the store.
+
+        'location' -- The location in which the data should be stored.
+
+        'data' -- The contents of the attachment."""
+
+        # Create the file.
+        file = open(location, "w")
+        # Write the data.
+        file.write(data)
+        # Close the file.
+        file.close()
 
 
 
@@ -246,7 +257,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         return os.stat(path)[6]
 
 
-    def Add(self, location, data):
+    def Store(self, location, data):
         """Add attachment data.
 
         'location' -- The location at which to find the data.  The value
@@ -301,7 +312,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         location = request["location"]
         assert is_temporary_location(location)
         # Get the attachment data.
-        self.Add(location, request["file_data"])
+        self.Store(location, request["file_data"])
         # Return a page that closes the popup window from which the
         # attachment was submitted.
         return '''

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest XMLResultSream class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -68,7 +68,6 @@ class XMLResultStream(ResultStream):
         element = result.MakeDomNode(self.__document)
         xml.dom.ext.PrettyPrint(element, self.__file, indent=" ",
                                 encoding="ISO-8859-1")
-        qm.xmlutil.discard_node(element)
         
 
     def Summarize(self):

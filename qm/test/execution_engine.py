@@ -9,6 +9,8 @@
 #
 # Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
+# For license terms see the file COPYING.
+#
 ########################################################################
 
 ########################################################################
@@ -19,6 +21,7 @@ import os
 import qm.common
 import qm.queue
 from   qm.test.base import *
+import qm.test.cmdline
 from   qm.test.context import *
 import qm.xmlutil
 from   result import *
@@ -155,7 +158,7 @@ class ExecutionEngine:
                 self.__descriptors[id] = descriptor
                 self.__descriptor_graph[descriptor] = [0, []]
             except:
-                self._AddUntestedResult(id, "Could not load test")
+                self._AddUntestedResult(id, "Could not load test.")
 
         # Create the edges.
         for descriptor in self.__descriptors.values():
@@ -178,8 +181,12 @@ class ExecutionEngine:
             # response.  There is nothing constructive we can do.
             idle_targets = self.__idle_targets
             if not idle_targets:
+                if __debug__:
+                    self._Trace("All targets are idle -- waiting.")
                 # Read a reply from the response_queue.
                 self._CheckForResponse(wait=1)
+                if __debug__:
+                    self._Trace("Response received.")
                 # Keep going.
                 continue
 
@@ -194,12 +201,21 @@ class ExecutionEngine:
                         self.__ready.remove(descriptor)
                         # And from the pending list.
                         self.__pending.remove(descriptor)
+                        # Output a trace message.
+                        if __debug__:
+                            self._Trace(("About to run %s."
+                                         % descriptor.GetId()))
                         # Run it.
                         target.RunTest(descriptor, self.__context)
                         # If the target is no longer idle, remove it
                         # from the idle_targets list.
                         if not target.IsIdle():
+                            if __debug__:
+                                self._Trace("Target is no longer idle.")
                             self.__idle_targets.remove(target)
+                        else:
+                            if __debug__:
+                                self._Trace("Target is still idle.")
                         # We have done something useful on this
                         # iteration.
                         wait = 0
@@ -208,11 +224,20 @@ class ExecutionEngine:
                 if not wait:
                     break
 
+            # Output a trace message.
+            if __debug__:
+                self._Trace("About to check for a response in %s mode."
+                            % ((wait and "blocking") or "nonblocking"))
+                    
             # See if any targets have finished their assignments.  If
             # we did not schedule any additional work during this
             # iteration of the loop, there's no point in continuing
             # until some target finishes what its doing.
             self._CheckForResponse(wait=wait)
+
+            # Output a trace message.
+            if __debug__:
+                self._Trace("Done checking.")
 
         # Any tests that are still pending are untested, unless there
         # has been an explicit request that we exit immediately.
@@ -233,8 +258,15 @@ class ExecutionEngine:
         # Read a reply from the response_queue.
         try:
             result = self.__response_queue.get(wait)
+            # Output a trace message.
+            if __debug__:
+                self._Trace(("Got response for %s from queue."
+                             % result.GetId()))
             # Handle it.
             self._AddResult(result)
+            # Output a trace message.
+            if __debug__:
+                self._Trace("Recorded result.")
             # If this was a test result, there may be other tests that
             # are now eligible to run.
             if result.GetKind() == Result.TEST:
@@ -288,6 +320,10 @@ class ExecutionEngine:
         'result' -- A 'Result' object representing the result of running
         a test or resource."""
 
+        # Output a trace message.
+        if __debug__:
+            self._Trace("Recording result for %s." % result.GetId())
+
         # Find the target with the name indicated in the result.
         if result.has_key(Result.TARGET):
             for target in self.__targets:
@@ -298,6 +334,10 @@ class ExecutionEngine:
             # test was not run at all, there will be no associated
             # target.
             target = None
+
+        # Having no target is a rare occurrence; output a trace message.
+        if __debug__ and not target:
+            self._Trace("No target for %s." % result.GetId())
                         
         # Store the result.
         if result.GetKind() == Result.TEST:
@@ -310,7 +350,14 @@ class ExecutionEngine:
         # This target might now be idle.
         if (target and target not in self.__idle_targets
             and target.IsIdle()):
+            # Output a trace message.
+            if __debug__:
+                self._Trace("Target is now idle.\n")
             self.__idle_targets.append(target)
+
+        # Output a trace message.
+        if __debug__:
+            self._Trace("Writing result for %s to streams." % result.GetId())
 
         # Report the result.
         for rs in self.__result_streams:
@@ -332,7 +379,16 @@ class ExecutionEngine:
         result[Result.CAUSE] = cause
         self._AddResult(result)
 
-        
+
+    def _Trace(self, message,):
+        """Write a trace 'message'.
+
+        'message' -- A string to be output as a trace message."""
+
+        tracer = qm.test.cmdline.get_qmtest().GetTracer()
+        tracer.Write(message, "exec")
+
+    
 ########################################################################
 # Local Variables:
 # mode: python

@@ -647,6 +647,21 @@
     options:</para>
 
     <variablelist>
+     <varlistentry>
+      <term><option>-a</option> <replaceable>name=value</replaceable></term>
+      <term>
+       <option>&dashdash;attribute</option> 
+       <replaceable>name=value</replaceable>
+      </term>
+      <listitem>
+       <para>Set the database attribute
+       <replaceable>name</replaceable> to
+       <replaceable>value</replaceable>.  The set of attribute names
+       and valid values is dependent on the database class in use.
+       The default database class accepts no attributes.</para>
+      </listitem>
+     </varlistentry>
+
      <varlistentry> 
       <term><option>-c</option> <replaceable>class</replaceable></term>
       <term>
@@ -1092,9 +1107,10 @@
      is not set, &qmtest; looks for a file named
      <filename>python</filename> in the <filename>bin</filename>
      directory where QM is installed.  If this file does not exist,
-     &qmtest; searches for <filename>python</filename> in the
-     directories listed in the <envar>PATH</envar> environment
-     variable.</para>
+     but <filename>/usr/bin/python2</filename> exists, &qmtest;
+     will use that path.  Otherwise, &qmtest; searches for
+     <filename>python</filename> in the directories listed in the
+     <envar>PATH</envar> environment variable.</para>
     </listitem>
    </varlistentry>
 

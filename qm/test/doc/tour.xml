@@ -131,8 +131,8 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <title>Running Tests</title>
 
    <para>To run all the tests, choose <guibutton>All Tests</guibutton>
-   from the <guilabel>Run</guilabel> menu.  &qmtest; will immediately
-   display the test results page.  As the tests run, this page will be
+   from the <guilabel>Run</guilabel> menu.  &qmtest; will display the
+   test results page.  As the tests run, this page will be
    automatically updated.  (If you do not want to wait for QMTest to
    update the page, you can manually reload the page in your browser.)
    After a few moments, &qmtest; will display the test results for the
@@ -157,10 +157,11 @@ QMTest running at http://127.0.0.1:1158/test/dir
    ran the tests.</para>
 
    <para>Below the statistics section, &qmtest; displays detailed
-   information about each test.  The tests that have unexpected 
-   results are always displayed at the top of the list.  In this case,
-   you can see that the <filename>exec1</filename> test is the one
-   that is failing.</para>
+   information about each test.  In this case, you can see that the
+   <filename>exec1</filename> test is the one that is failing.  You
+   can click on the <guilabel>Details</guilabel> link to get
+   additional information about why a particular test is
+   failing.</para>
 
   </section> <!-- sec-testtut-running-tests -->
 
@@ -182,23 +183,19 @@ QMTest running at http://127.0.0.1:1158/test/dir
    you used when you told &qmtest; when you asked it to save your
    results earlier.</para>
    
-   <para>Then, &qmtest; will display a page allowing you to edit the
-   expectations.  You will see a list of the tests in the database,
-   together with their current expectations.  You can see that
-   <filename>exec1</filename> is expected to fail; the other tests are
-   expected to pass.  Now, rerun your tests by choosing <guibutton>All
-   Tests</guibutton> from the <guilabel>Run</guilabel> menu.  Now, you
+   <para>Then, &qmtest; will redisplay the test results, but now you
    will see that there are no unexpected failures; the current results
    match your expectations.</para>
 
-   <para>You can also manually edit expectations.  Choose
-   <guibutton>Edit Expectations</guibutton> from the
-   <guilabel>Edit</guilabel> menu.  &qmtest; displays a list of all
-   the tests.  Set the expectation for <filename>exec1</filename> back
-   to <literal>PASS</literal>, click the <guibutton>OK</guibutton>
-   button and rerun the tests.  You will see that now the
-   <filename>exec1</filename> failure is unexpected again.  You can
-   save your expectations by choosing <guibutton>Save
+   <para>You can also manually edit expectations.  Click on the
+   <guilabel>Expectation</guilabel> link next to a particular test to
+   set the expectation.  To set the expectation for
+   <filename>exec1</filename> back to <literal>PASS</literal>, click
+   on the <guilabel>Expectation</guilabel> link next to
+   <filename>exec1</filename>, choose <literal>PASS</literal>, and
+   click the <guibutton>OK</guibutton> button.  You will see that now
+   the <filename>exec1</filename> failure is unexpected again.  You
+   can save your expectations by choosing <guibutton>Save
    Expectations</guibutton> from the <guilabel>File</guilabel>
    menu.</para>
 
@@ -259,7 +256,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <guibutton>Run</guibutton> menu and observe that the test now
    passes.</para>
 
-   <para>Creating in a new test works in a similar way.  Click on the
+   <para>Creating a new test works in a similar way.  Click on the
    <guilabel>Home</guilabel> link to return to the main &qmtest; page.
    Then, select <guibutton>New Test</guibutton> from the
    <guilabel>File</guilabel> menu to create a new test.  &qmtest;

@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -68,8 +50,11 @@ import sys
 ########################################################################
 
 def print_error_message(message):
-    message = qm.structured_text.to_text(str(message))
-    sys.stderr.write("%s: error: %s" % (program_name, message))
+    prefix = "%s: error: " % program_name
+    message = qm.structured_text.to_text(str(message),
+                                         indent=len(prefix))
+    message = prefix + message[len(prefix):]
+    sys.stderr.write(message)
 
 ########################################################################
 # script
@@ -87,26 +72,12 @@ qm.rc.Load("test")
 program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
-    try:
-        # Parse the command line.
-        command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
-        # Execute the command.
-        command.Execute(sys.stdout)
-        exit_code = 0
-    except IOError, exception:
-        # There is a bug in Python 1.5.2 (and perhaps other versions prior
-        # to 2.1) that can cause SIGINT to be delivered to a thread other
-        # than the main thread.  The main thread will therefore get an
-        # IOError exception (indicating an interrupted sytem call) rather
-        # than a KeyboardInterrupt exception.  We therefore transform
-        # the IOError into a KeyboardInterrupt.
-        if exception.errno == errno.EINTR:
-            raise KeyboardInterrupt
-        # For other kinds of IOErrors, just reraise the current
-        # exception.
-        else:
-            raise
-except RuntimeError, msg:
+    # Parse the command line.
+    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
+    # Execute the command.
+    command.Execute(sys.stdout)
+    exit_code = 0
+except qm.common.QMException, msg:
     print_error_message(msg)
     exit_code = 1
 except qm.cmdline.CommandError, msg:
@@ -116,7 +87,7 @@ except qm.cmdline.CommandError, msg:
     exit_code = 2
 except KeyboardInterrupt:
     # User killed it; that's OK.
-    sys.stderr.write("\nInterrupted.\n")
+    sys.stderr.write("\nqmtest: Interrupted.\n")
     exit_code = 0
     
 # End the program.

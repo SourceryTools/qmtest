@@ -7,11 +7,9 @@
   Contents:
     Popup window for entering the name of a new category.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
-  be distributed only subject to the terms and conditions set forth in
-  the Software Carpentry Open Publication License, which is available at:
+  Copyright (C) 2001 CodeSourcery LLC.  
 
-    http://www.software-carpentry.com/openpub-license.html
+  For license terms see the file COPYING.
 
 --></dtml-comment>
 <?xml version="1.0" encoding="UTF-8"?>

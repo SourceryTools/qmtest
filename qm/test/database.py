@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -37,6 +19,7 @@
 
 import os.path
 import qm
+from   qm.common import *
 import qm.test.base
 
 ########################################################################
@@ -182,10 +165,17 @@ class ItemDescriptor:
             name = field.GetName()
 
             # Use a default value for each field for which an argument
+
             # was not specified.
             if not arguments.has_key(name):
                 arguments[name] = field.GetDefaultValue()
 
+        # Record the test or resource name.  Logically, this
+        # should be a paramter passed in to the test class
+        # constructor, but that would require changing all the
+        # existing test classes.
+        arguments["id"] = self.GetId()
+        
         return apply(self.GetClass(), [], arguments)
 
     
@@ -389,7 +379,7 @@ class ResourceDescriptor(ItemDescriptor):
 
 
 
-class DatabaseError(Exception):
+class DatabaseError(QMException):
     """An exception relating to a 'Database'.
 
     All exceptions raised directly by 'Database', or its derived
@@ -530,15 +520,14 @@ class Database:
     simultaneously.  Therefore, you must take appropriate steps to
     ensure thread-safe access to shared data."""
 
-    def __init__(self, path, store):
+    def __init__(self, path, **attributes):
         """Construct a 'Database'.
 
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
-        'store' -- The attachment store that is used to store 
-        'Attachment's to tests or resources.
-
+        'attributes' -- A dictionary mapping attribute names to values.
+        
         Derived classes must call this method from their own '__init__'
         methods.  Evey derived class must have an '__init__' method that
         takes the path to the directory containing the database as its
@@ -547,13 +536,8 @@ class Database:
 
         # The path given must be an absolute path.
         assert os.path.isabs(path)
-        # The path must refer to a directory.
-        if not os.path.isdir(path):
-            raise DatabaseException, "%s is not a directory" % path
-
         self.__path = path
-        self.__store = store
-
+        
     # Methods that deal with tests.
     
     def GetTest(self, test_id):
@@ -871,9 +855,9 @@ class Database:
         returns -- The 'AttachmentStore' containing the attachments
         associated with tests and resources in this database.
 
-        Derived classes must not override this method."""
+        Derived classes must override this method."""
 
-        return self.__store
+        raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
 
 
     def GetClassPaths(self):

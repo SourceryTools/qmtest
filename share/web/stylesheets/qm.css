@@ -41,17 +41,57 @@ a:hover {
     color: #500060;
 }
 
-table {
+/* Navigation bar.  */
+
+table.navbar {
+    background-color: black;
+    width: 100%;
 }
 
-th {
+td.navbar {
     color: white;
-    background-color: black;
+}
+
+a.navbar:link {
+    color: white;
+}
+
+a.navbar:visited {
+    color: white;
+}
+
+a.navbar:active {
+    color: white;
+}
+
+a.navbar:hover {
+    color: white;
+}
+
+/* Tables.  */
+
+/* Generic tables. */
+
+th {
     text-align: left;
+}
+
+th.table_caption {
+    text-align: center;
+}
+
+caption {
+    text-align: center;
     font-weight: bold;
 }
 
-td {
+/* Tables are used sometimes used simply to control presentation.  The
+   "data" class indicates that the table is being used to display 
+   tabular data.  */
+
+table.data {
+    margin: 4px;
+    padding: 4px;
 }
 
 th.issue-class {
@@ -89,7 +129,7 @@ span.error, span.warning {
     color: #c00000;
 }
 
-tr.field {
+.field {
     background-color: #f0f8ff;
 }
 
@@ -118,52 +158,8 @@ a.help-link {
     color: #402090;
 }
 
-table.navbar {
-    background-color: black;
-}
-
-td.navbar {
-    color: white;
-}
-
-td.unexpected {
-    background-color: #ffe0e8;
-}
-
-a.navbar:link {
-    color: white;
-}
-
-a.navbar:visited {
-    color: white;
-}
-
-a.navbar:active {
-    color: white;
-}
-
-a.navbar:hover {
-    color: white;
-}
-
 input.submit {
     background-color: #e0e0e0;
-}
-
-tr.pass {
-    background-color: #f0f8ff;
-}
-
-tr.fail {
-    background-color: #ffe0e8;
-}
-
-tr.untested {
-    background-color: #f0f0f0;
-}
-
-tr.error {
-    background-color: #ffffe0;
 }
 
 span.outcome {
@@ -177,5 +173,27 @@ span.cause {
 span.id {
     font-family: monospace;
     font-weight: bold;
+}
+
+/* Test outcomes. */
+
+.qmtest_pass {
+    background-color: #a0f0a0;
+}
+
+.qmtest_fail, .qmtest_unexpected {
+    background-color: #ff9090;
+}
+
+.qmtest_error {
+    background-color: #ffffe0;
+}
+
+.qmtest_untested {
+    background-color: #d0d0d0;
+}
+
+.qmtest_expected {
+    background-color: #c0c0c0;
 }
 

@@ -46,9 +46,9 @@ Instructions for writing documention:
 
 Instructions for writing code:
 
-QM software should be written to work with Python
-1.5.2 or higher.  Python source code should adhere to Guido van
-Rossum's "Python Style Guide", available at
+QM software should be written to work with Python 2.1 or higher.
+Python source code should adhere to Guido van Rossum's "Python Style
+Guide", available at
 
     http://www.python.org/doc/essays/styleguide.html
 

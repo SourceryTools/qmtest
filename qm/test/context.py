@@ -12,17 +12,31 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import qm
+import qm.common
 import re
 import types
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
+class ContextException(qm.common.QMException):
+    """A 'ContextException' indicates a missing context variable."""
+
+    def __init__(self, key):
+        """Construct a new 'ContextException'.
+
+        'key' -- A string giving the context key for which no value
+        was available."""
+
+        self.key = key
+
+        
+    
 class Context:
     """Test-time and local configuration for tests.
 
@@ -66,7 +80,10 @@ class Context:
     # Methods to simulate a map object.
 
     def __getitem__(self, key):
-        return self.__properties[key]
+        try:
+            return self.__properties[key]
+        except KeyError:
+            raise ContextException(key)
 
 
     def __setitem__(self, key, value):
@@ -127,7 +144,7 @@ class Context:
 
         raises -- 'RuntimeError' if 'key' is not valid."""
 
-        if not isinstance(key, types.StringType):
+        if type(key) not in qm.common.string_types:
             raise ValueError, "context key must be a string"
         if not re.match("[-A-Za-z0-9_.]+", key):
             raise ValueError, \

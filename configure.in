@@ -1,4 +1,4 @@
-########################################################################
+##################################################### -*-shell-script-*-
 #
 # File:   configure.in
 # Author: Alex Samuel
@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -48,26 +30,14 @@ AC_ARG_ENABLE(maintainer-mode,
 AC_SUBST(MAINTAINER_MODE)
 	     
 dnl ####################################################################
-dnl Set the version numbers for QM.  These values should be set here 
-dnl and nowhere else in QM.
+dnl Load the version numbers.
 dnl ####################################################################
 
-QM_MAJOR_VER=1
-QM_MINOR_VER=1
-QM_RELEASE_VER=0
+. ${srcdir}/version
 
 AC_SUBST(QM_MAJOR_VER)
 AC_SUBST(QM_MINOR_VER)
 AC_SUBST(QM_RELEASE_VER)
-
-# For a dot release, the release is named "X.Y.Z"; for other releases
-# the name is just "X.Y".
-if test ${QM_RELEASE_VER} -ne 0; then
-    QM_VERSION=${QM_MAJOR_VER}.${QM_MINOR_VER}.${QM_RELEASE_VER}
-else
-    QM_VERSION=${QM_MAJOR_VER}.${QM_MINOR_VER}
-fi
-
 AC_SUBST(QM_VERSION)
 
 dnl ####################################################################
@@ -90,17 +60,44 @@ if test -n "$PYTHON" -a "$PYTHON" != yes; then
     echo "Cannot find Python interpreter $PYTHON."; exit 1
   )
 else
-  AC_PATH_PROG(PYTHON, python, python)
+  AC_PATH_PROG(PYTHON, python2 python, python)
 fi
 
 dnl ####################################################################
 dnl Determine the Python version, installation prefix, and and platform.
 dnl ####################################################################
 
+# The code used to check the version only reports the version accurately
+# with Python 2.0 or greater -- but the minimum acceptable version of
+# Python is already higher than that.
 AC_MSG_CHECKING(Python version)
-PYTHON_VERSION=`$PYTHON -c "import sys; import string; print string.split(sys.version, ' ')[[0]][[:3]]"`
+cat > python-ver.py <<EOF
+try:
+  import sys
+  print sys.version_info[[0]]
+except:
+  print 0
+EOF
+PYTHON_MAJOR=`$PYTHON python-ver.py`
+cat > python-ver.py <<EOF
+try:
+  import sys
+  print sys.version_info[[1]]
+except:
+  print 0
+EOF
+PYTHON_MINOR=`$PYTHON python-ver.py`
+rm python-ver.py
+PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 AC_MSG_RESULT($PYTHON_VERSION)
 AC_SUBST(PYTHON_VERSION)
+
+# Some Python versions before 2.1 have serious bugs if threads and
+# fork are used together.  Therefore, Python 2.1 or higher is required.
+if test "$PYTHON_MAJOR" -lt 2 || \
+   (test "$PYTHON_MAJOR" -eq 2 && test "$PYTHON_MINOR" -lt 1); then
+  AC_MSG_ERROR(QM requires Python version 2.1 or greater)
+fi
 
 AC_MSG_CHECKING(Python prefix)
 PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`

@@ -1,3 +1,303 @@
+2002-05-27  Mark Mitchell  <mark@codesourcery.com>
+
+ 	Merge from release-1-1-branch.
+
+2002-05-20  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* qm/common.py (load_module): Insert the path appropriate for the
+	loaded module in front of the default directories, rather than
+	behind them.
+	* NEWS: Update it.
+
+2002-05-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* scripts/qm-release (upload): Update Windows logic.
+
+2002-05-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* scripts/qm-release (tag_qm): Return to the top level directory.
+
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Correct
+	punctuation in error message.
+	* scripts/qm-release (upload): Upload manuals, too.
+	(build_exec): Use Python 2.2.
+	(build_binary): Use zcat.
+
+	* scripts/qm-release: Set the umask before building distributions.
+	
+	* scripts/qm-release (upload): New function.
+	* config.guess: New file.
+
+	* scripts/qm-release (TAG): Initialize it.
+
+	* configure.in: Use version to get the version number.
+	* configure: Regenerated.
+
+	* scripts/qm-release (tag_qm): Overwrite version, rather than
+	appending to it.
+	
+	* scripts/qm-release (tag_qm): New function.
+
+	* version: New file.
+
+2002-05-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/web/web.py (ShowSuitePage.__init__): Add is_new_suite
+	parameter.
+	(QMTestServer.HandleCreateSuite): Pass it.
+	(QMTestServer.HandleShowSuite): Likewise.
+	* qm/test/share/dtml/suite.dtml: Make cancellation of new suite
+	requests redirect to the main directory page.
+
+2002-05-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/file.py (FileContentsTest.fields): Rename to ...
+	(FileContentsTest.arguments): ... this.
+
+2002-04-30  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* qm/cmdline.py (CommandParser.ParseCommandLine): Avoid joining
+	and splitting command-line arguments.
+
+2002-04-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* configure.in: Compute PYTHON_MAJOR and PYTHON_MINOR without
+	using here documents inside command substitution.
+	* configure: Regenerated.
+
+2002-03-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* scripts/qm-release (build_rpm): Use sudo.
+	(TAR_OPTS): Use "root" rather than "0" in owner options.
+
+	* qm/test/cmdline.py (QMTest.MakeContext): Fix typo.
+	* NEWS: Note fix.
+	
+2002-03-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/common.py (string_types): New variable.
+
+	* qm/test/context.py: Permit Unicode strings throughout.
+	* qm/test/result.py: Likewise.
+
+2002-03-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/doc/tour.xml: Update tutorial instructions to reflect
+	changes in QMTest 1.1.2.
+	* qm/test/share/dtml/set-expectations.dtml: Clarify form.
+
+	* configure.in (PYTHON_MAJOR): Robustify checks.
+	(PYTHON_MINOR): Likewise.
+	* configure: Regenerated.
+	* qm/web.py (DocumentTemplate): Guard import with try-block to
+	improve error messages.
+
+2002-03-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/share/dtml/results.dtml: Simplify.
+	* qm/test/web/web.py (StorageResultsStream.__init__): Initialize
+	__test_results_in_order.
+	(StorageResultsStream.WriteResult): Update it.
+	(StorageResultsStream.Start): Likewise.
+	(StorageResultsStream.GetTestResultsInOrder): New method.
+	(TestResultsPage.__init__): Use it.
+	(TestResultsPage.GetTotalUnexpected): Take advantage of the fact
+	that test_results is now a list, not a dictionary.
+	(TestResultsPage.GetResultsWithOutcome): Likewise.	
+	(TestResultsPage.GetTestIds): Remove.
+
+	* qm/test/web/web.py (StorageResultsStream.Start): Add test_ids
+	parameter; remove existing results for tests that are going to be
+	re-run.
+
+	* qm/common.py (starts_with): Simplify.
+	(ends_with): Likewise.
+	(parse_assignment): New function.
+	(read_assignments): Likewise.
+	* qm/test/cmdline.py (context_file_name): New member.
+	(QMTest.MakeContext): Use read_assignments.
+	(QMTest.__ParseContextAssignment): Remove.
+	(QMTest.__ParseKeywordArgument): Likewise.
+	(QMTest.__ExecuteCreateTdb): Use parse_assignment.
+	* qm/test/qmtest.py: Tidy interrupted message.
+	* qm/test/share/dtml/load-expected-results.dtml: Remove.
+	* qm/test/share/dtml/load-results.dtml: Likewise.
+	* qm/test/share/dtml/load.dtml: New file.
+	* qm/test/share/dtml/navigation-bar.dtml (load_context): New
+	function.
+	* qm/test/share/dtml/set-expectation.dtml: New file.
+	* qm/test/web/web.py (QMTestPage.__init__): Add load context and
+	save context functions to the file menu.
+	(LoadExpectedResultsPage): Reimplement using load.dtml.
+	(LoadResultsPage): Likewise.
+	(LoadContxtPage): Likewise.
+	(QMTestServer.__init__): Register context load and save URLs.
+	(QMTestServer.HandleClearResults): Summarize the new results
+	stream.
+	(QMTestServer.HandleLoadContext): New method.
+	(QMTestServer.HandleSaveContext): Likewise.
+	(QMTestServer.HandleSubmitContext): Likewise.
+	(QMTestServer._ClosePopupAndRedirect): New method.
+	
+	* COPYING: Replace with the GPL.
+	Replace all other copyright notices with references to COPYING.
+	* README: Note license change.
+	
+2002-03-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUMakefile.in (PYTHON_PACKAGES): Remove sgmlop.
+	* qm/attachment.py (AttachmentStore.HandleDownloadRequest): Update
+	documentation.
+	(AttachmentStore.Store): New method.
+	(FileAttachmentStore.Store): Likewise.
+	(TemporaryAttachmentStore.Add): Rename to ...
+	(TemporaryAttachmentStore.Store): ... this.
+	* qm/common.py (QMException): New class.
+	(MethodShouldBeOverridenError): Derive from it.
+	(MutexError): Likewise.
+	(MutexLockError): Likewise.
+	(ConfigurationError): Likewise.
+	(UserError): Likewise.
+	(load_class): Raise QMException, not ValueError.
+	(make_temporary_directory): Remove FIXME.
+	* qm/fields.py (SetField.FormatValueAsHtml): Tidy.
+	(AttachmentField.FormatValueAsHtml): Likewise.
+	(EnumerationField.MakePropertyControls): Likewise.
+	* qm/platform_unix.py (RunProgramError): Derived from QMException.
+	(SignalException): Likewise.
+	* qm/web.py (qm_bug_system_url): Use the mailing list address.
+	(WebServer.__init__): Register self._HandleProblems, not
+	_handle_problems.
+	(WebServer._HandleProblems): New method.
+	(make_set_control): Remove counter manipulations.
+	(make_button_for_popup): Don't cache it.
+	(make_button_for_cached_popup): New function.
+	(_handle_problems): Remove.
+	* qm/xmultil.py (xml.dom.minidom): Import it.
+	(load_xml): Use it.
+	* qm/test/base.py (valid_id): Raise QMException, not RuntimeError.
+	(load_database): Raise QMException, not ValueError.  Allow
+	attributes to be passed to the database.
+	(create_database): Allow attributes to be stored in the database
+	configuration file.
+	(get_extension_class): Turn ImportError into QMException.
+	(load_results): Do not validate the incoming results file.
+	* qm/test/cmdline.py (QMTest.attribute_option_spec): New member.
+	(QMTest.Execute): Simplify exception-handling.
+	(QMTest.__ParseContextAssignment): Break out ...
+	(QMTest.__ParseKeywordArgument): ... this method.
+	* qm/test/context.py (ContextException): New class.
+	(Context.__getitem__): Raise it instead of KeyError.
+	* qm/test/database.py (DatabaseError): Derived from QMException.
+	(__init__): Do not require an attachment store.
+	(Database.GetAttachmentStore): Require that it be overridden.
+	* qm/test/file_database.py (FileDatabase.__init__): Remove the
+	store parameter.
+	* qm/test/qmtest.py (print_errror_message): Indent the message.
+	* qm/test/result.py (Result.outcomes): Order from most 
+	interesting to least interesting.
+	* qm/test/target.py (Target.RunTest): Catch ContextException and
+	introduce appropriate failure notices.
+	* qm/test/test.py (Test.GetId): New method.
+	* qm/test/text_result_stream.py (TextResultStream.Summarize): Tidy
+	output.
+	* qm/test/xmldb.py (Database.__init__): Do not pass down the
+	attachment store.
+	(Database.GetAttachmentStore): New method.
+	* qm/test/classes/command.py (ExecTestBase): Robustify.
+	* qm/test/share/dtds/tdb-configuration.dtd: Allow database
+	attributes.
+	* qm/test/share/dtml/dir.dtml: Rework display.
+	* qm/test/share/dtml/navigation-bar.dtml: Simplify.
+	* qm/test/share/dtml/result.dtml: Likewise.
+	* qm/test/share/dtml/results.dtml: Rework display.
+	* qm/test/share/messages/diagnostics.txt (invalid context
+	assignment): Remove.
+	(invalid keyword assignment): Add.
+	(extension class not found): Likewise.
+	* qm/test/web/web.py: Rework substantially.
+	* scripts/.cvsignore: New file.
+	* share/dtml/problems.dtml: Rework to mention mailing list.
+	* share/web/common.js (property_add_or_change): Do not
+	restrict to valid labels.
+	* share/web/images/left-arrow.gif: New file.
+	* share/web/stylesheets/qm.css: Update and extend.
+	* qm/test/doc/reference.xml: Document -a option to create-tdb.
+
+2002-02-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/web.py (WebServer.Run): Remove exception-handling code.
+	* qm/test/cmdline.py (QMTest.expectations_file_name): New
+	variable.
+	(QMTest.results_file_name): Likewise.
+	* qm/test/share/dtml/load-expected-results.dtml: Use it.
+	* qm/test/share/dtml/load-results.dtml: Likewise.
+	* qm/test/share/dtml/navigation-bar.dtml (handle_menu_select): 
+	Reset menus after use.
+	* qm/test/web/web.py (QMTestPage.__init__): Use
+	QMTest.expectations_file_name and QMTest.results_file_name.  Store
+	the global QMTest object for DTML pages.
+	(QMTestServer.__init__): Use QMTest.expectations_file_name and
+	QMTest.results_file_name.
+
+2002-02-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/command.py (Command.ExecTestBase.RunProgram):
+	Make sure that result annotations are stored as strings, not 
+	integers.
+
+	* qm.spec.in (Release): Increment.
+
+2002-02-13  Vladimir Prus <ghost@cs.msu.su>
+
+	* qm/test/web.py (ShowSuitePage.__init__): Fix typo.
+	* qm/test/file_database.py (FileDatabase._GetLabels): Likewise.
+	
+2002-01-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/result.py (Result.MakeDomNode): Fix typo.
+	* qm/test/classes/temporary.py (TempDirectoryResource.__init__):
+	Remove.
+	(TempDirectoryResource.SetUp): Fix typo.
+	(TempDirectoryResource.CleanUp): Likewise.
+	
+	* qm/test/database.py (ItemDescriptor._MakeItem): Tell a newly
+	created test or resource what its name is.
+
+	* qm/xmlutil.py (discard_node): Remove.
+	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult):
+	Do not use it.
+	* qm/test/qmtest.py: Remove Python 1.5 work-around.
+	* qm/test/result.py: Alphabetize annotations in results file.
+	
+	* qm/test/cmdline.py (QMTest.MakeContext): Fix spelling of
+	context file option.
+
+2002-01-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* README (REQUIREMENTS): Note that Python 2.1 or higher
+	is required.
+	* README.sources: Remove restriction that software must work with
+	Python 1.5.
+	* configure.in: Check for Python 2.1 or higher.
+	* configure: Regenerated.
+	* qm/qm.sh (QM_PYTHON_FLAGS): New variable.
+	(qm_python): Check /usr/bin/python2 before falling back to
+	the python in the PATH.
+	* qm/queue.py: Fix copyright notice.
+	* qm/setup_path.py.in: Issue an error if an old version of
+	Python is in use.
+	* qm/trace.py: New file.
+	* qm/test/cmdline.py (QMTest.__init__): Create a trace object.
+	(QMTest.GetTracer): Return it.
+	* qm/test/commnd_thread.py: Fix copyright notice.
+	* qm/test/execution_engine.py: Likewise.
+	(ExecutionEngine): Add trace message throughout.
+	(ExecutionEngine._Trace): New method.
+	* qm/test/target.py (Target.RunTest): Remove unnecessary code.
+	* qm/test/doc/reference.xml: Update description of how QMTest
+	locates the python interpreter to use.
+	
 2002-01-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (INSTALL_DIR): Set the mode of the installed
@@ -59,8 +359,6 @@
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* configure.in: Do not build gadfly if it does not exist.
-
-2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release (build_source): Remove QMTrack from
 	the release tarball.

@@ -7,27 +7,9 @@
 # Contents:
 #   Web form to summarize issues in a table.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -167,7 +149,7 @@ class SummaryPage(web.DtmlPage):
         display_options_page = display_options_page(self.request)
         # Construct the Display Options button, which pops up a window
         # showing this page.
-        return qm.web.make_button_for_popup(
+        return qm.web.make_button_for_cached_popup(
             "Change Display Options...",
             display_options_page,
             request=self.request,
@@ -188,7 +170,7 @@ class SummaryPage(web.DtmlPage):
             self.field_dictionary.get(self.lightness_field_name, None),
             self.field_dictionary.get(self.saturation_field_name, None)
             )
-        return qm.web.make_button_for_popup(
+        return qm.web.make_button_for_cached_popup(
             "Color Key",
             page(self.request),
             request=self.request,

@@ -5,19 +5,40 @@
 
 1.  REQUIREMENTS
 
-    To run QM, you will need a Python 1.5.2 (or greater) distribution.
-    Python 2.1 (or greater) is recommended.
-
-    If you are using Python 1.5.2, you must obtain Distutils 1.0.2 
-    from:
-
-      http://www.python.org/sigs/distutils-sig/download.html
+    To run QM, you will need Python Python 2.1 (or greater).
 
     You must use GNU Make to build QM.
 
 ------------------------------------------------------------------------
 
-2.  BUILDING QM
+2.  Licensing
+
+    QM is licensed under the GNU General Public License.  See the file
+    COPYING for the exact text of the license.
+
+    QM incorporates some third-party software:
+
+      - The zope-dtml module contains code for generating HTML from DTML
+	(Document Template Markup Language) from the Zope package, by
+	Digital Creations.
+
+      - The gadfly module containsthe Gadfly SQL Relational Database
+	(http://www.chordate.com/kwParsing/gadfly.html), written by
+	Chordate Systems.
+
+      - The xmlrpc module contains a Python implementation of XML/RPC by
+	Fredrik Lundh and Secret Labs AB.
+
+      - The PyXML package contains XML-related software written by and/or
+	copyright by Fourthought, Inc., BeOpen, CNRI, CWI, Greg Stein,
+	Secret Labs AB, and Lars Marius Carshol.
+
+    Please consult the corresponding READMEs, license files, etc. for
+    license information about these components.
+
+------------------------------------------------------------------------
+
+3.  BUILDING QM
 
     From the top of the source tree, first configure the sources:
 
@@ -61,34 +82,6 @@
     This assumes that the qmtest executable you just installed (or
     another one) is in your PATH, and that /path/to/qm is the path to
     your QM source tree.
-
-------------------------------------------------------------------------
-
-3. THIRD-PARTY SOFTWARE
-
-   The QM Tools incorporate code written by third parties. 
-
-     - The zope-dtml module contains code for generating HTML from DTML
-       (Document Template Markup Language) from the Zope package, by
-       Digital Creations.
-
-     - The gadfly module containsthe Gadfly SQL Relational Database
-       (http://www.chordate.com/kwParsing/gadfly.html), written by
-       Chordate Systems.
-
-     - The sgmlop module contains an optimized SGML/XML parser by
-       Fredrik Lundh and Secret Labs AB.
-
-     - The xmlrpc module contains a Python implementation of XML/RPC by
-       Fredrik Lundh and Secret Labs AB.
-
-     - The PyXML package contains XML-related software written by and/or
-       copyright by Fourthought, Inc., BeOpen, CNRI, CWI, Greg Stein,
-       Secret Labs AB, and Lars Marius Carshol.
-       
-   Please consult the corresponding READMEs, license files, etc. for
-   applicable copyright notices.
-
 
 ------------------------------------------------------------------------
 Local Variables:

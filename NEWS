@@ -3,8 +3,42 @@ NEWS
 
 This file describes user visible changes to QM.
 
-Changes in QM 1.1
-=================
+QM 1.1.5
+========
+
+When loading a test, resource, or database class, the directory
+containing the extension class is placed at the front of the path used
+to search for modules.  In previous versions of QMTest, it was placed
+at the back.
+
+QM 1.1.4
+========
+
+The QMTest GUI no longer crashes when the "Cancel" button is hit when
+creating a new test suite.
+
+Commands like "qmtest create-tdb --attribute X=Y" where "Y" contains
+spaces are now handled correctly.
+
+QM 1.1.3
+========
+
+The "-c" option to "qmtest run" did not work correctly in QM 1.1.2.
+This problem has been corrected.
+
+QM 1.1.2
+========
+
+QM is now licensed under the GNU General Public License.
+
+The QMTest GUI has been substantially improved.
+
+It is now possible to load and save the context in the GUI.
+
+Numerous small bugs have been fixed.
+
+QM 1.1
+======
 
 QMTest now works on systems that do not have support for threads, or,
 more precisely, when using a Python interpreter for which "import

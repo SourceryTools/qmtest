@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -42,6 +24,7 @@ import xml.dom
 import xml.dom.ext 
 import xml.dom.ext.reader.Sax
 import xml.dom.DOMImplementation
+import xml.dom.minidom
 
 ########################################################################
 # exceptions
@@ -93,18 +76,23 @@ def load_xml(file, whence="(input)", validate=1):
     # Construct the path to the DTD catalog.
     catalog_path = os.path.join(qm.get_share_directory(),
                                 "xml", "CATALOG")
-    # Create a validating DOM reader.
-    reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
-                                           catName=catalog_path)
-    try:
-        # Read and parse XML.
-        document = reader.fromStream(file)
-    except xml.sax._exceptions.SAXParseException, exception:
-        raise ParseError, qm.error("xml parse error",
-                                   line=exception.getLineNumber(),
-                                   character=exception.getColumnNumber(),
-                                   file_name=whence,
-                                   message=exception._msg)
+    if validate:
+        # Create a validating DOM reader.
+        reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
+                                               catName=catalog_path)
+        try:
+            # Read and parse XML.
+            document = reader.fromStream(file)
+        except xml.sax._exceptions.SAXParseException, exception:
+            raise ParseError, qm.error("xml parse error",
+                                       line=exception.getLineNumber(),
+                                       character=exception.getColumnNumber(),
+                                       file_name=whence,
+                                       message=exception._msg)
+    else:
+        # If not validating, use a faster implementation.
+        document = xml.dom.minidom.parse(file)
+        
     file.close()
     return document
 
@@ -274,17 +262,6 @@ def sanitize_text_for_comment(text):
 
     return text
 
-
-def discard_node(node):
-    """Discard the DOM 'node'.
-
-    'node' -- The node to discard.
-
-    In general, DOM nodes can contain circular data structures.  Python
-    versions before Python 2.0 could not collect such data structures,
-    so we must manually break the cycles."""
-
-    xml.dom.ext.ReleaseNode(node)
 
 ########################################################################
 # Local Variables:

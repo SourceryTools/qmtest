@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -92,10 +74,12 @@ class Database(FileDatabase):
         the database."""
 
         # Initialize base classes.
-        FileDatabase.__init__(self, path, AttachmentStore(path, self))
+        FileDatabase.__init__(self, path)
+        # Create an AttachmentStore for this database.
+        self.__store = AttachmentStore(path, self)
         # Make sure the database path exists.
         if not os.path.isdir(path):
-            raise ValueError, \
+            raise qm.common.QMException, \
                   qm.error("db path doesn't exist", path=path)
 
 
@@ -567,6 +551,15 @@ class Database(FileDatabase):
                      test_ids=test_ids, suite_ids=suite_ids)
 
 
+    def GetAttachmentStore(self):
+        """Returns the 'AttachmentStore' associated with the database.
+
+        returns -- The 'AttachmentStore' containing the attachments
+        associated with tests and resources in this database."""
+
+        return self.__store
+
+    
 
 class AttachmentStore(qm.attachment.AttachmentStore):
     """The attachment store implementation to use with the XML database.

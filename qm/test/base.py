@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -40,6 +22,7 @@ import cStringIO
 import os
 import qm
 import qm.attachment
+from   qm.common import *
 import qm.graph
 import qm.label
 import qm.platform
@@ -77,10 +60,10 @@ corresponding DTD public identifiers."""
 def validate_id(item_id):
     """Validate a test or resource ID.
 
-    raises -- 'RuntimeError' if 'item_id' is not a valid ID."""
+    raises -- 'QMException' if 'item_id' is not a valid ID."""
 
     if not qm.label.is_valid(item_id, allow_separator=1):
-        raise RuntimeError, qm.error("invalid id", id=item_id)
+        raise QMException, qm.error("invalid id", id=item_id)
 
 
 def get_db_configuration_directory(db_path):
@@ -118,8 +101,11 @@ def load_database(db_path):
 
     # Make sure it is a directory.
     if not is_database(db_path):
-        raise ValueError, \
+        raise QMException, \
               qm.error("not test database", path=db_path)
+
+    # There are no database attributes yet.
+    attributes = {}
 
     # Figure out which class implements the database.  Start by looking
     # for a file called 'configuration' in the directory corresponding
@@ -136,26 +122,35 @@ def load_database(db_path):
         # Get the database class.
         database_class = get_extension_class(database_class_name,
                                              "database", None)
+        # Get attributes to pass to the constructor.
+        for node in qm.xmlutil.get_children(database, "attribute"):
+            name = node.getAttribute("name")
+            value = qm.xmlutil.get_dom_text(node)
+            attributes[name] = value
     else:
         # If 'configuration' did not exist, fall back to the 'xmldb'
         # database.
         import xmldb
         database_class = xmldb.Database
-    
+        
     # Create the database.
-    return database_class(db_path)
+    return apply(database_class, (db_path,), attributes)
 
 
-def create_database(db_path, class_name):
+def create_database(db_path, class_name, attributes={}):
     """Create a new test database.
 
     'db_path' -- The path to the test database.
 
-    'class_name' -- The class name of the test database implementation."""
+    'class_name' -- The class name of the test database implementation.
+
+    'attributes' -- A dictionary mapping attribute names to values.
+    These attributes will be applied to the database when it is
+    used."""
 
     # Make sure the path doesn't already exist.
     if os.path.exists(db_path):
-        raise RuntimeError, qm.error("db path exists", path=db_path)
+        raise QMException, qm.error("db path exists", path=db_path)
     # Create an empty directory.
     os.mkdir(db_path)
     # Create the configuration directory.
@@ -171,6 +166,13 @@ def create_database(db_path, class_name):
     class_element = qm.xmlutil.create_dom_text_element(
         document, "class-name", class_name)
     document.documentElement.appendChild(class_element)
+    # Create elements for the attributes.
+    for name, value in attributes.items():
+        element = qm.xmlutil.create_dom_text_element(document,
+                                                     "attribute",
+                                                     value)
+        element.setAttribute("name", name)
+        document.documentElement.appendChild(element)
     # Write it.
     configuration_path = _get_db_configuration_path(db_path)
     qm.xmlutil.write_dom_document(document, open(configuration_path, "w"))
@@ -319,9 +321,13 @@ def get_extension_class(class_name, kind, database):
 
     # Otherwise, load it now.  Get all the extension directories in
     # which this class might be located.
-    klass = qm.common.load_class(class_name,
-                                 get_extension_directories(kind,
-                                                           database))
+    try:
+        klass = qm.common.load_class(class_name,
+                                     get_extension_directories(kind,
+                                                               database))
+    except ImportError:
+        raise QMException, qm.error("extension class not found",
+                                    klass=class_name)
     # Cache it.
     cache[class_name] = klass
 
@@ -420,8 +426,10 @@ def load_results(file):
     returns -- A sequence of 'Result' objects."""
 
     results = []
-    
-    results_document = qm.xmlutil.load_xml(file)
+
+    # We do not validate the results file because results files tend
+    # to be large, and the validating parser is very slow.
+    results_document = qm.xmlutil.load_xml(file, validate=0)
     node = results_document.documentElement
     # Extract the results.
     results_elements = qm.xmlutil.get_children(node, "result")
