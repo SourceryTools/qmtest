@@ -45,18 +45,6 @@ QM_MAJOR_VER    = @QM_MAJOR_VER@
 QM_MINOR_VER    = @QM_MINOR_VER@
 QM_VERSION      = @QM_VERSION@
 
-QM_TAR_GZ       = qm-$(QM_VERSION).tar.gz
-
-CVS_SERVER      = cvs.codesourcery.com
-CVS_REPOSITORY  = /home/sc/Repository
-CVS             = cvs -f -z9 -Q \
-		  -d :pserver:anoncvs@$(CVS_SERVER):$(CVS_REPOSITORY)
-
-RPM_ARCH        = i386
-RPM_BASE	= /usr/src/redhat
-QM_RPM          = qm-$(QM_VERSION)-1.$(RPM_ARCH).rpm
-QM_SRPM         = qm-$(QM_VERSION)-1.src.rpm
-
 include $(TOPDIR)/standard.mk
 
 ########################################################################
@@ -81,8 +69,8 @@ PyXML:
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
 	env QM_BUILD=1 QM_HOME=`pwd` $(PYTHON) -O install.py \
-	    $(INSTALLBINDIR) $(INSTALLLIBDIR) \
-	    $(INSTALLSHAREDIR) $(INSTALLDOCDIR)
+	    "$(INSTALLBINDIR)" "$(INSTALLLIBDIR)" \
+	    "$(INSTALLSHAREDIR)" "$(INSTALLDOCDIR)"
 	cd $(INSTALLLIBDIR)/gadfly; $(PYTHON) gfinstall.py
 	chmod 0644 $(INSTALLLIBDIR)/gadfly/sql.mar
 
@@ -93,39 +81,3 @@ clean::
 check: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS)
 
-########################################################################
-# Releases
-########################################################################
-
-# The source distribution.
-dist:	$(QM_TAR_GZ)
-
-$(QM_TAR_GZ): release
-	(cd release && rm -rf qm-$(QM_VERSION) && \
-	 $(CVS) export -d qm-$(QM_VERSION) \
-                -r release-$(QM_MAJOR_VER)-$(QM_MINOR_VER)-branch qm && \
-	 tar czf ../$@ qm-$(QM_VERSION)) || (rm -f $@ && false)
-
-clean::
-	rm -rf $(QM_TAR_GZ) release 
-
-.PHONY: dist
-
-# The RPM.
-rpm:	$(RPM)
-
-$(QM_RPM): $(QM_TAR_GZ)
-	cp $(QM_TAR_GZ) $(RPM_BASE)/SOURCES
-	rpm --quiet -ba --rmsource qm.spec
-	mv $(RPM_BASE)/RPMS/$(RPM_ARCH)/$(QM_RPM) $@
-	mv $(RPM_BASE)/SRPMS/$(QM_SRPM) $@
-
-clean::
-	rm -rf $(QM_RPM) $(QM_SRPM)
-
-.PHONY: rpm
-
-# Support.
-
-release:
-	mkdir $@

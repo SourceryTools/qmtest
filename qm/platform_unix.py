@@ -599,43 +599,6 @@ def get_host_name():
 
     return posix.uname()[1]
 
-
-def get_shell_for_command():
-    """Return the command shell to use when running a single shell command.
-
-    returns -- A sequence of argument list entries to use when invoking
-    the shell.  The first element of the list is the shell executable
-    path.  The command should be appended to the argument list."""
-
-    shell = common.rc.Get("command_shell", None, "common")
-    if shell is not None:
-        # Split the configuration value into an argument list.
-        shell = common.split_argument_list(shell)
-    else:
-        # For Bourne-type shells, use the '-c' option to pass a single
-        # command in the argument list.
-        shell = default_shell + ["-c"]
-    return shell
-
-
-def get_shell_for_script():
-    """Return the command shell to use when running a shell script.
-
-    returns -- A sequence of argument list entries to use when running a
-    shell script.  The first element of the list is the shell
-    executable.  The name of the script should be appended to the
-    argument list."""
-
-    shell = common.rc.Get("script_shell", None, "common")
-    if shell is not None:
-        # Split the configuration value into an argument list.
-        shell = common.split_argument_list(shell)
-    else:
-        # Use the default, but copy it so the caller can change it.
-        shell = default_shell[:]
-    return shell
-
-
 ########################################################################
 # initialization
 ########################################################################

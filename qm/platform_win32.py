@@ -43,6 +43,12 @@ import string
 import sys
 
 ########################################################################
+# constants
+########################################################################
+
+default_shell = [os.environ.get("COMPSPEC", r"C:\WINNT\SYSTEM32\CMD.EXE")]
+
+########################################################################
 # classes
 ########################################################################
 
@@ -63,7 +69,6 @@ class SignalException(Exception):
 def get_user_name():
     """Return the name user running the current program."""
 
-    # FIXME: Security.
     return os.environ["USERNAME"]
 
 
@@ -108,6 +113,7 @@ def open_in_browser(url):
     The browser is run in a separate, independent process."""
 
     os.startfile(url)
+
 
 ########################################################################
 # Local Variables:

@@ -1,3 +1,28 @@
+2001-11-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (install): Quote directory names.
+	* install.py (scripts): Use .bat extension on Windows.
+	(install_package): Include .pyd files on Windows.
+	* qm/Makefile.in (SCRIPTS): Generate batch files under Windows.
+	* qm/platform.py: Treat unknown platforms as UNIX.
+	(get_shell_for_command): New function.
+	(get_shell_for_script): Likewise.
+	* qm/platform_unix.py (get_shell_for_command): Remove.
+	(get_shell_for_script): Likewise.
+	* qm/platform_win32.py (default_shell): New variable.
+	* qm/test/suite.py (Suite.__init__): Remove unnecessary assertion.
+	* qm/test/classes/command.py (ReadThread): New class.
+	(WriteThread): Likewise.
+	(ExecTestBase.exit_code): Revise documentation.
+	(ExecTestBase.Run): Rename to ...
+	(ExecTestBase.RunProgram): ... this.  Support Windows.
+	(ExecTest.RunProgram): Rename to ...
+	(ExecTest.Run): ... this.
+	(ShellCommandTest.RunProgram): Rename to ...
+	(ShellCommandTest.Run): ... this.
+	(ShellScriptTest.RunProgram): Rename to ...
+	(ShellScriptTest.Run): ... this.
+
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/web.py (WebServer.RegisterPathTranslation): Do not require

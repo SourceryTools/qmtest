@@ -45,7 +45,7 @@ from   qm.test.result import *
 from   qm.test.test import *
 import string
 import sys
-import tempfile
+from   threading import *
 
 ########################################################################
 # functions
@@ -77,6 +77,53 @@ def _make_result_for_exception(cause):
 # classes
 ########################################################################
 
+class ReadThread(Thread):
+    """An 'ReadThread' is a thread that reads from a file."""
+
+    def __init__(self, f):
+        """Construct a new 'ReadThread'.
+
+        'f' -- The file object from which to read."""
+
+        Thread.__init__(self, None, None, None)
+
+        self.f = f
+        
+            
+    def run(self):
+        """Read the data from the stream."""
+
+        try:
+            self.data = self.f.read()
+        except:
+            self.data = ""
+	self.f.close()
+
+        
+
+class WriteThread(Thread):
+    """A 'WriteThread' is a thread that writes to a file."""
+
+    def __init__(self, f, data):
+        """Construct a new 'WriteThread'.
+
+        'f' -- The file object to which to write.
+
+        'data' -- The string to be written to the file."""
+
+        Thread.__init__(self, None, None, None)
+
+        self.f = f
+        self.data = data
+        
+
+    def run(self):
+        """Write the data to the stream."""
+        
+        self.f.write(self.data)
+	self.f.close()
+
+        
 class ExecTestBase(Test):
     """Check a program's output and exit code.
 
@@ -130,7 +177,10 @@ class ExecTestBase(Test):
             description="""The expected exit code.
 
             Most programs use a zero exit code to indicate success and a
-            non-zero exit code to indicate failure."""
+            non-zero exit code to indicate failure.  Under Windows,
+            QMTest does not accurately report the exit code of the
+            program; all programs are treated as if they exited with
+            code zero."""
             ),
 
         qm.fields.TextField(
@@ -181,149 +231,200 @@ class ExecTestBase(Test):
         return environment
 
 
-    def Run(self, context, result):
-        # Names of temporary files.  The file have been created iff the
-        # corresponding file name variable is not 'None'.
-        stdin_file_name = None
-        stdout_file_name = None
-        stderr_file_name = None
-        result_pipe_file = None
-	result_pipe_read = None
-	result_pipe_write = None
+    def RunProgram(self, program, arguments, context, result):
+        """Run the 'program'.
+
+        'program' -- The path to the program to run.
+
+        'arguments' -- A list of the arguments to the program.  This
+        list must contain a first argument corresponding to 'argv[0]'.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
 
         # Construct the environment.
-        self.environment = self.MakeEnvironment(context)
+        environment = self.MakeEnvironment(context)
 
+        stdin_r = None
+        stdin_w = None
+        stdout_r = None
+        stdout_w = None
+        stderr_r = None
+        stderr_w = None
+        result_r = None
+        result_w = None
+        stdin_f = None
+        stdout_f = None
+        stderr_f = None
+        result_f = None
+        
         # Try block to clean up temporary files and file descriptors in
         # any eventuality.
         try:
-            # Generate temporary files for standard output and error.
-            stdout_file_name, stdout_fd = qm.open_temporary_file_fd()
-            stderr_file_name, stderr_fd = qm.open_temporary_file_fd()
-            # Write the standard input contents to a temporary file.
-            stdin_file_name, stdin_fd = qm.open_temporary_file_fd()
-            bytes_written = os.write(stdin_fd, self.stdin)
-            assert bytes_written == len(self.stdin)
-            # Rewind back to the beginning of the file.
-            os.lseek(stdin_fd, 0, 0)
+            # Under Windows, use popen to create the child.  It would be
+            # better to use spawn, but it is not easy to connect the
+            # standard streams for the child that way.
+            if sys.platform == "win32":
+                # Join the program and the arguments into a single
+                # command.
+                command = program + ' ' + string.join(arguments[1:], ' ')
+                # Start the command.
+                stdin_f, stdout_f, stderr_f = os.popen3(command)
+            # Under UNIX, use fork/exec to create the child.
+            else:
+                # Create pipes for all of the standard streams.
+                stdin_r, stdin_w = os.pipe()
+                stdout_r, stdout_w = os.pipe()
+                stderr_r, stderr_w = os.pipe()
 
-            # Create a pipe for communicating with the child process.
-            # This pipe is used to communicate test results from the
-            # child to the parent in case something goes wrong (for
-            # instance, if the target program cannot be run).
-            #
-            # Only the parent reads from the pipe, and only the child
-            # writes to the pipe.  If the child process runs the target
-            # program successfully, it simply closes the pipe without
-            # writing anything.  If something goes wrong, though, the
-            # child process builds an appropriate test result object,
-            # pickles it, writes it to the pipe, and then closes the
-            # pipe and exits.
-            result_pipe_read, result_pipe_write = os.pipe()
+                # Create a pipe for communicating with the child process.
+                # This pipe is used to communicate test results from the
+                # child to the parent in case something goes wrong (for
+                # instance, if the target program cannot be run).
+                #
+                # Only the parent reads from the pipe, and only the child
+                # writes to the pipe.  If the child process runs the target
+                # program successfully, it simply closes the pipe without
+                # writing anything.  If something goes wrong, though, the
+                # child process builds an appropriate test result object,
+                # pickles it, writes it to the pipe, and then closes the
+                # pipe and exits.
+                result_r, result_w = os.pipe()
 
-            # FIXME: Use spawn under Windows.
+                # Fork a new process.
+                child_pid = os.fork()
 
-            # Fork a new process.
-            child_pid = os.fork()
-
-            if child_pid == 0:
-                # This is the child process.
-                try:
+                if child_pid == 0:
+                    # This is the child process.
                     try:
-                        # Close the read end of the result pipe.
-                        os.close(result_pipe_read)
+                        # Close the pipe ends we do not need.
+                        os.close(stdin_w)
+                        os.close(stdout_r)
+                        os.close(stderr_r)
+                        os.close(result_r)
                         # Redirect stdin from the standard input file.
-                        os.dup2(stdin_fd, sys.stdin.fileno())
+                        os.dup2(stdin_r, sys.stdin.fileno())
                         # Redirect stdout to the standard output file.
-                        os.dup2(stdout_fd, sys.stdout.fileno())
+                        os.dup2(stdout_w, sys.stdout.fileno())
                         # Redirect stderr to the standard error file.
-                        os.dup2(stderr_fd, sys.stderr.fileno())
+                        os.dup2(stderr_w, sys.stderr.fileno())
+                        # Execute the program.
+                        os.execve(program, arguments, environment)
                     except:
                         # Perhaps something went wrong while setting up
                         # the standard stream files.
                         result = _make_result_for_exception(
                             "Exception setting up test.")
+                        cPickle.dump(result, os.fdopen(result_w, "w"))
+                        # Exit.
+                        os._exit(1)
                     else:
-                        # Run the target program.  If the target executes
-                        # successfully, this call does not return.
-                        result = self.RunProgram(context)
-                    # If the call returned, it handed back an error
-                    # result.  Pass it to our parent process by pickling
-                    # it and sending it down the pipe.
-                    result_pickle = cPickle.dumps(result)
-                    os.write(result_pipe_write, result_pickle)
-                    os.close(result_pipe_write)
-                except:
-                    # It would be bad if we let an exception get out of
-                    # the child process.  For one thing, the program's
-                    # output would be extremely confusing.  So, write to
-                    # the stderr file.
-                    sys.stderr.write(qm.format_exception(sys.exc_info()))
+                        # We should never get here.  If the call to
+                        # execve fails, an exception will be thrown.
+                        assert 0
 
-                # End this process immediately.  Don't do any Python
-                # cleanup.
-                os._exit(1)
+                # This is the parent process.  Close file descriptors
+                # we do not need.
+                os.close(stdin_r)
+                stdin_r = None
+                os.close(stdout_w)
+                stdout_w = None
+                os.close(stderr_w)
+                stderr_w = None
+                os.close(result_w)
+                result_w = None
 
-            # This is the parent process.
+                # Create the file objects.
+                stdin_f = os.fdopen(stdin_w, "w")
+                stdin_w = None
+                stdout_f = os.fdopen(stdout_r)
+                stdout_r = None
+                stderr_f = os.fdopen(stderr_r)
+                stderr_r = None
+                
+            # Create a thread to write to the child's standard input
+            # stream.
+            stdin_thread = WriteThread(stdin_f, self.stdin)
+	    stdin_f = None
+            # Create threads to read the child's standard output and
+            # standard error streams.
+            stdout_thread = ReadThread(stdout_f)
+	    stdout_f = None
+            stderr_thread = ReadThread(stderr_f)
+	    stderr_f = None
 
-            # Only the child process writes to the result pipe; we don't.
-            os.close(result_pipe_write)
-	    result_pipe_write = None
+            # Start the threads.
+            stdin_thread.start()
+            stdout_thread.start()
+            stderr_thread.start()
+            
             # Wait for the child process to complete.
-            pid, exit_status = os.waitpid(child_pid, 0)
-            assert pid == child_pid
-            # Try to read a pickled result from the result pipe.  If the
-            # child process didn't write one, we'll read zero bytes.
-            result_pipe_file = os.fdopen(result_pipe_read, "r")
-            result_pickle = result_pipe_file.read()
-            # Did we get back something (that should be a pickle)?
-            if len(result_pickle) > 0:
-                # Yes; unpickle it.
-                (outcome, annotations) = cPickle.loads(result_pickle)
-                result.SetOutcome(outcome)
-                for k in annotations.keys():                    
-                    result[k] = annotations[k]
-            # Otherwise no: the child ran the target program successfully.
+            if sys.platform == "win32":
+                # On Windows, we have no way of obtaining the exit code.
+                exit_status = 0
+            else:
+                exit_status = os.waitpid(child_pid, 0)[1]
+            # Join the threads, so that the data read is known
+            # to be available.
+            stdin_thread.join()
+            stdout_thread.join()
+            stderr_thread.join()
 
-            elif os.WIFEXITED(exit_status):
+            pickle = None
+            
+            if sys.platform != "win32":
+                # Try to read a pickled result from the result pipe.  If the
+                # child process didn't write one, we'll read zero bytes.
+                result_f = os.fdopen(result_r)
+                result_r = None
+                pickle = result_f.read()
+                # If we read anything, there was a failure.
+                if pickle:
+                    (outcome, annotations) = cPickle.loads(pickle)
+                    result.SetOutcome(outcome)
+                    for k in annotations.keys():                    
+                        result[k] = annotations[k]
+
+            # If there was a pickle, there is nothing more to do.
+            if pickle:
+                pass
+            # If the process terminated normally, check the outputs.
+            elif sys.platform == "win32" or os.WIFEXITED(exit_status):
+                # There are no causes of failure yet.
+                causes = []
                 # The target program terminated normally.  Extract the
                 # exit code, if this test checks it.
                 if self.exit_code is None:
                     exit_code = None
+		elif sys.platform == "win32":
+		    exit_code = 0
                 else:
                     exit_code = os.WEXITSTATUS(exit_status)
-                # Read the standard output generated by the program.
-                os.lseek(stdout_fd, 0, 0)
-                stdout_file = os.fdopen(stdout_fd, "r+b")
-                stdout = stdout_file.read()
-                expected_stdout = self.stdout
-                # Read the standard error generated by the program.
-                os.lseek(stderr_fd, 0, 0)
-                stderr_file = os.fdopen(stderr_fd, "r+b")
-                stderr = stderr_file.read()
-                expected_stderr = self.stderr
-                # Do the target program's outputs match expectations?
-                if exit_code == self.exit_code \
-                   and stdout == expected_stdout \
-                   and stderr == expected_stderr: 
-                    # The test passed.
-                    pass
-                else:
-                    # No.  The test has failed.  Construct a failing
-                    # result, including the outputs that didn't match
-                    # expectations. 
-                    causes = []
-                    if exit_code != self.exit_code:
-                        causes.append("exit code")
-                        result["ExecTest.exit_code"] = str(exit_code)
-                    if stdout != expected_stdout:
-                        causes.append("standard output")
-                        result["ExecTest.stdout"] = stdout
-                        result["ExecTest.expected_stdout"] = expected_stdout
-                    if stderr != expected_stderr:
-                        causes.append("standard error")
-                        result["ExecTest.stderr"] = stderr
-                        result["ExecTest.expected_stderr"] = expected_stderr
+                # Get the output generated by the program.
+                stdout = stdout_thread.data
+                stderr = stderr_thread.data
+                # Check to see if the exit code matches.
+                if exit_code != self.exit_code:
+                    causes.append("exit_code")
+                    result["ExecTest.expected_exit_code"] = self.exit_code
+                    result["ExecTest.exit_code"] = str(exit_code)
+                # Check to see if the standard output matches.
+                if stdout != self.stdout:
+                    causes.append("standard output")
+                    result["ExecTest.stdout"] = stdout
+                    result["ExecTest.expected_stdout"] = self.stdout
+                # Check to see that the standard error matches.
+                if stderr != self.stderr:
+                    causes.append("standard error")
+                    result["ExecTest.stderr"] = stderr
+                    result["ExecTest.expected_stderr"] = self.stderr
+                # If anything went wrong, the test failed.
+                if causes:
                     result.Fail("Unexpected %s." % string.join(causes, ", ")) 
             elif os.WIFSIGNALED(exit_status):
                 # The target program terminated with a signal.  Construe
@@ -341,30 +442,25 @@ class ExecTestBase(Test):
                 # The target program terminated abnormally in some other
                 # manner.  (This shouldn't normally happen...)
                 result.Fail("Program did not terminate normally.")
-        finally:
-            # Clean things up.
-            if result_pipe_file is not None:
-                result_pipe_file.close()
-	    if result_pipe_write is not None:
-	        os.close(result_pipe_write)
-            if stdin_file_name is not None:
-		os.close(stdin_fd)
-                os.remove(stdin_file_name)
-            if stdout_file_name is not None:
-                os.close(stdout_fd)
-                os.remove(stdout_file_name)
-            if stderr_file_name is not None:
-                os.close(stderr_fd)
-                os.remove(stderr_file_name)
+        except:
+            result.NoteException()
+            
+        # Make sure all of the file descriptors we opened are closed.
+        for fd in (stdin_r, stdin_w, stdout_r, stdout_w,
+                   stderr_r, stderr_w, result_r, result_w):
+            if fd is not None:
+                try:
+                    os.close(fd)
+                except:
+                    pass
 
-
-    def RunProgram(self, context):
-        """Run the program.
-
-        Derived classes should define this function to indicate how the
-        program will actually be executed."""
-
-        raise qm.MethodShouldBeOverriddenError, "ExecTestBase.RunProgram"
+        # Make sure all of the stream objects are closed, too.
+        for f in (stdin_f, stdout_f, stderr_f, result_f):
+            if f is not None:
+                try:
+                    f.close()
+                except:
+                    pass
 
         
     
@@ -398,52 +494,25 @@ class ExecTest(ExecTestBase):
             ))]
 
 
-    def RunProgram(self, context):
-        """Run the target program.
+    def Run(self, context, result):
+        """Run the test.
 
-        This function will not return if the target program executes
-        (whether the test passes or fails).  However, if a problem
-        occurs while running the target program, this function returns
-        an '(outcome, annotations)' pair describing the error."""
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
 
-        annotations = {}
-        
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
+
         # Was the program not specified?
         if string.strip(self.program) == "":
-            annotations[Result.CAUSE] = "No program specified."
-            return (Result.ERROR, annotations)
-        program = qm.find_program_in_path(self.program)
-        # Did we find it?
-        if program is None:
-            # No.  That's an error.
-            annotations[Result.CAUSE] = \
-              "Could not locate program '%s'." % self.program
-            annotations["ExecTest.path"] = path
-            return (Result.ERROR, annotations)
-        # Make sure it's an executable.
-        if not qm.common.is_executable(program):
-            annotations[Result.CAUSE] = \
-              "Program '%s' is not an executable." % program
-            return (Result.ERROR, annotations)
+            result.Fail("No program specified.")
+            return
 
-        # The name of the program is the first element of its argument
-        # list. 
-        arguments = [ program ] + self.arguments
-        try:
-            try:
-                # Run it.
-                os.execve(program, arguments, self.environment)
-            # Handle selected failures specially.
-            except os.error, os_error:
-                if os_error.errno == errno.EACCES:
-                    annotations[Result.CAUSE] = \
-                      "Access error running %s." % program
-                    return (Result.ERROR, annotations)
-                raise
-        except:
-            return _make_result_for_exception("Exception running program.")
-        # We should never get here.
-        assert 0
+        self.RunProgram(self.program, 
+			[ self.program ] + self.arguments,
+                        context, result)
 
 
 
@@ -483,7 +552,17 @@ class ShellCommandTest(ExecTestBase):
         ]
 
     
-    def RunProgram(self, context):
+    def Run(self, context, result):
+        """Run the test.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
+
         # If the context specifies a shell, use it.
         if context.has_key("command_shell"):
             # Split the context value to build the argument list.
@@ -492,20 +571,9 @@ class ShellCommandTest(ExecTestBase):
         else:
             # Otherwise, use a platform-specific default.
             shell = qm.platform.get_shell_for_command()
-        # Make sure the interpreter exists.
-        if not qm.common.is_executable(shell[0]):
-            return (Result.ERROR,
-                    { Result.CAUSE : qm.message("no shell executable"),
-                      "ShellCommandTest.executable" : shell_exectuable })
         # Append the command at the end of the argument list.
         arguments = shell + [ self.command ]
-        try: 
-            # Run the interpreter.
-            os.execve(arguments[0], arguments, self.environment)
-        except:
-            return _make_result_for_exception("Exception invoking command.")
-        # We should never reach here.
-        assert 0
+        self.RunProgram(arguments[0], arguments, context, result)
 
 
 
@@ -561,45 +629,40 @@ class ShellScriptTest(ExecTestBase):
 
 
     def Run(self, context, result):
+        """Run the test.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        'result' -- A 'Result' object.  The outcome will be
+        'Result.PASS' when this method is called.  The 'result' may be
+        modified by this method to indicate outcomes other than
+        'Result.PASS' or to add annotations."""
+
         # Create a temporary file for the script.
         self.__script_file_name, script_file = qm.open_temporary_file() 
         try:
             # Write the script to the temporary file.
             script_file.write(self.script)
             script_file.close()
-            # Run the script.
-            ExecTest.Run(self, context, result)
+            # If the context specifies a shell, use it.
+            if context.has_key("script_shell"):
+                # Split the context value to build the argument list.
+                shell = qm.common.split_argument_list(
+                    context["script_shell"])
+            else:
+                # Otherwise, use a platform-specific default.
+                shell = qm.platform.get_shell_for_script()
+            # Construct the argument list.  The argument list for the
+            # interpreter is followed by the name of the script
+            # temporary file, and then the arguments to the script.
+            arguments = shell \
+                        + [ self.__script_file_name ] \
+                        + self.arguments
+            self.RunProgram(arguments[0], arguments, context, result)
         finally:
             # Clean up the script file.
             os.remove(self.__script_file_name)
-        
-
-    def RunProgram(self, context):
-        # If the context specifies a shell, use it.
-        if context.has_key("script_shell"):
-            # Split the context value to build the argument list.
-            shell = qm.common.split_argument_list(
-                context["script_shell"])
-        else:
-            # Otherwise, use a platform-specific default.
-            shell = qm.platform.get_shell_for_script()
-        # Make sure the interpreter exists.
-        if not qm.common.is_executable(shell[0]):
-            return (Result.ERROR,
-                    { Result.CAUSE : qm.message("no shell executable"),
-                      "ShellScriptTest.executable" : shell_executable })
-        # Construct the argument list.  The argument list for the
-        # interpreter is followed by the name of the script
-        # temporary file, and then the arguments to the script.
-        arguments = shell \
-                    + [ self.__script_file_name ] \
-                    + self.arguments
-        try: 
-            # Run the script.
-            os.execve(arguments[0], arguments, self.environment)
-        except:
-            return _make_result_for_exception(
-                "Exception while running script.")
 
 
 
