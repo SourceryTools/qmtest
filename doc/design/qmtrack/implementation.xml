@@ -647,7 +647,259 @@ class Trigger:
   
  </section>
 
- &idb-impl.xml;
+ <section id="sec-rdbms-idb">
+  <title id="sec-rdbms-idb-title">&rdbms; &idb; implementation</title>
+
+  <para>The &idb; implementation provided with &qmtrack; will be based
+  on an &sql; &rdbms;.  In the database, each issue revision is
+  represented by a rows in one or more tables.  The &rdbms;
+  implementation relies on ordinary disk files as well for auxiliary
+  storage, for such data as file attachment contents.</para>
+
+  <para>The &sql; implementation provides the following advantages:
+   <itemizedlist>
+    <listitem>
+     <para>Speed.  &rdbms;s are optimized for high-speed storage and
+     retrieval of data.  A good &idb; implementation will take
+     advantage of &rdbms; features such as indexing to speed up
+     common operations.</para>
+    </listitem>
+
+    <listitem>
+     <para>Scalability.  The efficiency and compactness of an
+     &rdbms;'s data representation makes it suitable for very large
+     deployments.</para>
+    </listitem>
+
+    <listitem>
+     <para>Integrity.  Most &rdbms; systems provide mechanisms to
+     preserve the database integrity in such eventualities as sudden
+     system failure.</para>
+    </listitem>
+   </itemizedlist>
+  </para>
+
+  <section id="sec-rdbms-compatibility">
+   <title>&rdbms; compatibility</title>
+
+   <para>The &rdbms; &idb; implementation will be based on &sql;92 and
+   the standard <interface>pydb</interface> interface.  This should
+   permit &qmtrack; trivially or easily to be adapted to work with
+   many database systems, such as the free-software <ulink
+   url="http://www.mysql.com/"><application>MySQL</application></ulink>
+   and <ulink
+   url="http://postgresql.readysetnet.com/"><application>PostgreSQL</application></ulink>,
+   and commercial systems such as
+   <application>Oracle</application>.</para>
+
+   <para>However, the burden of installing a full-blown &rdbms; system
+   will be too onerous for many potential &qmtrack; users.  Some
+   installers will not have the requisite experience and system
+   priviledges to install and configure a database server.
+   Nevertheless, &qmtrack; needs to provide out-of-the-box
+   functionality for these users, with fully-automated installation.
+   For these users, the &qmtrack; distribution will include an
+   in-process &rdbms; as the default issue database.  This sytsem
+   should be adequate for most installations.</para>
+
+   <para>The selection of an &rdbms; for inclusion in &qmtrack; is
+   still under investigation.  <ulink
+   url="http://www.chordate.com/gadfly.html">Gadfly</ulink>, an
+   all-Python, single-process database system with a liberal free
+   software license, is a likely choice.</para>
+
+  </section>
+
+  <section id="sec-rdbms-schema">
+   <title>Database schema</title>
+
+   <para>Each issue class is implemented by a table in the database.
+   Table columns correspond to fields in the issue class.  The issue
+   id and revision number fields will joinly comprise the primary key
+   of each table.  Wherever possible, standard &sql; datatypes will be
+   used to represent field types (<type>VARCHAR</type> columns for
+   text fields, <type>TIMESTAMP</type> columns for time fields,
+   etc.).</para>
+
+   <para>Attachment fields are implemented with three
+   <type>VARCHAR</type> columns.  The attachment data itself is not
+   stored in the database; instead, the data for each attachment is
+   stored in a separate file.  The first two attachment fields store
+   the attachment description and MIME type, respectively.  The third
+   stored the name of a file containing the attachment data.  The file
+   name is automatically generated and not user-visible.</para>
+
+   <para>Set fields are implemented with additional tables.  For each
+   set field of each issue class, a new table is used.  Each row of a
+   set table corresponds to a single element in a set field of a
+   specific issue revision.  The row contains an issue id and revision
+   number of the issue revision to which it belongs, plus any
+   additional column value(s) necessary to represent the element
+   itself.</para> 
+
+   <para>For example, a simplified issue class called "bugs" including
+   these fields
+    <orderedlist>
+     <listitem>
+      <para>"description": text</para>
+     </listitem>
+
+     <listitem>
+      <para>"categories": enumeration set</para>
+     </listitem>
+
+     <listitem>
+      <para>"severity": enumeration</para>
+     </listitem>
+
+     <listitem>
+      <para>"attachments": attachment set</para>
+     </listitem>
+    </orderedlist>
+   would be represented by three tables.  The first table would
+   contain one row for each issue revision.  The second would contain
+   elements of the "categories" field for the issues in this class.
+   The third would contain elements of the "attachments" field.</para>
+
+   <para>If this issue class contained a single issue, with two
+   revisions, given by this &xml; element,
+    <programlisting><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+  <class>bugs</class>
+  <iid>smith17</iid>
+  <field-data revision="1">
+    <field name="description">Core dump at startup.</field>
+    <field name="categories">
+      <item>user bug</item>
+      <item>segmentation fault</item>
+    </field>
+    <field name="severity">critical</field>
+    <field name="attachments">
+      <attachment>
+        <description>core file</description>
+        <mime-type>application/octet-stream</mime-type>
+        <external-name>attachment001</external-name>
+      </attachment>
+    </field>
+  </field-data>
+  <field-data revision="0">
+    <field name="categories">
+      <item>user bug</item>
+    </field>
+    <field name="severity">normal</field>
+  </field-data>
+</issue>
+    ]]></programlisting>
+   the three tables would look like this: <xref
+   linkend="tab-sql-example-main"/> is the main table for issue
+   revisions, <xref linkend="tab-sql-example-categories"/> stores
+   entries in the "categories" field, and <xref
+   linkend="tab-sql-example-attachments"/> stores entries in the
+   "attachments" field.</para>
+
+   <table id="tab-sql-example-main">
+    <title>Example: main table for issue class "bugs"</title>
+    <tgroup cols="4">
+     <thead>
+      <row>
+       <entry>IID</entry>
+       <entry>revision</entry>
+       <entry>description</entry>
+       <entry>severity</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry>smith17</entry>
+       <entry>0</entry>
+       <entry>Core dump at startup.</entry>
+       <entry>0</entry>
+      </row>
+      <row>
+       <entry>smith17</entry>
+       <entry>1</entry>
+       <entry>Core dump at startup.</entry>
+       <entry>2</entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+
+   <table id="tab-sql-example-categories">
+    <title>Example: table for "categories" fields of issue class
+    "bugs"</title> 
+    <tgroup cols="3">
+     <thead>
+      <row>
+       <entry>IID</entry>
+       <entry>revision</entry>
+       <entry>category</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry>smith17</entry>
+       <entry>0</entry>
+       <entry>4</entry>
+      </row>
+      <row>
+       <entry>smith17</entry>
+       <entry>1</entry>
+       <entry>4</entry>
+      </row>
+      <row>
+       <entry>smith17</entry>
+       <entry>1</entry>
+       <entry>6</entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+
+   <table id="tab-sql-example-attachments">
+    <title>Example: table for "attachments" field of issue class
+    "bugs"</title>
+    <tgroup cols="5">
+     <thead>
+      <row>
+       <entry>IID</entry>
+       <entry>revision</entry>
+       <entry>description</entry>
+       <entry>mime-type</entry>
+       <entry>external-name</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry>smith17</entry>
+       <entry>0</entry>
+       <entry>core file</entry>
+       <entry>application/octet-stream</entry>
+       <entry>attachments/smith17/0000</entry>
+      </row>
+      <row>
+       <entry>smith17</entry>
+       <entry>1</entry>
+       <entry>core file</entry>
+       <entry>application/octet-stream</entry>
+       <entry>attachments/smith17/0000</entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+
+   <para>Note that enumerations, in this case the categories and
+   severity, are stored as integers.  For this example, the mapping
+   for categories is "user bug" -> 4, "segmentation fault" -> 6, and
+   for severity, "normal" -> 0, "critical" -> 2.  The actual bytes in
+   the core file are stored outside the database, in a file designated
+   by <filename>attachments/smith17/0000</filename>.</para>
+
+  </section>
+
+ </section>
 
 </chapter>
 

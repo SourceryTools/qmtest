@@ -38,7 +38,7 @@
 <!ELEMENT issue (class, iid, field-data*)>
 
 <!ELEMENT field-data (field*)>
-<!ATTLIST field-data revision-number CDATA #OPTIONAL>
+<!ATTLIST field-data revision CDATA #OPTIONAL>
 
 <!ELEMENT class (#PCDATA)>
 
@@ -68,17 +68,16 @@
    single revision only, namely the latest revision.  In this case,
    the <sgmltag>&lt;issue&gt;</sgmltag> element will contain only a
    single <sgmltag>&lt;field-data&gt;</sgmltag> element, and the the
-   <property>revision-numer</property> attribute is supressed.  For
+   <property>revision</property> attribute is supressed.  For
    &xml;-based &idb; implementations in which multiple revisions are
    stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
    elements will be included with different
-   <property>revision-numer</property> values.  The &idb;
-   implementation may choose to store <link
-   linkend="sec-diff-issue-records">difference issue records</link>
-   instead of the entire field data for past revision, i.e. for the
-   next-most-recent and previous revisions, only fields that were
-   changes are included in the <sgmltag>&lt;field-data&gt;</sgmltag>
-   element.</para>
+   <property>revision</property> values.  The &idb; implementation may
+   choose to store <link linkend="sec-diff-issue-records">difference
+   issue records</link> instead of the entire field data for past
+   revision, i.e. for the next-most-recent and previous revisions,
+   only fields that were changes are included in the
+   <sgmltag>&lt;field-data&gt;</sgmltag> element.</para>
 
    <para>The <sgmltag>&lt;field&gt;</sgmltag> element is used for all
    issue fields.  For set fields, the contents are zero or more item

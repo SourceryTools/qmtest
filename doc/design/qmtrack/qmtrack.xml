@@ -35,7 +35,6 @@
   <!ENTITY xml-repr.xml SYSTEM "xml-repr.xml">
   <!ENTITY implementation.xml SYSTEM "implementation.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
-  <!ENTITY idb-impl.xml SYSTEM "idb-impl.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
 ]>
 <book>

@@ -1,5 +1,12 @@
 2000-12-05  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtrack/qmtrack.xml (idb-impl.xml): Remove entity.
+	* doc/design/qmtrack/idb-impl.xml: Remove.
+	* doc/design/qmtrack/implementation.xml: Describe SQL IDB.
+	* doc/design/qmtrack/xml-repr.xml: Tune.
+	
+2000-12-05  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/design/qmtrack/user-interface.xml: Tidy up formatting.
 
 2000-12-05  Benjamin Chelf  <chelf@codesourcery.com>
