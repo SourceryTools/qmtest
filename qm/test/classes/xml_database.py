@@ -260,7 +260,7 @@ class XMLDatabase(ExtensionDatabase):
                 if not self.IsValidLabel(id_, is_component = 0):
                     raise RuntimeError, qm.error("invalid id", id=id_)
             # Construct the suite.
-            return ExplicitSuite({ "is_implicit" : 0,
+            return ExplicitSuite({ "is_implicit" : "false",
                                    "test_ids" : test_ids,
                                    "suite_ids" : suite_ids },
                                  self, suite_id)

@@ -1,3 +1,10 @@
+2004-01-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/explicit_suite.py (ExplicitSuite.is_implicit):
+	Give it a default value of false.
+	(ExplicitSuite.IsImplicit): Fix thinko.
+	* qm/test/classes/xml_database.py (XMLDatabase._GetSuiteFromPath): 
+
 2004-01-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (_version_output): Add 2004 to list of
