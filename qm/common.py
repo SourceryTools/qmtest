@@ -35,11 +35,15 @@
 # imports
 ########################################################################
 
+import base64
 import ConfigParser
 import cPickle
+import cStringIO
+import gzip
 import imp
 import os
 import os.path
+import quopri
 import re
 import socket
 import string
@@ -719,6 +723,65 @@ def split_path_fully(path):
         return [ entry ]
     else:
         return split_path_fully(dir) + [ entry ]
+
+
+def encode_data_as_text(data, mime_type="application/octet-stream"):
+    """Encode data as text.
+
+    'data' -- The data to encode.
+
+    'mime_type' -- The MIME type of the data.
+
+    returns -- A pair.  The first element designates the encoding scheme
+    used.  The second is a string containing the encoded data."""
+
+    base_type = string.split(mime_type, "/", 1)[0]
+
+    # FIXME: Support automatic data compression here?
+
+    # For the text base MIME type, use a quoted-printable encoding.
+    # This makes the encoded data more human-friendly.
+    if base_type == "text":
+        encoding = "quoted-printable"
+        input_file = cStringIO.StringIO(data)
+        output_file = cStringIO.StringIO()
+        quopri.encode(input_file, output_file, 0)
+        data = output_file.getvalue()
+
+    # For everything else, gzip the data and then base64-encode it.
+    else:
+        encoding = "gzipped base64"
+        data = gzip.zlib.compress(data)
+        data = base64.encodestring(data)
+
+    return (encoding, data)
+
+
+def decode_data_from_text(data, encoding):
+    """Decode data that was encoded as text.
+
+    'data' -- The encoded data.
+
+    'encoding' -- The encoding scheme used to encode this data.
+
+    returns -- A string containing the decoded data."""
+
+    if encoding == "quoted-printable":
+        # Decode quoted-printable text.
+        input_file = cStringIO.StringIO(data)
+        output_file = cStringIO.StringIO()
+        quopri.decode(input_file, output_file)
+        return output_file.getvalue()
+        
+    elif encoding == "gzipped base64":
+        # First base64-decode the data.
+        data = base64.decodestring(data)
+        # Now uncompress it.
+        return gzip.zlib.decompress(data)
+
+    else:
+        # Unknown encoding type.
+        raise ValueError, "unknown encoding %s" % encoding
 
 
 ########################################################################

@@ -104,12 +104,28 @@ You did not specify an issue database (IDB).  Either
 
   * Or, set the '%(envvar)s' environment variable to the IDB path.
 
+@ missing import files
+You must specify one or more files from which to import issues.
+
+@ xml file unknown class
+The issue file contains issues of unknown issue class %(class_name)s.
+
+@ xml file unknown field
+The issue file contains an unknown field %(field_name)s of issue class
+%(class_name)s. 
+
+@ xml parse error
+The XML parser encountered an error at line %(line)d, character
+%(character)d of the issue file %(file_name)s:
+
+  '%(message)s'
+
 @ create no equals
 Incorrect argument "%(arg)". Must have an = in the argument passed to the
 create command.
 
 @ format error
-Unknown format "%(format)". You must specify a valid format to display the
+Unknown format "%(format)s". You must specify a valid format to display the
 issues.
 
 @ field exist

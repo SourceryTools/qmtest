@@ -319,7 +319,7 @@ def handle_submit(request):
             editing it (or perhaps you submitted the same changes
             twice).  Please reload the issue and resubmit your edits.
             """
-            return qm.web.generate_error_page(request, msg)
+            return web.generate_error_page(request, msg)
 
     # Loop over query arguments in the submission.
     for name, value in request.items():
@@ -367,6 +367,7 @@ def handle_submit(request):
         differences = qm.track.get_differing_fields(issue, previous_revision)
         if len(differences) == 0:
             # Nothing has changed, so don't update.
+            # FIXME: Would it be polite to inform the user here?
             pass
         else:
             # Add the new revision.

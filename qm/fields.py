@@ -35,9 +35,9 @@
 # imports
 ########################################################################
 
+import attachment
 import common
 import label
-import mimetypes
 import qm
 import qm.xmlutil
 import diagnostic
@@ -45,6 +45,7 @@ import string
 import time
 import urllib
 import xml.dom
+import xmlutil
 
 ########################################################################
 # exceptions
@@ -61,72 +62,6 @@ class DomNodeError(Exception):
 
 ########################################################################
 # classes
-########################################################################
-
-class Attachment:
-    """A file attachment."""
-
-    def __init__(self,
-                 location,
-                 mime_type=None,
-                 description="",
-                 file_name=""):
-        """Creates a new attachment object."""
-
-        self.location = location
-        self.description = description
-        self.file_name = file_name
-        # If no MIME type is specified, try to guess it from the file
-        # name.
-        if mime_type == "" or mime_type == None:
-            mime_type = mimetypes.guess_type(file_name)[0]
-            if mime_type is None:
-                # Couldn't guess from the file name.  Use a safe
-                # default.
-                mime_type = "application/octet-stream"
-        self.mime_type = mime_type
-            
-
-    def __cmp__(self, other):
-        if other is None:
-            return -1
-        if self.location == other.location \
-           and self.description == other.description \
-           and self.mime_type == other.mime_type \
-           and self.file_name == other.file_name:
-            return 0
-        else:
-            return 1
-
-
-    def GetLocation(self):
-        """Returns the location of the attachment data.
-
-        The interpretation of the return value, a string, is
-        context-dependent."""
-
-        return self.location
-
-
-    def GetMimeType(self):
-        """Returns the MIME type of the attachment."""
-
-        return self.mime_type
-
-
-    def GetDescription(self):
-        """Returns a description of the attachment."""
-
-        return self.description
-
-
-    def GetFileName(self):
-        """Return the file name associated with this attachment."""
-
-        return self.file_name
-
-
-
 ########################################################################
 
 class Field:
@@ -153,7 +88,7 @@ class Field:
 
         if not label.is_valid(name):
             raise ValueError, \
-                  qm.track.error("invalid field name", field_name=name)
+                  qm.error("invalid field name", field_name=name)
 
         self.__attributes = {
             "name" : name,
@@ -166,6 +101,10 @@ class Field:
         # Use the name as the title, if no other was specified.
         if not self.__attributes.has_key("title"):
             self.__attributes["title"]
+
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__, self.GetName())
 
 
     def GetName(self):
@@ -353,6 +292,16 @@ class Field:
         raise qm.MethodShouldBeOverriddenError, "Field.GetValueFromDomNode"
 
 
+    def MakeDomNodeForValue(self, value, document):
+        """Generate a DOM element node for a value of this field.
+
+        'value' -- The value to represent.
+
+        'document' -- The containing DOM document node."""
+
+        raise qm.MethodShouldBeOverriddenError, "Field.MakeDomNodeForValue"
+
+
 
 ########################################################################
 
@@ -428,6 +377,11 @@ class IntegerField(Field):
                   diagnostic.error("dom bad integer", value=value)
 
 
+    def MakeDomNodeForValue(self, value, document):
+        return qm.xmlutil.create_dom_text_element(document, "integer",
+                                                  str(value))
+
+
 
 ########################################################################
 
@@ -482,8 +436,7 @@ class TextField(Field):
         # value complies.
         if self.IsAttribute("nonempty") and value == "":
             raise ValueError, \
-                  qm.track.error("empty field value",
-                                 field_name=self.GetTitle()) 
+                  qm.error("empty field value", field_name=self.GetTitle()) 
         return value
 
 
@@ -563,6 +516,10 @@ class TextField(Field):
         # Just the text, ma'am.
         return qm.xmlutil.get_dom_text(node)
 
+
+    def MakeDomNodeForValue(self, value, document):
+        return qm.xmlutil.create_dom_text_element(document, "text", value)
+       
 
 
 ########################################################################
@@ -862,6 +819,19 @@ class SetField(Field):
         return map(contained_field.GetValueFromDomNode, node.childNodes)
 
 
+    def MakeDomNodeForValue(self, value, document):
+        # Create a set element.
+        element = document.createElement("set")
+        # Add a child node for each item in the set.
+        contained_field = self.GetContainedField()
+        for item in value:
+            # The contained field knows how to make a DOM node for each
+            # item in the set.
+            item_node = contained_field.MakeDomNodeForValue(item, document)
+            element.appendChild(item_node)
+        return element
+
+
 
 ########################################################################
 
@@ -894,7 +864,7 @@ class AttachmentField(Field):
 
     def Validate(self, value):
         # The value should be an instance of 'Attachment', or 'None'.
-        if value != None and not isinstance(value, Attachment):
+        if value != None and not isinstance(value, attachment.Attachment):
             raise ValueError, \
                   "the value of an attachment field must be an 'Attachment'"
         return value
@@ -904,16 +874,15 @@ class AttachmentField(Field):
 
     def FormatValueAsHtml(self, value, style, name=None):
         field_name = self.GetName()
-        idb = qm.track.get_idb()
 
         if value is None:
             # The attachment field value may be 'None', indicating no
             # attachment. 
             pass
-        elif isinstance(value, Attachment):
-            location = value.GetLocation()
-            type = value.GetMimeType()
-            description = value.GetDescription()
+        elif isinstance(value, attachment.Attachment):
+            location = value.location
+            type = value.mime_type
+            description = value.description
         else:
             raise ValueError, "'value' must be 'None' or an 'Attachment'"
 
@@ -934,7 +903,7 @@ class AttachmentField(Field):
                                                            description)
             # For the full style, display the MIME type.
             if style == "full":
-                size = idb.GetAttachmentSize(location)
+                size = value.GetDataSize()
                 size = qm.format_byte_count(size)
                 result = result + ' (%s; %s)' % (type, size)
             return result
@@ -1047,16 +1016,13 @@ class AttachmentField(Field):
     def FormEncodeValue(self, value):
         # We shouldn't have to form-encode a null attachment.
         assert value is not None
-        # The encoding is made of four parts; the fourth is the
-        # uploaded file name, which we no longer have.
-        location = value.GetLocation()
-        type = value.GetMimeType()
-        description = value.GetDescription()
+
+        # We'll encode all the relevant information.
         parts = (
-            value.GetDescription(),
-            value.GetMimeType(),
-            value.GetLocation(),
-            value.GetFileName(),
+            value.description,
+            value.mime_type,
+            value.location,
+            value.file_name,
             )
         # Each part is URL-encoded.
         map(urllib.quote, parts)
@@ -1076,9 +1042,10 @@ class AttachmentField(Field):
         # Unpack the results.
         description, mime_type, location, file_name = parts
         # Create the attachment.
-        attachment = qm.fields.Attachment(location, mime_type,
-                                          description, file_name)
-        return attachment
+        return attachment.attachment_class(mime_type=mime_type,
+                                           description=description,
+                                           file_name=file_name,
+                                           location=location)
 
 
     def FormatSummary(self, attachment):
@@ -1090,7 +1057,7 @@ class AttachmentField(Field):
         if attachment is None:
             return ""
         else:
-            return attachment.GetDescription()
+            return attachment.description
 
 
     def GetValueFromDomNode(self, node):
@@ -1102,22 +1069,12 @@ class AttachmentField(Field):
                                    name=self.GetName(),
                                    right_tag="attachment",
                                    wrong_tag=node.tagName)
-        # There should be only four child nodes.
-        assert len(node.childNodes) == 4
-        # One is the description.
-        description = qm.xmlutil.get_dom_child_text(node, "description")
-        # One is the MIME type.
-        mime_type = qm.xmlutil.get_dom_child_text(node, "mime_type")
-        # One is the file name.
-        file_name = qm.xmlutil.get_dom_child_text(node, "file_name")
-        # One is the location.
-        location = qm.xmlutil.get_dom_child_text(node, "location")
-        # Construct the resulting attachment.
-        return Attachment(location=location,
-                          mime_type=mime_type,
-                          description=description,
-                          file_name=file_name)
+        return attachment.from_dom_node(node)
 
+
+    def MakeDomNodeForValue(self, value, document):
+        return value.MakeDomNode(document)
+    
 
 
 ########################################################################
@@ -1151,12 +1108,11 @@ class EnumerationField(IntegerField):
             value = int(value)
             # Make sure the name is OK.
             if not label.is_valid(key):
-                raise ValueError, \
-                      qm.track.error("invalid enum key", key=key)
+                raise ValueError, qm.error("invalid enum key", key=key)
             # Store it.
             self.__enumeration[key] = value
         if len(self.__enumeration) == 0:
-            raise ValueError, qm.track.error("empty enum")
+            raise ValueError, qm.error("empty enum")
         # If 'default_value' is 'None', use the lowest-numbered enumeral.
         if default_value == None:
             default_value = min(self.__enumeration.values())
@@ -1185,10 +1141,10 @@ class EnumerationField(IntegerField):
                                      self.__enumeration.items()),
                                  ", ")
             raise ValueError, \
-                  qm.track.error("invalid enum value",
-                                 value=value,
-                                 field_name=self.GetTitle(),
-                                 values=values)
+                  qm.error("invalid enum value",
+                           value=value,
+                           field_name=self.GetTitle(),
+                           values=values)
 
 
     def GetEnumerals(self):
@@ -1223,11 +1179,10 @@ class EnumerationField(IntegerField):
         values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
                                  self.__enumeration.items()),
                              ", ")
-        raise ValueError, \
-              qm.track.error("invalid enum value",
-                             value=str(value),
-                             field_name=self.GetTitle(),
-                             values=values)
+        raise ValueError, qm.error("invalid enum value",
+                                   value=str(value),
+                                   field_name=self.GetTitle(),
+                                   values=values)
 
 
     def GetEnumeration(self):
@@ -1292,6 +1247,13 @@ class EnumerationField(IntegerField):
         except ValueError:
             # Not a number; assume it's an enumeral name.
             return value
+
+
+    def MakeDomNodeForValue(self, value, document):
+        # Store the name of the enumeral.
+        enumeral_name = self.ValueToName(value)
+        return qm.xmlutil.create_dom_text_element(document, "enumeral",
+                                                  enumeral_name)
 
 
 

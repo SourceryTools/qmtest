@@ -273,6 +273,7 @@ class IssueClass:
         file.write("\n")
 
 
+
 ########################################################################
 # Local Variables:
 # mode: python

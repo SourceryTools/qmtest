@@ -1,3 +1,67 @@
+2001-03-22  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py (create_dom_text_element): New function.
+	(__dom_implementation): New variable.
+	(create_dom_document): New function.
+	(write_dom_document): Likewise.
+	* qm/web.py (WebRequestHandler.do_GET): Ignore exceptions during
+	shutdown. 
+	(WebRequestHandler.do_POST): Likewise.
+	(WebRequestHandler.__HandleScriptRequest): Ignore IO errors during
+	write. 
+	* qm/fields.py (Attachment): Remove.
+	Use attachment.Attachment throughout.
+	Replace qm.track.error with qm.error throughout.
+	(Field.__repr__): New method.
+	(Field.MakeDomNodeForValue): Likewise.
+	(IntegerField.MakeDomNodeForValue): Likewise.
+	(TextField.MakeDomNodeForValue): Likewise.
+	(SetField.MakeDomNodeForValue): Likewise.
+	(AttachmentField.MakeDomNodeForValue): Likewise.
+	(EnumerationField.MakeDomNodeForValue): Likewise.
+	* qm/common.py (encode_data_as_text): New function.
+	(decode_data_from_text): Likewise.
+	* qm/attachment.py: New file.
+
+	* qm/track/sql_idb.py (SqlIdb.AddIssue): Check IID uniqueness.
+	(SqlIdb.__ColumnSpecForField): Add fourth attachment column.
+	(SqlIdb.__GetColumnName): Likewise.
+	(SqlIdb.__BuildSqlForFieldValue): Likewise.
+	(SqlIdb.__GetFieldFromRow): Likewise.
+	* qm/track/issue.py (IssueFileError): New class.
+	(Attachment): Likewise.
+	(Issue.__repr__): New method.
+	(Issue.MakeDomElement): Likewise.
+	(get_differing_fields): Ignore revision number and timestamp.
+	(load_issues_from_xml_file): New function.
+	(__issues_from_dom): Likewise.
+	(__issue_from_dom): Likewise.
+	(issues_to_xml): Likewise.
+	Initialize qm.attachment.attachment_class.
+	* qm/track/issue.dtd: New file.
+	* qm/track/idb.py (IdbBase.Query): Ignore attachment fields.
+	* qm/track/diagnostics.txt (missing import files): New diagnostic.
+	(xml file unknown class): Likewise.
+	(xml file unknown field): Likewise.
+	(xml parse error): Likewise.
+	(format error): Add output format specifier. 
+	* qm/track/cmdline.py (Command.output_option): New attribute.
+	(Command.qmtrack_commands): Use it for several commands.  Add
+	import command.
+	(Command.__init__): Dispatch import command.
+	(Command.Execute): Handle output option.
+	(Command.__PerformQuery): Query all issue classes.
+	(Command.__PerformImport): New method.
+	(Command.__PrintResults): Adjust comments.  Implement XML format.
+	* qm/track/web/web.py (make_url_for_attachment): Use attachment
+	attributes. 
+	
+	* qm/test/test.dtd: Adjust for attachment schema.
+	* qm/test/cmdline.py (Command.__WriteResults): Use
+	create_dom_document and write_dom_document.
+	* qm/test/base.py (Attachment): New class.
+	Initialize qm.attachment.attachment_class.
+
 2001-03-20  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py: New file.

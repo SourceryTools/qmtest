@@ -1,11 +1,11 @@
 <!--
 
-  File:   test.dtd
+  File:   issue.dtd
   Author: Alex Samuel
   Date:   2001-03-14
 
   Contents:
-    DTD for a test case.
+    DTD for a collection of issues.
 
   Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
 
@@ -37,17 +37,22 @@
 		     FIXME FIXME FIXME FIXME FIXME
 -->
 
-<!-- A single test.  -->
-<!ELEMENT test
-    (class, (argument | category | prerequisite | preaction | postaction)*)
->
+<!-- A colleciton of issues.  -->
+<!ELEMENT issues (issue*)>
 
-<!-- The name of a test class.  -->
+<!-- A single issue.  -->
+<!ELEMENT issue
+    (class, field*)
+>
+<!ATTLIST issue id CDATA #REQUIRED>
+
+<!-- The name of an issue class.  -->
 <!ELEMENT class (#PCDATA)>
 
 <!-- An argument to a test class.  -->
-<!ELEMENT argument (integer | text | set | attachment | enumeral)>
-<!ATTLIST argument name CDATA #REQUIRED eval ( yes | no ) "no">
+<!ELEMENT field (integer | text | set | attachment | enumeral)>
+<!ATTLIST field name CDATA #REQUIRED 
+                eval ( yes | no ) "no">
 
 <!-- The value of an integer field.  -->
 <!ELEMENT integer (#PCDATA)>
@@ -59,7 +64,7 @@
 <!ELEMENT set ((integer | text | attachment | enumeral)*)>
 
 <!-- The value of an attachment field.  -->
-<!ELEMENT attachment (description, mimetype, filename, location)>
+<!ELEMENT attachment (description, mimetype, filename, (location | data))>
 
 <!-- A text description of an attachment.  -->
 <!ELEMENT description (#PCDATA)>
@@ -73,23 +78,12 @@
 <!-- The database-specific location where an attachment is stored.  -->
 <!ELEMENT location (#PCDATA)>
 
+<!-- Inline attachment data.  -->
+<!ELEMENT data (#PCDATA)>
+<!ATTLIST data encoding CDATA #REQUIRED>
+
 <!-- The value of an enumeral field.  -->
 <!ELEMENT enumeral (#PCDATA)>
-
-<!-- The name of a category to which the test belongs.  -->
-<!ELEMENT category (#PCDATA)>
-
-<!-- The test ID of another test that must be run before this one is. 
-     The outcome attribute is the outcome that the other test must produce
-     for this one to be run.  -->
-<!ELEMENT prerequisite (#PCDATA)>
-<!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
-
-<!-- The ID of an action that must be invoked before this test is run.  -->
-<!ELEMENT preaction (#PCDATA)>
-
-<!-- The ID of an action that must be invoked after this test is run.  -->
-<!ELEMENT postaction (#PCDATA)>
 
 <!-- 
   Local Variables:

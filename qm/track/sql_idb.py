@@ -44,9 +44,9 @@ SQL-based implementation of the issue database.
 
     -- Text fields are represented by VARCHAR columns.
 
-    -- Attachment fields are represented by three columns, each
-       VARCHAR, containing the attachment location, MIME type, and
-       description respectively.  
+    -- Attachment fields are represented by four columns, each VARCHAR,
+       containing the attachment location, MIME type, description, and
+       original file name, respectively.
 
     -- A set field is represented by an auxiliary table.  The table
        contains three columns: an issue id, a revision number, and a
@@ -57,7 +57,7 @@ SQL-based implementation of the issue database.
             
    Except for attachment fields, the column name is the same as the
    field name.  For an attachment field named "foo", the column names
-   are "_atl_foo", "_att_foo", and "_atd_foo", respectively.
+   are "_atl_foo", "_att_foo", "_atd_foo", and "_atn_foo", respectively.
 """
 
 ########################################################################
@@ -169,18 +169,25 @@ class SqlIdb(idb.IdbBase):
 
         precondition -- The issue class of 'issue' must occur in this
         IDB, and fields of 'issue' must match the class's."""
-
-        issue_class = issue.GetClass()
+        
         # Make sure the issue is OK.
         issue.AssertValid()
+        # Check IID uniqueness.
+        try:
+            revision = self.GetIssue(issue.GetId())
+            # Oops, we foudn this issue.
+            raise ValueError, "iid already in use"
+        except KeyError:
+            # Couldn't find the issue.  That's good.
+            pass
         # Set the revision number to zero.
         issue.SetField("revision", 0)
         # Set the timestamp to now.
         issue.StampTime()
         # Make sure the issue's class is in this IDB.
+        issue_class = issue.GetClass()
         if not self.__HasIssueClass(issue_class):
             raise ValueError, "new issue in a class not in this IDB"
-        # FIXME: Check iid uniqueness.
         # Insert the first revision.
         return self.__InsertIssue(issue_class, issue)
 
@@ -476,8 +483,9 @@ class SqlIdb(idb.IdbBase):
             # For an attachment field, 'col_name' is a triplet of
             # three names of columns that are used to implement
             # the field.   All three should be VARCHARs.
-            return "_atl_%s VARCHAR, _att_%s VARCHAR, _atd_%s VARCHAR" \
-                   % (3 * (name, ))
+            return "_atl_%s VARCHAR, _att_%s VARCHAR, " \
+                   "_atd_%s VARCHAR, _atn_%s VARCHAR" \
+                   % (4 * (name, ))
 
         else:
             raise RuntimeError, "unrecognized field type"
@@ -612,7 +620,7 @@ class SqlIdb(idb.IdbBase):
             # Attachment fields are implemented by three columns.
             # Return a triplet of the column names.  Use reserved
             # labels to avoid conflicts with user field names.
-            return "_atl_%s, _att_%s, _atd_%s" % (3 * (name, ))
+            return "_atl_%s, _att_%s, _atd_%s, _atn_%s" % (4 * (name, ))
         elif isinstance(field, qm.fields.SetField):
             return None
         else:
@@ -771,13 +779,14 @@ class SqlIdb(idb.IdbBase):
         elif isinstance(field, qm.fields.AttachmentField):
             # An attachment is represented by three columns.
             if value == None:
-                # For no attachment, use three empty strings.
-                return "'', '', ''"
+                # For no attachment, use four empty strings.
+                return "'', '', '', ''"
             else:
                 cols = (
-                    value.GetLocation(),
-                    value.GetMimeType(),
-                    value.GetDescription()
+                    value.location,
+                    value.mime_type,
+                    value.description,
+                    value.file_name,
                     )
                 cols = map(make_sql_string_literal, cols)
                 return string.join(cols, ", ")
@@ -816,17 +825,19 @@ class SqlIdb(idb.IdbBase):
             raise ValueError, 'field may not be a set field'
 
         elif isinstance(field, qm.fields.AttachmentField):
-            # The next three columns contain information about the
+            # The next four columns contain information about the
             # attachment. 
-            location, value, mime_type = row[:3]
-            # Advance past all three columns.
-            new_row = row[3:]
+            location, value, mime_type, file_name = row[:4]
+            # Advance past all four columns.
+            new_row = row[4:]
             if location == "":
                 # A null location field indicates no attachment.
                 value = None
             else:
-                value = qm.fields.Attachment(location, value, mime_type)
-
+                value = qm.track.Attachment(mime_type=mime_type,
+                                            description=description,
+                                            file_name=file_name,
+                                            location=location)
         else:
             raise RuntimeError, "unrecognized field type"
 
@@ -1195,4 +1206,5 @@ def pprint_ast (t):
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

@@ -274,8 +274,8 @@ def make_url_for_attachment(field, attachment):
     """Return a URL to download 'attachment'."""
 
     request = qm.web.WebRequest("download-attachment",
-                                location=attachment.GetLocation(),
-                                mime_type=attachment.GetMimeType())
+                                location=attachment.location,
+                                mime_type=attachment.mime_type)
     return qm.web.make_url_for_request(request)
 
 

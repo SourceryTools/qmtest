@@ -306,6 +306,13 @@ class IdbBase:
             if c.GetName() == issue_class_name:
                 # Set up the execution environment for the expression.
                 for field in c.GetFields():
+                    # Queries aren't supported on attachment fields;
+                    # skip those.
+                    if isinstance(field, qm.fields.AttachmentField) \
+                       or (isinstance(field, qm.fields.SetField) \
+                           and isinstance(field.GetContainedField(),
+                                          qm.fields.AttachmentField)):
+                        continue
                     field_name = field.GetName()
                     # Set each field to be its current value in the issue.
                     field_value = issue.GetField(field_name)

@@ -38,10 +38,9 @@
 import base
 import os
 import qm.cmdline
+import qm.xmlutil
 import string
 import sys
-import xml.dom.ext 
-import xml.dom.DOMImplementation
 import xmldb
 
 ########################################################################
@@ -462,18 +461,10 @@ class Command:
 
         'output' -- A file object to which to write the results."""
 
-        implementation = xml.dom.DOMImplementation.DOMImplementation()
-        # Create the document type for the XML document.
-        document_type = implementation.createDocumentType(
-            qualifiedName="results",
-            publicId=None,
-            systemId="results.dtd"
-            )
-        # Create a new XML document.
-        document = implementation.createDocument(
-            namespaceURI=None,
-            qualifiedName="results",
-            doctype=document_type
+        document = qm.xmlutil.create_dom_document(
+            public_id=None,
+            system_id="results.dtd",
+            document_element_tag="results"
             )
         # Add a result element for each test that was run.
         for test_id in results.keys():
@@ -481,10 +472,7 @@ class Command:
             result_element = result.MakeDomElement(document)
             document.documentElement.appendChild(result_element)
         # Generate output.
-        xml.dom.ext.PrettyPrint(document,
-                                stream=output,
-                                indent=" ",
-                                encoding="ISO-8859-1")
+        qm.xmlutil.write_dom_document(document, output)
 
 
 

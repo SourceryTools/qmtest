@@ -36,6 +36,8 @@
 ########################################################################
 
 import xml.dom
+import xml.dom.ext 
+import xml.dom.DOMImplementation
 
 ########################################################################
 # classes
@@ -92,6 +94,61 @@ def get_dom_children_texts(node, child_tag):
         text = get_dom_text(child_node)
         results.append(text)
     return results
+
+
+def create_dom_text_element(document, tag, text):
+    """Return a DOM element containing a single text node.
+
+    'document' -- The containing DOM document node.
+
+    'tag' -- The element tag.
+
+    'text' -- The text contents of the text node."""
+
+    element = document.createElement(tag)
+    text_node = document.createTextNode(text)
+    element.appendChild(text_node)
+    return element
+
+
+__dom_implementation = xml.dom.DOMImplementation.DOMImplementation()
+
+def create_dom_document(public_id, system_id, document_element_tag):
+    """Create a DOM document.
+
+    'public_id' -- The public ID of the DTD to use for this document.
+
+    'system_id' -- The system ID of the DTD to use for this document.
+
+    'document_element_tag' -- The tag of the main document element.
+
+    returns -- A DOM document node."""
+
+    # Create the document type for the XML document.
+    document_type = __dom_implementation.createDocumentType(
+        qualifiedName=document_element_tag,
+        publicId=public_id,
+        systemId=system_id
+        )
+    # Create a new DOM document.
+    return __dom_implementation.createDocument(
+        namespaceURI=None,
+        qualifiedName=document_element_tag,
+        doctype=document_type
+        )
+    
+
+def write_dom_document(document, stream):
+    """Write a DOM document.
+
+    'document' -- A DOM document node.
+
+    'stream' -- A file object."""
+
+    xml.dom.ext.PrettyPrint(document,
+                            stream=stream,
+                            indent=" ",
+                            encoding="ISO-8859-1")
 
 
 ########################################################################

@@ -37,12 +37,13 @@
 
 import os
 import qm
+import qm.attachment
 import qm.graph
 import qm.label
+import qm.xmlutil
 import string
 import sys
 import types
-import qm.xmlutil
 import xml.dom.ext.reader.Sax
 
 ########################################################################
@@ -66,6 +67,82 @@ class NoSuchSuiteError(Exception):
 ########################################################################
 # classes
 ########################################################################
+
+class Attachment(qm.attachment.Attachment):
+    """A file attachment.
+
+    A file attachment to a test description may include data in-line, as
+    part of the test description, or may reference external data.  For
+    instance, in the XML test database impelementation, a test
+    description may include attachment data for its arguments directly
+    in the XML file, or may reference data in another file stored in the
+    test database.
+
+    To store in-line data with the attachment, use the 'data'
+    attribute.  To reference external data, set the 'location' to the
+    data's location as presented in the test specification.  In the
+    latter case, some other agent must set the 'path' attribute of the
+    attribute object to the full path to the attachment file, since the
+    attachment doesn't have the necessary context."""
+
+    def __init__(self,
+                 mime_type=None,
+                 description="",
+                 file_name="",
+                 data=None,
+                 location=None):
+        """Creata a new attachment.
+
+        'data' -- The attachment data, or 'None' if it's stored in an
+        external file.
+
+        'location' -- The name (not generally a full path) of the
+        external file containing the attachment data, or 'None'.  If
+        this option is specified, the caller is responsible for setting
+        the 'path' attribute of the new attachment object to the full
+        path to the data file."""
+
+        # Check semantics.
+        assert data is not None or location is not None
+        assert data is None or location is None
+
+        # Perform base class initialization.
+        qm.attachment.Attachment.__init__(self, mime_type,
+                                          description, file_name)
+        if data is not None:
+            self.data = data
+        else:
+            self.location = location
+        
+
+    def GetData(self):
+        if hasattr(self, "data"):
+            return self.data
+        else:
+            # Read the data from the external file.
+            return open(self.path, "r").read()
+
+
+    def GetDataSize(self):
+        if hasattr(self, "data"):
+            return len(data)
+        else:
+            # Examine the external file.
+            return os.stat(self.path)[6]
+
+
+    def MakeDomNode(self, document):
+        if hasattr(self, "data"):
+            # Include in-line attachment data.
+            return qm.attachment.make_dom_node(self, document,
+                                               data=self.data)
+        else:
+            # Simply specify the location in the DOM tree.  The full
+            # path is context-dependent and shouldn't be stored.
+            return qm.attachment.make_dom_node(self, document,
+                                               location=self.location)
+
+
 
 class Test:
     """A test instance."""
@@ -784,6 +861,12 @@ __builtin_test_class_path = [
     os.path.join(qm.common.get_base_directory(), "test", "classes"),
     ]
 """Standard paths to search for test classes."""
+
+########################################################################
+# initialization
+########################################################################
+
+qm.attachment.attachment_class = Attachment
 
 ########################################################################
 # Local Variables:

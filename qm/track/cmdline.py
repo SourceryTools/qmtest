@@ -36,6 +36,7 @@
 ########################################################################
 
 import config
+import issue
 import os
 import os.path
 import sys
@@ -83,6 +84,8 @@ class Command:
                           'Populate IDB with values for testing.')
     internal_option = (None, 'internal', None,
                        'Set up IDB for internal use.')
+    output_option = ('o', 'output', 'FILE',
+                     'Write output to FILE (- for stdout).')
 
     qmtrack_options = [
         database_option,
@@ -100,26 +103,43 @@ class Command:
          "class for the field with the" " class flag. You must also "
          "specify the mandatory fields, 'id', 'categories', and " 
          "'summary'.",
-         [ help_option, class_option, format_option ]
+         [ help_option, class_option, format_option, output_option ]
          ),
         
+        ('destroy',
+         'Destroy an IDB.',
+         'path',
+         "This command destroys an issue database and removes " 
+         "associated files.",
+         [ help_option ],
+         ),
+
         ('edit',
          'Edit an issue.',
          'id field[=,+=,-=]value...',
          "This command will edit an issue. The 'id' is the issue's "
          "id. The field/value pairs represent the fields you wish to "
          "edit. A new revision of the issue will be created.",
-         [ help_option, format_option ]
+         [ help_option, format_option, output_option ]
          ),
-        
-        ('split',
-         'Split an issue.',
-         'id',
-         "This command will split a single issue into two issues. The "
-         "new issues will be the children of the original issue and it "
-         "will be their parent.",
-         [ help_option, format_option ]
+
+        ('import',
+         'Import issues from XML files.',
+         'FILE ...',
+         "This command imports issues or issue revisions stored in "
+         "an XML file.",
+         [ help_option, format_option, output_option ]
          ),
+
+        ('initialize',
+         'Initialize an IDB.',
+         'path',
+         "This command initializes a new issue database.  Valid "
+         "IDB types are 'MemoryIdb' and 'GadflyIdb'.",
+         [ help_option, idb_type_option, test_values_option,
+           internal_option, output_option ],
+
+        ),
         
         ('join',
          'Join two issues.',
@@ -127,7 +147,7 @@ class Command:
          "This command will join two issues into a single issue. The "
          "resulting issue will be the child of each of the original "
          "issues and they will be its parent.",
-         [ help_option, format_option ]
+         [ help_option, format_option, output_option ]
          ),
 
         ('query',
@@ -135,7 +155,7 @@ class Command:
          'expression',
          "This command will query the database to find all issues for "
          "which the query expression evalutes to true.",
-         [ help_option, query_class_option, format_option ]
+         [ help_option, query_class_option, format_option, output_option ]
          ),
 
         ('server',
@@ -151,25 +171,18 @@ class Command:
          'id',
          "This command displays a single issue.  This command is a "
          "shortcut for 'query iid==value'.",
-         [ help_option, format_option ]
+         [ help_option, format_option, output_option ]
          ),
 
-        ('initialize',
-         'Initialize an IDB.',
-         'path',
-         "This command initializes a new issue database.  Valid "
-         "IDB types are 'MemoryIdb' and 'GadflyIdb'.",
-         [ help_option, idb_type_option, test_values_option, internal_option ],
-        ),
+        ('split',
+         'Split an issue.',
+         'id',
+         "This command will split a single issue into two issues. The "
+         "new issues will be the children of the original issue and it "
+         "will be their parent.",
+         [ help_option, format_option, output_option ]
+         ),
         
-        ('destroy',
-         'Destroy an IDB.',
-         'path',
-         "This command destroys an issue database and removes " 
-         "associated files.",
-         [ help_option ],
-         ),
-
     ]
     """All the commands for qmtrack."""
 
@@ -194,6 +207,7 @@ class Command:
             'create': self.__PerformCreate,
             'destroy': self.__PerformDestroy,
             'edit': self.__PerformEdit,
+            'import': self.__PerformImport,
             'initialize': self.__PerformInitialize,
             'join': self.__PerformJoin,
             'query': self.__PerformQuery,
@@ -274,6 +288,17 @@ class Command:
     def Execute(self, output):
         """Execute the command."""
 
+        # Was the output option specified?
+        command_options = self.GetCommandOptions()
+        if command_options.has_key("output"):
+            # Yes; export to the specified file name.
+            output_file_name = command_options["output"]
+            output_file = open(output_file_name, "w")
+            output = output_file
+        else:
+            # Otherwise use the normal output.
+            output_file = None
+
         # If the user specified the help command, print out the help
         # and exit.
         if self.GetGlobalOptions().has_key('help'):
@@ -298,6 +323,10 @@ class Command:
             handler = self.__command_dispatch[self.__command_name]
             # Call the command handler function.
             handler(output)
+
+        # Close the output file, if we opened it.
+        if output_file is not None:
+            output_file.close()
         
 
     def __ParseFieldValuePairs(self, list):
@@ -719,7 +748,18 @@ class Command:
         query_str = string.join(self.__arguments)
 
         idb = qm.track.get_idb()
-        results = idb.Query(query_str, issue_class_name)
+        if issue_class_name is None:
+            # No issue class was specified.  Therefore, search all issue
+            # classes.  Obtain all their names.
+            issue_class_names = map(lambda cl: cl.GetName(),
+                                    idb.GetIssueClasses())
+        else:
+            # Search only one issue class.
+            issue_class_names = [ issue_class_name ]
+        results = []
+        # Aggregate query results for all issue classes.
+        for name in issue_class_names:
+            results = results + (idb.Query(query_str, name))
 
         apply(self.__PrintResults, (output, ) + tuple(results))
 
@@ -869,6 +909,48 @@ class Command:
         # Don't try to release the lock.  It vanished with the IDB.
 
 
+    def __PerformImport(self, output):
+        """Process the import command."""
+
+        # Make sure some import files were specified.
+        if len(self.__arguments) == 0:
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("missing import files")
+        file_names = self.__arguments
+
+        # Load issues from all files.
+        issues = []
+        for file_name in file_names:
+            issues = issues + qm.track.load_issues_from_xml_file(file_name)
+
+        # Now loop over the issues.
+        idb = qm.track.get_idb()
+        for issue in issues:
+            iid = issue.GetId()
+            try:
+                # Try to get the current revision for this IID.
+                current_revision = idb.GetIssue(iid)
+            except KeyError:
+                # Couldn't get it; that means it's a new issue.
+                idb.AddIssue(issue)
+                output.write("imported issue %s new\n" % iid)
+            else:
+                # Got the current revision, so this issue already
+                # exists.  So add a new revision, but first make sure
+                # it's different from the current one.
+                differences = qm.track.get_differing_fields(issue,
+                                                            current_revision)
+                if len(differences) == 0:
+                    # No differences; don't add a revision.
+                    output.write("imported issue %s is current; skipping\n"
+                                 % iid)
+                else:
+                    # Add the new revision.
+                    idb.AddRevision(issue)
+                    output.write("imported issue %s revision %d\n"
+                                 % (iid, current_revision.GetRevision() + 1))
+
+
     def __PrintResults(self, output, *issues):
         """Print the list of issues that are the results of the command.
 
@@ -897,7 +979,7 @@ class Command:
         elif self.format_name == 'short':
             for issue in issues:
                 output.write(issue.GetId() + '\n')
-        # We will make the 'full' format the same as the 'summary' format
+        # We will make the 'full' format the same as the 'long' format
         # for now.
         elif self.format_name == 'long' or self.format_name == "full":
             for issue in issues:
@@ -908,10 +990,10 @@ class Command:
                     output.write("%-24s: %s\n" % (field.GetTitle(), value))
                 output.write('\n\n')
         elif self.format_name == 'xml':
-            raise UnimplementedError
+            qm.track.issues_to_xml(issues, output)
 
 
-    
+
 ########################################################################
 # Local Variables:
 # mode: python

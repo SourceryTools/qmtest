@@ -205,7 +205,11 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         request = apply(WebRequest, (script_url, ), fields)
         self.__HandleRequest(request)
         self.wfile.flush()
-        self.connection.shutdown(1)
+        try:
+            self.connection.shutdown(1)
+        except:
+            # Probably a network error.
+            pass
 
 
     def do_POST(self):
@@ -238,8 +242,12 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         else:
             raise NotImplementedError, \
                   "unknown POST encoding: %s" % content_type
-        self.wfile.flush()
-        self.connection.shutdown(1)
+        try:
+            self.wfile.flush()
+            self.connection.shutdown(1)
+        except:
+            # Probably a network error.
+            pass
 
 
     def __HandleScriptRequest(self, request):
@@ -278,7 +286,13 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-Type", mime_type)
         self.send_header("Content-Length", len(data))
         self.end_headers()
-        self.wfile.write(data)
+        try:
+            self.wfile.write(data)
+        except IOError:
+            # Couldn't write to the client.  Oh well, it's probably a
+            # nework problem, or the user cancelled the operation, or
+            # the browser crashed...
+            pass
         
 
     def __HandleXmlRpcRequest(self):
