@@ -286,11 +286,26 @@ class Field:
 
 
     def GetDescription(self):
-        """Return a description of this field."""
+        """Return a description of this field.
+
+        This description is used when displaying detailed help
+        information about the field."""
 
         return self.GetAttribute("description")
 
 
+    def GetBriefDescription(self):
+        """Return a brief description of this field.
+
+        This description is used when prompting for input, or when
+        displaying the current value of the field."""
+
+        # Get the complete description.
+        description = self.GetDescription()
+        # Return the first paragraph.
+        return structured_text.get_first(description)
+
+        
     def GetTypeDescription(self):
         """Return a structured text description of valid values."""
 

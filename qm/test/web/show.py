@@ -163,6 +163,20 @@ class ShowPage(web.DtmlPage):
             return "&nbsp;"
 
 
+    def GetBriefClassDescription(self):
+        """Return a brief description of the test or resource class.
+
+        returns -- The brief description, formatted as HTML."""
+
+        # Extract the class's doc string.
+        doc_string = self.item.GetClass().__doc__
+        if doc_string is not None:
+            doc_string = qm.structured_text.get_first(doc_string)
+            return qm.web.format_structured_text(doc_string)
+        else:
+            return "&nbsp;"
+
+
     def MakeShowUrl(self):
         """Return the URL for showing this item."""
 

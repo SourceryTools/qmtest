@@ -1,5 +1,18 @@
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/fields.py (Field.GetDescription): Update docstring.
+	(Field.GetBriefDescription): New method.
+	* qm/structured_text.py (StructuredTextProcessor.__call__): Use
+	get_paragraphs.
+	(get_paragraphs): New function.
+	(get_first_paragraph): Likewise.
+	(__paragraph_regexp): New variable.
+	* qm/test/web/show.py (ShowPage.GetBriefClassDescription): New
+	method.
+	* share/dtml/test/new.dtml: Correct typo.
+	* share/dtml/test/show.dtml: Reduce verbosity; reoder some 
+	comments.
+	
 	* qm/test/classes/command.py (ExecTest): Revise doc strings.
 	(ShellCommandTest): Likewise.
 	(ShellScriptTest): Likewise.

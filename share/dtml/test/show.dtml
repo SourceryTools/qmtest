@@ -104,9 +104,22 @@
      </td>
     </tr>
     <tr class="heading">
-     <td colspan="2">
-      <dtml-var expr="GetClassDescription()">
-     </td>
+      <td colspan=2">
+         <table border="0"
+                cellpadding="0"
+                cellspacing="0"
+                width="100%"
+                columns="2">
+           <tr class="heading">
+             <td width="100%">
+               <dtml-var expr="GetBriefClassDescription()">
+             </td><td>
+               <dtml-var expr="web.make_help_link_html(
+                               GetClassDescription())">
+             </td>
+           </tr>
+         </table>
+      </td>
     </tr>
 
     <dtml-comment><!--
@@ -139,7 +152,10 @@
           >
        <td>
         <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
-        <dtml-var expr="web.format_structured_text(field.GetDescription())">
+        <dtml-if expr="edit">
+          <dtml-var expr="web.format_structured_text(field.
+                                                     GetBriefDescription())">
+        </dtml-if>
        </td>
        <td width="25%">
         <table border="0" cellpadding="0" cellspacing="4" width="100%">
@@ -166,61 +182,59 @@
     </dtml-let>
     </dtml-in>
 
-    <tr><td colspan="2">&nbsp;</td></tr>
+   <tr><td colspan="2">&nbsp;</td></tr>
 
-    <tr class="heading">
-     <td colspan="2">
-      Properties
-     </td>
-    </tr>
-
-    <tr class="field" valign="top">
-     <td>
-      <b>Properties</b>
-      <p>A property specifies additional information not related to 
-      the <dtml-var name="type">'s execution.</p>
-     </td>
-     <td>
-      <dtml-if expr="edit">
-       <dtml-var expr="web.make_properties_control('form', 'properties',
-                                                   item.GetProperties())">
-      <dtml-else>
-       <dtml-if expr="_.len(item.GetProperties()) > 0">
-        <dtml-in expr="item.GetProperties().keys()">
-        <dtml-let name=sequence-item>
-         <li><dtml-var name="name">&nbsp;= 
-         <dtml-var expr="item.GetProperty(name)"></li>
-        </dtml-let>
-        </dtml-in>
-       <dtml-else>
-        None
-       </dtml-if>
-      </dtml-if>
-     </td>
-    </tr>
+   <tr class="heading">
+    <td colspan="2">
+     Additional Information
+    </td>
+   </tr>
 
     <dtml-comment><!--
 
-      For tests, there's additional information: prerequisite tests,
+      For tests, there are some additional fields: prerequisite tests,
       setup/cleanup resources, and categories.
 
     --></dtml-comment>
     <dtml-if expr="type is 'test'">
 
-     <tr><td colspan="2">&nbsp;</td></tr>
-
-     <tr class="heading">
-      <td colspan="2">
-       Additional Information
+     <tr class="field" valign="top">
+      <td>
+       <b>Categories</b>
+       <dtml-if expr="edit">
+         <p>Categories that apply to this test.</p>
+       </dtml-if>
+      </td>
+      <td>
+       <dtml-if expr="edit">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr valign="top"><td>
+          <dtml-var expr="MakeCategoriesControl()">
+         </td><td>
+          <dtml-var expr="web.make_help_link('categories control')">
+         </td></tr>
+        </table>
+       <dtml-else>
+        <dtml-if expr="_.len(categories) > 0">
+         <dtml-in name="categories">
+         <dtml-let category=sequence-item>
+          <dtml-var expr="category"> 
+          <br>
+         </dtml-let>
+         </dtml-in>
+        <dtml-else>
+         None
+        </dtml-if>
+       </dtml-if>
       </td>
      </tr>
 
      <tr class="field" valign="top">
       <td>
        <b>Prerequisite Tests</b>
-       <p>A prerequisite test is always run first.  If any prerequisite
-       test produces an outcome different from the expected outcome, this
-       test is not run.</p>
+       <dtml-if expr="edit">
+         <p>Tests that should be run before this one.</p>
+       </dtml-if>
       </td>
       <td>
        <dtml-if expr="edit">
@@ -250,7 +264,9 @@
      <tr class="field" valign="top">
       <td>
        <b>Resources</b>
-       <p>A resource specifies setup and cleanup operations for the test.</p>
+       <dtml-if expr="edit">
+         <p>Setup and cleanup operations.</p>
+       </dtml-if>
       </td>
       <td>
        <dtml-if expr="edit">
@@ -276,38 +292,38 @@
       </td>
      </tr>
 
-     <tr class="field" valign="top">
-      <td>
-       <b>Categories</b>
-       <p>A category groups together tests that share a common feature.
-       A test may be in more than one category; specify the names of all
-       categories here.</p>
-      </td>
-      <td>
-       <dtml-if expr="edit">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-         <tr valign="top"><td>
-          <dtml-var expr="MakeCategoriesControl()">
-         </td><td>
-          <dtml-var expr="web.make_help_link('categories control')">
-         </td></tr>
-        </table>
-       <dtml-else>
-        <dtml-if expr="_.len(categories) > 0">
-         <dtml-in name="categories">
-         <dtml-let category=sequence-item>
-          <dtml-var expr="category"> 
-          <br>
-         </dtml-let>
-         </dtml-in>
-        <dtml-else>
-         None
-        </dtml-if>
-       </dtml-if>
-      </td>
-     </tr>
-
     </dtml-if>
+
+    <dtml-comment><!--
+
+      For both tests and resources, allow users to associate 
+      additional properties with the item.
+
+    --></dtml-comment>
+
+    <tr class="field" valign="top">
+     <td>
+      <b>Properties</b>
+      <p>Properties of the <dtml-var name="type">.</p>
+     </td>
+     <td>
+      <dtml-if expr="edit">
+       <dtml-var expr="web.make_properties_control('form', 'properties',
+                                                   item.GetProperties())">
+      <dtml-else>
+       <dtml-if expr="_.len(item.GetProperties()) > 0">
+        <dtml-in expr="item.GetProperties().keys()">
+        <dtml-let name=sequence-item>
+         <li><dtml-var name="name">&nbsp;= 
+         <dtml-var expr="item.GetProperty(name)"></li>
+        </dtml-let>
+        </dtml-in>
+       <dtml-else>
+        None
+       </dtml-if>
+      </dtml-if>
+     </td>
+    </tr>
 
     <tr><td colspan="2">&nbsp;</td></tr>
 

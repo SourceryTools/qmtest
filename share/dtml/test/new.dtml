@@ -36,8 +36,8 @@
     <tr>
      <td colspan="2">
       <dtml-if expr="field_errors != {}">
-       <p>Your issue submission contained errors.  Please correct them
-       and resubmit.</p>
+       <p>Your <dtml-var name="type"> submission contained errors.
+       Please correct them and resubmit.</p>
       <dtml-else>
        <p>First, you must specify the ID and class for the new <dtml-var
        name="type">.</p>

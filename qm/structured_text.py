@@ -447,9 +447,6 @@ class StructuredTextProcessor:
     # Regex fragment matching a single punctuation or space character.
     __punctuation = "[%s]" % "][)(.,!?;:'\" "
 
-    # Regex matching paragraph separators.
-    __paragraph_regex = re.compile("(?:\n *)+\n", re.MULTILINE)
-
     # Regex matching a list bullet at the start of the line.
     __bullet_regex = re.compile("^[-o*] +")
 
@@ -543,7 +540,7 @@ class StructuredTextProcessor:
                 position = match.start()
 
         # Split text into paragraphs.
-        paragraphs = self.__paragraph_regex.split(text)
+        paragraphs = get_paragraphs(text)
 
         # Loop over paragraphs.
         for paragraph in paragraphs:
@@ -829,8 +826,32 @@ def get_rest(structured_text):
         return parts[1]
     else:
         return ""
-        
 
+        
+def get_paragraphs(structured_text):
+    """Split 'structured_text' into paragraphs.
+
+    'structured_text' -- A string consisting of structured text.
+    
+    returns -- A sequence of pagraphs of structured text.  Each
+    element in the sequence corresponds to a successive pagraph
+    in the 'structured_text'.  If 'structured_text' is the empty
+    string, the sequence returned will consist of a single
+    paragraph, itself empty."""
+
+    return __paragraph_regex.split(structured_text)
+
+
+def get_first_paragraph(structured_text):
+    """Return the first paragraph of 'structured_text'.
+
+    'structured_text' -- A string consisting of structured text.
+
+    returns -- A string of structured text that is the first paragraph
+    of the 'structured_text'."""
+
+    return get_paragraphs(structured_text)[0]
+    
 ########################################################################
 # variables
 ########################################################################
@@ -855,6 +876,9 @@ for entity, character in htmlentitydefs.entitydefs.items():
 __entity_char_replacement = lambda match, \
                                    replacement_map=__entity_char_replacement: \
                             replacement_map[match.group(0)]
+
+# Regex matching paragraph separators.
+__paragraph_regex = re.compile("(?:\n *)+\n", re.MULTILINE)
 
 ########################################################################
 # script
