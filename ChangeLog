@@ -1,5 +1,8 @@
 2003-02-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (build_rpm): Use rpmbuild, rather than rpm,
+	to build an RPM.
+
 	* test/share/dtml/navigation-bar.dtml (hide_menu): Work around
 	JavaScript issue in Mozilla.
 	* NEWS: Update.
