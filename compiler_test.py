@@ -346,6 +346,11 @@ class CompilerTest(Test, CompilerBase):
             arguments = interpreter.split() + [path]
         else:
             arguments = [path]
+        # Compute the result annotation prefix.
+        prefix = self._GetAnnotationPrefix() + "execution_"
+        # Record the command line.
+        result[prefix + "command"] = \
+            "<tt>" + string.join(arguments) + "</tt>"
         # Compute the environment.
         library_dirs = self._GetLibraryDirectories(context)
         if library_dirs:
@@ -368,8 +373,6 @@ class CompilerTest(Test, CompilerBase):
         status = executable.Run(arguments,
                                 environment = environment,
                                 dir = self._GetDirectory())
-        # Compute the result annotation prefix.
-        prefix = self._GetAnnotationPrefix() + "execution_"
         # Remember the output streams.
         result[prefix + "stdout"] = "<pre>" + executable.stdout + "</pre>"
         result[prefix + "stderr"] = "<pre>" + executable.stderr + "</pre>"

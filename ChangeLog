@@ -1,7 +1,8 @@
 2003-11-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler_test.py (CompilerTest._RunExecutable): Add support for
-	interpreters that take command-line arguments.
+	interpreters that take command-line arguments.  Record the command
+	line used to invoke the interperter.
 
 2003-09-15  Mark Mitchell  <mark@codesourcery.com>
 
