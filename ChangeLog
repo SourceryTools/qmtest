@@ -1,5 +1,8 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/Makefile.in (QM_SRPM): Remove target.
+	* qm.spec.in: Make relocatable, use build root.
+
 	* qm/Makefile.in (SCRIPTS): Add qmtest.
 
 	* Makefile.in (QM_TAR_GZ): Modify logic.
