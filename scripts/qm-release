@@ -71,6 +71,8 @@ EOF
     # release that we are happy with.
     ${CVS} tag -F ${QM_RELEASE_TAG} || \
       error "Could not tag QM"
+    # Go back to the directory we started in.
+    changedir ..
 }
 
 # Build QM itself from the source distribution.

@@ -1,5 +1,7 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (tag_qm): Return to the top level directory.
+
 	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Correct
 	punctuation in error message.
 	* scripts/qm-release (upload): Upload manuals, too.
