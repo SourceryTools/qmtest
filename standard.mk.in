@@ -112,8 +112,19 @@ endif
 # Flags to pass to the regression test driver script.
 TESTFLAGS	= -v -k
 
+# The install program.
+INSTALL		= @INSTALL@
+
+# Places to install things.
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+INSTALLBINDIR	= @bindir@
+INSTALLLIBDIR	= @libdir@/qm
+INSTALLSHAREDIR	= @datadir@/qm
+
 .PHONY:		all clean doc setup subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print doc-python
+.PHONY:		install
 .PHONY:		$(SUBDIRS)
 
 ########################################################################

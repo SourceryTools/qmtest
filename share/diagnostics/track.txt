@@ -107,6 +107,15 @@ You did not specify an issue database (IDB).  Either
 @ missing import files
 You must specify one or more files from which to import issues.
 
+@ new idb message
+QMTrack has created a new IDB for you at %(path)s.  Either set the
+'%(envvar)s' environment variable to this path, or use the '--idb'
+option when you invoke QMTrack.
+
+A new user account database has been created in %(userdb)s, containing a
+single guest user only.  Edit this file to add additional user accounts,
+or to disable the guest account.
+
 @ xml file unknown class
 The issue file contains issues of unknown issue class %(class_name)s.
 

@@ -1,3 +1,24 @@
+2001-03-30  Alex Samuel  <samuel@codesourcery.com>
+
+	* Makefile.in (install): New target.
+	* configure.in (AC_PROG_INSTALL): Use it.
+	* configure: Regenerate.
+	* install.py: New file.
+	* qm.spec: Likewise.
+	* standard.mk.in (INSTALL): New variable.
+	(prefix): Likewise.
+	(exec_prefix): Likewise.
+	(INSTALLBINDIR): Likewise.
+	(INSTALLLIBDIR): Likewise.
+	(INSTALLSHAREDIR): Likewise.
+	* sgmlop/sgmllib.py: Strip CR.
+	* sgmlop/xmllib.py: Likewise.
+	* xmlrpc/xmlrpc_handler.py: Likewise.
+	* xmlrpm/xmlrpclib.py: Likewise.
+	* share/diagnostics/track.txt (new idb message): New diagnostic.
+	* qm/users.xml.tempalte: Move to...
+	* share/xml/users.xml.template: ... here.
+
 2001-03-28  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (write_dom_document): Write emacs configury.

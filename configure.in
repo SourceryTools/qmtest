@@ -36,6 +36,7 @@ divert(0)
 AC_INIT(configure.in)
 
 AC_PROG_MAKE_SET
+AC_PROG_INSTALL
 AC_PATH_PROG(HAPPYDOC, happydoc, happydoc)
 AC_PATH_PROG(JADE, jade, jade)
 AC_PATH_PROG(PYTHON, python, python)
