@@ -1120,9 +1120,11 @@ class EnumerationField(IntegerField):
         if default_value == None:
             default_value = min(self.__enumeration.values())
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, default_value), attributes)
+        apply(Field.__init__, (self, name, ), attributes)
         # Store the enumeration as an attribute.
         self.SetAttribute("enumeration", repr(enumeration))
+        # Set the default value.
+        self.SetDefaultValue(default_value)
 
 
     def GetTypeDescription(self):
@@ -1275,12 +1277,17 @@ class TimeField(TextField):
         causes the current time to be used when an issue is created if no
         field value is provided."""
 
+        default_value = None
+
         # Perform base class initalization.
         apply(TextField.__init__, (self, name, default_value), attributes)
+        # Set the default value.
+        self.SetDefaultValue(default_value)
 
 
     def GetTypeDescription(self):
         return "a date/time (right now, it is %s)" % self.GetCurrentTime()
+
 
     def Validate(self, value):
         # Parse and reformat the time value.

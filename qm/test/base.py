@@ -892,7 +892,7 @@ __loaded_test_classes = {}
 """Cache of loaded test classes."""
 
 __builtin_test_class_path = [
-    os.path.join(qm.common.get_base_directory(), "test", "classes"),
+    qm.common.get_lib_directory("qm", "test", "classes"),
     ]
 """Standard paths to search for test classes."""
 

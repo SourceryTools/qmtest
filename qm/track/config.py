@@ -346,8 +346,8 @@ def initialize_idb(path, idb_class_name):
     configuration.Save()
 
     # Copy in the user database template.
-    user_db_template_path = os.path.join(qm.common.get_base_directory(),
-                                         "users.xml.template")
+    user_db_template_path = qm.common.get_share_directory("xml",
+                                                          "users.xml.template")
     user_db_path = os.path.join(path, "users.xml")
     shutil.copy(user_db_template_path, user_db_path)
 

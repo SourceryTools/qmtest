@@ -863,6 +863,12 @@ class Command:
             qm.track.setup_idb_for_internal_use()
             qm.track.close_idb()
 
+        # Print a helpful message.
+        print qm.warning("new idb message",
+                         path=idb_path,
+                         envvar=qm.track.state["idb_env_var"],
+                         userdb=os.path.join(idb_path, "users.xml"))
+
 
     def __PerformDestroy(self, output):
         """Process the destroy command."""

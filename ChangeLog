@@ -1,5 +1,26 @@
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/setup_path.py.in (add_to_python_path): Use __lib_dir.
+	(__base_dir): Remove.
+	(__lib_dir): New variable.
+	(__share_dir): Likewise.
+	Set different environment variables.
+	* qm/fields.py (EnumerationField.__init__): Adjust call to base
+	initializer.  Set default.
+	(TimeField.__init__): Likewise.
+	* qm/common.py (get_base_directory): Remove.
+	(get_lib_directory): New function.
+	(get_share_directory): Likewise.
+	* qm/Makefile.in (setup_path.py): Adjust substitutions.
+	* qm/track/config.py (initialize_idb): Get user db template from
+	new location.
+	* qm/track/cmdline.py (Command.__PerformInitialize): Print a
+	message. 
+	* qm/test/base.py (__builtin_test_class_path): Use
+	get_lib_directory in initializer.
+
+2001-03-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* Makefile.in (install): New target.
 	* configure.in (AC_PROG_INSTALL): Use it.
 	* configure: Regenerate.

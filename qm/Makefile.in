@@ -45,11 +45,12 @@ all:		setup_path.py $(SCRIPTS)
 
 # Generate setup_path.py by replacing the text @qm_top_directory@ with
 # the path to this directory.
-setup_path.py:	setup_path.py.in Makefile
+setup_path.py: 	setup_path.py.in Makefile
 	rm -f $@
 	( echo "# This file is automatically generaged."; \
 	  echo "# Don't edit this file; edit $< instead."; \
-	  sed "s#@qm_top_directory@#$$(pwd)/..#" $< \
+	  sed "s#@qm_lib_path@#$$(pwd)/..#" $< \
+	  | sed "s#@qm_share_path@#$$(pwd)/../share#" \
 	) > $@
 	chmod a-w $@
 

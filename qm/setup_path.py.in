@@ -50,7 +50,7 @@ def add_to_python_path(*components):
     Constructs the added path by appending the directory names in
     'components' to the base QM Python directory."""
 
-    path = apply(os.path.join, (__base_dir, ) + components)
+    path = apply(os.path.join, (__lib_dir, ) + components)
     path = os.path.normpath(path)
     if path not in sys.path:
         sys.path.append(path)
@@ -62,7 +62,8 @@ def add_to_python_path(*components):
 
 # The path to the directory under which the QM Python files are
 # installed.
-__base_dir = "@qm_top_directory@"
+__lib_dir = "@qm_lib_path@"
+__share_dir = "@qm_share_path@"
 
 # Add things to the Python search path that we'll need.
 add_to_python_path()
@@ -71,9 +72,10 @@ add_to_python_path("zope-dtml", "ExtensionClass")
 add_to_python_path("sgmlop")
 add_to_python_path("xmlrpc")
 
-# Now store the top QM Python directory in the environment, so that
-# other modules can access it.
-os.environ["QM_BASE_PATH"] = os.path.normpath(os.path.join(__base_dir, "qm"))
+# Now store the QM directories in the environment, so that other modules
+# can access them.
+os.environ["QM_LIB_PATH"] = os.path.normpath(__lib_dir)
+os.environ["QM_SHARE_PATH"] = os.path.normpath(__share_dir)
 
 #######################################################################
 # Local Variables:
