@@ -32,6 +32,13 @@
 #
 ########################################################################
 
+"""Functions for parsing, processing, and formatting Python structured text.
+
+See "Structured Text Formatting
+Rules":http://www.python.org/sigs/doc-sig/stext.html for more
+information.
+"""
+
 ########################################################################
 # imports
 ########################################################################
@@ -362,22 +369,22 @@ class StructuredTextProcessor:
     # Regex matching single-quoted verbatim text.  Group 1 is leading
     # spaces; group 2 is the verbatim text; group 3 is trailing spaces
     # and/or punctuation.
-    __verbatim_regex = re.compile("( +)'([^']+)'(%s+)" % __punctuation)
+    __verbatim_regex = re.compile("(^| +)'([^']+)'(%s+)" % __punctuation)
 
     # Regex matching emphasized text.  Group 1 is leading spaces;
     # group 2 is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __strong_regex = re.compile("( +)\*\*([^*]+)\*\*(%s+)" % __punctuation)
+    __strong_regex = re.compile("(^| +)\*\*([^*]+)\*\*(%s+)" % __punctuation)
 
     # Regex matching strong text.  Group 1 is leading spaces; group 2
     # is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __emph_regex = re.compile("( +)\*([^*]+)\*(%s+)" % __punctuation)
+    __emph_regex = re.compile("(^| +)\*([^*]+)\*(%s+)" % __punctuation)
 
     # Regex matching underlined text.  Group 1 is leading spaces;
     # group 2 is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __underline_regex = re.compile("( +)_([^_]+)_(%s+)" % __punctuation)
+    __underline_regex = re.compile("(^| +)_([^_]+)_(%s+)" % __punctuation)
 
     # Regex matching double-quoted hyperlinks using colon syntax.
     # Group 1 is the link text; group 2 is the link target group 3 is

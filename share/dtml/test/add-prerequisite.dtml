@@ -21,7 +21,13 @@
  <dtml-var expr="GenerateHtmlHeader('Specify a Prerequisite Test')">
  <dtml-var expr="GenerateStartBody()">
 
-  <h3>Specify a Prerequisite Test</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr valign="top"><td width="100%">
+    <h3>Specify a Prerequisite Test</h3>
+   </td><td>
+    <dtml-var expr="MakeHelpLink('prerequisite popup')">
+   </td></tr>
+  </table>
 
   <form name="form"
         onsubmit="add_prerequisite();">
@@ -35,8 +41,7 @@
      <tr class="field" valign="top">
       <td>
        <b>Test ID</b>
-       <p>Select the prerequisite test ID from the list of tests in the
-       test database, or enter a test ID below.</p>
+       <p>The test ID of the prerequisite test.</p>
       </td>
       <td>
        <select name="test_id_list" 

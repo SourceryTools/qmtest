@@ -444,14 +444,21 @@ def setup_idb_for_test():
                               title="Test Issue Class")
     get_configuration()["default_class"] = "test_class"
 
-    field = qm.fields.AttachmentField("attachments")
-    field.SetAttribute("title", "File Attachments")
+    field = qm.fields.AttachmentField(
+        name="attachments",
+        title="File Attachments",
+        description="""
+        Zero or more file attachments that contain information or data
+        relavent to this issue.
+        """)
     field = qm.fields.SetField(field)
     icl.AddField(field)
 
-    field = qm.fields.TextField("description")
-    field.SetAttribute("title", "Description")
-    field.SetAttribute("structured", "true")
+    field = qm.fields.TextField(
+        name="description",
+        title="Description",
+        description="A detailed description of this issue.",
+        structured="true")
     icl.AddField(field)
 
     severity_enum = {
@@ -459,9 +466,15 @@ def setup_idb_for_test():
         "medium" : 2,
         "low" : 1,
         }
-    field = qm.fields.EnumerationField("severity", severity_enum, "medium")
-    field.SetAttribute("title", "Severity")
-    field.SetAttribute("ordered", "true")
+    field = qm.fields.EnumerationField(
+        name="severity",
+        enumeration=severity_enum,
+        default_value="medium",
+        title="Severity",
+        description="""
+        An indication of the importance of resolving this issue.
+        """,
+        ordered="true")
     icl.AddField(field)
 
     idb.AddIssueClass(icl)

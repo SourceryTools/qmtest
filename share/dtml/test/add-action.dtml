@@ -21,7 +21,13 @@
  <dtml-var expr="GenerateHtmlHeader('Specify an Action Test')">
  <dtml-var expr="GenerateStartBody()">
 
-  <h3>Specify an Action</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr valign="top"><td width="100%">
+    <h3>Specify an Action</h3>
+   </td><td>
+    <dtml-var expr="MakeHelpLink('action popup')">
+   </td></tr>
+  </table>
 
   <form name="form"
         onsubmit="add_action();">
@@ -35,8 +41,6 @@
      <tr class="field" valign="top">
       <td>
        <b>Action ID</b>
-       <p>Select the action ID from the list of actions in the
-       test database, or enter an action ID below.</p>
       </td>
       <td>
        <select name="action_id_list" 

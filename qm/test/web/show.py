@@ -239,7 +239,6 @@ class ShowPageInfo(web.PageInfo):
                                        rows=4,
                                        window_height=240)
 
- 
 
 
 class AddPrerequisitePageInfo(qm.web.PageInfo):

@@ -21,7 +21,13 @@
  <dtml-var expr="GenerateHtmlHeader('Specify a Category')">
  <dtml-var expr="GenerateStartBody()">
 
-  <h3>Specify a Category</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr valign="top"><td width="100%">
+    <h3>Specify a Category</h3>
+   </td><td>
+    <dtml-var expr="MakeHelpLink('category popup')">
+   </td></tr>
+  </table>
 
   <form name="form"
         onsubmit="add_category();">

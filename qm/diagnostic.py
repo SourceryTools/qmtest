@@ -84,9 +84,6 @@ class DiagnosticSet:
     # Regular express that matches the start of a new diagnostic entry. 
     __separator_regex = re.compile("^@", re.MULTILINE)
 
-    program_name = "?"
-    """The name of the program, as it should appear in diagnostics."""
-
 
     def __init__(self):
         """Initialize a new set of diagnostics."""
@@ -136,12 +133,14 @@ class DiagnosticSet:
 
         returns -- The bare diagnostic message."""
         
+        substitutions = substitutions.copy()
+        substitutions["program_name"] = common.program_name
         message = self.__diagnostics[tag] % substitutions
         if output is None:
             pass
         else:
             output.write("%s: %s: %s\n"
-                         % (self.program_name, severity, message)) 
+                         % (common.program_name, severity, message)) 
         return message
 
 

@@ -1,3 +1,55 @@
+2001-04-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.common_javascript): Add help_window.  Add
+	show_help.
+	(PageInfo.MakeHelpButton): Remove.
+	(PageInfo.MakeHelpLink): New method.
+	(PageInfo.MakeHelpLinkHtml): Likewise.
+	(make_set_control): Make popup resizable.  Change popup window
+	logic.
+	(make_help_button): Remove.
+	(make_help_link): New function.
+	(_help_counter): New variable.
+	(make_help_link_html): New function.
+	* qm/structured_text.py (HtmlFormatter.__verbatim_regex): Match at
+	start of line.
+	(HtmlFormatter.__strong_regex): Likewise.
+	(HtmlFormatter.__emph_regex): Likewise.
+	* qm/fields.py (Field.GetHelp): New method.
+	(Field.GetHtmlHelp): Likewise.
+	(IntegerField.GetHelp): Likewise.
+	(TextField.GetHelp): Likewise.
+	(SetField.FormatValueAsHtml): Specify window size.
+	(SetField.GetHelp): New method.
+	(SetField.GetHtmlHelp): Likewise.
+	(AttachmentField.FormatValueAsHtml): Rename button "Change..."
+	(AttachmentField.GetHelp): New method.
+	(AttachmentField.GetHtmlHelp): Likewise.
+	(EnumerationField.GetHelp): Likewise.
+	(UidField.__init__): Pass attributes to base.
+	* qm/diagnostic.py (DiagnosticSet.program_name): Remove.
+	(DiagnosticSet.Generate): Use common.program_name.
+	* qm/common.py (program_name): New variable.
+	* qm/Makefile.in ($(SCRIPTS)): Use PYTHONBIN.
+	* qm/track/config.py (setup_idb_for_test): Adjust syntax.  Add
+	descriptions. 
+	* qm/track/issue_class.py (IssueClass.__init__): Likewise.
+	(IidField.__init__): Pass attributes to base.
+	* qm/test/qmtest.in: Set common.program_name.  Load help diagnostics.
+	* share/dtml/attachment.dtml: Add help links.
+	* share/dtml/test/add-action.dtml: Likewise.
+	* share/dtml/test/add-category.dtml: Likewise.
+	* share/dtml/test/add-prerequisite.dtml: Likewise.
+	* share/dtml/test/new.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.
+	* share/dtml/track/show.dtml: Likewise.
+	* share/diagnostics/common-help.txt: New file.
+	* share/web/stylesheets/qm.css (body): Specify font-family.
+	(a:link): Don't specify background.
+	(a:visited): Likewise.
+	(a:active): Likewise.
+	(a:hover): Likewise.
+	
 2001-04-25  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/Makefile.in: Fix typo.

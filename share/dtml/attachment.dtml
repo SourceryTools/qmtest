@@ -36,10 +36,16 @@
    <dtml-comment><!--
      A field for the user to upload a file.
    --></dtml-comment>
-   <h3>
-    Upload file contents for field 
-    <span class="fieldname"><dtml-var name="field_name"></span>
-   </h3>
+   <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr valign="top"><td width="100%">
+     <h3>
+      Upload file contents for field 
+      <span class="fieldname"><dtml-var name="field_name"></span>
+     </h3>
+    </td><td>
+     <dtml-var expr="MakeHelpLink('attachment form')">
+    </td></tr>
+   </table>
 
    <table border="0"
           cellpadding="4"
@@ -163,7 +169,7 @@
  }
  </script>
 
- </body>
+ <dtml-var expr="GenerateEndBody()">
 </html>
 
 <dtml-comment><!-- 

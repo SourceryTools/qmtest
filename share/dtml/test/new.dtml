@@ -33,14 +33,17 @@
          cellspacing="4"
          width="100%">
    <tbody>
-    <dtml-if expr="field_errors != {}">
-     <tr>
-      <td colspan="2">
+    <tr>
+     <td colspan="2">
+      <dtml-if expr="field_errors != {}">
        <p>Your issue submission contained errors.  Please correct them
        and resubmit.</p>
-      </td>
-     </tr>
-    </dtml-if>
+      <dtml-else>
+       <p>First, you must specify the ID and class for the new <dtml-var
+       name="type">.</p>
+      </dtml-if>
+     </td>
+    </tr>
 
     <tr valign="top"
        <dtml-if expr="field_errors.has_key('_id')">
@@ -49,31 +52,36 @@
         class="field"
        </dtml-if>
         >
-     <td>
+     <td width="100%">
       <dtml-if expr="type == 'test'">
        <b>Test ID</b>
-       <p>The test ID identifies the test.  The test ID may be composed
-       of lower-case letters, digits, and underscores.  Organize tests
-       in a hierarchy using a period as the path separator.</p>
+       <p>The test ID identifies the test.</p>
       <dtml-else>
        <b>Action ID</b>
-       <p>The action ID identifies the action.  The action ID may be
-       composed of lower-case letters, digits, and underscores.
-       Organize actions in a hierarchy using a period as the path
-       separator.</p>
+       <p>The action ID identifies the action.</p>
       </dtml-if>
      </td>
      <td>
-      <input name="id" 
-             type="text" 
-             size="40" 
-             value="<dtml-var name="item_id">"/>
-      <dtml-if expr="field_errors.has_key('_id')">
-       <br>
-       <span class="error">
-        <dtml-var expr="field_errors['_id']">
-       </span>
-      </dtml-if>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+       <tr valign="top"><td>
+        <input name="id" 
+               type="text" 
+               size="40" 
+               value="<dtml-var name="item_id">"/>
+        <dtml-if expr="field_errors.has_key('_id')">
+         <br>
+         <span class="error">
+          <dtml-var expr="field_errors['_id']">
+         </span>
+        </dtml-if>
+       </td><td align="right">
+        <dtml-if expr="type == 'test'">
+         <dtml-var expr="MakeHelpLink('test ID')">
+        <dtml-else>
+         <dtml-var expr="MakeHelpLink('action ID')">
+        </dtml-if>
+       </td></tr>
+      </table>
      </td>
     </tr>
 
@@ -90,44 +98,48 @@
 
        <p>The test class determines how the test is parameterized, and
        provides the mechanism by which the test is run.</p>
-
-       <p>Choose a standard test class from the list, or enter the name
-       of a custom test class.</p>
       <dtml-else>
        <b>Action Class</b>
 
        <p>The action class determines how the action is parameterized,
        and provides the mechanism by which the action is run.</p>
-
-       <p>Choose a standard action class from the list, or enter the
-       name of a custom action class.</p>
       </dtml-if>
      </td>
      <td>
-      Standard Classes:
-      <select name="class_list"
-              onchange="set_class();">
-       <option value=""> </option>
-       <dtml-in name="class_names">
-       <dtml-let class_name=sequence-item>
-        <option value="<dtml-var name="class_name">">
-         <dtml-var name="class_name">
-        </option>
-       </dtml-let>
-       </dtml-in>
-      </select>
-      <input name="class" 
-             type="text" 
-             size="40" 
-             value="<dtml-var name="class_name">"
-             onkeydown="document.form.class_list.selectedIndex = 0;"
-             />
-      <dtml-if expr="field_errors.has_key('_class')">
-       <br>
-       <span class="error">
-        <dtml-var expr="field_errors['_class']">
-       </span>
-      </dtml-if>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+       <tr valign="top"><td>
+        Standard Classes:
+        <select name="class_list"
+                onchange="set_class();">
+         <option value=""> </option>
+         <dtml-in name="class_names">
+         <dtml-let class_name=sequence-item>
+          <option value="<dtml-var name="class_name">">
+           <dtml-var name="class_name">
+          </option>
+         </dtml-let>
+         </dtml-in>
+        </select>
+        <input name="class" 
+               type="text" 
+               size="40" 
+               value="<dtml-var name="class_name">"
+               onkeydown="document.form.class_list.selectedIndex = 0;"
+               />
+        <dtml-if expr="field_errors.has_key('_class')">
+         <br>
+         <span class="error">
+          <dtml-var expr="field_errors['_class']">
+         </span>
+        </dtml-if>
+       </td><td align="right">
+        <dtml-if expr="type == 'test'">
+         <dtml-var expr="MakeHelpLink('test class control')">
+        <dtml-else>
+         <dtml-var expr="MakeHelpLink('action class control')">
+        </dtml-if>
+       </td></tr>
+      </table>
      </td>
     </tr>
 

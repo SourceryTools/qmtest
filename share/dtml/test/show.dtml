@@ -136,13 +136,19 @@
         <dtml-var expr="FormatStructuredText(field.GetDescription())">
        </td>
        <td width="25%">
-        <dtml-var expr="FormatFieldValue(field)">
-        <dtml-if expr="field_errors.has_key(field_name)">
-         <br>
-         <span class="error">
-          <dtml-var expr="field_errors[field_name]">
-         </span>
-        </dtml-if>
+        <table border="0" cellpadding="0" cellspacing="4" width="100%">
+         <tr valign="top"><td width="100%">
+          <dtml-var expr="FormatFieldValue(field)">
+          <dtml-if expr="field_errors.has_key(field_name)">
+           <br>
+           <span class="error">
+            <dtml-var expr="field_errors[field_name]">
+           </span>
+          </dtml-if>
+         </td><td>
+          <dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp(edit=edit))">
+         </td></tr>
+        </table>  
        </td>
       </tr>
      </dtml-if>
@@ -174,7 +180,13 @@
       </td>
       <td>
        <dtml-if expr="edit">
-        <dtml-var expr="MakePrerequisitesControl()">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr valign="top"><td>
+          <dtml-var expr="MakePrerequisitesControl()">
+         </td><td>
+          <dtml-var expr="MakeHelpLink('prerequisites control')">
+         </td></tr>
+        </table>
        <dtml-else>
         <dtml-if expr="_.len(prerequisites) > 0">
          <dtml-in expr="prerequisites.keys()">
@@ -198,7 +210,13 @@
       </td>
       <td>
        <dtml-if expr="edit">
-        <dtml-var expr="MakeActionsControl()">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr valign="top"><td>
+          <dtml-var expr="MakeActionsControl()">
+         </td><td>
+          <dtml-var expr="MakeHelpLink('actions control')">
+         </td></tr>
+        </table>
        <dtml-else>
         <dtml-if expr="_.len(actions) > 0">
          <dtml-in name="actions">
@@ -223,7 +241,13 @@
       </td>
       <td>
        <dtml-if expr="edit">
-        <dtml-var expr="MakeCategoriesControl()">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr valign="top"><td>
+          <dtml-var expr="MakeCategoriesControl()">
+         </td><td>
+          <dtml-var expr="MakeHelpLink('categories control')">
+         </td></tr>
+        </table>
        <dtml-else>
         <dtml-if expr="_.len(categories) > 0">
          <dtml-in name="categories">

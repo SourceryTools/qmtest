@@ -5,7 +5,7 @@
 # Date:   2001-03-08
 #
 # Contents:
-#   Common QMTrack help message templates.
+#   Common QM help message templates.
 #
 # Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -33,15 +33,22 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
-@ help message
-This is some help text.
+@ attachment form
+Using this form, you can upload a file from your computer as a file
+attachment.  An attachment consists of the file's contents, plus the
+file name, the file's MIME type, and a short description.
 
-  first -- Item number one.
+ 1. In the **File** field, enter the path of the file you wish to
+    upload, or click on "Browse" to browse the contents of your file
+    system.
 
-  second -- Item number two.
+ 2. Specify the file's MIME type in the **Description** field.  Select
+    "Detect Automatically" to have %(program_name)s guess the MIME type
+    automatically based on the file's name, or enter a valid MIME type
+    in the edit control.
 
-And that's **absolutely** it!
-
+ 3. In the **Description** field, enter a short description of the
+    file's contents.
 
 ########################################################################
 # Local Variables:

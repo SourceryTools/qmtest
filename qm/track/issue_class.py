@@ -73,13 +73,14 @@ default_states = {
 class IidField(qm.fields.TextField):
     """A field containing the ID of an issue."""
 
-    def __init__(self, name):
+    def __init__(self, name, **attributes):
         """Create an IID field.
 
         The field has no default value."""
         
         # Do base-class initialization, with different defaults.
-        qm.fields.TextField.__init__(self, name, default_value=None)
+        attributes["default_value"] = None
+        apply(qm.fields.TextField.__init__, (self, name), attributes)
 
 
     def GetTypeDescription(self):
@@ -141,58 +142,98 @@ class IssueClass:
         # Create mandatory fields.
         
         # The issue id field.
-        field = IidField("iid")
-        field.SetAttribute("title", "Issue ID")
-        field.SetAttribute("initialize_only", "true")
+        field = IidField(
+            name="iid",
+            title="Issue ID",
+            description="A label that uniquely identifies the issue.",
+            initialize_only="true")
         # We do not want the iid to have a default value. It
         # always must be specified.
         field.UnsetDefaultValue()
         self.AddField(field)
 
         # The revision number field.
-        field = qm.fields.IntegerField("revision")
-        field.SetAttribute("title", "Revision Number")
-        field.SetAttribute("hidden", "true")
+        field = qm.fields.IntegerField(
+            name="revision",
+            title="Revision Number",
+            description="The cardinality of this revision of the issue.",
+            hidden="true")
         self.AddField(field)
 
         # The revision timestamp field.
-        field = qm.fields.TimeField("timestamp")
-        field.SetAttribute("title", "Last Modification Time")
-        field.SetAttribute("read_only", "true")
+        field = qm.fields.TimeField(
+            name="timestamp",
+            title="Modification Time",
+            description="The time when this revision was created.",
+            read_only="true")
         self.AddField(field)
 
         # The user id field.
-        field = qm.fields.UidField("user")
-        field.SetAttribute("title", "Last Modifying User")
-        field.SetAttribute("read_only", "true")
+        field = qm.fields.UidField(
+            name="user",
+            title="Modifying User",
+            description="The ID of the user who created this revision.",
+            read_only="true")
         self.AddField(field)
 
         # The summary field.
-        field = qm.fields.TextField("summary")
-        field.SetAttribute("title", "Summary")
-        field.SetAttribute("nonempty", "true")
+        field = qm.fields.TextField(
+            name="summary",
+            title="Summary",
+            description="A brief description of this issue.",
+            nonempty="true")
         self.AddField(field)
 
         # The categories field.
-        field = qm.fields.EnumerationField("categories", categories)
-        field.SetAttribute("title", "Categories")
+        field = qm.fields.EnumerationField(
+            name="categories",
+            enumeration=categories,
+            title="Categories",
+            description="""
+            The names of categories to which this issue belongs.  A
+            category is a group of issues that share a similar feature,
+            for instance all bugs in the particular component.
+            """)
         field = qm.fields.SetField(field)
         self.AddField(field)
 
         # The parents field.
-        field = qm.fields.SetField(IidField("parents"))
-        field.SetAttribute("hidden", "true")
+        field = IidField(
+            name="parents",
+            title="Parents",
+            description="""
+            The issue ID of the issue from which this issue was split,
+            or the issue IDs of the issues from which this issue was
+            joined.
+            """,
+            hidden="true")
+        field = qm.fields.SetField(field)
         self.AddField(field)
 
         # The children field.
-        field = qm.fields.SetField(IidField("children"))
-        field.SetAttribute("hidden", "true")
+        field = IidField(
+            name="children",
+            title="Children",
+            description="""
+            The issue IDs of issues into which this issue was split, or
+            the issue ID of the issue which resulted when this issue was
+            joined with other issues.
+            """,
+            hidden="true")
+        field = qm.fields.SetField(field)
         self.AddField(field)
 
         # The state field.
-        field = qm.fields.EnumerationField("state", states,
-                                          default_value="active")
-        field.SetAttribute("title", "State")
+        field = qm.fields.EnumerationField(
+            name="state",
+            enumeration=states,
+            title="State",
+            description="""
+            The state of this issue in the issue class's state model.
+            The state reflects the status of this issue within the set of
+            procedures by which an issue is normally resolved.
+            """,
+            default_value="active")
         self.AddField(field)
 
 

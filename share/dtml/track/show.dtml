@@ -65,7 +65,7 @@
          action="<dtml-var expr="MakeSubmitUrl()">"
          enctype="multipart/form-data"/>
    <dtml-comment><!--
-     In a form, iid and revision may not be represented as form
+     In a form, IID and revision may not be represented as form
      controls.  Nevertheless, we need the values of these fields to be
      accessible in a submitted form, so put them in hidden controls.
    --></dtml-comment>
@@ -92,7 +92,7 @@
       <dtml-comment><!--
         Show a row with the field label and a rendering of its value.
       --></dtml-comment>
-      <tr 
+      <tr valign="top"
           <dtml-if expr="field_errors.has_key(field_name)">
           class="field-error"
           <dtml-else>
@@ -103,20 +103,26 @@
         <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
        </td>
        <td width="75%">
-        <dtml-var expr="FormatFieldValue(field)">
-        <dtml-comment><!--
-          If there's an error message associated with this issue, display
-          it on the next row.
-        --></dtml-comment>
-        <dtml-if expr="field_errors.has_key(field_name)">
-         <br>
-         <span class="error">
-          <dtml-var expr="field_errors[field_name]">
-         </span>
-        </dtml-if>
-       </dtml-if>
-      </td>
-     </tr>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr valign="top"><td width="100%">
+          <dtml-var expr="FormatFieldValue(field)">
+          <dtml-comment><!--
+            If there's an error message associated with this issue,
+            display it on the next row.
+          --></dtml-comment>
+          <dtml-if expr="field_errors.has_key(field_name)">
+           <br>
+           <span class="error">
+            <dtml-var expr="field_errors[field_name]">
+           </span>
+          </dtml-if>
+         </td><td>
+          <dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp())">
+         </td></tr>
+        </table>  
+       </td>
+      </tr>
+     </dtml-if>
     </dtml-let>
     </dtml-in>
    </tbody>

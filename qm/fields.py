@@ -43,6 +43,8 @@ import os
 import qm
 import qm.xmlutil
 import string
+import structured_text
+import sys
 import time
 import urllib
 import web
@@ -312,6 +314,33 @@ class Field:
         raise qm.MethodShouldBeOverriddenError, "Field.MakeDomNodeForValue"
 
 
+    def GetHelp(self):
+        """Generate help text about this field in structured text format."""
+
+        raise qm.MethodShouldBeOverriddenError, "GetHelp"
+        
+
+    def GetHtmlHelp(self, edit=0):
+        """Generate help text about this field in HTML format.
+
+        'edit' -- If true, display information about editing controls
+        for this field."""
+
+        description = structured_text.to_html(self.GetDescription())
+        help = structured_text.to_html(self.GetHelp())
+
+        return '''
+        <h3>%s</h3>
+        <p><font size="-1">Refer to this field as <tt>%s</tt> in Python
+        expressions.</font></p>
+        <hr noshade size="2">
+        <h4>About This Field</h4>
+        %s
+        <hr noshade size="2">
+        <h4>About This Field\'s Values</h4>
+        %s
+        ''' % (self.GetTitle(), self.GetName(), description, help)
+
 
 ########################################################################
 
@@ -394,6 +423,17 @@ class IntegerField(Field):
         return qm.xmlutil.create_dom_text_element(document, "integer",
                                                   str(value))
 
+
+    def GetHelp(self):
+        help = '''
+            This field takes an integer value between %d and %d inclusive.
+        ''' % (-sys.maxint - 1, sys.maxint)
+        if self.HasDefaultValue():
+            help = help + '''
+            The default value of this field is %d.
+            ''' % self.GetDefaultValue()
+        return help
+    
 
 
 ########################################################################
@@ -534,7 +574,31 @@ class TextField(Field):
 
     def MakeDomNodeForValue(self, value, document):
         return qm.xmlutil.create_dom_text_element(document, "text", value)
-       
+
+
+    def GetHelp(self):
+        help = """
+            A text field.  """
+        if self.IsAttribute("structured"):
+            help = help + '''
+            The text is interpreted as structured text, and formatted
+            appropriately for the output device.  See "Structured Text
+            Formatting
+            Rules":http://www.python.org/sigs/doc-sig/stext.html for
+            more information.  '''
+        elif self.IsAttribute("verbatim"):
+            help = help + """
+            The text is stored verbatim; whitespace and indentation are
+            preserved.  """
+        if self.IsAttribute("nonempty"):
+            help = help + """
+            This field may not be empty.  """
+        if self.HasDefaultValue():
+            help = help + """
+            The default value of this field is "%s".
+            """ % self.GetDefaultValue()
+        return help
+
 
 
 ########################################################################
@@ -703,7 +767,9 @@ class SetField(Field):
                                         field_name=name,
                                         select_name=select_name,
                                         add_page=add_page,
-                                        initial_elements=initial_elements)
+                                        initial_elements=initial_elements,
+                                        window_width=600,
+                                        window_height=400)
             # All done.
             return form
 
@@ -763,6 +829,32 @@ class SetField(Field):
             item_node = contained_field.MakeDomNodeForValue(item, document)
             element.appendChild(item_node)
         return element
+
+
+    def GetHelp(self):
+        return """
+        A set field.  A set contains zero or more elements, all of the
+        same type.  The elements of the set are described below:
+
+        """ + self.GetContainedField().GetHelp()
+
+
+    def GetHtmlHelp(self, edit=0):
+        help = Field.GetHtmlHelp(self)
+        if edit:
+            # In addition to the standard generated help, include
+            # additional instructions about using the HTML controls.
+            help = help + help + """
+            <hr noshade size="2">
+            <h4>Modifying This Field</h4>
+        
+            <p>The list control shows the current elements of the set.
+            Each element is listed on a separate line.  Add a new
+            element to the set, click on the <i>Add...</i> button.  To
+            remove an element from the set, select it by clicking on it
+            in the list, and click on the <i>Remove</i> button.</p>
+            """
+        return help
 
 
 
@@ -934,7 +1026,7 @@ class AttachmentField(Field):
             <input type="button"
                    name="_upload_%s"
                    size="20"
-                   value=" Change "
+                   value=" Change... "
                    onclick="javascript: upload_file_%s()">
             ''' % (field_name, field_name)
             # A button to clear the attachment.
@@ -1070,6 +1162,39 @@ class AttachmentField(Field):
             return attachment.make_dom_node(None, document)
         else:
             return value.MakeDomNode(document)
+
+
+    def GetHelp(self):
+        return """
+        An attachment field.  An attachment consists of an uploaded
+        file, which may be of any file type, plus a short description.
+        The name of the file, as well as the file's MIME type, are also
+        stored.  The description is a single line of plain text.
+
+        An attachment need not be provided.  The field may be left
+        empty."""
+
+
+    def GetHtmlHelp(self, edit=0):
+        help = Field.GetHtmlHelp(self)
+        if edit:
+            # In addition to the standard generated help, include
+            # additional instructions about using the HTML controls.
+            help = help + """
+            <hr noshade size="2">
+            <h4>Modifying This Field</h4>
+        
+            <p>The text control describes the current value of this
+            field, displaying the attachment's description, file name,
+            and MIME type.  If the field is empty, the text control
+            displays "None".  The text control cannot be edited.</p>
+
+            <p>To upload a new attachment (replacing the previous one,
+            if any), click on the <i>Change...</i> button.  To clear the
+            current attachment and make the field empty, click on the
+            <i>Clear</i> button.</p>
+            """
+        return help
     
 
 
@@ -1275,6 +1400,26 @@ class EnumerationField(IntegerField):
                                                   enumeral_name)
 
 
+    def GetHelp(self):
+        help = """
+        An enumeration field.  The value of this field must be one of a
+        preselected set of enumerals.  The enumerals for this field are,
+
+        """
+        for name, value in self.__enumeration.items():
+            help = help + "            * %s (%d)\n\n" % (name, value)
+        help = help + """
+        An enumeral may be specified either by its name or by its
+        numerical value.
+        """
+        if self.HasDefaultValue():
+            default_value = self.GetDefaultValue()
+            help = help + """
+        The default value of this field is %s.
+            """ % self.ValueToName(default_value)
+        return help
+
+
 
 ########################################################################
 
@@ -1330,10 +1475,10 @@ class TimeField(TextField):
 class UidField(TextField):
     """A field containing a user ID."""
 
-    def __init__(self, name):
-        # FIXME: For now, since we don't have a user model, use a
-        # default value.
-        TextField.__init__(self, name, default_value="default_user")
+    def __init__(self, name, **attributes):
+        attributes["default_value"] = None
+        apply(TextField.__init__, (self, name), attributes)
+
 
     def GetTypeDescription(self):
         return "a user ID"

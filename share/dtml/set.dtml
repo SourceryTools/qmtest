@@ -41,7 +41,13 @@
       </p>
      </td>
      <td>
-      <dtml-var expr="MakeElementControl()">
+      <table border="0" cellpadding="0" cellspacing="4" width="100%">
+       <tr valign="top"><td width="100%">
+        <dtml-var expr="MakeElementControl()">
+       </td><td>
+        <dtml-var expr="MakeHelpLinkHtml(field.GetContainedField().GetHtmlHelp(edit=1))">
+       </td></tr>
+      </table>
      </td>
     </tr>
 

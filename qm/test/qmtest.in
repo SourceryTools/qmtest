@@ -57,9 +57,15 @@ def print_error_message(message):
 # script
 ########################################################################
 
+# Set the program name.
+qm.common.program_name = "QMTest"
+
 # Load QMTest diagnostics.
 diagnostic_file = qm.get_share_directory("diagnostics", "test.txt")
 qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
+# Load QMTest help messages.
+help_file = qm.get_share_directory("diagnostics", "test-help.txt")
+qm.diagnostic.help_set.ReadFromFile(help_file)
 
 # Load RC options.
 qm.rc.Load("test")

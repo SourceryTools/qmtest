@@ -163,12 +163,23 @@ class PageInfo:
         control.value = select.options[select.selectedIndex].value;
     }
 
+    var help_window = null;
+    function show_help(help_page)
+    {
+      if(help_window != null && !help_window.closed)
+        help_window.close();
+      help_window = window.open("", "help", "resizeable");
+      help_window.document.open("text/html", "replace");
+      help_window.document.write(help_page);
+      help_window.document.close();
+    }
+
     var debug_window = null;
     function debug(msg)
     {
       if(debug_window == null || debug_window.closed) {
         debug_window = window.open("", "debug", "resizable");
-        debug_window.document.open("text/plain");
+        debug_window.document.open("text/plain", "replace");
       }
       debug_window.document.writeln(msg);
     }
@@ -267,8 +278,12 @@ class PageInfo:
         return make_button_for_url(title, url)
 
 
-    def MakeHelpButton(self, tag, label="Help", **substitutions):
-        return apply(make_help_button, (tag, label), substitutions)
+    def MakeHelpLink(self, tag, label="Help", **substitutions):
+        return apply(make_help_link, (tag, label), substitutions)
+
+
+    def MakeHelpLinkHtml(self, help_text, label="Help"):
+        return make_help_link_html(help_text, label)
 
 
     def MakeImageUrl(self, image):
@@ -1639,7 +1654,8 @@ def make_set_control(form_name,
 
     # Construct the arguments to the JavaScript 'Window.open' function,
     # which specifies attributes of the popup window.
-    window_args = "'height=%d,width=%d'" % (window_height, window_width)
+    window_args = "'height=%d,width=%d,resizable'" \
+                  % (window_height, window_width)
     if add_request is not None:
         # A 'WebRequest' was specified.  Respond by opening a window
         # displaying the request.
@@ -1658,25 +1674,21 @@ def make_set_control(form_name,
         # HTML source was specified.  Write a function that opens a
         # popup window and writes the HTML page directly into it.   The
         # HTML page is encoded as a JavaScript string literal.
-        #
-        # This funcion closes the window and reopens it if it already
-        # exists.  This is necessary to work around bugs in various
-        # browsers. 
+
+        page_contents_var = "_page_contents_%d" % (__counter - 1)
         add_script = """
         <script language="JavaScript">
-        var popup_window = null;
-
-        function %s()
+        var %s = %s;
+        function %s ()
         {
-          if(popup_window != null && !popup_window.closed)
-            popup_window.close();
-          popup_window = window.open('', 'popup', %s);
-          popup_window.document.open();
-          popup_window.document.write(%s);
-          popup_window.document.close();
+          window.open('javascript: window.opener.%s;', 'popup', %s);
         }
         </script>
-        """ % (add_function, window_args, make_javascript_string(add_page))
+        """ % (page_contents_var,
+               make_javascript_string(add_page),
+               add_function,
+               page_contents_var,
+               window_args)
 
     # Arrange everything in a table to control the layout.
     return contents + '''
@@ -1733,11 +1745,37 @@ def make_javascript_string(text):
     return "'" + text + "'"
 
 
-def make_help_button(help_text_tag, label, **substitutions):
+def make_help_link(help_text_tag, label, **substitutions):
+    """Make a link to pop up help text.
+
+    'help_text_tag' -- A message tag for the help diagnostic.
+
+    'label' -- The help link label.
+
+    'substitutions' -- Substitutions to the help diagnostic."""
+    
+    # Construct the help text.
     help_text = apply(diagnostic.help_set.Generate,
                       (help_text_tag, "help", None),
                       substitutions)
+    # Convert it to HTML.
     help_text = qm.structured_text.to_html(help_text)
+    # Make the link.
+    return make_help_link_html(help_text, label)
+
+
+_help_counter = 0
+
+def make_help_link_html(help_text, label):
+    """Make a link to pop up help text.
+
+    'help_text' -- HTML source for the help text.
+
+    'label' -- The help link label."""
+
+    global _help_counter
+
+    # Wrap the help text in a complete HTML page.
     help_page = """
     <html>
      <head>
@@ -1745,23 +1783,28 @@ def make_help_button(help_text_tag, label, **substitutions):
       <meta http-equiv="Content-Style-Type" content="text/css"/>
       <link rel="stylesheet" type="text/css" href="/stylesheets/qm.css"/>
      </head>
-     <body class="help">%s</body>
+     <body class="help">
+      %s
+     </body>
     </head>
     </html>
     """ % help_text
+    # Embed the page in a JavaScript string literal.
     help_page = make_javascript_string(help_page)
-    # FIXME: Funciton name!
-    return """
+
+    # Construct the name for the JavaScript variable which will hold the
+    # help page. 
+    help_variable_name = "_help_text_%d" % _help_counter
+    _help_counter = _help_counter + 1
+
+    # Construct the link.
+    return '''
     <a href="javascript: void(0)"
-       onclick="show_help_1();">%s</a>
+       onclick="show_help(%s);">%s</a>
     <script language="JavaScript">
-    function show_help_1()
-    {
-      help_window = window.open("", "help", "");
-      help_window.document.write(%s);
-    }
+    var %s = %s;
     </script>
-    """ % (label, help_page)
+    ''' % (help_variable_name, label, help_variable_name, help_page)
 
 
 ########################################################################
