@@ -1,3 +1,17 @@
+2001-05-29  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (SetField.GetHtmlHelp): Don't add old help twice.
+	* qm/common.py (Enumeral.__cmp__): Check RHS against enumerals for
+	strings only.
+	* qm/track/issue_class.py (IidField.__init__): copy attributes.
+	(DiscussionField): New class.
+	* qm/track/issue.py (Issue.MakeDomElement): Compare value as string.
+	* qm/track/config.py (setup_idb_for_internal_use): Add discussion
+	field.
+	* qm/track/triggers/discussion.py: New file.
+	* qm/track/web/web.py (HistoryPageInfo.FormatRevisionDiff): Handle
+	set fields specially.
+	
 2001-05-28  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Mention scheduling across threads

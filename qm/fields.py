@@ -914,7 +914,7 @@ class SetField(Field):
         if edit:
             # In addition to the standard generated help, include
             # additional instructions about using the HTML controls.
-            help = help + help + """
+            help = help + """
             <hr noshade size="2">
             <h4>Modifying This Field</h4>
         

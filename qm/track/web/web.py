@@ -148,9 +148,42 @@ class HistoryPageInfo(PageInfo):
         for field in fields:
             field_name = field.GetName()
             value = revision1.GetField(field_name)
-            formatted_value = field.FormatValueAsHtml(value, "brief")
-            description = "%s changed to %s" % (field_name, formatted_value)
-            differences.append(description)
+
+            if isinstance(field, qm.fields.SetField):
+                # Treat set fields differently.  Rather than showing the
+                # entire field contents, show elements that have been
+                # added and removed.
+                previous_value = revision2.GetField(field_name)
+
+                # Show all elements in the previous revision's value but
+                # not in the current value, if any.
+                removed_elements = []
+                for el in previous_value:
+                    if el not in value:
+                        removed_elements.append(el)
+                if len(removed_elements) > 0:
+                    description = "removed from %s: " % field_name \
+                        + field.FormatValueAsHtml(removed_elements, "brief")
+                    differences.append(description)
+
+                # Now the same thing for elements added to the current
+                # revision. 
+                new_elements = []
+                for el in value:
+                    if el not in previous_value:
+                        new_elements.append(el)
+                if len(new_elements) > 0:
+                    description = "added to %s: " % field_name \
+                        + field.FormatValueAsHtml(new_elements, "brief")
+                    differences.append(description)
+
+            else:
+                # All other (non-set) field types.
+                formatted_value = field.FormatValueAsHtml(value, "brief")
+                description = "%s changed to %s" \
+                              % (field_name, formatted_value)
+                differences.append(description)
+
         # Build a complete string.
         return string.join(differences, "<br>\n")
 

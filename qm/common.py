@@ -138,11 +138,12 @@ class Enumeral:
             return 0
         except ValueError:
             # Probably, it's a string.
-            other = str(other)
-            if other not in self.__enumeration.keys():
+            if type(other) is types.StringType \
+               and other not in self.__enumeration.keys():
                 # It's a string that isn't in the enumeration.
                 raise ValueError, "\"%s\" isn't a valid enumeral" % other
             else:
+                other = str(other)
                 return cmp(self.__GetName(), other)
         else:
             return cmp(self.__value, other_as_int)

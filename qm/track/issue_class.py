@@ -40,6 +40,7 @@ import qm
 import qm.fields
 import qm.label
 import string
+import types
 
 ########################################################################
 # constants
@@ -103,6 +104,7 @@ class IidField(qm.fields.TextField):
         The field has no default value."""
         
         # Do base-class initialization, with different defaults.
+        attributes = attributes.copy()
         attributes["default_value"] = None
         apply(qm.fields.TextField.__init__, (self, name), attributes)
 
@@ -713,6 +715,109 @@ class StateField(qm.fields.EnumerationField):
             return en == value or str(en) in av
         # Return only matching enumerals.
         return filter(filter_function, enumerals)
+
+
+
+########################################################################
+
+class DiscussionField(qm.fields.SetField):
+    """A field for incremental text discussion of an issue.
+
+    This field is a set of text fields.  The normal controls for
+    manipulating a set are not shown, though.  Instead, the controls for
+    a text field are shown, and any text entered is added as a new item
+    in the discussion.
+
+    A 'qm.track.triggers.discussion.DiscussionTrigger' must be used with
+    this field.  This trigger, among other things, prepends a line to
+    each discussion element listing the user name and timestamp for the
+    element."""
+
+    def __init__(self, name, **attributes):
+        # Create the contained field, which is a text field.  Pass
+        # extra attributes to it.
+        contained_field = apply(qm.fields.TextField, (name, ), attributes)
+        # Now construct our base class, the set field.
+        apply(qm.fields.SetField.__init__, (self, contained_field))
+
+
+    def Validate(self, value):
+        # Normally, the value of a set field is a list, but we allow
+        # strings here too.  'DiscussionTrigger' will take the string
+        # and append it to the previous value of the field.
+        if type(value) is types.StringType:
+            return value
+        else:
+            return qm.fields.SetField.Validate(self, value)
+
+
+    def FormatValueAsHtml(self, value, style, name=None):
+        # Use default value if requested.
+        if value is None:
+            value = []
+        # Use the default field form field name if requested.
+        if name is None:
+            name = self.GetHtmlFormFieldName()
+
+        contained = self.GetContainedField()
+
+        # For read-only display styles, show a history of the
+        # conversation.  
+        if style in ["full", "brief"]:
+            # Use a table to achieve the indentation we want.
+            result = '''
+            <table border="0" cellpadding="4" cellspacing="4" columns="2">
+             <tbody>
+            '''
+            # Display the discussion elements in reverse order, with the
+            # most recent one first.
+            value = value[:]
+            value.reverse()
+            # Show each element.
+            for message in value:
+                # The first line shows the user and timestamp; format it
+                # specially. 
+                head, body = string.split(message, "\n", 1)
+                result = result + '''
+                <tr>
+                 <td colspan="2"><i>%s</i></td>
+                </tr>
+                <tr>
+                 <td>&nbsp;</td>
+                 <td>%s</td>
+                </tr>
+                ''' % (qm.web.escape(head),
+                       contained.FormatValueAsHtml(body, style))
+            result = result + '''
+             </tbody>
+            </table>
+            '''
+            return result
+            
+        # For editing styles, show the controls for the contained text
+        # field, not for the set.
+        elif style in ["new", "edit"]:
+            return contained.FormatValueAsHtml("", style, name)
+
+        # Everything else as a set.
+        else:
+            return qm.fields.SetField.FormatValueAsHtml(self, value,
+                                                        style, name)
+
+
+    def ParseFormValue(self, value):
+        # Since we show editing controls for the contained field, we
+        # need to parse the submitted value accordingly.
+        contained = self.GetContainedField()
+        return contained.ParseFormValue(value)
+
+
+    def GetHelp(self):
+        return """
+        A discussion field.  This field contains an ongoing discussion
+        of the issue.  You may add additional comments to the field, and
+        view the record of previous comments.
+        """
 
 
 

@@ -383,6 +383,7 @@ def setup_idb_for_internal_use():
     precondition -- A local session is open."""
 
     import triggers.notification
+    import triggers.discussion
 
     idb = get_idb()
 
@@ -427,6 +428,18 @@ def setup_idb_for_internal_use():
         """)
     field = qm.fields.SetField(field)
     icl.AddField(field)
+
+    field = qm.track.issue_class.DiscussionField(
+        name="follow_up",
+        title="Follow-up",
+        description="Follow-up discussion of this issue.",
+        structured="true")
+    icl.AddField(field)
+
+    trigger = triggers.discussion.DiscussionTrigger(
+        name="follow_up_discussion",
+        field_name="follow_up")
+    icl.RegisterTrigger(trigger)
 
     field = qm.fields.SetField(qm.fields.UidField(
         name="subscribers",

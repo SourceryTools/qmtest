@@ -292,7 +292,7 @@ class Issue:
             # Is it the same as the field's default?
             if field.HasDefaultValue() \
                and value == field.GetDefaultValue() \
-               and (value == "" or value == []):
+               and (str(value) == "" or str(value) == "[]"):
                 # Yes; suppress this field for brevity.
                 continue
 
