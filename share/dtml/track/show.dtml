@@ -139,7 +139,9 @@
     End the form, if necessary.
   --></dtml-comment>
   <dtml-if expr="IsForm()">
-   <input type="submit" value=" OK "/>
+   <input type="button" 
+          value=" OK "
+          onclick="document.form.submit();"/>
    <input type="button" 
           value=" Cancel "
           onclick="document.location = 

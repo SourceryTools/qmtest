@@ -1,5 +1,9 @@
 2001-06-11  Alex Samuel  <samuel@codesourcery.com>
 
+	* share/dtml/track/show.dtml: Use an ordinary button for OK.
+
+2001-06-11  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (WebServer.GetXmlRpcUrl): Use the explicitly-specified
 	host name.
 	(WebServer.Bind): Add messages.
