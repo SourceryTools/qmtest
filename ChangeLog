@@ -1,3 +1,11 @@
+2003-10-02  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* qm/test/share/dtds/result.dtd: Convert 'outcome' to an attribute.
+	* qm/test/result.py: Likewise.
+	* qm/test/classes/xml_result_stream.py: Likewise.
+	* tests/results_files/README: Report new xml result file format.
+	* tests/results_files/xml_results_v3.qmr: New reference results file.
+
 2003-10-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (get_extension_directories): Use ";" as the
