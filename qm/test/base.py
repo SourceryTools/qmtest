@@ -367,7 +367,11 @@ def get_class_arguments(klass):
         # Pull the first class off the list.
         c = classes.pop(0)
         # Add all of the new base classes to the end of the list.
-        classes.extend(c.__bases__)
+	# The __bases__ attribute is a tuple, not a list, so we
+	# must convert it to a list before using	"extend".  By
+	# Python 2.1, this restriction	was removed, but in order
+	# to support Python 1.5.2 we must obey the old constraints.
+        classes.extend(map(lambda x: x,  c.__bases__))
         # Add the arguments from this class.
         if c.__dict__.has_key("arguments"):
             arguments.extend(c.__dict__["arguments"])

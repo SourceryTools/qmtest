@@ -1,5 +1,9 @@
 2001-11-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (get_class_arguments): Retrofit to Python 1.5.2.
+
+2001-11-19  Mark Mitchell  <mark@codesourcery.com>
+
 	* Makefile.in (install): Quote directory names.
 	* install.py (scripts): Use .bat extension on Windows.
 	(install_package): Include .pyd files on Windows.
