@@ -255,13 +255,14 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <guibutton>Run</guibutton> menu and observe that the test now
    passes.</para>
 
-   <para>Creating a new test works in a similar way.  Click on the
-   <guilabel>Home</guilabel> link to return to the main &qmtest; page.
-   Then, select <guibutton>New Test</guibutton> from the
-   <guilabel>File</guilabel> menu to create a new test.  &qmtest;
-   displays a form that contains two fields: the test name, and the
-   test class.  The test name identifies the test; the test class
-   indicates what kind of test will be created.</para>
+   <para>Creating a new test works in a similar way.  Choose
+   <guilabel>Directory</guilabel> under the <guilabel>View</guilabel>
+   menu to return to the main &qmtest; page.  Then, select
+   <guibutton>New Test</guibutton> from the <guilabel>File</guilabel>
+   menu to create a new test.  &qmtest; displays a form that contains
+   two fields: the test name, and the test class.  The test name
+   identifies the test; the test class indicates what kind of test
+   will be created.</para>
 
    <para>Test names must be composed entirely of lowercase letters,
    numbers, the <quote>_</quote> character, and the <quote>.</quote>
@@ -281,30 +282,26 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <para>Enter <filename>command.test1</filename> for the test name.
    This will create a new test named <filename>test1</filename> in the
    <filename>command</filename> directory.  Choose
-   <classname>command.ExecTest</classname> as the test class.  This
-   kind of test runs a command and compares its actual output against
-   the expected output.  If they match, the test passes.  This test
-   class is useful for testing many programs.  Click on the
+   <classname>command.ShellCommandTest</classname> as the test class.
+   This kind of test runs a command and compares its actual output
+   against the expected output.  If they match, the test passes.  This
+   test class is useful for testing many programs.  Click on the
    <guibutton>Next</guibutton> button to continue.</para>
    
    <para>Now, &qmtest; will present you with a form that looks just
    like the form you used to edit <filename>exec1</filename>, except
    that the arguments are different.  The arguments are different
    because you're creating a different kind of test.  Enter
-   <literal>echo</literal> in the <guilabel>Program</guilabel> field.
-   Click on the <guibutton>Add Another</guibutton> button to add a program
-   argument and enter <literal>test</literal> in the box that appears.
-   At this point, you've told qmtest that you want to run the command
-   <command>echo test</command>.  This command will produce an output
-   (the word <literal>test</literal>) as output, so find the
-   <guilabel>Standard Output</guilabel> box and enter
-   <literal>test</literal> in this box.  Make sure to hit the
-   <keycap>Return</keycap> key after you type <literal>test</literal>;
-   the <command>echo</command> command will output a carriage return
-   after it prints the word <literal>test</literal>, so you must
-   indicate that you expect a carriage return.  When you are done,
-   click the <guibutton>OK</guibutton> button at the bottom of the
-   form.</para>
+   <literal>echo test</literal> in the <guilabel>Command</guilabel>
+   field.  This command will produce an output (the word
+   <literal>test</literal>), so find the <guilabel>Standard
+   Output</guilabel> box and enter <literal>test</literal> in this
+   box.  Make sure to hit the <keycap>Return</keycap> key after you
+   type <literal>test</literal>; the <command>echo</command> command
+   will output a carriage return after it prints the word
+   <literal>test</literal>, so you must indicate that you expect a
+   carriage return.  When you are done, click the
+   <guibutton>OK</guibutton> button at the bottom of the form.</para>
 
    <para>Now you can select <guibutton>This Test</guibutton> from the
    <guilabel>Run</guilabel> menu to run the test.</para>

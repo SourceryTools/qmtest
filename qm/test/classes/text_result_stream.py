@@ -81,8 +81,7 @@ class TextResultStream(FileResultStream):
             The "full" format is like "brief" except that all
             annotations are shown for tests as they are run.
 
-            The "stats" format is omits the failing tests section is
-            omitted."""),
+            The "stats" format omits the failing tests section."""),
         ]
     
     def __init__(self, arguments):

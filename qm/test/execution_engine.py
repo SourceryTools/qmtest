@@ -22,6 +22,7 @@ import qm.common
 import qm.queue
 from   qm.test.base import *
 import qm.test.cmdline
+import qm.test.database
 from   qm.test.context import *
 import qm.xmlutil
 from   result import *
@@ -39,14 +40,130 @@ class ExecutionEngine:
     A 'ExecutionEngine' object handles the execution of a collection
     of tests.
 
-    This class schedules the tests, plus the setup and cleanup of any
-    resources they require, across one or more targets.
+    This class schedules the tests across one or more targets.
 
     The shedule is determined dynamically as the tests are executed
     based on which targets are idle and which are not.  Therefore, the
     testing load should be reasonably well balanced, even across a
     heterogeneous network of testing machines."""
-    
+
+
+    class __TestStatus(object):
+        """A '__TestStatus' indicates whether or not a test has been run.
+
+        The 'outcome' slot indicates whether the test has not be queued so
+        that it can be run, has completed, or has not been processed at all.
+
+        If there are tests that have this test as a prerequisite, they are
+        recorded in the 'dependants' slot.
+
+        Ever test passes through the following states, in the following
+        order:
+
+        1. Initial
+
+           A test in this state has not yet been processed.  In this state,
+           the 'outcome' slot is 'None'.
+
+        2. Queued
+
+           A test in this state has been placed on the stack of tests
+           waiting to run.  In this state, the 'outcome' slot is
+           'QUEUED'.  Such a test may be waiting for prerequisites to
+           complete before it can run.
+
+        3. Ready
+
+           A test in this state is ready to run.  All prerequisites have
+           completed, and their outcomes were as expected.  In this
+           state, the 'outcome' slot is 'READY'.
+
+        4. Finished
+
+           A test in this state has finished running.  In this state, the
+           'outcome' slot is one of the 'Result.outcomes'.
+
+        The only exception to this order is that when an error is noted
+        (like a failure to load a test from the database, or a
+        prerequisite has an unexpected outcome) a test may jump to the
+        "finished" state without passing through intermediate states."""
+
+        __slots__ = "outcome", "dependants"
+
+        QUEUED = "QUEUED"
+        READY = "READY"
+
+        def __init__(self):
+
+            self.outcome = None
+            self.dependants = None
+
+
+        def GetState(self):
+            """Return the state of this test.
+
+            returns -- The state of this test, using the representation
+            documented above."""
+            
+            return self.outcome
+        
+        
+        def NoteQueued(self):
+            """Place the test into the "queued" state."""
+
+            assert self.outcome is None
+            self.outcome = self.QUEUED
+
+
+        def HasBeenQueued(self):
+            """Returns true if the test was ever queued.
+
+            returns -- True if the test has ever been on the queue.
+            Such a test may be ready to run, or may in fact have already
+            run to completion."""
+
+            return self.outcome == self.QUEUED or self.HasBeenReady()
+
+
+        def NoteReady(self):
+            """Place the test into the "ready" state."""
+
+            assert self.outcome is self.QUEUED
+            self.outcome = self.READY
+            
+
+        def HasBeenReady(self):
+            """Returns true if the test was ever ready.
+
+            returns -- True if the test was every ready to run.  Such a
+            test may have already run to completion."""
+
+            return self.outcome == self.READY or self.IsFinished()
+
+
+        def IsFinished(self):
+            """Returns true if the test is in the "finished" state.
+
+            returns -- True if this test is in the "finished" state."""
+
+            return not (self.outcome is None
+                        or self.outcome is self.READY
+                        or self.outcome is self.QUEUED)
+
+
+        def NoteDependant(self, test_id):
+            """Note that 'test_id' depends on 'self'.
+
+            'test_id' -- The name of a test.  That test has this test as a
+            prerequisite."""
+
+            if self.dependants is None:
+                self.dependants = [test_id]
+            else:
+                self.dependants.append(test_id)
+
+
+
     def __init__(self,
                  database,
                  test_ids,
@@ -61,7 +178,7 @@ class ExecutionEngine:
         
         'test_ids' -- A sequence of IDs of tests to run.  Where
         possible, the tests are started in the order specified.
-
+        
         'context' -- The context object to use when running tests.
 
         'targets' -- A sequence of 'Target' objects, representing
@@ -89,19 +206,11 @@ class ExecutionEngine:
         # There are no input handlers.
         self.__input_handlers = {}
         
-        # All of the targets are idle at first.
-        self.__idle_targets = targets[:]
         # There are no responses from the targets yet.
         self.__response_queue = qm.queue.Queue(0)
         # There no pending or ready tests yet.
-        self.__pending = []
-        self.__ready = []
         self.__running = 0
 
-        # The descriptor graph has not yet been created.
-        self.__descriptors = {}
-        self.__descriptor_graph = {}
-        
         self.__any_unexpected_outcomes = 0
         
         # Termination has not yet been requested.
@@ -121,7 +230,7 @@ class ExecutionEngine:
     def IsTerminationRequested(self):
         """Returns true if termination has been requested.
 
-        return -- True if Terminate has been called."""
+        returns -- True if Terminate has been called."""
 
         return self.__terminated
     
@@ -155,7 +264,7 @@ class ExecutionEngine:
 
             # Read responses until there are no more.
             self._Trace("Checking for final responses.")
-            while self._CheckForResponse(wait=0):
+            while self.__CheckForResponse(wait=0):
                 pass
             
             # Let all of the result streams know that the test run is
@@ -180,146 +289,399 @@ class ExecutionEngine:
 
         self.__input_handlers[fd] = function
         
-    
+
     def _RunTests(self):
-        """Run all of the tests.
 
-        This function assumes that the targets have already been
-        started.
+        num_tests = len(self.__test_ids)
 
-        The tests are run in the order that they were presented --
-        modulo requirements regarding prerequisites and any
-        nondeterminism introduced by running tests in parallel."""
+        # No tests have been started yet.
+        self.__num_tests_started = 0
 
-        # Create a directed graph where each node is a pair
-        # (count, descriptor).  There is an edge from one node
-        # to another if the first node is a prerequisite for the
-        # second.  Begin by creating the nodes of the graph.
+        self.__tests_iterator = iter(self.__test_ids)
+
+        # A map from the tests we are supposed to run to their current
+        # status.
+        self.__statuses = {}
         for id in self.__test_ids:
-            try:
-                descriptor = self.__database.GetTest(id)
-                self.__descriptors[id] = descriptor
-                self.__descriptor_graph[descriptor] = [0, []]
-                self.__pending.append(descriptor)
-            except:
-                result = Result(Result.TEST, id)
-                result.NoteException(cause = "Could not load test.",
-                                     outcome = Result.UNTESTED)
-                self._AddResult(result)
-                
-        # Create the edges.
-        for descriptor in self.__pending:
-            prereqs = descriptor.GetPrerequisites()
-            if prereqs:
-                for (prereq_id, outcome) in prereqs.items():
-                    if not self.__descriptors.has_key(prereq_id):
-                        # The prerequisite is not amongst the list of
-                        # tests to run.  In that case we do still run
-                        # the dependent test; it was explicitly
-                        # requested by the user.
-                        continue
-                    prereq_desc = self.__descriptors[prereq_id]
-                    self.__descriptor_graph[prereq_desc][1] \
-                        .append((descriptor, outcome))
-                    self.__descriptor_graph[descriptor][0] += 1
+            self.__statuses[id] = self.__TestStatus()
 
-            if not self.__descriptor_graph[descriptor][0]:
-                # A node with no prerequisites is ready.
-                self.__ready.append(descriptor)
+        # A stack of tests.  If a test has prerequisites, the
+        # prerequisites will appear nearer to the top of the stack.
+        self.__test_stack = []
+        # A hash-table giving the names of the tests presently on the
+        # stack.  The names are the keys; the values are unused.
+        self.__ids_on_stack = {}
 
-        # Iterate until there are no more tests to run.
-        while ((self.__pending or self.__ready)
-               and not self.IsTerminationRequested()):
-            # If there are no idle targets, block until we get a
-            # response.  There is nothing constructive we can do.
-            idle_targets = self.__idle_targets
-            if not idle_targets:
+        # Every target is in one of three states: busy, idle, or
+        # starving.  A busy target is running tests, an idle target is
+        # ready to run tests, and a starving target is ready to run
+        # tests, but no tests are available for it to run.  The value
+        # recorded in the table is 'None' for a starving target, true
+        # for an idle target, and false for a busy target.
+        self.__target_state = {}
+        for target in self.__targets:
+            self.__target_state[target] = 1
+        # The total number of idle targets.
+        self.__num_idle_targets = len(self.__targets)
+        
+        # Figure out what target groups are available.
+        self.__target_groups = {}
+        for target in self.__targets:
+            self.__target_groups[target.GetGroup()] = None
+        self.__target_groups = self.__target_groups.keys()
+        
+        # A hash-table indicating whether or not a particular target
+        # pattern is matched by any of our targets.
+        self.__pattern_ok = {}
+        # A map from target groups to patterns satisfied by the group.
+        self.__patterns = {}
+        # A map from target patterns to lists of test descriptors ready
+        # to run.
+        self.__target_pattern_queues = {}
+        
+        while self.__num_tests_started < num_tests:
+            # Process any responses and update the count of idle targets.
+            while self.__CheckForResponse(wait=0):
+                pass
+
+            # Now look for idle targets.
+            if self.__num_idle_targets == 0:
+                # Block until one of the running tests completes.
                 self._Trace("All targets are busy -- waiting.")
-                # Read a reply from the response_queue.
-                self._CheckForResponse(wait=1)
+                self.__CheckForResponse(wait=1)
                 self._Trace("Response received.")
-                # Keep going.
                 continue
 
-            # If there are no tests ready to run, but no tests are
-            # actually running at this time, we have
-            # a cycle in the dependency graph.  Pull the head off the
-            # pending queue and mark it UNTESTED, see if that helps.
-            if (not self.__ready and not self.__running):
-                descriptor = self.__pending[0]
-                self._Trace(("Dependency cycle, discarding %s."
-                             % descriptor.GetId()))
-                self.__pending.remove(descriptor)
-                self._AddUntestedResult(descriptor.GetId(),
-                                        qm.message("dependency cycle"))
-                self._UpdateDependentTests(descriptor, Result.UNTESTED)
-                continue
+            # Go through each of the idle targets, finding work for it
+            # to do.
+            self.__num_idle_targets = 0
+            for target in self.__targets:
+                if self.__target_state[target] != 1:
+                    continue
+                # Try to find work for the target.  If there is no
+                # available work, the target is starving.
+                if not self.__FeedTarget(target):
+                    self.__target_state[target] = None
+                else:
+                    is_idle = target.IsIdle()
+                    self.__target_state[target] = is_idle
+                    if is_idle:
+                        self.__num_idle_targets += 1
 
-            # There is at least one idle target.  Try to find something
-            # that it can do.
-            wait = 1
-            for descriptor in self.__ready:
-                for target in idle_targets:
-                    if target.IsInGroup(descriptor.GetTargetGroup()):
-                        # This test can be run on this target.  Remove
-                        # it from the ready list.
-                        self.__ready.remove(descriptor)
-                        # And from the pending list.
-                        try:
-                            self.__pending.remove(descriptor)
-                        except ValueError:
-                            # If the test is not pending, that means it
-                            # got pulled off for some reason
-                            # (e.g. breaking dependency cycles).  Don't
-                            # try to run it, it won't work.
-                            self._Trace(("Ready test %s not pending, skipped"
-                                         % descriptor.GetId()))
-                            wait = 0
-                            break
+        # Now all tests have been started; we just have wait for them
+        # all to finish.
+        while self.__running:
+            self.__CheckForResponse(wait=1)
 
-                        # Output a trace message.
-                        self._Trace(("About to run %s."
-                                     % descriptor.GetId()))
-                        # Run it.
-                        self.__running += 1
-                        target.RunTest(descriptor, self.__context)
-                        # If the target is no longer idle, remove it
-                        # from the idle_targets list.
-                        if not target.IsIdle():
-                            self._Trace("Target is no longer idle.")
-                            self.__idle_targets.remove(target)
-                        else:
-                            self._Trace("Target is still idle.")
-                        # We have done something useful on this
-                        # iteration.
-                        wait = 0
-                        break
 
-                if not wait:
-                    break
+    def __FeedTarget(self, target):
+        """Run a test on 'target'
 
-            # Output a trace message.
-            self._Trace("About to check for a response in %s mode."
-                        % ((wait and "blocking") or "nonblocking"))
+        'target' -- The 'Target' on which the test should be run.
+
+        returns -- True, iff a test could be found to run on 'target'.
+        False otherwise."""
+
+        self._Trace("Looking for a test for target %s" % target.GetName())
+
+        descriptor = None
+
+        # See if there is already a ready-to-run test for this target.
+        for pattern in self.__patterns.get(target.GetGroup(), []):
+            tests = self.__target_pattern_queues.get(pattern, [])
+            if tests:
+                descriptor = tests.pop()
+                break
+
+        # If there is no ready test, find one.
+        descriptor = self.__FindRunnableTest(target)
+        if descriptor is None:
+            # There are no more tests ready to run.
+            return 0
+                
+        target_name = target.GetName()
+        test_id = descriptor.GetId()
+        self._Trace("Running %s on %s" % (test_id, target_name))
+        assert self.__statuses[test_id].GetState() == self.__TestStatus.READY
+        self.__num_tests_started += 1
+        self.__running += 1
+        target.RunTest(descriptor, self.__context)
+        return 1
+
+
+    def __FindRunnableTest(self, target):
+        """Return a test that is ready to run.
+
+        'target' -- The 'Target' on which the test will run.
+        
+        returns -- the 'TestDescriptor' for the next available ready
+        test, or 'None' if no test could be found that will run on
+        'target'.
+
+        If a test with unsatisfied prerequisites is encountered, the
+        test will be pushed on the stack and the prerequisites processed
+        recursively."""
+
+        while 1:
+            if not self.__test_stack:
+                # We ran out of prerequisite tests, so pull a new one
+                # off the user's list.
+                try:
+                    test_id = self.__tests_iterator.next()
+                except StopIteration:
+                    # We're entirely out of fresh tests; give up.
+                    return None
+                if self.__statuses[test_id].HasBeenQueued():
+                    # This test has already been handled (probably
+                    # because it's a prereq of a test already seen).
+                    continue
+                # Try to add the new test to the stack.
+                if not self.__AddTestToStack(test_id):
+                    # If that failed, look for another test.
+                    continue
+                self._Trace("Added new test %s to stack" % test_id)
+
+            descriptor, prereqs = self.__test_stack[-1]
+            # First look at the listed prereqs.
+            if prereqs:
+                new_test_id = prereqs.pop()
+                # We must filter tests that are already in the process
+                # here; if we were to do it earlier, we would be in
+                # danger of being confused by dependency graphs like
+                # A->B, A->C, B->C, where we can't know ahead of time
+                # that A's dependence on C is unnecessary.
+                if self.__statuses[new_test_id].HasBeenQueued():
+                    # This one is already in process.  This is also what
+                    # a dependency cycle looks like, so check for that
+                    # now.
+                    if new_test_id in self.__ids_on_stack:
+                        self._Trace("Cycle detected (%s)"
+                                    % (new_test_id,))
+                        self.__AddUntestedResult \
+                                 (new_test_id,
+                                  qm.message("dependency cycle"))
+                    continue
+                else:
+                    self.__AddTestToStack(new_test_id)
+                    continue
+            else:
+                # Remove the test from the stack.
+                test_id = descriptor.GetId()
+                del self.__ids_on_stack[test_id]
+                self.__test_stack.pop()
+
+                # Check to see if the test is already ready to run, or
+                # has completed.  The first case occurs when the test
+                # has prerequisites that have completed after it was
+                # placed on the stack; the second occurs when a test
+                # is marked UNTESTED after a cycle is detected.
+                if self.__statuses[test_id].HasBeenReady():
+                    continue
+
+                # Now check the prerequisites.
+                prereqs = self.__GetPendingPrerequisites(descriptor)
+                # If one of the prerequisites failed, the test will have
+                # been marked UNTESTED.  Keep looking for a runnable
+                # test.
+                if prereqs is None:
+                    continue
+                # If there are prerequisites, request notification when
+                # they have completed.
+                if prereqs:
+                    for p in prereqs:
+                        self.__statuses[p].NoteDependant(test_id)
+                    # Keep looking for a runnable test.                        
+                    continue
+
+                # This test is ready to run.  See if it can run on
+                # target.
+                if not target.IsInGroup(descriptor.GetTargetGroup()):
+                    # This test can't be run on this target, but it can be
+                    # run on another target.
+                    self.__AddToTargetPatternQueue(descriptor)
+                    continue
                     
-            # See if any targets have finished their assignments.  If
-            # we did not schedule any additional work during this
-            # iteration of the loop, there's no point in continuing
-            # until some target finishes what it's doing.
-            self._CheckForResponse(wait=wait)
+                self.__statuses[descriptor.GetId()].NoteReady()
+                return descriptor
 
+
+    def __AddTestToStack(self, test_id):
+        """Adds 'test_id' to the stack of current tests.
+
+        returns -- True if the test was added to the stack; false if the
+        test could not be loaded.  In the latter case, an 'UNTESTED'
+        result is recorded for the test."""
+        
+        self._Trace("Trying to add %s to stack" % test_id)
+
+        # Update test status.
+        self.__statuses[test_id].NoteQueued()
+
+        # Load the descriptor.
+        descriptor = self.__GetTestDescriptor(test_id)
+        if not descriptor:
+            return 0
+
+        # Ignore prerequisites that are not going to be run at all.
+        prereqs_iter = iter(descriptor.GetPrerequisites())
+        relevant_prereqs = filter(self.__statuses.has_key, prereqs_iter)
+
+        # Store the test on the stack.
+        self.__ids_on_stack[test_id] = None
+        self.__test_stack.append((descriptor, relevant_prereqs))
+
+        return 1
+
+        
+    def __AddToTargetPatternQueue(self, descriptor):
+        """A a test to the appropriate target pattern queue.
+
+        'descriptor' -- A 'TestDescriptor'.
+
+        Adds the test to the target pattern queue indicated in the
+        descriptor."""
+
+        test_id = descriptor.GetId()
+        self.__statuses[test_id].NoteReady()
+
+        pattern = descriptor.GetTargetGroup()
+
+        # If we have not already determined whether or not this pattern
+        # matches any of the targets, do so now.
+        if not self.__pattern_ok.has_key(pattern):
+            self.__pattern_ok[pattern] = 0
+            for group in self.__target_groups:
+                if re.match(pattern, group):
+                    self.__pattern_ok[group] = 1
+                    patterns = self.__patterns.setdefault(group, [])
+                    patterns.append(pattern)
+        # If none of the targets can run this test, mark it untested.
+        if not self.__pattern_ok[pattern]:
+            self.__AddUntestedResult(test_id,
+                                     "No target matching %s." % pattern)
+            return
+
+        queue = self.__target_pattern_queues.setdefault(pattern, [])
+        queue.append(descriptor)
+
+
+    def __GetPendingPrerequisites(self, descriptor):
+        """Return pending prerequisite tests for 'descriptor'.
+
+        'descriptor' -- A 'TestDescriptor'.
+        
+        returns -- A list of prerequisite test ids that have to
+        complete, or 'None' if one of the prerequisites had an
+        unexpected outcome."""
+
+        needed = []
+
+        prereqs = descriptor.GetPrerequisites()
+        for prereq_id, outcome in prereqs.iteritems():
+            try:
+                prereq_status = self.__statuses[prereq_id]
+            except KeyError:
+                # This prerequisite is not being run at all.
+                continue
+
+            if prereq_status.IsFinished():
+                prereq_outcome = prereq_status.outcome
+                if outcome != prereq_outcome:
+                    # Failed prerequisite.
+                    self.__AddUntestedResult \
+                        (descriptor.GetId(),
+                         qm.message("failed prerequisite"),
+                         {'qmtest.prequisite': prereq_id,
+                          'qmtest.outcome': prereq_outcome,
+                          'qmtest.expected_outcome': outcome })
+                    return None
+            else:
+                # This prerequisite has not yet completed.
+                needed.append(prereq_id)
+
+        return needed
+
+
+    def __AddResult(self, result):
+        """Report the result of running a test or resource.
+        
+        'result' -- A 'Result' object representing the result of running
+        a test or resource."""
+
+        # Output a trace message.
+        id = result.GetId()
+        self._Trace("Recording %s result for %s." % (result.GetKind(), id))
+
+        # Find the target with the name indicated in the result.
+        if result.has_key(Result.TARGET):
+            for target in self.__targets:
+                if target.GetName() == result[Result.TARGET]:
+                    break
+            else:
+                assert 0, ("No target %s exists (test id: %s)"
+                           % (result[Result.TARGET], id))
+        else:
+            # Not all results will have associated targets.  If the
+            # test was not run at all, there will be no associated
+            # target.
+            target = None
+
+        # Having no target is a rare occurrence; output a trace message.
+        if not target:
+            self._Trace("No target for %s." % id)
+
+        # This target might now be idle.
+        if (target and target.IsIdle()):
             # Output a trace message.
-            self._Trace("Done checking for responses.")
+            self._Trace("Target is now idle.\n")
+            self.__target_state[target] = 1
+            self.__num_idle_targets += 1
+            
+        # Only tests have expectations or scheduling dependencies.
+        if result.GetKind() == Result.TEST:
+            # Record the outcome for this test.
+            test_status = self.__statuses[id]
+            test_status.outcome = result.GetOutcome()
 
-        # Any tests that are still pending are untested, unless there
-        # has been an explicit request that we exit immediately.
-        if not self.IsTerminationRequested():
-            for descriptor in self.__pending:
-                self._AddUntestedResult(descriptor.GetId(),
-                                        qm.message("execution terminated"))
+            # If there were tests waiting for this one to complete, they
+            # may now be ready to execute.
+            if test_status.dependants:
+                for dependant in test_status.dependants:
+                    if not self.__statuses[dependant].HasBeenReady():
+                        descriptor = self.__GetTestDescriptor(dependant)
+                        if not descriptor:
+                            continue
+                        prereqs = self.__GetPendingPrerequisites(descriptor)
+                        if prereqs is None:
+                            continue
+                        if not prereqs:
+                            # All prerequisites ran and were satisfied.
+                            # This test can now run.
+                            self.__AddToTargetPatternQueue(descriptor)
+                # Free the memory consumed by the list.
+                del test_status.dependants
+
+            # Check for unexpected outcomes.
+            if result.GetKind() == Result.TEST:
+                if (self.__expectations.get(id, Result.PASS)
+                    != result.GetOutcome()):
+                    self.__any_unexpected_outcomes = 1
+
+            # Any targets that were starving may now be able to find
+            # work.
+            for t in self.__targets:
+                if self.__target_state[t] is None:
+                    self.__target_state[t] = 1
+            
+        # Output a trace message.
+        self._Trace("Writing result for %s to streams." % id)
+
+        # Report the result.
+        for rs in self.__result_streams:
+            rs.WriteResult(result)
 
 
-    def _CheckForResponse(self, wait):
+    def __CheckForResponse(self, wait):
         """See if any of the targets have completed a task.
 
         'wait' -- If false, this function returns immediately if there
@@ -335,20 +697,13 @@ class ExecutionEngine:
                 # Output a trace message.
                 self._Trace("Got %s result for %s from queue."
                              % (result.GetKind(), result.GetId()))
-                # Handle it.
-                self._AddResult(result)
+                # Record the result.
+                self.__AddResult(result)
                 if result.GetKind() == Result.TEST:
                     assert self.__running > 0
                     self.__running -= 1
                 # Output a trace message.
                 self._Trace("Recorded result.")
-                # If this was a test result, there may be other tests that
-                # are now eligible to run.
-                if result.GetKind() == Result.TEST:
-                    # Get the descriptor for this test.
-                    descriptor = self.__descriptors[result.GetId()]
-                    # Iterate through each of the dependent tests.
-                    self._UpdateDependentTests(descriptor, result.GetOutcome())
                 return result
             except qm.queue.Empty:
                 # If there is nothing in the queue, then this exception will
@@ -371,105 +726,8 @@ class ExecutionEngine:
                 continue
 
 
-    def _UpdateDependentTests(self, descriptor, outcome):
-        """Update the status of tests that depend on 'node'.
-
-        'descriptor' -- A test descriptor.
-
-        'outcome' -- The outcome associated with the test.
-
-        If tests that depend on 'descriptor' required a particular
-        outcome, and 'outcome' is different, mark them as untested.  If
-        tests that depend on 'descriptor' are now eligible to run, add
-        them to the '__ready' queue."""
-
-        node = self.__descriptor_graph[descriptor]
-        for (d, o) in node[1]:
-            # Find the node for the dependent test.
-            n = self.__descriptor_graph[d]
-            # If some other prerequisite has already had an undesired
-            # outcome, there is nothing more to do.
-            if n[0] == 0:
-                continue
-
-            # If the actual outcome is not the outcome that was
-            # expected, the dependent test cannot be run.
-            if outcome != o:
-                try:
-                    # This test will never be run.
-                    n[0] = 0
-                    self.__pending.remove(d)
-                    # Mark it untested.
-                    self._AddUntestedResult(d.GetId(),
-                                            qm.message("failed prerequisite"),
-                                            { 'qmtest.prequisite' :
-                                              descriptor.GetId(),
-                                              'qmtest.outcome' : outcome,
-                                              'qmtest.expected_outcome' : o })
-                    # Recursively remove tests that depend on d.
-                    self._UpdateDependentTests(d, Result.UNTESTED)
-                except ValueError:
-                    # This test has already been taken off the pending queue;
-                    # assume a result has already been recorded.  This can
-                    # happen when we're breaking dependency cycles.
-                    pass
-            else:
-                # Decrease the count associated with the node, if
-                # the test has not already been declared a failure.
-                n[0] -= 1
-                # If this was the last prerequisite, this test
-                # is now ready.
-                if n[0] == 0:
-                    self.__ready.append(d)
-                    
-    
-    def _AddResult(self, result):
-        """Report the result of running a test or resource.
-
-        'result' -- A 'Result' object representing the result of running
-        a test or resource."""
-
-        # Output a trace message.
-        self._Trace("Recording %s result for %s."
-                    % (result.GetKind(), result.GetId()))
-
-        # Find the target with the name indicated in the result.
-        if result.has_key(Result.TARGET):
-            for target in self.__targets:
-                if target.GetName() == result[Result.TARGET]:
-                    break
-        else:
-            # Not all results will have associated targets.  If the
-            # test was not run at all, there will be no associated
-            # target.
-            target = None
-
-        # Having no target is a rare occurrence; output a trace message.
-        if not target:
-            self._Trace("No target for %s." % result.GetId())
-                        
-        # Check for unexpected outcomes.
-        if result.GetKind() == Result.TEST  \
-           and (self.__expectations.get(result.GetId(), Result.PASS)
-                != result.GetOutcome()):
-            self.__any_unexpected_outcomes = 1
-            
-        # This target might now be idle.
-        if (target and target not in self.__idle_targets
-            and target.IsIdle()):
-            # Output a trace message.
-            self._Trace("Target is now idle.\n")
-            self.__idle_targets.append(target)
-
-        # Output a trace message.
-        self._Trace("Writing result for %s to streams." % result.GetId())
-
-        # Report the result.
-        for rs in self.__result_streams:
-            rs.WriteResult(result)
-
-
-    def _AddUntestedResult(self, test_name, cause, annotations={}):
+    def __AddUntestedResult(self, test_name, cause, annotations={},
+                            exc_info = None):
         """Add a 'Result' indicating that 'test_name' was not run.
 
         'test_name' -- The label for the test that could not be run.
@@ -477,14 +735,44 @@ class ExecutionEngine:
         'cause' -- A string explaining why the test could not be run.
 
         'annotations' -- A map from strings to strings giving
-        additional annotations for the result."""
+        additional annotations for the result.
 
-        # Create the result.
-        result = Result(Result.TEST, test_name, Result.UNTESTED, annotations)
-        result[Result.CAUSE] = cause
-        self._AddResult(result)
+        'exc_info' -- If this test could not be tested due to a thrown
+        exception, 'exc_info' is the result of 'sys.exc_info()' when the
+        exception was caught.  'None' otherwise."""
+
+        # Remember that this test was started.
+        self.__num_tests_started += 1
+
+        # Create and record the result.
+        result = Result(Result.TEST, test_name, annotations = annotations)
+        if exc_info:
+            result.NoteException(exc_info, cause, Result.UNTESTED)
+        else:
+            result.SetOutcome(Result.UNTESTED, cause)
+        self.__AddResult(result)
 
 
+    ### Utility methods.
+
+    def __GetTestDescriptor(self, test_id):
+        """Return the 'TestDescriptor' for 'test_id'.
+
+        returns -- The 'TestDescriptor' for 'test_id', or 'None' if the
+        descriptor could not be loaded.
+
+        If the database cannot load the descriptor, an 'UNTESTED' result
+        is recorded for 'test_id'."""
+
+        try:
+            return self.__database.GetTest(test_id)
+        except:
+            self.__AddUntestedResult(test_id,
+                                     "Could not load test.",
+                                     exc_info = sys.exc_info())
+            return None
+        
+        
     def _Trace(self, message):
         """Write a trace 'message'.
 

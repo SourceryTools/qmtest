@@ -1,3 +1,17 @@
+2003-07-31  Nathaniel Smith  <njs@codesourcery.com>
+	    Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/execution_engine.py: Rewrite to improve scalability.
+	* test/regress/bad_target1: New test.
+	* test/regress/bad_target2: Likewise.
+	* test/regress/nocycle1: Likewise.
+	* test/regress/nocycle2: Likewise.
+	* benchmarks/throughput: New benchmark.
+
+	* qm/test/classes/text_result_stream.py (TextResultStream): Fix
+	typo in documentation.
+	* qm/test/doc/tour.xml: Update instructions to match GUI changes.
+	
 2003-07-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Recommend Mozilla, even on Windows.  Mention use of
