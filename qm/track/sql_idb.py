@@ -66,13 +66,14 @@ SQL-based implementation of the issue database.
 
 from   issue import *
 from   issue_class import *
+import qm.track
 import string
 
 ########################################################################
 # classes
 ########################################################################
 
-class SqlIdb:
+class SqlIdb(qm.track.IdbBase):
     """Generic SQL IDB implementation.
 
     An instance of this class represents a connections to an IDB.  Any
@@ -91,6 +92,11 @@ class SqlIdb:
     
     """
     
+
+    def __init__(self):
+        # Perform base class initialization.
+        qm.track.IdbBase.__init__(self)
+
 
     def GetIssueClass(self, name):
         """Return the issue class named by 'name'."""
@@ -137,6 +143,8 @@ class SqlIdb:
         'issue' -- The new issue.  The revision number is ignored and
         set to zero.
 
+        returns -- A true value if the addition succeeded.
+
         precondition -- The issue class of 'issue' must occur in this
         IDB, and fields of 'issue' must match the class's."""
 
@@ -148,11 +156,13 @@ class SqlIdb:
             raise ValueError, "new issue in a class not in this IDB"
         # FIXME: Check iid uniqueness.
         # Insert the first revision.
-        self.__InsertIssue(issue_class, issue)
+        return self.__InsertIssue(issue_class, issue)
 
 
     def AddRevision(self, issue):
         """Add a revision of an existing issue to the database.
+
+        returns -- A true value if the addition succeeded.
 
         'issue' -- A new revision of an existing issue.  The revision
         number is ignored and replaced with the next consecutive one
@@ -161,10 +171,11 @@ class SqlIdb:
         issue_class = issue.GetClass()
         # Find the current revision, and assign the next revision
         # number to 'issue'.
-        next_revision = self.GetCurrentRevisionNumber(issue.GetId()) + 1
-        issue.SetField("revision", next_revision)
+        current = self.GetIssue(issue.GetId(), issue_class=issue_class)
+        next_revision_number = current.GetRevision() + 1
+        issue.SetField("revision", next_revision_number)
         # Insert the revision.
-        self.__InsertIssue(issue_class, issue)
+        return self.__InsertIssue(issue_class, issue, current)
 
 
     def GetIssueClasses(self):
@@ -182,6 +193,8 @@ class SqlIdb:
         'issue_class' -- If 'None', all issue classes are searched for
         'iid'.  If an issue class name or 'IssueClass' instance are
         given, only that issue class is used.
+
+        returns -- An 'Issue' instance.
 
         raises -- 'KeyError' if an issue with 'iid' cannot be found."""
 
@@ -205,7 +218,7 @@ class SqlIdb:
             where_clause = where_clause + " AND revision = %d" % revision
 
         # Query each class for a matching SELECT.
-        results = None
+        results = []
         for icl in classes_to_search:
             results = self.__SelectRows(icl, where_clause)
             # Found it?  Stop searching.
@@ -215,7 +228,7 @@ class SqlIdb:
                 found_in_issue_class = icl
                 break
 
-        if results == None:
+        if len(results) == 0:
             # The issue was not found.
             if revision == None:
                 raise KeyError, "no issue with IID '%s' found" % iid
@@ -237,8 +250,18 @@ class SqlIdb:
             assert len(results) == 1
             result = results[0]
 
-        # Found it; all done.
-        return self.__BuildIssueFromRow(found_in_issue_class, result)
+        # Found it; construct the issue.
+        issue = self.__BuildIssueFromRow(found_in_issue_class, result)
+        # Invoke get triggers.
+        trigger_result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
+        # Check the trigger result.
+        if not trigger_result:
+            # The trigger vetoed the retrieval, so behave as if the
+            # issue was nout found.
+            raise KeyError, "no revision with IID '%s' found" % iid
+        # FIXME: Do something with outcomes.
+        # All done.
+        return issue
 
 
     def GetAllRevisions(self, iid, issue_class=None):
@@ -284,10 +307,16 @@ class SqlIdb:
             raise KeyError, "no issue with IID '%s' found" % iid
 
         # Found it; convert rows into issues.
-        result = []
+        issues = []
         for row in rows:
-            result.append(self.__BuildIssueFromRow(found_in_issue_class, row))
-        return result
+            issue = self.__BuildIssueFromRow(found_in_issue_class, row)
+            # Invoke get triggers.
+            trigger_result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
+            # Keep the issue only if the trigger passed it.
+            if trigger_result:
+                issues.append(issue)
+            # FIXME: Do something with outcomes.
+        return issues
 
 
     def GetCurrentRevisionNumber(self, iid):
@@ -303,47 +332,6 @@ class SqlIdb:
 
         'current_revision_only -- If true, don't match revisions other
         than the current revision of each issue."""
-
-        raise NotImplementedError
-
-
-    def RegisterTrigger(self, type, trigger):
-        """Register a trigger.
-
-        'type' -- The type is a string indicating the trigger type.
-
-           * '"get"' triggers are invoked on issue records that are
-             retrieved or returned as query results.  
-
-           * '"preupdate"' triggers are invoked before an issue is
-             updated.  
-
-           * '"postupdate"' triggers are invoked after an issue is
-             updated.  
-
-         'trigger' -- The trigger, a callable object.  The trigger
-         takes two arguments, both instances of 'IssueRecord'.
-
-         The same trigger may be registered more than once for each
-         type, or for multiple types."""
-
-        raise NotImplementedError
-
-
-    def UnregisterTrigger(self, type, trigger):
-        """Unregister a trigger.
-
-        'type' -- If 'None', all instances of 'trigger' are
-        unregistered.  Otherwise, only instances matching 'type' are
-        unregistered.
-
-        'trigger' -- The trigger to unregister."""
-
-        raise NotImplementedError
-
-
-    def GetTriggers(self, type):
-        """Return a sequence registered triggers of type 'type'."""
 
         raise NotImplementedError
 
@@ -404,8 +392,29 @@ class SqlIdb:
         self.GetCursor().execute(sql_statement)
         
 
-    def __InsertIssue(self, issue_class, issue):
-        """Insert 'issue' into 'issue_class'."""
+    def __InsertIssue(self, issue_class, issue, previous_issue=None):
+        """Insert 'issue' into 'issue_class'.
+
+        Invokes preupdate and postupdate triggers.
+
+        'issue_class' -- The class into which to insert the issue.
+
+        'issue' -- The 'Issue' instance to insert.
+
+        'previous_issue' -- If this is not the first revision of a new
+        issue, the previous current revision of the same issue.
+
+        returns -- A true value if the insert succeeded, or a false
+        value if it was vetoed by a trigger."""
+
+        # Invoke preupdate triggers.
+        result, outcomes = \
+                self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
+        # FIXME: Do something with outcomes.
+        # Did a trigger veto the update?
+        if not result:
+            # Yes; bail.
+            return 0
 
         # The name of the table containing this class.
         table_name = self.__GetTableName(issue_class)
@@ -430,6 +439,12 @@ class SqlIdb:
                 self.__AddSetFieldContents(cursor, field, issue)
         # Delete the cursor to commit the results.
         del cursor
+
+        # Invoke postupdate triggers.
+        outcomes = self._IdbBase__InvokePostupdateTriggers(issue,
+                                                           previous_issue)
+        # FIXME: Do something with outcomes.
+        return 1
 
 
     def __SelectRows(self, issue_class, where_clause):

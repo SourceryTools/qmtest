@@ -35,6 +35,7 @@
 # imports
 ########################################################################
 
+from idb import *
 from issue_class import *
 from issue import *
 

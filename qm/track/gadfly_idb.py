@@ -77,6 +77,9 @@ class GadflyIdb(sql_idb.SqlIdb):
         'create_idb' -- If true, creates a new IDB from scratch.
         Otherwise, connects to an existing IDB."""
 
+        # Perform base class initialiation.
+        sql_idb.SqlIdb.__init__(self)
+
         # Store away the path to the database.
         self.path = path
         # Create or connect to the Gadfly database.

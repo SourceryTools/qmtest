@@ -1,3 +1,37 @@
+2001-01-07  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/__init__.py: Import idb.
+	* qm/track/idb.py: New file.
+	* qm/track/sql_idb.py (SqlIdb): Drive from IdbBase.
+	(SqlIdb.__init__): Initialize base class.
+	(SqlIdb.AddIssue): Process triggers.  Return result code.
+	(SqlIdb.AddRevision): Likewise.
+	(SqlIdb.GetIssue): Process triggers.
+	(SqlIdb.GetAllRevisions): Likewise.
+	(SqlIdb.RegisterTrigger): Remove.
+	(SqlIdb.UnregisterTrigger): Likewise.
+	(SqlIdb.GetTriggers): Likewise.
+	(SqlIdb.__InsertIssue): New method.
+	* qm/track/gadfly_idb.py (GadflyIdb.__init__): Initialize base class.
+	* qm/track/memory_idb.py (MemoryIdb): Derive from IdbBase.
+	(MemoryIdb.__init__): Initialize base class.
+	(MemoryIdb.AddIssue): Process triggers.  Return result code.
+	(MemoryIdb.AddRevision): Likewise.
+	(MemoryIdb.GetIssue): Process triggers.
+	(MemoryIdb.GetAllRevisions): Likewise.
+	(MemoryIdb.RegisterTrigger): Remove.
+	(MemoryIdb.UnregisterTrigger): Likewise.
+	(MemoryIdb.GetTriggers): Likewise.
+	(MemoryIdb.__InsertIssue): New method.
+	* qm/track/test.py (TestPreupdateTrigger): New class.
+	(test_preupdate_trigger): New test.
+	(TestGetTrigger): New class.
+	(test_get_trigger): New test.
+	(TestPostupdateTrigger): New class.
+	(test_postupdate_trigger): New test.
+	(regression_tests): Add new tests.
+	Run memory IDB tests first.
+
 2001-01-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (MutexLockError): New class.

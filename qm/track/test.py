@@ -262,6 +262,161 @@ def test_attachments():
     return 1
 
 
+class TestPreupdateTrigger(qm.track.Trigger):
+    """Trigger implementation for testing preupdate triggers.
+
+    Rejects issues whose iids start with the letter x."""
+
+    def __init__(self):
+        qm.track.Trigger.__init__(self, "test preupdate trigger")
+
+
+    def __call__(self, issue, previous_issue):
+        if issue.GetId()[0] == 'x':
+            return qm.track.TriggerOutcome(self, 0,
+                                           "issue ID may not start with x")
+        else:
+            return qm.track.TriggerOutcome(self, 1)
+
+
+
+def test_preupdate_trigger():
+    """Test preupdate triggers.
+
+    Register an instance of 'TestPreupdateTrigger'.  Test that an issue
+    may not be added with the iid "xxx", but that "www" and "yyy" are
+    accepted."""
+
+    idb = idb_impl(idb_path)
+    idb.RegisterTrigger("preupdate", TestPreupdateTrigger())
+    icl = idb.GetIssueClass("test_class")
+    # Should be able to add an issue with iid "www".
+    if not idb.AddIssue(qm.track.Issue(icl, "www")):
+        return 0
+    # Should not be able to add an issue with iid "xxx".
+    if idb.AddIssue(qm.track.Issue(icl, "xxx")):
+        return 0
+    # Should be able to add an issue with iid "yyy".
+    if not idb.AddIssue(qm.track.Issue(icl, "yyy")):
+        return 0
+    # The issue "www" should have been added successfully.
+    try:
+        idb.GetIssue("www", issue_class=icl)
+    except KeyError:
+        return 0
+    # The issue "xxx" should not have been added.
+    try:
+        idb.GetIssue("xxx", issue_class=icl)
+        return 0
+    except KeyError:
+        pass
+    # The issue "yyy" should have been added successfully.
+    try:
+        idb.GetIssue("yyy", issue_class=icl)
+    except KeyError:
+        return 0
+    # All done.
+    return 1
+
+
+class TestGetTrigger(qm.track.Trigger):
+    """Trigger implementation for testing get triggers.
+
+    Rejects issues with the iid "www"."""
+
+    def __init__(self):
+        qm.track.Trigger.__init__(self, "test get trigger")
+
+
+    def __call__(self, issue, previous_issue):
+        assert previous_issue == None
+        iid = issue.GetId()
+        return qm.track.TriggerOutcome(self, iid != "www")
+
+
+
+def test_get_trigger():
+    """Test get triggers.
+
+    Register an instance of 'TestGetTrigger'.  Test that the issue
+    with iid "www" is accessible before, and no longer accessible
+    afterwards.  Test that another issue is accessible afterwards."""
+
+    idb = idb_impl(idb_path)
+    # The issue "www" should be accessible.
+    try:
+        idb.GetIssue("www")
+    except KeyError:
+        return 0
+    idb.RegisterTrigger("get", TestGetTrigger())
+    # The issue "www" should no longer be accessible.
+    try:
+        idb.GetIssue("www")
+        return 0
+    except KeyError:
+        pass
+    # The issue "yyy" should still be accessible.
+    try:
+        idb.GetIssue("yyy")
+    except KeyError:
+        return 0
+    # All done.
+    return 1
+
+
+class TestPostupdateTrigger(qm.track.Trigger):
+    """Trigger implementation for testing postupdate triggers.
+
+    Stores away the most recent summary for each iid it has seen."""
+
+    def __init__(self):
+        qm.track.Trigger.__init__(self, "test postupdate trigger")
+        self.summary_map = {}
+
+
+    def __call__(self, issue, previous_issue):
+        assert (previous_issue == None and issue.GetRevision() == 0) \
+               or (issue.GetRevision() == previous_issue.GetRevision() + 1)
+        summary = issue.GetField("summary")
+        self.summary_map[issue.GetId()] = summary
+
+
+
+def test_postupdate_trigger():
+    """Test postupdate triggers.
+
+    Register an instance of 'TestPostupdateTrigger'.  Add a few issue
+    revisions, and make sure the trigger was called."""
+
+    idb = idb_impl(idb_path)
+    # Create and register the trigger.
+    trigger = TestPostupdateTrigger()
+    idb.RegisterTrigger("postupdate", trigger)
+    # Add a new issue.
+    icl = idb.GetIssueClass("test_class")
+    issue = qm.track.Issue(icl, "tpt1")
+    issue.SetField("summary", "value 1")
+    idb.AddIssue(issue)
+    # Add another revision of it.
+    issue.SetField("summary", "value 2")
+    idb.AddRevision(issue)
+    # And another new issue.
+    issue = qm.track.Issue(icl, "tpt2")
+    issue.SetField("summary", "value 3")
+    idb.AddIssue(issue)
+    # Make sure the revision numbers were recorded when the trigger
+    # was called.
+    try:
+        if trigger.summary_map["tpt1"] != "value 2":
+            return 0
+        if trigger.summary_map["tpt2"] != "value 3":
+            return 0
+    except KeyError:
+        return 0
+    # All done.
+    return 1
+
+
 regression_tests = [
     test_enumeration_field_1,
     test_issue_class_name,
@@ -281,19 +436,22 @@ regression_tests = [
     test_add_issues,
     test_get_issues,
     test_attachments,
+    test_preupdate_trigger,
+    test_get_trigger,
+    test_postupdate_trigger,
     ]
 
 
 if __name__ == "__main__":
     failures = 0
 
-    print "Testing Gadfly IDB"
-    idb_impl = qm.track.gadfly_idb.GadflyIdb
+    print "testing memory IDB"
+    idb_impl = qm.track.memory_idb.MemoryIdb
     failures = failures + qm.regression_test.\
                run_regression_test_driver(regression_tests)
 
-    print "Testing memory IDB"
-    idb_impl = qm.track.memory_idb.MemoryIdb
+    print "\ntesting Gadfly IDB"
+    idb_impl = qm.track.gadfly_idb.GadflyIdb
     failures = failures + qm.regression_test.\
                run_regression_test_driver(regression_tests)
 

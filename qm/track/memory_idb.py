@@ -53,7 +53,7 @@ import types
 # classes
 ########################################################################
 
-class MemoryIdb:
+class MemoryIdb(qm.track.IdbBase):
 
     # Issues and issue classes are stored in the following attributes:
     #
@@ -73,6 +73,8 @@ class MemoryIdb:
         'create_idb' -- If true, creates a new IDB from scratch at the
         specified path.  Otherwise, loads in an existing IDB."""
 
+        # Perform base class initialization.
+        qm.track.IdbBase.__init__(self)
         # Store away the path.
         self.path = path
         # If this is a new IDB, create the directory to contain it.
@@ -147,7 +149,10 @@ class MemoryIdb:
         set to zero.
 
         precondition -- The issue class of 'issue' must occur in this
-        IDB, and fields of 'issue' must match the class's."""
+        IDB, and fields of 'issue' must match the class's.
+
+        returns -- A true value if the insert succeeded, or a false
+        value if it was vetoed by a trigger."""
 
         # Copy the issue, since we'll be holding onto it.
         issue = issue.Copy()
@@ -163,9 +168,8 @@ class MemoryIdb:
             raise ValueError, "iid is already used"
         # Set the initial revision number to zero.
         issue.SetField("revision", 0)
-        # Store the issue.  Create a new list to store revisions of
-        # it.  Revision zero is the first element of the sequence.
-        self.__issues[iid] = [issue]
+        # Store the new issue.
+        return self.__InsertIssue(issue)
 
 
     def AddRevision(self, issue):
@@ -173,7 +177,10 @@ class MemoryIdb:
 
         'issue' -- A new revision of an existing issue.  The revision
         number is ignored and replaced with the next consecutive one
-        for the issue."""
+        for the issue.
+
+        returns -- A true value if the insert succeeded, or a false
+        value if it was vetoed by a trigger."""
 
         # Copy the issue, since we'll be holding onto it.
         issue = issue.Copy()
@@ -186,8 +193,8 @@ class MemoryIdb:
         # Assign the next revision number.
         next_revision = len(revisions)
         issue.SetField("revision", next_revision)
-        # Append the revision onto the list of revisions.
-        revisions.append(issue)
+        # Store the new revision.
+        return self.__InsertIssue(issue)
 
 
     def GetIssueClasses(self):
@@ -222,10 +229,21 @@ class MemoryIdb:
         if revision == None:
             # The current revision was requested; it's at the end of
             # the list.
-            return revisions[-1]
+            issue = revisions[-1]
         else:
             # Index into the list to retrieve the requested revision.
-            return revisions[revision]
+            issue = revisions[revision]
+
+        # Found an issue.  Inoke get triggers.
+        result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
+        # Did the trigger veto the get?
+        if not result:
+            # The trigger vetoed the retrieval, so behave as if the
+            # issue was nout found.
+            raise KeyError, "no revision with IID '%s' found" % iid
+        # FIXME: Do something with outcomes.
+        # All done.
+        return issue
 
 
     def GetAllRevisions(self, iid, issue_class=None):
@@ -250,8 +268,17 @@ class MemoryIdb:
         if issue_class != None \
            and revisions[0].GetClass() != issue_class:
             raise KeyError, "issue not found in specified issue class"
+
+        # Invoke get triggers on each resulting revision.
+        issues = []
+        for issue in revisions:
+            result, outcomes = self._IdbBase__InvokeGetTriggers(issue)
+            # Keep the revision only if the trigger passed it.
+            if result:
+                issues.append(issue)
+            # FIXME: Do something with outcomes.
         # Return the full list of revisions.
-        return revisions
+        return issues
 
 
     def GetCurrentRevisionNumber(self, iid):
@@ -275,45 +302,47 @@ class MemoryIdb:
         raise NotImplementedError
 
 
-    def RegisterTrigger(self, type, trigger):
-        """Register a trigger.
+    # Helper functions.
+    
+    def __InsertIssue(self, issue):
+        """Insert an issue record into the database.
 
-        'type' -- The type is a string indicating the trigger type.
+        'issue' -- An 'Issue' instance, either for a new issue or for
+        a new revision of an existing issue.
 
-           * '"get"' triggers are invoked on issue records that are
-             retrieved or returned as query results.  
+        returns -- A true value if the insert succeded, or a false
+        value if a preupdate trigger vetoed the isertion."""
 
-           * '"preupdate"' triggers are invoked before an issue is
-             updated.  
+        iid = issue.GetId()
+        if self.__issues.has_key(iid):
+            revisions = self.__issues[iid]
+            previous_issue = revisions[-1]
+        else:
+            revisions = None
+            previous_issue = None
 
-           * '"postupdate"' triggers are invoked after an issue is
-             updated.  
+        # Invoke preupdate triggers.
+        result, outcomes = \
+                self._IdbBase__InvokePreupdateTriggers(issue, previous_issue)
+        # FIXME: Do something with outcomes.
+        # Did a trigger veto the update?
+        if not result:
+            return 0
 
-         'trigger' -- The trigger, a callable object.  The trigger
-         takes two arguments, both instances of 'IssueRecord'.
+        if revisions != None:
+            # This is not the first revision of the issue.  Append
+            # this new revision to the end.
+            revisions.append(issue)
+        else:
+            # This is the first revision of the issue.  Create a new
+            # list of revisions.
+            self.__issues[iid] = [issue]
 
-         The same trigger may be registered more than once for each
-         type, or for multiple types."""
-
-        raise NotImplementedError
-
-
-    def UnregisterTrigger(self, type, trigger):
-        """Unregister a trigger.
-
-        'type' -- If 'None', all instances of 'trigger' are
-        unregistered.  Otherwise, only instances matching 'type' are
-        unregistered.
-
-        'trigger' -- The trigger to unregister."""
-
-        raise NotImplementedError
-
-
-    def GetTriggers(self, type):
-        """Return a sequence registered triggers of type 'type'."""
-
-        raise NotImplementedError
+        # Invoke postupdate triggers.
+        outcomes = self._IdbBase__InvokePostupdateTriggers(issue,
+                                                           previous_issue)
+        # FIXME: Do something with outcomes.
+        return 1
 
 
 
