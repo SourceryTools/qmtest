@@ -18,6 +18,7 @@
 import dircache
 import os
 import qm
+import sys
 import tempfile
 
 ########################################################################
