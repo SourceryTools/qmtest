@@ -21,8 +21,7 @@ import cPickle
 import errno
 import os
 import qm.common
-from   qm.read_thread import ReadThread
-from   qm.write_thread import WriteThread
+import qm.executable
 import qm.fields
 import qm.test.base
 from   qm.test.test import Test
@@ -30,7 +29,6 @@ from   qm.test.result import Result
 import string
 import sys
 import types
-from   threading import *
 
 ########################################################################
 # Classes
@@ -119,6 +117,31 @@ class ExecTestBase(Test):
         ]
 
 
+    class InputExecutable(qm.executable.RedirectedExecutable):
+        """An 'InputExecutable' receives a string on its standard input."""
+
+        def __init__(self, input):
+            """Construct a new 'InputExecutable'.
+
+            'input' -- The string to be provided the executable on its
+            standard input."""
+
+            qm.executable.RedirectedExecutable.__init__(self)
+            self.__input = input
+            
+
+        def _WriteStdin(self):
+
+            # If there's nothing more to write, stop.
+            if not self.__input:
+                qm.executable.RedirectedExecutable._WriteStdin(self)
+            else:            
+                # Write some data.
+                written = os.write(self._stdin_pipe[1],
+                                   self.__input[:64 * 1024])
+                self.__input = self.__input[written:]
+            
+
     def MakeEnvironment(self, context):
         """Construct the environment for executing the target program."""
 
@@ -162,228 +185,63 @@ class ExecTestBase(Test):
 
         # Construct the environment.
         environment = self.MakeEnvironment(context)
+        # Create the executable.
+        e = ExecTestBase.InputExecutable(self.stdin)
+        # Run it.
+        exit_status = e.Run(arguments, environment, path = program)
 
-        stdin_r = None
-        stdin_w = None
-        stdout_r = None
-        stdout_w = None
-        stderr_r = None
-        stderr_w = None
-        result_r = None
-        result_w = None
-        stdin_f = None
-        stdout_f = None
-        stderr_f = None
-        result_f = None
-        
-        # Try block to clean up temporary files and file descriptors in
-        # any eventuality.
-        try:
-            # Under Windows, use popen to create the child.  It would be
-            # better to use spawn, but it is not easy to connect the
-            # standard streams for the child that way.
-            if sys.platform == "win32":
-                # Join the program and the arguments into a single
-                # command.
-                command = program + ' ' + string.join(arguments[1:], ' ')
-                # Start the command.
-                stdin_f, stdout_f, stderr_f = os.popen3(command)
-            # Under UNIX, use fork/exec to create the child.
+        # If the process terminated normally, check the outputs.
+        if sys.platform == "win32" or os.WIFEXITED(exit_status):
+            # There are no causes of failure yet.
+            causes = []
+            # The target program terminated normally.  Extract the
+            # exit code, if this test checks it.
+            if self.exit_code is None:
+                exit_code = None
+            elif sys.platform == "win32":
+                exit_code = 0
             else:
-                # Create pipes for all of the standard streams.
-                stdin_r, stdin_w = os.pipe()
-                stdout_r, stdout_w = os.pipe()
-                stderr_r, stderr_w = os.pipe()
-
-                # Create a pipe for communicating with the child process.
-                # This pipe is used to communicate test results from the
-                # child to the parent in case something goes wrong (for
-                # instance, if the target program cannot be run).
-                #
-                # Only the parent reads from the pipe, and only the child
-                # writes to the pipe.  If the child process runs the target
-                # program successfully, it simply closes the pipe without
-                # writing anything.  If something goes wrong, though, the
-                # child process builds an appropriate test result object,
-                # pickles it, writes it to the pipe, and then closes the
-                # pipe and exits.
-                result_r, result_w = os.pipe()
-
-                # Fork a new process.
-                child_pid = os.fork()
-
-                if child_pid == 0:
-                    # This is the child process.
-                    try:
-                        # Close the pipe ends we do not need.
-                        os.close(stdin_w)
-                        os.close(stdout_r)
-                        os.close(stderr_r)
-                        os.close(result_r)
-                        # Redirect stdin from the standard input file.
-                        os.dup2(stdin_r, sys.stdin.fileno())
-                        # Redirect stdout to the standard output file.
-                        os.dup2(stdout_w, sys.stdout.fileno())
-                        # Redirect stderr to the standard error file.
-                        os.dup2(stderr_w, sys.stderr.fileno())
-                        # Execute the program.
-                        os.execvpe(program, arguments, environment)
-                    except:
-                        # Perhaps something went wrong while setting up
-                        # the standard stream files, or we were unable
-                        # to execute the program.
-                        exc_info = sys.exc_info()
-                        result = (Result.ERROR,
-                                  { Result.CAUSE : "Could not execute program",
-                                    Result.EXCEPTION : "%s: %s" % exc_info[:2],
-                                    Result.TRACEBACK :
-                                      "<pre>"
-                                      + qm.format_traceback(exc_info)
-                                      + "</pre>" })
-                        cPickle.dump(result, os.fdopen(result_w, "w"))
-                        # Exit.
-                        os._exit(1)
-                    else:
-                        # We should never get here.  If the call to
-                        # execve fails, an exception will be thrown.
-                        assert 0
-
-                # This is the parent process.  Close file descriptors
-                # we do not need.
-                os.close(stdin_r)
-                stdin_r = None
-                os.close(stdout_w)
-                stdout_w = None
-                os.close(stderr_w)
-                stderr_w = None
-                os.close(result_w)
-                result_w = None
-
-                # Create the file objects.
-                stdin_f = os.fdopen(stdin_w, "w")
-                stdin_w = None
-                stdout_f = os.fdopen(stdout_r)
-                stdout_r = None
-                stderr_f = os.fdopen(stderr_r)
-                stderr_r = None
-                
-            # Create a thread to write to the child's standard input
-            # stream.
-            stdin_thread = WriteThread(stdin_f, self.stdin)
-	    stdin_f = None
-            # Create threads to read the child's standard output and
-            # standard error streams.
-            stdout_thread = ReadThread(stdout_f)
-	    stdout_f = None
-            stderr_thread = ReadThread(stderr_f)
-	    stderr_f = None
-
-            # Start the threads.
-            stdin_thread.start()
-            stdout_thread.start()
-            stderr_thread.start()
-            
-            # Wait for the child process to complete.
-            if sys.platform == "win32":
-                # On Windows, we have no way of obtaining the exit code.
-                exit_status = 0
-            else:
-                exit_status = os.waitpid(child_pid, 0)[1]
-            # Join the threads, so that the data read is known
-            # to be available.
-            stdin_thread.join()
-            stdout_thread.join()
-            stderr_thread.join()
-
-            pickle = None
-            
-            if sys.platform != "win32":
-                # Try to read a pickled result from the result pipe.  If the
-                # child process didn't write one, we'll read zero bytes.
-                result_f = os.fdopen(result_r)
-                result_r = None
-                pickle = result_f.read()
-                # If we read anything, there was a failure.
-                if pickle:
-                    (outcome, annotations) = cPickle.loads(pickle)
-                    result.SetOutcome(outcome)
-                    for k in annotations.keys():                    
-                        result[k] = annotations[k]
-
-            # If there was a pickle, there is nothing more to do.
-            if pickle:
-                pass
-            # If the process terminated normally, check the outputs.
-            elif sys.platform == "win32" or os.WIFEXITED(exit_status):
-                # There are no causes of failure yet.
-                causes = []
-                # The target program terminated normally.  Extract the
-                # exit code, if this test checks it.
-                if self.exit_code is None:
-                    exit_code = None
-		elif sys.platform == "win32":
-		    exit_code = 0
-                else:
-                    exit_code = os.WEXITSTATUS(exit_status)
-                # Get the output generated by the program.
-                stdout = stdout_thread.data
-                stderr = stderr_thread.data
-                # Check to see if the exit code matches.
-                if exit_code != self.exit_code:
-                    causes.append("exit_code")
-                    result["ExecTest.expected_exit_code"] \
-                        = str(self.exit_code)
-                    result["ExecTest.exit_code"] = str(exit_code)
-                # Check to see if the standard output matches.
-                if stdout != self.stdout:
-                    causes.append("standard output")
-                    result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
-                    result["ExecTest.expected_stdout"] \
-                        = "<pre>" + self.stdout + "</pre>"
-                # Check to see that the standard error matches.
-                if stderr != self.stderr:
-                    causes.append("standard error")
-                    result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
-                    result["ExecTest.expected_stderr"] \
-                        = "<pre>" + self.stderr + "</pre>"
-                # If anything went wrong, the test failed.
-                if causes:
-                    result.Fail("Unexpected %s." % string.join(causes, ", ")) 
-            elif os.WIFSIGNALED(exit_status):
-                # The target program terminated with a signal.  Construe
-                # that as a test failure.
-                signal_number = str(os.WTERMSIG(exit_status))
-                result.Fail("Program terminated by signal.")
-                result["ExecTest.signal_number"] = signal_number
-            elif os.WIFSTOPPED(exit_status):
-                # The target program was stopped.  Construe that as a
-                # test failure.
-                signal_number = str(os.WSTOPSIG(exit_status))
-                result.Fail("Program stopped by signal.")
-                result["ExecTest.signal_number"] = signal_number
-            else:
-                # The target program terminated abnormally in some other
-                # manner.  (This shouldn't normally happen...)
-                result.Fail("Program did not terminate normally.")
-        except:
-            result.NoteException()
-            
-        # Make sure all of the file descriptors we opened are closed.
-        for fd in (stdin_r, stdin_w, stdout_r, stdout_w,
-                   stderr_r, stderr_w, result_r, result_w):
-            if fd is not None:
-                try:
-                    os.close(fd)
-                except:
-                    pass
-
-        # Make sure all of the stream objects are closed, too.
-        for f in (stdin_f, stdout_f, stderr_f, result_f):
-            if f is not None:
-                try:
-                    f.close()
-                except:
-                    pass
+                exit_code = os.WEXITSTATUS(exit_status)
+            # Get the output generated by the program.
+            stdout = e.stdout
+            stderr = e.stderr
+            # Check to see if the exit code matches.
+            if exit_code != self.exit_code:
+                causes.append("exit_code")
+                result["ExecTest.expected_exit_code"] \
+                    = str(self.exit_code)
+                result["ExecTest.exit_code"] = str(exit_code)
+            # Check to see if the standard output matches.
+            if stdout != self.stdout:
+                causes.append("standard output")
+                result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
+                result["ExecTest.expected_stdout"] \
+                    = "<pre>" + self.stdout + "</pre>"
+            # Check to see that the standard error matches.
+            if stderr != self.stderr:
+                causes.append("standard error")
+                result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
+                result["ExecTest.expected_stderr"] \
+                    = "<pre>" + self.stderr + "</pre>"
+            # If anything went wrong, the test failed.
+            if causes:
+                result.Fail("Unexpected %s." % string.join(causes, ", ")) 
+        elif os.WIFSIGNALED(exit_status):
+            # The target program terminated with a signal.  Construe
+            # that as a test failure.
+            signal_number = str(os.WTERMSIG(exit_status))
+            result.Fail("Program terminated by signal.")
+            result["ExecTest.signal_number"] = signal_number
+        elif os.WIFSTOPPED(exit_status):
+            # The target program was stopped.  Construe that as a
+            # test failure.
+            signal_number = str(os.WSTOPSIG(exit_status))
+            result.Fail("Program stopped by signal.")
+            result["ExecTest.signal_number"] = signal_number
+        else:
+            # The target program terminated abnormally in some other
+            # manner.  (This shouldn't normally happen...)
+            result.Fail("Program did not terminate normally.")
 
         
     

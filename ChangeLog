@@ -1,5 +1,9 @@
 2002-11-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/executable.py: New file.
+	* qm/test/classes/command.py (ExecTestBase.RunProgram): Use
+	RedirectedExecutable to encapsulate execution.
+
 	* qm/read_thread.py: New file.
 	* qm/write_thread.py: Likewise.
 	* qm/test/classes/command.py: Use them.
