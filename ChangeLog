@@ -1,5 +1,10 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (QM_SRPM): Remove target.
+	* qm.spec.in: Make relocatable, use build root.
+
+2001-11-16  Mark Mitchell  <mark@codesourcery.com>
+
 	* Makefile.in (QM_TAR_GZ): Modify logic.
 	* install.py (bin_handler): Remove.
 
