@@ -116,9 +116,15 @@ PYTHON_PKG_PREFIX := $(shell $(PYTHON) -c "import distutils.sysconfig; print dis
 
 # Distutils requires relative paths on Windows.  For consistency,
 # we use the same technique everywhere.
-RELLIBDIR := $(shell expr "$(PYTHON_PKG_PREFIX)" : '$(NATPREFIX)/\(.*\)')
-RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
-RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
+RELLIBDIR := $(shell expr "$(PYTHON_PKG_PREFIX)" : '$(NATPREFIX)\(.*\)')
+RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)\(.*\)')
+RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)\(.*\)')
+# Depending on how the user typed their prefix, there may now be slashes
+# left at the beginning of the supposedly relative paths, so we remove
+# those:
+RELLIBDIR := $(shell echo "$(RELLIBDIR)" | sed 's|^/*||')
+RELSHAREDIR := $(shell echo "$(RELSHAREDIR)" | sed 's|^/*||')
+RELINCDIR := $(shell echo "$(RELINCDIR)" | sed 's|^/*||')
 
 ifeq ($(PYTHON_PLATFORM),win32)
 SCRIPT_EXT = .bat

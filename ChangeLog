@@ -1,5 +1,12 @@
 2003-07-24  Nathaniel Smith  <njs@codesourcery.com>
 
+	* GNUmakefile.in (RELLIBDIR): Don't add slashes to prefix when
+	matching for removal.  Strip slashes after prefix removal.
+	(RELSHAREDIR): Likewise.
+	(RELINCDIR): Likewise.
+	
+2003-07-24  Nathaniel Smith  <njs@codesourcery.com>
+
 	* tests/xmldb/common.qms/graph_complete.qmt: Delete.
         * tests/xmldb/common.qms/graph_cycle.qmt: Likewise.
         * tests/xmldb/common.qms/graph_pass.qmt: Likewise.
