@@ -489,13 +489,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         Parses the argument list but does not execute the command.
 
         'argument_list' -- The arguments to QMTest, not including the
-        initial argv[0].
-
-        'major_version' -- The major version number.
-
-        'minor_version' -- The minor version number.
-
-        'release_version' -- The release version number."""
+        initial argv[0]."""
 
         global _the_qmtest
         

@@ -399,15 +399,18 @@ class TimeoutExecutable(Executable):
         process group is killed.
         
         If the 'timeout' is -1, this class behaves exactly like
-        'Executable'."""
+        'Executable'.
+
+        At present, the 'timeout' parameter is ignored under Windows.
+        In the future, it will have the same meaning that it does on
+        UNIX systems."""
 
         super(TimeoutExecutable, self).__init__()
-        
-        self.__timeout = timeout
 
-        # This functionality is not yet supported under Windows.
-        if self.__UseSeparateProcessGroupForChild():
-            assert sys.platform != "win32"
+        if sys.platform == "win32":
+            self.__timeout = 0
+        else:
+            self.__timeout = float(timeout)
         
 
     def _InitializeChild(self):
@@ -458,6 +461,12 @@ class TimeoutExecutable(Executable):
                 # group as the child 
                 os.setpgid(self.__monitor_pid, child_pid)
             else:
+                # Put the monitoring process into the child's process
+                # group.  We know the process group still exists at
+                # this point because either (a) we are in the process
+                # group, or (b) the parent has not yet called waitpid.
+                os.setpgid(0, child_pid)
+
                 # Close all open file descriptors.  They are not needed
                 # in the monitor process.  Furthermore, when the parent
                 # closes the write end of the stdin pipe to the child,
@@ -475,11 +484,6 @@ class TimeoutExecutable(Executable):
                         pass
 
                 try:
-                    # Put the monitoring process into the child's process
-                    # group.  We know the process group still exists at this
-                    # point because either (a) we are in the process
-                    # group, or (b) the parent has not yet called waitpid.
-                    os.setpgid(0, child_pid)
                     if self.__timeout >= 0:
                         # Give the child time to run.
                         time.sleep (self.__timeout)
@@ -515,10 +519,10 @@ class TimeoutExecutable(Executable):
     def __UseSeparateProcessGroupForChild(self):
         """Returns true if the child wil be placed in its own process group.
 
-        returns -- True if the child wil be placed in its own process
+        returns -- True if the child will be placed in its own process
         group.  In that case, a separate monitoring process will also
         be created."""
-        
+
         return self.__timeout >= 0 or self.__timeout == -2
 
 
@@ -902,3 +906,14 @@ class Filter(RedirectedExecutable):
             self.__next += os.write(self._stdin_pipe[1],
                                     self.__input[self.__next
                                                  : self.__next + 64 * 1024])
+
+
+########################################################################
+# Variables
+#######################################################################
+
+__all__ = ["Executable",
+           "TimeoutExecutable",
+           "RedirectedExecutable",
+           "Filter"]
+       

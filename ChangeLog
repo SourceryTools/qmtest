@@ -1,3 +1,11 @@
+2003-09-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (TimeoutExecutable.__init__): Ignore timeouts
+	under Windows.  Accept any representation of "timeout" that can be
+	converted to a float.
+	(__all__): Define.
+	* qm/test/cmdline.py (QMTest.__init__): Improve documentation.
+
 2003-09-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable._MakeCloseOnExec): Deal with
