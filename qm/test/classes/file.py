@@ -167,7 +167,7 @@ class SubstitutionField(qm.fields.TextField):
         return """
         A substitution consists of a regular expression pattern and a
         substitution string.  When the substitution is applied, all
-        matched of the regular expression pattern are replaced with the
+        subtrings matching the pattern are replaced with the
         substitution string.  The substitution string may reference
         matched groups in the pattern.
 
@@ -178,14 +178,13 @@ class SubstitutionField(qm.fields.TextField):
 
 
 class FileContentsTest:
-    """Test the contents of a file.
+    """Check that the contents of a file match the expected value.
 
-    A 'FileContentsTest' tests the contents of a file against an
-    expectation.  The test passes if the file's contents matches the
-    expectation text exactly.
+    A 'FileContentsTest' examines the contents of a file.  The test
+    passes if and only if the contents exactly match the expected value.
 
     The path to the file itself is not specified explicitly in the test.
-    Instead, it is taken from a contex attribute; the name of that
+    Instead, it is taken from a contex property; the name of that
     variable is specified in the **Path Attribute** field.
 
     Optionally, the test may specify one or more substitutions.  Each
@@ -199,8 +198,11 @@ class FileContentsTest:
         qm.fields.TextField(
             name="path_attribute",
             title="Path Attribute",
-            description="""The name of the context attribute that
-            contains the path to the file to compare.""",
+            description="""The context property naming the file.
+
+            The context property given here will contain the path name
+            of the file.""",
+            not_empty_text=1,
             default="path"),
 
         qm.fields.TextField(
@@ -213,10 +215,14 @@ class FileContentsTest:
         qm.fields.SetField(SubstitutionField(
             name="substitutions",
             title="Substitutions",
-            description="""Regular expression text substitutions to
-            perform on the expected and actual file contents before
-            performing the comparison.""")),
-        
+            description="""Regular expression substitutions.
+
+            Each substitution will be applied to both the expected and
+            actual contents of the file.  The comparison will be
+            performed after the substitutions have been performed.
+
+            You can use substitutions to ignore insignificant
+            differences between the expected and autual contents.""")),
         ]
 
 

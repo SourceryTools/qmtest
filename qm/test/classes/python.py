@@ -50,21 +50,23 @@ import types
 ########################################################################
 
 class ExecTest:
-    """A test consisting of Python code.
+    """Check the result of a Python expression.
 
-    A 'ExecTest' test consists of a body of Python source code, and an
-    optional expression.  The Python code is executed; if it raises an
-    uncaught exception, the test fails.  If an expression is specified,
-    the test passes iff the expression value evaluates to boolean true.
-    If no expression is provided, the test passes automatically (unless
-    the Python code raises an uncaught exception)."""
+    An 'ExecTest' test consists of Python source code together with
+    an (optional) Python expression.  First the Python code is
+    executed.  If it throws an (uncaught) exception the test fails.
+    If the optional expression is present, it is then evaluated.  If it
+    evaluates to false, the test fails.  Otherwise, the test passes."""
 
     fields = [
         qm.fields.TextField(
             name="source",
             title="Python Source Code",
-            description="Python source code to execute.  This may "
-            "contain class and function definitions.",
+            description="""The source code.
+
+            This code may contain class definitions, function
+            definitions, statements, and so forth.  If this code
+            throws an uncaught exception, the test will fail.""",
             verbatim="true",
             multiline="true",
             default_value="pass"
@@ -73,11 +75,13 @@ class ExecTest:
         qm.fields.TextField(
             name="expression",
             title="Python Expression",
-            description="""A Python expression indicating the test
-            result.  The expression returns a boolean; true indicates
-            PASS.  If omitted, the expression is assumed to return a
-            passing value, so the test will always pass unless the code
-            specified for the 'source' parameter raises an exception.""",
+            description="""The expression to evaluate.
+
+            If the expression evaluates to true, the test will pass,
+            unless the source code above throws an uncaught exception.
+
+            If this field is left blank, it is treated as an expression
+            that is always true.""",
             verbatim="true",
             multiline="true",
             default_value="1"
@@ -153,7 +157,10 @@ class BaseExceptionTest:
         qm.fields.TextField(
             name="source",
             title="Python Source Code",
-            description="Python source code to execute.",
+            description="""The source code.
+
+            This code may contain class definitions, function
+            definitions, statements, and so forth.""",
             verbatim="true",
             multiline="true",
             default_value="pass"
@@ -162,10 +169,13 @@ class BaseExceptionTest:
         qm.fields.TextField(
             name="exception_argument",
             title="Exception Argument",
-            description="""If this parameter is specified, a Python
-            expression which evaluates to the expected argument of the
-            raised expression.  If this parameter is empty, no check
-            is performed of the exception argument.""",
+            description="""The expected value of the exception.
+
+            This value is a Python expression which should evaluate
+            to the same value as the exception raised.
+
+            If this field is left blank, the value of the exception is
+            ignored.""",
             default_value=""
             ),
 
@@ -228,14 +238,13 @@ class BaseExceptionTest:
 
 
 class ExceptionTest(BaseExceptionTest):
-    """Test that Python code raises an exception.
+    """Check that the specified Python code raises an exception.
 
-    A test of this class consists of a body of Python code.  The test
-    execs the code and checks that it raises an exception.  For the test
-    to pass, the code must raise an exception that is an instance of the
-    specified Python class.  Optionally, an expected exception argument
-    may be specified as well.  If the code does not raise an exception,
-    the test fails."""
+    An 'ExceptionTest' checks that the specified Python code raises a
+    particular exception.  The test passes if the exception is an
+    instance of the expected class and (optionally) if its value matches
+    the expected value.  If the code fails to raise an exception, the
+    test fails."""
 
     fields = [
         BaseExceptionTest.fields[0],
@@ -243,12 +252,13 @@ class ExceptionTest(BaseExceptionTest):
         qm.fields.TextField(
             name="exception_argument",
             title="Exception Argument",
-            description="""If this parameter is specified, a Python
-            expression which evaluates to the expected argument of the
-            raised expression.
+            description="""The expected value of the exception.
 
-            If this parameter is empty, no check is performed of the
-            exception argument.
+            This value is a Python expression which should evaluate
+            to the same value as the exception raised.
+
+            If this field is left blank, the value of the exception is
+            ignored.
 
             A value of "None" or "()" matches an exception raised
             without an argument, as in 'raise ValueError'; an exception
@@ -261,10 +271,11 @@ class ExceptionTest(BaseExceptionTest):
         qm.fields.TextField(
             name="exception_class",
             title="Exception Class",
-            description="""If this parameter is specified, the exception
-            is expected to be a class instance.  The value of the
-            parameter is the name of Python class of which the exception
-            object is expected to be an instance.""",
+            description="""The expected type of the exception.
+
+            This value is the name of a Python class.  If the
+            exception raised is not an instance of this class, the
+            test fails.""",
             default="Exception"
             ),
 
@@ -335,21 +346,17 @@ class ExceptionTest(BaseExceptionTest):
 
 
 class StringExceptionTest(BaseExceptionTest):
-    """Test that Python code raises a string exception.
+    """Check that the specified Python code raises a string exception.
 
-    A test of this class consists of a body of Python code.  The test
-    execs the code and checks that it raises an exception.  For the test
-    to pass, the code must raise an exception that is a string that
-    matches the specified expected exception text.  Optionally, an
-    expected exception argument may be specified as well.  If the code
-    does not raise an exception, the test fails."""
-
+    A 'StringExceptionTest' checks that the specified code throws
+    an exception.  The exception must be a string and must have
+    the expected value."""
 
     fields = BaseExceptionTest.fields + [
         qm.fields.TextField(
             name="exception_text",
             title="Exception Text",
-            description="The expected text of the exception string.",
+            description="The expected exception string.",
             default_value="exception"
             )
 

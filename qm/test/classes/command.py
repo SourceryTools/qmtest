@@ -59,28 +59,38 @@ STDERR_FILENO = sys.stderr.fileno()
 ########################################################################
 
 class ExecTest:
-    """Test a program by running it and checking its output and exit code.
+    """Check a program's output and exit code.
 
-    An 'ExecTest' instance runs a specified program, optionally passing
-    it an argument list and standard input.  The program's standard
-    output, standard error, and exit code are captured, and compared
-    against reference values.  The test passes if these quantities are
-    identical to the expected values."""
+    An 'ExecTest' runs a program and compares its standard output,
+    standard error, and exit code with expected values.  The program
+    may be provided with command-line arguments and/or standard
+    input.
+
+    The test passes if the standard output, standard error, and
+    exit code are identical to the expected values."""
 
     fields = [
         qm.fields.TextField(
             name="program",
             title="Program",
-            description="The program to run."
+            not_empty_text=1,
+            description="""The path to the program.
+
+            This field indicates the path to the program.  If it is not
+            an absolute path, the value of the 'PATH' environment
+            variable will be used to search for the program."""
             ),
         
         qm.fields.SetField(qm.fields.TextField(
             name="arguments",
             title="Argument List",
-            description="""Elements of the program's argument list 
-            (command line).  The implicit 0th element of the argument 
-            list is added automatically, and should not be specified 
-            here.  If omitted, the argument list is empty."""
+            description="""The command-line arguments.
+
+            If this field is left blank, the program is run without any
+            arguments.
+
+            An implicit 0th argument (the path to the program) is added
+            automatically."""
             )),
             
         qm.fields.TextField(
@@ -88,43 +98,54 @@ class ExecTest:
             title="Standard Input",
             verbatim="true",
             multiline="true",
-            description="Text or data to pass to the program as standard "
-            "input.  If omitted, the program's standard input is empty."
+            description="""The contents of the standard input stream.
+
+            If this field is left blank, the standard input stream will
+            contain no data."""
             ),
 
         qm.fields.SetField(qm.fields.TextField(
             name="environment",
             title="Environment",
-            description="""The environment when executing the target
-            program.  Each element is of the form 'variable=value'.
+            description="""The contents of the environment.
 
-            QMTest adds these environment variables:
+            Each element must be of the form 'VAR=VAL'.  The
+            program will be run in an environment where the environment
+            variable 'VAR' has the value 'VAL'.
 
-              'PATH' -- The path from which executables are loaded, as
-              specified by the 'path' attribute in the test context.
+            QMTest automatically sets these environment variables:
 
-            Also, an environment variable is added for each context
-            property.  The name of the environment variable is the name
-            of the context property, prefixed with 'QMV_'.  For
-            instance, the value of the "target" context property is
-            accessible via the environment variable 'QMV_target'."""
+              'PATH' -- This environment variable is set to the value of
+              the 'path' context property.
+
+            Also, QMTest adds an environment variable corresponding to
+            each context property.  The name of the environment variable
+            is the name of the context property, prefixed with 'QMV_'.
+            For example, if the value of the context property named
+            'target' is available in the environment variable
+            'QMV_target'."""
             )),
         
         qm.fields.IntegerField(
             name="exit_code",
-            title="Expected Exit Code",
-            description="The program's expected exit code.  If omitted, "
-            "the program's exit code is not checked."
+            title="Exit Code",
+            description="""The expected exit code.
+
+            Most programs use a zero exit code to indicate success and a
+            non-zero exit code to indicate failure.
+
+            If this field is left blank, the exit code is not checked."""
             ),
 
         qm.fields.TextField(
             name="stdout",
-            title="Expected Standard Output",
+            title="Standard Output",
             verbatim="true",
             multiline="true",
-            description="The expected text or data from the program's "
-            "standard output stream.  If omitted, the program's standard " 
-            "output is not checked."
+            description="""The expected contents of the standard output stream.
+
+            If the output written by the program does not match this
+            value, the test will fail."""
             ),
         
         qm.fields.TextField(
@@ -132,9 +153,10 @@ class ExecTest:
             title="Expected Standard Error",
             verbatim="true",
             multiline="true",
-            description="The expected text or data from the program's "
-            "standard error stream.  If omitted, the program's standard "
-            "error is not checked."
+            description="""The expected contents of the standard error stream.
+
+            If the output written by the program does not match this
+            value, the test will fail."""
             ),
         ]
 
@@ -291,14 +313,12 @@ class ExecTest:
                     exit_code = None
                 else:
                     exit_code = os.WEXITSTATUS(exit_status)
-                # Read the standard output generated by the program, if
-                # this test checks it.
+                # Read the standard output generated by the program.
                 os.lseek(stdout_fd, 0, 0)
                 stdout_file = os.fdopen(stdout_fd, "w+b")
                 stdout = stdout_file.read()
                 expected_stdout = self.stdout
-                # Read the standard error generated by the program, if
-                # this test checks it.
+                # Read the standard error generated by the program.
                 os.lseek(stderr_fd, 0, 0)
                 stderr_file = os.fdopen(stderr_fd, "w+b")
                 stderr = stderr_file.read()
@@ -319,10 +339,10 @@ class ExecTest:
                         causes.append("exit code")
                         result["exit_code"] = str(exit_code)
                     if stdout != expected_stdout:
-                        causes.append("out")
+                        causes.append("standard output")
                         result["stdout"] = stdout
                     if stderr != expected_stderr:
-                        causes.append("err")
+                        causes.append("standard error")
                         result["stderr"] = stderr
                     result["cause"] = "Unexpected %s." \
                                       % string.join(causes, ", ") 
@@ -414,12 +434,12 @@ class ExecTest:
 
 
 class ShellCommandTest(ExecTest):
-    """Invoke a shell command and check its output and exit code.
+    """Check a shell command's output and exit code.
 
-    A 'CommandTest' test invokes a shell command, optionally passing it
-    standard input, and checks its exit code, standard output, and
-    standard error.  The test does not test any side effects of the
-    script
+    A 'CommandTest' runs the shell and compares its standard output,
+    standard error, and exit code with expected values.  The shell
+    may be provided with command-line arguments and/or standard
+    input.
 
     QMTest determines which shell to use by the following method:
 
@@ -438,7 +458,13 @@ class ShellCommandTest(ExecTest):
         qm.fields.TextField(
             name="command",
             title="Command",
-            description="The command to run."
+            description="""The arguments to the shell.
+
+            This field contains the arguments that are passed to the
+            shell.  It should contain the path to the shell itself.
+
+            If this field is left blank, the shell is run without
+            arguments."""
             ),
 
         ] + ExecTest.fields[2:]
@@ -487,12 +513,12 @@ class ShellCommandTest(ExecTest):
 
 
 class ShellScriptTest(ExecTest):
-    """Invoke a shell script and check its output and exit code.
+    """Check a shell script's output and exit code.
 
-    A 'ScriptTest' test runs a script (which can be a shell script or
-    any other interpreted language), optionally passing it command line
-    arguments and standard input.  The exit code, standard output, and
-    standard error are compared to expected values, if specified.
+    A 'ShellScriptTest' runs the shell script provided and compares its
+    standard output, standard error, and exit code with expected values.
+    The shell script may be provided with command-line arguments and/or
+    standard input.
 
     QMTest determines which shell to use by the following method:
 
@@ -511,7 +537,15 @@ class ShellScriptTest(ExecTest):
         qm.fields.TextField(
             name="script",
             title="Script",
-            description="The text of the script to run.",
+            description="""The contents of the shell script.
+
+            Provide the entire shell script here.  The script will be
+            written to a temporary file before it is executed.  There
+            does not need to be an explicit '#! /path/to/shell' at
+            the beginning of the script because QMTest will not directly
+            invoke the script.  Instead, it wil lrun the shell, passing
+            it the name of the temporary file containing the script as
+            an argument.""",
             verbatim="true",
             multiline="true",
             ),

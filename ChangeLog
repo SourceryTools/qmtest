@@ -1,3 +1,14 @@
+2001-09-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/command.py (ExecTest): Revise doc strings.
+	(ShellCommandTest): Likewise.
+	(ShellScriptTest): Likewise.
+	* qm/test/classes/file.py (SubstitutionField): Likewise.
+	(FileContentsTest): Likewise.
+	* qm/test/classes/python.py (ExecTest): Likewise.
+	(ExceptionTest): Likewise.
+	(StringExceptionTest): Likewise.
+
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (wrap_lines): Add indent parameter.
