@@ -263,7 +263,8 @@ class XMLDatabase(ExtensionDatabase):
             return ExplicitSuite({ "is_implicit" : "false",
                                    "test_ids" : test_ids,
                                    "suite_ids" : suite_ids },
-                                 self, suite_id)
+                                 **{ ExplicitSuite.EXTRA_ID : suite_id,
+                                     ExplicitSuite.EXTRA_DATABASE : self })
         else:
             # Load the extension.
             extension_class, arguments = \

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<suite>
+  <test_id>exec0</test_id>
+  <test_id>exec1</test_id>
+  <test_id>exec2</test_id>
+</suite>

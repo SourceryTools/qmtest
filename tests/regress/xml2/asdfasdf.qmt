@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<test><class>command.ExecTest</class><argument name="exit_code"><integer>1</integer></argument><argument name="stdin"><text/></argument><argument name="target_group"><text>.*</text></argument><argument name="stdout"><text/></argument><argument name="stderr"><text/></argument><argument name="arguments"><set><text>a</text><text>=</text><text>b</text></set></argument><argument name="program"><text>test</text></argument><argument name="environment"><set/></argument></test>

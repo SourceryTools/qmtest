@@ -1,3 +1,12 @@
+2005-03-20  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/xml_database.py: Fix ExplicitSuite constructor call.
+	* tests/regress/QMTest/selftest.py: Allow an 'ids' file to specify test
+	and suite ids to be specified to be used in the 'qmtest run' command.
+	* tests/regress/xml2: New regression test for XMLDatabase's ability to
+	use explicit suites.
+	* qm/test/share/tutorial/tdb/suite.qms: New demo suite.
+
 2005-02-16  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/web.py: Replace deprecated use of whrandom by random.
