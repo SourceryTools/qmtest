@@ -24,6 +24,7 @@ import qm
 import qm.attachment
 import qm.cmdline
 import qm.platform
+from   qm.test.result import Result
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.result_stream import ResultStream
@@ -1187,23 +1188,12 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             results_path = "results.qmr"
         else:
             results_path = self.__arguments[0]
-        # Load results.
-        try:
-            results = base.load_results(open(results_path, "rb"))
-            test_results = filter(lambda r: r.GetKind() == Result.TEST,
-                                  results)
-            resource_results = \
-                filter(lambda r: r.GetKind() != Result.TEST, results)
-        except (IOError, xml.sax.SAXException), exception:
-            raise QMException, \
-                  qm.error("invalid results file",
-                           path=results_path,
-                           problem=str(exception))
 
         # The remaining arguments, if any, are test and suite IDs.
         id_arguments = self.__arguments[1:]
         # Are there any?
         if len(id_arguments) > 0:
+            filter = 1
             # Expand arguments into test IDs.
             try:
                 test_ids, suite_ids \
@@ -1215,15 +1205,21 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             except ValueError, exception:
                 raise qm.cmdline.CommandError, \
                       qm.error("no such ID", id=str(exception))
-            # Show only test results whose IDs were specified.
-            test_results = filter(lambda r, ids=test_ids: r.GetId() in ids, 
-                                  test_results)
-            # Don't display any resource results.
-            resource_results = []
         else:
             # No IDs specified.  Show all test and resource results.
             # Don't show any results by test suite though.
+            filter = 0
             suite_ids = []
+
+        # Get an iterator over the results.
+        try:
+            results = base.load_results(open(results_path, "rb"),
+                                        self.GetDatabase())
+        except (IOError, xml.sax.SAXException), exception:
+            raise QMException, \
+                  qm.error("invalid results file",
+                           path=results_path,
+                           problem=str(exception))
 
         any_unexpected_outcomes = 0
 
@@ -1233,16 +1229,22 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         # Get the expected outcomes.
         outcomes = self.__GetExpectedOutcomes()
+
+        # Our filtering function.  Should use itertools.ifilter, once
+        # we can depend on having Python 2.3.
+        def good(r):
+            return r.GetKind() == Result.TEST \
+                   and r.GetId() in test_ids
+
         # Simulate the events that would have occurred during an
         # actual test run.
-        for r in test_results:
-            for s in streams:
-                s.WriteResult(r)
-            if r.GetOutcome() != outcomes.get(r.GetId(), Result.PASS):
-                any_unexpected_outcomes = 1
-        for r in resource_results:
-            for s in streams:
-                s.WriteResult(r)
+        for r in results:
+            if not filter or good(r):
+                for s in streams:
+                    s.WriteResult(r)
+                if (r.GetOutcome()
+                    != outcomes.get(r.GetId(), Result.PASS)):
+                    any_unexpected_outcomes = 1
         for s in streams:
             s.Summarize()
 
@@ -1512,7 +1514,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             else:
                 try:
                     self.__expected_outcomes \
-                         = base.load_outcomes(open(outcomes_file_name, "rb"))
+                         = base.load_outcomes(open(outcomes_file_name, "rb"),
+                                              self.GetDatabase())
                 except IOError, e:
                     raise qm.cmdline.CommandError, str(e)
 
@@ -1534,7 +1537,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         rerun_file_name = self.GetCommandOption("rerun")
         if rerun_file_name:
             # Load the outcomes from the file specified.
-            outcomes = base.load_outcomes(open(rerun_file_name, "rb"))
+            outcomes = base.load_outcomes(open(rerun_file_name, "rb"),
+                                          self.GetDatabase())
             expectations = self.__GetExpectedOutcomes()
             # We can avoid treating the no-expectation case as special
             # by creating an empty map.

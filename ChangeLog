@@ -1,3 +1,25 @@
+2003-06-24  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/result_source.py: New file.
+	* qm/test/file_result_source.py: New file.
+	* qm/test/classes/classes.qmc: Add XMLResultSource.
+	* qm/test/base.py (load_results): Take a database argument,
+	return a ResultSource. Use PickleResultSource/XMLResultSource.
+	(load_outcomes): Take a database argument, use new
+	load_results interface.
+	(_result_from_dom): Move to...
+	* qm/test/classes/xml_result_source.py: ...here.  New file.
+	* qm/test/classes/pickle_result_source.py: New file.
+	* qm/test/cmdline.py (qm.test.result.Result): import it.
+	(QMTest.__ExecuteSummarize): Rewrite to	use new load_results
+	interface.
+	(QMTest.__GetExpectedOutcomes): Pass database to
+	load_outcomes.
+	(QMTest.__FilterTestsToRun): Likewise.
+	* qm/test/web/web.py (QMTestServer.HandleSubmitExpectations):
+	Likewise.
+	(QMTestServer.HandleSubmitResults): Likewise.
+	
 2003-06-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (commands_spec): Add support for "qmtest

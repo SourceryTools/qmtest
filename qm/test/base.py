@@ -322,56 +322,49 @@ def get_resource_class(class_name, database):
     return get_extension_class(class_name, 'resource', database)
 
 
-def load_outcomes(file):
+def load_outcomes(file, database):
     """Load test outcomes from a file.
 
     'file' -- The file object from which to read the results.
 
+    'database' -- The current database.
+
     returns -- A map from test IDs to outcomes."""
 
-    # Load full results.
-    test_results = filter(lambda r: r.GetKind() == Result.TEST,
-                          load_results(file))
-    # Keep test outcomes only.
+    results = load_results(file, database)
     outcomes = {}
-    for r in test_results:
-        outcomes[r.GetId()] = r.GetOutcome()
+    for r in results:
+        # Keep test outcomes only.
+        if r.GetKind() == Result.TEST:
+            outcomes[r.GetId()] = r.GetOutcome()
     return outcomes
 
 
-def load_results(file):
+def load_results(file, database):
     """Read test results from a file.
 
     'file' -- The file object from which to read the results.
 
-    returns -- A sequence of 'Result' objects."""
+    'database' -- The current database.
 
-    results = []
+    returns -- A 'ResultSource' object."""
+
     # For backwards compatibility, look at the first few bytes of the
     # file to see if it is an XML results file.
     tag = file.read(5)
-    file.seek(-len(tag), 1)
+    file.seek(0)
     
     if tag == "<?xml":
-      results_document = qm.xmlutil.load_xml(file)
-      node = results_document.documentElement
-      # Extract the results.
-      results_elements = qm.xmlutil.get_children(node, "result")
-      for re in results_elements:
-          results.append(_result_from_dom(re))
+        source_cls = \
+         get_extension_class("xml_result_source.XMLResultSource",
+                             "result_source",
+                             database)
     else:
-        unpickler = cPickle.Unpickler(file)
-        while 1:
-            try:
-                results.append(unpickler.load())
-            except EOFError:
-                break
-            except cPickle.UnpicklingError:
-                # When file is a StringIO, EOFError is not raised when
-                # there are no more characters.  Instead, this exception
-                # is raised.
-                break
-    return results
+        source_cls = \
+         get_extension_class("pickle_result_source.PickleResultSource",
+                             "result_source",
+                             database)
+    return source_cls({"file": file})
 
 
 def _result_from_dom(node):
@@ -432,6 +425,7 @@ def split_results_by_expected_outcome(results, expected_outcomes):
 extension_kinds = [ 'database',
                     'label',
                     'resource',
+                    'result_source',
                     'result_stream',
                     'target',
                     'test', ]
@@ -450,6 +444,7 @@ for kind in extension_kinds:
 import qm.test.database
 import qm.label
 import qm.test.resource
+import qm.test.result_source
 import qm.test.result_stream
 import qm.test.target
 import qm.test.test
@@ -458,6 +453,7 @@ __extension_bases = {
     'database' : qm.test.database.Database,
     'label' : qm.label.Label,
     'resource' : qm.test.resource.Resource,
+    'result_source' : qm.test.result_source.ResultSource,
     'result_stream' : qm.test.result_stream.ResultStream,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test

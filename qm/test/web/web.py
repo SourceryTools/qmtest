@@ -2175,7 +2175,8 @@ class QMTestServer(qm.web.WebServer):
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
-        self.__expected_outcomes = qm.test.base.load_outcomes(f)
+        self.__expected_outcomes = \
+            qm.test.base.load_outcomes(f, self.GetDatabase())
         # Close the upload popup window, and redirect the main window
         # to the root of the database.
         return self._ClosePopupAndRedirect("dir")
@@ -2328,7 +2329,7 @@ class QMTestServer(qm.web.WebServer):
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
-        results = qm.test.base.load_results(f)
+        results = qm.test.base.load_results(f, self.GetDatabase())
         # Enter them into a new results stream.
         self.__results_stream = StorageResultsStream()
         for r in results:
