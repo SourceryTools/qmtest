@@ -1,3 +1,11 @@
+2003-08-27  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* setup.py: New file.
+	* qm/__init__.py: Import qm.config for data path and version info.
+	* qm/test/base.py: Add config.data_dir + '/test/classes' to search
+	path.
+	* qm/test/qmtest.py: Insert magic number so this becomes a real script.
+
 2003-08-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/web/web.py (LoadContextPage.prompt): Fix quoting.
