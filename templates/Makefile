@@ -7,7 +7,7 @@
 # Contents:
 #   Fill me in!
 # 
-# Copyright (C) 2001 CodeSourcery LLC
+# Copyright (C) 2003 CodeSourcery LLC
 #
 # For license terms see the file COPYING.
 #

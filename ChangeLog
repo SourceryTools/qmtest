@@ -1,3 +1,13 @@
+2003-06-23  Nathaniel Smith  <njs@codesourcery.com>
+
+	* templates/Makefile: It's 2003 now.
+	* templates/xml: Likewise.
+	* templates/py: Likewise.
+	* templates/html: Likewise.
+	* templates/dtml: Likewise.
+	* templates/docbook-chapter: Likewise.
+	* templates/docbook: Likewise.
+
 2003-06-22  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/attachment.py (Attachment): Move to start of file.
