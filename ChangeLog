@@ -1,5 +1,25 @@
 2001-02-18  Alex Samuel  <samuel@codesourcery.com>
 
+	* README: Add more instructions.
+	* qm/common.py (label_regex): Rename to...
+	(__label_regex): ... this.
+	(label_thunk_regex): Rename to...
+	(__label_thunk_regex): ... this.
+	(__host_name): New variable.
+	(get_host_name): New function.
+	* qm/track/config.py (open): Rename to...
+	(open_idb): ... this.  Catch only IOError.
+	(close): Rename to...
+	(close_idb): ... this.
+	(initialize): Rename to...
+	(initialize_idb): ... this.
+	* qm/track/cmdline.py: Adjust accordingly.
+	* qm/track/qmtrack.in: Likewise.
+	* qm/track/server.py (start_server): Write URL file.
+	(execute): Fix typo.
+
+2001-02-18  Alex Samuel  <samuel@codesourcery.com>
+
 	* Makefile.in (SUBDIRS): Add qm.
 	(README): Update.
 	* configure.in (AC_OUTPUT): Add qm/Makefile.

@@ -80,8 +80,20 @@ def start_server(port, log_file=None):
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",
                                    os.path.join(web_directory, "stylesheets"))
-    # Start the server.
-    server.Run(port, log_file)
+
+    # Write the URL file.  It contains the URL for this server.
+    url_path = qm.track.state["server_url_path"]
+    url_file = open(url_path, "w")
+    host_name = qm.get_host_name()
+    url_file.write("http://%s:%d%s\n" % (host_name, port, script_base))
+    url_file.close()
+
+    try:
+        # Start the server.
+        server.Run(port, log_file)
+    finally:
+        # Clean up the URL file.
+        os.remove(url_path)
 
 
 def execute(command, output_file):
@@ -109,7 +121,7 @@ def execute(command, output_file):
             if command.RequiresLocalIdb():
                 raise RuntimeError, \
                       "%s cannot be invoked on a remote IDB" \
-                      % command.GetCommmand()
+                      % command.GetCommand()
             # FIXME.  Implement remote execution here.
             raise NotImplementedError, "remote command execution"
 

@@ -789,13 +789,13 @@ class Command:
         idb_path = self.__arguments[0]
 
         # Create the IDB.
-        qm.track.initialize(idb_path, idb_class_name)
+        qm.track.initialize_idb(idb_path, idb_class_name)
 
         # If requested, populate the IDB with test values.
         if command_options.has_key('test-values'):
-            qm.track.open(idb_path)
+            qm.track.open_idb(idb_path)
             qm.track.setup_idb_for_test()
-            qm.track.close()
+            qm.track.close_idb()
 
 
     def __PrintResults(self, output, *issues):

@@ -79,7 +79,7 @@ You may specify the path to the issue base by
 """ % environment_variable_name
 
         # Open a session to the IDB.
-        qm.track.open(idb_path)
+        qm.track.open_idb(idb_path)
 
     try:
         # Execute the command.
@@ -87,7 +87,7 @@ You may specify the path to the issue base by
 
     finally:
         # Close the session, if one's open.
-        qm.track.close()
+        qm.track.close_idb()
 
 except qm.cmdline.CommandError, msg:
     sys.stderr.write("%s: %s\n" % (script_name, msg))

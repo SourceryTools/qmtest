@@ -124,7 +124,7 @@ def get_idb():
     return __idb
 
 
-def open(path, max_attempts=10, attempt_sleep_time=0.1):
+def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     """Open a QMTrack session.
 
     precondition -- A session isn't open.
@@ -221,15 +221,16 @@ def open(path, max_attempts=10, attempt_sleep_time=0.1):
             try:
                 server_url = open(server_url_path, "r").read()
                 server_url = string.strip(server_url)
-                # All is well.  Put the system into remote mode.
-                state["mode"] = "remote"
-                state["server_url_path"] = server_url_path
-                state["idb_path"] = path
-                return
-            except:
+            except IOError:
                 # We couldn't load the server URL.  Maybe it went away
                 # since we checked the lock.  Try again.
                 continue
+
+            # All is well.  Put the system into remote mode.
+            state["mode"] = "remote"
+            state["server_url_path"] = server_url_path
+            state["idb_path"] = path
+            return
 
     # We've exceeded the maximum number of attempts so bail with an
     # exception.
@@ -238,7 +239,7 @@ def open(path, max_attempts=10, attempt_sleep_time=0.1):
           % (path, attemps)
 
 
-def close():
+def close_idb():
     """Close the QMTrack session.
 
     If a session isn't open, do nothing.
@@ -278,7 +279,7 @@ def close():
     state["mode"] = "none"
 
 
-def initialize(path, idb_class_name):
+def initialize_idb(path, idb_class_name):
     """Initialize a new IDB.
 
     'path' -- The path to the new IDB.  The path must not exist.

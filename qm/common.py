@@ -39,6 +39,7 @@ import cPickle
 import os
 import os.path
 import re
+import socket
 import string
 import time
 import types
@@ -232,7 +233,7 @@ def get_base_directory():
     return base_directory
 
 
-label_regex = re.compile("[a-z0-9_]+$")
+__label_regex = re.compile("[a-z0-9_]+$")
 
 def is_valid_label(label, user=1):
     """Test whether 'label' is a valid label.
@@ -248,7 +249,7 @@ def is_valid_label(label, user=1):
 
     returns -- True if 'label' is valid."""
 
-    if not label_regex.match(label):
+    if not __label_regex.match(label):
         return 0
     # The regex doesn't match empty strings, so this indexing is OK.
     if user and label[0] == '_':
@@ -256,7 +257,7 @@ def is_valid_label(label, user=1):
     return 1
 
 
-label_thunk_regex = re.compile("[^a-z0-9_]")
+__label_thunk_regex = re.compile("[^a-z0-9_]")
 
 def thunk_to_label(label):
     """Sanitize and convert 'label' to a valid label.
@@ -271,7 +272,7 @@ def thunk_to_label(label):
     # Lower capital letters.
     label = string.lower(label)
     # Replace all invalid characters with underscores.
-    label = label_thunk_regex.sub("_", label)
+    label = __label_thunk_regex.sub("_", label)
     # Trim leading underscores.
     while len(label) > 0 and label[0] == "_":
         label = label[1:]
@@ -279,7 +280,18 @@ def thunk_to_label(label):
     if label == "":
         label = "x"
     return label
-        
+
+
+__host_name = None
+
+def get_host_name():
+    """Return the name of this computer."""
+
+    global __host_name
+    if __host_name is None:
+        __host_name = socket.gethostbyaddr(socket.gethostname())[0]        
+    return __host_name
+
 
 ########################################################################
 # Local Variables:

@@ -1,6 +1,9 @@
-                                                            -*- text -*-
 
 		     Software Carpentry QM Tools
+
+     Copyright (C) 2001 by CodeSourcery LLC.  All rights reserved.
+
+------------------------------------------------------------------------
 
 1.  REQUIREMENTS
 
@@ -12,6 +15,8 @@
     for more information on obtaining the tools.
 
 
+------------------------------------------------------------------------
+
 2.  BUILDING QM
 
     From the top of the source tree, first configure the sources:
@@ -22,15 +27,63 @@
 
       make setup
 
-    To build the QM programs, simply
+    Then build things:
 
-      make qm
+      make
 
-    and to build documentation,
 
-      make doc
-
+------------------------------------------------------------------------
 
 3. GETTING STARTED WITH QMTRACK
 
-   The qmtrack executable is in qm/qm/track.
+   The qmtrack executable is qm/qm/track/qmtrack.  This single
+   executable provides all QMTrack functionality.  There is no need to
+   set up your PYTHONPATH; this is set automatically by the script.
+
+   First, create a new issue database with the initialize command.
+   Specify the path to the new database.  You'll want to specify the
+   --test-values option too, to populate it with some dummy stuff.
+
+     qmtrack initialize --test-values /path/to/idb
+
+   Subsequently, you have to tell qmtrack where the IDB is.  Either
+   use the --idb option, or
+
+     export QMTRACK_IDB_PATH=/path/to/idb
+
+   You should then be able to poke around at the IDB.  For instance,
+   to list the issue ids of all issues,
+
+     qmtrack --format iid query 1
+
+   (The query expression "1" always evaluates to true, so all issues
+   match.)  Use the --help option to learn more about using the
+   qmtrack command.
+
+
+   To start the web server, use the qmtrack server command.  For
+   instance, to start the server on port 9000 and write log messages
+   to stdout,
+
+     qmtrack server --port 9000 --log-file -
+
+   Point your web browser at
+
+     http://my.host:9000/track/summary
+
+   and click around.
+
+
+------------------------------------------------------------------------
+
+4. NOTICES
+
+   This product includes software developed by Digital Creations for
+   use in the Z Object Publishing Environment (http://www.zope.org/).
+
+
+------------------------------------------------------------------------
+Local Variables:
+mode: text
+fill-column: 72
+End:
