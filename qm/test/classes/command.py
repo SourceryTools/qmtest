@@ -390,7 +390,8 @@ class ExecTestBase(Test):
                 # Check to see if the exit code matches.
                 if exit_code != self.exit_code:
                     causes.append("exit_code")
-                    result["ExecTest.expected_exit_code"] = self.exit_code
+                    result["ExecTest.expected_exit_code"] \
+                        = str(self.exit_code)
                     result["ExecTest.exit_code"] = str(exit_code)
                 # Check to see if the standard output matches.
                 if stdout != self.stdout:

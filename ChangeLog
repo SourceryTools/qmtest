@@ -1,5 +1,9 @@
 2002-02-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (Command.ExecTestBase.RunProgram):
+	Make sure that result annotations are stored as strings, not 
+	integers.
+
 	* qm.spec.in (Release): Increment.
 
 2002-02-13  Vladimir Prus <ghost@cs.msu.su>
