@@ -1391,9 +1391,9 @@ class QMTestServer(qm.web.WebServer):
         # Create an XML results stream for storing the results.
         rs = XMLResultStream(s)
         # Write all the results.
-        for r in self.__results_stream.test_results.values():
+        for r in self.__results_stream.GetTestResults().values():
             rs.WriteResult(r)
-        for r in self.__results_stream.resource_results.values():
+        for r in self.__results_stream.GetResourceResults().values():
             rs.WriteResult(r)
         # Terminate the stream.
         rs.Summarize()

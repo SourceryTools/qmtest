@@ -1,5 +1,8 @@
 2001-12-06  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/web/web.py (QMTestServer.HandleSaveResults): Fix
+	typos.
+
 	* scripts/qm-release: Fix typo.
 	
   	* scripts/qm-release: Update documentation copying rules. 
