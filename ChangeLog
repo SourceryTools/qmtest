@@ -1,3 +1,7 @@
+2001-09-21  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/platform_linux.py: Really remove it.
+
 2001-09-17  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_linux.py: Rename to...
