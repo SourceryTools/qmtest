@@ -1,3 +1,38 @@
+2002-03-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/common.py (starts_with): Simplify.
+	(ends_with): Likewise.
+	(parse_assignment): New function.
+	(read_assignments): Likewise.
+	* qm/test/cmdline.py (context_file_name): New member.
+	(QMTest.MakeContext): Use read_assignments.
+	(QMTest.__ParseContextAssignment): Remove.
+	(QMTest.__ParseKeywordArgument): Likewise.
+	(QMTest.__ExecuteCreateTdb): Use parse_assignment.
+	* qm/test/qmtest.py: Tidy interrupted message.
+	* qm/test/share/dtml/load-expected-results.dtml: Remove.
+	* qm/test/share/dtml/load-results.dtml: Likewise.
+	* qm/test/share/dtml/load.dtml: New file.
+	* qm/test/share/dtml/navigation-bar.dtml (load_context): New
+	function.
+	* qm/test/share/dtml/set-expectation.dtml: New file.
+	* qm/test/web/web.py (QMTestPage.__init__): Add load context and
+	save context functions to the file menu.
+	(LoadExpectedResultsPage): Reimplement using load.dtml.
+	(LoadResultsPage): Likewise.
+	(LoadContxtPage): Likewise.
+	(QMTestServer.__init__): Register context load and save URLs.
+	(QMTestServer.HandleClearResults): Summarize the new results
+	stream.
+	(QMTestServer.HandleLoadContext): New method.
+	(QMTestServer.HandleSaveContext): Likewise.
+	(QMTestServer.HandleSubmitContext): Likewise.
+	(QMTestServer._ClosePopupAndRedirect): New method.
+	
+	* COPYING: Replace with the GPL.
+	Replace all other copyright notices with references to COPYING.
+	* README: Note license change.
+	
 2002-03-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUMakefile.in (PYTHON_PACKAGES): Remove sgmlop.

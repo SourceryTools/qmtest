@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -73,6 +55,9 @@ class QMTest:
     summary_formats = ("full", "brief", "stats", "none")
     """Valid formats for result summaries."""
 
+    context_file_name = "context"
+    """The default name of a context file."""
+    
     expectations_file_name = "expectations.qmr"
     """The default name of a file containing expectations."""
     
@@ -515,67 +500,41 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             if option == "load-context":
                 if argument == "-":
                     # Read from standard input.
-                    lines = sys.stdin.readlines()
+                    file = sys.stdin
                 else:
-                    # Read from a file.
+                    # Read from a named file.
                     try:
-                        lines = open(argument, "r").readlines()
+                        file = open(argument, "r")
                     except:
                         raise qm.cmdline.CommandError, \
                               qm.error("could not read file",
                                        path=argument)
-                lines = map(string.strip, lines)
-                for line in lines:
-                    if line == "":
-                        # Blank line; skip it.
-                        pass
-                    elif qm.common.starts_with(line, "#"):
-                        # Comment line; skip it.
-                        pass
-                    else:
-                        self.__ParseContextAssignment(line, context)
+                # Read the assignments.
+                assignments = qm.common.read_assignments(file)
+                # Add them to the context.
+                for (name, value) in assignments.items():
+                    try:
+                        # Insert it into the context.
+                        context[name] = value
+                    except ValueError, msg:
+                        # The format of the context key is invalid, but
+                        # raise a 'CommandError' instead.
+                        raise qm.cmdline.CommandError, msg
 
             # Look for the '--context' option.
             elif option == "context":
-                self.__ParseContextAssignment(argument, context)
+                # Parse the argument.
+                name, value = qm.common.parse_assignment(assignment)
+            
+                try:
+                    # Insert it into the context.
+                    context[name] = value
+                except ValueError, msg:
+                    # The format of the context key is invalid, but
+                    # raise a 'CommandError' instead.
+                    raise qm.cmdline.CommandError, msg
 
         return context
-
-
-    def __ParseKeywordArgument(self, argument):
-        """Parse an 'argument' of the form 'name=value'.
-
-        'argument' -- A string.  The string should have the form
-        'name=value'.
-
-        returns -- A pair '(name, value)'."""
-
-        # Parse the assignment.
-        try:
-            (name, value) = string.split(argument, "=", 1)
-            return (name, value)
-        except:
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid keyword assignment",
-                           argument=argument)
-
-
-    def __ParseContextAssignment(self, assignment, context):
-        """Parse an assignment to the 'context'.
-
-        'assignment' -- A string indicating an assignment to a context
-        property."""
-        
-        # Parse the argument.
-        name, value = self.__ParseKeywordArgument(assignment)
-        
-        try:
-            # Insert it into the context.
-            context[name] = value
-        except ValueError, msg:
-            # The format of the context key is invalid, but
-            # raise a 'CommandError' instead.
-            raise qm.cmdline.CommandError, msg
 
 
     def __ExecuteCreateTdb(self, output, db_path):
@@ -591,7 +550,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Process attributes provided on the command line.
         for option, argument in self.__command_options:
             if option == "attribute":
-                name, value = self.__ParseKeywordArgument(argument)
+                name, value = qm.common.parse_assignment(argument)
                 attributes[name] = value
         # Create the test database.
         base.create_database(db_path, class_name, attributes)

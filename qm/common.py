@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2000, 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -879,15 +861,13 @@ def is_executable(path):
 def starts_with(text, prefix):
     """Return true if 'prefix' is a prefix of 'text'."""
 
-    return len(text) >= len(prefix) \
-           and text[:len(prefix)] == prefix
+    return text[:len(prefix)] == prefix
 
 
 def ends_with(text, suffix):
     """Return true if 'suffix' is a suffix of 'text'."""
 
-    return len(text) >= len(suffix) \
-           and text[-len(suffix):] == suffix
+    return text[-len(suffix):] == suffix
 
 
 def add_exit_function(exit_function):
@@ -1242,6 +1222,59 @@ else:
         minutes = hours*60 + minute
         seconds = minutes*60 + second
         return seconds
+
+
+def parse_assignment(assignment):
+    """Parse an 'assignment' of the form 'name=value'.
+
+    'aassignment' -- A string.  The string should have the form
+    'name=value'.
+
+    returns -- A pair '(name, value)'."""
+
+    # Parse the assignment.
+    try:
+        (name, value) = string.split(assignment, "=", 1)
+        return (name, value)
+    except:
+        raise QMException, \
+              qm.error("invalid keyword assignment",
+                       argument=assignment)
+
+
+def read_assignments(file):
+    """Read assignments from a 'file'.
+
+    'file' -- A file object containing the context.  When the file is
+    read, leading and trailing whitespace is discarded from each line
+    in the file.  Then, lines that begin with a '#' and lines that
+    contain no characters are discarded.  All other lines must be of
+    the form 'NAME=VALUE' and indicate an assignment to the context
+    variable 'NAME' of the indicated 'VALUE'.
+
+    returns -- A dictionary mapping each of the indicated 'NAME's to its
+    corresponding 'VALUE'.  If multiple assignments to the same 'NAME'
+    are present, only the 'VALUE' from the last assignment is stored."""
+
+    # Create an empty dictionary.
+    assignments = {}
+    
+    # Read all the lines in the file.
+    lines = file.readlines()
+    # Strip out leading and trailing whitespace.
+    lines = map(string.strip, lines)
+    # Drop any lines that are completely blank or lines that are
+    # comments.
+    lines = filter(lambda x: x != "" and not starts_with(x, "#"),
+                   lines)
+    # Go through each of the lines to process the context assignment.
+    for line in lines:
+        # Parse the assignment.
+        (name, value) = parse_assignment(line)
+        # Add it to the context.
+        assignments[name] = value
+
+    return assignments
 
 ########################################################################
 # variables

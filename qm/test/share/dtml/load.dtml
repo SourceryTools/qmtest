@@ -1,0 +1,37 @@
+<dtml-comment><!--
+
+  File:   load.dtml
+  Author: Mark Mitchell
+  Date:   2002-03-08
+
+  Contents:
+    Document template for loading a file.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader(title)">
+ <body>
+  <form name="load_form" method="post" 
+	action="<dtml-var submit_url>" enctype="multipart/form-data">
+   <h3><dtml-var heading></h3>
+   <table border="0" cellpadding="4" cellspacing="4" width="100%">
+    <tr class="field">
+     <td width="75%"><dtml-var prompt></td>
+     <td><input type="file" name="file" /></td>
+    </tr>
+    <tr>
+     <td colspan="2" align="right">
+      <input type="button" value=" OK " 
+             onclick="document.load_form.submit();"/>
+      <input type="button" value=" Cancel " onclick="window.close();"/>
+     </td>
+    </tr>
+   </table>
+  </form>
+ <dtml-var expr="GenerateEndBody()">
+</html>

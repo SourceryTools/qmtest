@@ -7,11 +7,9 @@
   Contents:
     Template for QMTest navigation bar.
 
-  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
-  be distributed only subject to the terms and conditions set forth in
-  the Software Carpentry Open Publication License, which is available at:
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
 
-    http://www.software-carpentry.com/openpub-license.html
+  For license terms see the file COPYING.
 
 --></dtml-comment>
 <form action="get">
@@ -108,6 +106,13 @@ function handle_menu_select(sel)
 }
 
 
+function load_context()
+{
+   window.open("load-context", "load_context", 
+               "dependent,height=200,width=640");
+}
+
+
 function load_results()
 {
    window.open("load-results", "load_results", 
@@ -117,7 +122,7 @@ function load_results()
 
 function load_expected_results()
 {
-   window.open("load-expected-results", "load_expected_results", 
+   window.open("load-expectations", "load_expectations", 
                "dependent,height=200,width=640");
 }
 <dtml-var expr="GenerateEndScript()">

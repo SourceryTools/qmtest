@@ -9,25 +9,7 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation files
-# (the "Software"), to deal in the Software without restriction,
-# including without limitation the rights to use, copy, modify, merge,
-# publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# For license terms see the file COPYING.
 #
 ########################################################################
 
@@ -38,6 +20,7 @@
 import os
 import qm
 import qm.attachment
+import qm.common
 import qm.fields
 import qm.label
 import qm.test.base
@@ -167,6 +150,9 @@ class QMTestPage(DefaultDtmlPage):
             ('Load Expectations', "load_expected_results();"),
             ('Save Expectations',
              "location = '%s';" % QMTest.expectations_file_name),
+            ('Load Context', "load_context();"),
+            ('Save Context',
+             "location = '%s';" % QMTest.context_file_name),
             ('Exit', 'shutdown')
             ]
         self.edit_menu_items = [
@@ -730,32 +716,80 @@ class DirPage(QMTestPage):
         else:
             return 30
 
+
     
-        
-class LoadExpectedResultsPage(QMTestPage):
-    """DTML page for uploading expected results."""
+class LoadContextPage(QMTestPage):
+    """DTML page for uploading a context."""
 
+    title = "Load Context"
+    """The title for the page."""
+    
+    heading = "Load the context from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load the context."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-context-file"
+    """The URL to which the file should be submitted."""
+    
     def __init__(self, server):
-        """Construct a new 'LoadExpectedResultsPage'.
+        """Construct a new 'LoadContextPage'.
 
         'server' -- The 'QMTestServer' creating this page."""
 
-        QMTestPage.__init__(self, "load-expected-results.dtml", server)
+        QMTestPage.__init__(self, "load.dtml", server)
+
+        
+        
+class LoadExpectationsPage(QMTestPage):
+    """DTML page for uploading a context."""
+
+    title = "Load Expectations"
+    """The title for the page."""
+    
+    heading = "Load expectations from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load expectations."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-expectations"
+    """The URL to which the file should be submitted."""
+    
+    def __init__(self, server):
+        """Construct a new 'LoadExpectationsPage'.
+
+        'server' -- The 'QMTestServer' creating this page."""
+
+        QMTestPage.__init__(self, "load.dtml", server)
 
 
-
+        
 class LoadResultsPage(QMTestPage):
-    """DTML page for uploading results."""
+    """DTML page for uploading a context."""
 
+    title = "Load Results"
+    """The title for the page."""
+    
+    heading = "Load results from a file."
+    """The heading printed across the top of the page."""
+    
+    prompt = "The file from which to load the results."""
+    """The prompt for the file name."""
+    
+    submit_url = "submit-results"
+    """The URL to which the file should be submitted."""
+    
     def __init__(self, server):
-        """Construct a new 'LoadResultsPage'.
+        """Construct a new 'LoadContextPage'.
 
         'server' -- The 'QMTestServer' creating this page."""
 
-        QMTestPage.__init__(self, "load-results.dtml", server)
+        QMTestPage.__init__(self, "load.dtml", server)
 
 
-        
+
 class NewItemPage(QMTestPage):
     """Page for creating a new test or resource."""
 
@@ -1503,7 +1537,8 @@ class QMTestServer(qm.web.WebServer):
             ( "edit-resource", self.HandleShowItem ),
             ( "edit-suite", self.HandleEditSuite ),
             ( "edit-test", self.HandleShowItem ),
-            ( "load-expected-results", self.HandleLoadExpectedResults ),
+            ( "load-context", self.HandleLoadContext ),
+            ( "load-expectations", self.HandleLoadExpectations ),
             ( "load-results", self.HandleLoadResults ),
             ( "new-resource", self.HandleNewResource ),
             ( "new-suite", self.HandleNewSuite ),
@@ -1519,6 +1554,7 @@ class QMTestServer(qm.web.WebServer):
             ( "shutdown", self.HandleShutdown ),
             ( "stop-tests", self.HandleStopTests ),
             ( "submit-context", self.HandleSubmitContext ),
+            ( "submit-context-file", self.HandleSubmitContextFile ),
             ( "submit-expectation", self.HandleSubmitExpectation ),
             ( "submit-resource", self.HandleSubmitItem ),
             ( "submit-expectations", self.HandleSubmitExpectations ),
@@ -1526,6 +1562,7 @@ class QMTestServer(qm.web.WebServer):
             ( "submit-results", self.HandleSubmitResults ),
             ( "submit-suite", self.HandleSubmitSuite ),
             ( "submit-test", self.HandleSubmitItem ),
+            ( QMTest.context_file_name, self.HandleSaveContext ),
             ( QMTest.expectations_file_name, self.HandleSaveExpectations ),
             ( QMTest.results_file_name, self.HandleSaveResults ),
             ]:
@@ -1637,6 +1674,7 @@ class QMTestServer(qm.web.WebServer):
         del self.__results_stream
         # And create a new one.
         self.__results_stream = StorageResultsStream()
+        self.__results_stream.Summarize()
 
         # Redirect to the main page.
         request = qm.web.WebRequest("dir", base=request)
@@ -1751,12 +1789,20 @@ class QMTestServer(qm.web.WebServer):
         return self.HandleShowSuite(request, edit=1)
 
 
-    def HandleLoadExpectedResults(self, request):
+    def HandleLoadContext(self, request):
+        """Handle a request to upload a context file.
+        
+        'request' -- The 'WebRequest' that caused the event."""
+
+        return LoadContextPage(self)(request)
+    
+        
+    def HandleLoadExpectations(self, request):
         """Handle a request to upload results.
         
         'request' -- The 'WebRequest' that caused the event."""
 
-        return LoadExpectedResultsPage(self)(request)
+        return LoadExpectationsPage(self)(request)
 
         
     def HandleLoadResults(self, request):
@@ -1834,6 +1880,20 @@ class QMTestServer(qm.web.WebServer):
         raise qm.web.HttpRedirect, request
 
 
+    def HandleSaveContext(self, request):
+        """Handlea  request to save the context to a file.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Start with the empty string.
+        s = ""
+        # Run through all of the context variables.
+        for (name, value) in self.__context.items():
+            s = s + "%s=%s\n" % (name, value)
+            
+        return ("application/x-qmtest-context", s)
+    
+        
     def HandleSaveExpectations(self, request):
         """Handle a request to save expectations to a file.
 
@@ -2101,6 +2161,28 @@ class QMTestServer(qm.web.WebServer):
         raise qm.web.HttpRedirect, request
 
 
+    def HandleSubmitContextFile(self, request):
+        """Handle a context file submission..
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # The context data.
+        data = request["file"]
+        # Create a file objet to read from.
+        file = StringIO.StringIO(data)
+        # Parse the assignments in the context file.
+        assignments = qm.common.read_assignments(file)
+        # Add them to the context.
+        for (name, value) in assignments.items():
+            try:
+                self.__context[name] = value
+            except ValueError:
+                # Skip any invalid assignments.
+                pass
+        # Redirect to the main page.
+        return self._ClosePopupAndRedirect("dir")
+
+
     def HandleSubmitExpectation(self, request):
         """Handle setting a single expectation.
 
@@ -2110,9 +2192,7 @@ class QMTestServer(qm.web.WebServer):
         outcome = request["outcome"]
         self.__expected_outcomes[id] = outcome
         # Close the upload popup window, and reload the main window.
-        return """<html><body><script language="JavaScript">
-                  window.opener.location = '%s';
-                  window.close();</script></body></html>""" % request["url"]
+        return self._ClosePopupAndRedirect(request["url"])
         
         
     def HandleSubmitExpectations(self, request):
@@ -2121,16 +2201,14 @@ class QMTestServer(qm.web.WebServer):
         'request' -- The 'WebRequest' that caused the event."""
 
         # Get the results file data.
-        data = request["expected_results"]
+        data = request["file"]
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
         self.__expected_outcomes = qm.test.base.load_outcomes(f)
         # Close the upload popup window, and redirect the main window
         # to the root of the database.
-        return """<html><body><script language="JavaScript">
-                  window.opener.location = '/test/dir';
-                  window.close();</script></body></html>"""
+        return self._ClosePopupAndRedirect("dir")
         
 
     def HandleSubmitExpectationsForm(self, request):
@@ -2312,7 +2390,7 @@ class QMTestServer(qm.web.WebServer):
         'request' -- The 'WebRequest' that caused the event."""
 
         # Get the results file data.
-        data = request["results"]
+        data = request["file"]
         # Create a file object from the data.
         f = StringIO.StringIO(data)
         # Read the results.
@@ -2324,9 +2402,7 @@ class QMTestServer(qm.web.WebServer):
         self.__results_stream.Summarize()
         # Close the upload popup window, and redirect the main window
         # to a view of the results.
-        return """<html><body><script language="JavaScript">
-                  window.opener.location = 'show-results';
-                  window.close();</script></body></html>"""
+        return self._ClosePopupAndRedirect("show-results")
 
 
     def HandleSubmitSuite(self, request):
@@ -2428,6 +2504,20 @@ class QMTestServer(qm.web.WebServer):
         """Handle the '/' URL."""
 
         raise qm.web.HttpRedirect, qm.web.WebRequest("/test/dir")
+
+
+    def _ClosePopupAndRedirect(self, url):
+        """Close the current window.  Redirect the main window to 'url'.
+
+        'url' -- A string giving the URL to which the main window should
+        be redirected.
+
+        returns -- A string giving HTML that will close the current
+        window and redirect the main window to 'url'."""
+
+        return """<html><body><script language="JavaScript">
+                  window.opener.location = '%s';
+                  window.close();</script></body></html>""" % url
         
 ########################################################################
 # initialization

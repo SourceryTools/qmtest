@@ -3,6 +3,15 @@ NEWS
 
 This file describes user visible changes to QM.
 
+Changes in QM 1.1.2
+===================
+
+QM is now licensed under the GNU General Public License.
+
+The QMTest GUI has been substantially improved.
+
+It is now possible to load and save the context in the GUI.
+
 Changes in QM 1.1
 =================
 
