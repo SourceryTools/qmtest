@@ -118,13 +118,6 @@ class QMTest:
         "Display usage summary."
         )
 
-    verbose_option_spec = (
-        "v",
-        "verbose",
-        None,
-        "Display informational messages."
-        )
-
     version_option_spec = (
         None,
         "version",
@@ -301,7 +294,6 @@ class QMTest:
 
     global_options_spec = [
         help_option_spec,
-        verbose_option_spec,
         version_option_spec,
         db_path_option_spec,
         ]
@@ -618,10 +610,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if self.GetCommandOption("help") is not None:
             self.__WriteCommandHelp(self.__command)
             return 0
-
-        # Handle the verbose option.  The verbose level is the number of
-        # times the verbose option was specified.
-        qm.common.verbose = self.__global_options.count(("verbose", ""))
 
         # Make sure a command was specified.
         if self.__command == "":

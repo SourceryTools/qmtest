@@ -1,3 +1,11 @@
+2003-08-18  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (verbose): Remove variable.
+	* qm/test/cmdline.py (QMTest.verbose_option_spec): Remove.
+	(QMTest.global_options_spec): Remove 'verbose_option_spec'.
+	(QMTest.Execute): Don't set 'qm.common.verbose'.
+	* qm/test/doc/reference.xml: Don't document -v/--verbose switch.
+
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Remove __has_*_run variables.

@@ -832,9 +832,6 @@ def read_assignments(file):
 # variables
 ########################################################################
 
-verbose = 0
-"""The verbosity level.  Higher values specify more output."""
-
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""
 

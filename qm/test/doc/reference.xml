@@ -598,17 +598,6 @@
      </varlistentry>
 
      <varlistentry>
-      <term><option>-v</option></term>
-      <term><option>&dashdash;verbose</option></term>
-      <listitem>
-       <para>Generate progress and status messages while executing.  This
-       option may be specified more than once; the more times it is
-       specified, the higher the verbose level, and the more messages are
-       printed.</para>
-      </listitem>
-     </varlistentry>
-    
-     <varlistentry>
       <term><option>&dashdash;version</option></term>
       <listitem>
        <para>Describe the version of &qmtest; in use.</para>
