@@ -41,7 +41,6 @@
   <!ENTITY xml-repr.xml SYSTEM "xml-repr.xml">
   <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
-  <!ENTITY user-api.xml SYSTEM "user-api.xml">
   <!ENTITY idb-impl.xml SYSTEM "idb-impl.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
 ]>
@@ -63,7 +62,6 @@
  &xml-repr.xml;
  &idb-api.xml;
  &triggers.xml;
- &user-api.xml;
  &idb-impl.xml;
  &user-interface.xml;
 

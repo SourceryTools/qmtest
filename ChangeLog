@@ -1,5 +1,10 @@
 2000-11-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtrack/qmtrack.xml: Don't include user-api.xml.
+	* doc/design/qmtrack/user-api.xml: Remove.
+	
+2000-11-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/qm-html.dsl (html-manifest): Set true.
 	(html-manifest-filename): Set to "docbook-html.manifest".
 	(%use-id-as-filename%): Set to true.

@@ -354,10 +354,6 @@ class IdbBase:
 ]]>
   </programlisting>
 
-  <para>See <link linkend="sec-query-implementation"
-  endterm="sec-query-implementation-title"></link> for a description
-  of query records.</para>
-
   <para>See <link linkend="sec-trigger-api"
   endterm="sec-trigger-api-title"></link> for
   <classname>IdbBase</classname> methods for registering triggers.</para>

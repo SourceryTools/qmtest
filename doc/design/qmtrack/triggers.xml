@@ -20,7 +20,7 @@
 <chapter id="chap-triggers">
  <title>Triggers</title>
 
- <para><firstterm>Triggers</firstterm> provide a mechanism for
+ <para><firstterm id="def-trigger">Triggers</firstterm> provide a mechanism for
  extending a &qmtrack; issue database in two important ways.
   <orderedlist>
    <listitem>
