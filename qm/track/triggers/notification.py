@@ -437,6 +437,10 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
             # Yes.
             uid = issue.GetField("user")
             current_subscribers = issue.GetField(self._field_name)
+            # Is the user already subscribed?
+            if uid in current_subscribers:
+                continue
+            # Find out who was subscribed before the revision.
             if previous_issue is None:
                 previous_subscribers = []
             else:

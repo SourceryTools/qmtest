@@ -125,6 +125,8 @@ class Enumeral:
     def __cmp__(self, other):
         try:
             other_as_int = int(other)
+        except TypeError:
+            return 0
         except ValueError:
             return cmp(self.__GetName(), other)
         else:

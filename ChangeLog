@@ -1,6 +1,12 @@
 2001-05-15  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/triggers/notification.py
+	(NotifyByUidFieldTrigger.Preupdate): Don't subscribe a user twice.
+	* qm/common.py (Enumeral.__cmp__): Handle TypeError.
+
+2001-05-15  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/triggers/notification.py
 	(NotifyByUidFieldTrigger.Preupdate): Handle new issues correctly.
 
 2001-05-15  Alex Samuel  <samuel@codesourcery.com>
