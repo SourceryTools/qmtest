@@ -7,7 +7,7 @@
 # Contents:
 #   Base interfaces and classes.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -273,7 +273,6 @@ def get_extension_class_names_in_directory(directory):
                 continue
             extensions[kind].append(qm.xmlutil.get_dom_text(c))
     except:
-        print sys.exc_info()[1]
         pass
 
     return extensions

@@ -50,7 +50,6 @@ import Queue
 from   result import *
 import string
 import sys
-import web.web
 import whrandom
 
 ########################################################################
@@ -822,10 +821,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
-        
+
+        # Delay importing this module until absolutely necessary since
+        # the GUI requires threads, and, in general, we do not assume
+        # that threads are available.
+        import qm.test.web.web
         # Set up the server.
-        server = web.web.QMTestServer(database, port_number, address,
-                                      log_file, targets, context)
+        server = qm.test.web.web.QMTestServer(database, port_number, address,
+                                              log_file, targets, context)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.

@@ -1,5 +1,7 @@
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: New file.
+	
 	* qm/queue.py: New file.
 	* qm/test/base.py (get_extension_class_names_in_directory): Remove
 	debugging statement.

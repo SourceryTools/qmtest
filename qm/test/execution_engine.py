@@ -17,10 +17,10 @@
 
 import os
 import qm.common
+import qm.queue
 from   qm.test.base import *
 from   qm.test.context import *
 import qm.xmlutil
-import Queue
 from   result import *
 import sys
 
@@ -76,7 +76,7 @@ class ExecutionEngine:
         # All of the targets are idle at first.
         self.__idle_targets = targets[:]
         # There are no responses from the targets yet.
-        self.__response_queue = Queue.Queue(0)
+        self.__response_queue = qm.queue.Queue(0)
         # There no pending or ready tests yet.
         self.__pending = []
         self.__ready = []
@@ -150,9 +150,12 @@ class ExecutionEngine:
         # to another if the first node is a prerequisite for the
         # second.  Begin by creating the nodes of the graph.
         for id in self.__test_ids:
-            descriptor = self.__database.GetTest(id)
-            self.__descriptors[id] = descriptor
-            self.__descriptor_graph[descriptor] = [0, []]
+            try:
+                descriptor = self.__database.GetTest(id)
+                self.__descriptors[id] = descriptor
+                self.__descriptor_graph[descriptor] = [0, []]
+            except:
+                self._AddUntestedResult(id, "Could not load test")
 
         # Create the edges.
         for descriptor in self.__descriptors.values():
@@ -273,7 +276,7 @@ class ExecutionEngine:
                             self.__ready.append(d)
 
             return result
-        except Queue.Empty:
+        except qm.queue.Empty:
             # If wait is zero, and there is nothing in the queue, then
             # this exception will be thrown.  Just return.
             return None
