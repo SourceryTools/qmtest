@@ -1,3 +1,8 @@
+2004-10-28  Matthias Klose <doko@cs.tu-berlin.de>
+
+	* qmdist/command/build_doc.py (build_doc.run): Use "openjade" if
+	"jade" is not available.
+
 2004-08-20  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/__init__.py: Don't import or define 'lib_dir'.

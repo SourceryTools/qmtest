@@ -98,8 +98,11 @@ class build_doc(build.build):
                             'qm/test/doc/introduction.xml',
                             'qm/test/doc/tour.xml',
                             'qm/test/doc/reference.xml'])
-        
-        jade = find_executable('jade')
+
+        # Some versions of Jade are called "jade"; others are called
+        # "openjade".  We look for both forms.
+        jade = find_executable('jade') or find_executable('openjade')
+
         dcl = find_file(map(normpath,
                             ['/usr/share/doc/jade*/pubtext/xml.dcl',
                              '/usr/share/doc/openjade*/pubtext/xml.dcl',
