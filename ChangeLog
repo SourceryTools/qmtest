@@ -1,5 +1,9 @@
 2000-11-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk (docbook-html): Fix files to tidy.
+
+2000-11-10  Alex Samuel  <samuel@codesourcery.com>
+
 	Conversion to DocBook.
 	
 	* standard.mk (TIDYFLAGS): Use one-space indent.

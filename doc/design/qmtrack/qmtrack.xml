@@ -23,6 +23,7 @@
   this document.  -->
 
   <!ENTITY idb "<acronym>idb</acronym>">
+  <!ENTITY iid "<acronym>iid</acronym>">
   <!ENTITY qmtrack "qmtrack">
 
   <!-- Each chapter is contained in a separate file, and included by

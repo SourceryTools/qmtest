@@ -104,7 +104,7 @@ docbook-html:	$(DOCBOOKMAIN) $(DOCBOOK)
 	$(JADE) \
             $(foreach dir,$(SGMLDIRS),-D$(dir)) \
 	    -t sgml -d $(HTMLSS) $(JADEEXTRA) $<
-	for f in *.htm; do \
+	for f in html/*.html; do \
 	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
 	    true; \
 	done 
