@@ -130,7 +130,7 @@ subject to the following modifications and clarifications:
     body of a function should be placed on the line(s) above the code
     it comments.
 
-  - Do not use special CVS substitution keywords ("$Id$, "$Author$",
+  - Do not use special CVS substitution keywords ("Id:, "Author:",
     etc.) in source code.
 
   - Always use the followng naming conventions:
@@ -143,7 +143,7 @@ subject to the following modifications and clarifications:
       class fields       CamelCaps
       local variables    underscore_delimited
 
-Doc strings should be written in formatted text.  In addition to the
+Doc strings should be written in structured text.  In addition to the
 guidelines in von Rossum's style guide, follow these rules:
 
   - TBD

@@ -1,3 +1,11 @@
+2000-11-06  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/process-xhtml.py: Handle multiple term classes.  Use
+	pickling for .terms file.
+	(terms_classes): New list.
+	(terms_def_classes): Likewise.
+	* templates/html: Add emacs gunk to set fill-column.
+	
 2000-11-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/process-xhtml.py (clean_up_term): New function.
