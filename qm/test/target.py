@@ -201,12 +201,16 @@ class Target(qm.extension.Extension):
         # Create the result.
         result = Result(Result.TEST, descriptor.GetId())
         try:
-            # Augment the context with the tmpdir property.
+            # Augment the context appropriately.
             context = Context(context)
             context[context.TMPDIR_CONTEXT_PROPERTY] \
                 = self._GetTemporaryDirectory()
+            context[context.DB_PATH_CONTEXT_PROPERTY] \
+                = descriptor.GetDatabase().GetPath()
             # Set up any required resources.
             self.__SetUpResources(descriptor, context)
+            # Make the ID of the test available.
+            context[context.ID_CONTEXT_PROPERTY] = descriptor.GetId()
             # Run the test.
             descriptor.Run(context, result)
         except KeyboardInterrupt:
@@ -304,6 +308,9 @@ class Target(qm.extension.Extension):
         # guarantee that it will be the same in a test that depends on
         # this resource as it was in the resource itself.
         del properties[Context.TMPDIR_CONTEXT_PROPERTY]
+        # Similarly, the ID property should be the name of the dependent
+        # entity, not the name of the reosurce.
+        del properties[Context.ID_CONTEXT_PROPERTY]
         rop = (resource, result.GetOutcome(), properties)
         self.__resources[result.GetId()] = rop
         return rop
@@ -362,6 +369,8 @@ class Target(qm.extension.Extension):
             resource_desc = self.GetDatabase().GetResource(resource_name)
             # Set up the resources on which this resource depends.
             self.__SetUpResources(resource_desc, wrapper)
+            # Make the ID of the resource available.
+            wrapper[Context.ID_CONTEXT_PROPERTY] = resource_name
             # Set up the resource itself.
             resource_desc.SetUp(wrapper, result)
             # Obtain the resource within the try-block so that if it

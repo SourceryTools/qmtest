@@ -75,6 +75,21 @@ class Context(types.DictType):
     A 'Context' object is effectively a mapping object whose keys must
     be labels and values must be strings."""
 
+    DB_PATH_CONTEXT_PROPERTY = "qmtest.dbpath"
+    """The context variable giving the path to the database.
+
+    The value of this context variable will be a string giving the
+    path to the database directory.  For example, if QMTest is invoked
+    as 'qmtest -D /path/to/db run', the value of this variable would
+    be '/path/to/db'.  The value may be an absolute or a relative
+    path."""
+
+    ID_CONTEXT_PROPERTY = "qmtest.id"
+    """The context variable giving the name of the running test or resource.
+
+    This value of this context variable will be the string giving the
+    name of the of the test or resource that is presently executing."""
+    
     TMPDIR_CONTEXT_PROPERTY = "qmtest.tmpdir"
     """A context property whose value is a string giving the path to a
     temporary directory.  This directory will be used only by the

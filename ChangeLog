@@ -1,5 +1,13 @@
 2003-11-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/context.py (Context.DB_PATH_CONTEXT_PROPERTY): New
+	variable.
+	(Context.ID_CONTEXT_PROPERTY): Likewise.
+	(Context.TMPDIR_CONTEXT_PROPERTY): Likewise.
+	* qm/test/target.py (Target.RunTest): Set them.
+	(Target._FinishResourceSetUp): Clear ID_CONTEXT_PROPERTY.
+	(Target._SetUpResource): Set ID_CONTEXT_PROPERTY.
+
 	* qm/common.py (parse_boolean): New function.
 	* qm/fields.py (BooleanField.Validate): New method.
 	* qm/test/context.py (ContextException.__init__): Generalize.
