@@ -101,12 +101,12 @@ class ShowPage(web.DtmlPage):
         self.field_errors = field_errors
 
         self.edit_menu_items.append(("Edit %s" % string.capitalize(type),
-                                     " edit_item()"))
+                                     "edit_item();"))
         self.edit_menu_items.append(("Delete %s" % string.capitalize(type),
-                                     " delete_item()"))
+                                     "delete_item();"))
 
         if type == "test" and not edit:
-            self.run_menu_items.append(("This Test", " run_test()"))
+            self.run_menu_items.append(("This Test", "run_test();"))
         
         # Some extra attributes that don't apply to resources.
         if self.type is "test":

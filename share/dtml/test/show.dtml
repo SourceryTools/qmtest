@@ -65,7 +65,7 @@
    <form name="form"
          method="post"
          action="<dtml-var expr="MakeSubmitUrl()">"
-         enctype="multipart/form-data"/>
+         enctype="multipart/form-data">
 
    <input type="hidden" 
           name="class"

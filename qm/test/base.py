@@ -1153,16 +1153,16 @@ def make_new_resource(resource_class_name, resource_id):
     return ResourceDescriptor(resource_id, resource_class_name, arguments)
 
 
-def load_outcomes(path):
+def load_outcomes(file):
     """Load test outcomes from a file.
 
-    'path' -- Path to an XML results file.
+    'file' -- The file object from which to read the results.
 
     returns -- A map from test IDs to outcomes."""
 
     # Load full results.
     test_results = filter(lambda r: r.GetKind() == Result.TEST,
-                          load_results(open(path, "r")))
+                          load_results(file))
     # Keep test outcomes only.
     outcomes = {}
     for r in test_results:

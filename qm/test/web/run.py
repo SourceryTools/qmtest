@@ -53,16 +53,18 @@ import web
 class TestResultsPage(web.DtmlPage):
     """DTML page for displaying test results."""
 
-    def __init__(self, test_results):
+    def __init__(self, test_results, expected_outcomes):
         """Construct a new 'TestResultsPage'.
 
-        'test_results' -- A map from test ids to 'Result' objects."""
+        'test_results' -- A map from test IDs to 'Result' objects.
+
+        'expected_outcomes' -- A map from test IDs to outcomes."""
         
         # Initialize the base classes.
         web.DtmlPage.__init__(self, "results.dtml")
 
         self.test_results = test_results
-        self.expected_results = {}
+        self.expected_outcomes = expected_outcomes
         
 
     def Summarize(self):
@@ -181,12 +183,12 @@ class TestResultsPage(web.DtmlPage):
         returned.  If false, unexpected results are returned."""
 
         if expected:
-            return filter(lambda r, er=self.expected_results: \
+            return filter(lambda r, er=self.expected_outcomes: \
                               r.GetOutcome() == er.get(r.GetId(),
                                                         Result.PASS),
                           results)
         else:
-            return filter(lambda r, er=self.expected_results: \
+            return filter(lambda r, er=self.expected_outcomes: \
                               r.GetOutcome() != er.get(r.GetId(),
                                                         Result.PASS),
                           results)

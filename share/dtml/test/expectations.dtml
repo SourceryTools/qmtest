@@ -1,0 +1,58 @@
+<dtml-comment><!--
+
+  File:   expectations.dtml
+  Author: Mark Mitchell
+  Date:   2001-10-20
+
+  Contents:
+    Document template for editing expected outcomes.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Load Results')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Expectations</h3>
+
+ <form name="expectations" method="post" 
+       action="submit-expectations-form" enctype="multipart/form-data">
+  <table border="0" cellpadding="4" cellspacing="4" width="100%">
+    <dtml-in test_ids>
+     <dtml-let test_id=sequence-item>
+      <tr class="field">
+       <td width="75%"><dtml-var expr="FormatId(test_id, 'test')"></td>
+       <td width="25%"><select name="<dtml-var test_id>">
+        <option value="None">None</option>
+	<dtml-in outcomes>
+         <dtml-let outcome=sequence-item>
+	  <option value="<dtml-var sequence-item>"
+	   <dtml-if expr="expected_outcomes.has_key(test_id) and
+			  expected_outcomes[test_id] == outcome">
+            selected="1"
+           </dtml-if> >
+	   <dtml-var sequence-item>
+	  </option>
+         </dtml-let>
+	</dtml-in>
+       </select></td>
+      </tr>
+     </dtml-let>
+    </dtml-in>
+   <tr><td colspan="2">&nbsp;</td></tr>
+   <tr class="form-submit">
+    <td colspan="2"><dtml-var expr="web.make_submit_button()"></td>
+   </tr>
+  </table>
+ </form>
+ <dtml-var expr="GenerateEndBody()">
+</html>

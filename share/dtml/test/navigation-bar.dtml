@@ -102,10 +102,8 @@ function handle_menu_select(sel)
   if (value == "shutdown") {
    <dtml-var expr="web.make_confirmation_dialog(
                    'Are you sure you want to exit?', 'shutdown')">
-  } else if (value[0] == " ") {
-    eval(value)
   } else if (sel.selectedIndex != 0) {
-    location = value; 
+    eval(value);
   }
 }
 
@@ -113,6 +111,13 @@ function handle_menu_select(sel)
 function load_results()
 {
    window.open("load-results", "load_results", 
+               "dependent,height=200,width=640");
+}
+
+
+function load_expected_results()
+{
+   window.open("load-expected-results", "load_expected_results", 
                "dependent,height=200,width=640");
 }
 </script>

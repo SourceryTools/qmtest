@@ -27,9 +27,9 @@
   <para>&qm; allows you to set up a per-user configuration file that
   contains your personal preferences, defaults, and settings.</para>
 
-  <para>On UNIX-like platforms, this file is named
-  <filename>.qmrc</filename>, and resides in your home directory.  On
-  Win32 platforms, ... &fixme;.</para>
+  <para>The configuration file is named
+  <filename>$HOME/.qmrc</filename>.  On Windows, you may have to set
+  the <envar>HOME</envar> environment variable manually.</para>
 
   <para>The &qm; configuration file is a plain text file, with a format
   similar to that used in Microsoft Windows <filename>.INI</filename>

@@ -85,9 +85,9 @@
        <td><dtml-var expr="FormatId(test_id, 'test')"></td>
        <td><span class="outcome"><dtml-var name="outcome">
         </span></td>
-       <dtml-if expr="expected_results.has_key(test_id)">
+       <dtml-if expr="expected_outcomes.has_key(test_id)">
         <td><span class="outcome">
-            <dtml-var expr="expected_results[test_id]"></span></td>
+            <dtml-var expr="expected_outcomes[test_id]"></span></td>
        <dtml-else>
         <td>&nbsp;</td>
        </dtml-if>

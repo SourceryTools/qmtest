@@ -501,7 +501,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Handle the 'outcome' option.
         outcomes_file_name = self.GetCommandOption("outcomes")
         if outcomes_file_name is not None:
-            outcomes = base.load_outcomes(outcomes_file_name)
+            outcomes = base.load_outcomes(open(outcomes_file_name, "r"))
         else:
             outcomes = None
             
@@ -557,7 +557,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Handle the 'outcome' option.
         outcomes_file_name = self.GetCommandOption("outcomes")
         if outcomes_file_name is not None:
-            outcomes = base.load_outcomes(outcomes_file_name)
+            outcomes = base.load_outcomes(open(outcomes_file_name, "r"))
         else:
             outcomes = None
             

@@ -1,3 +1,35 @@
+2001-10-20  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/doc/manual/common-manual.xml: Adjust configuration file
+	description.
+	* qm/test/base.py (load_outcomes): Take a file object, not a path. 
+	* qm/test/cmdline.py (Command.__ExecuteRun): Adjust.
+	(Command.__ExecuteSummarize): Likewise.
+	* qm/test/web/run.py (TestResultsPage): Take expected_outcomes
+	as a parameter.
+	* qm/test/web/show.py (ShowPage.__init__): Adjust menu item
+	handling.
+	* qm/test/web/suite.py (ShowPage.__init__): Adjust menu item
+	handling.
+	* qm/test/web/web.py (DefaultDtmlPage.__init__): Add menu items
+	for loading and saving expectations.
+	(ExpectationsPage): New class.
+	(LoadExpectedResultsPage): Likewise.
+	(QMTestServer.__init__): Add support for loading and saving
+	expectations.
+	(QMTestServer.GetExpectedOutcomes): New method.
+	(QMTestServer.HandleEditExpectations): Likewise.
+	(QMTestServer.HandleLoadExpectedResults): Likewise.
+	(QMTestServer.HandleSaveExpectations): Likewise.
+	(QMTestServer.HandleRunTests): Pass expected outcomes to
+	TestResultsPage.
+	(QMTestServer.HandleSubmitExpectations): New method.
+	(QMTestServer.HandleSubmitExpectationsForm): Likewise.
+	* qm/share/dtml/test/expectations.dtml: New file.
+	* qm/share/dtml/test/load-expected-results.dtml: Likewise.
+	* qm/share/dtml/test/navigation-bar.dtml (handle_menu_select): 
+	Simplify menu handling.
+	
 2001-10-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/doc/test-manual.xml: Update for changes to GUI.

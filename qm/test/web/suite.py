@@ -66,11 +66,11 @@ class ShowPage(web.DtmlPage):
         self.edit = edit
 
         if not suite.IsImplicit():
-            self.edit_menu_items.append(("Edit Suite", " edit_isuite()"))
-            self.edit_menu_items.append(("Delete Suite", " delete_suite()"))
+            self.edit_menu_items.append(("Edit Suite", "edit_isuite();"))
+            self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
 
         if not edit:
-            self.run_menu_items.append(("This Suite", " run_suite()"))
+            self.run_menu_items.append(("This Suite", "run_suite();"))
             
         if edit:
             # Find the directory path containing this suite.

@@ -58,21 +58,24 @@ class DefaultDtmlPage(qm.web.DtmlPage):
     def __init__(self, dtml_template, **attributes):
         # Set up the menus first; the attributes might override them.
         self.file_menu_items = [
-            ('New Test', 'new-test'),
-            ('New Suite', 'new-suite'),
-            ('New Resource', 'new-resource'),
-            ('Load Results', ' load_results()'),
-            ('Save Results', 'save-results'),
+            ('New Test', "location = 'new-test';"),
+            ('New Suite', "location = 'new-suite';"),
+            ('New Resource', "location = 'new-resource';"),
+            ('Load Results', "load_results();"),
+            ('Save Results', "location = 'save-results';"),
+            ('Load Expectations', "load_expected_results();"),
+            ('Save Expectations', "location = 'save-expectations';"),
             ('Exit', 'shutdown')
             ]
         self.edit_menu_items = [
-            ('Edit Context', 'edit-context')
+            ('Edit Context', "location = 'edit-context';"),
+            ('Edit Expectations', "location = 'edit-expectations';")
             ]
         self.view_menu_items = [
-            ('View Results', 'show-results')
+            ('View Results', "location = 'show-results';")
             ]
         self.run_menu_items = [
-            ('All Tests', 'run-tests')
+            ('All Tests', "location = 'run-tests';")
             ]
 
         # Initialize the base class.
@@ -167,6 +170,34 @@ class ContextPage(DtmlPage):
         self.context = server.GetContext()
         
 
+
+class ExpectationsPage(DtmlPage):
+    """DTML page for editing expected outcomes."""
+
+    def __init__(self, server):
+        """Construct a new 'ExpectationsPage'.
+
+        'server' -- The 'QMTestServer' creating this page."""
+
+        DtmlPage.__init__(self, "expectations.dtml")
+        
+        self.__server = server
+        self.expected_outcomes = server.GetExpectedOutcomes()
+        self.outcomes = Result.outcomes
+        self.test_ids = qm.test.base.expand_ids(".")[0]
+        self.test_ids.sort()
+
+        
+class LoadExpectedResultsPage(DtmlPage):
+    """DTML page for uploading expected results."""
+
+    def __init__(self):
+        """Construct a new 'LoadExpectedResultsPage'."""
+
+        DtmlPage.__init__(self, "load-expected-results.dtml")
+
+
+
 class LoadResultsPage(DtmlPage):
     """DTML page for uploading results."""
 
@@ -174,6 +205,7 @@ class LoadResultsPage(DtmlPage):
         """Construct a new 'LoadResultsPage'."""
 
         DtmlPage.__init__(self, "load-results.dtml")
+
 
         
 class ResultPage(DtmlPage):
@@ -251,14 +283,17 @@ class QMTestServer(qm.web.WebServer):
             ( "delete-test", qm.test.web.show.handle_delete ),
             ( "dir", qm.test.web.dir.handle_dir ),
             ( "edit-context", self.HandleEditContext ),
+            ( "edit-expectations", self.HandleEditExpectations ),
             ( "edit-resource", qm.test.web.show.handle_show ),
             ( "edit-suite", qm.test.web.suite.handle_edit ),
             ( "edit-test", qm.test.web.show.handle_show ),
+            ( "load-expected-results", self.HandleLoadExpectedResults ),
             ( "load-results", self.HandleLoadResults ),
             ( "new-resource", qm.test.web.show.handle_new_resource ),
             ( "new-suite", qm.test.web.suite.handle_new ),
             ( "new-test", qm.test.web.show.handle_new_test ),
             ( "run-tests", self.HandleRunTests ),
+            ( "save-expectations", self.HandleSaveExpectations ),
             ( "save-results", self.HandleSaveResults ),
             ( "show-dir", qm.test.web.dir.handle_dir ),
             ( "show-resource", qm.test.web.show.handle_show ),
@@ -269,6 +304,8 @@ class QMTestServer(qm.web.WebServer):
             ( "shutdown", self.HandleShutdown ),
             ( "submit-context", self.HandleSubmitContext ),
             ( "submit-resource", qm.test.web.show.handle_submit ),
+            ( "submit-expectations", self.HandleSubmitExpectations ),
+            ( "submit-expectations-form", self.HandleSubmitExpectationsForm ),
             ( "submit-results", self.HandleSubmitResults ),
             ( "submit-suite", qm.test.web.suite.handle_submit ),
             ( "submit-test", qm.test.web.show.handle_submit ),
@@ -299,6 +336,7 @@ class QMTestServer(qm.web.WebServer):
         self.__context = qm.test.base.Context()
 
         # There are no results yet.
+        self.__expected_outcomes = {}
         self.__results_stream = StorageResultsStream()
 
         # Bind the server to the specified address.
@@ -318,6 +356,15 @@ class QMTestServer(qm.web.WebServer):
         return self.__context
 
     
+    def GetExpectedOutcomes(self):
+        """Return the current expected outcomes for the test database.
+
+        returns -- A map from test IDs to outcomes.  Some tests may have
+        not have an entry in the map."""
+
+        return self.__expected_outcomes
+
+
     def HandleEditContext(self, request):
         """Handle a request to edit the context.
 
@@ -327,6 +374,22 @@ class QMTestServer(qm.web.WebServer):
         return context_page(request)
         
 
+    def HandleEditExpectations(self, request):
+        """Handle a request to edit the context.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        return ExpectationsPage(self)(request)
+
+
+    def HandleLoadExpectedResults(self, request):
+        """Handle a request to upload results.
+        
+        'request' -- The 'WebRequest' that caused the event."""
+
+        return LoadExpectedResultsPage()(request)
+
+        
     def HandleLoadResults(self, request):
         """Handle a request to upload results.
         
@@ -375,8 +438,32 @@ class QMTestServer(qm.web.WebServer):
         return self.HandleShowResults(request)
 
 
+    def HandleSaveExpectations(self, request):
+        """Handle a request to save expectations to a file.
+
+        'request' -- The 'WebRequest' that caused the event."""
+        
+        # Create a string stream to store the results.
+        s = StringIO.StringIO()
+        # Create an XML results stream for storing the results.
+        rs = XMLResultStream(s)
+        # Write all the results.
+        for (id, outcome) in self.__expected_outcomes.items():
+            r = Result(Result.TEST, id, qm.test.base.Context(),
+                       outcome)
+            rs.WriteResult(r)
+        # Terminate the stream.
+        rs.Summarize()
+        # Extract the data.
+        data = s.getvalue()
+        # Close the stream.
+        s.close()
+        
+        return ("application/x-qmtest-results", data)
+        
+
     def HandleSaveResults(self, request):
-        """Handle a request to show result detail.
+        """Handle a request to save results to a file.
 
         'request' -- The 'WebRequest' that caused the event."""
 
@@ -415,7 +502,8 @@ class QMTestServer(qm.web.WebServer):
 
         # Display the results.
         results_page = \
-            qm.test.web.run.TestResultsPage(self.__results_stream.test_results)
+            qm.test.web.run.TestResultsPage(self.__results_stream.test_results,
+                                            self.__expected_outcomes)
         return results_page(request)
 
 
@@ -463,9 +551,48 @@ class QMTestServer(qm.web.WebServer):
         # Close the upload popup window, and redirect the main window
         # to a view of the results.
         return """<html><body><script language="JavaScript">
-                  window.opener.location = 'show-results'
+                  window.opener.location = 'show-results';
                   window.close();</script></body></html>"""
+
+
+    def HandleSubmitExpectations(self, request):
+        """Handle uploading expected results.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Get the results file data.
+        data = request["expected_results"]
+        # Create a file object from the data.
+        f = StringIO.StringIO(data)
+        # Read the results.
+        self.__expected_outcomes = qm.test.base.load_outcomes(f)
+        # Close the upload popup window, and redirect the main window
+        # to a view of the results.
+        return """<html><body><script language="JavaScript">
+                  window.opener.location = 'edit-expectations';
+                  window.close();</script></body></html>"""
+        
+
+    def HandleSubmitExpectationsForm(self, request):
+        """Handle uploading expected results.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Clear out the current set of expected outcomes; the entire
+        # set of new 
+        self.__expected_outcomes = {}
+        
+        # Loop over all the tests.
+        for id in qm.test.base.expand_ids(".")[0]:
+            outcome = request[id]
+            if outcome != "None":
+                self.__expected_outcomes[id] = outcome
+
+        # Redirect to the main page.
+        request = qm.web.WebRequest("dir", base=request)
+        raise qm.web.HttpRedirect, request
     
+        
 ########################################################################
 # initialization
 ########################################################################
