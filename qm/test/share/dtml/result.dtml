@@ -51,6 +51,12 @@
   </dtml-in>
  </table>
 
+ <dtml-var expr="GenerateStartScript()">
+  function run_test() {
+   location = '<dtml-var "MakeRunUrl()">';
+  }
+ <dtml-var expr="GenerateEndScript()">
+
  <dtml-var expr="GenerateEndBody()">
 </html>
 

@@ -1,3 +1,10 @@
+2002-11-27  Vladimir Prus <ghost@cs.msu.su>
+
+	* qm/test/web/web.py (ResultPage.__init__): Add "This Test" to run
+	menu.
+	(ResultPage.MakeRunUrl): New method.
+	* qm/test/share/dtml/result.dtml (run_test): New method.
+	
 2002-11-25  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (load_results): Support pickled results files.

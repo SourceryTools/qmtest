@@ -873,6 +873,15 @@ class ResultPage(QMTestPage):
 
         QMTestPage.__init__(self, "result.dtml", server)
         self.result = result
+        self.run_menu_items.append(("This Test", "run_test();"))
+
+
+    def MakeRunUrl(self):
+        """Return the URL for running the test."""
+
+        return qm.web.WebRequest("run-tests",
+                                 base=self.request,
+                                 ids=self.result.GetId()).AsUrl()
         
 
 
@@ -1007,17 +1016,15 @@ class ShowItemPage(QMTestPage):
 
         return qm.web.WebRequest("edit-" + self.type,
                                  base=self.request,
-                                 id=self.item.GetId()) \
-               .AsUrl()
+                                 id=self.item.GetId()).AsUrl()
 
         
     def MakeRunUrl(self):
-        """Return the URL for editing this item."""
+        """Return the URL for running this item."""
 
         return qm.web.WebRequest("run-tests",
                                  base=self.request,
-                                 ids=self.item.GetId()) \
-               .AsUrl()
+                                 ids=self.item.GetId()).AsUrl()
 
 
     def MakeShowUrl(self):
@@ -1025,8 +1032,7 @@ class ShowItemPage(QMTestPage):
 
         return qm.web.WebRequest("show-" + self.type,
                                  base=self.request,
-                                 id=self.item.GetId()) \
-               .AsUrl()
+                                 id=self.item.GetId()).AsUrl()
 
 
     def MakeSubmitUrl(self):
