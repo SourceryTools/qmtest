@@ -1,5 +1,10 @@
 2001-09-05  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk.in (doc): Check for empty SUBDIRS.
+	($(HTMLMANIFEST)): Likewise.
+
+2001-09-05  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/Makefile.in (setup_path.py): Use left-quotes.
 	($(SCRIPTS):%): Likewise.
 	* qm/platform.py: Use Linux module for Irix.

@@ -151,9 +151,11 @@ $(SUBDIRS):
 	@cd $@ && make
 
 doc:		doc-python
+ifneq ($(SUBDIRS),)
 	@for subdir in $(SUBDIRS); do \
           (cd $${subdir} && make $@); \
         done
+endif
 
 # Generate documentation from Python sources using HappyDoc.
 ifneq ($(PYTHONDOCDIRS),)
@@ -205,11 +207,13 @@ ifeq ($(DOCUMENTATION),yes)
 	  true; \
 	done 
   endif
+  ifneq ($(DOCBITMAPS),)
 	for gr in $(DOCBITMAPS); \
 	do \
 	  cp $${gr} $(HTMLDIR)/; \
 	  echo $${gr##*/} >> $(HTMLMANIFEST); \
 	done
+  endif
 
   # Build a tarball containing the whole HTML output.
   $(HTMLTARBALL): \
