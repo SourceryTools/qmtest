@@ -1,3 +1,11 @@
+2001-02-11  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/command_line.py (ErrorHandler): New method.
+	(__init): Add output parameter.
+	(ParseCommandLine): Fix bugs.
+	
+	* qm/track/qmtrack.py: New file.
+
 2001-02-08  Alex Samuel  <samuel@codesourcery.com>
 
 	Module zope-dtml is now part of this module.  Add configury to set
@@ -11,7 +19,7 @@
 	* standard.mk.in (PYTHON): Build PYTHONPATH.
 	(PYTHONDIRS): New variable.
 
-2001-01-09  Benjamin Chelf  <chelf@mustangben.stanford.edu>
+2001-01-09  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/command_line.py: New file.
 

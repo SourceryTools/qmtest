@@ -52,6 +52,7 @@
 import getopt
 import string
 import copy
+import sys
 
 ########################################################################
 # classes
@@ -63,7 +64,7 @@ class CommandParser:
     The command parser is used to easily specify a list of command line
     options and commands to be parsed from an argument list."""
     
-    def __init__(self, name, options, commands):
+    def __init__(self, name, options, commands, output):
         """Create a new command parser.
 
         'name' -- The name of the executable that we are currently
@@ -87,9 +88,14 @@ class CommandParser:
         that will be printed after the command in the command specific
         help. 'long_description' is the long description to be printed out
         in the command specfic help. 'flags' is a list of 4-tuples of the
-        same form as the 'options' described above."""
+        same form as the 'options' described above.
+
+        'output' -- The place where the error handler should output
+        the errors and warnings. This should be a python file object that
+        has been opened for writing."""
 
         self.__name = name
+        self.__output = output
         
         # Check that the options are ok.
         self.CheckOptions(options)
@@ -129,6 +135,39 @@ class CommandParser:
         # Build the options string for getopt.
         self.__getopt_options = self.BuildGetoptString(self.__options)
 
+
+    def ErrorHandler(self, fatal, msg, help, which):
+        """Handle errors and warnings that come up during execution.
+
+        This function is the one to be called when the program needs
+        to issue a warning or an error. It can print out help based
+        on a command, if specified, or help based on the general
+        program.
+
+        'fatal' -- 1 if the error is fatal, 0 otherwise. If 1 is passed,
+        this method will exit the program immediately and not return.
+
+        'msg' -- The message to be printed.
+
+        'help' -- 1 if you wish help to be printed, 0 otherwise.
+
+        'which' -- The name of the command you wish to print help for.
+        If this variable is the null string (''), help will be printed
+        for the general program."""
+
+        if fatal == 1:
+            self.__output.write('Error: ')
+        else:
+            self.__output.write('Warning: ')
+        self.__output.write(msg + '\n')
+        if help == 1:
+            if which == '':
+                self.__output.write(self.GetBasicHelp())
+            else:
+                self.__output.write(self.GetCommandHelp(which))
+        if fatal == 1:
+            sys.exit(1)
+        
 
     def CheckOptions(self, options):
         """Check that a list of options 4-tuples is correct.
@@ -265,17 +304,31 @@ class CommandParser:
         to that flag (if applicable). 'command' is the command
         given. 'command_flags' is a list of 2-tuples indicating each flag
         given to the command and its possible argument. 'command-args' is
-        a list of arguments as given to the command."""
+        a list of arguments as given to the command. If no command is
+        given, then the function will return '' for the command, [] for
+        the arguments, and [] for the command flags."""
 
         # Get the flags off of the front of the command line.
         getopt_list = self.BuildGetoptList(self.__options)
-        flags, args = getopt.getopt(argv, self.__getopt_options,
-                                    getopt_list)
+
+        try:
+            flags, args = getopt.getopt(argv, self.__getopt_options,
+                                        getopt_list)
+        except getopt.error, msg:
+            print msg
+            print self.GetBasicHelp()
+            return -1
+            
         
         for i in range(0, len(flags)):
             flag = flags[i]
             new_flag = (self.__option_to_long[flag[0]], flag[1])
             flags[i] = new_flag
+
+        
+        # Did not specify anything on the command line except flags.
+        if args == []:
+            return (flags, '', [], [])
         
         # Get the command.
         command = args[0]
@@ -290,9 +343,15 @@ class CommandParser:
                 break
         getopt_string = self.BuildGetoptString(command_options)
         getopt_list = self.BuildGetoptList(command_options)
-        command_flags, command_args = getopt.getopt(string.split(args),
-                                                    getopt_string,
-                                                    getopt_list)
+        try:
+            command_flags, command_args = getopt.getopt(string.split(args),
+                                                        getopt_string,
+                                                        getopt_list)
+        except getopt.error, msg:
+            print "command '" + command + "':",
+            print msg
+            print self.GetCommandHelp(command)
+            return -1
 
         for i in range(0, len(command_flags)):
             flag = command_flags[i]
@@ -300,3 +359,4 @@ class CommandParser:
             command_flags[i] = new_flag
             
         return (flags, command, command_flags, command_args)
+
