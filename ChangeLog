@@ -1,5 +1,9 @@
 2001-05-29  Alex Samuel  <samuel@codesourcery.com>
 
+	* share/diagnostics/track-help.txt: New file.
+
+2001-05-29  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/issue.py (Issue.GetField): Use field's default if the
 	issue doesn't have a value.
 
