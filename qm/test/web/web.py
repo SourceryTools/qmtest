@@ -1889,7 +1889,7 @@ class QMTestServer(qm.web.WebServer):
         rs = rsc({ "file" : s })
         # Write all the results.
         for (id, outcome) in self.__expected_outcomes.items():
-            r = Result(Result.TEST, id, Context(), outcome)
+            r = Result(Result.TEST, id, outcome)
             rs.WriteResult(r)
         # Terminate the stream.
         rs.Summarize()

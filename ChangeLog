@@ -1,7 +1,10 @@
 2003-07-15  Vladimir Prus <ghost@cs.msu.su>
 
+	* qm/test/web/web.py (QMTestServer.HandleSaveExpectations): Do not
+	pass 'context' parameter to Result.__init__.
+	
 	* qm/test/web/web.py (StorageResultStream.__init__): Initialize
-	__annotations.
+	__annotations.  
 
 2003-07-14  Nathaniel Smith  <njs@codesourcery.com>
 
