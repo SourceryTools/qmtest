@@ -225,16 +225,17 @@ class CompilerTest(Test, CompilerBase):
             # Compute a prefix for the result annotations.
             prefix = self._GetAnnotationPrefix() + "step_%d_" % step_index
 
-            # Run the compiler.
-            (status, output, command) \
-                = compiler.Compile(step.mode, step.files,
-                                   self._GetDirectory(),
-                                   step.options, step.output)
-            # Remember the command used to perform the compilation.
+            # Get the compilation command.
+            command = compiler.GetCompilationCommand(step.mode, step.files,
+                                                     step.options,
+                                                     step.output)
             result[prefix + "command"] = \
                 "<tt>" + string.join(command) + "</tt>"
+            # Run the compiler.
+            (status, output) \
+                = compiler.ExecuteCommand(self._GetDirectory(), command)
 
-            # Make sure that the output is OK.
+             # Make sure that the output is OK.
             if not self._CheckOutput(context, result, prefix, output,
                                      step.diagnostics):
                 # If there were errors, do not try to run the program.

@@ -1432,15 +1432,15 @@ class GPPBprobTest(GPPTest):
         base = os.path.basename(self.GetId())
         base = os.path.splitext(base)[0]
         profiled_exe_path = os.path.join(".", base + "1.exe")
-        (status, output, command) \
-            = compiler.Compile(Compiler.MODE_LINK,
-                               [path],
-                               self._GetDirectory(),
-                               options + ["-fprofile-arcs"],
-                               profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "profile_arcs_"
-        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        command = compiler.GetCompilationCommand(Compiler.MODE_LINK,
+                                                 [path],
+                                                 options + ["-fprofile-arcs"],
+                                                 profiled_exe_path)
         result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
+        (status, output) \
+            = compiler.ExecuteCommand(self._GetDirectory(), command)
+        result[prefix + "output"] = "<pre>" + output + "</pre>"
         if not self._CheckStatus(result, prefix, "Compiler", status):
             return
 
@@ -1457,15 +1457,15 @@ class GPPBprobTest(GPPTest):
 
         # Build the test with "-fbranch-probabilities"
         profiled_exe_path = os.path.join(".", base + "2.exe")
-        (status, output, command) \
-            = compiler.Compile(Compiler.MODE_LINK,
-                               [path],
-                               self._GetDirectory(),
-                               options + ["-fbranch-probabilities"],
-                               profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "branch_probs_"
-        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        command = compiler.GetCompilationCommand(Compiler.MODE_LINK,
+                                                 [path],
+                                                 options + ["-fbranch-probabilities"],
+                                                 profiled_exe_path)
         result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
+        (status, output) \
+            = compiler.ExecuteCommand(self._GetDirectory(), command)
+        result[prefix + "output"] = "<pre>" + output + "</pre>"
         self._CheckStatus(result, prefix, "Compiler", status)
 
         # Remove the temporary directory.

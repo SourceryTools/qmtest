@@ -1,3 +1,11 @@
+2002-12-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (Compiler.Compile): Use ...
+	(Compiler.ExecuteCommand): ... this new method.
+	* compiler_test.py (CompilerTest.Run): Record commands before
+	trying to execute the compiler.
+	* gcc_database.py (GPPBprobTest): Likewise.
+
 2002-11-15    <Mark Mitchell <mark@codesourcery.com>>
 
 	* compiler.py (resource): Don't import it under Windows.
