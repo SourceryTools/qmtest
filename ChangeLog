@@ -1,3 +1,10 @@
+2000-11-16  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/concept: New directory.
+	* doc/concept/sapcat: Likewise.
+	* doc/design/qmconfig/*: Surgically move all repository files to...
+	* doc/concept/sapcat/*: ... here.
+
 2000-11-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk (docbook-html): Fix files to tidy.
