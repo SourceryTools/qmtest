@@ -147,7 +147,7 @@ build_rpm() {
     (tar xzf ${QM_SOURCE_TAR_GZ} -O qm-${QM_VERSION}/qm.spec.in | \
       sed -e "s|@QM_VERSION@|${QM_VERSION}|g" > qm.spec) || \
       error "Could not extract spec file"
-    rpm --quiet -ba --rmsource qm.spec || \
+    rpmbuild --quiet -ba --rmsource qm.spec || \
       error "Could not create RPM"
     cp ${RPM_BASE}/RPMS/i386/qm-${QM_VERSION}-0.i386.rpm ${QM_RPM}
 }
