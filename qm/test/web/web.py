@@ -1300,13 +1300,21 @@ class StorageResultsStream(ResultStream):
         self.__lock.release()
         
 
-    def Start(self):
+    def Start(self, test_ids):
         """Start collecting results.
 
-        Start collecting new results.  Do not discard old results."""
+        'test_ids' -- The names of the tests that we are about to run.
+        
+        Start collecting new results.  Discard results for the
+        'test_ids', but not for other tests."""
 
         self.__lock.acquire()
         self.__is_finished = 0
+        # Go through all of the tests we are about to run and remove
+        # corresponding results.
+        for id in test_ids:
+            if self.__test_results.has_key(id):
+                del self.__test_results[id]
         self.__lock.release()
         
         
@@ -1856,11 +1864,9 @@ class QMTestServer(qm.web.WebServer):
             ids = ["."]
         test_ids, suite_ids = self.GetDatabase().ExpandIds(ids)
 
-        context = self.__context
-
         # Let the results stream know that we are going to start
         # providing it with results.
-        self.__results_stream.Start()
+        self.__results_stream.Start(test_ids)
         
         # Create the thread that will run all of the tests.
         del self.__execution_thread
