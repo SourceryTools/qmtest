@@ -1,3 +1,13 @@
+2002-11-20  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/database.py (is_database): Check more carefully.
+	* qm/test/text_result_stream.py (TextResultStream._DisplayResult):
+	Show annotations for failing tests even in "brief" mode.
+	* tests/QMTest/selfdb.py (RegressionDatabase.GetTestIds): Use
+	is_database.
+	* tests/QMTest/selftest.py (RegTest.Run): Use <pre> tags to tidy
+	output.
+
 2002-11-19  Mark Mitchell  <mark@codesourcery.com>
 
 	* README: Update installation instructions.

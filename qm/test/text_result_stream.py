@@ -289,7 +289,8 @@ class TextResultStream(ResultStream):
             self.__file.write('    ' + result[Result.CAUSE] + '\n')
             
         # In the "full" format, print all result properties.
-        if format == "full":
+        if (format == "full"
+            or (format == "brief" and outcome != Result.PASS)):
 	    keys = result.keys()
 	    keys.sort()
             for name in keys:

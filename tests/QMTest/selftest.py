@@ -64,7 +64,7 @@ class RegTest(Test):
         # Sanity check the target location.
         assert os.path.isdir(os.path.join(path, "QMTest"))
         assert os.path.isfile(results)
-
+        
         # The QMTest binary to test is specified as a context variable.
         qmtest = context['qmtest_path']
 
@@ -78,8 +78,8 @@ class RegTest(Test):
         result.Annotate({
             "selftest.RegTest.cmdline"  : ' '.join(argv),
             "selftest.RegTest.exitcode" : ("%d" % status),
-            "selftest.RegTest.stdout"   : stdout,
-            "selftest.RegTest.stderr"   : stderr
+            "selftest.RegTest.stdout"   : '<pre>' + stdout + '</pre>',
+            "selftest.RegTest.stderr"   : '<pre>' + stderr + '</pre>'
             })
 
         if stderr != '':

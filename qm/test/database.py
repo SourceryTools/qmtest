@@ -1098,8 +1098,8 @@ def is_database(db_path):
     # A test database is a directory.
     if not os.path.isdir(db_path):
         return 0
-    # A test database contains a configuration subdirectory.
-    if not os.path.isdir(get_configuration_directory(db_path)):
+    # A test database contains a configuration file.
+    if not os.path.isfile(get_configuration_file(db_path)):
         return 0
     # It probably is OK.
     return 1

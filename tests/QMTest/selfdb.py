@@ -153,7 +153,7 @@ class RegressionDatabase(NestedDatabase):
         ids = []
 
         for entry in dircache.listdir(p):
-            if os.path.isdir(os.path.join(p, entry, "QMTest")):
+            if database.is_database(os.path.join(p, entry)):
                 ids.append(entry)
         return ids
 
