@@ -123,7 +123,7 @@ class Test(qm.test.runnable.Runnable):
 
 
     class TestField(qm.fields.ChoiceField):
-        """A 'TestField' contains the name of a resource.
+        """A 'TestField' contains the name of a test.
 
         The exact format of the name depends on the test database in use."""
 
