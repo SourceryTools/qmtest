@@ -1,5 +1,9 @@
 2003-09-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/pickle_result_stream.py
+	(PickleResultReader.__init__): Treat cPickle.UnpicklingError like
+	EOFError.
+
 	* qm/test/cmdline.py (QMTest.summary_formats): Rearrange order.
 	(QMTest.commands_spec): Automatically generate lists of --format
 	options.

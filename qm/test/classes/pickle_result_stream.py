@@ -181,7 +181,7 @@ class PickleResultReader(FileResultReader):
         # Check for a version number
         try:
             version = self.__unpickler.load()
-        except EOFError:
+        except (EOFError, cPickle.UnpicklingError):
             # This file is empty, no more handling needed.
             return
         
@@ -249,7 +249,11 @@ class PickleResultReader(FileResultReader):
         while 1:
             try:
                 thing = self.__unpickler.load()
-            except EOFError:
+            except (EOFError, cPickle.UnpicklingError):
+                # When reading from a StringIO, no EOFError will be
+                # raised when the unpickler tries to read from the file.
+                # Instead, the unpickler raises UnpicklingError when it
+                # tries to unpickle the empty string.
                 return None
             else:
                 if thing is _annotation_sentinel:
