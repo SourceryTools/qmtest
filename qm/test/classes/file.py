@@ -227,32 +227,26 @@ class FileContentsTest(Test):
 
             You can use substitutions to ignore insignificant
             differences between the expected and autual contents."""))
-        ] + Test.arguments
+        ]
 
 
-    def __init__(self,
-                 path_property,
-                 expected_contents,
-                 substitutions,
-                 target_group):
-        Test.__init__(self, target_group)
+    def __init__(self, **properties):
+        apply(Test.__init__, (self,), properties)
         
-        self.__path_property = path_property
-        self.__substitutions = substitutions
         # Might as well perform substitutions on the expected contents here.
-        expected_contents = self.__PerformSubstitutions(expected_contents)
-        self.__expected_contents = expected_contents
+        self.expected_contents = \
+          self.__PerformSubstitutions(self.expected_contents)
 
 
     def Run(self, context, result):
         # Extract the path to the file we're testing.
         try:
-            path = context[self.__path_property]
+            path = context[self.path_property]
         except KeyError:
             # The path is not present in the context under the expected
             # property name.
             result.Fail("Missing property '%s' in context." %
-                        self.__path_property)
+                        self.path_property)
         # Read the contents of the file.
         try:
             contents = open(path, "r").read()
@@ -264,11 +258,11 @@ class FileContentsTest(Test):
         # Perform substitutions on the file contents.
         contents = self.__PerformSubstitutions(contents)
         # Compare the contents to the expected contents.
-        if contents != self.__expected_contents:
+        if contents != self.expected_contents:
             result.Fail("Contents do not match expected contents.",
                         { "FileContentsTest.contents" : contents,
                           "FileContentsTest.expected_contents" :
-                          self.__expected_contents })
+                          self.expected_contents })
 
 
     def __PerformSubstitutions(self, text):
@@ -278,7 +272,7 @@ class FileContentsTest(Test):
         configured for this test instance."""
 
         substitutions_field = self.fields[2].GetContainedField()
-        for substitution in self.__substitutions:
+        for substitution in self.substitutions:
             pattern, replacement = substitutions_field.SplitValue(substitution)
             text = re.sub(pattern, replacement, text)
         return text

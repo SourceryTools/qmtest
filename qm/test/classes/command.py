@@ -77,10 +77,10 @@ def _make_result_for_exception(cause):
 # classes
 ########################################################################
 
-class ExecTest(Test):
+class ExecTestBase(Test):
     """Check a program's output and exit code.
 
-    An 'ExecTest' runs a program and compares its standard output,
+    An 'ExecTestBase' runs a program and compares its standard output,
     standard error, and exit code with expected values.  The program
     may be provided with command-line arguments and/or standard
     input.
@@ -89,29 +89,6 @@ class ExecTest(Test):
     exit code are identical to the expected values."""
 
     arguments = [
-        qm.fields.TextField(
-            name="program",
-            title="Program",
-            not_empty_text=1,
-            description="""The path to the program.
-
-            This field indicates the path to the program.  If it is not
-            an absolute path, the value of the 'PATH' environment
-            variable will be used to search for the program."""
-            ),
-        
-        qm.fields.SetField(qm.fields.TextField(
-            name="arguments",
-            title="Argument List",
-            description="""The command-line arguments.
-
-            If this field is left blank, the program is run without any
-            arguments.
-
-            An implicit 0th argument (the path to the program) is added
-            automatically."""
-            )),
-            
         qm.fields.TextField(
             name="stdin",
             title="Standard Input",
@@ -177,29 +154,7 @@ class ExecTest(Test):
             If the output written by the program does not match this
             value, the test will fail."""
             ) 
-        ] + Test.arguments
-
-
-    def __init__(self,
-                 program,
-                 arguments=[],
-                 stdin=None,
-                 environment=[],
-                 exit_code=None,
-                 stdout=None,
-                 stderr=None,
-                 target_group=".*"):
-
-        Test.__init__(self, target_group)
-        
-        # Just store everything away for later.
-        self.program = program
-        self.arguments = arguments
-        self.stdin = stdin
-        self.environment_list = environment
-        self.exit_code = exit_code
-        self.stdout = stdout
-        self.stderr = stderr
+        ]
 
 
     def MakeEnvironment(self, context):
@@ -214,7 +169,7 @@ class ExecTest(Test):
             environment[name] = value
         # Extract additional environment variable assignments from the
         # 'Environment' field.
-        for assignment in self.environment_list:
+        for assignment in self.environment:
             if "=" in assignment:
                 # Break the assignment at the first equals sign.
                 variable, value = string.split(assignment, "=", 1)
@@ -404,6 +359,46 @@ class ExecTest(Test):
 
 
     def RunProgram(self, context):
+        """Run the program.
+
+        Derived classes should define this function to indicate how the
+        program will actually be executed."""
+
+        raise qm.MethodShouldBeOverriddenError, "ExecTestBase.RunProgram"
+
+        
+    
+class ExecTest(ExecTestBase):
+    """Check a program's output and exit code.
+
+    An 'ExecTest' runs a program by using the 'exec' system call."""
+
+    arguments = [
+        qm.fields.TextField(
+            name="program",
+            title="Program",
+            not_empty_text=1,
+            description="""The path to the program.
+
+            This field indicates the path to the program.  If it is not
+            an absolute path, the value of the 'PATH' environment
+            variable will be used to search for the program."""
+            ),
+        
+        qm.fields.SetField(qm.fields.TextField(
+            name="arguments",
+            title="Argument List",
+            description="""The command-line arguments.
+
+            If this field is left blank, the program is run without any
+            arguments.
+
+            An implicit 0th argument (the path to the program) is added
+            automatically."""
+            ))]
+
+
+    def RunProgram(self, context):
         """Run the target program.
 
         This function will not return if the target program executes
@@ -452,7 +447,7 @@ class ExecTest(Test):
 
 
 
-class ShellCommandTest(ExecTest):
+class ShellCommandTest(ExecTestBase):
     """Check a shell command's output and exit code.
 
     A 'ShellCommandTest' runs the shell and compares its standard
@@ -484,29 +479,10 @@ class ShellCommandTest(ExecTest):
 
             If this field is left blank, the shell is run without
             arguments."""
-            ),
-
-        ] + ExecTest.arguments[2:]
+            )
+        ]
 
     
-    def __init__(self,
-                 command,
-                 stdin,
-                 environment,
-                 exit_code,
-                 stdout,
-                 stderr,
-                 target_group):
-        Test.__init__(self, target_group)
-        
-        self.command = command
-        self.stdin = stdin
-        self.environment_list = environment
-        self.exit_code = exit_code
-        self.stdout = stdout
-        self.stderr = stderr
-
-
     def RunProgram(self, context):
         # If the context specifies a shell, use it.
         if context.has_key("command_shell"):
@@ -533,7 +509,7 @@ class ShellCommandTest(ExecTest):
 
 
 
-class ShellScriptTest(ExecTest):
+class ShellScriptTest(ExecTestBase):
     """Check a shell script's output and exit code.
 
     A 'ShellScriptTest' runs the shell script provided and compares its
@@ -564,34 +540,24 @@ class ShellScriptTest(ExecTest):
             written to a temporary file before it is executed.  There
             does not need to be an explicit '#! /path/to/shell' at
             the beginning of the script because QMTest will not directly
-            invoke the script.  Instead, it wil lrun the shell, passing
+            invoke the script.  Instead, it will run the shell, passing
             it the name of the temporary file containing the script as
             an argument.""",
             verbatim="true",
             multiline="true",
             ),
+        qm.fields.SetField(qm.fields.TextField(
+            name="arguments",
+            title="Argument List",
+            description="""The command-line arguments.
 
-        ] + ExecTest.arguments[1:]
+            If this field is left blank, the program is run without any
+            arguments.
 
-    def __init__(self,
-                 script,
-                 arguments=[],
-                 stdin=None,
-                 environment=[],
-                 exit_code=None,
-                 stdout=None,
-                 stderr=None,
-                 target_group=".*"):
-        
-        Test.__init__(self, target_group)
-        
-        self.script = script
-        self.arguments = arguments
-        self.stdin = stdin
-        self.environment_list = environment
-        self.exit_code = exit_code
-        self.stdout = stdout
-        self.stderr = stderr
+            An implicit 0th argument (the path to the program) is added
+            automatically."""
+            ))        
+        ]
 
 
     def Run(self, context, result):
@@ -609,7 +575,7 @@ class ShellScriptTest(ExecTest):
         
 
     def RunProgram(self, context):
-        # If the context speciifes a shell, use it.
+        # If the context specifies a shell, use it.
         if context.has_key("script_shell"):
             # Split the context value to build the argument list.
             shell = qm.common.split_argument_list(

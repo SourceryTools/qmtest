@@ -7,7 +7,7 @@
   Contents:
     DSSSL style sheet for generating HTML from DocBook documents.
 
-  Copyright (C) 2000 CodeSourcery LLC
+  Copyright (C) 2000, 2001 CodeSourcery LLC
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -68,7 +68,7 @@
 (define html-manifest #t)
 (define html-manifest-filename "docbook-html.manifest")
 
-;; Use element ids to generate chunk filena,es
+;; Use element ids to generate chunk filenames
 (define %use-id-as-filename% #t)
 
 ;; Emit legal notices in a separate chunk.

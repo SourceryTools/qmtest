@@ -93,6 +93,23 @@ class Context:
         return self.__properties.items()
 
 
+    def get(self, key, default=None):
+        """Get the value associated with 'key'.
+
+        key -- A key.
+
+        default -- The value to return if there is no value associated
+        with 'key'.
+        
+        returns -- The value associated with 'key', or 'default' if
+        there is no such value."""
+
+        if self.has_key(key):
+            return self.key
+        else:
+            return default
+        
+    
     def copy(self):
         # No need to re-validate.
         result = Context()
@@ -221,6 +238,23 @@ class ContextWrapper:
         for key in self.keys():
             items.append((key, self[key], ))
         return items
+
+
+    def get(self, key, default=None):
+        """Get the value associated with 'key'.
+
+        key -- A key.
+
+        default -- The value to return if there is no value associated
+        with 'key'.
+        
+        returns -- The value associated with 'key', or 'default' if
+        there is no such value."""
+
+        if self.has_key(key):
+            return self.key
+        else:
+            return default
 
 
     def copy(self):

@@ -1,3 +1,32 @@
+2001-11-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (check): New target.
+	* doc/qm-html.dsl: Fix typo.
+	* doc/manual/test-manual.xml: Update for simplifications below.
+	* qm/test/base.py (get_class_arguments): New method.
+	* qm/test/cmdline.py (Command.Execute): Fix thinko.
+	* qm/test/context.py (Context.get): New method.
+	(ContextWrapper.get): Likewise.
+	* qm/test/database.py (ItemDescriptor.GetClassArguments): New
+	method.
+	(ItemDescriptor._MakeItem): Use it.
+	* qm/test/resource.py (Resource.arguments): Update documentation.
+	(Resource.__init__): Simplify.
+	* qm/test/test.py (Test.arguments): Update documentation.
+	(Test.__init__): Simplify.
+	(Test.GetTargetGroup): Update.
+	* qm/test/xmldb.py (Database.__GetArgumentsFromDomNode): Use
+	get_class_arguments.
+	* qm/test/classes/command.py: Update test classes.
+	* qm/test/classes/file.py: Likewise.
+	* qm/test/classes/python.py: Likewise.
+	* qm/test/classes/temporary.py: Update resource classes.
+	* qm/test/web/web.py (ShowItemPage.__init__): Update
+	documentation.
+	(QMTestServer.HandleSubmitItem): Use get_class_arguments.
+	(QMTestServer.MakeNewTest): Use get_class_arguments.
+	(QMTestServer.MakeNewResource): Use get_class_arguments.
+	
 2001-11-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/memory_issue_store.py (IssueStore.__Write): Store

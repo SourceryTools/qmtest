@@ -71,8 +71,7 @@ class TempDirectoryResource(Resource):
             "Otherwise, the directory must be empty on cleanup.",
             default_value=0
             ),
-
-        ] + Resource.arguments
+        ]
 
 
     def __init__(self,

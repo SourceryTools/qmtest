@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
+<test target-group='.*'>
  <class>command.ShellScriptTest</class>
  <argument name='exit_code'>
   <integer>0</integer>
@@ -8,8 +8,13 @@
  <argument name='stdin'>
   <text/>
  </argument>
- <argument name='stdout'>
-  <text/>
+ <argument name='environment'>
+  <set>
+   <text>MY_ENV_VAR=Hello</text>
+  </set>
+ </argument>
+ <argument name='target_group'>
+  <text>.*</text>
  </argument>
  <argument name='script'>
   <text># Make sure the environment variable is set correctly.
@@ -22,9 +27,7 @@ test ${MY_ENV_VAR} = "Hello"
  <argument name='arguments'>
   <set/>
  </argument>
- <argument name='environment'>
-  <set>
-   <text>MY_ENV_VAR=Hello</text>
-  </set>
+ <argument name='stdout'>
+  <text/>
  </argument>
 </test>

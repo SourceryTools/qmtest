@@ -111,6 +111,17 @@ class ItemDescriptor:
         raise qm.MethodShouldBeOverriddenError, "ItemDescriptor.GetClass"
     
 
+    def GetClassArguments(self):
+        """Return the arguments specified by the test class.
+
+        returns -- A list of 'Field' objects containing all the
+        arguments in the class hierarchy.
+
+        Derived classes should not override this method."""
+
+        return qm.test.base.get_class_arguments(self.GetClass())
+    
+
     def GetArguments(self):
         """Return the entity arguments.
 
@@ -167,8 +178,7 @@ class ItemDescriptor:
         arguments = self.GetArguments().copy()
 
         # Do some extra processing for test arguments.
-        klass = self.GetClass()
-        for field in klass.arguments:
+        for field in self.GetClassArguments():
             name = field.GetName()
 
             # Use a default value for each field for which an argument
@@ -176,7 +186,7 @@ class ItemDescriptor:
             if not arguments.has_key(name):
                 arguments[name] = field.GetDefaultValue()
 
-        return apply(klass, [], arguments)
+        return apply(self.GetClass(), [], arguments)
 
     
     def _Execute(self, context, result, method):

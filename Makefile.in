@@ -72,3 +72,6 @@ install:
 
 clean::
 	cd PyXML; $(PYTHON) ./setup.py clean
+
+check:
+	qm/test/qmtest -D tests run $(QMTESTFLAGS)
