@@ -1,5 +1,7 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release: New file.
+
 	* instally.py (packages): Remove gadfly.
 	* gadfly: Remove all files in this directory.
 	* Makefile.in (install): Do not install Gadfly.

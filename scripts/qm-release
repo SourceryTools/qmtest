@@ -1,0 +1,163 @@
+#! /bin/sh
+
+########################################################################
+#
+# File:   qm-release
+# Author: Mark Mitchell
+# Date:   11/16/2001
+#
+# Contents:
+#   Script to build QM releases.
+#
+# Copyright (C) 2001 CodeSourcery LLC
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+########################################################################
+# Functions
+########################################################################
+
+# Issue the error message given by $1 and exit with a non-zero
+# exit code.
+
+error() {
+    echo "qm-release: error: $1"
+    exit 1
+}
+
+# Issue a usage message explaining how to use this script.
+
+usage() {
+cat <<EOF
+qm-release version [source] [rpm] [binary]
+EOF
+    exit 1
+}
+
+# Change to the directory given by $1.
+
+changedir() {
+    cd $1 || \
+	error "Could not change directory to $1"
+}
+
+# Build the source distribution.
+
+build_source() {
+    echo "Building source distribution..."
+    # Remove the old version of the source distribution.
+    rm -rf ${QM_TAR_GZ} qm-${QM_VERSION}
+    cvs -f -z9 -Q export -d qm-${QM_VERSION} \
+      -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
+      error "Could not check out QM"
+    tar czf ${QM_TAR_GZ} qm-${QM_VERSION} || \
+      error "Could not create tar file"
+}
+
+# Build the RPM distribution.
+
+build_rpm() {
+    echo "Building RPM distribution..."
+    cp ${QM_TAR_GZ} ${RPM_BASE}/SOURCES || \
+      error "Could not install source distribution"
+    (tar xzf ${QM_TAR_GZ} -O qm-${QM_VERSION}/qm.spec.in | \
+      sed -e "s|@QM_VERSION@|${QM_VERSION}|g" > \
+      ${RPM_BASE}/SPECS/qm.spec) || \
+      error "Could not extract spec file"
+    rpm --quiet -ba --rmsource ${RPM_BASE}/SPECS/qm.spec || \
+      error "Could not create RPM"
+}
+
+########################################################################
+# Initialization
+########################################################################
+
+# The CVS server containing the GCC repository.
+CVS_SERVER="cvs.codesourcery.com"
+# The path to the repository on that server.
+CVS_REPOSITORY="/home/sc/Repository"
+# The CVS protocol to use.
+CVS_PROTOCOL="pserver"
+# The username to use when connecting to the server.
+CVS_USERNAME="anoncvs"
+
+# The major version of QM.
+QM_MAJOR_VER=
+# The minor version of QM.
+QM_MINOR_VER=
+# The version of QM.
+QM_VERSION=
+
+# The base RPM directory.
+RPM_BASE=/usr/src/redhat
+
+# The source distribution.
+QM_TAR_GZ=
+
+# Modes of operation.
+SOURCE=0
+RPM=0
+BINARY=0
+
+########################################################################
+# Main Program
+########################################################################
+
+# Parse the version.
+
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+QM_VERSION=$1
+shift
+
+QM_MAJOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $1; }'`
+QM_MINOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $2; }'`
+QM_TAR_GZ=qm-${QM_VERSION}.tar.gz
+
+# Handle the major modes.
+while [ $# -ne 0 ]; do
+    case $1 in
+    source) SOURCE=1;;
+    rpm)    RPM=1;;
+    binary) BINARY=1;;
+    *)      usage;;
+    esac
+    shift
+done
+
+# Set up CVS.
+CVSROOT=":${CVS_PROTOCOL}:${CVS_USERNAME}@"
+CVSROOT="${CVSROOT}${CVS_SERVER}:${CVS_REPOSITORY}"
+export CVSROOT
+
+# Build the source distribution.
+
+if [ ${SOURCE} -ne 0 ]; then
+  build_source
+fi
+
+if [ ${RPM} -ne 0 ]; then
+  build_rpm
+fi
