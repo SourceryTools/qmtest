@@ -1,4 +1,8 @@
 2000-11-26  Alex Samuel  <samuel@codesourcery.com>
+	
+	* doc/design/qmtrack/idb-api.xml: Add missing </section> tag.
+	
+2000-11-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/concepts.xml: Continue.
 	* doc/design/qmtrack/idb-api.xml: Likewise.
