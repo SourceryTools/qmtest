@@ -18,6 +18,7 @@
 ########################################################################
 
 import base64
+from   calendar import timegm
 import ConfigParser
 import cPickle
 import cStringIO
@@ -1121,38 +1122,6 @@ def parse_time(time_string, default_local_time_zone=1):
     else:
         return int(time.mktime(time_tuple))
     
-
-import calendar
-
-if "timegm" in dir(calendar):
-    # Use timegm from the Python library.
-    from calendar import timegm
-
-else:
-    # Note: This function can be removed if we migrate permanently to a
-    # newer Python version which includes 'timegm'.
-
-    # This function is borrowed from the Python 1.6.1 distribution's
-    # 'calendar' module.  According to the Python 1.5.2 library
-    # documentation, it should be present in that version too, but it's
-    # not.
-    def timegm(tuple):
-        from calendar import *
-        EPOCH = 1970
-        year, month, day, hour, minute, second = tuple[:6]
-        assert year >= EPOCH
-        assert 1 <= month <= 12
-        days = 365*(year-EPOCH) + leapdays(EPOCH, year)
-        for i in range(1, month):
-            days = days + mdays[i]
-        if month > 2 and isleap(year):
-            days = days + 1
-        days = days + day - 1
-        hours = days*24 + hour
-        minutes = hours*60 + minute
-        seconds = minutes*60 + second
-        return seconds
-
 
 def parse_assignment(assignment):
     """Parse an 'assignment' of the form 'name=value'.
