@@ -15,12 +15,14 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="qmReq"><title>Requirements</title>
+<chapter id="chap-requirements">
+ <title>Requirements</title>
 
  <para>In this chapter, we present the requirements we have identified
  for &qmconfig;.</para>
 
- <section><title>Terminology</title>
+ <section id="sec-requirements-terminology">
+  <title>Terminology</title>
 
   <para>The process of preparing software to run on a particular
   platform has been variously called configuring, tailoring, or
@@ -86,14 +88,16 @@
 
  </section>
 
- <section id="actors"><title>The Actors and their Use Cases</title>
+ <section id="sec-requirements-actors">
+  <title>The Actors and their Use Cases</title>
 
   <para>We have already introduced a couple actors, the tailor and the
   software developer.  In this section, we will study these actors in
   more depth.  This will help us identify a set of use cases we must
   satisfy.</para>
 
-  <section id="actors-tailors"><title>Tailors</title>
+  <section id="sec-requirements-actors-tailors">
+   <title>Tailors</title>
 
    <para>As we said earlier, a &D-tailor; is an actor that customizes
    a &D-kit;.  While both &D-tailors; and &D-softdevs; are

@@ -67,9 +67,8 @@
 
    <imageobject>
     <imagedata align="center" width="6in" scalefit="1"
-               fileref="figures/cl_tailorsym.png"></imagedata>
+               fileref="cl_tailorsym.png"></imagedata>
    </imageobject>
-
    <textobject>
     <phrase>Tailoring database</phrase>
    </textobject>

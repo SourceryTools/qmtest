@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="qmDesign">
+<chapter id="chap-design">
  <title>Design</title>
 
  <para>In this chapter, we present a design for the &qmconfig; system.
@@ -23,7 +23,8 @@
  constitute &qmconfig;.  Then we will go into more detail about the
  interfaces between packages, how the packages operate, etc.</para>
 
- <section><title>Components</title>
+ <section id="sec-design-components">
+  <title>Components</title>
 
   <figure id="fig-pkg-qmconfig" float="1">
    <title>&qmconfig; Package Diagram</title>
@@ -299,7 +300,8 @@
 
  </section>
 
- <section><title>Interfaces</title>
+ <section id="sec-design-interfaces">
+  <title>Interfaces</title>
 
   <para>This section describes the interfaces to the various modules
   comprising &qmconfig;.</para>

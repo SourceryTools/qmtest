@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>Introduction</title>
+<chapter id="chap-intro"><title>Introduction</title>
 
  <para>The &qmconfig; system is a tool supporting <quote>platform
  investigation and program configuration</quote>, a process variously
@@ -24,7 +24,7 @@
  <firstterm>tailoring</firstterm>.  It is intended to be an
  improvement over other such tools, like &Q-GNU; &QFLautoconf;.</para>
 
- <section><title>Motivation</title>
+ <section id="sec-intro-motivation"><title>Motivation</title>
 
   <para>We would like to be able to write software that is portable
   across computer platforms, where a <firstterm>platform</firstterm>
@@ -119,7 +119,7 @@
 
  </section>
 
- <section><title>Related systems</title>
+ <section id="sec-intro-related"><title>Related systems</title>
 
   <para>The idea of creating a tool to assist in adapting software is
   not new.  As mentioned above, there have been other systems (like
@@ -335,7 +335,7 @@
   </section>
  </section>
 
- <section><title>&qmconfig;</title>
+ <section id="sec-intro-qmconfig"><title>&qmconfig;</title>
 
   <para>The &qmconfig; system (a) uses <firstterm>project description
   files</firstterm> to identify source files, parameterized source

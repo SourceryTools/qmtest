@@ -15,12 +15,12 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="qmOver"><title>Overview of &qmconfig;</title>
+<chapter id="chap-overview"><title>Overview of &qmconfig;</title>
 
  <para>This chapter is introduces the &qmconfig; tool.  Whereas <xref
- linkend="qmReq" /> introduced the requirements for &qmconfig;, this
- chapter discusses scenarios of how &qmconfig; could actually be used
- to meet these requirments.</para>
+ linkend="chap-requirements"></xref> introduced the requirements for
+ &qmconfig;, this chapter discusses scenarios of how &qmconfig; could
+ actually be used to meet these requirments.</para>
 
  <para>&qmconfig; comes in both &Qgui; and command line variants.  The
  &Qgui; command can be invoked with no arguments, in which case it
@@ -48,11 +48,13 @@
  consider the view of the &D-tailor; first, since &qmconfig; is
  primarily intended to serve the &D-tailor;.</para>
 
- <section><title>&D-Tailors-;' Perspective of &qmconfig;</title>
+ <section id="sec-overview-tailors">
+  <title>&D-Tailors-;' Perspective of &qmconfig;</title>
 
- <para>As we discussed in <xref linkend="actors-tailors"/>,
- &D-tailors; range from &D-casinsts; to &D-proinsts; to &D-sysints;.
- Each of these has different ways of using &qmconfig;</para>
+ <para>As we discussed in <xref
+ linkend="sec-requirements-actors-tailors"></xref>, &D-tailors; range
+ from &D-casinsts; to &D-proinsts; to &D-sysints;.  Each of these has
+ different ways of using &qmconfig;</para>
 
   <section><title>&D-CasInsts-; Use of &qmconfig;</title>
 
@@ -303,7 +305,8 @@
 
  </section>
 
- <section><title>&D-SoftDevs-;' Perspective of &qmconfig;</title>
+ <section id="sec-overview-softdev">
+  <title>&D-SoftDevs-;' Perspective of &qmconfig;</title>
 
   <para>A &D-softdev; creates &D-srcdists;.  Our focus will be on how
   to incorporate &qmconfig;.</para>
