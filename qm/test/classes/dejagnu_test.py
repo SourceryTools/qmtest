@@ -311,10 +311,9 @@ class DejaGNUTest(Test, DejaGNUBase):
         returns -- A sequence of strings, each of which is a Tcl
         word.
 
-        Some Tcl constructs (namely variable substitution and command
-        substitution) are not supported and result in exceptions.
-        Invalid inputs (like the string consisting of a single quote)
-        also result in exceptions.
+        Command substitution is not supported and results in an
+        exceptions.  Invalid inputs (like the string consisting of a
+        single quote) also result in exceptions.
         
         See 'Tcl and the Tk Toolkit', by John K. Ousterhout, copyright
         1994 by Addison-Wesley Publishing Company, Inc. for details
@@ -363,8 +362,9 @@ class DejaGNUTest(Test, DejaGNUBase):
                     word += v
                 continue
             # A "[" indicates command substitution.
-            elif c == "[" and not in_brace_quoted_string:
-                raise QMException, "Unsupported Tcl substitution."
+            elif (c == "[" and not in_brace_quoted_string
+                  and n < len(s) + 1 and s[n + 1] != "]"):
+                raise QMException, "Tcl command substitution is unsupported."
             # A double-quote indicates the beginning of a double-quoted
             # string.
             elif c == '"' and not in_brace_quoted_string:
