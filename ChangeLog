@@ -1,5 +1,9 @@
 2000-11-20  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtest/req.xml: New file.
+
+2000-11-20  Alex Samuel  <samuel@codesourcery.com>
+
 	* README.sources: Add discussion of doc strings.
 
 2000-11-20  Benjamin Chelf  <chelf@codesourcery.com>

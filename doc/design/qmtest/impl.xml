@@ -91,25 +91,23 @@
 class TestRecord:
     """The canonical representation of a test."""
 
-    def GetId():
+    def GetId(self):
         """Return the test id of this test."""
 
-    def GetClassName():
+    def GetClassName(self):
         """Return the name of the test class of which this is an
         instance."""
 
-    def GetArguments():
-        """Return a sequence of arguments to the test class.  If the
-        test class takes optional named arguments, the last element of
-        the sequence is a dictionary from parameter names to
-        corresponding values.  All values are text strings containing
-        Python expressions."""
+    def GetArguments(self):
+        """Returns the arguments to the test class.  Arguments are
+        presented as a mapping from text argument names to argument
+        values.  Argument values are text Python expressions."""
 
-    def GetCategories():
+    def GetCategories(self):
         """Return a sequence of names of categories to which this test
         belongs."""
 
-    def GetPrerequisites():
+    def GetPrerequisites(self):
         """Return a sequence of pairs representing prerequisite tests
         for this test.  The first element of the pair is the test id
         of the prerequisite test.  The second element is the outcome
@@ -117,21 +115,21 @@ class TestRecord:
         considered met.  If the second element is None, any outcome is
         considered sufficient."""
 
-    def GetPreactions():
+    def GetPreactions(self):
         """Return a sequence of action ids of actions that must be run
         and produce a successful outcome before this test is run."""
 
-    def GetPostactions():
+    def GetPostactions(self):
         """Return a sequence of action ids of actions that must be run
         after this test is run."""
 
-    def GetDesignTimeArguments():
+    def GetDesignTimeArguments(self):
         """Fix me."""
 ]]>
     </programlisting></para>
 
-    <para>Note that test records are not polymorphic, regardless of
-    the test class of the test.</para>
+    <para>Note that test record objects are not polymorphic,
+    regardless of the test class of the test.</para>
 
     <para>Test records are the representation of tests that are stored
     in and returned by test databases.  Most test database

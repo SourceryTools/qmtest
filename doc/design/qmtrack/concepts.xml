@@ -103,13 +103,22 @@
       </listitem>
 
       <listitem>
+       <para><constant>text list</constant> fields contain an ordered
+       list of zero or more text strings.  Some instances of
+       <constant>text list</constant> fields may choose to ignore the
+       order.</para> 
+      </listitem>
+
+      <listitem>
        <para><constant>integer</constant> fields contain a signed
        32-bit integer.</para>
       </listitem>
 
       <listitem>
-       <para><constant>integer list</constant> fields contain a list
-       of zero or more 32-bit integers.</para>
+       <para><constant>integer list</constant> fields contain an
+       ordered list of zero or more 32-bit integers.  Some instances
+       of <constant>integer list</constant> fields may choose to
+       ignore the order.</para>
       </listitem>
 
       <listitem>
@@ -255,68 +264,73 @@
     <orderedlist>
      <listitem>
       <para><firstterm>Mandatory fields</firstterm> are present in any
-      &idb; schema and thus in every &qmtrack; issue.  The field type and
-      semantics of a mandatory field is invariant; &qmtrack; relies on
-      the presence of these fields for its operation.</para>
+      &idb; issue class and thus in every &qmtrack; issue.  The field
+      type and semantics of a mandatory field is invariant; &qmtrack;
+      relies on the presence of these fields for its operation.  The
+      names of mandatory fields are prefixed with
+      "<symbol>qm_</symbol>".</para>
      </listitem>
 
      <listitem>
-      <para><firstterm>Standard fields</firstterm> need not be present,
-      but if they are, take a particular field type and have standard
-      semantics.  Option &qmtrack; features and modules may rely on
-      standard fields for thier operation.</para>
+      <para><firstterm>Standard fields</firstterm> need not be present
+      in any particular issue class, but if they are, take a
+      particular field type and have standard semantics.  Optional
+      &qmtrack; features and modules may rely on standard fields for
+      thier operation.  A component of &qmtrack; or a module which
+      uses a standard field must always check first whether the field
+      is present, and degrade gracefully if it is not.  The names of
+      standard fields are prefixed with "<symbol>qm_</symbol>".</para>
      </listitem>
 
      <listitem>
-      <para><firstterm>Custom fields</firstterm> may be configured at
-      will in the &idb; schema.</para>
+      <para><firstterm>Custom fields</firstterm> are other fields
+      which are added to an issue class.  Custom fields may not begin
+      with the prefix "<symbol>qm_</symbol>".</para>
      </listitem>
     </orderedlist>
    </para>
 
    <section><title>Mandatory fields</title>
 
+    <para>This section describes mandatory fields.</para>
+
     <informaltable>
      <tgroup cols="2">
-      <tbody>
+      <thead>
        <row>
         <entry>field name</entry>
         <entry>type</entry>
         <entry>description</entry>
        </row>
+      </thead>
+      <tbody>
        <row>
-        <entry>id</entry>
-        <entry><constant>integer</constant></entry>
+        <entry>qm_id</entry>
+        <entry><constant>iid</constant></entry>
         <entry>issue id</entry>
        </row>
        <row>
-        <entry>revision</entry>
+        <entry>qm_revision</entry>
         <entry><constant>integer</constant></entry>
         <entry>revision number</entry>
        </row>
        <row>
-        <entry>time</entry>
+        <entry>qm_time</entry>
         <entry><constant>date</constant></entry> 
         <entry>the date and time at which this issue revision was
         entered into the &idb;</entry>
        </row>
        <row>
-        <entry>summary</entry>
+        <entry>qm_summary</entry>
         <entry><constant>string</constant></entry>
         <entry>short summary</entry>
        </row>
        <row>
-        <entry>categories</entry>
+        <entry>qm_categories</entry>
         <entry><constant>enumeration set</constant></entry>
         <entry>the categories to which the issue belongs</entry> </row>
        <row>
-        <entry>attachments</entry>
-        <entry>special</entry>
-        <entry>a collection of zero or more file attachments containing
-        arbitrary data</entry>
-       </row>
-       <row>
-        <entry>parents</entry>
+        <entry>qm_parents</entry>
         <entry><constant>iid set</constant></entry>
         <entry>the single iid of the parent issue if this issue was
         created in a split operation; the iid of all parent issues if
@@ -324,11 +338,37 @@
         otherwise</entry>
        </row>
        <row>
-        <entry>children</entry>
+        <entry>qm_children</entry>
         <entry><constant>iid set</constant></entry>
         <entry>the single iid of the child issue if this issue was
         joined with other issues; the iid of all children if this issue
         was split; an empty set otherwise</entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+
+   </section>
+
+   <section><title>Standard fields</title>
+
+    <para>This section describes standard fields.</para>
+
+    <informaltable>
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>field name</entry>
+        <entry>type</entry>
+        <entry>description</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry>qm_attachments</entry>
+        <entry>special</entry>
+        <entry>a collection of zero or more file attachments containing
+        arbitrary data</entry>
        </row>
       </tbody>
      </tgroup>
@@ -362,7 +402,7 @@
       <para>A description, stored as a string.</para>
      </listitem>
     </orderedlist>
-      </para>
+   </para>
 
   </section>
 

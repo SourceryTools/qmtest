@@ -24,36 +24,101 @@
   <para>The <classname>IdbBase</classname> class is the base class for
   idb implementations.</para>
 
-  <para>Creation and setup methods.
-   <programlisting>
+  <para>Creation and setup methods.</para>
+
+  <programlisting>
 <![CDATA[
 class IdbBase:
     """Base class for idb implementations."""
 ]]>
-   </programlisting>
-  </para>
+  </programlisting>
 
-  <para>Methods for retrieving issues and revisions.
-   <programlisting>
+  <para>Methods for retrieving issues and revisions.</para>
+
+  <programlisting>
 <![CDATA[
     def GetIssue(self, iid):
-        """Return the current revision of the issue corresponding to
-        iid."""
+        """Return the current revision of issue 'iid'."""
+
 
     def GetIssueRevision(self, iid, revision_number):
-        """Return the issue revision corresponding to iid and
-        revision_number."""
+        """Return the revision 'revision_number' of issue 'iid'."""
 
-    def GetIssueAllRevisions(self, iid):
-        """Return an array of revisions of the issue given by iid.
-        The array index is the revision number."""
+
+    def GetAllRevisions(self, iid):
+        """Return a sequence of all revisions of an issue.
+
+        'iid' -- The issue of which to retrieve all revisions.
+
+        returns -- A sequence of 'IssueRecord' objects, all
+        corresponding to 'iid', indexed by revision number."""
+
 
     def GetCurrentRevisionNumber(self, iid):
-        """Return the revision number of the current revision of the
-        issue given by iid."""
+        """Return the current revision number for issue 'iid'."""
 ]]>
-   </programlisting>
-  </para>
+  </programlisting>
+
+ </section>
+
+ <section><title>Issues</title>
+
+  <para>The canonical in-memory representation of an issue is an
+  <classname>IssueRecord</classname> instance.</para>
+
+  <programlisting>
+<![CDATA[
+class IssueRecord:
+    """The canonical representation of an issue."""
+
+    def GetClassName(self):
+        """Return the name of the issue class of this issue."""
+
+
+    def GetFields(self):
+        """Return the fields in this issue.  
+
+        returns -- A map from text field names to field values.  What
+        each value is depends on the type of that field, as specified
+        in the issue class."""
+
+
+    def GetField(self, field_name):
+        """Return the value of the field given by field_name."""
+
+
+    # Convenience methods for returning values of mandatory fields.
+
+    def GetId(self):
+        """Return the iid."""
+
+
+    def GetRevisionNumber(self):
+        """Return the revision number."""
+
+
+    def GetTime(self):
+        """Return the time  at which this revision was recorded."""
+
+
+    def GetSummary(self):
+        """Return a short summary."""
+
+
+    def GetCategories(self):
+        """Return a categories to which this issue belongs.
+
+        return -- A sequence of string names of categories."""
+
+
+    def GetParents(self):
+        """Return a sequence of iids of parents of this issue."""
+
+
+    def GetChildren(self):
+        """Return a sequence of iids of children of this issue."""
+]]>
+  </programlisting>
 
  </section>
 
@@ -69,18 +134,24 @@ class Attachment:
     def __init__(self, data, mime_type, description):
         """Create a new IdbAttachment instance."""
 
+
     def GetLocation(self):
-        """Return a string giving the location of the attachment data.
-        The contents of the string are opaque and
-        implementation-defined, but uniquely and completely specify
+        """Return the location of the attachment data.
+
+        returns -- An opaque, implementation-defined string specifying
         the location of the data."""
 
+
     def GetFile(self):
-        """Return a readable file handle to the attachment data,
-        positioned at the beginning."""
+        """Return a file handle to the attachment data.
+
+        returns -- A readable file object, positioned at the beginning
+        of the data."""
+
 
     def GetMimeType(self):
         """Return the MIME type of the attachment."""
+
 
     def GetDescription(self):
         """Return a description of the attachment."""

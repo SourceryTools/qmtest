@@ -22,11 +22,13 @@
   <!-- Commonly-used symbols, terms, and abbreviations specific to
   this document.  -->
 
+  <!ENTITY qmbuild "qmbuild">
   <!ENTITY qmtest "qmtest">
 
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->
 
+  <!ENTITY req.xml SYSTEM "req.xml">
   <!ENTITY core.xml SYSTEM "core.xml">
   <!ENTITY impl.xml SYSTEM "impl.xml">
 ]>
@@ -203,8 +205,373 @@
 
   </section>
 
+  <section><title>Acknowledgements</title>
+
+   <para>This document has its origins in the submissions to the
+   testing category of the Software Carpentry design competition in
+   the spring of 2000, and in the hundreds of messages on the Software
+   Carpentry discussion list in August--October of the same year.  We
+   are grateful to Paul Dubois (<ulink
+   url="http://www.llnl.gov">Lawrence Livermore National
+   Laboratory</ulink>), Stephen Lee (<ulink
+   url="http://www.lanl.gov">Los Alamos National Laboratory</ulink>),
+   Brian Marick (of <ulink
+   url="http://www.testing.com">testing.com</ulink>), Ken Martin
+   (<ulink url="http://www.kitware.com">Kitware</ulink>), and Dave
+   Thomas (a very <ulink
+   url="http://www.pragmaticprogrammer.com">pragmatic
+   programmer</ulink>) for their input.</para>
+
+  </section>
+
+  <section><title>Use Cases</title>
+
+   <section><title>Bhargan Basepair</title>
+
+    <para>Bhargan Basepair works for Genes'R'Us, a bio-technology firm
+    with development labs in four countries.  He and his two
+    assistants are developing fuzzy pattern-matching algorithms for
+    finding similarities between DNA records in standard databases.
+    Since his promotion, Bhargan spends most of his time doing
+    administrative and miscellaneous tasks, in an attempt to prevent
+    his assistants from losing focus.</para>
+
+    <para>As a semi-official service for other Genes'R'Us researchers,
+    and as a way of testing the efficacy of his group's heuristics,
+    Bhargan runs an overnight DNA sequence query service.  Researchers
+    send him sequences by electronic mail in a variety of formats
+    (in-line, attachments, URLs to pages behind the company firewall,
+    etc.).  Bhargan saves these messages in files called
+    <filename>search/a</filename>, <filename>search/b</filename>, and
+    so on, then edits them to add query directives.  (As he is very
+    conscientious, he almost never overwrites one query with another.)
+    Before leaving at night, he runs a Bourne shell script which
+    performs a search using the contents of every file in the search
+    directory in turn.  The results of each search are put in a file
+    with a name of the form <filename>search/a.out</filename>.  Each
+    search typically takes 15-20 minutes; he is sometimes not able to
+    run all of the searches he has received in a single night.</para>
+
+    <para>When Bhargan comes in the next morning, he pages through his
+    mail again, sending the appropriate <filename>.out</filename> file
+    to each researcher.  He then makes a list of searches that his
+    shell script didn't have time to get to, or which didn't run
+    successfully (e.g. because of format errors.  After copying these
+    to a temporary directory, he uses a small <command>awk</command>
+    script to archive the query sequence, the results (if any), the
+    date, the databases searched, and the search control parameters.
+    Periodically, he examines this data in order to tune his search
+    engine's parameters.</para>
+
+    <para>Bhargan wants to test the intern's code thoroughly before
+    using it.  He has the source code, but the student has gone back
+    to college, and the documentation never quite got written.
+    Bhargan's concerns are:
+     <itemizedlist>
+      <listitem>
+       <para>One person's results must <emphasis>never</emphasis> be
+       sent to someone else -- there could be legal fallout if this
+       ever happened.</para>
+      </listitem>
+
+      <listitem>
+       <para>Queries should never be lost or garbled: anyone who sends
+       a valid query should eventually get a reply.  Bhargan has been
+       doing the filtering and queueing by hand, and decided to
+       automate it because he was making two or three errors per week;
+       the automated service must have a lower "dropped message" rate
+       than this.</para>
+      </listitem>
+
+      <listitem>
+       <para>Each night's run of the program should append summary
+       results to a log file.  Previous results should not be
+       overwritten.  Bhargan has to be able to read and edit this file
+       while the program is running --- he spends a lot of time at
+       conferences and customer sites, and due to the time
+       differences, this means it's often 2:00 a.m. in the office when
+       he logs in.</para>
+      </listitem>
+
+     </itemizedlist>
+    </para>
+
+    <para>One extra wrinkle is that the test program shouldn't send
+    mail to real people, or be sent mail from them.  The corporate IT
+    department might be willing to set up dummy user accounts for
+    Bhargan to use in testing, but he'll probably see the millenium
+    roll over again before it actually gets done.</para>
+
+   </section>
+
+   <section id="story-daryl">
+    <title id="story-daryl-title">Daryl Dowhile</title>
+
+    <para>Daryl did a comparative study of the efficiencies of
+    different parsing algorithms for his Master's degree in Computer
+    Science at Euphoric State University, and is now working on a
+    contract to implement a parser for Fortran-2000 (or "F00") for the
+    GNU Compiler Collection (GCC).  The parser currently contains
+    47,000 executable lines of C and C++ in 350 functions, distributed
+    among 18 files, and is expected to triple in size by the time the
+    project is done.  Even at this point, the F00 parser will be less
+    than a third the size of commercial C++ parsers; it will achieve
+    this economy by re-using much of the parsing framework developed
+    for other languages.</para>
+
+    <para>Daryl starts an average working day by bringing his copy of
+    the source up to date with any overnight check-ins from colleagues
+    working on other modules.  He then checks his email to see whether
+    there are any upcoming developments that will affect him, such as
+    any extensions to the module used to internationalize error
+    messages.  Once these administrative tasks are done, he decides
+    which part of the draft F00 standard he is going to implement
+    next, and then writes a few new test cases that exercise those
+    language features.  (Some of these are actually not legal F00,
+    since a large part of the contract is to improve the compiler's
+    error messages.)</para>
+
+    <para>Daryl only starts adding the new feature to the parser once
+    all of his test cases are written and failing --- past experience
+    has taught him that if he writes his tests
+    <emphasis>after</emphasis> implementing the feature, he will test
+    against his implementation, and not against the language standard.
+    Writing the tests first also allows him to double-check the error
+    messages that the parser is generating.  According to the work log
+    he is keeping for this project, he typically makes three to five
+    changes to pre-existing features of the parser each time he adds a
+    new feature.</para>
+
+    <para>Daryl has inherited a collection of approximately 1200
+    tests, most written to test the Fortran-77 and Fortran-90 parsers
+    that are his starting point.  Each test is run by invoking the
+    compiler on a source file with certain diagnostic flags enabled.
+    The test is considered a pass if the compiler emits exactly the
+    expected diagnostic messages.</para>
+
+    <para>A single source file may be used as a fixture in several
+    tests --- for example, it maybe compiled several times at
+    different warning levels.  Control information for each test is
+    embedded in specially-formatted comments in the source files,
+    which are scattered throughout the source tree.  A simple Awk
+    script extracts control information from the source files, runs
+    the parser, and prints the test name followed by either "success"
+    (if the test behaved as expected), "failure" (if the test ran, but
+    did not produce the expected output), or "error" (if the test
+    crashes the parser).</para>
+
+    <para>Daryl typically writes five or ten tests for each feature
+    before implementing the feature, and another five or ten during
+    testing.  At least once a day, he types:
+     <userinput>
+      make parser_test | grep -v "success:"
+     </userinput>
+    in the root directory of the project, in order to re-run all of
+    the tests, and display only those that have not succeeded.  (The
+    Unix shell command <userinput>grep -v</userinput> prints only
+    those lines that do not contain the specified substring.)</para>
+
+    <para>Daryl would like to improve the way in which tests are
+    re-run.  In particular, he would like a tool to collect statistics
+    on how many tests have been executed, with what results, so that
+    he has a progress log to include in his monthly progress report.
+    He would also like some help generating tests: many are simple
+    variations on a theme, such as using eighteen different kinds of
+    constants as array subscripts, and he has made several errors in
+    the tests themselves when copying and modifying old test files.
+    Finally, he would like a single command to run the entire test
+    suite simultaneously on each of the dozen or so different machines
+    in the testing network.  These machines are a mix of various
+    versions of Unix and Microsoft Windows.</para>
+
+   </section>
+
+   <section id="story-glenda"><title id="story-glenda-title">Glenda
+   Grammar</title>
+
+    <para>Glenda is writing a set of tutorials for a new image
+    processing library to pay her bills while she finishes a Ph.D. in
+    mathematics.  She has taken several undergraduate and
+    graduate-level programming courses, and is reasonably proficient
+    with C++.</para>
+
+    <para>Glenda's employer is a consulting company part-owned by her
+    supervisor.  Because the company's two dozen employees are now
+    scattered around the country, the company manages work using
+    email lists.  Messages sent to any of the lists are automatically
+    archived, and a collection of CGI scripts allow the messages to
+    be accessed by date, author, or subject.  (Work is under way to
+    allow employees to search the content of messages as
+    well.)</para>
+
+    <para>On a good day, Glenda emails questions to the library's
+    developers, reads responses, updates the current text of the
+    tutorials (which are presently a collection of HTML pages), and
+    writes or updates the example programs.  Each time she changes an
+    example, she re-runs it, and checks its output (sometimes text,
+    but more often an image).  If she is satisfied, she puts the fresh
+    output into the company's CVS repository, then runs the new code
+    through a small script to HTMLify it (e.g. escape special
+    characters, and replace tabs with an appropriate number of
+    spaces), and pastes the result into the tutorial.</para>
+
+    <para>On a bad day, Glenda is told that there has been a change to
+    the library that will affect one of the tutorials.  In this case,
+    she must re-run each example that she thinks might be affected,
+    check its output against what is currently in the tutorial, and
+    update material accordingly.  She often sends messages to the
+    "Bugs" list after doing this, as she is usually the first one to
+    notice when changes in one section of the library expose errors in
+    another.</para>
+
+    <para>Glenda has the following testing needs:
+     <orderedlist>
+      <listitem>
+       <para>Each time she changes an example she needs to ensure that
+       the output agrees with her description in the tutorial.  The
+       output can be:
+        <itemizedlist>
+         <listitem>
+          <para>an image;</para>
+         </listitem>
+
+         <listitem>
+          <para>"exact" text, such as a count of the number of files
+          loaded and processed; or</para>
+         </listitem>
+
+         <listitem>
+          <para>numerical text, such as smoothing coefficients.  In
+          this case, changes to the program may cause small, but
+          acceptable, changes to the output.  </para>
+         </listitem>
+        </itemizedlist>
+       </para>
+      </listitem>
+
+      <listitem>
+       <para>She needs to ensure that her HTML-based tutorial and the
+       example code are properly cross-referenced: each example is
+       referenced by at least one tutorial, and all references to
+       examples are valid.  </para>
+      </listitem>
+     </orderedlist>
+    </para>
+
+    <para>Ideally, both processes should be totally automated.</para>
+
+   </section>
+
+   <section id="story-ovide">
+    <title>Ovide Overlay</title>
+
+    <para>Ovide Overlay is developing new algorithms for the map
+    overlay module of a geographical information system.  The module
+    takes as input two maps, A and B.  Each map covers the same
+    geographical area, and is divided into non-overlapping polygons.
+    The module's output is the overlay of the maps, i.e., the new map
+    that would be generated by drawing the input maps on transparent
+    film, and placing them on top of each other.  For example, if map
+    A shows soil types, and map B shows vegetation, the output map
+    would show where different kinds of plants are growing on
+    different types of soil.</para>
+
+    <para>In order to simplify his studies, Ovide is using maps
+    divided into rectangles, whose vertices all lie on a
+    [0...X]&times;[0...Y] grid.  His existing program implements a
+    naive "all-against-all" overlay algorithm, in which every
+    rectangle in map A is tested against every rectangle in map B.
+    Ovide wants to study two improvements to this algorithm:
+     <itemizedlist>
+      <listitem>
+       <para>The most obvious way to improve this algorithm is to make
+       use of the sorted order of the entries in each input list.
+       Clearly, two polygons P and Q cannot overlay if the upper X
+       coordinate of P is less than the lower X coordinate of Q, or
+       vice versa.  If the polygons in one map are sorted by
+       increasing upper X, and those in the other are sorted by
+       increasing lower X, this ordering can be used to limit the
+       sweep of the inner overlay loop.  </para>
+      </listitem>
+
+      <listitem>
+       <para>A second optimization is to keep track of how much of the
+       area of each polygon has not yet been accounted for.  Suppose,
+       for example, that a polygon P from one map overlaps exactly two
+       polygons Q1 and Q2 from a second map.  Once the two output
+       polygons have been generated, all of the area of P has been
+       "used up"; the program no longer needs to consider it when
+       calculating overlaps with other polygons from the second map.
+       This could be implemented by adding an integer field to each
+       polygon to keep track of its unaccounted-for area.  When the
+       area of a polygon is exhausted, it is deleted from its list.
+       </para>
+      </listitem>
+     </itemizedlist>
+    </para>
+
+   </section>
+
+   <section><title>Tahura Transparency</title>
+
+    <para>Tahura is a junior professor at Euphoric State University,
+    and part-owner of a consulting company that is developing a new
+    transparency rendering library in C++.  (This is the same company
+    that employs <link linkend="story-glenda"
+    endterm="story-glenda-title">Glenda Grammar</link> as a technical
+    writer.)  The company's two dozen employees are scattered around
+    the country, and communicate largely via email, and through the
+    shared version control repository.</para>
+
+    <para>Tahura's main tasks are to make sure that all of the
+    developers know what they are supposed to be building, and that
+    they are actually building it.  Each developer is supposed to keep
+    a list of current tasks, and milestones recently achieved, on a
+    personal web page.  Tahura checks these pages every Thursday
+    morning, in preparation for a regularly-scheduled conference call
+    that afternoon.  She is also very careful to save each
+    work-related message three times: once in a folder named for the
+    developer, once in another folder named for the project, and once
+    by date.</para>
+
+    <para>Tahura is also still trying to do some technical work
+    herself by experimenting with new wrinkles on existing rendering
+    algorithms using MATLAB.  When one of these experiments looks
+    promising, she hands the MATLAB script to the company's
+    developers, so that they can reproduce the algorithm in C++.  The
+    developers can then compare the output of the (slow) MATLAB and
+    (fast) C++ versions to validate their implementation.  The output
+    that is compared is not images, but rather histograms of lighting
+    intensity for each of a set of sample problems.  Once these are
+    close enough (no more than 2% difference for any value, and no
+    more than 5% cumulative difference), the developers compare a few
+    images visually.</para>
+
+    <para>As part of the run-up to the next release of the library,
+    Tahura wants to start recording performance information during
+    each run of the test suite.  Her experience has been that
+    unexpected changes in execution times usually indicate that
+    something has gone wrong, and her customers consider any slowing
+    down of the library to be a bug.  At present, each test prints an
+    identifying string (usually the name of the algorithm, and a
+    version number) and either "pass", "fail", or "error".  She is
+    trying to decide how to add performance information to this:
+    should tests print the absolute execution time, report the
+    percentage change from the previously-recorded time, or just print
+    "fail" instead of "pass" if the performance changes by too much?
+    She must also find a way to deal with the fact that the test suite
+    may be run on several different machines: should different
+    performance expectations be recorded for each, or should some
+    benchmark be run, and its time used to scale the expected
+    results?</para>
+
+   </section>
+
+  </section>
+
  </chapter>
 
+ &req.xml;
  &core.xml;
  &impl.xml;
 
