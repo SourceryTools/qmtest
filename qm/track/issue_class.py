@@ -36,8 +36,30 @@
 ########################################################################
 
 import qm
+import qm.track
 import time
 import types
+
+########################################################################
+# constants
+########################################################################
+
+# The default categories enumeration to use for a new issue class, if
+# one is not provided.
+
+default_categories = {
+    "default" : 0,
+}
+
+
+# The default set of states to use for a new issue class, if one is
+# not provided.
+
+default_states = {
+    "active" : 0,
+    "deleted" : -1
+}
+
 
 ########################################################################
 # classes
@@ -46,21 +68,16 @@ import types
 class IssueField:
     """Base class for issue field types."""
 
-    def __init__(self, name, default_value=None):
+    def __init__(self, name):
         """Create a new (generic) field.
 
-        'name' -- The value of the name attribute.
+        'name' -- The value of the name attribute.  Must be a valid
+        label."""
 
-        'default_value' -- The default value for this field.  If
-        provided, it must be a valid value for this field.  If 'None',
-        no default is provided, and each issue must be created with a
-        value for this field."""
+        if not qm.is_valid_label(name):
+            raise ValueError, "%s is not a valid field name" % name
 
         self.__attributes = { "name" : name }
-        # Validate the default value, if provided.
-        if default_value != None:
-            default_value = self.Validate(default_value)
-        self.__default_value = default_value
 
 
     def GetName(self):
@@ -69,10 +86,34 @@ class IssueField:
         return self.GetAttribute("name")
 
 
-    def GetDefaultValue(self):
-        """Return the default value for this field, or 'None' if none."""
+    def SetDefaultValue(self, value):
+        """Make 'value' the default value for this field."""
 
-        return self.__default_value
+        # Validate the default value.
+        value = self.Validate(value)
+        self.default_value = value
+
+
+    def UnsetDefaultValue(self):
+        """Remove the default value for this field, if any.
+
+        If a field has no default value, its value must be specified
+        for every issue created with that field."""
+
+        if hasattr(self, "default_value"):
+            del self.default_value
+
+
+    def HasDefaultValue(self):
+        """Return true if this field has a default value."""
+
+        return hasattr(self, "default_value")
+
+
+    def GetDefaultValue(self):
+        """Return the default value for this field."""
+
+        return self.default_value
 
 
     def GetAttribute(self, attribute_name, default_value=""):
@@ -121,14 +162,18 @@ class IssueField:
 
 class IssueFieldInteger(IssueField):
 
-    def __init__(self, name, default_value=None):
+    def __init__(self, name, default_value=0):
         """Create an integer field.
 
         The field must be able to represent a 32-bit signed
-        integer."""
+        integer.
+
+        'default_value' -- The default value for the field."""
 
         # Perform base class initialization.
-        IssueField.__init__(self, name, default_value)
+        IssueField.__init__(self, name)
+        # Set the default value.
+        self.SetDefaultValue(default_value)
 
 
     def Validate(self, value):
@@ -138,6 +183,8 @@ class IssueFieldInteger(IssueField):
 
 class IssueFieldText(IssueField):
     """A field that contains text.  
+
+    'default_value' -- The default value for this field.
 
     A text field uses the following attributes:
 
@@ -152,15 +199,17 @@ class IssueFieldText(IssueField):
     mechanisms that the contents of the field may be large and should
     be stored out-of-line."""
 
-    def __init__(self, name, default_value=None):
+    def __init__(self, name, default_value=""):
         """Create a text field."""
 
         # Perform base class initialization.
-        IssueField.__init__(self, name, default_value)
+        IssueField.__init__(self, name)
         # Set default attribute values.
         self.SetAttribute("multiline", "false")
         self.SetAttribute("verbatim", "false")
         self.SetAttribute("big", "false")
+        # Set the default field value.
+        self.SetDefaultValue(default_value)
 
 
     def Validate(self, value):
@@ -172,9 +221,11 @@ class IssueFieldSet(IssueField):
     """A field containing zero or more instances of some other field.
 
     All contents must be of the same field type.  A set field may not
-    contain sets."""
+    contain sets.
 
-    def __init__(self, contained, default_value=None):
+    The default field value is set to an empty set."""
+
+    def __init__(self, contained):
         """Create a set field.
 
         The name of the contained field is taken as the name of this
@@ -194,9 +245,11 @@ class IssueFieldSet(IssueField):
         if not isinstance(contained, IssueField):
             raise TypeError, "A set must contain another field."
         # Perform base class initialization.
-        IssueField.__init__(self, contained.GetName(), default_value)
+        IssueField.__init__(self, contained.GetName())
         # Remeber the contained field type.
         self.__contained = contained
+        # Set the default field value to any empty set.
+        self.SetDefaultValue([])
 
 
     def Validate(self, value):
@@ -218,23 +271,22 @@ class IssueFieldSet(IssueField):
 class IssueFieldAttachment(IssueField):
     """A field containing a file attachment."""
 
-    def __init__(self, name, default_value=None):
-        """Create an attachment field."""
+    def __init__(self, name):
+        """Create an attachment field.
+
+        Sets the default value of the field to 'None'."""
 
         # Perform base class initialization.
-        IssueField.__init__(self, name, default_value)
+        IssueField.__init__(self, name)
+        # Set the default value of this field.
+        self.SetDefaultValue(None)
 
 
     def Validate(self, value):
         # The value should be a triplet.
-        value = tuple(value)
-        if len(value) != 3:
+        if value != None and not isinstance(value, qm.track.Attachment):
             raise TypeError, \
-                  "the value of an attachment field must be a triplet"
-        # All three elements should be strings.
-        for element in value:
-            if not isinstance(value, types.StringType):
-                raise TypeError, "attachment elements must be strings"
+                  "the value of an attachment field must be an 'Attachment'"
         return value
 
 
@@ -252,14 +304,23 @@ class IssueFieldEnumeration(IssueFieldInteger):
     ordered by value."""
 
     def __init__(self, name, enumeration, default_value=None):
-        """Create an enumeral field."""
+        """Create an enumeral field.
+
+        'enumeration' -- A mapping from names to integer values.
+
+        'default_value' -- The default value for this enumeration.  If
+        'None', the lowest-valued enumeral is used."""
 
         # Copy the enumeration mapping, and canonicalize it so that
-        # keys are strings and values are integers.  Do this first, so
-        # we can validate the default value.
+        # keys are strings and values are integers.
         self.__enumeration = {}
         for key, value in enumeration.items():
             self.__enumeration[str(key)] = int(value)
+        if len(self.__enumeration) == 0:
+            raise ValueError, "enumeration must not be empty"
+        # If 'default_value' is 'None', use the lowest-numbered enumeral.
+        if default_value == None:
+            default_value = min(self.__enumeration.values())
         # Perform base class initialization.
         IssueFieldInteger.__init__(self, name, default_value)
         # Store the enumeration as an attribute.
@@ -285,21 +346,20 @@ class IssueFieldTime(IssueFieldText):
     __time_format = "%Y-%m-%d %H:%M"
     """The format, ala the 'time' module, used to represent field values."""
 
-    current_time = "current_time"
-
-    def __init__(self, name, default_value=None):
+    def __init__(self, name):
         """Create a time field.
 
-        If 'default_value' is 'current_time', the time current
-        at issue instantiation is used as the default value."""
+        The field is given a default value for this field is 'None', which
+        causes the current time to be used when an issue is created if no
+        field value is provided."""
 
         # Perform base class initalization.
-        IssueFieldText.__init__(self, name, default_value)
+        IssueFieldText.__init__(self, name, default_value=None)
 
 
     def Validate(self, value):
         # Parse and reformat the time value.
-        if value == self.current_time:
+        if value == None:
             return value
         else:
             time_tuple = time.strptime(value, self.__time_format)
@@ -308,7 +368,7 @@ class IssueFieldTime(IssueFieldText):
 
     def GetDefaultValue(self):
         default_value = IssueFieldText.GetDefaultValue(self)
-        if default_value == self.current_time:
+        if default_value == None:
             default_value = self.GetCurrentTime() 
         return default_value
 
@@ -339,26 +399,54 @@ class IssueFieldUid(IssueFieldText):
 class IssueClass:
     """Generic in-memory implementation of an issue class."""
 
-    def __init__(self, name):
+    def __init__(self, name, categories=default_categories,
+                 states=default_states):
         """Create a new issue class named 'name'.
 
-        The issue class initially includes mandatory fields."""
+        The issue class initially includes mandatory fields.  The iid
+        and revision fields, in that order, are gauranteed to be the
+        first two fields added, and as returned by 'GetFields()'."""
 
         self.__name = name
         self.__fields = {}
-        self.__default_values = {}
 
         # Create mandatory fields.
+        
+        # The issue id field.
         self.AddField(IssueFieldText("iid"))
-        self.AddField(IssueFieldInteger("revision", 0))
-        self.AddField(IssueFieldUid("user", "nobody"))
-        self.AddField(IssueFieldTime("timestamp",
-                                     IssueFieldTime.current_time))
-        self.AddField(IssueFieldText("summary", ""))
-        # categories
-        self.AddField(IssueFieldSet(IssueFieldIid("parents"), []))
-        self.AddField(IssueFieldSet(IssueFieldIid("children"), []))
-        # state
+
+        # The revision number field.
+        field = IssueFieldInteger("revision")
+        self.AddField(field)
+
+        # The user id field.
+        field = IssueFieldUid("user")
+        self.AddField(field)
+
+        # The revision timestamp field.
+        field = IssueFieldTime("timestamp")
+        self.AddField(field)
+
+        # The summary field.
+        field = IssueFieldText("summary")
+        self.AddField(field)
+
+        # The categories field.
+        field = IssueFieldEnumeration("categories", categories)
+        field = IssueFieldSet(field)
+        self.AddField(field)
+
+        # The parents field.
+        field = IssueFieldSet(IssueFieldIid("parents"))
+        self.AddField(field)
+
+        # The children field.
+        field = IssueFieldSet(IssueFieldIid("children"))
+        self.AddField(field)
+
+        # The state field.
+        field = IssueFieldEnumeration("state", states)
+        self.AddField(field)
 
 
     def GetName(self):
@@ -370,10 +458,16 @@ class IssueClass:
     def GetFields(self):
         """Return the fields in this class.
 
-        returns -- A map from field names to fields.  The keys of the
-        map are strings.  The values are 'IssueField' instances."""
+        returns -- A sequence of fields.  Nothing is gauranteed about
+        the order of the fields."""
 
-        return self.__fields
+        return self.__fields.values()
+
+
+    def HasField(self, name):
+        """Return true if there is a field named 'name'."""
+
+        return self.__fields.has_key(name)
 
 
     def GetField(self, name):

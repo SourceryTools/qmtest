@@ -35,8 +35,13 @@
 # imports
 ########################################################################
 
+import os
+import os.path
 import qm.regression_test 
-from qm.track import *
+from   qm.track import *
+import qm.track.gadfly_idb
+import qm.track.memory_idb
+import sys
 
 ########################################################################
 # tests
@@ -56,9 +61,8 @@ def test_mandatory_fields_1():
     c = IssueClass("test_class")
     mandatory_fields = ("iid", "revision", "user", "timestamp", "summary",
                         "categories", "parents", "children", "state")
-    fields = c.GetFields()
     for field in mandatory_fields:
-        if not fields.has_key(field):
+        if not c.HasField(field):
             return 0
     return 1
 
@@ -109,7 +113,7 @@ def test_set_field_4():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
     text_field = IssueFieldText(field_name)
-    issue_class.AddField(IssueFieldSet(text_field, []))
+    issue_class.AddField(IssueFieldSet(text_field))
     issue = Issue(issue_class, "i0")
     issue.SetField(field_name, [ "hello", "world", 42 ])
     return issue.GetField(field_name) == [ "hello", "world", "42" ]
@@ -119,7 +123,9 @@ def test_enumeration_field_1():
     field_name = "test_field"
     enum = { "small" : 1, "medium" : 10, "large" : 100 }
     issue_class = IssueClass("test_class")
-    issue_class.AddField(IssueFieldEnumeration(field_name, enum, "medium"))
+    field = IssueFieldEnumeration(field_name, enum)
+    field.SetDefaultValue("medium")
+    issue_class.AddField(field)
     issue = Issue(issue_class, "i0")
     if issue.GetField(field_name) != 10:
         return 0
@@ -135,8 +141,7 @@ def test_enumeration_field_1():
 def test_time_field_1():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
-    issue_class.AddField(IssueFieldTime(field_name,
-                                        IssueFieldTime.current_time))
+    issue_class.AddField(IssueFieldTime(field_name))
     issue = Issue(issue_class, "i0")
     issue.SetField(field_name, "2000-12-22 12:00")
     if issue.GetField(field_name) != "2000-12-22 12:00":
@@ -147,8 +152,7 @@ def test_time_field_1():
 def test_time_field_2():
     field_name = "test_field"
     issue_class = IssueClass("test_class")
-    issue_class.AddField(IssueFieldTime(field_name,
-                                        IssueFieldTime.current_time))
+    issue_class.AddField(IssueFieldTime(field_name))
     issue = Issue(issue_class, "i0")
     # An exception should be raised if we try to set the field value
     # to something that doesn't look like a time.
@@ -157,6 +161,105 @@ def test_time_field_2():
         return 0
     except ValueError:
         return 1
+
+
+idb_path = "./test_idb"
+
+def test_create_idb():
+    # Blow away an old database, if it exists.
+    if os.path.isdir(idb_path):
+        os.system("rm -r %s" % idb_path) 
+    # Create a new IDB.
+    idb_impl(idb_path, create_idb=1)
+    # There should be something there.
+    return os.path.isdir(idb_path)
+
+
+def test_add_issue_class():
+    log_file = open("test.py.sqllog", "wt")
+    idb = idb_impl(idb_path, log_file)
+    icl = qm.track.IssueClass("test_class")
+    icl.AddField(IssueFieldInteger("a_number", 14))
+    field = IssueFieldInteger("int_set")
+    icl.AddField(IssueFieldSet(field))
+    idb.AddIssueClass(icl)
+    if idb.GetIssueClass("test_class") == None:
+        return 0
+    return 1
+    
+
+def test_add_issues():
+    idb = idb_impl(idb_path)
+    icl = idb.GetIssueClass("test_class")
+
+    i = qm.track.Issue(icl, "iss_0")
+    i.SetField("summary", "An issue.")
+    i.SetField("a_number", 72)
+    idb.AddIssue(i)
+    
+    i = qm.track.Issue(icl, "iss_1")
+    i.SetField("summary", "Another issue.")
+    i.SetField("int_set", [5, 15, 25])
+    idb.AddIssue(i)
+    
+    i = qm.track.Issue(icl, "iss_2")
+    i.SetField("summary", "The third issue.")
+    i.SetField("a_number", -15)
+    i.SetField("int_set", [10, 20, 30])
+    idb.AddIssue(i)
+
+    i.SetField("a_number", -16)
+    i.SetField("int_set", [10, 30])
+    idb.AddRevision(i)
+
+    return 1
+
+
+def test_get_issues():
+    idb = idb_impl(idb_path)
+    i = idb.GetIssue("iss_1")
+    if i.GetField("a_number") != 14:
+        return 0
+    if i.GetField("summary") != "Another issue.":
+        return 0
+
+    # Get the current revision of iss_2.
+    i = idb.GetIssue("iss_2")
+    if i.GetField("a_number") != -16:
+        return 0
+    if i.GetField("summary") != "The third issue.":
+        return 0
+    if i.GetField("int_set") != [10, 30]:
+        return 0
+
+    # Retrieve a past revision of iss_2.
+    i = idb.GetIssue("iss_2", revision=0)
+    if i.GetField("a_number") != -15:
+        return 0
+
+    if i.GetField("summary") != "The third issue.":
+        return 0
+    if i.GetField("int_set") != [10, 20, 30]:
+        return 0
+
+    all_revisions = idb.GetAllRevisions("iss_2")
+    if len(all_revisions) != 2:
+        return 0
+
+    return 1
+
+
+def test_attachments():
+    idb = idb_impl(idb_path)
+    icl = qm.track.IssueClass("test_class2")
+    icl.AddField(IssueFieldAttachment("attachment"))
+    idb.AddIssueClass(icl)
+    i = qm.track.Issue(icl, "iss_5")
+    idb.AddIssue(i)
+    i = idb.GetIssue("iss_5")
+    if i.GetField("attachment") != None:
+        return 0
+    return 1
 
 
 regression_tests = [
@@ -170,11 +273,31 @@ regression_tests = [
     test_set_field_4,
     test_time_field_1,
     test_time_field_2,
+
+    # The next several test are interrelated, and their order must be
+    # preserved.
+    test_create_idb,
+    test_add_issue_class,
+    test_add_issues,
+    test_get_issues,
+    test_attachments,
     ]
 
 
 if __name__ == "__main__":
-    qm.regression_test.run_regression_test_driver(regression_tests)
+    failures = 0
+
+    print "Testing Gadfly IDB"
+    idb_impl = qm.track.gadfly_idb.GadflyIdb
+    failures = failures + qm.regression_test.\
+               run_regression_test_driver(regression_tests)
+
+    print "Testing memory IDB"
+    idb_impl = qm.track.memory_idb.MemoryIdb
+    failures = failures + qm.regression_test.\
+               run_regression_test_driver(regression_tests)
+
+    sys.exit(failures)
 
 
 ########################################################################

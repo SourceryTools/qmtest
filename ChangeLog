@@ -1,5 +1,43 @@
 2001-01-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/common.py (MutexLockError): New class.
+	(FileSystemMutex): Likewise.
+	* qm/regression_test.py (run_regression_test_driver): Don't exit.
+	* qm/test.py: New file.
+	
+	* qm/track/issue.py (Issue.__init__): Adjust for changes in
+	IssueClass. 
+	(Issue.Copy): New function.
+	(Attachment): New class.
+	* qm/track/issue_class.py (default_categories): New variable.
+	(default_states): Likewise.
+	(IssueField.__init__): Handle default values differently.
+	(IssueField.GetDefaultValue): Likewise.
+	(IssueField.SetDefaultValue): New function.
+	(IssueField.UnsetDefaultValue): Likewise.
+	(IssueField.HasDefaultValue): Likewise.
+	(IssueFieldInteger.__init__): Set default value.
+	(IssueFieldText.__init__): Likewise.
+	(IssueFieldSet.__init__): Likewise.
+	(IssueFieldAttachment.__init__): Likewise.
+	(IssueFieldEnumeration.__init__): Likewise.
+	(IssueFieldTime.__init__): Likewise.
+	(IssueFieldUid.__init__): Likewise.
+	(IssueClass.__init__): Create mandatory fields.
+	(IssueClass.GetFields): Store fields as a map.
+	(IssueClass.HasField): New function.
+	* qm/track/gadfly_idb.py: New file.
+	* qm/track/sql_idb.py: Likewise.
+	* qm/track/memory_idb.py: Likewise.
+	* qm/track/test.py: Adjust for new field initializers throughout.
+	(test_create_idb): New test.
+	(test_add_issue_class): Likewise.
+	(test_add_issues): Likewise.
+	(test_get_issues): Likewise.
+	(test_attachments): Likewise.
+	
+2001-01-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* gadfly/__init__.py: New file.
 
 	* templates/Makefile: Update year.

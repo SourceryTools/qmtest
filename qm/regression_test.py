@@ -46,7 +46,7 @@ import traceback
 ########################################################################
 
 def run_regression_test_driver(regression_tests):
-    """Run regression tests and exit.
+    """Run regression tests.
 
     Each regression test is a callable object that takes zero
     arguments, and returns a true value if the test passes or a false
@@ -101,12 +101,7 @@ def run_regression_test_driver(regression_tests):
             message(1, "failed\n")
             failures = failures + 1
 
-    # Exit with a non-zero code if some tests failed.
-    if failures > 0:
-        exit_code = 1
-    else:
-        exit_code = 0
-    sys.exit(exit_code)
+    return failures
         
 
 ########################################################################

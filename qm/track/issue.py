@@ -65,18 +65,27 @@ class Issue:
         self.__fields = {}
 
         # Initialize fields to default values, 
-        for field in issue_class.GetFields().values():
+        for field in issue_class.GetFields():
             name = field.GetName()
             if name == "iid":
                 value = iid
             elif field_values.has_key(name):
-                value = field.Validate(fields_values[name])
-            elif field.GetDefaultValue() != None:
+                value = field.Validate(field_values[name])
+            elif field.HasDefaultValue() != None:
                 value = field.GetDefaultValue()
             else:
                 raise IssueFieldError, \
                       "value for field %s must be specified" % field.GetName()
             self.__fields[name] = value
+
+
+    def Copy(self):
+        """Return a duplicate of this issue."""
+
+        # Construct a new 'Issue' instance with the same class and the
+        # same field values.  The issue class itself and field values
+        # should not be copied, but the field mapping should.
+        return apply(Issue, (self.GetClass(), ), self.__fields)
 
 
     def GetClass(self):
@@ -120,6 +129,38 @@ class Issue:
 
         return self.GetField("revision")
 
+
+
+class Attachment:
+    """A file attachment."""
+
+    def __init__(self, location, mime_type, description):
+        """Creates a new attachment object."""
+
+        self.location = location
+        self.mime_type = mime_type
+        self.description = description
+
+
+    def GetLocation(self):
+        """Returns the location of the attachment data.
+
+        The interpretation of the return value, a string, is
+        context-dependent."""
+
+        return self.location
+
+
+    def GetMimeType(self):
+        """Returns the MIME type of the attachment."""
+
+        return self.mime_type
+
+
+    def GetDescription(self):
+        """Returns a description of the attachment."""
+
+        return self.description
 
 
 ########################################################################
