@@ -43,7 +43,7 @@ import traceback
 import types
 import urllib
 import user
-import whrandom
+import random
 
 import qm.external.DocumentTemplate as DocumentTemplate
 
@@ -1418,13 +1418,11 @@ class Session:
         # Extract the client's IP address from the request.
         self.__client_address = request.client_address
 
-        # Now create a session ID.  Start with a new random number
-        # generator.
-        generator = whrandom.whrandom()
-        # Seed it with the system time.
-        generator.seed()
+        # Now create a session ID.
+        # Seed the random number generator with the system time.
+        random.seed()
         # FIXME: Security: Is this OK?
-        digest = md5.new("%f" % generator.random()).digest()
+        digest = md5.new("%f" % random.random()).digest()
         # Convert the digest, which is a 16-character string,
         # to a sequence hexadecimal bytes.
         digest = map(lambda ch: hex(ord(ch))[2:], digest)
