@@ -7,7 +7,7 @@
 # Contents:
 #   General type system for user-defied data constructs.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -2159,6 +2159,19 @@ class UidField(TextField):
             raise ValueError, style
 
 
+
+class PythonField(Field):
+    """A 'PythonField' stores a Python value.
+
+    All 'PythonField's are computed; they are never written out, nor can
+    they be specified directly by users.  They are used in situations
+    where the value of the field is specified programatically by the
+    system."""
+
+    def __init__(self, name, default_value = None):
+
+        Field.__init__(self, name, default_value, computed = "true")
+    
 ########################################################################
 # Local Variables:
 # mode: python

@@ -15,14 +15,14 @@
 # Imports
 ########################################################################
 
-from   qm.test.result_stream import *
+from   qm.test.file_result_stream import FileResultStream
 import qm.xmlutil
 
 ########################################################################
 # classes
 ########################################################################
 
-class XMLResultStream(ResultStream):
+class XMLResultStream(FileResultStream):
     """An 'XMLResultStream' writes out results as XML.
 
     An 'XMLResultStream' writes out results as XML.  This stream is
@@ -33,17 +33,11 @@ class XMLResultStream(ResultStream):
     individual result.  The closing tag for the results file will
     be missing."""
 
-    def __init__(self, file):
-        """Construct an 'XMLResultStream'.
-
-        'file' -- The file object to which the results should be
-        written.  Closing the file remains the responsibility of the
-        caller."""
+    def __init__(self, arguments):
 
         # Initialize the base class.
-        ResultStream.__init__(self, {})
+        FileResultStream.__init__(self, arguments)
         
-        self.__file = file
         # Create an XML document, since the DOM API requires you
         # to have a document when you create a node.
         self.__document = qm.xmlutil.create_dom_document(
@@ -51,12 +45,12 @@ class XMLResultStream(ResultStream):
             dtd_file_name="result.dtd",
             document_element_tag="results")
         # Write out the prologue.
-        self.__file.write("<?xml version='1.0' encoding='ISO-8859-1'?>\n")
-        self.__file.write('<!DOCTYPE results PUBLIC "%s" "%s">\n'
-                          % (qm.test.base.dtds["result"],
-                             qm.xmlutil.make_system_id("result.dtd")))
+        self.file.write("<?xml version='1.0' encoding='ISO-8859-1'?>\n")
+        self.file.write('<!DOCTYPE results PUBLIC "%s" "%s">\n'
+                        % (qm.test.base.dtds["result"],
+                           qm.xmlutil.make_system_id("result.dtd")))
         # Begin the list of results.
-        self.__file.write("<results>\n")
+        self.file.write("<results>\n")
 
 
     def WriteResult(self, result):
@@ -65,8 +59,8 @@ class XMLResultStream(ResultStream):
         'result' -- A 'Result'."""
 
         element = result.MakeDomNode(self.__document)
-        element.writexml(self.__file)
-        self.__file.write("\n")
+        element.writexml(self.file)
+        self.file.write("\n")
         
 
     def Summarize(self):
@@ -78,6 +72,6 @@ class XMLResultStream(ResultStream):
         also be performed at this point."""
 
         # Finish the list of results.
-        self.__file.write("\n</results>\n")
+        self.file.write("\n</results>\n")
 
-        ResultStream.Summarize(self)
+        FileResultStream.Summarize(self)

@@ -8,6 +8,11 @@ QM 2.1 (Not Yet Released)
 
 QM 2.1 requires Python 2.2 or greater.
 
+There is now a "qmtest create" command-line option that can be used to
+create extension instances (such as tests, resources, or databases)
+programmatically.  The "--class" option to the qmtest create-tdb"
+command now supports the same descriptor syntax as "qmtest create".
+
 There is a new executable.TimeoutExecutable class that can be used to
 run a child process with a timeout.  The "command" test classes now
 make use of this functionality to support running child processes with
@@ -16,11 +21,10 @@ a timeout.
 There is now a "-O" or "--outcomes" option for setting the expected
 outcomes, even when working within in the GUI.
 
-There is a new "--result-format" option to "qmtest run" and "qmtest
-gui".  This option controls the format of the results file, i.e.,
-whether the binary or XML file format is used.
+There is a new "--result-stream" option to "qmtest run" and "qmtest
+summarize" that allows users to specify custom result streams.
 
-A defect that could cause a multi-threaded or multi-process test run
+A defect that could cause a multi-threaded or multi-process tests run
 to hang if a resource could not be set up has been corrected.
 
 QM 2.0.4 (Not Yet Released)

@@ -80,13 +80,17 @@ def _make_comma_separated_string (items, conjunction):
         s += "'%s'" % i
 
     return s
-    
+
 ########################################################################
 # Classes
 ########################################################################
 
 class QMTest:
     """An instance of QMTest."""
+
+    __extension_kinds_string \
+         = _make_comma_separated_string(base.extension_kinds, "or")
+    """A string listing the available extension kinds."""
 
     db_path_environment_variable = "QMTEST_DB_PATH"
     """The environment variable specifying the test database path."""
@@ -134,6 +138,13 @@ class QMTest:
         "Path to the test database."
         )
 
+    extension_output_option_spec = (
+        "o",
+        "output",
+        "FILE",
+        "Write the extension to FILE.",
+        )
+        
     output_option_spec = (
         "o",
         "output",
@@ -253,9 +264,9 @@ class QMTest:
         "Specify the summary format."
         )
 
-    result_format_spec = (
+    result_stream_spec = (
         None,
-        "result-format",
+        "result-stream",
         "CLASS-NAME",
         "Specify the results file format."
         )
@@ -264,7 +275,7 @@ class QMTest:
         "c",
         "class",
         "CLASS-NAME",
-        "Specify the test database class."
+        "Specify the test database class.",
         )
 
     attribute_option_spec = (
@@ -295,6 +306,35 @@ class QMTest:
         ]
 
     commands_spec = [
+        ("create",
+         "Create (or update) an extension.",
+         "EXTENSION-KIND CLASS-NAME(ATTR1 = 'VAL1', ATTR2 = 'VAL2', ...)",
+         """Create (or update) an extension.
+
+         The EXTENSION-KIND indicates what kind of extension to
+         create; it must be one of """ + __extension_kinds_string + """.
+
+         The CLASS-NAME indicates the name of the extension class.  It
+         must have the form 'MODULE.CLASS'.  For a list of available
+         extension classes use "qmtest extensions".  If the extension
+         class takes arguments, those arguments can be specified after
+         the CLASS-NAME as show above.
+
+         Any "--attribute" options are processed before the arguments
+         specified after the class name.  Therefore, the "--attribute"
+         options can be overridden by the arguments provided after the
+         CLASS-NAME.  If no attributes are specified, the parentheses
+         following the 'CLASS-NAME' can be omitted.
+
+         The extension instance is written to the file given by the
+         "--output" option, or to the standard output if no "--output"
+         option is present.""",
+         ( attribute_option_spec,
+           help_option_spec,
+           extension_output_option_spec,
+           ),
+         ),
+           
         ("create-target",
          "Create (or update) a target specification.",
          "NAME CLASS [ GROUP ]",
@@ -329,7 +369,6 @@ class QMTest:
            no_browser_option_spec,
            pid_file_option_spec,
            port_option_spec,
-           result_format_spec,
            outcomes_option_spec,           
            targets_option_spec
            )
@@ -343,7 +382,7 @@ List the available extension classes.
 
 Use the '--kind' option to limit the classes displayed to test classes,
 resource classes, etc.  The parameter to '--kind' can be one of """  + \
-         _make_comma_separated_string(base.extension_kinds, "or") + "\n",
+         __extension_kinds_string + "\n",
          (
            extension_kind_option_spec,
            help_option_spec,
@@ -362,8 +401,7 @@ resource classes, etc.  The parameter to '--kind' can be one of """  + \
          "KIND CLASS",
          """
 Register an extension class with QMTest.  KIND is the kind of extension
-class to register; it must be one of """ + \
-         _make_comma_separated_string(base.extension_kinds, "or") + """
+class to register; it must be one of """ + __extension_kinds_string + """
 
 The CLASS gives the name of the class in the form 'module.class'.
 
@@ -416,7 +454,7 @@ The summary is written to standard output.
            output_option_spec,
            random_option_spec,
            rerun_option_spec,
-           result_format_spec,
+           result_stream_spec,
            seed_option_spec,
            targets_option_spec,
            )
@@ -434,14 +472,17 @@ did not pass.
 Use the '--format' option to specify the output format for the summary.
 Valid formats are "full", "brief" (the default), "stats", and "none".
          """,
-         ( help_option_spec, format_option_spec, outcomes_option_spec )
+         ( help_option_spec,
+           format_option_spec,
+           outcomes_option_spec,
+           result_stream_spec)
          ),
 
         ]
 
     __version_output = \
         ("QMTest %s\n" 
-         "Copyright (C) 2002 CodeSourcery, LLC\n"
+         "Copyright (C) 2002, 2003 CodeSourcery, LLC\n"
          "QMTest comes with ABSOLUTELY NO WARRANTY\n"
          "For more information about QMTest visit http://www.qmtest.com\n")
     """The string printed when the --version option is used.
@@ -506,6 +547,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # We have not yet computed the set of available targets.
         self.targets = None
 
+        # The result stream class used for results files is the pickling
+        # verison.
+        self.__file_result_stream_class_name \
+            = "pickle_result_stream.PickleResultStream"
+        # We haven't loaded the actual class yet.
+        self.__file_result_stream_class = None
+
 
     def HasGlobalOption(self, option):
         """Return true if 'option' was specified as a global command.
@@ -536,8 +584,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return 0
     
 
-    def GetCommandOption(self, option, default=None):
-        """Return the value of command 'option', or 'default' if ommitted."""
+    def GetCommandOption(self, option, default = None):
+        """Return the value of command 'option'.
+
+        'option' -- The long form of an command-specific option.
+
+        'default' -- The default value to be returned if the 'option'
+        was not specified.  This option should be the kind of an option
+        that takes an argument.
+
+        returns -- The value specified by the option, or 'default' if
+        the option was not specified."""
 
         for opt, opt_arg in self.__command_options:
             if opt == option:
@@ -603,6 +660,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             return 0
         
         method = {
+            "create" : self.__ExecuteCreate,
             "create-target" : self.__ExecuteCreateTarget,
             "extensions" : self.__ExecuteExtensions,
             "gui" : self.__ExecuteServer,
@@ -769,7 +827,21 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         return self.__qmtest_path
     
-    
+
+    def GetFileResultStreamClass(self):
+        """Return the 'ResultStream' class used for results files.
+
+        returns -- The 'ResultStream' class used for results files."""
+
+        if not self.__file_result_stream_class:
+            self.__file_result_stream_class \
+                = get_extension_class(self.__file_result_stream_class_name,
+                                      "result_stream",
+                                      self.GetDatabase())
+
+        return self.__file_result_stream_class
+
+        
     def _GetVersionString(self):
         """Return the version string for this version of QMTest.
 
@@ -783,23 +855,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return version_string
         
 
-    def GetResultStreamClass(self):
-        """Return the class object for the result stream.
-
-        returns -- The extension class (derived from 'ResultStream') to
-        use when reading or writings results files."""
-
-        if not self.__result_stream_class:
-            class_name = self.GetCommandOption("result-format",
-                                               "pickle_result_stream."
-                                                   "PickleResultStream")
-            self.__result_stream_class \
-                = get_extension_class(class_name, "result_stream",
-                                      self.GetDatabase())
-
-        return self.__result_stream_class
-    
-        
     def __GetAttributeOptions(self):
         """Return the attributes specified on the command line.
 
@@ -818,19 +873,82 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         return attributes
     
+
+    def __ExecuteCreate(self):
+        """Create a new extension file."""
+
+        # Check that the right number of arguments are present.
+        if len(self.__arguments) != 2:
+            self.__WriteCommandHelp("create")
+            return 1
+
+        # Figure out what database (if any) we are using.
+        try:
+            database = self.GetDatabase()
+        except:
+            database = None
+        
+        # Get the extension kind.
+        kind = self.__arguments[0]
+        self.__CheckExtensionKind(kind)
+
+        # Get the --attribute options.
+        arguments = self.__GetAttributeOptions()
+
+        # Process the descriptor.
+        (extension_class, more_arguments) \
+             = (qm.extension.parse_descriptor
+                (self.__arguments[1],
+                 lambda n: \
+                     qm.test.base.get_extension_class(n, kind, database)))
+
+        # Validate the --attribute options.
+        arguments = qm.extension.validate_arguments(extension_class,
+                                                    arguments)
+        # Override the --attribute options with the arguments provided
+        # as part of the descriptor.
+        arguments.update(more_arguments)
+
+        # Figure out what file to use.
+        filename = self.GetCommandOption("output")
+        if filename is not None:
+            file = open(filename, "w")
+        else:
+            file = sys.stdout
+                                     
+        # Write out the file.
+        qm.extension.write_extension_file(extension_class, arguments, file)
+        
         
     def __ExecuteCreateTdb(self, db_path):
         """Handle the command for creating a new test database.
 
         'db_path' -- The path at which to create the new test database."""
 
+        if len(self.__arguments) != 0:
+            self.__WriteCommandHelp("create-tdb")
+            return 1
+        
+        # Create the directory if it does not already exists.
+        if not os.path.isdir(db_path):
+            os.mkdir(db_path)
+        # Create the configuration directory.
+        config_dir = database.get_configuration_directory(db_path)
+        if not os.path.isdir(config_dir):
+            os.mkdir(config_dir)
+
+        # Reformulate this command in terms of "qmtest create".  Start by
+        # adding "--output <path>".
+        self.__command_options.append(("output",
+                                       database.get_configuration_file(db_path)))
         # Figure out what database class to use.
         class_name \
             = self.GetCommandOption("class", "xml_database.XMLDatabase")
-        # Get the attributes.
-        attributes = self.__GetAttributeOptions()
-        # Create the test database.
-        database.create_database(db_path, class_name, attributes)
+        # Add the extension kind and descriptor.
+        self.__arguments.append("database")
+        self.__arguments.append(class_name)
+        # Now process this just like "qmtest create".
+        self.__ExecuteCreate()
         # Print a helpful message.
         self._stdout.write(qm.message("new db message", path=db_path) + "\n")
 
@@ -915,6 +1033,11 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     def __ExecuteExtensions(self):
         """List the available extension classes."""
 
+        # Check that the right number of arguments are present.
+        if len(self.__arguments) != 0:
+            self.__WriteCommandHelp("extensions")
+            return 1
+            
         try:
             database = self.GetDatabase()
         except:
@@ -924,13 +1047,11 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Figure out what kinds of extensions we're going to list.
         kind = self.GetCommandOption("kind")
-        kinds = base.extension_kinds
         if kind:
-            if kind not in kinds:
-                raise qm.cmdline.CommandError, \
-                      qm.error("invalid extension kind",
-                               kind = kind)
+            self.__CheckExtensionKind(kind)
             kinds = [kind]
+        else:
+            kinds = base.extension_kinds
 
         for kind in kinds:
             # Get the available classes.
@@ -1114,18 +1235,29 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             suite_ids = []
 
         any_unexpected_outcomes = 0
+
+        # Compute the list of result streams to which output should be
+        # written.
+        streams = []
+        # Add the streams explicitly specified by the user.
+        streams.extend(self.__GetResultStreams())
+        # Add the text output stream.
+        stream = TextResultStream(self._stdout, format, outcomes,
+                                  self.GetDatabase(), suite_ids)
+        streams.append(stream)
         
         # Simulate the events that would have occurred during an
         # actual test run.
-        stream = TextResultStream(self._stdout, format, outcomes,
-                                  self.GetDatabase(), suite_ids)
         for r in test_results:
-            stream.WriteResult(r)
+            for s in streams:
+                s.WriteResult(r)
             if r.GetOutcome() != outcomes.get(r.GetId(), Result.PASS):
                 any_unexpected_outcomes = 1
         for r in resource_results:
-            stream.WriteResult(r)
-        stream.Summarize()
+            for s in streams:
+                s.WriteResult(r)
+        for s in streams:
+            s.Summarize()
 
         return any_unexpected_outcomes
         
@@ -1285,51 +1417,41 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                       database, test_suites)
             result_streams.append(stream)
 
-        # Handle 'result' options.
+        # Handle the --output option.
         close_result_file = 0
         if self.HasCommandOption("no-output"):
             # User specified no output.
-            result_file = None
+            result_file_name = None
         else:
             result_file_name = self.GetCommandOption("output")
             if result_file_name is None:
                 # By default, write results to a default file.
                 result_file_name = "results.qmr"
-
-            if result_file_name == "-":
-                # Use standard output.
-                result_file = sys.stdout
-            else:
-                # A named file.  Open the file in unbufferred mode so
-                # that results are written out immediately.
-                result_file = open(result_file_name, "wb", 0)
-                close_result_file = 1
                 
-        if result_file is not None:
-            result_stream_class = self.GetResultStreamClass()
-            result_streams.append(result_stream_class(result_file))
+        if result_file_name is not None:
+            rs = (self.GetFileResultStreamClass()
+                  ({ "filename" : result_file_name}))
+            result_streams.append(rs)
 
+        # Handle the --result-stream options.
+        result_streams.extend(self.__GetResultStreams())
+        
         # Keep track of whether or not any unexpected outcomes have
         # occurred.
         unexpected_outcomes_stream = UnexpectedOutcomesStream(expectations)
         result_streams.append(unexpected_outcomes_stream)
         
-        try:
-            if self.HasCommandOption("random"):
-                # Randomize the order of the tests.
-                random.shuffle(test_ids)
-            else:
-                test_ids.sort()
-            
-            # Run the tests.
-            engine = ExecutionEngine(database, test_ids, context, targets,
-                                     result_streams)
-            engine.Run()
-            return unexpected_outcomes_stream.AnyUnexpectedOutcomes()
-        finally:
-            # Close the result file.
-            if close_result_file:
-                result_file.close()
+        if self.HasCommandOption("random"):
+            # Randomize the order of the tests.
+            random.shuffle(test_ids)
+        else:
+            test_ids.sort()
+
+        # Run the tests.
+        engine = ExecutionEngine(database, test_ids, context, targets,
+                                 result_streams)
+        engine.Run()
+        return unexpected_outcomes_stream.AnyUnexpectedOutcomes()
                                                     
 
     def __ExecuteServer(self):
@@ -1500,7 +1622,41 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         return test_names
 
+
+    def __CheckExtensionKind(self, kind):
+        """Check that 'kind' is a valid extension kind.
+
+        'kind' -- A string giving the name of an extension kind.  If the
+        'kind' does not name a valid extension kind, an appropriate
+        exception is raised."""
+
+        if kind not in base.extension_kinds:
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid extension kind",
+                           kind = kind)
+
                        
+    def __GetResultStreams(self):
+        """Return the result streams to use.
+
+        returns -- A list of 'ResultStream' objects, as indicated by the
+        user."""
+
+        result_streams = []
+
+        database = self.GetDatabase()
+        f = lambda n: qm.test.base.get_extension_class(n,
+                                                       "result_stream",
+                                                       database)
+        
+        # Look for all of the "--result-stream" options.
+        for opt, opt_arg in self.__command_options:
+            if opt == "result-stream":
+                ec, as = qm.extension.parse_descriptor(opt_arg, f)
+                result_streams.append(ec(as))
+
+        return result_streams
+    
 ########################################################################
 # Functions
 ########################################################################

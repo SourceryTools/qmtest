@@ -1,5 +1,48 @@
 2003-04-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: Remove --result-format item and add --result-stream item.
+	Mention "qmtest create".
+	* qm/extension.py (write_extension_file): New function.
+	(read_extension_file): Likewise.
+	(parse_descriptor): Likewise.
+	* qm/fields.py (PythonField): New class.
+	* qm/test/cmdline.py (QMTest.__extension_kinds_string): New
+	variable.
+	(QMTest.extension_output_option_spec): New spec.
+	(QMTest.result_format_spec): Remove.
+	(QMTest.result_stream_spec): New spec.
+	(QMTest.commands_spec): Add "qmtest create".  Remove
+	"--result_format".  Add "--result_stream" for "qmtest run" and
+	"qmtest summarize".
+	(QMTest.__version_output): Update copyright date.
+	(QMTest.__init__): Set __file_result_stream_class_name and
+	__file_result_stream_class.
+	(QMTest.GetCommandOption): Add documentation.
+	(QMTest.Execute): Add "qmtest create" support.
+	(QMTest.GetFileResultStreamClass): New method.
+	(QMTest.GetResultStreamClass): Remove.
+	(QMTest.__ExecuteCreate): New method.
+	(QMTest.__ExecuteCreateTdb): Use it.
+	(QMTest.__ExecuteExtensions): Use __CheckExtensionKind.
+	(QMTest.__ExecuteSummarize): Use __GetResultStreams.
+	(QMTest.__ExecuteRun): Likewise.
+	(QMTest.__CheckExtensionKind): New method.
+	(QMTest.__GetResultStreams): Likewise.
+	* qm/test/database.py (create_database): Remove.
+	* qm/test/file_result_stream.py: New file.
+	* qm/test/classes/pickle_result_stream.py (PickleResultStream):
+	Inherit from FileResultStream.
+	* qm/test/classes/xml_database.py (XMLDatabase.WriteTest): Use
+	write_extension_file.
+	(XMLDatabase.WriteResource): Likewise.
+	* qm/test/classes/xml_result_stream.py (XMLResultStream): Inherit from
+	FileResultStream.
+	* qm/test/doc/reference.xml: Document new command-line options.
+	* qm/test/web/web.py (QMTestServer.HandleSaveResults): Use
+	QMTest.GetFileResultStreamClass.
+	(QMTestServer.HandleSaveExpectations): Likewise.
+	* share/diagnostics/common.txt: Add invalid descriptor syntax message.
+	
 	* qm/executable.py: Fix typo in comment.
 
 2003-04-12  Mark Mitchell  <mark@codesourcery.com>

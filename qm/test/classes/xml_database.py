@@ -78,10 +78,6 @@ class XMLDatabase(ExtensionDatabase):
 
         self.__StoreAttachments(test)
                                 
-        # Generate the document.
-        document = \
-            qm.extension.make_dom_document(test.GetClass(),
-                                           test.GetArguments())
         # Find the file system path for the test file.
         test_path = self.GetTestPath(test.GetId())
         # If the file is in a new subdirectory, create it.
@@ -89,7 +85,9 @@ class XMLDatabase(ExtensionDatabase):
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
         # Write out the test.
-        document.writexml(open(test_path, "w"))
+        qm.extension.write_extension_file(test.GetClass(),
+                                          test.GetArguments(),
+                                          open(test_path, "w"))
 
 
     def _GetResourceFromPath(self, resource_id, resource_path):
@@ -109,10 +107,6 @@ class XMLDatabase(ExtensionDatabase):
 
         self.__StoreAttachments(resource)
 
-        # Generate the document.
-        document = \
-            qm.extension.make_dom_document(resource.GetClass(),
-                                           resource.GetArguments())
         # Find the file system path for the resource file.
         resource_path = self.GetResourcePath(resource.GetId())
         # If the file is in a new subdirectory, create it.
@@ -120,7 +114,9 @@ class XMLDatabase(ExtensionDatabase):
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
         # Write out the resource.
-        document.writexml(open(resource_path, "w"))
+        qm.extension.write_extension_file(resource.GetClass(),
+                                          resource.GetArguments(),
+                                          open(resource_path, "w"))
 
 
     def WriteSuite(self, suite):

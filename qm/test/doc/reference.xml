@@ -615,6 +615,91 @@
    </section>
   </section>
 
+  <section id="sec-testcmd-create">
+   <title><command>&qmtest-cmd; create</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>Create a new extension instance.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; create</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <arg choice="plain">
+      <replaceable>descriptor</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+    
+   <section>
+    <title>Description</title>
+    <para>The <command>&qmtest-cmd; create</command> creates a new
+    extension instance.  For example, this command can be used to
+    create a new test or resource.  For a list of the types of
+    extensions supported by &qmtest;, run <command>&qmtest-cmd;
+    extensions</command>.</para>
+
+    <para>The descriptor specifies an extension class and (optionally)
+    attributes for that extension class.  The form of the descriptor is
+    <command><replaceable>class</replaceable>(<replaceable>attributes</replaceable>)</command>,
+    where the attributes are of the form
+    <command><replaceable>attr</replaceable> =
+    &quot;<replaceable>val</replaceable>&quot;</command>.  If there
+    are no attributes, the parentheses may be omitted.</para>
+
+    <para>If the <replaceable>class</replaceable> names a extension
+    file (such as an existing test or resource file), that file is
+    read.  The extension class used is the one specified in that
+    file.  Any attributes specified in the file are also read.</para>
+
+    <para>Any attributes specified in the descriptor (including those
+    in the extension file, if <replaceable>class</replaceable>
+    indicates an extension file) override those provided on the
+    command line using the <option>&dashdash;attribute</option> option.</para>
+
+    <para>The new extension file is written to the file specified with
+    the <option>&dashdash;output</option> option, or to the standard
+    output if no <option>&dashdash;output</option> is specified.</para>
+
+    <para>The <command>create</command> command accepts these
+    options:</para>    
+
+    <variablelist>
+     <varlistentry>
+      <term><option>-a</option> <replaceable>name=value</replaceable></term>
+      <term>
+       <option>&dashdash;attribute</option> 
+       <replaceable>name=value</replaceable>
+      </term>
+      <listitem>
+       <para>Set the target class argument
+       <replaceable>name</replaceable> to
+       <replaceable>value</replaceable>.  The set of valid argument names
+       and valid values is dependent on the extension class in use.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-o</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;output</option> 
+       <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>Write a description of the extension instance to
+       <replaceable>file</replaceable>.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+
+   </section>
+  </section>
+
   <section id="sec-testcmd-create-target">
    <title><command>&qmtest-cmd; create-target</command></title>
 
@@ -666,7 +751,7 @@
       <listitem>
        <para>Set the target class argument
        <replaceable>name</replaceable> to
-       <replaceable>value</replaceable>.  The set of arguments names
+       <replaceable>value</replaceable>.  The set of valid argument names
        and valid values is dependent on the target class in use.</para>
       </listitem>
      </varlistentry>
@@ -753,11 +838,13 @@
       </term>
       <listitem>
        <para>Use the test database class given by
-       <replaceable>class</replaceable>.  Once you create a test
-       database, you cannot change the test database implementation
-       it uses.  If you do not use this option, &qmtest; will use the
-       default test database implementation, which uses an XML file
-       format to store tests.</para>
+       <replaceable>class</replaceable>.  The
+       <replaceable>class</replaceable> may have the general form
+       described in <xref linkend="sec-testcmd-create"/>.  Once you create a
+       test database, you cannot change the test database
+       implementation it uses.  If you do not use this option,
+       &qmtest; will use the default test database implementation,
+       which uses an XML file format to store tests.</para>
       </listitem>
      </varlistentry>
     </variablelist>
@@ -907,16 +994,6 @@
         &qmtest; GUI will listen for connections.  If this option is not
         provided, &qmtest; will select an available port
         automatically.</para>
-       </listitem>
-      </varlistentry>
-
-      <varlistentry>
-       <term>
-        <option>&dashdash;result-format <replaceable>class</replaceable></option>
-       </term>
-       <listitem>
-        <para>For details about this option, see the description of the 
-        <command>qmtest run</command> command.</para>
        </listitem>
       </varlistentry>
 
@@ -1243,15 +1320,12 @@
 
      <varlistentry>
       <term>
-       <option>&dashdash;result-format <replaceable>class</replaceable></option>
+       <option>&dashdash;result-stream <replaceable>descriptor</replaceable></option>
       </term>
       <listitem>
-       <para>Specify the <replaceable>class</replaceable> to use when
-       generating a results file.  By default, &qmtest; will use
-       <literal>pickle_result_stream.PickleResultStream</literal>
-       which is a binary format.  The
-       <literal>xml_result_stream.XMLResultStream</literal> format is
-       an alternative XML-based format.</para>
+       <para>Specify an additional output result stream.  The
+       descriptor is in the format described in <xref
+       linkend="sec-testcmd-create"/>.</para>
       </listitem>
      </varlistentry>
 
@@ -1379,6 +1453,17 @@
        <command>qmtest run</command> command.</para>
       </listitem>
      </varlistentry> 
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;result-stream <replaceable>descriptor</replaceable></option>
+      </term>
+      <listitem>
+       <para>Specify an additional output result stream.  The
+       descriptor is in the format described in <xref
+       linkend="sec-testcmd-create"/>.</para>
+      </listitem>
+     </varlistentry>
     </variablelist>
    </section>
   </section> <!-- sec-testcmd-summarize -->

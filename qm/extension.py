@@ -15,7 +15,10 @@
 # Imports
 ########################################################################
 
+import os.path
 import qm
+import StringIO
+import tokenize
 import xml
 
 ########################################################################
@@ -326,6 +329,20 @@ def make_dom_document(extension_class, arguments):
     
         
 
+def write_extension_file(extension_class, arguments, file):
+    """Write an XML description of an extension to 'file'.
+
+    'extension_class' -- A class derived from 'Extension'.
+
+    'arguments' -- A dictionary mapping argument names to values.
+
+    'file' -- A file object to which the data should be written."""
+
+    document = make_dom_document(extension_class, arguments)
+    document.writexml(file)
+
+    
+    
 def parse_dom_element(element, class_loader, attachment_store = None):
     """Parse a DOM node representing an instance of 'Extension'.
 
@@ -378,3 +395,133 @@ def parse_dom_element(element, class_loader, attachment_store = None):
         arguments[str(name)] = value
     
     return (extension_class, arguments)
+
+
+def read_extension_file(file, class_loader, attachment_store = None):
+    """Parse a file describing an extension instance.
+
+    'file' -- A file-like object from which the extension instance
+    will be read.
+
+    'class_loader' --  A callable.  The callable will be passed the
+    name of the extension class and must return the actual class
+    object.
+    
+    'attachment_store' -- The 'AttachmentStore' in which attachments
+    can be found.
+
+    returns -- A pair ('extension_class', 'arguments') containing the
+    extension class (a class derived from 'Extension') and the
+    arguments (a dictionary mapping names to values) stored in the
+    'element'."""
+
+    document = qm.xmlutil.load_xml(file)
+    return parse_dom_element(document.documentElement,
+                             class_loader,
+                             attachment_store)
+
+    
+def parse_descriptor(descriptor, class_loader):
+    """Parse a descriptor representing an instance of 'Extension'.
+
+    'descriptor' -- A string representing an instance of 'Extension'.
+    The 'descriptor' has the form 'class(arg1 = "val1", arg2 = "val2",
+    ...)'.  The arguments and the parentheses are option.
+
+    If 'class' names a file in the file system, it is assumed to be an
+    extension file.  Any attributes provided in the descriptor
+    override those in the file.
+
+    'class_loader' -- A callable.  The callable will be passed the
+    name of the extension class and must return the actual class
+    object.
+
+    returns -- A pair ('extension_class', 'arguments') containing the
+    extension class (a class derived from 'Extension') and the
+    arguments (a dictionary mapping names to values) stored in the
+    'element'.  The 'arguments' will have already been processed by
+    'validate_arguments' by the time they are returned."""
+
+    # Look for the opening parenthesis.
+    open_paren = descriptor.find('(')
+    if open_paren == -1:
+        # If there is no opening parenthesis, the descriptor is simply
+        # the name of an extension class.
+        class_name = descriptor
+    else:
+        # The class name is the part of the descriptor up to the
+        # parenthesis.
+        class_name = descriptor[:open_paren]
+
+    # Load the extension class.
+    if os.path.exists(class_name):
+        extension_class, orig_arguments \
+            = read_extension_file(open(class_name), class_loader)
+    else:
+        extension_class = class_loader(class_name)
+        orig_arguments = {}
+
+    arguments = {}
+    
+    # Parse the arguments.
+    if open_paren != -1:
+        # Create a file-like object for the remainder of the string.
+        arguments_string = descriptor[open_paren:]
+        s = StringIO.StringIO(arguments_string)
+        # Use the Python tokenizer to process the remainder of the
+        # string.
+        g = tokenize.generate_tokens(s.readline)
+        # Read the opening parenthesis.
+        tok = g.next()
+        assert tok[0] == tokenize.OP and tok[1] == "("
+        need_comma = 0
+        # Keep going until we find the closing parenthesis.
+        while 1:
+            tok = g.next()
+            if tok[0] == tokenize.OP and tok[1] == ")":
+                break
+            # All arguments but the first must be separated by commas.
+            if need_comma:
+                if tok[0] != tokenize.OP or tok[1] != ",":
+                    raise qm.QMException, \
+                          qm.error("invalid descriptor syntax",
+                                   start = arguments_string[tok[2][1]:])
+                tok = g.next()
+            # Read the argument name.
+            if tok[0] != tokenize.NAME:
+                raise qm.QMException, \
+                      qm.error("invalid descriptor syntax",
+                               start = arguments_string[tok[2][1]:])
+            name = tok[1]
+            # Read the '='.
+            tok = g.next()
+            if tok[0] != tokenize.OP or tok[1] != "=":
+                raise qm.QMException, \
+                      qm.error("invalid descriptor syntax",
+                               start = arguments_string[tok[2][1]:])
+            # Read the value.
+            tok = g.next()
+            if tok[0] != tokenize.STRING:
+                raise qm.QMException, \
+                      qm.error("invalid descriptor syntax",
+                               start = arguments_string[tok[2][1]:])
+            # The token string will have surrounding quotes.  By
+            # running it through "eval", we get at the underlying
+            # value.
+            value = eval(tok[1])
+            arguments[name] = value
+            # The next argument must be preceded by a comma.
+            need_comma = 1
+        # There shouldn't be anything left at this point.
+        tok = g.next()
+        if not tokenize.ISEOF(tok[0]):
+            raise qm.QMException, \
+                  qm.error("invalid descriptor syntax",
+                           start = arguments_string[tok[2][1]:])
+    
+    # Process the arguments.
+    arguments = validate_arguments(extension_class, arguments)
+    # Use the explict arguments to override any specified in the file.
+    orig_arguments.update(arguments)
+    
+    return (extension_class, orig_arguments)

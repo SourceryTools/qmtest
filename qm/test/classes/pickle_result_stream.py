@@ -16,26 +16,21 @@
 ########################################################################
 
 import cPickle
-from   qm.test.result_stream import ResultStream
+from   qm.test.file_result_stream import FileResultStream
 
 ########################################################################
 # Classes
 ########################################################################
 
-class PickleResultStream(ResultStream):
+class PickleResultStream(FileResultStream):
     """A 'PickleResultStream' writes out results as Python pickles."""
 
-    def __init__(self, file):
-        """Construct a 'PickleResultStream'.
-
-        'file' -- The file object to which the results should be
-        written.  Closing the file remains the responsibility of the
-        caller."""
+    def __init__(self, arguments):
 
         # Initialize the base class.
-        ResultStream.__init__(self, {})
+        FileResultStream.__init__(self, arguments)
         # Create a pickler.
-        self.__pickler = cPickle.Pickler(file, 1)
+        self.__pickler = cPickle.Pickler(self.file, 1)
 
 
     def WriteResult(self, result):

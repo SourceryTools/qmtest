@@ -1116,36 +1116,6 @@ def is_database(db_path):
     return 1
 
 
-def create_database(db_path, class_name, attributes):
-    """Create a new test database.
-
-    'db_path' -- The path to the test database.
-
-    'class_name' -- The class name of the test database implementation.
-
-    'attributes' -- A dictionary mapping attribute names to values.
-    These attributes will be applied to the database when it is
-    used."""
-
-    # Create the directory if it does not already exists.
-    if not os.path.isdir(db_path):
-        os.mkdir(db_path)
-    # Create the configuration directory.
-    config_dir = get_configuration_directory(db_path)
-    if not os.path.isdir(config_dir):
-        os.mkdir(config_dir)
-
-    # Create the DOM document.
-    database_class = qm.test.base.get_extension_class(class_name,
-                                                      "database",
-                                                      None)
-    attributes = qm.extension.validate_arguments(database_class, attributes)
-    document = qm.extension.make_dom_document(database_class, attributes)
-
-    # Write it out.
-    document.writexml(open(get_configuration_file(db_path), "w"))
-    
-
 def load_database(db_path):
     """Load the database from 'db_path'.
 

@@ -1573,7 +1573,7 @@ class QMTestServer(qm.web.WebServer):
         self.__results_stream.Summarize()
         # There is no execution thread.
         self.__execution_thread = None
-
+        
         # Bind the server to the specified address.
         try:
             self.Bind()
@@ -1858,7 +1858,7 @@ class QMTestServer(qm.web.WebServer):
             
         return ("application/x-qmtest-context", s)
     
-        
+
     def HandleSaveExpectations(self, request):
         """Handle a request to save expectations to a file.
 
@@ -1867,8 +1867,8 @@ class QMTestServer(qm.web.WebServer):
         # Create a string stream to store the results.
         s = StringIO.StringIO()
         # Create a results stream for storing the results.
-        rsc = qm.test.cmdline.get_qmtest().GetResultStreamClass()
-        rs = rsc(s)
+        rsc = qm.test.cmdline.get_qmtest().GetFileResultStreamClass()
+        rs = rsc({ "file" : s })
         # Write all the results.
         for (id, outcome) in self.__expected_outcomes.items():
             r = Result(Result.TEST, id, Context(), outcome)
@@ -1891,8 +1891,8 @@ class QMTestServer(qm.web.WebServer):
         # Create a string stream to store the results.
         s = StringIO.StringIO()
         # Create a results stream for storing the results.
-        rsc = qm.test.cmdline.get_qmtest().GetResultStreamClass()
-        rs = rsc(s)
+        rsc = qm.test.cmdline.get_qmtest().GetFileResultStreamClass()
+        rs = rsc({ "file" : s })
         # Write all the results.
         for r in self.__results_stream.GetTestResults().values():
             rs.WriteResult(r)
