@@ -250,7 +250,6 @@ class FileContentsTest:
                           error=str(exception))
         # Perform substitutions on the file contents.
         contents = self.__PerformSubstitutions(contents)
-        print contents
         # Compare the contnets to the expected contents.
         if contents == self.__expected_contents:
             return Result(Result.PASS)

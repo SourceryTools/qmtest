@@ -207,7 +207,7 @@ class PageInfo:
         """ % _common_javascript
 
 
-    def MakeLoginForm(self, redirect_request=None):
+    def MakeLoginForm(self, redirect_request=None, default_user_id=""):
         if redirect_request is None:
             # No redirection specified, so redirect back to this page.
             redirect_request = self.request
@@ -223,7 +223,8 @@ class PageInfo:
             <tr><td>
              <input type="text"
                     size="16"
-                    name="_login_user_name"/>
+                    name="_login_user_name"
+                    value="%s"/>
             </td></tr>
             <tr><td>Password:</td></tr>
             <tr><td>
@@ -238,7 +239,7 @@ class PageInfo:
             </td></tr>
            </table>
           </form>
-        '''
+        ''' % default_user_id
         return form
 
 
@@ -1661,6 +1662,7 @@ def generate_login_form(redirect_request, message=None):
 
     page_info = PageInfo.default_class(redirect_request)
     page_info.message = message
+    page_info.default_user_id = qm.user.database.GetDefaultUserId()
     return generate_html_from_dtml("login_form.dtml", page_info)
 
 

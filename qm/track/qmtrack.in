@@ -65,24 +65,29 @@ try:
 
     # If the command needs an IDB, set it up.
     if command.RequiresIdb():
-        # Find the path to the IDB.
-        idb_path = command.GetGlobalOption("idb", None)
-        if idb_path is None:
-            # The path to the IDB was not specified in the command.  Try
-            # to get it from an environment variable.
-            environment_variable_name = qm.track.state["idb_env_var"]
-            try:
-                idb_path = os.environ[environment_variable_name]
-            except KeyError:
-                # The environment variable isn't set.  We don't know where to
-                # find the IDB, so bail.
-                raise qm.cmdline.CommandError, \
-                      qm.error("missing idb",
-                               envvar=environment_variable_name)
+        if command.HasGlobalOption("remote-idb"):
+            # The user specified a URL to a remote server.  Use it for
+            # remote mode. 
+            qm.track.set_remote_mode(command.GetGlobalOption("remote-idb"))
+        else:
+            # Find the path to the IDB.
+            idb_path = command.GetGlobalOption("idb", None)
+            if idb_path is None:
+                # The path to the IDB was not specified in the command.
+                # Try to get it from an environment variable.
+                environment_variable_name = qm.track.state["idb_env_var"]
+                try:
+                    idb_path = os.environ[environment_variable_name]
+                except KeyError:
+                    # The environment variable isn't set.  We don't know
+                    # where to find the IDB, so bail.
+                    raise qm.cmdline.CommandError, \
+                          qm.error("missing idb",
+                                   envvar=environment_variable_name)
 
-        # Open a session to the IDB.
-        qm.track.open_idb(idb_path)
-        qm.common.print_message(2, "IDB at %s opened.\n" % idb_path)
+            # Open a session to the IDB.
+            qm.track.open_idb(idb_path)
+            qm.common.print_message(2, "IDB at %s opened.\n" % idb_path)
 
     try:
         # Execute the command.

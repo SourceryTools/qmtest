@@ -28,7 +28,7 @@
   </dtml-if>
   <tr>
    <td>
-    <dtml-var expr="MakeLoginForm()">
+    <dtml-var expr="MakeLoginForm(default_user_id=default_user_id)">
    </td>
   </tr>
  </table>

@@ -1,3 +1,20 @@
+2001-07-02  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.MakeLoginForm): Add default_user_id
+	parameter. 
+	(generate_login_form): Set default_user_id attribute.
+	* qm/track/server.py (do_command_for_xml_rpc): Fix typos.
+	* qm/track/qmtrack.in: Handle remote-idb option.
+	* qm/track/config.py (set_remote_mode): New function.
+	(open_idb): Use it.
+	* qm/track/cmdline.py (Command.database_option_spec): Change short
+	form to D.
+	(Command.remote_database_option_spec): New attribute.
+	(Command.qmtrack_option_specs): Include it.
+	* qm/test/classes/file.py (FileContentsTest.__init__): Remove
+	debugging output.
+	* share/dtml/login_form.dtml: Use default_user_id in login form.
+
 2001-07-01  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/server.py (start_server): Move imports of qm.track.web

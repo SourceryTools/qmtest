@@ -91,10 +91,10 @@ class Command:
         )
 
     database_option_spec = (
-        "i",
+        "D",
         "idb",
         "PATH",
-        "Path to IDB."
+        "Path to issue database."
         )
 
     help_option_spec = (
@@ -102,6 +102,13 @@ class Command:
         "help",
         None,
         "Display usage summary."
+        )
+
+    remote_database_option_spec = (
+        "R",
+        "remote-idb",
+        "URL",
+        "URL of remote QMTrack server."
         )
 
     class_option_spec = (
@@ -177,6 +184,7 @@ class Command:
     qmtrack_option_specs = [
         database_option_spec,
         help_option_spec,
+        remote_database_option_spec,
         verbose_option_spec,
         ]
     """All the command line options for qmtrack."""

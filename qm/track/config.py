@@ -38,6 +38,7 @@
 import issue_class
 import os
 import qm
+import qm.common
 import qm.diagnostic
 import qm.track.idb
 import qm.fields
@@ -138,6 +139,21 @@ def get_idb_lock(path):
     """Return the mutex protecting the IDB at 'path'."""
     
     return qm.FileSystemMutex(os.path.join(path, "lock"))
+
+
+def set_remote_mode(server_url):
+    """Put the application into remote access mode.
+
+    precondition -- The mode is "none".
+
+    'server_url' -- The URL to the remote XML/RPC server.
+
+    postcondition -- The mode is "remote"."""
+
+    state["mode"] = "remote"
+    state["server_url"] = server_url
+    state["idb_path"] = None
+    return
 
 
 def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
@@ -247,9 +263,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
                 continue
 
             # All is well.  Put the system into remote mode.
-            state["mode"] = "remote"
-            state["server_url"] = server_url
-            state["idb_path"] = path
+            set_remote_mode(server_url)
             return
 
     # We've exceeded the maximum number of attempts so bail with an
@@ -289,8 +303,6 @@ def close_idb():
         del state["server_url_path"]
 
     elif mode == "remote":
-        # We shouldn't have the lock in remote mode.
-        assert not __global_lock.IsLocked()
         # Clean up state.
         del state["server_url"]
         

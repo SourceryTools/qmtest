@@ -38,6 +38,7 @@
 import os
 import qm
 import qm.attachment
+import qm.cmdline
 import qm.platform
 import qm.structured_text
 import qm.track.cmdline
@@ -71,7 +72,7 @@ def do_command_for_xml_rpc(argument_list):
     # Parse the command.
     try:
         command = qm.track.cmdline.Command(argument_list)
-    except qm.trak.cmdine.CommandError, msg:
+    except qm.cmdline.CommandError, msg:
         # Command error.  Return the error message as the error text.
         return (2, "", msg)
     # Excute the command, capturing output to string files.
