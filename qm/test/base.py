@@ -43,6 +43,7 @@ import qm.attachment
 import qm.graph
 import qm.label
 import qm.platform
+import qm.structured_text
 import qm.xmlutil
 import string
 import sys
@@ -846,6 +847,30 @@ class ResultWrapper:
         return element
 
 
+    def AsStructuredText(self, format):
+        """Format the result as structured text.
+
+        'format' -- A string indicating the desired output format,
+        either 'full' or 'brief'.
+
+        returns -- Structured text describing the result."""
+
+        # Print the cause of the failure.
+        if self.has_key("cause"):
+            text = self["cause"] + '\n'
+        
+        # In the "full" format, print all result properties.
+        if format == "full":
+            for name, value in self.items():
+                # The "cause" property has already been displayed."
+                if name == "cause":
+                    continue
+                # Add an item to the list
+                text = text + "\n'%s' -- %s\n" % (name, value)
+
+        return text
+
+        
     # Methods to emulate a map, to access the properties of the
     # underlying 'Result' object.
 
@@ -1232,7 +1257,7 @@ def load_database(path):
         raise ValueError, "Database path %s is not a directory." % path
 
     # Figure out which class implements the database.  Start by looking
-    # for a file called 'database.qtb' in the directory corresponding
+    # for a file called 'configuration' in the directory corresponding
     # to the database.
     config_path = os.path.join(path, 'configuration')
     if os.path.isfile(config_path):
@@ -1246,7 +1271,7 @@ def load_database(path):
         # Get the database class.
         database_class = get_database_class(database_class_name)
     else:
-        # If 'database.qtb' did not exist, fall back to the 'xmldb'
+        # If 'configuration' did not exist, fall back to the 'xmldb'
         # database.
         import xmldb
         database_class = xmldb.Database
@@ -1673,15 +1698,6 @@ def summarize_results(output, format, results, expected_outcomes=None):
         output.write("  None.\n\n")
         return
 
-    # Function to format a result property nicely.
-    def format_property(name, value):
-        if "\n" in value or len(value) > 72 - len(name):
-            value = qm.common.wrap_lines(value, columns=70,
-                                         break_delimiter="", indent="        ")
-            return "    %s:\n%s\n" % (name, value)
-        else:
-            return "    %s: %s\n" % (name, value)
-
     # Generate them.
     for result in results:
         id_ = result.GetId()
@@ -1697,20 +1713,13 @@ def summarize_results(output, format, results, expected_outcomes=None):
         else:
             output.write("  %-63s: %-8s\n" % (id_, outcome))
 
-        if format == "full":
-            # In the "full" format, print all result properties.
-            for name, value in result.items():
-                output.write(format_property(name, value))
-            output.write("\n")
-        elif format == "brief":
-            # In the "brief" format, print only the "cause" property, if
-            # specified.
-            if result.has_key("cause"):
-                output.write(format_property("cause", result["cause"]))
-
-    if format == "brief":
-        output.write("\n")
-
+        # Get a description of the result as structured text.
+        description = result.AsStructuredText(format)
+        # Format it as plain text.
+        description = qm.structured_text.to_text(description, 72, 4)
+        # Write it out.
+        output.write(description)
+        
 
 def run_test(test_id, context):
     """Run a test.

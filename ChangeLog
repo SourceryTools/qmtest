@@ -1,5 +1,15 @@
 2001-10-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/structured_text.py (HtmlFormatter.FinishDefinedTerm):
+	Write the <dd> tag corresponding to the beginning of the
+	definition itself.
+	* qm/test/base.py (ResultWrapper.AsStructuredText): New method.
+	(summarize_results): Use it.
+	* qm/test/web/run.py (TestResultsPage.ShouldShowProperty): Remove.
+	(TestResultsPage.FormatProperty): Remove.
+	(TestResultsPage.FormatResult): New method.
+	* share/dtml/test/results.dtml: Update accordingly.
+
 	* qm/test/base.py (Database.__init__): New method.
 	(Database.GetPath): Return the stored value.
 	* qm/test/cmdline.py (Command.Execute): Convert the database

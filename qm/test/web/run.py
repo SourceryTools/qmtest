@@ -68,48 +68,17 @@ class TestResultsPage(web.DtmlPage):
         self.resource_results = resource_results
         
 
-    def ShouldShowProperty(self, result, property_name):
-        """Return whether a result property should be displayed.
+    def FormatResult(self, result):
+         """Return HTML for displaying a test result.
 
-        'result' -- A 'ResultWrapper' object.
+         'result' -- A ResultWrapper.
 
-        'property_name' -- The property name, for which 'result' must
-        have a value."""
+         returns -- HTML displaying the result."""
 
-        if property_name == "cause":
-            # We will show this separately.  Don't show it again.
-            return 0
-        # Show everything else.
-        return 1
+         text = result.AsStructuredText("full")
+         return qm.structured_text.to_html(text)
 
-
-    def FormatProperty(self, result, property_name):
-        """Return HTML for displaying a result property.
-
-        'result' -- The result we're displaying.
-
-        'property_name' -- The name of the property of 'result' to
-        display.
-
-        returns -- HTML source displaying the property."""
-        
-        # Extract the property value.
-        value = result[property_name]
-
-        # This property is used to indicate the ID of a prerequisite
-        # or required resource that caused problems.
-        if property_name in ["prerequisite_id", "resource_id"]:
-            return '<a href="#%s"><tt>%s</tt></a>' % (value, value)
-
-        if "\n" in value:
-            # Put multiline values in a <pre> element.
-            return "<blockquote><pre>%s</pre></blockquote>" \
-                   % qm.web.escape(value)
-        else:
-            # Everything else in <tt> format.
-            return "<tt>%s</tt>" % qm.web.escape(value)
-
-
+         
     def GetClassForResult(self, result):
         """Return the CSS class for displaying a 'result'.
 

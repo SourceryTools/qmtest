@@ -401,7 +401,7 @@ class HtmlFormatter(Formatter):
     def FinishDefinedTerm(self):
         """Finish the definition of a term in a definition list."""
 
-        self.__Write("</dt>\n");
+        self.__Write("</dt><dd>\n");
 
 
     def EndItem(self, type):
@@ -591,7 +591,7 @@ class StructuredTextProcessor:
                         # list environment.
                         self.__SetType("definition list", indentation,
                                        label=match.group(1))
-                        # Cut of the definted term label, and use the
+                        # Cut off the defined term label, and use the
                         # indentation of the definition.
                         match_length = len(match.group(0))
                         indentation = indentation + match_length

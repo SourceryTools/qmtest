@@ -35,19 +35,7 @@
       <dtml-var expr="FormatId(test_id, 'test')">:
       <dtml-var name="outcome">
      </span>
-     <dtml-if expr="result.has_key('cause')">
-      : <span class="cause"><dtml-var 
-      expr="web.escape(result['cause'])"></span><br>
-     </dtml-if>
-     <dtml-in expr="result.keys()">
-     <dtml-let property_name=sequence-item>
-      <dtml-if expr="ShouldShowProperty(result, property_name)">
-       <li>
-       <dtml-var name="property_name">: 
-       <dtml-var expr="FormatProperty(result, property_name)">
-      </dtml-if>
-     </dtml-let>
-     </dtml-in>
+     <dtml-var expr="FormatResult(result)">
     </td>
    </tr>
   </dtml-let>
