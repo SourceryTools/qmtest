@@ -1,3 +1,8 @@
+2003-11-24  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* qm/test/result.py: Replace 'property' by 'annotation'.
+	* qm/test/share/dtds/result.dtd: Likewise.
+
 2003-11-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* setup.py: Tidy up.  Use "qmtest.py" as the name of the main

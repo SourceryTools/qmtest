@@ -316,7 +316,7 @@ class Result:
         element.setAttribute("id", self.GetId())
         element.setAttribute("kind", self.GetKind())
         element.setAttribute("outcome", str(self.GetOutcome()))
-        # Add a property element for each property.
+        # Add an annotation element for each annotation.
         keys = self.keys()
         keys.sort()
         for key in keys:
