@@ -43,9 +43,11 @@
     component of the system that selects and runs tests and collects
     their results.</p>
 
+
+
     <h4>Tests</h4>
 
-    <p>A <a class="TermDef">test</a> is the basic until of testing in
+    <p>A <a class="TermDef">test</a> is the basic unit of testing in
     qmtest.  A test consists of the following components:</p>
     <ol>
       <li>A <a class="Term">test id</a>.  This uniquely identifies the
@@ -89,7 +91,7 @@
     <p>If the test database presents a tree organization, the test id
     is a filesystem-style path from the root of the tree to the
     location of the test it identifies, with path components separated
-    by a periond (&quot;.&quot;).  This character is reserved and may
+    by a period (&quot;.&quot;).  This character is reserved and may
     not be used in interior or leaf node names.  No other characters
     have special interpretation.</p>
 
@@ -111,7 +113,7 @@
 
     <p>Categories are intended to group tests according to intrinsic
     properties of the tests themselves.  Another mechanism, a <a
-    class="Term">testsuite</a>, exists to group tests by extrinisic
+    class="Term">testsuite</a>, exists to group tests by extrinsic
     properties, such as frequency of use.</p>
 
     <h5>Prerequisites</h5>
@@ -194,7 +196,7 @@
     id</a> of each test will specify its position in the tree.</p>
 
     <p>Test databases may be composed.  <span class="Fixme">How does
-    this work?  Explain the interaction with heirarchical test
+    this work?  Explain the interaction with hierarchical test
     ids.</span></p>
 
     <h4>Execution engine</h4>
@@ -224,7 +226,7 @@
       <li>The execution engine obtains the corresponding tests from
       the <a class="Term">test database</a>.</li>
 
-      <li>The execution engine determines the transative closure of
+      <li>The execution engine determines the transitive closure of
       preactions, postactions, and prerequisites, to obtain a set of
       all test and actions that need to be run.  At the same time, it
       constructs a dependency graph reflecting ordering dependencies
