@@ -1,3 +1,8 @@
+2001-11-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/track: Remove this directory, and everything beneath it,
+	in prepreation for the 1.0 release.
+
 2001-11-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_unix.py (send_email): Reimplement, with support for
