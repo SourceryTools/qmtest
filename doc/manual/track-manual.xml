@@ -8,7 +8,7 @@
   Contents:
     Manual for QMTrack.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -191,6 +191,155 @@
   </section> <!-- sec-triggers -->
 
  </section> <!-- sec-qmtrack-configuration -->
+
+ <section id="sec-user-database">
+  <title>The User Database</title>
+
+  <para>The &qm; user database provides a mechanism for specifying and
+  configuring user accounts.  &qm; user accounts are independent of user
+  accounts on the operating system running the &qm; application.  In
+  this manual, when we refer to &quot;users&quot; and
+  &quot;groups,&quot; we are referring to those in the &qm; user
+  database, not the operating system's.</para>
+
+  <para>Each user is identified by a unique <firstterm>user
+  ID</firstterm>.  The user ID may be composed of lower-case letters,
+  digits, and underscores.  Similarly, each group is identified by a
+  unique <firstterm>group ID</firstterm>, which must obey the same
+  restrictions.</para>
+
+  <para>The user database may optionally specify a default user account.
+  In absence of other authentication information, &qm; will attempt to
+  authenticate using the default user account, in order to provide
+  anonymous access to application.  Remove or disable the default
+  account to forbid anonymous access.  Only one default user account may
+  be specified.</para>
+
+  <section id="sec-users">
+   <title>Users</title>
+
+   <para>In addition to a user ID, each user account is configured with
+   three sets of properties.</para>
+
+   <itemizedlist>
+    <listitem>
+     <para><firstterm>Info</firstterm> properties contain general
+     account information about the user.  Info properties are listed
+     below:</para>
+
+     <glosslist>
+
+      <glossentry>
+       <glossterm>
+        <property>name</property>
+       </glossterm>
+       <glossdef>
+        <para>The user's real name.</para>
+       </glossdef>
+      </glossentry>
+
+      <glossentry>
+       <glossterm>
+        <property>email</property>
+       </glossterm>
+       <glossdef>
+        <para>The user's Internet email address.</para>
+       </glossdef>
+      </glossentry>
+
+     </glosslist>
+    </listitem>
+
+    <listitem>
+     <para><firstterm>Authentication</firstterm> properties contain
+     information used to authenticate the user.  Authentication
+     properties are listed below:</para>
+
+     <glosslist>
+      <glossentry>
+       <glossterm>
+        <property>password</property>
+       </glossterm>
+       <glossdef>
+        <para>The user's password (in cleartext).</para>
+       </glossdef>
+      </glossentry>
+     </glosslist>
+    </listitem>
+
+    <listitem>
+     <para><firstterm>Configuration</firstterm> properties contain
+     application configuration information specific to the user.  &qm;
+     uses configuration properties to store the user's
+     preferences.</para>
+    </listitem>
+   </itemizedlist>
+
+   <para>Each property is a identified by a property name.  The value
+   of each property is a string.</para>
+
+  </section> <!-- Users -->
+
+  <section id="sec-xml-user-file">
+   <title>The XML User File</title>
+
+   <para>&qm; stores the user database in an XML file.  Currently,
+   configuring users accounts and groups requires editing this file.
+   Make sure no instance of the &qm; application is using the user
+   database while you edit it; otherwise, your changes may be
+   lost.</para>
+
+   <para>A user is represented by a <sgmltag
+   class="element">user</sgmltag> element.  The user's ID is specified
+   in the <sgmltag class="attribute">id</sgmltag> attribute.  The
+   account can be disabled by specifying the value &quot;yes&quot; for
+   another attribute, <sgmltag class="attribute">disabled</sgmltag> (the
+   account is enabled if this attribute is omitted).  To specify that a
+   user account is the default user account, specify the value
+   &quot;default&quot; for the <sgmltag class="attribute">role</sgmltag>
+   attribute.</para>
+
+   <para>A sample user element from in the user database looks like
+   this:</para>
+
+   <programlisting>
+<![CDATA[<user id="johndoe" disabled="no">
+ <info>
+  <property name="name">John Doe</property>
+  <property name="email">john@doe.org</property>
+ </info>
+ <authentication>
+  <property name="password">!h@rd2guesSs</property>
+ </authentication>
+</user>
+]]></programlisting>
+
+   <para>A group is represented by a <sgmltag
+   class="element">group</sgmltag> element.  As for a user, the group's
+   ID is specified with the <sgmltag class="attribute">id</sgmltag>
+   attribute.  The contents of the group element are <sgmltag
+   class="element">user-id</sgmltag> elements, which list the IDs of
+   users in the group.  The IDs must all refer to users in the same user
+   database.</para>
+
+   <para>A sample group element from the user database looks like
+   this:</para>
+
+   <programlisting>
+<![CDATA[<group id="powerusers">
+ <user-id>johndoe</user-id>
+ <user-id>janesmith</user-id>
+</group>
+]]></programlisting>
+
+   <para>&qm; recognizes a special group with group ID
+   &quot;administrators&quot;.  Users included in this group are
+   permitted to perform administrative operations on &qm; databases,
+   servers, etc.</para>
+
+  </section> <!-- The XML User File -->
+
+ </section> <!-- The User Database -->
 
  <section id="sec-writing-triggers">
   <title>Writing Trigger Classes</title>

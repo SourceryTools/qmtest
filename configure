@@ -1204,12 +1204,8 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "standard.mk
-  Makefile
+trap 'rm -fr `echo "GNUmakefile
   qm.spec
-  doc/Makefile
-  doc/design/qmtest/Makefile
-  doc/manual/Makefile
   qm/setup_path.py
 " | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
@@ -1302,12 +1298,8 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"standard.mk
-  Makefile
+CONFIG_FILES=\${CONFIG_FILES-"GNUmakefile
   qm.spec
-  doc/Makefile
-  doc/design/qmtest/Makefile
-  doc/manual/Makefile
   qm/setup_path.py
 "}
 EOF

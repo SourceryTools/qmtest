@@ -7,7 +7,7 @@
 # Contents:
 #   Top-level qm makefile.
 # 
-# Copyright (C) 2001 CodeSourcery LLC
+# Copyright (C) 2001, 2002 CodeSourcery LLC
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,11 +31,26 @@
 #
 ########################################################################
 
+# This trick is necessary to create a make variable containing a
+# single space.  See the "(make)Flavors" info page.
+NULLSTRING	:=
+SPACE		:= $(NULLSTRING) # This comment needs to be here.
+
 TOPDIR		= @top_srcdir@
 
-SUBDIRS		= doc
-
 PYTHONDOCDIRS	= qm
+
+# Python configuration.
+PYTHONBIN	= @PYTHON@
+PYTHON 		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
+		  $(PYTHONBIN) -O
+PYTHON_VERSION	= @PYTHON_VERSION@
+PYTHON_PREFIX   = @PYTHON_PREFIX@
+PYTHON_PLATFORM = @PYTHON_PLATFORM@
+MAKEFILE_PRE_IN = $(PYTHON_PREFIX)/lib/python$(PYTHON_VERSION)/config/Makefile.pre.in
+PYTHONDIRS	= $(TOPDIR) \
+                  $(TOPDIR)/zope-dtml \
+                  $(TOPDIR)/zope-dtml/ExtensionClass
 
 # Python packages with installation scripts.
 PYTHON_PACKAGES = \
@@ -52,13 +67,83 @@ PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
 SCRIPTS = qm/test/qmtest$(SCRIPT_EXT) \
 	  qm/test/qmtest-remote$(SCRIPT_EXT)
 
-include $(TOPDIR)/standard.mk
+# Whether or not we should generate documentation.
+DOCUMENTATION = @DOCUMENTATION@
+
+# Jade configuration,
+JADE		= @JADE@
+JADEEXTRA	= @XML_DCL@
+
+# The directory containing the Docbook DTD.
+SGMLDIRS      += @DOCBOOK_DTD@
+# Modular DSSSL stylesheet configuration.  The system identifiers are
+# specified as relative paths, so the base of the stylesheet
+# installation needs to be provided.
+SGMLDIRS      += @DOCBOOK_STYLESHEETS@ 
+
+# The sources that go into the manual.
+DOCBOOK_MAIN    = $(TOPDIR)/doc/manual/manual.xml
+DOCBOOK_SOURCES = $(TOPDIR)/doc/manual/*.xml
+
+# Output directory, index HTML files, and manifest file for HTML
+# output.  These are controlled by the DSSSL stylesheet for HTML.
+HTMLDIR		= $(TOPDIR)/doc/manual/html
+HTMLINDEX	= $(HTMLDIR)/index.html
+HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
+
+# Tarball containing HTML output.
+HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOK_MAIN:.xml=.tgz)
+
+# Output directory and output files generated with the DSSSL stylesheet
+# for TeX.
+PRINTDIR	= $(TOPDIR)/doc/manual/print
+PRINTTEX	= $(PRINTDIR)/$(notdir $(DOCBOOK_MAIN:.xml=.tex))
+PRINTPDF	= $(PRINTDIR)/$(notdir $(DOCBOOK_MAIN:.xml=.pdf))
+
+# Tidy configuration.
+TIDY 		= @TIDY@
+TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
+
+# HappyDoc configuration.
+HAPPYDOC	= @HAPPYDOC@
+
+# The install program.
+INSTALL		= @top_srcdir@/install-sh -c
+INSTALL_DATA    = $(INSTALL) -m 644
+INSTALL_DIR     = $(INSTALL) -d
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_SCRIPT  = $(INSTALL_PROGRAM)
+
+# Places to install things.
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+INSTALLBINDIR	= @bindir@
+INSTALLLIBDIR	= @libdir@/qm
+INSTALLSHAREDIR	= @datadir@/qm
+INSTALLDOCDIR   = @datadir@/doc/qm
+INSTALLINCDIR   = @includedir@
+
+ifneq ($(PYTHON_PLATFORM),win32)
+NATPREFIX       = $(prefix)
+else
+NATPREFIX       := $(shell cygpath -a -w $(prefix))
+endif
+
+ifeq ($(PYTHON_PLATFORM),win32)
+SCRIPT_EXT = .bat
+else
+SCRIPT_EXT =
+endif
 
 ########################################################################
-# additional rules
+# Main Rules
 ########################################################################
 
-all:: $(PYTHON_PACKAGES) $(SCRIPTS)
+all: $(PYTHON_PACKAGES) $(SCRIPTS) doc
+
+########################################################################
+# Build Rules
+########################################################################
 
 # Build the Python packages.
 .PHONY: $(PYTHON_PACKAGES)
@@ -91,15 +176,96 @@ clean::
 		pushd $$x; $(PYTHON) ./setup.py clean; popd; \
 	done
 
+distclean: clean
+	rm -f Makefile config.cache config.status config.log
+	rm -f qm/setup_path.py 
+	rm -f qm.spec
+
 # Run tests.
 check: all
 	qm/test/qmtest -D tests run $(QMTESTFLAGS)
 
 ########################################################################
-# installation
+# Documentation Rules
+########################################################################
+
+.PHONY: doc
+
+ifeq ($(DOCUMENTATION), yes)
+doc: doc-html doc-print
+else
+# If we are not building documentation, there is nothing to do.
+doc:
+endif
+
+doc-html: $(HTMLINDEX)
+
+$(HTMLMANIFEST) $(HTMLINDEX): $(DOCBOOK_SOURCES)
+	mkdir -p $(HTMLDIR)
+	(cd `dirname $(DOCBOOK_MAIN)` && \
+	  $(JADE) \
+            $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	    -t sgml -d ../qm-html.dsl \
+	    $(JADEEXTRA) \
+	    `basename $(DOCBOOK_MAIN)`) || \
+	  (rm -rf $(HTMLDIR) && false)
+ifneq ($(TIDY),no)
+	for f in $(HTMLDIR)/*.html; \
+	do \
+	  $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
+	  true; \
+	done 
+endif
+
+# Build a tarball containing the whole HTML output.
+$(HTMLTARBALL): $(HTMLMANIFEST)
+	tar zcf $(HTMLTARBALL) \
+	  $(foreach f,$(shell cat $(HTMLMANIFEST)),$(HTMLDIR)/$(f))
+
+.PHONY: doc-print
+
+doc-print: $(PRINTTEX) $(PRINTPDF)
+
+# Jade places the output TeX source file in the current directory, so
+# move it where we want it afterwards.
+#
+# We have to change -- into -{-} so that TeX does not generate long 
+# dashes.  This is a bug in Jade.
+
+$(PRINTTEX): $(DOCBOOK_SOURCES)
+	mkdir -p $(PRINTDIR)
+	(cd `dirname $(DOCBOOK_MAIN)` && \
+          $(JADE) \
+	    $(foreach dir,$(SGMLDIRS),-D$(dir)) \
+	    -t tex -d ../qm-print.dsl \
+	    $(JADEEXTRA) \
+	    `basename $(DOCBOOK_MAIN)`) || \
+          (rm -rf $(PRINTDIR) && false)
+	sed -e 's|--|-{-}|g' < \
+          `dirname $(DOCBOOK_MAIN)`/`basename $(PRINTTEX)` > $@
+	rm `dirname $(DOCBOOK_MAIN)`/`basename $(PRINTTEX)`
+
+# Process the TeX file to PDF, in the print directory.  
+$(PRINTPDF): $(PRINTTEX)
+	cd $(PRINTDIR); \
+	  pdfjadetex `basename $(PRINTTEX)`; \
+	  pdfjadetex `basename $(PRINTTEX)`; \
+	  pdfjadetex `basename $(PRINTTEX)`;
+
+.PHONY: doc-python
+
+doc-python: $(PYTHONDOCDIRS)
+	for dir in $(PYTHONDOCDIRS); do \
+	    $(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset $${dir}; \
+done
+
+########################################################################
+# Installation Rules
 ########################################################################
 
 # Install everything.
+.PHONY: install
+
 install: \
 	$(PYTHON_PACKAGES_INSTALL) \
 	doc-install \
@@ -153,7 +319,9 @@ doc-install:
 
 scripts-install:
 	$(INSTALL_DIR) "$(INSTALLBINDIR)"
-	$(INSTALL_SCRIPT) $(SCRIPTS) "$(INSTALLBINDIR)"
+	for script in $(SCRIPTS); do \
+		$(INSTALL_SCRIPT) $$script "$(INSTALLBINDIR)"; \
+	done
 
 # Install the share directory by recursively copying its contents.
 .PHONY: share-install

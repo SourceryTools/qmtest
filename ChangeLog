@@ -1,5 +1,20 @@
 2002-01-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* .cvsignore (standard.mk): Remove.
+	(Makefile): Likewise.
+	(GNUmakefile): Ignore it.
+	* Makefile.in: Issue an error message indicating that GNU Make is
+	required.
+	* GNUmakefile.in: New file.
+	* standard.mk.in: Remove.
+	* doc/.cvsignore (Makefile): Remove.
+	* doc/Makefile.in: Remove.
+	* doc/design/qmtest/.cvsignore (Makefile): Remove.
+	* doc/manual/.cvsignore (Makefile): Remove.
+	* doc/manual/Makefile.in: Remove.
+	* doc/manual/track-manual.xml: Add user database description.
+	* doc/manual/track-tour.xml: Update links.
+	
 	* qm/common.py (threading): Do not import it.
 	(Lock): Remove.
 	(MutexMixin): Likewise.

@@ -8,7 +8,7 @@
   Contents:
     Grand tour/tutorial of QMTrack.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -136,7 +136,7 @@
   option, &qmtrack; prints out the URL at which the server is running;
   you should open a browser window yourself and point it at this URL.
   (If &qmtrack; has trouble opening a web browser automatically on your
-  system, see <xref linkend="sec-rc"></xref> for information on
+  system, see <xref linkend="sec-rc-common"></xref> for information on
   configuring it correctly.)</para>
 
  </section> <!-- sec-tracktut-configuration -->

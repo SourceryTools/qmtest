@@ -1,5 +1,5 @@
-standard.mk
-Makefile
+GNUmakefile
 config.log
 config.cache
 config.status
+qm.spec
