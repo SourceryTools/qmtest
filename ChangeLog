@@ -1,3 +1,8 @@
+2001-07-04  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.qm_bug_system_url): Update.
+	* share/dtml/track/navigation-bar.dtml: Adjust URLs.
+
 2001-07-03  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/web/show.py (handle_submit): Handle IssueExistsError. 

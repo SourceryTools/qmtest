@@ -28,19 +28,21 @@
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="web.WebRequest('index', base=request).AsUrl()">"
+      href="<dtml-var expr="web.WebRequest('/track/index', 
+                            base=request).AsUrl()">"
    >Main Page</a>
   </td>
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="web.WebRequest('query', base=request).AsUrl()">"
+      href="<dtml-var expr="web.WebRequest('/track/query', 
+                            base=request).AsUrl()">"
    >Search</a>
   </td>
 
   <td class="navbar" width="12%" align="center">
    <a class="navbar"
-      href="<dtml-var expr="web.WebRequest('summary', last_query='1', 
+      href="<dtml-var expr="web.WebRequest('/track/summary', last_query='1', 
             base=request).AsUrl()">"
    >Search Again</a>
   </td>   

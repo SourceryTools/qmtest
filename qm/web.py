@@ -128,7 +128,7 @@ class PageInfo:
 
     html_stylesheet = "/stylesheets/qm.css"
 
-    qm_bug_system_url = "http://intranet.codesourcery.com:4242/track/"
+    qm_bug_system_url = "http://qm.software-carpentry.com:4224/track/"
 
     def __init__(self, request=None):
         """Create a new page.
