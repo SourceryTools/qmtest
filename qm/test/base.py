@@ -793,16 +793,7 @@ def load_results(path):
 
     returns -- A map from test IDs to 'ResultWrapper' objects."""
     
-    # Open the input file.
-    results_file = open(path, "r")
-    # Read and parse XML.
-    reader = xml.dom.ext.reader.Sax.Reader(validate=1)
-    try:
-        results_document = reader.fromStream(results_file)
-    except:
-        # FIXME:  Handle parse and validation errors.
-        raise
-    results_file.close()
+    results_document = qm.xmlutil.load_xml_file(path)
     # Extract the result elements.
     return __results_from_dom(results_document.documentElement)
 
