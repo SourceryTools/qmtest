@@ -354,11 +354,26 @@ class Command:
         if len(self.__arguments) == 0:
             raise qm.cmdline.CommandError, qm.error("no ids specified")
         try:
-            test_ids = []
+            # We'll collect all the tests to run in this map. 
+            test_ids = qm.common.OrderedMap()
+            # This function adds a test to 'test_ids'.
+            def add_test_id(test_id, test_ids=test_ids):
+                test_ids[test_id] = None
             # Validate test IDs and expand test suites in the arguments.
-            base.expand_and_validate_ids(database,
-                                         self.__arguments,
-                                         test_ids)
+            for argument in self.__arguments:
+                if database.HasSuite(argument):
+                    # It's a test suite.  Add all the test IDs in the
+                    # suite. 
+                    suite = database.GetSuite(argument)
+                    map(add_test_id, suite.GetTestIds())
+                elif database.HasTest(argument):
+                    # It's a test.  Add it.
+                    add_test_id(argument)
+                else:
+                    # It doesn't look like a test or suite.
+                    raise qm.cmdline.CommandError, \
+                          qm.error("unknown test or suite id", id=argument)
+            test_ids = test_ids.keys()
 
             # Set up a test engine for running tests.
             engine = base.Engine(database)
@@ -416,7 +431,7 @@ class Command:
         # Make sure the argument corresponds to an existing test.
         test_id = self.__arguments[0]
         if not database.HasTest(test_id):
-            raise qm.cmdline.CommandError, qm.error("unknown id",
+            raise qm.cmdline.CommandError, qm.error("unknown test id",
                                                     test_id=test_id)
         self.__EditTest(test_id)
 
@@ -655,7 +670,7 @@ class Command:
         'output' -- A file object to which to write the results."""
 
         document = qm.xmlutil.create_dom_document(
-            public_id="-//Software Carpentry//QMTest Result V0.1//EN",
+            public_id=base.dtds["result"],
             dtd_file_name="result.dtd",
             document_element_tag="results"
             )

@@ -132,9 +132,9 @@ def get_dom_children_texts(node, child_tag):
 
     'node' -- A DOM node.
 
-    returns -- The text contained in all child nodes of 'node' which
-    have tag 'child_tag'.  Each child must have exactly one child of its
-    own, which must be a text node."""
+    returns -- The list containing all child nodes of 'node' which have
+    tag 'child_tag'.  Each child must have exactly one child of its own,
+    which must be a text node."""
 
     results = []
     for child_node in node.getElementsByTagName(child_tag):

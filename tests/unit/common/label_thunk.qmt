@@ -8,8 +8,7 @@ import qm.label
 </text>
  </argument>
  <argument name='expression'>
-  <text>qm.label.is_valid(qm.label.thunk("")) \
-           and qm.label.is_valid(qm.label.thunk("abcyz_12390_")) \
+  <text>qm.label.is_valid(qm.label.thunk("abcyz_12390_")) \
            and qm.label.is_valid(qm.label.thunk("   abc 123   ")) \
            and qm.label.is_valid(qm.label.thunk("hello world!")) \
            and qm.label.is_valid(qm.label.thunk("(*@KAJD)92809  kj!")) \

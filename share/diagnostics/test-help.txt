@@ -133,6 +133,75 @@ another prerequisite, click on *Add...*.  To remove a prerequisite,
 select it in the list and click on *Remove*.
 
 
+@ suite suite IDs
+**Suite IDs**
+
+The list displays the IDs of other test suites that are *explicitly*
+included in this test suite.  When this test suite is run,
+%(program_name)s expands all included test suites recursively to
+determine the tests to run.
+
+A test suite displays included suite IDs relative to its own ID.  For
+example, if the test suite "core.suite1" contains the suites
+"core.suite2" , the suite ID in this suite is specified as "suite2" .
+
+
+@ suite suite IDs control
+**Suite IDs**
+
+**Suite IDs** allows you to change the test suites that are *explicitly*
+included in this test suite.  When this test suite is run,
+%(program_name)s expands all included test suites recursively to
+determine the tests to run.
+
+A test suite lists include suite IDs relative to its own ID.  For
+example, if the test suite "core.suite1" contains the suites
+"core.suite2" , the suite ID in this suite is specified as "suite2" .
+
+The *Included Suites* list displays the IDs of suites that are
+explicitly included in this test suite.  The *Available Suites* list
+displays the IDs of other test suites that may be included.
+
+To add a suite to this test suite, select it in the *Available Suites*
+list and click on *<< Add*.  To remove a test suite from this test
+suite, select it in the *Included Suites* list and click on *Remove >>*.
+
+
+@ suite test IDs
+**Test IDs**
+
+The list displays the IDs of tests that are *explicitly* included in the
+test suite.  Since the test suite may contain other tests suites, it may
+contain other tests as well.
+
+A test suite displays test IDs relative to its own ID.  For example, if
+the test suite "core.suite" contains the tests "core.test1" and
+"core.linux.test2" , the test IDs in the suite are specified as
+"test1" and "linux.test2".
+
+
+@ suite test IDs control
+**Test IDs**
+
+**Test IDs** allows you to change the tests that are *explicitly*
+included in the test suite.  Note that the suite may contain other
+tests, since it may include other test suites.
+
+A test suite lists test IDs relative to its own ID.  For example, if the
+test suite "core.suite" contains the tests "core.test1" and
+"core.linux.test2" , the test IDs in the suite are specified as "test1"
+and "linux.test2".  Only tests whose IDs begin with "core." may be
+included in the suite.
+
+The *Included Tests* list displays the IDs of tests that are explicitly
+included in the test suite.  The *Available Tests* list displays the IDs
+of other tests that may be included.
+
+To add a test to the test suite, select it in the *Available Tests* list
+and click on *<< Add*.  To remove a test from the test suite, select it
+in the *Included Tests* list and click on *Remove >>*.
+
+
 @ test class control
 **Test Class**
 

@@ -101,6 +101,17 @@ class PageInfo(qm.web.PageInfo):
                % (link_target, action_id)
 
 
+    def FormatSuiteId(self, suite_id):
+        """Return markup for 'suite_id'."""
+
+        request = qm.web.WebRequest("show-suite",
+                                    base=self.request,
+                                    id=suite_id)
+        link_target = qm.web.make_url_for_request(request)
+        return '<a href="%s"><span class="suite_id">%s</span></a>' \
+               % (link_target, suite_id)
+    
+
 
 ########################################################################
 # functions
@@ -134,6 +145,7 @@ def start_server(port, address="", log_file=None):
 
     import qm.test.web.dir
     import qm.test.web.show
+    import qm.test.web.suite
 
     # Base URL path for QMTest stuff.
     script_base = "/test/"
@@ -151,12 +163,15 @@ def start_server(port, address="", log_file=None):
         ( "create-test", qm.test.web.show.handle_show ),
         ( "dir", qm.test.web.dir.handle_dir ),
         ( "edit-action", qm.test.web.show.handle_show ),
+        ( "edit-suite", qm.test.web.suite.handle_edit ),
         ( "edit-test", qm.test.web.show.handle_show ),
         ( "new-action", qm.test.web.show.handle_new_action ),
         ( "new-test", qm.test.web.show.handle_new_test ),
         ( "show-action", qm.test.web.show.handle_show ),
+        ( "show-suite", qm.test.web.suite.handle_show ),
         ( "show-test", qm.test.web.show.handle_show ),
         ( "submit-action", qm.test.web.show.handle_submit ),
+        ( "submit-suite", qm.test.web.suite.handle_submit ),
         ( "submit-test", qm.test.web.show.handle_submit ),
         ]:
         server.RegisterScript(script_base + name, function)

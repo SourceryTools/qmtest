@@ -64,6 +64,17 @@ standard_action_class_names = [
     ]
 """A list of names of standard action classes."""
 
+dtds = {
+    "action": "-//Software Carpentry//QMTest Action V0.1//EN",
+    "result": "-//Software Carpentry//QMTest Result V0.1//EN",
+    "suite": "-//Software Carpentry//QMTest Suite V0.1//EN",
+    "test": "-//Software Carpentry//QMTest Test V0.1//EN",
+    }
+"""A mapping for DTDs used by QMTest.
+
+Keys are DTD types ("action", "result", etc).  Values are the
+corresponding DTD public identifiers."""
+
 ########################################################################
 # exceptions
 ########################################################################
@@ -227,6 +238,22 @@ class InstanceBase:
 
     # Helper functions.
 
+    def __MakeItem(self):
+        """Construct the underlying user test or action object."""
+
+        arguments = self.GetArguments().copy()
+
+        # Use a default value for each field for which an argument was
+        # not specified.
+        klass = self.GetClass()
+        for field in klass.fields:
+            field_name = field.GetName()
+            if not arguments.has_key(field_name):
+                arguments[field_name] = field.GetDefaultValue()
+
+        return apply(klass, [], arguments)
+
+
     def __SetAttachmentPaths(self, value):
         """Set full attachment paths.
 
@@ -291,19 +318,9 @@ class Test(InstanceBase):
     def GetTest(self):
         """Return the underlying user test object."""
 
-        arguments = self.GetArguments().copy()
-
-        # Use a default value for each field for which an argument was
-        # not specified.
-        test_class = self.GetClass()
-        for field in test_class.fields:
-            field_name = field.GetName()
-            if not arguments.has_key(field_name):
-                arguments[field_name] = field.GetDefaultValue()
-
         # Perform just-in-time instantiation.
         if self.__test is None:
-            self.__test = apply(test_class, [], arguments)
+            self.__test = self._InstanceBase__MakeItem()
 
         return self.__test
 
@@ -387,7 +404,7 @@ class Action(InstanceBase):
 
         # Perform just-in-time instantiation.
         if self.__action is None:
-            self.__action = apply(self.GetClass(), [], self.GetArguments())
+            self.__action = self._InstanceBase__MakeItem()
 
         return self.__action
 
@@ -439,14 +456,24 @@ class Action(InstanceBase):
 class Suite:
    """A group of tests."""
 
-   def __init__(self, id): 
+   def __init__(self, suite_id, test_ids=[], suite_ids=[], implicit=0): 
        """Create a new test suite instance.
 
-       'id' -- The suite ID."""
+       'suite_id' -- The ID of the new suite.
 
-       self.__id = id
-       self.__tests = []
+       'test_ids' -- A sequence of IDs of tests contained in the suite.
 
+       'suite_ids' -- A sequence of IDs of suites contained in the
+       suite.
+
+       'implicit' -- If true, this is an implicit suite.  It contains
+       all tests whose IDs have this suite's ID as a prefix."""
+
+       self.__id = suite_id
+       self.__test_ids = list(test_ids)
+       self.__suite_ids = list(suite_ids)
+       self.__implicit = implicit
+       
 
    def GetId(self):
        """Return the ID for this test suite."""
@@ -454,10 +481,65 @@ class Suite:
        return self.__id
 
 
-   def GetTestIds(self):
-       """Return a sequence of the test IDs of the tests in this suite."""
+   def IsImplicit(self):
+       """Return true if this is an implicit test suite.
 
-       raise qm.MethodShouldBeOverriddenError, "Suite.GetTestIds"
+       Implicit test suites should not be explicitly editable."""
+
+       return self.__implicit
+
+
+   def GetTestIds(self):
+       """Return a sequence of the test IDs of the tests in this suite.
+
+       returns -- A sequence of IDs of all tests in this suite.  If this
+       suite contains other suites, these are expanded recursively to
+       produce the full list of tests.  No test will appear more than
+       once.  Test IDs are relative to the top of the test database."""
+
+       database = get_database()
+       # 'rel' converts IDs relative to this suite to IDs relative to
+       # the top of the test database.
+       dir_id = qm.label.split(self.GetId())[0]
+       rel = qm.label.MakeRelativeTo(dir_id)
+       # Instead of keeping a list of test IDs, we'll build a map, to
+       # assist with skipping duplicates.  The keys are test IDs (we
+       # don't care about the values).
+       ids = {}
+       # Start by entering the tests explicitly part of this suite.
+       for test_id in map(rel, self.__test_ids):
+           ids[test_id] = None
+       # Now loop over suites contained in this suite.
+       for suite_id in map(rel, self.__suite_ids):
+           suite = database.GetSuite(suite_id)
+           # Get the test IDs in the contained suite.
+           test_ids_in_suite = suite.GetTestIds()
+           # Make note of them.
+           for test_id in test_ids_in_suite:
+               ids[test_id] = None
+       # All done.
+       return ids.keys()
+
+
+   def GetRawTestIds(self):
+       """Return the IDs of tests explicitly part of this suite.
+
+       returns -- A list of tests explicitly in this suite.  Does not
+       include IDs of tests that are included in this suite via other
+       suites.  Test IDs are relative to the path containing this
+       suite."""
+
+       return self.__test_ids
+
+
+   def GetRawSuiteIds(self):
+       """Return the IDs of suites explicitly part of this suite.
+
+       returns -- A list of suites explicitly in this suite.  Does not
+       include IDs of suites that are included via other suites.  Suite
+       IDs are relative to the path contianing this suite."""
+
+       return self.__suite_ids
 
 
 
@@ -515,8 +597,12 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.WriteSuite"
 
 
-    def GetSuiteIds(self, path="."):
-        """Return suite IDs of all test suites relative to 'path'."""
+    def GetSuiteIds(self, path=".", implicit=0):
+        """Return suite IDs of all test suites relative to 'path'.
+
+        'implicit' -- If true, include implicit test suites
+        corresponding to directories in the space of test and suite
+        IDs."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.GetSuiteIds"
 
@@ -1317,64 +1403,6 @@ def get_class(class_name, extra_paths=[]):
     __loaded_classes[class_name] = klass
     # All done.
     return klass
-
-
-def get_all_test_ids(database):
-    """Return a sequence of test IDs of tests in 'database'."""
-
-    test_ids = []
-    expand_and_validate_ids(database, ".", test_ids)
-    return test_ids
-
-
-def expand_and_validate_ids(database, content_ids, id_list):
-    """Expand and validate IDs.
-
-    This function examines the IDs in 'content_ids'.  Each ID must be a
-    test ID or a suite ID.
-
-      1. Expand suite IDs to the test IDs they contain.
-
-      2. Check that test IDs in 'content_ids' and expanded from suites
-         actually exist.
-
-      3. Append test IDs to 'id_list', skipping duplicates.  Any test
-         IDs already in 'id_list' are preserved.  The order of tests is
-         as specified in 'content_ids', with suites expanded
-         depth-first, and the first instance of each duplicate test IDs
-         kept.
-
-    raises -- 'ValueError' if an element of 'content_ids' isn't a valid
-    ID.
-
-    May also raise other exceptions while expanding suites."""
-    
-    # We'll keep a map whose keys are test IDs, to detect duplicates
-    # efficiently.  Initialize it to test IDs already in 'id_list'.
-    id_set = {}
-    for test_id in id_list:
-        id_set[test_id] = None
-    # Scan over inputs.
-    for id_ in content_ids:
-        # Do we already have a test with this ID?
-        if id_set.has_key(id_):
-            # Yes, so skip.
-            continue
-        # Check if it's a test ID.
-        if database.HasTest(id_):
-            id_list.append(id_)
-            id_set[id_] = None
-        # Or check if it's a suite ID.
-        elif database.HasSuite(id_):
-            suite = database.GetSuite(id_)
-            ids_in_suite = suite.GetTestIds()
-            for test_id in ids_in_suite:
-                if not id_set.has_key(test_id):
-                    id_list.append(test_id)
-                    id_set[test_id] = None
-        else:
-            # Can't find a match for the ID.
-            raise ValueError, id_
 
 
 def make_new_test(test_class_name, test_id):

@@ -1,3 +1,53 @@
+2001-04-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.MakeUrl): New method.
+	(make_url): New function.
+	* qm/test.py: Remove file.
+	* qm/test/web/web.py (PageInfo.FormatSuiteId): New method.
+	(start_server): Register edit-suite, show-suite, submit-suite
+	scripts. 
+	* qm/test/web/suite.py: New file.
+	* qm/test/web/dir.py (DirPageInfo.FormatItem): Use FormatSuiteId.
+	* qm/test/cmdline.py (Command.__ExecuteRun): Process arguments
+	here. 
+	(Command.__ExecuteEdit): Use "unknown test id" diagnostic.
+	(Command.__WriteResults): Use base.dtds.
+	* qm/test/xmldb.py (Database.WriteTest): Likewise.
+	(Database.WriteAction): Likewise.
+	(Database.GetSuite): Use __GetSuite.
+	(Database.WriteSuite): New method.
+	(Database.GetSuiteIds): Handle implicit parameter.
+	(FileSuite): Remove.
+	(DirectorySuite): Reimplement.
+	(scan_dir_for_suite_dirs): New function.
+	* qm/test/base.py (dtds): New variable.
+	(InstanceBase.__MakeItem): New method.
+	(Test.GetTest): Use it.
+	(Action.GetAction): Likewise.
+	(Suite): Reimplement.
+	(Database.GetSuiteIds): Add implicit parameter.
+	(get_all_test_ids): Remove.
+	(expand_and_validate_ids): Likewise.
+
+	* share/xml/CATALOG: Add suite DTD.
+	* share/xml/suite.dtd: New file.
+	* share/dtml/test/suite.dtml: New file.
+	* share/diagnostics/test.txt (no id for edit): Generalize.
+	(no id for show): Likewise.
+	(no id for submit): Likewise.
+	(unknown id): Remove.
+	(unknown test id): New diagnostic.
+	(unknown test or suite id): Likewise.
+	* share/diagnostics/test-help.txt (suite suite IDs): New
+	diagnostic.
+	(suite suite IDs control): Likewise.
+	(suite test IDs): Likewise.
+	(suite test IDs control): Likewise.
+
+	* tests/unit/common/label_thunk.qmt: Remove test for thunk of
+	empty label.
+	* tests/common.qms: Convert to XML format.
+
 2001-04-26  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.common_javascript): Add help_window.  Add

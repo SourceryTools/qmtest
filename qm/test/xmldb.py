@@ -36,6 +36,7 @@
 ########################################################################
 
 import base
+import dircache
 import os
 import qm.common
 import qm.fields
@@ -164,7 +165,7 @@ class Database(base.Database):
         self.__InvalidateItem(test.GetId(), self.__tests)
         # Generate the document and document type for XML test files.
         document = qm.xmlutil.create_dom_document(
-            public_id="-//Software Carpentry//QMTest Test V0.1//EN",
+            public_id=base.dtds["test"],
             dtd_file_name="test.dtd",
             document_element_tag="test"
             )
@@ -209,7 +210,7 @@ class Database(base.Database):
         self.__InvalidateItem(action.GetId(), self.__actions)
         # Generate the document and document type for XML action files.
         document = qm.xmlutil.create_dom_document(
-            public_id="-//Software Carpentry//QMTest Action V0.1//EN",
+            public_id=base.dtds["action"],
             dtd_file_name="action.dtd",
             document_element_tag="action"
             )
@@ -278,9 +279,8 @@ class Database(base.Database):
                 # directory.
                 suite = DirectorySuite(suite_id, self)
             else:
-                # Build a suite from a file.
-                path = path + suite_file_extension
-                suite = FileSuite(suite_id, self)
+                # Load a suite from a file.
+                suite = self.__GetSuite(suite_id)
             # Enter the suite into the cache.
             self.__suites[suite_id] = suite
             return suite
@@ -289,9 +289,55 @@ class Database(base.Database):
             return suite
 
 
-    def GetSuiteIds(self, path="."):
+    def WriteSuite(self, suite):
+        """Write 'suite' to the database as a suite file."""
+
+        # Don't write directory suites to suite file.
+        assert not isinstance(suite, DirectorySuite)
+
+        # Invalidate the cache entry.
+        self.__InvalidateItem(suite.GetId(), self.__suites)
+        # Generate the document and document type for XML suite files.
+        document = qm.xmlutil.create_dom_document(
+            public_id=base.dtds["suite"],
+            dtd_file_name="suite.dtd",
+            document_element_tag="suite"
+            )
+        # Construct the suite element node by adding children for test
+        # IDs and suite IDs.  Use the raw test and suite IDs, i.e. don't
+        # expand suites to their contained tests.  These IDs are
+        # relative to the path of the suite.
+        suite_element = document.documentElement
+        for test_id in suite.GetRawTestIds():
+            test_id_element = qm.xmlutil.create_dom_text_element(
+                document, "test_id", test_id)
+            suite_element.appendChild(test_id_element)
+        for suite_id in suite.GetRawSuiteIds():
+            suite_id_element = qm.xmlutil.create_dom_text_element(
+                document, "suite_id", suite_id)
+            suite_element.appendChild(suite_id_element)
+        # Find the file system path for the suite file.
+        suite_path = self.IdToPath(suite.GetId(), absolute=1) \
+                     + suite_file_extension
+        # If the file is in a new subdirectory, create it.
+        containing_directory = os.path.dirname(suite_path)
+        if not os.path.isdir(containing_directory):
+            os.makedirs(containing_directory)
+        # Write out the suite.
+        suite_file = open(suite_path, "w")
+        qm.xmlutil.write_dom_document(document, suite_file)
+        suite_file.close()
+
+
+    def GetSuiteIds(self, path=".", implicit=0):
+        # First find IDs corresponding to test suite files.
         dir_path = self.IdToPath(path, absolute=1)
-        return scan_dir_for_labels(dir_path, suite_file_extension)
+        suites = scan_dir_for_labels(dir_path, suite_file_extension)
+        # Were implicit suite IDs requested?
+        if implicit:
+            # Yes.  Scan for subdirectories.
+            suites = suites + scan_dir_for_suite_dirs(dir_path)
+        return suites
 
 
     def TestIdToPath(self, test_id, absolute=0):
@@ -728,65 +774,34 @@ class Database(base.Database):
             element.appendChild(arg_element)
 
 
+    def __GetSuite(self, suite_id):
+        """Load the test suite file with ID 'suite_id'.
 
-class FileSuite(base.Suite):
-    """A test suite whose elements are listed in a file.
+        returns -- A 'Suite' object."""
 
-    The test suite file lists one test ID on each line.  These IDs are
-    relative to directory containing the test suite.  For example, if
-    the test suite file corresponding to ID 'my.suite' lists 'foo' and
-    'bar.baz', the actual test IDs relative to the top of the test
-    database are 'my.foo' and 'my.bar.baz'."""
-
-    def __init__(self, suite_id, database):
-        """Create a new test suite instance.
-
-        'suite_id' -- The test suite ID.
-
-        'database' -- The test database."""
-
-        base.Suite.__init__(self, suite_id)
-        self.__ids = []
-
-        path = os.path.join(database.GetPath(),
-                            database.IdToPath(suite_id)) \
-               + suite_file_extension
+        path = self.IdToPath(suite_id, absolute=1) + suite_file_extension
         # Make sure there is a file by that name.
         if not os.path.isfile(path):
             raise base.NoSuchSuiteError, "no suite file %s" % path
-        # Read the contents of the suite file.
-        suite_file = open(path, "r")
-        contents = suite_file.read()
-        suite_file.close()
-        # Divide it into test IDs.
-        content_ids = string.split(contents)
-        # Clean them up.
-        content_ids = map(string.strip, content_ids)
+        # Load and parse the suite file.
+        document = qm.xmlutil.load_xml_file(path)
+        suite = document.documentElement
+        assert suite.tagName == "suite"
+        # Extract the test and suite IDs.
+        test_ids = qm.xmlutil.get_dom_children_texts(suite, "test_id")
+        suite_ids = qm.xmlutil.get_dom_children_texts(suite, "suite_id")
         # Make sure they're all valid.
-        for id in content_ids:
-            if not qm.label.is_valid(id, allow_separator=1):
-                raise RuntimeError, \
-                      qm.error("invalid id", id=id)
-
-        # The content IDs are relative to the location of the suite.
-        # Construct absolute IDs.
+        for id_ in test_ids + suite_ids:
+            if not qm.label.is_valid(id_, allow_separator=1):
+                raise RuntimeError, qm.error("invalid id", id=id_)
+        # The IDs are relative to the location of the suite.  Construct
+        # absolute IDs.
         dir_id = qm.label.split(suite_id)[0]
-        content_ids = map(qm.label.MakeRelativeTo(dir_id), content_ids)
-        
-        # Validate the IDs, and expand any suite IDs that may be among
-        # them. 
-        try:
-            base.expand_and_validate_ids(database,
-                                         content_ids,
-                                         self.__ids)
-        except ValueError, invalid_id:
-            raise KeyError, qm.error("invalid id in suite",
-                                     id=invalid_id,
-                                     suite=suite_id)
-
-           
-    def GetTestIds(self):
-        return self.__ids
+        rel = qm.label.MakeRelativeTo(dir_id)
+        test_ids = map(rel, test_ids)
+        suite_ids = map(rel, suite_ids)
+        # Construct the suite.
+        return base.Suite(suite_id, test_ids, suite_ids)
 
 
 
@@ -794,7 +809,7 @@ class DirectorySuite(base.Suite):
     """A test suite corresponding to directory in the database.
 
     Each directory in the test database is considered a virtual suite.
-    This suite contains all of the tests in the directory or its
+    This suite contains all of the tests in the directory and its
     subdirectories."""
 
     def __init__(self, suite_id, database):
@@ -808,36 +823,46 @@ class DirectorySuite(base.Suite):
         containing the tests.  All tests in and under this directory are
         included in the suite."""
 
-        base.Suite.__init__(self, suite_id)
-
         # Make sure the path exists.
         path = os.path.join(database.GetPath(),
                             database.IdToPath(suite_id))
         if not os.path.isdir(path):
             raise base.NoSuchSuiteError, "no directory at %s" % path
-
-        self.__ids = None
-        self.__suite_id = suite_id
+        # Initialize the base class. 
+        base.Suite.__init__(self, suite_id, implicit=1)
+        # Store the path to the directory.
         self.__suite_path = path
 
-        # Don't look up the test IDs yet.
+
+    def GetRawTestIds(self):
+        test_ids = {}
+        suite_ids = {}
+        self.__ScanDirectory(test_ids)
+        return test_ids.keys()
+
+
+    def GetRawSuiteIds(self):
+        # Implicit suites don't contain other suites.
+        return []
 
 
     def GetTestIds(self):
-        # The collection of contained test IDs is determined lazily, and
-        # cached for future invokations.
-        if self.__ids is None:
-            # We need to determine the IDs of tests under our directory. 
-            self.__ids = []
-            self.__AddTestsInDirectory("")
-
-        return self.__ids
+        # Since suites can specify only relative test IDs, a suite
+        # contained in this suite can only include tests contained in
+        # this suite.  So there's no need to expand suites to determine
+        # the test IDs in this suite.  However, we do need to make them
+        # relative to the top of the test database.
+        rel = qm.label.MakeRelativeTo(self.GetId())
+        result = map(rel, self.GetRawTestIds())
+        return result
 
 
     # Helper methods.
 
-    def __AddTestsInDirectory(self, sub_path):
-        """Scan the tests in directory 'path'.
+    def __ScanDirectory(self, test_ids, sub_path=""):
+        """Recursively scan the tests in directory 'sub_path'.
+
+        'test_ids' -- A map whose keys are test IDs.
 
         'sub_path' -- Path relative to top of suite directory from which
         to add tests.
@@ -845,24 +870,23 @@ class DirectorySuite(base.Suite):
         This method calls itself recursively for subdirectories."""
 
         sub_id = qm.label.from_path(sub_path)
-        dir_id = qm.label.join(self.__suite_id, sub_id)
-        rel = qm.label.MakeRelativeTo(dir_id)
+        rel = qm.label.MakeRelativeTo(sub_id)
         # Generate the full path to the directory being scanned.
         path = os.path.join(self.__suite_path, sub_path)
         # Loop over its contents.
-        for entry in os.listdir(path):
+        for entry in dircache.listdir(path):
             entry_path = os.path.join(path, entry)
             # Is it a directory?
             if os.path.isdir(entry_path):
-                # Yes; scan recursively.
-                self.__AddTestsInDirectory(os.path.join(sub_path, entry))
+                # Yes.  Scan recursively.
+                self.__ScanDirectory(test_ids, os.path.join(sub_path, entry))
             else:
                 # Look at its extension.
                 name, extension = os.path.splitext(entry)
                 if extension == test_file_extension:
-                    test_id = rel(name)
-                    self.__ids.append(test_id)
-
+                    # It looks like a test file.
+                    test_ids[rel(name)] = None
+                    
 
 
 ########################################################################
@@ -878,14 +902,13 @@ def scan_dir_for_labels(dir, extension):
 
     results = []
     # Scan contents of 'dir'.
-    for entry in os.listdir(dir):
+    for entry in dircache.listdir(dir):
         # Construct the full path to the entry.
         entry_path = os.path.join(dir, entry)
         # Is it a subdirectory?
         if os.path.isdir(entry_path):
             # Yes.  Call ourselves recursively.
-            sub_results = scan_dir_for_labels(os.path.join(dir, entry),
-                                              extension)
+            sub_results = scan_dir_for_labels(entry_path, extension)
             # Make the contents of the subdirectory relative to the
             # top-level 'dir' by prefixing the subdirectory name.
             rel = qm.label.MakeRelativeTo(entry)
@@ -901,6 +924,30 @@ def scan_dir_for_labels(dir, extension):
                     # Yes; keep it.
                     results.append(entry_name)
 
+    return results
+
+
+def scan_dir_for_suite_dirs(dir):
+    """Return labels for directories under 'dir' that are suites."""
+
+    results = []
+    # Scan contents of 'dir'.
+    for entry in dircache.listdir(dir):
+        # Construct the full path to the entry.
+        entry_path = os.path.join(dir, entry)
+        # Is it a subdirectory?
+        if os.path.isdir(entry_path):
+            # Yes.  Add the directory itself.
+            # FIXME: Check if it's empty?
+            results.append(entry)
+            # Call ourselves recursively.
+            sub_results = scan_dir_for_suite_dirs(entry_path)
+            # Make the contents of the subdirectory relative to the
+            # top-level 'dir' by prefixing the subdirectory name.
+            rel = qm.label.MakeRelativeTo(entry)
+            sub_results = map(rel, sub_results)
+            # Add to the results.
+            results = results + sub_results
     return results
 
 

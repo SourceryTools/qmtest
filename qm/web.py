@@ -202,6 +202,16 @@ class PageInfo:
         return structured_text.to_html(text)
 
 
+    def MakeUrl(self, script_name, **fields):
+        """Create a request and return a URL to it.
+
+        'script_name' -- The script name for the request.
+
+        'fields' -- Additional fields for the request."""
+
+        return apply(make_url, (script_name, self.request), fields)
+
+
     def GenerateHtmlHeader(self, description):
         """Return the header for an HTML document."""
 
@@ -1357,6 +1367,20 @@ def make_url_for_request(request):
         # Encode query arguments into the URL.
         return "%s?%s" % (request.GetUrl(), urllib.urlencode(request))
     
+
+def make_url(script_name, base_request=None, **fields):
+    """Create a request and return a URL for it.
+
+    'script_name' -- The script name for the request.
+
+    'base_request' -- If not 'None', the base request for the generated
+    request.
+
+    'fields' -- Additional fields to include in the request."""
+
+    request = apply(WebRequest, (script_name, base_request), fields)
+    return make_url_for_request(request)
+
 
 def make_form_for_request(request, method="get"):
     """Generate an opening form tag for 'request'.

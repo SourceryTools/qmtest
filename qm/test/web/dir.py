@@ -95,7 +95,7 @@ class DirPageInfo(web.PageInfo):
         if item.type == "test":
             return self.FormatTestId(item.id)
         elif item.type == "suite":
-            return item.id
+            return self.FormatSuiteId(item.id)
         elif item.type == "action":
             return self.FormatActionId(item.id)
 

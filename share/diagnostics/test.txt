@@ -97,13 +97,13 @@ You must specify the location of the test database.
     database. 
 
 @ no id for edit
-You must specify the ID of the test to edit.
+You must specify the ID of the item to edit.
 
 @ no id for show
-You must specify the ID of the test to show.
+You must specify the ID of the item to show.
 
 @ no id for submit
-You must speicfy the ID of the test to sumit.
+You must speicfy the ID of the item to submit.
 
 @ no ids specified
 You must specify one or more test or suite IDs.
@@ -147,15 +147,18 @@ The test code raised an exception of the unexpected class type
 The test code raised a string exception containing unexpected text
 "%(text)s".
 
-@ unknown id
-There is no test with ID "%(test_id)s" in the database.
-
 @ unknown id in suite
 The ID "%(id)s" in suite "%(suite)s" does not exist.
 
 @ unknown test class
 The test class '%(test_class_name)s' of test "%(test_id)s" was not
 found. 
+
+@ unknown test id
+There is no test with ID "%(test_id)s" in the database.
+
+@ unknown test or suite id
+There is no test or suite with ID %(id)s" in the database.
 
 @ xml invalid arg name
 %(name)s is not the name of an argument of this test class.

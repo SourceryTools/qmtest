@@ -1,0 +1,274 @@
+<dtml-comment><!--
+
+  File:   suite.dtml
+  Author: Alex Samuel
+  Date:   2001-04-20
+
+  Contents:
+    Document template for displaying suite contents.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Test Database')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <table border="0" width="100%">
+  <tbody>
+   <tr>
+    <td>
+     <h3>
+      Test Suite <dtml-var expr="suite.GetId()">
+     </h3>
+     <dtml-if expr="suite.IsImplicit()">
+      <p>This is an implicit test suite.  Every test whose ID has
+      <dtml-var expr="suite.GetId()"> as a prefix is included in this
+      suite.</p>
+     </dtml-if>
+    </td>
+    <td align="right">
+     <form>
+      <dtml-if expr="not suite.IsImplicit() and not edit">
+       <dtml-var expr="MakeButton('Edit', 'edit-suite', id=suite.GetId())">
+      </dtml-if>
+     </form>
+    </td>
+   </tr>
+  </tbody>
+ </table>
+
+ <dtml-if expr="edit">
+  <form name="form"
+        method="post"
+        action="<dtml-var expr="MakeUrl('submit-suite', id=suite.GetId())">"
+        enctype="multipart/form-data"
+        onsubmit="document.form.test_ids.value = 
+                    encode_ids(document.form.incl_tests);
+                  document.form.suite_ids.value = 
+                    encode_ids(document.form.incl_suites);"/>
+  <input type="hidden"
+         name="id"
+         value="<dtml-var expr="suite.GetId()">"/>
+ </dtml-if>
+
+ <table border="0"
+        cellspacing="4"
+        cellpadding="4"
+        width="100%">
+  <tbody>
+   <tr valign="top" class="field">
+    <td width="100%">
+     <b>Test IDs</b>
+     <p>IDs of tests that are included in this suite.</p>
+    </td>
+    <td>
+     <table border="0" cellpadding="0" cellspacing="4"><tr>
+      <dtml-if name="edit">
+
+       <input type="hidden" 
+              name="test_ids" 
+              value="<dtml-var name="encoded_test_ids">"/>
+       <td>
+        Included Tests:<br>
+        <select name="incl_tests"
+                width="160"
+                size="8"
+                onchange="document.form.excl_tests.selectedIndex = -1;">
+         <dtml-in expr="test_ids">
+         <dtml-let id=sequence-item>
+          <option value="<dtml-var name="id">"><dtml-var name="id"></option>
+         </dtml-let>
+         </dtml-in>
+        </select>
+       </td>
+       <td align="center">
+        <input type="button"
+               value=" << Add "
+               onclick="move(document.form.excl_tests,
+                             document.form.incl_tests);"/>
+        <br><br>
+        <input type="button"
+               value=" Remove >> "
+               onclick="move(document.form.incl_tests,
+                             document.form.excl_tests);"/>
+       </td>
+       <td>
+        Available Tests:<br>
+        <select name="excl_tests"
+                width="160"
+                size="8"
+                onchange="document.form.incl_tests.selectedIndex = -1">
+         <dtml-in expr="excluded_test_ids">
+         <dtml-let id=sequence-item>
+          <option value="<dtml-var name="id">"><dtml-var name="id"></option>
+         </dtml-let>
+         </dtml-in>
+        </select>
+       </td>
+       <td valign="top">
+        <dtml-var expr="MakeHelpLink('suite test IDs control')">
+       </td>
+
+      <dtml-else>
+
+       <td>
+        <dtml-if expr="_.len(test_ids) > 0">
+         <ul>
+          <dtml-in expr="test_ids">
+          <dtml-let id=sequence-item>
+           <li><dtml-var expr="FormatTestId(id)">
+          </dtml-let>
+          </dtml-in>
+         </ul>
+        <dtml-else>
+         None
+        </dtml-if>
+       </td>
+       <td valign="top">
+        <dtml-var expr="MakeHelpLink('suite test IDs')">
+       </td>
+
+      </dtml-if>
+     </tr></table>
+    </td>
+   </tr>
+
+   <dtml-if expr="not suite.IsImplicit()">
+    <tr valign="top" class="field">
+     <td>
+      <b>Suite IDs</b>
+      <p>IDs of other suites that are included in this suite.</p>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="4"><tr>
+       <dtml-if name="edit">
+
+        <input type="hidden" 
+               name="suite_ids" 
+               value="<dtml-var name="encoded_suite_ids">"/>
+        <td>
+         Included Suites:<br>
+         <select name="incl_suites"
+                 width="160"
+                 size="8"
+               onchange="document.form.excl_suites.selectedIndex = -1">
+          <dtml-in expr="suite_ids">
+          <dtml-let id=sequence-item>
+           <option value="<dtml-var name="id">"><dtml-var name="id"></option>
+          </dtml-let>
+          </dtml-in>
+         </select>
+        </td>
+        <td align="center">
+         <input type="button" 
+                value=" << Add "
+                onclick="move(document.form.excl_suites,
+                              document.form.incl_suites);"/>
+         <br><br>
+         <input type="button"
+                value=" Remove >> "
+                onclick="move(document.form.incl_suites,
+                              document.form.excl_suites);"/>
+        </td>
+        <td>
+         Available Suites:<br>
+         <select name="excl_suites"
+                 width="160"
+                 size="8"
+               onchange="document.form.incl_suites.selectedIndex = -1">
+          <dtml-in expr="excluded_suite_ids">
+          <dtml-let id=sequence-item>
+           <option value="<dtml-var name="id">"><dtml-var name="id"></option>
+          </dtml-let>
+          </dtml-in>
+         </select>
+        </td>
+        <td valign="top">
+         <dtml-var expr="MakeHelpLink('suite suite IDs control')">
+        </td>
+
+       <dtml-else>
+
+        <td>
+         <dtml-if expr="_.len(suite_ids)">
+          <ul>
+           <dtml-in expr="suite_ids">
+           <dtml-let id=sequence-item>
+            <li><dtml-var expr="FormatSuiteId(id)">
+           </dtml-let>
+           </dtml-in>
+          </ul>
+         <dtml-else>
+          &nbsp;
+         </dtml-if>
+        </td>
+        <td>
+         <dtml-var expr="MakeHelpLink('suite suite IDs')">
+        </td>
+
+       </dtml-if>
+      </tr></table>
+     </td>
+    </tr>
+   </dtml-if>
+
+   <dtml-if expr="edit">
+    <tr class="heading">
+     <td colspan="2">
+      <input type="submit"
+             value=" OK "/>
+      <input type="button"
+             value=" Cancel "
+             onclick="location = 
+               '<dtml-var expr="MakeUrl('show-suite', id=suite.GetId())">';"
+             />
+   </dtml-if>
+
+  </tbody>
+ </table>
+
+ <dtml-if expr="edit">
+  </form>
+
+  <script language="JavaScript">
+  function move(src, dst)
+  {
+    if(src.selectedIndex == -1)
+      return;
+    var option = src[src.selectedIndex];
+    dst[dst.length] = new Option(option.text, option.value);
+    src[src.selectedIndex] = null;
+  }
+
+  function encode_ids(select)
+  {
+    var result = "";
+    for(var i = 0; i < select.options.length; ++i) {
+      if(i > 0)
+        result += ",";
+      result += select.options[i].value;
+    }
+    return result;
+  }
+  </script>
+ </dtml-if>
+
+ <dtml-var name="html_footer">
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
