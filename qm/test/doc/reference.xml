@@ -503,7 +503,7 @@
 
   <para>The default &qmtest; test database implementation stores the
   database as a directory hierarchy containing XML files.  Each QMTest
-  subdirectrory is represented by a subdirectory in the filesystem.  A
+  subdirectory is represented by a subdirectory in the filesystem.  A
   test, suite, or resource is represented by an XML file.  These files
   have file extensions <filename>.qmt</filename>,
   <filename>.qms</filename>, and <filename>.qma</filename>,
