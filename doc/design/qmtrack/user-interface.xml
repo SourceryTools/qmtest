@@ -367,11 +367,62 @@
    configuration-type information simply so the web interface looks
    and feels the way the administrator wishes.</para>
 
+   <para><xref linkend="fig-web-state-model"/> shows the state model
+   for the primary &qmtrack; web pages.  Each state represents a web
+   page.  
+    <itemizedlist>
+     <listitem>
+      <para>The "New Issue Form" page displays controls for the fields
+      in an issue, initially blank, to be filled out as a new issue
+      entry.</para>
+     </listitem>
+
+     <listitem>
+      <para>The "Edit Form" page displays the same form, but with
+      the fields populated with the current field values from an
+      existing issue.</para>
+     </listitem>
+
+     <listitem>
+      <para>The "Query Form" page also displays a similar form, with
+      the fields left blank; fields are filled in to specify the
+      query.  The "Query Form" also contains a control that can be
+      used to enter more complicated Python expression queries.</para>
+     </listitem>
+
+     <listitem>
+      <para>The "View Issue" page shows the same form, but with
+      non-editable controls displaying field values.  This page has a
+      sub-state in which the audit trail (revision history) for the
+      issue is also displayed.</para>
+     </listitem>
+
+     <listitem>
+      <para>The "Issue List" page shows multiple issues resulting from
+      a query in a summary format.  The page also contains query
+      controls, by which the query results may be refined with
+      additional restrictions.  This enables a "drill-down" model of
+      browsing.</para>
+     </listitem>
+    </itemizedlist>
+   </para>
+
+   <figure id="fig-web-state-model">
+    <title>Web GUI state model schematic</title>
+
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="web-gui-states.png" format="PNG"
+      align="center" scale="50"/>
+     </imageobject>
+    </mediaobject>
+   </figure>
+
    <para>To create a new issue, the user will be presented with a form
    like the following:
     <mediaobject>
      <imageobject>
-      <imagedata fileref="create1.jpg" format="JPG"></imagedata>
+      <imagedata fileref="create1.jpg" format="JPG" scale="50"></imagedata>
      </imageobject>
     </mediaobject>
    He/she will then fill in the necessary data, click "Create," and be

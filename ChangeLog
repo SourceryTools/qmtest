@@ -1,3 +1,13 @@
+2000-12-05  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtrack/Makefile (DOCBITMAPS): Add *.png.
+	* doc/design/qmtrack/web-gui-states.dia: New file.
+	* doc/design/qmtrack/web-gui-states.png: Likewise.
+	* doc/design/qmtrack/concepts.xml: Add categories section.
+	* doc/design/qmtrack/idb-impl.xml: Edit.
+	* doc/design/qmtrack/triggers.xml: Explain get triggers better.
+	* doc/design/qmtrack/user-interface.xml: Expand.
+	
 2000-12-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/qm.mod: New file.

@@ -115,7 +115,10 @@
    linkend="sec-diff-issue-records">difference issue
    records</link>.</para>
 
-   <para>ARRANGEMENT IN FILESYSTEM ***********************</para>
+   <para>Since the number of issues in the &idb; may grow large, the
+   &xml; issue files will be broken into subdirectories.  A hashing
+   scheme on the issue id will be used to separate issues into
+   subdirectories.</para>
 
   </section>
 

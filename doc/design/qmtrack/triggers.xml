@@ -44,8 +44,10 @@
    <orderedlist>
     <listitem>
      <para>A <literal>"get"</literal> trigger is called before an
-     issue is returned from a query or another retrieval
-     operation.</para>
+     issue is returned from a query or another issue retrieval
+     operation.  The trigger may produce side effects related to the
+     operation, such as gathering query statistics, or veto the
+     operation, for instance to implement access control.</para>
     </listitem>
 
     <listitem>

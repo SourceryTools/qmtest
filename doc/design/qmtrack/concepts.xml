@@ -219,6 +219,23 @@
    </para>
 
   </section>
+
+  <section id="sec-categories">
+   <title id="sec-categories-title">Categories</title>
+
+   <para>Issue ids are not for organizational purposes; they serve
+   simply to identiy each issue uniquely.  <firstterm
+   id="def-categories">Categories</firstterm> are used to group
+   issues.  A category is simply a group of issues related in some way
+   in the users' conceptions.  Membership in a category is recorded in
+   the issue: each issue includes a list of categories to which it
+   belongs.  An issue may belong to zero, one, or more
+   categories.</para>
+
+   <para>The enumeration of categories included in a particualr
+   &qmtrack; deployment is part of the &idb; configuration.</para>
+
+  </section>
   
   <section id="sec-revisions">
    <title id="sec-revisions-title">Revisions and audit</title>
@@ -382,7 +399,7 @@
       <tbody>
        <row>
         <entry>attachments</entry>
-        <entry>special</entry>
+        <entry>attachment set</entry>
         <entry>a collection of zero or more file attachments containing
         arbitrary data</entry>
        </row>
