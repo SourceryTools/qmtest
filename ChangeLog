@@ -5,6 +5,7 @@
 	* qm/platform.py (get_shell_for_script): Use /c on Windows.
 	* qm/test/classes/command.py (ShellScriptTest): Make the 
 	script have a ".bat" extension on Windows.
+	* NEWS: Mention this fix.
 
 2004-02-08  Mark Mitchell  <mark@codesourcery.com>
 
