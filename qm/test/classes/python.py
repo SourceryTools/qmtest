@@ -115,7 +115,7 @@ class ExecTest(Test):
             # fails
             result.NoteException(cause="Exception executing source.")
         else:
-            # The source code execute OK.  Was an additional expression
+            # The source code executed OK.  Was an additional expression
             # provided? 
             if self.expression is not None:
                 # Yes; evaluate it.
