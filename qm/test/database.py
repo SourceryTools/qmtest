@@ -951,7 +951,7 @@ class Database:
                 suite = self.GetSuite(id)
                 # Determine all the tests and suites contained directly and
                 # indirectly in this suite.
-                suite_test_ids, sub_suite_ids = suite.GetAllTestAndSuiteIds()     
+                suite_test_ids, sub_suite_ids = suite.GetAllTestAndSuiteIds()
                 # Add them.
                 map(add_test_id, suite_test_ids)
                 map(add_suite_id, sub_suite_ids)

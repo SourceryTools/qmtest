@@ -158,8 +158,11 @@ class ExecutionEngine:
                 self.__descriptors[id] = descriptor
                 self.__descriptor_graph[descriptor] = [0, []]
             except:
-                self._AddUntestedResult(id, "Could not load test.")
-
+                result = Result(Result.TEST, id, self.__context)
+                result.NoteException(cause = "Could not load test.",
+                                     outcome = Result.UNTESTED)
+                self._AddResult(result)
+                
         # Create the edges.
         for descriptor in self.__descriptors.values():
             prereqs = descriptor.GetPrerequisites()

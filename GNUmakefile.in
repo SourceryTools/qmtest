@@ -40,10 +40,8 @@ PYTHONDIRS	= $(TOPDIR) \
 # Python packages with installation scripts.
 PYTHON_PACKAGES = \
 	qm \
-	PyXML \
 	zope-dtml/DocumentTemplate \
-	zope-dtml/ExtensionClass \
-	xmlrpc
+	zope-dtml/ExtensionClass
 # The names of rules to install the PYTHON_PACKAGES.
 PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
 

@@ -99,11 +99,6 @@ qm_split_path() {
 
 # Assume that QM is not running out of the build directory.
 QM_BUILD=0
-# Assume that we should run Python with optimization turned on, unless
-# other flags have been explicitly specified.
-if test x"${QM_PYTHON_FLAGS}" = x; then
-  QM_PYTHON_FLAGS="-O"
-fi
 
 # Check to see if QM_HOME is set.
 if test x"${QM_HOME}" = x; then
@@ -170,6 +165,16 @@ export QM_HOME
 # Export QM_BUILD so that QM knows where to look for other modules.
 export QM_BUILD
 
+# When running QMTest from the build environment, run Python without
+# optimization.  In a production environment, use optimization.
+if test x"${QM_PYTHON_FLAGS}" = x; then
+    if test ${QM_BUILD} -eq 1; then
+        QM_PYTHON_FLAGS=""
+    else
+        QM_PYTHON_FLAGS="-O"
+    fi
+fi
+
 # Decide which Python installation to use in the following way:
 #
 # 1. If ${QM_PYTHON} exists, use it.
@@ -178,13 +183,13 @@ export QM_BUILD
 #
 # 3. Otherwise, if /usr/bin/python2 exists, use it.
 #    
-#    Red Hat's python2 RPM installs Python in /usr/bin/python2, so
+#    Red Hat's "python2" RPM installs Python in /usr/bin/python2, so
 #    as not to conflict with the "python" RPM which installs 
 #    Python 1.5 as /usr/bin/python.  QM requires Python 2, and we
 #    do not want every user to have to set QM_PYTHON, so we must
 #    look for /usr/bin/python2 specially.
 #
-# 4. Otherwise, use whatever `python' is in the path.
+# 4. Otherwise, use whatever "python" is in the path.
 #
 # Set qm_python to this value.
 
@@ -214,5 +219,7 @@ esac
 qm_script="${qm_libdir}/${qm_script_dir}/${qm_script}.py"
 
 # Start the python interpreter, passing it all of the arguments
-# present on our command line.
+# present on our command line.  It would be nice to be able to
+# issue an error message if that does not work, beyond that which
+# the shell issues, but exec does not return on failure.
 exec "${qm_python}" ${QM_PYTHON_FLAGS} "${qm_script}" "$@"

@@ -21,9 +21,6 @@ import os
 import qm
 import re
 import xml.dom
-import xml.dom.ext 
-import xml.dom.ext.reader.Sax
-import xml.dom.DOMImplementation
 import xml.dom.minidom
 
 ########################################################################
@@ -45,10 +42,8 @@ def make_system_id(name):
     return "http://www.software-carpentry.com/qm/xml/%s" % name
 
 
-def load_xml_file(path, validate=1):
+def load_xml_file(path):
     """Return a DOM document loaded from the XML file 'path'.
-
-    'validate' -- If true, a validating XML parser is used.
 
     raises -- 'ParseError' if an error occurs while parsing the file.
     This may occur if the file is either not well-formed or not
@@ -56,16 +51,11 @@ def load_xml_file(path, validate=1):
 
     # Open the file.
     file = open(path, "r")
-    return load_xml(file, whence=path, validate=validate)
+    return load_xml(file)
 
 
-def load_xml(file, whence="(input)", validate=1):
+def load_xml(file):
     """Return a DOM document loaded from the XML file object 'file'.
-
-    'file' -- A file object from which to read XML.
-
-    'whence' -- Where the XML came from (e.g. a file path), for use in
-    diagnostic messages.
 
     'validate' -- If true, a validating XML parser is used.
 
@@ -73,26 +63,8 @@ def load_xml(file, whence="(input)", validate=1):
     This may occur if the file is either not well-formed or not
     valid."""
 
-    # Construct the path to the DTD catalog.
-    catalog_path = os.path.join(qm.get_share_directory(),
-                                "xml", "CATALOG")
-    if validate:
-        # Create a validating DOM reader.
-        reader = xml.dom.ext.reader.Sax.Reader(validate=validate,
-                                               catName=catalog_path)
-        try:
-            # Read and parse XML.
-            document = reader.fromStream(file)
-        except xml.sax._exceptions.SAXParseException, exception:
-            raise ParseError, qm.error("xml parse error",
-                                       line=exception.getLineNumber(),
-                                       character=exception.getColumnNumber(),
-                                       file_name=whence,
-                                       message=exception._msg)
-    else:
-        # If not validating, use a faster implementation.
-        document = xml.dom.minidom.parse(file)
-        
+    # If not validating, use a faster implementation.
+    document = xml.dom.minidom.parse(file)
     file.close()
     return document
 
@@ -106,12 +78,18 @@ def get_dom_text(node):
     which is a text node."""
 
     assert node.nodeType == xml.dom.Node.ELEMENT_NODE
+    # Normalize the node so that multiple TEXT_NODEs are collapsed into
+    # a single node.
+    node.normalize()
+    # If there are no children, the string is empty.
     if len(node.childNodes) == 0:
-        # Missing the text node; assume it's empty.
         return ""
-    assert len(node.childNodes) == 1
+    # If there is a child, there should be only one.
+    if len(node.childNodes) != 1:
+        raise QMException, "Invalid XML text node."
     child = node.childNodes[0]
-    assert child.nodeType == xml.dom.Node.TEXT_NODE
+    if child.nodeType != xml.dom.Node.TEXT_NODE:
+        raise QMException, "Invalid XML text node."
     return child.data
 
 
@@ -207,7 +185,7 @@ def create_dom_text_element(document, tag, text):
     return element
 
 
-__dom_implementation = xml.dom.DOMImplementation.DOMImplementation()
+__dom_implementation = xml.dom.getDOMImplementation()
 
 def create_dom_document(public_id, dtd_file_name, document_element_tag):
     """Create a DOM document.
@@ -242,10 +220,7 @@ def write_dom_document(document, stream):
 
     'stream' -- A file object."""
 
-    xml.dom.ext.PrettyPrint(document,
-                            stream=stream,
-                            indent=" ",
-                            encoding="ISO-8859-1")
+    document.writexml(stream)
 
 
 __hyphen_regex = re.compile("(--+)")

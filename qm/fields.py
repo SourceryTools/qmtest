@@ -975,7 +975,6 @@ class TextField(Field):
                                    name=self.GetName(),
                                    right_tag="text",
                                    wrong_tag=node.tagName)
-        # Just the text, ma'am.
         return xmlutil.get_dom_text(node)
 
 
@@ -1299,7 +1298,9 @@ class SetField(Field):
         contained_field = self.GetContainedField()
         fn = lambda n, f=contained_field, s=attachment_store: \
              f.GetValueFromDomNode(n, s)
-        return map(fn, node.childNodes)
+        return map(fn,
+                   filter(lambda n: n.nodeType == xml.dom.Node.ELEMENT_NODE,
+                          node.childNodes))
 
 
     def MakeDomNodeForValue(self, value, document):

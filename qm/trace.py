@@ -75,8 +75,7 @@ class Tracer:
         output."""
 
         if level < self.GetThreshold(category):
-            self.__file.write("Trace [%s]: %s\n" % (category,
-                                                    message))
+            self.__file.write("[%s]: %s\n" % (category, message))
             self.__file.flush()
 
 

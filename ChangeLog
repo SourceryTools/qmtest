@@ -1,3 +1,30 @@
+2002-05-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUMakefile.in (PYTHON_PACKAGES): Remove PyXML and xmlrpc.
+	* README: Update licensing information about zope-dtml.
+	* qm/fields.py (SetField.GetValueFromDomNode): Be tolerant of
+	TEXT_NODEs mixed in with the contained elements.
+	* qm/qm.sh (QM_PYTHON_FLAGS): Only use -O when running installed
+	code; do not use optimization when running from the build tree.
+	* qm/trace.py (Tracer.Write): Tweak output format.
+	* qm/web.py (xmlrpclib): Do not import it.  Remove XML-RPC 
+	handling throughout.
+	* qm/xmlutil.py: Remove uses of PyXML throughout.
+	* qm/test/base.py: Do not default to xmldb for databases that
+	have no configuration file.
+	(load_results): Do not pass a validate parameter to load_xml.
+	* qm/test/database.py (Database.ExpandIds): Tidy.
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): If 
+	loading a test fails, put the exception traceback in the result.
+	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult): 
+	Use only methods available in DOM, not PyXML extensions.
+	* qm/test/xmldb.py (Database.__ParseTestDocument): Add trace 
+	output.
+	(Database.__ParseResourceDocument): Likewise.
+	(Database.__GetArgumentsFromDomNode): Likewise.  Be tolerant of
+	embedded TEXT_NODEs.
+	(Database._Trace): New method.
+	
 2002-05-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/track: Remove directory.

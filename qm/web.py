@@ -43,7 +43,6 @@ import types
 import urllib
 import user
 import whrandom
-import xmlrpclib
 
 # If the binary modules that are used in the DTML implementation are
 # linked against more recent versions of the C library than are found on
@@ -492,12 +491,6 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # Store the client's IP address with the request.
             request.client_address = self.client_address[0]
             self.__HandleRequest(request)
-        elif content_type == "text/xml":
-            # Check if this request corresponds to an XML-RPC invocation.
-            if self.server.IsXmlRpcUrl(self.path):
-                self.__HandleXmlRpcRequest()
-            else:
-                self.send_response(400, "Unexpected request (not XML/RPC).")
         else:
             self.send_response(400,
                                "Unexpected request (POST of %s)."
@@ -565,42 +558,6 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # the browser crashed...
             pass
         
-
-    def __HandleXmlRpcRequest(self):
-        content_length = int(self.headers["Content-length"])
-        content = self.rfile.read(content_length)
-        arguments, method_name = xmlrpclib.loads(content)
-        # Do we have a matching method?
-        try:
-            method = self.server.GetXmlRpcMethod(method_name)
-        except KeyError:
-            # No matching method; report the error.
-            response = xmlrpclib.Fault(2, "no method: %s" % method_name)
-        else:
-            try:
-                # Invoke the method.
-                response = apply(method, arguments, {})
-                if not isinstance(response, types.TupleType):
-                    response = (response, )
-            except:
-                # The method raised an exception.  Send an XML-RPC
-                # fault response. 
-                exc_info = sys.exc_info()
-                response = xmlrpclib.Fault(1, "%s : %s"
-                                           % (exc_info[0], exc_info[1]))
-                # For debugging, dump exceptions out if verbose.
-                message = diagnostic.error(
-                    "xmlrpc exception", exception=format_exception(exc_info))
-                common.print_message(3, message)
-
-        # Encode the reponse.
-        response_string = xmlrpclib.dumps(response)
-        # Send it off.
-        self.send_response(200)
-        self.send_header("Content-type", "text/xml")
-        self.end_headers()
-        self.wfile.write(response_string)
-
 
     def __HandleFileRequest(self, request, path):
         # There should be no query arguments to a request for an
@@ -751,7 +708,7 @@ class HTTPServer(BaseHTTPServer.HTTPServer):
 
 
 class WebServer(HTTPServer):
-    """A web server that serves ordinary files, dynamic content, and XML-RPC.
+    """A web server that serves ordinary files and dynamic content.
 
     To configure the server to serve ordinary files, register the
     directories containing those files with
@@ -762,10 +719,6 @@ class WebServer(HTTPServer):
     To congifure the server to serve dynamic content, register dynamic
     URLs with 'RegisterScript'.  A request matching the URL exactly
     will cause the server to invoke the provided function.
-
-    To configure the server to service XML-RPC requests, pass an
-    'xml_rpc_path' to the '__init__' function and register methods
-    with 'RegisterXmlRpcMethod'.
 
     The web server resolves request URLs in a two-step process.
 
@@ -799,8 +752,7 @@ class WebServer(HTTPServer):
     def __init__(self,
                  port,
                  address="",
-                 log_file=sys.stderr,
-                 xml_rpc_path=None):
+                 log_file=sys.stderr):
         """Create a new web server.
 
         'port' -- The port on which to accept connections.  If 'port'
@@ -812,9 +764,6 @@ class WebServer(HTTPServer):
         'log_file' -- A file object to which to write log messages.
         If it's 'None', no logging.
 
-        'xml_rpc_path' -- The script path at which to accept XML-RPC
-        requests.   If 'None', XML-RPC is disabled for this server.
-
         The server is not started until the 'Bind' and 'Run' methods are
         invoked."""
 
@@ -823,8 +772,6 @@ class WebServer(HTTPServer):
         self.__log_file = log_file
         self.__scripts = {}
         self.__translations = {}
-        self.__xml_rpc_methods = {}
-        self.__xml_rpc_path = xml_rpc_path
         self.__shutdown_requested = 0
 
         self.RegisterScript("/problems.html", self._HandleProblems)
@@ -837,27 +784,6 @@ class WebServer(HTTPServer):
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
-
-
-    def GetXmlRpcUrl(self):
-        """Return the URL at which this server accepts XML-RPC.
-
-        preconditions -- The server must be bound.
-
-        returns -- The URL, or 'None' if XML-RPC is disabled."""
-
-        if self.__xml_rpc_path is None:
-            return None
-        else:
-            # Use the explicitly-specified host name, if provided.
-            # Otherwise, determine it from the socket.
-            host_name = self.__address
-            if host_name == "":
-                host_name = self.server_name
-            # Get the port from the socket; that works fine.
-            port = self.server_port
-            # Construct the URL.
-            return "http://%s:%d%s" % (host_name, port, self.__xml_rpc_path) 
 
 
     def RegisterScript(self, script_path, script):
@@ -907,38 +833,10 @@ class WebServer(HTTPServer):
         self.__translations[url_path] = file_path
 
 
-    def RegisterXmlRpcMethod(self, method, method_name=None):
-        """Register an XML-RPC method.
-
-        precoditions -- XML-RPC must be enabled.
-
-        'method' -- The method to call in response to the request.  It
-        must be callable.  The request arguments are passed to this
-        method's positional parameters.
-
-        'method_name' -- The RPC name to associate with this method.
-        If 'None', the name of 'method' is used."""
-
-        assert self.__xml_rpc_path is not None
-        assert callable(method)
-        # Take the name of 'method' if no name is provided.
-        if method_name is None:
-            method_name = method.__name__
-        # Map it.
-        self.__xml_rpc_methods[method_name] = method
-
-
     def IsScript(self, request):
         """Return a true value if 'request' corresponds to a script."""
 
         return self.__scripts.has_key(request.GetUrl())
-
-
-    def IsXmlRpcUrl(self, url):
-        """Return true if 'url' corresponds to an XML-RPC invocation."""
-
-        return self.__xml_rpc_path is not None \
-               and url == self.__xml_rpc_path
 
 
     def ProcessScript(self, request):
@@ -975,17 +873,6 @@ class WebServer(HTTPServer):
                 return file_path
         # No match was found.
         return None
-
-
-    def GetXmlRpcMethod(self, method_name):
-        """Return the method corresponding to XML-RPC 'method_name'.
-
-        returns -- A callable object corresponding to 'method_name'.
-
-        raises -- 'KeyError' if there is no mapping for
-        'method_name'."""
-
-        return self.__xml_rpc_methods[method_name]
 
 
     def Bind(self):

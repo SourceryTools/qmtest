@@ -16,25 +16,12 @@
     QM is licensed under the GNU General Public License.  See the file
     COPYING for the exact text of the license.
 
-    QM incorporates some third-party software:
+    The zope-dtml module incorporated in QM is software provided by 
+    Digital Creations.  See:
 
-      - The zope-dtml module contains code for generating HTML from DTML
-	(Document Template Markup Language) from the Zope package, by
-	Digital Creations.
+      zope-dtml/ExtensionClass/COPYRIGHT.txt
 
-      - The gadfly module containsthe Gadfly SQL Relational Database
-	(http://www.chordate.com/kwParsing/gadfly.html), written by
-	Chordate Systems.
-
-      - The xmlrpc module contains a Python implementation of XML/RPC by
-	Fredrik Lundh and Secret Labs AB.
-
-      - The PyXML package contains XML-related software written by and/or
-	copyright by Fourthought, Inc., BeOpen, CNRI, CWI, Greg Stein,
-	Secret Labs AB, and Lars Marius Carshol.
-
-    Please consult the corresponding READMEs, license files, etc. for
-    license information about these components.
+    for Digital Creations' copyright notice.
 
 ------------------------------------------------------------------------
 

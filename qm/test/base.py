@@ -111,27 +111,21 @@ def load_database(db_path):
     # for a file called 'configuration' in the directory corresponding
     # to the database.
     config_path = _get_db_configuration_path(db_path)
-    if os.path.isfile(config_path):
-        # Load the configuration file.
-        document = qm.xmlutil.load_xml_file(config_path)
-        # Get the root node in the document.
-        database = document.documentElement
-        # Load the database class name.
-        database_class_name = qm.xmlutil.get_child_text(database,
-                                                        "class-name")
-        # Get the database class.
-        database_class = get_extension_class(database_class_name,
-                                             "database", None)
-        # Get attributes to pass to the constructor.
-        for node in qm.xmlutil.get_children(database, "attribute"):
-            name = node.getAttribute("name")
-            value = qm.xmlutil.get_dom_text(node)
-            attributes[name] = value
-    else:
-        # If 'configuration' did not exist, fall back to the 'xmldb'
-        # database.
-        import xmldb
-        database_class = xmldb.Database
+    # Load the configuration file.
+    document = qm.xmlutil.load_xml_file(config_path)
+    # Get the root node in the document.
+    database = document.documentElement
+    # Load the database class name.
+    database_class_name = qm.xmlutil.get_child_text(database,
+                                                    "class-name")
+    # Get the database class.
+    database_class = get_extension_class(database_class_name,
+                                         "database", None)
+    # Get attributes to pass to the constructor.
+    for node in qm.xmlutil.get_children(database, "attribute"):
+        name = node.getAttribute("name")
+        value = qm.xmlutil.get_dom_text(node)
+        attributes[name] = value
         
     # Create the database.
     return apply(database_class, (db_path,), attributes)
@@ -313,7 +307,7 @@ def get_extension_class(class_name, kind, database):
     returns -- The class object with the indicated 'class_name'."""
 
     global __class_caches
-    
+
     # If this class is already in the cache, we can just return it.
     cache = __class_caches[kind]
     if cache.has_key(class_name):
@@ -426,10 +420,7 @@ def load_results(file):
     returns -- A sequence of 'Result' objects."""
 
     results = []
-
-    # We do not validate the results file because results files tend
-    # to be large, and the validating parser is very slow.
-    results_document = qm.xmlutil.load_xml(file, validate=0)
+    results_document = qm.xmlutil.load_xml(file)
     node = results_document.documentElement
     # Extract the results.
     results_elements = qm.xmlutil.get_children(node, "result")

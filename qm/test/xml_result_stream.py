@@ -17,7 +17,6 @@
 
 from   qm.test.result_stream import *
 import qm.xmlutil
-import xml.dom.ext
 
 ########################################################################
 # classes
@@ -66,8 +65,8 @@ class XMLResultStream(ResultStream):
         'result' -- A 'Result'."""
 
         element = result.MakeDomNode(self.__document)
-        xml.dom.ext.PrettyPrint(element, self.__file, indent=" ",
-                                encoding="ISO-8859-1")
+        element.writexml(self.__file)
+        self.__file.write("\n")
         
 
     def Summarize(self):

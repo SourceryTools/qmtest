@@ -30,6 +30,8 @@ from   qm.test.suite import *
 import qm.xmlutil
 import shutil
 import string
+import xml
+import xml.dom
 
 ########################################################################
 # classes
@@ -237,7 +239,12 @@ class Database(FileDatabase):
                   qm.error("unknown test class",
                            test_class_name=test_class_name,
                            test_id=test_id)
+
+        # Read the arguments.
+        if __debug__:
+            self._Trace("Reading arguments for %s." % test_id)
         arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
+
         categories = qm.xmlutil.get_child_texts(test_node,
                                                 "category")
         prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
@@ -273,6 +280,10 @@ class Database(FileDatabase):
                base.get_resource_class(resource_class_name, self)
         except KeyError:
             raise UnknownResourceClassError, class_name
+
+        # Read the arguments.
+        if __debug__:
+            self._Trace("Reading arguments for %s." % resource_id)
         arguments = self.__GetArgumentsFromDomNode(resource_node,
                                                    resource_class)
         # Construct a ResourceDescriptor for it.
@@ -310,11 +321,14 @@ class Database(FileDatabase):
         result = {}
         # The fields in the test class.
         fields = qm.test.base.get_class_arguments(klass)
-
+        
         # Loop over argument child elements.
         for arg_node in node.getElementsByTagName("argument"):
             # Extract the (required) name attribute.  
             name = arg_node.getAttribute("name")
+            if __debug__:
+                self._Trace("Processing %s argument." % name)
+                
             # Look for a field with the same name.
             field = None
             for f in fields:
@@ -326,12 +340,15 @@ class Database(FileDatabase):
                 # No.  That's an error.
                 raise TestFileError, \
                       qm.error("xml invalid arg name", name=name)
-            # The argument element should have exactly one child, the
-            # argument value. 
-            assert len(arg_node.childNodes) == 1
-            value_node = arg_node.childNodes[0]
+
+            if __debug__:
+                self._Trace("Field type is %s." % field.__class__.__name__)
+                
+            value_node \
+                 = filter(lambda n: n.nodeType == xml.dom.Node.ELEMENT_NODE,
+                          arg_node.childNodes)[0]
             # The field knows how to extract its value from the value
-            # node. 
+            # node.
             value = field.GetValueFromDomNode(value_node,
                                               self.GetAttachmentStore())
             # Make sure the value is OK.
@@ -559,6 +576,14 @@ class Database(FileDatabase):
 
         return self.__store
 
+
+    def _Trace(self, message,):
+        """Write a trace 'message'.
+
+        'message' -- A string to be output as a trace message."""
+
+        tracer = qm.test.cmdline.get_qmtest().GetTracer()
+        tracer.Write(message, "xmldb")
     
 
 class AttachmentStore(qm.attachment.AttachmentStore):
