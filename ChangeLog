@@ -1,3 +1,14 @@
+2003-09-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (TimeoutRedirectedExecutable): New class.
+	(CompilerExecutable): Inherit from it.
+	(Compiler.Compile): Add timeout parameter.
+	(Compiler.ExecuteCommand): Likewise.
+	* compiler_test.py (CompiledExecutable): Inherit from
+	TimeoutRedirectedExecutable.
+	(CompilerTest.Run): Use timeouts.
+	(CompilerTest._RunExecutable): Likewise.
+
 2003-07-21  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler_test.py (CompilerBase._GetDirectory): Do not use
