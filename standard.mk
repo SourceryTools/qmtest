@@ -53,6 +53,10 @@
 # Full path to the qm project.
 TOPDIR		= $(HOME)/qm
 
+# Python configuration.
+PYTHON		= PYTHONPATH=$(TOPDIR) python 
+
+# Tidy configuration.
 TIDY 		= tidy
 TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
 
@@ -81,10 +85,18 @@ HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
 # Output directory and output files generated with the DSSSL stylesheet
 # for TeX.
 PRINTDIR	= print
+ifneq ($(DOCBOOKMAIN),)
 PRINTTEX	= $(DOCBOOKMAIN:.xml=.tex)
 PRINTPDF	= $(DOCBOOKMAIN:.xml=.pdf)
+else
+PRINTTEX	= tex
+PRINTPDF	= pdf
+endif
 
-.PHONY:		all clean doc subdirs
+# Flags to pass to the regression test driver script.
+TESTFLAGS	= -v -k
+
+.PHONY:		all clean doc subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print 
 .PHONY:		$(SUBDIRS)
 
@@ -170,3 +182,12 @@ $(PRINTDIR)/$(PRINTPDF): \
 	cd $(PRINTDIR); \
 	    pdfjadetex $(PRINTTEX) 
 
+# Run regression tests.  Regression tests are stored in files named
+# test.py.  The file may be present for each package under qm.
+test:
+	@for test in `find $(TOPDIR)/qm -name test.py`; \
+	do \
+	  echo "running $${test}"; \
+	  $(PYTHON) $${test} $(TESTFLAGS); \
+	  echo; \
+	done

@@ -1,3 +1,17 @@
+2000-12-21  Alex Samuel  <samuel@codesourcery.com>
+
+	* standard.mk (PRINTTEX): Define as dummy if there's no DocBook.
+	(PRINTPDF): Likewise.
+	(test): New target.
+
+	* qm/__init__.py: New file.
+	* qm/common.py: Likewise.
+	* qm/regression_test.py: Likewise.
+	* qm/track/__init__.py: Likewise.
+	* qm/track/issue.py: Likewise.
+	* qm/track/issue_class.py: Likewise.
+	* qm/track/test.py: Likewise.
+	
 2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
 
 
