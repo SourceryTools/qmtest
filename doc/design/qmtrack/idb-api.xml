@@ -19,6 +19,285 @@
 -->
 <chapter><title>Issue Database API</title>
 
+ <section>
+  <title>Issue Classes</title>
+
+  <section>
+   <title>Issue Fields</title>
+
+   <para>Each field in an issue class is represented by an instance of
+   a subclass of <classname>IssueField</classname>.  The particular
+   subclass determines the type of the field.  For instance, an
+   <classname>IssueFieldInteger</classname> instance represents an
+   integer field, an <classname>IssueFieldText</classname> instance
+   represents a text field, etc.</para>
+
+   <section>
+    <title>Attributes</title>
+
+    <para>In addition, each field incorporates a set of attributes.
+    Attributes are simply mappings from attributes names (strings) to
+    string values (the <literal>"contents"</literal> attribute of a
+    set field, described <link
+    linkend="sec-issuefieldset">below</link> is a special-case
+    exception).  For boolean attributes, the value is either
+    <literal>"true"</literal> or <literal>"false"</literal>.</para>
+
+    <para>Each field has a an attribute called
+    <literal>"name"</literal>, which contains the name of the field.
+    Other attributes are used for various properties of other field
+    types.  Some attributes are used as hints, providing information
+    to the &qmtrack; user interface implementations and database
+    implemnetations about how the field value should be displayed and
+    stored, respectively.  User extensions to &qmtrack; may define and
+    use additional attributes as well.</para>
+
+   </section>
+
+   <section>
+    <title><classname>IssueField</classname></title>
+
+    <para><classname>IssueField</classname> is the base class for
+    other field types.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueField:
+    """Base class for issue field types."""
+
+    def __init__(self, name):
+        """Create a new (generic) field.
+
+        Sets the '"name"' attribute to 'name'."""
+
+
+    def GetName(self):
+        """Return the name of the field."""
+
+        return self.GetAttribute("name")
+
+
+    def GetAttribute(self, attribute_name, default_value=""):
+        """Return the value of an attribute.
+
+        Return the value of the attribute named by 'attribute_name'.
+        If that attribute is not set, return 'default_value'."""
+
+
+    def SetAttribute(self, attribute_name, attribute_value):
+        """Set the value of an attribute."""
+
+
+    def UnsetAttribute(Self, attribute_name):
+        """Remove an attribute."""
+]]>
+    </programlisting>
+   </section>
+
+   <section>
+    <title><classname>IssueFieldInteger</classname></title>
+
+    <para>An instance of <classname>IssueFieldInteger</classname>
+    represents an integer field.  The field must be able to store at
+    least a 32-bit signed value.  Values for this field type are
+    represented in memory as ordinary Python integers.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldInteger(IssueField):
+
+    def __init__(self, name):
+        """Create an integer field.
+
+        The field must be able to represent a 32-bit signed
+        integer."""
+]]>
+    </programlisting>
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldText</classname></title>
+
+    <para>An instance of <classname>IssueFieldText</classname>
+    represents a field that contains text.  There is no restriction on
+    the length of the field contents.  Values of this field type are
+    represented in memory as ordinary Python strings.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldText(IssueField):
+    """A field that contains text.  A text field uses the following
+    attributes:
+
+    '"multiline"' -- If true, the field may contain line breaks, and
+    is presented to the user accordingly.
+
+    '"verbatim"' -- If true, the contents of the field are quoted as a
+    block when the field is externalized; otherwise, individual
+    characters are quoted as required by the externalizaton mechanism.
+
+    '"big"' -- This is a hint that, if true, recommends to issue
+    database mechanisms that the contents of the field may be large
+    and should be stored out-of-line."""
+
+    def __init__(self, name):
+        """Create a text field."""
+]]>
+    </programlisting>
+
+    <para>The <literal>"verbatim"</literal> attribute is used to flag
+    a field that typically will contain text incorporating punctuation
+    characters that may need to be quoted, for example program source
+    code.  An &idb; implementation may choose to quote the entire
+    contents, rather than escaping individual punctuation separately.
+    For instance, an XML-based &idb; implementation might store the
+    field contents inside a marked CDATA section
+    ("<literal>&lt;![CDATA[ ... ]]&gt;</literal>").</para>
+
+    <para>The <literal>"big"</literal> attribute flags that the
+    contents of the field may be quite large.  An &idb; implementation
+    may choose to store the field contents separately from the rest of
+    the issue.  For instance, an RDBMS &idb; implementation might
+    store the field contents in a separate text repository instead of
+    in the main issue table.</para>
+
+   </section>    
+
+   <section>
+    <title id="sec-issuefieldset"><classname>IssueFieldSet</classname></title>
+
+    <para>An instance of <classname>IssueFieldSet</classname>
+    represents a set field.  A set field can be thought of as a
+    collection of zero or more instances of another field type.  All
+    contents of a set must be of the same type.  A values of this
+    field type is represented in memory as a Python sequence, with the
+    type of sequence elements given by the contained field
+    type.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldSet(IssueField):
+    """A field containing zero or more instances of some other field.
+
+    All contents must be of the same field type.  A set field uses the
+    following attributes:
+
+    '"contents"' -- An 'IssueField' describing the elements of the
+    set."""
+
+    def __init__(self, contained_field):
+        """Create a set field.
+
+        The name of the contained field is taken as the name of this
+        field."""
+]]>
+    </programlisting>
+
+    <para>The <literal>"contents"</literal> attribute of a set field
+    takes a special value: another <classname>IssueField</classname>
+    subclass instance, representing the type of the contents of the
+    set.</para> 
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldAttachment</classname></title>
+
+    <para>An instance of <classname>IssueFieldAttachment</classname>
+    represents a field that contains an attachment.</para>
+
+    <para>The value in memory of an issue field is either
+    <literal>None</literal>, indicating no attachment, or an instance
+    of <link
+    linkend="sec-file-attachments"><classname>Attachment</classname></link>
+    .</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldAttachment(IssueField):
+
+    def __init__(self, name):
+        """Create an attachment field."""
+]]>
+    </programlisting>    
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldEnumeration</classname></title>
+
+    <para>An instance of <classname>IssueFieldEnumeration</classname>
+    corresponds to a field containing an enumeral.  An in-memory
+    enumeration field value is a Python integer.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldEnumeration(IssueField):
+    """A field that contains an enumeral value.
+
+    The enumeral value is selected from an enumerated set of values.
+    An enumeral field uses the following attributes:
+
+    '"enumeration"' -- A mapping from enumeral names to enumeral
+    values.  Names are converted to strings, and values are stored as
+    integers.
+
+    '"ordered"' -- If non-zero, the enumerals are presented to the
+    user ordered by value."""
+
+
+    def __init__(self, name, enumeration):
+        """Create an enumeral field."""
+]]>
+    </programlisting>
+
+   </section>
+
+  </section>
+
+  <section>
+   <title><classname>IssueClass</classname></title>
+
+   <para>An issue class is represented by an instance of
+   <classname>IssueClass</classname>.</para>
+
+   <programlisting>
+<![CDATA[
+class IssueClass:
+
+    def __init__(self, name):
+        """Create a new issue class named 'name'.
+
+        The issue class initially includes mandatory fields only."""
+
+
+    def GetName(self):
+        """Return the name of this class."""
+
+
+    def GetFields(self):
+        """Return the fields in this class.
+
+        returns -- A map from field names to field values.  The keys
+        of the map are strings.  The values are 'IssueField'
+        instances."""
+
+        
+    def AddField(self, field, retroactive_value):
+        """Adds a new field to the issue class.
+
+        'field' -- An instance of a subclass of 'IssueField' which
+        describes the field to be added.  The object is copied, and
+        subsequent modifications to it will not affect the issue class.
+
+        'default_value' -- The value to assign for this field to
+        existing issues of the issue class."""
+]]>
+   </programlisting>
+
+ </section>
+
  <section><title>Issue database</title>
 
   <para>The <classname>IdbBase</classname> class is the base class for
@@ -37,6 +316,10 @@ class IdbBase:
 
   <programlisting>
 <![CDATA[
+    def GetIssueClass(self, name):
+        """Return the issue class named by 'name'."""
+
+
     def GetIssue(self, iid):
         """Return the current revision of issue 'iid'."""
 
@@ -56,8 +339,21 @@ class IdbBase:
 
     def GetCurrentRevisionNumber(self, iid):
         """Return the current revision number for issue 'iid'."""
+
+
+    def Query(self, query_record, current_revision_only=1):
+        """Return a sequence of issues matching 'query_record'.
+
+        'query_record' -- An instance of IssueRecord specifying the query.
+
+        'current_revision_only -- If true, don't match revisions other
+        than the current revision of each issue."""
 ]]>
   </programlisting>
+
+  <para>See <link linkend="sec-query-implementation"
+  endterm="sec-query-implementation-title"></link> for a description
+  of query records.</para>
 
  </section>
 
@@ -73,14 +369,6 @@ class IssueRecord:
 
     def GetClassName(self):
         """Return the name of the issue class of this issue."""
-
-
-    def GetFields(self):
-        """Return the fields in this issue.  
-
-        returns -- A map from text field names to field values.  What
-        each value is depends on the type of that field, as specified
-        in the issue class."""
 
 
     def GetField(self, field_name):
@@ -122,7 +410,8 @@ class IssueRecord:
 
  </section>
 
- <section><title>File attachements</title>
+ <section id="sec-file-attachments">
+  <title>File attachements</title>
 
   <para>The <classname>Attachment</classname> class represents an
   attachment.
@@ -158,6 +447,77 @@ class Attachment:
 ]]>
    </programlisting>
   </para>
+
+ </section>
+
+ <section id="sec-query-implementation">
+  <title id="sec-query-implementation-title">Query
+  implementation</title>
+
+  <para>A query is specified by providing an exemplar
+  <classname>IssueRecord</classname> instance.  The
+  <classname>IssueQuery</classname> subclass can be used to construct
+  such an instance.</para>
+
+  <para>Each field in the <classname>IssueRecord</classname> used to
+  specify the query may be in one of three states:
+   <orderedlist>
+    <listitem>
+     <para>A field value is not specified.  This indicates that any
+     field value for this field should match.</para>
+    </listitem>
+
+    <listitem>
+     <para>The field value is an instance
+     of<classname>FieldQuery</classname> (<link
+     linkend="sec-fieldquery">see below</link>).</para>
+    </listitem>
+
+    <listitem>
+     <para>The field contains some other value.  An exact match to
+     this field value is required.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+  <programlisting>
+<![CDATA[
+class IssueQuery(IssueRecord):
+
+    def __init__(self, class_name):
+        """Create a new query object.
+
+        The query object can be used to match instances of
+        'class_name'.  Initially, the query has no restrictions,
+        i.e. every issue of 'class_name' will match."""
+
+
+    def MatchField(self, field_name, value):
+        """Add a match constraint to the query.
+
+        Restricts the query to issues matching 'value' in the field
+        'field_name'.  
+
+        * If 'value' is a function object, it is evaluated for each
+          issue, passing the value of field 'field_name' as its single
+          argument.  If the return value evaluates to true, a match is
+          inferred.
+
+        * If 'value' is not a function object, the match is for exact
+          Python equality of the value of field 'field_name' to
+          'value'. """
+]]>
+  </programlisting>
+
+  <section id="sec-fieldquery">
+   <title><classname>FieldQuery</classname></title>
+
+   <para>A <classname>FieldQuery</classname> object specifies a query
+   criterion other than an exact match.</para>
+
+   <!-- FIXME: more stuff here. -->
+
+  </section>
 
  </section>
 

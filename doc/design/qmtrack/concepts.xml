@@ -103,29 +103,20 @@
       </listitem>
 
       <listitem>
-       <para><constant>text list</constant> fields contain an ordered
-       list of zero or more text strings.  Some instances of
-       <constant>text list</constant> fields may choose to ignore the
-       order.</para> 
-      </listitem>
-
-      <listitem>
        <para><constant>integer</constant> fields contain a signed
        32-bit integer.</para>
       </listitem>
 
       <listitem>
-       <para><constant>integer list</constant> fields contain an
-       ordered list of zero or more 32-bit integers.  Some instances
-       of <constant>integer list</constant> fields may choose to
-       ignore the order.</para>
+       <para><constant>attachment</constant> fields contain an
+       arbitrary file attachment.  The attachment consistes of a
+       (text) MIME type, a text description, and the binary data of
+       the file itself.</para>
       </listitem>
 
       <listitem>
-       <para><constant>attachment</constant> fields contain zero or
-       more arbitrary file attachments.  Each attachment consistes of
-       a (text) MIME type, a text description, and the binary data of
-       the file itself.</para>
+       <para><constant>set</constant> fields contain zero or more
+       instances of another field type.</para>
       </listitem>
      </orderedlist>
     </para>
@@ -175,13 +166,6 @@
        preconfigured set of alternatives.  Enumeration values are
        typically stored as integers; the mapping between values and
        enumerals is part of the &idb; configuration.</para>
-      </listitem>
-
-      <listitem>
-       <para><constant>enumeration set</constant> fields contain a
-       subset of elements of a preconfigured set of enumeral
-       alternatives.  Enumeration set fields are typically stored as
-       integer sets in the underlying &idb; implementation.</para>
       </listitem>
      </orderedlist>
     </para>    
@@ -405,6 +389,18 @@
    </para>
 
   </section>
+
+ </section>
+
+ <section>
+  <title>Issue Queries</title>
+
+  <para>Queries are made using an exemplar pattern.  A query is
+  specified by providing an issue record in which all fields are empty
+  except those for which a match is desired.  The latter fields may
+  contain a field value appropriate for that field, if an exact match
+  is desired, or a filter function which is used to ascertain
+  matches.</para>
 
  </section>
 

@@ -1,3 +1,8 @@
+2000-11-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/design/qmtrack/concepts.xml: Continue.
+	* doc/design/qmtrack/idb-api.xml: Likewise.
+
 2000-11-25  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/user-api.xml: Make style changes. Update
