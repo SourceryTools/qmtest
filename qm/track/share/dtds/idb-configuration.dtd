@@ -1,13 +1,13 @@
 <!--
 
-  File:   test.dtd
+  File:   idb-configuration.dtd
   Author: Alex Samuel
-  Date:   2001-03-14
+  Date:   2001-09-19
 
   Contents:
-    DTD for a test case.
+    DTD for the configuration of an issue database.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,34 +31,14 @@
 
 -->
 
-<!-- A single test.  -->
-<!ELEMENT test (class, (argument | category | prerequisite | resource)*)>
+<!-- NAME: QMTrack IDB Configuration V0.1 -->
 
-<!-- The name of a test class.  -->
-<!ELEMENT class (#PCDATA)>
+<!-- An issue database configuration.  -->
+<!ELEMENT idb-configuration (property*)>
 
-<!-- An argument to a test class.  -->
-<!ELEMENT argument (integer | text | set | attachment | enumeral)>
-<!ATTLIST argument name CDATA #REQUIRED 
-                   eval ( yes | no ) "no">
-
-<!-- The name of a category to which the test belongs.  -->
-<!ELEMENT category (#PCDATA)>
-
-<!-- The test ID of another test that must be run before this one is. 
-     The outcome attribute is the outcome that the other test must produce
-     for this one to be run.  -->
-<!ELEMENT prerequisite (#PCDATA)>
-<!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
-
-<!-- The ID of an resource that must be invoked before and after this test
-     is run.  -->
-<!ELEMENT resource (#PCDATA)>
-
-<!ENTITY % fields PUBLIC 
-    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
-    "fields.mod">
-%fields;
+<!-- A configuration property of the issue database.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
 
 <!-- 
   Local Variables:

@@ -7,7 +7,7 @@
 # Contents:
 #   Common code for QMTest web user interface.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,6 +58,25 @@ class DefaultDtmlPage(qm.web.DtmlPage):
     """Subclass of DTML page class for QMTest pages."""
 
     html_generator = "QMTest"
+
+    def __init__(self, dtml_template, **attributes):
+        """Construct a new 'QMTestPage'.
+
+        'dtml_template' -- The file name of the DTML template, relative
+        to the DTML directory."""
+        
+        # In the build tree, tool-specific DTML pages are in a different
+        # location.
+        if (os.environ['QM_BUILD'] == '1'
+            and os.path.dirname(dtml_template) == "test"):
+            dtml_template \
+                = os.path.join("..", "..", "qm", "test", "share",
+                               "dtml", os.path.basename(dtml_template))
+
+        apply(qm.web.DtmlPage.__init__,
+              (self, dtml_template),
+              attributes)
+
 
     def GetName(self):
         """Return the name of the application."""
@@ -1103,7 +1122,7 @@ class QMTestServer(qm.web.WebServer):
             "/static", qm.get_share_directory("web", "static"))
         # Register the QM manual.
         self.RegisterPathTranslation(
-            "/manual", qm.get_doc_directory("manual", "html"))
+            "/manual", qm.get_doc_directory("test", "html"))
 
         # The global temporary attachment store processes attachment data
         # uploads.

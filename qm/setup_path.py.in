@@ -7,7 +7,7 @@
 # Contents:
 #   Python fragment to set up the Python lookup path to find QM modules.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -82,8 +82,11 @@ __home_dir = os.environ['QM_HOME']
 if os.environ['QM_BUILD'] == '1':
     __lib_dir = __home_dir
     __share_dir = os.path.join(__home_dir, 'share')
-    __doc_dir = os.path.join(__home_dir, 'doc')
+    __doc_dir = os.path.join(__home_dir, 'qm')
     add_to_python_path("PyXML/build/lib.%s-%s" %
+       (__python_platform, __python_version))
+    add_to_python_path(
+       "zope-dtml/ExtensionClass/build/lib.%s-%s/zope-dtml/ExtensionClass" %
        (__python_platform, __python_version))
 else:
     __lib_dir = os.path.join(__home_dir, 'lib/qm')

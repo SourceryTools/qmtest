@@ -1,13 +1,13 @@
 <!--
 
-  File:   resource.dtd
+  File:   suite.dtd
   Author: Alex Samuel
-  Date:   2001-03-28
+  Date:   2001-04-19
 
   Contents:
-    DTD for an resource.
+    DTD for a test suite.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,26 +31,13 @@
 
 -->
 
-<!-- A single resource.  -->
-<!ELEMENT resource (class, argument*)>
+<!-- NAME: QMTest Suite V0.1 -->
 
-<!-- The name of a resource class.  -->
-<!ELEMENT class (#PCDATA)>
+<!-- A test suite.  -->
+<!ELEMENT suite ((test_id | suite_id)*)>
 
-<!-- An argument to a resource class.  -->
-<!ELEMENT argument (integer | text | set | attachment | enumeral)>
-<!ATTLIST argument name CDATA #REQUIRED 
-                   eval ( yes | no ) "no">
+<!-- A single test ID.  -->
+<!ELEMENT test_id (#PCDATA)>
 
-<!ENTITY % fields PUBLIC 
-    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
-    "fields.mod">
-%fields;
-
-<!-- 
-  Local Variables:
-  mode: xml
-  indent-tabs-mode: nil
-  fill-column:72
-  End:
--->
+<!-- A single suite ID.  -->
+<!ELEMENT suite_id (#PCDATA)>

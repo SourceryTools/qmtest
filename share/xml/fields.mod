@@ -1,3 +1,5 @@
+<!-- NAME: ELEMENTS Fields Hierarcy V0.1 -->
+
 <!-- The value of an integer field.  -->
 <!ELEMENT integer (#PCDATA)>
 

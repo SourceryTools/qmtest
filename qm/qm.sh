@@ -9,7 +9,7 @@
 # Contents:
 #   QM script.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -163,7 +163,7 @@ if test x"${QM_HOME}" = x; then
 	    QM_HOME="${qm_path}"
 	    break
 	fi
-	# Alternative, if we have find a file called `qm/qm.sh',
+	# Alternatively, if we have find a file called `qm/qm.sh',
 	# then we have found the root of the QM build directory.
 	if test -f "${qm_path}/qm/qm.sh"; then
 	    QM_HOME="${qm_path}"

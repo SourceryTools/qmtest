@@ -1,13 +1,13 @@
 <!--
 
-  File:   qm-html.dsl
+  File:   qm-sgml.dsl
   Author: Alex Samuel
   Date:   2000-11-09
 
   Contents:
     DSSSL style sheet for generating HTML from DocBook documents.
 
-  Copyright (C) 2000, 2001 CodeSourcery LLC
+  Copyright (C) 2000, 2001, 2002 CodeSourcery LLC
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files

@@ -1,13 +1,13 @@
 <!--
 
-  File:   issue.dtd
+  File:   test.dtd
   Author: Alex Samuel
   Date:   2001-03-14
 
   Contents:
-    DTD for a collection of issues.
+    DTD for a test case.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,29 +31,31 @@
 
 -->
 
-<!-- A collection of issue revision histories.  -->
-<!ELEMENT histories (history*)>
+<!-- NAME: QMTest Test V0.1 -->
 
-<!-- A full revision history of an issue.  -->
-<!ELEMENT history (issue, issue-difference*)>
+<!-- A single test.  -->
+<!ELEMENT test (class, (argument | category | prerequisite | resource)*)>
 
-<!-- A colleciton of issues.  -->
-<!ELEMENT issues (issue*)>
-
-<!-- A single issue.  -->
-<!ELEMENT issue (class, field*)>
-<!ATTLIST issue id CDATA #REQUIRED>
-
-<!-- A difference between two issues.  -->
-<!ELEMENT issue-difference (field*)>
-
-<!-- The name of an issue class.  -->
+<!-- The name of a test class.  -->
 <!ELEMENT class (#PCDATA)>
 
 <!-- An argument to a test class.  -->
-<!ELEMENT field (integer | text | set | attachment | enumeral)>
-<!ATTLIST field name CDATA #REQUIRED 
-                eval ( yes | no ) "no">
+<!ELEMENT argument (integer | text | set | attachment | enumeral)>
+<!ATTLIST argument name CDATA #REQUIRED 
+                   eval ( yes | no ) "no">
+
+<!-- The name of a category to which the test belongs.  -->
+<!ELEMENT category (#PCDATA)>
+
+<!-- The test ID of another test that must be run before this one is. 
+     The outcome attribute is the outcome that the other test must produce
+     for this one to be run.  -->
+<!ELEMENT prerequisite (#PCDATA)>
+<!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
+
+<!-- The ID of an resource that must be invoked before and after this test
+     is run.  -->
+<!ELEMENT resource (#PCDATA)>
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 

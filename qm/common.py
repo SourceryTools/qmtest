@@ -535,8 +535,6 @@ def format_byte_count(bytes):
 def rmdir_recursively(path):
     """Remove the directory at 'path' and everything under it."""
 
-    assert os.path.isdir(path)
-
     # Remove everything in the directory.
     for entry in dircache.listdir(path):
         entry_path = os.path.join(path, entry)
@@ -891,38 +889,22 @@ def add_exit_function(exit_function):
 
     'exit_function' -- A callable that takes no arguments."""
 
-    global _exit_functions
-    global _foreign_exit_functions
-
-    # Check whether there is already an exit function registered with
-    # the Python interpreter.
-    if hasattr(sys, "exitfunc"):
-        # Yes, there is.  Is it our exit function dispatcher?
-        if sys.exitfunc is not _at_exit:
-            # Something else is there.  That's OK; we'll add it to the
-            # end of our own queue and run it later.
-            _foreign_exit_functions.append(sys.exitfunc)
-            # Replace it.
-            sys.exitfunc = _at_exit
-    else:
-        # Install our exit function dispatcher.
-        sys.exitfunc = _at_exit
-
     # Add the exit function to the list of things to do at exit.
     _exit_functions.append(exit_function)
 
 
-def _at_exit():
-    """Perform cleanup stuff at program termination."""
+def exit(code):
+    """Exit the program.
+
+    'code' -- The exit code to return."""
 
     global _exit_functions
-    global _foreign_exit_functions
     
-    # First run QM-installed exit functions.
+    # First run exit functions.
     map(lambda fn: fn(), _exit_functions)
-    # Finally, run any foreign exit functions that other code installed.
-    map(lambda fn: fn(), _foreign_exit_functions)
-
+    # Exit.
+    sys.exit(code)
+    
 
 def copy(object):
     """Make a best-effort attempt to copy 'object'.
@@ -1254,7 +1236,6 @@ else:
         minutes = hours*60 + minute
         seconds = minutes*60 + second
         return seconds
-
 
 ########################################################################
 # variables

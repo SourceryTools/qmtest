@@ -1,3 +1,143 @@
+2002-01-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (QM_TOOLS): New variable.
+	(MAKEFILE_PRE_IN): Remove.
+	(SCRIPTS): Calculate it automatically.
+	(DTD_CATALOG): New variable.
+	(COMMON_DTDS): Likewise.
+	(TOOL_DTDS): Likewise.
+	(COPIED_TOOL_DTDS): Likewise.
+	(DTDS): Likewise.
+	(JADECMD): Likewise.
+	(DOCBOOK_MAIN): Remove.
+	(DOCBOOK_SOURCES): Likewise.
+	(HTMLDIR): Likewise.
+	(HTMLINDEX): Likewise.
+	(HTMLMANIFEST): Likewise.
+	(HTMLTARBALL): Likewise.
+	(PRINTDIR): Likewise.
+	(PRINTTEX): Likewise.
+	(PRINTPDF): Likewise.
+	(HTML_MANUALS): New variable.
+	(TEX_MANUALS): Likewise.
+	(PDF_MANUALS): Likewise.
+	(all): Add dependencies.
+	(PYTHON_PACKAGES): Use -q option to setup.py.
+	(DTD_CATALOG): New taret.
+	(COPIED_TOOL_DTDS): Likewise.
+	(clean): Clean up more stuff.
+	(distclean): Remove GNUmakefile, not Makefile.
+	(doc-html): Depend on HTML_MANUALS.
+	(HTML_MANUALS): New rule.
+	(TEX_MANUALS): Likewise.
+	Adjust installation rules.
+	* doc/qm-html.dsl: Rename to ...
+	* doc/qm-sgml.dsl: ... this.
+	* doc/qm-print.dsl: Rename to ...
+	* doc/qm-tex.dsl: ... this.
+	* doc/manual/introduction.xml: Remove.
+	* doc/manual/manual.xml: Likewise.
+	* doc/manual/test-manual.xml: Likewise.
+	* doc/manual/test-tour.xml: Likewise.
+	* doc/manual/track-email.xml: Likewise.
+	* doc/manual/track-manual.xml: Likewise.
+	* doc/manual/track-tour.xml: Likewise.
+	* qm/.cvsignore: Add build.
+	* qm/common.py (rmdir_recursively): Remove bogus assertion.
+	(add_exit_function): Simplify.
+	(_at_exit): Rename to ...
+	(exit): This.
+	* qm/diagnostic.py (load_messages): New function.
+	(__initialize_module): Tweak.
+	* qm/qm.sh: Fix typo in comment.
+	* qm/setup.py: Automatically compute names of packages.
+	* qm/setup_path.py.in: Add zope-dtml/ExtensionClass build
+	directory to list of directories to search in build tree.
+	* qm/test/.cvsignore: Remove qmtest-remote.
+	* qm/test/cmdline.py (QMTest.commands_spec): Add "remote".
+	(QMTest.Execute): Dispatch it.
+	(QMTest.__ExecuteRemote): New method.
+	* qm/test/qmtest-remote.py: Remove.
+	* qm/test/qmtest.py: Use load_messages and qm.exit.
+	* qm/test/classes/rsh_target.py (RSHTarget.Start): Use qmtest, not
+	qmtest-remote, on the remote system.
+	* qm/test/doc/.cvsignore: New file.
+	* qm/test/doc/introduction.xml: Likewise.
+	* qm/test/doc/manual.xml: Likewise.
+	* qm/test/doc/reference.xml: Likewise.
+	* qm/test/doc/tour.xml: Likewise.
+	* qm/test/share/dtds/class-directory.dtd: New file.
+	* qm/test/share/dtds/resource.dtd: Likewise.
+	* qm/test/share/dtds/result.dtd: Likewise.
+	* qm/test/share/dtds/suite.dtd: Likewise.
+	* qm/test/share/dtds/target.dtd: Likewise.
+	* qm/test/share/dtds/tdb-configuration.dtd: Likewise.
+	* qm/test/share/dtds/test.dtd: Likewise.
+	* qm/test/share/dtml/add-category.dtml: Likewise.
+	* qm/test/share/dtml/add-prerequisite.dtml: Likewise.
+	* qm/test/share/dtml/add-resource.dtml: Likewise.
+	* qm/test/share/dtml/context.dtml: Likewise.
+	* qm/test/share/dtml/dir.dtml: Likewise.
+	* qm/test/share/dtml/expectations.dtml: Likewise.
+	* qm/test/share/dtml/load-expected-results.dtml: Likewise.
+	* qm/test/share/dtml/load-results.dtml: Likewise.
+	* qm/test/share/dtml/navigation-bar.dtml: Likewise.
+	* qm/test/share/dtml/new-suite.dtml: Likewise.
+	* qm/test/share/dtml/new.dtml: Likewise.
+	* qm/test/share/dtml/result.dtml: Likewise.
+	* qm/test/share/dtml/results.dtml: Likewise.
+	* qm/test/share/dtml/show.dtml: Likewise.
+	* qm/test/share/dtml/suite.dtml: Likewise.
+	* qm/test/share/messages/diagnostics.txt: Likewise.
+	* qm/test/share/messages/help.txt: Likewise.
+	* qm/test/share/tutorial/tdb/exec0.qmt: Likewise.
+	* qm/test/share/tutorial/tdb/exec1.qmt: Likewise.
+	* qm/test/share/tutorial/tdb/exec2.qmt: Likewise.
+	* qm/test/share/tutorial/tdb/QMTest/configuration: Likewise.
+	* qm/test/web/web.py (DefaultDtmlPage.__init__): New method.
+	(QMTestServer.__Init__): Change path to manual.
+	* qm/track/qmtrack.py: Use load_messages and qm.exit.
+	* qm/track/server.py (WebServer.__init__): Change path to 
+	manual.
+	* qm/track/doc/.cvsignore: New file.
+	* qm/track/doc/email.xml: Likewise.
+	* qm/track/doc/introduction.xml: Likewise.
+	* qm/track/doc/manual.css: Likewise.
+	* qm/track/doc/manual.xml: Likewise.
+	* qm/track/doc/reference.xml: Likewise.
+	* qm/track/doc/tour.xml: Likewise.
+	* qm/track/share/dtds/idb-configuration.dtd: Likewise.
+	* qm/track/share/dtds/issue-classes.dtd: Likewise.
+	* qm/track/share/dtds/issue.dtd: Likewise.
+	* qm/track/share/dtds/user.dtd: Likewise.
+	* qm/track/share/dtds/users.xml.template: Likewise.
+	* qm/track/share/dtds/users.xml.test-values: Likewise.
+	* qm/track/share/dtml/add-category-name.dtml: Likewise.
+	* qm/track/share/dtml/add-issue-class.dtml: Likewise.
+	* qm/track/share/dtml/add-issue-field.dtml: Likewise.
+	* qm/track/share/dtml/add-notification-address.dtml: Likewise.
+	* qm/track/share/dtml/add-notification-uid.dtml: Likewise.
+	* qm/track/share/dtml/config-idb.dtml: Likewise.
+	* qm/track/share/dtml/configuration-navigation-bar.dtml: Likewise.
+	* qm/track/share/dtml/history.dtml: Likewise.
+	* qm/track/share/dtml/index.dtml: Likewise.
+	* qm/track/share/dtml/issue-class.dtml: Likewise.
+	* qm/track/share/dtml/navigation-bar.dtml: Likewise.
+	* qm/track/share/messages/diagnostics.txt: Likewise.
+	* qm/track/share/messages/help.txt: Likewise.
+	* share/diagnostics/test-help.txt: Remove.
+	* share/diagnostics/test.txt: Remove.
+	* share/diagnostics/track-help.txt: Remove.
+	* share/diagnostics/track.txt: Remove.
+	* share/dtml/test: Remove all files.
+	* share/dtml/track: Likewise.
+	* share/tutorial/test: Likewise.
+	* share/xml/.cvsignore: New file.
+	* share/xml/CATALOG: Remove.
+	* share/xml: Remove all DTDs.
+	* tests/unit.qms/test.qms/classes.qms/scripttest1.qmt: Fix 
+	erroneous XML.
+	
 2002-01-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* .cvsignore (standard.mk): Remove.

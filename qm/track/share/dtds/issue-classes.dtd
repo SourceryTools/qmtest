@@ -1,13 +1,13 @@
 <!--
 
-  File:   idb-configuration.dtd
+  File:   issue-classes.dtd
   Author: Alex Samuel
   Date:   2001-09-19
 
   Contents:
-    DTD for the configuration of an issue database.
+    DTD for a sequence of issue class descriptors.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,12 +31,45 @@
 
 -->
 
-<!-- An issue database configuration.  -->
-<!ELEMENT idb-configuration (property*)>
+<!-- NAME: QMTrack Issue Classes V0.1 -->
 
-<!-- A configuration property of the issue database.  -->
+<!-- Note that the issue database records the configuration of the -->
+<!-- database, specifically all persistent state of the database other -->
+<!-- than the issues themselves.  -->
+
+<!-- An issue database configuration.  -->
+<!ELEMENT issue-classes (issue-class*)>
+
+<!-- The specification of an issue class.  -->
+<!ELEMENT issue-class (title, description, field*, trigger*)>
+<!ATTLIST issue-class name CDATA #REQUIRED
+                      next-id CDATA #REQUIRED>
+
+<!-- The user-visible title of an issue class.  -->
+<!ELEMENT title (#PCDATA)>
+
+<!-- The specification of a field.  -->
+<!ELEMENT field (class, default-value, property*, field?)>
+<!ATTLIST field name CDATA #REQUIRED>
+
+<!-- The Python class of a field or trigger.  -->
+<!ELEMENT class (#PCDATA)>
+
+<!-- The default value of a field.  -->
+<!ELEMENT default-value (integer | text | set | attachment | enumeral)>
+
+<!-- A field or trigger property.  -->
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA #REQUIRED>
+
+<!-- A trigger description.  -->
+<!ELEMENT trigger (class, property*)>
+
+<!ENTITY % fields PUBLIC 
+    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
+    "fields.mod">
+%fields;
+
 
 <!-- 
   Local Variables:

@@ -1543,7 +1543,7 @@
       <para>&qmtest; uses the remote shell to invoke the
       <command>qmtest_remote</command> program on the remote host.  This
       program is installed by default in
-      <filename>/usr/local/bin/qmtest_remote</filename>.  You may
+      <filename>/usr/local/bin/qmtest</filename>.  You may
       override this and use a version in a different place by specifying
       the <property>qmtest_remote</property> property.</para>
      </listitem>

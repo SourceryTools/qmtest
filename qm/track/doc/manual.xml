@@ -6,9 +6,9 @@
   Date:   2000-03-30
 
   Contents:
-    Master file for QM manual.
+    Master file for QMTrack manual.
 
-  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -21,7 +21,7 @@
 
   <!-- Include the QM common DTD module.  -->
 
-  <!ENTITY % qm SYSTEM "../qm.mod">
+  <!ENTITY % qm SYSTEM "../../../doc/qm.mod">
   %qm;
 
   <!-- Abbreviations, phrases, and the like specific to this
@@ -36,18 +36,13 @@
   separate file, and included by entity reference.  -->
 
   <!ENTITY introduction.xml SYSTEM "introduction.xml">
-  <!ENTITY common-manual.xml SYSTEM "common-manual.xml">
-  <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
-  <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
-  <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
-  <!ENTITY track-tour.xml SYSTEM "track-tour.xml">
-  <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
-  <!ENTITY track-reference.xml SYSTEM "track-reference.xml">
-  <!ENTITY track-email.xml SYSTEM "track-email.xml">
+  <!ENTITY common-manual.xml SYSTEM "../../../doc/manual/common-manual.xml">
+  <!ENTITY tour.xml SYSTEM "tour.xml">
+  <!ENTITY reference.xml SYSTEM "reference.xml">
 ]>
 <book>
  <bookinfo>
-  <title>QMTest and QMTrack: User's Guide and Reference</title>
+  <title>QMTrack: User's Guide and Reference</title>
   <corpauthor>CodeSourcery, LLC</corpauthor>
   <copyright>
    <year>2001</year>
@@ -66,11 +61,8 @@
 
  &introduction.xml;
 
- &test-tour.xml;
- &test-manual.xml;
-
- &track-tour.xml;
- &track-manual.xml;
+ &tour.xml;
+ &reference.xml;
 
  &common-manual.xml;
 

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTrack server and client functions.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -101,7 +101,7 @@ class WebServer(qm.web.WebServer):
             "/static", qm.get_share_directory("web", "static"))
         # Register the QM manual.
         self.RegisterPathTranslation(
-            "/manual", qm.get_doc_directory("manual", "html"))
+            "/manual", qm.get_doc_directory("track", "html"))
         # Register the remote command handler.
         self.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 

@@ -229,6 +229,17 @@ class QMTest:
            )
          ),
 
+        ("remote",
+         "Run QMTest as a remote server.",
+         "",
+         """
+Runs QMTest as a remote server.  This mode is only used by QMTest
+itself when distributing tests across multiple machines.  Users
+should not directly invoke QMTest with this option.
+         """,
+         ()
+         ),
+
         ("run",
          "Run one or more tests.",
          "[ ID ... ]",
@@ -393,6 +404,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Dispatch to the appropriate method.
             method = {
                 "gui": self.__ExecuteServer,
+                "remote" : self.__ExecuteRemote,
                 "run" : self.__ExecuteRun,
                 "summarize": self.__ExecuteSummarize,
                 }[self.__command]
@@ -615,6 +627,59 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             stream.WriteResult(r)
         stream.Summarize()
         
+
+    def __ExecuteRemote(self, output):
+        """Execute the 'remote' command."""
+
+        database = self.GetDatabase()
+
+        # Get the target class.  For now, we always run in serial when
+        # running remotely.
+        target_class = get_extension_class("serial_target.SerialTarget",
+                                           'target', database)
+        # Build the target.
+        target = target_class(None, None, 1, {}, database)
+
+        # Start the target.
+        response_queue = Queue.Queue(0)
+        target.Start(response_queue)
+        
+        # Read commands from standard input, and reply to standard
+        # output.
+        while 1:
+            # Read the command.
+            command = cPickle.load(sys.stdin)
+            
+            # If the command is just a string, it should be
+            # the 'Stop' command.
+            if isinstance(command, types.StringType):
+                assert command == "Stop"
+                target.Stop()
+                break
+
+            # Decompose command.
+            method, id, context = command
+            # Get the descriptor.
+            descriptor = database.GetTest(id)
+            # Run it.
+            target.RunTest(descriptor, context)
+            # There are no results yet.
+            results = []
+            # Read all of the results.
+            while 1:
+                try:
+                    result = response_queue.get(0)
+                    results.append(result)
+                except Queue.Empty:
+                    # There are no more results.
+                    break
+            # Pass the results back.
+            cPickle.dump(results, sys.stdout)
+            # The standard output stream is bufferred, but the master
+            # will block waiting for a response, so we must flush
+            # the buffer here.
+            sys.stdout.flush()
+
 
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""

@@ -7,7 +7,7 @@
 # Contents:
 #   Code for managing and generating diagnostics.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -68,6 +68,7 @@ For example:
 
 import common
 import os
+import qm
 import re
 import string
 import types
@@ -175,6 +176,31 @@ def warning(tag, output=None, **substitutions):
                  (tag, "warning", output, ),
                  substitutions)
 
+
+def load_messages(tool):
+    """Read messages that apply to 'tool'.
+
+    'tool' -- A string giving the name of a QM tool."""
+
+    # Load diagnostics.
+    if os.environ['QM_BUILD'] == '1':
+        diagnostic_file \
+            = qm.get_share_directory("..", "qm", tool, "share",
+                                     "messages", "diagnostics.txt")
+    else:
+        diagnostic_file \
+          = qm.get_share_directory("messages", tool, "diagnostics.txt")
+    diagnostic_set.ReadFromFile(diagnostic_file)
+    # Load help messages.
+    if os.environ['QM_BUILD'] == '1':
+        diagnostic_file \
+            = qm.get_share_directory("..", "qm", tool, "share",
+                                     "messages", "help.txt")
+    else:
+        diagnostic_file \
+            = qm.get_share_directory("messages", tool, "help.txt")
+    help_set.ReadFromFile(diagnostic_file)
+    
     
 ########################################################################
 # variables
@@ -193,11 +219,11 @@ generated."""
 
 def __initialize_module():
     # Load common diagnostics.
-    diagnostic_file = common.get_share_directory("diagnostics", "common.txt")
+    diagnostic_file = qm.get_share_directory("diagnostics", "common.txt")
     diagnostic_set.ReadFromFile(diagnostic_file)
 
     # Load common help messages.
-    help_file = common.get_share_directory("diagnostics", "common-help.txt")
+    help_file = qm.get_share_directory("diagnostics", "common-help.txt")
     help_set.ReadFromFile(help_file)
 
 

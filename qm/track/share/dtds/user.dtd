@@ -1,13 +1,13 @@
 <!--
 
-  File:   target.dtd
+  File:   user.dtd
   Author: Alex Samuel
-  Date:   2001-08-11
+  Date:   2001-03-23
 
   Contents:
-    DTD for test execution targets.
+    DTD for user information.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,27 +31,30 @@
 
 -->
 
-<!-- A collection of test execution targets.  -->
-<!ELEMENT targets (target*)>
+<!-- NAME: QMTrack User Database V0.1 -->
 
-<!-- A target for executing tests.  -->
-<!ELEMENT target (name, class, group, concurrency, property*)>
+<!-- A group of user records.  -->
+<!ELEMENT users ((user | group)*)>
 
-<!-- The name of a target.  -->
-<!ELEMENT name (#PCDATA)>
+<!-- A single user record.  -->
+<!ELEMENT user (info?, authentication?, configuration?)>
+<!ATTLIST user id CDATA #REQUIRED
+          role (user | admin | default) "user"
+          disabled (yes | no) "no">
 
-<!-- The target group containing this target.  -->
-<!ELEMENT group (#PCDATA)>
+<!ELEMENT info (property*)>
 
-<!-- The name of the Python class representing this target.  -->
-<!ELEMENT class (#PCDATA)>
+<!ELEMENT authentication (property*)>
 
-<!-- The number of tests that may be run simulaneous on this target.  -->
-<!ELEMENT concurrency (#PCDATA)>
+<!ELEMENT configuration (property*)>
 
-<!-- A miscellaneous named property of the target.  -->
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA #REQUIRED>
+
+<!ELEMENT group (user-id)*>
+<!ATTLIST group id CDATA #REQUIRED>
+
+<!ELEMENT user-id (#PCDATA)>
 
 <!-- 
   Local Variables:

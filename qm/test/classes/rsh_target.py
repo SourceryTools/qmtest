@@ -215,14 +215,12 @@ class RSHTarget(Target):
                 "database_path", default=self.GetDatabase().GetPath())
             # Determine the path to the remote 'qmtest-remote' command.
             qmtest_remote_path = self.GetProperty(
-                "qmtest_remote", "/usr/local/bin/qmtest-remote")
+                "qmtest_remote", "/usr/local/bin/qmtest")
             # Construct the command we want to invoke remotely.  The
             # 'qmtest-remote' script processes commands from standard
             # I/O. 
             remote_arg_list = [
-                '"%s"' % qmtest_remote_path,
-                '"%s"' % database_path,
-                str(self.GetConcurrency()),
+                qmtest_remote_path, '-D', database_path, "remote"
                 ]
             # Determine the remote shell program to use.
             remote_shell_program = self.GetProperty("remote_shell", None)
@@ -248,7 +246,7 @@ class RSHTarget(Target):
                 self.__host_name,
                 string.join(remote_arg_list, " ")
                 ]
-            
+
             # Run the remote shell.
             qm.platform.replace_program(arg_list[0], arg_list)
             # Should be unreachable.

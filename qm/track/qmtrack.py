@@ -7,7 +7,7 @@
 # Contents:
 #   QMTrack command line application
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,14 +60,8 @@ try:
     # Set the program name.
     qm.common.program_name = "QMTrack"
 
-    # Load QMTrack diagnostics.
-    diagnostic_file = \
-        qm.common.get_share_directory("diagnostics", "track.txt")
-    qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
-    # Load QMTrack help messages.
-    help_file = \
-        qm.common.get_share_directory("diagnostics", "track-help.txt")
-    qm.diagnostic.help_set.ReadFromFile(help_file)
+    # Load messages.
+    qm.diagnostic.load_messages("track")
 
     # Load RC options.
     qm.rc.Load("track")
@@ -75,12 +69,11 @@ try:
     # Run the command on the command line.
     exit_code = qm.track.cmdline.run_command(sys.argv)
 
-    # End the program.
-    sys.exit(exit_code)
-
 except KeyboardInterrupt:
     sys.stderr.write("Interrupted.\n")
-    sys.exit(1)
+    exit_code = 1
+
+qm.common.exit(exit_code)
 
 ########################################################################
 # Local Variables:

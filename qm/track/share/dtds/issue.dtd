@@ -1,13 +1,13 @@
 <!--
 
-  File:   suite.dtd
+  File:   issue.dtd
   Author: Alex Samuel
-  Date:   2001-04-19
+  Date:   2001-03-14
 
   Contents:
-    DTD for a test suite.
+    DTD for a collection of issues.
 
-  Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation files
@@ -31,11 +31,41 @@
 
 -->
 
-<!-- A test suite.  -->
-<!ELEMENT suite ((test_id | suite_id)*)>
+<!-- NAME: QMTrack Issue V0.1 -->
 
-<!-- A single test ID.  -->
-<!ELEMENT test_id (#PCDATA)>
+<!-- A collection of issue revision histories.  -->
+<!ELEMENT histories (history*)>
 
-<!-- A single suite ID.  -->
-<!ELEMENT suite_id (#PCDATA)>
+<!-- A full revision history of an issue.  -->
+<!ELEMENT history (issue, issue-difference*)>
+
+<!-- A colleciton of issues.  -->
+<!ELEMENT issues (issue*)>
+
+<!-- A single issue.  -->
+<!ELEMENT issue (class, field*)>
+<!ATTLIST issue id CDATA #REQUIRED>
+
+<!-- A difference between two issues.  -->
+<!ELEMENT issue-difference (field*)>
+
+<!-- The name of an issue class.  -->
+<!ELEMENT class (#PCDATA)>
+
+<!-- An argument to a test class.  -->
+<!ELEMENT field (integer | text | set | attachment | enumeral)>
+<!ATTLIST field name CDATA #REQUIRED 
+                eval ( yes | no ) "no">
+
+<!ENTITY % fields PUBLIC 
+    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
+    "fields.mod">
+%fields;
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest command line application.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,6 +57,7 @@ execfile(os.path.join(setup_path_dir, 'setup_path.py'))
 
 import qm
 import qm.cmdline
+import qm.diagnostic
 import qm.platform
 import qm.structured_text
 import qm.test.cmdline
@@ -77,12 +78,8 @@ def print_error_message(message):
 # Set the program name.
 qm.common.program_name = "QMTest"
 
-# Load QMTest diagnostics.
-diagnostic_file = qm.get_share_directory("diagnostics", "test.txt")
-qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
-# Load QMTest help messages.
-help_file = qm.get_share_directory("diagnostics", "test-help.txt")
-qm.diagnostic.help_set.ReadFromFile(help_file)
+# Load messages.
+qm.diagnostic.load_messages("test")
 
 # Load RC options.
 qm.rc.Load("test")
@@ -123,7 +120,7 @@ except KeyboardInterrupt:
     exit_code = 0
     
 # End the program.
-sys.exit(exit_code)
+qm.exit(exit_code)
 
 ########################################################################
 # Local Variables:

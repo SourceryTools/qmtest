@@ -2,3 +2,4 @@
 Makefile
 setup_path.py
 *.pyo
+build
