@@ -40,16 +40,14 @@ class Derived(Base):
                                computed = "true")
         ]
 
+    b = qm.fields.IntegerField(name = "b", default_value = 42)
 
     def Run(self, context, result):
 
-        args = qm.extension.get_class_arguments(Derived)
-        if args[0] != Derived.arguments[0]:
+        args = qm.extension.get_class_arguments_as_dictionary(Derived)
+        if args['a'] != Derived.arguments[0]:
             result.Fail("Incorrect argument.")
-        elif not args[0].IsComputed():
+        elif not args['a'].IsComputed():
             result.Fail("Argument is not computed.")
-        else:
-            for a in args[1:]:
-                if a.GetName() == "a":
-                    result.Fail('Two arguments named \"a\".')
-                        
+        elif self.b != args['b'].GetDefaultValue():
+            result.Fail("Argument 'b' has wrong value.")

@@ -69,8 +69,8 @@ class Field(object):
     form_field_prefix = "_field_"
     
     def __init__(self,
-                 name,
-                 default_value,
+                 name = "",
+                 default_value = None,
                  title = "",
                  description = "",
                  hidden = "false",
@@ -121,6 +121,17 @@ class Field(object):
             self.__hidden = 1
 
         self.__default_value = default_value
+
+
+    def SetName(self, name):
+        """Set the name of the field."""
+
+        # We assume that if title==name the title
+        # was not given and so defaulted to name.
+        # Keep it in sync with name in that case.
+        if (self.__name == self.__title):
+            self.__title = name
+        self.__name = name
 
 
     def GetName(self):
@@ -389,7 +400,7 @@ class Field(object):
 class IntegerField(Field):
     """An 'IntegerField' stores an 'int' or 'long' object."""
 
-    def __init__(self, name, default_value=0, **properties):
+    def __init__(self, name="", default_value=0, **properties):
         """Construct a new 'IntegerField'.
 
         'name' -- As for 'Field.__init__'.
@@ -481,7 +492,7 @@ class TextField(Field):
     """A field that contains text."""
 
     def __init__(self,
-                 name,
+                 name = "",
                  default_value = "",
                  multiline = "false",
                  structured = "false",
@@ -703,7 +714,7 @@ class TupleField(Field):
     example, '["abc", 3]' would be a valid value for a 'TupleField'
     containing a 'TextField' and an 'IntegerField'."""
 
-    def __init__(self, name, fields, **properties):
+    def __init__(self, name = "", fields = None, **properties):
         """Construct a new 'TupleField'.
 
         'name' -- The name of the field.
@@ -713,9 +724,9 @@ class TupleField(Field):
         The new 'TupleField' stores a list whose elements correspond to
         the 'fields'."""
 
-        default_value = map(lambda f: f.GetDefaultValue(), fields)
+        self.__fields = fields == None and [] or fields
+        default_value = map(lambda f: f.GetDefaultValue(), self.__fields)
         Field.__init__(self, name, default_value, **properties)
-        self.__fields = fields
 
 
     def GetHelp(self):
@@ -833,7 +844,7 @@ class SetField(Field):
             [],
             title = contained.GetTitle(),
             description = contained.GetDescription())
-                                       
+
         # A set field may not contain a set field.
         if isinstance(contained, SetField):
             raise ValueError, \
@@ -901,7 +912,6 @@ class SetField(Field):
             name = self.GetHtmlFormFieldName()
 
         contained_field = self.__contained
-
         if style == "brief" or style == "full":
             if len(value) == 0:
                 # An empty set.
@@ -1199,7 +1209,7 @@ class AttachmentField(Field):
     """
 
 
-    def __init__(self, name, **properties):
+    def __init__(self, name = "", **properties):
         """Create an attachment field.
 
         Sets the default value of the field to 'None'."""
@@ -1516,7 +1526,7 @@ class EnumerationField(ChoiceField):
     ordered by value."""
 
     def __init__(self,
-                 name,
+                 name = "",
                  default_value=None,
                  enumerals=[],
                  **properties):
@@ -1596,7 +1606,7 @@ class BooleanField(EnumerationField):
 
     The enumeration contains two values: true and false."""
 
-    def __init__(self, name, default_value = None, **properties):
+    def __init__(self, name = "", default_value = None, **properties):
 
         # Construct the base class.
         EnumerationField.__init__(self, name, default_value,
@@ -1622,7 +1632,7 @@ class TimeField(IntegerField):
     one-second precision.  User representations of 'TimeField' fields
     show one-minue precision."""
 
-    def __init__(self, name, **properties):
+    def __init__(self, name = "", **properties):
         """Create a time field.
 
         The field is given a default value for this field is 'None', which
@@ -1716,7 +1726,7 @@ class PythonField(Field):
     where the value of the field is specified programatically by the
     system."""
 
-    def __init__(self, name, default_value = None):
+    def __init__(self, name = "", default_value = None):
 
         Field.__init__(self, name, default_value, computed = "true")
     

@@ -17,6 +17,7 @@
 
 import os.path
 import qm
+from qm.fields import Field
 import StringIO
 import tokenize
 import xml
@@ -34,8 +35,55 @@ class Extension(object):
 
     'Extension' is an abstract class."""
 
-    arguments = [
-        ]
+    class Type(type):
+
+        def __init__(cls, name, bases, dict):
+            """Generate an '_argument_dictionary' holding all the 'Field' objects.
+            Then replace 'Field' objects by their values for convenient use inside
+            the code."""
+
+            # List all base classes that are themselves of type Extension.
+            #
+            # 'Extension' isn't known at this point so all we can do to find
+            # Extension base classes is test whether __metaclass__ is defined
+            # and if so, whether it is a base class of the metaclass of cls.
+            type = cls.__metaclass__
+            def is_extension(base):
+                metaclass = getattr(base, '__metaclass__', None)
+                return metaclass and issubclass(type, metaclass)
+
+            hierarchy = [base for base in bases if is_extension(base)]
+
+            arguments = {}
+            for c in hierarchy:
+                arguments.update(c._argument_dictionary)
+            # Now set arguments from class variables of type 'Field'.
+            for key, field in dict.iteritems():
+                if isinstance(field, Field):
+                    field.SetName(key)
+                    arguments[key] = field
+
+            # For backward compatibility, inject all members of the
+            # 'arguments' list into the dict.
+            for field in dict.get('arguments', []):
+                if (not cls._allow_arg_names_matching_class_vars
+                    and hasattr(cls, field.GetName())):
+                    raise qm.common.QMException, \
+                          qm.error("ext arg name matches class var",
+                                   class_name = name,
+                                   argument_name = field.GetName())
+                arguments[field.GetName()] = field
+
+            setattr(cls, '_argument_dictionary', arguments)
+            setattr(cls, '_argument_list', arguments.values())
+
+            # Finally set default values.
+            for i in arguments:
+                setattr(cls, i, arguments[i].GetDefaultValue())
+
+    __metaclass__ = Type
+
+    arguments = []
     """A list of the arguments to the extension class.
 
     Each element of this list should be an instance of 'Field'.  The
@@ -103,7 +151,6 @@ class Extension(object):
         
         # Remember the arguments provided.
         self.__dict__.update(arguments)
-
 
     def __getattr__(self, name):
 
@@ -185,38 +232,7 @@ def get_class_arguments(extension_class):
     arguments in the class hierarchy."""
 
     assert issubclass(extension_class, Extension)
-
-    arguments = extension_class.__dict__.get("_argument_list")
-    if arguments is None:
-        # There are no arguments yet.
-        arguments = []
-        dictionary = {}
-        # Start with the most derived class.
-        for c in extension_class.__mro__:
-            # Add the arguments from this class.
-            new_arguments = c.__dict__.get("arguments", [])
-            for a in new_arguments:
-                name = a.GetName()
-                # An extension class may not have an argument with the
-                # same name as a class variable.  That leads to
-                # serious confusion.
-                if (not extension_class._allow_arg_names_matching_class_vars
-                    and hasattr(extension_class, name)):
-                    raise qm.common.QMException, \
-                          qm.error("ext arg name matches class var",
-                                   class_name = extension_class.__name__,
-                                   argument_name = name)
-                # If we already have an entry for this name, then a
-                # derived class overrides this argument.
-                if not dictionary.has_key(name):
-                    arguments.append(a)
-                    dictionary[name] = a
-                    
-        extension_class._argument_list = arguments
-        extension_class._argument_dictionary = dictionary
-        
-    return arguments
-        
+    return extension_class._argument_list        
 
 def get_class_arguments_as_dictionary(extension_class):
     """Return the arguments associated with 'extension_class'.
@@ -228,10 +244,6 @@ def get_class_arguments_as_dictionary(extension_class):
     class hierarchy."""
 
     assert issubclass(extension_class, Extension)
-
-    if extension_class.__dict__.get("_argument_dictionary") is None:
-        get_class_arguments(extension_class)
-        
     return extension_class._argument_dictionary
         
 

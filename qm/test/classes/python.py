@@ -327,7 +327,15 @@ def make_namespaces(context):
     # The local namespace is empty.
     local_namespace = {
         }
-    return global_namespace, local_namespace
+    # FIXME: As of 2005-03-21, all python versions I tested with
+    #        contain a bug that makes non-trivial code fail when
+    #        global_namespace != local_namespace. See bug #1167300
+    #
+    #        Meanwhile, we use the global namespace for both, which
+    #        yields the same as when calling 'exec source in globals()'
+
+    #return global_namespace, local_namespace
+    return global_namespace, global_namespace
 
 
 ########################################################################

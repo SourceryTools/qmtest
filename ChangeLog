@@ -4,7 +4,7 @@
 	* qm/fields.py: Make fields more convenient to use in the context of
 	Extensions.
 	* tests/xmldb/api.xms/test.qms/fields.qmt: New unit test for this feature.
-	* tests/xmldb/api.xms/test.qms/test_inheritance.qmt: Adjust test to new
+	* tests/xmldb/QMTest/test_inheritance.py: Adjust test to new
 	feature.
 	* qm/test/classes/python.py: Work around a python bug.
 
