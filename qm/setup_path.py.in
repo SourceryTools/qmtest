@@ -46,11 +46,13 @@ except:
     __unsupported_python_version()
 
     
-# Some of the packages that are used with QM use modules (like regsub)
-# that are obsolete in Python 2.1.  Prevent Python from warning
-# about these modules.
+# DocumentTemplate uses regex and regsub, which are obsolete.  Prevent
+# Python from warning about these modules.
 import warnings
-warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore",
+                        r".*(regex|regsub).*",
+                        DeprecationWarning,
+                        r".*(DocumentTemplate|regsub).*")
 
 import os.path
 
