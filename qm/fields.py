@@ -17,9 +17,13 @@
 # imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import attachment
 import common
+import cStringIO
 import diagnostic
+import formatter
+import htmllib
 import label
 import os
 import re
@@ -214,8 +218,18 @@ class Field:
             default_value="false"
             ),
 
+        PropertyDeclaration(
+            name="computed",
+            description="""If true, the field is computed automatically.
+            All computed fields are implicitly hidden, and implicitly
+            readonly.""",
+            default_value="false"
+            ),
         ]
 
+
+    form_field_prefix = "_field_"
+    
 
     def __init__(self, name, default_value, **properties):
         """Create a new (generic) field.
@@ -256,6 +270,11 @@ class Field:
         # Update any additional properties provided explicitly.
         self.__properties.update(properties)
         self.SetDefaultValue(default_value)
+
+        # All computed fields are also read-only and hidden.
+        if (self.IsComputed()):
+            self.__properties.update({"read_only" : "true",
+                                      "hidden" : "true"})
 
 
     def __repr__(self):
@@ -326,7 +345,7 @@ class Field:
                 for declaration in self.property_declarations:
                     if declaration.name == property_name:
                         return declaration.default_value
-                raise common.QMException, \
+                raise qm.common.QMException, \
                       "no default value for %s" % property_name
             else:
                 return default_value
@@ -395,8 +414,6 @@ class Field:
         return cmp(value1, value2)
 
 
-    form_field_prefix = "_field_"
-
     def GetHtmlFormFieldName(self):
         """Return the form field name corresponding this field.
 
@@ -410,7 +427,7 @@ class Field:
         else:
             # Field names can't contain hyphens, so this name shouldn't
             # collide with anything.
-            return self.form_field_prefix + self.GetName()
+            return "_field_" + self.GetName()
 
 
     def FormatValueAsText(self, value, columns=72):
@@ -418,8 +435,26 @@ class Field:
 
         'columns' -- The maximum width of each line of text."""
 
-        raise NotImplementedError
+        # Create a file to hold the result.
+        text_file = cStringIO.StringIO()
+        # Format the field as HTML.
+        html_file = cStringIO.StringIO(self.FormatValueAsHtml(value,
+                                                              "brief"))
 
+        # Turn the HTML into plain text.
+        parser = htmllib.HTMLParser(formatter.AbstractFormatter
+                                    (formatter.DumbWriter(text_file,
+                                                          maxcol = columns)))
+        parser.feed(html_file)
+        parser.close()
+        text = text_file.getValue()
+
+        # Close the files.
+        text_file.close()
+        html_file.close()
+        
+        return text
+    
 
     def FormatValueAsHtml(self, value, style, name=None):
         """Return an HTML rendering of a 'value' for this field.
@@ -437,16 +472,32 @@ class Field:
         raise NotImplementedError
 
 
-    def ParseFormValue(self, value):
+    def ParseFormValue(self, request, name):
         """Convert a value submitted from an HTML form.
 
-        'value' -- A string representing the HTML form input's value.
+        'request' -- The 'WebRequest' containing a value corresponding
+        to this field.
+
+        'name' -- The name corresponding to this field in the 'request'.
+        
+        returns -- A pair '(value, redisplay)'.  'value' is the value
+        for this field, as indicated in 'request'.  'redisplay' is true
+        if and only if the form should be redisplayed, rather than
+        committed.  If an error occurs, an exception is thrown."""
+
+        return (self.ParseTextValue(request[name]), 0)
+
+
+    def ParseTextValue(self, value):
+        """Parse a value represented as a string.
+
+        'value' -- A string representing the value.
 
         returns -- The corresponding field value."""
 
-        raise NotImplementedError
-
-
+        raise NotImplemented
+    
+        
     def FormEncodeValue(self, value):
         """Return an encoding for 'value' to store in HTML forms.
 
@@ -454,13 +505,13 @@ class Field:
         an element in a set.  The options in the HTML list element
         representing the set store these encodings as their values."""
 
-        raise NotImplementedError
+        return urllib.quote_plus(repr(value))
 
 
     def FormDecodeValue(self, encoding):
         """Decode the HTML form-encoded 'encoding' and return a value."""
 
-        raise NotImplementedError
+        return eval(urllib.unquote_plus(value))
 
 
     def GetValueFromDomNode(self, node, attachment_store):
@@ -533,6 +584,17 @@ class Field:
         return FieldEditPage(self, submit_request)(request)
 
 
+    def IsComputed(self):
+        """Returns true if this field is computed automatically.
+
+        returns -- True if this field is computed automatically.  A
+        computed field is never displayed to users and is not stored
+        should not be stored; the class containing the field is
+        responsible for recomputing it as necessary."""
+
+        return self.IsProperty("computed")
+        
+        
     def _MakeTextPropertyControl(self, property_name):
         """Generate HTML inputs for a text-valued property.
 
@@ -610,40 +672,6 @@ class Field:
                 self._MakeBooleanPropertyControl("read_only"),
 
             }
-
-
-    def UpdateFromRequest(self, request):
-        """Update the settings of this field from a web request.
-
-        'request' -- A 'WebRequest' object.  The request is assumed to
-        include form fields for controls generated by
-        'GenerateEditWebPage' and 'MakePropertyControls' for this page.
-
-        postconditions -- The state of this field is updated according
-        to the form fields in 'request'."""
-        
-        # Set the default value, if specified.
-        new_default_value = request.get("_default_value", None)
-        if new_default_value is not None:
-            new_default_value = self.ParseFormValue(new_default_value)
-            if new_default_value != self.GetDefaultValue():
-                self.SetDefaultValue(new_default_value)
-
-        for name, value in request.items():
-            # Does this query field look like a field property?
-            if qm.common.starts_with(name, query_field_property_prefix):
-                # Yes.  Trim the prefix to obtain the property name.
-                name = name[len(query_field_property_prefix):]
-                value = str(value)
-                self.SetProperty(name, value)
-
-        # The submission contains an additional field,
-        # 'extra_properties', that contains other properties of the
-        # field not covered by explicit property inputs.  
-        extra_properties = request["extra_properties"]
-        extra_properties = qm.web.decode_properties(extra_properties)
-        # Set them.
-        self.SetProperties(extra_properties)
 
 
     def MakeDomNode(self, document):
@@ -733,20 +761,13 @@ class IntegerField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, value):
+    def ParseTextValue(self, value):
         try:
             return int(value)
-        except ValueError:
-            raise ValueError, qm.error("invalid integer field value")
+        except:
+            raise qm.common.QMException, \
+                  qm.error("invalid integer field value")
 
-
-    def FormEncodeValue(self, value):
-        return "%d" % value
-    
-
-    def FormDecodeValue(self, encoding):
-        return int(encoding)
-    
 
     def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is an '<integer>' element.
@@ -962,20 +983,18 @@ class TextField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, value):
+    def ParseFormValue(self, request, name):
+
         # HTTP specifies text encodints are CR/LF delimited; convert to
         # the One True Text Format (TM).
-        return qm.convert_from_dos_text(value)
+        return (self.ParseTextValue(qm.convert_from_dos_text(request[name])),
+                0)
+    
 
+    def ParseTextValue(self, value):
+        return value
 
-    def FormEncodeValue(self, value):
-        return urllib.quote(value)
-
-
-    def FormDecodeValue(self, encoding):
-        return urllib.unquote(encoding)
-
-
+    
     def GetValueFromDomNode(self, node, attachment_store):
         # Make sure 'node' is a '<text>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
@@ -1082,6 +1101,98 @@ class SetPopupPage(web.DtmlPage):
 
 
 
+class TupleField(Field):
+    """A 'TupleField' contains zero or more other 'Field's.
+
+    The contained fields may be of different types."""
+
+    class_name = "qm.fields.TupleField"
+
+    def __init__(self, name, fields, **properties):
+        """Construct a new 'TupleField'.
+
+        'fields' -- The fields contained in the tuple."""
+
+        default_value = map(lambda f: f.GetDefaultValue(), fields)
+        Field.__init__(self, name, default_value, **properties)
+        self.__fields = fields
+
+
+    def Validate(self, value):
+
+        assert len(value) == len(self.__fields)
+        map(lambda f, v: f.Validate(v),
+            self.__fields, value)
+
+
+    def FormatValueAsHtml(self, value, style, name = None):
+
+        # Format the field as a multi-column table.
+        html = '<table border="0" cellpadding="0"><tr>'
+        for f, v in map(None, self.__fields, value):
+            if name is not None:
+                element_name = name + "_" + f.GetName()
+            else:
+                element_name = None
+            html += "<td><b>" + f.GetTitle() + "</b>:</td>"
+            html += ("<td>" 
+                     + f.FormatValueAsHtml(v, style, element_name)
+                     + "</td>")
+        html += "</tr></table>"
+        # Add a dummy field with the desired 'name'.
+        if name is not None:
+            html += '<input type="hidden" name="%s" />' % name
+        return html
+
+
+    def ParseFormValue(self, request, name):
+
+        value = []
+        redisplay = 0
+        for f in self.__fields:
+            v, r = f.ParseFormValue(request, name + "_" + f.GetName())
+            value.append(v)
+            if r:
+                redisplay = 1
+
+        return (value, redisplay)
+            
+
+    def GetValueFromDomNode(self, node, attachment_store):
+
+        values = []
+        for f, element in map(None, self.__fields,
+                              node.getElementsByTagName("element")):
+            values.append(f.GetValueFromDom(element))
+
+        return values
+
+
+    def MakeDomNodeForValue(self, value, document):
+
+        element = document.createElement("tuple")
+        for f, v in map(None, self.__fields, value):
+            element.appendChild(f.MakeDomNodeForValue(value))
+
+        return element
+    
+
+    def GetHelp(self):
+
+        help = ""
+        need_space = 0
+        for f in self.__fields:
+            if need_space:
+                help += "\n"
+            else:
+                need_space = 1
+            help += "** " + f.GetTitle() + " **\n\n"
+            help += f.GetHelp()
+
+        return help
+    
+
+    
 class SetField(Field):
     """A field containing zero or more instances of some other field.
 
@@ -1199,11 +1310,9 @@ class SetField(Field):
             if len(value) == 0:
                 # An empty set.
                 return "None"
-            formatted = []
-            for element in value:
-                # Format each list element in the indicated style.
-                formatted.append(contained_field.FormatValueAsHtml(element,
-                                                                   style))
+            formatted \
+                = map(lambda v: contained_field.FormatValueAsHtml(v, style),
+                      value)
             if style == "brief":
                 # In the brief style, list elements separated by commas.
                 separator = ", "
@@ -1213,85 +1322,94 @@ class SetField(Field):
             return string.join(formatted, separator)
 
         elif style in ["new", "edit", "hidden"]:
-            field_name = self.GetName()
-            select_name = "_set_" + name
-
-            # Construct a list of (text, value) pairs for the set's
-            # elements. 
-            initial_elements = []
+            # Create a table to represent the set.
+            html = '''<table border="0" cellpadding="0" cellspacing="0">
+                        <tbody>\n'''
+            element_number = 0
             for element in value:
-                element_value = contained_field.FormEncodeValue(element)
-                if isinstance(contained_field, AttachmentField):
-                    element_text = "%s (%s; %s)" \
-                                   % (element.GetDescription(),
-                                      element.GetFileName(),
-                                      element.GetMimeType())
-                else:
-                    element_text = \
-                        contained_field.FormatValueAsText(element)
-                initial_elements.append((element_text, element_value))
-
-            if style == "hidden":
-                initial_values = map(lambda x: x[1], initial_elements)
-                value = web.encode_set_control_contents(initial_values)
-                return '<input type="hidden" name="%s" value="%s"/>' \
-                       % (name, value) 
-
-            if isinstance(contained_field, AttachmentField):
-                # Handle attachment fields specially.  For these, go
-                # straight to the upload attachment popup page.
-                add_page = UploadAttachmentPage(self.GetTitle(),
-                                                name,
-                                                select_name,
-                                                in_set=1)()
-            else:
-                # Generate the page to show when the user clicks the
-                # "Add..." button.  Generate a popup page that contains
-                # controls for designating a single value of the
-                # contained field type, which is the element that is
-                # being added to the set.
-                add_page = SetPopupPage(self, name, select_name)()
-            # Get a URL for the page.
-            url = qm.web.cache_page(add_page).AsUrl()
-            # Construct the controls for manipulating the set.
-            form = web.make_set_control("form",
-                                        field_name=name,
-                                        add_page=url,
-                                        select_name=select_name,
-                                        initial_elements=initial_elements,
-                                        window_width=600,
-                                        window_height=400)
-            # All done.
-            return form
+                html += "<tr><td>"
+                element_name = name + "_%d" % element_number
+                checkbox_name = element_name + "_remove"
+                if style == "edit":
+                    html += \
+                       ('''<input type="checkbox" name="%s" /></td><td>'''
+                        % checkbox_name)
+                html += contained_field.FormatValueAsHtml(element,
+                                                          style,
+                                                          element_name)
+                html += "</td></tr>\n"
+                element_number += 1
+            html += "</tbody></table>\n"
+            if style == "edit":
+                # The action field is used to keep track of whether the
+                # "Add" or "Remove" button has been pushed.  It would be
+                # much nice if we could use JavaScript to update the
+                # table, but Netscape 4, and even Mozilla 1.0, do not
+                # permit that.  Therefore, we have to go back to the server.
+                action_field \
+                    = '''<input type="hidden" name="%s" value=""
+                            default_value=""  />''' % name
+                add_button \
+                    = '''<input type="button" value="Add Another"
+                            onclick="%s.value = 'add'; submit();" />''' \
+                      % name
+                remove_button \
+                    = '''<input type="button" value="Remove Selected"
+                            onclick="%s.value = 'remove'; submit();" />''' \
+                      % name
+                button_table \
+                    = ('''<table border="0" cellpadding="0" cellspacing="0">
+                            <tbody>\n'''
+                       + " <tr><td>" + add_button + "</td></tr>\n"
+                       + " <tr><td>" + remove_button + "</td></tr>\n"
+                       + "</tbody></table>")
+                html += action_field + button_table
+            return html
 
 
-    def ParseFormValue(self, value):
+    def ParseFormValue(self, request, name):
+
+        values = []
+
         contained_field = self.GetContainedField()
-        # The value of a set field is is encoded as a comma-separated
-        # list of URL-encoded elements.
-        values = string.split(value, ",")
-        if values == [""]:
-            values = []
-        # Now decode the individual elements.
-        decoder = lambda value, field=contained_field: \
-                  field.FormDecodeValue(value)
-        return map(decoder, values)
 
+        # See if the user wants to add or remove elements to the set.
+        action = request[name]
 
-    def GenerateFormValue(self, value):
-        contained_field = self.GetContainedField()
-        result = []
-        for element in value:
-            result.append(contained_field.FormEncodeValue(element))
-        return string.join(result, ",")
-    
+        # Loop over the entries for each of the elements, adding them to
+        # the set.
+        element = 0
+        while 1:
+            element_name = name + "_%d" % element
+            if not request.has_key(element_name):
+                break
+            if not (action == "remove"
+                    and request.get(element_name + "_remove") == "on"):
+                v, r = contained_field.ParseFormValue(request, element_name)
+                values.append(v)
+                if r:
+                    redisplay = 1
+            element += 1
 
-    def FormEncodeValue(self, encoding):
-        raise NotImplementedError
+        # If the user requested another element, add to the set.
+        if action == "add":
+            redisplay = 1
+            values.append(contained_field.GetDefaultValue())
+        elif action == "remove":
+            redisplay = 1
+        else:
+            redisplay = 0
 
-
-    def FormDecodeValue(self, encoding):
-        raise NotImplementedError
+        # Remove entries from the request that might cause confusion
+        # when the page is redisplayed.
+        names = []
+        for n, v in request.items():
+            if n[:len(name)] == name:
+                names.append(n)
+        for n in names:
+            del request[n]
+            
+        return (values, redisplay)
 
 
     def GetValueFromDomNode(self, node, attachment_store):
@@ -1343,11 +1461,11 @@ class SetField(Field):
             <hr noshade size="2">
             <h4>Modifying This Field</h4>
         
-            <p>The list control shows the current elements of the set.
-            Each element is listed on a separate line.  Add a new
-            element to the set, click on the <i>Add...</i> button.  To
-            remove an element from the set, select it by clicking on it
-            in the list, and click on the <i>Remove</i> button.</p>
+            <p>Add a new element to the set by clicking the
+            <i>Add</i> button.  The new element will have a default
+            value until you change it.  To remove elements from the
+            set, select them by checking the boxes on the left side of
+            the form.   Then, click the <i>Remove</i> button.</p>
             """
         return help
 
@@ -1599,8 +1717,9 @@ class AttachmentField(Field):
             raise ValueError, style
 
 
-    def ParseFormValue(self, value):
-        return self.FormDecodeValue(value)
+    def ParseFormValue(self, request, name):
+
+        return (self.FormDecodeValue(request[name]), 0)
 
 
     def GenerateFormValue(self, value):
@@ -1817,22 +1936,6 @@ class EnumerationField(TextField):
             return string.split(enumerals, ",")
 
 
-    def ParseFormValue(self, value):
-        return value
-
-
-    def FormEncodeValue(self, encoding):
-        return str(encoding)
-
-
-    def FormDecodeValue(self, encoding):
-        return str(encoding)
-
-
-    def FormatValueAsText(self, value, columns=72):
-        return str(value)
-    
-
     def FormatValueAsHtml(self, value, style, name=None):
         # Use default value if requested.
         if value is None:
@@ -1848,15 +1951,14 @@ class EnumerationField(TextField):
                 # anything. 
                 self.FormatValueAsHtml(value, "brief", name)
             else:
-                return qm.web.make_select(name, enumerals, value,
-                                          str, self.FormEncodeValue)
+                return qm.web.make_select(name, enumerals, value, str, str)
 
         elif style == "hidden":
             return '<input type="hidden" name="%s" value="%s"/>' \
-                   % (name, str(value)) 
+                   % (name, value) 
 
         elif style == "full" or style == "brief":
-            return str(value)
+            return value
 
         else:
             raise ValueError, style
@@ -1987,7 +2089,7 @@ class TimeField(IntegerField):
             raise ValueError, style
 
 
-    def ParseFormValue(self, value):
+    def ParseTextValue(self, value):
         return qm.common.parse_time(value, default_local_time_zone=1)
 
 

@@ -69,6 +69,8 @@ class Target(qm.extension.Extension):
             on which it will run.""",
             default_value="")
         ]
+
+    kind = "target"
     
     def __init__(self, database, properties):
         """Construct a 'Target'.
@@ -211,7 +213,7 @@ class Target(qm.extension.Extension):
             result[Result.CAUSE] = "Missing context variable '%s'." % ce.key
             result["qmtest.missing_variable"] = ce.key
         except KeyboardInterrupt:
-            result.NoteException()
+            result.NoteException(cause = "Interrupted.")
             # We received a KeyboardInterrupt, indicating that the
             # user would like to exit QMTest.  Ask the execution
             # engine to stop.

@@ -7,7 +7,7 @@
   Contents:
     Document template for web page to display or edit a test or resource.
 
-  Copyright (C) 2001 CodeSourcery LLC.  
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
 
   For license terms see the file COPYING.
 
@@ -161,123 +161,6 @@
      </dtml-if> <!-- not field.IsProperty('hidden') -->
     </dtml-let>
     </dtml-in>
-
-    <dtml-comment><!--
-
-      For tests, there are some additional fields: prerequisite tests,
-      setup/cleanup resources, and categories.
-
-    --></dtml-comment>
-    <dtml-if expr="type is 'test'">
-
-    <tr><td colspan="2">&nbsp;</td></tr>
-
-     <tr class="heading">
-      <td colspan="2">
-       Additional Information
-      </td>
-     </tr>
-
-     <dtml-comment>
-      At present, categories are not used in QMTest, and are therefore
-      not displayed.
-
-      <tr class="field" valign="top">
-       <td>
-        <b>Categories</b>
-        <dtml-if expr="edit">
-          <p>Categories that apply to this test.</p>
-        </dtml-if>
-       </td>
-       <td>
-        <dtml-if expr="edit">
-         <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tr valign="top"><td>
-           <dtml-var expr="MakeCategoriesControl()">
-          </td><td>
-           <dtml-var expr="web.make_help_link('categories control')">
-          </td></tr>
-         </table>
-        <dtml-else>
-         <dtml-if expr="_.len(categories) > 0">
-          <dtml-in name="categories">
-          <dtml-let category=sequence-item>
-           <dtml-var expr="category"> 
-           <br />
-          </dtml-let>
-          </dtml-in>
-         <dtml-else>
-          None
-         </dtml-if>
-        </dtml-if>
-       </td>
-      </tr>
-    </dtml-comment>
-
-     <tr class="field" valign="top">
-      <td>
-       <b>Prerequisite Tests</b>
-       <dtml-if expr="edit">
-         <p>Tests that should be run before this one.</p>
-       </dtml-if>
-      </td>
-      <td>
-       <dtml-if expr="edit">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-         <tr valign="top"><td>
-          <dtml-var expr="MakePrerequisitesControl()">
-         </td><td>
-          <dtml-var expr="web.make_help_link('prerequisites control')">
-         </td></tr>
-        </table>
-       <dtml-else>
-        <dtml-if expr="_.len(prerequisites) > 0">
-         <dtml-in expr="prerequisites.keys()">
-         <dtml-let prerequisite=sequence-item>
-          <dtml-var expr="FormatId(prerequisite, 'test')"> 
-          (<dtml-var expr="prerequisites[prerequisite]">)
-          <br />
-         </dtml-let>
-         </dtml-in>
-        <dtml-else>
-         None
-        </dtml-if>
-       </dtml-if>
-      </td>
-     </tr>
-
-     <tr class="field" valign="top">
-      <td>
-       <b>Resources</b>
-       <dtml-if expr="edit">
-         <p>Setup and cleanup operations.</p>
-       </dtml-if>
-      </td>
-      <td>
-       <dtml-if expr="edit">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-         <tr valign="top"><td>
-          <dtml-var expr="MakeResourcesControl()">
-         </td><td>
-          <dtml-var expr="web.make_help_link('resources control')">
-         </td></tr>
-        </table>
-       <dtml-else>
-        <dtml-if expr="_.len(resources) > 0">
-         <dtml-in name="resources">
-         <dtml-let resource=sequence-item>
-          <dtml-var expr="FormatId(resource, 'resource')"> 
-          <br />
-         </dtml-let>
-         </dtml-in>
-        <dtml-else>
-         None
-        </dtml-if>
-       </dtml-if>
-      </td>
-     </tr>
-
-    </dtml-if>
 
     <tr><td colspan="2">&nbsp;</td></tr>
 

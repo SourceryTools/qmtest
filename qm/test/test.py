@@ -19,19 +19,21 @@
 
 from   __future__ import nested_scopes
 import qm
-from   qm.fields import *
+import qm.fields
 from   qm.test.cmdline import *
+import qm.test.result
 import qm.extension
 
 ########################################################################
 # Classes
 ########################################################################
 
-class TargetGroupField(TextField):
+class TargetGroupField(qm.fields.TextField):
     """A 'TargetGroupField' contains a target group pattern.
 
-    A 'TargetGroupField' is a 'TextField' that has been specialized to
-    store target group specifications."""
+    A target group pattern is a regular expression.  A test will only be
+    run on a particular target if the target's group is matched by the
+    test's target group pattern."""
 
     def GetDescription(self):
         """Return a description of this field.
@@ -40,7 +42,7 @@ class TargetGroupField(TextField):
         information about the field."""
 
         # Get the basic description.
-        desc = TextField.GetDescription(self)
+        desc = qm.fields.TextField.GetDescription(self)
         # Add a list of the available targets.
         desc = desc + "\n\n**Available Target Groups**\n\n"
         groups = map(lambda t: t.GetGroup(),
@@ -51,7 +53,6 @@ class TargetGroupField(TextField):
         return desc
 
 
-        
 class Test(qm.extension.Extension):
     """A 'Test' is run to check for correct behavior.
 
@@ -92,6 +93,22 @@ class Test(qm.extension.Extension):
     exception that is not caught within the method itself, QMTest will
     catch the exception and continue processing."""
 
+    class OutcomeField(qm.fields.EnumerationField):
+        """An 'OutcomeField' contains an outcome."""
+
+        def __init__(self, name, **properties):
+
+            qm.fields.EnumerationField.__init__(
+                self, name,
+                qm.test.result.Result.PASS,
+                [ qm.test.result.Result.PASS,
+                  qm.test.result.Result.FAIL,
+                  qm.test.result.Result.UNTESTED,
+                  qm.test.result.Result.ERROR ],
+                **properties)
+
+
+
     arguments = [
         qm.fields.TextField(
             name="id",
@@ -99,7 +116,7 @@ class Test(qm.extension.Extension):
             description="""The name of this test.
 
             A label naming the test.""",
-            hidden="true",
+            computed="true",
             default_value=""),
         TargetGroupField(
             name="target_group",
@@ -111,9 +128,43 @@ class Test(qm.extension.Extension):
             group name, the test can be run on targets in that
             group.""",
             default_value=".*"
-            )
+            ),
+        qm.fields.SetField(
+            qm.fields.TupleField(
+                "prerequisites",
+                (qm.fields.TextField(
+                    name = "test_id",
+                    title = "Test",
+                    description = """The name of the prerequisite test.""",
+                    not_empty_text = "true",
+                    ),
+                 OutcomeField(
+                    name = "outcome",
+                    title = "Outcome",
+                    description \
+                    = """The required outcome for the prerequisite test.
+                        
+                          If the outcome is different from that given here,
+                          the dependent test will not be run.""",
+                    )),
+                title="Prerequisite Tests",
+                description="""The tests on which this test depends.
+                
+                Every test can depend on other tests.  Those tests will be
+                run before this test.  If the prerequisite test does not
+                have the outcome indicated, this test will not be run.""",
+                )),
+        qm.fields.SetField(
+            qm.fields.TextField(
+                name = "resources",
+                title = "Resources",
+                description = """Resources on which this test depends.""",
+                not_empty_text = "true",
+                )),
     ]
 
+    kind = "test"
+    
     def Run(self, context, result):
         """Run the test.
 

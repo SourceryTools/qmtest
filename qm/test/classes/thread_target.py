@@ -44,12 +44,11 @@ class LocalThread(CommandThread):
 class ThreadTarget(Target):
     """A target implementation that runs tests in local threads.
 
-    This target starts one thread for each degree of concurrency.  Each
-    thread executes one test or resource function at a time."""
+    Each thread executes one test or resource at a time."""
 
     arguments = [
-        qm.fields.TextField(
-            name="concurrency",
+        qm.fields.IntegerField(
+            name="threads",
             title="Number of Threads",
             description="""The number of threads to devote to running tests.
 
@@ -58,7 +57,7 @@ class ThreadTarget(Target):
             tests to be run at once.  You can experiment with this
             value to find the number that results in the fastest
             execution.""",
-            default_value="1"),
+            default_value=1),
         ]
     
     def __init__(self, database, properties):
@@ -117,7 +116,7 @@ class ThreadTarget(Target):
         
         # Build the threads.
         self.__threads = []
-        for i in xrange(0, int(self.concurrency)):
+        for i in xrange(0, self.threads):
             # Create the new thread.
             thread = LocalThread(self)
             # Start the thread.

@@ -66,6 +66,9 @@ class QMTest:
     
     results_file_name = "results.qmr"
     """The default name of a file containing results."""
+
+    target_file_name = "targets"
+    """The default name of a file containing targets."""
     
     help_option_spec = (
         "h",
@@ -183,7 +186,7 @@ class QMTest:
         "T",
         "targets",
         "FILE",
-        "Load target specification from FILE."
+        "Use FILE as the target specification file."
         )
 
     random_option_spec = (
@@ -234,7 +237,7 @@ class QMTest:
         "EXTENSION-KIND",
         "Specify the kind of extension class."
         )
-    
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -249,6 +252,16 @@ class QMTest:
         ]
 
     commands_spec = [
+        ("create-target",
+         "Create (or update) a target specification.",
+         "NAME CLASS [ GROUP ]",
+         "Create (or update) a target specification.",
+         ( attribute_option_spec,
+           help_option_spec,
+           targets_option_spec
+           )
+         ),
+
         ("create-tdb",
          "Create a new test database.",
          "",
@@ -289,6 +302,7 @@ resource classes, etc.  The parameter to '--kind' can be one of 'test',
          """,
          (
            extension_kind_option_spec,
+           help_option_spec,
          )
         ),
 
@@ -390,17 +404,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     There is one fill-in, for a string, which should contain the version
     number."""
     
-    def __init__(self, program_name, argument_list,
+    def __init__(self, argument_list,
                  major_version, minor_version, release_version):
-        """Initialize a command.
+        """Construct a new QMTest.
 
         Parses the argument list but does not execute the command.
 
-        'program_name' -- The name of the program, as invoked by the
-        user.
-
-        'argument_list' -- A sequence conaining the specified argument
-        list.
+        'argument_list' -- The arguments to QMTest, not including the
+        initial argv[0].
 
         'major_version' -- The major version number.
 
@@ -412,12 +423,16 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         _the_qmtest = self
         
+        # Use the stadard stdout and stderr streams to emit messages.
+        self._stdout = sys.stdout
+        self._stderr = sys.stderr
+        
         # Build a trace object.
         self.__tracer = Tracer()
 
         # Build a command-line parser for this program.
         self.__parser = qm.cmdline.CommandParser(
-            program_name,
+            "qmtest",
             self.global_options_spec,
             self.commands_spec,
             self.conflicting_option_specs)
@@ -429,6 +444,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
           self.__command_options,
           self.__arguments
           ) = components
+
+        # If available, record the path to the qmtest executable.
+        self.__qmtest_path = os.environ.get("QM_PATH")
         
         # Record the version information.
         self._major_version = major_version
@@ -480,10 +498,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return default
 
 
-    def Execute(self, output):
+    def Execute(self):
         """Execute the command.
-
-        'output' -- The file object to send output to.
 
         returns -- 0 if the command was executed successfully.  1 if
         there was a problem or if any tests run had unexpected outcomes."""
@@ -492,16 +508,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # (The GNU coding standards require that the program take no
         # further action after seeing --version.)
         if self.HasGlobalOption("version"):
-            sys.stdout.write(self.__version_output % self._GetVersionString())
+            self._stderr.write(self.__version_output
+                               % self._GetVersionString())
             return 0
         # If the global help option was specified, display it and stop.
         if (self.GetGlobalOption("help") is not None 
             or self.__command == "help"):
-            output.write(self.__parser.GetBasicHelp())
+            self._stderr.write(self.__parser.GetBasicHelp())
             return 0
         # If the command help option was specified, display it and stop.
         if self.GetCommandOption("help") is not None:
-            self.__WriteCommandHelp(self.__command, output)
+            self.__WriteCommandHelp(self.__command)
             return 0
 
         # Handle the verbose option.  The verbose level is the number of
@@ -533,30 +550,22 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         error_occurred = 0
         
-        # Some commands don't require a test database.
+        # Dispatch to the appropriate method.
         if self.__command == "create-tdb":
-            self.__ExecuteCreateTdb(output, db_path)
-        elif self.__command == "extensions":
-            self.__ExecuteExtensions(output)
-        elif self.__command == "register":
-            self.__ExecuteRegister(output)
-        else:
-            # For the rest of the commands, we need to open the test
-            # database first.  If opening the database fails, an
-            # exception will be thrown and an appropriate error message
-            # issued.
-            self.GetDatabase()
+            self.__ExecuteCreateTdb(db_path)
+            return 0
+        
+        method = {
+            "create-target" : self.__ExecuteCreateTarget,
+            "extensions" : self.__ExecuteExtensions,
+            "gui" : self.__ExecuteServer,
+            "register" : self.__ExecuteRegister,
+            "remote" : self.__ExecuteRemote,
+            "run" : self.__ExecuteRun,
+            "summarize": self.__ExecuteSummarize,
+            }[self.__command]
 
-            # Dispatch to the appropriate method.
-            method = {
-                "gui": self.__ExecuteServer,
-                "remote" : self.__ExecuteRemote,
-                "run" : self.__ExecuteRun,
-                "summarize": self.__ExecuteSummarize,
-                }[self.__command]
-            error_occurred = method(output)
-
-        return error_occurred
+        return method()
 
 
     def GetDatabase(self):
@@ -568,18 +577,67 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return self.__database
 
 
+    def GetTargetFileName(self):
+        """Return the path to the file containing target specifications.
+
+        returns -- The path to the file containing target specifications."""
+
+        # See if the user requested a specific target file.
+        target_file_name = self.GetCommandOption("targets")
+        if target_file_name:
+            return target_file_name
+        # If there was no explicit option, use the "targets" file in the
+        # database directory.
+        return os.path.join(self.GetDatabase().GetConfigurationDirectory(),
+                            self.target_file_name)
+    
+
+    def GetTargetsFromFile(self, file_name):
+        """Return the 'Target's specified in 'file_name'.
+
+        returns -- A list of the 'Target' objects specified in the
+        target specification file 'file_name'."""
+
+        try:
+            document = qm.xmlutil.load_xml_file(file_name)
+            targets_element = document.documentElement
+            if targets_element.tagName != "targets":
+                raise QMException, \
+                      qm.error("could not load target file",
+                               file = file_name)
+            targets = []
+            for node in targets_element.getElementsByTagName("extension"):
+                # Parse the DOM node.
+                target_class, arguments \
+                    = (qm.extension.parse_dom_element
+                       (node,
+                        lambda n: get_extension_class(n, "target",
+                                                      self.GetDatabase())))
+                # Build the target.
+                target = target_class(self.GetDatabase(), arguments)
+                # Accumulate targets.
+                targets.append(target)
+
+            return targets
+        except Context:
+            raise QMException, \
+                  qm.error("could not load target file",
+                           file=file_name)
+
+        
+        
     def GetTargets(self):
         """Return the 'Target' objects specified by the user.
 
         returns -- A sequence of 'Target' objects."""
 
         if self.targets is None:
-            file_name = self.GetCommandOption("targets", None)
-            if file_name is None:
-                # No target file specified.  We'll use a single
-                # 'ThreadTarget' for running tests locally.  But perhaps a
-                # concurrency value was specified.
-                concurrency = self.GetCommandOption("concurrency", None)
+            file_name = self.GetTargetFileName()
+            if os.path.exists(file_name):
+                self.targets = self.GetTargetsFromFile(file_name)
+            else:
+                # The target file does not exist.
+                concurrency = self.GetCommandOption("concurrency")
                 if concurrency is None:
                     # No concurrency specified.  Run single-threaded.
                     concurrency = 1
@@ -597,45 +655,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 arguments["group"] = "local"
                 if concurrency > 1:
                     class_name = "thread_target.ThreadTarget"
-                    arguments["concurrency"] = str(concurrency)
+                    arguments["threads"] = concurrency
                 else:
                     class_name = "serial_target.SerialTarget"
                 target_class \
                     = get_extension_class(class_name,
                                           'target', self.GetDatabase())
                 self.targets = [ target_class(self.GetDatabase(), arguments) ]
-            else:
-                try:
-                    document = qm.xmlutil.load_xml_file(file_name)
-                except:
-                    raise QMException, \
-                          qm.error("could not load target file",
-                                   file=file_name)
-                targets_element = document.documentElement
-                assert targets_element.tagName == "targets"
-                self.targets = []
-                for node in targets_element.getElementsByTagName("target"):
-                    # Extract standard elements.
-                    name = qm.xmlutil.get_child_text(node, "name")
-                    class_name = qm.xmlutil.get_child_text(node, "class")
-                    group = qm.xmlutil.get_child_text(node, "group")
-                    # Extract arguments.
-                    arguments = {}
-                    arguments["name"] = name
-                    arguments["group"] = group
-                    for property_node in node.getElementsByTagName("property"):
-                        property_name = property_node.getAttribute("name")
-                        value = qm.xmlutil.get_dom_text(property_node)
-                        arguments[property_name] = value
-
-                    # Find the target class.
-                    target_class = get_extension_class(class_name,
-                                                       'target',
-                                                       self.GetDatabase())
-                    # Build the target.
-                    target = target_class(self.GetDatabase(), arguments)
-                    # Accumulate targets.
-                    self.targets.append(target)
             
         return self.targets
         
@@ -695,6 +721,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return context
 
 
+    def GetExecutablePath(self):
+        """Return the path to the QMTest executable.
+
+        returns -- A string giving the path to the QMTest executable.
+        This is the path that should be used to invoke QMTest
+        recursively.  Returns 'None' if the path to the QMTest
+        executable is uknown."""
+
+        return self.__qmtest_path
+    
+    
     def _GetVersionString(self):
         """Return the version string for this version of QMTest.
 
@@ -707,8 +744,27 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             version_string += ".%d" % self._release_version
         return version_string
         
+
+    def __GetAttributeOptions(self):
+        """Return the attributes specified on the command line.
+
+        returns -- A dictionary mapping attribute names (strings) to
+        values (strings).  There is an entry for each attribute
+        specified with '--attribute' on the command line."""
+
+        # There are no attributes yet.
+        attributes = {}
+
+        # Go through the command line looking for attribute options.
+        for option, argument in self.__command_options:
+            if option == "attribute":
+                name, value = qm.common.parse_assignment(argument)
+                attributes[name] = value
+
+        return attributes
+    
         
-    def __ExecuteCreateTdb(self, output, db_path):
+    def __ExecuteCreateTdb(self, db_path):
         """Handle the command for creating a new test database.
 
         'db_path' -- The path at which to create the new test database."""
@@ -716,23 +772,93 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Figure out what database class to use.
         class_name \
             = self.GetCommandOption("class", "xml_database.XMLDatabase")
-        # There are no attributes yet.
-        attributes = {}
-        # Process attributes provided on the command line.
-        for option, argument in self.__command_options:
-            if option == "attribute":
-                name, value = qm.common.parse_assignment(argument)
-                attributes[name] = value
+        # Get the attributes.
+        attributes = self.__GetAttributeOptions()
         # Create the test database.
         base.create_database(db_path, class_name, attributes)
         # Print a helpful message.
-        output.write(qm.message("new db message", path=db_path) + "\n")
+        self._stdout.write(qm.message("new db message", path=db_path) + "\n")
 
 
-    def __ExecuteExtensions(self, output):
-        """List the available extension classes.
+    def __ExecuteCreateTarget(self):
+        """Create a new target file."""
 
-        'output' -- The stream on which to output the results."""
+        # Make sure that the arguments are correct.
+        if (len(self.__arguments) < 2 or len(self.__arguments) > 3):
+            self.__WriteCommandHelp("create-target")
+            return 1
+
+        # Pull the required arguments out of the command line.
+        target_name = self.__arguments[0]
+        class_name = self.__arguments[1]
+        if (len(self.__arguments) > 2):
+            target_group = self.__arguments[2]
+        else:
+            target_group = ""
+
+        # Load the database.
+        database = self.GetDatabase()
+
+        # Load the target class.
+        target_class = qm.test.base.get_extension_class(class_name,
+                                                        "target",
+                                                        database)
+
+        # Get the dictionary of class arguments.
+        field_dictionary \
+            = qm.extension.get_class_arguments_as_dictionary(target_class)
+
+        # Get the name of the target file.
+        file_name = self.GetTargetFileName()
+        # If the file already exists, read it in.
+        if os.path.exists(file_name):
+            # Load the document.
+            document = qm.xmlutil.load_xml_file(file_name)
+            # If there is a previous entry for this target, discard it.
+            targets_element = document.documentElement
+            duplicates = []
+            for target_element \
+                in targets_element.getElementsByTagName("extension"):
+                for attribute \
+                    in target_element.getElementsByTagName("argument"):
+                    if attribute.getAttribute("name") == "name":
+                        name = field_dictionary["name"].\
+                               GetValueFromDomNode(attribute.childNodes[0],
+                                                   None)
+                        if name == target_name:
+                            duplicates.append(target_element)
+                            break
+            for duplicate in duplicates:
+                targets_element.removeChild(duplicate)
+                duplicate.unlink()
+        else:
+            document = (qm.xmlutil.create_dom_document
+                        (public_id = dtds["target"],
+                         dtd_file_name = "target.dtd",
+                         document_element_tag = "targets"))
+            targets_element = document.documentElement
+            
+        # Get the attributes.
+        attributes = self.__GetAttributeOptions()
+        attributes["name"] = target_name
+        attributes["group"] = target_group
+        attributes = qm.extension.validate_arguments(target_class,
+                                                     attributes)
+        
+        # Create the target element.
+        target_element = qm.extension.make_dom_element(target_class,
+                                                       attributes,
+                                                       document)
+        targets_element.appendChild(target_element)
+
+        # Write out the XML file.
+        document.writexml(open(self.GetTargetFileName(), "w"))
+        
+        return 0
+
+    
+    def __ExecuteExtensions(self):
+        """List the available extension classes."""
 
         try:
             database = self.GetDatabase()
@@ -742,7 +868,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             database = None
 
         # Figure out what kinds of extensions we're going to list.
-        kind = self.GetCommandOption("kind", None)
+        kind = self.GetCommandOption("kind")
         kinds = ['test', 'resource', 'database', 'target']
         if kind:
             if kind not in kinds:
@@ -765,25 +891,23 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                     extension_class \
                         = qm.test.base.get_extension_class(n, kind, database)
                     description \
-                        += qm.test.base.get_class_description(extension_class,
+                        += qm.extension.get_class_description(extension_class,
                                                               brief=1)
                 except:
                     description += ("No description available: "
                                     "could not load class.")
                 description += "\n\n"
                 
-            output.write(qm.structured_text.to_text(description))
+            self._stdout.write(qm.structured_text.to_text(description))
             
 
-    def __ExecuteRegister(self, output):
-        """Register a new extension class.
-
-        'output' -- The stream on which to output the results."""
+    def __ExecuteRegister(self):
+        """Register a new extension class."""
 
         # Make sure that the KIND and CLASS were specified.
         if (len(self.__arguments) != 2):
-            self.__WriteCommandHelp("register", output)
-            return
+            self.__WriteCommandHelp("register")
+            return 1
         kind = self.__arguments[0]
         class_name = self.__arguments[1]
 
@@ -830,10 +954,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # module.  (Sometimes, there might be another module with the
         # same name in the path.  Telling the user where we've found
         # the module will help the user to deal with this situation.)
-        output.write(qm.structured_text.to_text
-                     (qm.message("loading class",
-                                 class_name = name,
-                                 file_name = found)))
+        self._stdout.write(qm.structured_text.to_text
+                           (qm.message("loading class",
+                                       class_name = name,
+                                       file_name = found)))
         
         # We have found the module.  Try loading it.
         try:
@@ -843,8 +967,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                                                  directories)
         except PythonException, pe:
             # The class could not be loaded.  Show a traceback.
-            output.write(qm.common.format_exception
-                         ((pe.exc_type, pe.exc_value, sys.exc_info()[2])))
+            self._stderr.write(qm.common.format_exception
+                               ((pe.exc_type, pe.exc_value,
+                                 sys.exc_info()[2])))
             raise QMException, \
                   qm.error("could not load extension class",
                            class_name = class_name)
@@ -879,8 +1004,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Write out the file.
         document.writexml(open(classes_file_name, "w"))
 
+        return 0
+
         
-    def __ExecuteSummarize(self, output):
+    def __ExecuteSummarize(self):
         """Read in test run results and summarize."""
 
         # Look up the specified format.
@@ -944,7 +1071,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         # Simulate the events that would have occurred during an
         # actual test run.
-        stream = TextResultStream(output, format, outcomes,
+        stream = TextResultStream(self._stdout, format, outcomes,
                                   self.GetDatabase(), suite_ids)
         for r in test_results:
             stream.WriteResult(r)
@@ -957,7 +1084,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return any_unexpected_outcomes
         
 
-    def __ExecuteRemote(self, output):
+    def __ExecuteRemote(self):
         """Execute the 'remote' command."""
 
         database = self.GetDatabase()
@@ -1012,7 +1139,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return 0
 
 
-    def __ExecuteRun(self, output):
+    def __ExecuteRun(self):
         """Execute a 'run' command."""
         
         database = self.GetDatabase()
@@ -1108,7 +1235,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # a results file.
         result_streams = []
         if format != "none":
-            stream = TextResultStream(output, format, expectations,
+            stream = TextResultStream(self._stdout, format, expectations,
                                       self.GetDatabase(), test_suites)
             result_streams.append(stream)
 
@@ -1118,7 +1245,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # User specified no output.
             result_file = None
         else:
-            result_file_name = self.GetCommandOption("output", None)
+            result_file_name = self.GetCommandOption("output")
             if result_file_name is None:
                 # By default, write results to a default file.
                 result_file_name = "results.qmr"
@@ -1158,7 +1285,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 result_file.close()
                                                     
 
-    def __ExecuteServer(self, output):
+    def __ExecuteServer(self):
         """Process the server command."""
 
         database = self.GetDatabase()
@@ -1227,7 +1354,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             qm.platform.open_in_browser(url)
             
         message = qm.message("server url", url=url)
-        qm.common.print_message(0, message + "\n")
+        sys.stderr.write(message + "\n")
 
         # Become a daemon, if appropriate.
         if self.GetCommandOption("daemon") is not None:
@@ -1263,15 +1390,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return 0
 
 
-    def __WriteCommandHelp(self, command, output):
-        """Write help information about 'command' on 'output'.
+    def __WriteCommandHelp(self, command):
+        """Write out help information about 'command'.
 
         'command' -- The name of the command for which help information
-        is required.
+        is required."""
 
-        'output' -- The stream on which to write the output."""
-        
-        output.write(self.__parser.GetCommandHelp(command))
+        self._stderr.write(self.__parser.GetCommandHelp(command))
         
 
     def __GetExpectedOutcomes(self):

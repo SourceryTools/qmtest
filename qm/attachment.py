@@ -41,6 +41,7 @@ program.  The 'temporary_store' global instance should be used."""
 # imports
 ########################################################################
 
+import atexit
 import common
 import mimetypes
 import os
@@ -220,7 +221,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         # data. 
         self.__path = common.make_temporary_directory()
         # On exit, clean up the temporary directory.
-        common.add_exit_function(self.__CleanUpTemporaryDirectory)
+        atexit.register(self.__CleanUpTemporaryDirectory)
 
 
     def GetData(self, location):

@@ -260,43 +260,6 @@ class QMTestPage(DefaultDtmlPage):
 
     
         
-class AddPrerequisitePage(QMTestPage):
-    """Page for specifying a prerequisite test to add."""
-
-    outcomes = Result.outcomes
-    """The list of possible test outcomes."""
-
-    def __init__(self, server, base_path):
-        # Initialize the base class.
-        QMTestPage.__init__(self, "add-prerequisite.dtml", server)
-        # Extract a list of all test IDs in the specified path. 
-        test_ids = server.GetDatabase().GetTestIds(base_path)
-        test_ids.sort()
-        # Store it for the DTML code.
-        self.test_ids = test_ids
-
-
-
-class AddResourcePage(QMTestPage):
-    """Page for specifying an resource to add."""
-
-    def __init__(self, server, resource_path):
-        """Construct a new 'AddResourcePage'.
-
-        'server' -- The 'QMTestServer' creating this page.
-
-        'resource_path' -- The path to search for eligible resources."""
-        
-        # Initialize the base class.
-        QMTestPage.__init__(self, "add-resource.dtml", server)
-        # Extract a list of all resource IDs in the specified path.
-        resource_ids = server.GetDatabase().GetResourceIds(resource_path)
-        resource_ids.sort()
-        # Store it for the DTML code.
-        self.resource_ids = resource_ids
-        
-
-
 class ContextPage(QMTestPage):
     """DTML page for setting the context."""
 
@@ -854,7 +817,7 @@ class NewItemPage(QMTestPage):
         for n in self.database.GetTestClassNames():
             c = qm.test.base.get_extension_class(n, self.type,
                                                  self.database)
-            d = qm.test.base.get_class_description(c, brief=1)
+            d = qm.extension.get_class_description(c, brief=1)
             desc = desc + "  * " + n + "\n\n    " +  d + "\n\n"
 
         return desc
@@ -945,8 +908,7 @@ class ShowItemPage(QMTestPage):
         'type' -- Either "test" or "resource".
 
         'field_errors' -- A map from field names to corresponding error
-        messages.  The values "_prerequisites", "_resources", and
-        "_categories" may also be used as keys."""
+        messages."""
 
         # Initialize the base class.
         QMTestPage.__init__(self, "show.dtml", server)
@@ -967,12 +929,6 @@ class ShowItemPage(QMTestPage):
 
         if type == "test" and not edit:
             self.run_menu_items.append(("This Test", "run_test();"))
-        
-        # Some extra attributes that don't apply to resources.
-        if self.type is "test":
-            self.prerequisites = item.GetPrerequisites()
-            self.resources = item.GetResources()
-            self.categories = item.GetCategories()
 
 
     def GetTitle(self):
@@ -1026,7 +982,7 @@ class ShowItemPage(QMTestPage):
 
         returns -- The description, formatted as HTML."""
 
-        d = qm.test.base.get_class_description(self.item.GetClass())
+        d = qm.extension.get_class_description(self.item.GetClass())
         return qm.web.format_structured_text(d)
 
 
@@ -1035,7 +991,7 @@ class ShowItemPage(QMTestPage):
 
         returns -- The brief description, formatted as HTML."""
 
-        d = qm.test.base.get_class_description(self.item.GetClass(),
+        d = qm.extension.get_class_description(self.item.GetClass(),
                                                brief=1)
         return qm.web.format_structured_text(d)
 
@@ -1071,70 +1027,6 @@ class ShowItemPage(QMTestPage):
         """Return the URL for submitting edits."""
 
         return self.request.copy("submit-" + self.type).AsUrl()
-
-
-    def MakePrerequisitesControl(self):
-        """Make controls for editing test prerequisites."""
-
-        # Encode the current prerequisites.  The first element of each
-        # option is user-visible; the second is the option value which
-        # we can parse back later.
-        options = []
-        for test_id, outcome in self.prerequisites.items():
-            options.append(("%s (%s)" % (test_id, outcome),
-                            "%s;%s" % (test_id, outcome)))
-        # Compute the URL for the popup window that allows the addition
-        # of more prerequisite tests.
-        url = qm.web.WebRequest("add-prerequisite",
-                                base=self.request,
-                                id=self.item.GetId()).AsUrl()
-        # Generate the controls.
-        return qm.web.make_set_control(form_name="form",
-                                       field_name="prerequisites",
-                                       select_name="_set_prerequisites",
-                                       add_page=url,
-                                       initial_elements=options,
-                                       rows=4,
-                                       window_height=480)
-
-
-    def MakeResourcesControl(self):
-        """Make controls for editing the resources associated with a test."""
-
-        # Encode the current resource values.
-        options = map(lambda ac: (ac, ac), self.resources)
-        # Generate the page for selecting the resource to add.
-        test_path \
-            = self.GetDatabase().LabelDirname(self.item.GetId())
-        add_page = AddResourcePage(self.GetServer(),
-                                   test_path)(self.request)
-        url = qm.web.cache_page(add_page).AsUrl()
-        # Generate the controls.
-        return qm.web.make_set_control(form_name="form",
-                                       field_name="resources",
-                                       select_name="_set_resources",
-                                       add_page=url,
-                                       initial_elements=options,
-                                       rows=4,
-                                       window_height=360)
-
-
-    def MakeCategoriesControl(self):
-        """Make controls for editing a test's categories."""
-
-        # Encode the current categories.
-        options = map(lambda cat: (cat, cat), self.categories)
-        # Generate the page for selecting the category to add.
-        add_page = QMTestPage("add-category.dtml")(self.request)
-        url = qm.web.cache_page(add_page).AsUrl()
-        # Generate the controls.
-        return qm.web.make_set_control(form_name="form",
-                                       field_name="categories",
-                                       select_name="_set_categories",
-                                       add_page=url,
-                                       initial_elements=options,
-                                       rows=4,
-                                       window_height=240)
 
 
     def MakeDeleteScript(self):
@@ -1559,7 +1451,6 @@ class QMTestServer(qm.web.WebServer):
         script_base = "/test/"
         # Register all our web pages.
         for name, function in [
-            ( "add-prerequisite", self.HandleAddPrerequisite ),
             ( "clear-results", self.HandleClearResults ),
             ( "create-resource", self.HandleShowItem ),
             ( "create-suite", self.HandleCreateSuite ),
@@ -1692,17 +1583,6 @@ class QMTestServer(qm.web.WebServer):
         server."""
 
         return self.__results_stream
-    
-
-    def HandleAddPrerequisite(self, request):
-        """Handle a request to add a prerequisite.
-
-        'request' -- A 'WebRequest' object."""
-
-        dirname = self.GetDatabase().LabelDirname(request["id"])
-        page = AddPrerequisitePage(self, dirname)
-                                   
-        return page(request)
     
 
     def HandleClearResults(self, request):
@@ -2281,13 +2161,7 @@ class QMTestServer(qm.web.WebServer):
         'class' -- The name of the test or resource class of this item.
 
         arguments -- Argument values are encoded in fields whose names start
-        with 'qm.fields.Field.form_field_prefix'.
-
-        'prerequisites' -- For tests, a set-encoded collection of
-        prerequisites.  Each prerequisite is of the format
-        'test_id;outcome'.
-
-        'resources' -- For tests, a set-encoded collection of resource IDs."""
+        with 'qm.fields.Field.form_field_prefix'."""
 
         if request.GetScriptName() == "submit-test":
             type = "test"
@@ -2310,10 +2184,10 @@ class QMTestServer(qm.web.WebServer):
         fields = get_class_arguments(item_class)
 
         # We'll perform various kinds of validation as we extract form
-        # fields.  Errors are placed into this map; later, if it's empty, we
-        # know there were no validation errors.
+        # fields.  Errors are placed into this map.
         field_errors = {}
-
+        redisplay = 0
+        
         # Loop over fields of the class, looking for arguments in the
         # submitted request.
         arguments = {}
@@ -2322,72 +2196,41 @@ class QMTestServer(qm.web.WebServer):
             # Construct the name we expect for the corresponding argument.
             field_name = field.GetName()
             form_field_name = field_prefix + field_name
-            try:
-                # Try to get the argument value.
-                value = request[form_field_name]
-            except KeyError:
+            if not request.has_key(form_field_name):
                 # The value for this field is missing.
                 message = qm.error("missing argument",
                                    title=field.GetTitle())
                 return qm.web.generate_error_page(request, message)
             # Parse the value for this field.
             try:
-                value = field.ParseFormValue(value)
+                value, r = field.ParseFormValue(request, form_field_name)
+                if r:
+                    redisplay = 1
+                arguments[field_name] = value
             except:
                 # Something went wrong parsing the value.  Associate an
                 # error message with this field.
                 message = str(sys.exc_info()[1])
                 field_errors[field_name] = message
-            else:
-                # All is well with this field.
-                arguments[field_name] = value
+                redisplay = 1
 
         if type is "test":
-            # Extract prerequisite tests.  
-            preqs = request["prerequisites"]
-            preqs = qm.web.decode_set_control_contents(preqs)
-            # Prerequisite tests are encoded as 'test_id:outcome'.  Unencode
-            # them and build a map from test ID to expected outcome.
-            prerequisites = {}
-            for preq in preqs:
-                # Unencode.
-                test_id, outcome = string.split(preq, ";", 1)
-                # Make sure this outcome is one we know about.
-                if not outcome in Result.outcomes:
-                    raise RuntimeError, "invalid outcome"
-                # Store it.
-                prerequisites[test_id] = outcome
-
-            # Extract resources.
-            resources = request["resources"]
-            resources = qm.web.decode_set_control_contents(resources)
-
-            # At present, categories are not used in QMTest, even
-            # though they are stored in the test database.
-            categories = []
-
             # Create a new test.
             item = TestDescriptor(
                     self.GetDatabase(),
                     test_id=item_id,
                     test_class_name=item_class_name,
-                    arguments=arguments,
-                    prerequisites=prerequisites,
-                    categories=categories,
-                    resources=resources)
+                    arguments=arguments)
 
         elif type is "resource":
             # Create a new resource.
             item = ResourceDescriptor(self.GetDatabase(),
                                       item_id, item_class_name, arguments)
 
-        # Were there any validation errors?
-        if len(field_errors) > 0:
-            # Yes.  Instead of processing the submission, redisplay the form
-            # with error messages.
+        # If necessary, redisplay the form.
+        if redisplay:
             request = request.copy(url="edit-" + type)
-            return ShowItemPage(self, item, 1, 0, type,
-                                field_errors)(request)
+            return ShowItemPage(self, item, 1, 0, type, field_errors)(request)
 
         # Store it in the database.
         if type is "test":

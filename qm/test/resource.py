@@ -77,9 +77,11 @@ class Resource(qm.extension.Extension):
             description="""The name of this resource.
 
             A label naming the resource.""",
-            hidden="true",
+            computed="true",
             default_value=""),
         ]
+
+    kind = "resource"
     
     def SetUp(self, context, result):
         """Set up the resource.

@@ -50,7 +50,7 @@ import traceback
 ########################################################################
 
 def print_error_message(message):
-    prefix = "%s: error: " % program_name
+    prefix = "qmtest: error: "
     message = qm.structured_text.to_text(str(message),
                                          indent=len(prefix))
     message = prefix + message[len(prefix):]
@@ -69,20 +69,17 @@ qm.diagnostic.load_messages("test")
 # Load RC options.
 qm.rc.Load("test")
                                                        
-program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
-
 try:
     # Parse the command line.
-    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:],
+    command = qm.test.cmdline.QMTest(sys.argv[1:],
                                      major_version, minor_version,
                                      release_version)
     # Execute the command.
-    exit_code = command.Execute(sys.stdout)
+    exit_code = command.Execute()
 except qm.cmdline.CommandError, msg:
     print_error_message(msg)
     sys.stderr.write(
-        "Run '%s --help' to get instructions about how to use QMTest.\n"
-        % program_name)
+        "Run 'qmtest --help' to get instructions about how to use QMTest.\n")
     exit_code = 2
 except qm.common.QMException, msg:
     print_error_message(msg)
@@ -107,7 +104,7 @@ except qm.platform.SignalException, se:
         raise
     
 # End the program.
-qm.exit(exit_code)
+sys.exit(exit_code)
 
 ########################################################################
 # Local Variables:

@@ -212,16 +212,6 @@ def create_dom_document(public_id, dtd_file_name, document_element_tag):
         )
     
 
-def write_dom_document(document, stream):
-    """Write a DOM document.
-
-    'document' -- A DOM document node.
-
-    'stream' -- A file object."""
-
-    document.writexml(stream)
-
-
 __hyphen_regex = re.compile("(--+)")
 
 def __hyphen_replacement(match):

@@ -814,28 +814,6 @@ def ends_with(text, suffix):
     return text[-len(suffix):] == suffix
 
 
-def add_exit_function(exit_function):
-    """Register 'exit_function' to be called when the program exits.
-
-    'exit_function' -- A callable that takes no arguments."""
-
-    # Add the exit function to the list of things to do at exit.
-    _exit_functions.append(exit_function)
-
-
-def exit(code):
-    """Exit the program.
-
-    'code' -- The exit code to return."""
-
-    global _exit_functions
-    
-    # First run exit functions.
-    map(lambda fn: fn(), _exit_functions)
-    # Exit.
-    sys.exit(code)
-    
-
 def copy(object):
     """Make a best-effort attempt to copy 'object'.
 
@@ -916,22 +894,6 @@ def wrap_lines(text, columns=72, break_delimiter="\\", indent=""):
     lines = map(lambda l, i=indent: i + l, lines)
     # Rejoin lines.
     return string.join(lines, "\n")
-
-
-def print_message(min_verbose, text):
-    """Print a status message, if the verbose level is high enough.
-
-    'min_verbose' -- The minimum verbose level for which this message
-    will be printed.  A message with minimum verbose level of zero is
-    always printed; such messages should be used only in exceptional
-    situations, and certainly never in situations likely to be "batch
-    mode" use cases.
-
-    'text' -- The text of the message."""
-
-    if verbose >= min_verbose:
-        sys.stdout.write(text)
-        sys.stdout.flush()
 
 
 def format_time(time_secs, local_time_zone=1):
@@ -1135,15 +1097,6 @@ verbose = 0
 
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""
-
-# Functions that should be called when the program exits.  Each element
-# is a callable that takes no arguments.  The return value is ignored.
-_exit_functions = []
-
-# Foreign exit functions that were installed in 'sys.exitfunc' by non-QM
-# code.  These should be called after the QM-installed exit functions
-# are processed.
-_foreign_exit_functions = []
 
 # The next number to be used when handing out unqiue tag strings.
 _unique_tag = 0

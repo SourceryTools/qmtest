@@ -58,18 +58,12 @@ corresponding DTD public identifiers."""
 # functions
 ########################################################################
 
-def get_db_configuration_directory(db_path):
-    """Return the path to the test database's configuration directory."""
-    
-    return os.path.join(db_path, "QMTest")
-
-
 def _get_db_configuration_path(db_path):
     """Return the path to a test database's configuration file.
 
     'db_path' -- The path to the test database."""
 
-    return os.path.join(get_db_configuration_directory(db_path),
+    return os.path.join(qm.test.database.get_configuration_directory(db_path),
                         "configuration")
 
 
@@ -80,7 +74,8 @@ def is_database(db_path):
     if not os.path.isdir(db_path):
         return 0
     # A test database contains a configuration subdirectory.
-    if not os.path.isdir(get_db_configuration_directory(db_path)):
+    if not os.path.isdir(qm.test.database.get_configuration_directory
+                         (db_path)):
         return 0
     # It probably is OK.
     return 1
@@ -149,7 +144,7 @@ def create_database(db_path, class_name, attributes={}):
     if not os.path.isdir(db_path):
         os.mkdir(db_path)
     # Create the configuration directory.
-    config_dir = get_db_configuration_directory(db_path)
+    config_dir = qm.test.database.get_configuration_directory(db_path)
     if not os.path.isdir(config_dir):
         os.mkdir(config_dir)
 
@@ -159,7 +154,7 @@ def create_database(db_path, class_name, attributes={}):
         dtd_file_name="tdb_configuration.dtd",
         document_element_tag="tdb-configuration"
         )
-    # Create an element containign the class name.
+    # Create an element containing the class name.
     class_element = qm.xmlutil.create_dom_text_element(
         document, "class-name", class_name)
     document.documentElement.appendChild(class_element)
@@ -172,7 +167,7 @@ def create_database(db_path, class_name, attributes={}):
         document.documentElement.appendChild(element)
     # Write it.
     configuration_path = _get_db_configuration_path(db_path)
-    qm.xmlutil.write_dom_document(document, open(configuration_path, "w"))
+    document.writexml(open(configuration_path, "w"))
 
 
 def get_extension_directories(kind, database, database_path = None):
@@ -224,9 +219,10 @@ def get_extension_directories(kind, database, database_path = None):
         
     # Search the database configuration directory.
     if database:
-        dirs.append(get_db_configuration_directory(database.GetPath()))
+        dirs.append(database.GetConfigurationDirectory())
     elif database_path:
-        dirs.append(get_db_configuration_directory(database_path))
+        dirs.append(qm.test.database.get_configuration_directory
+                    (database_path))
         
     # Search the builtin directory, too.
     dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
@@ -416,24 +412,6 @@ def get_resource_class(class_name, database):
     return get_extension_class(class_name, 'resource', database)
 
 
-def get_class_description(klass, brief=0):
-    """Return a brief description of the extension class 'klass'.
-
-    'brief' -- If true, return a brief (one-line) description of the
-    extension class.
-    
-    returns -- A structured text description of 'klass'."""
-
-    # Extract the class's doc string.
-    doc_string = klass.__doc__
-    if doc_string is not None:
-        if brief:
-            doc_string = qm.structured_text.get_first(doc_string)
-        return doc_string
-    else:
-        return "&nbsp;"
-    
-    
 def load_outcomes(file):
     """Load test outcomes from a file.
 

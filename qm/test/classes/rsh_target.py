@@ -29,7 +29,7 @@ class RSHTarget(ProcessTarget):
 
     A 'RSHTarget' runs tests on a remote computer via a remote shell
     call.  The remote shell is in the style of 'rsh' and 'ssh'.  Using
-    the remote shell, the target invokes the 'qmtest-remote' script,
+    the remote shell, the target invokes the 'qmtest remote' script,
     which services commands sent via 'stdin', and replies via
     'stdout'."""
 

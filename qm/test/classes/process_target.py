@@ -17,6 +17,7 @@
 
 import cPickle
 import os
+import qm.test.cmdline
 from   qm.test.target import *
 
 ########################################################################
@@ -27,7 +28,7 @@ class ProcessTarget(Target):
     """A 'ProcessTarget' runs tests in child processes."""
 
     arguments = [
-        qm.fields.TextField(
+        qm.fields.IntegerField(
             name="processes",
             title="Number of Processes",
             description="""The number of processes to devote to running tests.
@@ -37,7 +38,7 @@ class ProcessTarget(Target):
             tests to be run at once.  You can experiment with this
             value to find the number that results in the fastest
             execution.""",
-            default_value="1"),
+            default_value=1),
         qm.fields.TextField(
             name="database_path",
             title="Database Path",
@@ -54,7 +55,7 @@ class ProcessTarget(Target):
 
             A string giving the file name of the 'qmtest' executable
             program.  This path is used to invoke QMTest.""",
-            default_value="/usr/local/bin/qmtest"),
+            default_value=""),
         ]
     
     def __init__(self, database, properties):
@@ -97,7 +98,7 @@ class ProcessTarget(Target):
 
         Target.Start(self, response_queue, engine)
 
-        for x in xrange(int(self.processes)):
+        for x in xrange(self.processes):
             # Create two pipes: one to write commands to the remote
             # QMTest, and one to read responses.
             command_pipe = os.pipe()
@@ -122,8 +123,17 @@ class ProcessTarget(Target):
                 database_path = self.database_path
                 if not database_path:
                     database_path = self.GetDatabase().GetPath()
-                # Determine the path to QMTest.
+                # See if the path to the QMTest binary was set in the
+                # target configuration.
                 qmtest_path = self.qmtest
+                if not qmtest_path:
+                    # If not, fall back to the value determined when
+                    # QMTest was invoked.
+                    qmtest_path \
+                        = qm.test.cmdline.get_qmtest().GetExecutablePath()
+                    # If there is no such value, use a default value.
+                    if not qmtest_path:
+                        qmtest_path = "/usr/local/bin/qmtest"
                 # Construct the command we want to invoke.
                 arg_list = (self._GetInterpreter() +
                             [ qmtest_path, '-D', database_path, "remote" ])

@@ -1,3 +1,77 @@
+2002-10-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (check-threads): Create the target file on the
+	fly.
+	(check-processes): Likewise.
+	* qm/attachment.py: Use atexit.
+	* qm/common.py (add_exit_function): Remove.
+	(exit): Likewise.
+	(print_message): Likewise.
+	(_exit_functions): Likewise.
+	(_foreign_exit_functions): Likewise.
+	* qm/extension.py (Extension.__init__): Use
+	get_class_arguments_as_dictionary.
+	(get_class_arguments): Rework.
+	(get_class_arguments_as_dictionary): Likewise.
+	(get_class_description): New method.
+	(get_extension_class_name): Likewise.
+	(validate_arguments): Likewise.
+	(make_dom_element): Likewise.
+	(parse_dom_element): Likewise.
+	* qm/fields.py: Substantial revisions.
+	(TupleField): New class.
+	(SetField): Rework display logic.
+	* qm/qm.sh (QM_PATH): Export it.
+	* qm/user.py (XmlDatabase.Write): Tidy.
+	* qm/web.py (WebServer.Bind): Use atexit.
+	* qm/xmlutil.py (write_dom_document): Remove.
+	* qm/test/base.py (get_db_configuration_directory): Remove.
+	(_get_db_configuration_path): Update.
+	(is_database): Likewise.
+	(create_database): Likewise.
+	(get_extension_directories): Tidy.
+	(get_class_description): Remove.
+	* qm/test/cmdline.py: Add create-target option.
+	(QMTest.GetTargetFileName): New method.
+	(QMTest.GetTargetsFromFile): Likewise.
+	(QMTest.GetTargets): Use them.
+	(QMTest.__ExecuteCreateTarget): New method.
+	* qm/test/database.py (TestDescriptor.__init__): Remove
+	prerequisites, categories, resources.
+	(TestDescriptor.GetCategories): Remove.
+	(Database.GetConfigurationDirectory): New method.
+	(get_configuration_directory): New function.
+	* qm/test/qmtest.py (print_error_message): Simplify.
+	Use sys.exit, not qm.exit.
+	* qm/test/resource.py (Resource.kind): New class variable.
+	* qm/test/target.py (Target.kind): Likewise.
+	(Target.RunTest): Provide more information about interrupted
+	tests.
+	* qm/test/test.py (Test.kind): New class variable.
+	(Test.arguments): Mark "id" as computed.  Add prerequisites.  Add
+	resources.
+	* qm/test/classes/process_target.py: Use integer fields where
+	possible.
+	* qm/test/classes/rsh_target.py: Fix typo in comment.
+	* qm/test/classes/thread_target.py: Use integer fields where
+	possible.
+	* qm/test/classes/xml_database.py: Use XML processing code from
+	the extension module throughout.
+	* qm/test/doc/reference.xml: Update.
+	* qm/test/share/dtml/show.dtml: Simplify.
+	* qm/test/share/dtml/add-category.dtml: Remove.
+	* qm/test/share/dtml/add-prerequisite.dtml: Remove.
+	* qm/test/share/dtml/add-resource.dtml: Remove.
+	* qm/test/share/messages/diagnostics.txt: Update.
+	* qm/test/web/web.py (AddPrerequisitePage): Remove.
+	(AddResourcePage): Remove.
+	(MakePrerequisitesControl): Likewise.
+	(MakeResourcesControl): Likewise.
+	(HandleAddPrerequisite): Likewise.
+	(QMTestServer.SubmitItem): Simplify.
+	* tests/QMTest/selfdb.py (QMSelftestDatabase._QualifyTests):
+	Adjust.
+	
 2002-09-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* README: Fix formatting.

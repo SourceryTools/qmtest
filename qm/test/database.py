@@ -26,7 +26,7 @@ from   qm.label import *
 from   qm.test.base import *
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class ItemDescriptor:
@@ -200,10 +200,7 @@ class TestDescriptor(ItemDescriptor):
                  database,
                  test_id,
                  test_class_name,
-                 arguments,
-                 prerequisites={},
-                 categories=[],
-                 resources=[]):
+                 arguments):
         """Create a new test instance.
 
         'database' -- The 'Database' containing this test.
@@ -215,22 +212,17 @@ class TestDescriptor(ItemDescriptor):
 
         'arguments' -- This test's arguments to the test class.
 
-        'prerequisites' -- A mapping from prerequisite test ID to
-        required outcomes.
-
-        'categories' -- A sequence of names of categories to which this
-        test belongs.
-
         'resources' -- A sequence of IDs of resources to run before and
         after the test is run."""
 
         # Initialize the base class.
         ItemDescriptor.__init__(self, database,
                                 test_id, test_class_name, arguments)
-        self.__prerequisites = prerequisites
-        self.__categories = categories
-        self.__resources = resources
-        
+
+        self.__prerequisites = {}
+        for p, o in self.GetArguments().get("prerequisites", []):
+            self.__prerequisites[p] = o
+            
         # Don't instantiate the test yet.
         self.__test = None
 
@@ -251,12 +243,6 @@ class TestDescriptor(ItemDescriptor):
         return self.GetItem()
 
 
-    def GetCategories(self):
-        """Return the names of categories to which the test belongs."""
-
-        return self.__categories
-    
-
     def GetPrerequisites(self):
         """Return a map from prerequisite test IDs to required outcomes."""
 
@@ -269,7 +255,7 @@ class TestDescriptor(ItemDescriptor):
         returns -- A sequence of resource names.  Each name indicates a
         resource that must be available to this test."""
 
-        return self.__resources
+        return self.GetArguments().get("resources", [])
 
 
     def GetTargetGroup(self):
@@ -508,6 +494,8 @@ class Database(qm.extension.Extension):
             default_value="python_label.PythonLabel"
             )
         ]
+
+    kind = "database"
     
     def __init__(self, path, arguments):
         """Construct a 'Database'.
@@ -934,6 +922,17 @@ class Database(qm.extension.Extension):
         return self.__path
     
 
+    def GetConfigurationDirectory(self):
+        """Return the directory containing configuration information.
+
+        returns -- The directory containing configuration information
+        for the database.
+
+        Derived classes must not override this method."""
+
+        return get_configuration_directory(self.GetPath())
+    
+
     def GetAttachmentStore(self):
         """Returns the 'AttachmentStore' associated with the database.
 
@@ -1045,6 +1044,19 @@ class Database(qm.extension.Extension):
         # Convert the maps to sequences.
         return test_ids.keys(), suite_ids.keys()
 
+########################################################################
+# Functions
+########################################################################
+
+def get_configuration_directory(path):
+    """Return the configuration directory for the database rooted at 'path'.
+
+    'path' -- The path to the test database.
+
+    returns -- The path to the configuration directory."""
+
+    return os.path.join(path, "QMTest")
+    
 ########################################################################
 # Local Variables:
 # mode: python

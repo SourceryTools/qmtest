@@ -96,6 +96,8 @@ qm_split_path() {
 # environment variable to that value.  If we have found QM in the
 # build directory, set the QM_BUILD environment variable to 1.  
 # Otherwise, set it to 0.
+#
+# Set QM_PATH to the path to this script.
 
 # Assume that QM is not running out of the build directory.
 QM_BUILD=${QM_BUILD:-0}
@@ -106,62 +108,61 @@ if test x"${QM_HOME}" = x; then
     # path to this script.
     if qm_is_absolute_path "$0"; then
 	# If $0 is an absolute path, use it.
-	qm_path="$0"
+	QM_PATH="$0"
     elif qm_contains_dirsep "$0"; then
 	# If $0 is something like `./qmtest', transform it into
 	# an absolute path.
-	qm_path="`pwd`/$0"
+	QM_PATH="`pwd`/$0"
     else
 	# Otherwise, search the PATH.
 	for d in `qm_split_path "${PATH}"`; do
 	    if test -f "${d}/$0"; then
-		qm_path="${d}/$0"
+		QM_PATH="${d}/$0"
 		break
 	    fi
 	done
 
 	# If we did not find this script, then we must give up.
-	if test x"${qm_path}" = x; then
+	if test x"${QM_PATH}" = x; then
 	    qm_could_not_find_qm
 	fi
 
 	# If the path we have found is a relative path, make it
 	# an absolute path.
-	if ! qm_is_absolute_path "${qm_path}"; then
-	    qm_path="`pwd`/${qm_path}"
+	if ! qm_is_absolute_path "${QM_PATH}"; then
+	    QM_PATH="`pwd`/${QM_PATH}"
 	fi
     fi
 
     # Iterate through the directories containing this script.
+    QM_HOME=`dirname "${QM_PATH}"`
     while true; do
-	# Go the next containing directory.  We do this at the
-	# beginning of the loop because $qm_path is the path
-	# to the script, not a directory containing it, on the
-	# first iteration.
-	qm_path=`dirname ${qm_path}`
 	# If there is a subdirectory called `lib/qm', then 
 	# we have found the root of the QM installation.
-	if test -d "${qm_path}/lib/qm"; then
-	    QM_HOME="${qm_path}"
+	if test -d "${QM_HOME}/lib/qm"; then
 	    break
 	fi
 	# Alternatively, if we have find a file called `qm/qm.sh',
 	# then we have found the root of the QM build directory.
-	if test -f "${qm_path}/qm/qm.sh"; then
-	    QM_HOME="${qm_path}"
+	if test -f "${QM_HOME}/qm/qm.sh"; then
 	    QM_BUILD=1
 	    break
 	fi
 	# If we have reached the root directory, then we have run
 	# out of places to look.
-	if test "x${qm_path}" = x/; then
+	if test "x${QM_HOME}" = x/; then
 	    qm_could_not_find_qm
 	fi
+	# Go the next containing directory.
+	QM_HOME=`dirname "${QM_HOME}"`
     done
+else
+    QM_PATH=$QM_HOME/bin/qmtest
 fi
 
-# Export QM_HOME so that we can find it from within Python.
+# Export QM_HOME and QM_PATH so that we can find them from within Python.
 export QM_HOME
+export QM_PATH
 # Export QM_BUILD so that QM knows where to look for other modules.
 export QM_BUILD
 

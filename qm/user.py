@@ -403,9 +403,7 @@ class XmlDatabase:
             group_element = create_dom_for_group(document, group)
             document_element.appendChild(group_element)
         # Write out the database.
-        user_db_file = open(self.__path, "w")
-        qm.xmlutil.write_dom_document(document, user_db_file)
-        user_db_file.close()
+        document.writexml(open(self.__path, "w"))
 
 
     # Methods for emulating a map object.

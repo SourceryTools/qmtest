@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import dircache
 import os
 import qm.common
@@ -86,7 +87,8 @@ class XMLDatabase(ExtensionDatabase):
             raise TestFileError, message
         
 
-    def WriteTest(self, test, comments=0):
+    def WriteTest(self, test):
+
         # Generate the document and document type for XML test files.
         document = qm.xmlutil.create_dom_document(
             public_id=qm.test.base.dtds["test"],
@@ -94,19 +96,18 @@ class XMLDatabase(ExtensionDatabase):
             document_element_tag="test"
             )
         # Construct the test element node.
-        test_id = test.GetId()
-        self.__MakeDomNodeForTest(document, document.documentElement,
-                                  test, comments)
+        document.documentElement \
+            = qm.extension.make_dom_element(test.GetClass(),
+                                            test.GetArguments(),
+                                            document)
         # Find the file system path for the test file.
-        test_path = self.GetTestPath(test_id)
+        test_path = self.GetTestPath(test.GetId())
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(test_path)
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
         # Write out the test.
-        test_file = open(test_path, "w")
-        qm.xmlutil.write_dom_document(document, test_file)
-        test_file.close()
+        document.writexml(open(test_path, "w"))
 
 
     def _GetResourceFromPath(self, resource_id, resource_path):
@@ -122,7 +123,8 @@ class XMLDatabase(ExtensionDatabase):
             raise TestFileError, message
         
 
-    def WriteResource(self, resource, comments=0):
+    def WriteResource(self, resource):
+
         # Generate the document and document type for XML resource files.
         document = qm.xmlutil.create_dom_document(
             public_id=qm.test.base.dtds["resource"],
@@ -130,19 +132,18 @@ class XMLDatabase(ExtensionDatabase):
             document_element_tag="resource"
             )
         # Construct the resource element node.
-        resource_id = resource.GetId()
-        self.__MakeDomNodeForResource(document, document.documentElement,
-                                    resource, comments)
+        document.documentElement \
+            = qm.extension.make_dom_element(resource.GetClass(),
+                                            resource.GetArguments(),
+                                            document)
         # Find the file system path for the resource file.
-        resource_path = self.GetResourcePath(resource_id)
+        resource_path = self.GetResourcePath(resource.GetId())
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(resource_path)
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
         # Write out the resource.
-        resource_file = open(resource_path, "w")
-        qm.xmlutil.write_dom_document(document, resource_file)
-        resource_file.close()
+        document.writexml(open(resource_path, "w"))
 
 
     def WriteSuite(self, suite):
@@ -176,9 +177,7 @@ class XMLDatabase(ExtensionDatabase):
         if not os.path.isdir(containing_directory):
             os.makedirs(containing_directory)
         # Write out the suite.
-        suite_file = open(suite_path, "w")
-        qm.xmlutil.write_dom_document(document, suite_file)
-        suite_file.close()
+        document.writexml(open(suite_path, "w"))
 
 
     # Helper functions.
@@ -213,38 +212,28 @@ class XMLDatabase(ExtensionDatabase):
         'document' -- A DOM document containing a single test element
         from which the test is constructed."""
         
-        # Make sure the document contains only a single test element.
-        test_nodes = document.getElementsByTagName("test")
-        assert len(test_nodes) == 1
-        test_node = test_nodes[0]
-        # Extract the pieces.
-        test_class_name = self.__GetClassNameFromDomNode(test_node)
-        # Obtain the test class.
-        try:
-            test_class = qm.test.base.get_test_class(test_class_name, self)
-        except ImportError:
-            raise UnknownTestClassError, \
-                  qm.error("unknown test class",
-                           test_class_name=test_class_name,
-                           test_id=test_id)
-
-        # Read the arguments.
-        if __debug__:
-            self._Trace("Reading arguments for %s." % test_id)
-        arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
-
-        categories = qm.xmlutil.get_child_texts(test_node,
-                                                "category")
-        prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
-        resources = self.__GetResourcesFromDomNode(test_node)
-        # Construct a test descriptor for it.
+        # Parse the DOM node.
+        test_class, arguments \
+            = (qm.extension.parse_dom_element
+               (document.documentElement,
+                lambda n : qm.test.base.get_test_class(n, self)))
+        test_class_name = qm.extension.get_extension_class_name(test_class)
+        # For backwards compatibility, look for "test" elements.
+        for p in document.documentElement.getElementsByTagName("prerequisite"):
+            if not arguments.has_key("prerequisites"):
+                arguments["prerequisites"] = []
+            arguments["prerequisites"].append((qm.xmlutil.get_dom_text(p),
+                                               p.getAttribute("outcome")))
+        # For backwards compatibility, look for "resource" elements.
+        for r in document.documentElement.getElementsByTagName("resource"):
+            if not arguments.has_key("resources"):
+                arguments["resources"] = []
+            arguments["resources"].append(qm.xmlutil.get_dom_text(r))
+        # Construct a descriptor for it.
         test = TestDescriptor(self,
                               test_id,
                               test_class_name,
-                              arguments,
-                              prerequisites,
-                              categories,
-                              resources)
+                              arguments)
         return test
         
 
@@ -256,276 +245,20 @@ class XMLDatabase(ExtensionDatabase):
         'document' -- A DOM document node containing a single resource
         element from which the resource object is constructed."""
 
-        # Make sure the document contains only a single test element.
-        resource_nodes = document.getElementsByTagName("resource")
-        assert len(resource_nodes) == 1
-        resource_node = resource_nodes[0]
-        # Extract the pieces.
-        resource_class_name = self.__GetClassNameFromDomNode(resource_node)
-        # Obtain the test class.
-        try:
-            resource_class = \
-               qm.test.base.get_resource_class(resource_class_name, self)
-        except KeyError:
-            raise UnknownResourceClassError, class_name
-
-        # Read the arguments.
-        if __debug__:
-            self._Trace("Reading arguments for %s." % resource_id)
-        arguments = self.__GetArgumentsFromDomNode(resource_node,
-                                                   resource_class)
-        # Construct a ResourceDescriptor for it.
-        return ResourceDescriptor(self, resource_id,
-                                  resource_class_name,
-                                  arguments)
+        # Parse the DOM node.
+        resource_class, arguments \
+            = (qm.extension.parse_dom_element
+               (document.documentElement,
+                lambda n : qm.test.base.get_resource_class(n, self)))
+        resource_class_name \
+            = qm.extension.get_extension_class_name(resource_class)
+        # Construct a descriptor for it.
+        resource = ResourceDescriptor(self,
+                                      resource_id,
+                                      resource_class_name,
+                                      arguments)
+        return resource
     
-
-    def __GetClassNameFromDomNode(self, node):
-        """Return the name of the test or resource class of a test.
-
-        'node' -- A DOM node for a test element.
-
-        raises -- 'UnknownTestClassError' if the test class specified
-        for the test is not among the registered test classes."""
-
-        # Make sure it has a unique class element child.
-        class_nodes = node.getElementsByTagName("class")
-        assert len(class_nodes) == 1
-        class_node = class_nodes[0]
-        # Extract the name of the test class.
-        return qm.xmlutil.get_dom_text(class_node)
-
-
-    def __GetArgumentsFromDomNode(self, node, klass):
-        """Return the arguments of a test or resource.
-
-        'node' -- A DOM node for a test or resource element.
-
-        'klass' -- The test or resource class.
-
-        returns -- A mapping from argument names to corresponding
-        values."""
-
-        result = {}
-        # The fields in the test class.
-        fields = qm.extension.get_class_arguments_as_dictionary(klass)
-        
-        # Loop over argument child elements.
-        for arg_node in node.getElementsByTagName("argument"):
-            # Extract the (required) name attribute.  
-            name = arg_node.getAttribute("name")
-            if __debug__:
-                self._Trace("Processing %s argument." % name)
-                
-            # Look for a field with the same name.
-            field = fields.get(name)
-            # If there isn't one, the XML is incorrect.
-            if not field:
-                raise TestFileError, \
-                      qm.error("xml invalid arg name", name=name)
-
-            if __debug__:
-                self._Trace("Field type is %s." % field.__class__.__name__)
-                
-            value_node \
-                 = filter(lambda n: n.nodeType == xml.dom.Node.ELEMENT_NODE,
-                          arg_node.childNodes)[0]
-            # The field knows how to extract its value from the value
-            # node.
-            value = field.GetValueFromDomNode(value_node,
-                                              self.GetAttachmentStore())
-            # Make sure the value is OK.
-            value = field.Validate(value)
-            # Store it.
-            result[field.GetName()] = value
-        # All done.
-        return result
-
-
-    def __GetPrerequisitesFromDomNode(self, test_node):
-        """Return the prerequisite tests for 'test_node'.
-
-        'test_node' -- A DOM node for a test element.
-
-        returns -- A mapping from prerequisite test ID to the outcome
-        required for that test."""
-        
-        # Extract the contents of all prerequisite elements.
-        results = {}
-        for child_node in test_node.getElementsByTagName("prerequisite"):
-            test_id = qm.xmlutil.get_dom_text(child_node)
-            # Get the required outcome.
-            outcome = child_node.getAttribute("outcome")
-            results[test_id] = outcome
-        return results
-
-
-    def __GetResourcesFromDomNode(self, test_node):
-        """Return the resources for 'test_node'.
-
-        'test_node' -- A DOM node for a test element.
-
-        returns -- A sequence of resource IDs."""
-        
-        # Extract the contents of all resource elements.
-        results = []
-        for child_node in test_node.getElementsByTagName("resource"):
-            resource_id = qm.xmlutil.get_dom_text(child_node)
-            results.append(resource_id)
-        return results
-
-
-    def __GetPropertiesFromDomNode(self, item_node):
-        """Return the properties for an 'item_node'.
-
-        'item_node' -- A DOM node for a test or resource element.
-
-        returns -- A map from property names to values."""
-
-        properties = {}
-        for child_node in item_node.getElementsByTagName("property"):
-            name = child_node.getAttribute("name")
-            value = qm.xmlutil.get_dom_text(child_node)
-            properties[name] = value
-        return properties
-
-
-    def __MakeDomNodeForTest(self, document, element, test, comments=0):
-        """Construct a DOM node for a test.
-
-        'document' -- The DOM document in which the node is being
-        constructed.
-
-        'element' -- A test element DOM node in which the test is
-        assembled.  If 'None', a new test element node is created.
-
-        'test' -- The 'TestDescriptor' for the test for which we are to
-        create a DOM node.
-
-        'comments' -- If true, add DOM comment nodes."""
-
-        test_id = test.GetId()
-
-        # Make an element node unless one was specified.
-        if element is None:
-            element = document.createElement("test")
-        else:
-            assert element.tagName == "test"
-
-        # Build common stuff.
-        self.__MakeDomNodeForItem(document, element, test, comments)
-        
-        # Build and add category elements.
-        for category in test.GetCategories():
-            cat_element = qm.xmlutil.create_dom_text_element(
-                document, "category", category)
-            element.appendChild(cat_element)
-
-        # Build and add prerequisite elements.  Loop over prerequisites.
-        for prerequisite_id, outcome in test.GetPrerequisites().items():
-            # The ID of the prerequisite test is stored as the element
-            # contents.
-            prq_element = qm.xmlutil.create_dom_text_element(
-                document, "prerequisite", prerequisite_id)
-            # The outcome is stored as an attribute.
-            prq_element.setAttribute("outcome", outcome)
-            element.appendChild(prq_element)
-
-        # Build and add resource elements.
-        for resource in test.GetResources():
-            act_element = qm.xmlutil.create_dom_text_element(
-                document, "resource", resource)
-            element.appendChild(act_element)
-
-        # All done.
-        return element
-
-
-    def __MakeDomNodeForResource(self,
-                                 document,
-                                 element,
-                                 resource,
-                                 comments=0):
-        """Construct a DOM node for a resource.
-
-        'document' -- The DOM document in which the node is being
-        constructed.
-
-        'element' -- A test element DOM node in which the test is
-        assembled.  If 'None', a new test element node is created.
-
-        'resource' -- The resource to write.
-
-        'comments' -- If true, add DOM comment nodes."""
-
-        # Make an element node unless one was specified.
-        if element is None:
-            element = document.createElement("resource")
-        else:
-            assert element.tagName == "resource"
-        # Build common stuff.
-        self.__MakeDomNodeForItem(document, element, resource, comments)
-        # All done.
-        return element
-
-
-    def __MakeDomNodeForItem(self, document, element, item, comments=0):
-        """Construct common DOM node elements for a test or resource.
-
-        'document' -- The DOM document in which the node is being
-        constructed.
-
-        'element' -- An element DOM node in which the test or resource is
-        assembled.
-
-        'item' -- The test or resource to write.  Only components common
-        to tests and resources are written.
-
-        'comments' -- If true, add DOM comment nodes."""
-
-        item_id = item.GetId()
-        item_class = item.GetClass()
-        item_class_name = item.GetClassName()
-
-        # Build and add the class element, which contains the test class
-        # name. 
-        class_element = document.createElement("class")
-        text = document.createTextNode(item_class_name)
-        class_element.appendChild(text)
-        element.appendChild(class_element)
-        
-        # Build and add argument elements, one for each argument that's
-        # specified for the item.
-        arguments = item.GetArguments()
-        for name, value in arguments.items():
-            arg_element = document.createElement("argument")
-            # Store the argument name in the name attribute.
-            arg_element.setAttribute("name", name)
-            # From the list of fields in the test class, find the one
-            # whose name matches this argument.  There should be exactly
-            # one. 
-            field = filter(lambda f, name=name: f.GetName() == name,
-                           qm.extension.get_class_arguments(item_class))
-            assert len(field) == 1
-            field = field[0]
-            # Add a comment describing the field, if requested.
-            if comments:
-                # Format the field description as text.
-                description = qm.structured_text.to_text(
-                    field.GetDescription(), indent=8, width=72)
-                # Strip off trailing newlines.
-                description = string.rstrip(description)
-                # Construct the comment, including the field title.
-                comment = "%s:\n%s" % (field.GetTitle(), description)
-                # Build and add a comment node.
-                comment = qm.xmlutil.sanitize_text_for_comment(comment)
-                comment_node = document.createComment(comment)
-                arg_element.appendChild(comment_node)
-            # Construct a node for the argument/field value itself.
-            value_node = field.MakeDomNodeForValue(value, document)
-            arg_element.appendChild(value_node)
-            element.appendChild(arg_element)
-
 
     def _GetSuiteFromPath(self, suite_id, path):
         """Load the test suite file at 'path' with suite ID 'suite_id'.
@@ -568,6 +301,7 @@ class XMLDatabase(ExtensionDatabase):
         tracer = qm.test.cmdline.get_qmtest().GetTracer()
         tracer.Write(message, "xmldb")
     
+
 
 class AttachmentStore(qm.attachment.AttachmentStore):
     """The attachment store implementation to use with the XML database.

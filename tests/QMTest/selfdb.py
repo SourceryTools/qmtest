@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import dircache
 import os
 import qm
@@ -363,22 +364,20 @@ class QMSelftestDatabase(Database):
         'test'   -- The test to be converted."""
 
         prereqs = test.GetPrerequisites()
-        qprereqs = {}
+        qprereqs = map(lambda x: (self.JoinLabels(parent, x[0]), x[1]),
+                       prereqs.items())
         resources = test.GetResources()
-        qresources = []
+        qresources = map(lambda r: self.JoinLabels(parent, r),
+                         resources)
 
-        for p in prereqs.keys():
-            qprereqs[self.JoinLabels(parent, p)] = prereqs[p]
-        for r in resources:
-            qresources.append(self.JoinLabels(parent, r))
+        arguments = test.GetArguments()
+        arguments["prerequisites"] = qprereqs
+        arguments["resources"] = qresources
 
         return TestDescriptor(self,
                               self.JoinLabels(parent, test.GetId()),
                               test.GetClassName(),
-                              test.GetArguments(),
-                              qprereqs,
-                              test.GetCategories(),
-                              qresources)
+                              arguments)
 
 
     def _QualifyResource(self, parent, resource):

@@ -343,8 +343,7 @@
    which you are running &qmtest;.  You may specify other targets by
    creating a target file, which lists the available targets and their
    attributes, and specifying the target file when you invoke
-   &qmtest-cmd;.  See <xref linkend="sec-target-files"/> for details
-   on writing and using target files.</para>
+   &qmtest-cmd;.</para>
 
    <para>Each target is a member of a single <firstterm
    id="def-target-group">target group</firstterm>.  All machines in
@@ -606,6 +605,81 @@
     <option>&dashdash;help</option> (<option>-h</option>) option after the
     command for a description of the command and a list of of available
     options for that command.</para>
+   </section>
+  </section>
+
+  <section id="sec-testcmd-create-target">
+   <title><command>&qmtest-cmd; create-target</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>Create a new target.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; create-target</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <arg choice="plain">
+      <replaceable>name</replaceable>
+     </arg>
+     <arg choice="plain">
+      <replaceable>class</replaceable>
+     </arg>
+     <arg choice="opt">
+      <replaceable>group</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+    <para>The <command>&qmtest-cmd; create-target</command> command
+    creates a new target.  A target is an entity that runs tests;
+    normally, a target corresponds to a particular machine.</para>
+
+    <para>The target's name and class must be specified.  An optional
+    group may also be specified.  When &qmtest; decides which target
+    to use to run a particular tests, it will select a target that
+    matches the test's requested target group.</para>
+
+    <para>The <command>create-target</command> command accepts these
+    options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term><option>-a</option> <replaceable>name=value</replaceable></term>
+      <term>
+       <option>&dashdash;attribute</option> 
+       <replaceable>name=value</replaceable>
+      </term>
+      <listitem>
+       <para>Set the target class argument
+       <replaceable>name</replaceable> to
+       <replaceable>value</replaceable>.  The set of arguments names
+       and valid values is dependent on the target class in use.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-T</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;targets</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>Write the target description to the indicated
+       <replaceable>file</replaceable>.  If there are already targets
+       listed in <replaceable>file</replaceable>, they will be
+       preserved, except that any target with the same name as the new
+       target will be removed.  If this option is not present, the
+       file used will be the <filename>QMTest/targets</filename> file
+       in the test database directory.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
    </section>
   </section>
 
@@ -1185,9 +1259,10 @@
       </term>
       <listitem>
        <para>Use targets specified in target specification file
-       <replaceable>file</replaceable>.  See <xref
-       linkend="sec-target-files"/> for a description of the target file
-       syntax.</para>
+       <replaceable>file</replaceable>.  If this option is not
+       present, the <filename>QMTest/targets</filename> in the test
+       database directory will be used.  If that file is not present,
+       the tests will be run in serial on the local machine.</para>
       </listitem>
      </varlistentry>
 
@@ -1577,15 +1652,6 @@
     </listitem>
 
     <listitem>
-     <para>A <firstterm
-     id="def-target-concurrency">concurrency</firstterm> value, which
-     must be a positive integer.  Most target classes support concurrent
-     execution of multiple tests on the target.  This number allows the
-     target specification to control how many tests are executed
-     simultaneously.</para>
-    </listitem>
-
-    <listitem>
      <para>Optionally, a target specification may include additional
      properties.  Properties are named and have string values.  Some
      target classes may use property information to control their
@@ -1596,66 +1662,6 @@
    </orderedlist>
 
   </section> <!-- sec-target-specifation -->
-
-  <section id="sec-target-files">
-   <title>Target Files</title>
-
-   <para>In a <firstterm id="def-target-file">target file</firstterm>,
-   you specify the computers or other test targets on which &qmtest; runs
-   tests.  Use the <link
-   linkend="opt-test-run-targets"><option>&dashdash;targets</option>
-   (<option>-T</option>) option</link> to the <command>&qmtest-cmd;
-   run</command> command to specify the target file.</para>
-
-   <para>A target file is an XML document containing elements
-   representing <link linkend="sec-target-specification">target
-   specifications</link>.  The document type is
-   <literal>-//Software&nbsp;Carpentry//QMTest&nbsp;Target&nbsp;V0.1//EN</literal>,
-   and the document element is <sgmltag
-   class="element">targets</sgmltag>.</para>
-
-   <para>Each target specification is represented by a 
-   <sgmltag class="element">target</sgmltag> element, and includes
-   <sgmltag class="element">name</sgmltag>, 
-   <sgmltag class="element">class</sgmltag>, 
-   <sgmltag class="element">group</sgmltag>, and 
-   <sgmltag class="element">concurrency</sgmltag> elements.  Additional
-   <sgmltag class="element">property</sgmltag> elements may provide
-   target properties.</para>
-
-   <para>For example, the following target file specifies two targets
-   for running tests.</para>
-
-   <programlisting>
-<![CDATA[<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE targets PUBLIC "-//Software Carpentry//QMTest Target V0.1//EN" "http://www.software-carpentry.com/qm/xml/target.dtd">
-<targets>
- <target>
-  <name>local</name>
-  <class>thread_target.ThreadTarget</class>
-  <group>i386-pc-linux-gnu</group>
-  <concurrency>2</concurrency>
- </target>
- <target>
-  <name>remote</name>
-  <class>rsh_target.RSHTarget</class>
-  <group>sparc-sun-solaris2.5.1</group>
-  <property name="host">sunshine</property>
-  <property name="arguments">-l test</property>
- </target>
-</targets>
-]]>
-  </programlisting>
-
-  <para>The first target is the <link
-  linkend="sec-thread-target">local</link> GNU/Linux computer.  Two
-  tests will be run at once on that computer.  The second target is a
-  remote computer running SPARC Solaris.  &qmtest; invokes tests on
-  the remote target using a <link
-  linkend="sec-remote-shell-target">remote shell</link> invocation.
-  The remote computer's name is "sunshine.</para>
-
-  </section> <!-- sec-target-files -->
 
   <section id="sec-target-classes">
    <title>Target Classes</title>

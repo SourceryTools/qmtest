@@ -19,6 +19,7 @@
 # imports
 ########################################################################
 
+import atexit
 import BaseHTTPServer
 import cgi
 import diagnostic
@@ -909,8 +910,6 @@ class WebServer(HTTPServer):
             self.server_address = (self.__address, self.__port)
             self.server_bind()
             self.server_activate()
-            qm.common.print_message(2, "Web server active on %s:%d.\n"
-                                    % self.GetServerAddress())
         except socket.error, error:
             error_number, message = error
             if error_number == errno.EADDRINUSE:
@@ -2438,7 +2437,7 @@ def cache_page(page_text, session_id=None):
         # Clean up the cache at exit.
         cleanup_function = lambda path=_page_cache_path: \
                            common.rmdir_recursively(path)
-        common.add_exit_function(cleanup_function)
+        atexit.register(cleanup_function)
 
     if session_id is None:
         # No path was specified.  Place the file in the top directory.
