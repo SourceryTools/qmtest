@@ -15,7 +15,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<section>
+<section id="sec-design-interfaces-td">
  <title>&M-TD;</title>
 
  <para>The actual &M-TD; used to tailor a kit may be composed from
@@ -33,7 +33,7 @@
  from the &D-tailor;, or from a probe.  Information about the needed
  probes is stored in the &M-TD; itself.  Additionally, if we have
  files that collect symbols, e.g, header files similar to
- &Q-autoconf;'s <filename class="headerfile">config.h</filename>, we
+ &Qautoconf;'s <filename class="headerfile">config.h</filename>, we
  need to store information about them, too.</para>
 
  <para>In normal operation, &qmconfig; creates a &M-TD;, sans values,
@@ -286,7 +286,7 @@ class Symbol:
  contains the class definitions for the tailoring database itself,
  illustrated in <xref linkend="fig-cl-tailor"></xref>.
  <programlisting>
-<![CDATA[ class TailorDB:
+<![CDATA[
 class MetaProbeSource:
 
     """Information about probe sources, including auxiliary

@@ -1,5 +1,14 @@
 2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
 
+
+	* doc/design/qmconfig/design.xml: Reorder some sections.
+	* doc/design/qmconfig/design-lm.xml: Add additional ids.
+	* doc/design/qmconfig/design-td.xml: Likewise.
+	* doc/design/qmconfig/design-probe.xml: Likewise.  Added rough
+	draft of probe database.
+
+2000-12-15  R. Lindsay Todd  <toddr@rpi.edu>
+
 	* doc/design/qmconfig/overview.xml: Remove /> sequences, so as to
 	not confuse psgml.
 	* doc/design/qmconfig/design-lm.xml: Likewise.

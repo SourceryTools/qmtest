@@ -15,7 +15,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<section><title>Language Module</title>
+<section id="sec-design-interfaces-lm">
+ <title>Language Module</title>
 
  <para>The language module, <classname
  role="module">lang_serv</classname>, is responsible for providing

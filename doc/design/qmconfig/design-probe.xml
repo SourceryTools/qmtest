@@ -15,7 +15,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<section><title>&M-PD;</title>
+<section id="sec-design-interfaces-probe">
+ <title>&M-PD;</title>
 
  <para>From a study of &Qautoconf;, we believe that several basic
  categories of probes are needed:</para>
@@ -153,6 +154,252 @@
  basis for the probe database, and this could lead to a distributed
  system wherein the latest available versions of probes are always
  used.</para>
+
+ <para><programlisting>
+<![CDATA[
+class QualifiedProbe:
+
+    """Class representing a qualified probe.  Probes may depend on
+    symbols, like other scripts and programs.  They also accept
+    parameters, which tailor the probe for particular uses (for
+    instance, specify a function for which the have_function probe
+    should test.  A probe that has been passed parameters is a
+    "qualified probe"."""
+
+
+    def GetProbeSource(self):
+
+        """Get a "ProbeSource" object representing this qualified
+        probe.
+
+        returns -- A "ProbeSource" object."""
+
+
+    def GetDefinedSymbols(self, probe_platform):
+
+        """Get the list of symbols defined by this probe.
+
+        'probe_platform' -- A name designating the scripting language
+        and other characteristics of the probe platform.
+
+        raise $$$ -- No script for 'probe_platform'.
+
+        returns -- List of Symbol objects These have already been
+        initialized with the appropriate "ProbeSource" objects."""
+
+
+    def GetRequiredSymbols(self, probe_platform):
+
+        """Get the list of symbols required by this probe.  These
+        symbols will need values before the probe script can be
+        executed.
+
+        'probe_platform' -- A name designating the scripting language
+        and other characteristics of the probe platform.
+
+        raise $$$ -- No script for 'probe_platform'.
+
+        returns -- List of Symbol objects."""
+
+
+    def GetScript(self, probe_platform):
+
+        """Get the script needed to execute this probe.
+
+        'probe_platform' -- A name designating the scripting language
+        and other characteristics of the probe platform.
+
+        raise $$$ -- No script for 'probe_platform'.
+
+        returns -- The script."""
+
+
+class Probe:
+
+    """Class representing a probe."""
+
+    def Qualify(self, probe_dp, probe_aux):
+
+        """Qualify this probe with the supplied parameters.
+
+        'probe_dp' -- The distinguished parameters to this probe.
+
+        'probe_aux' -- Auxiliary parameters for this probe, which may
+        come from a ProbeAuxDB.
+
+        raise $$$ -- Incomplete set of parameters, or spurious
+        parameters.
+
+        returns -- A qualified probe."""
+        
+
+    def GetPatternSet(self, prog_lang, set_name=None):
+
+        """Get a pattern for identifying symbols relating to this
+        probe.
+
+        'prog_lang' -- Name of the programming language for which we
+        need a pattern.
+
+        'set_name' -- Name of the pattern set.  Some programming
+        languages may define several sorts of symbols, e.g., for
+        matching magic header files, for matching preprocessor
+        symbols, etc.  Other languages may have a single pattern set,
+        in which case this parameter may be omitted.
+
+        returns -- A list of patterns.  These may be regular
+        expressions.  Really, they are whatever the language-specific
+        scanner requires."""
+
+
+    def GetName(self):
+
+        """Get the name of this probe.
+
+        returns -- The name of the probe."""
+
+
+class ProbeAuxDB:
+
+    """Database of auxiliary information for probes.  A probe is
+    selected by parsing symbol names, and may include certain
+    "distinguished" parameters to differentiate between similar uses
+    of the same probe.  (For instance, we probably want a single probe
+    to test for the existence of a function; we distinguish instances
+    with the function name.)  However, there may be additional
+    parameters needed to test for a function that should not be
+    overloaded into symbol names. (With the function test example, for
+    example, we may need to specify header files, link libraries, and
+    possibly a test program.)  These additional parameters can come
+    from the probe auxiliary database."""
+
+
+    def AddProbe(self, probe_name, probe_dp_types, probe_aux_types):
+
+        """Add information about a probe to the auxiliary probe
+        database.
+
+        'probe_name' -- The probe being added to the database.
+
+        'probe_dp_type' -- A dictionary mapping distinguished
+        parameter names to their types.
+
+        'probe_aux_types' -- A dictionary mapping auxiliary parameter
+        names to their types.
+
+        $$$ We need to decide how to represent these types...
+
+        raise 'KeyError' -- There already is probe information for
+        'probe_name' in this database.
+
+        returns -- None"""
+
+
+    def AddProbeParameters(self, probe_name, probe_dp, probe_aux):
+
+        """Add a set of parameters to a distinguished probe.
+
+        'probe_name' -- The probe for which information is being
+        added.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        'probe_aux' -- A mapping of auxiliary parameter names to
+        values.
+
+        raise 'KeyError' -- There is no information for 'probe_name'
+        with the specified parameters in this database."""
+
+
+    def GetProbeParameters(self, probe_name, probe_dp={}):
+
+        """Find the set of auxiliary parameters for a probe.
+
+        'probe_name' -- The name of the probe being checked.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        raise 'KeyError' -- There is no information for 'probe_name'
+        with the specified parameters in this database.
+
+        raise 'IndexError' -- One or more distinguished parameters for
+        'probe_name' are missing.
+
+        returns -- A dictionary mapping parameter names to values."""
+
+
+class ProbeDB:
+
+    """Base class for probe databases."""
+
+
+    def DeriveFrom(self, pdb):
+
+        """Add a base probe database to this database.  This
+        relationship persists until 'self' is closed.
+
+        'pdb' -- Probe database from which to derive probe information.
+
+        returns -- None"""
+
+
+    def Update(self, pdb):
+
+        """Update probes from another probe database (perhaps a master
+        probe repository).  This may add new probes to 'self'.
+
+        'pdb' -- The probe database from which to add or update
+
+        objects.
+
+        returns -- None"""
+
+
+    def Commit(self):
+
+        """Commit all changes to the actual database representing
+        'self'.
+
+        raise 'IOError' -- The database cannot be written.
+
+        returns -- None"""
+
+
+    def AddProbeAuxDB(self, padb):
+
+        """Add a ProbeAuxDB object to the list of auxiliary databases
+        used by this probe database.  This relationship persists until
+        'self' is closed. These databases are searched in the order
+        given for additional parameters.
+
+        'padb' -- The ProbeAuxDB being added to the list.
+
+        returns -- None"""
+
+
+    def AddProbe(self, probe):
+
+        """Add a Probe object to this database.
+
+        precondition -- There is not already a probe with the same
+        name as 'probe'.
+
+        'probe' -- The new probe object.
+
+        raise $$$ --
+
+        postcondition -- There is now a probe in 'self' whose name is
+        taken from 'probe'.
+
+        returns -- None"""
+
+
+    def ChooseProbe(self, symbol_name, prog_lang, set_name=None):
+
+        """Select a probe object."""
+]]></programlisting></para>
 
 </section>
 
