@@ -1,0 +1,22 @@
+Installation Instructions
+=========================
+
+Untar the source distribution:
+
+  gunzip qmtc-<version>.tar.gz
+  tar xf qmtc-<version>.tar
+
+These commands will create a directory called "qmtc-<version>".
+
+Add this directory to your "QMTEST_CLASS_PATH" environment variable.
+If you are using the Bourne shell:
+
+  QMTEST_CLASS_PATH="/path/to/qmtc-<version>:$QMTEST_CLASS_PATH"
+  export QMTEST_CLASS_PATH
+
+If you are using the C shell:
+
+  setenv QMTEST_CLASS_PATH "/path/to/qmtc-<version>:$QMTEST_CLASS_PATH"
+
+(This environment variable is just like the "PATH" variable, but lists
+the directories where QMTest looks for extension classes.)

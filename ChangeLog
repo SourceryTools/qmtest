@@ -1,5 +1,8 @@
 2002-03-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* README: New file.
+	* INSTALL: Likewise.
+
 	* compiler.py (CompilerExecutable): New class.
 	(Compiler): Do not inerit from RedirectedExecutable.
 	(Compiler.Compile): Use a CompilerExecutable.

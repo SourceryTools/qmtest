@@ -1,0 +1,26 @@
+QMTC
+====
+
+QMTC is a collection of QMTest (http://www.qmtest.com) classes that 
+enable compiler-testing.
+
+License
+-------
+
+QMTC is licensed under the GNU General Public License.  See the file
+COPYING for the exact text of the license.
+
+Installation
+------------
+
+See the file INSTALL.
+
+Additional Information
+----------------------
+
+For more information about this software, please contact:
+
+  info@codesourcery.com
+
+
+

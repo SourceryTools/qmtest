@@ -9,6 +9,8 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
+# For license terms see the file COPYING.
+#
 ########################################################################
 
 from   compiler import *
@@ -97,6 +99,7 @@ class CompiledExecutable(RedirectedExecutable):
 
         # Let the base class do what it needs to do.
         RedirectedExecutable._InitializeChild(self)
+
 
             
 class CompilationStep:

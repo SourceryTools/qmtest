@@ -9,6 +9,8 @@
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
+# For license terms see the file COPYING.
+#
 ########################################################################
 
 from   executable import *
