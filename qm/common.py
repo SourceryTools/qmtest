@@ -295,8 +295,35 @@ def get_host_name():
     """Return the name of this computer."""
 
     global __host_name
+
+    # FIXME:  Should we try the 'hostname' command here?
+
+    # Figure out the host name the first time this function is called.
     if __host_name is None:
-        __host_name = socket.gethostbyname_ex(socket.gethostname())[0]        
+        # First try to look up our own address in DNS.
+        try:
+            name = socket.gethostbyname_ex(socket.gethostname())[0]
+        except socket.error:
+            pass
+        # That didn't work.  Just use the local name.
+        if name is None:
+            try:
+                name = socket.gethostname()
+            except socket.error:
+                pass
+        # That didn't work either.  Check if the host name is stored in
+        # the environment.
+        if name is None:
+            try:
+                name = os.environ["HOSTNAME"]
+            except KeyError:
+                pass
+        # We're stumped.  Use localhost.
+        if name is None:
+            name = "localhost"
+        # Store the name for next time.
+        __host_name = name
+
     return __host_name
 
 
