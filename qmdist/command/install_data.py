@@ -31,10 +31,6 @@ class install_data(base.install_data):
         config = os.path.join(il.install_dir, 'qm/config.py')
         self.announce("generating %s" %(config))
         outf = open(config, "w")
-        outf.write("#the old way...\n")
-        outf.write("import os\n")
-        outf.write("os.environ['QM_BUILD']='0'\n")
-        outf.write("#the new way...\n")
         outf.write("version='%s'\n"%(self.distribution.get_version()))
         
         outf.write("\n")

@@ -2126,7 +2126,7 @@ def make_help_link(help_text_tag, label="Help", **substitutions):
     'substitutions' -- Substitutions to the help diagnostic."""
     
     # Construct the help text.
-    help_text = apply(diagnostic.help_set.Generate,
+    help_text = apply(diagnostic.get_help_set().Generate,
                       (help_text_tag, "help", None),
                       substitutions)
     # Convert it to HTML.

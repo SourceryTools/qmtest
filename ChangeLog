@@ -1,5 +1,27 @@
 2003-09-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in ($(SCRIPTS)): Don't set QM_BUILD.
+	* qm/__init__.py: Set common.is_installed.
+	* qm/common.py (get_share_directory): Don't use QM_BUILD.
+	(get_doc_directory): Likewise.
+	(is_installed): New variable.
+	* qm/diagnostic.py (__diagnostic_set): New variable.
+	(__help_set): Likewise.
+	(get_diagnostic_set): New function.
+	(get_help_set): Likewise.
+	(message): Use them.
+	(error): Likewise.
+	(warning): Likewise.
+	(load_messages): Likewise.
+	(__initialize_module): Remove.
+	(diagnostic_set): Likewise.
+	(help_set): Likewise.
+	* qm/qm.sh: Eliminate QM_BUILD.
+	* qm/web.py (make_help_link): Use diagnostic.get_help_set().
+	* qm/test/web/web.py (DefaultDtmlPage.__init__): Don't use
+	QM_BUILD.
+	* qmdist/command/install_data.py (install_data.run): Simplify.
+
 	* doc/qm-opl.xml: Remove Software Carpentry references.
 	* doc/manual/common-manual.xml: Likewise.
 	* qm/test/doc/manual.xml: Update version number.

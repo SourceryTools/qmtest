@@ -223,7 +223,7 @@ def get_share_directory(*components):
     """Return the path to a file in the QM data file directory."""
 
     home_dir = os.environ["QM_HOME"]
-    if os.environ.get("QM_BUILD") == "1":
+    if not is_installed:
         return os.path.join(home_dir, "share", *components)
     else:
         return os.path.join(home_dir, "share", "qm", *components)
@@ -233,7 +233,7 @@ def get_doc_directory(*components):
     """Return a path to a file in the QM documentation file directory."""
 
     home_dir = os.environ["QM_HOME"]
-    if os.environ.get("QM_BUILD") == "1":
+    if not is_installed:
         return os.path.join(home_dir, "qm", *components)
     else:
         return os.path.join(home_dir, "share", "doc", "qm", *components)
@@ -831,6 +831,12 @@ def read_assignments(file):
 ########################################################################
 # variables
 ########################################################################
+
+is_installed = 1
+"""True if this application has been installed.
+
+True if the application has been installed.  False if the application is
+running out of the source tree."""
 
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""

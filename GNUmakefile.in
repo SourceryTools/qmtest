@@ -171,7 +171,6 @@ $(SCRIPTS): GNUmakefile
 	rm -rf $@
 	echo -e "@echo off\r" > $@
 	echo -e "set QM_HOME=C:\\progra~1\qm\r" >> $@
-	echo -e "set QM_BUILD=0\r" >> $@
 	echo -e "set PYTHONPATH=%C:\\Program Files\\QM\\$(RELLIBDIR);%PYTHONPATH%\r" >> $@
 	echo -n "$(PYTHONEXE)" \
                  \"%QM_HOME%\\$(RELLIBDIR)\\$(subst /,\\,$(basename $@)).py\" \

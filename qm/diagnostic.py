@@ -127,16 +127,53 @@ class DiagnosticSet:
         return message
 
 
+########################################################################
+# Variables
+########################################################################
+
+__diagnostic_set = None
+"""The 'DiagnosticSet' object from which diagnostics are generated."""
+
+__help_set = None
+"""The 'DiagnosticSet'object from which help text messages are
+generated."""
 
 ########################################################################
 # functions
 ########################################################################
 
+def get_diagnostic_set():
+    """Return the 'DiagnosticSet' containing warning/error messages.
+
+    returns -- The 'DiagnosticSet' containing warning/error messages."""
+
+    global __diagnostic_set
+    if __diagnostic_set is None:
+        __diagnostic_set = DiagnosticSet()
+        __diagnostic_set.ReadFromFile(qm.get_share_directory("diagnostics",
+                                                             "common.txt"))
+
+    return __diagnostic_set
+
+
+def get_help_set():
+    """Return the 'DiagnosticSet' for help messages.
+
+    returns -- The 'DiagnosticSet' containing help messages."""
+
+    global __help_set
+    if __help_set is None:
+        __help_set = DiagnosticSet()
+        __help_set.ReadFromFile(qm.get_share_directory("diagnostics",
+                                                       "common-help.txt"))
+
+    return __help_set
+
+    
 def message(tag, **substitutions):
     """Generate a diagnostic message."""
 
-    global diagnostic_set
-    return apply(diagnostic_set.Generate,
+    return apply(get_diagnostic_set().Generate,
                  (tag, "message", None),
                  substitutions)
 
@@ -144,8 +181,7 @@ def message(tag, **substitutions):
 def error(tag, output=None, **substitutions):
     """Generate or emit an error diagnostic."""
 
-    global diagnostic_set
-    return apply(diagnostic_set.Generate,
+    return apply(get_diagnostic_set().Generate,
                  (tag, "error", output, ),
                  substitutions)
 
@@ -153,8 +189,7 @@ def error(tag, output=None, **substitutions):
 def warning(tag, output=None, **substitutions):
     """Generate or emit a warning diagnostic."""
 
-    global diagnostic_set
-    return apply(diagnostic_set.Generate,
+    return apply(get_diagnostic_set().Generate,
                  (tag, "warning", output, ),
                  substitutions)
 
@@ -165,52 +200,24 @@ def load_messages(tool):
     'tool' -- A string giving the name of a QM tool."""
 
     # Load diagnostics.
-    if os.environ['QM_BUILD'] == '1':
+    if not qm.common.is_installed:
         diagnostic_file \
             = qm.get_share_directory("..", "qm", tool, "share",
                                      "messages", "diagnostics.txt")
     else:
         diagnostic_file \
           = qm.get_share_directory("messages", tool, "diagnostics.txt")
-    diagnostic_set.ReadFromFile(diagnostic_file)
+    get_diagnostic_set().ReadFromFile(diagnostic_file)
     # Load help messages.
-    if os.environ['QM_BUILD'] == '1':
+    if not qm.common.is_installed:
         diagnostic_file \
             = qm.get_share_directory("..", "qm", tool, "share",
                                      "messages", "help.txt")
     else:
         diagnostic_file \
             = qm.get_share_directory("messages", tool, "help.txt")
-    help_set.ReadFromFile(diagnostic_file)
+    get_help_set().ReadFromFile(diagnostic_file)
     
-    
-########################################################################
-# variables
-########################################################################
-
-diagnostic_set = DiagnosticSet()
-"""The 'DiagnosticSet' object from which diagnostics are generated."""
-
-help_set = DiagnosticSet()
-"""The 'DiagnosticSet'object from which help text messages are
-generated."""
-
-########################################################################
-# initialization
-########################################################################
-
-def __initialize_module():
-    # Load common diagnostics.
-    diagnostic_file = qm.get_share_directory("diagnostics", "common.txt")
-    diagnostic_set.ReadFromFile(diagnostic_file)
-
-    # Load common help messages.
-    help_file = qm.get_share_directory("diagnostics", "common-help.txt")
-    help_set.ReadFromFile(help_file)
-
-
-__initialize_module()
-
 ########################################################################
 # Local Variables:
 # mode: python

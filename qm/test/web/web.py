@@ -55,7 +55,7 @@ class DefaultDtmlPage(qm.web.DtmlPage):
         
         # In the build tree, tool-specific DTML pages are in a different
         # location.
-        if (os.environ['QM_BUILD'] == '1'
+        if (not qm.common.is_installed
             and os.path.dirname(dtml_template) == "test"):
             dtml_template \
                 = os.path.join("..", "..", "qm", "test", "share",

@@ -18,6 +18,8 @@
 ########################################################################
 
 import string
+from qm.common import *
+from qm.diagnostic import error, warning, message
 
 try:
     # The config file is created during "make install" by setup.py.
@@ -26,11 +28,9 @@ try:
     """The version of QM as a tuple of '(major, minor, release)'."""
 except:
     # If qm.config was not available, we are running out of the source tree.
+    common.is_installed = 0
     from qm.__version import version, version_info
-
-from qm.common import *
-from qm.diagnostic import error, warning, message
-
+    
 ########################################################################
 # Local Variables:
 # mode: python

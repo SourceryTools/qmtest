@@ -100,14 +100,9 @@ qm_split_path() {
 #    developed.
 #
 # After determining the root of the QM installation, set the QM_HOME
-# environment variable to that value.  If we have found QM in the
-# build directory, set the QM_BUILD environment variable to 1.  
-# Otherwise, set it to 0.
+# environment variable to that value.
 #
 # Set QM_PATH to the path to this script.
-
-# Assume that QM is not running out of the build directory.
-QM_BUILD=${QM_BUILD:-0}
 
 # Check to see if QM_HOME is set.
 if test x"${QM_HOME}" = x; then
@@ -152,7 +147,6 @@ if test x"${QM_HOME}" = x; then
 	# Alternatively, if we have find a file called `qm/qm.sh',
 	# then we have found the root of the QM build directory.
 	if test -f "${QM_HOME}/qm/qm.sh"; then
-	    QM_BUILD=1
 	    break
 	fi
 	# If we have reached the root directory, then we have run
@@ -163,25 +157,29 @@ if test x"${QM_HOME}" = x; then
 	# Go the next containing directory.
 	QM_HOME=`dirname "${QM_HOME}"`
     done
+fi
+
+# Figure out whether or not we are running out of the build directory.
+if test -f "${QM_HOME}/qm/qm.sh"; then
+    qm_build=1
 else
-    # The QM_HOME variable was set.
-    if test ${QM_BUILD} -eq 0; then
-	QM_PATH=$QM_HOME/bin/qmtest
-    else
-	QM_PATH=$QM_HOME/qm/test/qmtest
-    fi
+    qm_build=0
+fi
+
+if test ${qm_build} -eq 0; then
+    QM_PATH=$QM_HOME/bin/qmtest
+else
+    QM_PATH=$QM_HOME/qm/test/qmtest
 fi
 
 # Export QM_HOME and QM_PATH so that we can find them from within Python.
 export QM_HOME
 export QM_PATH
-# Export QM_BUILD so that QM knows where to look for other modules.
-export QM_BUILD
 
 # When running QMTest from the build environment, run Python without
 # optimization.  In a production environment, use optimization.
 if test x"${QM_PYTHON_FLAGS}" = x; then
-    if test ${QM_BUILD} -eq 1; then
+    if test ${qm_build} -eq 1; then
         QM_PYTHON_FLAGS=""
     else
         QM_PYTHON_FLAGS="-O"
@@ -217,7 +215,7 @@ else
 fi
 
 # Figure out where to find the main Python script.
-if test ${QM_BUILD} -eq 0; then
+if test ${qm_build} -eq 0; then
     qm_libdir="${QM_HOME}/${qm_rel_libdir}"
 else
     qm_libdir="${QM_HOME}/qm"
