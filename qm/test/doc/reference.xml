@@ -1662,16 +1662,35 @@
 
  </section> <!-- sec-ref-targets -->
 
+</chapter> <!-- chap-test-manual -->
+
+<chapter id="chap-test-extension">
+ <title>Extending QMTest</title>
+
+ <para>If the built-in functionality provided with QMTest does not
+ serve all of your needs, you can extend QMTest.  All extensions to
+ QMTest take the form of Python classes.  You can write new test
+ classes, resource classes, or database classes in this way.</para>
+
+ <para>The contents of the class differ depending on the kind of
+ extension you are creating.  For example, the methods that a new test
+ class must implement are different from those that must be provided
+ by a new database class.  In each case, however, you must create the
+ class and place it in a location where QMTest can find it.  The
+ following sections explain how to create extension classes.  The last
+ section in this chapter explains how to register your new extension
+ classes.</para>
+
  <section id="sec-writing-test-and-resource-classes">
   <title>Writing Test and Resource Classes</title>
 
   <para>You can implement many tests using the test classes supplied
   with &qmtest;.  However, expert test implementors may wish to create
-  new test classes to customize existing tests or implement new testing
-  behavior.  In addition, implementors will wish to create resource
-  classes, to add customized setup and cleanup behavior to tests and
-  groups of tests.</para>
-
+  new test classes to customize existing tests or implement new
+  testing behavior.  In addition, implementors will wish to create
+  resource classes to add customized setup and cleanup behavior to
+  tests and groups of tests.</para>
+  
   <section id="sec-writing-test-classes">
    <title>Writing Test Classes</title>
 
@@ -1849,53 +1868,6 @@
 
   </section> <!-- sec-writing-resource-classes -->
 
-  <section id="sec-specifying-test-class">
-   <title>Specifying a Test or Resource Class</title>
-
-   <para>To use your test or resource class, you must place the Python
-   module file containing it in a location where &qmtest; can find it.
-   &qmtest; looks in three places when loading module files for test and
-   resource classes:</para>
-
-   <itemizedlist>
-    <listitem>
-     <para>If the environment variable <envar>QMTEST_CLASS_PATH</envar>
-     is defined, &qmtest first checks any directories listed in it.
-     This value of this environment variable should be a list of
-     directories to check for the module file, in the same format as
-     the standard <envar>PATH</envar> environment variable.</para>
-    </listitem>
-
-    <listitem>
-     <para>A test database may specify locations to check for module
-     files when loading a class.  &qmtest; test database implementations
-     generally check the subdirectory named <filename>QMTest</filename>
-     in the top test database directory for test and resource classes.
-     (Note that &qmtest; may place other files in this directory; you
-     should not disturb them.)  Module files containing test and
-     resource classes may be placed in this directory.</para>
-    </listitem>
-
-    <listitem>
-     <para>Finally, &qmtest; checks a standard directory.  This
-     directory, installed with &qmtest;, contains modules with the
-     standard test classes described in <xref
-     linkend="sec-ref-classes"/>.</para>
-    </listitem>
-   </itemizedlist>
-
-   <para>You should generally place module files containing your test
-   classes in the test database's test class directory, unless you plan
-   to use the test classes in more than one test database.</para>
-
-   <para>Assuming the Python module file containing the test class is
-   located in one of the directories specified above, you can refer to
-   it using the syntax <classname>module.Class</classname>, where
-   <classname>module</classname> is the name of the module and
-   <classname>Class</classname> is the name of the class.</para>
-
-  </section> <!-- sec-specifying-test-class -->
-
  </section> <!-- sec-writing-test-and-resource-classes -->
 
  <section id="sec-ref-writing-database-classes">
@@ -1935,7 +1907,58 @@
 
  </section> <!-- sec-ref-writing-database-classes -->
 
-</chapter>
+  <section id="sec-registering-extension-class">
+   <title>Registering an Extension Class</title>
+
+   <para>To use your test or resource class, you must place the Python
+   module file containing it in a directory where &qmtest; can find
+   it.  &qmtest; looks in three places when loading
+   extension classes:</para>
+
+   <itemizedlist>
+    <listitem>
+     <para>If the environment variable <envar>QMTEST_CLASS_PATH</envar>
+     is defined, &qmtest first checks any directories listed in it.
+     This value of this environment variable should be a list of
+     directories to check for the module file, in the same format as
+     the standard <envar>PATH</envar> environment variable.</para>
+    </listitem>
+
+    <listitem>
+     <para>A test database may specify locations to check for module
+     files when loading a class.  &qmtest; test database implementations
+     generally check the subdirectory named <filename>QMTest</filename>
+     in the top test database directory for test and resource classes.
+     (Note that &qmtest; may place other files in this directory; you
+     should not disturb them.)  Module files containing test and
+     resource classes may be placed in this directory.</para>
+    </listitem>
+
+    <listitem>
+     <para>Finally, &qmtest; checks a standard directory.  This
+     directory, installed with &qmtest;, contains modules with the
+     standard test classes described in <xref
+     linkend="sec-ref-classes"/>.</para>
+    </listitem>
+   </itemizedlist>
+
+   <para>You should generally place module files containing your test
+   classes in the test database's test class directory, unless you plan
+   to use the test classes in more than one test database.</para>
+
+   <para>You must also add an entry to the
+   <filename>classes.qmc</filename> file in the directory that
+   contains your extension class.</para>
+
+   <para>You can refer to the new extension class using the syntax
+   <classname>module.Class</classname>, where
+   <classname>module</classname> is the name of the module and
+   <classname>Class</classname> is the name of the class.</para>
+
+  </section> <!-- sec-registering-extension-class -->
+
+</chapter> <!-- chap-test-extension -->
+
 <!--
   Local Variables:
   mode: sgml

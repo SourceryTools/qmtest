@@ -18,6 +18,14 @@ run.  See the manual for more information.
 QMTest now has a "ProcessTarget" target class that can be used to
 run tests in parallel on systems that do not support threads.
 
+QMTest now requires that all extension classes be listed in the
+classes.qmc file in the directory that contains the extension class.
+A side-effect of this change is that some old databases may no longer
+work with QMTest 2.0.  In particular, the "QMTest/configuration" file
+must now use "xmldb.Database", rather than "qm.test.xmldb.Database" in
+the class-name field.  You can manually edit the file to make this
+change.
+
 QM 1.1.5
 ========
 
