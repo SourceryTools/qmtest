@@ -138,9 +138,12 @@ $(PYTHON_PACKAGES_INSTALL):
 
 doc-install:
 	$(INSTALL_DIR) "$(INSTALLDOCDIR)"
-	$(INSTALL_DATA) README COPYING "$(INSTALLDOCDIR)"
+	$(INSTALL_DATA) README "$(INSTALLDOCDIR)"
+	$(INSTALL_DATA) COPYING "$(INSTALLDOCDIR)"
 	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/html"
-	$(INSTALL_DATA) doc/manual/html/*.html "$(INSTALLDOCDIR)/manual/html"
+	for x in doc/manual/html/*.html; do \
+		$(INSTALL_DATA) $$x "$(INSTALLDOCDIR)/manual/html"; \
+	done
 	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/print"
 	$(INSTALL_DATA) doc/manual/print/manual.pdf \
 		"$(INSTALLDOCDIR)/manual/print"

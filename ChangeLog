@@ -1,5 +1,12 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (doc-install): Do not assume $(INSTALL) understands
+	wildcards.
+	* scripts/qm-release (build_qm): Do not rely on tar to do 
+	uncompression.
+	(build_exec): Do not try to update batch files here.  Adjust
+	use of zip command.
+
 	* Makefile.in (SCRIPTS): Use backslashes on Windows.
 
 	* Makefile.in (install): Don't depend on install -D.
