@@ -89,7 +89,7 @@ class SignalException(common.QMException):
         if signal_name is not None:
             message = message + " (%s)" % signal_name
         # Initialize the base class.
-        RuntimeError.__init__(self, message)
+        common.QMException.__init__(self, message)
         # Store the signal number.
         self.__signal_number = signal_number
 
@@ -157,7 +157,7 @@ def send_email(body_text,
                                   "common")
     # Make sure it exists and is executable.
     if not os.access(sendmail_path, os.X_OK):
-        raise RuntimeError, \
+        raise common.QMException, \
               qm.error("sendmail error",
                        sendmail_path=sendmail_path)
 
@@ -452,7 +452,7 @@ def run_program(program,
             raise ProgramStoppedError, os.WSTOPSIG(exit_status)
         else:
             # Don't know what happened here.
-            raise RuntimeError, "unknown exit status"
+            raise common.QMException, "unknown exit status"
 
 
 def run_program_captured(program,
@@ -548,7 +548,7 @@ def get_user_name():
             # Yes.  Return the first part, the user name.
             return parts[0]
     # No match.
-    raise RuntimeError, "user not found in /etc/passwd"
+    raise common.QMException, "user not found in /etc/passwd"
 
 
 def get_host_name():

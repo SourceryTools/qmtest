@@ -1,3 +1,39 @@
+2002-09-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* README: Fix formatting.
+	* qm/common.py (FileSystemMutex): Remove.
+	* qm/common.py (open_temporary_file): Raise QMExceptions, not
+	other varieties of Exception.
+	(make_temporary_directory): Likewise.
+	* qm/fields.py (Field.GetProperty): Likewise.
+	* qm/platform.py (MailError): Derive from QMException.
+	* qm/platform_unix.py (SignalException.__init__): Fix typo.
+	(send_email): Raise QMExceptions.
+	(run_program): Likewise.
+	(run_program_captured): Likewise.
+	* qm/web.py: Likewise.
+	(AddressInUseError): Derive from QMException.
+	(PrivilegedPortError): Likewise.
+	(NoSessionError): Likewise.
+	(InvalidSessionError): Likewise.
+	* qm/test/base.py (create_database): Allow the creation of
+	databases in existing directories.
+	* qm/test/cmdline.py (qm.test.web.web): Import it.
+	(signal): Likewise.
+	(QMTest.daemon_option_spec): New class variable.
+	(QMTest.pid_file_option_spec): Likewise.
+	(QMTest.commands_spec): Add them.
+	(QMTest.ExecuteServer): Handle them.
+	* qm/test/qmtest.py: Handle SignalExceptions.
+	* qm/test/doc/reference.xml: Add documentation for --daemon and
+	--pid-file.
+	* qm/test/share/messages/diagnostics.txt: Remove db path exists
+	message.
+	* qm/test/util/README: New file.
+	* qm/test/util/svr4_init/red_hat_linux: Likewise.
+	* qm/test/web/web.py: Use qm.test.cmdline.QMTest instead of QMTest 
+	throughout.
+	
 2002-08-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/execution_engine.py (ExecutionEngine._CheckForResponse): 

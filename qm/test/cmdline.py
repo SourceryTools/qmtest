@@ -29,10 +29,12 @@ from   qm.test.execution_engine import *
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
 from   qm.trace import *
+import qm.test.web.web
 import qm.xmlutil
 import Queue
 import random
 from   result import *
+import signal
 import string
 import sys
 
@@ -128,6 +130,13 @@ class QMTest:
         "Read context from a file (- for stdin)."
         )
 
+    daemon_option_spec = (
+        None,
+        "daemon",
+        None,
+        "Run as a daemon."
+        )
+        
     port_option_spec = (
         "P",
         "port",
@@ -156,6 +165,13 @@ class QMTest:
         "Do not open a new browser window."
         )
 
+    pid_file_option_spec = (
+        None,
+        "pid-file",
+        "PATH",
+        "Process ID file name."
+        )
+    
     concurrent_option_spec = (
         "j",
         "concurrency",
@@ -251,9 +267,11 @@ class QMTest:
            concurrent_option_spec,
            context_file_spec,
            context_option_spec,
+           daemon_option_spec,
            help_option_spec,
            log_file_option_spec,
            no_browser_option_spec,
+           pid_file_option_spec,
            port_option_spec,
            targets_option_spec
            )
@@ -411,7 +429,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
           self.__command_options,
           self.__arguments
           ) = components
-
+        
         # Record the version information.
         self._major_version = major_version
         self._minor_version = minor_version
@@ -1157,7 +1175,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # address is used by default for security reasons; it restricts
         # access to the QMTest server to users on the local machine.
         address = self.GetCommandOption("address", default="127.0.0.1")
-        # Was a log file specified?
+
+        # If a log file was requested, open it now.
         log_file_path = self.GetCommandOption("log-file")
         if log_file_path == "-":
             # A hyphen path name means standard output.
@@ -1169,15 +1188,27 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Otherwise, it's a file name.  Open it for append.
             log_file = open(log_file_path, "a+")
 
+        # If a PID file was requested, create it now.
+        pid_file_path = self.GetCommandOption("pid-file")
+        if pid_file_path is not None:
+            # If a PID file was requested, but no explicit path was
+            # given, use a default value.
+            if not pid_file_path:
+                pid_file_path = qm.common.rc.Get("pid-file",
+                                                 "/var/run/qmtest.pid",
+                                                 "qmtest")
+            try:
+                pid_file = open(pid_file_path, "w")
+            except IOError, e:
+                raise qm.cmdline.CommandError, str(e)
+        else:
+            pid_file = None
+            
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
-        # Delay importing this module until absolutely necessary since
-        # the GUI requires threads, and, in general, we do not assume
-        # that threads are available.
-        import qm.test.web.web
         # Set up the server.
         server = qm.test.web.web.QMTestServer(database, port_number, address,
                                               log_file, targets, context)
@@ -1198,9 +1229,37 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         message = qm.message("server url", url=url)
         qm.common.print_message(0, message + "\n")
 
-        # Accept requests.
-        server.Run()
+        # Become a daemon, if appropriate.
+        if self.GetCommandOption("daemon") is not None:
+            # Fork twice.
+            if os.fork() != 0:
+                os._exit(0)
+            if os.fork() != 0:
+                os._exit(0)
+            # This process is now the grandchild of the original
+            # process.
 
+        # Write out the PID file.  The correct PID is not known until
+        # after the transformation to a daemon has taken place.
+        try:
+            if pid_file:
+                pid_file.write(str(os.getpid()))
+                pid_file.close()
+                
+            # Accept requests.
+            try:
+                server.Run()
+            except qm.platform.SignalException, se:
+                if se.GetSignalNumber() == signal.SIGTERM:
+                    # If we receive SIGTERM, shut down.
+                    pass
+                else:
+                    # Other signals propagate outwards.
+                    raise
+        finally:
+            if pid_file:
+                os.remove(pid_file_path)
+                
         return 0
 
 

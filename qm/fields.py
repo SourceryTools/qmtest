@@ -326,7 +326,7 @@ class Field:
                 for declaration in self.property_declarations:
                     if declaration.name == property_name:
                         return declaration.default_value
-                raise RuntimeError, \
+                raise common.QMException, \
                       "no default value for %s" % property_name
             else:
                 return default_value

@@ -128,107 +128,6 @@ class PythonException(QMException):
 # classes
 ########################################################################
 
-class FileSystemMutex:
-    """A mutual exclusion lock residing in the file system."""
-
-    retry_interval = 0.1
-    """The interval, in seconds, at which to retry a lock."""
-
-
-    def __init__(self, path):
-        "Create a new mutex at 'path'.  No lock is aquired."""
-
-        self.__path = path
-        self.__pid_filename = os.path.join(path, "pid")
-
-        # Perform sanity check.  If 'path' exists, it should be a
-        # lock held by another instance of this class.
-        if os.path.exists(self.__path):
-            if not os.path.isdir(self.__path):
-                raise RuntimeError, "path exists and isn't a directory"
-
-        self.__locked = 0
-
-
-    def GetPath(self):
-        """Return the path of the lock."""
-
-        return self.__path
-
-
-    def Lock(self, timeout=None):
-        """Aquire a lock.  If the mutex is already held, block.
-
-        'timeout' -- If 'None', the lock operation blocks
-        indefinitely, until the mutex is available.  If not 'None',
-        this is a timeout, in seconds, after which to give up.  If
-        zero, this function returns immediately if a lock cannot be
-        acquired.
-
-        raises -- 'MutexError' if there is a problem with the mutex.
-
-        raises -- 'MutexLockError' if a lock was not acquired."""
-
-        # Don't allow double locks.
-        if self.__locked:
-            return
-
-        start_time = time.time()
-        while 1:
-            parent_dir = os.path.dirname(self.__path)
-            # Make sure the parent directory exists.
-            if not os.path.isdir(parent_dir):
-                raise MutexError, \
-                      "parent directory %s doesn't exist" % parent_dir
-            # Check if the directory exists.
-            if not os.path.isdir(self.__path):
-                # If not, attempt to create it.
-                try:
-                    os.mkdir(self.__path)
-                    # Creation succeeded; the lock is ours.
-                    self.__locked = 1
-                    # Write our pid into a file in the directory.
-                    pid_file = open(self.__pid_filename, "w")
-                    pid_file.write("%d\n" % os.getpid())
-                    pid_file.close()
-                    return
-                except os.error:
-                    # Couldn't lock.
-                    pass
-            # Time out yet?
-            if timeout != None \
-               and (time.time() - start_time) >= timeout:
-                # Timed out.  Raise an exception.
-                raise MutexLockError, \
-                      "lock on %s timed out" % self.__path
-            # Sleep for a while before trying again.
-            time.sleep(self.retry_interval)
-
-        
-    def Unlock(self):
-        """Release a lock."""
-
-        # Don't try to unlock if we're not already locked.
-        if not self.__locked:
-            return
-
-        # Sanity checks.
-        assert os.path.isdir(self.__path)
-        assert os.path.isfile(self.__pid_filename)
-
-        # Unlock.
-        os.unlink(self.__pid_filename)
-        os.rmdir(self.__path)
-        self.__locked = 0
-
-
-    def IsLocked(self):
-        """Return true if a lock is held on the mutex."""
-
-        return self.__locked
-        
-        
-
 class MapReplacer:
     """A callable object to replace text according to a map."""
 
@@ -825,10 +724,11 @@ def open_temporary_file_fd():
                      0600)
     except:
         exc_info = sys.exc_info()
-        raise RuntimeError, qm.error("temp file error",
-                                     file_name=file_name,
-                                     exc_class=str(exc_info[0]),
-                                     exc_arg=str(exc_info[1]))
+        raise common.QMException, \
+              qm.error("temp file error",
+                       file_name=file_name,
+                       exc_class=str(exc_info[0]),
+                       exc_arg=str(exc_info[1]))
     return (file_name, fd)
 
 
@@ -852,10 +752,11 @@ def make_temporary_directory():
         os.mkdir(dir_path, 0700)
     except:
         exc_info = sys.exc_info()
-        raise RuntimeError, qm.error("temp dir error",
-                                     dir_path=dir_path,
-                                     exc_class=str(exc_info[0]),
-                                     exc_arg=str(exc_info[1]))
+        raise common.QMException, \
+              qm.error("temp dir error",
+                       dir_path=dir_path,
+                       exc_class=str(exc_info[0]),
+                       exc_arg=str(exc_info[1]))
     return dir_path
 
 

@@ -51,7 +51,7 @@ import whrandom
 try:
     import DocumentTemplate
 except ImportError, message:
-    raise qm.common.QMException, message
+    raise common.QMException, message
 
 ########################################################################
 # constants
@@ -64,22 +64,22 @@ session_id_field = "session"
 # exception classes
 ########################################################################
 
-class AddressInUseError(RuntimeError):
+class AddressInUseError(common.QMException):
     pass
 
 
 
-class PrivilegedPortError(RuntimeError):
+class PrivilegedPortError(common.QMException):
     pass
 
 
 
-class NoSessionError(RuntimeError):
+class NoSessionError(common.QMException):
     pass
 
 
 
-class InvalidSessionError(RuntimeError):
+class InvalidSessionError(common.QMException):
     pass
 
 

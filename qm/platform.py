@@ -27,7 +27,7 @@ import sys
 # classes
 ########################################################################
 
-class MailError(RuntimeError):
+class MailError(common.QMException):
 
     pass
 

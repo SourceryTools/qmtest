@@ -98,6 +98,13 @@ except KeyboardInterrupt:
     # User killed it; that's OK.
     sys.stderr.write("\nqmtest: Interrupted.\n")
     exit_code = 0
+except qm.platform.SignalException, se:
+    # SIGTERM indicates a request to shut down.
+    if se.GetSignalNumber() == signal.SIGTERM:
+        exit_code = 1
+    # Other signals should be handled earlier.
+    else:
+        raise
     
 # End the program.
 qm.exit(exit_code)

@@ -36,9 +36,6 @@ The "%(file)s" target file could not be loaded.
 @ db path doesn't exist
 "%(path)s" does not exist. 
 
-@ db path exists
-"%(path)s" already exists.
-
 @ dependency cycle
 This test depends on itself, either directly or by way of other tests.
 
@@ -136,7 +133,7 @@ QMTest searched for files named '%(module)s.py', '%(module)s.pyc', and
 You may need to set the 'QMTEST_CLASS_PATH' environment variable.
 
 @ new db message
-QMTest has created a new test database at %(path)s.
+QMTest has created a new test database at '%(path)s'.
 
 @ no db specified
 You must specify the location of the test database.  

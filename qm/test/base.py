@@ -145,13 +145,13 @@ def create_database(db_path, class_name, attributes={}):
     These attributes will be applied to the database when it is
     used."""
 
-    # Make sure the path doesn't already exist.
-    if os.path.exists(db_path):
-        raise QMException, qm.error("db path exists", path=db_path)
-    # Create an empty directory.
-    os.mkdir(db_path)
+    # Create the directory if it does not already exists.
+    if not os.path.isdir(db_path):
+        os.mkdir(db_path)
     # Create the configuration directory.
-    os.mkdir(get_db_configuration_directory(db_path))
+    config_dir = get_db_configuration_directory(db_path)
+    if not os.path.isdir(config_dir):
+        os.mkdir(config_dir)
 
     # Now create an XML document for the configuration file.
     document = qm.xmlutil.create_dom_document(

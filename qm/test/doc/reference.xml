@@ -638,12 +638,8 @@
     <para>The test database is created in the directory specified by
     <option>&dashdash;tdb</option> (<option>-D</option>) option or by
     setting the <envar>QMTEST_DB_PATH</envar> environment variable.
-    The path you specify for the new test database must not exist.
-    (If no database path is specified, &qmtest; assumes that the
-    current directory is the test database.  Since the current
-    directory already exists, &qmtest; will issue an error.
-    Therefore, when using the <command>create-tdb</command> command,
-    the database directory must be explicitly specified.)</para>
+    If no database path is specified, &qmtest; assumes that the
+    current directory is the test database.</para>
 
     <para>By default, &qmtest; creates a new test database that uses the
     standard XML-based implementation.  (See <xref
@@ -762,6 +758,15 @@
       </varlistentry>
 
       <varlistentry>
+       <term><option>&dashdash;daemon</option></term>
+       <listitem>
+        <para>Run the QMTest GUI as a daemon.  In this mode, QMTest
+        will detach from the controlling terminal and run in the 
+        background until explicitly shutdown.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
        <term><option>-j</option> <replaceable>count</replaceable></term>
        <term>
         <option>&dashdash;concurrency</option> <replaceable>count</replaceable>
@@ -781,6 +786,23 @@
         GUI.  &qmtest; will still print out the URL at which the server
         can be accessed.  You can then connect to this URL
         manually using the browser of your choice.</para>
+       </listitem>
+      </varlistentry>
+
+      <varlistentry>
+       <term>
+        <option>&dashdash;pid-file <replaceable>path</replaceable></option>
+       </term>
+       <listitem>
+        <para>Specify the <replaceable>path</replaceable> to which
+        the QMTest GUI will write its process ID.  This option is
+        useful if you want to run QMTest as a daemon.  If this option
+        is not provided, no PID file is written.  If you specify this
+        option, but <replaceable>path</replaceable> is the empty
+        string, QMTest will check the <filename>.qmrc</filename>
+        configuration file for a <literal>pid-file</literal> entry.
+        If there is no such entry, QMTest will use an appropriate
+        platform-specific default value.</para>
        </listitem>
       </varlistentry>
 
@@ -1287,6 +1309,29 @@
   </variablelist>
     
   </section> <!-- sec-env-vars -->
+
+  <section id="sec-config-file">
+   <title>Configuration Variables</title>
+
+    <para>These configuration variables are used by QMTest.  You
+    should define them in the <literal>[qmtest]</literal> section of
+    your &qm; configuration file.</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm>
+       <property>pid-file</property>
+      </glossterm>
+      <glossdef>
+       <para>The default path to use when creating a PID file with the
+       <option>&dashdash;pid-file</option>.  If this entry is not
+       present, an appropriate platform-specific default value is 
+       used.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+  </section> <!-- sec-config-file -->
   
  </section>
 
