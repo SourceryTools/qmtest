@@ -64,10 +64,15 @@ SQL-based implementation of the issue database.
 # imports
 ########################################################################
 
+import rexec
+import parser
+import symbol
+import token
 import idb
 from   issue import *
 from   issue_class import *
 import string
+
 
 ########################################################################
 # classes
@@ -402,7 +407,77 @@ class SqlIdb(idb.IdbBase):
         return self.GetIssue(iid).GetRevision()
 
 
+    def Query(self, query_str, issue_class_name=None):
+        """Query the database.
+
+        This method is overridden from the idb base class. Instead of
+        iterating over all of the issues and evaluating the query string
+        on each issue, we parse the query string, convert it to an SQL
+        type query, and submit the query via sql. This is more efficient.
+
+        query_str -- The string with the python expression to be evaluated
+        on each issue to determine if the issue matches.
+        
+        issue_class_name -- The name of the class of which you wish to
+        query issues.  Only issues of that class will be queried.  If
+        this argument is 'None', all issues in the database will be
+        queried.
+
+        returns -- This function returns a list of issues that match a
+        query."""
+
+        no_sql = self.__CheckTautology(query_str)
+
+        if no_sql:
+            query_command = "1 = 1"
+        else:
+            query_command = self.__ConvertToSQL(query_str)
+
+        results = [ ]
+        self.results = [ ]
+
+        if issue_class_name is not None:
+            icl = self.GetIssueClass(issue_class_name)
+            try:
+                results = self.__SelectRows(icl, query_command)
+            except:
+                raise qm.UserError, "Invalid SQL query '%s'." \
+                      % query_command
+            self.__AddResults(icl, results)
+        else:
+            for icl in self.GetIssueClasses():
+                try:
+                    results = self.__SelectRows(icl, query_command)
+                except:
+                    raise qm.UserError, "Invalid SQL query '%s'." \
+                          % query_command
+            
+                self.__AddResults(icl, results)
+
+        # Return the list of matches
+        return self.results
+
+        
     # Helper functions.
+
+    def __AddResults(self, icl, results):
+        """Add the matching rows to the total results.
+
+        This helper builds an issue out of each row in the given results
+        and places it in the self.results instance variable.
+
+        'icl' -- The issue class for these results. Used to build the new
+        issues.
+        
+        'results' -- A list of rows to turn into issues."""
+
+        # For each result, build the issue to be in the list.
+        for match in results:
+            # Construct the issue.
+            issue = self.__BuildIssueFromRow(icl, match)
+            # Append the new issue to the list of results.
+            self.results.append(issue)
+
 
     def __ColumnSpecForField(self, issue_class, field):
         """Return a column specification for storing 'field'.
@@ -535,7 +610,7 @@ class SqlIdb(idb.IdbBase):
         # Add the WHERE clause, if specified.
         if where_clause is not None:
             sql_statement = sql_statement + " WHERE %s" % where_clause
-        
+
         # Run the query.
         cursor = self.GetCursor()
         cursor.execute(sql_statement)
@@ -853,6 +928,245 @@ class SqlIdb(idb.IdbBase):
             cursor.execute(sql_statement)
 
 
+    def __ConvertToSQL(self, string_expr):
+        """Create an SQL expression query from the python expression.
+
+        'string_expr' -- The python string to evaluate for the query.
+
+        returns -- A WHERE clause of an SQL query string that may be used
+        to query an SQL database."""
+
+        try:
+            # Get the AST
+            ast = parser.ast2tuple(parser.expr(string_expr))
+        except:
+            raise qm.UserError, \
+                  "Unable to parse python query expression '%s'." \
+                  % string_expr
+        try:
+            # Pass it on to the helper to create the actual SQL string.
+            sql_str = self.__AstToSQL(ast)
+        except:
+            raise ValueError, \
+                  "Invalid python expression on which to query: '%s'" \
+                  % string_expr
+        return sql_str
+
+
+    def __AstToSQL(self, ast):
+        """Returns the SQL expression for the given python AST.
+
+        'ast' -- The ast as returned by the ast2tuple from the parser.
+
+        returns -- A string that represents the SQL query.
+
+        Subclasses should override this method for the types of trees they
+        wish to handle differently. The grammar for these expressions
+        is listed below.
+
+        expression:    or_test
+
+        or_test:       and_test 
+                       | or_test "or" and_test
+        
+        and_test:      not_test 
+                       | and_test "and" not_test
+
+        not_test:      comparison 
+                       | "not" not_test
+
+        comparison:    or_expr (comp_operator or_expr)*
+
+        comp_operator: "<" 
+                       | ">"
+                       | "==" 
+                       | ">=" 
+                       | "<=" 
+                       | "<>"
+                       | "!="
+
+        or_expr:       xor_expr 
+                       | or_expr "|" xor_expr
+
+        xor_expr:      and_expr 
+                       | xor_expr "^" and_expr
+
+        and_expr:      shift_expr 
+                       | and_expr "&" shift_expr
+
+        shift_expr:    a_expr 
+                       | shift_expr ("<<" | ">>") a_expr
+
+        a_expr:        m_expr 
+                       | a_expr "+" m_expr 
+                       | a_expr "-" m_expr
+
+        m_expr:        u_expr 
+                       | m_expr "*" u_expr 
+                       | m_expr "/" u_expr
+                       | m_expr "%" u_expr
+
+        u_expr:        power 
+                       | "-" u_expr 
+                       | "+" u_expr 
+                       | "~" u_expr
+
+        power:         primary ["**" u_expr]
+
+        primary:       atom
+
+        atom:          identifier
+                       | literal
+                       | enclosure
+
+        literal:       stringliteral
+                       | integer    
+                       | floatnumber
+
+        enclosure:     parenth_form
+
+        parenth_form:  "(" [expression_list] ")"
+
+        expression_list: expression ("," expression)* [","]"""
+        
+        # Initialize the sql string.
+        sql_str = ""
+        
+        # Get the top level token from the ast to decide how to process
+        # this ast.
+        tok = ast[0]
+
+        # Non-terminal 'expression'.
+        if tok == symbol.eval_input:
+            if len(ast) != 4:
+                raise "Unrecognized expression"
+            sql_str = self.__AstToSQL(ast[1])
+        # Of of these non-terminals behave the same so
+        # we put them together. We rely on the fact that the python parser
+        # will correctly build up the tree for us. Therefore, we don't
+        # really need to check that there are the correct number of
+        # subtrees or anything like that, except for in special cases that
+        # we wish to handle differently.
+        elif tok == symbol.testlist \
+             or tok == symbol.test \
+             or tok == symbol.and_test \
+             or tok == symbol.not_test \
+             or tok == symbol.comparison \
+             or tok == symbol.comp_op \
+             or tok == symbol.expr \
+             or tok == symbol.xor_expr \
+             or tok == symbol.and_expr \
+             or tok == symbol.shift_expr \
+             or tok == symbol.arith_expr \
+             or tok == symbol.term \
+             or tok == symbol.power:
+            sql_str = self.__AstToSQLHelper(ast, " ")
+        # We leave these two out because we want the spacing to be right
+        # next to each other, instead of spaced one apart like all the
+        # rest. This is for +4, -4, etc. Same goes for atoms.
+        elif tok == symbol.factor \
+             or tok == symbol.atom:
+            sql_str = self.__AstToSQLHelper(ast, "")
+        # For the NAME token, most of them remain the same, but the
+        # boolean operators must be capitalized.
+        elif tok == token.NAME:
+            if ast[1] == 'or':
+                sql_str = "OR"
+            elif ast[1] == 'and':
+                sql_str = "AND"
+            elif ast[1] == 'not':
+                sql_str = "NOT"
+            elif ast[1] == 'in':
+                raise "Expression not in python subset."
+            else:
+                sql_str = ast[1]
+        # Most of the operators in python are the same in SQL so just
+        # use their python representation.
+        elif tok == token.STRING \
+             or tok == token.LPAR \
+             or tok == token.RPAR \
+             or tok == token.LSQB \
+             or tok == token.RSQB \
+             or tok == token.LESS \
+             or tok == token.GREATER \
+             or tok == token.NOTEQUAL \
+             or tok == token.NUMBER \
+             or tok == token.LEFTSHIFT \
+             or tok == token.RIGHTSHIFT \
+             or tok == token.PLUS \
+             or tok == token.MINUS \
+             or tok == token.STAR \
+             or tok == token.SLASH \
+             or tok == token.PERCENT \
+             or tok == token.TILDE \
+             or tok == token.VBAR \
+             or tok == token.AMPER \
+             or tok == token.COMMA:
+            sql_str = ast[1]
+        # The (power) '**' operator in python is '^' in SQL.
+        elif tok == token.DOUBLESTAR:
+            sql_str = "^"
+        # The (xor) '^' operator in python is '#' in SQL.
+        elif tok == token.CIRCUMFLEX:
+            sql_str = "#"
+        # The (comparison) '==' operator in python is '=' in SQL.
+        elif tok == token.EQEQUAL:
+            sql_str = "="
+        else:
+            raise "Expression not in python subset."
+
+        # Finally return the string we have built up.
+        return sql_str
+
+        
+    def __AstToSQLHelper(self, ast, seperator):
+        """Calls AstToSQL recursively and builds up string.
+
+        'ast' -- The ast as passed to __AstToSQL.
+
+        'separator' -- The seperator that you wish to sepearte tokens
+        at this highest level.
+        
+        returns -- An SQL string that __AstToSQL will return."""
+
+        if len(ast) >= 2:
+            sql_str = self.__AstToSQL(ast[1])
+            if len(ast) > 2:
+                num_taken = 2
+                while num_taken < len(ast):
+                    sql_str = "%s%s%s" % (sql_str, seperator,
+                                          self.__AstToSQL(ast[num_taken]))
+                    num_taken = num_taken + 1
+        else:
+            raise "Unrecognized expression"
+        return sql_str
+
+
+    def __CheckTautology(self, query_str):
+        """Check to see if the given string is a tautology in python.
+
+        This checks to see if the pythong string evaluates to true
+        before even setting up the environment. This is because you can
+        give python '1' and that will evaulate to true but in SQL, that
+        will not be a boolean expression therefore it is not a valid
+        search criteria. Eventually, we'll need to be more general
+        and notice when they are using the value of an int to represent
+        a boolean, but for now, we'll just take the whole expression.
+
+        'query_str' -- The python expression to be checked for true.
+
+        returns -- 1 if the expression is always true, 0 otherwise."""
+        query_env = rexec.RExec()
+        try:
+            if query_env.r_eval(query_str):
+                return 1
+            else:
+                return 0
+        # If an exception occurs, that means there's probably a variable
+        # in there somewhere so we know its not a tautology.
+        except:
+            return 0
+            
 
 ########################################################################
 # functions
@@ -886,7 +1200,22 @@ def unescape_for_sql(s):
 
     s = string.replace(s, "\r", "\n")
     return s
-    
+
+
+def remap (t): 
+  import types
+  if type(t) == types.IntType:
+    if token.ISNONTERMINAL(t):
+      return symbol.sym_name[t]
+    else:
+      return token.tok_name[t]
+  elif type(t) == types.TupleType:
+    return pprint_ast (t)
+  else:
+    return t
+
+def pprint_ast (t):
+  return map (remap, t)
 
 
 ########################################################################

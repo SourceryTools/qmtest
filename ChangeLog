@@ -1,3 +1,12 @@
+2001-02-28  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/sql_idb.py (Query): Define.
+	(__AddResults): Likewise.
+	(__ConvertToSQL): Likewise.
+	(__AstToSQL): Likewise.
+	(__AstToSQLHelper): Likewise.
+	(__CheckTautology): Likewise.
+	
 2001-02-28  Alex Samuel  <samuel@codesourcery.com>
 
 	Support attachments in the web UI.
