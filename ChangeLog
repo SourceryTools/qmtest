@@ -1,5 +1,9 @@
 2001-08-22  Alex Samuel  <samuel@indetermi.net>
 
+	* qm.spec (files): Add qmtest-remote.
+
+2001-08-22  Alex Samuel  <samuel@indetermi.net>
+
 	* install.py (scripts): Fix qmtest-remote script.
 
 2001-08-22  Alex Samuel  <samuel@indetermi.net>
