@@ -27,8 +27,6 @@ import sys
 # the same name.
 sys.path = sys.path[1:]
 
-execfile(os.path.join(os.environ["QM_TRUE_LIBDIR"], "setup_path.py"))
-
 ########################################################################
 # imports
 ########################################################################

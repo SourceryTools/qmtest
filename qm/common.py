@@ -219,25 +219,24 @@ class RcConfiguration(ConfigParser.ConfigParser):
 # functions
 ########################################################################
 
-def get_lib_directory(*components):
-    """Return the absolute path to the top QM Python directory."""
-
-    path = os.environ["QM_LIB_PATH"]
-    return apply(os.path.join, (path, ) + components)
-
-
 def get_share_directory(*components):
-    """Return the path to the directory containing QM data files."""
+    """Return the path to a file in the QM data file directory."""
 
-    path = os.environ["QM_SHARE_PATH"]
-    return apply(os.path.join, (path, ) + components)
+    home_dir = os.environ["QM_HOME"]
+    if os.environ.get("QM_BUILD") == "1":
+        return os.path.join(home_dir, "share", *components)
+    else:
+        return os.path.join(home_dir, "share", "qm", *components)
 
 
 def get_doc_directory(*components):
-    """Return the path to the directory containing QM documentation files."""
+    """Return a path to a file in the QM documentation file directory."""
 
-    path = os.environ["QM_DOC_PATH"]
-    return apply(os.path.join, (path, ) + components)
+    home_dir = os.environ["QM_HOME"]
+    if os.environ.get("QM_BUILD") == "1":
+        return os.path.join(home_dir, "qm", *components)
+    else:
+        return os.path.join(home_dir, "share", "doc", "qm", *components)
 
 
 def format_exception(exc_info):

@@ -224,7 +224,6 @@ else
 fi
 qm_script=`basename $0`
 
-export QM_TRUE_LIBDIR=${qm_libdir}
 # Just in case we installed into a weird place:
 qm_python_path_dir=`expr "${qm_libdir}" : '\(.*\)/qm'`
 export PYTHONPATH=${qm_python_path_dir}:$PYTHONPATH

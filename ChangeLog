@@ -1,4 +1,16 @@
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (get_lib_directory): Remove.
+	(get_share_directory): Move path lookup logic to here from
+	setup_path.py.  Clarify docstring.
+	(get_doc_directory): Move path lookup logic to here from
+	setup_path.py.  Clarify docstring.
+	* qm/setup_path.py: Remove file.
+	* qm/test/qmtest.py: Don't execfile setup_path.py.
+	* GNUmakefile.in ($(SCRIPTS)): Don't set QM_TRUE_LIBDIR.
+	* qm/qm.sh: Don't set QM_TRUE_LIBDIR.
+	
+2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
 	
 	* qm/version.py.in: Rename to...
 	* qm/__version.py.in: ...this.
