@@ -39,20 +39,6 @@ import xml.sax
 # classes
 ########################################################################
 
-class UnknownTestClassError(RuntimeError):
-    """An unknown test class was specified."""
-    
-    pass
-
-
-
-class UnknownResourceClassError(RuntimeError):
-    """An unknown resource class was specified."""
-    
-    pass
-
-
-
 class TestFileError(RuntimeError):
     """An error in the format or contents of an XML test file."""
 

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Result class.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -191,6 +191,7 @@ class Result:
         if cause:
             self[Result.CAUSE] = cause
         self.Annotate(annotations)
+
         
     def GetId(self):
         """Return the label for the test or resource.

@@ -8,7 +8,7 @@
 #   FileDatabase
 #   ExtensionFileDatabase
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -74,27 +74,6 @@ class FileDatabase(Database):
         self.__RemoveEntity(self.GetTestPath(test_id), NoSuchTestError)
 
 
-    def GetTestIds(self, directory="", scan_subdirs=1):
-        """Return all test IDs that begin with 'directory'.
-
-        'directory' -- A label indicating the directory in which to
-        begin the search.
-
-        'scan_subdirs' -- True if (and only if) subdirectories of
-        'directory' should be scanned.
-
-        'returns' -- A list of all tests located within 'directory',
-        as absolute labels.
-
-        Derived classes must not override this method."""
-
-        # Compute the path name of the directory in which to start.
-        file_dir = self.GetSuitePath(directory)
-        # Get all the files that correspond to tests.
-        return self._GetLabels(file_dir, scan_subdirs,
-                               directory, self._IsTestFile)
-
-
     def GetTestPath(self, test_id):
         """Return the file containing 'test_id'.
 
@@ -120,7 +99,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise NotImplementedError
+        return self._IsFile(Database.TEST, path)
         
     # Methods that deal with suites.
 
@@ -164,27 +143,6 @@ class FileDatabase(Database):
         self.__RemoveEntity(self.GetSuitePath(suite_id), NoSuchSuiteError)
 
 
-    def GetSuiteIds(self, directory="", scan_subdirs=1):
-        """Return all suite IDs that begin with 'directory'.
-
-        'directory' -- A label indicating the directory in which to
-        begin the search.
-
-        'scan_subdirs' -- True if (and only if) subdirectories of
-        'directory' should be scanned.
-
-        'returns' -- A list of all suites located within 'directory',
-        as absolute labels.
-
-        Derived classes must not override this method."""
-
-        # Compute the directory in which to start looking.
-        file_dir = self.GetSuitePath(directory)
-        # Get all the files that correspond to tests.
-        return self._GetLabels(file_dir, scan_subdirs, directory,
-                               self._IsSuiteFile)
-
-
     def GetSuitePath(self, suite_id):
         """Return the file containing 'suite_id'.
 
@@ -215,7 +173,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise NotImplementedError
+        return self._IsFile(Database.SUITE, path)
     
     # Methods that deal with resources.
 
@@ -254,27 +212,6 @@ class FileDatabase(Database):
                             NoSuchResourceError)
 
 
-    def GetResourceIds(self, directory="", scan_subdirs=1):
-        """Return all resource IDs that begin with 'directory'.
-
-        'directory' -- A label indicating the directory in which to
-        begin the search.
-
-        'scan_subdirs' -- True if (and only if) subdirectories of
-        'directory' should be scanned.
-
-        'returns' -- A list of all resources located within 'directory',
-        as absolute labels.
-
-        Derived classes must not override this method."""
-
-        # Compute the directory in which to start looking.
-        file_dir = self.GetSuitePath(directory)
-        # Get all the files that correspond to suites.
-        return self._GetLabels(file_dir, scan_subdirs, directory,
-                               self._IsResourceFile)
-
-
     def GetResourcePath(self, resource_id):
         """Return the file containing 'resource_id'.
 
@@ -300,7 +237,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise NotImplementedError
+        return self._IsFile(Database.RESOURCE, path)
     
     # Miscellaneous methods.
 
@@ -339,6 +276,41 @@ class FileDatabase(Database):
                 and os.path.isdir(entry_path)):
                 subdirs.append(root)
         return subdirs
+
+
+    def GetIds(self, kind, directory = "", scan_subdirs = 1):
+
+        # Compute the path name of the directory in which to start.
+        file_dir = self.GetSuitePath(directory)
+        # Get all the files of the appropriate kind.
+        return self._GetLabels(file_dir, scan_subdirs, directory,
+                               lambda p: self._IsFile(kind, p))
+
+
+    def GetItem(self, kind, item_id):
+
+        if kind == Database.TEST:
+            return self.GetTest(item_id)
+        elif kind == Database.RESOURCE:
+            return self.GetResource(item_id)
+        elif kind == Database.SUITE:
+            return self.GetSuite(item_id)
+
+        assert None
+        
+
+    def _IsFile(self, kind, path):
+        """Returns true if 'path' is a file of the indicated 'kind'.
+
+        'kind' -- One of 'Database.ITEM_KINDS'.
+
+        'path' -- The path to a file.
+
+        returns -- True iff 'path' is a file of the indicated kind.
+
+        Derived classes must override this method."""
+
+        raise NotImplementedError
         
     # Derived classes must override these methods.
 
@@ -525,7 +497,14 @@ class ExtensionDatabase(FileDatabase):
             containing resources.""",
             default_value=".qma"),
         ]
-    
+
+    def __init__(self, path, arguments):
+
+        FileDatabase.__init__(self, path, arguments)
+        self._extensions = { Database.TEST : self.test_extension,
+                             Database.RESOURCE : self.resource_extension,
+                             Database.SUITE : self.suite_extension }
+        
     def GetTestExtension(self):
         """Return the extension that indicates a file is a test.
 
@@ -561,12 +540,6 @@ class ExtensionDatabase(FileDatabase):
         return test_path
 
 
-    def _IsTestFile(self, path):
-
-        return (os.path.splitext(path)[1] == self.test_extension
-                and os.path.isfile(path))
-
-
     def GetSuitePath(self, suite_id):
 
         # The top-level suite is just the directory containing the
@@ -580,13 +553,6 @@ class ExtensionDatabase(FileDatabase):
             return suite_path
 
 
-    def _IsSuiteFile(self, path):
-
-        return (path == self.GetRoot() 
-                or (os.path.splitext(path)[1] == self.suite_extension
-                    and (os.path.isfile(path) or os.path.isdir(path))))
-
-
     def GetResourcePath(self, resource_id):
 
         test_path = self._GetPathFromLabel(resource_id)
@@ -595,11 +561,18 @@ class ExtensionDatabase(FileDatabase):
         return test_path
         
 
-    def _IsResourceFile(self, path):
+    def _IsFile(self, kind, path):
 
-        return (os.path.splitext(path)[1] == self.resource_extension
-                and os.path.isfile(path))
+        if kind == Database.SUITE and path == self.GetRoot():
+            return 1
 
+        extension = os.path.splitext(path)[1]
+        if extension != self._extensions[kind]:
+            return 0
+
+        return (os.path.isfile(path)
+                or (kind == Database.SUITE and os.path.isdir(path)))
+        
 
     def _GetPathFromLabel(self, label):
 

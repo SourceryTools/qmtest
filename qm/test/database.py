@@ -145,8 +145,7 @@ class ItemDescriptor:
         returns -- A sequence of resource names.  Each name indicates a
         resource that must be available to this item."""
 
-        return self.GetArguments().get("resources", [])
-
+        return self.GetArguments().get(Runnable.RESOURCE_FIELD_ID, [])
         
     # Helper functions.
 
@@ -271,8 +270,6 @@ class ResourceDescriptor(ItemDescriptor):
         # Initialize the base class.
         ItemDescriptor.__init__(self, database, resource_id,
                                 resource_class_name, arguments)
-        # Don't instantiate the resource yet.
-        self.__resource = None
 
 
     def GetClass(self):
@@ -473,7 +470,12 @@ class Database(qm.extension.Extension):
             default_value = "true")
         ]
 
-    kind = "database"
+    RESOURCE = "Resource"
+    TEST = "Test"
+    SUITE = "Suite"
+    
+    ITEM_KINDS = [RESOURCE, TEST, SUITE]
+    """The kinds of items that can be stored in a 'Database'."""
     
     def __init__(self, path, arguments):
         """Construct a 'Database'.
@@ -599,11 +601,9 @@ class Database(qm.extension.Extension):
         returns -- A 'TestDescriptor' corresponding to 'test_id'.
         
         raises -- 'NoSuchTestError' if there is no test in the database
-        named 'test_id'.
+        named 'test_id'."""
 
-        Derived classes must override this method."""
-
-        raise NotImplementedError
+        return self.GetItem(Database.TEST, test_id)
 
 
     def WriteTest(self, test):
@@ -679,11 +679,9 @@ class Database(qm.extension.Extension):
         'directory' should be scanned.
         
         'returns' -- A list of all tests located within 'directory',
-        as absolute labels.
+        as absolute labels."""
 
-        Derived classes must override this method."""
-
-        raise NotImplementedError
+        return self.GetIds(self.TEST, directory, scan_subdirs)
 
     # Methods that deal with suites.
 
@@ -702,11 +700,9 @@ class Database(qm.extension.Extension):
         contains all tests in the database.  More generally, for each
         directory in the database, there must be a corresponding suite
         that contains all tests in that directory and its
-        subdirectories.
+        subdirectories."""
 
-        Derived classes must override this method."""
-
-        raise NotImplementedError
+        return self.GetItem(Database.SUITE, suite_id)
 
 
     def WriteSuite(self, suite):
@@ -780,11 +776,9 @@ class Database(qm.extension.Extension):
         'directory' should be scanned.
 
         'returns' -- A list of all suites located within 'directory',
-        as absolute labels.
+        as absolute labels."""
 
-        Derived classes must override this method."""
-
-        raise NotImplementedError
+        return self.GetIds(self.SUITE, directory, scan_subdirs)
 
 
     # Methods that deal with resources.
@@ -797,11 +791,9 @@ class Database(qm.extension.Extension):
         returns -- A 'ResourceDescriptor' corresponding to 'resource_id'.
         
         raises -- 'NoSuchResourceError' if there is no resource in the
-        database named 'resource_id'.
+        database named 'resource_id'."""
 
-        Derived classes must override this method."""
-
-        raise NotImplementedError
+        return self.GetItem(Database.RESOURCE, resource_id)
 
 
     def WriteResource(self, resource):
@@ -866,14 +858,48 @@ class Database(qm.extension.Extension):
         'directory' should be scanned.
 
         'returns' -- A list of all resources located within 'directory',
-        as absolute labels.
+        as absolute labels."""
+
+        return self.GetIds(self.RESOURCE, directory, scan_subdirs)
+
+    # Miscellaneous methods.
+
+    def GetIds(self, kind, directory = "", scan_subdirs = 1):
+        """Return all IDs of the indicated 'kind' that begin with 'directory'.
+
+        'kind' -- One of the 'ITEM_KINDS'.
+        
+        'directory' -- A label indicating the directory in which to
+        begin the search.
+
+        'scan_subdirs' -- True if (and only if) subdirectories of
+        'directory' should be scanned.
+
+        returns -- A list of all items of the indicated 'kind' located
+        within 'directory', as absolute labels.
 
         Derived classes must override this method."""
 
         raise NotImplementedError
 
-    # Miscellaneous methods.
 
+    def GetItem(self, kind, item_id):
+        """Return the item of the indicated 'kind' with indicated 'item_id'.
+
+        'kind' -- One of the 'ITEM_KINDS'.
+
+        'item_id' -- The name of the item.
+
+        returns -- If 'kind' is 'Database.TEST' or 'Database.RESOURCE',
+        returns a test descriptor or resource descriptor, respectively.
+        If 'kind' is 'Database.SUITE', returns a 'Suite'.
+
+        Derived classes must override this method."""
+
+        raise NotImplementedError
+
+    
+        
     def GetSubdirectories(self, directory):
         """Return the immediate subdirectories of 'directory'.
 
@@ -990,11 +1016,6 @@ class Database(qm.extension.Extension):
         # checks efficient.
         test_ids = {}
         suite_ids = {}
-        # These function add to the maps.
-        def add_test_id(test_id, test_ids=test_ids):
-            test_ids[test_id] = None
-        def add_suite_id(suite_id, suite_ids=suite_ids):
-            suite_ids[suite_id] = None
 
         for id in ids:
             # Skip this ID if we've already seen it.
@@ -1002,19 +1023,21 @@ class Database(qm.extension.Extension):
                 continue
             # Is this a suite ID?
             if self.HasSuite(id):
-                add_suite_id(id)
+                suite_ids[id] = None
                 # Yes.  Load the suite.
                 suite = self.GetSuite(id)
                 # Determine all the tests and suites contained directly and
                 # indirectly in this suite.
                 suite_test_ids, sub_suite_ids = suite.GetAllTestAndSuiteIds()
                 # Add them.
-                map(add_test_id, suite_test_ids)
-                map(add_suite_id, sub_suite_ids)
+                for test_id in suite_test_ids:
+                    test_ids[test_id] = None
+                for suite_id in sub_suite_ids:
+                    suite_ids[suite_id] = None
             # Or is this a test ID?
             elif self.HasTest(id):
                 # Yes.  Add it.
-                add_test_id(id)
+                test_ids[id] = None
             else:
                 # It doesn't look like a test or suite ID.
                 raise ValueError, id

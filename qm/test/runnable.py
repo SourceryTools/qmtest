@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Runnable class.
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -49,10 +49,14 @@ class Runnable(qm.extension.Extension):
     """The name of the extra keyword argument to '__init__' that
     specifies the database containing the test or resource."""
 
+    RESOURCE_FIELD_ID = "resources"
+    """The name of the field that contains the resources on which this
+    test or resource depends."""
+    
     arguments = [
         qm.fields.SetField(
             ResourceField(
-                name = "resources",
+                name = RESOURCE_FIELD_ID,
                 title = "Resources",
                 description = \
                 """Resources on which this test or resource depends.

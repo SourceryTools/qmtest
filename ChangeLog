@@ -1,3 +1,37 @@
+2003-03-20  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/database.py (ItemDescriptor.GetResources): Use
+	Runnable.RESOURCE_FIELD_ID.
+	(ResourceDescriptor.__init__): Remove dead code.
+	(Database.kind): Remove.
+	(Database.RESOURCE): New variable.
+	(Database.TEST): Likewise.
+	(Database.SUITE): Likewise.
+	(Database.ITEM_KINDS): Likewise.
+	(Database.GetTest): Use GetItem.
+	(Database.GetTestIds): Use GetIds.
+	(Database.GetSuite): Use GetItem.
+	(Database.GetSuiteIds): Use GetIds.
+	(Database.GetResource): Use GetItem.
+	(Database.GetResourceIds): Use GetIds.
+	(Database.GetItem): New method.
+	(Database.GetIds): Likewise.
+	(Database.ExpandIds): Optimize.
+	* qm/test/file_database.py (FileDatabase.GetTestIds): Remove.
+	(FileDatabase.GetSuiteIds): Likewise.
+	(FileDatabase.GetResourceIds): Likewise.
+	(FileDatabase._IsTestFile): Use _IsFile.
+	(FileDatabase._IsSuiteFile): Likewise.
+	(FileDatabase._IsResourceFile): Likewise.
+	(FileDatabase._IsFile): New method.
+	(FileDatabase.GetIds): New method.
+	(FileDatabase.GetItems): Likewise.
+	* qm/test/result.py: Fix formatting.
+	* qm/test/runnable.py (Runnable.RESOURCE_FIELD_ID): New variable.
+	(Runnable.arguments): Use it.
+	* qm/test/classes/xml_database.py (UnknownTestClassError): Remove.
+	(UnknownResourceClassError): Likewise.
+	
 2003-03-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/command_thread.py (sys): Import it.
