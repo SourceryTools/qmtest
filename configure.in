@@ -1,4 +1,4 @@
-########################################################################
+##################################################### -*-shell-script-*-
 #
 # File:   configure.in
 # Author: Alex Samuel
@@ -83,20 +83,23 @@ dnl ####################################################################
 # with Python 2.0 or greater -- but the minimum acceptable version of
 # Python is already higher than that.
 AC_MSG_CHECKING(Python version)
-PYTHON_MAJOR=`$PYTHON <<EOF
+cat > python-ver.py <<EOF
 try:
   import sys
   print sys.version_info[[0]]
 except:
   print 0
-EOF`
-PYTHON_MINOR=`$PYTHON <<EOF
+EOF
+PYTHON_MAJOR=`$PYTHON python-ver.py`
+cat > python-ver.py <<EOF
 try:
   import sys
   print sys.version_info[[1]]
 except:
   print 0
-EOF`
+EOF
+PYTHON_MINOR=`$PYTHON python-ver.py`
+rm python-ver.py
 PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 AC_MSG_RESULT($PYTHON_VERSION)
 AC_SUBST(PYTHON_VERSION)
