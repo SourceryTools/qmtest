@@ -1,5 +1,7 @@
 2004-05-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: Mention improvements in 2.2.
+
 	* GNUmakefile.in (distclean): Remove MANIFEST.
 	* setup.py: Install documentation stylesheet.
 	* doc/qm-sgml.dsl: Use documentation stylesheet.

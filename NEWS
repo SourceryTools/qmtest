@@ -3,12 +3,21 @@ NEWS
 
 This file describes user-visible changes to QM.
 
-QM 2.1.3
-========
+QM 2.2
+======
 
 Under Windows, tests derived from command.ExecTestBase that explicitly
 set environment variables for the child process did not operate
 correctly.  This problem has been corrected.
+
+Resources are now destroyed in reverse order of creation.
+
+Signal masks are now set correctly for processes spawned by QMTest,
+even when QMTest is running with multiple threads.
+
+QMTest can provide output reports compatible with that from TET.
+
+QMTest's DejaGNU emulation has been updated and improved.
 
 QM 2.1.2
 ========
