@@ -1,6 +1,7 @@
 2003-06-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* zope-dtml/DocumentTemplate/.cvsignore: Remove.
+	* zope-dtml/ExtensionClass/.cvsignore: Remove.
 
 2003-06-03  Mark Mitchell  <mark@codesourcery.com>
 
