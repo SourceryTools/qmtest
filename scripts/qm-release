@@ -9,7 +9,7 @@
 # Contents:
 #   Script to build QM releases.
 #
-# Copyright (C) 2001 CodeSourcery LLC
+# Copyright (C) 2001, 2002 CodeSourcery LLC
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -98,6 +98,8 @@ build_source() {
     cvs -f -z9 -Q export -d qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
+    # Remove the qm/track directory and packages that only it uses.
+    rm -rf qm-${QM_VERSION}/qm/track qm-${QM_VERSION}/gadfly
     # The "-P" option is documented, but does not work, with "cvs export"
     # in CVS 1.10.7.  Therefore, just try to remove all the directories
     # exported; this will succeed only with empty directories.
