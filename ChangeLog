@@ -1,3 +1,8 @@
+2003-10-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (SetField.ParseFormValue): Correct logic
+	determining whether or not to redisplay the form.
+
 2003-10-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in: Sipmlify drastically, relying on distutils to do

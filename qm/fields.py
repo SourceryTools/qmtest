@@ -1040,14 +1040,13 @@ class SetField(Field):
     def ParseFormValue(self, request, name, attachment_store):
 
         values = []
-
-        contained_field = self.GetContainedField()
-
-        # See if the user wants to add or remove elements to the set.
+        redisplay = 0
+        
+        # See if the user wants to add or remove elements from the set.
         action = request[name]
-
         # Loop over the entries for each of the elements, adding them to
         # the set.
+        contained_field = self.GetContainedField()
         element = 0
 	for element in xrange(int(request[name + "_count"])):
             element_name = name + "_%d" % element
@@ -1085,8 +1084,6 @@ class SetField(Field):
             values.append(contained_field.GetDefaultValue())
         elif action == "remove":
             redisplay = 1
-        else:
-            redisplay = 0
 
         return (values, redisplay)
 
