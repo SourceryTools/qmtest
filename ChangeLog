@@ -1,3 +1,13 @@
+2002-01-06  Zack Weinberg  <zack@codesourcery.com>
+
+	* GNUmakefile.in (PYTHON): Remove unnecessary use of 'env'.
+	(clean): Don't use pushd and popd.  Don't delete documentation
+	if we didn't build it.
+	($(HTML_MANUALS)): Disable use of .tidyrc.
+	* configure.in: Add Debian-specific locations of xml.dcl and
+	DocBook stylesheets.  Fix typo.
+	* configure: Regenerate.
+
 2002-01-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release: New file.

@@ -1030,6 +1030,7 @@ echo "configure:1028: checking xml.dcl" >&5
     /usr/share/doc/jade*/pubtext/xml.dcl \
     /usr/share/doc/openjade*/pubtext/xml.dcl \
     /usr/doc/jade*/pubtext/xml.dcl \
+    /usr/share/sgml/declaration/xml.dcl \
   ; do
     if test -r "$file"; then
       XML_DCL=$file
@@ -1042,10 +1043,11 @@ fi
 
 
 echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
-echo "configure:1046: checking DocBook stylesheets" >&5
+echo "configure:1047: checking DocBook stylesheets" >&5
 DOCBOOK_STYLESHEETS=no
 for dir in \
   /usr/lib/sgml/stylesheets/docbook \
+  /usr/lib/sgml/stylesheet/dsssl/docbook \
 ; do
   if test -d $dir; then
     DOCBOOK_STYLESHEETS=$dir
@@ -1057,8 +1059,8 @@ echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
 
 
 DOCBOOK_DTD=
-echo $ac_n "checking for dobook DTD""... $ac_c" 1>&6
-echo "configure:1062: checking for dobook DTD" >&5
+echo $ac_n "checking for docbook DTD""... $ac_c" 1>&6
+echo "configure:1064: checking for docbook DTD" >&5
 # Check whether --with-docbook-dtd or --without-docbook-dtd was given.
 if test "${with_docbook_dtd+set}" = set; then
   withval="$with_docbook_dtd"

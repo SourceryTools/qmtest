@@ -47,7 +47,7 @@ PYTHONDOCDIRS	= qm
 
 # Python configuration.
 PYTHONBIN	= @PYTHON@
-PYTHON 		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
+PYTHON 		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
 		  $(PYTHONBIN) -O
 PYTHON_VERSION	= @PYTHON_VERSION@
 PYTHON_PREFIX   = @PYTHON_PREFIX@
@@ -207,11 +207,13 @@ $(COPIED_TOOL_DTDS): $(TOOL_DTDS)
 
 clean::
 	for x in $(PYTHON_PACKAGES); do \
-	  pushd $$x; $(PYTHON) ./setup.py clean; popd; \
+	  (cd $$x && $(PYTHON) ./setup.py clean); \
 	done
+ifeq ($(DOCUMENTATION),yes)
 	for tool in $(QM_TOOLS); do \
 	  rm -rf qm/$$tool/doc/html qm/$$tool/doc/print; \
 	done
+endif
 	rm -f $(SCRIPTS)
 
 distclean: clean
@@ -248,7 +250,8 @@ $(HTML_MANUALS): \
 ifneq ($(TIDY),no)
 	for f in $(dir $@)*.html; \
 	do \
-	  $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
+	  HTML_TIDY=/dev/null \
+		$(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
 	  true; \
 	done 
 endif
