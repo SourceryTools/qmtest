@@ -1,0 +1,8 @@
+2000-10-22  Alex Samuel  <samuel@codesourcery.com>
+
+	* ChangeLog: New file.
+	* README.sources: Likewise.
+	* COPYING: Likewise.
+	
+	* templates: New directory.
+	* doc: Likewise.
