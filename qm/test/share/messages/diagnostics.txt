@@ -36,6 +36,9 @@ The "%(class_name)s" extension class could not be loaded.
 @ db path exists
 "%(path)s" already exists.
 
+@ dependency cycle
+This test depends on itself, either directly or by way of other tests.
+
 @ error loading xml resource
 A problem occurred while loading the XML resource file "%(resource_id)s":
 %(message)s.

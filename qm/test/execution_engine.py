@@ -87,6 +87,7 @@ class ExecutionEngine:
         # There no pending or ready tests yet.
         self.__pending = []
         self.__ready = []
+        self.__running = 0
 
         # The descriptor graph has not yet been created.
         self.__descriptors = {}
@@ -192,11 +193,18 @@ class ExecutionEngine:
             prereqs = descriptor.GetPrerequisites()
             if prereqs:
                 for (prereq_id, outcome) in prereqs.items():
+                    if not self.__descriptors.has_key(prereq_id):
+                        # The prerequisite is not amongst the list of
+                        # tests to run.  In that case we do still run
+                        # the dependent test; it was explicitly
+                        # requested by the user.
+                        continue
                     prereq_desc = self.__descriptors[prereq_id]
                     self.__descriptor_graph[prereq_desc][1] \
                         .append((descriptor, outcome))
-                self.__descriptor_graph[descriptor][0] = len(prereqs)
-            else:
+                    self.__descriptor_graph[descriptor][0] += 1
+
+            if not self.__descriptor_graph[descriptor][0]:
                 # A node with no prerequisites is ready.
                 self.__ready.append(descriptor)
 
@@ -207,24 +215,21 @@ class ExecutionEngine:
             # response.  There is nothing constructive we can do.
             idle_targets = self.__idle_targets
             if not idle_targets:
-                if __debug__:
-                    self._Trace("All targets are busy -- waiting.")
+                self._Trace("All targets are busy -- waiting.")
                 # Read a reply from the response_queue.
                 self._CheckForResponse(wait=1)
-                if __debug__:
-                    self._Trace("Response received.")
+                self._Trace("Response received.")
                 # Keep going.
                 continue
 
-            # If there are no busy targets and no ready tests, we have
+            # If there are no tests ready to run, but no tests are
+            # actually running at this time, we have
             # a cycle in the dependency graph.  Pull the head off the
             # pending queue and mark it UNTESTED, see if that helps.
-            if (not self.__ready
-                and len(self.__idle_targets) == len(self.__targets)):
+            if (not self.__ready and not self.__running):
                 descriptor = self.__pending[0]
-                if __debug__:
-                    self._Trace(("Dependency cycle, discarding %s."
-                                 % descriptor.GetId()))
+                self._Trace(("Dependency cycle, discarding %s."
+                             % descriptor.GetId()))
                 self.__pending.remove(descriptor)
                 self._AddUntestedResult(descriptor.GetId(),
                                         qm.message("dependency cycle"))
@@ -248,27 +253,24 @@ class ExecutionEngine:
                             # got pulled off for some reason
                             # (e.g. breaking dependency cycles).  Don't
                             # try to run it, it won't work.
-                            if __debug__:
-                              self._Trace(("Ready test %s not pending, skipped"
-                                           % descriptor.GetId()))
+                            self._Trace(("Ready test %s not pending, skipped"
+                                         % descriptor.GetId()))
                             wait = 0
                             break
 
                         # Output a trace message.
-                        if __debug__:
-                            self._Trace(("About to run %s."
-                                         % descriptor.GetId()))
+                        self._Trace(("About to run %s."
+                                     % descriptor.GetId()))
                         # Run it.
+                        self.__running += 1
                         target.RunTest(descriptor, self.__context)
                         # If the target is no longer idle, remove it
                         # from the idle_targets list.
                         if not target.IsIdle():
-                            if __debug__:
-                                self._Trace("Target is no longer idle.")
+                            self._Trace("Target is no longer idle.")
                             self.__idle_targets.remove(target)
                         else:
-                            if __debug__:
-                                self._Trace("Target is still idle.")
+                            self._Trace("Target is still idle.")
                         # We have done something useful on this
                         # iteration.
                         wait = 0
@@ -278,9 +280,8 @@ class ExecutionEngine:
                     break
 
             # Output a trace message.
-            if __debug__:
-                self._Trace("About to check for a response in %s mode."
-                            % ((wait and "blocking") or "nonblocking"))
+            self._Trace("About to check for a response in %s mode."
+                        % ((wait and "blocking") or "nonblocking"))
                     
             # See if any targets have finished their assignments.  If
             # we did not schedule any additional work during this
@@ -289,8 +290,7 @@ class ExecutionEngine:
             self._CheckForResponse(wait=wait)
 
             # Output a trace message.
-            if __debug__:
-                self._Trace("Done checking.")
+            self._Trace("Done checking.")
 
         # Any tests that are still pending are untested, unless there
         # has been an explicit request that we exit immediately.
@@ -317,14 +317,12 @@ class ExecutionEngine:
                 else:
                     result = self.__response_queue.get(wait)
                 # Output a trace message.
-                if __debug__:
-                    self._Trace(("Got response for %s from queue."
-                                 % result.GetId()))
+                self._Trace(("Got response for %s from queue."
+                             % result.GetId()))
                 # Handle it.
                 self._AddResult(result)
                 # Output a trace message.
-                if __debug__:
-                    self._Trace("Recorded result.")
+                self._Trace("Recorded result.")
                 # If this was a test result, there may be other tests that
                 # are now eligible to run.
                 if result.GetKind() == Result.TEST:
@@ -413,8 +411,7 @@ class ExecutionEngine:
         a test or resource."""
 
         # Output a trace message.
-        if __debug__:
-            self._Trace("Recording result for %s." % result.GetId())
+        self._Trace("Recording result for %s." % result.GetId())
 
         # Find the target with the name indicated in the result.
         if result.has_key(Result.TARGET):
@@ -428,12 +425,13 @@ class ExecutionEngine:
             target = None
 
         # Having no target is a rare occurrence; output a trace message.
-        if __debug__ and not target:
+        if not target:
             self._Trace("No target for %s." % result.GetId())
                         
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
+            self.__running -= 1
         elif result.GetKind() == Result.RESOURCE:
             self.__resource_results.append(result)
         else:
@@ -443,13 +441,11 @@ class ExecutionEngine:
         if (target and target not in self.__idle_targets
             and target.IsIdle()):
             # Output a trace message.
-            if __debug__:
-                self._Trace("Target is now idle.\n")
+            self._Trace("Target is now idle.\n")
             self.__idle_targets.append(target)
 
         # Output a trace message.
-        if __debug__:
-            self._Trace("Writing result for %s to streams." % result.GetId())
+        self._Trace("Writing result for %s to streams." % result.GetId())
 
         # Report the result.
         for rs in self.__result_streams:
@@ -477,8 +473,9 @@ class ExecutionEngine:
 
         'message' -- A string to be output as a trace message."""
 
-        tracer = qm.test.cmdline.get_qmtest().GetTracer()
-        tracer.Write(message, "exec")
+        if __debug__:
+            tracer = qm.test.cmdline.get_qmtest().GetTracer()
+            tracer.Write(message, "exec")
 
     
 ########################################################################

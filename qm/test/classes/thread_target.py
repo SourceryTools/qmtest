@@ -71,7 +71,7 @@ class ThreadTarget(Target):
         to strings (property values)."""
         
         # Initialize the base class.
-        Target.__init__(self, properties, database)
+        Target.__init__(self, database, properties)
 
         # Create a lock to guard accesses to __ready_threads.
         self.__ready_threads_lock = Lock()

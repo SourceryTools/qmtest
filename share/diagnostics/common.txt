@@ -31,9 +31,6 @@ You may not specify both '--%(option1)s' and '--%(option2)s'.
 @ could not read file
 %(program_name)s could not read the file '%(path)s'.
 
-@ dependency cycle
-This test depends on itself, either directly or by way of other tests.
-
 @ disabled account
 The account you specified is disabled.
 
