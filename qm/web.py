@@ -2012,7 +2012,8 @@ def make_select(field_name,
                 items,
                 default_value,
                 item_to_text=str,
-                item_to_value=str):
+                item_to_value=str,
+                form_name="form"):
     """Construct HTML controls for selecting an item from a list.
 
     'field_name' -- The name of the form control which will contain the
@@ -2030,6 +2031,9 @@ def make_select(field_name,
     'item_to_value' -- A function that returns the value representation
     of an item.
 
+    'form_name' -- The name of the form that will contain the returned
+    controls. 
+
     returns -- The HTML text for the controls.  
 
     For each item, 'item_to_text' and 'item_to_value' are used to
@@ -2046,9 +2050,9 @@ def make_select(field_name,
              % (field_name, item_to_value(default_value))
     # Write the handler to update the hidden control when the
     # selection changes in the select control.
-    on_change = "update_from_select(document.form.%s, " \
-                "document.form.%s)" \
-                % (select_name, field_name)
+    on_change = "update_from_select(document.%s.%s, " \
+                "document.%s.%s)" \
+                % (form_name, select_name, form_name, field_name)
     # Generate a '<select>' control droplist.
     result = result + '<select name="%s" onchange="%s">\n' \
              % (select_name, on_change)

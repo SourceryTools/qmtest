@@ -592,6 +592,9 @@ def __initialize_module():
     # Load QMTrack diagnostics.
     diagnostic_file = qm.get_share_directory("diagnostics", "track.txt")
     qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
+    # Load QMTest help messages.
+    help_file = qm.get_share_directory("diagnostics", "track-help.txt")
+    qm.diagnostic.help_set.ReadFromFile(help_file)
 
 
 __initialize_module()

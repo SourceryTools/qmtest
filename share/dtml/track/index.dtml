@@ -112,17 +112,18 @@
 
     <tr><td></td></tr>
 
-    <tr><th>Search for Issues</th></tr>
+    <tr><th>Search and Browse Issues</th></tr>
     <tr>
      <td>
       <dtml-var expr="MakeQueryForm()">
-       Query: <input type="text" size="40" name="query"/>
+       Query Expression: 
+       <input type="text" size="40" name="query"/>
        <input type="button" 
               onclick="document.query_form.submit();" 
               value=" Search "/>
       </form>
       See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
-      for instructions.
+      for instructions and more options.
      </td>
     </tr>
 

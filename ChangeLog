@@ -1,5 +1,20 @@
 2001-05-29  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (make_select): Add form_name parameter.
+	* qm/track/web/query.py (QueryPageInfo.__init__): Don't get field
+	names. 
+	(QueryPageInfo.MakeQueryForm): Add name parameter.
+	(QueryPageInfo.GetFieldTypeDescription): Remove.
+	(QueryPageInfo.MakePythonQueryHelp): New method.
+	(QueryPageInfo.MakeCategorySelect): Likewise.
+	(QueryPageInfo.MakeStateSelect): Likewise.
+	* qm/track/config.py (__initialize_module): Load help diagnostics.
+	* share/dtml/track/query.dtml: Remove help info.  Add browse
+	controls. 
+	* share/dtml/track/index.dtml: Adjust labels for query.
+
+2001-05-29  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (SetField.GetHtmlHelp): Don't add old help twice.
 	* qm/common.py (Enumeral.__cmp__): Check RHS against enumerals for
 	strings only.

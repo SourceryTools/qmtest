@@ -18,58 +18,89 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xhtmlns="http://www.w3.org/1999/xhtml">
- <dtml-var expr="GenerateHtmlHeader('Page Title Here!')">
+ <dtml-var expr="GenerateHtmlHeader('Search and Browse Issues')">
  <dtml-var expr="GenerateStartBody()">
 
- <h3>Search Issues</h3>
+ <h3>Search and Browse Issues</h3>
 
  <table border="0" 
-        cellpadding="4" 
-        cellspacing="4" 
+        cellpadding="8" 
+        cellspacing="0" 
         bgcolor="#f0f0f0"
-        width="100%">
+        width="100%"
+        columns="2">
   <tbody>
-   <tr>
+   <tr valign="top">
     <td>
      <h4>Python Query</h4>
 
      <p>Enter a Python query expression.  <dtml-var expr="GetName()">
      will find all issues for which the expression is true.</p>
 
-     <dtml-var expr="MakeQueryForm()">
-      Query Expression: <input type="text" size="40" name="query"/>
-      <input type="submit" value="Search">
+     <dtml-var expr="MakeQueryForm(name='expr_query')">
+      Query Expression: 
+      <input type="text" 
+             size="40" 
+             name="query"/>
+      <input type="button" 
+             value=" Search " 
+             onclick="document.expr_query.submit();"/>
+     </form>
+    </td>
+    <td valign="right">
+     <dtml-var expr="MakePythonQueryHelp()">
+    </td>
+   </tr>
+
+   <tr><td colspan="2" bgcolor="white"></td></tr>
+
+   <tr>
+    <td>
+     <h4>Browse Issues</h4>
+  
+     <dtml-var expr="MakeQueryForm(name='browse_category')">
+      Show All Issues in Category:
+      <dtml-var expr="MakeCategorySelect()">
+      <input type="button"
+             value=" Show "
+             onclick="make_category_query();
+                      document.browse_category.submit();"/>
+      <input type="hidden"
+             name="query"/>
+      <script language="JavaScript">
+      function make_category_query()
+      {
+        var form = document.browse_category;
+        form.query.value = "'" + form.category.value + "' in categories";
+      }
+      </script>
      </form>
 
-     <p>The expression may refer to the values of following fields, as
-     if they were ordinary variables:</p>
+     <dtml-var expr="MakeQueryForm(name='browse_state')">
+      Show All Issues in State:
+      <dtml-var expr="MakeStateSelect()">
+      <input type="button"
+             value=" Show "
+             onclick="make_state_query(); document.browse_state.submit();"/>
+      <input type="hidden"
+             name="query"/>
+      <script language="JavaScript">
+      function make_state_query()
+      {
+        var form = document.browse_state;
+        form.query.value = "state == '" + form.state.value + "'";
+      }
+      </script>
+     </form>
 
-     <center>
-     <table>
-      <thead>
-       <tr>
-        <th>Field Name</th>
-        <th>Value Type</th>
-       </tr>
-      </thead>
-      <tbody>
-       <dtml-in expr="fields">
-       <dtml-let field=sequence-item>
-        <tr valign="top">
-         <td>
-          <tt><dtml-var expr="field.GetName()"></tt>
-         </td>
-         <td>
-          <dtml-var expr="GetFieldTypeDescription(field)">
-         </td>
-        </tr>
-       </dtml-let>
-       </dtml-in>
-      </tbody>
-     </table>
-     </center>
-
-    </tr>
+     <dtml-var expr="MakeQueryForm(name='browse')">
+      Show All Issues:
+      <input type="button"
+             value=" Show "
+             onclick="document.browse.submit();"/>
+     </form>
+    </td>
+    <td>&nbsp;</td>
    </tr>
   </tbody>
  </table>
