@@ -134,7 +134,7 @@ class DtmlPage:
     html_stylesheet = "/stylesheets/qm.css"
     """The URL for the cascading stylesheet to use with generated pages."""
 
-    qm_bug_system_url = "http://qm.software-carpentry.com:4224/track/"
+    qm_bug_system_url = "http://qm.codesourcery.com:4224/track/"
     """The public URL for the bug tracking system for the QM tools."""
 
 

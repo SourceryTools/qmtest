@@ -8,7 +8,7 @@
     QM-specific DTD module for use with DocBook.  Contains names,
     phrases, acronyms, etc. used throughout QM documentation.
 
-  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  Copyright (C) 2000, 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -50,7 +50,7 @@
 <!-- Other commonly-used symbols and phrases.  -->
 
 <!ENTITY fixme "<emphasis role=&#34;fixme&#34;>FIXME</emphasis>">
-<!ENTITY prompt "<prompt>$ </prompt>">
+<!ENTITY prompt "<prompt>> </prompt>">
 
 <!ENTITY PASS "<symbol>PASS</symbol>">
 <!ENTITY FAIL "<symbol>FAIL</symbol>">

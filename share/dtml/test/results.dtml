@@ -43,9 +43,12 @@
        <td align="right"><dtml-var expr="count"></td>
        <td align="right"><dtml-var 
                           expr="'%3.0f' % ((100. * count) / total)"></td>
-       <td align="right"><dtml-var expr="unexp_count"></td>
-       <td align="right"><dtml-var 
-                          expr="'%3.0f' % ((100. * unexp_count) / total)"></td>
+       <td align="right" 
+           <dtml-if expr="unexp_count">class="unexpected"</dtml-if>
+           ><dtml-var expr="unexp_count"></td>
+       <td align="right"
+           <dtml-if expr="unexp_count">class="unexpected"</dtml-if>
+           ><dtml-var expr="'%3.0f' % ((100. * unexp_count) / total)"></td>
       </tr>
      </dtml-if>
     </dtml-let>
