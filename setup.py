@@ -86,21 +86,13 @@ test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
 share_files = {}
 os.path.walk("share", select_share_files, share_files)
 
-# On UNIX, we want the main script to be "qmtest".  On Windows, we need
-# to use a ".py" extension so that users can invoke the script directly;
-# if we were to omit the ".py" extension they would have to explicitly
-# type "python qmtest" to invoke the script.  Searching for
-# "bdist_wininst" in sys.argv is an (inelegant) way of checking to see
-# if we are building a Windows binary installer.
+# On UNIX, users invoke "qmtest".  On Windows, there is no way to make a
+# Python script directly executable, unless its suffix is ".py".  It is
+# difficult to get distutils to install just one script or the other, so
+# we install both on all platforms.
 qmtest_script = join("qm", "test", "qmtest")
-py_script = qmtest_script + ".py"
-if "bdist_wininst" in sys.argv:
-    shutil.copyfile(qmtest_script, py_script)
-    qmtest_script = py_script
-elif os.path.exists(py_script):
-    # Avoid accidentally packaging the ".py" version of the script, if
-    # it exists.
-    os.remove(py_script)
+qmtest_py_script = qmtest_script + ".py"
+shutil.copyfile(qmtest_script, qmtest_py_script)
      
 setup(name="qm", 
       version=version,
@@ -124,7 +116,7 @@ setup(name="qm",
                 'qm/test',
                 'qm/test/classes',
                 'qm/test/web'),
-      scripts=[qmtest_script],
+      scripts=[qmtest_script, qmtest_py_script],
       data_files=[('qm/messages/test',
                    prefix(messages, 'qm/test/share/messages')),
                   # DTML files for the GUI.

@@ -1,3 +1,8 @@
+2004-02-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* setup.py: Install both "qmtest" and "qmtest.py" on all systems.
+	* qm/__version.py:Advance to 2.1.2.
+	
 2004-02-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/__version.py: Advance to 2.1.1.
