@@ -50,10 +50,8 @@ def check_python_version():
             version = "%d.%d" % required_python_version
         else:
             version = "%d.%d.%d" % required_python_version
-        sys.stderr.write(
-            ("QMTest requires Python %s or later.\n"
-             "Set the QM_PYTHON environment variable to an appropriate "
-             "Python interpreter.\n") % version)
+        sys.stderr.write("qmtest: error: QMTest requires Python %s or later.\n"
+                         % version)
         sys.exit(1)
 
 check_python_version()
