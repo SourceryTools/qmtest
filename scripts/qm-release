@@ -66,11 +66,11 @@ changedir() {
 build_source() {
     echo "Building source distribution..."
     # Remove the old version of the source distribution.
-    rm -rf ${QM_TAR_GZ} qm-${QM_VERSION}
+    rm -rf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION}
     cvs -f -z9 -Q export -d qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
-    tar czf ${QM_TAR_GZ} qm-${QM_VERSION} || \
+    tar czf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION} || \
       error "Could not create tar file"
 }
 
@@ -78,14 +78,40 @@ build_source() {
 
 build_rpm() {
     echo "Building RPM distribution..."
-    cp ${QM_TAR_GZ} ${RPM_BASE}/SOURCES || \
+    cp ${QM_SOURCE_TAR_GZ} ${RPM_BASE}/SOURCES || \
       error "Could not install source distribution"
-    (tar xzf ${QM_TAR_GZ} -O qm-${QM_VERSION}/qm.spec.in | \
+    (tar xzf ${QM_SOURCE_TAR_GZ} -O qm-${QM_VERSION}/qm.spec.in | \
       sed -e "s|@QM_VERSION@|${QM_VERSION}|g" > \
       ${RPM_BASE}/SPECS/qm.spec) || \
       error "Could not extract spec file"
     rpm --quiet -ba --rmsource ${RPM_BASE}/SPECS/qm.spec || \
       error "Could not create RPM"
+}
+
+# Build the binary distribution.
+
+build_binary() {
+    echo "Building binary distribution..."
+    # Remove any old source distribution.
+    rm -rf qm-${QM_VERSION}
+    # Untar the source distribution.
+    tar xzf ${QM_SOURCE_TAR_GZ} || \
+      error "Could not unpack source distribution"
+    changedir qm-${QM_VERSION}
+    # Create an installation directory.
+    mkdir qm-${QM_VERSION}-install || \
+      error "Could not create installation directory"
+    # Configure QM.
+    ./configure --prefix=`pwd`/qm-${QM_VERSION}-install || \
+      error "Could not configure QM"
+    # Build it.
+    make || error "Could not build QM"
+    # Install it.
+    make install || error "Could not install QM"
+    # Build a tar file.
+    changedir qm-${QM_VERSION}-install
+    tar czf ../../${QM_BINARY_TAR_GZ} . || \
+      error "Could not create tar file"
 }
 
 ########################################################################
@@ -112,7 +138,9 @@ QM_VERSION=
 RPM_BASE=/usr/src/redhat
 
 # The source distribution.
-QM_TAR_GZ=
+QM_SOURCE_TAR_GZ=
+# The binary distribution.
+QM_BINARY_TAR_GZ=
 
 # Modes of operation.
 SOURCE=0
@@ -134,7 +162,8 @@ shift
 
 QM_MAJOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $1; }'`
 QM_MINOR_VER=`echo $QM_VERSION | awk --assign FS=. '{ print $2; }'`
-QM_TAR_GZ=qm-${QM_VERSION}.tar.gz
+QM_SOURCE_TAR_GZ=qm-${QM_VERSION}.tar.gz
+QM_BINARY_TAR_GZ=qm-${QM_VERSION}-binary.tar.gz
 
 # Handle the major modes.
 while [ $# -ne 0 ]; do
@@ -160,4 +189,8 @@ fi
 
 if [ ${RPM} -ne 0 ]; then
   build_rpm
+fi
+
+if [ ${BINARY} -ne 0 ]; then
+  build_binary
 fi
