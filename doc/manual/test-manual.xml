@@ -52,7 +52,7 @@
   <section id="sec-qmtest-concepts">
   <title>&qmtest; Concepts</title>
 
-  <para>This section the concepts that underlie &qmtest;'s design.  By
+  <para>This section presents the concepts that underlie &qmtest;'s design.  By
   understanding these concepts, you will be able to better understand
   how &qmtest; works.  In addition, you will find it easier to extend
   &qmtest; to new application domains.</para>
@@ -380,7 +380,7 @@
   command line.</para>
 
   <para>&qmtest; can run tests in multiple concurrent threads of
-  execution, or on multiple remote hosts.  See the documentation for the
+  execution or on multiple remote hosts.  See the documentation for the
   <link linkend="sec-testcmd-run"><command>run</command> command</link>
   for details.</para>
 
@@ -389,7 +389,7 @@
 
    <para>Given one or more input test names and test suite names, &qmtest;
    employs the following procedure to determine which tests and
-   resources to run, and the order in which they are run.</para>
+   resources to run and the order in which they are run.</para>
 
    <orderedlist>
     <listitem>
@@ -417,7 +417,7 @@
     </listitem>
 
     <listitem>
-     <para>&qmtest; determines the required by a the tests to be run.
+     <para>&qmtest; determines the required resources for the tests to be run.
      If several tests require the same resource, &qmtest; attempts to
      run all of the tests on the same target.  In this case, the
      resource is set up and cleaned up only once.  In some cases,
@@ -426,9 +426,8 @@
     </listitem>
    </orderedlist>
 
-   <para>In some cases, a test specified in the test run, or the setup
-   or cleanup function of an resource required by a test in the test
-   run, is not executed:</para>
+   <para>In some cases, a test, resource setup function, or resource
+   cleanup function is not executed:</para
 
    <itemizedlist>
     <listitem>
@@ -460,7 +459,7 @@
    <title>The Context</title>
 
    <para>&qmtest; passes a context object to the run method of a test
-   that is run, and to the setup and cleanup methods of a
+   that is run and to the setup and cleanup methods of a
    resource.</para>
 
    <para>Most of the properties of the context are the same for all
@@ -495,7 +494,7 @@
 
    <para>For instance, a resource setup function might allocate the
    resource and place a handle to it (for instance, a temporary
-   directory name, or a database session key) in the context as a
+   directory name or a database session key) in the context as a
    context property.  Tests that require that resource have access to
    the temporary resource via the handle stored in the context.  The
    resource's cleanup function also uses the handle to deallocate the
@@ -510,8 +509,8 @@
   <title>Test Database Contents</title>
 
   <para>The default &qmtest; test database implementation stores the
-  database as a directory hierarchy containing XML files.  Each component
-  of a test, suite, or resource name is represented by a subdirectory.  A
+  database as a directory hierarchy containing XML files.  Each QMTest
+  subdirectrory is represented by a subdirectory in the filesystem.  A
   test, suite, or resource is represented by an XML file.  These files
   have file extensions <filename>.qmt</filename>,
   <filename>.qms</filename>, and <filename>.qma</filename>,
@@ -522,7 +521,7 @@
   responsibility to ensure the integrity and validity of the XML
   contents of each file.  For example, file and directory names should
   contain only characters allowed in identifiers (lower-case letters,
-  digits, and underscores); a period should only be used to a file
+  digits, and underscores); a period should only be used before a file
   extension, such as <filename>.qmt</filename>.  Also, the files and
   directories in a test database should not be modified directly while
   &qmtest; is running with that test database.</para>
@@ -566,7 +565,7 @@
     <para>All options are available in a "long form" prefixed with
     "&dashdash;" (two hyphens).  Some options also may be specified in
     a "short form" consisting of a single hyphen and a one-letter
-    abbreviation (listed below in parentheses).  Short-form options may
+    abbreviation.  Short-form options may
     be combined; for example, <command>-abc</command> is equivalent to
     <command>-a -b -c</command>.</para>
 
@@ -650,7 +649,7 @@
     current directory is the test database.  Since the current
     directory already exists, &qmtest; will issue an error.
     Therefore, when using the <command>create-tdb</command> command,
-    the database directory must be explicitly specified.</para>
+    the database directory must be explicitly specified.)</para>
 
     <para>By default, &qmtest; creates a new test database that uses the
     standard XML-based implementation.  (See <xref
@@ -938,7 +937,7 @@
       <listitem>
        <para>Write full test results to <replaceable>file</replaceable>.
        Specify "<literal>-</literal>" (a hyphen) to write results to
-       standard output.  If neither this option, nor the
+       standard output.  If neither this option nor
        <option>&dashdash;no-output</option> is specified, the results
        are written to the file named <filename>results.qmr</filename>
        in the current directory.</para>
@@ -954,8 +953,7 @@
        <para>Treat <replaceable>file</replaceable> as a set of
        expected outcomes.  The <replaceable>file</replaceable> must
        have be a results file created either by <command>&qmtest-cmd;
-       run</command>, by saving results in graphical user interface,
-       or by saving expectations in the graphical user interface.
+       run</command>, or by saving results in the graphical user interface.
        &qmtest; will expect the results of the current test run to
        match those specified in the <replaceable>file</replaceable>
        and will highlight differences from those results.</para>
@@ -1119,7 +1117,7 @@
     </term>
     <listitem>
      <para>If this environment variable is set, it should contain a
-     list of directories, in the same format as used for the system's
+     list of directories in the same format as used for the system's
      <envar>PATH</envar> environment variable.  These directories
      are searched (before the directories that &qmtest; searches by
      default) when looking for extension classes such as test classes
@@ -1135,7 +1133,7 @@
      <para>If this environment variable is set, its value is used as
      the location of the test database, unless the
      <option>&dashdash;tdb</option> (<option>-D</option>) option is
-     used.  If this environment variable is not set, and the
+     used.  If this environment variable is not set and the
      <option>&dashdash;tdb</option> option is not used, the current
      directory is used as the test database.</para>
     </listitem>
@@ -1185,8 +1183,7 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Argument List</property> (set field of text
-      items)</glossterm>
+      <glossterm><property>Argument List</property> (set of strings)</glossterm>
       <glossdef>
        <para>The argument list for the program.  The elements of this
        set are sequential items from which the program's argument list
@@ -1208,8 +1205,7 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Environment</property> (set field of text
-      items)</glossterm>
+      <glossterm><property>Environment</property> (set of strings)</glossterm>
       <glossdef>
        <para>The environment (i.e. the set of environment variables)
        available to the executing program.  Each element of this
@@ -1248,7 +1244,7 @@
      </glossentry>
 
      <glossentry>
-      <glossterm><property>Expected Standard Input</property>
+      <glossterm><property>Expected Standard Error</property>
       (text field)</glossterm>
       <glossdef>
        <para>The text or data which the program is expected to produce
@@ -1499,7 +1495,7 @@
     running these tests.</para>
 
     <para>To use <classname>RSHTarget</classname>, the remote
-    computer must have &qmtest; installed, and must contain an identical
+    computer must have &qmtest; installed and must contain an identical
     copy of the test database.  &qmtest; does not transfer entire tests
     over the remote shell connection; instead, it relies on the remote
     test database for loading tests.</para>
@@ -1512,10 +1508,9 @@
     <command>ssh-agent</command> program for this.  See the
     corresponding manual pages for details.</para>
 
-    <para>The concurrency value of the target specification controls the
-    number of concurrent tests to run on the remote host.  The number of
-    processes used on the remote host is one (the controlling process)
-    plus the concurrency value.</para>
+    <para>The concurrency value of the target specification controls
+    the number tests that may be run concurrently on the remote
+    host.</para>
 
     <para>The <classname>RSHTarget</classname> target class
     takes its configuration from the following target properties:</para>
@@ -1589,14 +1584,14 @@
    <para>In &qmtest;, a test class is represented by a Python class.
    The class must inherit from
    <classname>qm.test.test.Test</classname>.  The class must include
-   two things: a <varname>arguments</varname>
+   two things: an <varname>arguments</varname>
    attribute, whose value is a sequence of field objects, and a 
    <function>Run</function> function.</para>
 
    <section>
     <title>The <varname>arguments</varname> Attribute</title>
 
-    <para>The test class must include a <varname>arguments</varname>
+    <para>The test class must include an <varname>arguments</varname>
     attribute, indicating the types of the test class's parameters.  The
     <varname>arguments</varname> attributes value should be a sequence
     consisting of field objects.  A field object is an instance of a
@@ -1607,7 +1602,7 @@
     <para>For instance, this definition of the <varname>arguments</varname>
     attribute declares two parameters for the test class.  One
     parameter, called &quot;input_text&quot;, takes a text value.  The
-    other parameter, called &quot;value_list&quot;, takes as its value a
+    other parameter, called &quot;value_list&quot;, takes a
     set of integers.</para>
 
     <programlisting>
@@ -1675,9 +1670,7 @@
 
     <para>In case of a &FAIL; result, it is conventional to assign the
     <literal>Result.CAUSE</literal> property a string value providing
-    a description of why the test failed.</para>
-
-    <para>These two equivalent examples demonstrate how to indicates
+    a description of why the test failed.  These two equivalent examples demonstrate how to indicates
     test failure (both assume that the
     <classname>qm.test.result.Result</classname> class has been
     imported into the module's global namespace).</para>
@@ -1697,7 +1690,7 @@
     detects a failure by catching an exception.  The method
     <function>Result.NoteException</function> provides
     a convenient mechanism for creating a result that includes
-    information about the exception.For
+    information about the exception.  For
     example: 
 
     <programlisting>
@@ -1718,10 +1711,10 @@
    <title>Writing Resource Classes</title>
 
    <para>Writing resource classes is similar to writing test classes.
-   The requirements are the same, except that instead of a <link
+   The requirements are the same except that, instead of a <link
    linkend="sec-run-function"><function>Run</function></link>
-   function, you must provide two functions, named
-   <function>SetUp</function> and <function>CleanUp</function>, to
+   function, you must provide two functions named
+   <function>SetUp</function> and <function>CleanUp</function> to
    perform resource setup and cleanup.  Both of these functions take
    the same arguments that are provided to a test class
    <function>Run</function> method.  Since the cleanup function is
@@ -1731,7 +1724,7 @@
 
    <para>The setup function may add additional properties to the
    context.  These properties will be visible only to the
-   <function>CleanUp</function> function called for the same resource,
+   <function>CleanUp</function> function called for the same resource
    and to tests that require this resource.  To insert a context
    property, use Python's map assignment syntax.</para>
 
@@ -1818,7 +1811,7 @@
   stored.  &qmtest's default database class stores each test as an XML
   file, but you might want to use a format that is particularly well
   suited to your application domain or to your organization's
-  arrangment of computing resources.</para>
+  arrangement of computing resources.</para>
 
   <para>For example, if you were testing a compiler, you might want to
   represent tests as source files with special embedded comments

@@ -7,7 +7,7 @@
   Contents:
     Software Carpentry Open Publication License text.
 
-  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  Copyright (C) 2000, 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
   the Software Carpentry Open Publication License, which is available at:
 
@@ -26,11 +26,11 @@
  <para>Proper form for incorporation of this license by reference is
  as follows:
   <blockquote>
-   <para>Copyright &copy; 2000 by CodeSourcery LLC.  This material may
-   be distributed only subject to the terms and conditions set forth
-   in the Software Carpentry Open Publication License, which is
-   available at http://www.software-carpentry.com/openpub-license.html
-   .</para>
+   <para>Copyright &copy; 2000, 2001 by CodeSourcery LLC.  This
+   material may be distributed only subject to the terms and
+   conditions set forth in the Software Carpentry Open Publication
+   License, which is available at
+   http://sc-archive.codesourcery.com/openpub-license.html .</para>
   </blockquote>
  </para>
 

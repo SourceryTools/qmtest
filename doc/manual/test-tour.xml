@@ -33,8 +33,8 @@
    <title>Setting Up</title>
 
    <para>A test database is a directory that &qmtest; uses to store
-   tests.  If you wanted to create a new, empty test database from
-   scratch, you would use the <command>&qmtest-cmd;
+   tests.  If you want to create a new, empty test database from
+   scratch, you use the <command>&qmtest-cmd;
    create-tdb</command> command, but for this tutorial, you should use
    the sample test database provided with &qmtest;.  Since you'll
    modify the test database later in the tutorial, start by making a
@@ -224,7 +224,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
    If the expression evaluates to true, the test passes; otherwise, it
    fails.</para>
 
-   <para>The set up code and the expression are the
+   <para>The setup code and the expression are the
    <firstterm>arguments</firstterm> to the test class.  Every test
    class takes arguments; the arguments are what differentiate one
    instance of a test class from another.  &qmtest; displays the

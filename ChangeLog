@@ -1,3 +1,13 @@
+2001-12-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* PyXML/.cvsignore: New file.
+	* doc/qm-opl.xml: Update copyright date.
+	* doc/manual/common-manual.xml: Tweak language.
+	* doc/manual/test-manual.xml: Likewise.
+	* doc/manual/test-tour.xml: Likewise.
+	* qm/test/classes/python.py (ExecTest.Run): Fix typo in comment.
+	* share/dtml/set.dtml: Clarify help documentation.
+
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/web.py (make_button_for_popup): Spell "resizeable" without

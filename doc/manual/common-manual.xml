@@ -29,7 +29,7 @@
  similar to that used in Microsoft Windows <filename>.INI</filename>
  files.  It is divided into sections by headings in square brackets.
  Three sections are supported: <literal>[common]</literal> contains
- configuration variables common to both the &qm; tools, while
+ configuration variables common to all the &qm; tools, while
  <literal>[test]</literal> contains
  configuration variables specific to &qmtest;.  Within
  each section, configuration variables are set using the syntax
@@ -46,7 +46,7 @@ browser=/usr/local/bin/netscape
  <section id="sec-rc-common">
   <title>Configuration Variables</title>
 
-  <para>These configuration variables are used in both &qm; tools.  You
+  <para>These configuration variables are used in all &qm; tools.  You
   should define them in the <literal>[common]</literal> section of your
   &qm; configuration file.</para>
 

@@ -36,7 +36,7 @@
     <tr class="field">
      <td width="25%">
       <p>
-       Select an element to add to the set field 
+       Add an element to the 
        <b><dtml-var expr="field.GetTitle()"></b>.
       </p>
      </td>
