@@ -1,5 +1,10 @@
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/config.py (diagnostic): Generate path to diagnostics
+	file. 
+
+2001-03-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (EnumerationField.FormatValueAsHtml): Fix name and
 	value defaults.
 	* qm/track/config.py (setup_idb_for_internal_use): Don't generate

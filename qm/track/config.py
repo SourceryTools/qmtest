@@ -481,7 +481,10 @@ def diagnostic(tag, severity, output, **substitutions):
 
     # Perform one-time initialization, if it hasn't been done.
     if __diagnostics is None:
-        __diagnostics = qm.diagnostic.DiagnosticSet("diagnostics.txt",
+        diagnostics_file = os.path.join(qm.common.base_directory,
+                                        "track",
+                                        "diagnostics.txt")
+        __diagnostics = qm.diagnostic.DiagnosticSet(diagnostics_file,
                                                     get_name())
     # Generate or emit the diagnostic.
     return apply(__diagnostics.Generate,
