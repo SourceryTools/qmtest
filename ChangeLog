@@ -1,5 +1,7 @@
 2001-02-26  Alex Samuel  <samuel@codesourcery.com>
 
+	* README: Clarify --test-values flag.
+
 	* qm/track/server.py (execute): Rearrange exception handling.
 	* qm/track/issue_class.py (IssueFieldIid.SetDefaultValue): New method.
 	* qm/track/config.py (initialize_idb): Check that the IDB path

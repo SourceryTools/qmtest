@@ -41,8 +41,9 @@
    set up your PYTHONPATH; this is set automatically by the script.
 
    First, create a new issue database with the initialize command.
-   Specify the path to the new database.  You'll want to specify the
-   --test-values option too, to populate it with some dummy stuff.
+   Specify the path to the new database.  If you specify the
+   --test-values option, QMTrack adds to the IDB a sample test class and
+   a few sample issues to start you off.
 
      qmtrack initialize --test-values /path/to/idb
 
