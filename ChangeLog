@@ -65,6 +65,8 @@
 	* qm/track/web/templates: New directory.
 	* qm/track/web/templates/show.dtml: New file.
 	* qm/track/web/templates/summary.dtml: Likewise.
+
+	* templates/dtml: New file.
 	
 2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
 
