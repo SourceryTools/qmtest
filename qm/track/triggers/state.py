@@ -45,15 +45,42 @@ from   qm.track.issue_class import TriggerResult
 ########################################################################
 
 class Trigger(qm.track.issue_class.Trigger):
+    """Trigger for managing the issue state field.
 
-    def __init__(self, name, state_field_name="state"):
+    This trigger watches modifications to a state field in the issue and
+    makes sure all changes are in accordance to the field's configured
+    state model.  The field vetoes a change to an issue that includes a
+    state field change not corresponding to a transition in the model.
+    Each state model transition may carry a condition (which may depend
+    on values of other fields in the issue); the trigger similarly
+    vetoes a change if a state transition's condition does not hold.  It
+    also makes sure that the state field's value in a new issue is
+    initialized to the state model's initial state."""
+
+    class_name = "qm.track.triggers.state.Trigger"
+
+    property_declarations = \
+        qm.track.issue_class.Trigger.property_declarations \
+        + (
+        qm.fields.PropertyDeclaration(
+            name="field_name",
+            description="The name of the state field to manage.",
+            default_value="state"),
+
+        )
+    
+
+    def __init__(self, name, field_name="state", **properties):
         # Initialize the base class.
-        qm.track.issue_class.Trigger.__init__(self, name)
-        self.__state_field_name = state_field_name
+        apply(qm.track.issue_class.Trigger.__init__,
+              (self, name),
+              properties)
+        # Store the state field name.
+        self.SetProperty("field_name", field_name)
         
 
     def Preupdate(self, issue, previous_issue):
-        field_name = self.__state_field_name
+        field_name = self.GetProperty("field_name")
         new_state = issue.GetField(field_name)
 
         if previous_issue is not None:

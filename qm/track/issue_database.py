@@ -703,7 +703,7 @@ issue."""
     import triggers.notification
     trigger = triggers.notification.NotifyByUidFieldTrigger(
         "notification", "_changed('state')", "notify")
-    trigger.SetAutomaticSubscription("user != 'guest'")
+    trigger.SetSubscriptionCondition("user != 'guest'")
     icl.RegisterTrigger(trigger)
     
     idb.AddIssueClass(icl)

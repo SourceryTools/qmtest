@@ -40,7 +40,7 @@
 
 <!-- The specification of an issue class.  -->
 <!-- FIXME: Triggers.  -->
-<!ELEMENT issue-class (title, description, field*)>
+<!ELEMENT issue-class (title, description, field*, trigger*)>
 <!ATTLIST issue-class name CDATA #REQUIRED>
 
 <!-- The user-visible title of an issue class.  -->
@@ -50,20 +50,24 @@
 <!ELEMENT field (class, default-value, property*, field?)>
 <!ATTLIST field name CDATA #REQUIRED>
 
-<!-- The class of a field.  -->
+<!-- The Python class of a field or trigger.  -->
 <!ELEMENT class (#PCDATA)>
 
 <!-- The default value of a field.  -->
 <!ELEMENT default-value (integer | text | set | attachment | enumeral)>
 
-<!-- A field property.  -->
+<!-- A field or trigger property.  -->
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA #REQUIRED>
+
+<!-- A trigger description.  -->
+<!ELEMENT trigger (class, property*)>
 
 <!ENTITY % fields PUBLIC 
     "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
     "fields.mod">
 %fields;
+
 
 <!-- 
   Local Variables:

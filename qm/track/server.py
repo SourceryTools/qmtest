@@ -256,7 +256,7 @@ def make_server(idb, port, address="", log_file=None):
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
-        ( "shutdown", handle_shutdown ),
+        ( "shutdown", handle_shutdown_by_administrator ),
         ( "submit", qm.track.web.show.handle_submit ),
         ( "summary", qm.track.web.summary.handle_summary ),
         ]:
@@ -322,6 +322,16 @@ def make_configuration_server(idb, port, address="", log_file=None):
 
 def handle_shutdown(request):
     """Handle a request to shut down the server."""
+
+    raise SystemExit, None
+    
+
+
+def handle_shutdown_by_administrator(request):
+    """Handle a request to shut down the server.
+
+    The shutdown proceeds only if submitted by a user in the
+    "administrators" group."""
 
     administrators_group = qm.user.database.GetGroup("administrators")
     user_id = request.GetSession().GetUserId()

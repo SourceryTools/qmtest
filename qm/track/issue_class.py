@@ -220,16 +220,71 @@ class Trigger:
     The default implementations of these methods are no-ops; the 'Get'
     and 'Preupdate' implementations return an 'ACCEPT' outcome."""
 
-    def __init__(self, name):
-        """Create a new trigger instance."""
+    class_name = None
+    """The name of this class.
 
-        self.__name = name
+    Subclasses must define this to be a string containing the
+    fully-qualified class name."""
+    
+
+    property_declarations = (
+        qm.fields.PropertyDeclaration(
+            name="name",
+            description="The name of this trigger instance.",
+            default_value=""
+            ),
+        
+        )
+
+
+    def __init__(self, name, **properties):
+        """Create a new trigger instance.
+
+        'name' -- The trigger name.
+
+        'properties' -- Additional trigger properties to set."""
+
+        self.__properties = {}
+        # Initialize properties to defaults from property declarations. 
+        for declaration in self.property_declarations:
+            self.__properties[declaration.name] = \
+                declaration.default_value
+        # Set properties specified as arguments.
+        for property_name, value in properties.items():
+            self.SetProperty(property_name, value)
+        self.SetProperty("name", name)
+
+
+    def GetProperty(self, name, default=None):
+        """Return the value of the property named 'name'.
+
+        returns -- The value of the property 'name', or 'default' if
+        these is no such property."""
+
+        try:
+            return self.__properties[str(name)]
+        except KeyError:
+            return default
+
+
+    def SetProperty(self, name, value):
+        """Set a property value.
+
+        'name' -- The name of the property to set.
+
+        'value' -- The value for the property.  If it is not a string,
+        it is converted to one."""
+
+        name = str(name)
+        if not qm.label.is_valid(name):
+            raise ValueError, name
+        self.__properties[name] = str(value)
 
 
     def GetName(self):
         """Return the name of this trigger instance."""
 
-        return self.__name
+        return self.GetProperty("name")
 
 
     def Preupdate(self, issue, previous_issue):
@@ -267,6 +322,28 @@ class Trigger:
         returns -- A 'TriggerResult' object."""
 
         return TriggerResult(self, TriggerResult.ACCEPT)
+
+
+    def MakeDomNode(self, document):
+        """Construct a DOM element node representing this trigger.
+
+        'document' -- The DOM document in which to create the node."""
+
+        # Construct the main element node.
+        element = document.createElement("trigger")
+        # Store the Python class name of the trigger's class.
+        class_element = qm.xmlutil.create_dom_text_element(
+            document, "class", self.class_name)
+        element.appendChild(class_element)
+        
+        # Create an element for each property.
+        for name, value in self.__properties.items():
+            property_element = qm.xmlutil.create_dom_text_element(
+                document, "property", str(value))
+            property_element.setAttribute("name", name)
+            element.appendChild(property_element)
+
+        return element
 
 
 
@@ -638,7 +715,7 @@ class StateField(qm.fields.EnumerationField):
 
     property_declarations = \
         qm.fields.EnumerationField.property_declarations + [
-        qm.fields.FieldPropertyDeclaration(
+        qm.fields.PropertyDeclaration(
             name="state_model",
             description="""The set of states available for this field,
             and allowed transitions among them.""",
@@ -1106,9 +1183,9 @@ issues.""",
             return self.__fields_by_name[name]
         except KeyError:
             raise KeyError, \
-                  qm.track.error("field not in class",
-                                 field_name=name,
-                                 issue_class_name=self.GetName())
+                  qm.error("field not in class",
+                           field_name=name,
+                           issue_class_name=self.GetName())
 
         
     def AddField(self, field):
@@ -1200,12 +1277,15 @@ issues.""",
             document, "description", self.GetDescription())
         element.appendChild(description_element)
 
-        # FIXME: triggers
-
         # Store the fields.
         for field in self.__fields:
             field_element = field.MakeDomNode(document)
             element.appendChild(field_element)
+
+        # Store the triggers.
+        for trigger in self.__triggers:
+            trigger_element = trigger.MakeDomNode(document)
+            element.appendChild(trigger_element)
 
         return element
 
@@ -1345,10 +1425,37 @@ def decode_transition(encoding):
     return Transition(start, end, condition)
     
 
+def trigger_from_dom_node(node):
+    """Construct a trigger from a DOM node.
+
+    'node' -- A DOM element node, with tag "trigger".
+
+    returns -- A 'Trigger' object."""
+
+    assert node.tagName == "trigger"
+
+    # Get the Python class for the field.
+    trigger_class_name = qm.xmlutil.get_child_text(node, "class")
+    # Load the class.
+    trigger_class = qm.common.load_class(trigger_class_name)
+
+    # Construct a map of properties.
+    properties = {}
+    for property_node in node.getElementsByTagName("property"):
+        property_name = property_node.getAttribute("name")
+        property_value = qm.xmlutil.get_dom_text(property_node)
+        properties[property_name] = property_value
+
+    # Instantiate the trigger.
+    trigger = apply(trigger_class, (), properties)
+    # All done.
+    return trigger
+
+
 def from_dom_node(node, attachment_store):
     """Construct an issue class from a DOM node.
 
-    'node' -- A DOM node element, with tag "issue-class".
+    'node' -- A DOM element node, with tag "issue-class".
 
     'attachment_store' -- The attachment store in which to presume
     attachments are located.
@@ -1357,10 +1464,12 @@ def from_dom_node(node, attachment_store):
 
     assert node.tagName == "issue-class"
 
+    # Get the main properties for the issue class.
     name = node.getAttribute("name")
     title = qm.xmlutil.get_child_text(node, "title")
     description = qm.xmlutil.get_child_text(node, "description")
     
+    # Get field descriptors.
     fields = []
     fields_by_name = {}
     for field_node in qm.xmlutil.get_children(node, "field"):
@@ -1368,12 +1477,17 @@ def from_dom_node(node, attachment_store):
         fields.append(field)
         fields_by_name[field.GetName()] = field
 
-    # FIXME: Triggers.
+    # Get triggers.
+    triggers = []
+    for trigger_node in qm.xmlutil.get_children(node, "trigger"):
+        trigger = trigger_from_dom_node(trigger_node)
+        triggers.append(trigger)
 
+    # Construct the issue class.
     issue_class = IssueClass(name, title, description)
     issue_class._IssueClass__fields = fields
     issue_class._IssueClass__fields_by_name = fields_by_name
-
+    issue_class._IssueClass__triggers = triggers
     return issue_class
 
 

@@ -640,7 +640,7 @@ changes to this issue."""))
     trigger = NotifyByUidFieldTrigger("subscription",
                                       notification_condition,
                                       "subscribers")
-    trigger.SetAutomaticSubscription(subscription_condition)
+    trigger.SetSubscriptionCondition(subscription_condition)
     # Insert it.
     issue_class = _get_issue_class_for_session(request)
     issue_class.RegisterTrigger(trigger)

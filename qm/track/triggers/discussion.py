@@ -47,7 +47,20 @@ import types
 class DiscussionTrigger(qm.track.issue_class.Trigger):
     """Trigger to manage a 'DiscussionField'."""
 
-    def __init__(self, name, field_name):
+    class_name = "qm.track.triggers.discussion.DiscussionTrigger"
+
+    property_declarations = \
+        qm.track.issue_class.Trigger.property_declarations + (
+        qm.fields.PropertyDeclaration(
+            name="field_name",
+            description="The name of the discussion field.",
+            default_value="discussion"
+            ),
+
+        )
+
+
+    def __init__(self, name, field_name, **properties):
         """Create a new trigger.
 
         'name' -- The trigger name.
@@ -57,17 +70,20 @@ class DiscussionTrigger(qm.track.issue_class.Trigger):
         'qm.track.issue_class.DiscussionField' field."""
         
         # Initialize the base class.
-        qm.track.issue_class.Trigger.__init__(self, name)
-        # Remember the field name.
-        self.__field_name = field_name
+        apply(qm.track.issue_class.Trigger.__init__,
+              (self, name),
+              properties)
+        # Store the discussion field name.
+        self.SetProperty("field_name", field_name)
 
 
     def Preupdate(self, issue, previous_issue):
-        field = issue.GetClass().GetField(self.__field_name)
+        field_name = self.GetProperty("field_name")
+        field = issue.GetClass().GetField(field_name)
         contained_field = field.GetContainedField()
 
         # Extract the value being set for this issue.
-        value = issue.GetField(self.__field_name)
+        value = issue.GetField(field_name)
         if type(value) is types.StringType:
             # Normally, since 'DiscussionField' is a 'SetField'
             # subclass, the value is a list.  However, when the user
@@ -76,7 +92,7 @@ class DiscussionTrigger(qm.track.issue_class.Trigger):
             # point, extract the old field value, which should be a list
             # of previous discussion elements.
             if previous_issue is not None:
-                previous_value = previous_issue.GetField(self.__field_name)
+                previous_value = previous_issue.GetField(field_name)
             else:
                 previous_value = []
             if value != "":
@@ -93,7 +109,7 @@ class DiscussionTrigger(qm.track.issue_class.Trigger):
                 # previous field value.
                 new_value = previous_value
             # Replace the string with a list.
-            issue.SetField(self.__field_name, new_value)
+            issue.SetField(field_name, new_value)
 
         # Proceed as usual.
         return TriggerResult(self, TriggerResult.ACCEPT)

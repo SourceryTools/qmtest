@@ -1,3 +1,81 @@
+2001-10-13  Alex Samuel  <samuel@indetermi.net>
+
+	* qm/fields.py (FieldPropertyDeclaration): Rename to...
+	(PropertyDeclaration): ... this.
+	Adjust accordingly throughout.
+	* qm/track/server.py (make_server): Use
+	handle_shutdown_by_administrator. 
+	(handle_shutdown): Rename to...
+	(handle_shutdown_by_administrator): ... this.
+	(handle_shutdown): New function.
+	* qm/track/issue_database.py (setup_for_test): Use
+	SetSubscriptionCondition. 
+	* qm/track/issue_class.py (Trigger.class_name): New variable.
+	(Trigger.property_declarations): Likewise.
+	(Trigger.__init__): Rewrite.
+	(Trigger.GetProperty): New method.
+	(Trigger.SetProperty): Likewise.
+	(Trigger.GetName): Use GetProperty.
+	(Trigger.MakeDomNode): New method.
+	(StateField.property_declarations): Adjust for
+	PropertyDeclaration. 
+	(IssueClass.GetField): Fix error code.
+	(IssueClass.MakeDomNode): Store triggers.
+	(trigger_from_dom_node): New function.
+	(from_dom_node): Load triggers.
+	* qm/track/triggers/state.py (Trigger.class_name): New variable.
+	(Trigger.property_declarations): Likewise.
+	(Trigger.__init__): Pass propertis to parent.  Don't use object
+	attributes. 
+	(Trigger.Preupdate): Use GetProperty.
+	* qm/track/triggers/notification.py
+	(_NotifyTrigger.property_declarations): New variable.
+	(_NotifyTrigger.__init__): Pass properties to parent.  Don't use
+	object attributes.
+	(_NotifyTrigger.GetCondition): Use GetProperty.
+	(_NotifyTrigger.SetFromAddress): Use SetProperty.
+	(_NotifyTrigger.SetSubjectPrefix): Use GetProperty.
+	(_NotifyTrigger.Postupdate): Likewise.
+	(NotifyFixedTrigger.class_name): New variable.
+	(NotifyFixedTrigger.__init__): Pass properties to parents.  Don't
+	use object attributes.
+	(NotifyFixedTrigger.GetSubscriberAddresses): Use user database.
+	(NotifyFixedTrigger.SetRecipientAddresses): New method.
+	(NotifyFixedTrigger.GetRecipientAddresses): Use GetProperty.
+	(NotifyFixedTrigger.SetRecipientUids): new method.
+	(NotifyFixedTrigger.GetRecipientUids): Use GetProperty.
+	(NotifyFixedTrigger.AddRecipientAddress): Use GetRecipientAddress
+	and SetRecipientAddress.
+	(_NotifyByFieldTrigger.property_declarations): New variable.
+	(_NotifyByFieldTrigger.__init__): Pass properties to parent.
+	Don't use object attributes.
+	(_NotifyByFieldTrigger.GetFieldName): New method.
+	(_NotifyByFieldTrigger.GetFieldContents): Use it.
+	(NotifyByAddressFieldTrigger.class_name): New variable.
+	(NotifyByAddressFieldTrigger.__init__): Pass properties to
+	parent.  Don't use object attributes.
+	(NotifyByUidFieldTrigger.class_name): New variable.
+	(NotifyByUidFieldTrigger.property_declarations): Likewise.
+	(NotifyByUidFieldTrigger.__init__): Pass properties to parent.
+	Don't use object attributes.
+	(NotifyByUidFieldTrigger.SetAutomaticSubscription): Rename to...
+	(NotifyByUidFieldTrigger.SetSubscriptionCondition): ... this.
+	(NotifyByUidFieldTrigger.GetAutomaticSubscriptionCondition):
+	Rename to...
+	(NotifyByUidFieldTrigger.GetSubscriptionCondition): ... this.
+	(NotifyByUidFieldTrigger.Preupdate): Use accessor.
+	* qm/track/triggers/discussion.py (DiscussionTrigger.class_name):
+	New variable. 
+	(DiscussionTrigger.property_declarations): Likewise.
+	(DiscussionTrigger.__init__): Pass properties to parent.  Don't
+	use object attributes.
+	(DiscussionTrigger.Preupdate): Use GetProperty.
+	* qm/track/web/issue_class.py (handle_submit_subscription): Use
+	SetSubscriptionCondition. 
+	* share/dtml/track/config-idb.dtml: Add shutdown button.
+	* share/xml/issue-classes.dtd (issue-class): Add triggers.
+	(trigger): New element.
+
 2001-10-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/introduction.xml: Revise.

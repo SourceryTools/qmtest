@@ -85,7 +85,31 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
     # subscribers of the notification by providing a
     # 'GetSubscriberAddresses' method.
     
-    def __init__(self, name, condition):
+    property_declarations = \
+        qm.track.issue_class.Trigger.property_declarations + (
+        qm.fields.PropertyDeclaration(
+            name="condition",
+            description="""A Python expression specifying the
+            condition under which to send a notification
+            message.""",
+            default_value="1"),
+
+        qm.fields.PropertyDeclaration(
+            name="from_address",
+            description="""The email address from which notification
+            messages should originate.""",
+            default_value="qmtrack@%s" % qm.platform.get_host_name()),
+
+        qm.fields.PropertyDeclaration(
+            name="subject_prefix",
+            description="""The prefix for the subject line of
+            notification messdages.""",
+            default_value="[QMTrack] "),
+
+        )
+
+
+    def __init__(self, name, condition, **properties):
         """Construct a new trigger.
 
         'name' -- The name of the trigger instance.
@@ -94,17 +118,15 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         evaluate to true for notification to be sent."""
 
         # Initialize the base class.
-        qm.track.issue_class.Trigger.__init__(self, name)
+        apply(qm.track.issue_class.Trigger.__init__, (self, name), properties)
         # Set up attributes.
-        self.__condition = condition
-        self.__from_address = "qmtrack@%s" % qm.platform.get_host_name()
-        self.__subject_prefix = "[QMTrack]"
+        self.SetProperty("condition", condition)
 
 
     def GetCondition(self):
         """Return the expression representing the notification condition."""
 
-        return self.__condition
+        return self.GetProperty("condition")
 
 
     def SetFromAddress(self, address):
@@ -113,7 +135,7 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         'address' -- An email address to be used in the 'From' field of
         notification messages."""
 
-        self.__from_address = address
+        self.SetProperty("from_address", address)
 
 
     def SetSubjectPrefix(self, prefix):
@@ -122,7 +144,7 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         'prefix' -- Text that will be prepended to the subject of
         notification email messages."""
 
-        self.__subject_prefix = prefix
+        self.SetProperty("subject_prefix", prefix)
         
 
     def Postupdate(self, issue, previous_issue):
@@ -146,12 +168,13 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
             else:
                 subject = "modification to issue %s" % issue.GetId()
             # Add the prefix.
-            subject = self.__subject_prefix + " " + subject
+            subject = self.GetProperty("subject_prefix") + " " + subject
             # Send the message.
+            from_address = self.GetProperty("from_address")
             qm.platform.send_email(message,
                                    subject=subject,
                                    recipients=subscribers,
-                                   from_address=self.__from_address)
+                                   from_address=from_address)
 
 
     # Internal methods.
@@ -218,37 +241,36 @@ class NotifyFixedTrigger(_NotifyTrigger):
     The notification subscribers are part of the trigger's configuration.
     Subscribers may be specified by email address or by user ID."""
 
+    class_name = "qm.track.triggers.notification.NotifyFixedTrigger"
+
+
     def __init__(self,
                  name,
                  condition,
-                 recipient_addresses=[],
-                 recipient_users=[]):
+                 **properties):
         """Create a new trigger instance.
 
         'name' -- The name of the trigger instance.
 
         'condition' -- A Python expression representing the condition
-        under which to send notification.
-
-        'recipient_addresses' -- A sequence of email addresses of
-        recipients.
-
-        'recipient_users' -- A sequence of user IDs of recipients."""
+        under which to send notification."""
         
         # Initialize the base class.
-        _NotifyTrigger.__init__(self, name, condition)
-        # Store any subscribers that were specified here.
-        self.__recipient_addresses = list(recipient_addresses)
-        self.__recipient_users = list(recipient_users)
+        apply(_NotifyTrigger.__init__, (self, name, condition), properties)
 
 
     def GetSubscriberAddresses(self, issue):
         """Return a sequence of email addresses of subscribers."""
         
         # Start with subscribers listed by email address.
-        result = self.__recipient_addresses[:]
+        result = self.GetRecipientAddresses()
         # Add email addresses of subscribed users.
-        for user in self.__recipient_users:
+        for uid in self.GetRecipientUids():
+            try:
+                user = qm.user.database[uid]
+            except KeyError:
+                # No such user; skip silently.
+                continue
             # Get the user's email address.
             email_address = user.GetInfoProperty("email", None)
             if email_address is None:
@@ -260,22 +282,42 @@ class NotifyFixedTrigger(_NotifyTrigger):
         return result
 
 
+    def SetRecipientAddresses(self, addresses):
+        """Set the recipients by email address.
+
+        'addresses' -- The sequence of email addresses of recipients who
+        are specified by email address."""
+
+        self.SetProperty("recipient_addresses", string.join(addresses, ","))
+
+
     def GetRecipientAddresses(self):
         """Return a sequence of recipients specified by email address."""
 
-        return self.__recipient_addresses
+        return string.split(self.GetProperty("recipient_addresses"), ",")
+
+
+    def SetRecipientUids(self, user_ids):
+        """Set the recipients by user ID.
+
+        'user_ids' -- The sequence of user IDs of recipients who are
+        specified by user ID."""
+
+        self.SetProperty("recipient_uids", string.join(user_ids, ","))
 
 
     def GetRecipientUids(self):
         """Return a sequence of recipients specified by user ID."""
 
-        return self.__recipient_users
+        return string.split(self.GetProperty("recipient_uids"), ",")
 
 
     def AddRecipientAddress(self, address):
         """Add email 'address' to the list of recipients."""
 
-        self.__recipoent_addresses.append(address)
+        addresses = self.GetRecipientAddresses()
+        addresses.append(address)
+        self.SetRecipientAddresses(addresses)
 
 
     def AddRecipientUid(self, uid):
@@ -295,14 +337,27 @@ class NotifyFixedTrigger(_NotifyTrigger):
             # Silently ignore invalid user IDs.
             return
         else:
-            self.__recipient_users.append(user)
+            uids = self.GetRecipientUids()
+            uids.append(user)
+            self.SetRecipientUids(uids)
 
 
 
 class _NotifyByFieldTrigger(_NotifyTrigger):
     """Base class for triggers which extract subscribers from a field."""
 
-    def __init__(self, name, condition, field_name):
+    property_declarations = \
+        _NotifyTrigger.property_declarations + (
+        qm.fields.PropertyDeclaration(
+            name="field_name",
+            description="The name of the field listing notification "
+            "subscribers.",
+            default_value="subscribers"),
+
+        )
+
+
+    def __init__(self, name, condition, field_name, **properties):
         """Create a new trigger instance.
 
         'name' -- The name of the trigger instance.
@@ -316,9 +371,15 @@ class _NotifyByFieldTrigger(_NotifyTrigger):
         be substituted.)"""
 
         # Initialize the base class.
-        _NotifyTrigger.__init__(self, name, condition)
+        apply(_NotifyTrigger.__init__, (self, name, condition), properties)
         # Remeber the field name.
-        self._field_name = field_name
+        self.SetProperty("field_name", field_name)
+
+
+    def GetFieldName(self):
+        """Return the name of the issue field containing recipients."""
+
+        return self.GetProperty("field_name")
 
 
     def GetFieldContents(self, issue):
@@ -328,9 +389,10 @@ class _NotifyByFieldTrigger(_NotifyTrigger):
 
         # Extract the field object.
         issue_class = issue.GetClass()
-        field = issue_class.GetField(self._field_name)
+        field_name = self.GetFieldName()
+        field = issue_class.GetField(field_name)
         # Get the field value for the issue.
-        value = issue.GetField(self._field_name)
+        value = issue.GetField(field_name)
         # Is it a text field (or subclass)?
         if isinstance(field, qm.fields.TextField):
             # Yes; the value is the single subscriber, unless it's an
@@ -347,7 +409,7 @@ class _NotifyByFieldTrigger(_NotifyTrigger):
         else:
             # Can't handle this field type.
             raise RuntimeError, \
-                  "field %s is an invalid type" % self._field_name
+                  "field %s is an invalid type" % field_name
     
 
 
@@ -366,7 +428,10 @@ class NotifyByAddressFieldTrigger(_NotifyByFieldTrigger):
     addresses.  The field may be a text field (at most one address) or a
     set-of-text field (arbitrarily many subscriber addresses)."""
 
-    def __init__(self, name, condition, address_field_name):
+    class_name = "qm.track.fields.notification.NotifyByAddressFieldTrigger"
+
+
+    def __init__(self, name, condition, address_field_name, **properties):
         """Create a new trigger instance.
 
         'name' -- The name of the trigger instance.
@@ -380,8 +445,9 @@ class NotifyByAddressFieldTrigger(_NotifyByFieldTrigger):
         field.""" 
 
         # Initialize the base class.
-        _NotifyByFieldTrigger.__init__(self, name, condition,
-                                       address_field_name)
+        apply(_NotifyByFieldTrigger.__init__,
+              (self, name, condition, address_field_name),
+              properties)
 
 
     def GetSubscriberAddresses(self, issue):
@@ -413,23 +479,43 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
     subscribed will receive notification for the same revision (if the
     revision satisfies the notification condition)."""
 
+    class_name = "qm.track.triggers.notification.NotifyByUidFieldTrigger"
 
-    def __init__(self, name, condition, uid_field_name):
+    property_declarations = \
+        _NotifyByFieldTrigger.property_declarations + (
+        qm.fields.PropertyDeclaration(
+            name="subscription_condition",
+            description="A Python issue expression.  If the issue "
+            "evaluates to true when the issue is modified, the "
+            "modifying user is automatically subscribed.",
+            default_value="0"),
+
+        )
+
+
+    def __init__(self,
+                 name,
+                 condition,
+                 field_name,
+                 subscription_condition="0",
+                 **properties):
         """Create a new trigger instance.
 
         'name' -- The name of the trigger instance.
 
-        'condition' -- A Python expression representing the condition
-        under which to send notification.
-
-        'uid_field_name' -- The name of the issue field which contains
+        'field_name' -- The name of the issue field which contains
         the email address or addresses of notification subscribers.  The
-        field may be a UID field or a set-of-UID field."""
+        field may be a UID field or a set-of-UID field.
+
+        'subscription_condition' -- A Python expression representing the
+        condition under which to send notification."""
 
         # Initialize the base class.
-        _NotifyByFieldTrigger.__init__(self, name, condition, uid_field_name)
-        # Initialize defaults.
-        self.__subscription_condition = "0"
+        apply(_NotifyByFieldTrigger.__init__,
+              (self, name, condition, field_name),
+              properties)
+        # Store the subscription condition.
+        self.SetProperty("subscription_condition", subscription_condition)
 
 
     def GetSubscriberAddresses(self, issue):
@@ -452,34 +538,35 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
                 if email_address is not None:
                     addresses.append(email_address)
                 else:
-                    # FIXME?
                     # Silently ignore users without email addresses.
                     pass
         return addresses
 
 
-    def SetAutomaticSubscription(self, condition):
-        """Turn on or off automatic addition to the notification list.
+    def SetSubscriptionCondition(self, subscription_condition):
+        """Set the condition for automatic subscription.
 
-        'condition' -- A Python expression specifying the condition
-        under which the user who modifies the issue will be added to the
-        notification list.
+        'subscriptio_condition' -- A Python expression specifying the
+        condition under which the user who modifies the issue will be
+        added to the notification list.
 
-        Automatic subscription is off by default."""
+        Set the condition to "0" (which always evaluates to false) to
+        disable automatic subscription."""
 
-        self.__subscription_condition = condition
+        self.SetProperty("subscription_condition", subscription_condition)
 
 
-    def GetAutomaticSubscriptionCondition(self):
+    def GetSubscriptionCondition(self):
         """Return the condition under which users are subscribed."""
 
-        return self.__subscription_condition
+        return self.GetProperty("subscription_condition")
 
 
     def Preupdate(self, issue, previous_issue):
+        subscription_condition = self.GetSubscriptionCondition()
         # Should the user who made the update be subscribed automatically?
         result = qm.track.issue.eval_revision_expression(
-            self.__subscription_condition, issue, previous_issue)
+            subscription_condition, issue, previous_issue)
         if result:
             # Yes.
             uid = issue.GetField("user")

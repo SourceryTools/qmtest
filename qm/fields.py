@@ -78,17 +78,13 @@ class DomNodeError(Exception):
 # classes
 ########################################################################
 
-class FieldPropertyDeclaration:
-    """A declaration of a field property.
+class PropertyDeclaration:
+    """A declaration of a property.
 
-    A 'FieldPropertyDeclaration' is used to declare a property
-    understood by a field type, and provide auxiliary information,
-    including a user-friendly description and a default value.
-
-    Individual fields may have other properties defined for them as
-    well; it is not a requirement that all properties defined for a
-    field must correspond to property declarations of the field's
-    type.
+    A 'PropertyDeclaration' is used to declare a property, which
+    consists of a string name and a string value, and provide auxiliary
+    information, including a user-friendly description and a default
+    value.
 
     The name of a property is composed of lower-case letters, digits,
     and underscores.  Properties are string-valued, but there are no
@@ -202,7 +198,7 @@ class Field:
     class_name = None
 
     property_declarations = [
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="name",
             description="""The internal name for this field. QM uses
             this name to identify the field. This name is also used when
@@ -210,27 +206,27 @@ class Field:
             default_value=""
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="title",
             description="""The name displayed for this field in user
             interfaces.""",
             default_value=""
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="description",
             description="A description of this field's role or purpose.",
             default_value=""
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="hidden",
             description="""If true, the field is for internal purposes,
             and not shown in user interfaces.""",
             default_value="false"
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="read_only",
             description="If true, the field may not be modified by users.",
             default_value="false"
@@ -801,28 +797,28 @@ class TextField(Field):
     class_name = "qm.fields.TextField"
 
     property_declarations = Field.property_declarations + [
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="multiline",
             description="""If false, a value for this field is a single
             line of text.  If true, multi-line text is allowed.""",
             default_value="false"
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="structured",
             description="""If true, the field contains structured
             text.""",
             default_value="false"
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="verbatim",
             description="""If true, the contents of the field are
             treated as preformatted text.""",
             default_value="false"
             ),
 
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="not_empty_text",
             description="""The value of this field is considered invalid
             if it empty or composed only of whitespace.""",
@@ -1106,7 +1102,7 @@ class SetField(Field):
     class_name = "qm.fields.SetField"
 
     set_property_declarations = [
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="not_empty_set",
             description="""If true, this field may not be empty,
             i.e. the value of this field must contain at least one
@@ -1741,7 +1737,7 @@ class EnumerationField(TextField):
     class_name = "qm.fields.EnumerationField"
 
     property_declarations = TextField.property_declarations + [
-        FieldPropertyDeclaration(
+        PropertyDeclaration(
             name="enumerals",
             description="""The enumerals allowed for this field.
             Enumerals are presented in the order listed.""",
