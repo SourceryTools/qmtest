@@ -53,6 +53,10 @@
 # Full path to the qm project.
 TOPDIR		= $(HOME)/qm
 
+# Output directories.
+BUILDDIR	= $(TOPDIR)/build
+DOCDIR		= $(BUILDDIR)/doc
+
 # Python configuration.
 PYTHON		= PYTHONPATH=$(TOPDIR) python 
 
@@ -82,6 +86,9 @@ HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
 # Tarball containing HTML output.
 HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
 
+# HappyDoc configuration.
+HAPPYDOC	= happydoc
+
 # Output directory and output files generated with the DSSSL stylesheet
 # for TeX.
 PRINTDIR	= print
@@ -97,7 +104,7 @@ endif
 TESTFLAGS	= -v -k
 
 .PHONY:		all clean doc setup subdirs test
-.PHONY:         doc-html doc-print docbook-html docbook-print 
+.PHONY:         doc-html doc-print docbook-html docbook-print doc-python
 .PHONY:		$(SUBDIRS)
 
 ########################################################################
@@ -114,7 +121,7 @@ subdirs:	$(SUBDIRS)
 $(SUBDIRS):	
 	cd $@ && make TOPDIR=$(TOPDIR)
 
-doc:		doc-html doc-print
+doc:		doc-html doc-print doc-python
 
 # Generate html and print documentation from DocBook source, if it was
 # specified. 
@@ -183,6 +190,10 @@ $(PRINTDIR)/$(PRINTPDF): \
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) 
+
+# Generate documentation from Python sources using HappyDoc.
+doc-python:
+	$(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset qm
 
 # Run regression tests.  Regression tests are stored in files named
 # test.py.  The file may be present for each package under qm.

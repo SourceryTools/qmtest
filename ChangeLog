@@ -1,3 +1,11 @@
+2001-01-08  Alex Samuel  <samuel@codesourcery.com>
+
+	* standard.mk (BUILDDIR): New macro.
+	(DOCDIR): Likewise.
+	(HAPPYDOC): Likewise.
+	(doc): Depend on doc-python.
+	(doc-python): New rule.
+
 2001-01-07  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/__init__.py: Import idb.
