@@ -34,6 +34,13 @@ import time
 # Classes
 ########################################################################
 
+class TerminationRequested(qm.common.QMException):
+    """A target requested termination of the test loop."""
+    
+    pass
+
+
+
 class ExecutionEngine:
     """A 'ExecutionEngine' executes tests.
 
@@ -232,6 +239,7 @@ class ExecutionEngine:
         may take some time; tests that are already running will continue
         to run, for example."""
 
+        self._Trace("Test loop termination requested.")
         self.__terminated = 1
 
 
@@ -253,20 +261,27 @@ class ExecutionEngine:
 
         returns -- True if any tests had unexpected outcomes."""
 
-        # Write out all the currently known annotations.
-        start_time_str = qm.common.format_time_iso(time.time())
-        for rs in self.__result_streams:
-            rs.WriteAllAnnotations(self.__context)
-            rs.WriteAnnotation("qmtest.run.start_time", start_time_str)
+        # Write out run metadata.
+        self._WriteInitialAnnotations()
 
         # Start all of the targets.
         for target in self.__targets:
             target.Start(self.__response_queue, self)
 
         # Run all of the tests.
+        self._Trace("Starting test loop")
         try:
-            self._RunTests()
+            try:
+                self._RunTests()
+            except:
+                self._Trace("Test loop exited with exception: %s"
+                            % str(sys.exc_info()))
+                for rs in self.__result_streams:
+                    rs.WriteAnnotation("qmtest.run.aborted", "true")
+                raise
         finally:
+            self._Trace("Test loop finished.")
+
             # Stop the targets.
             self._Trace("Stopping targets.")
             for target in self.__targets:
@@ -346,7 +361,9 @@ class ExecutionEngine:
         while self.__num_tests_started < num_tests:
             # If the user interrupted QMTest, stop executing tests.
             if self._IsTerminationRequested():
-                break
+                self._Trace("Terminating test loop as requested.")
+                raise TerminationRequested, "Termination requested."
+
             # Process any responses and update the count of idle targets.
             while self.__CheckForResponse(wait=0):
                 pass
@@ -378,8 +395,9 @@ class ExecutionEngine:
                     else:
                         self.__target_state[target] = self.__TARGET_BUSY
 
-        # Now all tests have been started; we just have wait for them
-        # all to finish.
+        # Now every test that we're going to start has started; we just
+        # have wait for them all to finish.
+        self._Trace("Waiting for remaining tests to finish.")
         while self.__running:
             self.__CheckForResponse(wait=1)
 
@@ -793,6 +811,31 @@ class ExecutionEngine:
             tracer.Write(message, "exec")
 
     
+    def _WriteInitialAnnotations(self):
+
+        # Calculate annotations.
+        start_time_str = qm.common.format_time_iso(time.time())
+
+        try:
+            username = qm.common.get_username()
+        except:
+            username = None
+
+        try:
+            uname = " ".join(os.uname())
+        except:
+            uname = None
+
+        # Write them.
+        for rs in self.__result_streams:
+            rs.WriteAllAnnotations(self.__context)
+            rs.WriteAnnotation("qmtest.run.start_time", start_time_str)
+            if username is not None:
+                rs.WriteAnnotation("qmtest.run.user", username)
+            rs.WriteAnnotation("qmtest.run.version", qm.version)
+            rs.WriteAnnotation("qmtest.run.uname", uname)
+
+
 ########################################################################
 # Local Variables:
 # mode: python

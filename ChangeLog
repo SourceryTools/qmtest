@@ -1,3 +1,18 @@
+2004-02-11  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py: Import getpass.  
+	(get_username): New function.
+	* qm/test/execution_engine.py
+	(ExecutionEngine._WriteInitialAnnotations): New method.
+	(ExecutionEngine.Run): Call it.
+	(TerminationRequested): New exception.
+	(ExecutionEngine._RunTests): Raise it when terminating.
+	(ExecutionEngine.Run): Check for exceptions in _RunTests.
+	
+	(ExecutionEngine.RequestTermination): More tracing.
+	(ExecutionEngine.Run): Likewise.
+	(ExecutionEngine._RunTests): Likewise.
+	
 2004-02-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Remove "Not yet released" markers from news for 2.1.

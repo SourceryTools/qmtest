@@ -39,6 +39,7 @@ import tempfile
 import time
 import traceback
 import types
+import getpass
 if sys.platform != "win32":
     import fcntl
     
@@ -872,6 +873,35 @@ def read_assignments(file):
         assignments[name] = value
 
     return assignments
+
+
+def get_username():
+    """Returns the current username as a string.
+
+    If the username cannot be found, raises a 'QMException'."""
+
+    # First try using the 'getpass' module.
+    try:
+        return getpass.getuser()
+    except:
+        pass
+
+    # 'getpass' doesn't necessarily work on Windows, so if that fails,
+    # try the win32 function.
+    try:
+        import win32api
+    except ImportError:
+        pass
+    else:
+        try:
+            return win32api.GetUserName()
+        except:
+            raise PythonException("Error accessing win32 user database",
+                                  *sys.exc_info()[:2])
+
+    # And if none of that worked, give up.
+    raise QMException, "Cannot determine user name."
+
 
 ########################################################################
 # variables
