@@ -124,11 +124,11 @@ HAPPYDOC	= @HAPPYDOC@
 TESTFLAGS	= -v -k
 
 # The install program.
-INSTALL		= @INSTALL@
-INSTALL_DATA    = @INSTALL_DATA@
+INSTALL		= @top_srcdir@/install-sh -c
+INSTALL_DATA    = $(INSTALL) -m 644
 INSTALL_DIR     = $(INSTALL) -d
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_SCRIPT  = @INSTALL_SCRIPT@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_SCRIPT  = $(INSTALL_PROGRAM)
 
 # Places to install things.
 prefix		= @prefix@

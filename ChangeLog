@@ -1,5 +1,14 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (install): Don't depend on install -D.
+	(share-install): Likewise.
+	* configure.in (AC_PROG_INSTALL): Remove.
+	* configure: Regenerated.
+	* standard.mk.in (INSTALL): Define explicitly.
+	(INSTALL_DATA): Likewise.
+	(INSTALL_PROGRAM): Likewise.
+	(INSTALL_SCRIPT): Likewise.
+
 	* Makefile.in (SCRIPTS): Hardwire destination path.
 
 	* Makefile.in (PYTHON_PACKAGES_INSTALL): Do not attempt

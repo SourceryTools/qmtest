@@ -105,7 +105,8 @@ install: \
 	doc-install \
 	scripts-install \
 	share-install
-	$(INSTALL_DATA) -D qm/test/classes/classes.qmc \
+	$(INSTALL_DIR) $(INSTALLLIBDIR)/qm/test/classes
+	$(INSTALL_DATA) qm/test/classes/classes.qmc \
 		"$(INSTALLLIBDIR)/qm/test/classes/classes.qmc"
 
 # Install Python packages that use distutils.
@@ -155,10 +156,12 @@ scripts-install:
 .PHONY: share-install
 
 share-install:
-	cd share && \
-		find . \( -name '*.txt' -o -name '*.dtml' \
-			  -o -name '*.qmt' -o -name 'configuration' \
-			  -o -name '*.css' -o -name '*.js' \
-			  -o -name '*.gif' -o -name 'CATALOG' \
-			  -o -name '*.dtd' -o -name '*.mod' \) \
-		-exec $(INSTALL_DATA) -D {} "$(INSTALLSHAREDIR)/{}" \;
+	for x in `find share \( -name '*.txt' -o -name '*.dtml' \
+		  -o -name '*.qmt' -o -name 'configuration' \
+		  -o -name '*.css' -o -name '*.js' \
+		  -o -name '*.gif' -o -name 'CATALOG' \
+		  -o -name '*.dtd' -o -name '*.mod' \)`; do \
+		y=`expr "$$x" : 'share/\(.*\)'`; \
+		$(INSTALL_DIR) "$(INSTALLSHAREDIR)/`dirname $$y`"; \
+		$(INSTALL_DATA) "$$x" "$(INSTALLSHAREDIR)/$$y"; \
+	done
