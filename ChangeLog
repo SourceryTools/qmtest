@@ -1,5 +1,14 @@
 2003-11-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in (QM_MAJOR_VER): Do not AC_SUBST it.
+	(QM_MINOR_VER): Likewise.
+	(QM_RELEASE_VER): Likewise.
+	(QM_VERSION): Likewise.
+	* configure: Regenerated.
+	* version: Remove.
+	* qm/__version.py.in: Likewise.
+	* qm/__version.py: New file.
+
 	* qm.spec.in: Remove.
 	* .cvsignore: Remove qm.spec.
 	* GNUmakefile.in (distclean): Do not remove qm.spec.

@@ -1133,14 +1133,6 @@ fi;
 
 
 
-. ${srcdir}/version
-
-
-
-
-
-
-
 
 # Check whether --with-python or --without-python was given.
 if test "${with_python+set}" = set; then
@@ -1319,7 +1311,7 @@ echo "$as_me: WARNING: Documentation is only built with --enable-maintainer-mode
 fi
 
 
-ac_config_files="$ac_config_files GNUmakefile qm/__version.py"
+ac_config_files="$ac_config_files GNUmakefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -1817,7 +1809,6 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "GNUmakefile" ) CONFIG_FILES="$CONFIG_FILES GNUmakefile" ;;
-  "qm/__version.py" ) CONFIG_FILES="$CONFIG_FILES qm/__version.py" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
@@ -1899,10 +1890,6 @@ s,@ECHO_N@,$ECHO_N,;t t
 s,@ECHO_T@,$ECHO_T,;t t
 s,@LIBS@,$LIBS,;t t
 s,@MAINTAINER_MODE@,$MAINTAINER_MODE,;t t
-s,@QM_MAJOR_VER@,$QM_MAJOR_VER,;t t
-s,@QM_MINOR_VER@,$QM_MINOR_VER,;t t
-s,@QM_RELEASE_VER@,$QM_RELEASE_VER,;t t
-s,@QM_VERSION@,$QM_VERSION,;t t
 s,@PYTHON@,$PYTHON,;t t
 s,@PYTHON_PLATFORM@,$PYTHON_PLATFORM,;t t
 s,@HAPPYDOC@,$HAPPYDOC,;t t

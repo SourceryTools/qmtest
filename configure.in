@@ -30,17 +30,6 @@ AC_ARG_ENABLE(maintainer-mode,
 AC_SUBST(MAINTAINER_MODE)
 	     
 dnl ####################################################################
-dnl Load the version numbers.
-dnl ####################################################################
-
-. ${srcdir}/version
-
-AC_SUBST(QM_MAJOR_VER)
-AC_SUBST(QM_MINOR_VER)
-AC_SUBST(QM_RELEASE_VER)
-AC_SUBST(QM_VERSION)
-
-dnl ####################################################################
 dnl Find the Python interpreter.  If the user specified the 
 dnl --with-python option, use its value, after checking that it exists.
 dnl Otherwise, look in the PATH.
@@ -125,5 +114,4 @@ dnl ####################################################################
 
 AC_OUTPUT(
   GNUmakefile
-  qm/__version.py
 )
