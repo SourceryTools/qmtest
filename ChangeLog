@@ -1,3 +1,7 @@
+2000-11-20  Alex Samuel  <samuel@codesourcery.com>
+
+	* README.sources: Add discussion of doc strings.
+
 2000-11-20  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/qmtrack.xml: Added user-api.xml.

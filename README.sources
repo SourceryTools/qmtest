@@ -120,11 +120,10 @@ subject to the following modifications and clarifications:
 	  c = first_function (i) \
 	      + second_function (j)
 
-  - All comments and doc strings should be written in complete, proper
-    English sentences.  Do not use phrases that are incomplete
-    sentences.  Capitalize the first word of the sentence, unless it
-    is a name from source code (and try to avoid this case).  End each
-    sentence with punctuation, followed by two blank spaces.
+  - All comments and doc strings should be written in full sentences.
+    Capitalize the first word of the sentence, unless it is a name
+    from source code (and try to avoid this case).  End each sentence
+    with punctuation, and separate sentences with two spaes.
 
   - Avoid placing comments on the same line as code.  A comment in the
     body of a function should be placed on the line(s) above the code
@@ -143,10 +142,43 @@ subject to the following modifications and clarifications:
       class fields       CamelCaps
       local variables    underscore_delimited
 
-Doc strings should be written in structured text.  In addition to the
-guidelines in von Rossum's style guide, follow these rules:
+Every program element (module, class, function, etc.) should be
+provided with a doc string.  Doc strings should be written in
+structured text, using full sentences.  Begin and end all doc strings
+with three double quotes (""").
 
-  - TBD
+The first line of each doc string should be a short summary sentence
+for the item.  If necessary, a detailed description should follow,
+separated by a blank line.  All source code names (such as variable
+and parameter names) mentioned in doc strings should be surrounded by
+single quotes.
+
+All function parameters should be documented (except for self, for
+class methods).  Return values, preconditions, postconditions, and
+potentially raised exeptions should also be mentioned explicitly.
+These may be documented in the text description of the function, or as
+a definition-style list (write the name of the parameter, two dashes
+(--), and then a description.  For example,
+
+    def read_file(file, filter=None):
+	"""Read data from a file, filtering as necessary.
+
+	preconditions -- 'file' is rewound to the beginning.
+
+	'file' -- A file object to read from.
+
+	'filter' -- A 'FooFilter' instance, or 'None' for no filtering.
+
+	raises -- 'IOException' if 'file' cannot be read.
+
+	postconditions -- 'file' is closed.
+
+	returns -- The filtered data."""
+
+Doc strings should be used for interface documentation, i.e. the
+information that another programmer needs to know to use the element
+correctly.  Implementation, i.e. how a function actually does its job,
+should be commented using ordinary comments,
 
 All source code checked into the Software Carpentry source repository
 should comply with these guidelines.  
