@@ -60,6 +60,7 @@ edit -- Edit an existing issue."""
 
 import qm.web
 import string
+import urllib
 import web
 
 ########################################################################
@@ -84,17 +85,22 @@ class ShowPageInfo(web.PageInfo):
     generated."""
     
 
-    def __init__(self, request, issue):
+    def __init__(self, request, issue, field_errors={}):
         """Create a new page.
 
         To show or edit an existing page, pass it as 'issue'.  To
         create a new issue, pass a freshly-made 'Issue' instance as
-        'issue', and specify the style "new" in 'request'."""
+        'issue', and specify the style "new" in 'request'.
+
+        'invalid_fields' -- A mapping from field names to error
+        messages.  If non-empty, the error messages are shown with the
+        corresponding fields."""
 
         # Initialize the base class.
         qm.web.PageInfo.__init__(self, request)
         # Set up attributes.
         self.issue = issue
+        self.field_errors = field_errors
         self.fields = self.issue.GetClass().GetFields()
         if request.has_key("style"):
             self.style = request["style"]
@@ -205,7 +211,6 @@ class ShowPageInfo(web.PageInfo):
 
 
 
-
 ########################################################################
 # functions
 ########################################################################
@@ -214,6 +219,12 @@ def handle_show(request):
     """Generate the show issue page.
 
     'request' -- A 'WebRequest' object."""
+
+    # Make sure that the form has the iid argument set.  If not, the
+    # user probably submitted the form without entering an IID.
+    if not request.has_key("iid"):
+        msg = "You must specify an issue ID."
+        return web.generate_error_page(request, msg)
 
     # Determine the issue to show.
     iid = request["iid"]
@@ -276,27 +287,71 @@ def handle_submit(request):
     requested_revision = int(request["revision"])
     idb = qm.track.get_idb()
     issue_class = idb.GetIssueClass(request["class"])
+
+    # Is this the submission of a new issue?
+    is_new = (requested_revision == 0)
         
-    if requested_revision == 0:
-        # It's a new issue submission.  Create a new issue instance.
+    if is_new:
+        # Create a new issue instance.
         issue = qm.track.Issue(issue_class, iid)
     else:
-        # It's a new revision of an existing issue.
+        # It's a new revision of an existing issue.  Retrieve the
+        # latter. 
         issue = idb.GetIssue(iid)
         # Make sure the requested revision is one greater than the
         # most recent stored revision for this issue.  If it's not,
         # this probably indicates that this issue was modified while
         # this new revision was being formulated by the user.
         if issue.GetRevision() + 1 != requested_revision:
-            # FIXME: Handle this more gracefully.
-            raise RuntimeError, "issue revision incoherency"
+            msg = """
+            Someone else has modified this issue since you started
+            editing it (or perhaps you submitted the same changes
+            twice).  Please reload the issue and resubmit your edits.
+            """
+            return qm.web.generate_error_page(request, msg)
 
+    # Loop over query arguments in the submission.
     for name, value in request.items():
-        if name[:6] == "field-":
-            field_name = name[6:]
+        # Does this look like a form field representing an issue field
+        # value? 
+        if string.find(name, web.form_field_prefix) == 0:
+            # Yes -- trim off the prefix to obtain the field name.
+            field_name = name[len(web.form_field_prefix):]
         else:
+            # No, so skip it.
             continue
+        # Obtain the corresponding field.
+        field = issue_class.GetField(field_name)
+        # Set fields need to be handled specially.
+        if isinstance(field, qm.track.IssueFieldSet):
+            # The value of a set field is is encoded as a
+            # comma-separated list of URL-encoded elements.
+            value = string.split(value, ",")
+            if value == [""]:
+                value = []
+            value = map(urllib.unquote, value)
+        # Interpret the query argument value as the field value.
         issue.SetField(field_name, value)
+
+    # Is the submission valid?
+    invalid_fields = issue.Validate()
+    if len(invalid_fields) > 0:
+        # There are invalid fields.  Instead of putting the submission
+        # through, reshow the form, indicating the problems.
+        field_errors = {}
+        for field_name, exc_info in invalid_fields.items():
+            field_errors[field_name] = str(exc_info[1])
+        if is_new:
+            new_request = qm.web.WebRequest("show", style="new")
+            new_request["class"] = request["class"]
+        else:
+            new_request = qm.web.WebRequest("show",
+                                            style="edit",
+                                            iid=request["iid"])
+            new_request["class"] = request["class"]
+        page_info = ShowPageInfo(new_request, issue,
+                                 field_errors=field_errors)
+        return web.generate_html_from_dtml("show.dtml", page_info)
 
     if requested_revision == 0:
         # Add the new issue.

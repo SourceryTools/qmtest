@@ -111,16 +111,12 @@ class PageInfo:
         return "</body>"
 
 
-    def MakeUrlButton(self, url, text=None):
-        """Generate HTML for a (non-form) action button."""
+    def MakeUrlButton(self, *args, **attributes):
+        """Generate HTML for a (non-form) action button.
 
-        return '''
-          <table cellpadding="4" cellspacing="0" border="0">
-           <tr bgcolor="#006090">
-            <td><a href="%s"><font color="white">%s</font></a></td>
-           </tr>
-          </table>
-          ''' % (url, text)
+        See 'make_url_button'."""
+
+        return apply(make_url_button, args, attributes)
 
 
     def MakeImageUrl(self, image):
@@ -834,6 +830,35 @@ def make_form_for_request(request, method="get"):
                  % (name, value)
 
     return result
+
+
+def make_url_button(url, text=None, on_click=None):
+    """Generate HTML for a (non-form) action button.
+
+    'url' -- The URL to link to.  If 'None', fill in a URL that does
+    nothing.
+
+    'text' -- Text to display in this button.
+
+    'on_click' -- If not 'None', the onclick action for this
+    button."""
+
+    # If the button doesn't go anywhere, use a do-nothing URL.
+    if url is None:
+        url = "javascript: void(0)"
+    # Generate the onclick attribute to the <a> tag, if required.
+    if on_click is None:
+        on_click = ""
+    else:
+        on_click = ' onclick="%s"' % on_click
+    # Generate an <a> element, formatted appropriately.
+    return '''
+      <table cellpadding="4" cellspacing="0" border="1">
+       <tr>
+        <td><a href="%s" %s><font>%s</font></a></td>
+       </tr>
+      </table>
+      ''' % (url, on_click, text)
 
 
 ########################################################################

@@ -363,7 +363,7 @@ def get_field_type_description_for_query(field):
 
     if isinstance(field, issue_class.IssueFieldEnumeration):
         enumerals = field.GetEnumerals()
-        enumerals = map(lambda x: "'%s'" % x[0], enumerals)
+        enumerals = map(lambda x: '"%s"' % x[0], enumerals)
         return "an enumeration of %s" % string.join(enumerals, ", ")
     elif isinstance(field, issue_class.IssueFieldTime):
         return "a date/time (right now, it is %s)" % field.GetCurrentTime()

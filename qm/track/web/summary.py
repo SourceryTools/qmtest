@@ -89,7 +89,7 @@ class SummaryPageInfo(web.PageInfo):
     def IsIssueShown(self, issue):
         """Return a true value if 'issue' should be displayed."""
 
-        return issue.GetField("state") >= 0
+        return 1
 
 
     def GetBackgroundColor(self, issue):
@@ -179,9 +179,11 @@ def handle_summary(request):
             return web.generate_error_page(request, msg)
 
     else:
-        # No query was specified; show all issues.
+        # No query was specified; show all issues...
         issues = idb.GetIssues()
-
+        # ... that aren't deleted.
+        issues = filter(lambda iss: not iss.IsDeleted(), issues)
+        
     page_info = SummaryPageInfo(request, issues)
     return web.generate_html_from_dtml("summary.dtml", page_info)
 

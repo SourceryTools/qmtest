@@ -12,26 +12,26 @@ body {
 /* Links.  */
 
 :link {
-    color: "#500060";
+    color: #500060;
     background-color: white;
     text-decoration: none;
 }
 
 :visited {
-    color: "#500060";
+    color: #500060;
     background-color: white;
     text-decoration: none;
 }
 
 :active {
-    color: "#500060";
-    background-color: "#f4f0ff";
+    color: #500060;
+    background-color: #f4f0ff;
     text-decoration: none;
 }
 
 :hover {
-    color: "#500060";
-    background-color: "#f4f0ff";
+    color: #500060;
+    background-color: #f4f0ff;
     text-decoration: none;
 }
 
@@ -59,13 +59,23 @@ a#colhead {
 }
 
 
-span#fieldname {
-    text-decoration: bold;
-    color: red;
+span.fieldname {
+    font-weight: bold;
 }
-
 
 span#button {
     color: red;
     background-color: black;
+}
+
+span.error {
+    color: red;
+}
+
+tr.field {
+    background-color: f0f8ff;
+}
+
+tr.field-error {
+    background-color: fff0f8;
 }

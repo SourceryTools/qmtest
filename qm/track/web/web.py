@@ -58,7 +58,9 @@ are,
 import DocumentTemplate
 import os
 import qm.web
+import re
 import string
+import urllib
 
 ########################################################################
 # classes
@@ -145,7 +147,6 @@ class HistoryPageInfo(PageInfo):
         # Build a list of strings describing differences.
         differences = []
         for field in fields:
-            # FIXME: We need specific support for sets and attachments.
             field_name = field.GetName()
             value = revision1.GetField(field_name)
             formatted_value = format_field_value(field, value, "brief")
@@ -160,6 +161,9 @@ class HistoryPageInfo(PageInfo):
 # functions
 ########################################################################
 
+form_field_prefix = "_field_"
+
+
 def make_form_field_name(field):
     """Return the form field name corresponding to 'field'.
 
@@ -173,17 +177,23 @@ def make_form_field_name(field):
     else:
         # Field names can't contain hyphens, so this name shouldn't
         # collide with anything.
-        return "field-" + field.GetName()
+        return "_field_" + field.GetName()
 
 
-def format_field_value(field, value, style):
+def format_field_value(field, value, style, name=None):
     """Return an HTML representation of a field of an issue.
 
     'field' -- The field to represent.
 
-    'value' -- The issue's value for that field.
+    'value' -- The issue's value for that field.  The value may be
+    'None', in which case a default is chosen appropriately.
 
     'style' -- The style in which to format the field.
+
+    'name' -- The name to use for the name attribute of the HTML form
+    element, if one is generated.  If 'name' is 'None', the
+    appropriate name corresponding to 'field' will be generated with
+    'make_form_field_name'.
 
     raises -- 'ValueError' if 'style' is not a known style."""
 
@@ -196,15 +206,19 @@ def format_field_value(field, value, style):
         if style == "edit":
             style = "full"
 
+    # Generate the form field name, if required.
+    if name is None:
+        name = make_form_field_name(field)
+
     # Format based on field type.
     if isinstance(field, qm.track.IssueFieldEnumeration):
-        return format_enum_field_value(field, value, style)
+        return format_enum_field_value(field, value, style, name)
     elif isinstance(field, qm.track.IssueFieldInteger):
-        return format_int_field_value(field, value, style)
+        return format_int_field_value(field, value, style, name)
     elif isinstance(field, qm.track.IssueFieldText):
-        return format_text_field_value(field, value, style)
+        return format_text_field_value(field, value, style, name)
     elif isinstance(field, qm.track.IssueFieldSet):
-        return format_set_field_value(field, value, style)
+        return format_set_field_value(field, value, style, name)
     else:
         # FIXME:
         # IssueFieldAttachment.
@@ -213,32 +227,45 @@ def format_field_value(field, value, style):
               "Can't render a %s value." % field.__class__.__name__
 
 
-def format_int_field_value(field, value, style):
+def format_int_field_value(field, value, style, name):
     """Return an HTML representation of an integer field."""
+
+    # Use default value if requested.
+    if value is None:
+        value = 0
 
     if style == "new" or style == "edit":
         return '<input type="text" size="8" name="%s" value="%d"/>' \
-               % (make_form_field_name(field), value)
+               % (name, value)
     elif style == "full" or style == "brief":
         return '<tt>%d</tt>' % value
     else:
         raise ValueError, style
 
 
-def format_text_field_value(field, value, style):
+def format_text_field_value(field, value, style, name):
     """Return an HTML representation of a text field."""
+
+    # Use default value if requested.
+    if value is None:
+        value = ""
 
     if style == "new" or style == "edit":
         if field.IsAttribute("verbatim") or field.IsAttribute("structured"):
-            return '<textarea cols="40" rows="16" name="%s">%s</textarea>' \
-                   % (make_form_field_name(field), value)
+            return '<textarea cols="40" rows="6" name="%s">%s</textarea>' \
+                   % (name, value)
         else:
             return '<input type="text" size="40" name="%s" value="%s"/>' \
-                   % (make_form_field_name(field), value)
+                   % (name, value)
 
     elif style == "brief":
         if field.IsAttribute("verbatim"):
-            # FIXME: What should we use here?
+            # Truncate to 80 characters, if it's longer.
+            if len(value) > 80:
+                value = value[:80] + "..."
+            # Replace all whitespace with ordinary space.
+            value = re.replace("\w", " ")
+            # Put it in a <tt> element.
             return '<tt>%s</tt>' % qm.web.escape_for_html(value)
         elif field.IsAttribute("structured"):
             # Use only the first line of text.
@@ -263,25 +290,158 @@ def format_text_field_value(field, value, style):
         raise ValueError, style
 
 
-def format_set_field_value(field, value, style):
+def format_set_field_value(field, value, style, name):
     """Return an HTML representation of a set field."""
 
-    contained = field.GetContainedField()
-    formatted = []
-    for element in value:
-        formatted.append(format_field_value(field, value, style))
-    if len(formatted) == 0:
-        return "&nbsp;"
-    else:
-        return string.join(formatted, ", ")
+    # Use default value if requested.
+    if value is None:
+        value = []
+
+    contained_field = field.GetContainedField()
+
+    if style == "brief" or style == "full":
+        formatted = []
+        for element in value:
+            formatted.append(format_field_value(contained_field,
+                                                element, "full"))
+        if len(formatted) == 0:
+            return "&nbsp;"
+        else:
+            return string.join(formatted, ", ")
+
+    elif style == "new" or style == "edit":
+        # To edit a set field, we generate form and script elements to
+        # do most of the work on the client side.  We create a
+        # multiline select element to show the contents of the set, a
+        # button to delete the selected element, and another button
+        # and an input field to add elements.  The values of options
+        # in the select element are URL-encoded string representations
+        # of the set elements themselves.
+        #
+        # In addition, we add an extra hidden field, which contains
+        # the complete value of the field.  It is this hidden field
+        # that carries the form field name for this field.  The field
+        # value is updated automatically on the client side whenever
+        # the set list elements are modified.  The value consists of
+        # the URL-encoded elements separated by commas.
+        #
+        # The JavaScript scripts generated here assume the form
+        # elements will be part of a form named "form".
+        
+        field_name = field.GetName()
+        # Generate a table to arrange the form elements.
+        form = '''
+        <table border="0" cellpadding="0" cellspacing="0">
+        <tr><td>'''
+        # Create the hidden field that will carry the field value. 
+        text_elements = map(lambda x: urllib.quote(str(x)), value)
+        form = form \
+               + '<input type="hidden" name="%s" value="%s"/>\n' \
+               % (name, string.join(text_elements, ","))
+        # Start a select control to show the set elements.
+        form = form + '''
+         <select size="6" name="_list_%s" width="200">
+        ''' % field_name
+        # Add an option element for each element of the set.
+        for item in value:
+            brief_item = format_field_value(contained_field, item, "brief")
+            form = form + '<option value="%s">%s</option>\n' \
+                   % (urllib.quote(str(item)), brief_item)
+        # End the select control.  Put everything else next to it.
+        form = form + '''
+         </select>
+        </td><td>
+        '''
+        # Build a button for deleting elements.  It calls a
+        # JavaScript function to do the work.
+        on_click = "_delete_selected_%s();" % field_name
+        form = form \
+               + qm.web.make_url_button(url=None,
+                                        text="Delete Selected",
+                                        on_click=on_click) \
+               + "<br>"
+        # Add a field with which the user specifies each new element
+        # to add. 
+        new_item_field_name = "_new_item_%s" % field_name
+        form = form + format_field_value(contained_field, None, style,
+                                         name=new_item_field_name)
+        # Build the button that adds the element specified in this
+        # control. 
+        on_click = "_add_%s();" % field_name
+        form = form \
+               + qm.web.make_url_button(url=None, text="Add",
+                                        on_click=on_click)
+        # All done with the visiual elements.
+        form = form + '''
+        </td></tr>
+        </table>
+        '''
+        # Generate JavaScript functions for adding and deleting
+        # elements.  Also generate a function that updates the value
+        # of the hidden field from the values in the select element.
+        form = form + '''
+        <script language="JavaScript">
+        function _delete_selected_%s()
+        {
+          var list = document.form._list_%s;
+          if(list.selectedIndex != -1)
+            list.options[list.selectedIndex] = null;
+          _update_%s();
+          return false;
+        }
+
+        function _add_%s()
+        {
+          var options = document.form._list_%s.options;
+          var input = document.form._new_item_%s;
+          var text;
+          var value;
+          if(input.type == "select-one" || input.type == "select-multiple") {
+            text = input.options[input.selectedIndex].text;
+            value = input.options[input.selectedIndex].value;
+          }
+          else {
+            text = input.value;
+            value = escape(input.value);
+          }
+          for(var i = 0; i < options.length; ++i)
+            if(options[i].value == value)
+              return false;
+          if(value != "")
+            options[options.length] = new Option(text, value);
+          input.value = "";
+          input.focus();
+          _update_%s();
+          return false;
+        }  
+
+        function _update_%s()
+        {
+          var list = document.form._list_%s;
+          var result = "";
+          for(var i = 0; i < list.options.length; ++i) {
+            if(i > 0)
+              result += ",";
+            result += list.options[i].value;
+          }
+          document.form.%s.value = result;
+        }
+        </script>
+        ''' % (9 * (field_name, ) + (name, ))
+        # All done.
+        return form
 
 
-def format_enum_field_value(field, value, style):
+def format_enum_field_value(field, value, style, name):
     """Return an HTML representation of an enumeration field."""
+
+    # Use default value if requested.
+    if value is None:
+        value = field.GetEnumerals()[0][1]
 
     if style == "new" or style == "edit":
         # If the field is editable, generate a '<select>' control.
-        result = '<select name="%s">' % make_form_field_name(field)
+        result = '<select name="%s">\n' % name
         # Generate an '<option>' element for each enumeral.
         for en_name, en_val in field.GetEnumerals():
             # Specify the 'select' attribute if this enumeral
@@ -290,9 +450,9 @@ def format_enum_field_value(field, value, style):
                 is_selected = "selected"
             else:
                 is_selected = ""
-            result = result + '<option value="%s" %s>%s</option>' \
-                     % (en_name, is_selected, en_name)
-        result = result + '</select>'
+            result = result + '<option value="%d" %s>%s</option>\n' \
+                     % (en_val, is_selected, en_name)
+        result = result + '</select>\n'
         return result
 
     elif style == "full" or style == "brief":

@@ -162,6 +162,8 @@ class SqlIdb(idb.IdbBase):
         IDB, and fields of 'issue' must match the class's."""
 
         issue_class = issue.GetClass()
+        # Make sure the issue is OK.
+        issue.AssertValid()
         # Set the revision number to zero.
         issue.SetField("revision", 0)
         # Set the timestamp to now.
@@ -184,6 +186,8 @@ class SqlIdb(idb.IdbBase):
         for the issue."""
 
         issue_class = issue.GetClass()
+        # Make sure the issue is OK.
+        issue.AssertValid()
         # Find the current revision, and assign the next revision
         # number to 'issue'.
         current = self.GetIssue(issue.GetId(), issue_class=issue_class)

@@ -203,9 +203,9 @@ class CommandParser:
         for option in options:
             if option[0] is not None:
                 getopt_string = getopt_string + option[0]
-            # Tell getopt that this option takes an argument.
-            if option[2] != None:
-                getopt_string = getopt_string + ':'
+                # Tell getopt that this option takes an argument.
+                if option[2] != None:
+                    getopt_string = getopt_string + ':'
 
         return getopt_string
 

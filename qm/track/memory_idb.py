@@ -145,6 +145,8 @@ class MemoryIdb(qm.track.IdbBase):
         returns -- A true value if the insert succeeded, or a false
         value if it was vetoed by a trigger."""
 
+        # Make sure the issue is OK.
+        issue.AssertValid()
         # Copy the issue, since we'll be holding onto it.
         issue = issue.Copy()
         # Make sure the issue is in a class known to this IDB.
@@ -175,6 +177,8 @@ class MemoryIdb(qm.track.IdbBase):
         returns -- A true value if the insert succeeded, or a false
         value if it was vetoed by a trigger."""
 
+        # Make sure the issue is OK.
+        issue.AssertValid()
         # Copy the issue, since we'll be holding onto it.
         issue = issue.Copy()
         # Retrieve the current list of revisions of the issue.

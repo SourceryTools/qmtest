@@ -55,7 +55,7 @@
       <tbody>
        <dtml-in expr="fields">
        <dtml-let field=sequence-item>
-        <tr>
+        <tr valign="top">
          <td>
           <tt><dtml-var expr="field.GetName()"></tt>
          </td>

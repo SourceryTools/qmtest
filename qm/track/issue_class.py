@@ -48,8 +48,14 @@ import types
 # The default categories enumeration to use for a new issue class, if
 # one is not provided.
 
+# FIXME: These are bogus test values.  Put something better here.
+
 default_categories = {
-    "default" : 0,
+    "core" : 0,
+    "web_ui" : 1,
+    "cmdline_ui" : 2,
+    "mem_idb" : 3,
+    "gadfly_idb" : 4,
 }
 
 
@@ -177,8 +183,10 @@ class IssueField:
 
         returns -- The canonicalized representation of 'value'.
 
-        raises -- 'TypeError' if 'value' is not a valid value for
-        this field."""
+        raises -- 'ValueError' if 'value' is not a valid value for
+        this field.
+
+        Implementations of this method must be idempotent."""
 
         raise qm.MethodShouldBeOverriddenError, "IssueField.Validate"
 
@@ -215,7 +223,7 @@ class IssueFieldText(IssueField):
     """A field that contains text.  
 
     'default_value' -- The default value for this field.
-
+    
     A text field uses the following attributes:
 
     structured -- If true, the field contains multiline structured
@@ -227,7 +235,10 @@ class IssueFieldText(IssueField):
 
     big -- This is a hint that, if true, recommends to issue database
     mechanisms that the contents of the field may be large and should
-    be stored out-of-line."""
+    be stored out-of-line.
+
+    nonempty -- The value of this field is considered invalid if it
+    consists of an empty string (after stripping)."""
 
     def __init__(self, name, default_value=""):
         """Create a text field."""
@@ -238,12 +249,23 @@ class IssueFieldText(IssueField):
         self.SetAttribute("structured", "false")
         self.SetAttribute("verbatim", "false")
         self.SetAttribute("big", "false")
+        self.SetAttribute("nonempty", "false")
         # Set the default field value.
         self.SetDefaultValue(default_value)
 
 
     def Validate(self, value):
-        return str(value)
+        # Be forgiving, and try to convert 'value' to a string if it
+        # isn't one.
+        value = str(value)
+        # Clean up unless it's a verbatim string.
+        if not self.IsAttribute("verbatim"):
+            value = string.strip(value)
+        # If this field has the nonempty attribute set, make sure the
+        # value complies.
+        if self.IsAttribute("nonempty") and value == "":
+            raise ValueError, "this field may not be empty"
+        return value
 
 
 
@@ -315,7 +337,7 @@ class IssueFieldAttachment(IssueField):
     def Validate(self, value):
         # The value should be a triplet.
         if value != None and not isinstance(value, issue.Attachment):
-            raise TypeError, \
+            raise ValueError, \
                   "the value of an attachment field must be an 'Attachment'"
         return value
 
@@ -345,7 +367,14 @@ class IssueFieldEnumeration(IssueFieldInteger):
         # keys are strings and values are integers.
         self.__enumeration = {}
         for key, value in enumeration.items():
-            self.__enumeration[str(key)] = int(value)
+            # Turn them into the right types.
+            key = str(key)
+            value = int(value)
+            # Make sure the name is OK.
+            if not qm.is_valid_label(key):
+                raise ValueError, '%s is not a valid enumeral' % key
+            # Store it.
+            self.__enumeration[key] = value
         if len(self.__enumeration) == 0:
             raise ValueError, "enumeration must not be empty"
         # If 'default_value' is 'None', use the lowest-numbered enumeral.
@@ -397,7 +426,7 @@ class IssueFieldEnumeration(IssueFieldInteger):
         for en_name, en_val in self.__enumeration.items():
             if value == en_val:
                 return en_name
-        raise ValueError, "invalid enumeration value: %d" % value
+        raise ValueError, "invalid enumeration value: %s" % str(value)
 
 
     def GetEnumeration(self):
@@ -457,17 +486,30 @@ class IssueFieldTime(IssueFieldText):
 class IssueFieldIid(IssueFieldText):
     """A field containing the ID of an issue."""
 
-    # No special semantics this interface level.  IDB implementations
-    # may enforce referential integrity constraints.
-    pass
+    def __init__(self, name):
+        """Create an IID field.
+
+        The field has no default value."""
+        
+        # Do base-class initialization, with different defaults.
+        IssueFieldText.__init__(self, name, default_value=None)
+
+
+    def Validate(self, value):
+        value = str(value)
+        if not qm.is_valid_label(value):
+            raise ValueError, "%s is not a valid issue ID label" % value
+        return value
 
 
 
 class IssueFieldUid(IssueFieldText):
     """A field containing a user ID."""
 
-    # No special semantics this level.
-    pass
+    def __init__(self, name):
+        # FIXME: For now, since we don't have a user model, use a
+        # default value.
+        IssueFieldText.__init__(self, name, default_value="default_user")
 
 
 
@@ -492,7 +534,7 @@ class IssueClass:
         # Create mandatory fields.
         
         # The issue id field.
-        field = IssueFieldText("iid")
+        field = IssueFieldIid("iid")
         field.SetAttribute("initialize_only", "true")
         # We do not want the iid to have a default value. It
         # always must be specified.
@@ -516,6 +558,7 @@ class IssueClass:
 
         # The summary field.
         field = IssueFieldText("summary")
+        field.SetAttribute("nonempty", "true")
         self.AddField(field)
 
         # The categories field.

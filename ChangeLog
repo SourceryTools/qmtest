@@ -1,3 +1,57 @@
+2001-02-25  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (make_url_button): New function.
+	(PageInfo.MakeUrlButton): Call it.
+	* qm/cmdline.py (CommandParser.BuildGetoptString): Don't add
+	argument indicator if there's no short form.
+
+	* qm/track/issue_class.py (default_categories): Add some bogus
+	test values.
+	(IssueField.Validate): Raise ValueError instead.
+	(IssueFieldText): Add nonempty attribute.
+	(IssueFieldText.Validate): Do validation.
+	(IssueFieldAttachment.Validate): Raise ValueError.
+	(IssueFieldEnumeration.__init__): Likewise.  Validate better.
+	(IssueFieldIid.__init__): New method.
+	(IssueFieldIid.Validate): Likewise.
+	(IssueFieldUid.__init__): Likewise.
+	(IssueClass.__init__): Make iid an IssueFieldIid.  Make summary
+	nonempty.
+	* qm/track/issue.py (Issue.__init__): Don't validate.
+	(Issue.SetField): Likewise.
+	(Issue.Validate): New function.
+	(Issue.AssertValid): Likewise.
+	(Issue.IsDeleted): Likewise.
+	* qm/track/idb.py (get_field_type_description_for_query): Place
+	enumerals in double quotes.
+	* qm/track/config.py (setup_idb_for_test): Add problem_reports
+	field. 
+	* qm/track/memory_idb.py (MemoryIdb.AddIssue): Check issue
+	validity.
+	(MemoryIdb.AddRevision): Likewise.
+	* qm/track/sql_idb.py (SqlIdb.AddIssue): Likewise.
+	(SqlIdb.AddRevision): Likewise.
+
+	* qm/track/web/web.py (format_field_value): Add name argument.
+	(format_int_field_value): Likewise.
+	(format_text_field_value): Likewise.  Adjust formatting.
+	(format_set_field_value): Implement.
+	(format_enum_field_value): Add name argument.  Change option
+	values. 
+	* qm/track/web/summary.py (SummaryPageInfo.IsIssueShown): Always
+	return 1. 
+	(handle_summary): Filter out deleted issues.
+	* qm/track/web/show.py (ShowPageInfo.__init__): Add field_errors
+	argument. 
+	(handle_show): Make sure iid is specified.
+	(handle_submit): Add is_new.  Issue error on revision
+	incoherency.  Handle encoded set fields.  Validate submission and
+	generate resubmission pages.
+	* qm/track/web/stylesheets/qmtrack.css: Adjust.
+	* qm/track/web/templates/show.dtml: Adjust formatting.  Use more
+	styles.  Support field error messages.
+	* qm/track/web/templates/query.dtml: Adjust table formatting.
+
 2001-02-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/dtml: Adjust.

@@ -35,6 +35,8 @@
 # imports
 ########################################################################
 
+import sys
+
 ########################################################################
 # classes
 ########################################################################
@@ -70,7 +72,7 @@ class Issue:
             if name == "iid":
                 self.__fields[name] = iid
             elif field_values.has_key(name):
-                self.__fields[name] = field.Validate(field_values[name])
+                self.__fields[name] = field_values[name]
             elif field.HasDefaultValue():
                 self.__fields[name] = field.GetDefaultValue()
 
@@ -100,14 +102,7 @@ class Issue:
         """Set the value of the field 'name' to 'value'."""
 
         field = self.__issue_class.GetField(name)
-        self.__fields[name] = field.Validate(value)
-
-
-    def StampTime(self):
-        """Set the timestamp to now."""
-
-        timestamp_field = self.GetClass().GetField("timestamp")
-        self.SetField("timestamp", timestamp_field.GetCurrentTime())
+        self.__fields[name] = value
 
 
     def DiagnosticPrint(self, file):
@@ -119,7 +114,45 @@ class Issue:
         file.write("\n")
 
 
-    # Convenience methods for returning values of mandatory fields.
+    def Validate(self):
+        """Check that all field values are valid.
+
+        returns -- A mapping indicating invalid fields.  Each key is the
+        name of a field whose value is invalid.  The corresponding value
+        is an exception info triple (see 'sys.exc_info') representing
+        the problem.  If the mapping is empty, all fields are valid."""
+
+        invalid_fields = {}
+        # Loop over fields.
+        for field in self.__issue_class.GetFields():
+            field_name = field.GetName()
+            # Extrace the value.
+            value = self.__fields[field_name]
+            # Is it valid?
+            try:
+                valid_value = field.Validate(value)
+            except ValueError:
+                # Nope; store the problem.
+                invalid_fields[field_name] = sys.exc_info()
+            else:
+                # Yes, but replace the old value with the validated one.
+                if valid_value != value:
+                    self.__fields[field_name] = valid_value
+        # All done.
+        return invalid_fields
+
+
+    def AssertValid(self):
+        """Make sure all field values are valid.
+
+        raises -- 'ValueError' if one or more fields are not valid."""
+
+        invalid_fields = self.Validate()
+        if len(invalid_fields) > 0:
+            raise ValueError, invalid_fields
+
+
+    # Convenience methods for dealing with mandatory fields.
 
     def GetId(self):
         """Return the iid."""
@@ -131,6 +164,23 @@ class Issue:
         """Return the revision number."""
 
         return self.GetField("revision")
+
+
+    def StampTime(self):
+        """Set the timestamp to now."""
+
+        timestamp_field = self.GetClass().GetField("timestamp")
+        self.SetField("timestamp", timestamp_field.GetCurrentTime())
+
+
+    def IsDeleted(self):
+        """Return true if this issue has been deleted.
+
+        An issue is considered to be deleted if its state value is
+        negative."""
+
+        return self.GetField("state") < 0
+
 
 
 

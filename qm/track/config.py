@@ -367,6 +367,11 @@ def setup_idb_for_test():
     field.SetAttribute("ordered", "true")
     icl.AddField(field)
 
+    field = qm.track.IssueFieldText("problem_reports")
+    field.SetAttribute("structured", "true")
+    field = qm.track.IssueFieldSet(field)
+    icl.AddField(field)
+
     idb.AddIssueClass(icl)
 
     for counter in range(1, 10):

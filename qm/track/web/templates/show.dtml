@@ -25,7 +25,8 @@
     If we're generating a form, start it here.
   --></dtml-comment>
   <dtml-if expr="IsForm()">
-   <form method="post"
+   <form name="form"
+         method="post"
          action="<dtml-var expr="MakeSubmitUrl()">"
          enctype="multipart/form-data"/>
    <dtml-comment><!--
@@ -45,13 +46,19 @@
 
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
    <tr>
-    <td><b><font size="+1">
-     <dtml-if expr="style == 'new'">
-      New Issue
-     <dtml-else>
-      Issue <dtml-var expr="issue.GetId()">
+    <td>
+     <b><font size="+1">
+      <dtml-if expr="style == 'new'">
+       New Issue
+      <dtml-else>
+       Issue <dtml-var expr="issue.GetId()">
+      </dtml-if>
+     </font></b>
+     <dtml-if expr="field_errors != {}">
+      <p>Your issue submission contained errors.  Please correct them and
+      resubmit.</p>
      </dtml-if>
-    </font></b></td>
+    </td>
     <td align="right">
      <dtml-if expr="style == 'full' or style == 'history'">
       <dtml-var expr="MakeUrlButton(MakeEditUrl(), text='Edit Issue')">
@@ -60,21 +67,48 @@
      </dtml-if>
     </td>
    </tr>
+   <tr><td colspan="2"><dtml-var expr="MakeSpacer(0, 8)"></td></tr>
   </table>
 
-  <table <dtml-var name="table_attributes">
+  <table border="0"
+         cellpadding="6"
+         cellspacing="2"
          width="100%"
          columns="2">
    <tbody>
     <dtml-in name="fields">
-    <dtml-with expr="_.namespace(field=_['sequence-item'])">
+    <dtml-let field=sequence-item
+              field_name="field.GetName()">
      <dtml-if expr="IsShowField(field)">
-      <tr bgcolor="#e0f8ff">
-       <td><span id="fieldname"><dtml-var expr="field.GetName()"></span></td>
-       <td><dtml-var expr="FormatFieldValue(field)"></td>
-      </tr>
-     </dtml-if>
-    </dtml-with>
+      <dtml-comment><!--
+        Show a row with the field label and a rendering of its value.
+      --></dtml-comment>
+      <tr 
+          <dtml-if expr="field_errors.has_key(field_name)">
+          class="field-error"
+          <dtml-else>
+          class="field"
+          </dtml-if>
+          >
+       <td width="25%">
+        <span class="fieldname"><dtml-var expr="field.GetName()"></span>
+       </td>
+       <td width="75%">
+        <dtml-var expr="FormatFieldValue(field)">
+        <dtml-comment><!--
+          If there's an error message associated with this issue, display
+          it on the next row.
+        --></dtml-comment>
+        <dtml-if expr="field_errors.has_key(field_name)">
+         <br>
+         <span class="error">
+          <dtml-var expr="field_errors[field_name]">
+         </span>
+        </dtml-if>
+       </dtml-if>
+      </td>
+     </tr>
+    </dtml-let>
     </dtml-in>
    </tbody>
   </table>
