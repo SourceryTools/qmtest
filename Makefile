@@ -32,3 +32,16 @@
 ########################################################################
 
 include standard.mk
+
+########################################################################
+# additional rules
+########################################################################
+
+# The Gadfly module requires one-time setup.
+setup:		gadfly/sqlwhere.py
+
+# This follows the setup instructions in the Gadfly package.  The
+# target is a file generated in the setup procedure.  See
+# gadfly/index.html.
+gadfly/sqlwhere.py:
+	cd gadfly; python gfinstall.py

@@ -1,5 +1,11 @@
 2000-12-22  Alex Samuel  <samuel@codesourcery.com>
 
+	* Makefile (setup): New target.
+	(gadfly/sqlwhere.py): Likewise.
+	* standard.mk (setup): New phony target.
+	
+2000-12-22  Alex Samuel  <samuel@codesourcery.com>
+
 	* Makefile: New file.
 
 2000-12-21  Alex Samuel  <samuel@codesourcery.com>

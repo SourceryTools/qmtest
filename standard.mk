@@ -96,7 +96,7 @@ endif
 # Flags to pass to the regression test driver script.
 TESTFLAGS	= -v -k
 
-.PHONY:		all clean doc subdirs test
+.PHONY:		all clean doc setup subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print 
 .PHONY:		$(SUBDIRS)
 
@@ -191,3 +191,5 @@ test:
 	  $(PYTHON) $${test} $(TESTFLAGS); \
 	  echo; \
 	done
+
+setup:
