@@ -56,12 +56,21 @@ class Empty:
     pass
 
 
+
 class QMException(Exception):
     """An exception generated directly by QM.
 
     All exceptions thrown by QM should be derived from this class."""
-    
-    pass
+
+    def __init__(self, message):
+        """Construct a new 'QMException'.
+
+        'message' -- A string describing the cause of the message as
+        structured text.  If this exception is not handled, the
+        'message' will be displayed as an error message."""
+
+        Exception.__init__(self, message)
+
 
 
 class MutexError(QMException):
@@ -90,6 +99,31 @@ class UserError(QMException):
 
 
 
+class PythonException(QMException):
+    """A 'PythonException' is a wrapper around a Python exception.
+
+    A 'PythonException' is a 'QMException' and, as such, can be
+    processed by the QM error-handling routines.  However, the raw
+    Python exception which triggered this exception can be obtained by
+    using the 'exc_type' and 'exc_value' attributes of this
+    exception."""
+
+    def __init__(self, message, exc_type, exc_value):
+        """Construct a new 'PythonException'.
+
+        'message' -- A string describing the cause of the message as
+        structured text.  If this exception is not handled, the
+        'message' will be displayed as an error message.
+
+        'exc_type' -- The type of the Python exception.
+
+        'exc_value' -- The value of the Python exception."""
+        
+        QMException.__init__(self, message)
+
+        self.exc_type = exc_type
+        self.exc_value = exc_value
+    
 ########################################################################
 # classes
 ########################################################################

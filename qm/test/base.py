@@ -330,9 +330,13 @@ def get_extension_class_from_directory(class_name, kind, directory, path):
     try:
         klass = qm.common.load_class(class_name, [directory],
                                      path + sys.path)
-    except ImportError:
-        raise QMException, qm.error("extension class not found",
-                                    klass=class_name)
+    except:
+        raise PythonException, \
+              (qm.error("extension class not found",
+                        klass=class_name),
+               sys.exc_info()[0],
+               sys.exc_info()[1]), \
+               sys.exc_info()[2]
 
     # Make sure the class is derived from the appropriate base class.
     if not issubclass(klass, __extension_bases[kind]):

@@ -811,14 +811,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                                                  kind,
                                                                  directory,
                                                                  directories)
-        except QMException:
-            # The class could not be loaded, and we have already diagnosed
-            # the problem.  Let the top-level error handlers explain the
-            # situation.
-            raise
-        except:
+        except PythonException, pe:
             # The class could not be loaded.  Show a traceback.
-            output.write(qm.common.format_exception(sys.exc_info()))
+            output.write(qm.common.format_exception
+                         ((pe.exc_type, pe.exc_value, sys.exc_info()[2])))
             raise QMException, \
                   qm.error("could not load extension class",
                            class_name = class_name)

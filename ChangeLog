@@ -1,3 +1,11 @@
+2002-08-08  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/common.py (QMException.__init__): New method.
+	(PythonException): New class.
+	* qm/test/base.py (get_extension_class_from_directory): Raise
+	a PythonException.
+	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Handle it.
+	
 2002-08-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (load_database): Add documentation.  Adjust call
