@@ -39,17 +39,26 @@ class DejaGNUStream(FileResultStream):
             default_value = "false"
             )
         ]
+
+    __summary_outcomes = [
+        DejaGNUTest.PASS,
+        DejaGNUTest.FAIL,
+        DejaGNUTest.XPASS,
+        DejaGNUTest.XFAIL,
+        DejaGNUTest.UNRESOLVED,
+        DejaGNUTest.UNTESTED,
+        DejaGNUTest.UNSUPPORTED
+        ]
+    """The outcomes for which summary output should be produced."""
     
     __outcome_descs = {
         DejaGNUTest.PASS: "expected passes",
         DejaGNUTest.FAIL: "unexpected failures",
-        DejaGNUTest.XFAIL: "expected failures",
         DejaGNUTest.XPASS: "unexpected successes",
-        DejaGNUTest.WARNING: "warnings",
-        DejaGNUTest.ERROR: "errors",
-        DejaGNUTest.UNSUPPORTED: "unsupported tests",
+        DejaGNUTest.XFAIL: "expected failures",
         DejaGNUTest.UNRESOLVED: "unresolved testcases",
-        DejaGNUTest.UNTESTED: "untested testcases"
+        DejaGNUTest.UNTESTED: "untested testcases",
+        DejaGNUTest.UNSUPPORTED: "unsupported tests",
         }
     """A map from DejaGNU outcomes to descriptions.
 
@@ -109,7 +118,7 @@ class DejaGNUStream(FileResultStream):
         self.file.write("\n\t\t=== Summary ===\n\n")
         # This function emulates log_summary from the DejaGNU
         # distribution.
-        for o in DejaGNUTest.dejagnu_outcomes:
+        for o in self.__summary_outcomes:
             if self.__outcomes[o]:
                 desc = "# of %s" % self.__outcome_descs[o]
                 self.file.write(desc)

@@ -1,5 +1,12 @@
 2003-06-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* README: Mention HappyDoc.
+	* qm/test/classes/dejagnu_stream.py
+	(DejaGNUStream.__summary_outcomes): New variable.
+	(DejaGNUStream.Summarize): Use it.
+	* qm/test/classes/dejagnu_test.py (DejaGNUTest._ParseTclWords):
+	Correct variable substitution.
+
 	* qm/test/classes/dejagnu_stream.py: New file.
 	* qm/test/classes/dejagnu_test.py: New file.
 	* qm/test/classes/dejagnu_base.py: New file.

@@ -57,6 +57,13 @@
     to perform the build.  You must use GNU make, which is called
     "gmake" on some systems.
 
+    If you are modifying QMTest, you may want to install HappyDoc 2.1
+    from:
+
+      http://sourceforge.net/projects/happydoc/
+
+    If you install HappyDoc before you run configure
+
 
   - TESTING QM
 

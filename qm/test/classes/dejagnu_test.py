@@ -341,7 +341,8 @@ class DejaGNUTest(Test, DejaGNUBase):
                     start = k + 1
                     finish = s.index("}", start)
                     n = finish + 1
-                    v = variables[start:finish]
+                    var = s[start:finish]
+                    v = variables[var]
                 else:
                     # The following letters, numbers, and underscores make
                     # up the variable name.
@@ -352,7 +353,8 @@ class DejaGNUTest(Test, DejaGNUBase):
                     n = k
                     finish = k
                     if start < finish:
-                        v = variables[start:finish]
+                        var = s[start:finish]
+                        v = variables[var]
                     else:
                         v = "$"
                 if word is None:
