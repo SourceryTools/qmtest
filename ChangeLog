@@ -1,3 +1,8 @@
+2003-07-15  Vladimir Prus <ghost@cs.msu.su>
+
+	* qm/test/web/web.py (StorageResultStream.__init__): Initialize
+	__annotations.
+
 2003-07-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/pickle_result_stream.py

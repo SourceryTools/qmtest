@@ -1212,6 +1212,8 @@ class StorageResultsStream(ResultStream):
         self.__resource_results = {}
         # The stream is not finished yet.
         self.__is_finished = 0
+        # And there are no annotations yet.
+        self.__annotations = {}
         
         # Create a lock for synchronization between the test execution
         # thread (which will call methods like 'WriteResults' and
