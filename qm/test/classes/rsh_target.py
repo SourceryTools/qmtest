@@ -64,58 +64,27 @@ class RSHThread(CommandThread):
         self.__read_file = read_file
         
 
-    def _RunTest(self, test_id, context):
-        """Run the test given by 'test_id'.
+    def _RunTest(self, descriptor, context):
+        """Run the test given by 'descriptor'.
 
-        'test_id' -- The name of the test to be run.
+        'descriptor' -- The 'TestDescriptor' for the test to be run.
 
         'context' -- The 'Context' in which to run the test."""
 
+        test_id = descriptor.GetId()
         command_object = ("RunTest", test_id, context)
         try:
             cPickle.dump(command_object, self.__write_file)
-            result = cPickle.load(self.__read_file)
+            results = cPickle.load(self.__read_file)
+            for result in results:
+                self.GetTarget()._RecordResult(result)
         except:
             result = Result(Result.TEST, test_id, context)
             result.NoteException()
-            
-        self.RecordResult(result)
+            self.GetTarget()._RecordResult(result)
         
-
-    def _SetUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource."""
-
-        command_object = ("SetUpResource", resource_id, context)
-        try:
-            cPickle.dump(command_object, self.__write_file)
-            result = cPickle.load(self.__read_file)
-        except:
-            result = Result(Result.RESOURCE, resource_id, context,
-                            Result.ERROR, { Result.ACTION : "setup" } )
-            result.NoteException()
-        self.RecordResult(result)
-
-
-    def _CleanUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource."""
-
-        command_object = ("CleanUpResource", resource_id, context)
-        try:
-            cPickle.dump(command_object, self.__write_file)
-            result = cPickle.load(self.__read_file)
-        except:
-            result = Result(Result.RESOURCE, resource_id, context,
-                            Result.ERROR, { Result.ACTION : "cleanup" } )
-            result.NoteException()
-        self.RecordResult(result)
+        # Tell the target that we have nothing to do.
+        self.GetTarget().NoteIdle()
 
 
     def _Stop(self):
@@ -137,18 +106,6 @@ class RSHThread(CommandThread):
         self.__read_file.close()
 
         
-    def RecordResult(self, result):
-        """Record the 'result'.
-
-        'result' -- A 'Result' of a test or resource execution."""
-
-        # Pass the result back to the target.
-        self.GetTarget().RecordResult(result)
-        # Tell the target that we have nothing to do.
-        self.GetTarget().NoteIdle()
-
-
-
 class RSHTarget(Target):
     """A target that runs tests via a remote shell invocation.
 
@@ -179,9 +136,7 @@ class RSHTarget(Target):
       'arguments' -- Additional command-line arguments to pass to the
       remote shell program.  The value of this property is split at
       space characters, and the arguments are added to the command line
-      before the name of the remote host.
-
-    """
+      before the name of the remote host."""
 
     def __init__(self, name, group, concurrency, properties, database):
         """Construct a new 'RSHTarget'.
@@ -340,33 +295,11 @@ class RSHTarget(Target):
         self.__lock.release()
         
         
-    def RunTest(self, test_id, context):
+    def RunTest(self, descriptor, context):
         """Run the test given by 'test_id'.
 
-        'test_id' -- The name of the test to be run.
+        'descriptor' -- The 'TestDescriptor' for the test.
 
         'context' -- The 'Context' in which to run the test."""
 
-        self.__thread.RunTest(test_id, context)
-
-
-    def SetUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource."""
-
-        self.__thread.SetUpResource(resource_id, context)
-
-
-    def CleanUpResource(self, resource_id, context):
-        """Set up the resource given by 'resource_id'.
-
-        'resource_id' -- The name of the resource to be set up.
-
-        'context' -- The 'Context' in which to run the resource.
-
-        Derived classes must override this method."""
-
-        self.__thread.CleanUpResource(resource_id, context)
+        self.__thread.RunTest(descriptor, context)

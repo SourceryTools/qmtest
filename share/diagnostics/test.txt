@@ -92,7 +92,7 @@ properties using the syntax KEY=VALUE.
 
 @ invalid context key
 The context key "%(key)s" is not valid.  Context keys may contain
-lower-case letters, digits, underscores, and periods.
+letters, digits, underscores, and periods.
 
 @ invalid environment assignment
 The string '%(assignment)s' is not a valid environment element.

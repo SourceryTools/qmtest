@@ -38,6 +38,7 @@
 import os
 import qm
 import qm.attachment
+import qm.fields
 import qm.test.base
 from   qm.test.context import *
 from   qm.test.database import *
@@ -1112,8 +1113,9 @@ class QMTestServer(qm.web.WebServer):
         # The DB's attachment store processes download requests for
         # attachment data.
         attachment_store = database.GetAttachmentStore()
-        self.RegisterScript(qm.fields.AttachmentField.download_url,
-                            attachment_store.HandleDownloadRequest)
+        if attachment_store:
+            self.RegisterScript(qm.fields.AttachmentField.download_url,
+                                attachment_store.HandleDownloadRequest)
 
         # There are no results yet.
         self.__expected_outcomes = {}

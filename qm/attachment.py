@@ -124,9 +124,11 @@ class AttachmentStore:
     def GetSize(self, location):
         """Return the size of the data for an attachment.
 
-        returns -- The length of the attachment data, in bytes."""
+        returns -- The length of the attachment data, in bytes.
 
-        raise MethodShouldBeOverriddenError, "AttachmentStore.GetSize"
+        This method may be overridden by derived classes."""
+
+        return len(self.GetData(location))
 
 
     def HandleDownloadRequest(self, request):
@@ -140,6 +142,50 @@ class AttachmentStore:
         mime_type = request["mime_type"]
         data = self.GetData(location)
         return (mime_type, data)
+
+
+
+class FileAttachmentStore(AttachmentStore):
+    """An attachment store based on the file system.
+
+    The locations are the names of files in the file system."""
+
+    def __init__(self, database):
+        """Create a new AttachmentStore.
+
+        'database' -- The database with which this attachment store
+        is associated."""
+
+        # Initialize the base class.
+        AttachmentStore.__init__(self)
+        # Remember the database.
+        self._database = database
+
+        
+    def GetData(self, location):
+        """Return the data for an attachment.
+
+        returns -- A string containing the attachment data."""
+
+        # Open the file.
+        f = open(self.GetDataFile(location))
+        # Read the contents.
+        s = f.read()
+        # Close the file.
+        f.close()
+
+        return s
+
+
+    def GetDataFile(self, location):
+        """Return the path to a file containing attachment data.
+
+        'location' -- The location at which to find the data.
+
+        returns -- A file system path.  The file should be considered
+        read-only, and should not be modified in any way."""
+
+        return location
 
 
 

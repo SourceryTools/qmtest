@@ -85,23 +85,14 @@ class Database(FileDatabase, qm.common.MutexMixin):
     # specifying an argument which doesn't exist in the test class.  For
     # these, we raise an 'TestFileError'.
 
-    def __init__(self, path, create=0):
+    def __init__(self, path):
         """Open a connection to a database.
 
         'path' -- The absolute path to the directory that represents
-        the database.
-
-        'create' -- If true, the database is created.  Otherwise, it
-        must already exist."""
+        the database."""
 
         # Initialize base classes.
         FileDatabase.__init__(self, path, AttachmentStore(path, self))
-        # Create a new database, if requested.
-        if create:
-            if os.path.exists(path):
-                raise ValueError, \
-                      qm.error("db path exists", path=path)
-            os.mkdir(path)
         # Make sure the database path exists.
         if not os.path.isdir(path):
             raise ValueError, \

@@ -1,7 +1,7 @@
 ########################################################################
 #
 # File:   execution_thread.py
-# Author: Alex Samuel
+# Author: Mark Mitchell
 # Date:   2001-08-04
 #
 # Contents:
@@ -35,58 +35,18 @@
 # imports
 ########################################################################
 
-import base
-import cPickle
 import os
 import qm.common
 from   qm.test.base import *
 from   qm.test.context import *
 import qm.xmlutil
 import Queue
-import re
 from   result import *
-import string
 import sys
 from   threading import *
 
 ########################################################################
-# exceptions
-########################################################################
-
-class NoTargetForGroupError(Exception):
-    """There is no target whose group matches the test's group pattern."""
-
-    pass
-
-
-
-class FailedResourceError(Exception):
-    """A resource required for a test failed during setup.
-
-    The exception message is the resource's ID."""
-
-    pass
-
-
-
-class IncorrectOutcomeError(Exception):
-    """A test's prerequisite produced an incorrect outcome.
-
-    The exception message is the prerequisite test ID."""
-
-    pass
-
-
-
-class TerminatedError(Exception):
-    """Test execution was terminated."""
-
-    pass
-
-
-    
-########################################################################
-# classes
+# Class
 ########################################################################
 
 class ExecutionThread(Thread):
@@ -96,76 +56,19 @@ class ExecutionThread(Thread):
     of tests.
 
     This class schedules the tests, plus the setup and cleanup of any
-    resources they require, across one or more targets.  The schedule
-    follows these rules:
+    resources they require, across one or more targets.
 
-      * A test may be run on any target whose target group is allowed
-        for the test.
-
-      * If a test's prerequisite test is included in the test run, the
-        test is not started until its prerequisite completes.  If the
-        prerequisite produced the wrong outcome, the test is not run at
-        all.
-
-      * A test is not run until and unless all the resources required by
-        it have been set up successfully on the same target.
-
-      * Resources may be set up on more than one target.
-
-      * Resources are cleaned up before the test run ends.
-
-      * If a resource setup function fails, the resource setup is not
-        attempted again, even on a different target.
-
-      * Tests and resource functions may be run concurrently on targets
-        which support that. 
-
-    This class schedules tests and resource functions incrementally,
-    using a simple greedy algorithm."""
-
-    # Attributes:
-    #
-    # '__test_ids' -- The complete sequence of IDs of tests in the test
-    # run.
-    #
-    # '__context' -- The 'Context' object with which to run tests and
-    # resource functions.
-    #
-    # '__targets' -- The sequence of 'Target' objects on which to run
-    # tests.
-    #
-    # '__test_results' -- A map from test ID to the 'Result' object for
-    # that test.
-    #
-    # '__resource_results' -- A sequence of 'Result' objects for
-    # resource functions that have been run.
-    #
-    # '__failed_resources' -- A map indicating resources whose setup
-    # functions have failed.  The keys are IDs of failed resources; the
-    # corresponding values are ignored.
-    #
-    # '__valid_tests' -- A map indicating tests which have been checked
-    # for validity in this run; see '__ValidateTest'.  The keys are IDS
-    # of tests that have been checked; the corresponding values are
-    # ignored.
-    #
-    # '__remaining_test_ids' -- The sequence of IDs of tests that remain
-    # to be run.
-    #
-    # '__resources' -- A representation of resources active on a given
-    # target.  For each target, '__resources[target]' is a map, whose
-    # keys are the IDs of resources active on the target.  For each such
-    # resource, '__resources[target][resource_id]' is a map of context
-    # properties added by the resource setup function.  These properties
-    # are added to the contexts of tests which depend on the resource.
-
-
+    The shedule is determined dynamically as the tests are executed
+    based on which targets are idle and which are not.  Therefore, the
+    testing load should be reasonably well balanced, even across a
+    heterogeneous network of testing machines."""
+    
     def __init__(self,
                  database,
                  test_ids,
                  context,
                  targets,
-                 result_streams=None):
+                 result_streams = None):
         """Set up a test run.
 
         'database' -- The 'Database' containing the tests that will be
@@ -186,7 +89,14 @@ class ExecutionThread(Thread):
         synchronization if it will be accessed before 'run' returns."""
 
         Thread.__init__(self, None, None, None)
-                        
+
+        # This is a deamon thread; if the main QMTest thread exits,
+        # this thread should not prolong the life of the process.
+        # Because the daemon flag is inherited from the creating thread,
+        # threads created by the targets will automatically be daemon
+        # threads.
+        self.setDaemon(1)
+        
         self.__database = database
         self.__test_ids = test_ids
         self.__context = context
@@ -196,17 +106,23 @@ class ExecutionThread(Thread):
         else:
             self.__result_streams = []
         
-        # For each target, construct an initially empty map of resources
-        # active for that target.
-        self.__resources = {}
-        for target in targets:
-            self.__resources[target] = {}
+        # All of the targets are idle at first.
+        self.__idle_targets = targets[:]
+        # There are no responses from the targets yet.
+        self.__response_queue = Queue.Queue(0)
+        # There no pending or ready tests yet.
+        self.__pending = []
+        self.__ready = []
 
+        # The descriptor graph has not yet been created.
+        self.__descriptors = {}
+        self.__descriptor_graph = {}
+        
+        # There are no results yet.
         self.__test_results = {}
         self.__resource_results = []
-        self.__failed_resources = {}
-        self.__valid_tests = {}
-        self.__remaining_test_ids = list(test_ids)
+
+        # Termination has not yet been requested.
         self.__terminated = 0
         # Access to __terminated is guarded with this lock.
         self.__lock = Lock()
@@ -234,405 +150,211 @@ class ExecutionThread(Thread):
         self.__lock.release()
         return terminated
     
-        
+
     def run(self):
         """Run the tests.
 
         This method runs the tests specified in the __init__
         function."""
 
-        # Create the response queue.
-        response_queue = Queue.Queue(0)
-
         # Start all of the targets.
         for target in self.__targets:
-            target.Start(response_queue)
+            target.Start(self.__response_queue)
 
-        # Schedule all the tests and resource functions in the test run.
+        # Run all of the tests.
         try:
-            # Schedule the first batch of work.
-            count = self.Schedule()
-            # If some work was scheduled, process it.
-            while count != 0 or self.__remaining_test_ids:
-                # Loop until we've received responses for all of the tests
-                # and resources that have been scheduled.
-                while count > 0:
-                    # Read a reply from the response_queue.
-                    result = response_queue.get()
-                    # Process the response.
-                    self.AddResult(result)
-                    # We're waiting for one less test.
-                    count = count - 1
-
-                # Schedule some more work.
-                count = self.Schedule()
+            self._RunTests()
         finally:
             # Stop the targets.
             for target in self.__targets:
                 target.Stop()
 
-            # Let all of the result streams know that the test run is complete.
+            # Read responses until there are no more.
+            while self._CheckForResponse(wait=0):
+                pass
+            
+            # Let all of the result streams know that the test run is
+            # complete.
             for rs in self.__result_streams:
                 rs.Summarize()
 
-        
-    def Schedule(self):
-        """Schedule tests and resource functions.
 
-        This method attempts to schedule tests and resource functions so
-        that each target has something to do.  Not all tests are
-        necessarily scheduled.  Call this method repeatedly, when at
-        least one target has completed its work, until the return value
-        is zero.
+    def _RunTests(self):
+        """Run all of the tests."""
 
-        returns -- The number of commands that have been issued to 
-	targets; or zero if no more tests and resource remain."""
+        # Create a directed graph where each node is a pair
+        # (descriptor, count).  There is an edge from one node
+        # to another if the first node is a prerequisite for the
+        # second.  Begin by creating the nodes of the graph.
+        for id in self.__test_ids:
+            descriptor = self.__database.GetTest(id)
+            self.__descriptors[id] = descriptor
+            self.__descriptor_graph[descriptor] = [0, []]
 
-        database = self.__database
-
-        # For each call, we'll maintain a list of targets which are
-        # ready to accept more work.
-        ready_targets = filter(lambda t: t.IsIdle(), self.__targets)
-
-	count = 0
-
-        if len(self.__remaining_test_ids) == 0:
-            # There are no tests left to be run, so the test run is
-            # almost over.  Clean up resources now.  Since we're
-            # scheduling greedily, it's hard to clean up resources
-            # eariler than the very end of the test run.
-            for target in self.__targets:
-                resources = self.__resources[target].items()
-                for resource_id, properties in resources:
-                    # Properties added to the context in the resource's
-                    # setup function are available in the cleanup
-                    # functions' context.
-                    context_wrapper = \
-                        ContextWrapper(self.__context, properties)
-                    target.CleanUpResource(resource_id, context_wrapper)
-		    count = count + 1
-
-            # That's it for the test run.
-            return count
-
-        # Scan through all remaining tests, attempting to schedule each
-        # on a target.
-        for test_id in self.__remaining_test_ids:
-            # If there are no targets ready to accept additional work,
-            # stop scheduling immediately.
-            if len(ready_targets) == 0:
-                break
-
-            # Load the test. 
-            test = database.GetTest(test_id)
-            try:
-                # Is it ready to run?
-                test_is_ready = self.__TestIsReady(test)
-            except NoTargetForGroupError:
-                # There is no target whose target group is allowable for
-                # this test.  We therefore can't run this test.  Add an
-                # 'UNTESTED' result for it.
-                cause = qm.message("no target for group")
-                group_pattern = test.GetTargetGroup()
-                result = Result(Result.TEST, test_id, 
-                                self.__context, Result.UNTESTED,
-                                { Result.CAUSE : cause,
-                                  'group_pattern' : group_pattern })
-                self.AddResult(result)
-                self.__remaining_test_ids.remove(test_id)
-                continue
-            except IncorrectOutcomeError, error:
-                prerequisite_id = str(error)
-                # One of the test's prerequisites was run and produced
-                # the incorrect outcome.  We won't run this test.  Add
-                # an 'UNTESTED' result for it.
-                cause = qm.message("failed prerequisite")
-                prerequisite_outcome = \
-                    self.__test_results[prerequisite_id].GetOutcome()
-                expected_outcome = test.GetPrerequisites()[prerequisite_id]
-                result = Result(Result.TEST, test_id, 
-                                self.__context, Result.UNTESTED,
-                                { Result.CAUSE : cause,
-                                  'prerequisite_id' : prerequisite_id,
-                                  'prerequisite_outcome' :
-                                    prerequisite_outcome,
-                                  'expected_outcome' : expected_outcome })
-                self.AddResult(result)
-                self.__remaining_test_ids.remove(test_id)
-                continue
-            except FailedResourceError, error:
-                resource_id = str(error)
-                # One of the resources required for this test failed
-                # during setup, so we can't run the test.  Add an
-                # 'UNTESTED' result for it.
-                cause = qm.message("failed resource")
-                result = Result(Result.TEST, test_id, self.__context,
-                                Result.UNTESTED)
-                result[Result.CAUSE] = cause
-                result['resource_id'] = resource_id
-                self.AddResult(result)
-                self.__remaining_test_ids.remove(test_id)
-                continue
-            except TerminatedError:
-                result = Result(Result.TEST, test_id, self.__context,
-                                Result.UNTESTED)
-                result[Result.CAUSE] = qm.message("execution terminated")
-                self.AddResult(result)
-                self.__remaining_test_ids.remove(test_id)
-                continue
+        # Create the edges.
+        for descriptor in self.__descriptors.values():
+            prereqs = descriptor.GetPrerequisites()
+            if prereqs:
+                for (prereq_id, outcome) in prereqs.items():
+                    prereq_desc = self.__descriptors[prereq_id]
+                    self.__descriptor_graph[prereq_desc][1] \
+                        .append((descriptor, outcome))
+                self.__descriptor_graph[descriptor][0] = len(prereqs)
             else:
-                if not test_is_ready:
-                    # The test isn't ready yet.  Defer it.
-                    continue
+                # A node with no prerequisites is ready.
+                self.__ready.append(descriptor)
 
-            # Determine the best available target for running this test.
-            target = self.__FindBestTarget(test, ready_targets)
-            if target is None:
-                # None of the currently-available targets can run this
-                # test.  Must be that all the targets that can are
-                # currently busy.  Defer the test.
+        # Iterate until there are no more tests to run.
+        self.__pending = self.__descriptors.values()
+        while ((self.__pending or self.__ready)
+               and not self.IsTerminationRequested()):
+            # If there are no idle targets, block until we get a
+            # response.  There is nothing constructive we can do.
+            idle_targets = self.__idle_targets
+            if not idle_targets:
+                # Read a reply from the response_queue.
+                self._CheckForResponse(wait=1)
+                # Keep going.
                 continue
 
-            # Even the best target may not have all the required
-            # resources currently set up.  Determine whether there are
-            # any resources missing.
-            test_resources = test.GetResources()
-            missing_resource_ids = qm.common.sequence_difference(
-                test_resources, self.__resources[target].keys())
-            # Are there any?
-            if len(missing_resource_ids) == 0:
-                # No, we have all the required resources.  Run the test
-                # itself.  First, contstruct a map of additional
-                # properties added to the context by all resources
-                # required by this test.
-                properties = {}
-                for resource_id in test.GetResources():
-                    resource_properties = \
-                        self.__resources[target][resource_id]
-                    properties.update(resource_properties)
-                # These properties are made available to the test
-                # through its context.
-                context_wrapper = ContextWrapper(self.__context,
-                                                 properties)
-                # Run the test.
-                target.RunTest(test_id, context_wrapper)
-		count = count + 1
-                self.__remaining_test_ids.remove(test_id)
-            else:
-                # Yes, there's at least one resource missing for the
-                # target.  Instead of running the test, set up all the
-                # missing resources.  Defer the test; it'll probably be
-                # scheduled for this target later.
-                for resource_id in missing_resource_ids:
-                    context_wrapper = ContextWrapper(self.__context)
-                    target.SetUpResource(resource_id, context_wrapper)
-		    count = count + 1
-                    if not target.IsIdle():
+            # There is at least one idle target.  Try to find something
+            # that it can do.
+            wait = 1
+            for descriptor in self.__ready:
+                for target in idle_targets:
+                    if target.IsInGroup(descriptor.GetTargetGroup()):
+                        # This test can be run on this target.  Remove
+                        # it from the ready list.
+                        self.__ready.remove(descriptor)
+                        # And from the pending list.
+                        self.__pending.remove(descriptor)
+                        # Run it.
+                        target.RunTest(descriptor, self.__context)
+                        # We have done something useful on this
+                        # iteration.
+                        wait = 0
                         break
 
-            # If we just gave the target enough work to keep it busy for
-            # now, remove it from the list of available targets.
-            if not target.IsIdle():
-                ready_targets.remove(target)
+                if not wait:
+                    break
 
-        # We've scheduled as much as we can for now.
-        return count
+            # See if any targets have finished their assignments.  If
+            # we did not schedule any additional work during this
+            # iteration of the loop, there's no point in continuing
+            # until some target finishes what its doing.
+            self._CheckForResponse(wait=wait)
+
+        # Any tests that are still pending are untested.
+        for descriptor in self.__pending:
+            self._AddUntestedResult(descriptor.GetId(),
+                                    qm.message("execution terminated"))
 
 
-    def AddResult(self, result):
+    def _CheckForResponse(self, wait):
+        """See if any of the targets have completed a task.
+
+        'wait' -- If 1, block until a response is available.  If 0,
+        return immediately if there is no available response.
+
+        returns -- True iff a response was received."""
+
+        # Read a reply from the response_queue.
+        try:
+            result = self.__response_queue.get(wait)
+            # Handle it.
+            self._AddResult(result)
+            # If this was a test result, there may be other tests that
+            # are now eligible to run.
+            if result.GetKind() == Result.TEST:
+                # Get the descriptor for this test.
+                descriptor = self.__descriptors[result.GetId()]
+                # Get the graph node corresponding to this test.
+                node = self.__descriptor_graph[descriptor]
+                # Iterate through each of the dependent tests.
+                for (d, outcome) in node[1]:
+                    # Find the node for the dependent test.
+                    n = self.__descriptor_graph[d]
+                    # If some other prerequisite has already had
+                    # an undesired outcome, there is nothing more to do.
+                    if n[0] == 0:
+                        continue
+                    
+                    # If the actual outcome is not the outcmoe that
+                    # was expected, the dependent test cannot be run.
+                    if result.GetOutcome() != outcome:
+                        self._AddUntestedResult(
+                            d.GetId(),
+                            qm.message("failed prerequisite"),
+                            { 'qmtest.prequisite' :
+                                result.GetId(),
+                              'qmtest.outcome' : 
+                                result.GetOutcome(),
+                              'qmtest.expected_outcome' :
+                                outcome })
+                        # This test will never be run.
+                        n[0] = 0
+                        self.__pending.remove(d)
+                    else:
+                        # Decrease the count associated with the node, if
+                        # the test has not already been declared a failure.
+                        n[0] = n[0] - 1
+                        # If this was the last prerequisite, this test
+                        # is now ready.
+                        if n[0] == 0:
+                            self.__ready.append(d)
+
+            return result
+        except Queue.Empty:
+            # If wait is zero, and there is nothing in the queue, then
+            # this exception will be thrown.  Just return.
+            return None
+
+        
+    def _AddResult(self, result):
         """Report the result of running a test or resource.
 
         'result' -- A 'Result' object representing the result of running
         a test or resource."""
 
+        # Find the target with the name indicated in the result.
+        if result[Result.TARGET]:
+            for target in self.__targets:
+                if target.GetName() == result[Result.TARGET]:
+                    break
+                        
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
         elif result.GetKind() == Result.RESOURCE:
             self.__resource_results.append(result)
-
-            # Extract information from the result.
-            resource_id = result.GetId()
-            outcome = result.GetOutcome()
-            action = result[Result.ACTION]
-            assert action in ["setup", "cleanup"]
-
-            # Find the target with the name indicated in the result.
-            if result[Result.TARGET]:
-                for target in self.__targets:
-                    if target.GetName() == result[Result.TARGET]:
-                        break
-                        
-            if action == "setup" and outcome == Result.PASS:
-                # A resource has successfully been set up.  Record it as an
-                # active resource for the target.  For that resource and
-                # target combination, store the context properties that were
-                # added by the resource setup function, so that these can be
-                # made available to tests that use the resource.
-                added_properties = \
-                    result.GetContext().GetAddedProperties()
-                self.__resources[target][resource_id] = added_properties
-
-            elif action == "setup" and outcome != Result.PASS:
-                # A resource's setup function failed.  Note this, so that
-                # the resource setup is not reattempted.
-                self.__failed_resources[resource_id] = None
-                # Schedule the cleanup function for this resource
-                # immediately. 
-                context_wrapper = ContextWrapper(self.__context)
-                target.CleanUpResource(resource_id, context_wrapper)
-
-            elif action == "cleanup" and outcome == Result.PASS:
-                # A resource has successfully been cleaned up.  Remove it
-                # from the list of active resources for the target.
-                del self.__resources[target][resource_id]
         else:
             assert 0
             
+        # This target might now be idle.
+        if target.IsIdle():
+            self.__idle_targets.append(target)
+
         # Report the result.
-        self.__ReportResult(result)
-
-    # Helper functions.
-
-    def __ReportResult(self, result):
-        """Report the 'result'.
-
-        'result' -- A 'Result' indicating the outcome of a test or
-        resource run.
-
-        The result is provided to all of the 'ResultStream' objects."""
-
         for rs in self.__result_streams:
             rs.WriteResult(result)
 
 
-    def __ValidateTest(self, test):
-        """Make sure a test is valid for this test run.
+    def _AddUntestedResult(self, test_name, cause, annotations):
+        """Add a 'Result' indicating that 'test_name' was not run.
 
-        'test' -- The test to validate.
+        'test_name' -- The label for the test that could not be run.
 
-        raises -- 'NoTargetForGroupError' if there is no target in
-        the test run whose group matches the test's group."""
+        'cause' -- A string explaining why the test could not be run.
 
-        test_id = test.GetId()
+        'annotations' -- A map from strings to strings giving
+        additional annotations for the result."""
 
-        # A test needs to be checked only once per run.  If this test
-        # was already checked, don't re-check it.
-        if self.__valid_tests.has_key(test_id):
-            return
+        result = Result(Result.TEST, test_name, self.__context,
+                        Result.UNTESTED, annotations)
+        result[Result.CAUSE] = cause
+        self._AddResult(result)
 
-        # Find a target in the correct group.
-        group_pattern = test.GetTargetGroup()
-        for target in self.__targets:
-            if target.IsInGroup(group_pattern):
-                # Found a match.  Mark the test as checked, so it isn't
-                # re-checked next time.
-                self.__valid_tests[test_id] = None
-                return
-
-        # No target is in a matching group.  This test can't be run with
-        # the specified set of targets.
-        raise NoTargetForGroupError, test_id
-
-
-    def __TestIsReady(self, test):
-        """Check whether 'test' is ready to be run.
-
-        'test' -- The test to check.
-
-        returns -- True if the test is ready to run, false otherwise.
-        Note that a test may be ready to run even if there is no target
-        which currently has all the required resources set up.
-
-        raises -- 'IncorrectOutcomeError' if one of the test's a
-        prerequisites has already been run but produced the incorrect
-        outcome.  The exception string is the ID of the prerequisite
-        test.
-
-        raises -- 'FailedResourceError' if one of the test's resources
-        has failed during setup.  The exception string is the ID of the
-        resource."""
-
-        if self.IsTerminationRequested():
-            raise TerminatedError
         
-        # Check the test itself.
-        self.__ValidateTest(test)
-
-        # Check resources.
-        for resource_id in test.GetResources():
-            if self.__failed_resources.has_key(resource_id):
-                raise FailedResourceError, resource_id
-
-        # Check prerequisites.
-        prerequisite_ids = test.GetPrerequisites()
-        for prerequisite_id, outcome in prerequisite_ids.items():
-            if prerequisite_id not in self.__test_ids:
-                # This prerequisite test is not in the test run; ignore
-                # it.
-                continue
-
-            try:
-                # Obtain the prerequisite's result.
-                prerequisite_result = self.__test_results[prerequisite_id]
-            except KeyError:
-                # No result yet; the prerequisite test hasn't
-                # completed.  Don't run this test yet.
-                return 0
-
-            # Did the test produce the right outcome?
-            if prerequisite_result.GetOutcome() != outcome:
-                raise IncorrectOutcomeError, prerequisite_id
-                
-            else:
-                # Correct outcome.  Move on to the next prerequisite.
-                continue
-
-        # Everything is OK.
-        return 1
-
-
-    def __FindBestTarget(self, test, targets):
-        """Determine the best target for running 'test'.
-
-        'test' -- The 'Test' to consider.
-
-        'targets' -- A sequence of targets from which to choose the
-        best.
-
-        returns -- The target on which to run the test."""
-        
-        test_resource_ids = test.GetResources()
-        group_pattern = test.GetTargetGroup()
-
-        best_target = None
-        # Scan over targets to find the best one.
-        for target in targets:
-            # Disqualify this target if its group does not match.
-            if not target.IsInGroup(group_pattern):
-                continue
-            # Count the number of resources required by the test that
-            # aren't currently active on this target.
-            target_resource_ids = self.__resources[target].keys()
-            missing_resource_count = \
-                len(qm.common.sequence_difference(target_resource_ids,
-                                                  test_resource_ids))
-            # Were there any?
-            if missing_resource_count == 0:
-                # We have all the resources we need.  This target is
-                # good enough. 
-                best_target = target
-                break
-            # Is this the best (or first) target so far?
-            if best_target is None \
-               or missing_resource_count < best_missing_resource_count:
-                # Yes; remember it.
-                best_target = target
-                best_missing_resource_count = missing_resource_count
-
-        # Return the best target we found.
-        return best_target
-
 ########################################################################
 # Local Variables:
 # mode: python

@@ -133,11 +133,8 @@ class Resource:
         raise qm.MethodShouldBeOverriddenError, "Resource.SetUp"
 
 
-    def CleanUp(self, context, result):
+    def CleanUp(self, result):
         """Clean up the resource.
-
-        'context' -- A 'Context' giving run-time parameters to the
-        test.
 
         'result' -- A 'Result' object.  The outcome will be
         'Result.PASS' when this method is called.  The 'result' may be

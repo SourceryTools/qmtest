@@ -741,7 +741,7 @@ def load_class(name, path=sys.path):
     # separator. 
     if not "." in name:
         raise ValueError, \
-              "%s it not a fully-qualified class name" % name
+              "%s is not a fully-qualified class name" % name
     # Split the module path into components.
     components = string.split(name, ".")
     # Reconstruct the full path to the containing module.

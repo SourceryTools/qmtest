@@ -16,6 +16,7 @@
 ########################################################################
 
 import qm
+import re
 import types
 
 ########################################################################
@@ -105,7 +106,7 @@ class Context:
         there is no such value."""
 
         if self.has_key(key):
-            return self.key
+            return self[key]
         else:
             return default
         
@@ -124,12 +125,11 @@ class Context:
 
         raises -- 'ValueError' if 'key' is not a string.
 
-        raises -- 'RuntimeError' if 'key' is not a valid label
-        (including periods)."""
+        raises -- 'RuntimeError' if 'key' is not valid."""
 
         if not isinstance(key, types.StringType):
             raise ValueError, "context key must be a string"
-        if not qm.label.is_valid(key, allow_separator=1):
+        if not re.match("[A-Za-z0-9_.]+", key):
             raise ValueError, \
                   qm.error("invalid context key", key=key)
 
@@ -252,7 +252,7 @@ class ContextWrapper:
         there is no such value."""
 
         if self.has_key(key):
-            return self.key
+            return self[key]
         else:
             return default
 

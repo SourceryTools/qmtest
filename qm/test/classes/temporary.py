@@ -82,27 +82,24 @@ class TempDirectoryResource(Resource):
     
 
     def SetUp(self, context, result):
-        # FIXME: Security.
         # Generate a temporary file name.
-        dir_path = tempfile.mktemp()
+        self.__dir_path = tempfile.mktemp()
         try:
             # Create the directory.
-            os.mkdir(dir_path, 0700)
+            os.mkdir(self.__dir_path, 0700)
         except OSError, error:
             # Setup failed.
             cause = "Directory creation failed.  %s" % str(error)
             result.Fail(cause)
         else:
             # Setup succeeded.  Store the path to the directory where
-            # tests can get at it. 
-            context[self.__dir_path_property] = dir_path
+            # tests can get at it.
+            context[self.__dir_path_property] = self.__dir_path
     
 
-    def CleanUp(self, context, result):
+    def CleanUp(self, result):
         # Extract the path to the directory.
-        dir_path = context[self.__dir_path_property]
-        # Make sure it's a directory.
-        assert os.path.isdir(dir_path)
+        dir_path = self.__dir_path
         # Clean up the directory.
         try:
             if self.__delete_recursively:
