@@ -1,3 +1,7 @@
+2000-12-02  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* doc/design/qmtrack/user-interface.xml: Update e-mail section.
+
 2000-12-01  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk: Update instructional comments.

@@ -77,8 +77,8 @@
     ID of the command you wish to edit and then as arguments any
     fields you wish to edit. For example,
      <screen>
-      &prompt;<userinput>qmtrack edit foo categories-=first</userinput>
-      <computeroutput>foo</computeroutput>
+      &prompt;<userinput>qmtrack edit iss2 categories-=first</userinput>
+      <computeroutput>iss2</computeroutput>
      </screen>
     will edit the issue with id "iss2" removing the category "first"
     from the issue. A new revision of the issue will be created and
@@ -204,18 +204,17 @@
   <title id="sec-email-title">E-mail</title>
 
   <para>To create, edit, and query issues via e-mail, simply construct an
-  e-mail in xml as shown below and send the message to the database. It
-  will respond with the same information that would be given on the
-  command line had the request been issued that way. The first line of the
-  e-mail should contain the command (e.g. <literal>create</literal>,
-  <literal>edit</literal>, or <literal>query</literal>). You may then
-  either give the command as you would on the command line, or you may
-  specify it using an xml representation. For example, to create a new
-  issue, you can send an e-mail with this body:
+  e-mail with the command as you would issue it on the command line and
+  send it to the database. You may also write an issue in xml as shown
+  below and send the message to the database. In both cases, the database
+  will respond with the information in xml form. For the xml
+  representation, place the name of the command in the first line of the
+  body and then the xml representation starting on the second line. For
+  example, to create a new issue, you can send an e-mail with this body:
   
   <programlisting>
 <![CDATA[
-  create SUMMARY="My issue" CATEGORIES+="foo" CATEGORIES+="bar"
+  create summary="My issue" categories+=foo categories+=bar
 ]]>
   </programlisting>
 
@@ -236,10 +235,8 @@
 
   <programlisting>
 <![CDATA[
-  Issue Created:
-
   <issue>
-    <id>2</id>
+    <id>iss2</id>
     <summary>My issue</summary>
     <categories>foo</categories>
     <categories>bar</categories>
@@ -255,7 +252,7 @@
 
   <programlisting>
 <![CDATA[
-  edit 2 CATEGORIES-=foo
+  edit iss2 categories-=foo
   ]]>
   </programlisting>
 
@@ -263,16 +260,19 @@
 
   <programlisting>
 <![CDATA[
-  retrieve 2 for edit
+  edit iss2
   ]]>
   </programlisting>
 
-  This would cause the database to send you the following message:
+  with no arguments to the edit command except for the issue. Sending an
+  email of this form will cause the database to send you the following
+  message:
+
   <programlisting>
 <![CDATA[
   edit
   <issue>
-    <id>2</id>
+    <id>iss2</id>
     <summary>My issue</summary>
     <categories>foo</categories>
     <categories>bar</categories>
@@ -286,31 +286,58 @@
 <![CDATA[
   edit
   <issue>
-    <id>2</id>
+    <id>iss2</id>
     <summary>My issue</summary>
     <categories>bar</categories>
   </issue>
   ]]>
   </programlisting>
 
-  (removing the category "foo") and send back to the database. In either
-  case, you after the edit is complete, you would receive a message that
-  looked like this:
+  (removing the category "foo") and send back to the database.  If you
+  wish to add an attachment to this revision of the issue, you can simply
+  attach it to the email. In either case, you after the edit is complete,
+  you would receive a message that looked like this:
 
   <programlisting>
 <![CDATA[
-  Issue edited:
-
   <issue>
-    <id>2</id>
+    <id>iss2</id>
     <summary>My issue</summary>
     <categories>bar</categories>
   </issue>
   ]]>
   </programlisting>
 
+  As with creating and editing, you may also specify a query by sending an
+  e-mail to the database. If you issue the command as is done on the
+  command line, the syntax is identical to that on the command
+  line. However, if you choose to use an xml representation for your
+  query, you are more limited in the way you search. Imagine the following
+  body of an e-mail message to be sent to the database:
 
-  INSERT QUERY INFO HERE.
+  <programlisting>
+<![CDATA[
+  query
+  <issue>
+    <categories>bar</categories>
+  </issue>
+  ]]>
+  </programlisting>
+
+  This will return the xml representation for any issues that have
+  <literal>bar</literal> in their category set. This would be equivalent
+  to sending a message containing the body:
+
+  <programlisting>
+<![CDATA[
+  query 'bar in categories'
+  ]]>
+  </programlisting>
+
+  For more information about the query syntax that is allowed on the
+  command line, see the section on <link linkend="sec-queries"
+  endterm="sec-queries-title"></link>.
+
 <!-- Commented out for now until we know what's up with queries
 
   <para>Queries are similar to edits and creates with the exception that
