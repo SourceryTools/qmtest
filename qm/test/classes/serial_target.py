@@ -7,7 +7,7 @@
 # Contents:
 #   SerialTarget
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -24,7 +24,7 @@ from   qm.test.target import *
 ########################################################################
 
 class SerialTarget(Target):
-    """A target implementation that runs tests locally in serial."""
+    """A target that runs tests in serial on the local machine."""
 
     def IsIdle(self):
         """Return true if the target is idle.

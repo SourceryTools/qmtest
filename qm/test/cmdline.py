@@ -212,6 +212,13 @@ class QMTest:
         "Set a database attribute."
         )
 
+    extension_kind_option_spec = (
+        "k",
+        "kind",
+        "EXTENSION-KIND",
+        "Specify the kind of extension class."
+        )
+    
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -252,6 +259,50 @@ class QMTest:
            )
          ),
 
+        ("extensions",
+         "List extension classes.",
+         "",
+         """
+List the available extension classes.
+
+Use the '--kind' option to limit the classes displayed to test classes,
+resource classes, etc.  The parameter to '--kind' can be one of 'test',
+'resource', 'database', or 'target'.
+         """,
+         (
+           extension_kind_option_spec,
+         )
+        ),
+
+        ("help",
+         "Display usage summary.",
+         "",
+         "Display usage summary.",
+         ()
+         ),
+
+        ("register",
+         "Register an extension class.",
+         "KIND CLASS",
+         """
+Register an extension class with QMTest.  KIND is the kind of extension
+class to register; it must be one of 'test', 'resource', 'database',
+or 'target'.
+
+The CLASS gives the name of the class in the form 'module.class'.
+
+QMTest will search the available extension class directories to find the
+new CLASS.  QMTest looks for files whose basename is the module name and
+whose extension is either '.py', '.pyc', or '.pyo'.
+
+QMTest will then attempt to load the extension class.  If the extension
+class cannot be loaded, QMTest will issue an error message to help you
+debug the problem.  Otherwise, QMTest will update the 'classes.qmc' file
+in the directory containing the module to mention your new extension class.
+         """,
+         ()
+         ),
+        
         ("remote",
          "Run QMTest as a remote server.",
          "",
@@ -365,6 +416,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         self._major_version = major_version
         self._minor_version = minor_version
         self._release_version = release_version
+
+        # We have not yet loaded the database.
+        self.__database = None
         
         # We have not yet computed the set of available targets.
         self.targets = None
@@ -420,12 +474,13 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             sys.stdout.write(self.__version_output % self._GetVersionString())
             return
         # If the global help option was specified, display it and stop.
-        if self.GetGlobalOption("help") is not None:
+        if (self.GetGlobalOption("help") is not None 
+            or self.__command == "help"):
             output.write(self.__parser.GetBasicHelp())
             return
         # If the command help option was specified, display it and stop.
         if self.GetCommandOption("help") is not None:
-            output.write(self.__parser.GetCommandHelp(self.__command))
+            self.__WriteCommandHelp(self.__command, output)
             return
 
         # Handle the verbose option.  The verbose level is the number of
@@ -453,15 +508,21 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             db_path = os.path.join(os.getcwd(), db_path)
         # Normalize the path so that it is easy for the user to read
         # if it is emitted in an error message.
-        db_path = os.path.normpath(db_path)
+        self.__db_path = os.path.normpath(db_path)
         
         # Some commands don't require a test database.
         if self.__command == "create-tdb":
             self.__ExecuteCreateTdb(output, db_path)
+        elif self.__command == "extensions":
+            self.__ExecuteExtensions(output)
+        elif self.__command == "register":
+            self.__ExecuteRegister(output)
         else:
             # For the rest of the commands, we need to open the test
-            # database first.
-            self.__database = base.load_database(db_path)
+            # database first.  If opening the database fails, an
+            # exception will be thrown and an appropriate error message
+            # issued.
+            self.GetDatabase()
 
             # Dispatch to the appropriate method.
             method = {
@@ -475,7 +536,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
     def GetDatabase(self):
         """Return the test database to use."""
-        
+
+        if not self.__database:
+            self.__database = base.load_database(self.__db_path)
+            
         return self.__database
 
 
@@ -503,17 +567,18 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                               qm.error("concurrency not integer",
                                        value=concurrency)
                 # Construct the target.
-                properties = {}
+                arguments = {}
+                arguments["name"] = "local"
+                arguments["group"] = "local"
                 if concurrency > 1:
                     class_name = "thread_target.ThreadTarget"
-                    properties["concurrency"] = str(concurrency)
+                    arguments["concurrency"] = concurrency
                 else:
                     class_name = "serial_target.SerialTarget"
                 target_class \
                     = get_extension_class(class_name,
                                           'target', self.GetDatabase())
-                self.targets = [ target_class("local", "local", properties,
-                                              self.GetDatabase()) ]
+                self.targets = [ target_class(self.GetDatabase(), arguments) ]
             else:
                 document = qm.xmlutil.load_xml_file(file_name)
                 targets_element = document.documentElement
@@ -524,20 +589,21 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                     name = qm.xmlutil.get_child_text(node, "name")
                     class_name = qm.xmlutil.get_child_text(node, "class")
                     group = qm.xmlutil.get_child_text(node, "group")
-                    # Extract properties.
-                    properties = {}
+                    # Extract arguments.
+                    arguments = {}
+                    arguments["name"] = name
+                    arguments["group"] = group
                     for property_node in node.getElementsByTagName("property"):
                         property_name = property_node.getAttribute("name")
                         value = qm.xmlutil.get_dom_text(property_node)
-                        properties[property_name] = value
+                        arguments[property_name] = value
 
                     # Find the target class.
                     target_class = get_extension_class(class_name,
                                                        'target',
                                                        self.GetDatabase())
                     # Build the target.
-                    target = target_class(name, group, properties,
-                                          self.GetDatabase())
+                    target = target_class(self.GetDatabase(), arguments)
                     # Accumulate targets.
                     self.targets.append(target)
             
@@ -619,7 +685,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # Figure out what database class to use.
         class_name \
-            = self.GetCommandOption("class", "qm.test.xmldb.Database")
+            = self.GetCommandOption("class", "xml_database.XMLDatabase")
         # There are no attributes yet.
         attributes = {}
         # Process attributes provided on the command line.
@@ -633,6 +699,158 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         output.write(qm.message("new db message", path=db_path) + "\n")
 
 
+    def __ExecuteExtensions(self, output):
+        """List the available extension classes.
+
+        'output' -- The stream on which to output the results."""
+
+        try:
+            database = self.GetDatabase()
+        except:
+            # If the database could not be opened that's OK; this
+            # command can be used without a database.
+            database = None
+
+        # Figure out what kinds of extensions we're going to list.
+        kind = self.GetCommandOption("kind", None)
+        kinds = ['test', 'resource', 'database', 'target']
+        if kind:
+            if kind not in kinds:
+                raise qm.cmdline.CommandError, \
+                      qm.error("invalid extension kind",
+                               kind = kind)
+            kinds = [kind]
+
+        for kind in kinds:
+            # Get the available classes.
+            names = qm.test.base.get_extension_class_names(kind, database)
+            # Build structured text describing the classes.
+            description = "** Available %s classes **\n\n" % kind
+            for n in names:
+                description += "  * " + n + "\n\n    "
+                # Try to load the class to get more information.
+                try:
+                    extension_class \
+                        = qm.test.base.get_extension_class(n, kind, database)
+                    description \
+                        += qm.test.base.get_class_description(extension_class,
+                                                              brief=1)
+                except:
+                    description += ("No description available: "
+                                    "could not load class.")
+                description += "\n\n"
+                
+            output.write(qm.structured_text.to_text(description))
+            
+
+    def __ExecuteRegister(self, output):
+        """Register a new extension class.
+
+        'output' -- The stream on which to output the results."""
+
+        # Make sure that the KIND and CLASS were specified.
+        if (len(self.__arguments) != 2):
+            self.__WriteCommandHelp("register", output)
+            return
+        kind = self.__arguments[0]
+        class_name = self.__arguments[1]
+
+        # Check that the KIND is valid.
+        if kind not in ['test', 'resource', 'database', 'target']:
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid extension kind",
+                           kind = kind)
+
+        # Check that the CLASS_NAME is well-formed.
+        if class_name.count('.') != 1:
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid class name",
+                           class_name = class_name)
+        module, name = class_name.split('.')
+
+        # Try to load the database.  It may provide additional
+        # directories to search.
+        try:
+            database = self.GetDatabase()
+        except:
+            database = None
+        # Hunt through all of the extension class directories looking
+        # for an appropriately named module.
+        found = None
+        directories = get_extension_directories(kind, database)
+        for directory in directories:
+            for ext in (".py", ".pyc", ".pyo"):
+                file_name = os.path.join(directory, module + ext)
+                if os.path.exists(file_name):
+                    found = file_name
+                    break
+            if found:
+                break
+
+        # If we could not find the module, issue an error message.
+        if not found:
+            raise qm.QMException, \
+                  qm.error("module does not exist",
+                           module = module)
+
+        # Inform the user of the location in which QMTest found the
+        # module.  (Sometimes, there might be another module with the
+        # same name in the path.  Telling the user where we've found
+        # the module will help the user to deal with this situation.)
+        output.write(qm.structured_text.to_text
+                     (qm.message("loading class",
+                                 class_name = name,
+                                 file_name = found)))
+        
+        # We have found the module.  Try loading it.
+        try:
+            extension_class = get_extension_class_from_directory(class_name,
+                                                                 kind,
+                                                                 directory,
+                                                                 directories)
+        except QMException:
+            # The class could not be loaded, and we have already diagnosed
+            # the problem.  Let the top-level error handlers explain the
+            # situation.
+            raise
+        except:
+            # The class could not be loaded.  Show a traceback.
+            output.write(qm.common.format_exception(sys.exc_info()))
+            raise QMException, \
+                  qm.error("could not load extension class",
+                           class_name = class_name)
+
+        # Update the classes.qmc file.  If it already exists, we must
+        # read it in first.
+        classes_file_name = os.path.join(directory, "classes.qmc")
+        try:
+            document = qm.xmlutil.load_xml_file(classes_file_name)
+        except:
+            document = (qm.xmlutil.create_dom_document
+                        (public_id=qm.test.base.dtds["class-directory"],
+                         dtd_file_name="class-directory.dtd",
+                         document_element_tag="class-directory"))
+
+        # Remove any previous entries for this class.
+        duplicates = []
+        for element in qm.xmlutil.get_children(document.documentElement,
+                                               "class"):
+            if (str(qm.xmlutil.get_dom_text(element)) == class_name):
+                duplicates.append(element)
+        for element in duplicates:
+            document.documentElement.removeChild(element)
+            element.unlink()
+                
+        # Construct the new node.
+        class_element = (qm.xmlutil.create_dom_text_element
+                         (document, "class", class_name))
+        class_element.setAttribute("kind", kind)
+        document.documentElement.appendChild(class_element)
+
+        # Write out the file.
+        document.writexml(open(classes_file_name, "w"))
+
+        
     def __ExecuteSummarize(self, output):
         """Read in test run results and summarize."""
 
@@ -923,6 +1141,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Accept requests.
         server.Run()
 
+
+    def __WriteCommandHelp(self, command, output):
+        """Write help information about 'command' on 'output'.
+
+        'command' -- The name of the command for which help information
+        is required.
+
+        'output' -- The stream on which to write the output."""
+        
+        output.write(self.__parser.GetCommandHelp(command))
+        
 
     def __GetExpectedOutcomes(self):
         """Return the expected outcomes for this test run.

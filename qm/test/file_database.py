@@ -483,37 +483,40 @@ class ExtensionDatabase(FileDatabase):
 
     'ExtensionDatabase' is an abstract class."""
 
-    def __init__(self, path,
-                 test_extension = ".qmt",
-                 suite_extension = ".qms",
-                 resource_extension = ".qma",
-                 **attributes):
-        """Construct a new 'ExtensionDatabase'.
-
-        'test_extension' -- The extension (including the leading period)
-        that indicates that a file is a test.
-        
-        'suite_extension' -- The extension (including the leading period)
-        that indicates that a file (or directory) is a suite.
-
-        'resource_extension' -- The extension (including the leading period)
-        that indicates that a file is a resource."""
-
-        # Initialize the base class.
-        FileDatabase.__init__(self, path, **attributes)
-        
-        self.__test_extension = test_extension
-        self.__suite_extension = suite_extension
-        self.__resource_extension = resource_extension
-
-        
+    arguments = [
+        qm.fields.TextField(
+            name="test_extension",
+            title="Test Extension",
+            description="""The extension for test files.
+            
+            The extension (including the leading period) used for files
+            containing tests.""",
+            default_value=".qmt"),
+        qm.fields.TextField(
+            name="suite_extension",
+            title="Suite Extension",
+            description="""The extension for suite files.
+            
+            The extension (including the leading period) used for files
+            containing suites.""",
+            default_value=".qms"),
+        qm.fields.TextField(
+            name="resource_extension",
+            title="Resource Extension",
+            description="""The extension for resource files.
+            
+            The extension (including the leading period) used for files
+            containing resources.""",
+            default_value=".qma"),
+        ]
+    
     def GetTestExtension(self):
         """Return the extension that indicates a file is a test.
 
         returns -- The extension (including the leading period) that
         indicates that a file is a test."""
 
-        return self.__test_extension
+        return self.test_extension
     
         
     def GetSuiteExtension(self):
@@ -522,7 +525,7 @@ class ExtensionDatabase(FileDatabase):
         returns -- The extension (including the leading period) that
         indicates that a file is a suite."""
 
-        return self.__suite_extension
+        return self.suite_extension
     
         
     def GetResourceExtension(self):
@@ -531,17 +534,17 @@ class ExtensionDatabase(FileDatabase):
         returns -- The extension (including the leading period) that
         indicates that a file is a resource."""
 
-        return self.__resource_extension
+        return self.resource_extension
 
 
     def GetTestPath(self, test_id):
 
-        return self._GetPathFromLabel(test_id) + self.__test_extension
+        return self._GetPathFromLabel(test_id) + self.test_extension
 
 
     def _IsTestFile(self, path):
-        
-        return (os.path.splitext(path)[1] == self.__test_extension
+
+        return (os.path.splitext(path)[1] == self.test_extension
                 and os.path.isfile(path))
 
 
@@ -552,33 +555,32 @@ class ExtensionDatabase(FileDatabase):
         if suite_id == "":
             return self.GetRoot()
         else:
-            return self._GetPathFromLabel(suite_id) + self.__suite_extension
+            return self._GetPathFromLabel(suite_id) + self.suite_extension
 
 
     def _IsSuiteFile(self, path):
 
         return (path == self.GetRoot() 
-                or (os.path.splitext(path)[1] == self.__suite_extension
+                or (os.path.splitext(path)[1] == self.suite_extension
                     and (os.path.isfile(path) or os.path.isdir(path))))
 
 
     def GetResourcePath(self, resource_id):
 
         return self._GetPathFromLabel(resource_id) \
-               + self.__resource_extension
+               + self.resource_extension
         
 
     def _IsResourceFile(self, path):
 
-        return (os.path.splitext(path)[1] == self.__resource_extension
+        return (os.path.splitext(path)[1] == self.resource_extension
                 and os.path.isfile(path))
 
 
     def _GetPathFromLabel(self, label):
 
         return os.path.join(self.GetRoot(),
-                            self._LabelToPath(label,
-                                              self.__suite_extension))
+                            self._LabelToPath(label, self.suite_extension))
 
         
     def _GetLabelFromBasename(self, basename):

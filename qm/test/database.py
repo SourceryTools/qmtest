@@ -20,6 +20,8 @@
 import os.path
 import qm
 from   qm.common import *
+import qm.extension
+import qm.fields
 from   qm.label import *
 from   qm.test.base import *
 
@@ -102,7 +104,7 @@ class ItemDescriptor:
 
         Derived classes should not override this method."""
 
-        return get_class_arguments(self.GetClass())
+        return qm.extension.get_class_arguments(self.GetClass())
     
 
     def GetArguments(self):
@@ -129,7 +131,9 @@ class ItemDescriptor:
         returns -- An instance of the class returned by 'GetClass'."""
 
         if not self.__item:
-            self.__item = self._MakeItem()
+            arguments = self.GetArguments().copy()
+            arguments["id"] = self.GetId()
+            self.__item = self.GetClass()(arguments)
 
         return self.__item
     
@@ -153,30 +157,6 @@ class ItemDescriptor:
 
     # Helper functions.
 
-    def _MakeItem(self):
-        """Construct the entity itself.
-
-        returns -- An instance of the class returned by 'GetClass'."""
-
-        arguments = self.GetArguments().copy()
-
-        # Do some extra processing for test arguments.
-        for field in self.GetClassArguments():
-            name = field.GetName()
-            # Use a default value for each field for which an argument
-            # was not specified.
-            if not arguments.has_key(name):
-                arguments[name] = field.GetDefaultValue()
-
-        # Record the test or resource name.  Logically, this
-        # should be a paramter passed in to the test class
-        # constructor, but that would require changing all the
-        # existing test classes.
-        arguments["id"] = self.GetId()
-        
-        return apply(self.GetClass(), [], arguments)
-
-    
     def _Execute(self, context, result, method):
         """Execute the entity.
         
@@ -440,7 +420,7 @@ class NoSuchResourceError(DatabaseError):
 
 
 
-class Database:
+class Database(qm.extension.Extension):
     """A 'Database' stores tests, testsuites, and resources.
 
     A 'Database' has two primary functions:
@@ -516,33 +496,41 @@ class Database:
     simultaneously.  Therefore, you must take appropriate steps to
     ensure thread-safe access to shared data."""
 
-    ATT_LABEL_CLASS = "Database.label_class"
-    """The name of the attribute used to specify the label class."""
+    arguments = [
+        qm.fields.TextField(
+            name="label_class",
+            title="Label Class",
+            description="""The name of the label class used by this database.
+
+            The label class is used to separate names of entities used
+            by the database into directories and basenames.""",
+            default_value="python_label.PythonLabel"
+            )
+        ]
     
-    def __init__(self, path, **attributes):
+    def __init__(self, path, arguments):
         """Construct a 'Database'.
 
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
-        'attributes' -- A dictionary mapping attribute names to values.
+        'arguments' -- A dictionary mapping attribute names to values.
         
         Derived classes must call this method from their own '__init__'
-        methods.  Evey derived class must have an '__init__' method that
+        methods.  Every derived class must have an '__init__' method that
         takes the path to the directory containing the database as its
         only argument.  The path provided to the derived class '__init__'
         function will always be an absolute path."""
 
+        qm.extension.Extension.__init__(self, arguments)
+        
         # The path given must be an absolute path.
         assert os.path.isabs(path)
         self.__path = path
 
-        # Figure out what kind of labels are being used to name entities
-        # in this database.
-        label_class_name = attributes.get(self.ATT_LABEL_CLASS,
-                                          "python_label.PythonLabel")
-        self.__label_class = get_extension_class(label_class_name,
-                                                 "label", self)
+        # Translate the label class name into an actual Python class.
+        self.__label_class \
+            = get_extension_class(self.label_class, "label", self)
                                           
     # Methods that deal with labels.
     

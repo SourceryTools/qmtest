@@ -27,6 +27,9 @@ The target concurrency "%(value)s" is not a positive integer.
 @ context property cannot be deleted
 The property %(property)s cannot be deleted from this context.
 
+@ could not load extension class
+The "%(class_name)s" extension class could not be loaded.
+
 @ db path doesn't exist
 "%(path)s" does not exist. 
 
@@ -43,6 +46,14 @@ A problem occurred while loading the XML test file "%(test_id)s":
 
 @ execution terminated
 Termination was requested before this test was executed.
+
+@ extension class not found
+The extension class '%(klass)s' could not be found.  You may need
+to set the 'QMTEST_CLASS_PATH' environment variable.
+
+@ extension class not subclass
+The %(kind)s extension class "%(class_name)s" is not a subclass of
+"%(base_name)s".
 
 @ failed prerequisite
 A prerequisite produced an incorrect outcome.
@@ -76,6 +87,10 @@ letters, digits, hyphens, underscores, and periods.
 The string '%(assignment)s' is not a valid environment element.
 Environment elements must have the form 'variable=value'.
 
+@ invalid extension kind
+"%(kind)s" is not an extension class kind.  The extension class kind
+must be one of "test", "resource", "database", or "target".
+
 @ invalid result
 The test %(id)s of class %(test_class)s returned an invalid result,
 '%(result)s'. 
@@ -105,6 +120,15 @@ A value for the "%(title)s" parameter is missing.
 @ missing test id
 There is no test with ID "%(test_id)s".
 
+@ module does not exist
+There is no module named "%(module)s" in any of the extension
+directories.
+
+QMTest searched for files named '%(module)s.py', '%(module)s.pyc', and
+'%(module)s.pyo'.
+
+You may need to set the 'QMTEST_CLASS_PATH' environment variable.
+
 @ new db message
 QMTest has created a new test database at %(path)s.
 
@@ -116,9 +140,8 @@ You must specify the location of the test database.
   * Or, set the '%(envvar)s' environment variable to the path to the
     database. 
 
-@ extension class not found
-The extension class '%(klass)s' could not be found.  You may need
-to set the 'QMTEST_CLASS_PATH' environment variable.
+@ loading class
+QMTest will load '%(class_name)s' from '%(file_name)s'.
 
 @ no id for edit
 You must specify the ID of the item to edit.

@@ -7,7 +7,7 @@
 # Contents:
 #   Test classes for tests written in Python.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -72,9 +72,9 @@ class ExecTest(Test):
         ]
 
 
-    def __init__(self, **properties):
+    def __init__(self, arguments):
 
-        apply(Test.__init__, (self,), properties)
+        Test.__init__(self, arguments)
         
         # Store stuff for later.
         if self.source is None:
@@ -153,9 +153,9 @@ class BaseExceptionTest(Test):
         ]
 
 
-    def __init__(self, **properties):
+    def __init__(self, arguments):
 
-        apply(Test.__init__, (self,), properties)
+        Test.__init__(self, arguments)
         
         # Store stuff for later.
         if string.strip(self.exception_argument) != "":
@@ -225,7 +225,7 @@ class ExceptionTest(BaseExceptionTest):
             This value is the name of a Python class.  If the
             exception raised is not an instance of this class, the
             test fails.""",
-            default="Exception"
+            default_value="Exception"
             )
         ]
 

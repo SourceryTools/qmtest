@@ -31,39 +31,38 @@ class RSHTarget(ProcessTarget):
     call.  The remote shell is in the style of 'rsh' and 'ssh'.  Using
     the remote shell, the target invokes the 'qmtest-remote' script,
     which services commands sent via 'stdin', and replies via
-    'stdout'.
+    'stdout'."""
 
-    This target recognizes the following properties:
+    arguments = [
+        qm.fields.TextField(
+            name="host",
+            title="Remote Host Name",
+            description="""The name of the host on which to run tests.
 
-      'remote_shell' -- The path to the remote shell executable to
-      use.  If omitted, the configuration variable 'remote_shell' is
-      used instead.  If neither is specified, the default is
-      '/usr/bin/ssh'.  The remote shell program must accept the
-      command-line syntax 'remote_shell *remote_host*
-      *remote_command*'.
+            The name (or IP address) of the host on which QMTest
+            should execute tests.  If this value is the empty string,
+            the name of the target is used."""),
+        qm.fields.TextField(
+            name="remote_shell",
+            title="Remote Shell Program",
+            description="""The path to the remote shell program.
 
-      'host' -- The remote host name.  If omitted, the target name is
-      used.
+            The name of the program that can be used to create a
+            remote shell.  This program must accept the same command
+            line arguments as the 'rsh' program.""",
+            default_value="ssh"),
+        qm.fields.TextField(
+            name="arguments",
+            title="Remote Shell Arguments",
+            description="""The arguments to provide to the remote shell.
 
-      'database_path' -- The path to the test database on the remote
-      computer.  The test database must be identical to the local test
-      database.  If omitted, the local test database path is used.
-
-      'qmtest' -- The path to 'qmtest'.  The default is
-      '/usr/local/bin/qmtest'.
-
-      'arguments' -- Additional command-line arguments to pass to the
-      remote shell program.  The value of this property is split at
-      space characters, and the arguments are added to the command line
-      before the name of the remote host."""
-
-    def __init__(self, name, group, properties, database):
+            A space-separated list of arguments to provide to the
+            remote shell program.""",
+            default_value="")
+        ]
+    
+    def __init__(self, properties, database):
         """Construct a new 'RSHTarget'.
-
-        'name' -- A string giving a name for this target.
-
-        'group' -- A string giving a name for the target group
-        containing this target.
 
         'properties'  -- A dictionary mapping strings (property names)
         to strings (property values).
@@ -72,32 +71,23 @@ class RSHTarget(ProcessTarget):
         run."""
 
         # Initialize the base class.
-        ProcessTarget.__init__(self, name, group, properties, database)
+        ProcessTarget.__init__(self, properties, database)
 
-        # Determine the host name.
-        self.__host_name = self.GetProperty("host", None)
-        if self.__host_name is None:
-            # None specified; use the target name.
-            self.__host_name = self.GetName()
+        # Use the target name as the default name for the remote host.
+        if not self.host:
+            self.host = self.GetName()
 
 
     def _GetInterpreter(self):
         
         # Determine the remote shell program to use.
-        remote_shell_program = self.GetProperty("remote_shell")
-        open("/tmp/foo", "w").write(str(type(remote_shell_program)))
+        remote_shell_program = self.remote_shell
         if not remote_shell_program:
             remote_shell_program = qm.rc.Get("remote_shell",
-                                             default="/usr/bin/ssh",
+                                             default="ssh",
                                              section="common")
         # Extra command-line arguments to the remote shell program
-        # may be specified with the "arguments" property. 
-        extra_arguments = self.GetProperty("arguments", None)
-        if extra_arguments is None:
-            # None specified.
-            extra_arguments = []
-        else:
-            # Split them at spaces.
-            extra_arguments = string.split(extra_arguments, " ")
+        # may be specified with the "arguments" property.
+        arguments = self.arguments.split(" ")
 
-        return [remote_shell_program] + extra_arguments + [self.__host_name]
+        return [remote_shell_program] + arguments + [self.host]

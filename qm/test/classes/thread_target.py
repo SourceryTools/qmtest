@@ -47,22 +47,31 @@ class ThreadTarget(Target):
     This target starts one thread for each degree of concurrency.  Each
     thread executes one test or resource function at a time."""
 
-    def __init__(self, name, group, properties, database):
+    arguments = [
+        qm.fields.IntegerField(
+            name="concurrency",
+            title="Number of Threads",
+            description="""The number of threads to devote to running tests.
+
+            A positive integer that indicates the number of threads to
+            use when running tests.  Larger numbers will allow more
+            tests to be run at once.  You can experiment with this
+            value to find the number that results in the fastest
+            execution.""",
+            default_value=1),
+        ]
+    
+    def __init__(self, database, properties):
         """Construct a 'ThreadTarget'.
 
-        'name' -- A string giving a name for this target.
-
-        'group' -- A string giving a name for the target group
-        containing this target.
+        'database' -- The 'Database' containing the tests that will be
+        run.
 
         'properties'  -- A dictionary mapping strings (property names)
-        to strings (property values).
+        to strings (property values)."""
         
-        'database' -- The 'Database' containing the tests that will be
-        run."""
-
         # Initialize the base class.
-        Target.__init__(self, name, group, properties, database)
+        Target.__init__(self, properties, database)
 
         # Create a lock to guard accesses to __ready_threads.
         self.__ready_threads_lock = Lock()
@@ -108,7 +117,7 @@ class ThreadTarget(Target):
         
         # Build the threads.
         self.__threads = []
-        for i in xrange(0, int(self.GetProperty("concurrency", "1"))):
+        for i in xrange(0, self.concurrency):
             # Create the new thread.
             thread = LocalThread(self)
             # Start the thread.

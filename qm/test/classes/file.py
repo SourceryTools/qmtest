@@ -59,7 +59,7 @@ class SubstitutionField(qm.fields.TextField):
         By default, the pattern and replacement string are empty."""
 
         # Initialize the base class.
-        apply(qm.fields.TextField.__init__, (self, name, ";"), properties)
+        qm.fields.TextField.__init__(self, name, ";", **properties)
 
 
     def SplitValue(self, value):
@@ -189,14 +189,15 @@ class FileContentsTest(Test):
             The context property given here will contain the path name
             of the file.""",
             not_empty_text=1,
-            default="path"),
+            default_value="path"),
 
         qm.fields.TextField(
             name="expected_contents",
             title="Expected Contents",
             description="""The expected contents of the file.""",
             verbatim="true",
-            multiline="true"),
+            multiline="true",
+            default_value=""),
 
         qm.fields.SetField(SubstitutionField(
             name="substitutions",
@@ -212,8 +213,9 @@ class FileContentsTest(Test):
         ]
 
 
-    def __init__(self, **properties):
-        apply(Test.__init__, (self,), properties)
+    def __init__(self, arguments):
+
+        Test.__init__(self, arguments)
         
         # Might as well perform substitutions on the expected contents here.
         self.expected_contents = \

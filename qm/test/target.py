@@ -18,6 +18,7 @@
 ########################################################################
 
 import qm
+import qm.extension
 from   qm.test.context import *
 from   qm.test.result import *
 import re
@@ -27,7 +28,7 @@ import sys
 # classes
 ########################################################################
 
-class Target:
+class Target(qm.extension.Extension):
     """Base class for target implementations.
 
     A 'Target' is an entity that can run tests.  QMTest can spread the
@@ -47,23 +48,38 @@ class Target:
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version."""
 
-    def __init__(self, name, group, properties, database):
+    arguments = [
+        qm.fields.TextField(
+            name="name",
+            title="Name",
+            description="""The name of this target.
+
+            The name of the target.  The target name will be recorded
+            in any tests executed on that target so that you can see
+            where the test was run.""",
+            default_value=""),
+        qm.fields.TextField(
+            name="group",
+            title="Group",
+            description="""The group associated with this target.
+
+            Some tests may only be able to run on some targets.  A
+            test can specify a pattern indicating the set of targets
+            on which it will run.""",
+            default_value="")
+        ]
+    
+    def __init__(self, database, properties):
         """Construct a 'Target'.
 
-        'name' -- A string giving a name for this target.
-
-        'group' -- A string giving a name for the target group
-        containing this target.
+        'database' -- The 'Database' containing the tests that will be
+        run.
 
         'properties'  -- A dictionary mapping strings (property names)
-        to strings (property values).
-        
-        'database' -- The 'Database' containing the tests that will be
-        run."""
+        to values."""
 
-        self.__name = name
-        self.__group = group
-        self.__properties = properties
+        qm.extension.Extension.__init__(self, properties)
+        
         self.__database = database
 
         # There are no resources available on this target.
@@ -75,7 +91,7 @@ class Target:
 
         Derived classes must not override this method."""
         
-        return self.__name
+        return self.name
 
 
     def GetGroup(self):
@@ -83,7 +99,7 @@ class Target:
 
         Derived classes must not override this method."""
 
-        return self.__group
+        return self.group
 
 
     def GetDatabase(self):
@@ -95,23 +111,6 @@ class Target:
         Derived classes must not override this method."""
 
         return self.__database
-
-
-    def GetProperty(self, name, default=None):
-        """Return the value of the property with the indicated 'name'.
-
-        'name' -- A string naming a property.
-
-        'default' -- The value to return if the property is not
-        otherwise defined.
-
-        returns -- The value associated with that property in the
-        'target_spec' used to construct this 'Target', or the
-        'default' if there is no such value.
-
-        Derived classes must not override this method."""
-
-        return self.__properties.get(name, default)
 
 
     def IsIdle(self):

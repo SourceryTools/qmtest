@@ -1,6 +1,6 @@
 ########################################################################
 #
-# File:   xmldb.py
+# File:   xml_database.py
 # Author: Alex Samuel
 # Date:   2001-03-08
 #
@@ -17,15 +17,15 @@
 # imports
 ########################################################################
 
-import base
 import dircache
-from   file_database import *
 import os
 import qm.common
 import qm.fields
 import qm.label
 import qm.structured_text
+import qm.test.base
 from   qm.test.database import *
+from   qm.test.file_database import *
 from   qm.test.suite import *
 import qm.xmlutil
 import shutil
@@ -58,25 +58,13 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(ExtensionDatabase):
-    """A database represnting tests as XML files in a directory tree."""
+class XMLDatabase(ExtensionDatabase):
+    """A database representing tests as XML files in a directory tree."""
 
-    # When processing the DOM tree for an XML test file, we may
-    # encounter two kinds of errors.  One indicates an invalid DOM tree,
-    # i.e. the structure is at variance with the test DTD.  We can use
-    # 'assert' to flag these, since we expect that the validating parser
-    # should have caught those.  Other errors are semantic, for instance
-    # specifying an argument which doesn't exist in the test class.  For
-    # these, we raise an 'TestFileError'.
-
-    def __init__(self, path):
-        """Open a connection to a database.
-
-        'path' -- The absolute path to the directory that represents
-        the database."""
+    def __init__(self, path, arguments):
 
         # Initialize base classes.
-        ExtensionDatabase.__init__(self, path)
+        ExtensionDatabase.__init__(self, path, arguments)
         # Create an AttachmentStore for this database.
         self.__store = AttachmentStore(path, self)
         # Make sure the database path exists.
@@ -101,7 +89,7 @@ class Database(ExtensionDatabase):
     def WriteTest(self, test, comments=0):
         # Generate the document and document type for XML test files.
         document = qm.xmlutil.create_dom_document(
-            public_id=base.dtds["test"],
+            public_id=qm.test.base.dtds["test"],
             dtd_file_name="test.dtd",
             document_element_tag="test"
             )
@@ -137,7 +125,7 @@ class Database(ExtensionDatabase):
     def WriteResource(self, resource, comments=0):
         # Generate the document and document type for XML resource files.
         document = qm.xmlutil.create_dom_document(
-            public_id=base.dtds["resource"],
+            public_id=qm.test.base.dtds["resource"],
             dtd_file_name="resource.dtd",
             document_element_tag="resource"
             )
@@ -165,7 +153,7 @@ class Database(ExtensionDatabase):
 
         # Generate the document and document type for XML suite files.
         document = qm.xmlutil.create_dom_document(
-            public_id=base.dtds["suite"],
+            public_id=qm.test.base.dtds["suite"],
             dtd_file_name="suite.dtd",
             document_element_tag="suite"
             )
@@ -233,7 +221,7 @@ class Database(ExtensionDatabase):
         test_class_name = self.__GetClassNameFromDomNode(test_node)
         # Obtain the test class.
         try:
-            test_class = base.get_test_class(test_class_name, self)
+            test_class = qm.test.base.get_test_class(test_class_name, self)
         except ImportError:
             raise UnknownTestClassError, \
                   qm.error("unknown test class",
@@ -277,7 +265,7 @@ class Database(ExtensionDatabase):
         # Obtain the test class.
         try:
             resource_class = \
-               base.get_resource_class(resource_class_name, self)
+               qm.test.base.get_resource_class(resource_class_name, self)
         except KeyError:
             raise UnknownResourceClassError, class_name
 
@@ -320,7 +308,7 @@ class Database(ExtensionDatabase):
 
         result = {}
         # The fields in the test class.
-        fields = qm.test.base.get_class_arguments(klass)
+        fields = qm.extension.get_class_arguments_as_dictionary(klass)
         
         # Loop over argument child elements.
         for arg_node in node.getElementsByTagName("argument"):
@@ -330,14 +318,9 @@ class Database(ExtensionDatabase):
                 self._Trace("Processing %s argument." % name)
                 
             # Look for a field with the same name.
-            field = None
-            for f in fields:
-                if f.GetName() == name:
-                    field = f
-                    break
-            # Did we find a field by this name?
-            if field is None:
-                # No.  That's an error.
+            field = fields.get(name)
+            # If there isn't one, the XML is incorrect.
+            if not field:
                 raise TestFileError, \
                       qm.error("xml invalid arg name", name=name)
 
@@ -522,7 +505,7 @@ class Database(ExtensionDatabase):
             # whose name matches this argument.  There should be exactly
             # one. 
             field = filter(lambda f, name=name: f.GetName() == name,
-                           qm.test.base.get_class_arguments(item_class))
+                           qm.extension.get_class_arguments(item_class))
             assert len(field) == 1
             field = field[0]
             # Add a comment describing the field, if requested.

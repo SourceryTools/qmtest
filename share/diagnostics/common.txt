@@ -5,7 +5,7 @@
 # Date:   2001-03-08
 #
 # Contents:
-#   Common QMTrack diagnostic message templates.
+#   Common QM diagnostic message templates.
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -59,6 +59,9 @@ composed of lower-case letters, digits, hyphens, and underscores.
 The value "%(value)s" is not allowed for field "%(field_title)s".  The
 field may take the values %(values)s.
 
+@ invalid extension argument
+The argument "%(value)s" is not allowed for field "%(name)s".
+
 @ invalid integer field value
 The value of this field must be an integer.
 
@@ -108,6 +111,9 @@ An error occured while creating the temporary file '%(file_name)s'.
 Please check that your temporary directory is configured correctly.
 
 '%(exc_class)s: %(exc_arg)s'
+
+@ unexpected extension argument
+"%(name)s" is not a valid argument to the "%(class_name)s" extension class.
 
 @ unrecognized command
 %(program_name)s does not recognize the command "%(command)s".

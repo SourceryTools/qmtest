@@ -18,12 +18,13 @@
 ########################################################################
 
 import qm
+import qm.extension
 
 ########################################################################
 # classes
 ########################################################################
 
-class Resource:
+class Resource(qm.extension.Extension):
     """A 'Resource' sets up before a test and cleans up afterwards.
 
     Some tests take a lot of work to set up.  For example, a database
@@ -69,34 +70,17 @@ class Resource:
     exception that is not caught within the method itself, QMTest will
     catch the exception and continue processing."""
     
-    arguments = []
-    """A list of the arguments to the resource class.
+    arguments = [
+        qm.fields.TextField(
+            name="id",
+            title="Resource Name",
+            description="""The name of this resource.
 
-    Each element of this list should be an instance of 'Field'.  When
-    QMTest prompts the user for arguments to create a new resource, it
-    will prompt in the order that the fields are provided here.
-
-    Derived classes may redefine this class variable.  However,
-    derived classes should not explicitly include the arguments from
-    base classes; QMTest will automatically combine all the arguments
-    found throughout the class hierarchy."""
-
+            A label naming the resource.""",
+            hidden=1,
+            default_value=""),
+        ]
     
-    def __init__(self, **arguments):
-        """Construct a new 'Resource'
-
-        'arguments' -- A dictionary mapping argument names (as
-        specified in the 'arguments' class variable) to values.
-
-        This method will place all of the arguments into this objects
-        instance dictionary.
-        
-        Derived classes may override this method.  The Derived class
-        method should begin by calling this method."""
-        
-        self.__dict__.update(arguments)
-
-
     def SetUp(self, context, result):
         """Set up the resource.
 

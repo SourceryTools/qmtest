@@ -810,6 +810,107 @@
     </section>
    </section> <!-- sec-testcmd-gui -->
 
+  <section id="sec-testcmd-extensions">
+   <title><command>&qmtest-cmd; extensions</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>List available extension classes.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; extensions</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+
+    <para>The <command>&qmtest-cmd; extensions</command> lists
+    available extension classes and provides a brief description of
+    each class.  You can use this command to list all of the available
+    extension classes, or to list all of the available extension
+    classes of a particular type.  For example, you can use this
+    command to list all of the available test classes.</para>
+
+    <para>The <command>extensions</command> command accepts these
+    options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term>
+       <option>-k</option>
+       <replaceable>kind</replaceable>
+      </term>
+      <term>
+       <option>&dashdash;kind</option> 
+       <replaceable>kind</replaceable>
+      </term>
+      <listitem>
+       <para>List the available extension classes of the indicated
+       <replaceable>kind</replaceable>.  The
+       <replaceable>kind</replaceable> must be one of
+       <literal>test</literal>, <literal>resource</literal>,
+       <literal>target</literal>, or <literal>database</literal>.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </section>
+
+  </section> <!-- sec-testcmd-extensions -->
+
+  <section id="sec-testcmd-register">
+   <title><command>&qmtest-cmd; register</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>Register an extension class.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; register</command>
+     <arg choice="plain"><replaceable>kind</replaceable></arg>
+     <arg choice="plain"><replaceable>class-name</replaceable></arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+
+    <para>The <command>&qmtest-cmd; register</command> registers an
+    extension class with QMTest.  As part of this process, QMTest will 
+    load your extension class.  If the extension class cannot be
+    loaded, QMTest will tell you what went wrong.</para>
+
+    <para>QMTest will search for your extension class in the
+    directories it would search when running tests, including those
+    given by the environment variable
+    <envar>QMTEST_CLASS_PATH</envar>.</para>
+
+    <para>The <replaceable>kind</replaceable> argument tells QMTest
+    what kind of extension class you are registering.  The
+    <replaceable>kind</replaceable> must be one of
+    <literal>test</literal>, <literal>resource</literal>,
+    <literal>target</literal>, or <literal>database</literal>.</para>
+
+    <para>The <replaceable>class-name</replaceable> argument gives the
+    name of the class in the form
+    <classname>module.Class</classname>.  QMTest will look for a file
+    whose basename is the module name and whose extension is either
+    <filename>py</filename>, <filename>pyc</filename>, or
+    <filename>pyo</filename>.</para>
+
+   </section>
+
+  </section> <!-- sec-testcmd-register -->
+
   <section id="sec-testcmd-run">
    <title><command>&qmtest-cmd; run</command></title>
 
@@ -1621,10 +1722,8 @@
     <itemizedlist>
      <listitem>
       <para>The <property>remote_shell</property> property specifies the
-      path to the remote shell program.  If omitted, the configuration
-      variable <property>remote_shell</property> is used instead.  If
-      neither is specified, the default is
-      <filename>/usr/bin/ssh</filename>.  The remote shell program must
+      path to the remote shell program.  The default value is
+      <command>ssh</command>.  The remote shell program must
       accept the same command-line syntax as
       <command>rsh</command>.</para>
      </listitem>
@@ -1943,12 +2042,12 @@
    </itemizedlist>
 
    <para>You should generally place module files containing your test
-   classes in the test database's test class directory, unless you plan
-   to use the test classes in more than one test database.</para>
+   classes in the test database's <filename>QMTest</filename>
+   directory, unless you plan to use the test classes in more than one
+   test database.</para>
 
-   <para>You must also add an entry to the
-   <filename>classes.qmc</filename> file in the directory that
-   contains your extension class.</para>
+   <para>You must then use the <command>&qmtest-cmd;
+   register</command> command to register your new extension class.</para>
 
    <para>You can refer to the new extension class using the syntax
    <classname>module.Class</classname>, where

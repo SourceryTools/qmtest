@@ -39,6 +39,8 @@ import types
 ########################################################################
 
 dtds = {
+    "class-directory":
+                    "-//Software Carpentry//QMTest Class Directory V0.1//EN",
     "tdb-configuration":
                     "-//Software Carpentry//QMTest TDB Configuration V0.1//EN",
     "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",
@@ -108,6 +110,11 @@ def load_database(db_path):
     # Load the database class name.
     database_class_name = qm.xmlutil.get_child_text(database,
                                                     "class-name")
+    # For backwards compatibility with QM 1.1.x, we accept
+    # "xmldb.Database" and "qm.test.xmldb.Database", even though those
+    # to do not name actual database classes any more.
+    if database_class_name in ("xmldb.Database", "qm.test.xmldb.Database"):
+        database_class_name = "xml_database.XMLDatabase"
     # Get the database class.
     database_class = get_extension_class(database_class_name,
                                          "database", None)
@@ -116,13 +123,13 @@ def load_database(db_path):
         name = node.getAttribute("name")
         value = qm.xmlutil.get_dom_text(node)
         # Python does not allow keyword arguments to have Unicode
-        # keywords.  Therefore, convert name to an ordinary string.
+        # values.  Therefore, convert name to an ordinary string.
         name = str(name)
         # Keep track of the new attribute.
         attributes[str(name)] = value
     
     # Create the database.
-    return apply(database_class, (db_path,), attributes)
+    return database_class(db_path, attributes)
 
 
 def create_database(db_path, class_name, attributes={}):
@@ -173,7 +180,7 @@ def get_extension_directories(kind, database):
     This must be of the elements of 'extension_kinds'.
 
     'database' -- The 'Database' with which the extension class will be
-    used, or 'None' if 'kind' is 'database'.
+    used, or 'None'.
     
     returns -- A sequence of strings.  Each string is the path to a
     directory that should be searched for QMTest extensions.  The
@@ -198,10 +205,6 @@ def get_extension_directories(kind, database):
 
     # The kind should be one of the extension_kinds.
     assert kind in extension_kinds
-    if kind != 'database':
-        assert database
-    else:
-        assert database is None
         
     # Start with the directories that the user has specified in the
     # QNTEST_CLASSPATH environment variable.
@@ -210,10 +213,8 @@ def get_extension_directories(kind, database):
     else:
         dirs = []
 
-    # Search directories specified by the database -- unless we are
-    # searching for a database class, in which case we cannot assume
-    # that a database has already been loaded.
-    if kind != 'database':
+    # Search directories specified by the database.
+    if database:
         dirs = dirs + database.GetClassPaths()
 
     # Search the builtin directory, too.
@@ -287,6 +288,52 @@ def get_extension_class_names(kind, database):
     return names
 
 
+def get_extension_class_from_directory(class_name, kind, directory, path):
+    """Load an extension class from 'directory'.
+
+    'class_name' -- The name of the extension class, in the form
+    'module.class'.
+
+    'kind' -- The kind of class to load.  This value must be one
+    of the 'extension_kinds'.
+
+    'directory' -- The directory from which to load the class.
+
+    'path' -- The directories to search for modules imported by the new
+    module.
+
+    returns -- The class loaded."""
+    
+    global __class_caches
+    global __extension_bases
+    
+    # If this class is already in the cache, we can just return it.
+    cache = __class_caches[kind]
+    if cache.has_key(class_name):
+        return cache[class_name]
+
+    # Load the class.
+    try:
+        klass = qm.common.load_class(class_name, [directory],
+                                     path + sys.path)
+    except ImportError:
+        raise QMException, qm.error("extension class not found",
+                                    klass=class_name)
+
+    # Make sure the class is derived from the appropriate base class.
+    if not issubclass(klass, __extension_bases[kind]):
+        raise QMException, \
+              qm.error("extension class not subclass",
+                       kind = kind,
+                       class_name = class_name,
+                       base_name = __extension_bases[kind].__name__)
+                      
+    # Cache it.
+    cache[class_name] = klass
+
+    return klass
+
+                                     
 def get_extension_class(class_name, kind, database):
     """Return the extension class named 'class_name'.
 
@@ -301,25 +348,28 @@ def get_extension_class(class_name, kind, database):
     returns -- The class object with the indicated 'class_name'."""
 
     global __class_caches
-
+    
     # If this class is already in the cache, we can just return it.
     cache = __class_caches[kind]
     if cache.has_key(class_name):
         return cache[class_name]
 
-    # Otherwise, load it now.  Get all the extension directories in
-    # which this class might be located.
-    try:
-        klass = qm.common.load_class(class_name,
-                                     get_extension_directories(kind,
-                                                               database))
-    except ImportError:
+    # Look for the class in each of the extension directories.
+    directories = get_extension_directories(kind, database)
+    directory = None
+    for d in directories:
+        if class_name in get_extension_class_names_in_directory(d)[kind]:
+            directory = d
+            break
+
+    # If the class could not be found, issue an error.
+    if not directory:
         raise QMException, qm.error("extension class not found",
                                     klass=class_name)
-    # Cache it.
-    cache[class_name] = klass
 
-    return klass
+    # Load the class.
+    return get_extension_class_from_directory(class_name, kind,
+                                              directory, directories)
 
 
 def get_test_class(class_name, database):
@@ -343,28 +393,6 @@ def get_resource_class(class_name, database):
     'class_name'."""
     
     return get_extension_class(class_name, 'resource', database)
-
-
-def get_class_arguments(klass):
-    """Return the arguments specified by the extension class 'klass'.
-
-    returns -- A list of 'Field' objects containing all the
-    arguments in the class hierarchy."""
-
-    arguments = []
-
-    # Start with the most derived class.
-    classes = [klass]
-    while classes:
-        # Pull the first class off the list.
-        c = classes.pop(0)
-        # Add all of the new base classes to the end of the list.
-        classes.extend(c.__bases__)
-        # Add the arguments from this class.
-        if c.__dict__.has_key("arguments"):
-            arguments.extend(c.__dict__["arguments"])
-
-    return arguments
 
 
 def get_class_description(klass, brief=0):
@@ -510,6 +538,24 @@ is itself a dictionary mapping class names to class objects."""
 # Initialize the caches.
 for kind in extension_kinds:
     __class_caches[kind] = {}
+
+import qm.test.database
+import qm.label
+import qm.test.resource
+import qm.test.target
+import qm.test.test
+
+__extension_bases = {
+    'database' : qm.test.database.Database,
+    'label' : qm.label.Label,
+    'resource' : qm.test.resource.Resource,
+    'target' : qm.test.target.Target,
+    'test' : qm.test.test.Test
+    }
+"""A map from extension class kinds to base classes.
+
+An extension class of a particular 'kind' must be derived from
+'extension_bases[kind]'."""
 
 ########################################################################
 # Local Variables:

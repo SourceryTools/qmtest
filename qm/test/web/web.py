@@ -22,6 +22,7 @@ import os
 import qm
 import qm.attachment
 import qm.common
+from   qm.extension import *
 import qm.fields
 import qm.label
 import qm.test.base
@@ -1171,7 +1172,7 @@ class ShowSuitePage(QMTestPage):
 
         # It does not make sense to display a new suite without being
         # able to edit it; there is nothing to show.
-        assert edit or not new_suite 
+        assert edit or not is_new_suite 
         
         # Set up attributes.
         database = server.GetDatabase()
@@ -2301,7 +2302,7 @@ class QMTestServer(qm.web.WebServer):
         item_class = qm.test.base.get_extension_class(item_class_name,
                                                       type,
                                                       self.GetDatabase())
-        fields = qm.test.base.get_class_arguments(item_class)
+        fields = get_class_arguments(item_class)
 
         # We'll perform various kinds of validation as we extract form
         # fields.  Errors are placed into this map; later, if it's empty, we
@@ -2491,7 +2492,7 @@ class QMTestServer(qm.web.WebServer):
                                          test_id=test_id)
         # Construct an argument map containing default values.
         arguments = {}
-        for field in qm.test.base.get_class_arguments(test_class):
+        for field in get_class_arguments(test_class):
             name = field.GetName()
             value = field.GetDefaultValue()
             arguments[name] = value
@@ -2519,7 +2520,7 @@ class QMTestServer(qm.web.WebServer):
                                          resource_id=resource_id)
         # Construct an argument map containing default values.
         arguments = {}
-        for field in qm.test.base.get_class_arguments(resource_class):
+        for field in get_class_arguments(resource_class):
             name = field.GetName()
             value = field.GetDefaultValue()
             arguments[name] = value

@@ -96,7 +96,11 @@
    <dtml-if subdir_ids>
      <tr><td><table class="data" width="100%">
       <caption>
-       Subdirectories of <span class="id"><dtml-var path></span>
+       <dtml-if path>
+         Subdirectories of <span class="id"><dtml-var path></span>
+       <dtml-else>
+         Subdirectories
+       </dtml-if>
       </caption> 
       <tbody>
        </tr>
@@ -179,7 +183,13 @@
 
    <dtml-if test_ids>
     <tr><td><table class="data" width="100%">
-     <caption>Tests in <span class="id"><dtml-var path></span></caption>
+     <caption>
+      <dtml-if path>
+       Tests in <span class="id"><dtml-var path></span>
+      <dtml-else>
+       Tests
+      </dtml-if>
+     </caption>
      <tbody>
        </tr>
        <tr class="heading">
@@ -237,12 +247,18 @@
 
    <dtml-if suite_ids>
     <tr><td><table class="data" width="100%">
-     <caption>Suites in <span class="id"><dtml-var path></span></caption>
+     <caption>
+      <dtml-if path>
+       Suites in <span class="id"><dtml-var path></span>
+      <dtml-else>
+       Suites
+      </dtml-if>
+     </caption>
      <tbody>
       <tr class="heading"><th width="60%">Suites</th></tr>
       <dtml-in expr="suite_ids">
        <dtml-let item=sequence-item>
-        <tr><td width="100%">
+        <tr><td width="100%" class="field">
          <dtml-var expr="FormatId(item, 'suite', 'tree')">
         </td></tr>
        </dtml-let>
@@ -253,12 +269,18 @@
 
    <dtml-if resource_ids>
     <tr><td><table class="data" width="100%">
-     <caption>Resources in <span class="id"><dtml-var path></span></caption>
+     <caption>
+      <dtml-if path>
+       Resources in <span class="id"><dtml-var path></span>
+      <dtml-else>
+       Resources
+      </dtml-if>
+     </caption>
      <tbody>
       <tr class="heading"><th width="60%">Resources</th></tr>
       <dtml-in expr="resource_ids">
        <dtml-let item=sequence-item>
-        <tr><td width="60%">
+        <tr><td width="60%" class="field">
          <dtml-var expr="FormatId(item, 'resource', 'tree')">
         </td></tr>
        </dtml-let>

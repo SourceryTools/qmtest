@@ -26,22 +26,48 @@ from   qm.test.target import *
 class ProcessTarget(Target):
     """A 'ProcessTarget' runs tests in child processes."""
 
-    def __init__(self, name, group, properties, database):
+    arguments = [
+        qm.fields.IntegerField(
+            name="processes",
+            title="Number of Processes",
+            description="""The number of processes to devote to running tests.
+
+            A positive integer that indicates the number of processes to
+            use when running tests.  Larger numbers will allow more
+            tests to be run at once.  You can experiment with this
+            value to find the number that results in the fastest
+            execution.""",
+            default_value=1),
+        qm.fields.TextField(
+            name="database_path",
+            title="Database Path",
+            description="""The path to the test database.
+
+            A string giving the directory containing the test
+            database.  If this value is the empty string, QMTest uses
+            the path provided on the command line.""",
+            default_value=1),
+        qm.fields.TextField(
+            name="qmtest",
+            title="QMTest Path",
+            description="""The path to the QMTest executable.
+
+            A string giving the file name of the 'qmtest' executable
+            program.  This path is used to invoke QMTest.""",
+            default_value="/usr/local/bin/qmtest"),
+        ]
+    
+    def __init__(self, database, properties):
         """Construct a new 'ProcessTarget'.
 
-        'name' -- A string giving a name for this target.
-
-        'group' -- A string giving a name for the target group
-        containing this target.
-
-        'properties'  -- A dictionary mapping strings (property names)
-        to strings (property values).
-        
         'database' -- The 'Database' containing the tests that will be
-        run."""
+        run.
     
+        'properties'  -- A dictionary mapping strings (property names)
+        to strings (property values)."""
+        
         # Initialize the base class.
-        Target.__init__(self, name, group, properties, database)
+        Target.__init__(self, properties, database)
 
         # There are no children yet.
         self.__children = []
@@ -71,7 +97,7 @@ class ProcessTarget(Target):
 
         Target.Start(self, response_queue, engine)
 
-        for x in xrange(int(self.GetProperty("concurrency", "1"))):
+        for x in xrange(self.concurrency):
             # Create two pipes: one to write commands to the remote
             # QMTest, and one to read responses.
             command_pipe = os.pipe()
@@ -93,14 +119,13 @@ class ProcessTarget(Target):
                 os.dup2(response_pipe[1], sys.stdout.fileno())
                 
                 # Determine the test database path to use.
-                database_path = self.GetProperty(
-                    "database_path", default=self.GetDatabase().GetPath())
+                database_path = self.database_path
+                if not database_path:
+                    database_path = self.GetDatabase().GetPath()
                 # Determine the path to QMTest.
-                qmtest_path = self.GetProperty(
-                    "qmtest", "/usr/local/bin/qmtest")
+                qmtest_path = self.qmtest
                 # Construct the command we want to invoke.
-                arg_list \
-                         = (self._GetInterpreter() +
+                arg_list = (self._GetInterpreter() +
                             [ qmtest_path, '-D', database_path, "remote" ])
                 # Run it.
                 qm.platform.replace_program(arg_list[0], arg_list)

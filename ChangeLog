@@ -1,3 +1,87 @@
+2002-08-07  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention "qmtest extensions" and "qmtest register".
+	* qm/common.py (load_module): Separate path parameter into
+	search_path and load_path.
+	(load_class): Likewise.
+	* qm/extension.py: New class.
+	* qm/test/base.py (dtds): Mention class-directory.
+	(load_database): Handle "xmldb.Database" and
+	"qm.test.xmldb.Database" specially for backwards compatibility.
+	(get_extension_directories): Do not require a database.
+	(get_extension_class_from_directory): New method.
+	(get_extension_class): Use it.
+	(get_class_arguments): Remove.
+	(__extension_bases): New variable.
+	* qm/test/cmdline.py (QMTest.extension_kind_option_spec): New variable.
+	(commands_spec): Add "extensions", "register", and "help".
+	(QMTest.Execute): Support them.
+	(QMTest.GetDatabase): Instantiate the database if it does not
+	already exist.
+	(QMTest.GetTargets): Adjust for changes to Target.
+	(QMTest.__ExecuteCreateTdb): Adjust name of default database
+	class.
+	(QMTest.__ExecuteExtensions): New method.
+	(QMTest.__ExecuteRegister): Likewise.
+	(QMTest.__WriteCommandHelp): New method.
+	* qm/test/database.py: Import qm.extension, qm.fields.
+	(ItemDescriptor.GetClassArguments): Use
+	qm.extension.get_class_arguments.
+	(ItemDescriptor._MakeItem): Remove.
+	(Database): Inherit from Extension.
+	(Database.arguments): New field.
+	(Database.__init__): Adjust accordingly.
+	* qm/test/file_database.py: (ExtensionDatabase.__init__): Remove.
+	(ExtensionDatabase.arguments): New variable.
+	(ExtensionDatabase.GetTestExtension): Adjust.
+	(ExtensionDatabase.GetSuiteExtension): Likewise.
+	(ExtensionDatabase.GetResourceExtension): Likewise.
+	(ExtensionDatabase.GetTestPath): Likewise.
+	(ExtensionDatabase._IsTestFile): Likewise.
+	(ExtensionDatabase._IsSuiteFile): Likewise.
+	(ExtensionDatabase._IsResourceFile): Likewise.
+	* qm/test/resource.py (Resource): Inherit from Extension.
+	(Resource.__init__): Remove.
+	(Resource.arguments): Add "id".
+	* qm/test/target.py (Target): Inherit from Extension.
+	(Target.__init__): Simplify.
+	(Target.attributes): New variable.
+	(Target.GetName): Adjust.
+	(Target.GetGroup): Likewise.
+	(Target.GetProperty): Remove.
+	* qm/test/test.py (Test): Inherit from Extension.
+	(Test.arguments): Add "id".
+	(Test.__init__): Simplify.
+	(Test.GetTargetGroup): Adjust.
+	* qm/test/xmldb.py: Remove.
+	* qm/test/classes/classes.qmc: Add xml_database.XMLDatabase.
+	* qm/test/classes/file.py (SubstitutionField.__init__): Simplify.
+	(FileContentsTest.arguments): Fix typos.
+	(FileContentsTest.__init__): Adjust.
+	* qm/test/classes/process_target.py (ProcessTarget.__init__):
+	Simplify.
+	(ProcessTarget.arguments): New variable.
+	(ProcessTarget.Start): Adjust.
+	* qm/test/classes/python.py (ExecTest.__init__): Adjust.
+	(BaseExceptionTest.__init__): Likewise.
+	(ExceptionTest.__init__): Likewise.
+	(StringExceptionTest.arguments): Fix typo.
+	* qm/test/clases/rsh_target.py (RSHTarget.arguments): New variable.
+	(RSHTarget.GetInterpreter): Adjust.
+	* qm/test/classes/serial_target.py: Adjust class description.
+	* qm/test/classes/thread_target.py (ThreadTarget.__init__):
+	Adjust.
+	(ThreadTarget.arguments): New variable.
+	(ThreadTarget.start): Adjust.
+	* qm/test/classes/xml_database.py: New file.
+	* qm/test/doc/reference.xml: Update to mention new command-line
+	options.
+	* qm/test/share/dtml/dir.dtml: Correct grammar in displayed pages.
+	* qm/test/share/messages/diagnostics.txt: Add more messages.
+	* qm/test/web/web.py (ShowSuitePage.__init__): Fix typo.
+	(QMTestServer.HandleSubmitItem): Adjust call to get_class_arguments.
+	* share/diagnostics/common.txt: New messages.
+	
 2002-07-31  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Discuss requirement that classes be listed in classes.qmc.

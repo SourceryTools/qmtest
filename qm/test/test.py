@@ -14,15 +14,17 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import qm
 from   qm.fields import *
 from   qm.test.cmdline import *
+import qm.extension
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class TargetGroupField(TextField):
@@ -41,14 +43,16 @@ class TargetGroupField(TextField):
         desc = TextField.GetDescription(self)
         # Add a list of the available targets.
         desc = desc + "\n\n**Available Target Groups**\n\n"
-        groups = map(lambda t: t.GetGroup(), get_qmtest().GetTargets())
+        groups = map(lambda t: t.GetGroup(),
+                     qm.test.cmdline.get_qmtest().GetTargets())
         for g in groups:
             desc = desc + "  * " + g + "\n"
 
         return desc
-    
+
+
         
-class Test:
+class Test(qm.extension.Extension):
     """A 'Test' is run to check for correct behavior.
 
     A 'Test' performs some check on the system being tested, and
@@ -89,6 +93,14 @@ class Test:
     catch the exception and continue processing."""
 
     arguments = [
+        qm.fields.TextField(
+            name="id",
+            title="Test Name",
+            description="""The name of this test.
+
+            A label naming the test.""",
+            hidden=1,
+            default_value=""),
         TargetGroupField(
             name="target_group",
             title="Target Group Pattern",
@@ -101,32 +113,6 @@ class Test:
             default_value=".*"
             )
     ]
-    """A list of the arguments to the test class.
-
-    Each element of this list should be an instance of 'Field'.  When
-    QMTest prompts the user for arguments to create a new test, it
-    will prompt in the order that the fields are provided here.
-
-    Derived classes may redefine this class variable.  However,
-    derived classes should not explicitly include the arguments from
-    base classes; QMTest will automatically combine all the arguments
-    found throughout the class hierarchy."""
-
-
-    def __init__(self, **arguments):
-        """Construct a new 'Test'.
-
-        'arguments' -- A dictionary mapping argument names (as
-        specified in the 'arguments' class variable) to values.
-
-        This method will place all of the arguments into this objects
-        instance dictionary.
-        
-        Derived classes may override this method.  The Derived class
-        method should begin by calling this method."""
-
-        self.__dict__.update(arguments)
-
 
     def Run(self, context, result):
         """Run the test.

@@ -9,22 +9,31 @@ QM 2.0
 Tests are no longer run in a random order by default.  To run tests in
 a random order, you must now use the "--random" option to "qmtest run".
 
-QMTest now has a "--version" option.
-
-The "qmtest run" command now has a "--rerun" option to rerun only
-those tests which had unexpected outcomes when the tests were last
-run.  See the manual for more information.
-
 QMTest now has a "ProcessTarget" target class that can be used to
 run tests in parallel on systems that do not support threads.
 
 QMTest now requires that all extension classes be listed in the
 classes.qmc file in the directory that contains the extension class.
-A side-effect of this change is that some old databases may no longer
-work with QMTest 2.0.  In particular, the "QMTest/configuration" file
-must now use "xmldb.Database", rather than "qm.test.xmldb.Database" in
-the class-name field.  You can manually edit the file to make this
-change.
+
+New command-line options:
+-------------------------
+
+QMTest now has a "--version" option.
+
+The "qmtest run" command now has a "--rerun" option to rerun only
+those tests which had unexpected outcomes when the tests were last
+run.
+
+The "qmtest run" command now has a "--random" option to run the tests in 
+a random order.
+
+The "qmtest extensions" command can be used to list the available
+extension classes.
+
+The "qmtest register" command can be used to register new extension 
+classes and to try loading an extension class.
+
+The "qmtest help" command is a synonym for "qmtest --help".
 
 QM 1.1.5
 ========

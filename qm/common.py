@@ -567,15 +567,17 @@ def convert_from_dos_text(text):
 __load_module_lock = lock.RLock()
 """A lock used by load_module."""
 
-def load_module(name, path=sys.path):
+def load_module(name, search_path=sys.path, load_path=sys.path):
     """Load a Python module.
 
     'name' -- The fully-qualified name of the module to load, for
     instance 'package.subpackage.module'.
 
-    'path' -- A sequence of directory paths in which to search for the
-    module, analogous to 'sys.path'.
+    'search_path' -- A sequence of directories.  These directories are
+    searched to find the module.
 
+    'load_path' -- The setting of 'sys.path' when the module is loaded.
+    
     returns -- A module object.
 
     raises -- 'ImportError' if the module cannot be found."""
@@ -603,9 +605,9 @@ def load_module(name, path=sys.path):
             # containing package.
             parent_package = string.join(components[:-1], ".")
             # Load the containing package.
-            package = load_module(parent_package, path)
+            package = load_module(parent_package, search_path, load_path)
             # Look for the module in the parent package.
-            path = package.__path__
+            search_path = package.__path__
         else:
             # No containing package.
             package = None
@@ -613,7 +615,8 @@ def load_module(name, path=sys.path):
         # path.  
         module_name = components[-1]
         # Locate the module.
-        file, file_name, description = imp.find_module(module_name, path)
+        file, file_name, description = imp.find_module(module_name,
+                                                       search_path)
         # Find the module.
         try:
             # While loading the module, add 'path' to Python's module path,
@@ -621,7 +624,7 @@ def load_module(name, path=sys.path):
             # same directory, Python can find them.  But remember the old
             # path so we can restore it afterwards.
             old_python_path = sys.path[:]
-            sys.path = path + sys.path
+            sys.path = load_path + sys.path
             # Load the module.
             module = imp.load_module(name, file, file_name, description)
             # Restore the old path.
@@ -640,7 +643,7 @@ def load_module(name, path=sys.path):
         __load_module_lock.release()
 
         
-def load_class(name, path=sys.path):
+def load_class(name, search_path = sys.path, load_path = sys.path):
     """Load a Python class.
 
     'name' -- The fully-qualified (including package and module names)
@@ -648,8 +651,10 @@ def load_class(name, path=sys.path):
     class must be at the top level of the module's namespace, i.e. not
     nested in another class.
 
-    'path' -- A sequence of directory paths in which to search for the
-    containing module, analogous to 'sys.path'.
+    'search_path' -- A sequence of directories.  These directories are
+    searched to find the module.
+
+    'load_path' -- The setting of 'sys.path' when the module is loaded.
 
     returns -- A class object.
 
@@ -670,7 +675,7 @@ def load_class(name, path=sys.path):
     # The last element is the name of the class.
     class_name = components[-1]
     # Load the containing module.
-    module = load_module(module_name, path)
+    module = load_module(module_name, search_path, load_path)
     # Extract the requested class.
     try:
         klass = module.__dict__[class_name]
