@@ -237,7 +237,22 @@ class Field:
         self.__properties["name"] = name
         # Use the name as the title, if no other was specified.
         if not properties.has_key("title"):
-            self.__properties["title"]
+            self.__properties["title"] = name
+        # Make sure that all properties provided are actually declared.
+        # Otherwise, typos in extension classes where the wrong
+        # properties are set are hard to debug.  This is handled by an
+        # exception, rather than an assert, because asserts are only
+        # visible when running Python in debug mode.  We want to make
+        # sure that these errors are always visible to extension class
+        # programmers.
+        declared_property_names = map(lambda pd: pd.name,
+                                      self.property_declarations)
+        for k in properties.keys():
+            if k not in declared_property_names:
+                raise qm.common.QMException, \
+                      qm.error("unexpected extension argument",
+                               name = k,
+                               class_name = self.__class__)
         # Update any additional properties provided explicitly.
         self.__properties.update(properties)
         self.SetDefaultValue(default_value)
