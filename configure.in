@@ -90,7 +90,7 @@ if test -n "$PYTHON" -a "$PYTHON" != yes; then
     echo "Cannot find Python interpreter $PYTHON."; exit 1
   )
 else
-  AC_PATH_PROG(PYTHON, python, python)
+  AC_PATH_PROG(PYTHON, python2 python, python)
 fi
 
 dnl ####################################################################
@@ -98,9 +98,18 @@ dnl Determine the Python version, installation prefix, and and platform.
 dnl ####################################################################
 
 AC_MSG_CHECKING(Python version)
-PYTHON_VERSION=`$PYTHON -c "import sys; import string; print string.split(sys.version, ' ')[[0]][[:3]]"`
+PYTHON_MAJOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[[0]]"`
+PYTHON_MINOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[[1]]"`
+PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 AC_MSG_RESULT($PYTHON_VERSION)
 AC_SUBST(PYTHON_VERSION)
+
+# Some Python versions before 2.1 have serious bugs if threads and
+# fork are used together.  Therefore, Python 2.1 or higher is required.
+if test "$PYTHON_MAJOR" -lt 2 || \
+   (test "$PYTHON_MAJOR" -eq 2 && test "$PYTHON_MINOR" -lt 1); then
+  AC_MSG_ERROR(QM requires Python version 2.1 or greater)
+fi
 
 AC_MSG_CHECKING(Python prefix)
 PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`

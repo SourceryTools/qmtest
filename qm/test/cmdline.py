@@ -45,6 +45,7 @@ from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
+from   qm.trace import *
 import qm.xmlutil
 import Queue
 from   result import *
@@ -301,6 +302,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         _the_qmtest = self
         
+        # Build a trace object.
+        self.__tracer = Tracer()
+
         # Build a command-line parser for this program.
         self.__parser = qm.cmdline.CommandParser(
             program_name,
@@ -318,7 +322,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # We have not yet computed the set of available targets.
         self.targets = None
-        
+
 
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
@@ -481,7 +485,15 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             
         return self.targets
         
-        
+
+    def GetTracer(self):
+        """Return the 'Tracer' associated with this instance of QMTest.
+
+        returns -- The 'Tracer' associated with this instance of QMTest."""
+
+        return self.__tracer
+
+    
     def MakeContext(self):
         """Construct a 'Context' object for running tests."""
 

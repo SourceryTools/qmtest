@@ -209,8 +209,6 @@ class Target:
 
         Derived classes may override this method."""
         
-        # See if the test requires any resources.
-        resources = descriptor.GetResources()
         # There are not yet any additional context properties that
         # need to be passed to the test.
         properties = {}

@@ -1,3 +1,28 @@
+2002-01-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* README (REQUIREMENTS): Note that Python 2.1 or higher
+	is required.
+	* README.sources: Remove restriction that software must work with
+	Python 1.5.
+	* configure.in: Check for Python 2.1 or higher.
+	* configure: Regenerated.
+	* qm/qm.sh (QM_PYTHON_FLAGS): New variable.
+	(qm_python): Check /usr/bin/python2 before falling back to
+	the python in the PATH.
+	* qm/queue.py: Fix copyright notice.
+	* qm/setup_path.py.in: Issue an error if an old version of
+	Python is in use.
+	* qm/trace.py: New file.
+	* qm/test/cmdline.py (QMTest.__init__): Create a trace object.
+	(QMTest.GetTracer): Return it.
+	* qm/test/commnd_thread.py: Fix copyright notice.
+	* qm/test/execution_engine.py: Likewise.
+	(ExecutionEngine): Add trace message throughout.
+	(ExecutionEngine._Trace): New method.
+	* qm/test/target.py (Target.RunTest): Remove unnecessary code.
+	* qm/test/doc/reference.xml: Update description of how QMTest
+	locates the python interpreter to use.
+	
 2002-01-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (INSTALL_DIR): Set the mode of the installed

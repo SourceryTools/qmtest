@@ -5,13 +5,7 @@
 
 1.  REQUIREMENTS
 
-    To run QM, you will need a Python 1.5.2 (or greater) distribution.
-    Python 2.1 (or greater) is recommended.
-
-    If you are using Python 1.5.2, you must obtain Distutils 1.0.2 
-    from:
-
-      http://www.python.org/sigs/distutils-sig/download.html
+    To run QM, you will need Python Python 2.1 (or greater).
 
     You must use GNU Make to build QM.
 

@@ -33,21 +33,44 @@
 
 """Execute this file with 'execfile' to set up the Python path for QM."""
 
+
 ########################################################################
 # imports
 ########################################################################
 
-# Some of the packages that are used with QM use modules (like regsub)
-# that are not obsolete in Python 2.1.  Prevent Python from warning
-# about these modules.
+import string
+import sys
+
+def __unsupported_python_version():
+    """Tell the user that their version of Python is unsupported."""
+
+    sys.exit(
+        "qm: error: Python 2.1 or higher is required.\n"
+        "           Set QM_PYTHON to an appropriate Python interpreter.\n")
+
+# Check to see that the version of Python being used is recent
+# enough.
+
 try:
-    import warnings
-    warnings.filterwarnings("ignore")
+    # If the version of Python in use is lower than 2.1, it is too
+    # old.
+    if (sys.version_info[0] < 2
+        or (sys.version_info[0] == 2
+            and sys.version_info[1] < 1)):
+        __unsupported_python_version()
 except:
-    pass
+    # If the sys.version_info variable does not exist, the version of
+    # Python in use is too old.
+    __unsupported_python_version()
+
+    
+# Some of the packages that are used with QM use modules (like regsub)
+# that are obsolete in Python 2.1.  Prevent Python from warning
+# about these modules.
+import warnings
+warnings.filterwarnings("ignore")
 
 import os.path
-import sys
 
 ########################################################################
 # functions
@@ -73,13 +96,12 @@ def add_to_python_path(*components):
 # script
 ########################################################################
 
-__python_version = "@PYTHON_VERSION@"
-__python_platform = "@PYTHON_PLATFORM@"
-
 # The root of the QM installation.
 __home_dir = os.environ['QM_HOME']
 
 if os.environ['QM_BUILD'] == '1':
+    __python_version = "@PYTHON_VERSION@"
+    __python_platform = "@PYTHON_PLATFORM@"
     __lib_dir = __home_dir
     __share_dir = os.path.join(__home_dir, 'share')
     __doc_dir = os.path.join(__home_dir, 'qm')
