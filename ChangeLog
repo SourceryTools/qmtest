@@ -1,3 +1,38 @@
+2003-08-08  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/context.py (ContextException.__safe_for_unpickling__):
+	Set to 1.
+	(ContextWrapper): New class.
+	* qm/test/result.py (Result.__setstate__): New method.
+	(Result.__getstate__): New method.
+
+	* tests/results_files: New directory.
+	* tests/results_files/QMTest: Likewise.
+	* tests/results_files/QMTest/configuration: New file.
+	* tests/results_files/QMTest/classes.qmc: New file.
+	* tests/results_files/QMTest/results_file_database.py: New
+	file.
+	* tests/results_files/QMTest/results_file_test.py: New file.
+	* tests/results_files/README: New file.
+	* tests/results_files/xml_results.qmr: New file.
+	* tests/results_files/result_class_v0-file_format_v0-pickling_format_v0.qmr:
+	New file.
+	* tests/results_files/result_class_v1-file_format_v0-pickling_format_v0.qmr:
+	New file.
+	* tests/results_files/result_class_v1-file_format_v1-pickling_format_v0.qmr:
+	New file.
+	* tests/results_files/result_class_v1-file_format_v1-pickling_format_v1.qmr:
+	New file.
+	* tests/results_file/tdb: New directory.
+	* tests/results_file/tdb/QMTest: New directory.
+	* tests/results_file/tdb/QMTest/configuration: New file.
+	* tests/results_file/tdb/pass.qmt: New file.
+	* tests/results_file/tdb/fail.qmt: New file.
+	* tests/results_file/tdb/error.qmt: New file.
+	* tests/results_file/tdb/untested.qmt: New file.
+	* tests/results_file/tdb/tmpdir_resource.qma: New file.
+	* tests/results_file/tdb/fail_with_tmpdir.qmt: New file.
+	
 2003-08-07  Nathaniel Smith  <njs@codesourcery.com>
 	    Mark Mitchell  <mark@codesourcery.com>
 

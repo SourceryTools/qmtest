@@ -142,6 +142,49 @@ class Result:
         self.__annotations = annotations.copy()
 
 
+    def __getstate__(self):
+        """Return a representation of this result for pickling.
+
+        By using an explicit tuple representation of 'Result's when
+        storing them in a pickle file, we decouple our storage format
+        from internal implementation details (e.g., the names of private
+        variables)."""
+
+        # A tuple containing the data needed to reconstruct a 'Result'.
+        # No part of this structure should ever be a user-defined type,
+        # because that will introduce interdependencies that we want to
+        # avoid.
+        return (self.__kind,
+                self.__id,
+                self.__outcome,
+                self.__annotations)
+
+
+    def __setstate__(self, pickled_state):
+        """Construct a 'Result' from its pickled form."""
+
+        if isinstance(pickled_state, dict):
+            # Old style pickle, from before we defined '__getstate__'.
+            # (Notionally, this is version "0".)  The state is a
+            # dictionary containing the variables we used to have.
+            self.__kind = pickled_state["_Result__kind"]
+            self.__id = pickled_state["_Result__id"]
+            self.__outcome = pickled_state["_Result__outcome"]
+            self.__annotations = pickled_state["_Result__annotations"]
+            # Also has a key "_Result__context" containing a (probably
+            # invalid) context object, but we discard it.
+        else:
+            assert isinstance(pickled_state, tuple) \
+                   and len(pickled_state) == 4
+            # New style pickle, from after we defined '__getstate__'.
+            # (Notionally, this is version "1".)  The state is a tuple
+            # containing the values of the variables we care about.
+            (self.__kind,
+             self.__id,
+             self.__outcome,
+             self.__annotations) = pickled_state
+
+
     def GetKind(self):
         """Return the kind of result this is.
 

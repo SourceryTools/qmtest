@@ -39,6 +39,19 @@ class ContextException(qm.common.QMException):
 
         
     
+class ContextWrapper:
+    """Do-nothing class to preserve pickle compatability.
+
+    A class called 'ContextWrapper' used to be used in instead of a
+    'Context' class in some cases, and we used to put contexts into
+    'Result's.  Because of how pickles work, this means that the only way
+    to unpickle these old 'Result's is to have a do-nothing placeholder
+    class that can be instantiated and then thrown away."""
+
+    pass
+
+
+
 class Context(types.DictType):
     """Test-time and local configuration for tests.
 
@@ -66,6 +79,9 @@ class Context(types.DictType):
     temporary directory at the same time.  There is no guarantee that
     the temporary directory is empty, however; it may contain files
     left behind by the execution of other 'Runnable' objects."""
+
+    __safe_for_unpickling__ = 1
+    """Required to unpickle new-style classes under Python 2.2."""
 
     def __init__(self, context = None):
         """Construct a new context.
