@@ -494,7 +494,8 @@ def setup_idb_for_test():
 
     field = qm.fields.SetField(qm.fields.UidField(
         name="notify",
-        title="People to Notify"))
+        title="People to Notify",
+        hidden="true"))
     icl.AddField(field)
 
     for counter in range(1, 10):

@@ -1,5 +1,12 @@
 2001-05-11  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/web/summary.py (DisplayOptionsPageInfo.__init__): Don't
+	show hidden fields.
+	* qm/track/config.py (setup_idb_for_test): Make the notification
+	field hidden.
+
+2001-05-11  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/xmldb.py (scan_dir_for_suite_dirs): Skip directories
 	named CVS.
 	* qm/test/web/suite.py (ShowPageInfo.__init__): Construct controls

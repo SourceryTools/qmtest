@@ -213,7 +213,8 @@ class DisplayOptionsPageInfo(web.PageInfo):
         fields = {}
         for issue_class in issue_classes:
             for field in issue_class.GetFields():
-                fields[field.GetName()] = field
+                if not field.IsAttribute("hidden"):
+                    fields[field.GetName()] = field
         # Find all field names that aren't in 'included_field_names'.
         excluded_field_names = []
         for field_name in fields.keys():
