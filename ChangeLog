@@ -1,5 +1,16 @@
 2001-10-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (InstanceBase): Tweak documentation.
+	(InstanceBase.GetClass): Use TestDescriptor, not Test, and
+	ResourceDescriptor, not Resource.
+	(Test): Rename to TestDescriptor.
+	(Resource): Rename to ResourceDescriptor.
+	(make_new_test): Adjust.
+	(make_new_resource): Likewise.
+	* qm/test/xmldb.py (Database.__ParseTestDescriptor): Likweise.
+	(Database.__ParseResourceDescriptor): Likewise.
+	* qm/test/web/show.py (handle_sumbit): Likewise.
+	
 	Use 'arguments' not 'fields' in test classes.
 	Change API for 'Run' method in tests.
 	* qm/test/base.py: Import qm.test.result.

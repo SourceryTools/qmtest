@@ -96,7 +96,7 @@ class CommandFailedError(RuntimeError):
 ########################################################################
 
 class InstanceBase:
-    """Common base class for test and resource objects."""
+    """Common base class for test and resource descriptors."""
 
     def __init__(self,
                  instance_id,
@@ -120,9 +120,9 @@ class InstanceBase:
     def GetClass(self):
         """Return the class of this test or resource."""
 
-        if isinstance(self, Test):
+        if isinstance(self, TestDescriptor):
             kind = 'test'
-        elif isinstance(self, Resource):
+        elif isinstance(self, ResourceDescriptor):
             kind = 'resource'
         else:
             assert 0
@@ -219,7 +219,7 @@ class InstanceBase:
 
 
 
-class Test(InstanceBase):
+class TestDescriptor(InstanceBase):
     """A test instance."""
 
     def __init__(self,
@@ -326,7 +326,7 @@ class Test(InstanceBase):
 
 
 
-class Resource(InstanceBase):
+class ResourceDescriptor(InstanceBase):
     """A resource instance."""
 
     def __init__(self,
@@ -1046,7 +1046,7 @@ def make_new_test(test_class_name, test_id):
 
     'test_id' -- The test ID of the new test.
 
-    returns -- A new 'Test' object."""
+    returns -- A new 'TestDescriptor' object."""
 
     test_class = get_test_class(test_class_name)
     # Make sure there isn't already such a test.
@@ -1061,7 +1061,7 @@ def make_new_test(test_class_name, test_id):
         value = field.GetDefaultValue()
         arguments[name] = value
     # Construct a default test instance.
-    return Test(test_id, test_class_name, arguments, {}, [])
+    return TestDescriptor(test_id, test_class_name, arguments, {}, [])
 
 
 def make_new_resource(resource_class_name, resource_id):
@@ -1072,7 +1072,7 @@ def make_new_resource(resource_class_name, resource_id):
 
     'resource_id' -- The resource ID of the new resource.
 
-    returns -- A new 'Resource' object."""
+    returns -- A new 'ResourceDescriptor' object."""
 
     resource_class = get_resource_class(resource_class_name)
     # Make sure there isn't already such a resource.
@@ -1087,7 +1087,7 @@ def make_new_resource(resource_class_name, resource_id):
         value = field.GetDefaultValue()
         arguments[name] = value
     # Construct a default resource instance.
-    return Resource(resource_id, resource_class_name, arguments)
+    return ResourceDescriptor(resource_id, resource_class_name, arguments)
 
 
 def load_outcomes(path):

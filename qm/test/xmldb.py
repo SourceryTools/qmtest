@@ -371,14 +371,14 @@ class Database(FileDatabase, qm.common.MutexMixin):
         prerequisites = self.__GetPrerequisitesFromDomNode(test_node)
         resources = self.__GetResourcesFromDomNode(test_node)
         properties = self.__GetPropertiesFromDomNode(test_node)
-        # Construct a test wrapper around it.
-        test = base.Test(test_id,
-                         test_class_name,
-                         arguments,
-                         prerequisites,
-                         categories,
-                         resources,
-                         properties)
+        # Construct a test descriptor for it.
+        test = base.TestDescriptor(test_id,
+                                   test_class_name,
+                                   arguments,
+                                   prerequisites,
+                                   categories,
+                                   resources,
+                                   properties)
         return test
         
 
@@ -404,9 +404,9 @@ class Database(FileDatabase, qm.common.MutexMixin):
         arguments = self.__GetArgumentsFromDomNode(resource_node,
                                                    resource_class)
         properties = self.__GetPropertiesFromDomNode(resource_node)
-        # Construct a test wrapper around it.
-        return base.Resource(resource_id, resource_class_name,
-                             arguments, properties)
+        # Construct a ResourceDescriptor for it.
+        return base.ResourceDescriptor(resource_id, resource_class_name,
+                                       arguments, properties)
 
 
     def __GetClassNameFromDomNode(self, node):

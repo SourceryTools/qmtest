@@ -600,20 +600,21 @@ def handle_submit(request):
         categories = qm.web.decode_set_control_contents(categories)
 
         # Create a new test.
-        item = qm.test.base.Test(test_id=item_id,
-                                 test_class_name=item_class_name,
-                                 arguments=arguments,
-                                 prerequisites=prerequisites,
-                                 categories=categories,
-                                 resources=resources,
-                                 properties=properties)
+        item = qm.test.base.TestDescriptor(test_id=item_id,
+                                           test_class_name=item_class_name,
+                                           arguments=arguments,
+                                           prerequisites=prerequisites,
+                                           categories=categories,
+                                           resources=resources,
+                                           properties=properties)
 
     elif type is "resource":
         # Create a new resource.
-        item = qm.test.base.Resource(resource_id=item_id,
-                                     resource_class_name=item_class_name,
-                                     arguments=arguments,
-                                     properties=properties)
+        item = qm.test.base.ResourceDescriptor
+            (resource_id=item_id,
+             resource_class_name=item_class_name,
+             arguments=arguments,
+             properties=properties)
 
     # Were there any validation errors?
     if len(field_errors) > 0:
