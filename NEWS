@@ -11,8 +11,8 @@ QMTest requires Python 2.2 or greater.
 On Windows, we recommend that Mozilla be used with QMTest.  Internet
 Explorer appears to handle some forms that QMTest creates incorrectly.
 CodeSourcery has validated the HTML using automated and manual
-methods, and believes that the problems like with Internet Explorer
-and not with QMTest.
+methods, and believes that the problems lie with Internet Explorer and
+not with QMTest.
 
 There is now a "qmtest create" command-line option that can be used to
 create extension instances (such as tests, resources, or databases)

@@ -241,8 +241,8 @@ class ExecTestBase(Test):
         returns -- True if 's1' and 's2' are the same, ignoring
         differences in line endings."""
 
-        # The "splitlines" works independently of the line ending
-        # convention involved.
+        # The "splitlines" method works independently of the line ending
+        # convention in use.
         return s1.splitlines() == s2.splitlines()
 
         
