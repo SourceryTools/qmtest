@@ -60,7 +60,7 @@ class ProcessTarget(Target):
         ]
 
     class QMTestExecutable(qm.executable.Executable):
-        """A 'QMTestExecutable' redirects commands to a chlid process."""
+        """A 'QMTestExecutable' redirects commands to a child process."""
 
         def _InitializeParent(self):
 

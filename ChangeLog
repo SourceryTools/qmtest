@@ -1,5 +1,11 @@
 2003-04-15  Nathaniel Smith  <njs@pobox.com>
 
+	* qm/test/base.py (get_extension_directories): typo in comment.
+	* qm/test/classes/process_target.py (QMTestExecutable): typo in 
+	docstring.
+
+2003-04-15  Nathaniel Smith  <njs@pobox.com>
+
 	* zope-dtml/ExtensionClass/: Remove.
 	* qm/external/: New directory.
 	* qm/external/__init__.py: New file.
