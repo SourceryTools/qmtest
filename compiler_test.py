@@ -47,7 +47,7 @@ class CompiledExecutable(RedirectedExecutable):
         RedirectedExecutable.__init__(self, path)
         # Remember the directories to search for shared objects.
         self._library_dirs = library_dirs
-        
+
                  
     def Run(self, arguments=[]):
         """Spawn the program and wait for it to finish.
@@ -99,7 +99,6 @@ class CompiledExecutable(RedirectedExecutable):
         RedirectedExecutable._InitializeChild(self)
 
             
-        
 class CompilationStep:
     """A single compilation step."""
 
@@ -200,7 +199,7 @@ class CompilerTest(Test):
             # If this compilation generated an executable, remember
             # that fact.
             if step.mode == Compiler.MODE_LINK:
-                executable_path = step.output or "a.out"
+                executable_path = os.path.join(".", step.output or "a.out")
 
             # We're on to the next step.
             step_index = step_index + 1
@@ -291,7 +290,7 @@ class CompilerTest(Test):
             result[prefix + "exit_code"] = str(exit_code)
             # If the exit code is non-zero, the test fails.
             if exit_code != 0:
-                result.Fail("Executable exited with code %d" % exit_code)
+                result.Fail("Executable exited with code %d." % exit_code)
                 return
         elif os.WIFSIGNALED(status):
             # Obtain the signal number.
@@ -442,5 +441,5 @@ class CompilerTest(Test):
         # Compute the string representation of each diagnostic.
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
-        return string.join(diagnostic_strings, '\n')
+        return "'''" + string.join(diagnostic_strings, '\n') + "'''"
 

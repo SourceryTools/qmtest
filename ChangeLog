@@ -1,3 +1,48 @@
+2002-03-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (CompilerExecutable): New class.
+	(Compiler): Do not inerit from RedirectedExecutable.
+	(Compiler.Compile): Use a CompilerExecutable.
+	(Compiler._InitializeChild): Remove.
+	(Compiler._StdinPipe): Likewise.
+	(Compiler._StderrPipe): Likewise.
+	(Compiler.GetPath): New function.
+	(Compiler.GetOptions): Likewise.
+	(Compiler.SetOptions): Likewise.
+	(SourcePosition.__str__): Refine.
+	(GPP.__init__): Remove.
+	* compiler_test.py (CompilerTest.Run): Do not assume that "."
+	is in the path.  Tweak formatting for failure messages.
+	* gcc_database.py (errno): Import it.
+	(tempfile): Likewise.
+	(GCCTest.Run): Return an indication of whether or not we
+	are running in XFAIL-generation mode.
+	(GCCTest._IsExpectedToFail): Add context parameter.
+	(GCCTest._MakeDirectoryRecursively): New method.
+	(GCCTest._MakeDirectoryForTest): Likewise.
+	(GCCTest._EnterDirectoryForTest): Likewise.
+	(GCCTest._ExitDirectoryForTest): Likewise.
+	(GPPTest._compiler): New variable.
+	(GPPTest._library_directories): Likewise.
+	(GPPTest._v3_directory): Likewise.
+	(GPPTest.__init__): Do not set self._compiler.
+	(GPPTest._GetCompiler): Use GPPTest._compiler, not self._compiler,
+	to store the compiler.  Automatically find multilib directories.
+	(GPPTest._GetLibraryDirectories): New method.
+	(GPPTest._IsExpectedToFail): Add context parameter.
+	(OldDejaGNUTest.Run): Allow more than one source file.
+	(DGTest._GetAdditionalSourceFiles): New method.
+	(DGTest._IsExpectedToFail): Add context parameter.
+	(DGTest.Run): Be thread safe.
+	(InitPriorityTest): New class.
+	(GCCDatabase._prefix_map): Make tests in gpp.dg.special be
+	InitPriorityTests.
+	(GCCDatabase._tests_in_directory): Add gpp.dg.special.conpr-3r.
+	(GCCDatabase.GetTestIds): Deal with tests that have upper-case
+	characters in their names.
+	(GCCDatabase.GetTest): Likewise.
+	(GCCDatabase._GetTestPath): Special case gpp.dg.special.conpr-3r.
+	
 2002-03-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (SourcePosition.__str__): Refine.

@@ -22,8 +22,56 @@ import sys
 ########################################################################
 # Classes
 ########################################################################
+    
+class CompilerExecutable(RedirectedExecutable):
+    """A 'CompilerExecutable' is a 'Compiler' that is being run."""
 
-class Compiler(RedirectedExecutable):
+    def __init__(self, compiler):
+        """Construct a new 'CompilerExecutable'.
+
+        'compiler' -- The 'Compiler' to run."""
+
+        RedirectedExecutable.__init__(self, compiler.GetPath())
+
+
+    def _InitializeChild(self):
+        """Initialize the child process.
+
+        After 'fork' is called this method is invoked to give the
+        child a chance to initialize itself.  '_InitializeParent' will
+        already have been called in the parent process."""
+
+        # Disable compiler core dumps.
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+        # Do whatever the base class version would otherwise do.
+        RedirectedExecutable._InitializeChild(self)
+
+
+    def _StdinPipe(self):
+        """Return a pipe to which to redirect the standard input.
+
+        returns -- A pipe, or 'None' if the standard input should be
+        closed in the child."""
+
+        # The compiler should not need the standard input.
+        return None
+
+
+    def _StderrPipe(self):
+        """Return a pipe to which to redirect the standard input.
+
+        returns -- A pipe, or 'None'.  If 'None' is returned, but
+        '_StdoutPipe' returns a pipe, then the standard error and
+        standard input will both be redirected to that pipe.  However,
+        if '_StdoutPipe' also returns 'None', then the standard error
+        will be closed in the child."""
+
+        # The standard output and standard error are combined.
+        return None
+
+
+
+class Compiler:
     """A 'Compiler' compiles and links source files."""
 
     MODE_COMPILE = 'compile'
@@ -47,11 +95,8 @@ class Compiler(RedirectedExecutable):
         'options' -- A list of strings indicating options to the
         compiler, or 'None' if there are no options."""
 
-        Executable.__init__(self, path)
-        if options:
-            self._options = options
-        else:
-            self._options = []
+        self._path = path
+        self.SetOptions(options or [])
             
 
     def Compile(self, mode, files, options=[], output=None):
@@ -81,9 +126,10 @@ class Compiler(RedirectedExecutable):
         # Get the command to use.
         command = self.GetCompilationCommand(mode, files, options, output)
         # Invoke the compiler.
-        status = self.Run(command)
+        executable = CompilerExecutable(self)
+        status = executable.Run(command)
         # Return all of the information.
-        return (status, self.stdout, command)
+        return (status, executable.stdout, command)
         
         
     def GetCompilationCommand(self, mode, files, options=[], output=None):
@@ -137,42 +183,34 @@ class Compiler(RedirectedExecutable):
         assert None
         
         
-    def _InitializeChild(self):
-        """Initialize the child process.
+    def GetPath(self):
+        """Return the location of the executable.
 
-        After 'fork' is called this method is invoked to give the
-        child a chance to initialize itself.  '_InitializeParent' will
-        already have been called in the parent process."""
-
-        # Disable compiler core dumps.
-        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-        # Do whatever the base class version would otherwise do.
-        RedirectedExecutable._InitializeChild(self)
+        returns -- A string giving the location of the executable.
+        This location is the one that was specified as the 'path'
+        argument to '__init__'."""
+        
+        return self._path
 
 
-    def _StdinPipe(self):
-        """Return a pipe to which to redirect the standard input.
+    def GetOptions(self):
+        """Return the list of compilation options.
 
-        returns -- A pipe, or 'None' if the standard input should be
-        closed in the child."""
+        returns -- A list of strings giving the compilation options
+        specified when the 'Compiler' was constructed."""
 
-        # The compiler should not need the standard input.
-        return None
-
-
-    def _StderrPipe(self):
-        """Return a pipe to which to redirect the standard input.
-
-        returns -- A pipe, or 'None'.  If 'None' is returned, but
-        '_StdoutPipe' returns a pipe, then the standard error and
-        standard input will both be redirected to that pipe.  However,
-        if '_StdoutPipe' also returns 'None', then the standard error
-        will be closed in the child."""
-
-        # The standard output and standard error are combined.
-        return None
+        return self._options
 
 
+    def SetOptions(self, options):
+        """Reset the list of compiler options.
+        
+        'options' -- A list of strings indicating options to the
+        compiler, or 'None' if there are no options."""
+
+        self._options = options
+
+        
     def _GetModeSwitches(self, mode):
         """Return the compilation switches for the compilation 'mode'.
 
@@ -232,9 +270,11 @@ class SourcePosition:
 
         result = ''
         if self.file:
-            result = result + '"%s"' % self.file
+            result = result + '"%s"' % os.path.split(self.file)[0]
         if self.line:
-            result = result + ', line %d' % self.line
+            if self.file:
+                result = result + ', '
+            result = result + 'line %d' % self.line
         if self.column:
             result = result + ': %d' % self.column
 
@@ -348,24 +388,6 @@ class GPP(Compiler):
     """A compiled regular expression.  When an error message is matched
     by this regular expression, the error message indicates an
     internal error in the compiler."""
-
-    def __init__(self, path, options=None):
-        """Construct a new 'GPP'.
-
-        'path' -- A string giving the location of the compiler
-        executable.
-
-        'options' -- A list of strings indicating options to the
-        compiler."""
-
-        # Add "-fmessage-length=0" to the list of options to make it
-        # easier to parse the error messages emitted by the compiler.
-        if options is None:
-            options = []
-        options = ['-fmessage-length=0'] + options
-        
-        Compiler.__init__(self, path, options)
-
 
     def GetExecutableName(self, source_files):
         """Return the name of the executable for the 'source_files'.

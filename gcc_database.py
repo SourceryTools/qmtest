@@ -14,6 +14,7 @@
 from   compiler import *
 from   compiler_test import *
 import dircache
+import errno
 from   executable import *
 import fnmatch
 import os
@@ -24,6 +25,7 @@ from   qm.test.database import *
 from   qm.test.result import *
 import re
 import string
+import tempfile
 
 ########################################################################
 # Classes
@@ -97,11 +99,13 @@ class GCCTest(CompilerTest):
         # Check to see if we are running in the special mode used
         # to generate a list of expected failures.
         if context.has_key("GCCTest.generate_xfails"):
-            if self._IsExpectedToFail():
+            if self._IsExpectedToFail(context):
                 result.Fail("Expected failure.")
+            return 0
         else:
             CompilerTest.Run(self, context, result)
-            
+            return 1
+        
             
     def _GetSource(self):
         """Return the contents of the primary source file.
@@ -147,9 +151,12 @@ class GCCTest(CompilerTest):
         return self.GetId() + ".exe"
 
 
-    def _IsExpectedToFail(self):
+    def _IsExpectedToFail(self, context):
         """Return true if this test is expected to fail.
 
+        'context' -- The 'Context' in which this test is being
+        executed.
+        
         returns -- True iff this test is expected to fail."""
 
         return 0
@@ -313,13 +320,76 @@ class GCCTest(CompilerTest):
         return words
 
 
-                
+    def _MakeDirectoryRecursively(self, directory):
+        """Create 'directory' and its parents.
+
+        'directory' -- The name of the directory to create.  It must
+        be a relative path"""
+
+        (parent, base) = os.path.split(directory)
+        # Make sure the parent directory exists.
+        if parent and not os.path.isdir(parent):
+            self._MakeDirectoryRecursively(parent)
+        # Create the final directory.
+        try:
+            os.mkdir(directory)
+        except EnvironmentError, e:
+            # It's OK if the directory already exists.
+            if e.errno == errno.EEXIST:
+                pass
+            else:
+                raise
+            
+            
+    def _MakeDirectoryForTest(self):
+        """Create a directory in which to place generated files.
+
+        'returns' -- The name of the directory created."""
+
+        # Get the directory name by turning the label into a path
+        # name.
+        directory = os.path.join(".", qm.label.to_path(self.GetId()))
+        # Create it.
+        self._MakeDirectoryRecursively(directory)
+
+        return directory
+
+
+    def _EnterDirectoryForTest(self):
+        """Create and enter the directory for generated files.
+
+        The caller should subsequently call '_ExitDirectoryForTest'
+        to restore the current directory."""
+    
+        directory = self._MakeDirectoryForTest()
+        self._saved_directory = os.getcwd()
+        os.chdir(directory)
+
+        
+    def _ExitDirectoryForTest(self):
+        """Leave the directory created for generated files.
+
+        The caller must have previously called '_EnterDirectoryForTest'."""
+
+        os.chdir(self._saved_directory)
+
+
+        
 class GPPTest(GCCTest):
     """A 'GPPTest' is a test for 'g++'."""
 
     _default_options = ["-ansi", "-pedantic-errors", "-Wno-long-long"]
     """A list of strings giving the options to use by default if no
     options are specified by the test."""
+
+    _compiler = None
+    """The 'Compiler' being tested."""
+
+    _library_directories = []
+    """The list of directories to search for libraries."""
+
+    _v3_directory = None
+    """The directory containing libstdc++-v3."""
     
     def __init__(self, **arguments):
         """Construct a new 'GCCTest'."""
@@ -328,8 +398,6 @@ class GPPTest(GCCTest):
 
         # Assume that we do not need to run the generated executable.
         self._run_executable = 0
-        # We have not created the compiler yet.
-        self._compiler = None
         
 
     def _GetCompiler(self, context):
@@ -338,7 +406,7 @@ class GPPTest(GCCTest):
         'context' -- The 'Context' in which this test is being
         executed."""
 
-        if not self._compiler:
+        if not GPPTest._compiler:
             # Compute the path to the compiler.
             if context.has_key("GCCTest.prefix"):
                 path = os.path.join(context["GCCTest.prefix"],
@@ -347,21 +415,68 @@ class GPPTest(GCCTest):
                 path = context["GPPTest.gpp"]
             # There are no compiler options yet.
             options = []
-            # Add -L options for all the directories we should search
-            # for libraries.
-            for d in self._GetLibraryDirectories(context):
-                options.append("-L" + d)
+            # Make error messages easier to parse.
+            options.append('-fmessage-length=0')
             # See if there are any compiler options specified in the
             # context.
             options += string.split(context.get("GCCTest.flags", ""))
             options += string.split(context.get("GPPTest.flags", ""))
                     
-            # Create the Compiler itself.
-            self._compiler = GPP(path, options)
+            # Create the 'Compiler'.
+            GPPTest._compiler = GPP(path, options)
 
-        return self._compiler
+            # Add -L options for all the directories we should search
+            # for libraries.
+            for d in self._GetLibraryDirectories(context):
+                options.append("-L" + d)
+
+            # Run a script to findout what flags to use when compiling
+            # for the V3 library.
+            executable = RedirectedExecutable(os.path.join(self._v3_directory,
+                                                           "testsuite_flags"))
+            executable.Run(["testsuite_flags", "--build-includes"])
+            options += string.split(executable.stdout)
+            
+            GPPTest._compiler.SetOptions(options)
+
+        return GPPTest._compiler
         
 
+    def _GetLibraryDirectories(self, context):
+        """Returns the directories to search for libraries.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
+
+        returns -- A sequence of strings giving the paths to the
+        directories to search for libraries."""
+
+        if not GPPTest._library_directories:
+            # Get the base of the objdir; the libraries can be found
+            # relative to that.
+            objdir = context['GCCTest.objdir']
+            # Run the compiler to find out what multilib directory is
+            # in use.
+            compiler = self._GetCompiler(context)
+            executable = CompilerExecutable(compiler)
+            executable.Run([compiler.GetPath()] + compiler.GetOptions() 
+                           + ['--print-multi-dir'])
+            directory = executable.stdout[:-1]
+            # Add the V3 library directory.
+            self._v3_directory = os.path.join(objdir,
+                                              self._GetTargetPlatform(context),
+                                              directory,
+                                              "libstdc++-v3")
+            GPPTest._library_directories.append(os.path.join
+                                                (self._v3_directory,
+                                                 "src", ".libs"))
+            # Add the directory containing libgcc.
+            GPPTest._library_directories.append(os.path.join(objdir, "gcc",
+                                                             directory))
+
+        return GPPTest._library_directories
+
+    
     def _GetCompilationOptions(self, contents):
         """Return the options to given the indicated test 'contents'.
 
@@ -470,8 +585,11 @@ class OldDejaGNUTest(GPPTest):
         GCCTest.Run(self, context, result)
 
 
-    def _IsExpectedToFail(self):
+    def _IsExpectedToFail(self, context):
         """Return true if this test is expected to fail.
+
+        'context' -- The 'Context' in which this test is being
+        executed.
 
         returns -- True iff this test is expected to fail."""
 
@@ -658,7 +776,7 @@ class DGTest(GPPTest):
         contents = self._GetSource()
 
         # There is only one source file.
-        source_files = [path]
+        source_files = [path] + self._GetAdditionalSourceFiles(path)
         
         # Get the diagnostics expected for this test.
         diagnostics = self._expected_diagnostics
@@ -715,6 +833,18 @@ class DGTest(GPPTest):
         return self._options
 
 
+    def _GetAdditionalSourceFiles(self, path):
+        """Return source files to be included other than the primary
+        source file.
+
+        'path' -- The path to the primary source file.
+
+        returns -- A list of strings giving the names of additional
+        source files."""
+
+        return []
+    
+        
     def _ParseSelector(self, selector):
         """Return the target indicated by the 'selector'.
 
@@ -905,8 +1035,11 @@ class DGTest(GPPTest):
                 raise QMException, "Unsupported command 'dg-%s'." % command
               
 
-    def _IsExpectedToFail(self):
+    def _IsExpectedToFail(self, context):
         """Return true if this test is expected to fail.
+
+        'context' -- The 'Context' in which this test is being
+        executed.
 
         returns -- True iff this test is expected to fail."""
         
@@ -937,50 +1070,123 @@ class DGTest(GPPTest):
             result.SetOutcome(Result.UNTESTED)
             result[Result.CAUSE] = "Test skipped on %s." % target
             return
-        
-        # Run the test.
-        if not GCCTest.Run(self, context, result):
-            return
 
-        # If the test isn't passing at this point, there's no point in
-        # doing additional work.
-        if result.GetOutcome() != Result.PASS:
-            return
+        # So that we are thread safe, all work is done in a directory
+        # corresponding to this test.
+        self._EnterDirectoryForTest()
+        try:
+            # Run the test.
+            if not GCCTest.Run(self, context, result):
+                return
 
-        # See if there are assembly patterns for which to look.
-        if self._assembly_patterns or self._demangled_assembly_patterns:
-            # Get the basename for the source file.
-            file_name \
-                = os.path.split(self.source_file.GetDataFile())[1]
-            # Get the assembly file in which we are supposed to look.
-            file_name = os.path.splitext(file_name)[0] + ".s"
-            # Read the contents of the file.
-            file = open(file_name)
-            asm_contents = file.read()
-            file.close()
+            # If the test isn't passing at this point, there's no point in
+            # doing additional work.
+            if result.GetOutcome() != Result.PASS:
+                return
 
-            # See if all the patterns are there.
-            for p in self._assembly_patterns:
-                if not re.search(p, asm_contents):
-                    result.Fail("Assembly file does not contain '%s'." % p,
-                                { "DGTest.pattern" : p })
-                    return
+            # See if there are assembly patterns for which to look.
+            if self._assembly_patterns or self._demangled_assembly_patterns:
+                # Get the basename for the source file.
+                file_name \
+                    = os.path.split(self.source_file.GetDataFile())[1]
+                # Get the assembly file in which we are supposed to look.
+                file_name = os.path.splitext(file_name)[0] + ".s"
+                # Read the contents of the file.
+                file = open(file_name)
+                asm_contents = file.read()
+                file.close()
+
+                # See if all the patterns are there.
+                for p in self._assembly_patterns:
+                    if not re.search(p, asm_contents):
+                        result.Fail("Assembly file does not contain '%s'."
+                                    % p,
+                                    { "DGTest.pattern" : p })
+                        return
+
+                # If we have to demangle the contents, do it.
+                if self._demangled_assembly_patterns:
+                    demangler = Demangler(context["DGTest.demangler"],
+                                          asm_contents)
+                    demangler.Run([demangler.GetPath()])
+                    asm_contents = demangler.stdout
+
+                # See if all the patterns are there.
+                for p in self._demangled_assembly_patterns:
+                    if not re.search(p, asm_contents):
+                        result.Fail("Assembly file does not contain '%s'."
+                                    % p,
+                                    { "DGTest.pattern" : p })
+                        return
+        finally:
+            self._ExitDirectoryForTest()
                 
-            # If we have to demangle the contents, do it.
-            if self._demangled_assembly_patterns:
-                demangler = Demangler(context["DGTest.demangler"],
-                                      asm_contents)
-                demangler.Run([demangler.GetPath()])
-                asm_contents = demangler.stdout
-
-            # See if all the patterns are there.
-            for p in self._demangled_assembly_patterns:
-                if not re.search(p, asm_contents):
-                    result.Fail("Assembly file does not contain '%s'." % p,
-                                { "DGTest.pattern" : p })
-                    return
-
             
+
+class InitPriorityTest(DGTest):
+    """An 'InitPriorityTest' tests the 'init_priority' attribute."""
+
+    def _IsExpectedToFail(self, context):
+        """Return true if this test is expected to fail.
+
+        'context' -- The 'Context' in which this test is being
+        executed.
+
+        returns -- True iff this test is expected to fail."""
+
+        # The test is expected to fail if the compiler does not
+        # understand the 'init_priority' attribute.  Create a
+        # temporary file to test that.  We make five attempts at
+        # creating the temporary file since there is a race condition
+        # between the time that we get the filename and the time that
+        # we get the file itself.
+        for i in range(5):
+            filename = tempfile.mktemp(".cpp")
+            try:
+                file = open(filename, "w")
+            except EnvironmentError, e:
+                if e.errno == EEXIST:
+                    continue
+        # Create the contents of the file.
+        try:
+            file.write("struct S{};\n"
+                       "S s __attribute__((init_priority(5000)));\n")
+            file.close()
+            # Compile the file.
+            compiler = self._GetCompiler(context)
+            output = compiler.Compile(Compiler.MODE_COMPILE, [filename])[1]
+            # If there are any diagnostics, the compiler does not
+            # understand the attribute.
+            if (compiler.ParseOutput(output)):
+                return 1
+            else:
+                return 0
+        finally:
+            os.remove(filename)
+
+        
+    def _GetAdditionalSourceFiles(self, path):
+        """Return source files to be included other than the primary
+        source file.
+
+        'path' -- The path to the primary source file.
+        
+        returns -- A list of strings giving the names of additional
+        source files."""
+
+        files = []
+        
+        if self.GetId() == "gpp.dg.special.conpr-2":
+            files = ["conpr-2a.C"]
+        elif self.GetId() == "gpp.dg.special.conpr-3":
+            files = ["conpr-3a.C", "conpr-3b.C"]
+        elif self.GetId() == "gpp.dg.special.conpr-3r":
+            files = ["conpr-3b.C", "conpr-3a.C"]
+
+        return map(lambda f, p=path: os.path.join(os.path.split(p)[0], f),
+                   files)
+
+    
 
 class GCCDatabase(Database):
     """A 'GPPDatabase' is a G++ test database."""
@@ -1005,7 +1211,8 @@ class GCCDatabase(Database):
 
     _prefix_map = (
         ("gpp.old-deja.",  "gcc_database.OldDejaGNUTest"),
-        ("gpp.dg.", "gcc_database.DGTest")
+        ("gpp.dg.special.", "gcc_database.InitPriorityTest"),
+        ("gpp.dg.", "gcc_database.DGTest"),
     )
     """A sequence whose elements are of the form '(prefix,
     classname)'.  If first part of a test name matches the prefix,
@@ -1061,7 +1268,8 @@ class GCCDatabase(Database):
     prefixing the suite name with the 'suite_prefix'."""
     
     _tests_in_directory = {
-        "gpp.dg.special" : ["conpr-1", "conpr-2", "conpr-3", "initp1"],
+        "gpp.dg.special" : ["conpr-1", "conpr-2", "conpr-3",
+                            "conpr-3r", "initp1"],
     }
     """A map from directory names (as absolute labels) to lists of
     relative labels.  The relative labels give the tests present in
@@ -1120,7 +1328,15 @@ class GCCDatabase(Database):
             if extension == self._test_extension:
                 # Skip tests with invalid names.
                 if not qm.label.is_valid(base):
-                    continue
+                    # Perhaps the name has a upper-case letter in it.  
+                    # Translate upper-case to lower-case and try
+                    # again.
+                    if qm.label.is_valid(base.lower()):
+                        # If that worked, use the lower-case name.
+                        base = base.lower()
+                    else:
+                        print "Invalid test %s" % base
+                        continue
                 # Add this test to the list.
                 test_names.append(qm.label.join(directory, base))
                 # Go on to the next entry in the directory.
@@ -1153,7 +1369,19 @@ class GCCDatabase(Database):
 
         # If the file does not exist, then there is no such test.
         if not os.path.exists(path):
-            raise NoSuchTestError, test_id
+            # Except that we may have translated names with upper-case
+            # letters to lower-case.  Look through the directory to
+            # see if we can find the test.  Fortunately, this is not
+            # fast-path code.
+            (dir, base) = os.path.split(path)
+            path = None
+            for entry in dircache.listdir(dir):
+                (name, ext) = os.path.splitext(entry)
+                if name.lower() + ext == base:
+                    path = os.path.join(dir, entry)
+                    break
+            if not path:
+                raise NoSuchTestError, test_id
         
         # Construct the attachment for the primary source file.
         basename = os.path.basename(path)
@@ -1234,6 +1462,11 @@ class GCCDatabase(Database):
         returns -- A string giving the path to the source file
         corresponding to the indicated test."""
 
+        # There is one test that is a special case: conpr-3r is just
+        # conpr-3 with the files linked in another order.
+        if test_id == "gpp.dg.special.conpr-3r":
+            test_id = "gpp.dg.special.conpr-3"
+            
         # Split the test name into its components.
         (directory, test_name) = qm.label.split(test_id)
         # Compute the file system path corresponding to the test.
