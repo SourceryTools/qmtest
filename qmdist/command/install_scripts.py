@@ -35,25 +35,30 @@ class install_scripts(base.install_scripts):
         # Do the standard installation.
         base.install_scripts.run(self)
 
-        # Postprocess the main QMTest Python script.
-        qmtest_file = os.path.join(self.install_dir, "qmtest")
-        qmtest_script = open(qmtest_file).read()
+        # Postprocess the main QMTest Python script.  The script will
+        # have ".py" extension on Windows systems, but not on UNIX
+        # systems.
+        for basename in ("qmtest", "qmtest.py"):
+            qmtest_file = os.path.join(self.install_dir, basename)
+            if not os.path.exists(qmtest_file):
+                continue
+            # Read the contents of the script.
+            qmtest_script = open(qmtest_file).read()
+            # Encode the relative path from that script to the top of the
+            # installation directory.
+            i = self.distribution.get_command_obj('install')
+            prefix = i.root or i.prefix
+            rel_prefix = get_relative_path(self.install_dir, prefix)
+            assignment = 'rel_prefix = "%s"' % rel_prefix
+            qmtest_script = re.sub("rel_prefix = .*", assignment,
+                                   qmtest_script)
+            # Encode the relative path from the prefix to the library
+            # directory.
+            il = self.distribution.get_command_obj('install_lib')
+            rel_libdir = get_relative_path(prefix, il.install_dir)
+            assignment = 'rel_libdir = "%s"' % rel_libdir
+            qmtest_script = re.sub("rel_libdir = .*", assignment,
+                                   qmtest_script)
 
-        # Encode the relative path from that script to the top of the
-        # installation directory.
-        i = self.distribution.get_command_obj('install')
-        prefix = i.root or i.prefix
-        rel_prefix = get_relative_path(self.install_dir, prefix)
-        assignment = 'rel_prefix = "%s"' % rel_prefix
-        qmtest_script = re.sub("rel_prefix = .*", assignment,
-                               qmtest_script)
-        # Encode the relative path from the prefix to the library
-        # directory.
-        il = self.distribution.get_command_obj('install_lib')
-        rel_libdir = get_relative_path(prefix, il.install_dir)
-        assignment = 'rel_libdir = "%s"' % rel_libdir
-        qmtest_script = re.sub("rel_libdir = .*", assignment,
-                               qmtest_script)
-
-        # Write the script back out.
-        open(qmtest_file, "w").write(qmtest_script)
+            # Write the script back out.
+            open(qmtest_file, "w").write(qmtest_script)

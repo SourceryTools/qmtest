@@ -114,6 +114,8 @@ class PickleResultStream(FileResultStream):
         ),
     ]
 
+    _is_binary_file = 1
+
     def __init__(self, arguments):
 
         # Initialize the base class.

@@ -21,6 +21,7 @@ from   distutils.core import setup
 import sys
 import os
 import os.path
+from   os.path import join
 import string
 import glob
 from   qmdist.command.build import build
@@ -29,6 +30,8 @@ from   qmdist.command.install_data import install_data
 from   qmdist.command.install_lib import install_lib
 from   qmdist.command.install_scripts import install_scripts
 from   qmdist.command.check import check
+from   qm.__version import version
+import shutil
 
 ########################################################################
 # Functions
@@ -36,7 +39,7 @@ from   qmdist.command.check import check
 
 def prefix(list, pref):
 
-    return map(lambda x, p=pref: os.path.join(p, x), list)
+    return map(lambda x, p=pref: join(p, x), list)
 
 
 def files_with_ext(dir, ext):
@@ -70,27 +73,17 @@ def select_share_files(share_files, dir, files):
                    files)
     if files:
         files = prefix(files, dir)
-        dir = os.path.join("qm", dir[len("share/"):])
+        dir = join("qm", dir[len("share/"):])
         share_files[dir] = files
-
-packages=['qm',
-          'qm/external',
-          'qm/external/DocumentTemplate',
-          'qm/test',
-          'qm/test/classes',
-          'qm/test/web']
-
-classes = ["classes.qmc"]
 
 diagnostics=['common.txt','common-help.txt']
 
 messages=['help.txt', 'diagnostics.txt']
 
-html_docs = []
-
 if not os.path.isdir(os.path.normpath('qm/test/doc/html')):
     print """Warning: to include documentation run the
              \'build_doc\' command first."""
+    html_docs = []
 
 else:
     html_docs = filter(lambda f: f.endswith(".html"),
@@ -102,14 +95,30 @@ test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
 share_files = {}
 os.path.walk("share", select_share_files, share_files)
 
+# On UNIX, we want the main script to be "qmtest".  On Windows, we need
+# to use a ".py" extension so that users can invoke the script directly;
+# if we were to omit the ".py" extension they would have to explicitly
+# type "python qmtest" to invoke the script.  Searching for
+# "bdist_wininst" in sys.argv is an (inelegant) way of checking to see
+# if we are building a Windows binary installer.
+qmtest_script = join("qm", "test", "qmtest")
+py_script = qmtest_script + ".py"
+if "bdist_wininst" in sys.argv:
+    shutil.copyfile(qmtest_script, py_script)
+    qmtest_script = py_script
+elif os.path.exists(py_script):
+    # Avoid accidentally packaging the ".py" version of the script, if
+    # it exists.
+    os.remove(py_script)
+     
 setup(name="qm", 
-      version="2.1",
+      version=version,
       author="CodeSourcery, LLC",
       author_email="info@codesourcery.com",
       maintainer="Mark Mitchell",
       maintainer_email="mark@codesourcery.com",
       url="http://www.codesourcery.com/qm/test",
-      description="QMTest is a automated software test execution tool.",
+      description="QMTest is an automated software test execution tool.",
       
       cmdclass={'build': build,
                 'build_doc': build_doc,
@@ -118,8 +127,13 @@ setup(name="qm",
                 'install_scripts' : install_scripts,
                 'check': check},
 
-      packages=packages,
-      scripts=['qm/test/qmtest'],
+      packages=('qm',
+                'qm/external',
+                'qm/external/DocumentTemplate',
+                'qm/test',
+                'qm/test/classes',
+                'qm/test/web'),
+      scripts=[qmtest_script],
       data_files=[('qm/messages/test',
                    prefix(messages, 'qm/test/share/messages')),
                   # DTML files for the GUI.

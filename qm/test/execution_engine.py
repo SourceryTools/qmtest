@@ -226,19 +226,21 @@ class ExecutionEngine:
         
 
     def RequestTermination(self):
-        """Request termination.
+        """Request that the execution engine stop executing tests.
 
-        Request that the execution thread be terminated.  This may
-        take some time; tests that are already running will continue
+        Request that the execution thread be terminated.  Termination
+        may take some time; tests that are already running will continue
         to run, for example."""
 
         self.__terminated = 1
-        
-        
-    def IsTerminationRequested(self):
+
+
+    def _IsTerminationRequested(self):
         """Returns true if termination has been requested.
 
-        returns -- True if Terminate has been called."""
+        returns -- True if no further tests should be executed.  If the
+        value is -1, the execution engine should simply terminate
+        gracefully."""
 
         return self.__terminated
     
@@ -341,8 +343,10 @@ class ExecutionEngine:
         # to run.
         self.__target_pattern_queues = {}
         
-        while (self.__num_tests_started < num_tests
-               and not self.IsTerminationRequested()):
+        while self.__num_tests_started < num_tests:
+            # If the user interrupted QMTest, stop executing tests.
+            if self._IsTerminationRequested():
+                break
             # Process any responses and update the count of idle targets.
             while self.__CheckForResponse(wait=0):
                 pass

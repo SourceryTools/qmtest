@@ -110,13 +110,13 @@ class ExecutionThread(Thread, ExecutionEngine):
         self.__lock.release()
 
 
-    def IsTerminationRequested(self):
+    def _IsTerminationRequested(self):
         """Returns true if termination has been requested.
 
         return -- True if Terminate has been called."""
 
         self.__lock.acquire()
-        terminated = ExecutionEngine.IsTerminationRequested(self)
+        terminated = ExecutionEngine._IsTerminationRequested(self)
         self.__lock.release()
         return terminated
 

@@ -1,5 +1,24 @@
 2003-11-23  Mark Mitchell  <mark@codesourcery.com>
 
+	* setup.py: Tidy up.  Use "qmtest.py" as the name of the main
+	script under Windows.
+	* qm/__init__.py: Do not honor qm.config settings under Windows.
+	* qm/test/.cvsignore: Add qmtest.py.
+	* qm/test/execution_engine.py
+	(ExecutionEngine.IsTerminationRequested): Rename to ..
+	(ExecutionEngine._IsTerminationRequested): ... this.
+	* qm/test/execution_thread.py
+	(ExecutionThread.IsTerminationRequested): Rename to ..
+	(ExecutionEngine._IsTerminationRequested): ... this.
+	* qm/test/qmtest: Do not honor rel_libdir on Windows.
+	* qm/test/clasess/pickle_result_stream.py
+	(PickleResultStream._is_binary_file): Set it.
+	* qm/test/doc/tour.xml: Update for changes in installation
+	procedures.
+	* qmdist/command/install_scripts.py (install_scripts.run): Process
+	both the "qmtest" and the "qmtest.py" script.
+	* scripts/qm-release: Remove.
+
 	* .cvsignore: Add build, dist, and MANIFEST.
 	* MANIFEST.in: Update for recent changes.
 	* setup.py: Put qm/test/classes in lib, not share.  Add more

@@ -42,14 +42,6 @@ script to the installation directory.  The value above is correct when
 QMTest is being run out of the source tree.  When QMTest is installed,
 this value is updated appropriately."""
 
-rel_libdir = ""
-"""The relative path from the prefix to the library directory.
-
-This path gives the relative path from the prefix to the library
-directory.  The value above is correct when QMTest is being run out of
-the source tree.  When QMTest is installed, this value is updated
-appropriately."""
-
 # Get the path to this script.
 qm_path = os.path.abspath(sys.argv[0])
 
@@ -61,9 +53,25 @@ if qm_home is None:
                                             rel_prefix))
 
 # Update sys.path so that we can find the rest of QMTest.
-libdir = os.path.normpath(os.path.join(qm_home, rel_libdir))
-if libdir not in sys.path:
-    sys.path.insert(0, libdir)
+if sys.platform != "win32":
+    rel_libdir = ""
+    """The relative path from the prefix to the library directory.
+
+    This path gives the relative path from the prefix to the library
+    directory.  The value above is correct when QMTest is being run out of
+    the source tree.  When QMTest is installed, this value is updated
+    appropriately."""
+
+    libdir = os.path.normpath(os.path.join(qm_home, rel_libdir))
+    if libdir not in sys.path:
+        sys.path.insert(0, libdir)
+else:
+    # On Windows, the value computed for rel_libdir is incorrect because
+    # Distutils does a mock pre-installation using different directory
+    # names than are used by the binary installer.  On Windows, however,
+    # the QM module files are installed into a location that is already in
+    # sys.path.
+    pass
 
 import qm
 
