@@ -21,6 +21,7 @@ import qm
 from   qm.test.context import ContextException
 import sys
 import types
+import cgi
 
 ########################################################################
 # Classes
@@ -261,6 +262,20 @@ class Result:
             return ""
     
         
+    def Quote(self, string):
+        """Return a version of string suitable for an annotation value.
+
+        Performs appropriate quoting for a string that should be taken
+        verbatim; this includes HTML entity escaping, and addition of
+        <pre> tags.
+
+        'string' -- The verbatim string to be quoted.
+
+        returns -- The quoted string."""
+
+        return "<pre>%s</pre>" % cgi.escape(string)
+
+
     def NoteException(self,
                       exc_info = None,
                       cause = None,
@@ -301,7 +316,7 @@ class Result:
         self[Result.CAUSE] = cause
         self[Result.EXCEPTION] = "%s: %s" % exc_info[:2]
         self[Result.TRACEBACK] \
-            = "<pre>" + qm.format_traceback(exc_info) + "</pre>"
+            = self.Quote(qm.format_traceback(exc_info))
 
         
     def MakeDomNode(self, document):

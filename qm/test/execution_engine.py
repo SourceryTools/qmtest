@@ -825,15 +825,24 @@ class ExecutionEngine:
             uname = " ".join(os.uname())
         except:
             uname = None
+        try:
+            userid = str(qm.common.get_userid())
+        except:
+            userid = None
+
+        args_str = " ".join(sys.argv)
 
         # Write them.
         for rs in self.__result_streams:
             rs.WriteAllAnnotations(self.__context)
             rs.WriteAnnotation("qmtest.run.start_time", start_time_str)
             if username is not None:
-                rs.WriteAnnotation("qmtest.run.user", username)
+                rs.WriteAnnotation("qmtest.run.username", username)
+            if userid is not None:
+                rs.WriteAnnotation("qmtest.run.userid", userid)
             rs.WriteAnnotation("qmtest.run.version", qm.version)
             rs.WriteAnnotation("qmtest.run.uname", uname)
+            rs.WriteAnnotation("qmtest.run.command_line", args_str)
 
 
 ########################################################################

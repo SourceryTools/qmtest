@@ -15,6 +15,7 @@
 # Imports
 ########################################################################
 
+import types
 import cPickle
 import struct
 import qm.fields
@@ -152,6 +153,8 @@ class PickleResultStream(FileResultStream):
 
     def WriteAnnotation(self, key, value):
 
+        assert isinstance(key, types.StringTypes)
+        assert isinstance(value, types.StringTypes)
         self.__pickler.dump(_annotation_sentinel)
         self._WriteAnnotationPtr()
         self.__pickler.dump(("annotation", key, value))

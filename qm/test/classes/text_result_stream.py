@@ -17,9 +17,8 @@
 # imports
 ########################################################################
 
-import formatter
-import htmllib
-import StringIO
+import qm.common
+import qm.fields
 from   qm.test.base import *
 from   qm.test.result import *
 from   qm.test.file_result_stream import FileResultStream
@@ -190,8 +189,8 @@ class TextResultStream(FileResultStream):
             self._DisplayHeading("TEST RESULTS")
             self.__first_test = 0
         
-	# Display the result.
-	self._DisplayResult(result, self.format)
+        # Display the result.
+        self._DisplayResult(result, self.format)
 
         # Display annotations associated with the test.
         if (self.format == "full"
@@ -350,27 +349,27 @@ class TextResultStream(FileResultStream):
             return
 
         # Generate them.
-	for result in results:
+        for result in results:
             self._DisplayResult(result, self.format)
 
 
     def _DisplayResult(self, result, format):
-	"""Display 'result'.
+        """Display 'result'.
 
-	'result' -- The 'Result' of a test or resource execution.
+        'result' -- The 'Result' of a test or resource execution.
 
         'format' -- The format to use when displaying results."""
 
-	id_ = result.GetId()
+        id_ = result.GetId()
         kind = result.GetKind()
-	outcome = result.GetOutcome()
+        outcome = result.GetOutcome()
 
-	# Print the ID and outcome.
-	if self.expected_outcomes:
-	    # If expected outcomes were specified, print the expected
-	    # outcome too.
-	    expected_outcome = \
-	        self.expected_outcomes.get(id_, Result.PASS)
+        # Print the ID and outcome.
+        if self.expected_outcomes:
+            # If expected outcomes were specified, print the expected
+            # outcome too.
+            expected_outcome = \
+                self.expected_outcomes.get(id_, Result.PASS)
             if (outcome == Result.PASS
                 and expected_outcome == Result.FAIL):
                 self._WriteOutcome(id_, kind, "XPASS")
@@ -381,7 +380,7 @@ class TextResultStream(FileResultStream):
                 self._WriteOutcome(id_, kind, outcome, expected_outcome)
             else:
                 self._WriteOutcome(id_, kind, outcome)
-	else:
+        else:
             self._WriteOutcome(id_, kind, outcome)
 
         # Print the cause of the failure.
@@ -406,15 +405,10 @@ class TextResultStream(FileResultStream):
             self.file.write("    %s:\n" % name)
 
             # Convert the HTML to text.
-            s = StringIO.StringIO()
-            w = formatter.DumbWriter(s)
-            f = formatter.AbstractFormatter(w)
-            p = htmllib.HTMLParser(f)
-            p.feed(result[name])
-            p.close()
+            text = qm.common.html_to_text(result[name])
 
             # Write out the text.
-            for l in s.getvalue().splitlines():
+            for l in text.splitlines():
                 self.file.write("      " + l + "\n")
             self.file.write("\n")
         
@@ -436,10 +430,10 @@ class TextResultStream(FileResultStream):
             name = "Cleanup " + name
         
         if expected_outcome:
-	    self.file.write("  %-46s: %-8s, expected %-8s\n"
+            self.file.write("  %-46s: %-8s, expected %-8s\n"
                             % (name, outcome, expected_outcome))
-	else:
-	    self.file.write("  %-46s: %-8s\n" % (name, outcome))
+        else:
+            self.file.write("  %-46s: %-8s\n" % (name, outcome))
 
             
     def _DisplayHeading(self, heading):

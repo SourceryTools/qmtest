@@ -135,9 +135,11 @@ class TETStream(FileResultStream):
         self._start_time = "<unknown_start_time>"
         self._finish_time = "<unknown_finish_time>"
         self._aborted = False
-        self._user = "<unknown_user>"
+        self._username = "<unknown_user>"
+        self._userid = "<unknown_user>"
         self._version = "<unknown_version>"
         self._uname = "<unknown_uname>"
+        self._cmdline = "<unknown_command_line>"
         self._settings = {}
 
         self._tcc_number = 0
@@ -190,12 +192,16 @@ class TETStream(FileResultStream):
                                = self._TETFormatTime(value)
         elif key == "qmtest.run.aborted" and value == "true":
             self._aborted = True
-        elif key == "qmtest.run.user":
-            self._user = value
+        elif key == "qmtest.run.username":
+            self._username = value
+        elif key == "qmtest.run.userid":
+            self._userid = value
         elif key == "qmtest.run.version":
             self._version = "qmtest-" + value
         elif key == "qmtest.run.uname":
             self._uname = value
+        elif key == "qmtest.run.command_line":
+            self._cmdline = value
         else:
             self._settings[key] = value
 
@@ -210,11 +216,15 @@ class TETStream(FileResultStream):
 
         # Test case controller start
         # 0 | version time date | who
-        self._WriteLine(0,
-                        "%s %s %s" % (self._version,
-                                      self._start_time,
-                                      self._start_date),
-                        "User: " + qm.common.get_username())
+        # who is
+        # "User: <username> (<numeric-id>) TCC Start, Command line: <cmdline>"
+        data = "%s %s %s" % (self._version,
+                             self._start_time,
+                             self._start_date)
+        who = "User: %s (%s) TCC Start, Command line: %s" \
+              % (self._username, self._userid, self._cmdline)
+
+        self._WriteLine(0, data, who)
         # Local system information
         # 5 | sysname nodename release version machine | text
         self._WriteLine(5, self._uname, "")
@@ -252,11 +262,14 @@ class TETStream(FileResultStream):
         # Test case start
         # 10 | activity_number testcase_path time | invocable_components
         started = self._ExtractTime(result, Result.START_TIME)
-        data = "%i %s %s" % (self._tcc_number, result.GetId(), started)
-        self._WriteLine(10, data, "")
+        data = "%i %s %s" % (self._tcc_number,
+                             "/" + result.GetId(),
+                             started)
+        self._WriteLine(10, data, "TC Start")
 
 
-    def _WriteResultAnnotations(self, result, seq_start=1):
+    def _WriteResultAnnotations(self, result, purpose,
+                                num_restrict=None, seq_start=1):
         """Writes out annotations for a 'result' in TET format.
 
         Annotations are represented as (sequences of) "test case
@@ -264,12 +277,28 @@ class TETStream(FileResultStream):
 
         'result' -- The 'Result' whose annotations should be written.
 
+        'num_restrict' -- Only write out annotations that end with this
+        number.  If the number is '1', also writes out all results that
+        don't end in any number, with "INFO: " prefixed.  If 'None',
+        writes out all annotations.
+
         'seq_start' -- The TET test case information sequence number to
         start with."""
 
         seqnum = seq_start
-        for key, value in result.items():
-            for line in value.split("\n"):
+        keys = result.keys()
+        keys.sort()
+        for key in keys:
+            value = result[key]
+            prefix = ""
+            if num_restrict is not None:
+                if num_restrict == 1 and key[-1] not in "0123456789":
+                    prefix = "INFO: "
+                elif not key.endswith("_%i" % num_restrict):
+                    continue
+                    
+            text = qm.common.html_to_text(value)
+            for line in text.split("\n"):
                 # Test case information
                 # 520 | activity_num tp_num context block sequence | text
                 #
@@ -285,8 +314,10 @@ class TETStream(FileResultStream):
                 # 'sequence' appears to be incremented for each line
                 #   within a single test purpose and context.
                 self._WriteLine(520,
-                                "%i 0 0 1 %i" % (self._tcc_number, seqnum),
-                                "%s: %s" % (key, line))
+                                "%i %i 0 1 %i" % (self._tcc_number,
+                                                  purpose,
+                                                  seqnum),
+                                "%s%s: %s" % (prefix, key, line))
                 seqnum += 1
 
 
@@ -301,8 +332,6 @@ class TETStream(FileResultStream):
         keys.sort(lambda k1, k2: cmp(int(k1[len(DejaGNUTest.RESULT_PREFIX):]),
                                      int(k2[len(DejaGNUTest.RESULT_PREFIX):])))
 
-        self._WriteResultAnnotations(result)
-                
         start_time = self._ExtractTime(result, Result.START_TIME)
         end_time = self._ExtractTime(result, Result.END_TIME)
 
@@ -315,46 +344,40 @@ class TETStream(FileResultStream):
             self._WriteLine(200,
                             "%i %i %s"
                             % (self._tcc_number, purpose, start_time),
-                            "")
-            if outcome == DejaGNUTest.WARNING:
-                # Test case information
-                # 520 | activity_num tp_num context block sequence | text
-                # (see _WriteResultAnnotations for details)
-                self._WriteLine(520,
-                                "%i %i 0 1 1" % (self._tcc_number,
-                                                 purpose),
-                                "WARNING")
-            elif outcome == DejaGNUTest.ERROR:
-                # Test case information
-                # 520 | activity_num tp_num context block sequence | text
-                # (see _WriteResultAnnotations for details)
-                self._WriteLine(520,
-                                "%i %i 0 1 1" % (self._tcc_number,
-                                                 purpose),
-                                "ERROR")
-            else:
-                outcome_num, outcome_name \
-                    = { DejaGNUTest.PASS: self.PASS,
-                        DejaGNUTest.XPASS: self.PASS,
-                        DejaGNUTest.FAIL: self.FAIL,
-                        DejaGNUTest.XFAIL: self.FAIL,
-                        DejaGNUTest.UNTESTED: self.UNTESTED,
-                        DejaGNUTest.UNRESOLVED: self.UNRESOLVED,
-                        # TET's UNSUPPORTED is like a FAIL for tests
-                        # that check for optional features; UNTESTED is
-                        # the correct correspondent for DejaGNU's
-                        # UNSUPPORTED.
-                        DejaGNUTest.UNSUPPORTED: self.UNTESTED,
-                        }[outcome]
-                # Test purpose result
-                # 220 | activity_number tp_number result time | result-name
-                data = "%i %i %i %s" % (self._tcc_number,
-                                        purpose,
-                                        outcome_num,
-                                        end_time)
-                self._WriteLine(220, data, outcome_name)
+                            "TP Start")
 
-                purpose += 1
+            outcome_num, outcome_name \
+                = { DejaGNUTest.PASS: self.PASS,
+                    DejaGNUTest.XPASS: self.PASS,
+                    DejaGNUTest.FAIL: self.FAIL,
+                    DejaGNUTest.XFAIL: self.FAIL,
+                    DejaGNUTest.UNTESTED: self.UNTESTED,
+                    DejaGNUTest.UNRESOLVED: self.UNRESOLVED,
+                    DejaGNUTest.ERROR: self.UNRESOLVED,
+                    DejaGNUTest.WARNING: self.WARNING,
+                    # TET's UNSUPPORTED is like a FAIL for tests
+                    # that check for optional features; UNTESTED is
+                    # the correct correspondent for DejaGNU's
+                    # UNSUPPORTED.
+                    DejaGNUTest.UNSUPPORTED: self.UNTESTED,
+                    }[outcome]
+            # As a special case, check for magic annotation.
+            if result.has_key("test_not_relevant_to_testing_mode"):
+                outcome_num, outcome_name = self.NOTINUSE
+
+            # Write per-purpose annotations:
+            self._WriteResultAnnotations(result, purpose,
+                                         num_restrict=purpose)
+
+            # Test purpose result
+            # 220 | activity_number tp_number result time | result-name
+            data = "%i %i %i %s" % (self._tcc_number,
+                                    purpose,
+                                    outcome_num,
+                                    end_time)
+            self._WriteLine(220, data, outcome_name)
+
+            purpose += 1
             
         # Test case end
         # 80 | activity_number completion_status time | text
@@ -362,7 +385,7 @@ class TETStream(FileResultStream):
         # the documented examples.
         self._WriteLine(80,
                         "%i 0 %s" % (self._tcc_number, end_time),
-                        "")
+                        "TC End")
 
             
     def _WriteTestResult(self, result):
@@ -372,30 +395,30 @@ class TETStream(FileResultStream):
         # Test purpose start
         # 200 | activity_number test_purpose_number time | text
         start_time = self._ExtractTime(result, Result.START_TIME)
-        data = "%i 0 %s" % (self._tcc_number, start_time)
-        self._WriteLine(200, data, "")
+        data = "%i 1 %s" % (self._tcc_number, start_time)
+        self._WriteLine(200, data, "TP Start")
 
         outcome_num, outcome_name = { Result.FAIL: self.FAIL,
                                       Result.PASS: self.PASS,
                                       Result.UNTESTED: self.UNINITIATED,
                                       Result.ERROR: self.UNREPORTED,
                                     }[result.GetOutcome()]
-        # Test purpose result
-        # 220 | activity_number tp_number result time | result-name
-        end_time = self._ExtractTime(result, Result.END_TIME)
-        data = "%i 0 %i %s" % (self._tcc_number, outcome_num, end_time)
-        self._WriteLine(220, data, outcome_name)
-
         if result.GetOutcome() == Result.ERROR:
             # Test case information
             # 520 | activity_num tp_num context block sequence | text
             # (see _WriteResultAnnotations for details)
             self._WriteLine(520,
-                            "%i 0 0 1 1" % self._tcc_number,
-                            "ERROR in test " + result.GetId())
-            self._WriteResultAnnotations(result, 2)
+                            "%i 1 0 1 1" % self._tcc_number,
+                            "QMTest ERROR in test " + result.GetId())
+            self._WriteResultAnnotations(result, 1, seq_start=2)
         else:
-            self._WriteResultAnnotations(result)
+            self._WriteResultAnnotations(result, 1)
+
+        # Test purpose result
+        # 220 | activity_number tp_number result time | result-name
+        end_time = self._ExtractTime(result, Result.END_TIME)
+        data = "%i 1 %i %s" % (self._tcc_number, outcome_num, end_time)
+        self._WriteLine(220, data, outcome_name)
 
         # Test case end
         # 80 | activity_number completion_status time | text
@@ -403,7 +426,7 @@ class TETStream(FileResultStream):
         # the documented examples.
         self._WriteLine(80,
                         "%i 0 %s" % (self._tcc_number, end_time),
-                        "")
+                        "TC End")
 
 
     def _WriteResourceResult(self, result):

@@ -32,6 +32,9 @@ import time
 import traceback
 import types
 import getpass
+import StringIO
+import htmllib
+import formatter
 if sys.platform != "win32":
     import fcntl
     
@@ -780,6 +783,10 @@ def read_assignments(file):
 def get_username():
     """Returns the current username as a string.
 
+    This is our best guess as to the username of the user who is
+    actually logged in, as opposed to the effective user id used for
+    running tests.
+
     If the username cannot be found, raises a 'QMException'."""
 
     # First try using the 'getpass' module.
@@ -803,6 +810,41 @@ def get_username():
 
     # And if none of that worked, give up.
     raise QMException, "Cannot determine user name."
+
+
+def get_userid():
+    """Returns the current user id as an integer.
+
+    This is the real user id, not the effective user id, to better track
+    who is actually running the tests.
+
+    If the user id cannot be found or is not defined, raises a
+    'QMException'."""
+
+    try:
+        uid = os.getuid()
+    except AttributeError:
+        raise QMException, "User ids not supported on this system."
+    return uid
+    
+
+def html_to_text(html, width=72):
+    """Renders HTML to text in a simple way.
+
+    'html' -- A string containing the HTML code to be rendered.
+
+    'width' -- Column at which to word-wrap.  Default 72.
+
+    returns -- A string containing a plain text rendering of the
+    HTML."""
+
+    s = StringIO.StringIO()
+    w = formatter.DumbWriter(s, width)
+    f = formatter.AbstractFormatter(w)
+    p = htmllib.HTMLParser(f)
+    p.feed(html)
+    p.close()
+    return s.getvalue()
 
 
 ########################################################################

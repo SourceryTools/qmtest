@@ -93,10 +93,10 @@ class RegTest(Test):
         stderr = e.stderr
 
         result.Annotate({
-            "selftest.RegTest.cmdline"  : ' '.join(argv),
+            "selftest.RegTest.cmdline"  : result.Quote(' '.join(argv)),
             "selftest.RegTest.exitcode" : ("%d" % status),
-            "selftest.RegTest.stdout"   : '<pre>' + stdout + '</pre>',
-            "selftest.RegTest.stderr"   : '<pre>' + stderr + '</pre>'
+            "selftest.RegTest.stdout"   : result.Quote(stdout),
+            "selftest.RegTest.stderr"   : result.Quote(stderr),
             })
 
         if stderr != '':

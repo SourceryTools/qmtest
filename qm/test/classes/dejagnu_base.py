@@ -32,7 +32,7 @@ class DejaGNUBase:
 
         index = self.__next_command
         key = "DejaGNUTest.command_%d" % index
-        result[key] = "<tt><pre>" + " ".join(command) + "</tt></pre>"
+        result[key] = result.Quote(" ".join(command))
         self.__next_command += 1
 
         return index
@@ -57,7 +57,7 @@ class DejaGNUBase:
             result["DejaGNUTest.command_status_%d" % index] = str(status)
         if output:
             result["DejaGNUTest.command_output_%d" % index] \
-              = "<tt><pre>" + output + "</pre></tt>"
+              = result.Quote(output)
 
 
     def _SetUp(self, context):

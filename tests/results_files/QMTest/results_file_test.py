@@ -69,8 +69,8 @@ class ResultsFileTest(Test):
         result.Annotate({
             "selftest.RegTest.cmdline"  : ' '.join(argv),
             "selftest.RegTest.exitcode" : ("%d" % status),
-            "selftest.RegTest.stdout"   : '<pre>' + e.stdout + '</pre>',
-            "selftest.RegTest.stderr"   : '<pre>' + e.stderr + '</pre>',
+            "selftest.RegTest.stdout"   : result.Quote(e.stdout),
+            "selftest.RegTest.stderr"   : result.Quote(e.stderr),
             })
 
         if e.stderr != '':

@@ -1,3 +1,49 @@
+2004-03-30  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (htmllib): Import it.
+	(StringIO): Likewise.
+	(formatter): Likewise.
+	(html_to_text): New function.
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream._DisplayAnnotations): Use it.
+	(formatter): Don't import it.
+	(htmllib): Likewise.
+	(StringIO): Likewise.
+	(qm.common): Import it.
+	(qm.fields): Likewise.
+	
+	* qm/test/result.py (cgi): Import it.
+	(Result.Quote): New function.
+	(Result.NoteException): Use it.
+	* qm/test/classes/dg_test.py (DGTest._RunDGTest): Likewise.
+	* qm/test/classes/command.py (ExecTestBase.RunProgram):
+	Likewise.
+	* qm/test/classes/dejagnu_base.py
+	(DejaGNUBase._RecordCommandOutput): Likewise.
+	(DejaGNUBase._RecordCommand): Likewise.
+	* tests/regress/QMTest/selftest.py (RegTest.Run): Likewise.
+	* tests/results_files/QMTest/results_file_test.py
+	(ResultsFileTest.Run): Likewise.
+
+	* qm/test/classes/tet_stream.py (TETStream): Many output
+	enhancements.
+
+	* qm/test/classes/dg_test.py (DGTest._RunDGTest): Refactor,
+	(DGTest._RunDGToolPortion): ...creating this.
+	(DGTest._RunDGExecutePortion): ...and this.
+
+	* qm/test/classes/pickle_result_stream.py (types): Import it.
+	(PickleResultStream.WriteAnnotation): Check that annotations are
+	strings.
+
+	* qm/common.py (get_username): Expand docstring.
+	(get_userid): New function.
+	* qm/test/execution_engine.py
+	(ExecutionEngine._WriteInitialAnnotations): Use it.
+	Disambiguate old "qmtest.run.user" annotation by renaming to
+	"qmtest.run.username".
+	Add "qmtest.run.command_line" annotation.
+	
 2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
 	
 	* qm/test/target.py (Target._SetUpResource): Fix typo from

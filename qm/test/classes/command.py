@@ -203,8 +203,8 @@ class ExecTestBase(Test):
             stderr = e.stderr
             # Record the results.
             result["ExecTest.exit_code"] = str(exit_code)
-            result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
-            result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
+            result["ExecTest.stdout"] = result.Quote(stdout)
+            result["ExecTest.stderr"] = result.Quote(stderr)
             # Check to see if the exit code matches.
             if exit_code != self.exit_code:
                 causes.append("exit_code")
@@ -214,12 +214,12 @@ class ExecTestBase(Test):
             if not self.__CompareText(stdout, self.stdout):
                 causes.append("standard output")
                 result["ExecTest.expected_stdout"] \
-                    = "<pre>" + self.stdout + "</pre>"
+                    = result.Quote(self.stdout)
             # Check to see that the standard error matches.
             if not self.__CompareText(stderr, self.stderr):
                 causes.append("standard error")
                 result["ExecTest.expected_stderr"] \
-                    = "<pre>" + self.stderr + "</pre>"
+                    = result.Quote(self.stderr)
             # If anything went wrong, the test failed.
             if causes:
                 result.Fail("Unexpected %s." % string.join(causes, ", ")) 
