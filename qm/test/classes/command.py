@@ -526,8 +526,9 @@ class ShellCommandTest(ExecTestBase):
 
     QMTest determines which shell to use by the following method:
 
-      - If the context contains the property 'command_shell', its value
-        is split into an argument list and used.
+      - If the context contains the property
+        'ShellCommandTest.command_shell', its value is split into
+        an argument list and used.
 
       - Otherwise, if the '.qmrc' configuration file contains the common
         property 'command_shell', its value is split into an argument
@@ -564,10 +565,10 @@ class ShellCommandTest(ExecTestBase):
         'Result.PASS' or to add annotations."""
 
         # If the context specifies a shell, use it.
-        if context.has_key("command_shell"):
+        if context.has_key("ShellCommandTest.command_shell"):
             # Split the context value to build the argument list.
             shell = qm.common.split_argument_list(
-                context["command_shell"])
+                context["ShellCommandTest.command_shell"])
         else:
             # Otherwise, use a platform-specific default.
             shell = qm.platform.get_shell_for_command()
@@ -587,8 +588,9 @@ class ShellScriptTest(ExecTestBase):
 
     QMTest determines which shell to use by the following method:
 
-      - If the context contains the property 'script_shell', its value
-        is split into an argument list and used.
+      - If the context contains the property
+        'ShellScriptTest.script_shell', its value is split into an
+        argument list and used.
 
       - Otherwise, if the '.qmrc' configuration file contains the common
         property 'script_shell', its value is split into an argument
@@ -646,10 +648,10 @@ class ShellScriptTest(ExecTestBase):
             script_file.write(self.script)
             script_file.close()
             # If the context specifies a shell, use it.
-            if context.has_key("script_shell"):
+            if context.has_key("ShellScriptTest.script_shell"):
                 # Split the context value to build the argument list.
                 shell = qm.common.split_argument_list(
-                    context["script_shell"])
+                    context["ShellScriptTest.script_shell"])
             else:
                 # Otherwise, use a platform-specific default.
                 shell = qm.platform.get_shell_for_script()
