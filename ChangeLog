@@ -1,3 +1,13 @@
+2001-02-15  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/qmtrack.py: Fix coding standards issues.
+	* qm/track/issue_class.py: Likewise.
+	* qm/track/memory_idb.py: Likewise.
+
+	* qm/command_line.py (CommandParser::ParseCommandLine): Fix
+	to use 'write' instead of print. Add code to check for command
+	existence.
+	
 2001-02-14  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/issue_class.py (IssueFieldEnumeration::GetEnumeration): 

@@ -315,8 +315,8 @@ class CommandParser:
             flags, args = getopt.getopt(argv, self.__getopt_options,
                                         getopt_list)
         except getopt.error, msg:
-            print msg
-            print self.GetBasicHelp()
+            self.__output.write(msg + "\n")
+            self.__output.write(self.GetBasicHelp() + "\n")
             return -1
             
         
@@ -333,6 +333,21 @@ class CommandParser:
         # Get the command.
         command = args[0]
 
+        # This checks to make sure the command they specified is actually
+        # a command that we know.  Checking this now saves trouble
+        # in having to do it later.
+        found = 0
+        for command_item in self.__commands:
+            if command == command_item[0]:
+                found = 1
+
+        # The command they specified does not exist, therefore we should
+        # print out the help and return -1.
+        if found == 0:
+            self.ErrorHandler(1, 'Unrecognized command "%s"' % command, 1,
+                              '')
+            return 1
+            
         # Get the arguments to the command.
         args = string.join(args[1:])
         command_options = []
@@ -348,9 +363,9 @@ class CommandParser:
                                                         getopt_string,
                                                         getopt_list)
         except getopt.error, msg:
-            print "command '" + command + "':",
-            print msg
-            print self.GetCommandHelp(command)
+            self.__output.write("command '" + command + "': ")
+            self.__output.write(msg + "\n")
+            self.__output.write(self.GetCommandHelp(command) + "\n")
             return -1
 
         for i in range(0, len(command_flags)):

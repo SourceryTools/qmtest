@@ -342,12 +342,13 @@ class IssueFieldEnumeration(IssueFieldInteger):
     def GetEnumeration(self):
         """Get the enumeration mapping from this class.
 
-        XXX. Another shameless hack by Benjamin Chelf. We need to get
+        XXX: Another shameless hack by Benjamin Chelf.  We need to get
         the actual mapping (not the string found in the attribute)
-        so we can set enumerals to their integer values. Better suggestions
+        so we can set enumerals to their integer values.  Better suggestions
         to do this are appreciated.
 
-        'returns' -- A mapping from enumerals to their integer values."""
+        'returns' -- This function returns a mapping from enumerals to
+        their integer values."""
 
         return self.__enumeration
     

@@ -206,11 +206,12 @@ class MemoryIdb(qm.track.IdbBase):
     def GetIssues(self):
         """Return a list of all the issues.
 
-        This function is a hack to test the querying. We want something
-        better for sure in the future. Hacked in by Benjamin Chelf.
+        This function is a hack to test the querying.  We want something
+        better for sure in the future.  Created by Benjamin Chelf.
         FOR INTERNAL USE ONLY.
 
-        'returns' -- A list of all the issues in the database."""
+        'returns' -- This function returns a list of all the issues in the
+        database."""
 
         return self.__issues.values()
 
