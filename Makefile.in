@@ -75,6 +75,7 @@ sgmlop/Makefile:
 # Run the install.py script to install everything.
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
+	rm -rf $(INSTALLSHAREDIR)
 	$(PYTHON) install.py \
 	    $(INSTALLBINDIR) $(INSTALLLIBDIR) $(INSTALLSHAREDIR)
 	cd $(INSTALLLIBDIR)/gadfly; $(PYTHON) gfinstall.py

@@ -1,5 +1,9 @@
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* Makefile.in (install): Clean up share directory.
+
+2001-03-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/setup_path.py.in (add_to_python_path): Use __lib_dir.
 	(__base_dir): Remove.
 	(__lib_dir): New variable.
