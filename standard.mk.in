@@ -65,6 +65,10 @@ DOCDIR		= $(BUILDDIR)/doc
 # Python configuration.
 PYTHONBIN	= @PYTHON@
 PYTHON		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
+PYTHON_VERSION	= @PYTHON_VERSION@
+PYTHON_PREFIX   = @PYTHON_PREFIX@
+PYTHON_PLATFORM = @PYTHON_PLATFORM@
+MAKEFILE_PRE_IN = $(PYTHON_PREFIX)/lib/python$(PYTHON_VERSION)/config/Makefile.pre.in
 PYTHONDIRS	= $(TOPDIR) \
                   $(TOPDIR)/zope-dtml \
                   $(TOPDIR)/zope-dtml/ExtensionClass

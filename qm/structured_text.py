@@ -818,6 +818,8 @@ def get_rest(structured_text):
 # Write a regular expression for finding characters that need to be
 # escaped as HTML entities.
 __entity_char_regex = htmlentitydefs.entitydefs.values()
+# FIXME: Only handle single-byte characters.
+__entity_char_regex = filter(lambda l: len(l) == 1, __entity_char_regex)
 __entity_char_regex = "[" + string.join(__entity_char_regex, "") + "]"
 __entity_char_regex = re.compile(__entity_char_regex)
 
@@ -826,13 +828,13 @@ __entity_char_regex = re.compile(__entity_char_regex)
 # corresponding HTML entity code.
 __entity_char_replacement = {}
 for entity, character in htmlentitydefs.entitydefs.items():
-    __entity_char_replacement[character] = "&%s;" % entity
+    if len(character) == 1:
+        __entity_char_replacement[character] = "&%s;" % entity
 # Write a function for use as the regex replacement that looks up the
 # corresponding entity for a matched character.
 __entity_char_replacement = lambda match, \
                                    replacement_map=__entity_char_replacement: \
                             replacement_map[match.group(0)]
-
 
 ########################################################################
 # script

@@ -62,16 +62,10 @@ setup:		gadfly/sqlwhere.py
 gadfly/sqlwhere.py:
 	cd gadfly; python gfinstall.py
 
-# Build the ExtensionClass package Makefile.
-zope-dtml/ExtensionClass/Makefile:
-	cd zope-dtml/ExtensionClass; \
-	cp /usr/lib/python1.5/config/Makefile.pre.in .; \
-        make -f Makefile.pre.in boot
-
 # Build the sgmlop package Makefile.
 sgmlop/Makefile:
 	cd sgmlop; \
-	cp /usr/lib/python1.5/config/Makefile.pre.in .; \
+	cp $(MAKEFILE_PRE_IN) ./Makefile.pre.in; \
 	make -f Makefile.pre.in boot
 
 # Build the PyXML package.

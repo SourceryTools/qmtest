@@ -61,6 +61,12 @@ def add_to_python_path(*components):
         sys.path.insert(0, path)
 
 
+def get_python_version():
+    """Return the Python version number, as used by 'distutils'."""
+
+    return sys.version[0:3]
+
+
 ########################################################################
 # script
 ########################################################################
@@ -70,6 +76,8 @@ def add_to_python_path(*components):
 __lib_dir = "@qm_lib_path@"
 __share_dir = "@qm_share_path@"
 __doc_dir = "@qm_doc_path@"
+__python_version = "@python_version@"
+__python_platform = "@python_platform@"
 
 # Add things to the Python search path that we'll need.
 add_to_python_path()
@@ -77,7 +85,8 @@ add_to_python_path("zope-dtml")
 add_to_python_path("zope-dtml", "ExtensionClass")
 add_to_python_path("sgmlop")
 add_to_python_path("xmlrpc")
-add_to_python_path("PyXML/build/lib.linux-i686-1.5")
+add_to_python_path("PyXML/build/lib.%s-%s" %
+                   (__python_platform, __python_version))
 
 # Now store the QM directories in the environment, so that other modules
 # can access them.

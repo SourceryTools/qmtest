@@ -64,6 +64,26 @@ fi
 
 
 dnl ####################################################################
+dnl Determine the Python version, installation prefix, and and platform.
+dnl ####################################################################
+
+AC_MSG_CHECKING(Python version)
+PYTHON_VERSION=`$PYTHON -c "import sys; import string; print string.split(sys.version, ' ')[[0]][[:3]]"`
+AC_MSG_RESULT($PYTHON_VERSION)
+AC_SUBST(PYTHON_VERSION)
+
+AC_MSG_CHECKING(Python prefix)
+PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
+AC_MSG_RESULT($PYTHON_PREFIX)
+AC_SUBST(PYTHON_PREFIX)
+
+AC_MSG_CHECKING(Python platform)
+PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()"`
+AC_MSG_RESULT($PYTHON_PLATFORM)
+AC_SUBST(PYTHON_PLATFORM)
+
+
+dnl ####################################################################
 dnl Look for HappyDoc, which we use to build source documentation.
 dnl ####################################################################
 

@@ -51,6 +51,8 @@ setup_path.py: 	setup_path.py.in Makefile
 	  sed "s#@qm_lib_path@#$$CYGWIN$$(pwd)/..#" $< \
 	  | sed "s#@qm_share_path@#$$CYGWIN$$(pwd)/../share#" \
 	  | sed "s#@qm_doc_path@#$$(pwd)/../doc#" \
+	  | sed "s#@python_version@#$(PYTHON_VERSION)#" \
+	  | sed "s#@python_platform@#$(PYTHON_PLATFORM)#" \
 	) > $@
 	chmod a-w $@
 

@@ -1,5 +1,32 @@
 2001-09-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* configure.in: Extract PYTHON_VERSION, PYTHON_PREFIX,
+	PYTHON_PLATFORM. 
+	* configure: Regenerate.
+	* standard.mk.in (PYTHON_VERSION): New variable.
+	(PYTHON_PREFIX): Likewise.
+	(PYTHON_PLATFORM): Likewise.
+	(MAKEFILE_PRE_IN): Likewise.
+	* Makefile.in (zope-dtml/ExtensionClass/Makefile): Remove rule.
+	(sgmlop/Makefile): Use MAKEFILE_PRE_IN.
+	* qm/Makefile.in (setup_path.py): Substitute @python_version@ and
+	@python_platform@. 
+	* qm/setup_path.py.in (get_python_version): New function.
+	(__python_version): New variable.
+	(__python_platform): Likewise.
+	Use them for PyXML path.
+	* qm/structured_text.py (__entity_char_regex): Handle
+	single-character entities only.
+	(__entity_char_replacement): Likewise.
+	* zope-dtml/ExtensionClass/Makefile.in (TOPDIR): New variable.
+	Include standard.mk.
+	(all): Use PYTHON.
+	* sgmlop/Makefile.in (TOPDIR): New variable.
+	Include standard.mk.
+	(all): Use PYTHON.
+	
+2001-09-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* configure.in: Rewrite.
 	* configure: Regenerate.
 	* standard.mk.in: Rewrite documentation portions.
