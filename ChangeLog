@@ -1,3 +1,7 @@
+2002-12-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/test.py (Test.TestField): Fix typo in comment.
+
 2002-12-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (get_class_arguments): Allow derived classe
