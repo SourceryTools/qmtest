@@ -1,2 +1,2 @@
 <?xml version="1.0" ?>
-<class-directory><class kind="test">gcc_database.DGTest</class></class-directory>
+<class-directory><class kind="resource">compiler_table.CompilerTable</class></class-directory>

@@ -1,3 +1,16 @@
+2003-06-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (Compiler.MODE_PREPROCESS): New variable.
+	(GPP): Rename to ...
+	(GCC): ... this.
+	(GCC.MODE_PRECOMPILE): New variable.
+	(GCC.modes): Add it.
+	* compiler_table.py: New file.
+	* gcc_database.py: Remove.
+	
+	* classes.qmc: Add compiler_table.CompilerTable.  Remove
+	gcc_database.DGTest.
+
 2002-12-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler_test.py (CompilerBase._QuoteForHTML): New method.
