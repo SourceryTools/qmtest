@@ -1,5 +1,7 @@
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (CommandTest): Fix typo in comment.
+
 	* qm/fields.py (SetField.GetValueFromDomNode): Correct thinko.
 
 	* qm/test/classes/command.py (ExecTest.fields): Adjust

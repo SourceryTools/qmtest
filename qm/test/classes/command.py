@@ -434,9 +434,9 @@ class ExecTest:
 class ShellCommandTest(ExecTest):
     """Check a shell command's output and exit code.
 
-    A 'CommandTest' runs the shell and compares its standard output,
-    standard error, and exit code with expected values.  The shell
-    may be provided with command-line arguments and/or standard
+    A 'ShellCommandTest' runs the shell and compares its standard
+    output, standard error, and exit code with expected values.  The
+    shell may be provided with command-line arguments and/or standard
     input.
 
     QMTest determines which shell to use by the following method:
