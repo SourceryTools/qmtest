@@ -1,5 +1,9 @@
 2001-12-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (SCRIPTS): Correct typo.
+	* gadfly/.cvsignore: Remove.
+	* scripts/qm-release: Remove empty directories manually.
+
 	* Makefile.in (SCRIPTS): Generate them here.
 	* qm/Makefile.in: Remove.
 	* scripts/qm-release (build_source): Tell CVS not to export 

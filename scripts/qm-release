@@ -96,6 +96,11 @@ build_source() {
     cvs -f -z9 -Q export -d qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
+    # The "-P" option is documented, but does not work, with "cvs export"
+    # in CVS 1.10.7.  Therefore, just try to remove all the directories
+    # exported; this will succeed only with empty directories.
+    find qm-${QM_VERSION} -type d -exec rmdir {} \; > /dev/null 2>&1 
+    # Create the tar file.
     tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
       error "Could not create tar file"
     # Build QM to obtain documentation files.

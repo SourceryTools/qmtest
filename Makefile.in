@@ -70,7 +70,7 @@ $(PYTHON_PACKAGES):
 ifneq ($(PYTHON_PLATFORM),win32)
 $(SCRIPTS): qm/qm.sh
 	rm -rf $@
-	cp qm.sh $@
+	cp qm/qm.sh $@
 	chmod a-w $@
 	chmod a+x $@
 else
