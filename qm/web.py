@@ -284,17 +284,33 @@ class PageInfo:
         request["_redirect_url"] = redirect_request.GetUrl()
         # Use a POST method to submit the login form, so that passwords
         # don't appear in web logs.
-        return qm.web.make_form_for_request(request, method="post") \
-               + '''
-   <table cellpadding="0" cellspacing="0">
-    <tr><td>User name:</td></tr>
-    <tr><td><input type="text" size="16" name="_login_user_name"></td></tr>
-    <tr><td>Password:</td></tr>
-    <tr><td><input type="password" size="16" name="_login_password"></td></tr>
-    <tr><td><input type="submit" value=" Log In "></td></tr>
-   </table>
-  </form>
-''' 
+        form = qm.web.make_form_for_request(request,
+                                            method="post",
+                                            name="login_form")
+        form = form + \
+        '''
+           <table cellpadding="0" cellspacing="0">
+            <tr><td>User name:</td></tr>
+            <tr><td>
+             <input type="text"
+                    size="16"
+                    name="_login_user_name"/>
+            </td></tr>
+            <tr><td>Password:</td></tr>
+            <tr><td>
+             <input type="password"
+                    size="16"
+                    name="_login_password"/>
+            </td></tr>
+            <tr><td>
+             <input type="button"
+                    value=" Log In "
+                    onclick="document.login_form.submit();"/>
+            </td></tr>
+           </table>
+          </form>
+        '''
+        return form
 
 
     def MakeButton(self, title, script_url, **fields):
@@ -364,6 +380,25 @@ class PageInfo:
         """Generate HTML for a user ID."""
 
         return '<span class="userid">%s</span>' % user_id
+
+
+    def UserIsInGroup(self, group_id):
+        """Return true if the user is a member of group 'group_id'.
+
+        Checks the group membership of the user associated with the
+        current session.
+
+        If there is no group named 'group_id' in the user database,
+        returns a false result."""
+
+        user_id = self.request.GetSession().GetUserId()
+        try:
+            group = user.database.GetGroup(group_id)
+        except KeyError:
+            # No such group.
+            return 0
+        else:
+            return user_id in group
 
 
 
@@ -1475,12 +1510,14 @@ def make_url(script_name, base_request=None, **fields):
     return request.AsUrl()
 
 
-def make_form_for_request(request, method="get"):
+def make_form_for_request(request, method="get", name=None):
     """Generate an opening form tag for 'request'.
 
     'request' -- A 'WebRequest' object.
 
     'method' -- The HTTP method for this form, either "get" or "post".
+
+    'name' -- The name of this form, or 'None'.
 
     returns -- An opening form tag for the request, plus hidden input
     elements for arguments to the request.
@@ -1488,13 +1525,20 @@ def make_form_for_request(request, method="get"):
     The caller must add additional inputs, the submit input, and close
     the form tag."""
 
+    if name is not None:
+        name_attribute = 'name="%s"' % name
+    else:
+        name_attribute = ''
     # Generate the form tag.
     if method == "get":
-        result = '<form method="get" action="%s">\n' % request.GetUrl()
+        result = '<form method="get" action="%s" %s>\n' \
+                 % (request.GetUrl(), name_attribute)
     elif method == "post":
-        result = '''<form method="post"
+        result = '''<form %s
+                          method="post"
                           enctype="multipart/form-data"
-                          action="%s">\n''' % request.GetUrl()
+                          action="%s">\n''' \
+        % (name_attribute, request.GetUrl())
     else:
         raise ValueError, "unknown method %s" % method
     # Add hidden inputs for the request arguments.
@@ -1583,14 +1627,26 @@ def handle_login(request, default_redirect_url="/"):
     If '_redirect_url' is not specified in the request, the value of
     'default_redirect_url' is used instead."""
 
-    user_id = qm.user.authenticator.AuthenticateWebRequest(request)
+    # The URL of the page to which to redirect on successful login is
+    # stored in the request.  Extract it.
+    redirect_url = request.get("_redirect_url", default_redirect_url)
+
+    try:
+        user_id = qm.user.authenticator.AuthenticateWebRequest(request)
+    except qm.user.AuthenticationError:
+        # Incorrect user name or password.  Show the login form.
+        message = qm.error("invalid login")
+        redirect_request = WebRequest(redirect_url)
+        return generate_login_form(redirect_request, message)
+    except qm.user.AccountDisabledError:
+        # Log in to a disabled account.  Show the login form again.
+        message = qm.error("disabled account")
+        redirect_request = WebRequest(redirect_url)
+        return generate_login_form(redirect_request, message)
 
     session = Session(request, user_id)
     session_id = session.GetId()
 
-    # The URL of the page to which to redirect on successful login is
-    # stored in the request.  Extract it.
-    redirect_url = request.get("_redirect_url", default_redirect_url)
     # Generate a new request for that URL.  Copy other fields from the
     # old request.
     redirect_request = request.copy(redirect_url)

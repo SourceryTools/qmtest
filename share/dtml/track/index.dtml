@@ -42,7 +42,9 @@
          <dtml-var expr="MakeLoginForm()">
         <dtml-else>
          <dtml-var expr="MakeLogoutForm()">
-          <input type="submit" value=" Log Out "/>
+          <input type="button" 
+                 value=" Log Out "
+                 onclick="document.logout_form.submit();"/>
          </form>
         </dtml-if>
        </td></tr>
@@ -57,7 +59,7 @@
          width="100%"
          bgcolor="#f0f0f0">
    <tbody>
-    <tr><th>Create a new issue.</th></tr>
+    <tr><th>Create a New Issue</th></tr>
     <tr>
      <td>
       <dtml-var expr="MakeNewForm()">
@@ -81,59 +83,66 @@
          </dtml-in>
         </select>
        </dtml-if>
-       <input type="submit" value=" New "/>
+       <input type="button" 
+              value=" New "
+              onclick="document.new_form.submit();"/>
       </form>
      </td>
     </tr>
 
     <tr><td></td></tr>
 
-    <tr><th>Show an existing issue.</th></tr>
+    <tr><th>Show or Edit an Existing Issue</th></tr>
     <tr>
      <td>
       <dtml-var expr="MakeShowForm()">
        Issue ID: <input type="text" size="8" name="iid"/>
-       <input type="submit" value=" Show "/>
+       <input type="hidden" name="style">
+       <input type="button" 
+              value=" Show "
+              onclick="document.show_form.style.value = 'full';
+                       document.show_form.submit();"/>
+       <input type="button"
+              value=" Edit "
+              onclick="document.show_form.style.value = 'edit';
+                       document.show_form.submit();"/>
       </form>
      </td>
     </tr>
 
     <tr><td></td></tr>
 
-    <tr><th>Edit an issue.</th></tr>
-    <tr>
-     <td>
-      <dtml-var expr="MakeEditForm()">
-       Issue ID: <input type="text" size="8" name="iid"/>
-       <input type="submit" value=" Edit "/>
-      </form>
-     </td>
-    </tr>
-
-    <tr><td></td></tr>
-
-    <tr><th>Search for issues.</th></tr>
+    <tr><th>Search for Issues</th></tr>
     <tr>
      <td>
       <dtml-var expr="MakeQueryForm()">
        Query: <input type="text" size="40" name="query"/>
-       <input type="submit" value=" Search "/>
+       <input type="button" 
+              onclick="document.query_form.submit();" 
+              value=" Search "/>
       </form>
       See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
       for instructions.
      </td>
     </tr>
 
-    <tr><td></td></tr>
+    <dtml-if expr="UserIsInGroup('administrators')">
 
-    <tr><th>Shut down server.</th></tr>
-    <tr>
-     <td>
-      <dtml-var expr="MakeShutdownForm()">
-       <input type="submit" value=" Shut Down "/>
-      </form>
-     </td>
-    </tr>
+     <tr><td></td></tr>
+
+     <tr><th>Administrative</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="MakeShutdownForm()">
+        <input type="button" 
+               value=" Shut Down "
+               onclick="document.shutdown_form.submit();"/>
+       </form>
+      </td>
+     </tr>
+
+    </dtml-if> <!-- administrators -->
+
    </tbody>
   </table>
 

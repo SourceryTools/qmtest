@@ -1,3 +1,48 @@
+2001-05-17  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.MakeLoginForm): Adjust HTML.
+	(PageInfo.UserIsInGroup): New method.
+	(make_form_for_request): Add name parameter.
+	(handle_login): Handle exceptions.
+	* qm/user.py: Add doc string.
+	(Group): New class.
+	(DefaultDatabase.GetGroupIds): New method.
+	(DefaultDatabase.GetGroup): Likewise.
+	(XmlDatabase.__init__): Load groups.
+	(XmlDatabase.GetGroupIds): New method.
+	(XmlDatabase.GetGroup): Likewise.
+	* qm/platform_linux.py (CLOSE_STREAM): New variable.
+	(replace_program): New function.
+	(run_program): Likewise.
+	* qm/platform.py (RunProgramError): New class.
+	(ProgramTerminatedBySignalError): Likewise.
+	(ProgramStoppedError): Likewise.
+	* qm/common.py (Empty): New class.
+	* qm/track/web/index.py (IndexPageInfo.MakeNewForm): Specify form
+	name. 
+	(IndexPageInfo.MakeShowForm): Likewise.
+	(IndexPageInfo.MakeEditForm): Remove.
+	(IndexPageInfo.MakeShowAllForm): Likewise.
+	(IndexPageInfo.MakeQueryForm): Specify form name.
+	(IndexPageInfo.MakeShutdownForm): Likewise.
+	(IndexPageInfo.MakeLogoutForm): Likewise.
+	* qm/track/server.py (handle_shutdown): Disallow non-administrators. 
+	
+	* share/xml/users.xml.template: Add a group.
+	* share/xml/user.dtd (users): Allow group elements.
+	(group): New element.
+	(user-id): Likewise.
+	* share/web/stylesheets/qm.css (a.help-link): Don't specify
+	decorations. 
+	* share/dtml/track/index.dtml: Adjust buttons.  Show shutdown
+	button for administrators only.
+	* share/diagnostics/common.txt (disabled account): New diagnostic.
+	(invalid login): Likewise.
+	(shutdown not allowed): Likewise.
+
+	* doc/manual/manual.xml (common-manual.xml): New entity.  Include it. 
+	* doc/manual/common-manual.xml: New file.
+
 2001-05-16  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (Field.GetDefaultValue): Copy the result.

@@ -31,11 +31,39 @@
 #
 ########################################################################
 
+"""User management facilities.
+
+Access to this module is primarily through two global variables.
+
+  'database' -- The user database.  The database contains objects
+  representing users, accessed via a *user ID*.  The user ID is a label
+  uniquely identifying the user in the system.
+
+  The user database also provides a notion of user groups.  Each group
+  is identified by a group ID, and contains zero or more user IDs.  A
+  user may belong to more than one group.  A group may not contain other
+  groups. 
+
+  'authenticator' -- The authenticator object by which the application
+  authenticates users who attempt to access it via various channels.
+
+Access the database object via this interface:
+
+  * Use the database object as a Python map from user IDs to 'User'
+    objects.  The 'keys' method returns a sequence of user IDs in the
+    database. 
+
+  * Call 'GetGroupIds' to return a sequence of group IDs.  Use the
+    'GetGroup' method to retrieve a 'Group' object for a given group ID.
+
+"""
+
 ########################################################################
 # imports
 ########################################################################
 
 import qm
+import label
 import xmlutil
 
 ########################################################################
@@ -155,7 +183,62 @@ class User:
        """Set the informational property 'name' to 'value'."""
 
        self.__info[name] = value
-    
+
+
+
+class Group:
+    """A group of users.
+
+    A 'Group' object is treated as an ordinary list of user IDs (except
+    that a user ID may not appear more than once in the list)."""
+
+    def __init__(self, group_id, user_ids=[]):
+        """Create a new group.
+
+        'group_id' -- The ID of this group.
+
+        'user_ids' -- IDs of users initially in the group."""
+
+        if not label.is_valid(group_id):
+            raise ValueError, 'invalid group ID "%s"' % group_id
+        self.__id = group_id
+        self.__user_ids = list(user_ids)
+
+
+    def GetId(self):
+        """Return the group_id of this group."""
+        
+        return self.__id
+
+
+    def __len__(self):
+        return len(self.__user_ids)
+
+
+    def __getitem__(self, index):
+        return self.__user_ids[index]
+
+
+    def __setitem__(self, index, user_id):
+        self.__user_ids[index] = user_id
+        # Make sure 'user_id' appears only once.
+        while self.__user_ids.count(user_id) > 1:
+            self.__user_ids.remove(user_id)
+
+
+    def __delitem__(self, index):
+        del self.__user_ids[index]
+
+
+    def append(self, user_id):
+        # Don't add a given user more than once.
+        if user_id not in self.__user_ids:
+            self.__user_ids.append(user_id)
+
+
+    def remove(self, user_id):
+        self.__user_ids.remove(user_id)
+
 
 
 class Authenticator:
@@ -213,6 +296,14 @@ class DefaultDatabase:
             return self.default_user
         else:
             return None
+
+
+    def GetGroupIds(self):
+        return []
+
+
+    def GetGroup(self, group_id):
+        raise KeyError, "no such group"
 
 
 
@@ -295,7 +386,10 @@ class XmlDatabase:
         assert node.tagName == "users"
 
         self.__users = {}
+        self.__groups = {}
         self.__default_user_id = None
+
+        # Load users.
         for user_node in node.getElementsByTagName("user"):
             user = XmlDatabaseUser(user_node)
             # Store the account.
@@ -307,11 +401,38 @@ class XmlDatabase:
                     raise XmlDatabaseError, "multiple default users"
                 self.__default_user_id = user.GetId()
 
+        # Load groups.
+        for group_node in node.getElementsByTagName("group"):
+            group_id = group_node.getAttribute("id")
+            user_ids = xmlutil.get_dom_children_texts(group_node, "user-id")
+            # Make sure all the user IDs listed for this group are IDs
+            # we know. 
+            for user_id in user_ids:
+                if not self.__users.has_key(user_id):
+                    raise XmlDatabaseError, "user %s in group %s is unknown" \
+                          % (user_id, group_id)
+            # Make the group.
+            group = Group(group_id, user_ids)
+            self.__groups[group_id] = group
+            
+
 
     def GetDefaultUserId(self):
         """Return the ID of the default user, or 'None'."""
         
         return self.__default_user_id
+
+
+    def GetGroupIds(self):
+        """Return the IDs of user groups."""
+
+        return self.__groups.keys()
+
+
+    def GetGroup(self, group_id):
+        """Return the group with ID 'group_id'."""
+
+        return self.__groups[group_id]
 
 
     # Methods for emulating a map object.
@@ -326,6 +447,7 @@ class XmlDatabase:
 
     def keys(self):
         return self.__users.keys()
+
 
 
 class XmlDatabaseAuthenticator(Authenticator):

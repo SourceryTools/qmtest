@@ -64,6 +64,12 @@ program_name = "??"
 # exceptions
 ########################################################################
 
+class Empty:
+    """An empty class."""
+
+    pass
+
+
 class MethodShouldBeOverriddenError(Exception):
     """Indicates a method was called that should have been overridden."""
 

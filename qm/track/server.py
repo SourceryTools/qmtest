@@ -48,6 +48,7 @@ import qm.track.web.issue_class
 import qm.track.web.query
 import qm.track.web.show
 import qm.track.web.summary
+import qm.user
 import qm.web
 import StringIO
 import sys
@@ -165,7 +166,16 @@ def start_server(port, address="", log_file=None):
 def handle_shutdown(request):
     """Handle a request to shut down the server."""
 
-    raise SystemExit, None
+    administrators_group = qm.user.database.GetGroup("administrators")
+    user_id = request.GetSession().GetUserId()
+
+    if user_id in administrators_group:
+        raise SystemExit, None
+    else:
+        # The user isn't an administrator, so disallow the operation.
+        # Show an error page instead.
+        message = qm.error("shutdown not allowed")
+        return qm.web.generate_error_page(request, message)
 
 
 def execute(command, output_file, error_file):

@@ -36,11 +36,20 @@
 ########################################################################
 
 import common
+import cPickle
 import os
 import qm
+import select
 import signal
 import string
 import sys
+import traceback
+
+########################################################################
+# constants
+########################################################################
+
+CLOSE_STREAM = common.Empty()
 
 ########################################################################
 # classes
@@ -194,6 +203,234 @@ def _signal_handler(signal_number, execution_frame):
     """Generic signal handler that raises an exception."""
 
     raise SignalException(signal_number)
+
+
+def replace_program(program,
+                    arguments,
+                    environment=None,
+                    stdin=None,
+                    stdout=None,
+                    stderr=None):
+    """Replace the Python interpreter with another program.
+
+    'program' -- The path to the program to run.
+
+    'arguments' -- The argument list for the program, as a sequence of
+    strings.  Conventionally, the first element is the same as the value
+    of 'program'.
+
+    'environment' -- A map specifying the environment for the program.
+    If 'None' or omitted, this process's environment is used instead.
+
+    'stdin' -- A file descriptor to use as standard input for the
+    program.  If 'None' or omitted, this process's standard input stream
+    is used.  If 'CLOSE_STREAM', the process's standard input stream is
+    closed.
+
+    'stdout' -- A file descriptor to use as standard output for the
+    program.  If 'None' or omitted, this process's standard output
+    stream is used.  If 'CLOSE_STREAM', the process's standard output
+    stream is closed.
+
+    'stderr' -- A file descriptor to use as standard error for the
+    program.  If 'None' or omitted, this process's standard error stream
+    is used.  If 'CLOSE_STREAM', the process's standard error stream is
+    closed.
+
+    returns -- Does not return.
+
+    raises -- 'ValueError' if 'program' is not the path to an accessible
+    executable.
+
+    raises -- 'ProgramTerminatedBySignalError' if 'program' was
+    terminated by a signal.
+
+    raises -- 'ProgramStoppedError' if 'program' was stopped by a
+    signal."""
+
+    # Make sure 'program' is executable.  We have a race condition
+    # between this check and the actual call to 'exec', but all that
+    # means is we may raise the wrong exception.
+    if not qm.is_executable(program):
+        raise ValueError, "program %s is not executable" % program
+
+    # First set up file descriptors.  Close or duplicate standard input,
+    # if requested.
+    if stdin is None:
+        pass
+    elif stdin is CLOSE_STREAM:
+        os.close(sys.stdin.fileno())
+    else:
+        os.dup2(stdin, sys.stdin.fileno())
+    # Close or duplicate standard output, if requested.
+    if stdout is None:
+        pass
+    elif stdout is CLOSE_STREAM:
+        os.close(sys.stdout.fileno())
+    else:
+        os.dup2(stdout, sys.stdout.fileno())
+    # Close or duplicate standard error, if requested.
+    if stderr is None:
+        pass
+    elif stderr is CLOSE_STREAM:
+        os.close(sys.stderr.fileno())
+    else:
+        os.dup2(stderr, sys.stderr.fileno())
+
+    # Run the program.
+    if environment is None:
+        os.execv(program, arguments)
+    else:
+        os.execve(program, arguments, environment)
+    # 'exec' functions should not return normally.
+    assert not "reachable"
+    
+
+def run_program(program,
+                arguments,
+                environment=None,
+                stdin=None,
+                stdout=None,
+                stderr=None):
+    """Run a program in a subprocess.
+
+    'program' -- The path to the program to run.
+
+    'arguments' -- The argument list for the program, as a sequence of
+    strings.  Conventionally, the first element is the same as the value
+    of 'program'.
+
+    'environment' -- A map specifying the environment for the program.
+    If 'None' or omitted, this process's environment is used instead.
+
+    'stdin' -- A file descriptor to use as standard input for the
+    program.  If 'None' or omitted, this process's standard input stream
+    is used.  If 'CLOSE_STREAM', the process's standard input stream is
+    closed.
+
+    'stdout' -- A file descriptor to use as standard output for the
+    program.  If 'None' or omitted, this process's standard output
+    stream is used.  If 'CLOSE_STREAM', the process's standard output
+    stream is closed.
+
+    'stderr' -- A file descriptor to use as standard error for the
+    program.  If 'None' or omitted, this process's standard error stream
+    is used.  If 'CLOSE_STREAM', the process's standard error stream is
+    closed.
+
+    returns -- The exit code from running 'program'.
+
+    raises -- 'ValueError' if 'program' is not the path to an accessible
+    executable.
+
+    raises -- 'ProgramTerminatedBySignalError' if 'program' was
+    terminated by a signal.
+
+    raises -- 'ProgramStoppedError' if 'program' was stopped by a
+    signal."""
+
+    # We need to fork a new process to run the program.  But
+    # first, create a pipe through which the child process can send
+    # an exception object, should one be thrown while attemptint to
+    # run the program.
+    pipe_read, pipe_write = os.pipe()
+    # Now fork the child process.
+    child_pid = os.fork()
+    # Which process is this?
+    if child_pid == 0:
+        # This is the child process.  We only write to the pipe.
+        os.close(pipe_read)
+        # Call recursively, but with 'replace' set to false, to
+        # actually run the program.
+        try:
+            replace_program(program, arguments, environment,
+                            stdin, stdout, stderr)
+        except:
+            # Oops, something went wrong. 
+            exc_info = sys.exc_info()
+            type, exception, frame = exc_info
+            # Execution frame objects are not pickleable, so format
+            # the traceback here and glue it on to the exception, in
+            # case someone's interested.
+            exception.traceback = common.format_traceback(exc_info)
+            # Send the exception through the pipe.
+            pickle = cPickle.dumps(exception)
+            os.write(pipe_write, pickle)
+        # Close the pipe.
+        os.close(pipe_write)
+        # Violently end this process.  We don't want Python to do
+        # cleanup things here.
+        os._exit(1)
+    else:
+        # This is the parent process.  We only read from the pipe.
+        os.close(pipe_write)
+        # Wait for the child to exit.
+        pid, exit_status = os.waitpid(child_pid, 0)
+        assert pid == child_pid
+        # Read whatever the child wrote in the pipe.
+        pickle = os.fdopen(pipe_read, "r").read()
+        # Did the child write an exception to the pipe?
+        if len(pickle) > 0:
+            # Yes.  Extract and raise it.
+            exception = cPickle.loads(pickle)
+            raise exception
+        # How did the child terminate?
+        if os.WIFEXITED(exit_status):
+            # Normally.  Return its exit code.
+            return os.WEXITSTATUS(exit_status)
+        elif os.WIFSIGNALED(exit_status):
+            # By a signal.  Raise an exception.
+            raise ProgramTerminatedBySignalError, \
+                  os.WTERMSIG(exit_status)
+        elif os.WIFSTOPPED(exit_status):
+            # Stopped by a signal.  Raise an exception
+            raise ProgramStoppedError, os.WSTOPSIG(exit_status)
+        else:
+            # Don't know what happened here.
+            raise RuntimeError, "unknown exit status"
+
+
+def run_program_captured(program,
+                         arguments,
+                         environment=None,
+                         stdin=""):
+
+    stdin_fd = -1
+    stdout_fd = -1
+    stderr_fd = -1
+
+    try:
+        stdin_path, stdin_fd = common.open_temporary_file_fd()
+        os.unlink(stdin_path)
+        os.write(stdin_fd, stdin)
+        os.lseek(stdin_fd, 0, 0)
+        stdout_path, stdout_fd = common.open_temporary_file_fd()
+        os.unlink(stdout_path)
+        stderr_path, stderr_fd = common.open_temporary_file_fd()
+        os.unlink(stderr_path)
+
+        exit_code = run_program(program, arguments, environment,
+                                stdin=stdin_fd,
+                                stdout=stdout_fd,
+                                stderr=stderr_fd)
+
+        os.lseek(stdout_fd, 0, 0)
+        stdout_file = os.fdopen(stdout_fd, "r")
+        stdout = stdout_file.read()
+
+        os.lseek(stderr_fd, 0, 0)
+        stderr_file = os.fdopen(stderr_fd, "r")
+        stderr = stderr_file.read()
+
+        return exit_code, stdout, stderr
+
+    finally:
+        if stdin_fd != -1:
+            os.close(stdin_fd)
+        if stdout_fd != -1:
+            os.close(stdout_fd)
+        if stderr_fd != -1:
+            os.close(stderr_fd)
 
 
 ########################################################################

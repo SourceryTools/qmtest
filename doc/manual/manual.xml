@@ -36,6 +36,7 @@
   separate file, and included by entity reference.  -->
 
   <!ENTITY introduction.xml SYSTEM "introduction.xml">
+  <!ENTITY common-manual.xml SYSTEM "common-manual.xml">
   <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
   <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
   <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
@@ -75,6 +76,7 @@
   <title>Using &qm;</title>
   &test-manual.xml;
   &test-reference.xml;
+  &common-manual.xml;
  </part>  
 
 </book>

@@ -42,6 +42,9 @@ Could not execute your web browser, '%(browser_path)s'.
 @ conflicting options
 You may not specify both '--%(option1)s' and '--%(option2)s'.
 
+@ disabled account
+The account you specified is disabled.
+
 @ dom bad integer
 The value "%(value)s" is not an integer.  The contents of an '<integer>'
 node must be an integer.
@@ -56,6 +59,9 @@ composed of lower-case letters, digits, and underscores.
 
 @ invalid integer field value
 The value of this field must be an integer.
+
+@ invalid login
+The user name or password you entered is invalid.  Please log in again.
 
 @ missing command
 You must specify a command.  Use the '--help' option to list commands.
@@ -78,6 +84,9 @@ from that from which the session originated.  A session may only be used
 from a single network address.  
 
 Please log in again to start a new session.
+
+@ shutdown not allowed
+Only administrators may shut down the server.
 
 @ temp dir error
 An error occured while creating the temporary directory '%(dir_path)s'.

@@ -62,28 +62,17 @@ class IndexPageInfo(web.PageInfo):
 
     def MakeNewForm(self):
         request = self.request.copy("new")
-        return qm.web.make_form_for_request(request)
+        return qm.web.make_form_for_request(request, name="new_form")
 
 
     def MakeShowForm(self):
         request = self.request.copy("show")
-        return qm.web.make_form_for_request(request)
-
-
-    def MakeEditForm(self):
-        request = self.request.copy("show")
-        request["style"] = "edit"
-        return qm.web.make_form_for_request(request)
-
-
-    def MakeShowAllForm(self):
-        request = self.request.copy("summary")
-        return qm.web.make_form_for_request(request)
+        return qm.web.make_form_for_request(request, name="show_form")
 
 
     def MakeQueryForm(self):
         request = self.request.copy("summary")
-        return qm.web.make_form_for_request(request)
+        return qm.web.make_form_for_request(request, name="query_form")
 
 
     def MakeQueryUrl(self):
@@ -92,13 +81,13 @@ class IndexPageInfo(web.PageInfo):
 
     def MakeShutdownForm(self):
         request = self.request.copy("shutdown")
-        return qm.web.make_form_for_request(request)
+        return qm.web.make_form_for_request(request, name="shutdown_form")
 
 
     def MakeLogoutForm(self):
         request = qm.web.WebRequest("logout", base=self.request)
         request["_redirect_url"] = self.request.GetUrl()
-        return qm.web.make_form_for_request(request)
+        return qm.web.make_form_for_request(request, name="logout_form")
 
 
 

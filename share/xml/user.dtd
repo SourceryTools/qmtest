@@ -32,7 +32,7 @@
 -->
 
 <!-- A group of user records.  -->
-<!ELEMENT users (user*)>
+<!ELEMENT users ((user | group)*)>
 
 <!-- A single user record.  -->
 <!ELEMENT user (info?, authentication?, configuration?)>
@@ -48,6 +48,11 @@
 
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA #REQUIRED>
+
+<!ELEMENT group (user-id)*>
+<!ATTLIST group id CDATA #REQUIRED>
+
+<!ELEMENT user-id (#PCDATA)>
 
 <!-- 
   Local Variables:
