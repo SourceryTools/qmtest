@@ -196,7 +196,7 @@ class CompilerTest(Test):
         'Result.PASS' or to add annotations."""
 
         # Create an object representing the executable.
-        executable = CompiledExecutable(library_dirs)
+        executable = CompiledExecutable()
         # Compute the command line for the executable.
         interpreter = context.get("CompilerTest.interpreter")
         if interpreter:
