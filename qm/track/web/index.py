@@ -72,7 +72,13 @@ class IndexPage(web.DtmlPage):
 # functions
 ########################################################################
 
-handle_index = IndexPage()
+def handle_index(request):
+    """Handle a request for the index page."""
+
+    # Make a new page instance, so the list of issue classes is
+    # refreshed. 
+    return IndexPage()(request)
+
 
 ########################################################################
 # Local Variables:
