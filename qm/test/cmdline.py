@@ -612,8 +612,9 @@ The summary is written to standard output.
                 # Use standard output.
                 result_file = sys.stdout
             else:
-                # A named file.  
-                result_file = open(result_file_name, "w")
+                # A named file.  Open the file in unbufferred mode so
+                # that results are written out immediately.
+                result_file = open(result_file_name, "w", 0)
                 close_result_file = 1
                 
         if result_file is not None:

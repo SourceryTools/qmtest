@@ -1217,7 +1217,7 @@ def run_test(test_id, context):
     test = get_database().GetTest(test_id)
 
     result = Result(Result.TEST, test_id, context)
-    
+
     try:
         # Run the test.
         test.Run(context, result)
@@ -1242,7 +1242,8 @@ def set_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(Result.RESOURCE, resource_id, context)
+    result = Result(Result.RESOURCE, resource_id, context,
+                    { "action" : "setup" } )
 
     # Set up the resoure.
     try:
@@ -1250,8 +1251,6 @@ def set_up_resource(resource_id, context):
     except:
         # The resource raised an exception.
         result.NoteException(cause="Uncaught exception.")
-    # Indicate in the result what we did.
-    result["action"] = "setup"
 
     return result
 
@@ -1267,7 +1266,8 @@ def clean_up_resource(resource_id, context):
 
     resource = get_database().GetResource(resource_id)
 
-    result = Result(Result.RESOURCE, resource_id, context)
+    result = Result(Result.RESOURCE, resource_id, context,
+                    { "action" : "cleanup" } )
     
     # Clean up the resource.
     try:
@@ -1275,8 +1275,6 @@ def clean_up_resource(resource_id, context):
     except:
         # The resource raised an exception.
         result.NoteException(cause="Uncaught exception.")
-    # Indicate in the result what we did.
-    result["action"] = "cleanup"
 
     return result
 

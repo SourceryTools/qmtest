@@ -313,7 +313,7 @@ class ExecTest(Test):
             if len(result_pickle) > 0:
                 # Yes; unpickle it.
                 (outcome, annotations) = cPickle.loads(result_pickle)
-                result.setOutcome(outcome)
+                result.SetOutcome(outcome)
                 for k in annotations.keys():                    
                     result[k] = annotations[k]
             # Otherwise no: the child ran the target program successfully.
@@ -355,18 +355,18 @@ class ExecTest(Test):
                     if stderr != expected_stderr:
                         causes.append("standard error")
                         result["ExecTest.stderr"] = stderr
-                    result.FAIL("Unexpected %s." % string.join(causes, ", ")) 
-            elif os.WSIGNALED(exit_status):
+                    result.Fail("Unexpected %s." % string.join(causes, ", ")) 
+            elif os.WIFSIGNALED(exit_status):
                 # The target program terminated with a signal.  Construe
                 # that as a test failure.
-                signal_number = str(WTERMSIG(exit_status))
-                result.FAIL("Program terminated by signal.")
+                signal_number = str(os.WTERMSIG(exit_status))
+                result.Fail("Program terminated by signal.")
                 result["ExecTest.signal_number"] = signal_number
             elif os.WIFSTOPPED(exit_status):
                 # The target program was stopped.  Construe that as a
                 # test failure.
-                signal_number = str(WSTOPSIG(exit_status))
-                result.FAIL("Program stopped by signal.")
+                signal_number = str(os.WSTOPSIG(exit_status))
+                result.Fail("Program stopped by signal.")
                 result["ExecTest.signal_number"] = signal_number
             else:
                 # The target program terminated abnormally in some other

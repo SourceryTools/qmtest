@@ -1,5 +1,14 @@
 2001-10-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (set_up_resource): Set up the action
+	annotation when the result is created.
+	* qm/test/base.py (clean_up_resource): Likewise.
+	* qm/test/cmdline.py (Command.__ExecuteRun): Use unbufferred
+	output for the results file.
+	* qm/test/result.py (Result.__init__): Correct handling of
+	default parameter.
+	* qm/test/classes/command.py (Command.Run): Fix typos.
+	
 	* qm/test/base.py (base.dtds): Change version number for
 	result DTD.
 	(write_results): Remove.

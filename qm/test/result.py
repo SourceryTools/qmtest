@@ -147,7 +147,7 @@ class Result:
         self.__id = id
         self.__context = context
         self.__outcome = outcome
-        self.__annotations = annotations
+        self.__annotations = annotations.copy()
 
 
     def GetKind(self):
