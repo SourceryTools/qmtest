@@ -13,10 +13,6 @@
 #
 ########################################################################
 
-# The QM Tools that are being built in this version of QM.
-QM_TOOLS	:= $(notdir \
-                     $(filter qm/test, $(wildcard qm/*)))
-
 # This trick is necessary to create a make variable containing a
 # single space.  See the "(make)Flavors" info page.
 NULLSTRING	:=
@@ -37,7 +33,9 @@ DOCUMENTATION = @MAINTAINER_MODE@
 # HappyDoc configuration.
 HAPPYDOC	= @HAPPYDOC@
 
-# Places to install things.
+# Places to install things.  The values substituted by configure
+# involve $(exec_prefix), so we must define that even though it is not
+# used directly.
 prefix		= @prefix@
 exec_prefix	= @exec_prefix@
 datadir		= @datadir@
@@ -81,10 +79,11 @@ endif
 
 clean::
 	$(PYTHON) ./setup.py clean -a
+	rm -rf qm/test/doc/print
+	rm -rf qm/test/doc/html
 
 distclean: clean
 	rm -f GNUmakefile config.cache config.status config.log
-	rm -f qm/__version.py 
 
 ########################################################################
 # Installation Rules

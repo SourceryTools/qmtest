@@ -15,6 +15,7 @@
 
 include ChangeLog COPYING README
 include MANIFEST.in setup.py
+include GNUmakefile.in configure.in configure
 
 # These are the modules included in the 'qm' package.
 recursive-include   qm *.py

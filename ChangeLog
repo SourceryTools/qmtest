@@ -1,5 +1,13 @@
 2003-11-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in (QM_TOOLS): Do not set it.
+	(clean): Remove generated documentation.
+	(distclean): Do not remove qm/__version.py.
+	* MANIFEST.in: Include GNUmakefile.in, configure.in, and
+	configure.
+	* config.guess: Remove.
+	* install-sh: Likewise.
+
 	* configure.in (QM_MAJOR_VER): Do not AC_SUBST it.
 	(QM_MINOR_VER): Likewise.
 	(QM_RELEASE_VER): Likewise.
