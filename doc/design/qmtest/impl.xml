@@ -15,10 +15,10 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter><title>&QMTest; Core Implementation</title>
+<chapter><title>&qmtest; Core Implementation</title>
   
  <para>This chapter describes the Python implementation of the core
- QMTest components.  For some components, many implementations are
+ &qmtest; components.  For some components, many implementations are
  envisioned; the requirements for these implementations are
  given.</para>
   
@@ -26,8 +26,8 @@
    
   <section><title>Test class implementations</title>
 
-   <para>Each QMTest test class is implemented as a Python class.
-   Though QMTest does not recognize any notion of test class
+   <para>Each &qmtest; test class is implemented as a Python class.
+   Though &qmtest; does not recognize any notion of test class
    inheritance, this may be produced in effect via Python class
    inheritance.</para>
 
@@ -95,7 +95,7 @@
   <section><title>Test records</title>
 
    <para>Test records are represented by instances of the class
-   <classname>QMTest.TestRecord</classname>.  This class has the
+   <classname>&qmtest;.TestRecord</classname>.  This class has the
    following members:</para>
 
    <para><programlisting>
@@ -188,7 +188,7 @@ class TestRecord:
     <programlisting>
 <![CDATA[
 <?xml version="1.0"?>
-<QMTest.test>
+<&qmtest;.test>
  <class>compile_link_run</class>
  <argument name="input" type="text">
 <![CDATA[
@@ -205,7 +205,7 @@ int main ()
  <category>PIC</category>
  <category>optimization</category>
  <prerequisite>torture.link.test123</prerequisite>
-</QMTest.test>
+</&qmtest;.test>
 ]]>
    </programlisting></para>
 
@@ -257,6 +257,6 @@ int main ()
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("QMTest.xml" "book" "chapter")
+  sgml-parent-document: ("qmtest.xml" "book" "chapter")
   End:
 -->

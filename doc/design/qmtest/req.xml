@@ -6,7 +6,7 @@
   Date:   2000-11-01
 
   Contents:
-    Core architecture of QMTest.
+    Core architecture of qmtest.
 
   Copyright (C) 2000 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
@@ -23,21 +23,21 @@
  linkend="req-accuracy">accuracy</link>, <link
  linkend="req-smallscale">usability</link>, <link
  linkend="req-reproducible">reproducibility</link>, and <link
- linkend="req-standards">recycling existing standards</link>) are
+ linkend="req-standards">conservatism</link>) are
  presented first; secondary or derived requirements follow.</para>
 
  <section id="req-accuracy">
   <title id="req-accuracy-title">Accuracy</title>
 
-  <para>The most important requirement on &QMTest; is accuracy: it
+  <para>The most important requirement for &qmtest; is accuracy: it
   must never report that a test has succeeded when in fact it has
-  failed, or vice versa: in statistical terminology, there must be
+  failed, or vice versa. (In statistical terminology, there must be
   <phrase id="discuss-false-positives">no false positives</phrase> and
-  <phrase id="discuss-false-negatives">no false negatives</phrase>.  A
-  corollary of this requirement is that &QMTest; must <phrase
+  <phrase id="discuss-false-negatives">no false negatives</phrase>.)  A
+  corollary of this requirement is that &qmtest; must <phrase
   id="discuss-execute-all">always execute at least all of the tests
   requested by the user</phrase>.  Ideally, it should only execute
-  exactly these tests, but in practice, it is acceptable for &QMTest;
+  exactly these tests, but in practice, it is acceptable for &qmtest;
   to run more tests than the user asked for, so long as all of the
   tests that were asked for are run.</para>
 
@@ -46,58 +46,55 @@
  <section id="req-smallscale">
   <title id="req-smallscale-title">Small-Scale Usability</title>
 
-  <para>The second most important requirement is that <phrase
-  id="discuss-small-use">small-scale testing must be easier to do with
-  &QMTest; than by hand</phrase>.  In particular, if &QMTest; requires
-  users to do things that only pay off on medium or large projects,
-  many of those users will choose to do ad hoc testing initially,
-  instead of using &QMTest;.  In theory, users could then switch to
-  &QMTest; when its adoption cost was outweighed by its benefits, but
-  in practice, those ad hoc test suites will usually grow (or, more
-  likely, rust) as their projects grow.</para>
+  <para><phrase id="discuss-small-use">Small-scale testing must be
+  easier to do with &qmtest; than by hand</phrase>.  If &qmtest;
+  requires users to do things that only pay off on medium or large
+  projects, many of those users will choose to do ad hoc testing
+  initially, instead of using &qmtest;.  In theory, users could then
+  switch to &qmtest; when its adoption cost was outweighed by its
+  benefits, but in practice, those ad hoc test suites will usually
+  grow (or, more likely, rust) as their projects grow.</para>
 
  </section>
 
  <section id="req-reproducible">
   <title id="req-reproducible-title">Reproducibility</title>
 
-  <para>The third requirement is that <phrase
-  id="discuss-reproducible">test execution must be
-  reproducible</phrase>: &QMTest; must be able to recreate the
+  <para><phrase id="discuss-reproducible">Test execution must be
+  reproducible</phrase>: &qmtest; must be able to recreate the
   starting point for a particular run of a test exactly.  This
   requirement is necessary in order to minimize the burden on human
   users: without it, it could be necessary to repeatedly re-run a test
   that reported an error or failure in order to isolate the fault.
   Note that this does not mean that the test result is exactly
-  reproducible&mdash;some tests of network software and user interfaces
-  are intrinsically non-deterministic&mdash;but random number generator
-  seeds, file sizes, and the like must be stored in a re-executable
-  way.</para>
+  reproducible&mdash;some tests of network software and user
+  interfaces are intrinsically non-deterministic&mdash;but all
+  controllable variables (such as random number generator seeds) must
+  be stored in a re-executable way.</para>
 
  </section>
 
  <section id="req-standards">
-  <title id="req-standards-title">Recycle Existing Standards</title>
+  <title id="req-standards-title">Conservatism</title>
 
-  <para>The fourth general requirement is that &QMTest; <phrase
-  id="discuss-recycle">must use existing standards, syntax,
-  conventions, and tools</phrase> wherever possible. Even when
-  customized solutions (e.g. a special-purpose test description
-  language) might be cleaner, developing, maintaining, and documenting
-  these solutions requires more resources than this project has.  More
-  importantly, the cost to users of learning, integrating, and
-  customizing them decreases the chances of &QMTest; having an impact
-  on common daily practice.</para>
+  <para>&qmtest; <phrase id="discuss-recycle">must use existing
+  standards, syntax, conventions, and tools</phrase> wherever
+  possible. Even when customized solutions (e.g. a special-purpose
+  test description language) might be cleaner, developing,
+  maintaining, and documenting these solutions requires more resources
+  than this project has.  More importantly, the cost to users of
+  learning, integrating, and customizing them decreases the chances of
+  &qmtest; being adopted and maintained.</para>
 
   <para>The specific implications of this requirement are:
    <itemizedlist>
     <listitem>
-     <para>Where &QMTest; needs Boolean operators, quoting rules,
-     floating-point numbers, or other programmatic constructs, it uses
-     the syntax defined for Python.  Note that this does
-     <emphasis>not</emphasis> mean that &QMTest; will be Python-centric;
-     the rationale is simply that there is no point defining yet
-     another set of rules for writing things like: 
+     <para>Where &qmtest; needs Boolean operators, quoting rules,
+     floating-point numbers, or other programmatic constructs, it will
+     use the syntax defined for Python.  Note that this does
+     <emphasis>not</emphasis> mean that &qmtest; will be
+     Python-centric; the rationale is simply that there is no point
+     defining yet another set of rules for writing things like:
       <programlisting>
        output &lt; 5.0 and command != "start\n"
       </programlisting>
@@ -105,7 +102,7 @@
     </listitem>
 
     <listitem>
-     <para>Where &QMTest; needs structured data storage, the format of
+     <para>Where &qmtest; needs structured data storage, the format of
      that storage will be defined in terms of XML.  This does
      <emphasis>not</emphasis> mean that only XML will be used: flat
      text, executable scripts, relational database schemas, persisted
@@ -116,24 +113,24 @@
     </listitem>
 
     <listitem>
-     <para>Where &QMTest; needs data formats (e.g. parameters for
+     <para>Where &qmtest; needs data formats (e.g. parameters for
      procedure calls), it will use the rules included in the draft
      SOAP standard.  Again, this does <emphasis>not</emphasis> mean
      that only SOAP will be used in the system; as with programmatic
      syntax, however, there seems to be little point developing yet
      another set of rules for describing or constraining such things
-     as arrays of strings...  </para>
+     as arrays of strings.</para>
     </listitem>
 
    </itemizedlist>
   </para>
 
-  <para>A "negative" standards requirement is that &QMTest; <phrase
+  <para>A "negative" standards requirement is that &qmtest; <phrase
   id="discuss-not-all-cmdline">must not require all tests to be
   command-line applications</phrase>.  In particular, tests
   <emphasis>may</emphasis> have access to standard input and standard
   output, and <emphasis>may</emphasis> be able to report success or
-  failure by exiting with a zero or non-zero status, but &QMTest; does
+  failure by exiting with a zero or non-zero status, but &qmtest; does
   not insist upon this.  This requirement is necessary because many
   applications of interest may be long-lived services (e.g. a web
   server), or may rely on a framework (such as the Microsoft
@@ -144,28 +141,26 @@
 
  <section><title>Dependent and Independent Tests</title>
 
-  <para>&QMTest; must <phrase id="discuss-specify-dependency"
-  role="req">allow programmers to specify dependencies between
-  tests</phrase>, and must <phrase
-  id="discuss-track-dependency">prevent dependent tests from being
-  executed if an error occurred in an antecedent</phrase>.  For
+  <para>&qmtest; must <phrase id="discuss-specify-dependency">allow
+  programmers to specify dependencies between tests</phrase>, and must
+  <phrase id="discuss-track-dependency">prevent dependent tests from
+  being executed if an error occurred in an antecedent</phrase>.  For
   obvious reasons, dependencies between tests must be acyclic;
-  &QMTest; must <phrase id="discuss-cyclic-dependency">detect and
-  report cyclic dependencies</phrase>.  &QMTest; should try to
-  <emphasis>detect and report cyclic dependencies before executing any
-  tests</emphasis>, but is not required to do this, since this may not
-  be possible if tests are being <link linkend="req-multi">generated
-  on the fly</link>.</para>
+  &qmtest; must <phrase id="discuss-cyclic-dependency">detect and
+  report cyclic dependencies</phrase>.  &qmtest; should try to detect
+  and report cyclic dependencies before executing any tests, but is
+  not required to do this, since this may not be possible if tests are
+  being <link linkend="req-multi">generated on the fly</link>.</para>
 
   <para>Finally, it must be possible to <phrase
   id="discuss-separate-prep">separate setup and teardown from
   particular tests</phrase>, so that the modified fixtures required
   for dependent tests are not destroyed before those tests are
-  executed.  &QMTest; must <phrase id="discuss-trace-dependency">trace
+  executed.  &qmtest; must <phrase id="discuss-trace-dependency">trace
   dependencies between tests</phrase>, and automatically determine
-  when to set up and tear down fixtures.  If possible, &QMTest; should
-  <emphasis>share dependency detection and management functionality
-  with &qmbuild;</emphasis>.</para>
+  when to set up and tear down fixtures.  If possible, &qmtest; should
+  share dependency detection and management functionality with
+  &qmbuild;.</para>
 
  </section>
 
@@ -174,7 +169,7 @@
   <para>There are often periods in a development cycle during which
   certain tests are expected to fail.  For example, if Extreme
   Programming's "test, then code" development model is being used, all
-  of a module's tests will initially fail.  &QMTest; must therefore
+  of a module's tests will initially fail.  &qmtest; must therefore
   allow programmers to <phrase id="discuss-expect-failure">specify
   that some tests are expected to fail</phrase>.  It must also <phrase
   id="discuss-reported-expected-failures">report expected failures
@@ -185,7 +180,7 @@
 
  <section><title>Reporting</title>
 
-  <para>&QMTest; must be able to <phrase
+  <para>&qmtest; must be able to <phrase
   id="discuss-readable-report">report test results in textual,
   human-readable form</phrase>.  This is necessary for two reasons:
    <orderedlist>
@@ -194,13 +189,13 @@
      display micro-differences between text files, most are not able
      to do this for binary files.  Since users should archive test
      results along with the tests themselves (and the code being
-     tested), &QMTest; must be designed to facilitate this.
+     tested), &qmtest; must be designed to facilitate this.
      </para>
     </listitem> 
 
     <listitem>
      <para>Many developers still use command-line tools, and will want
-     to run &QMTest; from the command-line.  Its output must therefore
+     to run &qmtest; from the command-line.  Its output must therefore
      be viewable without external helper applications, such as web
      browsers.  </para>
     </listitem>
@@ -208,19 +203,19 @@
   </para>
 
   <para>This requirement does <emphasis>not</emphasis> imply that flat
-  text will be &QMTest;'s only, or usual, output format.  In
+  text will be &qmtest;'s only, or usual, output format.  In
   particular, as XML-aware tools mature and become more common,
-  &QMTest; must therefore be able to <phrase
+  &qmtest; must therefore be able to <phrase
   id="discuss-report-xml">report and store test results as
   XML</phrase>.  This will make it easier for XML-aware integrated
   development environments (IDEs) and version control systems, to
-  leverage the semantic content of &QMTest;'s output.
+  leverage the semantic content of &qmtest;'s output.
   </para>
 
   <para>Requiring test authors to write tests that can generate output
-  in two or more formats is an unacceptable burden.  &QMTest; must
+  in two or more formats is an unacceptable burden.  &qmtest; must
   therefore <phrase id="discuss-format-function">provide test result
-  formatting and reporting functions in all languages of
+  formatting and reporting functions in all programming languages of
   interest</phrase>.  The <phrase id="discuss-format-switch">format in
   which these functions report results must be controlled by a single
   switch</phrase>, i.e. there cannot be separate functions for
@@ -235,30 +230,28 @@
   then used as a reference, against which further test runs are
   compared, a fault can go undetected for a very long time.</para>
 
-  <para>Despite this, many (potential) &QMTest; users would like it to
+  <para>Despite this, many (potential) &qmtest; users would like it to
   be able to generate reference results, as well as compare current
   test results against reference versions.  This is partly a matter of
   convenience: having specified what to run, and how to run it, users
   feel that having to go through and run everything by hand is an
-  unnecessary burden.  Therefore, &QMTest; <phrase
-  id="discuss-gen-results">must be able to generate, or re-generate,
-  reference test results using exactly the same settings and
-  specifications used for testing</phrase>.</para>
+  unnecessary burden.  Therefore, &qmtest; must be able to <phrase
+  id="discuss-gen-results">generate, or re-generate, reference test
+  results using exactly the same settings and specifications used for
+  testing</phrase>.</para>
 
-  <para>&QMTest; will <emphasis>not</emphasis> mark
+  <para>&qmtest; will <emphasis>not</emphasis> mark
   programmatically-generated reference results as "unverified", and
   only change their status to "verified" when those files have been
   inspect by the test developer.  In practice, almost all developers
-  would tell &QMTest; to "verify all" immediately after generating the
-  reference results.  This step would therefore be as useful as
-  putting up a dialog to ask users whether they are sure they want to
-  delete the files they have just marked for deletion...</para>
+  would tell &qmtest; to "verify all" immediately after generating the
+  reference results.</para>
 
  </section>
 
  <section><title>Test Suites</title>
 
-  <para>In order to make test management practical, &QMTest; must
+  <para>In order to make test management practical, &qmtest; must
   allow test authors to <phrase id="discuss-test-suites">aggregate
   tests into test suites</phrase>.  Further, <phrase
   id="discuss-suite-prep">test suites must support setup and
@@ -297,7 +290,7 @@
   <para>The standard solution to the problem of unique, long-lived
   identification is hierarchical naming.  Since this is familiar to
   most programmers (and to any non-programmer who has ever navigated a
-  tree of directories and files), &QMTest; will <phrase
+  tree of directories and files), &qmtest; will <phrase
   id="discuss-hierarchical-names">require every test or test suite to
   be uniquely named below its parent</phrase>.  Specific tests can
   then be referred to using path-like identifiers.</para>
@@ -307,26 +300,27 @@
   comparability when items are moved or renamed.  For example, if a
   test is moved from a program's "I/O" suite, and put in its "runtime"
   suite, its full name will change.  It would therefore be desirable
-  for &QMTest; to <emphasis>include name-tracking</emphasis>, but this
-  will not be implemented in the first version.</para>
+  for &qmtest; to include name-tracking, but this will be left to the
+  users' version control systems in the first release.</para>
 
  </section>
 
  <section id="req-summary">
   <title id="req-summary-title">Summary Reporting</title>
 
-  <para>&QMTest; <phrase id="discuss-summarize-results">must summarize
+  <para>&qmtest; must <phrase id="discuss-summarize-results">summarize
   the results of tests</phrase>, i.e. produce a count of the number of
   tests which have passed, failed, generated an error, or been
   deferred.  This <phrase
   id="discuss-hierarchical-reporting">reporting must be
   hierarchical</phrase>: users must be able to inspect the summaries
   for suites, sub-suites, and so on.  In order to avoid confusion,
-  <emphasis>summary reporting must mirror the test suite
-  hierarchy</emphasis>, i.e. aggregate results will only be produced
-  that correspond to the nodes in the tree of suites and sub-suites.
-  Finally, <phrase>reporting and recording must be
-  independent</phrase>, i.e. &QMTest; must be able to record more
+  <phrase id="discuss-summary-reporting-hierarchy">summary reporting
+  must mirror the test suite hierarchy</phrase>, i.e. aggregate
+  results will only be produced that correspond to the nodes in the
+  tree of suites and sub-suites.  Finally, <phrase
+  id="discuss-report-record">reporting and recording must be
+  independent</phrase>, i.e. &qmtest; must be able to record more
   information about test results than it provides in summary reports,
   so that users can drill down to isolate faults after the
   fact.</para>
@@ -340,25 +334,25 @@
   with a standard result (pass, fail, error, or deferred).  For
   example, it may be desirable to have tests report execution time,
   memory usage, number of context switches, or code coverage.
-  &QMTest;'s <phrase id="discuss-extra-values">output format must
-  allow tests to report extra named values</phrase>, while the <phrase
+  &qmtest; <phrase id="discuss-extra-values">must allow tests to
+  contain and report extra named values</phrase>, while the <phrase
   id="discuss-summarize-extra-values">summary reporting system must
   allow extra named values to be combined
   hierarchically</phrase>.</para>
 
-  <para>One common case in which extra information is provided is
-  <phrase id="discuss-explain-deferral">explaining why specific
-  tests were deferred</phrase>.  If test authors make the execution
-  of particular tests dependent on external factors, which
-  (combination) of those factors resulted in the test being deferred
-  must be reported.  This topic is revisited in the discussion of
-  <link linkend="req-traversal">test traversal</link> below.</para>
+  <para>One common case in which extra information is provided is to
+  <phrase id="discuss-explain-deferral">explain why specific tests
+  were deferred</phrase>.  If test authors make the execution of
+  particular tests dependent on external factors, which (combination)
+  of those factors resulted in the test being deferred must be
+  reported.  This topic is revisited in the discussion of <link
+  linkend="req-traversal">test traversal</link> below.</para>
 
-  <para>Note that this version of &QMTest; restricts extra information
+  <para>Note that this version of &qmtest; restricts extra information
   to be a flat property set, i.e. name/value pairs without any
   internal structure.  This restriction may be relaxed in future
   versions.  Note also that collecting this extra information may
-  require modifications to the &QMTest; execution engine.  &QMTest;
+  require modifications to the &qmtest; execution engine.  &qmtest;
   must therefore allow users to <phrase
   id="discuss-override-engine">override all aspects of the execution
   engine's internal operation</phrase>, e.g. by deriving one or more
@@ -369,11 +363,11 @@
 
  <section><title>Logging Changes</title>
 
-  <para>The most important question &QMTest; can answer during the
-  development cycle is, "What has changed?"  &QMTest;'s default
+  <para>The most important question &qmtest; can answer during the
+  development cycle is, "What has changed?"  &qmtest;'s default
   reporting must therefore <phrase id="discuss-report-changes">report
   test results in a manner that draws attention to recent
-  changes</phrase>.  In order to do this, &QMTest; must be able to
+  changes</phrase>.  In order to do this, &qmtest; must be able to
   <phrase id="discuss-temporary-records">temporarily record the
   results of recent test runs</phrase>, and <phrase
   id="discuss-permanent-records">permanently record the results of
@@ -390,7 +384,7 @@
  <section id="req-traversal">
   <title id="req-traversal-title">Traversal</title>
 
-  <para>&QMTest; must be able to <phrase
+  <para>&qmtest; must be able to <phrase
   id="discuss-automatic-traversal">automatically traverse test suites
   by default</phrase>, i.e. execute all of the tests or test suites
   included in a suite recursively.  However, it must be possible for
@@ -398,15 +392,15 @@
   or suites to be executed or omitted</phrase>.</para>
 
   <para>Four special cases of traversal control deserve closer
-  attention.  The first is that the user must be able to specify that
-  <phrase id="discuss-include-omit">one or more tests are to be
-  included or omitted</phrase> when &QMTest; is run.  This <phrase
+  attention.  The first is that the user must be able to <phrase
+  id="discuss-include-omit">specify that one or more tests are to be
+  included or omitted</phrase> when &qmtest; is run.  This <phrase
   id="discuss-log-filtering">filtering must be logged</phrase>,
   e.g. by recording it in the header of the overall test result
-  record, or by including dummy deferred reports for all tests not
-  executed.  The reason for deferring tests must be included in the
-  test report, as discussed in the section on <link
-  linkend="req-info">extra information</link>.</para>
+  record, or by including deferred reports for all tests not executed.
+  The reason for deferring tests must be included in the test report,
+  as discussed in the section on <link linkend="req-info">extra
+  information</link>.</para>
 
   <para>The second special case arises when the user makes a
   persistent change to the <link linkend="req-spec">test specification
@@ -414,10 +408,10 @@
   tests.  This filter specification must be logged, as discussed
   above.</para>
 
-  <para>The third special case is that &QMTest; must be able to
+  <para>The third special case is that &qmtest; must be able to
   <phrase id="discuss-filter-by-result">re-execute only those tests
   that produced specific results during a previous run</phrase>.  This
-  implies that &QMTest; <phrase
+  implies that &qmtest; <phrase
   id="discuss-access-temporary-results">must have access to the
   temporary and permanent results of previous test runs while
   executing</phrase>.</para>
@@ -432,7 +426,7 @@
   this requirement has on <link linkend="req-spec">test
   specification</link> is discussed below.</para>
 
-  <para>One common case that &QMTest;'s traversal mechanism must be
+  <para>One common case that &qmtest;'s traversal mechanism must be
   able to handle correctly is interruption and re-start.  A complete
   test suite may take hours or days to run; users <phrase
   id="discuss-interrupt">must be able to pause and re-start test
@@ -441,18 +435,17 @@
   <keycap>Z</keycap></keycombo> at a command prompt, since the test
   harness may spawn sub-processes, or may execute some tests in
   parallel on <link linkend="discuss-parallel">other machines</link>.
-  Note that it would also be desirable for &QMTest; to be able to
-  <emphasis>checkpoint and restart</emphasis> in the event of system
-  failure (e.g. power outages), but this will not be included in the
-  first version.  (For a discussion of this topic, see the links to
-  James Bach's paper "Test Automation Snake Oil" in the
-  references.)</para>
+  Note that it would also be desirable for &qmtest; to be able to
+  checkpoint and restart in the event of system failure (e.g. power
+  outages), but this will not be included in the first version.  (For
+  a discussion of this topic, see the links to James Bach's paper
+  "Test Automation Snake Oil" in the references.)</para>
 
  </section>
 
  <section><title>Physical Organization of Tests</title>
 
-  <para>&QMTest; <phrase id="discuss-physical-structure">cannot
+  <para>&qmtest; <phrase id="discuss-physical-structure">cannot
   mandate a physical structure for projects</phrase> in order to
   support testing.  In particular, developers must be able to put
   tests, temporary files, transient results, and permanent results:
@@ -480,16 +473,16 @@
    </itemizedlist>
   </para>
 
-  <para>&QMTest; must therefore allow users to <phrase
+  <para>&qmtest; must therefore allow users to <phrase
   id="discuss-specify-locations">separately specify the location of
   tests, temporary files, transient results, and permanent
   results</phrase>.  In order to avoid placing too great a burden on
-  first-time users, however, &QMTest; <phrase
+  first-time users, however, &qmtest; <phrase
   id="discuss-default-locations">cannot require explicit specification
   of object locations</phrase>. Instead, it must have sensible,
   predictable default expectations and behavior.</para>
 
-  <para>Finally, &QMTest; <phrase id="discuss-no-redundancy">must not
+  <para>Finally, &qmtest; <phrase id="discuss-no-redundancy">must not
   require redundant specification</phrase> of locations.  For example,
   the user should be able to specify once, at the root of the testing
   hierarchy, that intermediate files are to be put in
@@ -502,7 +495,7 @@
  <section><title>Controlling Execution</title>
 
   <para>The longer a test suite takes to run, the less frequently it
-  will be used.  &QMTest; therefore <phrase id="discuss-parallel">must
+  will be used.  &qmtest; therefore <phrase id="discuss-parallel">must
   be able to execute tests concurrently</phrase> when the resources
   needed to do so are available.  In order to encourage test
   developers to structure tests so that they do not contain
@@ -519,7 +512,7 @@
   id="discuss-platform-placement">keep results from sequential or
   concurrent runs on different platforms separate</phrase>.</para>
 
-  <para>&QMTest; must also allow users to <phrase id="discuss-timeout"
+  <para>&qmtest; must also allow users to <phrase id="discuss-timeout"
   >specify timeouts and resource limits on tests for particular test
   runs</phrase>.  These limits must override any that are built into
   the test specification. </para>
@@ -529,11 +522,11 @@
  <section id="req-spec">
   <title>Test Specification</title>
 
-  <para>The single most important aspect of &QMTest;'s design is how
+  <para>The single most important aspect of &qmtest;'s design is how
   users actually create individual tests.  If this is difficult, then
-  it doesn't matter how elegant the rest of &QMTest; is&mdash;it will
+  it doesn't matter how elegant the rest of &qmtest; is&mdash;it will
   not be widely used.  Some of the particular input formats which
-  &QMTest; be able to support are listed below.</para>
+  &qmtest; must be able to support are listed below.</para>
 
   <glosslist>
 
@@ -545,8 +538,8 @@
      setup, a single call to a single test subject, and fixture
      teardown.  When the program is executed, it inspects the result
      of the call to the test subject (which may mean trapping errors),
-     compares this to the result the develoepr expected, and produces
-     a textual report in a standard format, from which &QMTest; can
+     compares this to the result the developer expected, and produces
+     a textual report in a standard format, from which &qmtest; can
      extract the test result.  Note that this case includes the case
      in which the "call" is actually a series of calls, at the end of
      which a single test result is generated.</para>
@@ -566,17 +559,17 @@
       <itemizedlist>
        <listitem>
         <para><phrase id="discuss-translate-exit-code">Translate a
-        program's exit status code into a test result</phrase>
+        program's exit status code into a test result</phrase>,
         automatically trapping unexpected abnormal ends such as
         floating point exceptions or memory access violations.</para>
        </listitem>
 
        <listitem>
         <para><phrase id="discuss-translate-file-diff">Compare the
-        program's output stream to a reference copy.</phrase> This
-        <phrase id="discuss-translate-custom-diff"> must be able to
-        use an exact or fuzzy comparison program specified by a
-        user</phrase>.</para>
+        program's output to a reference copy.</phrase> This <phrase
+        id="discuss-translate-custom-diff">must be able to use an
+        user-specified comparator to determine whether a program's
+        output matches a reference result</phrase>.</para>
        </listitem>
 
        <listitem>
@@ -606,12 +599,13 @@
      calls to multiple test subjects.  Each call is preceded by
      fixture setup, and followed by fixture teardown.  Each call
      results in a single test report, so that when the test program is
-     run, many test reports are produced.  Note that &QMTest; does
+     run, many test reports are produced.  Note that &qmtest; does
      <emphasis>not</emphasis> support multiple results requiring
      translation from a single executable, i.e. it will
      <emphasis>not</emphasis> create many test reports by comparing
      each of the many files generated by an executable against a
-     reference file.</para>
+     reference file (although a user-defined result comparator may do
+     so).</para>
     </glossdef>
    </glossentry>
 
@@ -622,7 +616,7 @@
      <para>All of the cases above (and below) may be repeated many
      times with different options, such as different command-line
      arguments, input files, configuration files, thresholds, and so
-     on.  &QMTest;'s users therefore <phrase
+     on.  &qmtest;'s users therefore <phrase
      id="discuss-arg-calls">must be able to specify
      repetition</phrase> in a simple way, and <phrase
      id="discuss-arg-calls-id">must be able to uniquely identify
@@ -635,7 +629,7 @@
     subject</glossterm>
     <glossdef>
      <para>In some cases, it may be necessary or desirable to have
-     &QMTest; itself call the test subject.  In particular, the test
+     &qmtest; itself call the test subject.  In particular, the test
      subject may be a COM or CORBA component, a JavaBean, or a
      function or procedure in a dynamic language such as Perl, Python,
      or Ruby.  In these cases, the test developer must be able to
@@ -649,11 +643,11 @@
     specification from arbitrary files</glossterm>
     <glossdef>
      <para>As well as reading test specifications from its own
-     configuration files, &QMTest; must be able to extract test
+     configuration files, &qmtest; must be able to extract test
      specifications from arbitrary pre-existing files.  For example,
      <link linkend="story-daryl">Daryl Dowhile</link> already has 1200
      test specifications embedded as specially-formatted comments in
-     program source files; &QMTest; must allow him to recycle those
+     program source files; &qmtest; must allow him to recycle those
      files.</para>
     </glossdef>
    </glossentry>
@@ -688,7 +682,7 @@
     </listitem>
   
     <listitem>
-     <para>&QMTest; could allow tests to report partial success or
+     <para>&qmtest; could allow tests to report partial success or
      failure, e.g. return a vector of results rather than a scalar
      result.  This option is rejected because it makes human
      comprehension of results more error-prone.</para>
@@ -707,9 +701,9 @@
      <para> Users could be allowed to <phrase
      id="discuss-test-generator">specify that a test specification is
      actually a test specification generator</phrase>, i.e. that
-     &QMTest; was to execute the "test", then execute on the output of
+     &qmtest; was to execute the "test", then execute on the output of
      the "test", and so on until actual tests were being executed.
-     This option is the one that &QMTest; uses, as it integrates well
+     This option is the one that &qmtest; uses, as it integrates well
      with the input transformation discussed in the section on <link
      linkend="req-spec">test specification</link>.</para>
     </listitem>
@@ -718,7 +712,7 @@
 
   <para>Of course, allowing test specifications to generate more test
   specifications on the fly opens up the possibility of infinite
-  recursion.  &QMTest; must therefore <phrase
+  recursion.  &qmtest; must therefore <phrase
   id="discuss-recursion-limit">have a default limit on the depth of
   test generation recursion</phrase>, and <phrase
   id="discuss-override-recursion-limit">allow users to override the
@@ -731,7 +725,7 @@
 
   <para>Individual tests and test suites may require arbitrary setup
   before, and teardown after, their execution.  In order to simplify
-  test management, &QMTest; requires that <phrase
+  test management, &qmtest; requires that <phrase
   id="discuss-prep-in-spec">setup and teardown must be specified in
   the test specification</phrase>, that <phrase
   id="discuss-log-prep">setup and teardown operations must be
@@ -742,11 +736,11 @@
   (i.e. return the environment to its pre-test state) even if setup
   and the test itself failed partially or completely.</para>
 
-  <para>In order to avoid drowning users in detail, &QMTest; must log
+  <para>In order to avoid drowning users in detail, &qmtest; must log
   setup failure as a reason for deferral for all tests, but <phrase
   id="discuss-first-error">only report significant setup errors by
   default</phrase>.  For example, if test B depends on test A, and
-  test A's setup fails, &QMTest; should not report that test B has
+  test A's setup fails, &qmtest; should not report that test B has
   failed, since the root cause is the failure in test A's
   setup.</para>
 
@@ -771,14 +765,474 @@
   example, is a good way to test how it will behave when it needs to
   allocate many large data structures.</para>
 
-  <para>While future versions of &QMTest; <emphasis>may come packaged
-  with sandbox and throttle libraries</emphasis> for specific
-  languages and applications, these are out of the scope of the
-  current effort.  However, in order to make it easy for developers to
-  use these facilities today (if they have them), &QMTest; <phrase
+  <para>While future versions of &qmtest; may come packaged with
+  sandbox and throttle libraries for specific languages and
+  applications, these are out of the scope of the current effort.
+  However, in order to make it easy for developers to use these
+  facilities today (if they have them), &qmtest; <phrase
   id="discuss-record-build-options">must be able to record the build
   options of all tests</phrase>, including compiler options, linked
   libraries, and so on.</para>
+
+ </section>
+
+
+ <section id="req-summary">
+  <title id="req-summary-title">Summary</title>
+
+  <orderedlist>
+
+  <listitem>
+  <!-- phrase id="discuss-false-positives"-- >
+  No false positives.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-false-negatives" -->
+  No false negatives.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-execute-all" -->
+  Always execute at least all of the tests requested by the user.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-small-use" -->
+  Small-scale testing must be easier to do with &qmtest; than by hand.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-reproducible" -->
+  Test execution must be reproducible.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-recycle" -->
+  Must use existing standards, syntax, conventions, and tools.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-not-all-cmdline" -->
+  Must not require all tests to be command-line applications.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-specify-dependency" -->
+  Allow programmers to specify dependencies between tests.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-track-dependency" -->
+  Prevent dependent tests from being executed if an error occurred in
+  an antecedent.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-cyclic-dependency" -->
+  detect and
+  Report cyclic dependencies.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-separate-prep" -->
+  Separate setup and teardown from particular tests.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-trace-dependency" -->
+  Trace dependencies between tests.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-expect-failure" -->
+  Specify that some tests are expected to fail.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-reported-expected-failures" -->
+  Report expected failures separately from passes, unexpected
+  failures, and other results.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-readable-report" -->
+  Report test results in textual, human-readable form.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-report-xml" -->
+  Report and store test results as XML.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-format-function" -->
+  Provide test result formatting and reporting functions in all
+  programming languages of interest.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-format-switch" -->
+  Format in which these functions report results must be controlled by
+  a single switch.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-gen-results" -->
+  Generate, or re-generate, reference test results using exactly the
+  same settings and specifications used for testing.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-test-suites" -->
+  Aggregate tests into test suites.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-suite-prep" -->
+  Test suites must support setup and teardown.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-whole-part" -->
+  Make tests and test suites members of suites.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-suites-not-tests" -->
+  Test suites do not generate test results.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-unique-id" -->
+  Every test must be uniquely identified.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-id-long-lived" -->
+  Test identifiers must be long-lived.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-hierarchical-names" -->
+  Require every test or test suite to be uniquely named below its
+  parent.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-summarize-results" -->
+  Summarize the results of tests.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-hierarchical-reporting" -->
+  Reporting must be hierarchical.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-summary-reporting-hierarchy" -->
+  Summary reporting must mirror the test suite hierarchy
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-report-record" -->
+  Reporting and recording must be independent.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-extra-values" -->
+  Must allow tests to contain and report extra named values.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-summarize-extra-values" -->
+  Summary reporting system must allow extra named values to be
+  combined hierarchically.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-explain-deferral" -->
+  Explain why specific tests were deferred.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-override-engine" -->
+  Override all aspects of the execution engine's internal operation.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-report-changes" -->
+  Report test results in a manner that draws attention to recent
+  changes.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-temporary-records" -->
+  Temporarily record the results of recent test runs.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-permanent-records" -->
+  Permanently record the results of selected test runs.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-user-recording-control" -->
+  Distinction between temporary and permanent recording must be under
+  developers' control.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-automatic-traversal" -->
+  Automatically traverse test suites by default.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-user-control-traversal" -->
+  Specify tests or suites to be executed or omitted.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-include-omit" -->
+  Specify that one or more tests are to be included or omitted.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-log-filtering" -->
+  Filtering must be logged.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-filter-by-result" -->
+  Re-execute only those tests that produced specific results during a
+  previous run.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-access-temporary-results" -->
+  Must have access to the temporary and permanent results of previous
+  test runs while executing.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-interrupt" -->
+  Must be able to pause and re-start test execution.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-physical-structure" -->
+  Cannot mandate a physical structure for projects.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-specify-locations" -->
+  Separately specify the location of tests, temporary files, transient
+  results, and permanent results.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-default-locations" -->
+  Cannot require explicit specification of object locations.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-no-redundancy" -->
+  Must not require redundant specification.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-parallel" -->
+  Must be able to execute tests concurrently.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-out-of-order" -->
+  Unordered execution should be the default.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-in-order" -->
+  Specifying test order must be simple.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-heterogeneous" -->
+  Run programs on many different kinds of platforms simultaneously.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-platform-log" -->
+  Log platform information automatically as part of test results.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-platform-placement" -->
+  Keep results from sequential or concurrent runs on different
+  platforms separate.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-timeout"
+  > Specify timeouts and resource limits on tests for particular tes --t
+  runs.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-translate-exit-code" -->
+  Translate a program's exit status code into a test result.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-translate-file-diff" -->
+  Compare the program's output to a reference copy..
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-translate-custom-diff" -->
+  Must be able to use an user-specified comparator to determine
+  whether a program's output matches a reference result.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-translate-side-effect" -->
+  Inspect one or more of the side effects of the program's execution.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-translate-monitor" -->
+  Construct a report based on the output of a monitoring program.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-arg-calls" -->
+  Must be able to specify repetition.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-arg-calls-id" -->
+  Must be able to uniquely identify members of a repetition set.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-tag-tests" -->
+  Add arbitrary tags to filter tests.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-test-generator" -->
+  Specify that a test specification is actually a test specification
+  generator.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-recursion-limit" -->
+  Have a default limit on the depth of test generation recursion.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-override-recursion-limit" -->
+  Allow users to override the test generation recursion limit.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-prep-in-spec" -->
+  Setup and teardown must be specified in the test specification.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-log-prep" -->
+  Setup and teardown operations must be logged.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-test-after-setup" -->
+  Tests are only executed if their setup operations complete
+  successfully.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-first-error" -->
+  Only report significant setup errors by default.
+  <!-- /phrase -->
+  </listitem>
+
+  <listitem>
+  <!-- phrase id="discuss-record-build-options" -->
+  Must be able to record the build options of all tests.
+  <!-- /phrase -->
+  </listitem>
+
+  </orderedlist>
 
  </section>
 
@@ -792,6 +1246,6 @@
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("QMTest.xml" "book" "chapter")
+  sgml-parent-document: ("qmtest.xml" "book" "chapter")
   End:
 -->
