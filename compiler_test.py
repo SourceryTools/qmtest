@@ -138,14 +138,6 @@ class CompilerTest(Test):
     _ignored_diagnostic_regexps = ()
     """A sequence of regular expressions matching diagnostics to ignore."""
 
-    arguments = [
-        qm.fields.TextField(
-            name="directory",
-            title="Directory",
-            description="""The directory in which to run the test.""",
-            default_value=""),
-        ]
-    
     def Run(self, context, result):
         """Run the test.
 
@@ -184,7 +176,8 @@ class CompilerTest(Test):
                                    step.options, step.output)
 
             # Remember the command used to perform the compilation.
-            result[prefix + "command"] = string.join(command)
+            result[prefix + "command"] = \
+                "<tt>" + string.join(command) + "</tt>"
 
             # Make sure that the output is OK.
             if not self._CheckOutput(context, result, prefix, output,
@@ -193,7 +186,11 @@ class CompilerTest(Test):
                 is_execution_required = 0
             
             # Check the output status.
-            if not self._CheckStatus(result, prefix, "Compiler", status,
+            if step.mode == Compiler.MODE_LINK:
+                desc = "Link"
+            else:
+                desc = "Compilation"
+            if not self._CheckStatus(result, prefix, desc, status,
                                      step.diagnostics):
                 return
 
@@ -282,8 +279,8 @@ class CompilerTest(Test):
         # Compute the result annotation prefix.
         prefix = self._GetAnnotationPrefix() + "execution_"
         # Remember the output streams.
-        result[prefix + "stdout"] = "'''" + executable.stdout + "'''"
-        result[prefix + "stderr"] = "'''" + executable.stderr + "'''"
+        result[prefix + "stdout"] = "<pre>" + executable.stdout + "</pre>"
+        result[prefix + "stderr"] = "<pre>" + executable.stderr + "</pre>"
         # Check the output status.
         self._CheckStatus(result, prefix, "Executable", status)
 
@@ -308,7 +305,8 @@ class CompilerTest(Test):
         prevent execution of the test."""
 
         # Annotate the result with the output.
-        result[prefix + "output"] = "'''" + output + "'''"
+        if output:
+            result[prefix + "output"] = "<pre>" + output + "</pre>"
 
         # Get the compiler to use to parse the output.
         compiler = self._GetCompiler(context)
@@ -399,17 +397,17 @@ class CompilerTest(Test):
         if os.WIFEXITED(status):
             # Obtain the exit code.
             exit_code = os.WEXITSTATUS(status)
-            # Record the exit code in the result.
-            result[prefix + "exit_code"] = str(exit_code)
             # If the exit code is non-zero, the test fails.
             if exit_code != 0 and not non_zero_exit_ok:
-                result.Fail("%s exited with code %d." % (desc, exit_code))
+                result.Fail("%s failed with exit code %d." % (desc, exit_code))
+                # Record the exit code in the result.
+                result[prefix + "exit_code"] = str(exit_code)
                 return 0
         elif os.WIFSIGNALED(status):
             # Obtain the signal number.
             signal = os.WTERMSIG(status)
             # If the program gets a fatal signal, the test fails .
-            result.Fail("%s received fatal signal %d." % (desc, status))
+            result.Fail("%s received fatal signal %d." % (desc, signal))
             result[prefix + "signal"] = str(signal)
             return 0
         else:
@@ -467,7 +465,7 @@ class CompilerTest(Test):
         # Compute the string representation of each diagnostic.
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
-        return "'''" + string.join(diagnostic_strings, '\n') + "'''"
+        return "<pre>" + string.join(diagnostic_strings, '\n') + "</pre>"
 
 
     def _GetDirectoryForTest(self):
@@ -475,7 +473,8 @@ class CompilerTest(Test):
 
         'returns' -- The name of the directory."""
 
-        return self.directory
+        return os.path.join(".", "build",
+                            self.GetDatabase().LabelToPath(self.GetId()))
     
         
     def _MakeDirectoryRecursively(self, directory):

@@ -1444,8 +1444,8 @@ class GPPBprobTest(GPPTest):
                                options + ["-fprofile-arcs"],
                                profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "profile_arcs_"
-        result[prefix + "output"] = output
-        result[prefix + "command"] = string.join(command)
+        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
         if not self._CheckStatus(result, prefix, "Compiler", status):
             return
 
@@ -1469,8 +1469,8 @@ class GPPBprobTest(GPPTest):
                                options + ["-fbranch-probabilities"],
                                profiled_exe_path)
         prefix = self._GetAnnotationPrefix() + "branch_probs_"
-        result[prefix + "output"] = output
-        result[prefix + "command"] = string.join(command)
+        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
         self._CheckStatus(result, prefix, "Compiler", status)
 
         # Remove the temporary directory.
@@ -1679,11 +1679,7 @@ class GCCDatabase(Database):
         # Create the TestDescriptor
         descriptor = TestDescriptor(self, test_id, test_class,
                                     { 'source_file' : attachment,
-                                      'options' : options,
-                                      'directory' :
-                                      os.path.join(".",
-                                                   self._LabelToPath(test_id))
-                                      })
+                                      'options' : options })
         
         return descriptor
         

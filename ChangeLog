@@ -1,3 +1,14 @@
+2002-11-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler_test.py (arguments): Remove.
+	(CompilerTest.Run): Use HTML formatting.
+	(CompilerTest._CheckStatus): Likewise.
+	(CompilerTest._GetDirectoryForTest): Compute it, rather than
+	expecting the database to pass it in.
+	* gcc_database.py (GPPBprobTest.Run): Use HTML formatting.
+	(GCCDatabase.GetTest): Do not pass in a directory.
+	* classes.qmc: New file.
+
 2002-10-31  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (GPP.GetObjectNames): Remove.
