@@ -1,5 +1,11 @@
 2001-12-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (ShellCommandTest): Use
+	ShellCommandTest.command_shell, not just command_shell, as a
+	context variable.
+	(ShellScriptTest): Use ShellScriptTest.script_shell, not just
+	script_shell.
+
 	* standard.mk.in (PRINTTEX): Fix -- problem with TeX formatting.
 	* doc/qm.mod (dashdash): Remove FIXME comment.
 	* doc/manual/common-manual.xml: Update.
