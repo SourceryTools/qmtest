@@ -97,3 +97,82 @@ begin with an underscore.
 lower-case letters, digits, and underscores, and may not begin with an
 underscore. 
 
+@ command error
+No command specified. You must specify a command to qmtrack.
+
+@ create no equals
+Incorrect argument "%(arg)". Must have an = in the argument passed to the
+create command.
+
+@ format error
+Unknown format "%(format)". You must specify a valid format to display the
+issues.
+
+@ field exist
+No field "%(field)" in issue class "%(class)". You may specify only
+fields that are present in the issue class.
+
+@ field set use equal
+The operator = is not allowed for a set field "%(field)". You must use the
++= and -= operators for fields of set types.
+
+@ field set use plus
+The operators += and -= are not allowed for a non-set field
+"%(field)". You must use only the = operator for non-set types.
+
+@ create class error syn
+You must specify an issue class when creating a new issue.
+
+@ create field error
+Missing mandatory field(s) "%(field)". You must specify all mandatory fields 
+when creating a new issue.
+
+@ create build error
+Internal error in creating issue.
+
+@ create issue error
+An issue with the iid "%(iid)" already exists. Try a different iid.
+
+@ edit issue error syn
+You must specify an iid to edit.
+
+@ edit issue error sem
+The iid "%(iid)" was not found in the database.
+
+@ split issue error syn
+You must specify an iid to split.
+
+@ split issue error sem
+The iid "%(iid)" was not found in the database.
+
+@ split iid error sem
+The iid "%(iid)" already exists. There was a conflict in names in the
+database when splitting the specified issue.
+
+@ join issue error syn
+Fewer than two iids specified. You must specified two iids to be joined.
+
+@ join issue error sem
+The iid "%(iid)" was not found in the database.
+
+@ join iid error sem
+The generated iid "%(iid)" from the two issues to be joined is already 
+in the database.
+
+@ query error syn
+No query string specified. Specify a string to evaluate on all issues.
+
+@ show wrong args
+You must specify an iid to show.
+
+@ show no iid
+The iid "%(iid)" was not found in the database.
+
+@ initialize invalid idb class
+IDB type "%(type)" is invalid.
+
+@ initialize wrong flag
+The --idb option is not allowed to this command.
+
+@ initialize no idb path
+You must specify an IDB path to the initialize command.

@@ -1,3 +1,8 @@
+2001-03-09  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/diagnostics.txt: Add new error messages.
+	* qm/track/cmdline.py: Fixed formatting for raising errors.
+
 2001-03-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/web/show.py (handle_submit): Format error messages.
@@ -65,6 +70,7 @@
 	(Command.__init__): Register destroy.
 	(Command.__PerformDestroy): New method.
 
+>>>>>>> 1.100
 2001-02-28  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/sql_idb.py (Query): Define.

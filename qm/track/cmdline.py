@@ -174,34 +174,6 @@ class Command:
 
     # The following are the strings for all the warnings and errors
     # that can be encountered in this module.
-    format_error = 'unknown format %s'
-    command_error = 'no command specified'
-    unrecognized_error = 'unrecognized command %s'
-    field_exist = 'no field %s in issue class %s'
-    field_set_use_equal = 'operator = not allowed for set field %s'
-    field_set_use_plus = \
-      'cannot use operators += or -= on non-set field %s'
-    create_class_error_syn = 'create: no issue class specified'
-    create_field_error = 'create: missing mandatory fields (%s)'
-    create_class_error_sem = 'create: issue class %s does not exist'
-    create_issue_error = 'create: iid %s already exists'
-    create_no_equals_error = 'create: incorrect argument %s'
-    edit_issue_error_syn = 'edit: no iid specified'
-    edit_issue_error_sem = 'edit: iid %s not found'
-    split_issue_error_syn = 'split: no iid specified'
-    split_issue_error_sem = 'split: iid %s not found'
-    split_iid_error_sem = 'split: iid %s already exists'
-    join_issue_error_syn = 'join: fewer than two iids specified'
-    join_issue_error_sem = 'join: iid %s not found'
-    join_iid_error_sem = 'join: iid %s already exists'
-    query_error_syn = 'query: no query specified'
-    query_invalid_id = 'query: unknown name %s'
-    query_invalid_att = 'query: unknown attribute %s'
-    query_exception = 'query: an exception occured: %s: %s'
-    show_wrong_args = 'show: no iid specified'
-    show_no_iid = 'show: iid %s not found'
-    initialize_invalid_idb_class = 'initialize: IDB type %s is invalid'
-    initialize_wrong_flag = 'initialize: --idb option is not allowed'
     initialize_no_idb_path = 'initialize: missing IDB path'
     
     def __init__(self, argument_list):
@@ -315,7 +287,8 @@ class Command:
 
         if self.__command_name == '':
             # The user did not specify a command so we report an error.
-            raise qm.cmdline.CommandError, self.command_error
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("command error")
         else:
             # Look up a handler for the command.  The command parser
             # should already have flagged the case where the command
@@ -349,7 +322,7 @@ class Command:
             # Check to make sure there is an '=' in the pair.
             if string.find(pair, '=') == -1:
                 raise qm.cmdline.CommandError, \
-                      self.create_no_equals_error % pair
+                      qm.track.error("create no equals", arg=pair)
             name, value = string.split(pair, '=', 1)
             if value != '':
                 # If the last character is a '+' or a '-', we need
@@ -416,7 +389,7 @@ class Command:
         # Make sure the format is valid.
         if not self.format_name in self.formats:
             raise qm.cmdline.CommandError, \
-                  self.format_error % self.format_name
+                  qm.track.error("format error", format=self.format_name)
 
     
     def __CheckFieldTypes(self, hash, issue_class):
@@ -450,8 +423,8 @@ class Command:
             # report the error.
             if not issue_class.HasField(field_name):
                 raise qm.cmdline.CommandError, \
-                      self.field_exist \
-                      % (field_name, issue_class.GetName())
+                      qm.track.error("field exist", field=field_name, \
+                                     class=issue_class.GetName())
 
             # If the field does exist, get the field.
             field = issue_class.GetField(field_name)
@@ -460,13 +433,15 @@ class Command:
             if isinstance(field, qm.track.issue_class.IssueFieldSet):
                 if not is_set_operation:
                     raise qm.cmdline.CommandError, \
-                          self.field_set_use_equal % field_name
+                          qm.track.error("field set use equal", \
+                                         field=field_name)
             # Conversely, if the field is of a non-set type, and they
             # used the syntax for a set type, report an error.
             else:
                 if is_set_operation:
                     raise qm.cmdline.CommandError, \
-                          self.field_set_use_plus % field_name
+                          qm.track.error("field set use plus", \
+                                         field=field_name)
                     
         
     def __PerformCreate(self, output):
@@ -477,7 +452,8 @@ class Command:
             issue_class_name = self.GetCommandOptions()['class']
         except KeyError:
             # The class was not specified.  Report an error.
-            raise qm.cmdline.CommandError, self.create_class_error_syn
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("create class error syn")
 
         # Split the 'field=value' arguments up into pairs.
         hash = self.__ParseFieldValuePairs(self.__arguments)
@@ -489,7 +465,8 @@ class Command:
             icl = idb.GetIssueClass(issue_class_name)
         except KeyError:
             raise qm.cmdline.CommandError, \
-                  self.create_class_error_sem % issue_class_name
+                  qm.track.error("create field error", \
+                                 field=issue_class_name)
 
         # Check that the user used the correct operator for the types of
         # fields that they specify.
@@ -517,7 +494,8 @@ class Command:
         # If some mandatory fields were missing, report an error.
         if missing != []:
             raise qm.cmdline.CommandError, \
-                  self.create_field_error % string.join(missing, ',')
+                  qm.track.error("create field error", \
+                                 field=string.join(missing, ','))
         
         # Once we have checked that everything is in order to create the
         # new issue, we build it based on the argument pairs.
@@ -531,14 +509,16 @@ class Command:
                     elif string.rfind(key, '-') != len(key) - 1:
                         new_issue.SetField(key, value)
                 except ValueError, msg:
-                    raise qm.cmdline.CommandError, msg
+                    raise qm.cmdline.CommandError, \
+                          qm.track.error("create build error")
             
         # Add the issue to the database.  Check to see if the issue
         # with that 'iid' already exists.  If so, report an error.
         try:
             idb.AddIssue(new_issue)
         except ValueError:
-            raise qm.cmdline.CommandError, self.create_issue_error % iid
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("create issue error", iid=iid)
 
         self.__PrintResults(output, new_issue)
 
@@ -549,7 +529,8 @@ class Command:
         # If there are no command arguments to the command, they did
         # not specify a command to be edited and we report an error.
         if len(self.__arguments) == 0:
-            raise qm.cmdline.CommandError, self.edit_issue_error_syn
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("edit issue error syn")
         
         iid = self.__arguments[0]
 
@@ -559,7 +540,8 @@ class Command:
         try:
             issue = idb.GetIssue(iid)
         except KeyError:
-            raise qm.cmdline.CommandError, self.edit_issue_error_sem % iid
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("edit issue error sem", iid=iid)
 
         # Split arguments up into pairs.
         hash = self.__ParseFieldValuePairs(self.__arguments[1:])
@@ -616,7 +598,8 @@ class Command:
         # If there are no command arguments to the command, they did
         # not specify a command to be split and we report an error.
         if len(self.__arguments) == 0:
-            raise qm.cmdline.CommandError, self.split_issue_error_syn
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("split issue error syn")
         
         iid = self.__arguments[0]
 
@@ -625,7 +608,10 @@ class Command:
         try:
             issue = idb.GetIssue(iid)
         except KeyError:
-            raise qm.cmdline.CommandError, self.split_issue_error_sem % iid
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("split issue error sem", iid=iid)
+
+        self.split_issue_error_sem % iid
 
         # Copy the original issue.
         issue1 = issue.Copy()
@@ -645,14 +631,14 @@ class Command:
         try:
             idb.GetIssue(issue1.GetId())
             raise qm.cmdline.CommandError, \
-                  self.split_iid_error_sem % issue1.GetId()
+                  qm.track.error("split iid error sem", iid=issue1.GetId())
         except ValueError:
             # Couldn't find the issue; that's good.
             pass
         try:
             idb.GetIssue(issue2.GetId())
             raise qm.cmdline.CommandError, \
-                  self.split_iid_error_sem % issue2.GetId()
+                  qm.track.error("split iid error sem", iid=issue2.GetId())
         except ValueError:
             # Couldn't find the issue; that's good.
             pass
@@ -671,7 +657,8 @@ class Command:
         # to be joined.  If a different number of arguments are given,
         # report an error.
         if len(self.__arguments) != 2:
-            raise qm.cmdline.CommandError, self.join_issue_error_syn
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("join issue error syn")
         
         iid1 = self.__arguments[0]
         iid2 = self.__arguments[1]
@@ -681,11 +668,13 @@ class Command:
         try:
             issue1 = idb.GetIssue(iid1)
         except KeyError:
-            raise qm.cmdline.CommandError, self.join_issue_error_sem % iid1
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("join issue error sem", iid=iid1)
         try:
             issue2 = idb.GetIssue(iid2)
         except KeyError:
-            raise qm.cmdline.CommandError, self.join_issue_error_sem % iid2
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("join issue error sem", iid=iid2)
 
         # How are we supposed to map over all the fields to combine
         # the two issues?  For enumerals, do we want intersection or union?
@@ -705,7 +694,7 @@ class Command:
             idb.AddIssue(new_issue)
         except ValueError:
             raise ComandError, \
-                  self.join_iid_error_sem % issue1.GetId()
+                  qm.track.error("join iid error sem", iid=issue1.GetId())
 
         self.__PrintResults(output, new_issue)
 
@@ -720,7 +709,8 @@ class Command:
         # If there are no command arguments to the command, they did
         # not specify a query string to be use and we report an error.
         if len(self.__arguments) == 0:
-            raise qm.cmdline.CommandError, self.query_error_syn
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("query error syn")
 
         # Combine the arguments to the query into one string so that
         # the expression may be passed to the Python expression
@@ -762,7 +752,8 @@ class Command:
 
         # Make sure an iid argument was specified.
         if len(self.__arguments) != 1:
-            raise qm.cmdline.CommandError, self.show_wrong_args
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("show wrong args")
         
         iid = self.__arguments[0]
 
@@ -772,7 +763,8 @@ class Command:
         try:
             issue = idb.GetIssue(iid)
         except KeyError:
-            raise qm.cmdline.CommandError, self.show_no_iid % iid
+            raise qm.cmdline.CommandError, \
+                  qm.track.error("show no iid", iid=iid)
 
         self.__PrintResults(output, issue)
 
@@ -794,17 +786,18 @@ class Command:
             idb_class = qm.track.idb.get_idb_class(idb_class_name)
         except ValueError:
             raise qm.ConfigurationError, \
-                  self.initialize_invalid_idb_class % idb_class_name
+                  qm.track.error("initialize invalid idb class", \
+                                 type=idb_class_name)
         # For this command, the IDB path is provided as an argument.
         # Make sure the --idb flag wasn't specified, to make sure
         # users aren't confused.
         if self.GetGlobalOptions().has_key('idb'):
             raise qm.cmdline.CommandError, \
-                  self.initialize_wrong_flag
+                  qm.track.error("initialize wrong flag")
         # Make sure the argument was provided.
         if len(self.__arguments) != 1:
             raise qm.cmdline.CommandError, \
-                  self.initialize_no_idb_path
+                  qm.track.error("initialize no idb path")
         idb_path = self.__arguments[0]
 
         # Create the IDB.
@@ -826,11 +819,11 @@ class Command:
         # users aren't confused.
         if self.GetGlobalOptions().has_key('idb'):
             raise qm.cmdline.CommandError, \
-                  self.initialize_wrong_flag
+                  qm.track.error("initialize wrong flag")
         # Make sure the argument was provided.
         if len(self.__arguments) != 1:
             raise qm.cmdline.CommandError, \
-                  self.initialize_no_idb_path
+                  qm.track.error("initialize no idb path")
         idb_path = self.__arguments[0]
 
         # Lock the IDB, to make sure we don't delete it under some
