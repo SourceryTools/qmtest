@@ -1,5 +1,27 @@
+2001-10-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/xmldb.py (Database.__init__): Pass the attachment
+	store down to the base class.
+	(Database.GetAttachmentStore): Remove.
+	(Database.__GetArgumentsFromDomNode): Use GetAttachmentStore
+	to access the attachment store.
+
 2001-10-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* README.sources: Fix typo.
+
+	* qm/label.py: Revise documentation.
+
+	* qm/test/base.py: Move Database to ...
+	* qm/test/database.py: New file.
+	* qm/test/cmdline.py: Use it throughout in place of base.
+	* qm/test/qmtest-remote.py (program_name): Fix initialization.
+	* qm/test/qmtest.py (program_name): Likewise.
+	* qm/test/xmldb.py: Import database.  Use it throughout in place
+	of base.
+	* qm/test/web/show.py: Likewise.
+	* share/diagnostics/test.txt (no such resource): New error message.
+	
 	* qm/structured_text.py (HtmlFormatter.FinishDefinedTerm):
 	Write the <dd> tag corresponding to the beginning of the
 	definition itself.

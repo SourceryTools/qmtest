@@ -106,7 +106,7 @@ class Database(database.Database, qm.common.MutexMixin):
         must already exist."""
 
         # Initialize base classes.
-        database.Database.__init__(self, path)
+        database.Database.__init__(self, path, AttachmentStore(path))
         # Create a new database, if requested.
         if create:
             if os.path.exists(path):
@@ -121,8 +121,6 @@ class Database(database.Database, qm.common.MutexMixin):
         self.__tests = {}
         self.__suites = {}
         self.__resources = {}
-        # Connect to the attachment store.
-        self.__attachment_store = AttachmentStore(path)
 
 
     def GetClassPaths(self):
@@ -376,11 +374,6 @@ class Database(database.Database, qm.common.MutexMixin):
                             qm.label.to_path(name))
 
 
-    def GetAttachmentStore(self):
-        return self.__attachment_store
-
-
-
     # Helper functions.
 
     def __InvalidateItem(self, item_id, cache):
@@ -534,7 +527,7 @@ class Database(database.Database, qm.common.MutexMixin):
             # The field knows how to extract its value from the value
             # node. 
             value = field.GetValueFromDomNode(value_node,
-                                              self.__attachment_store)
+                                              self.GetAttachmentStore())
             # Make sure the value is OK.
             value = field.Validate(value)
             # Store it.
