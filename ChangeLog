@@ -1,3 +1,9 @@
+2003-02-24  Mark Mitchell  <mark@codesourcery.com>
+
+	* test/share/dtml/navigation-bar.dtml (hide_menu): Work around
+	JavaScript issue in Mozilla.
+	* NEWS: Update.
+
 2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
 	* qm/test/target.py (Target._RecordResult): Always record the
