@@ -755,8 +755,8 @@ class TupleField(Field):
     def Validate(self, value):
 
         assert len(value) == len(self.__fields)
-        map(lambda f, v: f.Validate(v),
-            self.__fields, value)
+        return map(lambda f, v: f.Validate(v),
+                   self.__fields, value)
 
 
     def ParseFormValue(self, request, name, attachment_store):

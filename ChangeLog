@@ -1,3 +1,8 @@
+2003-07-21  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/fields.py (TupleField.Validate): Return the computed
+	value.
+
 2003-07-21  Vladimir Prus <ghost@cs.msu.su>
 	    Mark Mitchell <mark@codesourcery.com>
 
