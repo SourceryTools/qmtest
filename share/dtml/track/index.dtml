@@ -100,7 +100,7 @@
       <td>
        <dtml-var expr="request.copy('show').AsForm(name='show_form')">
         Issue ID: <input type="text" size="8" name="iid"/>
-        <input type="hidden" name="style">
+        <input type="hidden" name="style" value="full">
         <input type="button" 
                value=" Show "
                onclick="document.show_form.style.value = 'full';

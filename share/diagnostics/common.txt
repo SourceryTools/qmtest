@@ -86,6 +86,9 @@ Specify a command.
 @ sendmail error
 Could not execute your mail transport agent, `%(sendmail_path)s'.
 
+@ server url
+%(program_name)s running at %(url)s
+
 @ session expired
 Your session has expired.  Please log in again to start a new session.
 

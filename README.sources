@@ -106,6 +106,15 @@ subject to the following modifications and clarifications:
       class attributes	 underscore_delimited
       local variables    underscore_delimited
 
+For class attributes and methods, use a name that starts with a single
+underscore for members that would be protected in C++, i.e. meant to be
+accessible by the class itself and its subclasses only.  Use a name that
+starts with two underscores for members that would be private in C++,
+i.e. meant to be accessible only by the class itself.  In global scope,
+use names that begin with a single underscore for functions and
+variables that would be static in C or C++, i.e. meant to be used within
+the package only.
+
 Every program element (module, class, function, etc.) should be
 provided with a doc string.  Doc strings should be written in
 structured text, using full sentences.  Begin and end all doc strings

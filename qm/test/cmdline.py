@@ -619,8 +619,8 @@ class Command:
             # a browser at it safely.
             qm.platform.open_in_browser(url)
         else:
-            qm.common.print_message(0, "%s server running at %s .\n"
-                                    % (qm.common.program_name, url))
+            message = qm.message("server url", url=url)
+            qm.common.print_message(0, message + "\n")
 
         # Accept requests.
         server.Run()

@@ -1,3 +1,11 @@
+2001-08-30  Alex Samuel  <samuel@codesourcery.com>
+
+	* README.sources: Describe conventions for private names.
+	* qm/setup_path.py.in (add_to_python_path): Adjust comment.
+	* qm/test/cmdline.py (Command.__ExecuteServer): Adjust message.
+	* share/dtml/track/index.dtml: Initialize style field.
+	* share/diagnostics/common.txt (server url): New diagnostic.
+
 2001-08-28  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/xmldb.py (Database.GetTest): Handle ParseError.

@@ -54,11 +54,10 @@ def add_to_python_path(*components):
     path = os.path.normpath(path)
     if path not in sys.path:
         # Insert the path element at the front, so that QM can replace
-        # Python system libraries.
-        # FIXME: This also menas that users cannot replace QM libraries
-        # by setting the PYTHONPATH environment variable, since this is
-        # prepended to 'sys.path' before we get here.  This might not be
-        # a good restriction.
+        # Python system libraries.  This also means that users cannot
+        # replace QM libraries by setting the 'PYTHONPATH' environment
+        # variable, since this is prepended to 'sys.path' before we get
+        # here.
         sys.path.insert(0, path)
 
 
