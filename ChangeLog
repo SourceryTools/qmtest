@@ -1,3 +1,7 @@
+2001-01-09  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: New file.
+
 2001-01-08  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk (BUILDDIR): New macro.

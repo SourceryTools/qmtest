@@ -1,0 +1,12 @@
+                                                            -*- text -*-
+
+		     Software Carpentry QM Tools
+
+1.  REQUIREMENTS
+
+    Besides Python, various tools are necessary for building QM
+    software and documentation.  See
+
+      http://www.software-carpentry.com/dev
+
+    for more information on obtaining the tools.
