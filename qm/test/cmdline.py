@@ -96,7 +96,7 @@ class QMTest:
     db_path_environment_variable = "QMTEST_DB_PATH"
     """The environment variable specifying the test database path."""
 
-    summary_formats = ("full", "brief", "stats", "batch", "none")
+    summary_formats = ("brief", "full", "stats", "batch", "none")
     """Valid formats for result summaries."""
 
     context_file_name = "context"
@@ -433,9 +433,8 @@ Test results are written to "results.qmr".  Use the '--output' option to
 specify a different output file, or '--no-output' to supress results.
 
 Use the '--format' option to specify the output format for the summary.
-Valid formats are "full", "brief" (the default), "stats", and "none".
-The summary is written to standard output.
-         """,
+Valid formats are %s.
+         """ % _make_comma_separated_string(summary_formats, "and"),
          (
            concurrent_option_spec,
            context_file_spec,
@@ -463,8 +462,8 @@ whose results are shown.  If none are specified, shows all tests that
 did not pass.
 
 Use the '--format' option to specify the output format for the summary.
-Valid formats are "full", "brief" (the default), "stats", and "none".
-         """,
+Valid formats are %s.
+         """ % _make_comma_separated_string(summary_formats, "and"),
          ( help_option_spec,
            format_option_spec,
            outcomes_option_spec,

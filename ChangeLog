@@ -1,5 +1,11 @@
 2003-09-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/cmdline.py (QMTest.summary_formats): Rearrange order.
+	(QMTest.commands_spec): Automatically generate lists of --format
+	options.
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream.arguments): Specify valid enumerals for format.
+
 	* qm/test/cmdline.py (commands_spec): Add --help support for
 	"qmtest remote".
 

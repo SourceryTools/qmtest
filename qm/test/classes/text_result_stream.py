@@ -82,7 +82,8 @@ class TextResultStream(FileResultStream):
             annotations are shown for tests as they are run.
 
             In the "stats" format only the summary statistics are
-            displayed."""),
+            displayed.""",
+            enumerals = ["brief", "batch", "full", "stats"])
         ]
     
     def __init__(self, arguments):
