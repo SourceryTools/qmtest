@@ -500,8 +500,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         context = Context()
 
         for option, argument in self.__command_options:
-            # Look for the '--context-file' option.
-            if option == "context-file":
+            # Look for the '--load-context' option.
+            if option == "load-context":
                 if argument == "-":
                     # Read from standard input.
                     lines = sys.stdin.readlines()

@@ -1,3 +1,8 @@
+2002-01-29  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.MakeContext): Fix spelling of
+	context file option.
+
 2002-01-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* README (REQUIREMENTS): Note that Python 2.1 or higher
