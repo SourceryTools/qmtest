@@ -3,6 +3,14 @@ NEWS
 
 This file describes user visible changes to QM.
 
+QM 2.0.2
+========
+
+When a test fails due to dependency on a resource that could not be
+set up, the GUI now displays a link to the resource result from the
+test result.  (Previously, there was no way to get information about
+resource failures in the GUI.)
+
 QM 2.0.1
 ========
 

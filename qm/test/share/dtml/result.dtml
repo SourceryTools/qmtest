@@ -43,7 +43,12 @@
      <tr class="field">
       <td width="30%"><dtml-var annotation></td>
       <td width="70%">
-       <dtml-var expr="result[annotation]">
+       <dtml-if expr="annotation == result.RESOURCE">
+        <a href='<dtml-var expr="GetResultURL(result[annotation])">'"
+         ><dtml-var expr="result[annotation]"></a>
+       <dtml-else>
+        <dtml-var expr="result[annotation]">
+       </dtml-if>
       </td>
      </tr>
     </dtml-if>
@@ -53,7 +58,7 @@
 
  <dtml-var expr="GenerateStartScript()">
   function run_test() {
-   location = '<dtml-var "MakeRunUrl()">';
+   location = '<dtml-var "GetRunURL()">';
   }
  <dtml-var expr="GenerateEndScript()">
 

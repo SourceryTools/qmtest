@@ -1,3 +1,18 @@
+2002-12-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/result.py (Result): Update documentation string to more
+	clearly describe annotations.
+	* qm/test/web/web.py (ResultPage.__init__): Do not add a "This
+	Test" link to the run menu for a resource.
+	(ResultPage.MakeRunUrl): Rename to ...
+	(ResultPage.GetRunURL): ... this.
+	(ResultPage.GetResultURL): ... new method.
+	(StorageResultsStream.GetResult): New method.
+	(QMTestServer.HandleShowResults): Use it.
+	* qm/test/share/dtml/result.dtml: Display links to resources, as
+	appropriate.
+	* NEWS: Note that links to results are now available.
+
 2002-12-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/web/web.py (NewItemPage.GetClassDescriptions): Use
