@@ -184,7 +184,7 @@ def create_dom_text_element(document, tag, text):
     return element
 
 
-__dom_implementation = xml.dom.getDOMImplementation()
+__dom_implementation = xml.dom.minidom.getDOMImplementation()
 
 def create_dom_document(public_id, dtd_file_name, document_element_tag):
     """Create a DOM document.

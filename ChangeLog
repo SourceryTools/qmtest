@@ -1,3 +1,8 @@
+2002-06-19  Zack Weinberg  <zack@codesourcery.com>
+
+	* qm/xmlutil.py: Use xml.dom.minidom.getDOMImplementation() so
+	that writexml() will work when xmlplus is installed.
+
 2002-06-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/common.py (sequence_difference): Remove.
