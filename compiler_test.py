@@ -187,6 +187,18 @@ class CompilerBase:
         return os.path.splitext(basename)[0] + object_extension
     
 
+    def _QuoteForHTML(self, text):
+
+        for t, h in (('&', '&amp;'),
+                     ('<', '&lt;'),
+                     ('>', '&gt;'),
+                     ('"', "&quot;")):
+            if text.find(t) >= 0:
+                text = h.join(text.split(t))
+
+        return text
+    
+
 
 class CompilerTest(Test, CompilerBase):
     """A 'CompilerTest' tests a compiler."""
@@ -384,7 +396,8 @@ class CompilerTest(Test, CompilerBase):
 
         # Annotate the result with the output.
         if output:
-            result[prefix + "output"] = "<pre>" + output + "</pre>"
+            result[prefix + "output"] \
+                = "<pre>" + self._QuoteForHTML(output) + "</pre>"
 
         # Get the compiler to use to parse the output.
         compiler = self._GetCompiler(context)

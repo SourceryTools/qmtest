@@ -1,3 +1,9 @@
+2002-12-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler_test.py (CompilerBase._QuoteForHTML): New method.
+	(CompilerTest._CheckOutput): Use it.
+	* gcc_database.py (GPPBprobTest): Likewise.
+	
 2002-12-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (Compiler.Compile): Use ...

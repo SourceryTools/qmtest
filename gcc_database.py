@@ -1440,7 +1440,8 @@ class GPPBprobTest(GPPTest):
         result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
         (status, output) \
             = compiler.ExecuteCommand(self._GetDirectory(), command)
-        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        result[prefix + "output"] \
+            = "<pre>" + self._QuoteForHTML(output) + "</pre>"
         if not self._CheckStatus(result, prefix, "Compiler", status):
             return
 
@@ -1465,7 +1466,8 @@ class GPPBprobTest(GPPTest):
         result[prefix + "command"] = "<tt>" + string.join(command) + "</tt>"
         (status, output) \
             = compiler.ExecuteCommand(self._GetDirectory(), command)
-        result[prefix + "output"] = "<pre>" + output + "</pre>"
+        result[prefix + "output"] \
+            = "<pre>" + self._QuoteForHTML(output) + "</pre>"
         self._CheckStatus(result, prefix, "Compiler", status)
 
         # Remove the temporary directory.
