@@ -38,9 +38,19 @@
 
     <p>The <a class="Term">issue database</a> is an abstract database
     model used by qmtrack to store, retrieve, and query issues.
-    Qmtrack issues the idb via an abstract interface, which allows
+    Qmtrack accesses the idb via an abstract interface, which allows
     multiple implementations with varying performance and maintenance
-    attributes.  All implementations must support the behaviour
+    attributes.  We envision and accomodate implementations based on
+    underlying database technologies such as,</p>
+    <ul>
+      <li>a flat text file</li>
+      <li>an XML file</li>
+      <li>a persistent store of Python objects</li>
+      <li>SQL-based relational databases such as Postgres, MySQL, and
+      Oracle</li>
+      <li>custom client protocols with remote database servers</li>
+    </ul>
+    <p>However, all implementations must support the behaviour
     specified here.</p>
 
     <p>The idb consists of a single table.  Each row of this table
@@ -65,6 +75,9 @@
 
       <li><span class="Identifier">integer</span> fields contain a
       signed 32-bit integer.</li>
+
+      <li><span class="Identifier">integer list</span> fields contain
+      a list of zero or more 32-bit integers.</li>
     </ol>
 
     <p>The data types listed below are also stored in the idb, but
@@ -75,14 +88,30 @@
       date/time.  Time is stored as a string, with the format
       &quot;%Y-%m-%d %H:%M:%S&quot;.</li>
 
-      <li><span class="Identifier">user id</span> fields store a <a
+      <li><span class="Identifier">uid</span> fields store a <a
       class="Term">user id</a> as a <span
       class="Identifier">string</span>.</li>
 
-      <li><span class="Identifier">issue id</span> fields contain a
+      <li><span class="Identifier">iid</span> fields contain a
       reference to another issue in the same idb as an <span
       class="Identifier">integer</span> field.</li>
-    </ol>
+
+      <li><span class="Identifier">iid set</span> fields contain
+      zero or more references to other issues in the same idb.  These
+      fields are typically stored as <span class="Identifier">integer
+      list</span> fields in the underlying idb implementation.</li>
+
+      <li><span class="Identifier">enumeration</span> fields contain
+      an enumerated value: exactly one value selected from a
+      preconfigured set of alternatives.  Enumeration values are
+      typically stored as integers; the mapping between values and
+      enumerals is part of the idb configuration.</li>
+
+      <li><span class="Identifier">enumeration set</span> fields
+      contain a subset of elements of a preconfigured set of enumeral
+      alternatives.  Enumeration set fields are typically stored as
+      integer sets in the underlying idb implementation.</li>
+   </ol>
 
     <h5>Issue id</h5>
 
@@ -144,7 +173,7 @@ class IdbBase:
         revision_number."""
 
     def GetIssueAllRevisions(self, iid):
-        """Returns an array of revisions of the issue given by iid.
+        """Return an array of revisions of the issue given by iid.
         The array index is the revision number."""
 
     def GetCurrentRevisionNumber(self, iid):
@@ -152,5 +181,143 @@ class IdbBase:
         issue given by iid."""
 </pre>
     </div>
+
+    <h4>Issues</h4>
+
+    <p>An <a class="Term">issue</a> is the principal data record in
+    qmtrack.  Each issue corresponds to a bug report, feature request,
+    or other process item in the qmtrack database.</p>
+
+    <h5>Fields</h5>
+
+    <p>Each issue (or, more accurately, each revision of each issue)
+    contains fields specified by the columns of the idb schema.
+    Fields fall into three categories:</p>
+    <ol>
+      <li><a class="TermDef">Mandatory fields</a> are present in any
+      idb schema and thus in every qmtrack issue.  The field type and
+      semantics of a mandatory field is invariant; qmtrack relies on
+      the presence of these fields for its operation.</li>
+
+      <li><a class="TermDef">Standard fields</a> need not be present,
+      but if they are, take a particular field type and have standard
+      semantics.  Option qmtrack features and modules may rely on
+      standard fields for thier operation.</li>
+
+      <li><a class="TermDef">Custom fields</a> may be configured at
+      will in the idb schema.</li>
+    </ol>
+
+    <h5>Mandatory fields</h5>
+
+    <table columns="3">
+      <tr class="Heading">
+        <td>field name</td>
+        <td>type</td>
+        <td>description</td>
+      </tr>
+      <tr>
+        <td>id</td>
+        <td><span class="Identifier">integer</span></td>
+        <td><a class="Term">issue id</a></td>
+      </tr>
+      <tr>
+        <td>revision number</td>
+        <td><span class="Identifier">integer</span></td>
+        <td><a class="Term">revision number</a></td>
+      </tr>
+      <tr>
+        <td>time stamp</td>
+        <td><span class="Identifier">date</span></td>
+        <td>the date and time at which this issue revision was entered
+        into the idb</td>
+      </tr>
+      <tr>
+        <td>summary</td>
+        <td><span class="Identifier">string</span></td>
+        <td>short summary</td>
+      </tr>
+      <tr>
+        <td>categories</td>
+        <td><span class="Identifier">enumeration set</span></td>
+        <td>the <a class="Term">categories</a> to which the issue
+        belongs</td>
+      </tr>              
+      <tr>
+        <td>attachments</td>
+        <td>special</td>
+        <td>a collection of zero or more file attachments containing
+        arbitrary data</td>
+      </tr>
+      <tr>
+        <td>parents</td>
+        <td><span class="Identifier">iid set</span></td>
+        <td>the single iid of the parent issue if this issue was
+        created in a split operation; the iid of all parent issues if
+        this issue was created in a join operation; an empty set
+        otherwise</td>
+      </tr>
+      <tr>
+        <td>children</td>
+        <td><span class="Identifier">iid set</span></td>
+        <td>the single iid of the child issue if this issue was joined
+        with other issues; the iid of all children if this issue was
+        split; an empty set otherwise</td>
+      </tr>
+    </table>
+
+    <h6>Attachments</h6>
+
+    <p>Arbitrary file attachments may be associated with an issue in
+    the idb.  For most record-oriented implementations of the idb,
+    though, the attachments themselves will not be stored in the
+    database.  Instead, the attachment data itself will be stored on
+    the side in some other repository (such as a file system) and
+    incorporated by reference.</p>
+
+    <p>Each attachment includes three pieces of information.</p>
+    <ol>
+      <li>A specification of the location of the attachment data.</li>
+
+      <li>A MIME type, stored as a string.</li>
+
+      <li>A description, stored as a string.</li>
+    </ol>
+
+    <p>The <span class="Class">IdbAttachment</span> class represents
+    an attachment.</p>
+    <div class="API">
+<pre>
+class IdbAttachment:
+    """A file attachment to an issue."""
+
+    def __init__(self, data, mime_type, description):
+        """Create a new IdbAttachment instance."""
+
+    def GetLocation(self):
+        """Return a string giving the location of the attachment data.
+        The contents of the string are opaque and
+        implementation-defined, but uniquely and completely specify
+        the location of the data."""
+
+    def GetFile(self):
+        """Return a readable file handle to the attachment data,
+        positioned at the beginning."""
+
+    def GetMimeType(self):
+        """Return the MIME type of the attachment."""
+
+    def GetDescription(self):
+        """Return a description of the attachment."""
+</pre>
+    </div>
+
   </body>
 </html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  End:
+-->

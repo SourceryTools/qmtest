@@ -1,3 +1,15 @@
+2000-11-01  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/qm.css (a.Dfn): Remove.
+	(a.TermDef): Fix background-color.
+	(span.Identifier): Recreate.
+	(span.Class): Likewise.
+	(table): New style.
+	(tr.Heading): New class.
+	(span.Fixme): Likewise.
+
+	* templates/html: Add Emacs local variables.
+
 2000-10-31  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk (%.html): Fix.

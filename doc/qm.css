@@ -106,22 +106,16 @@ div.Contents {
    or concept.  Do not set the name attribute; this is done
    automatically by XHTML processing.*/
 
-span.Dfn {
-    color: #000060;
-    background-color: white;
-    font-style: italics;    
+a.TermDef {
+   color: #000060;
+   background-color: white;
+   font-style: italic;
 }
 
 /* Use <a class="Term">...</a> for subsequent uses of a defined term
    or concept.  Do not set the ref attribute; this is done
    automatically by the XHTML processing.  But be sure to use exactly
    the same spelling of the term.  */
-
-a.TermDef {
-   color: #000060;
-   backgrond-color: white;
-   font-style: italic;
-}
 
 a.Term:link, a.Term:visited {
     color: #000060;
@@ -156,15 +150,43 @@ div.API {
    names used in source code.  */
 
 span.Identifier {
-    color: #ff0000;
-    font: Courier;
-    font-style: bold;
+    font-family: courier, monospace;
+    font-weight: bold;
 }
 
 /* Use <span class="Class">...</span> for the name of a class.  */
 
 span.Class {
-    color: #ff0000;
-    font: Courier;
-    font-style: bold;
+    font-family: courier, monospace;
+    font-weight: bold;
 }
+
+
+/* Table formatting.  */
+
+/* General tables, containing primarily text.  */
+
+table {
+    border-style: none;
+    padding: 4pt;
+}
+
+/* A heading row in a table.  */
+
+tr.Heading {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}
+
+
+/* Miscellaneous editorial stuff.  */
+
+/* Use <span class="Fixme">...</span> as a marker for material that
+   needs to be revisited, revised, or completed.  */
+
+span.Fixme {
+    background-color: white;
+    color: red;
+}
+
