@@ -18,6 +18,12 @@ The substitutions field for the FileContentsTest now works correctly
 in the GUI.  This is an incompatible change; tests that use this test
 class will require hand-editing.
 
+An argument in a derived test or resource class which has the same
+name as an argument in a base class now overrides the base class
+argument.  Therefore, every test class will have only one argument
+with a given name.  (Previously, both the base and derived class
+arguments were present.)
+
 QM 2.0.1
 ========
 

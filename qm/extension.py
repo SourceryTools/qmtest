@@ -114,6 +114,7 @@ def get_class_arguments(extension_class):
     if arguments is None:
         # There are no arguments yet.
         arguments = []
+        dictionary = {}
         # Start with the most derived class.
         classes = [extension_class]
         while classes:
@@ -122,8 +123,17 @@ def get_class_arguments(extension_class):
             # Add all of the new base classes to the end of the list.
             classes.extend(c.__bases__)
             # Add the arguments from this class.
-            arguments.extend(c.__dict__.get("arguments", []))
+            new_arguments = c.__dict__.get("arguments", [])
+            for a in new_arguments:
+                name = a.GetName()
+                # If we already have an entry for this name, then a
+                # derived class overrides this argument.
+                if not dictionary.has_key(name):
+                    arguments.append(a)
+                    dictionary[name] = a
+                    
         extension_class._argument_list = arguments
+        extension_class._argument_dictionary = dictionary
         
     return arguments
         
@@ -139,15 +149,10 @@ def get_class_arguments_as_dictionary(extension_class):
 
     assert issubclass(extension_class, Extension)
 
-    dictionary = extension_class._argument_dictionary
-    if dictionary is None:
-        arguments = get_class_arguments(extension_class)
-        dictionary = {}
-        for argument in arguments:
-            dictionary[argument.GetName()] = argument
-        extension_class._argument_dictionary = dictionary
+    if extension_class._argument_dictionary is None:
+        get_class_arguments(extension_class)
         
-    return dictionary
+    return extension_class._argument_dictionary
         
 
 def get_class_description(extension_class, brief=0):
