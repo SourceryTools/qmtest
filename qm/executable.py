@@ -112,6 +112,8 @@ class Executable:
             # A relative path name, like "./program".
             if dir:
                 path = os.path.normpath(os.path.join(dir, path))
+                if not os.path.isabs(path):
+                    path = os.path.abspath(path)
             else:
                 path = os.path.abspath(path)
         else:
@@ -119,7 +121,7 @@ class Executable:
             # execute will be found by searching the PATH environment
             # variable.
             pass
-            
+
         # Initialize the parent.
         startupinfo = self._InitializeParent()
 

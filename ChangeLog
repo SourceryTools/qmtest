@@ -1,5 +1,7 @@
 2002-11-22  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/executable.py (Executable.Spawn): Refine previous patch.
+
 	* qm/executable.py (Executable.Spawn): Handle relative pathnames
 	in a platform-independent manner.
 	(RedirectedExecutable._DoParent): Fix typo.
