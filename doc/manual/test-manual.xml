@@ -1463,10 +1463,11 @@
 
     <listitem>
      <para>A test database may specify locations to check for module
-     files when loading a class.  The standard &qmtest; test database
-     implementation specifies the subdirectory named
-     <filename>_classes</filename> in the top test database directory,
-     if this directory exists.  Module files containing test and
+     files when loading a class.  &qmtest; test database implementations
+     generally check the subdirectory named <filename>_QMTest</filename>
+     in the top test database directory for test and resource classes.
+     (Note that &qmtest; may place other files in this directory; you
+     should not disturb them.)  Module files containing test and
      resource classes may be placed in this directory.</para>
     </listitem>
 
