@@ -23,7 +23,6 @@ import os
 import qm
 import qm.attachment
 from   qm.common import *
-import qm.graph
 import qm.platform
 import qm.structured_text
 from   qm.test.context import *

@@ -1,3 +1,8 @@
+2003-07-23  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/base.py (qm.graph): Don't import.
+	* qm/graph.py: Delete.
+
 2003-07-22  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (Field._GetHtmlFormFieldName): Rename to ...
