@@ -34,6 +34,8 @@
 
   <!ENTITY internal_doc_url "http://www.codesourcery.com/qm/qmtest_internals_docs/qm">
 
+  <!ENTITY context_class "<ulink url=&#34;&internal_doc_url;/test/context/Context.html&#34;><classname>Context</classname></ulink>">
+  <!ENTITY result_class "<ulink url=&#34;&internal_doc_url;/test/result/Result.html&#34;><classname>Result</classname></ulink>">
   <!ENTITY extension_class "<ulink url=&#34;&internal_doc_url;/extension/Extension.html&#34;><classname>Extension</classname></ulink>">
   <!ENTITY field_class "<ulink url=&#34;&internal_doc_url;/fields/Field.html&#34;><classname>Field</classname></ulink>">
   <!ENTITY integer_field_class "<ulink url=&#34;&internal_doc_url;/fields/IntegerField.html&#34;><classname>IntegerField</classname></ulink>">

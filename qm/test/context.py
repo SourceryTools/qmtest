@@ -71,10 +71,7 @@ class Context(types.DictType):
         """Construct a new context.
 
         'context' -- If not 'None', the existing 'Context' being
-        wrapped by this new context.
-        
-        'initial_properties' -- Initial key/value pairs to include in
-        the context."""
+        wrapped by this new context."""
 
         super(Context, self).__init__()
 

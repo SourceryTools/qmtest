@@ -64,8 +64,7 @@ class XMLDatabase(ExtensionDatabase):
         try:
             return self.__LoadItem(test_id, test_path,
                                    self.__ParseTestDocument)
-        except (qm.fields.DomNodeError, xml.sax.SAXException), \
-               exception:
+        except Exception, exception:
             # Problem while parsing XML.
             message = qm.error("error loading xml test",
                                test_id=test_id,
@@ -93,8 +92,7 @@ class XMLDatabase(ExtensionDatabase):
         try:
             return self.__LoadItem(resource_id, resource_path,
                                    self.__ParseResourceDocument)
-        except (qm.fields.DomNodeError, xml.sax.SAXException), \
-               exception:
+        except Exception, exception:
             # Problem while parsing XML.
             message = qm.error("error loading xml resource",
                                resource_id=resource_id,

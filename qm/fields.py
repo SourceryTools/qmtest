@@ -43,10 +43,8 @@ of test names."""
 import attachment
 import common
 import cStringIO
-import diagnostic
 import formatter
 import htmllib
-import label
 import os
 import re
 import qm
@@ -56,23 +54,9 @@ import sys
 import time
 import types
 import urllib
-import user
 import web
 import xml.dom
 import xmlutil
-
-########################################################################
-# exceptions
-########################################################################
-
-class DomNodeError(Exception):
-    """An error extracting a field value from an XML DOM node.
-
-    See 'Field.GetValueFromDomNode'."""
-
-    pass
-
-
 
 ########################################################################
 # classes
@@ -306,10 +290,14 @@ class Field(object):
 
         'value' -- A value to validate for this field.
 
-        returns -- The canonicalized representation of 'value'.
+        returns -- If the 'value' is valid, returns 'value' or an
+        equivalent "canonical" version of 'value'.  (For example, this
+        function may search a hash table and return an equivalent entry
+        from the hash table.)
 
-        raises -- 'ValueError' if 'value' is not a valid value for
-        this field.
+        This function must raise an exception if the value is not valid.
+        The string representation of the exception will be used as an
+        error message in some situations.
 
         Implementations of this method must be idempotent."""
 
@@ -361,8 +349,8 @@ class Field(object):
         'attachment_store' -- For attachments, the store that should be
         used.
         
-        raises -- 'DomNodeError' if the node's structure or contents are
-        incorrect for this field."""
+        If the 'node' is incorrectly formed, this method should raise an
+        exception."""
 
         raise NotImplementedError
 
@@ -460,14 +448,15 @@ class IntegerField(Field):
 
 
     def GetValueFromDomNode(self, node, attachment_store):
+
         # Make sure 'node' is an '<integer>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "integer":
-            raise DomNodeError, \
-                  diagnostic.error("dom wrong tag for field",
-                                   name=self.GetName(),
-                                   right_tag="integer",
-                                   wrong_tag=node.tagName)
+            raise qm.QMException, \
+                  qm.error("dom wrong tag for field",
+                           name=self.GetName(),
+                           right_tag="integer",
+                           wrong_tag=node.tagName)
         # Retrieve the contained text.
         value = xmlutil.get_dom_text(node)
         # Convert it to an integer.
@@ -679,14 +668,15 @@ class TextField(Field):
 
     
     def GetValueFromDomNode(self, node, attachment_store):
+
         # Make sure 'node' is a '<text>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "text":
-            raise DomNodeError, \
-                  diagnostic.error("dom wrong tag for field",
-                                   name=self.GetName(),
-                                   right_tag="text",
-                                   wrong_tag=node.tagName)
+            raise qm.QMException, \
+                  qm.error("dom wrong tag for field",
+                           name=self.GetName(),
+                           right_tag="text",
+                           wrong_tag=node.tagName)
         return self.Validate(xmlutil.get_dom_text(node))
 
 
@@ -1035,11 +1025,11 @@ class SetField(Field):
         # Make sure 'node' is a '<set>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "set":
-            raise DomNodeError, \
-                  diagnostic.error("dom wrong tag for field",
-                                   name=self.GetName(),
-                                   right_tag="set",
-                                   wrong_tag=node.tagName)
+            raise qm.QMException, \
+                  qm.error("dom wrong tag for field",
+                           name=self.GetName(),
+                           right_tag="set",
+                           wrong_tag=node.tagName)
         # Use the contained field to extract values for the children of
         # this node, which are the set elements.
         contained_field = self.GetContainedField()
@@ -1364,14 +1354,15 @@ class AttachmentField(Field):
 
 
     def GetValueFromDomNode(self, node, attachment_store):
+
         # Make sure 'node' is an "attachment" element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "attachment":
-            raise DomNodeError, \
-                  diagnostic.error("dom wrong tag for field",
-                                   name=self.GetName(),
-                                   right_tag="attachment",
-                                   wrong_tag=node.tagName)
+            raise qm.QMException, \
+                  qm.error("dom wrong tag for field",
+                           name=self.GetName(),
+                           right_tag="attachment",
+                           wrong_tag=node.tagName)
         return self.Validate(attachment.from_dom_node(node, attachment_store))
 
 
@@ -1497,14 +1488,15 @@ class EnumerationField(TextField):
 
 
     def GetValueFromDomNode(self, node, attachment_store):
+
         # Make sure 'node' is an '<enumeral>' element.
         if node.nodeType != xml.dom.Node.ELEMENT_NODE \
            or node.tagName != "enumeral":
-            raise DomNodeError, \
-                  diagnostic.error("dom wrong tag for field",
-                                   name=self.GetName(),
-                                   right_tag="enumeral",
-                                   wrong_tag=node.tagName)
+            raise qm.QMException, \
+                  qm.error("dom wrong tag for field",
+                           name=self.GetName(),
+                           right_tag="enumeral",
+                           wrong_tag=node.tagName)
         # Extract the value.
         return self.Validate(xmlutil.get_dom_text(node))
 

@@ -1,5 +1,26 @@
 2003-06-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/fields.py (diagnostic): Do not import it.
+	(label): Likewise.
+	(user): Likewise.
+	(DomNodeError): Remove.
+	(Field.Validate): Update documentation.
+	(IntegerField.GetValueFromDomNode): Raise QMException, not
+	DomNodeError.
+	(TextField.GetValueFromDomNode): Likewise.
+	(SetField.GetValueFromDomNode): Likewise.
+	(AttachmentField.GetValueFromDomNode): Likewise.
+	(EnumerationField.GetValueFromDomNode): Likewise.
+	* qm/test/context.py (Context.__init__): Update documentation
+	string.
+	* qm/test/classes/xml_database.py (XMLDatabase._GetTestFromPath):
+	Handle all exceptions.
+	(XMLDatabase._GetResourceFromPath): Handle all exceptions.
+	* qm/test/doc/manual.xml (context_class): New entity.
+	(result_class): Likewise.
+	* qm/test/doc/reference.xml: Update sections on writing test and
+	resource classes.
+	
 	* qm/fields.py: More massive reorganization and cleanup.
 	* qm/test/doc/manual.xml: Add links to onlin documentation.
 	* qm/test/doc/reference.xml: Describe Field classes.
