@@ -83,7 +83,7 @@ build_qm() {
     # Untar the source distribution.  Under Windows there seem
     # to be cases where "tar xzf" will crash, but separating the
     # decompression and untarring steps works reliably.
-    (gunzip -c ${QM_SOURCE_TAR_GZ} | tar xf -) || \
+    (zcat ${QM_SOURCE_TAR_GZ} | tar xf -) || \
       error "Could not unpack source distribution"
     changedir qm-${QM_VERSION}
     # Create an installation directory.

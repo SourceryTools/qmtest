@@ -4,6 +4,7 @@
 	punctuation in error message.
 	* scripts/qm-release (upload): Upload manuals, too.
 	(build_exec): Use Python 2.2.
+	(build_binary): Use zcat.
 
 	* scripts/qm-release: Set the umask before building distributions.
 	
