@@ -1,3 +1,9 @@
+2003-10-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (get_extension_directories): Use ";" as the
+	QMTEST_CLASS_PATH separator on Windows.
+	* NEWS: Mention recent improvements.
+
 2003-09-30  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qmdist/command/check.py: New file.

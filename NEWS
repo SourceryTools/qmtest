@@ -45,6 +45,12 @@ to hang if a resource could not be set up has been corrected.
 A defect that resulted in resources being created only per run of the
 GUI, rather than once per test run, has been corrected.
 
+The XML results file format has been improved to make it more
+readable, and to make it easier to postprocess the XML.
+
+QMTest now correctly uses ";" as the separator in QMTEST_CLASS_PATH on
+Windows.
+
 QM 2.0.4 (Not Yet Released)
 ===========================
 

@@ -95,7 +95,8 @@ def get_extension_directories(kind, database, database_path = None):
     # Start with the directories that the user has specified in the
     # QMTEST_CLASS_PATH environment variable.
     if os.environ.has_key('QMTEST_CLASS_PATH'):
-        dirs = string.split(os.environ['QMTEST_CLASS_PATH'], ':')
+        dirs = string.split(os.environ['QMTEST_CLASS_PATH'],
+                            os.pathsep)
     else:
         dirs = []
 
