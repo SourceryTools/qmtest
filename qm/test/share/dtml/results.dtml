@@ -73,14 +73,14 @@
   </dtml-let>
  </table>
 
- <dtml-let ids="GetTestIds()" start="request.get('start', 1)">
+ <dtml-let start="request.get('start', 1)">
   <table class="data" width="100%">
    <caption>
-    <dtml-in ids size=10 start=start previous>
+    <dtml-in test_results size=10 start=start previous>
      <a href="show-results<dtml-var sequence-query>start=<dtml-var previous-sequence-start-number>"><img src="/images/left-arrow.gif" border="0" align="top"></a>
     </dtml-in>
     Test Results
-    <dtml-in ids size=10 start=start next>
+    <dtml-in test_results size=10 start=start next>
      <a href="show-results<dtml-var sequence-query>start=<dtml-var next-sequence-start-number>"><img src="/images/right-arrow.gif" border="0" align="top"></a>
     </dtml-in>
    </caption>
@@ -90,9 +90,9 @@
     <th width="10%">Expectation</td>
     <th width="10%">Details</td>
    </tr>
-   <dtml-in ids size=10 start=start>
-    <dtml-let test_id=sequence-item
-              result="test_results[test_id]"
+   <dtml-in test_results size=10 start=start>
+    <dtml-let result=sequence-item
+              test_id="result.GetId()"
               outcome="result.GetOutcome()"
               url="GetDetailUrl(test_id)">
      <tr class="<dtml-var expr="server.GetHTMLClassForOutcome(outcome)">">

@@ -1256,6 +1256,7 @@ class StorageResultsStream(ResultStream):
 
         ResultStream.__init__(self)
         self.__test_results = {}
+        self.__test_results_in_order = []
         self.__resource_results = {}
         # The stream is not finished yet.
         self.__is_finished = 0
@@ -1276,6 +1277,7 @@ class StorageResultsStream(ResultStream):
         try:
             if result.GetKind() == Result.TEST:
                 self.__test_results[result.GetId()] = result
+                self.__test_results_in_order.append(result)
             else:
                 self.__resource_results[result.GetId()] = result
         finally:
@@ -1315,6 +1317,10 @@ class StorageResultsStream(ResultStream):
         for id in test_ids:
             if self.__test_results.has_key(id):
                 del self.__test_results[id]
+            self.__test_results_in_order \
+                = filter(lambda r, rs=self.__test_results: \
+                             rs.has_key(r.GetId()),
+                         self.__test_results_in_order)
         self.__lock.release()
         
         
@@ -1337,6 +1343,18 @@ class StorageResultsStream(ResultStream):
 
         self.__lock.acquire()
         results = self.__test_results
+        self.__lock.release()
+        return results
+    
+
+    def GetTestResultsInOrder(self):
+        """Return the test results in the order they appeared.
+
+        returns -- A sequence of test results, in the order that they
+        appeared."""
+
+        self.__lock.acquire()
+        results = self.__test_results_in_order
         self.__lock.release()
         return results
     
@@ -1372,7 +1390,7 @@ class TestResultsPage(QMTestPage):
         # claim they are incomplete than to show only some of the
         # results and claim they are complete.
         self.__is_finished = results_stream.IsFinished()
-        self.test_results = results_stream.GetTestResults()
+        self.test_results = results_stream.GetTestResultsInOrder()
         self.expected_outcomes = server.GetExpectedOutcomes()
         
 
@@ -1397,8 +1415,7 @@ class TestResultsPage(QMTestPage):
 
         returns -- The total number of unexpected results."""
 
-        return len(self.GetRelativeResults(self.test_results.values(),
-                                           0))
+        return len(self.GetRelativeResults(self.test_results, 0))
 
 
     def GetResultsWithOutcome(self, outcome):
@@ -1409,7 +1426,7 @@ class TestResultsPage(QMTestPage):
         returns -- The results with the given 'outcome'."""
 
         return filter(lambda r, o=outcome: r.GetOutcome() == o,
-                          self.test_results.values())
+                      self.test_results)
     
         
     def GetCount(self, outcome):
@@ -1435,18 +1452,6 @@ class TestResultsPage(QMTestPage):
         return len(results)
 
     
-    def GetTestIds(self):
-        """Return a sequence of test IDs whose results are to be shown.
-
-        returns -- The test ids for which we have results, with
-        unexpected results before expected results."""
-
-        results = (self.GetRelativeResults(self.test_results.values(), 0)
-                   + self.GetRelativeResults(self.test_results.values(), 1))
-        
-        return map(lambda r: r.GetId(), results)
-
-
     def GetRelativeResults(self, results, expected):
         """Return the results that match, or fail to match, expectations.
 

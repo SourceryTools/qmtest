@@ -1,5 +1,17 @@
 2002-03-09  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/share/dtml/results.dtml: Simplify.
+	* qm/test/web/web.py (StorageResultsStream.__init__): Initialize
+	__test_results_in_order.
+	(StorageResultsStream.WriteResult): Update it.
+	(StorageResultsStream.Start): Likewise.
+	(StorageResultsStream.GetTestResultsInOrder): New method.
+	(TestResultsPage.__init__): Use it.
+	(TestResultsPage.GetTotalUnexpected): Take advantage of the fact
+	that test_results is now a list, not a dictionary.
+	(TestResultsPage.GetResultsWithOutcome): Likewise.	
+	(TestResultsPage.GetTestIds): Remove.
+
 	* qm/test/web/web.py (StorageResultsStream.Start): Add test_ids
 	parameter; remove existing results for tests that are going to be
 	re-run.
