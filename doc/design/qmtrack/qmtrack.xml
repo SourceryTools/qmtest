@@ -32,6 +32,7 @@
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
   <!ENTITY concepts.xml SYSTEM "concepts.xml">
   <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
+  <!ENTITY triggers.xml SYSTEM "triggers.xml">
   <!ENTITY user-api.xml SYSTEM "user-api.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
 ]>
@@ -54,6 +55,7 @@
  &requirements.xml;
  &concepts.xml;
  &idb-api.xml;
+ &triggers.xml;
  &user-api.xml;
  &user-interface.xml;
 

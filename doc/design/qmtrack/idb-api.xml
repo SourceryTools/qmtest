@@ -357,6 +357,10 @@ class IdbBase:
   endterm="sec-query-implementation-title"></link> for a description
   of query records.</para>
 
+  <para>See <link linkend="sec-trigger-api"
+  endterm="sec-trigger-api-title"></link> for
+  <classname>IdbBase</classname> methods for registering triggers.</para>
+
  </section>
 
  <section><title>Issues</title>
@@ -470,8 +474,8 @@ class Attachment:
     </listitem>
 
     <listitem>
-     <para>The field value is an instance
-     of<classname>FieldQuery</classname> (<link
+     <para>The field value is an instance of
+     <classname>FieldQuery</classname> (<link
      linkend="sec-fieldquery">see below</link>).</para>
     </listitem>
 
@@ -480,7 +484,9 @@ class Attachment:
      this field value is required.</para>
     </listitem>
    </orderedlist>
-  </para>
+  All fields for which either a <classname>FieldQuery</classname> or
+  exact-match value is provided must match for an issue to match the
+  query.</para>
 
   <programlisting>
 <![CDATA[
@@ -500,10 +506,8 @@ class IssueQuery(IssueRecord):
         Restricts the query to issues matching 'value' in the field
         'field_name'.  
 
-        * If 'value' is a function object, it is evaluated for each
-          issue, passing the value of field 'field_name' as its single
-          argument.  If the return value evaluates to true, a match is
-          inferred.
+        * If 'value' is an instance of 'FieldQuery' or a subclass,
+          that object's 'Query' method is used to determine a match.
 
         * If 'value' is not a function object, the match is for exact
           Python equality of the value of field 'field_name' to
@@ -515,9 +519,102 @@ class IssueQuery(IssueRecord):
    <title><classname>FieldQuery</classname></title>
 
    <para>A <classname>FieldQuery</classname> object specifies a query
-   criterion other than an exact match.</para>
+   criterion other than an exact match.  A field query has one method,
+   <function>Query</function>, which takes a field value as its
+   argument and returns a boolean match result.  If the result is
+   true, the field is considered to match.</para>
 
-   <!-- FIXME: more stuff here. -->
+   <programlisting>
+<![CDATA[
+class FieldQuery:
+    """A 'FieldQuery' object may be supplied as a field value in an
+    'IssueRecord' that is used to specify a query.  The 'FieldQuery'
+    object signifies a query type other than an exact match on that
+    field.""" 
+
+    def Query(self, value):
+        """Return true if 'value' matches this query."""
+]]>
+   </programlisting>
+
+   <para>In many cases, programs and extensions will create custom
+   <classname>FieldQuery</classname> subclasses to express complicated
+   queries.  To process these queries, an &idb; implementation must
+   retrieve all issues (or all issues matching other field queries)
+   and filter this set by applying the <function>Query</function>
+   method to each to determine matches.</para>
+
+   <para>As an optimization, a collection of standard
+   <classname>FieldQuery</classname> subclasses are provided with
+   standardized semantics.  An &idb; implementation may be able to
+   improve query performance by providing special-case implementations
+   of some of these field query types, using features of the
+   underlying storage mechanism.</para>
+
+   <para>The following three <classname>FieldQuery</classname>
+   subclasses provide common string-matching operations.  Other query
+   types will be added as we gain experience with the system and
+   gather data about bottlenecks in query performance.</para>
+
+   <programlisting>
+<![CDATA[
+class FieldQueryRegex(FieldQuery):
+    """This query operates on text fields by matching a regular
+    expression.  The query matches if the regular expression matches
+    the field value."""
+
+    def __init__(self, regex):
+        """Create a new regular expression query with 'regex'."""
+
+
+class FieldQueryKeywordAll(FieldQuery):
+    """This query operates on text fields by searching for keywords.
+    All keywords must be found in the field value for the query to
+    match."""
+
+    def __init__(self, keywords):
+        """Create a keyword query for all of a set of keywords.
+
+        'keywords' -- A sequence of strings containing the
+        keywords."""
+
+
+class FieldQueryKeywordAny(FieldQuery):
+    """This query operates on text fields by searching for keywords.
+    If any keywords are found in the field value, the query
+    matches."""
+
+    def __init__(self, keywords):
+          """Create a keyword query for any of a set of keywords.
+
+        'keywords' -- A sequence of strings containing the
+        keywords.""" 
+]]>
+   </programlisting>
+
+   <para>An RDBMS &idb; implementation, for example, might use the
+   <acronym>SQL</acronym> <function>LIKE</function> statement to
+   implement the keyword query operations.</para>
+
+   <para>For integer and enumerated fields, a standard query type is
+   provided for numerical comparison.</para>
+
+   <programlisting>
+<![CDATA[
+class FieldQueryNumericalComparison(FieldQuery):
+    """This query operates on integer and enumeration fields by
+    performing a numerical comparison."""
+
+    def __init__(self, operation, value):
+        """Creates a numerical comparison object.
+
+        'operation' -- One of '<', '<=', '>', or '>=', specifying the
+        operation to use.
+
+        'value' -- The value for the right-hand side of the comparison
+        operation.  The field value is on the left-hand side."""
+]]>
+   </programlisting>
 
   </section>
 
