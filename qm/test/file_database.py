@@ -57,7 +57,7 @@ class FileDatabase(Database):
         if not self._IsTestFile(path):
             raise NoSuchTestError, test_id
 
-        return self._GetTestFromPath(test_id, path)
+        return self._GetTestFromPath(test_id, os.path.normpath(path))
 
 
     def RemoveTest(self, test_id):
@@ -146,7 +146,7 @@ class FileDatabase(Database):
         if os.path.isdir(path):
             return DirectorySuite(self, suite_id)
         else:
-            return self._GetSuiteFromPath(suite_id, path)
+            return self._GetSuiteFromPath(suite_id, os.path.normpath(path))
 
         
     def RemoveSuite(self, suite_id):
@@ -236,7 +236,7 @@ class FileDatabase(Database):
         if not self._IsResourceFile(path):
             raise NoSuchResourceError, resource_id
 
-        return self._GetResourceFromPath(resource_id, path)
+        return self._GetResourceFromPath(resource_id, os.path.normpath(path))
 
 
     def RemoveResource(self, resource_id):

@@ -16,11 +16,14 @@
 #######################################################################
 
 import os
+import string
 import sys
 
 # The classes in this module are implemented differently depending on
 # the operating system in use.
 if sys.platform == "win32":
+    import msvcrt
+    import pywintypes
     from   threading import *
     import win32api
     import win32con
@@ -149,7 +152,7 @@ class Executable:
         self._DoParent()
         # Wait for the child to exit.
         if sys.platform == "win32":
-            child = self._GetChild()
+            child = self.GetChild()
             win32event.WaitForSingleObject(child, win32event.INFINITE)
             # Get its exit code.
             return win32process.GetExitCodeProcess(child)
@@ -379,8 +382,9 @@ class RedirectedExecutable(Executable):
             # Windows that they do under UNIX.
             
             if self._stdin_pipe:
-                self._stdin_pipe[1] \
-                    = msvcrt.open_osfhandle(self._stdin_pipe[1], 0)
+                h = self._stdin_pipe[1]
+                self._stdin_pipe[1] = msvcrt.open_osfhandle(h, 0)
+                h.Detach()
                 stdin_thread = Thread(target = self.__CallUntilNone,
                                       args = (self._WriteStdin,
                                               "_stdin_pipe"))
@@ -388,8 +392,9 @@ class RedirectedExecutable(Executable):
                 stdin_thread = None
                 
             if self._stdout_pipe:
-                self._stdout_pipe[0] \
-                    = msvcrt.open_osfhandle(self._stdout_pipe[0], 0)
+                h = self._stdout_pipe[0]
+                self._stdout_pipe[0] = msvcrt.open_osfhandle(h, 0)
+                h.Detach()
                 stdout_thread = Thread(target = self.__CallUntilNone,
                                        args = (self._ReadStdout,
                                                "_stdout_pipe"))
@@ -397,8 +402,9 @@ class RedirectedExecutable(Executable):
                 stdout_thread = None
 
             if self._stderr_pipe:
-                self._stderr_pipe[0] \
-                    = msvcrt.open_osf_handle(self._stderr_pipe[0], 0)
+                h = self._stderr_pipe[0]
+                self._stderr_pipe[0] = msvcrt.open_osf_handle(h, 0)
+                h.Detach()
                 stderr_thread = Thread(target = self.__CallUntilNone,
                                        args = (self._ReadStderr,
                                                "_stderr_pipe"))
@@ -537,8 +543,8 @@ class RedirectedExecutable(Executable):
 
         'handle' -- A file handle.
 
-        returns -- A new handle that is a duplicate of the
-        'handle'.
+        returns -- A new handle that is a non-inheritable duplicate of
+        the 'handle'.
 
         This method should only be used under Windows."""
 
@@ -549,5 +555,5 @@ class RedirectedExecutable(Executable):
                                         handle,
                                         current_process,
                                         0,
-                                        inheritable,
+                                        0,
                                         win32con.DUPLICATE_SAME_ACCESS)

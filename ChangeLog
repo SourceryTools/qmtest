@@ -1,3 +1,12 @@
+2002-11-15    <Mark Mitchell <mark@codesourcery.com>>
+
+	* qm/executable.py (string): Import it.
+	(msvcrt): Likewise.
+	(pywintypes): Likewise.
+	(Executable.Run): Fix typo.
+	(Executable._DoParent): Correct Windows logic.
+	* qm/test/file_database.py: Use normpath throughout.
+
 2002-11-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py: New file.
