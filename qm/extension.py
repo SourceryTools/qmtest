@@ -110,7 +110,7 @@ def get_class_arguments(extension_class):
 
     assert issubclass(extension_class, Extension)
 
-    arguments = extension_class._argument_list
+    arguments = extension_class.__dict__.get("_argument_list")
     if arguments is None:
         # There are no arguments yet.
         arguments = []
@@ -149,7 +149,7 @@ def get_class_arguments_as_dictionary(extension_class):
 
     assert issubclass(extension_class, Extension)
 
-    if extension_class._argument_dictionary is None:
+    if extension_class.__dict__.get("_argument_dictionary") is None:
         get_class_arguments(extension_class)
         
     return extension_class._argument_dictionary
