@@ -1,4 +1,9 @@
 2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
+	
+	* qm/test/target.py (Target._SetUpResource): Fix typo from
+	previous commit.
+	
+2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/base.py (CouldNotLoadExtensionError.__init__): Save
 	'exc_info' value for later use.

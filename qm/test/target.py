@@ -391,7 +391,7 @@ class Target(qm.extension.Extension):
             result.NoteException(cause="Resource is missing from the database.")
             self._RecordResult(result)
             return (None, result, None)
-        except qm.base.CouldNotLoadExtensionError, e:
+        except qm.test.base.CouldNotLoadExtensionError, e:
             result.NoteException(e.exc_info,
                                  cause = "Could not load extension class")
         except KeyboardInterrupt:
