@@ -1,3 +1,10 @@
+2002-06-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (SourcePosition.__init__): Remove incorrect
+	assertion.
+	* compiler_test.py: Substantial revisions to use filename labels.
+	* gcc_database.py: Likewise.
+
 2002-05-27  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
 
 	* compiler.py (CompilerExecutable.__init__): Add dir parameter.

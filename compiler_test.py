@@ -17,7 +17,6 @@ from   compiler import *
 import errno
 from   qm.test.result import *
 from   qm.test.test import *
-from   qm.label import *
 
 ########################################################################
 # Classes
@@ -141,8 +140,7 @@ class CompilerTest(Test):
     def __init__(self, **arguments):
         """Construct a new 'CompilerTest'."""
 
-        apply(Test.__init__, (self,), arguments)
-        self.__directory = os.path.join(".", qm.label.to_path(self.GetId()))
+        Test.__init__(self, **arguments)
 
         
     def Run(self, context, result):
@@ -474,7 +472,7 @@ class CompilerTest(Test):
 
         'returns' -- The name of the directory."""
 
-        return self.__directory
+        return self.directory
     
         
     def _MakeDirectoryRecursively(self, directory):
@@ -505,3 +503,20 @@ class CompilerTest(Test):
         directory = self._GetDirectoryForTest()
         # Create it.
         self._MakeDirectoryRecursively(directory)
+
+
+    def _RemoveDirectoryForTest(self, result):
+        """Remove the directory in which generated files are placed.
+
+        'result' -- The 'Result' of the test.  If the test has passed,
+        the directory is removed.  Otherwise, the directory is left
+        behind to allow investigation of the reasons behind the test
+        failure."""
+
+        if result.GetOutcome() == Result.PASS:
+            try:
+                qm.common.rmdir_recursively(self._GetDirectoryForTest())
+            except:
+                # If the directory cannot be removed, that is no
+                # reason for the test to fail.
+                pass

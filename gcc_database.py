@@ -13,6 +13,7 @@
 #
 ########################################################################
 
+from   __future__ import nested_scopes
 from   compiler import *
 from   compiler_test import *
 import dircache
@@ -186,7 +187,8 @@ class GCCTest(CompilerTest):
 
         # On DOS/Windows the executable name must end with ".exe", and
         # it is harmless to add this extension on UNIX platforms.
-        return qm.label.split(self.GetId())[1] + ".exe"
+        base = os.path.splitext(os.path.basename(self.GetId()))[0]
+        return base + ".exe"
 
 
     def _IsExpectedToFail(self, context):
@@ -603,7 +605,8 @@ class OldDejaGNUTest(GPPTest):
         self._MakeDirectoryForTest()
         # Run the test.
         GCCTest.Run(self, context, result)
-
+        # Remove the temporary directory.
+        self._RemoveDirectoryForTest(result)
 
 
     def _IsExpectedToFail(self, context):
@@ -901,7 +904,9 @@ class DGTest(GPPTest):
 
         # Check the coverage data.
         self._CheckCoverage(context, result)
-
+        # Remove the temporary directory.
+        self._RemoveDirectoryForTest(result)
+        
 
     def _GetCompilationSteps(self):
         """Return the compilation steps for this test.
@@ -1384,11 +1389,11 @@ class InitPriorityTest(DGTest):
 
         files = []
         
-        if self.GetId() == "gpp.dg.special.conpr-2":
+        if self.GetId() == "g++.dg/special/conpr-2.C":
             files = ["conpr-2a.C"]
-        elif self.GetId() == "gpp.dg.special.conpr-3":
+        elif self.GetId() == "g++.dg/special/conpr-3.C":
             files = ["conpr-3a.C", "conpr-3b.C"]
-        elif self.GetId() == "gpp.dg.special.conpr-3r":
+        elif self.GetId() == "g++.dg/special/conpr-3r.C":
             files = ["conpr-3b.C", "conpr-3a.C"]
 
         return map(lambda f, p=path: os.path.join(os.path.split(p)[0], f),
@@ -1421,7 +1426,8 @@ class GPPBprobTest(GPPTest):
         options = string.split(self.options)
 
         # Build the test with "-fprofile-arcs"
-        base = qm.label.split(self.GetId())[1]
+        base = os.path.basename(self.GetId())
+        base = os.path.splitext(base)[0]
         profiled_exe_path = os.path.join(".", base + "1.exe")
         (status, output, command) \
             = compiler.Compile(Compiler.MODE_LINK,
@@ -1457,9 +1463,10 @@ class GPPBprobTest(GPPTest):
         prefix = self._GetAnnotationPrefix() + "branch_probs_"
         result[prefix + "output"] = output
         result[prefix + "command"] = string.join(command)
-        if not self._CheckStatus(result, prefix, "Compiler", status):
-            return
+        self._CheckStatus(result, prefix, "Compiler", status)
 
+        # Remove the temporary directory.
+        self._RemoveDirectoryForTest(result)
         
     
 class GCCDatabase(Database):
@@ -1484,47 +1491,34 @@ class GCCDatabase(Database):
     that a file is a test."""
 
     _prefix_map = (
-        ("gpp.old-deja.",  "gcc_database.OldDejaGNUTest"),
-        ("gpp.dg.bprob.", "gcc_database.GPPBprobTest"),
-        ("gpp.dg.special.", "gcc_database.InitPriorityTest"),
-        ("gpp.dg.", "gcc_database.DGTest"),
+        ("g++.old-deja/",  "gcc_database.OldDejaGNUTest"),
+        ("g++.dg/bprob/", "gcc_database.GPPBprobTest"),
+        ("g++.dg/special/", "gcc_database.InitPriorityTest"),
+        ("g++.dg/", "gcc_database.DGTest"),
     )
     """A sequence whose elements are of the form '(prefix,
     classname)'.  If first part of a test name matches the prefix,
     the corresponding test class is used to run that test."""
 
     _subdirectories = {
-        "." : ["gpp"],
-        "gpp" : ["dg", "old-deja"],
+        "" : ["g++.dg", "g++.old-deja"],
     }
     """A map from directory names (as absolute labels) to lists of
     relative labels.  The relative labels give the subdirectories for
     the directory."""
     
     _extra_subdirectories = {
-        "gpp.dg" : ["special"],
+        "g++.dg" : ["special"],
     }
     """A map from directory names (as absolute labels) to lists of
     relative labels.  The relative labels give additional
     subdirectories that cannot be found by the default method."""
 
-    _directory_paths = {
-        "." : "",
-        "gpp" : "",
-        "gpp.dg" : "g++.dg",
-        "gpp.dg.special" : os.path.join("g++.dg", "special"),
-        "gpp.old-deja" : "g++.old-deja",
-    }
-    """A map from directory names (as absolute labels) to relative
-    file sytem paths.  The paths are relative to the top of the
-    database.  Entries in this map will be used instead of the default
-    algorithm when converting from directory labels to paths."""
-
     _suite_predicates = (
-        ("gpp.old-deja", "_IsOldDejaSuite"),
-        ("gpp.dg.bprob", "_IsMultioptionSuite"),
-        ("gpp.dg.debug", "_IsMultioptionSuite"),
-        ("gpp.dg", "_IsGPPDGSuite"),
+        ("g++.old-deja", "_IsOldDejaSuite"),
+        ("g++.dg/bprob", "_IsMultioptionSuite"),
+        ("g++.dg/debug", "_IsMultioptionSuite"),
+        ("g++.dg", "_IsGPPDGSuite"),
     )
     """A sequence of pairs '(label, function)'.  When determining
     whether a file is a suite, we call the 'function' corresponding to
@@ -1537,7 +1531,7 @@ class GCCDatabase(Database):
     the string must correspond to a method of 'GCCDatabase'."""
 
     _suite_prefixes = (
-        ("gpp.old-deja", "g++."),
+        ("g++.old-deja", "g++."),
     )
     """A sequence of pairs '(dir_prefix, suite_prefix)'.  If a
     directory label matches the 'dir_prefix', then file system
@@ -1545,8 +1539,8 @@ class GCCDatabase(Database):
     prefixing the suite name with the 'suite_prefix'."""
     
     _tests_in_directory = {
-        "gpp.dg.special" : ["conpr-1", "conpr-2", "conpr-3",
-                            "conpr-3r", "initp1"],
+        "g++.dg/special" : ["conpr-1.C", "conpr-2.C", "conpr-3.C",
+                            "conpr-3r.C", "initp1.C"],
     }
     """A map from directory names (as absolute labels) to lists of
     relative labels.  The relative labels give the tests present in
@@ -1554,8 +1548,8 @@ class GCCDatabase(Database):
     system is searched for appropriate source files."""
 
     _multioption_directories = (
-        "gpp.dg.bprob",
-        "gpp.dg.debug",
+        "g++.dg/bprob",
+        "g++.dg/debug",
     )
     """A sequence of directory labels.  These directories contain
     test files, but each test is supposed to be run with multiple
@@ -1584,7 +1578,9 @@ class GCCDatabase(Database):
                 self._debug_options.append((opt + level,))
                 self._debug_options.append((opt + level, "-O2"))
                 self._debug_options.append((opt + level, "-O3"))
-            
+
+        # Use FileLabels for this test class.
+        attributes[self.ATT_LABEL_CLASS] = "file_label.FileLabel"
         # Call the base class constructor.
         apply(Database.__init__, (self, path), attributes)
         # Create an attachment store for the database.
@@ -1608,31 +1604,31 @@ class GCCDatabase(Database):
         test_names = self._tests_in_directory.get(directory, [])
         # If there is a special list, return it.
         if test_names:
-            return map(lambda n, d=directory: qm.label.join(d, n),
+            return map(lambda n: self.JoinLabels(directory, n),
                        test_names)
 
-        # Handle directories that correspond to tests that are run
+        # Handle directories that corresponnd to tests that are run
         # with multiple options.
-        (parent, base) = qm.label.split(directory)
+        (parent, base) = self.SplitLabel(directory)
         if parent in self._multioption_directories:
             for x in range(len(self._GetMultipleOptions(parent))):
-                test_names.append(qm.label.join(directory,
-                                                base + ("_%d" % x)))
+                test_names.append(self.JoinLabels(directory,
+                                                  base + ("_%d" % x)))
             return test_names
-                
+
         # Compute the path name of the directory in which to start.
         path = self._GetPathFromDirectory(directory)
         
         # Add the files from this directory.
         if directory not in self._multioption_directories:
             for n in self._GetTestFilesInDirectory(path):
-                test_names.append(qm.label.join(directory, n))
+                test_names.append(self.JoinLabels(directory, n))
 
         # If requested, iterate through all of the subdirectories.
         if scan_subdirs:
             for subdirectory in self.GetSubdirectories(directory):
                 # Compute the absolute name of the subdirectory.
-                absolute = qm.label.join(directory, subdirectory)
+                absolute = self.JoinLabels(directory, subdirectory)
                 # Recurse on the subdirectory.
                 test_names.extend(self.GetTestIds(absolute, 1))
 
@@ -1651,7 +1647,6 @@ class GCCDatabase(Database):
 
         # Compute the path to the primary source file.
         path = self._GetTestPath(test_id)
-        
         # If the file does not exist, then there is no such test.
         if not os.path.exists(path):
             raise NoSuchTestError, test_id
@@ -1664,8 +1659,8 @@ class GCCDatabase(Database):
         # Get the test class associated with this test.
         test_class = self._GetTestClass(test_id)
 
-        directory, base  = qm.label.split(test_id)
-        parent = qm.label.split(directory)[0]
+        directory, base  = self.SplitLabel(test_id)
+        parent = self.LabelDirname(directory)
         if parent in self._multioption_directories:
             variant = int(base[base.rfind("_") + 1:])
             options = self._GetMultipleOptions(parent)[variant]
@@ -1676,8 +1671,12 @@ class GCCDatabase(Database):
         # Create the TestDescriptor
         descriptor = TestDescriptor(self, test_id, test_class,
                                     { 'source_file' : attachment,
-                                      'options' : options })
-
+                                      'options' : options,
+                                      'directory' :
+                                      os.path.join(".",
+                                                   self._LabelToPath(test_id))
+                                      })
+        
         return descriptor
         
 
@@ -1713,35 +1712,22 @@ class GCCDatabase(Database):
 
         # There is one test that is a special case: conpr-3r is just
         # conpr-3 with the files linked in another order.
-        if test_id == "gpp.dg.special.conpr-3r":
-            test_id = "gpp.dg.special.conpr-3"
+        if test_id == "g++.dg/special/conpr-3r.C":
+            test_id = "g++.dg/special/conpr-3.C"
             
         # Split the test name into its components.
-        (directory, test_name) = qm.label.split(test_id)
+        (directory, test_name) = self.SplitLabel(test_id)
 
         # If the parent of the directory is a multioption directory,
         # then directory itself gives us the path to the test.
-        parent = qm.label.split(directory)[0]
+        parent = self.LabelDirname(directory)
         if parent in self._multioption_directories:
             return self._GetTestPath(directory)
         
         # Compute the file system path corresponding to the test.
         dirpath = self._GetPathFromDirectory(directory)
-        path = test_name + self._test_extension
 
-        files = dircache.listdir(dirpath)
-        if path not in files:
-            # We may have translated names with upper-case letters to
-            # lower-case.  Look through the directory to
-            # see if we can find the test.  Fortunately, this is not
-            # fast-path code.
-            for entry in files:
-                (name, ext) = os.path.splitext(entry)
-                if name.lower() + ext == path:
-                    path = entry
-                    break
-
-        return os.path.join(dirpath, path)
+        return os.path.join(dirpath, test_name)
 
 
     def _GetTestClass(self, test_id):
@@ -1774,10 +1760,10 @@ class GCCDatabase(Database):
         '(("-O", "-fno-builtin"), ("-O2"))', the test should be run
         once with '-O -fno-builtin' and once with '-O2'."""
 
-        if directory == "gpp.dg.bprob":
+        if directory == "g++.dg/bprob":
             return (("-g",), ("-O0",), ("-O1",), ("-O2",), ("-O3",),
                     ("-O3", "-g"), ("-Os",))
-        elif directory == "gpp.dg.debug":
+        elif directory == "g++.dg/debug":
             return self._debug_options
 
         assert None
@@ -1800,7 +1786,7 @@ class GCCDatabase(Database):
         contains all tests in the database."""
 
         # Compute the path corresponding to the 'suite_id'.
-        (parent, base) = qm.label.split(suite_id)
+        (parent, base) = self.SplitLabel(suite_id)
         if parent in self._multioption_directories:
             path = self._GetTestPath(suite_id)
             if os.path.exists(path):
@@ -1833,7 +1819,7 @@ class GCCDatabase(Database):
         path = self._GetPathFromDirectory(directory)
 
         # Get all of the immediate subdirectories, as absolute labels.
-        subdirs = map(lambda s, d=directory: qm.label.join(d, s),
+        subdirs = map(lambda s: self.JoinLabels(directory, s),
                       self.GetSubdirectories(directory))
         # Add them (and their children) to suite_names.
         for subdirectory in subdirs:
@@ -1963,20 +1949,7 @@ class GCCDatabase(Database):
         returns -- A string giving the file system path corresponding
         to 'directory'."""
 
-        path = self._directory_paths.get(directory)
-        if path is not None:
-            # If this directory has a special path, return it.
-            return os.path.join(self._GetTestsuiteRoot(), path)
-        else:
-            # Recursively, get the parent directory path.
-            (parent, base) = qm.label.split(directory)
-            path = self._GetPathFromDirectory(parent)
-            # Add a component for this subdirectory.
-            for (dir_prefix, suite_prefix) in self._suite_prefixes:
-                if parent[:len(dir_prefix)] == dir_prefix:
-                    return os.path.join(path, suite_prefix + base)
-            # By default, just add the base.
-            return os.path.join(path, base)
+        return os.path.join(self._GetTestsuiteRoot(), directory)
 
 
     def _GetSuiteNameFromPath(self, directory, dirpath, path):
@@ -2021,23 +1994,9 @@ class GCCDatabase(Database):
         # Iterate through all the files in the directory.
         for entry in dircache.listdir(path):
             # Split the file name into its components.
-            (base, extension) = os.path.splitext(entry)
-
-            # See if it is a test file.
-            if extension == self._test_extension:
-                # Skip tests with invalid names.
-                if not qm.label.is_valid(base):
-                    # Perhaps the name has a upper-case letter in it.  
-                    # Translate upper-case to lower-case and try
-                    # again.
-                    if qm.label.is_valid(base.lower()):
-                        # If that worked, use the lower-case name.
-                        base = base.lower()
-                    else:
-                        print "Invalid test %s" % base
-                        continue
+            if os.path.splitext(entry)[1] == self._test_extension:
                 # Add this test to the list.
-                test_names.append(base)
+                test_names.append(entry)
 
         return test_names
 
@@ -2058,7 +2017,7 @@ class GCCDatabase(Database):
 
         # If the path begins with "g++.", it names a suite.
         if path[:len("g++.")] == "g++.":
-            return path[len("g++."):]
+            return path
 
         return None
         
@@ -2102,7 +2061,7 @@ class GCCDatabase(Database):
         dirpath = os.path.join(dirpath, path)
         # Scan the directory looking for .C files.
         for file in dircache.listdir(dirpath):
-            if fnmatch.fnmatch(file, "*.C"):
+            if fnmatch.fnmatch(file, "*" + self._test_extension):
                 return path
 
         return None

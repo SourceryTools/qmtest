@@ -267,8 +267,6 @@ class SourcePosition:
         'column' -- The column number, indexed from one.  If no column
         number is available, use zero for this parameter."""
 
-        assert file
-        
         self.file = file
         self.line = line
         self.column = column
