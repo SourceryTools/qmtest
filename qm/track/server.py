@@ -151,7 +151,6 @@ def start_server(port, address="", log_file=None):
     # Write the URL file.  It contains the XML-RPC URL for this server.
     url_path = qm.track.state["server_url_path"]
     url_file = open(url_path, "w")
-    host_name = qm.get_host_name()
     url_file.write(server.GetXmlRpcUrl() + '\n')
     url_file.close()
 

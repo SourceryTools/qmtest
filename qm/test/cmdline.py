@@ -43,7 +43,6 @@ import qm.xmlutil
 import string
 import sys
 import web.web
-import xmldb
 
 ########################################################################
 # classes
@@ -276,7 +275,7 @@ class Command:
                 raise RuntimeError, \
                       qm.error("no db specified",
                                envvar=self.db_path_environment_variable)
-        base._database = xmldb.Database(db_path)
+        base.load_database(db_path)
 
         # Dispatch to the appropriate method.
         method = {

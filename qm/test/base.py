@@ -519,7 +519,10 @@ class Suite:
        database = get_database()
        # 'rel' converts IDs relative to this suite to IDs relative to
        # the top of the test database.
-       dir_id = qm.label.split(self.GetId())[0]
+       if self.IsImplicit():
+           dir_id = self.GetId()
+       else:
+           dir_id = qm.label.dirname(self.GetId())
        rel = qm.label.MakeRelativeTo(dir_id)
        # Instead of keeping a list of test IDs, we'll build a map, to
        # assist with skipping duplicates.  The keys are test IDs (we
@@ -565,13 +568,24 @@ class Suite:
 class Database:
     """A database containing tests."""
 
+    def GetPath(self):
+        """Return the path to the database."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetPath"
+    
+
     def GetClassPaths(self):
         """Return paths to search for class files.
 
         returns -- A sequence of paths to add to the classpath when
         loading test and action classes."""
 
-        return []
+        # Specify the '_classes' subdirectory, if it exists.
+        class_dir = os.path.join(self.GetPath(), "_classes")
+        if os.path.isdir(class_dir):
+            return [class_dir]
+        else:
+            return []
 
 
     def HasTest(self, test_id):
@@ -690,6 +704,7 @@ class Database:
         'item_id' -- A test or action ID associated with this attachment."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.SetAttachmentData"
+
 
 
 class Result:
@@ -1408,6 +1423,46 @@ def get_database():
 
     assert _database is not None
     return _database
+
+
+def load_database(path):
+    """Load the database from 'path'."""
+
+    # Make sure it is a directory.
+    if not os.path.isdir(path):
+        raise ValueError, "Database path %s is not a directory." % path
+
+    # Try to load the database implementation from a file named
+    # '_classes/database.py' in the test database.
+    classes_path = [os.path.join(path, "_classes")]
+    database_class = None
+    try:
+        database_module = qm.common.load_module("database", classes_path)
+    except ImportError, e:
+        # Couldn't import the module.
+        pass
+    else:
+        # Look for a class named 'Database' in the module.
+        try:
+            db = database_module.Database
+        except AttributeError:
+            # No such attribute in the module.
+            pass
+        else:
+            # Make sure it's a class.
+            if type(db) is types.ClassType:
+                database_class = db
+
+    # Did we find the class?
+    if database_class is None:
+        # No.  Fall back to the default XML test database implementation.
+        import xmldb
+        database_class = xmldb.Database
+
+    # Load the database.
+    global _database
+    _database = database_class(path)
+
 
 
 def get_class(class_name):

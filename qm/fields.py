@@ -46,6 +46,7 @@ import string
 import structured_text
 import sys
 import time
+import types
 import urllib
 import user
 import web
@@ -168,7 +169,7 @@ class Field:
     def GetDefaultValue(self):
         """Return the default value for this field."""
 
-        return self.default_value
+        return common.copy(self.default_value)
 
 
     def GetAttribute(self, attribute_name, default_value=""):

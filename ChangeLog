@@ -1,3 +1,15 @@
+2001-05-16  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (Field.GetDefaultValue): Copy the result.
+	* qm/common.py (copy): New function.
+	* qm/track/server.py (start_server): Don't call get_host_name.
+	* qm/test/cmdline.py (Command.Execute): Use load_database.
+	* qm/test/base.py (Suite.GetTestIds): Use dirname.  Handle paths
+	differently in implicit suites.
+	(Database.GetPath): New method.
+	(Database.GetClassPaths): Use _classes directory if it exists.
+	(load_database): New function.
+
 2001-05-15  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/triggers/notification.py

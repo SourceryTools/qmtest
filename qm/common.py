@@ -1036,6 +1036,31 @@ def _at_exit():
     map(lambda fn: fn(), _exit_functions)
 
 
+def copy(object):
+    """Make a best-effort attempt to copy 'object'.
+
+    returns -- A copy of 'object', if feasible, or otherwise
+    'object'."""
+
+    if type(object) is types.ListType:
+        # Copy lists.
+        return object[:]
+    elif type(object) is types.DictionaryType:
+        # Copy dictionaries.
+        return object.copy()
+    elif type(object) is types.InstanceType:
+        # For objects, look for a method named 'copy'.  If there is one,
+        # call it.  Otherwise, just return the object.
+        copy_function = getattr(object, "copy", None)
+        if callable(copy_function):
+            return object.copy()
+        else:
+            return object
+    else:
+        # Give up.
+        return object
+
+
 ########################################################################
 # variables
 ########################################################################
