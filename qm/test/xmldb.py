@@ -7,7 +7,7 @@
 # Contents:
 #   XML-based test database implementation.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -196,7 +196,7 @@ class Database(FileDatabase):
                 document, "suite_id", suite_id)
             suite_element.appendChild(suite_id_element)
         # Find the file system path for the suite file.
-        suite_path = self.GetSuitePath(suite)
+        suite_path = self.GetSuitePath(suite.GetId())
         # If the file is in a new subdirectory, create it.
         containing_directory = os.path.dirname(suite_path)
         if not os.path.isdir(containing_directory):

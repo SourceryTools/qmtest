@@ -7,7 +7,7 @@
 # Contents:
 #   Test classes for testing command-line programs.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -47,32 +47,6 @@ import string
 import sys
 from   threading import *
 
-########################################################################
-# functions
-########################################################################
-
-def _make_result_for_exception(cause):
-    """Return data for a result indicating an exception.
-
-    This function doesn't return a 'Result' object, but it does return
-    the data necessary to note an exception in a 'Result' object.
-
-    preconditions -- 'sys.exc_info()' returns information about the
-    current exception.
-
-    'cause' -- The text to annotate as the cause in the result.
-
-    returns -- A pair 'outcome, annotation_map', where 'outcome' is is
-    the result outcome to use, and 'annotation_map' is a map from
-    names to values of annotations to include in the result."""
-
-    exc_info = sys.exc_info()
-    return (Result.ERROR,
-            { Result.CAUSE : cause,
-              Result.EXCEPTION : "%s: %s" % exc_info[:2],
-              Result.TRACEBACK : qm.format_traceback(exc_info) })
-
-    
 ########################################################################
 # classes
 ########################################################################
@@ -314,12 +288,17 @@ class ExecTestBase(Test):
                         # Redirect stderr to the standard error file.
                         os.dup2(stderr_w, sys.stderr.fileno())
                         # Execute the program.
-                        os.execve(program, arguments, environment)
+                        os.execvpe(program, arguments, environment)
                     except:
                         # Perhaps something went wrong while setting up
-                        # the standard stream files.
-                        result = _make_result_for_exception(
-                            "Could not execute program.")
+                        # the standard stream files, or we were unable
+                        # to execute the program.
+                        exc_info = sys.exc_info()
+                        result = (Result.ERROR,
+                                  { Result.CAUSE : "Could not execut program",
+                                    Result.EXCEPTION : "%s: %s" % exc_info[:2],
+                                    Result.TRACEBACK :
+                                      qm.format_traceback(exc_info) })
                         cPickle.dump(result, os.fdopen(result_w, "w"))
                         # Exit.
                         os._exit(1)

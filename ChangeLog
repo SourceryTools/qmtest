@@ -1,5 +1,14 @@
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/xmldb.py (Database.WriteSuite): Fix typo.
+	* qm/test/classes/command.py (_make_result_for_exception): Remove.
+	(ExecTestBase.RunProgram): Use execvpe, not execve.
+	* qm/test/web/web.py (qm.test.suite): Import it.
+	(QMTestServer.HandleCreateSuite): Pass the server, not the 
+	test database, to ShowSuitePage.
+	(QMTestServer.HandleShowSuite): Likewise.
+	(QMTestServer.HandleSubmitSuite): Use Suite, not qm.test.base.Suite.
+
 	* qm.spec.in (Release): Reset to zero.
 
 	* scripts/qm-release (build_source): Change destination for
