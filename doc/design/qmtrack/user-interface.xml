@@ -6,7 +6,7 @@
  Date:   2000-11-25
 
  Contents:
-   Chapter `User Interface' of qmtrack design document.
+   Section `User Interface' of qmtrack design document.
 
  This is part of the master document contained in qmtrack.xml.
 
@@ -17,210 +17,210 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="chap-ui">
- <title id="chap-ui-title">User Interface</title>
+ <section id="sec-ui">
+  <title id="sec-ui-title">User Interface</title>
 
- <para>This section describes the different methods the user can use
- to create issues, edit issues, and query the database. We invision
- three main modes for interaction: command line, email, and
- web. However, based on the specification in the previous section, any
- mode may be added.</para>
+  <para>This section describes the different methods the user can use
+  to create issues, edit issues, and query the database. We invision
+  three main modes for interaction: command line, email, and
+  web. However, based on the specification in the previous section,
+  any mode may be added.</para>
 
- <section id="sec-command-line">
-  <title id="sec-command-line-title">Command line</title>
-  
-  <para>All &qmtrack; command-line functionality is accessed via the
-  &qmtrack-cmd; command, using a command-line syntax popularized by
-  the <application>CVS</application> program.  The user provides a
-  <firstterm id="def-subcommand">subcommand</firstterm> with each
-  invocation of &qmtrack-cmd;, which specifies the type of operation
-  to be performed.  The user may specify options modifying &qmtrack;'s
-  behavior, and, for certain subcommands, additional arguments.</para>
+  <section id="sec-command-line">
+   <title id="sec-command-line-title">Command line</title>
+   
+   <para>All &qmtrack; command-line functionality is accessed via the
+   &qmtrack-cmd; command, using a command-line syntax popularized by
+   the <application>CVS</application> program.  The user provides a
+   <firstterm id="def-subcommand">subcommand</firstterm> with each
+   invocation of &qmtrack-cmd;, which specifies the type of operation
+   to be performed.  The user may specify options modifying
+   &qmtrack;'s behavior, and, for certain subcommands, additional
+   arguments.</para>
 
-  <synopsis>
+   <synopsis>
     qmtrack [ options ] command [ command_options ] [ command_args ]
-  </synopsis>
+   </synopsis>
 
-  <para>When creating or modifying an issue, field values are
-  specified as arguments.  The user specifies field values to
-  &qmtrack-cmd; commands using assignment notation, as in
-  <userinput><replaceable>field</replaceable>=<replaceable>value</replaceable></userinput>.
-  For set fields, different notation is used instead to add or remove
-  elements from the set.  To add elements, the user specifies
-  <userinput><replaceable>field</replaceable>+=<replaceable>value</replaceable></userinput>.
-  To remove elements, the <userinput>-=</userinput> symbol is used
-  instead.  All of the commands to create and edit issues use the
-  above three operators to specify new values for fields.</para>
+   <para>When creating or modifying an issue, field values are
+   specified as arguments.  The user specifies field values to
+   &qmtrack-cmd; commands using assignment notation, as in
+   <userinput><replaceable>field</replaceable>=<replaceable>value</replaceable></userinput>.
+   For set fields, different notation is used instead to add or remove
+   elements from the set.  To add elements, the user specifies
+   <userinput><replaceable>field</replaceable>+=<replaceable>value</replaceable></userinput>.
+   To remove elements, the <userinput>-=</userinput> symbol is used
+   instead.  All of the commands to create and edit issues use the
+   above three operators to specify new values for fields.</para>
 
-  <section id="sec-qmtrack-commands">
-   <title id="sec-qmtrack-commands-title">&qmtrack-cmd commands</title>
+   <section id="sec-qmtrack-commands">
+    <title id="sec-qmtrack-commands-title">&qmtrack-cmd commands</title>
 
-   <formalpara>
-    <title><command>create</command></title> 
+    <formalpara>
+     <title><command>create</command></title> 
 
-    <para>This command is used to create a new issue.  It takes as its
-    mandatory arguments a summary and categories.  Optional arguments
-    include any other field values you wish to set.  For example,
+     <para>This command is used to create a new issue.  It takes as
+     its mandatory arguments a summary and categories.  Optional
+     arguments include any other field values you wish to set.  For
+     example,
      <screen>
       &prompt;<userinput>qmtrack create summary="My first issue" categories+=simple categories+=first</userinput>
       <computeroutput>iss2</computeroutput>
      </screen>
-    will create a new issue that has the summary, "My first issue" and
-    belongs to the two categories, "simple" and "first". The value
-    printed is the ID of the new issue.</para>
-   </formalpara>
+     will create a new issue that has the summary, "My first issue"
+     and belongs to the two categories, "simple" and "first". The
+     value printed is the ID of the new issue.</para>
+    </formalpara>
 
-   <formalpara>
-    <title><command>edit</command></title>
+    <formalpara>
+     <title><command>edit</command></title>
 
-    <para>This command is used to edit an existing issue. It takes the
-    ID of the command you wish to edit and then as arguments any
-    fields you wish to edit. For example,
+     <para>This command is used to edit an existing issue. It takes
+     the ID of the command you wish to edit and then as arguments any
+     fields you wish to edit. For example,
      <screen>
       &prompt;<userinput>qmtrack edit iss2 categories-=first</userinput>
       <computeroutput>iss2</computeroutput>
      </screen>
-    will edit the issue with id "iss2" removing the category "first"
-    from the issue. A new revision of the issue will be created and
-    stored in the database.  &qmtrack; responds with the issue id of
-    the edited issue.</para>
-   </formalpara>
+     will edit the issue with id "iss2" removing the category "first"
+     from the issue. A new revision of the issue will be created and
+     stored in the database.  &qmtrack; responds with the issue id of
+     the edited issue.</para>
+    </formalpara>
 
-   <formalpara>
-    <title><command>split</command></title>
+    <formalpara>
+     <title><command>split</command></title>
 
-    <para>The <command>split</command> command splits one issue into
-    two.  The issue ids of the two new issues are printed (the old
-    issue id is no longer used).  For example,
+     <para>The <command>split</command> command splits one issue into
+     two.  The issue ids of the two new issues are printed (the old
+     issue id is no longer used).  For example,
      <screen>
       &prompt;<userinput>qmtrack split foo</userinput>
       <computeroutput>foo.1, foo.2</computeroutput>
      </screen>
     </para>
-   </formalpara>
+    </formalpara>
 
-   <formalpara>
-    <title><command>join</command></title>
+    <formalpara>
+     <title><command>join</command></title>
 
-    <para>The <command>join</command> command joins two or more issues
-    into a new issue.  If any field assignments are specified, these
-    fields are modified in the newly-joined issue.  The issue id of
-    the newly joined issue is printed.  For example,
+     <para>The <command>join</command> command joins two or more
+     issues into a new issue.  If any field assignments are specified,
+     these fields are modified in the newly-joined issue.  The issue
+     id of the newly joined issue is printed.  For example,
      <screen>
       &prompt;<userinput>qmtrack join foo bar</userinput>
       <computeroutput>foo_bar</computeroutput>
      </screen>
     </para>
-   </formalpara>
+    </formalpara>
 
-   <formalpara>
-    <title><command>query</command></title>
+    <formalpara>
+     <title><command>query</command></title>
 
-    <para>This command is used to search the database for issues that
-    match certain criteria.  A Python-like syntax is used to specify
-    queries, as described in <link linkend="sec-queries"
-    endterm="sec-queries-title"></link>.  For example,
+     <para>This command is used to search the database for issues that
+     match certain criteria.  A Python-like syntax is used to specify
+     queries, as described in <link linkend="sec-queries"
+     endterm="sec-queries-title"></link>.  For example,
      <screen>
       &prompt;<userinput> qmtrack query 'front_end in categories and severity &gt; serious'</userinput>
       <computeroutput>foo,bar,bar2,baz</computeroutput>
      </screen>
-    searches for all issues in the category "front_end" at the
-    severity level "serious" or greater.  &qmtrack; responds with the
-    issue ids of matching issues.</para>
-   </formalpara>
+     searches for all issues in the category "front_end" at the
+     severity level "serious" or greater.  &qmtrack; responds with the
+     issue ids of matching issues.</para>
+    </formalpara>
 
-  </section>
+   </section>
 
-  <section id="sec-output-options">
-   <title id="sec-output-options-title">Output options</title>
+   <section id="sec-output-options">
+    <title id="sec-output-options-title">Output options</title>
 
-   <para>By default, &qmtrack; displays a comma-separated list of
-   issue ids created, edited, or matched by the user's operation.
-   Other output may be selected using the <option>--format</option>
-   (<option>-f</option>) option.  This option takes an option
-   parameter, which is the name of a format style.  See <xref
-   linkend="tab-format-params"></xref> for parameter values.</para>
+    <para>By default, &qmtrack; displays a comma-separated list of
+    issue ids created, edited, or matched by the user's operation.
+    Other output may be selected using the <option>--format</option>
+    (<option>-f</option>) option.  This option takes an option
+    parameter, which is the name of a format style.  See <xref
+    linkend="tab-format-params"></xref> for parameter values.</para>
 
-   <table id="tab-format-params">
-    <title><option>--format</option> parameters</title>
-    <tgroup cols="2">
-     <thead>
-      <row>
-       <entry>format style</entry>
-       <entry>description</entry>
-      </row>
-     </thead>
-     <tbody>
-      <row>
-       <entry><literal>none</literal></entry>
-       <entry>Don't display any issue output.</entry>
-      </row>
-      <row>
-       <entry><literal>iid</literal></entry>
-       <entry>Comma-delimited issue ids (default).</entry>
-      </row>
-      <row>
-       <entry><literal>iid-single</literal></entry>
-       <entry>Issue ids, delimited with newlines, useful for shell
+    <table id="tab-format-params">
+     <title><option>--format</option> parameters</title>
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>format style</entry>
+        <entry>description</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>none</literal></entry>
+        <entry>Don't display any issue output.</entry>
+       </row>
+       <row>
+        <entry><literal>iid</literal></entry>
+        <entry>Comma-delimited issue ids (default).</entry>
+       </row>
+       <row>
+        <entry><literal>iid-single</literal></entry>
+        <entry>Issue ids, delimited with newlines, useful for shell
         and line-oriented processing.</entry>
-      </row>
-      <row>
-       <entry><literal>summary</literal></entry>
-       <entry>Issue ids and summaries.</entry>
-      </row>
-      <row>
-       <entry><literal>short</literal></entry>
-       <entry>To be determined.</entry>
-      </row>
-      <row>
-       <entry><literal>full</literal></entry>
-       <entry>To be determined.</entry>
-      </row>
-      <row>
-       <entry><literal>command</literal></entry> 
-       <entry>Field assignments, in the format that would be passed
+       </row>
+       <row>
+        <entry><literal>summary</literal></entry>
+        <entry>Issue ids and summaries.</entry>
+       </row>
+       <row>
+        <entry><literal>short</literal></entry>
+        <entry>To be determined.</entry>
+       </row>
+       <row>
+        <entry><literal>full</literal></entry>
+        <entry>To be determined.</entry>
+       </row>
+       <row>
+        <entry><literal>command</literal></entry> 
+        <entry>Field assignments, in the format that would be passed
         to the <command>qmtrack create</command> command.  Note that
         some fields, such as attachment fields, cannot be represented
         this way.</entry>
-      </row>
-      <row>
-       <entry><literal>xml</literal></entry>
-       <entry>The issue(s) in canonical XML format.</entry>
-      </row>
-     </tbody>
-    </tgroup>
-   </table>
+       </row>
+       <row>
+        <entry><literal>xml</literal></entry>
+        <entry>The issue(s) in canonical XML format.</entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
 
-   <para>Additionally, the <option>--custom-format</option>
-   (<option>-F</option>) option may be used to specify a different
-   format.  This option takes as its parameter a comma-separated list
-   of field names to display in tabular format.</para>
+    <para>Additionally, the <option>--custom-format</option>
+    (<option>-F</option>) option may be used to specify a different
+    format.  This option takes as its parameter a comma-separated list
+    of field names to display in tabular format.</para>
+
+   </section>
 
   </section>
 
- </section>
+  <section id="sec-email">
+   <title id="sec-email-title">E-mail</title>
 
- <section id="sec-email">
-  <title id="sec-email-title">E-mail</title>
-
-  <para>To create, edit, and query issues via e-mail, simply construct an
-  e-mail with the command as you would issue it on the command line and
-  send it to the database. You may also write an issue in xml as shown
-  below and send the message to the database. In both cases, the database
-  will respond with the information in xml form. For the xml
-  representation, place the name of the command in the first line of the
-  body and then the xml representation starting on the second line. For
-  example, to create a new issue, you can send an e-mail with this body:
-  
-  <programlisting>
+   <para>To create, edit, and query issues via e-mail, simply
+   construct an e-mail with the command as you would issue it on the
+   command line and send it to the database. You may also write an
+   issue in xml as shown below and send the message to the
+   database. In both cases, the database will respond with the
+   information in xml form. For the xml representation, place the name
+   of the command in the first line of the body and then the xml
+   representation starting on the second line. For example, to create
+   a new issue, you can send an e-mail with this body:
+   <programlisting>
 <![CDATA[
   create summary="My issue" categories+=foo categories+=bar
 ]]>
-  </programlisting>
-
-  or with this body:
-
-  <programlisting>
+   </programlisting>
+   or with this body:
+   <programlisting>
 <![CDATA[
   create
   <issue>
@@ -229,11 +229,9 @@
     <categories>bar</categories>
   </issue>
   ]]>
-  </programlisting>
-
-  Either way, you would receive an e-mail back containing the text:
-
-  <programlisting>
+   </programlisting>
+   Either way, you would receive an e-mail back containing the text:
+   <programlisting>
 <![CDATA[
   <issue>
     <id>iss2</id>
@@ -242,23 +240,20 @@
     <categories>bar</categories>
   </issue>
   ]]>
-  </programlisting>
-
-  indicating that the issue has been created. To edit an issue, you may
-  either give the command line for editing the issue or request that the
-  issue be sent back to you for editing and subsequently send it back
-  after you have edited it. For example, to remove the category, foo, from
-  the issue we just created, you could send the following message:
-
-  <programlisting>
+   </programlisting>
+   indicating that the issue has been created. To edit an issue, you
+   may either give the command line for editing the issue or request
+   that the issue be sent back to you for editing and subsequently
+   send it back after you have edited it. For example, to remove the
+   category, foo, from the issue we just created, you could send the
+   following message:
+   <programlisting>
 <![CDATA[
   edit iss2 categories-=foo
   ]]>
-  </programlisting>
-
-  or you could send the following message:
-
-  <programlisting>
+   </programlisting>
+   or you could send the following message:
+   <programlisting>
 <![CDATA[
   edit iss2
   ]]>
@@ -336,43 +331,23 @@
 
   For more information about the query syntax that is allowed on the
   command line, see the section on <link linkend="sec-queries"
-  endterm="sec-queries-title"></link>.
-
-<!-- Commented out for now until we know what's up with queries
-
-  <para>Queries are similar to edits and creates with the exception that
-  the field lines must contain additional information to indicate what type
-  of query to be performed (e.g. 'contains', 'exact', 'less', 'greater', or
-  'range'). This attribute comes between the field name and the value and
-  is separated by a colon. Also, to use the 'and', 'or', and 'not'
-  directives, simply place the directive on a line before the one or two
-  fields to that argument. For example, to perform a query that finds all
-  issues that do not contain the word "foo" in the summary and have "bar"
-  as their only category, the e-mail is formed like this:
-   <programlisting>
-<![CDATA[
-query
-not
-and
-SUMMARY:contains:"foo"
-CATEGORY:exact:"bar"
-]]>
-   </programlisting>
-
--->
+                                         endterm="sec-queries-title"></link>.
   </para>
- </section>
+  </section>
 
- <section><title>Web</title>
-  <para>To create, edit, and perform queries on the web, the user will be
-  presented with a form that has all the fields of an issue. This form
-  will be generated by DTML using the special dtml-in tag that iterates
-  over all the elements in a list (in this case, the fields of the
-  issue). For more information about DTML and the dtml-in tag, see
-  http://www.zope.org/Documentation/Guides/DTML. The dtml code to display
-  the forms will be similar to the following:
+  <section>
+   <title>Web</title> 
 
-  <programlisting>
+   <para>To create, edit, and perform queries on the web, the user
+   will be presented with a form that has all the fields of an
+   issue. This form will be generated by &dtml; using the special
+   dtml-in tag that iterates over all the elements in a list (in this
+   case, the fields of the issue). For more information about &dtml;
+   and the <sgmltag>dtml-in</sgmltag> tag, see <ulink
+   url="http://www.zope.org/Documentation/Guides/&dtml;">&dtml;
+   manual</ulink>. The &dtml; code to display the forms will be
+   similar to the following:
+   <programlisting>
 <![CDATA[
   <table>
   <dtml-in fields>
@@ -380,95 +355,81 @@ CATEGORY:exact:"bar"
       <td><dtml-expr "get_display"></td>
   </tr>
 ]]>
-  </programlisting>
+   </programlisting>
+   where for each field, the field name is displayed and then the
+   method <function>get_display</function> is called on each field to
+   determine the way the field should be displayed (e.g., as a text
+   box, as a set of check boxes, etc.). For querying, another line is
+   added to the above to extract from the field what choices for
+   querying the user has (e.g., exact match versus substring match,
+   less than versus greater than, etc.). Using &dtml;, the
+   administrator will be able to specify headers and footers and other
+   configuration-type information simply so the web interface looks
+   and feels the way the administrator wishes.</para>
 
-  where for each field, the field name is displayed and then the method
-  get_display is called on each field to determine the way the field
-  should be displayed (e.g., as a text box, as a set of check boxes,
-  etc.). For querying, another line is added to the above to extract from
-  the field what choices for querying the user has (e.g., exact match
-  versus substring match, less than versus greater than, etc.). Using
-  DTML, the administrator will be able to specify headers and footers and
-  other configuration-type information simply so the web interface looks
-  and feels the way the administrator wishes.</para>
+   <para>To create a new issue, the user will be presented with a form
+   like the following:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="create1.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   He/she will then fill in the necessary data, click "Create," and be
+   shown a page like the following:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="create2.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   To edit, the user will be presented with a form like this:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="edit1.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   He/she will then fill in the ID of the issue to edited and click on
+   "Retrieve." This will fill in the form with the issue:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="edit2.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   Then the user can edit it and click on "Edit" to commit the changes
+   made. After doing this, the user will be presented with a page like
+   the following:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="edit3.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   To query, the user will be presented wiht a form like this:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="query1.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   Then the user can simply put values in the fields as desired,
+   choosing how to search on each field with the given pull down
+   menus. (Each field type has a set of "ways to search" that are
+   determined and used to generate the pull down menus.) Once the user
+   inputs the data and clicks "Query":
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="query2.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   the following page is returned:
+    <mediaobject>
+     <imageobject>
+      <imagedata fileref="query3.jpg" format="JPG"></imagedata>
+     </imageobject>
+    </mediaobject>
+   The user may then refine the search to enforce additional
+   constraints.</para>
 
-  <para>To create a new issue, the user will be presented with a form like
-  the following:
-  
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="create1.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
+  </section>
 
-  He/she will then fill in the necessary data, click "Create," and be
-  shown a page like the following:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="create2.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  To edit, the user will be presented with a form like this:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="edit1.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  He/she will then fill in the ID of the issue to edited and click on
-  "Retrieve." This will fill in the form with the issue:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="edit2.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  Then the user can edit it and click on "Edit" to commit the changes
-  made. After doing this, the user will be presented with a page like the
-  following:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="edit3.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  To query, the user will be presented wiht a form like this:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="query1.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  Then the user can simply put values in the fields as desired, choosing
-  how to search on each field with the given pull down menus. (Each field
-  type has a set of "ways to search" that are determined and used to
-  generate the pull down menus.) Once the user inputs the data and clicks
-  "Query":
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="query2.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  the following page is returned:
-
-  <mediaobject>
-  <imageobject>
-  <imagedata fileref="query3.jpg" format="JPG"></imagedata>
-  </imageobject>
-  </mediaobject>
-
-  The user may then refine the search to enforce additional constraints.
-  </para>
  </section>
-</chapter>
 
 <!--
   Local Variables:
@@ -477,6 +438,6 @@ CATEGORY:exact:"bar"
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  sgml-parent-document: ("qmtrack.xml" "chapter" "section")
   End:
 -->

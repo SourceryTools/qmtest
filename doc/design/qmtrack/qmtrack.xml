@@ -24,6 +24,7 @@
 
   <!ENTITY api "<acronym>API</acronym>">
   <!ENTITY dtd "<acronym>DTD</acronym>">
+  <!ENTITY dtml "<acronym>DTML</acronym>">
   <!ENTITY idb "<acronym>IDB</acronym>">
   <!ENTITY iid "<acronym>IID</acronym>">
   <!ENTITY prompt "<prompt>$ </prompt>">
@@ -41,7 +42,7 @@
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
   <!ENTITY concepts.xml SYSTEM "concepts.xml">
   <!ENTITY xml-repr.xml SYSTEM "xml-repr.xml">
-  <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
+  <!ENTITY implementation.xml SYSTEM "implementation.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
   <!ENTITY idb-impl.xml SYSTEM "idb-impl.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
@@ -50,22 +51,27 @@
  <bookinfo>
   <title>&qmtrack; Design</title>
   <author>
+   <firstname>Benjamin</firstname>
+   <surname>Chelf</surname>
+  </author>
+  <author>
+   <firstname>Mark</firstname>
+   <surname>Mitchell</surname>
+  </author>
+  <author>
    <firstname>Alex</firstname>
    <surname>Samuel</surname>
   </author>
   <author>
-   <firstname>Benjamin</firstname>
-   <surname>Chelf</surname>
+   <firstname>Greg</firstname>
+   <surname>Wilson</surname>
   </author>
  </bookinfo>
 
  &introduction.xml;
  &requirements.xml;
  &concepts.xml;
- &idb-api.xml;
- &triggers.xml;
- &idb-impl.xml;
- &user-interface.xml;
+ &implementation.xml;
 
 </book>
 

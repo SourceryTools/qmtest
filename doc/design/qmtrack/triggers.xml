@@ -6,7 +6,7 @@
   Date:   2000-11-20
 
   Contents:
-    Chapter `Triggers' of qmtrack design document.
+    Section `Triggers' of qmtrack design document.
 
   This is part of the master document contained in qmtrack.xml.
 
@@ -17,162 +17,31 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter id="chap-triggers">
- <title>Triggers</title>
+ <section id="chap-triggers">
+  <title>Triggers</title>
 
- <para><firstterm id="def-trigger">Triggers</firstterm> provide a mechanism for
- extending a &qmtrack; issue database in two important ways.
+  <para><firstterm id="def-trigger">Triggers</firstterm> provide a
+  mechanism for extending a &qmtrack; issue database in two important
+  ways.
   <orderedlist>
-   <listitem>
-    <para>A trigger can be used to impose a constraint on the issue
-    database.  For instance, a trigger can check that a certain
-    condition is fulfilled before allowing a modification to the issue
-    database.</para>
-   </listitem>
-
-   <listitem>
-    <para>A trigger can be used to implement issue database policies
-    and workflow by invoking operations in response to user
-    actions.</para>
-   </listitem>
-  </orderedlist>
- </para>
-
- <section id="sec-trigger-api">
-  <title id="sec-trigger-api-title">Trigger API</title>
-
-  <para>A trigger is implemented as an instance of a subclass of
-  <classname>Trigger</classname>.  The principal method is
-  <function>Invoke</function>, which is passed two arguments, both
-  <classname>IssueRecord</classname> instances.</para>
-
-  <programlisting>
-<![CDATA[
-class Trigger:
-    """Base class for triggers."""
-
-    def GetName(self):
-        """Return the name of this trigger instance."""
-
-
-    def Invoke(self, issue, previous_issue):
-        """Invoke the trigger.
-
-        'issue' -- An 'IssueRecord' instance.  For a "get" trigger,
-         the issue being retrieved.  For update triggers, the state of
-         the issue as it will be or is after the update.
-
-        'previous_issue' -- An 'IssueRecord' instance.  For a "get"
-        trigger, 'None'.  For update triggers, the state of the issue
-        before the update.
-
-        returns -- A pair '(result, message)'.  The 'result' value
-        evaulates to true if the operation is to continue, false if
-        the operation is to be cancelled; this value is ignored for
-        "postupdate" triggers.  'message' is a short string describing
-        the trigger action, or 'None'.  
-]]>
-  </programlisting>
-
-  <para>A trigger is registered with the &idb; for one of three
-  trigger types:
-   <orderedlist>
     <listitem>
-     <para>A <literal>"get"</literal> trigger is called before an
-     issue is returned from a query or another retrieval
-     operation.</para>
+     <para>A trigger can be used to impose a constraint on the issue
+     database.  For instance, a trigger can check that a certain
+     condition is fulfilled before allowing a modification to the
+     issue database.</para>
     </listitem>
 
     <listitem>
-     <para>A <literal>"preupdate"</literal> trigger is called before
-     an update to an issue takes place.</para>
-    </listitem>
-
-    <listitem>
-     <para>A <literal>"postupdate"</literal> trigger is called after
-     an update to an issue takes place.</para>
+     <para>A trigger can be used to implement issue database policies
+     and workflow by invoking operations in response to user
+     actions.</para>
     </listitem>
    </orderedlist>
   </para>
 
-  <para>Triggers are registered with the &idb; instance.</para>
-
-  <programlisting>
-<![CDATA[ class IdbBase:
-
-    def RegisterTrigger(self, type, trigger):
-        """Register a trigger.
-
-        'type' -- The type is a string indicating the trigger type.
-
-           * '"get"' triggers are invoked on issue records that are
-             retrieved or returned as query results.  
-
-           * '"preupdate"' triggers are invoked before an issue is
-             updated.  
-
-           * '"postupdate"' triggers are invoked after an issue is
-             updated.  
-
-         'trigger' -- The trigger, a callable object.  The trigger
-         takes two arguments, both instances of 'IssueRecord'.
-
-         The same trigger may be registered more than once for each
-         type, or for multiple types."""
-
-
-    def UnregisterTrigger(self, type, trigger):
-        """Unregister a trigger.
-
-        'type' -- If 'None', all instances of 'trigger' are
-        unregistered.  Otherwise, only instances matching 'type' are
-        unregistered.
-
-        'trigger' -- The trigger to unregister."""
-
-
-    def GetTriggers(self, type):
-        """Return a sequence registered triggers of type 'type'."""
-]]>
-  </programlisting>
-
-  <para>Triggers are invoked in the order they are registered.</para>
-
-  <para>A trigger returns a boolean value as the first element of its
-  return value (a pair).
-   <orderedlist>
-    <listitem>
-     <para>For "get" triggers, a false result causes the issue to be
-     supressed in the result of the &idb; operation.  If the operation
-     was a query, the issue is omitted from the results.  If the
-     operation is a single-issue access, the exception object is
-     returned.</para>
-    </listitem>
-
-    <listitem>
-     <para>For "preupdate" triggers, a false result causes the update
-     to be cancelled.</para>
-    </listitem>
-
-    <listitem>
-     <para>For "postupdate" triggers, the boolean result is ignored
-     silently.</para>
-    </listitem>
-   </orderedlist>
-  </para>
-
-  <para>Triggers may perform other actions as side effects.  Note that
-  if multiple "preupdate" triggers are registered and the second or a
-  subsequent trigger returns a false result, any side effects from
-  previous triggers have taken effect; no attempt is made to reverse
-  them.  Therefore, it is inadvisable to use preupdate triggers with
-  side effects; side effect should be placed in postupdate triggers
-  instead, to be invoked when the update has been committed.</para>
-
+ 
  </section>
-
-</chapter>
-
+ 
 <!--
   Local Variables:
   indent-tabs-mode: nil
@@ -180,6 +49,6 @@ class Trigger:
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  sgml-parent-document: ("qmtrack.xml" "chapter" "section")
   End:
 -->

@@ -1,0 +1,656 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   implementation.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Chapter `Implementation' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-implementation">
+ <title id="chap-implementation-title">Implementation</title>
+
+ <section>
+  <title>Issue Classes</title>
+
+  <section>
+   <title>Issue Fields</title>
+
+   <para>Each field in an issue class is represented by an instance of
+   a subclass of <classname>IssueField</classname>.  The particular
+   subclass determines the type of the field.  For instance, an
+   <classname>IssueFieldInteger</classname> instance represents an
+   integer field, an <classname>IssueFieldText</classname> instance
+   represents a text field, etc.</para>
+
+   <section>
+    <title>Attributes</title>
+
+    <para>In addition, each field incorporates a set of attributes.
+    Attributes are simply mappings from attributes names (strings) to
+    string values (the <literal>"contents"</literal> attribute of a
+    set field, described <link
+    linkend="sec-issuefieldset">below</link> is a special-case
+    exception).  For boolean attributes, the value is either
+    <literal>"true"</literal> or <literal>"false"</literal>.</para>
+
+    <para>Each field has a an attribute called
+    <literal>"name"</literal>, which contains the name of the field.
+    Other attributes are used for various properties of other field
+    types.  Some attributes are used as hints, providing information
+    to the &qmtrack; user interface implementations and database
+    implemnetations about how the field value should be displayed and
+    stored, respectively.  User extensions to &qmtrack; may define and
+    use additional attributes as well.</para>
+
+   </section>
+
+   <section>
+    <title><classname>IssueField</classname></title>
+
+    <para><classname>IssueField</classname> is the base class for
+    other field types.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueField:
+    """Base class for issue field types."""
+
+    def __init__(self, name):
+        """Create a new (generic) field.
+
+        Sets the '"name"' attribute to 'name'."""
+
+
+    def GetName(self):
+        """Return the name of the field."""
+
+        return self.GetAttribute("name")
+
+
+    def GetAttribute(self, attribute_name, default_value=""):
+        """Return the value of an attribute.
+
+        Return the value of the attribute named by 'attribute_name'.
+        If that attribute is not set, return 'default_value'."""
+
+
+    def SetAttribute(self, attribute_name, attribute_value):
+        """Set the value of an attribute."""
+
+
+    def UnsetAttribute(Self, attribute_name):
+        """Remove an attribute."""
+]]>
+    </programlisting>
+   </section>
+
+   <section>
+    <title><classname>IssueFieldInteger</classname></title>
+
+    <para>An instance of <classname>IssueFieldInteger</classname>
+    represents an integer field.  The field must be able to store at
+    least a 32-bit signed value.  Values for this field type are
+    represented in memory as ordinary Python integers.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldInteger(IssueField):
+
+    def __init__(self, name):
+        """Create an integer field.
+
+        The field must be able to represent a 32-bit signed
+        integer."""
+]]>
+    </programlisting>
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldText</classname></title>
+
+    <para>An instance of <classname>IssueFieldText</classname>
+    represents a field that contains text.  There is no restriction on
+    the length of the field contents.  Values of this field type are
+    represented in memory as ordinary Python strings.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldText(IssueField):
+    """A field that contains text.  A text field uses the following
+    attributes:
+
+    '"multiline"' -- If true, the field may contain line breaks, and
+    is presented to the user accordingly.
+
+    '"verbatim"' -- If true, the contents of the field are quoted as a
+    block when the field is externalized; otherwise, individual
+    characters are quoted as required by the externalizaton mechanism.
+
+    '"big"' -- This is a hint that, if true, recommends to issue
+    database mechanisms that the contents of the field may be large
+    and should be stored out-of-line."""
+
+    def __init__(self, name):
+        """Create a text field."""
+]]>
+    </programlisting>
+
+    <para>The <literal>"verbatim"</literal> attribute is used to flag
+    a field that typically will contain text incorporating punctuation
+    characters that may need to be quoted, for example program source
+    code.  An &idb; implementation may choose to quote the entire
+    contents, rather than escaping individual punctuation separately.
+    For instance, an XML-based &idb; implementation might store the
+    field contents inside a marked CDATA section
+    ("<literal>&lt;![CDATA[ ... ]]&gt;</literal>").</para>
+
+    <para>The <literal>"big"</literal> attribute flags that the
+    contents of the field may be quite large.  An &idb; implementation
+    may choose to store the field contents separately from the rest of
+    the issue.  For instance, an RDBMS &idb; implementation might
+    store the field contents in a separate text repository instead of
+    in the main issue table.</para>
+
+   </section>    
+
+   <section>
+    <title id="sec-issuefieldset"><classname>IssueFieldSet</classname></title>
+
+    <para>An instance of <classname>IssueFieldSet</classname>
+    represents a set field.  A set field can be thought of as a
+    collection of zero or more instances of another field type.  All
+    contents of a set must be of the same type.  A set field may not
+    contain sets.  A values of this field type is represented in
+    memory as a Python sequence, with the type of sequence elements
+    given by the contained field type.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldSet(IssueField):
+    """A field containing zero or more instances of some other field.
+
+    All contents must be of the same field type.  A set field uses the
+    following attributes:
+
+    '"contents"' -- An 'IssueField' describing the elements of the
+    set.  It may not be an 'IssueFieldSet'."""
+
+    def __init__(self, contained_field):
+        """Create a set field.
+
+        The name of the contained field is taken as the name of this
+        field."""
+]]>
+    </programlisting>
+
+    <para>The <literal>"contents"</literal> attribute of a set field
+    takes a special value: another <classname>IssueField</classname>
+    subclass instance, representing the type of the contents of the
+    set.</para> 
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldAttachment</classname></title>
+
+    <para>An instance of <classname>IssueFieldAttachment</classname>
+    represents a field that contains an attachment.</para>
+
+    <para>The value in memory of an issue field is either
+    <literal>None</literal>, indicating no attachment, or an instance
+    of <link
+    linkend="sec-file-attachments"><classname>Attachment</classname></link>
+    .</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldAttachment(IssueField):
+
+    def __init__(self, name):
+        """Create an attachment field."""
+]]>
+    </programlisting>    
+
+   </section>
+
+   <section>
+    <title><classname>IssueFieldEnumeration</classname></title>
+
+    <para>An instance of <classname>IssueFieldEnumeration</classname>
+    corresponds to a field containing an enumeral.  An in-memory
+    enumeration field value is a Python integer.</para>
+
+    <programlisting>
+<![CDATA[
+class IssueFieldEnumeration(IssueField):
+    """A field that contains an enumeral value.
+
+    The enumeral value is selected from an enumerated set of values.
+    An enumeral field uses the following attributes:
+
+    '"enumeration"' -- A mapping from enumeral names to enumeral
+    values.  Names are converted to strings, and values are stored as
+    integers.
+
+    '"ordered"' -- If non-zero, the enumerals are presented to the
+    user ordered by value."""
+
+
+    def __init__(self, name, enumeration):
+        """Create an enumeral field."""
+]]>
+    </programlisting>
+
+   </section>
+
+  </section>
+
+  <section>
+   <title><classname>IssueClass</classname></title>
+
+   <para>An issue class is represented by an instance of
+   <classname>IssueClass</classname>.</para>
+
+   <programlisting>
+<![CDATA[
+class IssueClass:
+
+    def __init__(self, name):
+        """Create a new issue class named 'name'.
+
+        The issue class initially includes mandatory fields only."""
+
+
+    def GetName(self):
+        """Return the name of this class."""
+
+
+    def GetFields(self):
+        """Return the fields in this class.
+
+        returns -- A map from field names to field values.  The keys
+        of the map are strings.  The values are 'IssueField'
+        instances."""
+
+        
+    def AddField(self, field, retroactive_value):
+        """Adds a new field to the issue class.
+
+        'field' -- An instance of a subclass of 'IssueField' which
+        describes the field to be added.  The object is copied, and
+        subsequent modifications to it will not affect the issue class.
+
+        'default_value' -- The value to assign for this field to
+        existing issues of the issue class."""
+]]>
+   </programlisting>
+
+  </section>
+
+ </section>
+
+ <section id="sec-idb-api">
+  <title id="sec-idb-api-title">Issue database API</title>
+
+  <para>The <classname id="class-IdbBase">IdbBase</classname> class is
+  the base class for idb implementations.</para>
+
+  <para>Creation and setup methods.</para>
+
+  <programlisting>
+<![CDATA[
+class IdbBase:
+    """Base class for idb implementations."""
+]]>
+  </programlisting>
+
+  <para>Methods for retrieving issues and revisions.</para>
+
+  <programlisting>
+<![CDATA[
+    def GetIssueClass(self, name):
+        """Return the issue class named by 'name'."""
+
+
+    def GetIssue(self, iid):
+        """Return the current revision of issue 'iid'."""
+
+
+    def GetIssueRevision(self, iid, revision_number):
+        """Return the revision 'revision_number' of issue 'iid'."""
+
+
+    def GetAllRevisions(self, iid):
+        """Return a sequence of all revisions of an issue.
+
+        'iid' -- The issue of which to retrieve all revisions.
+
+        returns -- A sequence of 'IssueRecord' objects, all
+        corresponding to 'iid', indexed by revision number."""
+
+
+    def GetCurrentRevisionNumber(self, iid):
+        """Return the current revision number for issue 'iid'."""
+
+
+    def Query(self, query_record, current_revision_only=1):
+        """Return a sequence of issues matching 'query_record'.
+
+        'query_record' -- An instance of IssueRecord specifying the query.
+
+        'current_revision_only -- If true, don't match revisions other
+        than the current revision of each issue."""
+]]>
+  </programlisting>
+
+  <para>See <link linkend="sec-trigger-api"
+  endterm="sec-trigger-api-title"></link> for
+  <classname>IdbBase</classname> methods for registering triggers.</para>
+
+ </section>
+
+ <section><title>Issues</title>
+
+  <para>The canonical in-memory representation of an issue is an
+  <classname>IssueRecord</classname> instance.</para>
+
+  <programlisting>
+<![CDATA[
+class IssueRecord:
+    """The canonical representation of an issue."""
+
+    def GetClassName(self):
+        """Return the name of the issue class of this issue."""
+
+
+    def GetField(self, field_name):
+        """Return the value of the field given by field_name."""
+
+
+    # Convenience methods for returning values of mandatory fields.
+
+    def GetId(self):
+        """Return the iid."""
+
+
+    def GetRevisionNumber(self):
+        """Return the revision number."""
+
+
+    def GetTime(self):
+        """Return the time  at which this revision was recorded."""
+
+
+    def GetSummary(self):
+        """Return a short summary."""
+
+
+    def GetCategories(self):
+        """Return a categories to which this issue belongs.
+
+        return -- A sequence of string names of categories."""
+
+
+    def GetParents(self):
+        """Return a sequence of iids of parents of this issue."""
+
+
+    def GetChildren(self):
+        """Return a sequence of iids of children of this issue."""
+]]>
+  </programlisting>
+
+  <section id="sec-diff-issue-records">
+   <title id="sec-diff-issue-records-title">Difference issue records</title>
+
+   <para>An <classname>IssueRecord</classname> instance may also be
+   used to represent the <emphasis>difference</emphasis> between two
+   revisions of the same issue.  Only fields that differ between the
+   two issue revisions are included in the issue record; other fields
+   are omitted.</para>
+
+   <para>The revision number returned by
+   <function>GetRevisionNumber</function> for such an object is a pair
+   of numbers, <varname>(from_rev, to_rev)</varname>.  To obtain the
+   issue record corresponding to revision number
+   <varname>to_rev</varname>, retrieve the issue record
+   corresponding to revision number <varname>from_rev</varname>, and
+   replace any fields present in the difference issue record.</para>
+
+   <para>Functions are provided to obtain a difference given two issue
+   records, and to apply a difference to an issue record to obtain the
+   revised issue record:
+    <programlisting><![CDATA[
+def issue_record_diff(from_record, to_record):
+    """Calculate the difference between two issue records.
+
+    'from_record' -- An 'IssueRecord' instance.
+
+    'to_record' -- An 'IssueRecord' instance corresponding to a
+    revision of the same issue given by 'from_record'.
+
+    returns -- A difference issue record between 'from_record' and
+    'to_record'."""
+
+
+def issue_record_patch(from_record, diff_record):
+    """Apply a difference  to a full issue record.
+
+    'from_record' -- An 'IssueRecord' instance.
+
+    'diff_record' -- A difference 'IssueRecord' instance.
+
+    returns -- An issue record containing 'from_record' with all
+    fields present in 'diff_record' replaced.
+
+    invariant -- The result of 'issue_record_patch(r1,
+    issue_record_diff(r1, r2))' is identical to 'r2'."""
+]]>
+    </programlisting>
+   </para>
+
+  </section>
+
+ </section>
+
+ <section id="sec-file-attachments">
+  <title>File attachements</title>
+
+  <para>The <classname>Attachment</classname> class represents an
+  attachment.
+   <programlisting>
+<![CDATA[
+class Attachment:
+    """A file attachment to an issue."""
+
+    def __init__(self, data, mime_type, description):
+        """Create a new IdbAttachment instance."""
+
+
+    def GetLocation(self):
+        """Return the location of the attachment data.
+
+        returns -- An opaque, implementation-defined string specifying
+        the location of the data."""
+
+
+    def GetFile(self):
+        """Return a file handle to the attachment data.
+
+        returns -- A readable file object, positioned at the beginning
+        of the data."""
+
+
+    def GetMimeType(self):
+        """Return the MIME type of the attachment."""
+
+
+    def GetDescription(self):
+        """Return a description of the attachment."""
+]]>
+   </programlisting>
+  </para>
+
+ </section>
+
+ &xml-repr.xml;
+
+ <section id="sec-trigger-api">
+  <title id="sec-trigger-api-title">Trigger API</title>
+
+  <para>A <link linkend="def-trigger">trigger</link> is implemented as
+  an instance of a subclass of <classname>Trigger</classname>.  The
+  principal method is <function>Invoke</function>, which is passed two
+  arguments, both <classname>IssueRecord</classname> instances.</para>
+
+  <programlisting>
+<![CDATA[
+class Trigger:
+    """Base class for triggers."""
+
+    def GetName(self):
+        """Return the name of this trigger instance."""
+
+
+    def Invoke(self, issue, previous_issue):
+        """Invoke the trigger.
+
+        'issue' -- An 'IssueRecord' instance.  For a "get" trigger,
+         the issue being retrieved.  For update triggers, the state of
+         the issue as it will be or is after the update.
+
+        'previous_issue' -- An 'IssueRecord' instance.  For a "get"
+        trigger, 'None'.  For update triggers, the state of the issue
+        before the update.
+
+        returns -- A pair '(result, message)'.  The 'result' value
+        evaulates to true if the operation is to continue, false if
+        the operation is to be cancelled; this value is ignored for
+        "postupdate" triggers.  'message' is a short string describing
+        the trigger action, or 'None'.  
+]]>
+  </programlisting>
+
+  <para>A trigger is registered with the &idb; for one of three
+  trigger types:
+   <orderedlist>
+    <listitem>
+     <para>A <literal>"get"</literal> trigger is called before an
+     issue is returned from a query or another retrieval
+     operation.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <literal>"preupdate"</literal> trigger is called before
+     an update to an issue takes place.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <literal>"postupdate"</literal> trigger is called after
+     an update to an issue takes place.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+  <para>Triggers are registered with the &idb; instance.</para>
+
+  <programlisting>
+<![CDATA[ class IdbBase:
+
+    def RegisterTrigger(self, type, trigger):
+        """Register a trigger.
+
+        'type' -- The type is a string indicating the trigger type.
+
+           * '"get"' triggers are invoked on issue records that are
+             retrieved or returned as query results.  
+
+           * '"preupdate"' triggers are invoked before an issue is
+             updated.  
+
+           * '"postupdate"' triggers are invoked after an issue is
+             updated.  
+
+         'trigger' -- The trigger, a callable object.  The trigger
+         takes two arguments, both instances of 'IssueRecord'.
+
+         The same trigger may be registered more than once for each
+         type, or for multiple types."""
+
+
+    def UnregisterTrigger(self, type, trigger):
+        """Unregister a trigger.
+
+        'type' -- If 'None', all instances of 'trigger' are
+        unregistered.  Otherwise, only instances matching 'type' are
+        unregistered.
+
+        'trigger' -- The trigger to unregister."""
+
+
+    def GetTriggers(self, type):
+        """Return a sequence registered triggers of type 'type'."""
+]]>
+  </programlisting>
+
+  <para>Triggers are invoked in the order they are registered.</para>
+
+  <para>A trigger returns a boolean value as the first element of its
+  return value (a pair).
+   <orderedlist>
+    <listitem>
+     <para>For "get" triggers, a false result causes the issue to be
+     supressed in the result of the &idb; operation.  If the operation
+     was a query, the issue is omitted from the results.  If the
+     operation is a single-issue access, the exception object is
+     returned.</para>
+    </listitem>
+
+    <listitem>
+     <para>For "preupdate" triggers, a false result causes the update
+     to be cancelled.</para>
+    </listitem>
+
+    <listitem>
+     <para>For "postupdate" triggers, the boolean result is ignored
+     silently.</para>
+    </listitem>
+   </orderedlist>
+   </para>
+
+  <para>Triggers may perform other actions as side effects.  Note that
+  if multiple "preupdate" triggers are registered and the second or a
+  subsequent trigger returns a false result, any side effects from
+  previous triggers have taken effect; no attempt is made to reverse
+  them.  Therefore, it is inadvisable to use preupdate triggers with
+  side effects; side effect should be placed in postupdate triggers
+  instead, to be invoked when the update has been committed.</para>
+  
+ </section>
+
+ &idb-impl.xml;
+
+</chapter>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

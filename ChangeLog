@@ -1,3 +1,35 @@
+2000-12-04  Alex Samuel  <samuel@codesourcery.com>
+
+	* standard.mk (HTMLINDEX): New macro.
+	(PRINTDIR): Likewise.
+	(PRINTTEX): Likewise.
+	(PRINTPDF): Likewise.
+	(html-dir): Remove target.
+	(html-output): Likewise.
+	(html-graphics): Likewise.
+	($(HTMLINDEX)): New target.
+	($(HTMLMANIFEST)): Likewise.
+	($(HTMLTARBALL)): Change dependencies.
+	(docbook-print): Remove target.
+	($(PRINTTEX)): New target.
+	($(PRINTPDF)): Likewise.
+	(%.html): Likewise.
+	
+	* doc/design/qmtrack/qmtrack.xml (dtml): New entity.
+	(implementation.xml): Likewise.
+	(idb-api.xml): Remove entity.
+	Add authors.
+	* doc/design/qmtrack/concepts.xml: Include triggers and
+	user interface sections.
+	* doc/design/qmtrack/idb-api.xml: Rename to...
+	* doc/design/qmtrack/implementation.xml: ... this.  Add trigger
+	API.  Include IDB implementation section.
+	* doc/design/qmtrack/idb-impl.xml: Make it a section.
+	* doc/design/qmtrack/triggers.xml: Remove API stuff.  Make it a
+	section. 
+	* doc/design/qmtrack/user-interface.xml: Make it a section.
+	Reformat. 
+	
 2000-12-02  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/user-interface.xml: Update e-mail section.

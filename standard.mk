@@ -69,17 +69,23 @@ SGMLDIRS        += /usr/lib/sgml/stylesheets/docbook
 HTMLSS          = $(TOPDIR)/doc/qm-html.dsl
 PRINTSS         = $(TOPDIR)/doc/qm-print.dsl
 
-# Output directory and manifest file for HTML output.  These are
-# controlled by the HTML stylesheet.
+# Output directory, index HTML files, and manifest file for HTML
+# output.  These are controlled by the DSSSL stylesheet for HTML.
 HTMLDIR		= html
+HTMLINDEX	= $(HTMLDIR)/index.html
 HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
 
 # Tarball containing HTML output.
 HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
 
+# Output directory and output files generated with the DSSSL stylesheet
+# for TeX.
+PRINTDIR	= print
+PRINTTEX	= $(DOCBOOKMAIN:.xml=.tex)
+PRINTPDF	= $(DOCBOOKMAIN:.xml=.pdf)
+
 .PHONY:		all clean doc subdirs
 .PHONY:         doc-html doc-print docbook-html docbook-print 
-.PHONY:		html-dir html-output html-graphics $(HTMLTARBALL)
 .PHONY:		$(SUBDIRS)
 
 ########################################################################
@@ -90,6 +96,11 @@ NULLSTRING	:=
 SPACE		:= $(NULLSTRING) # Leave this comment here.
 
 all:		subdirs doc
+
+subdirs:	$(SUBDIRS)
+
+$(SUBDIRS):	
+	cd $@ && make TOPDIR=$(TOPDIR)
 
 doc:		doc-html doc-print
 
@@ -103,24 +114,22 @@ doc-html:
 doc-print:	
 endif
 
-subdirs:	$(SUBDIRS)
+docbook-html:	$(HTMLINDEX) $(HTMLTARBALL)
 
-$(SUBDIRS):	
-	cd $@ && make TOPDIR=$(TOPDIR)
+docbook-print:	$(PRINTDIR)/$(PRINTPDF)
 
-docbook-html:	html-dir html-output html-graphics $(HTMLTARBALL)
-
-html-dir:
-	mkdir -p $(HTMLDIR)
 
 # The DocBook modular stylesheets generate some sloppy HTML.  Process
 # it with tidy.  Unfortunately, tidy will emit copious warnings;
 # funnel them to /dev/null.  Also tidy returns non-zero indicating
 # warnings; supress this by running true.
-html-output:  	html-dir $(DOCBOOKMAIN) $(DOCBOOK)
+$(HTMLINDEX):  	$(DOCBOOKMAIN) $(DOCBOOK)
+	mkdir -p $(HTMLDIR)
 	$(JADE) \
 	    $(foreach dir,$(SGMLDIRS),-D$(dir)) \
-	    -t sgml -d $(HTMLSS) $(JADEEXTRA) $(DOCBOOKMAIN)
+	    -t sgml -d $(HTMLSS) \
+	    $(JADEEXTRA) \
+	    $(DOCBOOKMAIN)
 	for f in html/*.html; \
 	do \
 	    $(TIDY) $(TIDYFLAGS) -f /dev/null -asxml -modify $${f}; \
@@ -130,7 +139,8 @@ html-output:  	html-dir $(DOCBOOKMAIN) $(DOCBOOK)
 # For each image file required by the HTML documentation output, copy
 # it into the output directory and also add the filename to the
 # manifest.
-html-graphics:	html-output $(DOCBITMAPS)
+$(HTMLMANIFEST): \
+		$(HTMLINDEX) $(DOCBITMAPS)
 	for gr in $(DOCBITMAPS); \
 	do \
 	    cp $${gr} $(HTMLDIR)/; \
@@ -138,30 +148,27 @@ html-graphics:	html-output $(DOCBITMAPS)
 	done
 
 # Build a tarball containing the whole HTML output.
-$(HTMLTARBALL):	html-output html-graphics
+$(HTMLTARBALL):	$(HTMLMANIFEST)
 	tar zcf $(HTMLTARBALL) \
 	    $(foreach f,$(shell cat $(HTMLMANIFEST)),$(HTMLDIR)/$(f))
 
-docbook-print:	$(DOCBOOKMAIN) $(DOCBOOK)
-	mkdir -p print
+# Jade places the output TeX source file in the current directory, so
+# move it where we want it afterwards.
+$(PRINTDIR)/$(PRINTTEX): \
+		$(DOCBOOKMAIN) $(DOCBOOK)
+	mkdir -p $(PRINTDIR)
 	$(JADE) \
             $(foreach dir,$(SGMLDIRS),-D$(dir)) \
-	    -t tex -d $(PRINTSS) $(JADEEXTRA) $<
-	if [ -n "$(DOCBITMAPS)" ]; then cp $(DOCBITMAPS) print/; fi
-	texfile=$(DOCBOOKMAIN:.xml=.tex); \
-	mv $${texfile} print/; \
-	    cd print; \
-	    pdfjadetex $${texfile} && \
-	    pdfjadetex $${texfile}
+	    -t tex -d $(PRINTSS) \
+	    $(JADEEXTRA) \
+	    $<
+	mv $(PRINTTEX) $(PRINTDIR)/
 
-########################################################################
-# Pattern rules
-########################################################################
+# Process the TeX file to PDF, in the print directory.  TEXPSHEADERS
+# must be set to the DocBook source directory so that TeX can find the
+# image files referenced in the document.  
+$(PRINTDIR)/$(PRINTPDF): \
+		$(PRINTDIR)/$(PRINTTEX)
+	cd $(PRINTDIR) \
+	    && TEXPSHEADERS=..: pdfjadetex $(PRINTTEX) 
 
-# Generate .html files from .xhtml files by applying the XHTML
-# processor script and then feeding the output through tidy.
-
-%.html:		%.xhtml
-	$(XHTMLPROCESS) $^ \
-	  | $(TIDY) $(TIDYFLAGS) -xml \
-	  > $@

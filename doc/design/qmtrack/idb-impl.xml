@@ -6,7 +6,7 @@
   Date:   2000-11-28
 
   Contents:
-    Chapter `Issue Database Implementations' of qmtrack design document.
+    Section `Issue Database Implementations' of qmtrack design document.
 
   This is part of the master document contained in qmtrack.xml.
 
@@ -17,18 +17,18 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter>
+<section>
  <title>Issue Database Implementations</title>
 
  <para>In this chapter, we present two implementations of the
- &qmtrack; <link linkend="chap-idb-api">issue database</link>.
+ &qmtrack; <link linkend="class-IdbBase">issue database</link>.
   <orderedlist>
    <listitem>
     <para>The <link linkend="sec-xml-idb"
-    endterm="sec-xml-idb-title"></link> section describes an &idb;
-    which uses &xml; as its storage format.  Each issue is stored in
-    an &xml;-formatted text file.</para>
-
+    endterm="sec-xml-idb-title"/> section describes an &idb; which
+    uses &xml; as its storage format. Each issue is stored in an
+    &xml;-formatted text file.</para>
+    
     <para>This implementation provides the following benefits:
      <itemizedlist>
       <listitem>
@@ -93,7 +93,6 @@
       </listitem>
      </itemizedlist>
     </para>
-
    </listitem>
   </orderedlist>
  </para>
@@ -124,12 +123,12 @@
 
  <section id="sec-sql-idb">
   <title id="sec-sql-idb-title">&sql; issue database</title>
- 
-  <para></para>
 
+  <para></para>
+  
  </section>
 
-</chapter>
+</section>
 
 <!--
   Local Variables:
@@ -138,6 +137,6 @@
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  sgml-parent-document: ("qmtrack.xml" "chapter" "section")
   End:
 -->
