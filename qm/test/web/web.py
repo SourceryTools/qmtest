@@ -1081,7 +1081,7 @@ class ShowItemPage(QMTestPage):
         message = """
         <p>Are you sure you want to delete the %s %s?</p>
         """ % (self.type, item_id)
-        self.server.MakeConfirmationDialog(message, delete_url)
+        return self.server.MakeConfirmationDialog(message, delete_url)
 
 
 

@@ -1,3 +1,7 @@
+2003-07-03  Vladimir Prus <ghost@cs.msu.su>
+
+	* qm/test/web/web.py (ShowItemPage.MakeDeleteScript): Fix typo.
+
 2003-06-27  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/classes.qmc: Add
