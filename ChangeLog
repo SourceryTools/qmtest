@@ -1,5 +1,11 @@
 2002-06-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/file_database.py (FileDatabase.GetRoot): New method.
+	(FileDatabase._GetPathFromLabel): Use it.
+	(ExtensionDatabase.GetSuitePath): Likewise.
+	(ExtensionDatabase._IsSuiteFile): Likewise.
+	(ExtensionDatabase._GetPathFromLabel): Likewise.
+
 	* qm/test/file_database.py (ExtensionDatabase): New class, split
 	out from ...
 	(FileDatabase): ... here.

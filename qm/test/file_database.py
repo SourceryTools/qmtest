@@ -304,6 +304,17 @@ class FileDatabase(Database):
     
     # Miscellaneous methods.
 
+    def GetRoot(self):
+        """Return the root of the test database.
+
+        returns -- The directory that serves as the root of the test
+        database.  All paths are relative to this directory.
+
+        Derived classes may override this method."""
+
+        return self.GetPath()
+    
+        
     def GetSubdirectories(self, directory):
         """Return the subdirectories of 'directory'.
 
@@ -384,7 +395,7 @@ class FileDatabase(Database):
 
         Derived classes must not override this method."""
 
-        return os.path.join(self.GetPath(), self._LabelToPath(label))
+        return os.path.join(self.GetRoot(), self._LabelToPath(label))
 
     # Derived classes must not override any methods below this point.
 
@@ -525,14 +536,14 @@ class ExtensionDatabase(FileDatabase):
         # The top-level suite is just the directory containing the
         # database; no extension is required.
         if suite_id == "":
-            return self.GetPath()
+            return self.GetRoot()
         else:
             return self._GetPathFromLabel(suite_id) + self.__suite_extension
 
 
     def _IsSuiteFile(self, path):
 
-        return (path == self.GetPath() 
+        return (path == self.GetRoot() 
                 or (os.path.splitext(path)[1] == self.__suite_extension
                     and (os.path.isfile(path) or os.path.isdir(path))))
 
@@ -551,7 +562,7 @@ class ExtensionDatabase(FileDatabase):
 
     def _GetPathFromLabel(self, label):
 
-        return os.path.join(self.GetPath(),
+        return os.path.join(self.GetRoot(),
                             self._LabelToPath(label,
                                               self.__suite_extension))
         
