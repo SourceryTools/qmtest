@@ -24,7 +24,8 @@
     <h3>Set expectation for <span class="id"><dtml-var id></span></h3>
     <table border="0" cellpadding="4" cellspacing="4" width="100%">
      <tr class="field">
-      <td width="75%">Expectation</td>
+      <td width="75%">The expected outcome for 
+        <span class="id"><dtml-var id></span>.</td>
       <td>
        <select name="outcome">
 	<dtml-in outcomes>
