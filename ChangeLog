@@ -1,5 +1,11 @@
 2001-07-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/qm.mod (iid): New entity.
+	* doc/manual/track-tour.xml: Add "Adding Fields", "Special
+	Features" sections.
+
+2001-07-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.qm_bug_system_url): Update.
 	* share/dtml/track/navigation-bar.dtml: Adjust URLs.
 

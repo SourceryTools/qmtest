@@ -163,7 +163,11 @@ class FieldEditPageInfo(web.PageInfo):
     def GetFieldType(self, field):
         """Return the class name of this field."""
         
-        return field.__class__
+        if isinstance(field, SetField):
+            return "<tt>%s</tt> of <tt>%s</tt>" \
+                   % (field.__class__, field.GetContainedField().__class__)
+        else:
+            return "<tt>%s</tt>" % field.__class__
 
 
     def GetDocString(self, field):

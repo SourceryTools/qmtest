@@ -49,7 +49,21 @@
    </td>
   </tr>
 
+<dtml-comment><!--
   <tr><td colspan="2">&nbsp;</td></tr>
+
+  <tr class="field" valign="top">
+   <td>
+    <b>Default Value</b>
+    <p>The default value for this field.</p>
+   </td>
+   <td>
+    <dtml-var expr="field.FormatValueAsHtml(field.GetDefaultValue(), 'full')">
+   </td>
+  </tr>
+
+  <tr><td colspan="2">&nbsp;</td></tr>
+--></dtml-comment>
 
   <tr class="heading">
    <td colspan="2">
@@ -88,18 +102,6 @@
     <dtml-var expr="MakeExtraPropertyInputs()">
    </td>
   </tr>
-
-<dtml-comment><!--
-  <tr class="field" valign="top">
-   <td>
-    <b>Default Value</b>
-    <p>The default value for this field.</p>
-   </td>
-   <td>
-    <dtml-var expr="field.FormatValueAsHtml(field.default_value, 'edit')">
-   </td>
-  </tr>
---></dtml-comment>
 
  </table>
 

@@ -35,6 +35,7 @@
 <!ENTITY gui "<acronym>GUI</acronym>">
 <!ENTITY html "<acronym>HTML</acronym>">
 <!ENTITY idb "<acronym>IDB</acronym>">
+<!ENTITY iid "<acronym>IID</acronym>">
 <!ENTITY mime "<acronym>MIME</acronym>">
 <!ENTITY rdbms "<acronym>RDBMS</acronym>">
 <!ENTITY sql "<acronym>SQL</acronym>">

@@ -194,6 +194,203 @@
 
  </section> <!-- sec-tracktut-issue-class -->
 
+ <section id="sec-tracktut-adding-fields">
+  <title>Adding Fields</title>
+
+  <para>&qmtrack; includes several fields in every issue class.  These
+  are added automatically when you create the issue class.  Some of
+  these fields contain general information that's useful for any kind of
+  issue; others are for &qmtrack;'s internal use.</para>
+
+  <para>The most important is the "Issue ID" field.  This contains a
+  unique issue ID (&iid;)&mdash;a short string which identifies the issue.
+  Each's issue's &iid; is unique in the issue database.</para>
+
+  <para>Another important field added by &qmtrack; is the "Summary"
+  field.  This field contains a short summary of each issue.  When a
+  &qmtrack; presents a table of several issues (for instance, when
+  displaying the results of a query), these summaries help the user
+  identify the gist of each issue.</para>
+
+  <para>The "Modifying User" and "Modification Time" fields store the
+  user ID of the user who last modified the issue and the time at which
+  this modification was made, respectively.  When you browse the
+  revision history of an issue, these fields display the user who
+  made each revision, and the time the revision was made,
+  respectively.</para>
+
+  <para>You may wish to add fields to your issue class.  To do so, click
+  on the <guibutton>Add a New Field...</guibutton> button.  Specify the
+  name of the field (this is &qmtrack;'s internal name, not the name
+  that will be presented to the user; you can specify the latter
+  afterwards) and the field's type.  &qmtrack; represents field types by
+  Python classes.  Generally, you will choose one of &qmtrack;'s
+  built-in field types from the drop-down list, which represent the most
+  common data types used in issue tracking.  Most fields are
+  single-valued, but you may create a set field, which contains an
+  arbitrary number of values of the specified type, by selecting the
+  appropriate radio button.</para>
+
+  <para>Once you specify the field name and type, click
+  <guibutton>OK</guibutton>.  &qmtrack; creates the field, and takes you
+  to the field editing page, from which you can customize the field you
+  just created.  Here, you may specify the title by which this field
+  appears to users and a longer description of the field's purpose, and
+  adjust other settings.</para>
+
+  <para>Here are some suggestions of fields you may wish to add to your
+  issue class:</para>
+
+  <itemizedlist>
+   <listitem>
+    <para>The "Summary" field takes a single line of descriptive text
+    only.  You may wish to add another field to contain a longer
+    description of each issue.  Use a field name "description" and a
+    field type "text field"
+    (<classname>qm.fields.TextField</classname>).</para>
+
+    <para>In the field editing page, set the field's title to
+    "Description".  If the field will contain mostly English text, set
+    the "structured" attribute to true.  If the field will contain
+    mostly code listings, formatted output, or screen dumps, set the
+    "verbatim" attribute to true.</para>
+   </listitem>
+  
+   <listitem>
+    <para>&qmtrack; allows you to add a field for storing arbitrary file
+    attachments with each issue.  Use a field name "attachments" or
+    similar, and specify the field type "attachment field"
+    (<classname>qm.fields.AttachmentField</classname>).  So that an
+    issue may include more than one file attachment, specify that the
+    field should be a set field.</para>
+
+    <para>In the field editing page, set the title to "File
+    Attachments", and add an explanatory description suggesting the
+    types of file attachments that users of &qmtrack; might add to an
+    issue.</para>
+   </listitem>
+  </itemizedlist>
+
+  <para>Once you're done adding fields and adjusting their
+  configurations, don't forget to click on the <guibutton>Commit
+  Changes</guibutton> button at the bottom of the issue class form.
+  &qmtrack; will not actually modify your issue class until do
+  this.</para>
+
+ </section> <!-- sec-tracktut-adding-fields -->
+
+ <section id="sec-tracktut-special-features">
+  <title>Special Issue Class Features</title>
+
+  <para>&qmtrack; provides some special features to help you make the
+  best use of your issue database.  These features can be configured for
+  each issue class individually.  To do so, click on the
+  <guibutton>Edit...</guibutton> button for an issue class from the
+  &idb; configuration page.  The form contains a section
+  <guilabel>Special Features</guilabel> from which you can access
+  them.</para>
+
+  <glosslist>
+   <glossentry>
+    <glossterm>Notification</glossterm>
+    <glossdef>
+     <para>&qmtrack;'s notification feature causes an email message to
+     be sent when an issue is created or modified.  You may specify the
+     recipients of the notification message, and also specify the
+     conditions under which the message is to be sent.</para>
+
+     <para>Click on the <guibutton>Configure...</guibutton> button for
+     the notification feature to configure email notification for all
+     issues in that issue class.  &qmtrack; shows you a form from which
+     you may specify both ordinary Internet email addresses and
+     &qmtrack; user IDs for recipients of the notification
+     messages.</para>
+
+     <para>Note that &qmtrack; will send notification messages to a user
+     whose IDs you specify only if that user has an email address
+     configured in the <link linkend="sec-user-database">user
+     database</link>.</para>
+
+     <para>You may also specify a condition under which to send
+     notification messages.  The condition is in the form of a Python
+     expression, just like the Python expressions used for specifying
+     queries.  If the condition evaluates to true for the modified
+     issue, the email notification is sent.</para>
+
+     <para>For example, the condition "<literal>state == 'active' and
+     len(summary) == 0</literal>" specifies that email notification
+     should be sent whenever the modified issue's state is "active" and
+     the length of the issue's summary is zero (i.e. the summary is
+     empty).  Note that in the condition expression, the names of fields
+     ("state" and "summary"), not their user-visible titles ("State" and
+     "Summary"), must be used.</para>
+
+     <para>The Python expression "<literal>1</literal>" always has a
+     true result, so specify this to send email notification whenever an
+     issue changes.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>Subscription</glossterm>
+    <glossdef>
+     <para>&qmtrack; also allows users to subscribe to specific issues.
+     In contrast to the notification feature, in which a fixed list of
+     recipients is notified whenever any issue changes, the subscription
+     feature stores a list of interested subscribers for each issue.
+     Optionally, you may configure the issue class to subscribe a user
+     to an issue automatically when the user modifies that issue.</para>
+
+     <para>Click on the <guibutton>Configure...</guibutton> button for
+     the subscription feature to configure it.  &qmtrack; shows you a
+     form from which you may specify the condition under which the
+     notification email is sent.  The semantics of this field are
+     identical to those for the condition field of the notification
+     feature, above.</para>
+
+     <para>In addition, you may specify a similar condition under which
+     a user who modifies an issue is subscribed automatically.  This
+     condition is also a Python expression, and the user is subscribed
+     if it evaluates to a true value for the modified issue.  For
+     example, specify "<literal>1</literal>" to subscribe the user
+     always, or "<literal>0</literal>" to disable automatic
+     subscription.  As with the notification condition, you may specify
+     more complicated expressions involving field values of the modified
+     issue.  For instance, the condition "<literal>user not in ['guest',
+     'admin', 'system']</literal>" subscribes the user automatically
+     unless the user happens to be one of "guest", "admin", or
+     "system".</para>
+
+     <para>&qmtrack; stores the list of user IDs of subscribers to an
+     issue in an ordinary issue field, named "subscribers".  You may
+     choose to hide this field when an issue is displayed; in this case,
+     users will not be able to view the subscriber list or modify it
+     directly (though automatic subscriptions will still be
+     processed).</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>Discussion</glossterm>
+    <glossdef>
+     <para>&qmtrack; supports a special kind of text field for tracking
+     an ongoing discussion about an issue.  Such a discussion field
+     is handy for displaying follow-up comments added by users who
+     modify an issue.  When a user modifies the contents of an ordinary
+     text field in an issue, the modified contents replace the previous
+     ones.  With a discussion field, however, the text added with each
+     revision is added to the end of the discussion, rather than
+     replacing it.</para>
+
+     <para>To add a discussion field, simply click on the
+     <guibutton>Add</guibutton> button for the discussion feature.
+     &qmtrack; immediately adds a field named "discussion".</para>
+    </glossdef>
+   </glossentry>
+  </glosslist>
+
+ </section> <!-- sec-tracktut-special-features -->
+
 </chapter>
 <!--
   Local Variables:
