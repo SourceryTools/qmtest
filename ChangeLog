@@ -1,3 +1,8 @@
+2002-04-30  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* qm/cmdline.py (CommandParser.ParseCommandLine): Avoid joining
+	and splitting command-line arguments.
+
 2002-04-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* configure.in: Compute PYTHON_MAJOR and PYTHON_MINOR without

@@ -7,7 +7,7 @@
 # Contents:
 #   Code for command line interface.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -308,7 +308,7 @@ class CommandParser:
         and the argument given to that option (if applicable).
         'command' is the command given.  'command_options' is a list of
         2-tuples indicating each option given to the command and its
-        possible argument.  'command-args' is a list of arguments as
+        possible argument.  'command_args' is a list of arguments as
         given to the command.  If no command is given, then the function
         will return '' for the command, [] for the arguments, and [] for
         the command options.
@@ -351,7 +351,6 @@ class CommandParser:
                   qm.error("unrecognized command", command=command)
             
         # Get the arguments to the command.
-        args = string.join(args[1:])
         command_options = []
 
         for command_item in self.__commands:
@@ -361,7 +360,7 @@ class CommandParser:
         getopt_string = self.BuildGetoptString(command_options)
         getopt_list = self.BuildGetoptList(command_options)
         try:
-            command_options, command_args = getopt.getopt(string.split(args),
+            command_options, command_args = getopt.getopt(args[1:],
                                                           getopt_string,
                                                           getopt_list)
         except getopt.error, msg:
