@@ -1,3 +1,10 @@
+2003-03-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/process_target.py (ProcessTarget.__init):  Move
+	initialization of children to ...
+	(ProcessTarget.Start): ... here.
+	(ProcessTarget.Stop): Call Target.Stop.
+
 2003-03-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (.PHONY): Mention more targets.

@@ -93,13 +93,7 @@ class ProcessTarget(Target):
         # Initialize the base class.
         Target.__init__(self, database, properties)
 
-        # There are no children yet.
-        self.__children = []
-        self.__idle_children = []
-        self.__busy_children = []
-        self.__children_by_fd = {}
-        
-        
+
     def IsIdle(self):
         """Return true if the target is idle.
 
@@ -121,6 +115,12 @@ class ProcessTarget(Target):
 
         Target.Start(self, response_queue, engine)
 
+        # There are no children yet.
+        self.__children = []
+        self.__idle_children = []
+        self.__busy_children = []
+        self.__children_by_fd = {}
+        
         # Determine the test database path to use.
         database_path = self.database_path
         if not database_path:
@@ -178,8 +178,11 @@ class ProcessTarget(Target):
         while self.__busy_children:
             self.__ReadResults(self.__busy_children[0][1].fileno())
         # Wait for the children to terminate.
-        for child in self.__children:
+        while self.__children:
+            child = self.__children.pop()
             os.waitpid(child[0], 0)
+            
+        Target.Stop(self)
 
 
     def RunTest(self, descriptor, context):
