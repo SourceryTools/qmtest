@@ -42,6 +42,7 @@ import qm.async
 import qm.common
 import qm.xmlutil
 import re
+import string
 import sys
 
 ########################################################################
@@ -220,22 +221,19 @@ class Target:
     def EnqueueRunTest(self, test_id, context):
         """Place a test in the work queue."""
 
-        raise qm.common.MethodShouldBeOverriddenError, \
-              "Target.EnqueueRunTest"
+        self._EnqueueCommand("run test", test_id, context)
 
 
     def EnqueueSetUpResource(self, resource_id, context):
         """Place a resource setup function in the work queue."""
 
-        raise qm.common.MethodShouldBeOverriddenError, \
-              "Target.EnqueueSetUpResource"
+        self._EnqueueCommand("set up resource", resource_id, context)
 
 
     def EnqueueCleanUpResource(self, resource_id, context):
         """Place a resource cleanup function in the work queue."""
 
-        raise qm.common.MethodShouldBeOverriddenError, \
-              "Target.EnqueueCleanUpResource"
+        self._EnqueueCommand("clean up resource", resource_id, context)
 
 
     def GetQueueLength(self):
@@ -262,7 +260,19 @@ class Target:
         'test_run' -- The 'TestRun' object in which to accumulate test
         and resource results."""
 
-        raise qm.common.MethodShouldBeOverriddenError, "Target.OnReplyReady"
+        # Read the reply object from the channel.
+        reply_type, result = _receive(channel)
+        if reply_type == "test result":
+            # It contains a test result.  Accumulate it in the provided
+            # test run.
+            test_run.AddTestResult(result, self)
+        elif reply_type == "resource result":
+            # It contains a resource function result.  Accumulate it in
+            # the provided test run.
+            test_run.AddResourceResult(result, self)
+        else:
+            # Something we don't recognize.
+            raise ProtocolError, "invalid reply type: %s" % reply_type
 
 
     def ProcessQueue(self):
@@ -295,10 +305,10 @@ class SubprocessTarget(Target):
 
     # Attributes:
     #
-    # '__children' -- A list of 'ChildProcess' instances representing
+    # '_children' -- A list of 'ChildProcess' instances representing
     # the child processes.
     #
-    # '__ready_children' -- A subset list of '__children' containing
+    # '_ready_children' -- A subset list of '_children' containing
     # those child processes that are not running a test or resource
     # function.
     #
@@ -311,7 +321,7 @@ class SubprocessTarget(Target):
         Target.__init__(self, target_spec)
 
         # Build the children.
-        self.__children = []
+        self._children = []
         for i in xrange(0, self.GetConcurrency()):
             # Fork a child process.
             child_pid, channel = qm.async.fork_with_channel()
@@ -335,96 +345,309 @@ class SubprocessTarget(Target):
             else:
                 # This is the parent process.  Store the child PID and
                 # the channel.
-                self.__children.append(self.ChildProcess(child_pid, channel))
+                self._children.append(self.ChildProcess(child_pid, channel))
 
         # Initially, all children are reayd 
-        self.__ready_children = self.__children[:]
+        self._ready_children = self._children[:]
         self.__command_queue = []
 
 
     def GetChannels(self):
         # Extract the channel for each child.
-        return map(lambda child: child.channel, self.__children)
+        return map(lambda child: child.channel, self._children)
 
 
     def Stop(self):
         # Make sure we're not doing anything.
         assert self.IsIdle()
         # Send each child a "quit" command.
-        for child in self.__children:
+        for child in self._children:
             _send(child.channel, ("quit", None, None))
             # Make sure the data goes out.
             child.channel.Flush()
         # Now wait for each child process to finish.
-        for child in self.__children:
+        for child in self._children:
             os.waitpid(child.pid, 0)
             child.channel.Close()
 
         # Erase attributes.  This instance is now no longer usable.
-        del self.__ready_children 
-        del self.__children
-
-
-    def EnqueueRunTest(self, test_id, context):
-        self.__EnqueueCommand("run test", test_id, context)
-
-
-    def EnqueueSetUpResource(self, resource_id, context):
-        self.__EnqueueCommand("set up resource", resource_id, context)
-
-
-    def EnqueueCleanUpResource(self, resource_id, context):
-        self.__EnqueueCommand("clean up resource", resource_id, context)
+        del self._ready_children 
+        del self._children
 
 
     def GetQueueLength(self):
-        return len(self.__command_queue)
+        return len(self.__command_queue) - len(self._ready_children)
 
 
     def IsIdle(self):
         return len(self.__command_queue) == 0 \
-               and len(self.__ready_children) == len(self.__children)
+               and len(self._ready_children) == len(self._children)
 
 
     def OnReplyReady(self, channel, test_run):
-        # Find the child process associated with 'channel'.
-        for child in self.__children:
+        # Run the base class version.  This reads and processes the
+        # reply object itself, and accumulates results appropriately.
+        Target.OnReplyReady(self, channel, test_run)
+        # Put the child process corresponding to this channel on the
+        # ready list.  Find the child process associated with 'channel'.
+        for child in self._children:
             if child.channel == channel:
                 break
-        assert child not in self.__ready_children
-
-        # Read the reply object from the channel.
-        reply_type, result = _receive(channel)
-        if reply_type == "test result":
-            # It contains a test result.  Accumulate it in the provided
-            # test run.
-            test_run.AddTestResult(result, self)
-        elif reply_type == "resource result":
-            # It contains a resource function result.  Accumulate it in
-            # the provided test run.
-            test_run.AddResourceResult(result, self)
-        else:
-            # Something we don't recognize.
-            raise ProtocolError, "invalid reply type: %s" % reply_type
-
+        assert child not in self._ready_children
         # The child process is now ready to receive additional work.
-        self.__ready_children.append(child)
-
+        self._ready_children.append(child)
+        
 
     def ProcessQueue(self):
         # Feed commands to ready children until either is exhausted.
-        while len(self.__ready_children) > 0 \
+        while len(self._ready_children) > 0 \
               and len(self.__command_queue) > 0:
-            child = self.__ready_children.pop(0)
+            child = self._ready_children.pop(0)
             command = self.__command_queue.pop(0)
             _send(child.channel, command)
 
 
     # Helper functions.
 
-    def __EnqueueCommand(self, command_type, id, context):
+    def _EnqueueCommand(self, command_type, id, context):
         # The command object is simply a Python triple.
         self.__command_queue.append((command_type, id, context))
+
+
+
+class RemoteShellTarget(Target):
+    """A target that runs tests via a remote shell invocation.
+
+    A 'RemoteShellTarget' runs tests on a remote computer via a remote
+    shell call.  The remote shell is in the style of 'rsh' and 'ssh'.
+    Using the remote shell, the target invokes the 'qmtest-remote'
+    script, which services commands sent via 'stdin', and replies via
+    'stdout'.
+
+    This target recognizes the following properties:
+
+      'remote_shell' -- The path to the remote shell executable to use.
+      If omitted, the configuration variable 'remote_shell' is used
+      instead.  If both are not specified, the default is
+      '/usr/bin/ssh'.  The remote shell program must accept the
+      command-line syntax 'remote_shell *remote_host* *remote_command*'.
+
+      'host' -- The remote host name.  If omitted, the target name is
+      used.
+
+      'database_path' -- The path to the test database on the remote
+      computer.  The test database must be identical to the local test
+      database.  If omitted, the local test database path is used.
+
+      'qmtest_remote' -- The path to the 'qmtest_remote' command on the
+      remote computer.  The default is '/usr/local/bin/qmtest'.
+
+    """
+
+    # To keep the remote process busy even in the face of network
+    # latency, we queue some commands ahead of time -- more than the
+    # remote process can execute at one time.  This attribute is the
+    # number of commands to queue ahead.
+    __push_ahead = 2
+
+
+    def __init__(self, target_spec):
+        """Create a remote target."""
+
+        # Initialize the base class.
+        Target.__init__(self, target_spec)
+        # Determine the host name.
+        self.__host_name = self.GetProperty("host", None)
+        if self.__host_name is None:
+            # None specified; use the target name.
+            self.__host_name = self.GetName()
+
+        # Fork a child process, redirecting standard I/O to a channel.
+        child_pid, channel = qm.async.fork_with_stdio_channel()
+        if child_pid == 0:
+            # This is the child process.
+
+            # Determine the test database path to use.
+            database_path = self.GetProperty(
+                "database_path", default=base.get_database().GetPath())
+            # Determine the path to the remote 'qmtest-remote' command.
+            qmtest_remote_path = self.GetProperty(
+                "qmtest_remote", "/usr/local/bin/qmtest-remote")
+            # Construct the command we want to invoke remotely.  The
+            # 'qmtest-remote' script processes commands from standard
+            # I/O. 
+            remote_arg_list = [
+                '"%s"' % qmtest_remote_path,
+                '"%s"' % database_path,
+                str(self.GetConcurrency()),
+                ]
+            # Determine the remote shell program to use.
+            remote_shell_program = self.GetProperty("remote_shell", None)
+            if remote_shell_program is None:
+                remote_shell_program = qm.rc.Get("remote_shell",
+                                                 default="/usr/bin/ssh",
+                                                 section="common")
+            # Construct the remote shell command.
+            arg_list = [
+                remote_shell_program,
+                self.__host_name,
+                string.join(remote_arg_list, " ")
+                ]
+            
+            # Run the remote shell.
+            qm.platform.replace_program(arg_list[0], arg_list)
+            # Should be unreachable.
+            assert false
+
+        else:
+            # This is the parent process.  Remember the child.
+            self.__command_queue = []
+            self.__child_pid = child_pid
+            self.__channel = channel
+            self.__ready_threads = self.GetConcurrency()
+
+
+    def GetChannels(self):
+        return [self.__channel]
+
+
+    def Stop(self):
+        assert self.IsIdle()
+        # Send a single "quit" command to the remote program.
+        _send(self.__channel, ("quit", None, None))
+        # Make sure it goes out now.
+        self.__channel.Flush()
+        # Wait for the remote shell process to terminate.
+        os.waitpid(self.__child_pid, 0)
+        # Clean up.
+        self.__channel.Close()
+        del self.__channel
+        del self.__child_pid
+
+
+    def GetQueueLength(self):
+        return len(self.__command_queue) - self.__ready_threads
+
+
+    def IsIdle(self):
+        return len(self.__command_queue) == 0 \
+               and self.__ready_threads == self.GetConcurrency()
+
+
+    def OnReplyReady(self, channel, test_run):
+        self.__ready_threads = self.__ready_threads + 1
+        # Run the base class version.  This reads and processes the
+        # reply object itself, and accumulates results appropriately.
+        Target.OnReplyReady(self, channel, test_run)
+        
+                
+    def ProcessQueue(self):
+        # Keep sending commands to the remote process, until we're out
+        # of queued commands, or the remote process is oversaturated by
+        # '__ready_threads'. 
+        while len(self.__command_queue) > 0 \
+              and self.__ready_threads > -self.__push_ahead:
+            command = self.__command_queue.pop(0)
+            self.__ready_threads = self.__ready_threads - 1
+            _send(self.__channel, command)
+
+
+    # Helper functions.
+
+    def _EnqueueCommand(self, command_type, id, context):
+        self.__command_queue.append((command_type, id, context))
+
+
+
+class _RemoteDemultiplexerTarget(SubprocessTarget):
+    """A special target for implementing remote test targets.
+
+    A '_RemoteDemultiplexerTarget' reads commands from a channel and
+    dispatches them to a pool of worker processes on the local
+    computer.  Replies from the worker processes are asynchronously
+    multiplexed back up the channel.
+
+    In addition to the target mechanism, this class includes an event
+    loop, 'RelayCommands', which reads commands from the channel,
+    dispatches them, and relays replies back up the channel.
+
+    This target should not be used by users.  It is for internal use."""
+
+    def __init__(self, target_spec, control_channel):
+        """Intialize the target.
+
+        'control_channel' -- The channel for communicating with the
+        controlling host.  Commands are read from the channel, and
+        replies multiplexed into it."""
+
+        # Initialize the base class.
+        SubprocessTarget.__init__(self, target_spec)
+        # Remember the channel.
+        self.__control_channel = control_channel
+
+
+    def OnReplyReady(self, channel):
+        # Don't decode the reply.  Forward it, uninspected, directly to
+        # the control channel.
+        data = channel.Read()
+        self.__control_channel.Write(data)
+        # Put the child process corresponding to this channel on the
+        # ready list.  Find the child process associated with 'channel'.
+        for child in self._children:
+            if child.channel == channel:
+                break
+        assert child not in self._ready_children
+        # The child process is now ready to receive additional work.
+        self._ready_children.append(child)
+
+
+    def RelayCommands(self):
+        """Read commands from the control channel and forward replies to it.
+        
+        This command blocks until the "quit" command is received and all
+        subprocesses terminate."""
+
+        # Create a multiplexer.  This allows us to listen to the control
+        # channel and the various child process channels at the same
+        # time.
+        mux = qm.async.Multiplexer()
+        mux.AddChannel(self.__control_channel)
+        map(mux.AddChannel, self.GetChannels())
+
+        while 1:
+            # Wait for something to happen.
+            mux.Wait()
+
+            # Did we get a command from the control channel?
+            while self.__control_channel.IsReadReady():
+                # Yes.  Read it.
+                command = _receive(self.__control_channel)
+                if command[0] == "quit":
+                    # The "quit" command.  First wait for all the child
+                    # processes to finish what they're doing.
+                    while not self.IsIdle():
+                        self.ProcessQueue()
+                        mux.Wait()
+                        self.__ProcessReplies()
+                    # Shut down the child processes.
+                    self.Stop()
+                    # All done.
+                    return
+                else:
+                    # Enqueue the command for execution by a child process.
+                    apply(self._EnqueueCommand, command)
+
+            # Handle subprocesses.
+            self.__ProcessReplies()
+            self.ProcessQueue()
+
+
+    def __ProcessReplies(self):
+        """Process incoming replies from child process channels."""
+
+        for channel in self.GetChannels():
+            while channel.IsReadReady():
+                self.OnReplyReady(channel)
 
 
 
@@ -1012,10 +1235,11 @@ def test_run(test_ids,
             # something. 
             mux.Wait()
         # Process replies from any channel that has data in it.
-        for channel in filter(lambda ch: ch.IsReadReady(), channels):
-            # The target is responsible for reading from the channel and
-            # processing the data accordingly.
-            channel.__target.OnReplyReady(channel, run)
+        for channel in channels:
+            while channel.IsReadReady():
+                # The target is responsible for reading from the channel
+                # and processing the data accordingly.
+                channel.__target.OnReplyReady(channel, run)
         # Schedule some more work.
         done = run.Schedule()
 
@@ -1031,10 +1255,11 @@ def test_run(test_ids,
         # Wait for at least one of them to reply with something.
         mux.Wait()
         # Process replies from any channel that has data in it.
-        for channel in filter(lambda ch: ch.IsReadReady(), channels):
-            # The target is responsible for reading from the channel and
-            # processing the data accordingly.
-            channel.__target.OnReplyReady(channel, run)
+        for channel in channels:
+            while channel.IsReadReady():
+                # The target is responsible for reading from the channel
+                # and processing the data accordingly.
+                channel.__target.OnReplyReady(channel, run)
 
     # All targets are now idle.  Stop them.
     for target in targets:
@@ -1180,9 +1405,9 @@ def _target_spec_from_dom(node):
     # Extract properties.
     properties = {}
     for property_node in node.getElementsByTagName("property"):
-        name = property_node.getAttribute("name")
+        property_name = property_node.getAttribute("name")
         value = qm.xmlutil.get_dom_text(property_node)
-        properties[name] = value
+        properties[property_name] = value
     # Construct the target spec.
     return TargetSpec(name, class_name, group, concurrency, properties)
 

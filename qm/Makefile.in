@@ -33,7 +33,7 @@
 
 TOPDIR		= @top_srcdir@
 
-SCRIPTS		= track/qmtrack test/qmtest
+SCRIPTS		= track/qmtrack test/qmtest test/qmtest-remote
 
 include $(TOPDIR)/standard.mk
 

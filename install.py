@@ -64,6 +64,7 @@ setup_path_script_template_path = "qm/setup_path.py.in"
 scripts = {
     "qmtest": "qm/test/qmtest.in",
     "qmtrack": "qm/track/qmtrack.in",
+    "qmtrack-remote": "qm/track/qmtrack-remote.in",
     }
 
 # Documentation files to install.

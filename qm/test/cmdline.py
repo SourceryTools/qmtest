@@ -220,8 +220,8 @@ class Command:
          ),
 
         ("server",
-         'Start the web GUI server.',
-         '',
+         "Start the web GUI server.",
+         "",
          "Start the QMTest web GUI server.",
          [ help_option_spec, port_option_spec, address_option_spec,
            log_file_option_spec, start_browser_option_spec ]

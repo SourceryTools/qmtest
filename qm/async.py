@@ -40,6 +40,7 @@ import os
 import select
 import string
 import struct
+import sys
 
 ########################################################################
 # exceptions
@@ -173,6 +174,16 @@ class Channel:
             os.close(self.__write_fd)
         del self.__read_fd
         del self.__write_fd
+
+
+    def IsOpen(self):
+        """Return true if the channel is open."""
+
+        try:
+            self.__read_fd
+            return 1
+        except AttributeError:
+            return 0
 
 
     def _OnReadReady(self):
@@ -317,6 +328,7 @@ class Multiplexer:
                 try:
                     channel._OnReadReady()
                 except ConnectionClosedException:
+                    channel.Close()
                     self.RemoveChannel(channel)
                     write_fd = channel.GetWriteFileDescriptor()
                     if write_fd in write_ready_fds:
@@ -329,6 +341,7 @@ class Multiplexer:
                 try:
                     channel._OnWriteReady()
                 except ConnectionClosedException:
+                    channel.Close()
                     self.RemoveChannel(channel)
 
             # Return if some data was read.
@@ -425,6 +438,25 @@ def fork_with_channel():
         channel = Channel(child_to_parent_pipe[0], parent_to_child_pipe[1])
         return (child_pid, channel)
     
+
+def fork_with_stdio_channel():
+    """Fork, with a channel to the child's standard I/O streams.
+
+    'fork_with_stdio_channel' is similar to 'fork_with_channel', except
+    that the channel's read and write ends are attached to standard
+    input and output, respectively, in the child process.
+
+    returns -- A pair '(child_pid, channel)'.  'child_pid' is zero when
+    returning in the child process, or the child's process ID when
+    returning in the parent process.  In either case, 'channel' is a
+    'Channel' object for communicating with the other process."""
+
+    child_pid, channel = fork_with_channel()
+    if child_pid == 0:
+        os.dup2(channel.GetReadFileDescriptor(), sys.stdin.fileno())
+        os.dup2(channel.GetWriteFileDescriptor(), sys.stdout.fileno())
+    return child_pid, channel
+
 
 ########################################################################
 # Local Variables:

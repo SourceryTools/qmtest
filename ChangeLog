@@ -1,3 +1,31 @@
+2001-08-19  Alex Samuel  <samuel@codesourcery.com>
+
+	* install.py (scripts): Add qmtrack-remote.
+	* qm.spec (files): Likewise.
+	* qm/Makefile.in (SCRIPTS): Likewise.
+	* qm/async.py (Channel.IsOpen): New method.
+	(Multiplexer.Wait): Close channels if connection vanishes.
+	(fork_with_stdio_channel): New function.
+	* qm/test/run.py (Target.EnqueueRunTest): Implement here.
+	(Target.EnqueueSetUpResource): Likewise.
+	(Target.EnqueueCleanUpResource): Likewise.
+	(Target.OnReplyReady): Likewise.
+	(SubprocessTarget): Rename __children to _children and
+	__ready_children to _ready_children.
+	(SubprocessTarget.EnqueueSetUpResource): Likewise.
+	(SubprocessTarget.EnqueueCleanUpResource): Likewise.
+	(SubprocessTarget.OnReplyReady): Likewise.
+	(SubprocessTarget.GetQueueLength): Subtract number of ready
+	children. 
+	(SubprocessTarget.OnReplyReady): Use base implementation.
+	(SubprocessTarget.__EnqueueCommand): Rename to...
+	(SubprocessTarget._EnqueueCommand): ... this.
+	(RemoteShellTarget): New class.
+	(_RemoteDemultiplexerTarget): Likewise.
+	(test_run): Read multiple times from channels, if necessary.
+	(_target_spec_from_dom): Fix duplicate variable name.
+	* qm/test/qmtest-remote.in: New file.
+
 2001-08-16  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (__host_name): Remove.
