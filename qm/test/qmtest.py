@@ -87,25 +87,11 @@ qm.rc.Load("test")
 program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
-    try:
-        # Parse the command line.
-        command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
-        # Execute the command.
-        command.Execute(sys.stdout)
-        exit_code = 0
-    except IOError, exception:
-        # There is a bug in Python 1.5.2 (and perhaps other versions prior
-        # to 2.1) that can cause SIGINT to be delivered to a thread other
-        # than the main thread.  The main thread will therefore get an
-        # IOError exception (indicating an interrupted sytem call) rather
-        # than a KeyboardInterrupt exception.  We therefore transform
-        # the IOError into a KeyboardInterrupt.
-        if exception.errno == errno.EINTR:
-            raise KeyboardInterrupt
-        # For other kinds of IOErrors, just reraise the current
-        # exception.
-        else:
-            raise
+    # Parse the command line.
+    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
+    # Execute the command.
+    command.Execute(sys.stdout)
+    exit_code = 0
 except RuntimeError, msg:
     print_error_message(msg)
     exit_code = 1

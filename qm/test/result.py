@@ -271,7 +271,10 @@ class Result:
         outcome_element.appendChild(text)
         element.appendChild(outcome_element)
         # Add a property element for each property.
-        for key, value in self.items():
+        keys = self.items()
+        keys.sort()
+        for key in keys:
+            value = self[value]
             property_element = document.createElement("property")
             # The property name is an attribute.
             property_element.setAttribute("name", str(key))

@@ -1,5 +1,11 @@
 2002-01-29  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/xmlutil.py (discard_node): Remove.
+	* qm/test/xml_result_stream.py (XMLResultStream.WriteResult):
+	Do not use it.
+	* qm/test/qmtest.py: Remove Python 1.5 work-around.
+	* qm/test/result.py: Alphabetize annotations in results file.
+	
 	* qm/test/cmdline.py (QMTest.MakeContext): Fix spelling of
 	context file option.
 
