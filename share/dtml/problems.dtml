@@ -31,19 +31,16 @@
   </li>
 
   <li>
-   <p>The QM Tools are created and maintained by the Software Carpentry
-   project.  Check the <a
-   href="http://www.software-carpentry.com/">Software Carpentry web
-   site</a> for background and other information.</p>
+   <p>Contact <a href="http://www.codesourcery.com">CodeSourcery,
+    LLC</a> to obtain support for QM Tools.</p>
   </li>
 
   <li>
    <p>If you think you've found a bug, or would like to request a
    change, enhancement, or new feature, visit the <a href="javascript:
-   popup_qm_bug_system();">QM Tools bug tracking system</a> (which is
-   running QMTrack, naturally!).  You can also browse the bug tracking
-   system to check whether someone else has reported the problem you are
-   encountering.</p>
+   popup_qm_bug_system();">QM Tools bug tracking system</a>.  You can
+   also browse the bug tracking system to check whether someone else has
+   reported the problem you are encountering.</p>
    <script language="JavaScript">
    function popup_qm_bug_system()
    {

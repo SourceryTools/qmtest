@@ -169,14 +169,6 @@
     </dtml-let>
     </dtml-in>
 
-   <tr><td colspan="2">&nbsp;</td></tr>
-
-   <tr class="heading">
-    <td colspan="2">
-     Additional Information
-    </td>
-   </tr>
-
     <dtml-comment><!--
 
       For tests, there are some additional fields: prerequisite tests,
@@ -184,6 +176,14 @@
 
     --></dtml-comment>
     <dtml-if expr="type is 'test'">
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+
+     <tr class="heading">
+      <td colspan="2">
+       Additional Information
+      </td>
+     </tr>
 
      <tr class="field" valign="top">
       <td>

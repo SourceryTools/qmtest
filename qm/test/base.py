@@ -354,7 +354,7 @@ def get_resource_class(class_name, database):
 
 
 def get_class_arguments(klass):
-    """Return the arguments specified by the test or resource 'klass'.
+    """Return the arguments specified by the extension class 'klass'.
 
     returns -- A list of 'Field' objects containing all the
     arguments in the class hierarchy."""
@@ -368,7 +368,7 @@ def get_class_arguments(klass):
         c = classes.pop(0)
         # Add all of the new base classes to the end of the list.
 	# The __bases__ attribute is a tuple, not a list, so we
-	# must convert it to a list before using	"extend".  By
+	# must convert it to a list before using "extend".  By
 	# Python 2.1, this restriction	was removed, but in order
 	# to support Python 1.5.2 we must obey the old constraints.
         classes.extend(map(lambda x: x,  c.__bases__))
@@ -379,6 +379,24 @@ def get_class_arguments(klass):
     return arguments
 
 
+def get_class_description(klass, brief=0):
+    """Return a brief description of the extension class 'klass'.
+
+    'brief' -- If true, return a brief (one-line) description of the
+    extension class.
+    
+    returns -- A structured text description of 'klass'."""
+
+    # Extract the class's doc string.
+    doc_string = klass.__doc__
+    if doc_string is not None:
+        if brief:
+            doc_string = qm.structured_text.get_first(doc_string)
+        return doc_string
+    else:
+        return "&nbsp;"
+    
+    
 def load_outcomes(file):
     """Load test outcomes from a file.
 

@@ -55,11 +55,18 @@ import web.web
 import whrandom
 
 ########################################################################
+# variables
+########################################################################
+
+_the_qmtest = None
+"""The global 'QMTest' object."""
+
+########################################################################
 # classes
 ########################################################################
 
-class Command:
-    """A QMTest command."""
+class QMTest:
+    """An instance of QMTest."""
 
     db_path_environment_variable = "QMTEST_DB_PATH"
     """The environment variable specifying the test database path."""
@@ -289,6 +296,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         'argument_list' -- A sequence conaining the specified argument
         list."""
 
+        global _the_qmtest
+        
+        _the_qmtest = self
+        
         # Build a command-line parser for this program.
         self.__parser = qm.cmdline.CommandParser(
             program_name,
@@ -304,6 +315,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
           self.__arguments
           ) = components
 
+        # We have not yet computed the set of available targets.
+        self.targets = None
+        
 
     def GetGlobalOption(self, option, default=None):
         """Return the value of global 'option', or 'default' if omitted."""
@@ -405,58 +419,61 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         returns -- A sequence of 'Target' objects."""
 
-        file_name = self.GetCommandOption("targets", None)
-        if file_name is None:
-            # No target file specified.  We'll use a single
-            # 'ThreadTarget' for running tests locally.  But perhaps a
-            # concurrency value was specified.
-            concurrency = self.GetCommandOption("concurrency", None)
-            if concurrency is None:
-                # No concurrency specified.  Run single-threaded.
-                concurrency = 1
+        if self.targets is None:
+            file_name = self.GetCommandOption("targets", None)
+            if file_name is None:
+                # No target file specified.  We'll use a single
+                # 'ThreadTarget' for running tests locally.  But perhaps a
+                # concurrency value was specified.
+                concurrency = self.GetCommandOption("concurrency", None)
+                if concurrency is None:
+                    # No concurrency specified.  Run single-threaded.
+                    concurrency = 1
+                else:
+                    # Convert the concurrency to an integer.
+                    try:
+                        concurrency = int(concurrency)
+                    except ValueError:
+                        raise qm.cmdline.CommandError, \
+                              qm.error("concurrency not integer",
+                                       value=concurrency)
+                # Construct the target.
+                target_class \
+                    = get_extension_class("thread_target.ThreadTarget",
+                                          'target', self.GetDatabase())
+                self.targets = [ target_class("local", "local", concurrency,
+                                              {}, self.GetDatabase()) ]
             else:
-                # Convert the concurrency to an integer.
-                try:
+                document = qm.xmlutil.load_xml_file(file_name)
+                targets_element = document.documentElement
+                assert targets_element.tagName == "targets"
+                self.targets = []
+                for node in targets_element.getElementsByTagName("target"):
+                    # Extract standard elements.
+                    name = qm.xmlutil.get_child_text(node, "name")
+                    class_name = qm.xmlutil.get_child_text(node, "class")
+                    group = qm.xmlutil.get_child_text(node, "group")
+                    concurrency = qm.xmlutil.get_child_text(node,
+                                                            "concurrency")
                     concurrency = int(concurrency)
-                except ValueError:
-                    raise qm.cmdline.CommandError, \
-                          qm.error("concurrency not integer",
-                                   value=concurrency)
-            # Construct the target.
-            target_class = get_extension_class("thread_target.ThreadTarget",
-                                               'target', self.GetDatabase())
-            targets = [ target_class("local", "", concurrency,
-                                     {}, self.GetDatabase()) ]
-        else:
-            document = qm.xmlutil.load_xml_file(file_name)
-            targets_element = document.documentElement
-            assert targets_element.tagName == "targets"
-            targets = []
-            for node in targets_element.getElementsByTagName("target"):
-                # Extract standard elements.
-                name = qm.xmlutil.get_child_text(node, "name")
-                class_name = qm.xmlutil.get_child_text(node, "class")
-                group = qm.xmlutil.get_child_text(node, "group")
-                concurrency = qm.xmlutil.get_child_text(node, "concurrency")
-                concurrency = int(concurrency)
-                # Extract properties.
-                properties = {}
-                for property_node in node.getElementsByTagName("property"):
-                    property_name = property_node.getAttribute("name")
-                    value = qm.xmlutil.get_dom_text(property_node)
-                    properties[property_name] = value
+                    # Extract properties.
+                    properties = {}
+                    for property_node in node.getElementsByTagName("property"):
+                        property_name = property_node.getAttribute("name")
+                        value = qm.xmlutil.get_dom_text(property_node)
+                        properties[property_name] = value
 
-                # Find the target class.
-                target_class = get_extension_class(class_name,
-                                                   'target',
-                                                   self.GetDatabase())
-                # Build the target.
-                target = target_class(name, group, concurrency,
-                                      properties, self.GetDatabase())
-                # Accumulate targets.
-                targets.append(target)
+                    # Find the target class.
+                    target_class = get_extension_class(class_name,
+                                                       'target',
+                                                       self.GetDatabase())
+                    # Build the target.
+                    target = target_class(name, group, concurrency,
+                                          properties, self.GetDatabase())
+                    # Accumulate targets.
+                    self.targets.append(target)
             
-        return targets
+        return self.targets
         
         
     def MakeContext(self):
@@ -779,7 +796,22 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Accept requests.
         server.Run()
 
+########################################################################
+# functions
+########################################################################
 
+def get_qmtest():
+    """Returns the global QMTest object.
+
+    returns -- The 'QMTest' object that corresponds to the currently
+    executing thread.
+
+    At present, there is only one QMTest object per process.  In the
+    future, however, there may be more than one.  Then, this function
+    will return different values in different threads."""
+
+    return _the_qmtest
+    
 ########################################################################
 # Local Variables:
 # mode: python
