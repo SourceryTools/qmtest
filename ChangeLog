@@ -1,5 +1,11 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/classes/file.py (SubstitutionField.class_name): New
+	attribute. 
+	(SubstitutionField.GetHelp): Fix link in help text.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/issue_class.py (IssueClass.__init__): Adjust field
 	descriptions. 
 	* qm/track/cmdline.py (Command.GetIdbPath): Fix exception.

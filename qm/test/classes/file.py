@@ -59,6 +59,8 @@ class SubstitutionField(qm.fields.TextField):
     The syntax for the regular expression and the substitution string is
     that of the standard Python 're' (regular expression) module."""
 
+    class_name = "qm.test.classes.file.SubstitutionField"
+
     # The pattern and replacement string are encoded together into a
     # single string, separated by a semicolon.  Semicolons that occur
     # within the pattern and replacement string are escaped with a
@@ -172,8 +174,9 @@ class SubstitutionField(qm.fields.TextField):
         matched groups in the pattern.
 
         The regular expression and substitution syntax are those of
-        Python's standard "'re' regular expression
-        module":http://www.python.org/doc/1.5.2p2/lib/module-re.html ."""
+        Python's standard "'re' regular expression module"
+
+.. "'re' regular expression module" http://www.python.org/doc/1.5.2p2/lib/module-re.html ."""
 
 
 
