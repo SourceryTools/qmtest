@@ -1,3 +1,8 @@
+2003-07-21  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler_test.py (CompilerBase._GetDirectory): Do not use
+	Database.GetLabelToPath.
+
 2003-06-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (Compiler.MODE_PREPROCESS): New variable.

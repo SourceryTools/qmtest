@@ -117,8 +117,7 @@ class CompilerBase:
         'returns' -- The name of the directory in which this test or
         resource will execute."""
 
-        return os.path.join(".", "build",
-                            self.GetDatabase().LabelToPath(self.GetId()))
+        return os.path.join(".", "build", self.GetId())
     
         
     def _MakeDirectoryRecursively(self, directory):
