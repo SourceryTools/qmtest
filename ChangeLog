@@ -1,5 +1,14 @@
 2000-11-30  Benjamin Chelf  <chelf@codesourcery.com>
 
+        * doc/desgin/qmtrack/create1.jpg: New file.
+	* doc/desgin/qmtrack/create2.jpg: Likewise.
+	* doc/desgin/qmtrack/edit1.jpg: Likewise.
+	* doc/desgin/qmtrack/edit2.jpg: Likewise.
+	* doc/desgin/qmtrack/edit3.jpg: Likewise.
+	* doc/desgin/qmtrack/query1.jpg: Likewise.
+	* doc/desgin/qmtrack/query2.jpg: Likewise.
+	* doc/desgin/qmtrack/query3.jpg: Likewise.	
+	
 	* doc/design/qmtrack/user-interface.xml: Update to contain new
 	ideas for interfaces.
 
