@@ -126,7 +126,19 @@ td.navbar {
     color: white;
 }
 
-a.navbar {
+a.navbar:link {
+    color: white;
+}
+
+a.navbar:visited {
+    color: white;
+}
+
+a.navbar:active {
+    color: white;
+}
+
+a.navbar:hover {
     color: white;
 }
 

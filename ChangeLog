@@ -1,5 +1,8 @@
 2001-10-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/share/web/stylesheets/qm.css: Modify to work with Internet
+	Explorer.
+
 	* qm/web.py (WebServer.TranslateRequest): Use os.path.isabs
 	for robustness.
 
