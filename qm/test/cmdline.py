@@ -854,7 +854,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Check that the right number of arguments are present.
         if len(self.__arguments) != 2:
             self.__WriteCommandHelp("create")
-            return 1
+            return 2
 
         # Figure out what database (if any) we are using.
         try:
@@ -903,7 +903,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         if len(self.__arguments) != 0:
             self.__WriteCommandHelp("create-tdb")
-            return 1
+            return 2
         
         # Create the directory if it does not already exists.
         if not os.path.isdir(db_path):
@@ -937,7 +937,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Make sure that the arguments are correct.
         if (len(self.__arguments) < 2 or len(self.__arguments) > 3):
             self.__WriteCommandHelp("create-target")
-            return 1
+            return 2
 
         # Pull the required arguments out of the command line.
         target_name = self.__arguments[0]
@@ -1014,7 +1014,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Check that the right number of arguments are present.
         if len(self.__arguments) != 0:
             self.__WriteCommandHelp("extensions")
-            return 1
+            return 2
             
         try:
             database = self.GetDatabase()
@@ -1063,7 +1063,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Make sure that the KIND and CLASS were specified.
         if (len(self.__arguments) != 2):
             self.__WriteCommandHelp("register")
-            return 1
+            return 2
         kind = self.__arguments[0]
         class_name = self.__arguments[1]
 
@@ -1227,7 +1227,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             s.Summarize()
 
         if any_unexpected_outcomes:
-            return 2
+            return 1
         
         return 0
         
@@ -1363,7 +1363,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                  result_streams,
                                  self.__GetExpectedOutcomes())
         if engine.Run():
-            return 2
+            return 1
 
         return 0
                                                     

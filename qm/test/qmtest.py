@@ -94,7 +94,7 @@ def main():
 ########################################################################
 
 # Assume that something will go wrong.
-exit_code = 1
+exit_code = 2
 
 try:
     # Set the program name.

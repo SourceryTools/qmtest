@@ -1560,15 +1560,16 @@
    had their expected outcomes (if the
    <option>&dashdash;outcomes</option> option was used).</para>
 
-   <para>If QMTest could not perform the action requested,
-   &qmtest-cmd; returns 1.</para>
-
    <para>If either the <command>run</command> command or the
    <command>summarize</command> command was used, and at least one
    test failed (if the <option>&dashdash;outcomes</option> option was
    not used) or had an unexpected outcome (if the
    <option>&dashdash;outcomes</option> option was used), &qmtest-cmd;
-   returns 2.</para> 
+   returns 1.</para>
+
+   <para>If QMTest could not perform the action requested,
+   &qmtest-cmd; returns 2.</para>
+
   </section> <!-- sec-return-value -->
   
  </section>

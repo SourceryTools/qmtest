@@ -1,5 +1,16 @@
 2003-08-20  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/cmdline.py (QMTest.__ExecuteCreate): Return 2 for
+	failure, not 1.
+	(QMTest.__ExecuteCreateTdb): Likewise.
+	(QMTest.__ExecuteCreateTarget): Likewise.
+	(QMTest.__ExecuteExtensions): Likewise.
+	(QMTest.__ExecuteRegister): Likewise.
+	(QMTest.__ExecuteSummarize): Return 2 when a test fails, not 1.
+	(QMTest.__ExecuteRun): Likewise.
+	* qm/test/qmtest.py: Use 2 as the default exit code, not 1.
+	* qm/test/doc/reference.xml: Update accordingly.
+
 	* NEWS: Mention documentation of exit status.
 	* qm/test/cmdline.py (QMTest.Execute): Use the return value from
 	__ExecuteCreateTdb.
