@@ -1,5 +1,10 @@
 2001-05-31  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/test/base.py (RemoteTestHost.__init__): Change default qmtest
+	path. 
+
+2001-05-31  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/cmdline.py (Command.remote_option_spec): New attribute.
 	(Command.conflicting_options_spec): Update.
 	(Command.commands_spec): Add --remote-hosts option.

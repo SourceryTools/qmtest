@@ -1120,7 +1120,7 @@ class RemoteTestHost:
     def __init__(self,
                  host_name,
                  user_name=None,
-                 qmtest_path="/usr/local/qm/bin/qmtest",
+                 qmtest_path="/usr/local/bin/qmtest",
                  db_path=None,
                  extra_args=[]):
         self.host_name = host_name
