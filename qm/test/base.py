@@ -368,7 +368,7 @@ def load_results(file):
                 break
             except cPickle.UnpicklingError:
                 # When file is a StringIO, EOFError is not raised when
-                # there is no more characters.  Instead, this exception
+                # there are no more characters.  Instead, this exception
                 # is raised.
                 break
     return results

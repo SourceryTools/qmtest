@@ -1,5 +1,8 @@
 2003-06-18  Mark Mitchell  <mark@codesourcery.com>
 
+	* README: Correct typo.
+	* qm/test/base.py (load_results): Likewise.
+
 	* GNUmakefile.in (PYTHON_VERSION): Remove.
 	(PYTHON_PREFIX): Remove.
 	(doc-python): Conditionalize on the avaialability of happydoc.

@@ -62,12 +62,16 @@
 
       http://sourceforge.net/projects/happydoc/
 
-    If you install HappyDoc before you run configure
+    If you install HappyDoc before you run configure, you can use:
+
+      make doc-python
+ 
+     to build documentation about the internals of QM.
 
 
   - TESTING QM
 
-    QM comes with a test suite to testitself.  Of course, this test
+    QM comes with a test suite to test itself.  Of course, this test
     suite is implemented using QMTest.  To run it, invoke
 
       make check
