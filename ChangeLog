@@ -1,5 +1,12 @@
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (PrivilegedPortError): New class.
+	(WebServer.Bind): Handle EACCES.
+	* qm/track/server.py (start_server): Handle PrivilegedPortError.
+	* qm/track/diagnostics.txt (privileged port): New diagnostic.
+
+2001-03-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/config.py (diagnostic): Generate path to diagnostics
 	file. 
 

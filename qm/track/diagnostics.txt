@@ -139,6 +139,10 @@ You must specify an iid to edit.
 @ edit issue error sem
 The iid "%(iid)" was not found in the database.
 
+@ privileged port
+You have attempted use port %(port)d.  This port is privileged; only the
+superuser may use this port.
+
 @ split issue error syn
 You must specify an iid to split.
 

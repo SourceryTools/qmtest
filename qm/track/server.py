@@ -138,6 +138,9 @@ def start_server(port, address="", log_file=None):
     except qm.web.AddressInUseError, address:
         raise RuntimeError, \
               qm.track.error("address in use", address=address)
+    except qm.web.PrivilegedPortError:
+        raise RuntimeError, \
+              qm.track.error("privileged port", port=port)
 
     # Write the URL file.  It contains the XML-RPC URL for this server.
     url_path = qm.track.state["server_url_path"]

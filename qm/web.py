@@ -64,6 +64,11 @@ class AddressInUseError(RuntimeError):
 
 
 
+class PrivilegedPortError(RuntimeError):
+    pass
+
+
+
 ########################################################################
 # classes
 ########################################################################
@@ -636,8 +641,16 @@ class WebServer(HTTPServer):
             error_number, message = error
             if error_number == errno.EADDRINUSE:
                 # The specified address/port is already in use.
-                raise AddressInUseError, "localhost:%d" % self.__port
+                if self.__address == "":
+                    address = "port %d" % self.__port
+                else:
+                    address = "%s:%d" % (self.__address, self.__port)
+                raise AddressInUseError, address
+            elif error_number == errno.EACCES:
+                # Permission denied.
+                raise PrivilegedPortError, "port %d" % self.__port
             else:
+                # Propagate other exceptions.
                 raise
 
 
