@@ -38,6 +38,7 @@
 import qm
 import qm.regression_test
 import qm.command_line
+import qm.graph
 import string
 
 ########################################################################
@@ -260,6 +261,59 @@ def test_parser_dup_command_long():
 
     return 0
 
+
+def test_graph_cycle():
+    """Test to verify that top. sort works on a graph with a cycle.
+
+    The topological sort function should throw an exception on the given
+    graph because it contains a cycle."""
+
+    try:
+        ret_val = topological_sort([1, 2, 4, 5, 6, 7, 8],
+                                   {1: [2], 2: [3], 3: [], 4: [6, 7], 5: [8],
+                                    6: [5, 3], 7: [5], 8: [1, 4]}, 0)
+        return 0
+    except ValueError, msg:
+        if str(msg) != "Given graph has a cycle":
+            return 0
+        return 1
+
+
+def test_graph_complete():
+    """Test to verify that top. sort works on a graph that's not complete.
+
+    The topological sort function should throw an exception on the given
+    graph because it is given the complete_graph flag but the predecessor
+    3 shows up in the graph even though it is not specified in the nodes."""
+    try:
+        ret_val = topological_sort([1, 2, 4, 5, 6, 7, 8],
+                                   {1: [2], 2: [3], 3: [], 4: [6, 7], 5: [],
+                                    6: [5, 3], 7: [5], 8: [1, 4]}, 1)
+        return 0
+    except ValueError, msg:
+        if str(msg) != "predecessor not in nodes":
+            return 0
+        return 1
+
+    
+def test_graph_pass():
+    """Test to verify that top. sort works on a graph that's not complete.
+
+    This should pass and return a valid topological sort of the graph.
+    If the implementation of the sort changes, this function might fail
+    because there are many possible orderings to the graph."""
+    try:
+        ret_val = topological_sort([1, 2, 4, 5, 6, 7, 8],
+                                   {1: [2], 2: [3], 3: [], 4: [6, 7], 5: [],
+                                    6: [5, 3], 7: [5], 8: [1, 4]}, 0)
+        if ret_val == [3, 2, 1, 5, 6, 7, 4, 8]:
+            return 1
+        else:
+            return 0
+    except ValueError, msg:
+        return 0
+    
+    
 regression_tests = [
     test_is_valid_label,
     test_thunk_to_label,
@@ -271,7 +325,10 @@ regression_tests = [
     test_parser_two_char_short,
     test_parser_no_long,
     test_parser_dup_command_short,
-    test_parser_dup_command_long
+    test_parser_dup_command_long,
+    test_graph_pass,
+    test_graph_cycle,
+    test_graph_complete
     ]
 
 

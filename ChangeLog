@@ -1,3 +1,11 @@
+2001-03-13  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/test.py (test_graph_cycle): Define.
+	(test_graph_complete): Likewise.
+	(test_graph_pass): Likewise.
+	(regression_tests): Add the above.
+	* qm/graph.py: New file.
+
 2001-03-09  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/diagnostics.txt: Add new error messages.
