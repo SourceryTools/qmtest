@@ -387,18 +387,6 @@ class GPP(Compiler):
     by this regular expression, the error message indicates an
     internal error in the compiler."""
 
-    def GetExecutableName(self, source_files):
-        """Return the name of the executable for the 'source_files'.
-
-        'source_files' -- A sequence of strings giving the names of
-        the source files.
-
-        returns -- A string giving the name of the executable file
-        that will be generated from the 'source_files'."""
-
-        return os.path.splitext(source_files[0])[0]
-
-
     def GetObjectNames(self, source_files):
         """Return the names of the object files built from the 'source_files'.
 
