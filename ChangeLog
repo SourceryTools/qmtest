@@ -1,5 +1,8 @@
 2001-11-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* share/dtml/track: Remove contents in preparation for 1.0
+	release.
+
 	* Makefile.in (check): New target.
 	* doc/qm-html.dsl: Fix typo.
 	* doc/manual/test-manual.xml: Update for simplifications below.
