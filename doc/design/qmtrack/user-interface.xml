@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<!--
+
+ File:   user-interface.xml
+ Author: Benjamin Chelf
+ Date:   2000-11-25
+
+ Contents:
+   Chapter `User Interface' of qmtrack design document.
+
+ This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter><title>User Interface</title>
+
+ <section><title>Modes of Interaction</title>
+
+  <para>This section describes the different methods the user can use to
+  create issues, edit issues, and query the database. We invision three
+  main modes for interaction: command line, email, and web. However, based
+  on the specification in the previous section, any mode may be
+  added.</para>
+
+ </section>
+
+ <section><title>Command Line</title>
+
+  <para>
+  <programlisting>
+<![CDATA[
+Usage:
+
+qmtrack [ options ] command [ command_options ] [ command_args ]
+
+]]>
+  </programlisting>
+  qmtrack commands:</para>
+  <para><literal>create</literal>: This command is used to create a new
+  issue. It takes as its mandatory arguments a summary and
+  categories. Optional arguments include any other field values you wish
+  to set. For example:
+  <programlisting>
+<![CDATA[
+$ qmtrack create SUMMARY="My first issue" CATEGORIES+simple+first
+2
+$ 
+]]>
+  </programlisting>
+  will create a new issue that has the summary, <literal>"My first
+  issue"</literal> and belongs to the two categories,
+  <literal>simple</literal> and <literal>first</literal>. The value
+  printed to standard out is the ID of the issue.</para>
+
+  <para> To specify field values to qmtrack commands, there are three
+  special characters to indicate which action should be taken:
+   <itemizedlist>
+    <listitem>
+     <para>= : Set the field to the given value (e.g. FIELD=value).</para>
+    </listitem>
+
+    <listitem>
+     <para>+ : Add the given value to the set of values in the field
+     (e.g. CATEGEORY+value). This should only be used on fields that
+     contain sets of values.</para>
+    </listitem>
+
+    <listitem>
+     <para>- : Remove the given value to the set of values in the field
+     (e.g. CATEGORY-value). This should only be used on fields that
+     contain sets of values.</para>
+    </listitem>
+   </itemizedlist>
+  All of the commands to create and edit issues use the above three
+  operators to specify new values for fields.
+  </para>
+  <para><literal>edit</literal>: This command is used to edit an existing
+  issue. It takes the ID of the command you wish to edit and then as
+  arguments any fields you wish to edit. For example:
+  <programlisting>
+<![CDATA[
+$ qmtrack edit 2 CATEGORIES-first
+SUCCESS: Edited ID 2. New revision = 2.
+$ 
+]]>
+  </programlisting>
+  will edit the issue with ID 2 removing the <literal>first</literal>
+  category from the issue. A new revision of the issue will be created and
+  stored in the database. If the edit succeeds,
+  <literal>"SUCCESS"</literal> will be printed to standard out followed by
+  a message containing information on the current revision number of the
+  issue.
+  </para>
+  <para>You may also use the <literal>edit</literal> command to join two
+  or more issues into one and split one issue into two. Simply give the
+  edit command the <literal>-j</literal> flag followed by another ID to
+  join it to the issue. Any edits that are given on the command line will
+  be applied to the first revision of the joined issue. Similarly, the
+  <literal>-s</literal> flag will split the current issue into two
+  issues. Any edits made on that command line will be applied to the new
+  issue and its ID will be given on the command line as if create had been
+  called. All fields that are not edited in the split issue will be copied
+  from the original issue.
+  </para>
+  <para><literal>query</literal>: This command is used to search the
+  database for issues that match certain criteria. 
+  arguments any fields you wish to edit. For example:
+  <programlisting>
+<![CDATA[
+$ qmtrack query -v -r DATE "October 5, 2000" "October 7, 2000"
+QUERY RESULTS:
+1 issue
+
+Issue #2, summary "My first issue", last updated "October 6, 2000",
+current revision 2
+
+$ 
+]]>
+  </programlisting>
+  searches for all issues that were updated in the range of dates between
+  October 5th, 2000 and October 7th, 2000. The results are printed to
+  standard out based on the verbosity level of the request. The full set
+  of options are as follows:
+  </para>
+  <informaltable>
+   <tgroup cols="2">
+    <thead>
+     <row>
+      <entry>flag</entry>
+      <entry>description</entry>
+     </row>
+    </thead>
+    <tbody>
+     <row>
+      <entry><literal>-v</literal></entry>
+      <entry>First level of verbosity.</entry>
+     </row>
+     <row>
+      <entry><literal>-vv</literal></entry>
+      <entry>More verbose.</entry>
+     </row>
+     <row>
+      <entry><literal>-vvv</literal></entry>
+      <entry>Most verbose.</entry>
+     </row>
+     <row>
+      <entry><literal>-e</literal></entry>
+      <entry>Match exactly. Following this flag is the
+      field to match and then the value to match in that field exactly.
+      </entry>
+     </row>
+     <row>
+      <entry><literal>-c</literal></entry>
+      <entry>Contains. Following this flag is the field to match and then
+      the value to test if the field contains that value. This should only
+      be used on fields that have multiple possible values or strings. For
+      example, you may search the CATEGORY field for issues that are
+      members of one category or search on the SUMMARY field to find all
+      issues that contain the string <literal>"bug"</literal> in their
+      summary. However, it does not make sense to do a "contains" search
+      on a field like REVISION.</entry>
+     </row>
+     <row>
+      <entry><literal>-l</literal></entry>
+      <entry>Less than. For fields that have a specfic ordering (e.g.,
+       DATE or SEVERITY), you may use this flag to search for issues that
+       have a value less than a specified value in the given field. This
+       flag also takes the field to match and then a value.</entry>
+     </row>
+     <row>
+      <entry><literal>-g</literal></entry>
+      <entry>Greater than. Opposite of less than.</entry>
+     </row>
+     <row>     
+      <entry><literal>-r</literal></entry>
+      <entry>Range. Used to simplify writing of a less than search anded
+      with a greater than search. This flag, unlike any other, takes two
+      values after the field: the lower bound and the upper bound.</entry>
+     </row>
+
+     <row>
+      <entry><literal>-a</literal></entry>
+      <entry>And. Used to and two search criteria together. Simply list
+      the two flags (and their arguments) after the <literal>-a</literal>
+      flag and the query will intersect the results of the two queries
+      before printing. To and together more than two results, use multiple
+      <literal>-a</literal> flags.</entry>
+     </row>
+     <row>
+      <entry><literal>-o</literal></entry>
+      <entry>Or. Used to or two search criteria
+      together. Syntactically equivalent to the <literal>-a</literal> flag
+      except the two queries are unioned instead of intersected.</entry>
+     </row>
+     <row>
+      <entry><literal>-n</literal></entry>
+      <entry>Not. Used to take the complement of a given search
+      criteria. The opposite of the given criteria is reported when this
+      flag preceeds that query flag.</entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </informaltable>
+ </section>
+
+ <section><title>Email</title>
+
+ <para>To create, edit, and query issues via email, simply construct an
+ email with lines similar to headers in an email message and send the
+ message to the database. It will respond with the same information that
+ would be given on the command line had the request been issued that
+ way. The first line of the email should contain the command
+ (e.g. <literal>create</literal>, <literal>edit</literal>, or
+ <literal>query</literal>). For the creation and editing commands,
+ subsequent lines will contain pairs of fields and values separated by a
+ colon. For the edit command, one of the fields listed must contain the ID
+ of the issue to be edited. For example, an email to edit ID number 2
+ would look like the following:
+  <programlisting>
+<![CDATA[
+edit
+ID:2
+SUMMARY:="New summary"
+CATEGORY:+foo-bar
+]]>
+  </programlisting>
+ Notice how the same three characters, '=', '+', and '-' are used to
+ update the fields via email just as they were on the command line.</para>
+
+ <para>Queries are similar to edits and creates with the exception that
+ the field lines must contain additional information to indicate what type
+ of query to be performed (e.g. 'contains', 'exact', 'less', 'greater', or
+ 'range'). This attribute comes between the field name and the value and
+ is separated by a colon. Also, to use the 'and', 'or', and 'not'
+ directives, simply place the directive on a line before the one or two
+ fields to that argument. For example, to perform a query that finds all
+ issues that do not contain the word "foo" in the summary and have "bar"
+ as their only category, the email is formed like this:
+  <programlisting>
+<![CDATA[
+query
+not
+and
+SUMMARY:contains:"foo"
+CATEGORY:exact:"bar"
+]]>
+  </programlisting>
+  </para>
+ </section>
+ <section><title>Web</title>
+  <para>To create, edit, and perform queries on the web, the user will be
+  presented with a form that has all the fields of an issue. He/she will
+  be able to fill in the form as desired and then click any of the three
+  buttons, create, edit, and query to perform the desired function. To
+  create an issue, all fields may be specified except for the ID field,
+  the revision field, and the date field. These will be updated
+  automatically. The same holds for editing with one exception. When
+  perfoming an edit, it is likely that the user will like to retrieve the
+  information in the ID before he/she edits it. Therefore, after inputting
+  the correct ID in the ID text box and clicking "Retrieve Issue", the
+  form will fill with the latest revision of the issue to be edited. This
+  may also be useful when performing queries. The user will notice that a
+  select box will be available next to every field in the form. This is to
+  specify how to search on that field (e.g. exact, contains, less,
+  greater, or range depending on the type of the field). Also, buttons at
+  the bottom for "and," "or," and "not" will be available to combine
+  multiple queries in a logical fashion. When the "and" or "or" button is
+  pressed, another form will be loaded so that two (or more) queries can
+  be made simultaneously and their results combined as desired. </para>
+ </section>
+</chapter>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "book" "chapter")
+  End:
+-->

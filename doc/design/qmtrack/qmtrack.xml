@@ -33,6 +33,7 @@
   <!ENTITY concepts.xml SYSTEM "concepts.xml">
   <!ENTITY idb-api.xml SYSTEM "idb-api.xml">
   <!ENTITY user-api.xml SYSTEM "user-api.xml">
+  <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
 ]>
 <book>
  <bookinfo>
@@ -54,6 +55,7 @@
  &concepts.xml;
  &idb-api.xml;
  &user-api.xml;
+ &user-interface.xml;
 
 </book>
 

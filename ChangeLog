@@ -1,3 +1,9 @@
+2000-11-27  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* doc/design/qmtrack/qmtrack.xml: Add user-interface.xml.
+	* doc/design/qmtrack/user-api.xml: Fix typos.
+	* doc/design/qmtrack/user-interface.xml: New file.
+
 2000-11-26  Alex Samuel  <samuel@codesourcery.com>
 	
 	* doc/design/qmtrack/idb-api.xml: Add missing </section> tag.

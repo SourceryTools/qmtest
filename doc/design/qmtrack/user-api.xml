@@ -47,11 +47,12 @@
 
  </section>
 
- <section><title>Creating Issues</title> <para>This section describes the
-   basics of creating an issue. To create an issue, simply create an Issue
-   object. You pass it initial values for the 'summary,' 'categories,' and
-   'attachment' and the corresponding objects represents the first
-   revision of the new issue.</para>
+ <section><title>Creating Issues</title>
+
+   <para>This section describes the basics of creating an issue. To create
+   an issue, simply create an Issue object. You pass it initial values for
+   the 'summary,' 'categories,' and 'attachment' and the corresponding
+   objects represents the first revision of the new issue.</para>
 
    <para>Methods:
    <programlisting>
@@ -90,9 +91,9 @@ class Issue:
     def BeginEdit(self):
         """Returns a copy of the current revision of the issue.
 
-        Begins edits for a new revision of an issue. Blocks until
-        caller has exclusive rights to make edits. Returns the key to be
-        used in future edit calls. Acquires the edit lock on the issue."""
+        The returned copy may be edited and then the EndEdit method can be
+        called to commit the changes to the issue to create a new revision
+        of the issue."""
 
     def EndEdit(self, new_issue):
         """Returns 0 if successful, 1 on error.
@@ -115,7 +116,7 @@ class Issue:
     def Join(self, issue):
         """Joins self and id together to form one issue from the two.
 
-        Join must be called on both issues involved in the join."""
+        Join must be called on all issues involved in the join."""
 
     def Separate(self):
         """Returns an issue that is a twin of the original.
