@@ -111,13 +111,20 @@ class CompilerBase:
         return 1
     
 
-    def _GetDirectory(self):
+    def _GetDirectory(self, context):
         """Get the name of the directory in which to run.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
 
         'returns' -- The name of the directory in which this test or
         resource will execute."""
 
-        return os.path.join(".", "build", self.GetId())
+        if context.has_key("CompilerTest.scratch_dir"):
+            return os.path.join(context["CompilerTest.scratch_dir"],
+                                self.GetId())
+        else:
+            return os.path.join(".", "build", self.GetId())
     
         
     def _MakeDirectoryRecursively(self, directory):
@@ -141,20 +148,23 @@ class CompilerBase:
                 raise
             
             
-    def _MakeDirectory(self):
+    def _MakeDirectory(self, context):
         """Create a directory in which to place generated files.
+
+        'context' -- A 'Context' giving run-time parameters to the
+        test.
 
         returns -- The name of the directory."""
 
         # Get the directory name.
-        directory = self._GetDirectory()
+        directory = self._GetDirectory(context)
         # Create it.
         self._MakeDirectoryRecursively(directory)
 
         return directory
 
 
-    def _RemoveDirectory(self, result):
+    def _RemoveDirectory(self, context, result):
         """Remove the directory in which generated files are placed.
 
         'result' -- The 'Result' of the test or resource.  If the
@@ -164,7 +174,8 @@ class CompilerBase:
 
         if result.GetOutcome() == Result.PASS:
             try:
-                qm.common.rmdir_recursively(self._GetDirectory())
+                dir = self._GetDirectory(context)
+                qm.common.rmdir_recursively(dir)
             except:
                 # If the directory cannot be removed, that is no
                 # reason for the test to fail.
@@ -233,8 +244,8 @@ class CompilerTest(Test, CompilerBase):
             # Run the compiler.
             timeout = context.get("CompilerTest.compilation_timeout", -1)
             (status, output) \
-                = compiler.ExecuteCommand(self._GetDirectory(), command,
-                                          timeout)
+                = compiler.ExecuteCommand(self._GetDirectory(context),
+                                          command, timeout)
 
              # Make sure that the output is OK.
             if not self._CheckOutput(context, result, prefix, output,
@@ -360,7 +371,7 @@ class CompilerTest(Test, CompilerBase):
 
         status = executable.Run(arguments,
                                 environment = environment,
-                                dir = self._GetDirectory())
+                                dir = self._GetDirectory(context))
         # Remember the output streams.
         result[prefix + "stdout"] = result.Quote(executable.stdout)
         result[prefix + "stderr"] = result.Quote(executable.stderr)

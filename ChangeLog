@@ -1,3 +1,14 @@
+2004-04-28  Nathaniel Smith  <njs@codesourcery.com>
+
+	* compiler_test.py (CompilerBase._GetDirectory): Take 'context'
+	as an argument.  Check for context key
+	"CompilerTest.scratch_dir".
+	(CompilerBase._MakeDirectory): Take 'context' as an argument.
+	Pass 'context' to '_GetDirectory'.
+	(CompilerBase._RemoveDirectory): Likewise.
+	(CompilerTest.Run): Pass 'context' to '_GetDirectory'.
+	(CompilerTest._RunExecutable): Likewise.
+
 2004-03-31  Nathaniel Smith  <njs@codesourcery.com>
 
 	* compiler_test.py (CompilerBase._QuoteForHTML): Remove.
