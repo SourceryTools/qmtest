@@ -25,6 +25,7 @@ import cStringIO
 import dircache
 import gzip
 import imp
+import lock
 import operator
 import os
 import os.path
@@ -563,6 +564,8 @@ def convert_from_dos_text(text):
 
     return string.replace(text, "\r\n", "\n")
 
+__load_module_lock = lock.RLock()
+"""A lock used by load_module."""
 
 def load_module(name, path=sys.path):
     """Load a Python module.
@@ -582,58 +585,60 @@ def load_module(name, path=sys.path):
     # the 'knee' package included unofficially in the standard Python
     # library. 
 
-    # Is the module already loaded?
+    # In order to avoid getting incomplete modules, grab a lock here.
+    # Use a recursive lock so that deadlock does not occur if the loaded
+    # module loads more modules.
+    __load_module_lock.acquire()
     try:
-        module = sys.modules[name]
-        # It's listed; is there a module instance there?
-        if module is not None:
+        # Is the module already loaded?
+        module = sys.modules.get(name)
+        if module:
             return module
-        # Nope; go on loading.
-    except KeyError:
-        # No; that's OK.
-        pass
 
-    # The module may be in a package.  Split the module path into
-    # components. 
-    components = string.split(name, ".")
-    if len(components) > 1:
-        # The module is in a package.  Construct the name of the
-        # containing package.
-        parent_package = string.join(components[:-1], ".")
-        # Load the containing package.
-        package = load_module(parent_package, path)
-        # Look for the module in the parent package.
-        path = package.__path__
-    else:
-        # No containing package.
-        package = None
-    # The name of the module itself is the last component of the module
-    # path.  
-    module_name = components[-1]
-    # Locate the module.
-    file, file_name, description = imp.find_module(module_name, path)
-    # Find the module.
-    try:
-        # While loading the module, add 'path' to Python's module path,
-        # so that if the module references other modules, e.g. in the
-        # same directory, Python can find them.  But remember the old
-        # path so we can restore it afterwards.
-        old_python_path = sys.path[:]
-        sys.path = path + sys.path
-        # Load the module.
-        module = imp.load_module(name, file, file_name, description)
-        # Restore the old path.
-        sys.path = old_python_path
-        # Loaded successfully.  If it's contained in a package, put it
-        # into that package's name space.
-        if package is not None:
-            setattr(package, module_name, module)
-        return module
+        # The module may be in a package.  Split the module path into
+        # components. 
+        components = string.split(name, ".")
+        if len(components) > 1:
+            # The module is in a package.  Construct the name of the
+            # containing package.
+            parent_package = string.join(components[:-1], ".")
+            # Load the containing package.
+            package = load_module(parent_package, path)
+            # Look for the module in the parent package.
+            path = package.__path__
+        else:
+            # No containing package.
+            package = None
+        # The name of the module itself is the last component of the module
+        # path.  
+        module_name = components[-1]
+        # Locate the module.
+        file, file_name, description = imp.find_module(module_name, path)
+        # Find the module.
+        try:
+            # While loading the module, add 'path' to Python's module path,
+            # so that if the module references other modules, e.g. in the
+            # same directory, Python can find them.  But remember the old
+            # path so we can restore it afterwards.
+            old_python_path = sys.path[:]
+            sys.path = path + sys.path
+            # Load the module.
+            module = imp.load_module(name, file, file_name, description)
+            # Restore the old path.
+            sys.path = old_python_path
+            # Loaded successfully.  If it's contained in a package, put it
+            # into that package's name space.
+            if package is not None:
+                setattr(package, module_name, module)
+            return module
+        finally:
+            # Close the module file, if one was opened.
+            if file is not None:
+                file.close()
     finally:
-        # Close the module file, if one was opened.
-        if file is not None:
-            file.close()
-        
+        # Release the lock.
+        __load_module_lock.release()
+
         
 def load_class(name, path=sys.path):
     """Load a Python class.
@@ -666,7 +671,7 @@ def load_class(name, path=sys.path):
     class_name = components[-1]
     # Load the containing module.
     module = load_module(module_name, path)
-    # Exctract the requested class.
+    # Extract the requested class.
     try:
         klass = module.__dict__[class_name]
         if not isinstance(klass, types.ClassType):

@@ -40,6 +40,7 @@ class LocalThread(CommandThread):
         self.GetTarget()._RunTest(descriptor, context)
         
 
+
 class ThreadTarget(Target):
     """A target implementation that runs tests in local threads.
 
@@ -48,7 +49,7 @@ class ThreadTarget(Target):
 
     def __init__(self, name, group, concurrency, properties,
                  database):
-	"""Construct a 'ThreadTarget'.
+        """Construct a 'ThreadTarget'.
 
         'name' -- A string giving a name for this target.
 
@@ -62,7 +63,7 @@ class ThreadTarget(Target):
         to strings (property values).
         
         'database' -- The 'Database' containing the tests that will be
-	run."""
+        run."""
 
         # Initialize the base class.
         Target.__init__(self, name, group, concurrency, properties,
@@ -113,11 +114,11 @@ class ThreadTarget(Target):
         # Build the threads.
         self.__threads = []
         for i in xrange(0, self.GetConcurrency()):
-	    # Create the new thread.
-	    thread = LocalThread(self)
-	    # Start the thread.
-	    thread.start()
-	    # Remember the thread.
+            # Create the new thread.
+            thread = LocalThread(self)
+            # Start the thread.
+            thread.start()
+            # Remember the thread.
             self.__threads.append(thread)
 
         # Initially, all threads are ready.
@@ -133,10 +134,10 @@ class ThreadTarget(Target):
         
         # Send each thread a "quit" command.
         for thread in self.__threads:
-	    thread.Stop()
+            thread.Stop()
         # Now wait for each thread process to finish.
         for thread in self.__threads:
-	    thread.join()
+            thread.join()
 
 
     def RunTest(self, descriptor, context):

@@ -1,3 +1,17 @@
+2002-07-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/thread_target.py: Remove tabs.
+	* qm/common.py (lock): Import it.
+	(__load_module_lock): New variable.
+	(load_module): Use it to enforce thread safety when loading 
+	modules.
+	* qm/lock.py: New file.
+	* qm/test/execution_engine.py (ExecutionEngine.__init__): Do not
+	initialize busy_targets.
+	(ExecutionEngine.Run): Add additional trace output.
+	(ExecutionEngine._RunTests): Do not use busy_targets.  Use the
+	length of idle_targets to detect deadlock.
+
 2002-07-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention qmtest run --rerun.

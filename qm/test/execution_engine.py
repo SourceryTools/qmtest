@@ -78,7 +78,6 @@ class ExecutionEngine:
         
         # All of the targets are idle at first.
         self.__idle_targets = targets[:]
-        self.__busy_targets = []
         # There are no responses from the targets yet.
         self.__response_queue = qm.queue.Queue(0)
         # There no pending or ready tests yet.
@@ -130,10 +129,12 @@ class ExecutionEngine:
             self._RunTests()
         finally:
             # Stop the targets.
+            self._Trace("Stopping targets.")
             for target in self.__targets:
                 target.Stop()
 
             # Read responses until there are no more.
+            self._Trace("Checking for final responses.")
             while self._CheckForResponse(wait=0):
                 pass
             
@@ -201,7 +202,8 @@ class ExecutionEngine:
             # If there are no busy targets and no ready tests, we have
             # a cycle in the dependency graph.  Pull the head off the
             # pending queue and mark it UNTESTED, see if that helps.
-            if not self.__busy_targets and not self.__ready:
+            if (not self.__ready
+                and len(self.__idle_targets) == len(self.__targets)):
                 descriptor = self.__pending[0]
                 if __debug__:
                     self._Trace(("Dependency cycle, discarding %s."
@@ -247,7 +249,6 @@ class ExecutionEngine:
                             if __debug__:
                                 self._Trace("Target is no longer idle.")
                             self.__idle_targets.remove(target)
-                            self.__busy_targets.add(target)
                         else:
                             if __debug__:
                                 self._Trace("Target is still idle.")
@@ -408,7 +409,6 @@ class ExecutionEngine:
             if __debug__:
                 self._Trace("Target is now idle.\n")
             self.__idle_targets.append(target)
-            self.__busy_targets.remove(target)
 
         # Output a trace message.
         if __debug__:
