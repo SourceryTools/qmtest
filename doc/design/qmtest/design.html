@@ -20,21 +20,23 @@ tool, provisionally named "Qmtest".
 <a name="toc">
 <h2>Contents</h2>
 <ul>
-<li><a href="#intro"> Introduction </a></li>
+<li><a href="#intro"> Introduction </a>
 	<ul>
 	<li><a href="#intro-not"> What Qmtest is Not </a></li>
 	<li><a href="#intro-ack"> Acknowledgments </a></li>
 	</ul>
-<li><a href="#usecase"> Use Cases </a></li>
+</li>
+<li><a href="#story"> User Stories </a>
 	<ul>
-	<li><a href="#usecase-bhargan"> Bhargan Basepair </a></li>
-	<li><a href="#usecase-daryl"> Daryl Dowhile </a></li>
-	<li><a href="#usecase-glenda"> Glenda Grammar </a></li>
-	<li><a href="#usecase-ovide"> Ovide Overlay </a></li>
-	<li><a href="#usecase-tahura"> Tahura Transparency </a></li>
+	<li><a href="#story-bhargan"> Bhargan Basepair </a></li>
+	<li><a href="#story-daryl"> Daryl Dowhile </a></li>
+	<li><a href="#story-glenda"> Glenda Grammar </a></li>
+	<li><a href="#story-ovide"> Ovide Overlay </a></li>
+	<li><a href="#story-tahura"> Tahura Transparency </a></li>
 	</ul>
+</li>
 <li><a href="#term"> Terminology </a></li>
-<li><a href="#req"> Requirements </a></li>
+<li><a href="#req"> Requirements </a>
 	<ul>
 	<li><a href="#req-accuracy"> Accuracy </a></li>
 	<li><a href="#req-smallscale"> Small-Scale Usability </a></li>
@@ -43,6 +45,7 @@ tool, provisionally named "Qmtest".
 	<li><a href="#req-dep"> Dependent and Independent Tests </a></li>
 	<li><a href="#req-expect"> Expected and Unexpected Results </a></li>
 	<li><a href="#req-report"> Reporting </a></li>
+	<li><a href="#req-regen"> Regeneration of Reference Results </a></li>
 	<li><a href="#req-suite"> Test Suites </a></li>
 	<li><a href="#req-id"> Test Identification </a></li>
 	<li><a href="#req-summary"> Summary Reporting </a></li>
@@ -50,20 +53,31 @@ tool, provisionally named "Qmtest".
 	<li><a href="#req-change"> Logging Changes </a></li>
 	<li><a href="#req-traversal"> Traversal </a></li>
 	<li><a href="#req-physical"> Physical Organization of Tests </a></li>
-	<li><a href="#req-parallel"> Parallel Execution </a></li>
+	<li><a href="#req-ctrl"> Controlling Execution </a></li>
 	<li><a href="#req-spec"> Test Specification </a></li>
 	<li><a href="#req-multi"> Multi-Tests and Reflective Tests </a></li>
 	<li><a href="#req-updown"> Setup and Teardown </a></li>
 	<li><a href="#req-sandbox"> Sandboxing and Throttling </a></li>
 	<li><a href="#req-list"> Requirements Summary </a></li>
 	</ul>
+</li>
 <li><a href="#iface"> Interface </a></li>
+<li><a href="#solve"> User Solutions </a>
+	<ul>
+	<li><a href="#solve-bhargan"> Bhargan Basepair </a></li>
+	<li><a href="#solve-daryl"> Daryl Dowhile </a></li>
+	<li><a href="#solve-glenda"> Glenda Grammar </a></li>
+	<li><a href="#solve-ovide"> Ovide Overlay </a></li>
+	<li><a href="#solve-tahura"> Tahura Transparency </a></li>
+	</ul>
+</li>
 <li><a href="#arch"> Architecture </a></li>
 <li><a href="#impl"> Implementation </a></li>
 <li><a href="#devplan"> Development Plan </a></li>
 <li><a href="#risks"> Risks </a></li>
 <li><a href="#ref"> References </a></li>
 <li><a href="#notes"> Notes </a></li>
+<li><a href="#questions"> Questions </a></li>
 </ul>
 </a>
 
@@ -150,7 +164,7 @@ Parallel execution of test suites.
 </p>
 
 <p>
-This document begins by describing <a href="#usecase">six typical
+This document begins by describing <a href="#story">six typical
 users</a>, whose testing needs Qmtest is designed to address.  It then
 explores their <a href="#req">requirements</a> in more detail, in
 order to determine the features that Qmtest must have.  Qmtest's <a
@@ -181,11 +195,26 @@ being tested.
 </li>
 
 <li>
-Qmtest is not a version control system, or a relational database.  It
-will log the results of tests, but will rely on the capabilities of
+Qmtest is not a version control system, or a relational database.  In
+particular, versioning of tests will be handled by whatever version
+control system developers are already using.  Similarly, Qmtest will
+log the results of tests, but will rely on the capabilities of
 external systems to maintain historical records.  Note, however, that
 Qmtest <em>will</em> be able to retrieve information from those
 archiving systems in order to create reports.
+</li>
+
+<li>
+Qmtest is not a test creation wizard itself, although tools for
+creating Qmtest-compatible tests will be shipped with it.
+</li>
+
+<li>
+Qmtest is not a general program execution harness.  Some users may
+choose to run their programs via Qmtest under non-test circumstances
+(e.g. in order to obtain logging information), but Qmtest is not a
+replacement for distributed load-balancing software, safe shells, or
+other tools.
 </li>
 
 </ol>
@@ -213,10 +242,10 @@ programmer</a>) for their input.
 
 </a> <!-- end intro -->
 
-<a name="usecase">
+<a name="story">
 <h2>Use Cases</h2>
 
-<a name="usecase-bhargan">
+<a name="story-bhargan">
 <h3>Bhargan Basepair</h3>
 
 <p>
@@ -297,9 +326,9 @@ testing, but he'll probably see the millenium roll over again before
 it actually gets done.
 </p>
 
-</a> <!-- end usecase-bhargan -->
+</a> <!-- end story-bhargan -->
 
-<a name="usecase-daryl">
+<a name="story-daryl">
 <h3>Daryl Dowhile</h3>
 
 <p>
@@ -391,9 +420,9 @@ the dozen or so different machines in the testing network.  These
 machines are a mix of various versions of Unix and Microsoft Windows.
 </p>
 
-</a> <!-- end usecase-daryl -->
+</a> <!-- end story-daryl -->
 
-<a name="usecase-glenda">
+<a name="story-glenda">
 <h3>Glenda Grammar</h3>
 
 <p>
@@ -477,9 +506,9 @@ one tutorial, and all references to examples are valid.
 Ideally, both processes should be totally automated.
 </p>
 
-</a> <!-- end usecase-glenda -->
+</a> <!-- end story-glenda -->
 
-<a name="usecase-ovide">
+<a name="story-ovide">
 <h3>Ovide Overlay</h3>
 
 <p>
@@ -529,16 +558,16 @@ of a polygon is exhausted, it is deleted from its list.
 </ul>
 </p>
 
-</a> <!-- end usecase-ovide -->
+</a> <!-- end story-ovide -->
 
-<a name="usecase-tahura">
+<a name="story-tahura">
 <h3>Tahura Transparency</h3>
 
 <p>
 Tahura is a junior professor at Euphoric State University, and
 part-owner of a consulting company that is developing a new
 transparency rendering library in C++.  (This is the same company that
-employs <a href="#usecase-glenda">Glenda Grammar</a> as a technical
+employs <a href="#story-glenda">Glenda Grammar</a> as a technical
 writer.)  The company's two dozen employees are scattered around the
 country, and communicate largely via email, and through the shared
 version control repository.
@@ -588,9 +617,9 @@ expectations be recorded for each, or should some benchmark be run,
 and its time used to scale the expected results?
 </p>
 
-</a> <!-- end usecase-tahura -->
+</a> <!-- end story-tahura -->
 
-</a> <!-- end usecase -->
+</a> <!-- end story -->
 
 <a name="term">
 <h2>Terminology</h2>
@@ -780,8 +809,7 @@ first; secondary or derived requirements follow.
 <h3>Accuracy</h3>
 
 <p>
-The most important requirement on Qmtest is <em><a
-name="discuss-accuracy" role="req">accuracy</a></em>: it must never
+The most important requirement on Qmtest is accuracy: it must never
 report that a test has succeeded when in fact it has failed, or vice
 versa: in statistical terminology, there must be <em><a
 name="discuss-false-positives" role="req">no false positives</a></em>
@@ -904,17 +932,16 @@ that does not provide standard input or standard output.
 
 <p>
 Qmtest must <em><a name="discuss-specify-dependency" role="req">allow
-programmers to specify dependencies between tests</a></em>, and to
+programmers to specify dependencies between tests</a></em>, and must
 <em><a name="discuss-track-dependency" role="req">prevent dependent
-tests from being executed if the tests on which they depend did not
-behave as expected</a></em>.  For obvious reasons, dependencies
-between tests must be acyclic; Qmtest must <em><a
-name="discuss-cyclic-dependency" role="req">detect and report cyclic
-dependencies</a></em>.  Qmtest should try to <em role="desire">detect
-and report cyclic dependencies before executing any tests</em>, but is
-not required to do this, since this may not be possible (as discussed
-in the section on <a href="#req-multi">generating tests on the
-fly</a>).
+tests from being executed if an error occurred in an
+antecedent</a></em>.  For obvious reasons, dependencies between tests
+must be acyclic; Qmtest must <em><a name="discuss-cyclic-dependency"
+role="req">detect and report cyclic dependencies</a></em>.  Qmtest
+should try to <em role="desire">detect and report cyclic dependencies
+before executing any tests</em>, but is not required to do this, since
+this may not be possible if tests are being <a
+href="#req-multi">generated on the fly</a>.
 </p>
 
 <p>
@@ -992,6 +1019,41 @@ functions for different reporting formats.
 </p>
 
 </a> <!-- end req-report -->
+
+<a name="req-regen">
+<h3>Regeneration of Reference Results</h3>
+
+<p>
+One of the most common breakdowns in testing occurs when testers do
+not check test results correctly.  If those results are then used as a
+reference, against which further test runs are compared, a fault can
+go undetected for a very long time.
+</p>
+
+<p>
+Despite this, many (potential) Qmtest users would like it to be able
+to generate reference results, as well as compare current test results
+against reference versions.  This is partly a matter of convenience:
+having specified what to run, and how to run it, users feel that
+having to go through and run everything by hand is an unnecessary
+burden.  Therefore, Qmtest <em><a name="discuss-gen-results
+role="req">must be able to generate, or re-generate, reference test
+results using exactly the same settings and specifications used for
+testing</a></em>.
+</p>
+
+<p>
+Qmtest will <em>not</em> mark programmatically-generated reference
+results as "unverified", and only change their status to "verified"
+when those files have been inspect by the test developer.  In
+practice, almost all developers would tell Qmtest to "verify all"
+immediately after generating the reference results.  This step would
+therefore be as useful as putting up a dialog to ask users whether
+they are sure they want to delete the files they have just marked for
+deletion...
+</p>
+
+</a> <!-- end req-regen -->
 
 <a name="req-suite">
 <h3>Test Suites</h3>
@@ -1090,7 +1152,7 @@ isolate faults after the fact.
 Developers may want tests to report extra information along with a
 standard result (pass, fail, error, or deferred).  For example, it may
 be desirable to have tests report execution time, memory usage, number
-of context switches, and so on.  Qmtest's <em><a
+of context switches, or code coverage.  Qmtest's <em><a
 name="discuss-extra-values" role="req">output format must allow tests
 to report extra named values</a></em>, while the <em><a
 name="discuss-summarize-extra-values" role="req">summary reporting
@@ -1109,9 +1171,16 @@ href="#req-traversal">test traversal</a> below.
 </p>
 
 <p>
-Note that this version of Qmtest restricts extra information to be
-name/value pairs, without any internal structure (i.e. a property
-set).  This restriction may be relaxed in future versions.
+Note that this version of Qmtest restricts extra information to be a
+flat property set, i.e. name/value pairs without any internal
+structure.  This restriction may be relaxed in future versions.  Note
+also that collecting this extra information may require modifications
+to the Qmtest execution engine.  Qmtest must therefore allow users to
+<em><a name="discuss-override-engine" role="req">override all aspects
+of the execution engine's internal operation</a></em>, e.g. by
+deriving one or more new execution engine classes from the standard
+engine class, and telling the framework to use those to run particular
+tests.
 </p>
 
 </a> <!-- end req-info -->
@@ -1185,9 +1254,25 @@ The final special case is that <em><a name="discuss-tag-tests"
 role="req">users must be able to provide symbolic tags for tests or
 test suites which can be used as input to filtering</a></em>.  For
 example, users must be able to specify that a particular test is only
-to be executed on specific platforms, or that it is only to be run as
-part of a full smoke-and-build trial.  The effect this requirement has
+to be executed on specific platforms, or that it has a "cost" of 10
+(in some arbitrary units), so that it is only run when a full
+smoke-and-build test is being done.  The effect this requirement has
 on <a href="#req-spec">test specification</a> is discussed below.
+</p>
+
+<p>
+One common case that Qmtest's traversal mechanism must be able to
+handle correctly is interruption and re-start.  A complete test suite
+may take hours or days to run; users <em><a name="discuss-interrupt"
+role="req">must be able to pause and re-start test execution</a></em>.
+This will often be more complex than typing <code>Ctrl-Z</code> at a
+command prompt, since the test harness may spawn sub-processes, or may
+execute some tests in parallel on <a href="#discuss-parallel">other
+machines</a>.  Note that it would also be desirable for Qmtest to be
+able to <em role="desire">checkpoint and restart</em> in the event of
+system failure (e.g. power outages), but this will not be included in
+the first version.  (For a discussion of this topic, see the links to
+James Bach's paper "Test Automation Snake Oil" in the references.)
 </p>
 
 </a> <!-- end req-traversal -->
@@ -1206,6 +1291,10 @@ in the same directories as the test subjects;
 </li>
 <li>
 in sub-directories of those directories;
+</li>
+<li>
+in platform-specific directories (to avoid clashes when tests are
+being executed concurrently);
 </li>
 <li>
 in a parallel directory hierarchy; or
@@ -1237,23 +1326,10 @@ same directories as tests themselves.  Sub-suites and sub-tests should
 then inherit this behavior.
 </p>
 
-<p>
-<em role="question">Question: this seems to imply some sort of
-persistent record of inherited settings.  If a user executes an entire
-suite with the results directory set to <code>./results</code>, then
-re-executes the part of the suite contained in the sub-directory
-<code>platform</code>, Qmtest must be able to remember that results
-are supposed to go in <code>platform/results</code>.  This is
-manageable, but what about the case in which the user creates a whole
-new sub-directory, and runs Qmtest in there for the first time, rather
-than in the root directory?  How does Qmtest know that results are
-supposed to go in <code>newdir/results</code>?</em>
-</p>
-
 </a> <!-- end req-physical -->
 
-<a name="req-parallel">
-<h3>Parallel Execution</h3>
+<a name="req-ctrl">
+<h3>Controlling Execution</h3>
 
 <p>
 The longer a test suite takes to run, the less frequently it will be
@@ -1267,7 +1343,25 @@ although <em><a name="discuss-in-order" role="req">specifying test
 order must be simple</a></em>.
 </p>
 
-</a> <!-- end req-parallel -->
+<p>
+Three other facilities needed by a network-aware test harness are the
+ability to <em><a name="discuss-heterogeneous" role="req">run programs
+on many different kinds of platforms simultaneously</a></em>, to
+<em><a name="discuss-platform-log" role="req">log platform information
+automatically as part of test results</a></em>, and <em><a
+name="discuss-platform-placement" role="req">keep results from
+sequential or concurrent runs on different platforms
+separate</a></em>.
+</p>
+
+<p>
+Qmtest must also allow users to <em><a name="discuss-timeout"
+role="req">specify timeouts and resource limits on tests for
+particular test runs</a></em>.  These limits must override any that are
+built into the test specification.
+</p>
+
+</a> <!-- end req-ctrl -->
 
 <a name="req-spec">
 <h3>Test Specification</h3>
@@ -1276,12 +1370,10 @@ order must be simple</a></em>.
 The single most important aspect of Qmtest's design is how users
 actually create individual tests.  If this is difficult, then it
 doesn't matter how elegant the rest of Qmtest is --- it will not be
-widely used.
+widely used.  Some of the particular input formats which Qmtest be
+able to support are listed below.
 </p>
 
-<p>
-Some of the specific input modes which Qmtest must be able to support
-are:
 <dl>
 
 <dt>
@@ -1319,9 +1411,10 @@ cases include:
 	</li>
 	<li>
 	<em><a name="discuss-translate-file-diff" role="req">Compare
-	the program's output stream to a reference copy</a></em>,
-	using an exact or fuzzy comparison program specified by a
-	user.
+	the program's output stream to a reference copy</a></em>.
+	This <em><a name="discuss-translate-custom-diff" role="req">
+	must be able to use an exact or fuzzy comparison program
+	specified by a user</a></em>.
 	</li>
 	<li>
 	<em><a name="discuss-translate-side-effect" role="req">Inspect
@@ -1348,9 +1441,7 @@ report, so that when the test program is run, many test reports are
 produced.  Note that Qmtest does <em>not</em> support multiple results
 requiring translation from a single executable, i.e. it will
 <em>not</em> create many test reports by comparing each of the many
-files generated by an executable against a reference file.  <em
-role="question">Question: should we mandate that multiple tests in a
-single executable be considered a test suite?</em>
+files generated by an executable against a reference file.
 </dd>
 
 <dt>
@@ -1387,12 +1478,18 @@ specification from arbitrary files</a></em>:
 As well as reading test specifications from its own configuration
 files, Qmtest must be able to extract test specifications from
 arbitrary pre-existing files.  For example, <a
-href="#usecase-daryl">Daryl Dowhile</a> already has 1200 test
+href="#story-daryl">Daryl Dowhile</a> already has 1200 test
 specifications embedded as specially-formatted comments in program
 source files; Qmtest must allow him to recycle those files.
 </dd>
 
 </dl>
+
+<p>
+As discussed in the section on <a href="#req-traversal">traversal</a>,
+test developers must be able to <a href="#discuss-tag-tests">add
+arbitrary tags to filter tests</a>.  All forms of test specification
+format must therefore allow for this.
 </p>
 
 </a> <!-- end req-spec -->
@@ -1403,7 +1500,7 @@ source files; Qmtest must allow him to recycle those files.
 <p>
 Users will often want to generate multiple tests programmatically in
 cases where generating tests manually is impractical.  For example, <a
-href="#usecase-ovide">Ovide</a> may write a small program that
+href="#story-ovide">Ovide</a> may write a small program that
 generates all 169 different possible cases of two rectangles
 overlapping (or failing to overlap).  There are three ways in which
 this could be managed:
@@ -1480,26 +1577,6 @@ A's setup fails, Qmtest should not report that test B has failed,
 since the root cause is the failure in test A's setup.
 </p>
 
-<p>
-<em role="question">Question: how should setup and teardown be
-specified?  Options that must be included are:
-<ul>
-<li>
-arbitrary shell commands (which are platform-specific, and may not be
-directly nestable in XML);
-</li>
-<li>
-Python scripts (which have the same problems as shell scripts); and
-</li>
-<li>
-extra command-line options to the test itself specifying which input
-file to open, what output directory to create, etc. (in cases where
-these are distinct from the options that specify the test itself).
-</li>
-</ul>
-</em>
-</p>
-
 </a> <!-- end req-updown -->
 
 <a name="req-sandbox">
@@ -1542,267 +1619,459 @@ linked libraries, and so on.
 
 <ol>
 
-<a name="summary-accuracy"><li></a><a
-href="#discuss-accuracy">Accuracy.</a>
+<li>
+<a name="summary-false-positives"/>
+<a href="#discuss-false-positives">No false positives.</a>
+</li>
 
-<a name="summary-false-positives"><li></a><a
-href="#discuss-false-positives">No false positives.</a>
+<li>
+<a name="summary-false-negatives"/>
+<a href="#discuss-false-negatives">No false negatives.</a>
+</li>
 
-<a name="summary-false-negatives"><li></a><a
-href="#discuss-false-negatives">No false negatives.</a>
+<li>
+<a name="summary-execute-all"/>
+<a href="#discuss-execute-all">Always execute at least all of the
+tests requested by the user.</a>
+</li>
 
-<a name="summary-execute-all"><li></a><a
-href="#discuss-execute-all">Always execute at least all of the tests
-requested by the user.</a>
-
-<a name="summary-small-use"><li></a><a
-href="#discuss-small-use">Small-scale testing must be easier to do
+<li>
+<a name="summary-small-use"/>
+<a href="#discuss-small-use">Small-scale testing must be easier to do
 with Qmtest than by hand.</a>
+</li>
 
-<a name="summary-reproducible"><li></a><a
-href="#discuss-reproducible">Test execution must be reproducible.</a>
+<li>
+<a name="summary-reproducible"/>
+<a href="#discuss-reproducible">Test execution must be
+reproducible.</a>
+</li>
 
-<a name="summary-recycle"><li></a><a href="#discuss-recycle">Must use
-existing standards, syntax, conventions, and tools.</a>
+<li>
+<a name="summary-recycle"/>
+<a href="#discuss-recycle">Must use existing standards, syntax,
+conventions, and tools.</a>
+</li>
 
-<a name="summary-not-all-cmdline"><li></a><a
-href="#discuss-not-all-cmdline">Must not require all tests to be
+<li>
+<a name="summary-not-all-cmdline"/>
+<a href="#discuss-not-all-cmdline">Must not require all tests to be
 command-line applications.</a>
+</li>
 
-<a name="summary-specify-dependency"><li></a><a
-href="#discuss-specify-dependency">Allow programmers to specify
+<li>
+<a name="summary-specify-dependency"/>
+<a href="#discuss-specify-dependency">Allow programmers to specify
 dependencies between tests.</a>
+</li>
 
-<a name="summary-track-dependency"><li></a><a
-href="#discuss-track-dependency">Prevent dependent tests from being
-executed if the tests on which they depend did not behave as
-expected.</a>
+<li>
+<a name="summary-track-dependency"/>
+<a href="#discuss-track-dependency">Prevent dependent tests from being
+executed if an error occurred in an antecedent.</a>
+</li>
 
-<a name="summary-cyclic-dependency"><li></a><a
-href="#discuss-cyclic-dependency">Detect and report cyclic
+<li>
+<a name="summary-cyclic-dependency"/>
+<a href="#discuss-cyclic-dependency">Detect and report cyclic
 dependencies.</a>
+</li>
 
-<a name="summary-separate-prep"><li></a><a
-href="#discuss-separate-prep">Separate setup and teardown from
+<li>
+<a name="summary-separate-prep"/>
+<a href="#discuss-separate-prep">Separate setup and teardown from
 particular tests.</a>
+</li>
 
-<a name="summary-trace-dependency"><li></a><a
-href="#discuss-trace-dependency">Trace dependencies between tests.</a>
-
-<a name="summary-expect-failure"><li></a><a
-href="#discuss-expect-failure">Specify that some tests are expected to
-fail.</a>
-
-<a name="summary-reported-expected-failures"><li></a><a
-href="#discuss-reported-expected-failures">Report expected failures
-separately from passes, unexpected failures, and other results.</a>
-
-<a name="summary-readable-report"><li></a><a
-href="#discuss-readable-report">Report test results in textual,
-human-readable form.</a>
-
-<a name="summary-report-xml"><li></a><a
-href="#discuss-report-xml">Report and store test results as XML.</a>
-
-<a name="summary-format-function"><li></a><a
-href="#discuss-format-function">Provide test result formatting and
-reporting functions in all languages of interest.</a>
-
-<a name="summary-format-switch"><li></a><a
-href="#discuss-format-switch">Format in which these functions report
-results must be controlled by a single switch.</a>
-
-<a name="summary-test-suites"><li></a><a
-href="#discuss-test-suites">Aggregate tests into test suites.</a>
-
-<a name="summary-suite-prep"><li></a><a
-href="#discuss-suite-prep">Test suites must support setup and
-teardown.</a>
-
-<a name="summary-whole-part"><li></a><a
-href="#discuss-whole-part">Make tests and test suites members of
-suites.</a>
-
-<a name="summary-suites-not-tests"><li></a><a
-href="#discuss-suites-not-tests">Test suites do not generate test
-results.</a>
-
-<a name="summary-unique-id"><li></a><a href="#discuss-unique-id">Every
-test must be uniquely identified.</a>
-
-<a name="summary-id-long-lived"><li></a><a
-href="#discuss-id-long-lived">Test identifiers must be long-lived.</a>
-
-<a name="summary-hierarchical-names"><li></a><a
-href="#discuss-hierarchical-names">Require every test or test suite to
-be uniquely named below its parent.</a>
-
-<a name="summary-summarize-results"><li></a><a
-href="#discuss-summarize-results">Must summarize the results of
+<li>
+<a name="summary-trace-dependency"/>
+<a href="#discuss-trace-dependency">Trace dependencies between
 tests.</a>
+</li>
 
-<a name="summary-hierarchical-reporting"><li></a><a
-href="#discuss-hierarchical-reporting">Reporting must be
+<li>
+<a name="summary-expect-failure"/>
+<a href="#discuss-expect-failure">Specify that some tests are expected
+to fail.</a>
+</li>
+
+<li>
+<a name="summary-reported-expected-failures"/>
+<a href="#discuss-reported-expected-failures">Report expected failures
+separately from passes, unexpected failures, and other results.</a>
+</li>
+
+<li>
+<a name="summary-readable-report"/>
+<a href="#discuss-readable-report">Report test results in textual,
+human-readable form.</a>
+</li>
+
+<li>
+<a name="summary-report-xml"/>
+<a href="#discuss-report-xml">Report and store test results as
+XML.</a>
+</li>
+
+<li>
+<a name="summary-format-function"/>
+<a href="#discuss-format-function">Provide test result formatting and
+reporting functions in all languages of interest.</a>
+</li>
+
+<li>
+<a name="summary-format-switch"/>
+<a href="#discuss-format-switch">Format in which these functions
+report results must be controlled by a single switch.</a>
+</li>
+
+<li>
+<a name="summary-gen-results"/>
+<a href="#discuss-gen-results">Must be able to generate, or
+re-generate, reference test results using exactly the same settings
+and specifications used for testing.</a>
+</li>
+
+<li>
+<a name="summary-test-suites"/>
+<a href="#discuss-test-suites">Aggregate tests into test suites.</a>
+</li>
+
+<li>
+<a name="summary-suite-prep"/>
+<a href="#discuss-suite-prep">Test suites must support setup and
+teardown.</a>
+</li>
+
+<li>
+<a name="summary-whole-part"/>
+<a href="#discuss-whole-part">Make tests and test suites members of
+suites.</a>
+</li>
+
+<li>
+<a name="summary-suites-not-tests"/>
+<a href="#discuss-suites-not-tests">Test suites do not generate test
+results.</a>
+</li>
+
+<li>
+<a name="summary-unique-id"/>
+<a href="#discuss-unique-id">Every test must be uniquely
+identified.</a>
+</li>
+
+<li>
+<a name="summary-id-long-lived"/>
+<a href="#discuss-id-long-lived">Test identifiers must be
+long-lived.</a>
+</li>
+
+<li>
+<a name="summary-hierarchical-names"/>
+<a href="#discuss-hierarchical-names">Require every test or test suite
+to be uniquely named below its parent.</a>
+</li>
+
+<li>
+<a name="summary-summarize-results"/>
+<a href="#discuss-summarize-results">Must summarize the results of
+tests.</a>
+</li>
+
+<li>
+<a name="summary-hierarchical-reporting"/>
+<a href="#discuss-hierarchical-reporting">Reporting must be
 hierarchical.</a>
+</li>
 
-<a name="summary-summary-mirrors-hierarchy"><li></a><a
-href="#discuss-summary-mirrors-hierarchy">Summary reporting must
+<li>
+<a name="summary-summary-mirrors-hierarchy"/>
+<a href="#discuss-summary-mirrors-hierarchy">Summary reporting must
 mirror the test suite hierarchy.</a>
+</li>
 
-<a name="summary-independent-reporting"><li></a><a
-href="#discuss-independent-reporting">Reporting and recording must be
-independent.</a>
+<li>
+<a name="summary-independent-reporting"/>
+<a href="#discuss-independent-reporting">Reporting and recording must
+be independent.</a>
+</li>
 
-<a name="summary-extra-values"><li></a><a
-href="#discuss-extra-values">Output format must allow tests to report
-extra named values.</a>
+<li>
+<a name="summary-extra-values"/>
+<a href="#discuss-extra-values">Output format must allow tests to
+report extra named values.</a>
+</li>
 
-<a name="summary-summarize-extra-values"><li></a><a
-href="#discuss-summarize-extra-values">Summary reporting system must
-allow extra named values to be combined hierarchically.</a>
+<li>
+<a name="summary-summarize-extra-values"/>
+<a href="#discuss-summarize-extra-values">Summary reporting system
+must allow extra named values to be combined hierarchically.</a>
+</li>
 
-<a name="summary-explain-deferral"><li></a><a
-href="#discuss-explain-deferral">Explaining why specific tests were
+<li>
+<a name="summary-explain-deferral"/>
+<a href="#discuss-explain-deferral">Explaining why specific tests were
 deferred.</a>
+</li>
 
-<a name="summary-report-changes"><li></a><a
-href="#discuss-report-changes">Report test results in a manner that
+<li>
+<a name="summary-override-engine"/>
+<a href="#discuss-override-engine">Override all aspects of the
+execution engine's internal operation.</a>
+</li>
+
+<li>
+<a name="summary-report-changes"/>
+<a href="#discuss-report-changes">Report test results in a manner that
 draws attention to recent changes.</a>
+</li>
 
-<a name="summary-temporary-records"><li></a><a
-href="#discuss-temporary-records">Temporarily record the results of
+<li>
+<a name="summary-temporary-records"/>
+<a href="#discuss-temporary-records">Temporarily record the results of
 recent test runs.</a>
+</li>
 
-<a name="summary-permanent-records"><li></a><a
-href="#discuss-permanent-records">Permanently record the results of
+<li>
+<a name="summary-permanent-records"/>
+<a href="#discuss-permanent-records">Permanently record the results of
 selected test runs.</a>
+</li>
 
-<a name="summary-user-recording-control"><li></a><a
-href="#discuss-user-recording-control">Distinction between temporary
-and permanent recording must be under developers' control.</a>
+<li>
+<a name="summary-user-recording-control"/>
+<a href="#discuss-user-recording-control">Distinction between
+temporary and permanent recording must be under developers'
+control.</a>
+</li>
 
-<a name="summary-automatic-traversal"><li></a><a
-href="#discuss-automatic-traversal">Automatically traverse test suites
-by default.</a>
+<li>
+<a name="summary-automatic-traversal"/>
+<a href="#discuss-automatic-traversal">Automatically traverse test
+suites by default.</a>
+</li>
 
-<a name="summary-user-control-traversal"><li></a><a
-href="#discuss-user-control-traversal">Specify tests or suites to be
-executed or omitted.</a>
+<li>
+<a name="summary-user-control-traversal"/>
+<a href="#discuss-user-control-traversal">Specify tests or suites to
+be executed or omitted.</a>
+</li>
 
-<a name="summary-include-omit"><li></a><a
-href="#discuss-include-omit">One or more tests are to be included or
-omitted.</a>
+<li>
+<a name="summary-include-omit"/>
+<a href="#discuss-include-omit">One or more tests are to be included
+or omitted.</a>
+</li>
 
-<a name="summary-log-filtering"><li></a><a
-href="#discuss-log-filtering">Filtering must be logged.</a>
+<li>
+<a name="summary-log-filtering"/>
+<a href="#discuss-log-filtering">Filtering must be logged.</a>
+</li>
 
-<a name="summary-filter-by-result"><li></a><a
-href="#discuss-filter-by-result">Re-execute only those tests that
+<li>
+<a name="summary-filter-by-result"/>
+<a href="#discuss-filter-by-result">Re-execute only those tests that
 produced specific results during a previous run.</a>
+</li>
 
-<a name="summary-access-temporary-results"><li></a><a
-href="#discuss-access-temporary-results">Must have access to the
+<li>
+<a name="summary-access-temporary-results"/>
+<a href="#discuss-access-temporary-results">Must have access to the
 temporary and permanent results of previous test runs while
 executing.</a>
+</li>
 
-<a name="summary-tag-tests"><li></a><a href="#discuss-tag-tests">Users
-must be able to provide symbolic tags for tests or test suites which
-can be used as input to filtering.</a>
+<li>
+<a name="summary-tag-tests"/>
+<a href="#discuss-tag-tests">Users must be able to provide symbolic
+tags for tests or test suites which can be used as input to
+filtering.</a>
+</li>
 
-<a name="summary-physical-structure"><li></a><a
-href="#discuss-physical-structure">Cannot mandate a physical structure
-for projects.</a>
+<li>
+<a name="summary-interrupt"/>
+<a href="#discuss-interrupt">
+Must be able to pause and re-start test execution.</a>
+</li>
 
-<a name="summary-specify-locations"><li></a><a
-href="#discuss-specify-locations">Separately specify the location of
-tests, temporary files, transient results, and permanent results.</a>
+<li>
+<a name="summary-physical-structure"/>
+<a href="#discuss-physical-structure">Cannot mandate a physical
+structure for projects.</a>
+</li>
 
-<a name="summary-default-locations"><li></a><a
-href="#discuss-default-locations">Cannot require explicit
+<li>
+<a name="summary-specify-locations"/>
+<a href="#discuss-specify-locations">Separately specify the location
+of tests, temporary files, transient results, and permanent
+results.</a>
+</li>
+
+<li>
+<a name="summary-default-locations"/>
+<a href="#discuss-default-locations">Cannot require explicit
 specification of object locations.</a>
+</li>
 
-<a name="summary-no-redundancy"><li></a><a
-href="#discuss-no-redundancy">Must not require redundant
+<li>
+<a name="summary-no-redundancy"/>
+<a href="#discuss-no-redundancy">Must not require redundant
 specification.</a>
+</li>
 
-<a name="summary-parallel"><li></a><a href="#discuss-parallel">Must be
-able to execute tests concurrently.</a>
+<li>
+<a name="summary-parallel"/>
+<a href="#discuss-parallel">Must be able to execute tests
+concurrently.</a>
+</li>
 
-<a name="summary-out-of-order"><li></a><a
-href="#discuss-out-of-order">Unordered execution should be the
+<li>
+<a name="summary-out-of-order"/>
+<a href="#discuss-out-of-order">Unordered execution should be the
 default.</a>
+</li>
 
-<a name="summary-in-order"><li></a><a
-href="#discuss-in-order">Specifying test order must be simple.</a>
+<li>
+<a name="summary-in-order"/>
+<a href="#discuss-in-order">Specifying test order must be simple.</a>
+</li>
 
-<a name="summary-standalone-call"><li></a><a
-href="#discuss-standalone-call">Single report from a single standalone
-executable.</a>
+<li>
+<a name="summary-heterogeneous"/>
+<a href="#discuss-heterogeneous">Run programs on many different kinds
+of platforms simultaneously.</a>
+</li>
 
-<a name="summary-translate-call"><li></a><a
-href="#discuss-translate-call">Report translation from a single
+<li>
+<a name="summary-platform-log"/>
+<a href="#discuss-platform-log">Log platform information automatically
+as part of test results.</a>
+</li>
+
+<li>
+<a name="summary-platform-placement"/>
+<a href="#discuss-platform-placement">Keep results from sequential or
+concurrent runs on different platforms separate.</a>
+</li>
+
+<li>
+<a name="summary-timeout"/>
+<a href="#discuss-timeout">Specify timeouts and resource limits on
+tests for particular test runs.</a>
+</li>
+
+<li>
+<a name="summary-standalone-call"/>
+<a href="#discuss-standalone-call">Single report from a single
 standalone executable.</a>
+</li>
 
-<a name="summary-translate-file-diff"><li></a><a
-href="#discuss-translate-file-diff">Compare the program's output stream
-to a reference copy.</a>
+<li>
+<a name="summary-translate-call"/>
+<a href="#discuss-translate-call">Report translation from a single
+standalone executable.</a>
+</li>
 
-<a name="summary-translate-side-effect"><li></a><a
-href="#discuss-translate-side-effect">Inspect one or more of the side
-effects of the program's execution.</a>
+<li>
+<a name="summary-translate-file-diff"/>
+<a href="#discuss-translate-file-diff">Compare the program's output
+stream to a reference copy.</a>
+</li>
 
-<a name="summary-translate-monitor"><li></a><a
-href="#discuss-translate-monitor">Construct a report based
-on the output of a monitoring program.</a>
+<li>
+<a name="summary-translate-custom-diff"/>
+<a href="#discuss-translate-custom-diff">Must be able to use an exact
+or fuzzy comparison program specified by a user.</a>
+</li>
 
-<a name="summary-multiple-calls"><li></a><a
-href="#discuss-multiple-calls">Multiple reports from a single
+<li>
+<a name="summary-translate-side-effect"/>
+<a href="#discuss-translate-side-effect">Inspect one or more of the
+side effects of the program's execution.</a>
+</li>
+
+<li>
+<a name="summary-translate-monitor"/>
+<a href="#discuss-translate-monitor">Construct a report based on the
+output of a monitoring program.</a>
+</li>
+
+<li>
+<a name="summary-multiple-calls"/>
+<a href="#discuss-multiple-calls">Multiple reports from a single
 executable.</a>
+</li>
 
-<a name="summary-arg-calls"><li></a><a href="#discuss-arg-calls">Must
-be able to specify repetition.</a>
+<li>
+<a name="summary-arg-calls"/>
+<a href="#discuss-arg-calls">Must be able to specify repetition.</a>
+</li>
 
-<a name="summary-arg-calls-id"><li></a><a
-href="#discuss-arg-calls-id">Must be able to uniquely identify members
-of a repetition set.</a>
+<li>
+<a name="summary-arg-calls-id"/>
+<a href="#discuss-arg-calls-id">Must be able to uniquely identify
+members of a repetition set.</a>
+</li>
 
-<a name="summary-direct-calls"><li></a><a
-href="#discuss-direct-calls">Direct calls to the test subject.</a>
+<li>
+<a name="summary-direct-calls"/>
+<a href="#discuss-direct-calls">Direct calls to the test subject.</a>
+</li>
 
-<a name="summary-embedded-calls"><li></a><a
-href="#discuss-embedded-calls">Filter test specification from arbitrary
-files.</a>
+<li>
+<a name="summary-embedded-calls"/>
+<a href="#discuss-embedded-calls">Filter test specification from
+arbitrary files.</a>
+</li>
 
-<a name="summary-test-generator"><li></a><a
-href="#discuss-test-generator">Specify that a test specification is
+<li>
+<a name="summary-test-generator"/>
+<a href="#discuss-test-generator">Specify that a test specification is
 actually a test specification generator.</a>
+</li>
 
-<a name="summary-recursion-limit"><li></a><a
-href="#discuss-recursion-limit">Have a default limit on the depth of
-test generation recursion.</a>
+<li>
+<a name="summary-recursion-limit"/>
+<a href="#discuss-recursion-limit">Have a default limit on the depth
+of test generation recursion.</a>
+</li>
 
-<a name="summary-override-recursion-limit"><li></a><a
-href="#discuss-override-recursion-limit">Allow users to override the
-test generation recursion limit.</a>
+<li>
+<a name="summary-override-recursion-limit"/>
+<a href="#discuss-override-recursion-limit">Allow users to override
+the test generation recursion limit.</a>
+</li>
 
-<a name="summary-prep-in-spec"><li></a><a
-href="#discuss-prep-in-spec">Setup and teardown must be specified in
-the test specification.</a>
+<li>
+<a name="summary-prep-in-spec"/>
+<a href="#discuss-prep-in-spec">Setup and teardown must be specified
+in the test specification.</a>
+</li>
 
-<a name="summary-log-prep"><li></a><a href="#discuss-log-prep">Setup
-and teardown operations must be logged.</a>
+<li>
+<a name="summary-log-prep"/>
+<a href="#discuss-log-prep">Setup and teardown operations must be
+logged.</a>
+</li>
 
-<a name="summary-test-after-setup"><li></a><a
-href="#discuss-test-after-setup">Tests are only executed if their
+<li>
+<a name="summary-test-after-setup"/>
+<a href="#discuss-test-after-setup">Tests are only executed if their
 setup operations complete successfully.</a>
+</li>
 
-<a name="summary-first-error"><li></a><a
-href="#discuss-first-error">Only report significant setup errors by
+<li>
+<a name="summary-first-error"/>
+<a href="#discuss-first-error">Only report significant setup errors by
 default.</a>
+</li>
 
-<a name="summary-record-build-options"><li></a><a
-href="#discuss-record-build-options">Must be able to record the build
-options of all tests.</a>
+<li>
+<a name="summary-record-build-options"/>
+<a href="#discuss-record-build-options">Must be able to record the
+build options of all tests.</a>
+</li>
 
 </ol>
 
@@ -1812,26 +2081,94 @@ options of all tests.</a>
 
 <a name="iface">
 <h2>Interface</h2>
-
-<ol>
-<li>
-Input transformation: everything is mapped by user-specified filter
-(many standard ones provided) into canonical SOAP representation.
-</li>
-<li>
-E.g. multiple tests in a single file handled by splitting filter, flat
-text input handled by simple parser/translator, etc.x
-</li>
-<li>
-E.g. Daryl Dowhile implements a filter to extract test specs from
-legacy test files.
-</li>
-</ol>
-
 </a> <!-- end iface -->
+
+<a name="solve">
+<h2>User Solutions</h2>
+
+<a name="solve-bhargan">
+<h3>Bhargan Basepair</h3>
+</a> <!-- end solve-bhargan -->
+
+<a name="solve-daryl">
+<h3>Daryl Dowhile</h3>
+</a> <!-- end solve-daryl -->
+
+<a name="solve-glenda">
+<h3>Glenda Grammar</h3>
+</a> <!-- end solve-glenda -->
+
+<a name="solve-ovide">
+<h3>Ovide Overlay</h3>
+</a> <!-- end solve-ovide -->
+
+<a name="solve-tahura">
+<h3>Tahura Transparency</h3>
+</a> <!-- end solve-tahura -->
+
+</a> <!-- end solve -->
 
 <a name="arch">
 <h2>Architecture</h2>
+
+<p>
+Execution: Qmtest uses visitor pattern, calling methods of test
+execution class on the way into suites, between tests in the suite,
+etc.  Users may override the test execution class at any level
+(derivation in Python).
+</p>
+
+<p>
+Input: everything is translated into, or generates, SOAP-like XML,
+which then calls back into Qmtest.  This can cause Qmtest to execute
+tests, to generate new tests, or to execute other test specs
+(e.g. recurse into sub-directories).
+</p>
+
+<p>
+Output: Qmtest maintains a list of event handlers.  Each test is run.
+If an event occurs (e.g. timeout, memory fault, etc.), the appropriate
+handler is invoked to translate the fault into a test report.  If no
+event occurs, but a handler is associated with the test itself, Qmtest
+runs that handler.  It is responsible for translating the test's exit
+status, output files, stdout, etc., into a test report.  If there is
+no test-specific handler, Qmtest uses the program's stdout (or, if it
+cannot read or parse that, its exit status) to generate a test report.
+</p>
+
+<p>
+Standard output comparators are:
+<ul>
+<li>
+No-op (just echo stdout to Qmtest)
+</li>
+<li>
+Compare text (with flags to handle CR/LF, Unicode, and/or sorting)
+</li>
+<li>
+Compare bitwise
+</li>
+<li>
+Compare floating point within tolerance (what to do about large data
+sets, arrays, etc.?)
+</li>
+</ul>
+</p>
+
+<p>
+Recording: how best to record test results?  Persisted Python, XML,
+SQL database?
+</p>
+
+<p>
+Should Qmtest include pre-defined configuration tags?
+</p>
+
+<p>
+How to specify where tests are allowed to run?  Can't use specific
+machine names in test suite itself (reduces portability).  Separate
+list of machines, in separate spec?
+</p>
 
 </a> <!-- end arch -->
 
@@ -1922,6 +2259,14 @@ The entire discussion list is archived at:
 </blockquote>
 </p>
 
+<p>
+James Bach's paper "Test Automation Snake Oil" discusses why full
+automation of testing is not possible, practical, or desirable:
+<blockquote>
+<a href="http://www.satisfice.com/articles/test_automation_snake_oil.pdf">http://www.satisfice.com/articles/test_automation_snake_oil.pdf</a>
+</blockquote>
+</p>
+
 </a> <!-- end ref -->
 
 <a name="notes">
@@ -1945,9 +2290,93 @@ effect in one of two ways:
 	</ol>
 </p>
 
+<p>
+Qmtest will not support piped test generation, i.e. will not provide
+direct support for:
+<blockquote><pre>
+test_generator | test_subject | report_filter
+</pre></blockquote>
+Users may implement this themselves (e.g. as a shell script), or may
+specify that the test_generator is part of the setup for the
+test_subject, and have the test_generator write data to a temporary
+file.
+</p>
+
 </a> <!-- end notes -->
 
-<hr/>
+<a name="questions">
+<h2>Questions</h2>
+
+<p>
+The discussion in the section on <a href="#req-physical">physical
+organization</a> seems to imply some sort of persistent record of
+inherited settings.  If a user executes an entire suite with the
+results directory set to <code>./results</code>, then re-executes the
+part of the suite contained in the sub-directory
+<code>platform</code>, Qmtest must be able to remember that results
+are supposed to go in <code>platform/results</code>.  This is
+manageable, but what about the case in which the user creates a whole
+new sub-directory, and runs Qmtest in there for the first time, rather
+than in the root directory?  How does Qmtest know that results are
+supposed to go in <code>newdir/results</code>?  Should there be some
+way to re-execute the test suite from the root that doesn't actually
+run the tests, but only updates control settings?  If so, does this
+mean that Qmtest will store the user's settings, and the actual
+(fleshed-out) settings?
+</p>
+
+<p>
+In the section on <a href="#discuss-multiple-calls">multiple reports
+from a single executable</a>, should we mandate that multiple tests in
+a single executable be considered a test suite?
+</p>
+
+<p>
+In the section on <a href="#req-updown">setup and takedown</a>, how
+should setup and teardown be specified?  Options that must be included
+are:
+<ul>
+<li>
+arbitrary shell commands (which are platform-specific, and may not be
+directly nestable in XML);
+</li>
+<li>
+Python scripts (which have the same problems as shell scripts); and
+</li>
+<li>
+extra command-line options to the test itself specifying which input
+file to open, what output directory to create, etc. (in cases where
+these are distinct from the options that specify the test itself).
+</li>
+</ul>
+</p>
+
+<p>
+How are test specifications identified?  Presumably there is a single
+file in each interesting directory that tells Qmtest what tests to
+run, and what sub-specs to read.  These files must be flat text,
+Python, and XML (at least); the first two create the third.  Must be
+able to use regular expressions and/or file globs to identify other
+test files, along with execution rules.
+</p>
+
+<p>
+How are arbitrary actions identified?  In Python, they can be shell
+script fragments in a triple-quoted string.  What about flat text
+input, or XML input?  Nesting in CDATA is clunky, but external files
+and escaped characters are clunkier.
+</p>
+
+<p>
+How does Qmtest tell programs where to put temporary files (for
+comparison)?  Alternatively, how to programs tell Qmtest where they
+have put their results?
+</p>
+
+</a> <!-- end questions -->
+
+<p>
+<hr>
 
 <table cellpadding="10">
 <tr>
