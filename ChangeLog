@@ -1,5 +1,14 @@
 2003-11-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (parse_boolean): New function.
+	* qm/fields.py (BooleanField.Validate): New method.
+	* qm/test/context.py (ContextException.__init__): Generalize.
+	(Context.GetBoolean): New method.
+	* qm/test/result.py (Result.NoteException): Simplify.
+	* qm/test/share/messages/diagnostics.txt (invalid boolean context
+	var): New message.
+	(missing context variable): Likewise.
+
 	* qm/common.py (open_temporary_file): Fix typo.
 
 2003-11-10  Mark Mitchell  <mark@codesourcery.com>

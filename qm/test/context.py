@@ -26,15 +26,19 @@ import types
 ########################################################################
 
 class ContextException(qm.common.QMException):
-    """A 'ContextException' indicates a missing context variable."""
+    """A 'ContextException' indicates an invalid context variable."""
 
-    def __init__(self, key):
+    def __init__(self, key, msg = "missing context variable"):
         """Construct a new 'ContextException'.
 
-        'key' -- A string giving the context key for which no value
-        was available."""
+        'key' -- A string giving the context key for which no valid
+        value was available.
 
-        qm.common.QMException.__init__(self, "Missing context variable.")
+        'msg' -- A diagnostic identifier explaining the problem.  The
+        message string may contain a fill-in for the key."""
+
+        msg = qm.error(msg, key = key)
+        qm.common.QMException.__init__(self, msg)
         self.key = key
 
         
@@ -100,6 +104,31 @@ class Context(types.DictType):
             assert value is not None
             self[option] = value
 
+
+    def GetBoolean(self, key, default = None):
+        """Return the boolean value associated with 'key'.
+
+        'key' -- A string.
+
+        'default' -- A default value, used if 'key' has no assicated
+        value.
+
+        returns -- The value associated with 'key' in the context,
+        interpreted as a boolean.
+
+        The value associated with 'key' must be a string.  If not, an
+        exception is raised.  If the value is a string, but does not
+        correspond to a boolean value, an exception is raised."""
+
+        valstr = self.get(key)
+        if valstr is None:
+            raise ContextException(key)
+
+        try:
+            return qm.common.parse_boolean(valstr)
+        except ValueError:
+            raise ContextException(key, "invalid boolean context var")
+        
 
     def GetTemporaryDirectory(self):
         """Return the path to the a temporary directory.
@@ -209,4 +238,5 @@ class Context(types.DictType):
         added = self.__context.GetAddedProperties()
         added.update(self)
         return added
+
 

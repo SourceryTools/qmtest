@@ -682,6 +682,27 @@ def split_argument_list(command):
     return argument_list
 
 
+def parse_boolean(value):
+    """Parse a boolean string.
+
+    'value' -- A string.
+
+    returns -- True if 'value' is a true string, false if 'value' is a
+    false string.
+
+    raises -- 'ValueError' if 'value' is neither a true string, nor a
+    false string."""
+
+    value = value.lower()
+    if value in ("1", "true", "yes", "on"):
+        return 1
+    elif value in ("0", "false", "no", "off"):
+        return 0
+    else:
+        raise ValueError, value
+
+    
+    
 # No 'time.strptime' on non-UNIX systems, so use this instead.  This
 # version is more forgiving, anyway, and uses our standardized timestamp
 # format. 

@@ -1585,6 +1585,14 @@ class BooleanField(EnumerationField):
         EnumerationField.__init__(self, name, default_value,
                                   ["true", "false"], **properties)
 
+
+    def Validate(self, value):
+
+        if qm.common.parse_boolean(value):
+            value = "true"
+        else:
+            value = "false"
+        return super(BooleanField, self).Validate(value)
         
 
 ########################################################################

@@ -72,6 +72,9 @@ should be a valid Python regular expression.
 The substitution "%(substitution)s" is invalid.  A substitution should
 have the form "/*pattern*/*replacement*/".
 
+@ invalid boolean context var
+The value of "%(key)s" is not a valid boolean value.  
+
 @ invalid class
 There is no test class "%(class_name)s".
 
@@ -119,6 +122,9 @@ Specify the name of the test class and the test ID of the new test.
 
 @ missing argument
 A value for the "%(title)s" parameter is missing.
+
+@ missing context variable
+The context variable "%(key)s" was not defined.
 
 @ missing test id
 There is no test with ID "%(test_id)s".

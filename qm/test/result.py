@@ -286,14 +286,14 @@ class Result:
         # If no cause was specified, use an appropriate message.
         if not cause:
             if exception_type is ContextException:
-                cause = 'Missing context variable "%s".' % exc_info[1].key
+                cause = str(exc_info[1])
             else:
                 cause = "An exception occurred."
 
         # For a 'ContextException', indicate which context variable
-        # was missing.
+        # was invalid.
         if exception_type is ContextException:
-            self["qmtest.missing_variable"] = exc_info[1].key
+            self["qmtest.context_variable"] = exc_info[1].key
             
         self.SetOutcome(outcome)
         self[Result.CAUSE] = cause
