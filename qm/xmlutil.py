@@ -35,19 +35,62 @@
 # imports
 ########################################################################
 
+import os
+import qm
 import xml.dom
 import xml.dom.ext 
+import xml.dom.ext.reader.Sax
 import xml.dom.DOMImplementation
 
 ########################################################################
-# classes
+# exceptions
 ########################################################################
 
-# Place class definitions here.
+class ParseError(Exception):
+    pass
+
+    
 
 ########################################################################
 # functions
 ########################################################################
+
+def make_system_id(name):
+    """Construct a system ID for the file 'name'."""
+
+    return "http://www.software-carpentry.com/qm/dtds/%s" % name
+
+
+def load_xml_file(path):
+    """Return a DOM document loaded from the XML file 'path'.
+
+    raises -- 'ParseError' if an error occurs while parsing the file.
+    This may occur if the file is either not well-formed or not
+    valid."""
+
+    # Open the file.
+    try:
+        file = open(path, "r")
+    except:
+        # FIXME.  Any errors that need to be handled here?
+        raise
+    # Construct the path to the DTD catalog.
+    catalog_path = os.path.join(qm.get_base_directory(),
+                                "dtds", "CATALOG")
+    # Create a validating DOM reader.
+    reader = xml.dom.ext.reader.Sax.Reader(validate=1, catName=catalog_path)
+    try:
+        # Read and parse XML.
+        document = reader.fromStream(file)
+    except xml.sax._exceptions.SAXParseException, exception:
+        raise ParseError, qm.error("xml parse error",
+                                   line=exception.getLineNumber(),
+                                   character=exception.getColumnNumber(),
+                                   file_name=path,
+                                   message=exception._msg)
+    file.close()
+    return document
+
 
 def get_dom_text(node):
     """Return the text contained in DOM 'node'.
@@ -58,6 +101,9 @@ def get_dom_text(node):
     which is a text node."""
 
     assert node.nodeType == xml.dom.Node.ELEMENT_NODE
+    if len(node.childNodes) == 0:
+        # Missing the text node; assume it's empty.
+        return ""
     assert len(node.childNodes) == 1
     child = node.childNodes[0]
     assert child.nodeType == xml.dom.Node.TEXT_NODE
@@ -113,17 +159,18 @@ def create_dom_text_element(document, tag, text):
 
 __dom_implementation = xml.dom.DOMImplementation.DOMImplementation()
 
-def create_dom_document(public_id, system_id, document_element_tag):
+def create_dom_document(public_id, dtd_file_name, document_element_tag):
     """Create a DOM document.
 
     'public_id' -- The public ID of the DTD to use for this document.
 
-    'system_id' -- The system ID of the DTD to use for this document.
+    'dtd_file_name' -- The name of the DTD file for this document.
 
     'document_element_tag' -- The tag of the main document element.
 
     returns -- A DOM document node."""
 
+    system_id = make_system_id(dtd_file_name)
     # Create the document type for the XML document.
     document_type = __dom_implementation.createDocumentType(
         qualifiedName=document_element_tag,

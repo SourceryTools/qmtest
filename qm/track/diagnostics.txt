@@ -114,12 +114,6 @@ The issue file contains issues of unknown issue class %(class_name)s.
 The issue file contains an unknown field %(field_name)s of issue class
 %(class_name)s. 
 
-@ xml parse error
-The XML parser encountered an error at line %(line)d, character
-%(character)d of the issue file %(file_name)s:
-
-  '%(message)s'
-
 @ create no equals
 Incorrect argument "%(arg)". Must have an = in the argument passed to the
 create command.

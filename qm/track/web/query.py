@@ -61,7 +61,7 @@ class QueryPageInfo(web.PageInfo):
 
 
     def MakeQueryForm(self):
-        request = qm.web.WebRequest("summary")
+        request = self.request.copy("summary")
         return qm.web.make_form_for_request(request)
 
 

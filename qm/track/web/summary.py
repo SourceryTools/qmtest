@@ -174,7 +174,7 @@ class SummaryPageInfo(web.PageInfo):
     def MakeIssueUrl(self, issue):
         """Generate a URL to show an individual issue."""
 
-        request = qm.web.WebRequest("show", iid=issue.GetId())
+        request = self.request.copy("show", iid=issue.GetId())
         return qm.web.make_url_for_request(request)
 
 

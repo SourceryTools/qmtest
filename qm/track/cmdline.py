@@ -291,7 +291,7 @@ class Command:
         # Was the output option specified?
         command_options = self.GetCommandOptions()
         if command_options.has_key("output"):
-            # Yes; export to the specified file name.
+            # Export to the specified file name.
             output_file_name = command_options["output"]
             output_file = open(output_file_name, "w")
             output = output_file
@@ -770,7 +770,10 @@ class Command:
         command_options = self.GetCommandOptions()
         # Get the port number specified by a command option, if any.
         # Otherwise use a default value.
-        port_number = int(command_options.get('port', 8000))
+        try:
+            port_number = int(command_options.get('port', 8000))
+        except ValueError:
+            raise qm.cmdline.CommandError, qm.error("bad port number")
         # Get the local address specified by a command option, if any.
         # If not was specified, use the empty string, which corresponds
         # to all local addresses.

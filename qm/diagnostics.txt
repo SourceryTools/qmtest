@@ -33,6 +33,9 @@
 
 # Please keep diagnostics in alphabetical order by tag.
 
+@ bad port number
+You must specify a numerical port number.
+
 @ conflicting options
 You may not specify both '--%(option1)s' and '--%(option2)s'.
 
@@ -46,6 +49,12 @@ A '<%(wrong_tag)s>' element is not allowed for field %(field)s.  Only a
 
 @ missing command
 You must specify a command.  Use the '--help' option to list commands.
+
+@ xml parse error
+The XML parser encountered an error at line %(line)d, character
+%(character)d of the file %(file_name)s:
+
+  '%(message)s'
 
 ########################################################################
 # Local Variables:

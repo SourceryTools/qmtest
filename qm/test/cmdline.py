@@ -462,8 +462,8 @@ class Command:
         'output' -- A file object to which to write the results."""
 
         document = qm.xmlutil.create_dom_document(
-            public_id=None,
-            system_id="results.dtd",
+            public_id="-//Software Carpentry//QMTest Result V0.1//EN",
+            dtd_file_name="result.dtd",
             document_element_tag="results"
             )
         # Add a result element for each test that was run.

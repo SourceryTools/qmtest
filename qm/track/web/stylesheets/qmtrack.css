@@ -40,7 +40,7 @@ table {
 
 th {
     color: white;
-    background-color: black;
+    background-color: #808080;
     text-align: left;
     text-decoration: bold;
 }
@@ -62,7 +62,7 @@ span#colhead {
 
 a#colhead {
     color: white;
-    background-color: black;
+    background-color: #808080;
 }
 
 
@@ -87,3 +87,7 @@ tr.field-error {
     background-color: fff0f8;
 }
 
+span.userid {
+    color: green;
+    font-weight: bold;
+}

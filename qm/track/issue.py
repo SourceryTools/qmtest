@@ -42,7 +42,6 @@ import qm.xmlutil
 import string
 import sys
 import xml.dom.ext.reader.Sax
-import xml.dom.ext.Visitor
 
 ########################################################################
 # classes
@@ -479,8 +478,8 @@ def issues_to_xml(issues, output):
 
     # Create a DOM document.
     document = qm.xmlutil.create_dom_document(
-        public_id=None,
-        system_id="issue.dtd",
+        public_id="-//Software Carpentry//QMTrack Issue V0.1//EN",
+        dtd_file_name="issue.dtd",
         document_element_tag="issues"
         )
     # Add an issue element for each issue.

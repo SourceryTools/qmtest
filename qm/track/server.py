@@ -115,6 +115,8 @@ def start_server(port, address="", log_file=None):
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
         ( "download-attachment", qm.track.web.handle_download_attachment ),
+        ( "index", qm.track.web.index.handle_index ),
+        ( "login", qm.web.handle_login ),
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
@@ -211,7 +213,7 @@ def execute(command, output_file, error_file):
     except qm.cmdline.CommandError, msg:
         script_name = qm.track.state["script_name"]
         msg = qm.structured_text.to_text(str(msg))
-        error_file.write("%s: %s\n" % (script_name, msg))
+        error_file.write("%s: %s" % (script_name, msg))
         error_file.write("Invoke %s --help for help with usage.\n"
                          % script_name)
         return 2

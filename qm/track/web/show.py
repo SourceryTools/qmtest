@@ -166,7 +166,7 @@ class ShowPageInfo(web.PageInfo):
     def MakeSubmitUrl(self):
         """Generate a URL for submitting a new issue or revision."""
 
-        request = qm.web.WebRequest("submit")
+        request = self.request.copy("submit")
         request["class"] = self.issue.GetClass().GetName()
         return qm.web.make_url_for_request(request)
     
@@ -338,6 +338,9 @@ def handle_submit(request):
         value = field.ParseFormValue(value)
         issue.SetField(field_name, value)
 
+    # Set the user ID in the issue or revision.
+    issue.SetField("user", request.GetSession().GetUserId())
+
     # Is the submission valid?
     invalid_fields = issue.Validate()
     if len(invalid_fields) > 0:
@@ -348,13 +351,15 @@ def handle_submit(request):
             msg = qm.web.format_structured_text(str(exc_info[1]))
             field_errors[field_name] = msg
         if is_new:
-            new_request = qm.web.WebRequest("show", style="new")
-            new_request["class"] = request["class"]
+            new_request = qm.web.WebRequest("show",
+                                            base=request,
+                                            style="new")
         else:
             new_request = qm.web.WebRequest("show",
+                                            base=request,
                                             style="edit",
-                                            iid=request["iid"])
-            new_request["class"] = request["class"]
+                                            iid=request["iid"],)
+        new_request["class"] = request["class"]
         page_info = ShowPageInfo(new_request, issue,
                                  field_errors=field_errors)
         return web.generate_html_from_dtml("show.dtml", page_info)
@@ -377,7 +382,7 @@ def handle_submit(request):
     # or -modified issue.  Instead, redirect to it.  That way, if the
     # user reloads the page or backs up to it, the issue form will not
     # be resubmitted.
-    request = qm.web.WebRequest("show", iid=iid)
+    request = qm.web.WebRequest("show", base=request, iid=iid)
     raise qm.web.HttpRedirect, (qm.web.make_url_for_request(request))
 
 

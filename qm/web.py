@@ -41,8 +41,10 @@ import BaseHTTPServer
 import cgi
 import errno
 import htmlentitydefs
+import md5
 import os
 import qm.common
+import qm.user
 import re
 import SimpleHTTPServer
 import SocketServer
@@ -50,10 +52,20 @@ import socket
 import string
 import structured_text
 import sys
+import time
 import traceback
 import types
 import urllib
+import user
+import whrandom
 import xmlrpclib
+
+########################################################################
+# constants
+########################################################################
+
+session_id_field = "session"
+"""The name of the form field used to store the session ID."""
 
 ########################################################################
 # exception classes
@@ -66,6 +78,17 @@ class AddressInUseError(RuntimeError):
 
 class PrivilegedPortError(RuntimeError):
     pass
+
+
+
+class NoSessionError(RuntimeError):
+    pass
+
+
+
+class InvalidSessionError(RuntimeError):
+    pass
+
 
 
 
@@ -131,6 +154,27 @@ class PageInfo:
         return "</body>"
 
 
+    def MakeLoginForm(self, redirect_request=None):
+        if redirect_request is None:
+            # No redirection specified, so redirect back to this page.
+            redirect_request = self.request
+        request = redirect_request.copy("login")
+        request["_login_url"] = redirect_request.GetUrl()
+        # Use a POST method to submit the login form, so that passwords
+        # don't appear in web logs.
+        return qm.web.make_form_for_request(request, method="post") \
+               + '''
+   <table cellpadding="0" cellspacing="0">
+    <tr><td>User name:</td></tr>
+    <tr><td><input type="text" size="16" name="_login_user_name"></td></tr>
+    <tr><td>Password:</td></tr>
+    <tr><td><input type="password" size="16" name="_login_password"></td></tr>
+    <tr><td><input type="submit" value=" Log In "></td></tr>
+   </table>
+  </form>
+''' 
+
+
     def MakeUrlButton(self, *args, **attributes):
         """Generate HTML for a (non-form) action button.
 
@@ -170,6 +214,12 @@ class PageInfo:
           ''' % (color, self.MakeSpacer())
 
 
+    def FormatUserId(self, user_id):
+        """Generate HTML for a user ID."""
+
+        return '<span class="userid">%s</span>' % user_id
+
+
 
 class HttpRedirect(Exception):
     """Exception signalling an HTTP redirect response.
@@ -203,6 +253,8 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         script_url, fields = parse_url_query(self.path)
         # Build a request object and hand it off.
         request = apply(WebRequest, (script_url, ), fields)
+        # Store the client's IP address with the request.
+        request.client_address = self.client_address[0]
         self.__HandleRequest(request)
         self.wfile.flush()
         try:
@@ -232,6 +284,8 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             fields.update(url_fields)
             # Create and process a request.
             request = apply(WebRequest, (script_url, ), fields)
+            # Store the client's IP address with the request.
+            request.client_address = self.client_address[0]
             self.__HandleRequest(request)
         elif content_type == "text/xml":
             # Check if this request corresponds to an XML-RPC invocation.
@@ -285,6 +339,11 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", mime_type)
         self.send_header("Content-Length", len(data))
+        # Since this is a dynamically-generated page, indicate that it
+        # should not be cached.  The second header is necessary to support
+        # HTTP/1.0 clients.
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Pragma", "no-cache")
         self.end_headers()
         try:
             self.wfile.write(data)
@@ -345,6 +404,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         # Send the file.
         self.send_response(200)
         self.send_header("Content-Type", self.guess_type(path))
+        self.send_header("Cache-Control", "public")
         self.end_headers()
         self.copyfile(file, self.wfile)
 
@@ -648,9 +708,32 @@ class WebServer(HTTPServer):
         # Initialize the base class here.  This binds the server
         # socket. 
         try:
-            BaseHTTPServer.HTTPServer.__init__(self,
-                                               (self.__address, self.__port), 
-                                               WebRequestHandler)
+            # Base class initialization.  Unfortunately, the base
+            # class's initializer function (actually, its own base
+            # class's initializer function, 'TCPServer.__init__')
+            # doesn't provide a way to set options on the server socket
+            # after it's created but before it's bound.
+            #
+            # If the SO_REUSEADDR option is not set before the socket is
+            # bound, the bind operation will fail if there is alreay a
+            # socket on the same port in the TIME_WAIT state.  This
+            # happens most frequently if a server is terminated and then
+            # promptly restarted on the same port.  Eventually, the
+            # socket is cleaned up and the port number is available
+            # again, but it's a big nuisance.  The SO_REUSEADDR option
+            # allows the new socket to be bound to the same port
+            # immediately.
+            #
+            # So that we can insert the call to 'setsockopt' between the
+            # socket creation and bind, we duplicate the body of
+            # 'TCPServer.__init__' here and add the call.
+            self.server_address = (self.__address, self.__port)
+            self.RequestHandlerClass = WebRequestHandler
+            self.socket = socket.socket(self.address_family,
+                                        self.socket_type)
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_bind()
+            self.server_activate()
         except socket.error, error:
             error_number, message = error
             if error_number == errno.EADDRINUSE:
@@ -708,16 +791,24 @@ class WebRequest:
     or arguments encoded in a URL query string.  It has some other
     methods as well."""
 
-    def __init__(self, script_url, **fields):
+    def __init__(self, script_url, base=None, **fields):
         """Create a new request object.
 
         'script_url' -- The URL of the script that processes this
         query.
+        
+        'base' -- A request object from which the session ID will be
+        duplicated, or 'None'.
 
         'fields' -- The query arguments."""
 
         self.__url = script_url
         self.__fields = fields
+        # Copy the session ID from the base.
+        if base is not None:
+            session = base.GetSessionId()
+            if session is not None:
+                self.SetSessionId(session)
 
 
     def __str__(self):
@@ -733,6 +824,49 @@ class WebRequest:
         return self.__url
 
     
+    def SetSessionId(self, session_id):
+        """Set the session ID for this request to 'session_id'."""
+
+        self[session_id_field] = session_id
+
+
+    def GetSessionId(self):
+        """Return the session ID for this request.
+
+        returns -- A session ID, or 'None'."""
+
+        return self.get(session_id_field, None)
+
+
+    def GetSession(self):
+        """Return the session for this request.
+
+        raises -- 'NoSessionError' if no session ID is specified in the
+        request.
+
+        raises -- 'InvalidSessionError' if the session ID specified in
+        the request is invalid."""
+
+        session_id = self.GetSessionId()
+        if session_id is None:
+            # There's no session specified in this request.  Try to
+            # create a session for the default user.
+            try:
+                user_id = user.authenticator.AuthenticateDefaultUser()
+            except user.AuthenticationError:
+                # Couldn't get a default user session, so bail.
+                raise NoSessionError, "no sesison for request"
+            # Create an implicit session with the default user ID.
+            session = Session(self, user_id)
+            # Redirect to the same page but using the new session ID.
+            self.SetSessionId(session.GetId())
+            raise HttpRedirect, make_url_for_request(self)
+        else:
+            return get_session(self, session_id)
+
+
+    # Methods to emulate a mapping.
+
     def __getitem__(self, key):
         return self.__fields[key]
 
@@ -744,6 +878,10 @@ class WebRequest:
     def __delitem__(self, key):
         del self.__fields[key]
 
+
+    def get(self, key, default=None):
+        return self.__fields.get(key, default)
+    
 
     def keys(self):
         return self.__fields.keys()
@@ -757,10 +895,23 @@ class WebRequest:
         return self.__fields.items()
     
 
-    def copy(self):
-        """Return a duplicate of this request."""
+    def copy(self, url=None, **fields):
+        """Return a duplicate of this request.
 
-        return apply(WebRequest, (self.__url, ), self.__fields.copy())
+        'url' -- The URL for the request copy.  If 'None', use the
+        URL of the source.
+
+        '**fields' -- Additional fields to set in the copy."""
+
+        # Copy the URL unless another was specified.
+        if url is None:
+            url = self.__url
+        # Copy fields, and update with any that were specified
+        # additionally. 
+        new_fields = self.__fields.copy()
+        new_fields.update(fields)
+        # Make the request.
+        return apply(WebRequest, (url, ), new_fields)
 
 
 
@@ -805,6 +956,105 @@ class CGIWebRequest:
         for key in self.keys():
             fields[key] = self[key]
         return apply(WebRequest, (self.GetUrl(), ), fields)
+
+
+
+class Session:
+    """A persistent user session.
+
+    A 'Session' object represents an ongoing user interaction with the
+    web server."""
+
+    def __init__(self, request, user_id, expiration_timeout=3600):
+        """Create a new session.
+
+        'request' -- A 'WebRequest' object in response to which this
+        session is created.
+
+        'user_id' -- The ID of the user owning the session.
+
+        'expiration_timeout -- The expiration time, in seconds.  If a
+        session is not accessed for this duration, it is expired and no
+        longer usable."""
+
+        self.__user_id = user_id
+        self.__expiration_timeout = expiration_timeout
+        # Extract the client's IP address from the request.
+        self.__client_address = request.client_address
+
+        # Now create a session ID.  Start with a new random number
+        # generator.
+        generator = whrandom.whrandom()
+        # Seed it with the system time.
+        generator.seed()
+        # FIXME: Is this OK?
+        digest = md5.new("%f" % generator.random()).digest()
+        # Convert the digest, which is a 16-character string,
+        # to a sequence hexadecimal bytes.
+        digest = map(lambda ch: hex(ord(ch))[2:], digest)
+        # Convert it to a 32-character string.
+        self.__id = string.join(digest, "")
+        
+        self.Touch()
+
+        # Record ourselves in the sessions map.
+        sessions[self.__id] = self
+
+
+    def Touch(self):
+        """Update the last access time on the session to now."""
+        
+        self.__last_access_time = time.time()
+
+
+    def GetId(self):
+        """Return the session ID."""
+
+        return self.__id
+    
+
+    def GetUserId(self):
+        """Return the ID of the user who owns this session."""
+
+        return self.__user_id
+
+
+    def GetUser(self):
+        """Return the user record for the owning user.
+
+        returns -- A 'qm.user.User' object."""
+
+        return user.database[self.__user_id]
+    
+
+    def IsDefaultUser(self):
+        """Return true if the owning user is the default user."""
+
+        return self.GetUserId() == user.database.GetDefaultUserId()
+
+
+    def IsExpired(self):
+        """Return true if this session has expired."""
+
+        age = time.time() - self.__last_access_time
+        return age > self.__expiration_timeout
+
+
+    def Validate(self, request):
+        """Make sure the session is OK for a request.
+
+        'request' -- A 'WebRequest' object.
+
+        raises -- 'InvalidSessionError' if the session is invalid for
+        the request."""
+
+        # Make sure the client IP address in the request matches that
+        # for this session.
+        if self.__client_address != request.client_address:
+            raise InvalidSessionError, "wrong client address"
+        # Make sure the session hasn't expired.
+        if self.IsExpired():
+            raise InvalidSessionError, "session expired"
 
 
 
@@ -937,15 +1187,16 @@ def escape(text):
 # A regular expression that matches anything that looks like an entity.
 __entity_regex = re.compile("&(\w+);")
 
+
 # A function that returns the replacement for an entity matched by the
 # above expression.
 def __replacement_for_entity(match):
     entity = match.group(1)
-    print entity
     try:
         return htmlentitydefs.entitydefs[entity]
     except KeyError:
         return "&%s;" % entity
+
 
 def unescape(text):
     """Undo 'escape' by replacing entities with ordinary characters."""
@@ -1039,6 +1290,83 @@ def make_url_button(url, text=None, on_click=None):
       </table>
       ''' % (url, on_click, text)
 
+
+def get_session(request, session_id):
+    """Retrieve the session corresponding to 'session_id'.
+
+    'request' -- A 'WebRequest' object for which to get the session.
+
+    raises -- 'InvalidSessionError' if the session ID is invalid, or is
+    invalid for this 'request'."""
+
+    # Now's as good a time as any to clean up expired sessions.
+    __clean_up_expired_sessions()
+
+    try:
+        # Obtain the session for this ID.
+        session = sessions[session_id]
+    except KeyError:
+        # No session for this ID (note that it may have expired).
+        raise InvalidSessionError, "invalid session ID"
+    # Make sure the session is valid for this request.
+    session.Validate(request)
+    # Update the last access time.
+    session.Touch()
+    return session
+
+
+def __clean_up_expired_sessions():
+    """Remove any sessions that are expired."""
+
+    for session_id, session in sessions.items():
+        if session.IsExpired():
+            del sessions[session_id]
+
+
+def handle_login(request, default_redirect_url="/"):
+    """Handle a login request.
+
+    Authenticate the login using the user name and password stored in
+    the '_login_user_name' and '_login_password' request fields,
+    respectively.
+
+    If authentication succeeds, redirect to the URL stored in the
+    '_login_url' request field by raising an 'HttpRedirect', passing all
+    other request fields along as well.
+
+    If '_login_url' is not specified in the request, the value of
+    'default_redirect_url' is used instead."""
+
+    user_id = qm.user.authenticator.AuthenticateWebRequest(request)
+
+    session = Session(request, user_id)
+    session_id = session.GetId()
+
+    # The URL of the page to which to redirect on successful login is
+    # stored in the request.  Extract it.
+    redirect_url = request.get("_login_url", default_redirect_url)
+    # Generate a new request for that URL.  Copy other fields from the
+    # old request.
+    redirect_request = request.copy(redirect_url)
+    # Sanitize the request by removing the user name, password, and
+    # redirecting URL.
+    del redirect_request["_login_user_name"]
+    del redirect_request["_login_password"]
+    del redirect_request["_login_url"]
+    # Add the ID of the new session to the request.
+    redirect_request.SetSessionId(session_id)
+    # Generate a URL for the redirected page.
+    url = make_url_for_request(redirect_request)
+    # Redirect the client to this URL.
+    raise HttpRedirect, url
+
+
+########################################################################
+# variables
+########################################################################
+
+sessions = {}
+"""A mapping from session IDs to 'Session' instances."""
 
 ########################################################################
 # Local Variables:

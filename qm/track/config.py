@@ -40,6 +40,7 @@ import qm
 import qm.diagnostic
 import qm.track.idb
 import qm.fields
+import shutil
 import string
 import time
 
@@ -194,14 +195,18 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
             # Try to take a lock.
             __global_lock.Lock(0)
 
-            # Got it; the IDB is ours.  Load the configuration.
+            # Got it; the IDB is ours.
             try:
+                # Load the configuration.
                 configuration_path = __get_configuration_path(path)
                 __configuration = qm.Configuration(configuration_path)
                 __configuration.Load()
+                # Load the user database.
+                user_db_path = os.path.join(path, "users.xml")
+                qm.user.load_xml_database(user_db_path)
             except:
-                # Oops, a problem loading the configuration.  Don't
-                # hold a lock or leave gunk behind.
+                # Oops, a problem loading the configuration or user
+                # database.  Don't hold a lock or leave gunk behind.
                 __global_lock.Unlock()
                 __configuration = None
                 raise
@@ -339,6 +344,12 @@ def initialize_idb(path, idb_class_name):
     configuration = qm.Configuration(configuration_path)
     configuration["idb_class"] = idb_class_name
     configuration.Save()
+
+    # Copy in the user database template.
+    user_db_template_path = os.path.join(qm.common.get_base_directory(),
+                                         "users.xml.template")
+    user_db_path = os.path.join(path, "users.xml")
+    shutil.copy(user_db_template_path, user_db_path)
 
     # Create a new IDB instance.
     idb = idb_class(path, create_idb=1)
@@ -478,7 +489,7 @@ def __get_configuration_path(path):
 
 # Load QMTrack diagnostics.
 qm.diagnostic.diagnostic_set.ReadFromFile("track", "diagnostics.txt")
-                                                       
+
 ########################################################################
 # Local Variables:
 # mode: python

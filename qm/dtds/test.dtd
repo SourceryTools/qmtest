@@ -47,7 +47,8 @@
 
 <!-- An argument to a test class.  -->
 <!ELEMENT argument (integer | text | set | attachment | enumeral)>
-<!ATTLIST argument name CDATA #REQUIRED eval ( yes | no ) "no">
+<!ATTLIST argument name CDATA #REQUIRED 
+                   eval ( yes | no ) "no">
 
 <!-- The value of an integer field.  -->
 <!ELEMENT integer (#PCDATA)>

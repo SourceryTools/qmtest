@@ -1,3 +1,78 @@
+2001-03-25  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py (ParseError): New class.
+	(make_system_id): New function.
+	(load_xml_file): Likewise.
+	(get_dom_text): Handle empty text.
+	(create_dom_document): Generate system ID from DTD file name.
+	* qm/web.py (session_id_field): New variable.
+	(NoSessionError): New class.
+	(InvalidSessionError): Likewise.
+	(PageInfo.MakeLoginForm): New method.
+	(PageInfo.FormatUserId): Likewise.
+	(WebRequestHandler.do_GET): Store client IP address in request.
+	(WebRequestHandler.do_POST): Likewise.
+	(WebRequestHandler.__HandleScriptRequest): Set no-cache header.
+	(WebRequestHandler.__HandleFileRequest): Set public caching.
+	(WebServer.Bind): Set SO_REUSEADDR.
+	(WebRequest.__init__): Add base parameter.
+	(WebRequest.SetSessionId): New method.
+	(WebRequest.GetSessionId): Likewise.
+	(WebRequest.GetSession): Likewise.
+	(WebRequest.get): Likewise.
+	(WebRequest.copy): Add url, fields parameters.
+	(Session): New class.
+	(get_session): New function.
+	(__clean_up_expired_sessions): Likewise.
+	(handle_login): Likewise.
+	(sessions): New variable.
+	* qm/user.py: New file.
+	* qm/users.xml.template: Likewise.
+	* qm/diagnostics.txt (bad port number): New diagnostic.
+	(xml parse error): Likewise.
+
+	* qm/dtds: New directory.
+	* qm/dtds/CATALOG: New file.
+	* qm/dtds/issue.dtd: Likewise.
+	* qm/dtds/reslt.dtd: Likewise.
+	* qm/dtds/test.dtd: Likewise.
+	* qm/dtds/user.dtd: Likewise.
+
+	* qm/track/server.py (start_server): Handle index and login pages.
+	* qm/track/issue.py (issues_to_xml): Use public ID and DTD file
+	name.
+	* qm/track/diagnostics.txt (xml parse error): Remove.
+	* qm/track/config.py (open_idb): Load user database.
+	(initialize_idb): Create user database from template.
+	* qm/track/cmdline.py (Command.__PerformServer): Handle bad port
+	numbers.
+	* qm/track/issue.dtd: Remove.
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust title
+	bar. 
+	(UploadAttachmentPageInfo.MakeSubmitUrl): Copy request.
+	* qm/track/web/summary.py (SummaryPageInfo.MakeIssueUrl): Copy
+	request. 
+	* qm/track/web/query.py (QueryPageInfo.MakeQueryForm): Likewise.
+	* qm/track/web/show.py (ShowPageInfo.MakeSubmitUrl): Likewise.
+	(handle_submit): Likewise. Set the user field.
+	* qm/track/web/index.py (IndexPageInfo.MakeNewForm): Copy request.
+	(IndexPageInfo.MakeShowForm): Likewise.
+	(IndexPageInfo.MakeEditForm): Likewise.
+	(IndexPageInfo.MakeShowAllForm): Likewise.
+	(IndexPageInfo.MakeQueryForm): Likewise.
+	(IndexPageInfo.MakeQueryUrl): Likewise.
+	(IndexPageInfo.MakeShutdownForm): Likewise.
+	(IndexPageInfo.MakeLogoutForm): New method.
+	* qm/track/web/templates/index.dtml: Reformat.  Add login controls.
+	* qm/track/web/stylesheets/qmtrack.css: Adjust formatting.
+	(span.userid): New style.
+
+	* qm/test/xmldb.py (Database.GetTest): Use load_xml_file.
+	* qm/test/cmdline.py (Command.__WriteResults): Use public ID and
+	DTD file name.
+	* qm/test/results.dtd: Remove.
+	* qm/test/test.dtd: Likewise.
+	
 2001-03-22  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/xmlutil.py (create_dom_text_element): New function.

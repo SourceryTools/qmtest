@@ -24,15 +24,42 @@
 
   <h3>Welcome to <dtml-var expr="GetName()">!</h3>
 
-  <!-- Main menu.  -->
-  <table border="0" 
-         cellpadding="4" 
-         cellspacing="4"
-         bgcolor="#f0f0f0">
+  <table border="0"
+         cellpadding="0"
+         cellspacing="12"
+         width="100%">
+
    <tbody>
     <tr>
+     <td valign="top" width="25%" bgcolor="#f0f0f0">
+      <table border="0" cellspacing="0" cellpadding="8">
+       <tr><td>
+        Logged in as:<br>
+        <dtml-var expr="FormatUserId(request.GetSession().GetUserId())">
+       </td></tr>
+       <tr><td>
+        <dtml-if expr="request.GetSession().IsDefaultUser()">
+         <dtml-var expr="MakeLoginForm()">
+        <dtml-else>
+         <dtml-var expr="MakeLogoutForm()">
+          <input type="submit" value=" Log Out "/>
+         </form>
+        </dtml-if>
+       </td></tr>
+      </table>
+     </td>
      <td>
-      Create a new issue.
+
+  <!-- Main menu.  -->
+  <table border="0" 
+         cellpadding="6" 
+         cellspacing="0"
+         width="100%"
+         bgcolor="#f0f0f0">
+   <tbody>
+    <tr><th>Create a new issue.</th></tr>
+    <tr>
+     <td>
       <dtml-var expr="MakeNewForm()">
        <dtml-comment><!--
          Show a select control to choose the issue class, if there is
@@ -59,19 +86,23 @@
      </td>
     </tr>
 
+    <tr><td></td></tr>
+
+    <tr><th>Show an existing issue.</th></tr>
     <tr>
      <td>
-      Show an existing issue.
       <dtml-var expr="MakeShowForm()">
-       Issue Id: <input type="text" size="8" name="iid"/>
+       Issue ID: <input type="text" size="8" name="iid"/>
        <input type="submit" value=" Show "/>
       </form>
      </td>
     </tr>
 
+    <tr><td></td></tr>
+
+    <tr><th>Edit an issue.</th></tr>
     <tr>
      <td>
-      Edit an issue.
       <dtml-var expr="MakeEditForm()">
        Issue ID: <input type="text" size="8" name="iid"/>
        <input type="submit" value=" Edit "/>
@@ -79,18 +110,11 @@
      </td>
     </tr>
 
-    <tr>
-     <td>
-      Show all issues.
-      <dtml-var expr="MakeShowAllForm()">
-       <input type="submit" value=" Show All "/>
-      </form>
-     </td>
-    </tr>
+    <tr><td></td></tr>
 
+    <tr><th>Search for issues.</th></tr>
     <tr>
      <td>
-      Search for issues.
       <dtml-var expr="MakeQueryForm()">
        Query: <input type="text" size="40" name="query"/>
        <input type="submit" value=" Search "/>
@@ -102,9 +126,9 @@
 
     <tr><td></td></tr>
 
+    <tr><th>Shut down server.</th></tr>
     <tr>
      <td>
-      Shut down server.
       <dtml-var expr="MakeShutdownForm()">
        <input type="submit" value=" Shut Down "/>
       </form>
@@ -112,6 +136,11 @@
     </tr>
    </tbody>
   </table>
+
+    </td>
+   </tr>
+  </tbody>
+ </table>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

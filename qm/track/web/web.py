@@ -89,20 +89,19 @@ class PageInfo(qm.web.PageInfo):
  <tr bgcolor="black">
   <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
   src="/images/sc-logo.png"></a></td>
-  <td align="right"><font color="white">
-   <a href="/track/"><span id="colhead">%s</span></a>
+  <td align="right">
+   <a href="%s"><font color="white">%s</font></a>
    &nbsp;&nbsp;
-   <a href="/track/new"><span id="colhead">New Issue</span></a>
-   &nbsp;&nbsp;
-   <a href="/track/summary"><span id="colhead">All Issues</span></a>
-   &nbsp;&nbsp;
-   <a href="/track/query"><span id="colhead">Query</span></a>
-   &nbsp;
-  </font></td>
+  </td>
  </tr>
 </table>
 <br>
-''' % self.GetName()
+''' % (self.MakeIndexUrl(), self.GetName())
+
+
+    def MakeIndexUrl(self):
+        request = qm.web.WebRequest("index", base=self.request)
+        return qm.web.make_url_for_request(request)
 
 
 
@@ -175,7 +174,7 @@ class UploadAttachmentPageInfo(PageInfo):
     def MakeSubmitUrl(self):
         """Return the URL for submitting this form."""
 
-        request = qm.web.WebRequest("submit-attachment")
+        request = self.request.copy("submit-attachment")
         return qm.web.make_url_for_request(request)
 
 

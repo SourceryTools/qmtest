@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE users PUBLIC "-//Software Carpentry//User Database V0.1//EN" "">
+<users>
+ <user id="guest" role="default" disabled="no">
+  <authentication>
+   <property name="password"></property>
+  </authentication>
+ </user>
+
+<!--
+ <user id="joeuser" disabled="no">
+  <info>
+   <property name="name">Joe User</property>
+   <property name="email">joe@localhost</property>
+  </info>
+  <authentication>
+   <property name="password">an insecure password</property>
+  </authentication>
+ </user>
+-->
+
+</users>

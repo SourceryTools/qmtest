@@ -160,21 +160,8 @@ class Database(base.Database):
             # file system path, relative to the top of the test
             # database.
             path = self.IdToPath(test_id, absolute=1) + test_file_extension
-            # Open it.
-            try:
-                file = open(path, "r")
-            except:
-                # FIXME.  Any errors that need to be handled here?
-                raise
-            # Create a validating DOM reader.
-            reader = xml.dom.ext.reader.Sax.Reader(validate=1)
-            try:
-                # Read and parse XML.
-                test_document = reader.fromStream(file)
-            except:
-                # FIXME.  How should we handle parse errors?
-                raise
-            file.close()
+            # Load and parse the XML test representation.
+            test_document = qm.xmlutil.load_xml_file(path)
             # Turn it into a test object.
             test = self.__ParseTestDocument(test_id, test_document)
             # Enter it into the cache.
