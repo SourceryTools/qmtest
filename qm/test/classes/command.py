@@ -295,7 +295,7 @@ class ExecTestBase(Test):
                 # pickles it, writes it to the pipe, and then closes the
                 # pipe and exits.
                 result_r, result_w = os.pipe()
-
+                
                 # Fork a new process.
                 child_pid = os.fork()
 
@@ -314,7 +314,7 @@ class ExecTestBase(Test):
                         # Redirect stderr to the standard error file.
                         os.dup2(stderr_w, sys.stderr.fileno())
                         # Execute the program.
-                        os.execve(program, arguments, environment)
+                        os.execvpe(program, arguments, environment)
                     except:
                         # Perhaps something went wrong while setting up
                         # the standard stream files.

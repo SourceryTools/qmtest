@@ -188,11 +188,12 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <guibutton>Edit Expectations</guibutton> from the
    <guilabel>Edit</guilabel> menu.  &qmtest; displays a list of all
    the tests.  Set the expectation for <filename>exec1</filename> back
-   to <literal>PASS</literal> and rerun the tests.  You will see that
-   now the <filename>exec1</filename> failure is unexpected again.
-   You can save your expectations by choosing <guibutton>Save
-   Expectations</guibutton> from the <guilabel>File</guilabel>
-   menu.</para>
+   to <literal>PASS</literal>, and click the <guibutton>OK</guibutton>
+   button at the bottom of the screen.  Then rerun the tests.  You
+   will see that now the <filename>exec1</filename> failure is
+   unexpected again.  You can save your expectations by choosing
+   <guibutton>Save Expectations</guibutton> from the
+   <guilabel>File</guilabel> menu.</para>
 
   </section>
 

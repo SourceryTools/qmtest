@@ -1,5 +1,10 @@
 2001-12-06  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/manual/test-tour.xml: Tweak explanation of saving
+	expectations.
+	* qm/test/classes/command.py (ExecTestBase.RunProgram): Use
+	execvpe to execute programs.
+	
 	* qm/test/web/web.py (QMTestServer.HandleSaveResults): Fix
 	typos.
 
