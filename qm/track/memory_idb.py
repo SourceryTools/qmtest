@@ -203,6 +203,18 @@ class MemoryIdb(qm.track.IdbBase):
         return self.__issue_classes.values()
 
 
+    def GetIssues(self):
+        """Return a list of all the issues.
+
+        This function is a hack to test the querying. We want something
+        better for sure in the future. Hacked in by Benjamin Chelf.
+        FOR INTERNAL USE ONLY.
+
+        'returns' -- A list of all the issues in the database."""
+
+        return self.__issues.values()
+
+    
     def GetIssue(self, iid, revision=None, issue_class=None):
         """Return the current revision of issue 'iid'.
 

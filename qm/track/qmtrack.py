@@ -39,9 +39,11 @@
 import os
 import os.path
 import sys
+import rexec
 import qm
 import qm.command_line
 import string
+from types import *
 from   qm.track import *
 import qm.track.gadfly_idb
 import qm.track.memory_idb
@@ -113,14 +115,20 @@ class CommandLine:
     # The following are the strings for all the warnings and errors
     # that can be encountered in this module.
     format_warn = 'Unknown format type, using default.'
-    database_error = 'Must specify database location.'
-    database_warning = 'Database does not exist. Creating database.'
+    database_loc_error = 'Must specify database location.'
+    database_exist_error = 'Database does not exist.'
     command_error = 'Must specify a command.'
     unrecognized_error = 'Unrecognized command.'
+    field_exist_begin = 'No field of name "'
+    field_exist_end = '" exists in the issue class.'
+    field_set_use_equal_begin = 'Cannot use operator "=" on field "'
+    field_set_use_equals_end = '" of set type.'
+    field_set_use_plus_begin = 'Cannot use operators "+=" or "-=" on field "'
+    field_set_use_plus_end = '" of non-set type.'
     create_class_error_syn = \
     'Must specify an issue class when creating an issue.'
-    create_field_error_begin = 'Missing mandatory field '
-    create_field_error_end = ' in create command.'
+    create_field_error_begin = 'Missing mandatory field(s) "'
+    create_field_error_end = '" in create command.'
     create_class_error_sem = 'Given issue class does not exist.'
     create_issue_error = 'An issue with that iid already exists.'
     create_no_equals_error = 'Must specify a field and a value.'
@@ -131,9 +139,14 @@ class CommandLine:
     split_iid_error_sem = \
     'Split causes a iid conflict with another issue.'
     join_issue_error_syn = 'Must specify 2 issues to join.'
-    join_issue_error_sem_begin = 'Cannot find issue '
-    join_issue_error_sem_end = ' to join in database.'
+    join_issue_error_sem_begin = 'Cannot find issue "'
+    join_issue_error_sem_end = '" to join in database.'
     join_iid_error_sem = 'Join causes an iid conflict with another issue.'
+    query_invalid_id_begin = 'Unknown identifier "'
+    query_invalid_id_end = '" in query string.'
+    query_invalid_att_begin = 'Unknown attribute "'
+    query_invalid_att_end = '" in query string.'
+    query_exception = 'Exception occured while evaluating query string'
     unimplemented = 'Unimplemented feature.'
     
     def __init__(self, command, output):
@@ -151,7 +164,8 @@ class CommandLine:
 
         self.command = command
         self.output = output
-        
+        self.results = []
+
 
     def __del__(self):
         """End the parsing."""
@@ -175,10 +189,7 @@ class CommandLine:
         'list' -- a list of strings of field=value pairs.
 
         returns -- a hash of field, value pairs with set types as
-        described above.
-
-        XXX Must decide what to do in the case where there's no equals
-        in the pair."""
+        described above."""
 
         hash = {}
 
@@ -189,18 +200,19 @@ class CommandLine:
                                          1, 'create')
             # This will cause a problem if there is no = in there.
             name, value = string.split(pair, '=', 1)
-            # Last character is a +
-            if string.rfind(name, '+') == len(name) - 1 or \
-               string.rfind(name, '-') == len(name) - 1:
-                # This hash hasn't been defined yet.
-                if not hash.has_key(name):
-                    hash[name] = []
-                # Add the value to the list for this hash
-                hash[name].append(value)
-            # Regular field. Overwrite the value in the hash so the
-            # last value placed in it is the one to use.
-            else:
-                hash[name] = value
+            if value != '':
+                # Last character is a +
+                if string.rfind(name, '+') == len(name) - 1 or \
+                   string.rfind(name, '-') == len(name) - 1:
+                    # This hash hasn't been defined yet.
+                    if not hash.has_key(name):
+                        hash[name] = []
+                        # Add the value to the list for this hash
+                        hash[name].append(value)
+                        # Regular field. Overwrite the value in the hash so
+                        # the last value placed in it is the one to use.
+                else:
+                    hash[name] = value
 
         return hash
         
@@ -269,7 +281,7 @@ class CommandLine:
         # Database location was not specified on the command line
         if database_location[0] == 0:
             # fatal syntax
-            self.parser.ErrorHandler(1, self.database_error, 1, '')
+            self.parser.ErrorHandler(1, self.database_loc_error, 1, '')
             return 1
         
         # Create a new idb_impl object. This will open the database.
@@ -278,28 +290,76 @@ class CommandLine:
         if os.path.isdir(database_location[1]):
             self.idb = qm.track.memory_idb.MemoryIdb(database_location[1])
         # The database doesn't exist. We must create it. Print out
-        # warning. XXX: We'll probably want to change this at some point
-        # to just not do anything or print an error message and exit, but
-        # for now, this will make it easy to blow away and recreate
-        # new databases.
+        # error.
         else:
-            # Non-fatal for now syntax
-            self.parser.ErrorHandler(0, self.database_warning, 0, '')
-            self.idb = qm.track.memory_idb.MemoryIdb(database_location[1],
-                                                     create_idb=1)
+            self.parser.ErrorHandler(1, self.database_exist_error, 0, '')
+            return 1
+
             
         return 0
+
+
+    def CheckFieldTypes(self, hash, issue_class):
+        """Check that the field types are correctly used.
+
+        This method checks that '+=' and '-=' are only used with set
+        field classes and that '=' is not used on set field classes.
+
+        'hash' -- a hash of the values passed in as returned by
+        ParseFieldValuePairs.
+
+        'issue_class' -- the class for this issue to do the checking.
+
+        'returns' -- 0 on success, 1 on error."""
+
+        set = 0
+        for key, value in hash.items():
+            if string.rfind(key, '+') == len(key) - 1:
+                field_name = string.replace(key, '+', '')
+                set = 1
+            elif string.rfind(key, '-') == len(key) - 1:
+                field_name = string.replace(key, '-', '')
+                set = 1
+            else:
+                field_name = key
+
+            # If there is no such field by the given name, that's an
+            # error.
+            if not issue_class.HasField(field_name):
+                self.parser.ErrorHandler(1, self.field_exist_begin +
+                                         field_name +
+                                         self.field_exist_end, 0, '')
+                return 1
+
+            field = issue_class.GetField(field_name)
+            if isinstance(field, qm.track.issue_class.IssueFieldSet):
+                if set == 0:
+                    self.parser.ErrorHandler(1,
+                                             self.field_set_use_equals_begin +
+                                             field_name +
+                                             self.field_set_use_equals_end,
+                                             0, '')
+                    return 1
+            else:
+                if set == 1:
+                    self.parser.ErrorHandler(1,
+                                             self.field_set_use_plus_begin +
+                                             field_name +
+                                             self.field_set_use_plus_end,
+                                             0, '')
+                    return 1
+            
+        return 0
+                    
         
     def PerformCreate(self):
         """Create an issue because the create command was given.
 
-        returns -- 0 on succes, 1 on error."""
+        returns -- 0 on success, 1 on error."""
 
         # Get the class of the issue from the command line.
-        # XXX Probably want a default class at some point?
         class_value = self.GetCommandOption('class')
         if class_value[0] == 0:
-            # fatal syntax
             self.parser.ErrorHandler(1, self.create_class_error_syn, 1,
                                      'create')
             return 1
@@ -307,20 +367,6 @@ class CommandLine:
         # Split arguments up into pairs.
         hash = self.ParseFieldValuePairs(self.command_args)
 
-        # Check for mandatory fields and report an error if they
-        # they don't exist.
-        mandatory_fields = ("iid", "categories+", "summary")
-
-        # XXX fix this--difference between mandatory field and required
-        # field
-        for field in mandatory_fields:
-            if not hash.has_key(field):
-                # fatal semantic
-                self.parser.ErrorHandler(1, self.create_field_error_begin +
-                                         field +
-                                         self.create_field_error_end, 0, '')
-                return 1
-        
         # Catch the exception if the issue class doesn't exist
         try:
             icl = self.idb.GetIssueClass(class_value[1])
@@ -329,6 +375,32 @@ class CommandLine:
             self.parser.ErrorHandler(1, self.create_class_error_sem, 0, '')
             return 1
 
+        # Check for type errors in setting fields.
+        if self.CheckFieldTypes(hash, icl) == 1:
+            return 1
+
+        # Check for mandatory fields
+        mandatory_fields = []
+        for field in icl.GetFields():
+            # If a field in the issue class doesn't have a default value,
+            # it is required that the user specify a value when creating
+            # the issue.
+            if not field.HasDefaultValue():
+                mandatory_fields.append(field.GetName())
+
+        missing = []
+        for field in mandatory_fields:
+            # The field could be a normal field or a set.
+            if not hash.has_key(field) and not hash.has_key(field + '+'):
+                missing.append[field]
+
+        # Some mandatory fields were missing
+        if missing != []:
+            self.parser.ErrorHandler(1, self.create_field_error_begin +
+                                     string.join(missing[0:], ',') +
+                                     self.create_field_error_end, 0, '')
+            return 1
+        
         # Build the new issue based on the argument pairs.
         new_issue = qm.track.Issue(icl, hash['iid'])
         for key, value in hash.items():
@@ -357,10 +429,7 @@ class CommandLine:
 
         returns -- 0 on succes, 1 on error."""
 
-        # XXX Need to handle when they screw up the type of the
-        # fields (enumeral vs. regular)
         if len(self.command_args) == 0:
-            # fatal syntax
             self.parser.ErrorHandler(1, self.edit_issue_error_syn, 1,
                                      'edit')
             return 1
@@ -371,13 +440,16 @@ class CommandLine:
         try:
             issue = self.idb.GetIssue(iid)
         except KeyError:
-            # fatal semantic
             self.parser.ErrorHandler(1, self.edit_issue_error_sem, 0, '')
             return 1
 
         # Split arguments up into pairs.
         hash = self.ParseFieldValuePairs(self.command_args[1:])
 
+        # Check for type errors in setting fields.
+        if self.CheckFieldTypes(hash, issue.GetClass()) == 1:
+            return 1
+        
         # Set the fields in the issue according to their edited values.
         for key, value in hash.items():
             if key != 'iid':
@@ -386,26 +458,31 @@ class CommandLine:
                     # existing list of items for that field.
                     field_name = string.replace(key, '+', '')
                     current_items = issue.GetField(field_name)
+                    # Validate the value before we use it
+                    value = \
+                          issue.GetClass().GetField(field_name).Validate(value)
                     for item in value:
-                        current_items.append(item)
-                    issue.SetField(string.replace(key, '+', ''),
-                                   current_items)
+                        # Only add it if its not already in the list
+                        if not item in current_items:
+                            current_items.append(item)
+                    issue.SetField(field_name, current_items)
                 elif string.rfind(key, '-') == len(key) - 1:
                     # For each item in the set, remove it from the already
-                    # existing list of items for that field. Warning, XXX
+                    # existing list of items for that field. Warning,
                     # this part operates in n^2 time for the number
                     # of items in the field.
                     field_name = string.replace(key, '-', '')
                     current_items = issue.GetField(field_name)
+                    # Validate the value before we use it
+                    value = \
+                          issue.GetClass().GetField(field_name).Validate(value)
                     for item in value:
                         new_items = []
                         for item2 in current_items:
                             if item != item2:
                                 new_items.append(item2)
                         current_items = new_items
-
-                    issue.SetField(string.replace(key, '-', ''),
-                                   current_items)
+                    issue.SetField(field_name, current_items)
                 else:
                     issue.SetField(key, value)                   
 
@@ -420,7 +497,6 @@ class CommandLine:
         returns -- 0 on succes, 1 on error."""
 
         if len(self.command_args) == 0:
-            # fatal syntax
             self.parser.ErrorHandler(1, self.split_issue_error_syn, 1,
                                      'split')
             return 1
@@ -498,7 +574,7 @@ class CommandLine:
                                      self.join_issue_error_sem_end, 0, '')
             return 1
 
-        # XXX How are we supposed to map over all the fields to combine
+        # How are we supposed to map over all the fields to combine
         # the two issues? For enumerals, do we want intersection or union?
         # We should probably think about this more. For now, this function
         # will only copy the first issue, give it a new name, and set the
@@ -515,7 +591,6 @@ class CommandLine:
         try:
             self.idb.AddIssue(new_issue)
         except ValueError:
-            # fatal semantic
             self.parser.ErrorHandler(1, self.join_iid_error_sem, 0, '')
             return 1
 
@@ -530,7 +605,69 @@ class CommandLine:
 
         returns -- 0 on success, 1 on failure."""
 
-        self.parser.ErrorHandler(1, self.unimplemented, 0, '')
+        query_str = string.join(self.command_args[0:])
+
+        self.results = [ ]
+        for issue in self.idb.GetIssues():
+            # We have a list of revisions; we want only the last one.
+            issue = issue[len(issue) - 1]
+            query_env = rexec.RExec()
+            # Import string operations for them.
+            query_env.r_exec("import string");
+            c = issue.GetClass()
+            # Set up the execution environment for the expression.
+            for field in c.GetFields():
+                field_name = field.GetName()
+                # This sets each field to be its current value in the issue.
+                field_value = issue.GetField(field_name)
+                if type(field_value) == StringType:
+                    field_value = "'" + field_value + "'"
+                query_env.r_exec("%s = %s" % (field_name, field_value))
+                # This is somewhat of a hack. We have to check to
+                # see if this class is an enumeration. If it is,
+                # grab the mapping and use that. Otherwise, it might
+                # be a set of enumerations, in which case we need to
+                # fish into the set to get the mapping of each thing
+                # that could be in the set.
+                enum = field.GetAttribute("enumeration", "")
+                if enum == "":
+                    try:
+                        contained = field.GetContainedField()
+                        enum = contained.GetAttribute("enumeration", "")
+                        if enum != "":
+                            enum = contained.GetEnumeration()
+                    except:
+                        enum = ""
+                else:
+                    enum = field.GetEnumeration()
+
+                # This sets all the enumerals to be their value.
+                if enum != "":
+                    for key, value in enum.items():
+                        query_env.r_exec("%s = %d" % (str(key), int(value)))
+
+            # Execute the expression. If it's true, add this issue to
+            # the results to be printed.
+            try:
+                if query_env.r_eval(query_str):
+                    self.results.append(issue)
+            except NameError, msg:
+                self.parser.ErrorHandler(1, self.query_invalid_id_begin +
+                                         str(msg) +
+                                         self.query_invalid_id_end,
+                                         0, '')
+                return 0
+            except AttributeError, msg:
+                self.parser.ErrorHandler(1, self.query_invalid_att_begin +
+                                         str(msg) +
+                                         self.query_invalid_att_end,
+                                         0, '')
+                return 0
+            except:
+                self.parser.ErrorHandler(1, self.query_exception, 0, '')
+                return
+        
+        self.output.write("Issues found: %d\n" % len(self.results))
         return 1
     
     
@@ -542,10 +679,6 @@ class CommandLine:
 
         returns -- 0 on success, 1 on error."""
 
-        # XXX: I would like to change this so that the definitions above
-        # associate some code to execute to implement the functionality
-        # but is this available in python? (e.g. function pointers or
-        # name-able blocks of code)
         if self.command_name == 'create':
             return self.PerformCreate()    
         elif self.command_name == 'edit':
@@ -556,18 +689,17 @@ class CommandLine:
             return self.PerformSplit()
         elif self.command_name == 'query':
             return self.PerformQuery()
+        # Did not specify a command
         elif self.command_name == '':
-            # fatal syntax
             self.parser.ErrorHandler(1, self.command_error, 1, '')
+        # Specified a command that doesn't exist
         else:
-            # fatal syntax
             self.parser.ErrorHandler(1, self.unrecognized_error, 1, '')
             return 1
         
         return 0;
 
 
-    # XXX Change all of these 'print's to writes...
     def PrintResults(self):
         """Print the list of issues that are the results of the command.
 
@@ -577,7 +709,7 @@ class CommandLine:
             return 0
         elif self.format_name == 'iid':
             for i in range(0, len(self.results) - 1):
-                issue = results[i]
+                issue = self.results[i]
                 self.output.write(issue.GetId() + ', ')
             self.output.write(self.results[len(self.results) - 1].GetId())
             self.output.write('\n');

@@ -339,6 +339,19 @@ class IssueFieldEnumeration(IssueFieldInteger):
             raise ValueError, "invalid enumeration value: %s" % str(value)
 
 
+    def GetEnumeration(self):
+        """Get the enumeration mapping from this class.
+
+        XXX. Another shameless hack by Benjamin Chelf. We need to get
+        the actual mapping (not the string found in the attribute)
+        so we can set enumerals to their integer values. Better suggestions
+        to do this are appreciated.
+
+        'returns' -- A mapping from enumerals to their integer values."""
+
+        return self.__enumeration
+    
+
 
 class IssueFieldTime(IssueFieldText):
     """A field containing a date and time."""
@@ -413,7 +426,11 @@ class IssueClass:
         # Create mandatory fields.
         
         # The issue id field.
-        self.AddField(IssueFieldText("iid"))
+        field = IssueFieldText("iid")
+        # We do not want the iid to have a default value. It
+        # always must be specified (Benjamin Chelf). ?
+        field.UnsetDefaultValue()
+        self.AddField(field)
 
         # The revision number field.
         field = IssueFieldInteger("revision")

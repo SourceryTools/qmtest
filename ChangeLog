@@ -1,3 +1,22 @@
+2001-02-14  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/track/issue_class.py (IssueFieldEnumeration::GetEnumeration): 
+	Define.
+	(IssueClass::__init__): Make 'iid' have no default value.
+
+	* qm/track/memory_idb.py (MemoryIdb::GetIssues): Define.
+
+	* qm/track/qmtrack.py (CommandLine::__init__): Initialize 
+	results.
+	(CommandLine::ParseFieldValuePairs): Handle no '=' in string.
+	(CommandLine::OpenDatabase): Change warning to error.
+	(CommandLine::PerformCreate): Fix bugs and do type checking on
+	fields. Do mandatory fields correctly.
+	(CommandLine::CheckFieldTypes): Define.
+	(CommandLine::PerformEdit): Fix bugs and do type checking on
+	fields.
+	(CommandLine::PerformQuery): Define.
+	
 2001-02-12  Benjamin Chelf  <chelf@codesourcery.com>
 
         * qm/track/qmtrack.py (__main__): Change to catch exception.
