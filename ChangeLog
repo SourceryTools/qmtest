@@ -1,3 +1,8 @@
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
+	* configure.in (AC_CONFIG_SUBDIRS): Remove.
+	* configure: Regenerate.
+	
 2001-06-08  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (WebServer.__init__): Register /.
