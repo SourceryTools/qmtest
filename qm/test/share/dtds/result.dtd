@@ -31,8 +31,8 @@
 <!ELEMENT outcome (#PCDATA)>
 
 <!-- An additional annotation to the result.  -->
-<!ELEMENT property (#PCDATA)>
-<!ATTLIST property name CDATA #REQUIRED>
+<!ELEMENT annotation (#PCDATA)>
+<!ATTLIST annotation name CDATA #REQUIRED>
 
 <!-- 
   Local Variables:

@@ -325,19 +325,16 @@ class Result:
         keys.sort()
         for key in keys:
             value = self[key]
-            property_element = document.createElement("property")
-            # The property name is an attribute.
-            property_element.setAttribute("name", str(key))
-            if type(value) in qm.common.string_types:
-                # The property value is contained in a text mode.
-                node = document.createTextNode(str(value))
-                property_element.appendChild(node)
-            else:
-                for text in value:
-                    node = document.createTextNode(str(text))
-                    property_element.appendChild(node)
-            # Add the property element to the result node.
-            element.appendChild(property_element)
+            annotation_element = document.createElement("annotation")
+            # The annotation name is an attribute.
+            annotation_element.setAttribute("name", str(key))
+            # The annotation value is contained in a text node.  The
+            # data is enclosed in quotes for robustness if the
+            # document is pretty-printed.
+            node = document.createTextNode('"' + str(value) + '"')
+            annotation_element.appendChild(node)
+            # Add the annotation element to the result node.
+            element.appendChild(annotation_element)
 
         return element
 
@@ -377,3 +374,9 @@ class Result:
     def items(self):
         return self.__annotations.items()
 
+
+########################################################################
+# Variables
+########################################################################
+
+__all__ = ["Result"]

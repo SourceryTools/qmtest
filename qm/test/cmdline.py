@@ -1114,34 +1114,36 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                                              directory,
                                                              directories)
 
-        # Update the classes.qmc file.  If it already exists, we must
-        # read it in first.
+        # Create or update the classes.qmc file.
         classes_file_name = os.path.join(directory, "classes.qmc")
-        try:
-            document = qm.xmlutil.load_xml_file(classes_file_name)
-        except:
-            document = (qm.xmlutil.create_dom_document
-                        (public_id = "Class-Directory",
-                         document_element_tag="class-directory"))
+        
+        # Create a new DOM document for the class directory.
+        document = (qm.xmlutil.create_dom_document
+                    (public_id = "Class-Directory",
+                     document_element_tag="class-directory"))
+        
+        # Copy entries from the old file to the new one.
+        extensions \
+            = qm.test.base.get_extension_class_names_in_directory(directory)
+        for k, ns in extensions.iteritems():
+            for n in ns:
+                # Remove previous entries for the class being added.
+                if k == kind and n == class_name:
+                    continue
+                element = document.createElement("class")
+                element.setAttribute("kind", k)
+                element.setAttribute("name", n)
+                document.documentElement.appendChild(element)
 
-        # Remove any previous entries for this class.
-        duplicates = []
-        for element in qm.xmlutil.get_children(document.documentElement,
-                                               "class"):
-            if (str(qm.xmlutil.get_dom_text(element)) == class_name):
-                duplicates.append(element)
-        for element in duplicates:
-            document.documentElement.removeChild(element)
-            element.unlink()
-                
-        # Construct the new node.
-        class_element = (qm.xmlutil.create_dom_text_element
-                         (document, "class", class_name))
-        class_element.setAttribute("kind", kind)
-        document.documentElement.appendChild(class_element)
+        # Add an entry for the new element.
+        element = document.createElement("class")
+        element.setAttribute("kind", kind)
+        element.setAttribute("name", class_name)
+        document.documentElement.appendChild(element)        
 
         # Write out the file.
-        document.writexml(open(classes_file_name, "w"))
+        document.writexml(open(classes_file_name, "w"),
+                          addindent = " ", newl = "\n")
 
         return 0
 

@@ -1116,8 +1116,7 @@ def load_database(db_path):
                                                        None, db_path)))
     # For backwards compatibility with QM 1.1.x, we look for "attribute"
     # elements.
-    for node in qm.xmlutil.get_children(document.documentElement,
-                                        "attribute"):
+    for node in document.documentElement.getElementsByTagName("attribute"):
         name = node.getAttribute("name")
         # These elements were only allowed to contain strings as
         # values.

@@ -1,3 +1,25 @@
+2003-09-21  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/xmlutil.py (get_children): Remove.
+	(get_child_texts): Don't use it.
+	* qm/test/base.py (get_extension_class_names_in_directory):
+	Support new class directory format.
+	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Generate the
+	class directory using the new directory format.
+	* qm/test/database.py (load_database): Do not use get_children.
+	* qm/test/result.py (Result.MakeDomNode): Revise result format.
+	(__all__): New variable.
+	* qm/test/classes.qmc: Regenerated.
+	* qm/test/classes/xml_result_stream.py
+	(XMLResultStream.WriteAnnotation): Use indentation when writing
+	out results.
+	(XMLResultStream.WriteResult): Likewise.
+	(XMLResultReader._get_result_from_dom): Rename to ...
+	(XMLResultReader._GetResultFromDomNode): ... this.  Support old
+	and new formats.
+	* qm/test/share/dtds/result.dtd: Update.
+	* qm/test/share/dtds/class-directory.dtd: Likewise.
+
 2003-09-16  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qmdist/command/install_data.py: Do not generate data_dir,
@@ -20,7 +42,6 @@
 	* qm/test/classes/xml_database.py: Likewise.
 	* qm/test/classes/xml_result_stream.py: Likewise.
 	
-
 2003-09-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (TimeoutExecutable.__init__): Ignore timeouts

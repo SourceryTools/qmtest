@@ -1,27 +1,27 @@
 <?xml version="1.0" ?>
 <class-directory>
-<class kind="database">mount_database.MountDatabase</class>
-<class kind="database">xml_database.XMLDatabase</class>
-<class kind="test">command.ExecTest</class>
-<class kind="test">command.ShellCommandTest</class>
-<class kind="test">command.ShellScriptTest</class>
-<class kind="test">file.FileContentsTest</class>
-<class kind="test">python.ExecTest</class>
-<class kind="test">python.ExceptionTest</class>
-<class kind="test">python.StringExceptionTest</class>
-<class kind="resource">temporary.TempDirectoryResource</class>
-<class kind="target">serial_target.SerialTarget</class>
-<class kind="target">thread_target.ThreadTarget</class>
-<class kind="target">process_target.ProcessTarget</class>
-<class kind="target">rsh_target.RSHTarget</class>
-<class kind="label">file_label.FileLabel</class>
-<class kind="label">python_label.PythonLabel</class>
-<class kind="result_stream">text_result_stream.TextResultStream</class>
-<class kind="result_stream">xml_result_stream.XMLResultStream</class>
-<class kind="result_reader">xml_result_stream.XMLResultReader</class>
-<class kind="result_stream">pickle_result_stream.PickleResultStream</class>
-<class kind="result_reader">pickle_result_stream.PickleResultReader</class>
-<class kind="result_stream">sql_result_stream.SQLResultStream</class>
-<class kind="result_reader">sql_result_stream.SQLResultReader</class>
-<class kind="result_stream">dejagnu_stream.DejaGNUStream</class>
+ <class kind="result_reader" name="pickle_result_stream.PickleResultReader"/>
+ <class kind="result_reader" name="sql_result_stream.SQLResultReader"/>
+ <class kind="result_reader" name="xml_result_stream.XMLResultReader"/>
+ <class kind="result_stream" name="dejagnu_stream.DejaGNUStream"/>
+ <class kind="result_stream" name="pickle_result_stream.PickleResultStream"/>
+ <class kind="result_stream" name="sql_result_stream.SQLResultStream"/>
+ <class kind="result_stream" name="text_result_stream.TextResultStream"/>
+ <class kind="result_stream" name="xml_result_stream.XMLResultStream"/>
+ <class kind="resource" name="temporary.TempDirectoryResource"/>
+ <class kind="target" name="process_target.ProcessTarget"/>
+ <class kind="target" name="rsh_target.RSHTarget"/>
+ <class kind="target" name="serial_target.SerialTarget"/>
+ <class kind="target" name="thread_target.ThreadTarget"/>
+ <class kind="database" name="mount_database.MountDatabase"/>
+ <class kind="test" name="command.ExecTest"/>
+ <class kind="test" name="command.ShellCommandTest"/>
+ <class kind="test" name="command.ShellScriptTest"/>
+ <class kind="test" name="file.FileContentsTest"/>
+ <class kind="test" name="python.ExceptionTest"/>
+ <class kind="test" name="python.ExecTest"/>
+ <class kind="test" name="python.StringExceptionTest"/>
+ <class kind="label" name="file_label.FileLabel"/>
+ <class kind="label" name="python_label.PythonLabel"/>
+ <class kind="database" name="xml_database.XMLDatabase"/>
 </class-directory>

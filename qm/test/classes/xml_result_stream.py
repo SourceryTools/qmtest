@@ -56,32 +56,21 @@ class XMLResultStream(FileResultStream):
 
     def WriteAnnotation(self, key, value):
 
-            element = self.__document.createElement("annotation")
-            element.setAttribute("key", key)
-            text = self.__document.createTextNode(value)
-            element.appendChild(text)
-            element.writexml(self.file)
-            # Following increases readability of output:
-            self.file.write("\n")
+        element = self.__document.createElement("annotation")
+        element.setAttribute("key", key)
+        text = self.__document.createTextNode(value)
+        element.appendChild(text)
+        element.writexml(self.file, addindent = " ", newl = "\n")
 
 
     def WriteResult(self, result):
-        """Output a test or resource result.
-
-        'result' -- A 'Result'."""
 
         element = result.MakeDomNode(self.__document)
-        element.writexml(self.file)
-        self.file.write("\n")
+        element.writexml(self.file, indent = " ", addindent = " ",
+                         newl = "\n")
         
 
     def Summarize(self):
-        """Output summary information about the results.
-
-        When this method is called, the test run is complete.  Summary
-        information should be displayed for the user, if appropriate.
-        Any finalization, such as the closing of open files, should
-        also be performed at this point."""
 
         # Finish the list of results.
         self.file.write("\n</results>\n")
@@ -101,15 +90,15 @@ class XMLResultReader(FileResultReader):
 
         document = qm.xmlutil.load_xml(self.file)
         node = document.documentElement
-        results = qm.xmlutil.get_children(node, "result")
+        results = node.getElementsByTagName("result")
         self.__node_iterator = iter(results)
 
         # Read out annotations
         self._annotations = {}
-        annotation_nodes = qm.xmlutil.get_children(node, "annotation")
+        annotation_nodes = node.getElementsByTagName("annotation")
         for node in annotation_nodes:
             key = node.getAttribute("key")
-            value = qm.xmlutil.get_dom_text(node)
+            value = qm.xmlutil.get_dom_text(node).strip()
             self._annotations[key] = value
 
 
@@ -118,7 +107,15 @@ class XMLResultReader(FileResultReader):
         return self._annotations
 
 
-    def _result_from_dom(self, node):
+    def GetResult(self):
+
+        try:
+            return self._GetResultFromDomNode(self.__node_iterator.next())
+        except StopIteration:
+            return None
+
+
+    def _GetResultFromDomNode(self, node):
         """Extract a result from a DOM node.
 
         'node' -- A DOM node corresponding to a "result" element.
@@ -127,30 +124,37 @@ class XMLResultReader(FileResultReader):
 
         assert node.tagName == "result"
         # Extract the outcome.
-        outcome = qm.xmlutil.get_child_text(node, "outcome")
+        outcome = qm.xmlutil.get_child_text(node, "outcome").strip()
         # Extract the test ID.
         test_id = node.getAttribute("id")
         kind = node.getAttribute("kind")
         # Build a Result.
         result = Result(kind, test_id, outcome)
-        # Extract properties, one for each property element.
-        for property_node in node.getElementsByTagName("property"):
-            # The name is stored in an attribute.
-            name = property_node.getAttribute("name")
-            # The value is stored in the child text node.
-            value = qm.xmlutil.get_dom_text(property_node)
-            # Store it.
+        # Extract annotations.
+        for n in node.childNodes:
+            if n.nodeType != node.ELEMENT_NODE:
+                continue
+            if n.tagName == "annotation":
+                quoted = 1
+            elif n.tagName == "property":
+                # Versions of QMTest before 2.1 used the "property" tag,
+                # and did not quote the contained text.
+                quoted = 0
+            else:
+                continue
+            # Get the name of the annotation.
+            name = n.getAttribute("name")
+            # Get the value of the annotation.
+            value = qm.xmlutil.get_dom_text(n)
+            if quoted:
+                # Remove whitespace and then remove the enclosing quotes.
+                value = value.strip()[1:-1]
+            # Remember the annotation.
             result[name] = value
 
         return result
 
 
-    def GetResult(self):
-
-        try:
-            return self._result_from_dom(self.__node_iterator.next())
-        except StopIteration:
-            return None
 
 ########################################################################
 # Local Variables:

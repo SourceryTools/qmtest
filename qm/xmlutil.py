@@ -128,12 +128,6 @@ def get_child(node, child_tag):
     return matching_children[0]
 
 
-def get_children(node, child_tag):
-    """Return a sequence of children of 'node' whose tags are 'child_tag'."""
-    
-    return filter(child_tag_predicate(child_tag), node.childNodes)
-
-
 def get_child_text(node, child_tag, default=None):
     """Return the text contained in a child of DOM 'node'.
 
@@ -164,13 +158,13 @@ def get_child_texts(node, child_tag):
     tag 'child_tag'.  Each child must have exactly one child of its own,
     which must be a text node."""
 
-    return map(get_dom_text, get_children(node, child_tag))
+    return map(get_dom_text, node.getElementsByTagName(child_tag))
 
 
 def create_dom_text_element(document, tag, text):
     """Return a DOM element containing a single text node.
 
-    'document' -- The containing DOM document node.
+    'document' -- The containing DOM document.
 
     'tag' -- The element tag.
 

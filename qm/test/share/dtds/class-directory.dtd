@@ -21,6 +21,7 @@
 <!-- A class. -->
 <!ELEMENT class (#PCDATA)>
 <!ATTLIST class kind CDATA #REQUIRED>
+<!ATTLIST class name CDATA #REQUIRED>
 
 <!-- 
   Local Variables:

@@ -151,7 +151,7 @@ def get_extension_class_names_in_directory(directory):
         root = document.documentElement
         # Get the sequence of elements corresponding to each of the
         # classes listed in the directory.
-        classes = qm.xmlutil.get_children(root, 'class')
+        classes = root.getElementsByTagName("class")
         # Go through each of the classes to see what kind it is.
         for c in classes:
             kind = c.getAttribute('kind')
@@ -159,9 +159,17 @@ def get_extension_class_names_in_directory(directory):
             # are for some other QM tool.
             if kind not in extension_kinds:
                 continue
-            extensions[kind].append(qm.xmlutil.get_dom_text(c))
+            if c.hasAttribute("name"):
+                name = c.getAttribute("name")
+            else:
+                # Before QMTest 2.1, the class name was contained in
+                # the class element, rather than being an attribute.
+                name = qm.xmlutil.get_dom_text(c)
+            # Strip whitespace.
+            name = name.strip()
+            extensions[kind].append(name)
     except:
-        pass
+        raise
 
     return extensions
 

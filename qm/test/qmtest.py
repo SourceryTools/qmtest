@@ -40,8 +40,9 @@ import gc
 # This executable is supposed to live in ${QM_HOME}/bin (posix)
 # or ${QM_HOME}\Scripts (nt) so we deduce the QM_HOME variable
 # by stripping off the last two components of the path.
-#
-_qm_home = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+_qm_home = os.environ.get("QM_HOME",
+                          os.path.dirname(os.path.dirname(os.path.abspath
+                                                          (sys.argv[0]))))
 os.environ['QM_HOME']=_qm_home
 
 import qm
