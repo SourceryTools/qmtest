@@ -1,5 +1,9 @@
 2004-01-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/share/dtml/show.dtml: Add is_new field to form.
+	* qm/test/web/web.py (QMTestServer.HandleShowItem): Pass a correct
+	value for "new" to ShowItemPage.
+
 	* qm/test/classes/python.py (BaseExceptionTest.Run): Use
 	has_exception_argument to keep track of whether or not an argument
 	was provided.

@@ -2043,7 +2043,7 @@ class QMTestServer(qm.web.WebServer):
                                    field_errors=field_errors)
                 return page(request)
 
-            # Construct an test with default argument values, as the
+            # Construct a test with default argument values, as the
             # starting point for editing.
             if type is "resource":
                 item = self.MakeNewResource(class_name, item_id)
@@ -2257,6 +2257,8 @@ class QMTestServer(qm.web.WebServer):
             return qm.web.generate_error_page(request, message)
 
         database = self.__database
+        # Learn whether or not this is a new item.
+        is_new = int(request["is_new"])
         # Extract the class and field specification.
         item_class_name = request["class"]
         item_class = qm.test.base.get_extension_class(item_class_name,
@@ -2307,7 +2309,8 @@ class QMTestServer(qm.web.WebServer):
         if redisplay:
 	    request = qm.web.WebRequest("edit-" + type, base=request, 
                                         id=item_id)
-	    return ShowItemPage(self, item, 1, 0, type, field_errors)(request)
+	    return ShowItemPage(self, item, 1, is_new, type,
+                                field_errors)(request)
 
         # Store it in the database.
         database.WriteExtension(item_id, item.GetItem())
