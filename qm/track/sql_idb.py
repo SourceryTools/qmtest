@@ -225,6 +225,7 @@ class SqlIdb(idb.IdbBase):
         returns -- Returns a list of the current revisions of all
         issues in the database."""
 
+        import types
         # If 'issue_class' is the name of an issue class, look up the
         # class itself.
         if isinstance(issue_class, types.StringType):
@@ -282,7 +283,7 @@ class SqlIdb(idb.IdbBase):
         if issue_class == None:
             # Search all issue classes.
             classes_to_search = self.issue_classes.values()
-        elif isinstance(issue_class, IssueClass):
+        elif isinstance(issue_class, qm.track.issue_class.IssueClass):
             # Make sure the IssueClass instance belongs to this IDB.
             if not self.__HasIssueClass(issue_class):
                 raise ValueError, "invalid issue class %s" % issue_class_name
@@ -359,7 +360,7 @@ class SqlIdb(idb.IdbBase):
         if issue_class == None:
             # Search all issue classes.
             classes_to_search = self.issue_classes.values()
-        elif isinstance(issue_class, IssueClass):
+        elif isinstance(issue_class, qm.track.issue_class.IssueClass):
             # Make sure the IssueClass instance belongs to this IDB.
             if not self.__HasIssueClass(issue_class):
                 raise ValueError, "invalid issue class %s" % issue_class_name
