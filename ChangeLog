@@ -1,3 +1,9 @@
+2003-07-24  Nathaniel Smith  <njs@codesourcery.com>
+
+	* tests/xmldb/common.qms/graph_complete.qmt: Delete.
+        * tests/xmldb/common.qms/graph_cycle.qmt: Likewise.
+        * tests/xmldb/common.qms/graph_pass.qmt: Likewise.
+
 2003-07-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (QMTest.GetVersion): New method.
