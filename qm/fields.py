@@ -176,12 +176,7 @@ class FieldEditPage(web.DtmlPage):
 
 
 class Field:
-    """Base class for field types.
-
-    Subclasses should override any applicable methods, and must define
-    'class_name' to the fully-qualified name of the field class."""
-
-    class_name = None
+    """Base class for field types."""
 
     property_declarations = [
         PropertyDeclaration(
@@ -687,7 +682,7 @@ class Field:
         element.setAttribute("name", self.GetName())
         # Store the Python class name of this field.
         class_element = xmlutil.create_dom_text_element(
-            document, "class", self.class_name)
+            document, "class", self.__class__.__name__)
         element.appendChild(class_element)
         # Store the default value.
         default_value = self.GetDefaultValue()
@@ -714,8 +709,6 @@ class Field:
 
 class IntegerField(Field):
     """A signed integer field."""
-
-    class_name = "qm.fields.IntegerField"
 
     def __init__(self, name, default_value=0, **properties):
         """Create an integer field.
@@ -807,8 +800,6 @@ class IntegerField(Field):
 
 class TextField(Field):
     """A field that contains text."""
-
-    class_name = "qm.fields.TextField"
 
     property_declarations = Field.property_declarations + [
         PropertyDeclaration(
@@ -1064,8 +1055,6 @@ class TupleField(Field):
 
     The contained fields may be of different types."""
 
-    class_name = "qm.fields.TupleField"
-
     def __init__(self, name, fields, **properties):
         """Construct a new 'TupleField'.
 
@@ -1157,8 +1146,6 @@ class SetField(Field):
     contain sets.
 
     The default field value is set to an empty set."""
-
-    class_name = "qm.fields.SetField"
 
     set_property_declarations = [
         PropertyDeclaration(
@@ -1503,8 +1490,6 @@ class AttachmentField(Field):
     handle the attachment submission requests.  See
     'attachment.register_attachment_upload_script'."""
 
-    class_name = "qm.fields.AttachmentField"
-
     upload_url = "/attachment-upload"
     """The URL used to upload data for an attachment.
 
@@ -1804,8 +1789,6 @@ class EnumerationField(TextField):
     ordered -- If non-zero, the enumerals are presented to the user
     ordered by value."""
 
-    class_name = "qm.fields.EnumerationField"
-
     property_declarations = TextField.property_declarations + [
         PropertyDeclaration(
             name="enumerals",
@@ -2048,8 +2031,6 @@ class TimeField(IntegerField):
     one-second precision.  User representations of 'TimeField' fields
     show one-minue precision."""
 
-    class_name = "qm.fields.TimeField"
-
     def __init__(self, name, **properties):
         """Create a time field.
 
@@ -2148,8 +2129,6 @@ class TimeField(IntegerField):
 class UidField(TextField):
     """A field containing a user ID."""
 
-    class_name = "qm.fields.UidField"
-
     def __init__(self, name, **properties):
         default_user_id = user.database.GetDefaultUserId()
         apply(TextField.__init__,
@@ -2178,59 +2157,6 @@ class UidField(TextField):
 
         else:
             raise ValueError, style
-
-
-
-########################################################################
-# functions
-########################################################################
-
-def from_dom_node(node, attachment_store):
-    """Construct a field object from a DOM node.
-
-    'node' -- A DOM node for a "field" element.
-
-    'attachment_store' -- The attachment store in which to presume
-    attachments are located.
-
-    returns -- An instance of a 'Field' subclass specified by the
-    element."""
-
-    assert node.tagName == "field"
-
-    # Get the Python class for the field.
-    field_class_name = xmlutil.get_child_text(node, "class")
-    # Load the class.
-    field_class = common.load_class(field_class_name)
-
-    if issubclass(field_class, SetField):
-        # If it's a set field, find the class of the contained field,
-        # and load it with a recursive call.
-        contained_field_node = xmlutil.get_child(node, "field")
-        contained_field = from_dom_node(contained_field_node,
-                                        attachment_store)
-        # Construct the set field around it.
-        field = field_class(contained_field)
-
-    else:
-        # Get the name attribute.
-        name = node.getAttribute("name")
-        # Construct a map of properties.
-        properties = {}
-        for property_node in node.getElementsByTagName("property"):
-            property_name = property_node.getAttribute("name")
-            property_value = xmlutil.get_dom_text(property_node)
-            properties[property_name] = property_value
-        # Instantiate the field.
-        field = apply(field_class, [name], properties)
-        
-    # Set the default value.
-    default_value_node = xmlutil.get_child(node, "default-value")
-    default_value = field.GetValueFromDomNode(
-        default_value_node.childNodes[0], attachment_store)
-    field.SetDefaultValue(default_value)
-
-    return field
 
 
 ########################################################################

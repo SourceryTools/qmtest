@@ -1,3 +1,28 @@
+2003-01-30  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (Field.class_name): Remove.
+	(Field.MakeDomNode): Adjust accordingly.
+	(IntegerField.class_name): Remove.
+	(TextField.class_name): Likewise.
+	(TupleField.class_name): Likewise.
+	(SetField.class_name): Likewise.
+	(AttachmentField.class_name): Likewise.
+	(EnumerationField.class_name): Likewise.
+	(TimeField.class_name): Likewise.
+	(UidField.class_name): Likewise.
+	(from_dom_node): Remove.
+	* qm/test/database.py (ItemDescriptor.GetResources): New method.
+	(TestDescriptor.GetResources): Remove.
+	* qm/test/runnable.py (Runnable.ResourceField): New class.
+	(Runnable.arguments): Add resources.
+	* qm/test/target.py (Target.RunTest): Use __SetUpResources.
+	(Target._SetUpResource): Likewise.
+	(Target.__SetUpResources): New method.
+	* qm/test/test.py (Test.ResourceField): Remove.
+	(Test.ResourceField): Remove.
+	(Test.arguments): Remove resources field.
+	* qm/test/classes/file.py (SubstitutionField.class_name): Remove.
+	
 2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
 	* qm/fields.py (AttachmentField): Fix typo in introductory

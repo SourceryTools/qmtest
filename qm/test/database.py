@@ -138,6 +138,15 @@ class ItemDescriptor:
             
         return self.__item
     
+
+    def GetResources(self):
+        """Return the resources required by this item.
+
+        returns -- A sequence of resource names.  Each name indicates a
+        resource that must be available to this item."""
+
+        return self.GetArguments().get("resources", [])
+
         
     # Helper functions.
 
@@ -216,15 +225,6 @@ class TestDescriptor(ItemDescriptor):
         """Return a map from prerequisite test IDs to required outcomes."""
 
         return self.__prerequisites
-
-
-    def GetResources(self):
-        """Return the resources required by this test.
-
-        returns -- A sequence of resource names.  Each name indicates a
-        resource that must be available to this test."""
-
-        return self.GetArguments().get("resources", [])
 
 
     def GetTargetGroup(self):

@@ -110,18 +110,6 @@ class Test(qm.test.runnable.Runnable):
 
 
 
-    class ResourceField(qm.fields.ChoiceField):
-        """A 'ResourceField' contains the name of a resource.
-
-        The exact format of the name depends on the test database in use."""
-
-        def GetItems(self):
-
-            database = qm.test.cmdline.get_qmtest().GetDatabase()
-            return database.GetResourceIds()
-
-
-
     class TestField(qm.fields.ChoiceField):
         """A 'TestField' contains the name of a test.
 
@@ -169,14 +157,7 @@ class Test(qm.test.runnable.Runnable):
                 Every test can depend on other tests.  Those tests will be
                 run before this test.  If the prerequisite test does not
                 have the outcome indicated, this test will not be run.""",
-                )),
-        qm.fields.SetField(
-            ResourceField(
-                name = "resources",
-                title = "Resources",
-                description = """Resources on which this test depends.""",
-                not_empty_text = "true",
-                )),
+                ))
     ]
 
     kind = "test"

@@ -183,23 +183,7 @@ class Target(qm.extension.Extension):
         
         # There are not yet any additional context properties that
         # need to be passed to the test.
-        properties = {}
-        # See if there are resources that need to be set up.
-        for resource in descriptor.GetResources():
-            (r, outcome, resource_properties) \
-                = self._SetUpResource(resource, context)
-            
-            # If the resource was not set up successfully,
-            # indicate that the test itself could not be run.
-            if outcome != Result.PASS:
-                result = Result(Result.TEST, descriptor.GetId(),
-                                context, Result.UNTESTED)
-                result[Result.CAUSE] = qm.message("failed resource")
-                result[Result.RESOURCE] = resource
-                self._RecordResult(result)
-                return
-            # Update the list of additional context properties.
-            properties.update(resource_properties)
+        properties = self.__SetUpResources(descriptor, context)
         # Create the modified context.
         context = ContextWrapper(context, properties)
         # Run the test.
@@ -281,6 +265,39 @@ class Target(qm.extension.Extension):
         return rop
 
 
+    def __SetUpResources(self, descriptor, context):
+        """Set up all the resources associated with 'descriptor'.
+
+        'descriptor' -- The 'TestDescriptor' or 'ResourceDescriptor'
+        indicating the test or resource that is about to be run.
+
+        'context' -- The 'Context' in which the resources will be
+        executed.
+
+        returns -- A list of additional context properties that should
+        be available to the test."""
+        
+        # See if there are resources that need to be set up.
+        properties = {}
+        for resource in descriptor.GetResources():
+            (r, outcome, resource_properties) \
+                = self._SetUpResource(resource, context)
+            
+            # If the resource was not set up successfully,
+            # indicate that the test itself could not be run.
+            if outcome != Result.PASS:
+                result = Result(Result.TEST, descriptor.GetId(),
+                                context, Result.UNTESTED)
+                result[Result.CAUSE] = qm.message("failed resource")
+                result[Result.RESOURCE] = resource
+                self._RecordResult(result)
+                return
+            # Update the list of additional context properties.
+            properties.update(resource_properties)
+
+        return properties
+    
+        
     def _SetUpResource(self, resource_name, context):
         """Set up the resource given by 'resource_id'.
 
@@ -308,6 +325,8 @@ class Target(qm.extension.Extension):
             result.NoteException(cause="Resource is missing from the database.")
             self._RecordResult(result)
             return (None, result, None)
+        # Set up the resources on which this resource depends.
+        self.__SetUpResources(resource, context)
         # Set up the resource.
         try:
             resource.SetUp(context, result)

@@ -42,8 +42,6 @@ class SubstitutionField(qm.fields.TupleField):
     The syntax for the regular expression and the substitution string is
     that of the standard Python 're' (regular expression) module."""
 
-    class_name = "qm.test.classes.file.SubstitutionField"
-
     def __init__(self, name, **properties):
         """Create a new 'SubstitutionField'.
 

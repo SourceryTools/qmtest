@@ -29,6 +29,18 @@ class Runnable(qm.extension.Extension):
 
     'Runnable' is an abstract base class for 'Test' and 'Resource'."""
 
+    class ResourceField(qm.fields.ChoiceField):
+        """A 'ResourceField' contains the name of a resource.
+
+        The exact format of the name depends on the test database in use."""
+
+        def GetItems(self):
+
+            database = qm.test.cmdline.get_qmtest().GetDatabase()
+            return database.GetResourceIds()
+
+
+
     EXTRA_ID = "qmtest_id"
     """The name of the extra keyword argument to '__init__' that
     specifies the name of the test or resource."""
@@ -37,6 +49,21 @@ class Runnable(qm.extension.Extension):
     """The name of the extra keyword argument to '__init__' that
     specifies the database containing the test or resource."""
 
+    arguments = [
+        qm.fields.SetField(
+            ResourceField(
+                name = "resources",
+                title = "Resources",
+                description = \
+                """Resources on which this test or resource depends.
+                
+                Before this test or resource is executed, the
+                resources on which it depends will be set up.""",
+                not_empty_text = "true",
+                )),
+        ]
+
+    
     def __init__(self, arguments, **extras):
         """Construct a new 'Runnable'.
 
