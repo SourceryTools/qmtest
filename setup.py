@@ -20,8 +20,13 @@ import os.path
 import string
 import glob
 
+########################################################################
+# imports
+########################################################################
+
 from qmdist.command.build_doc import build_doc
 from qmdist.command.install_data import install_data
+from qmdist.command.check import check
 
 def prefix(list, pref): return map(lambda x, p=pref: p + x, list)
 
@@ -53,7 +58,8 @@ else:
 
 setup(cmdclass={'build_doc': build_doc,
                 #'build': qm_build,
-                'install_data': install_data},
+                'install_data': install_data,
+                'check': check},
       name="qm", 
       version="2.1",
       packages=packages,
