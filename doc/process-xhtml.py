@@ -73,6 +73,11 @@ def make_label(term):
     return 'DEF-%s' % to_camel_caps(term)
 
 
+def clean_up_term(term):
+    """Clean up whitespace and such to canonicalize a term."""
+    return string.strip(re.sub('\s+', ' ', term))
+
+
 # Load terms from the cache file, if it exists.
 try:
     terms_file = open(terms_filename, "r")
@@ -98,7 +103,7 @@ while 1:
     if match == None:
         break
 
-    term = string.strip(match.group(1))
+    term = clean_up_term(match.group(1))
     label = make_label(term)
     # Add the name attribute to the anchor element.
     input = input[ : match.start()] \
@@ -114,10 +119,14 @@ while 1:
     if match == None:
         break
 
-    term = string.strip(match.group(1))
+    term = clean_up_term(match.group(1))
     # Look up the term in the terms dictionary.
     if terms.has_key(term):
         ref = terms[term]
+    # If the term ends with 's', naively assume its a pluralized form
+    # and try to find the singluar.
+    elif term[-1] == 's' and terms.has_key(term[ : -1]):
+        ref = terms[term[ : -1]]
     else:
         # The term is not in our dictionary.  Emit a warning and use a
         # default ref.

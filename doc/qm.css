@@ -146,6 +146,15 @@ div.API {
     padding: 1ex;
 }
 
+/* Use <div class="XML"><pre>...</pre></div> when presenting XML
+   samples.  */
+
+div.XML {
+    background-color: #e0f0ff;
+    border: none;
+    padding: 1 ex;
+}
+
 /* Use <span class="Identifier">...</span> for identifiers and other
    names used in source code.  */
 
@@ -157,6 +166,13 @@ span.Identifier {
 /* Use <span class="Class">...</span> for the name of a class.  */
 
 span.Class {
+    font-family: courier, monospace;
+    font-weight: bold;
+}
+
+/* Use <span class="Function">...</span> for function names.  */
+
+span.Function {
     font-family: courier, monospace;
     font-weight: bold;
 }
