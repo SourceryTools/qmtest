@@ -97,7 +97,7 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         qm.track.issue_class.Trigger.__init__(self, name)
         # Set up attributes.
         self.__condition = condition
-        self.__from_address = "qmtrack@%s" % qm.common.get_host_name()
+        self.__from_address = "qmtrack@%s" % qm.platform.get_host_name()
         self.__subject_prefix = "[QMTrack]"
 
 

@@ -70,10 +70,11 @@ standard_resource_class_names = [
 """A list of names of standard resource classes."""
 
 dtds = {
-    "resource": "-//Software Carpentry//QMTest Resource V0.1//EN",
-    "result": "-//Software Carpentry//QMTest Result V0.1//EN",
-    "suite": "-//Software Carpentry//QMTest Suite V0.1//EN",
-    "test": "-//Software Carpentry//QMTest Test V0.1//EN",
+    "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",
+    "result":       "-//Software Carpentry//QMTest Result V0.2//EN",
+    "suite":        "-//Software Carpentry//QMTest Suite V0.1//EN",
+    "target":       "-//Software Carpentry//QMTest Target V0.1//EN",
+    "test":         "-//Software Carpentry//QMTest Test V0.1//EN",
     }
 """A mapping for DTDs used by QMTest.
 
@@ -488,12 +489,12 @@ class Resource(InstanceBase):
         return self.__resource
 
 
-    def DoSetup(self, context):
-        self.__Do(context, mode="setup")
+    def SetUp(self, context):
+        return self.__Do(context, mode="setup")
 
 
-    def DoCleanup(self, context):
-        self.__Do(context, mode="cleanup")
+    def CleanUp(self, context):
+        return self.__Do(context, mode="cleanup")
 
 
     def __Do(self, context, mode):
@@ -522,9 +523,9 @@ class Resource(InstanceBase):
                 os.chdir(working_directory)
             # Run the resource function.
             if mode is "setup":
-                return resource.DoSetup(context)
+                return resource.SetUp(context)
             else:
-                return resource.DoCleanup(context)
+                return resource.CleanUp(context)
         finally:
             if old_working_directory is not None:
                 # Restore the working directory.
@@ -849,8 +850,8 @@ class ResultWrapper:
         return self.__result._Result__outcome
 
 
-    def GetTestId(self):
-        """Return the ID of the test for which this is a result."""
+    def GetId(self):
+        """Return the ID of the test or resource for which this is a result."""
         
         return self.__test_id
 
@@ -874,7 +875,7 @@ class ResultWrapper:
 
         # The node is a result element.
         element = document.createElement("result")
-        element.setAttribute("id", self.GetTestId())
+        element.setAttribute("id", self.GetId())
         # Create and add an element for the outcome.
         outcome_element = document.createElement("outcome")
         text = document.createTextNode(str(self.GetOutcome()))
@@ -899,8 +900,8 @@ class ResultWrapper:
         return element
 
 
-    # Methods to emulate a (read-only) map, to access the properties of
-    # the underlying 'Result' object.
+    # Methods to emulate a map, to access the properties of the
+    # underlying 'Result' object.
 
     def __getitem__(self, key):
         return self.__result._Result__properties[key]
@@ -916,6 +917,14 @@ class ResultWrapper:
 
     def items(self):
         return self.__result._Result__properties.items()
+
+
+    def __setitem__(self, key, value):
+        self.__result[key] = value
+
+
+    def __delitem__(self, key):
+        del self.__result[key]
 
 
 
@@ -1127,820 +1136,6 @@ class ContextWrapper:
 
 
 
-class PrerequisiteMapAdapter:
-    """A map-like object associating prerequisites with test IDs."""
-
-    def __init__(self, database):
-        """Construct a new map."""
-        
-        self.__database = database
-
-
-    def __getitem__(self, test_id):
-        """Return a sequence of IDs of prerequisite tests of 'test_id'."""
-
-        test = self.__database.GetTest(test_id)
-        return test.GetPrerequisites().keys()
-
-
-    def get(self, test_id, default=[]):
-        test = self.__database.GetTest(test_id)
-        return test.GetPrerequisites().keys()
-        
-
-
-class RemoteTestHost:
-    """A remote host on which to run tests.
-
-    Instances of this class have the following attributes, which may be
-    set manually or with the '__init__' function:
-
-      'host_name' -- The name of the remote host.
-
-      'user_name' -- The name of the user account on the remote host on
-      which to run tests.  May be 'None', in which case the remote
-      invocation mechanism's default is used.
-
-      'qmtest_path' -- The path to the 'qmtest' executable on the remote
-      host.
-
-      'db_path' -- The path to the test database on the remote host.  If
-      'None', the local test database is used.
-
-      'extra_args' -- Additional command-line options and arguments to
-      pass to the 'qmest' command on the remote host."""
-
-    def __init__(self,
-                 host_name,
-                 user_name=None,
-                 qmtest_path="/usr/local/bin/qmtest",
-                 db_path=None,
-                 extra_args=[]):
-        self.host_name = host_name
-        self.user_name = user_name
-        self.qmtest_path = qmtest_path
-        if db_path is None:
-            self.db_path = get_database().GetPath()
-        else:
-            self.db_path = db_path
-        self.extra_args = extra_args
-
-
-
-class Engine:
-   """Base class for a test execution engine."""
-
-   def __init__(self):
-       """Create a new engine."""
-
-       pass
-
-
-   def RunTest(self, test_id, context):
-       """Run a test.
-
-       'test_id' -- The ID of the test to execute.  
-
-       'context' -- Context to pass to the test.
-
-       returns -- A 'Result' object."""
-
-       results = self.RunTests([ test_id ], context)
-       return results[test_id]
-
-
-   def RunSuite(self, suite_id, context):
-       """Execute a test suite.
-
-       'suite_id' -- The ID of the suite to run.
-
-       'context' -- Context to pass to the tests.
-
-       returns -- A map from test IDs to 'Result' objects of tests that
-       were run.  The tests that were run is a superset of the tests in
-       'suite_id'."""
-
-       suite = self._database.GetSuite(suite_id)
-       return self.RunTests(suite.GetTestIds(), context)
-
-
-   def RunTests(self, test_ids, context, progress_callback=None):
-       """Execute several tests.
-
-       'test_ids' -- A sequence of IDs of the tests to run.
-
-       'context' -- Context to pass to the tests.
-
-       'progress_callback' -- If not 'None', a callable that is invoked
-       to report test execution progress.  The function takes two
-       parameters.  The first is a test ID.  The function is invoked
-       once before a test is run, with 'None' as the second argument.
-       After the test has been run, the function is called again, with a
-       'Result' object as the second argument.
-
-       returns -- A map from test IDs to 'Result' objects of tests that
-       were run.  The tests that were run is a superset of
-       'test_ids'."""
-
-       raise NotImplementedError, "Engine.RunTests"
-   
-
-
-class InProcessEngine(Engine):
-    """Test execution engine that runs tests directly."""
-
-    def RunTests(self, test_ids, context, progress_callback=None):
-        database = get_database()
-
-        # For convenience, set 'progress_callback' to a do-nothing
-        # function if it is 'None'.
-        if progress_callback is None:
-            def null_function(message):
-                pass
-            progress_callback = null_function
-            
-        qm.print_message(2, "Computing test order.\n")
-       
-        # Construct a map-like object for test prerequisites.
-        prerequisite_map = PrerequisiteMapAdapter(database)
-        # Perform a topological sort to determine the tests that will be
-        # run and the order in which to run them.  The sort may return a
-        # superset of the original 'test_ids'.
-        test_ids = qm.graph.topological_sort(test_ids,
-                                             prerequisite_map)
-
-        # This map associates a test with each test ID.
-        tests = {}
-
-        qm.print_message(2, "Computing required resources.\n")
-
-        # This map contains information about when cleanup resources
-        # should be run.  There is an entry for each resource referenced
-        # by at least one of the tests that will be run.  The key is the
-        # resource ID, and the value is the ID of the test after which
-        # the cleanup resource must be run.
-        cleanup_resource_map = {}
-
-        # Loop over all the tests, in the order that they will be run.
-        for test_id in test_ids:
-            # Look up the test.
-            test = database.GetTest(test_id)
-            # Store it.
-            tests[test_id] = test
-            # Loop over all the resources it references.
-            for resource_id in test.GetResources():
-                # The cleanup resource should be run after this test.
-                # Another, earlier test may have been here, but this test
-                # will be run later, so reschedule the cleanup.
-                cleanup_resource_map[resource_id] = test_id
-
-        # This map contains the context properties that were added by
-        # each setup resource that has been run so far.  A key in this
-        # map is a resource ID, and the corresponding value represents
-        # the properties that the setup resource added to the context
-        # (as a map from property name to value).  If the setup resource
-        # failed, the corresponding value is 'None'.
-        setup_attributes = {}
-
-        qm.print_message(2, "Running tests.\n")
-
-        # Run tests.  Store the results in an ordered map so that we can
-        # retrieve results by test ID efficiently, and also preserve the
-        # order in which tests were run.
-        results = qm.OrderedMap()
-        for test_id in test_ids:
-            test = tests[test_id]
-            result = None
-            resource_ids = test.GetResources()
-
-            # Prerequisite tests and setup resources may add additional
-            # properties to the context which are visible to this test.
-            # Accumulate those properties in this map.
-            extra_context_properties = {}
-
-            # Check that all the prerequisites of this test have produced
-            # the expected outcomes.  If a prerequisite produced a
-            # different outcome, generate an UNTESTED result and stop
-            # processing prerequisites.
-
-            prerequisites = test.GetPrerequisites()
-            for prerequisite_id, outcome in prerequisites.items():
-                # Because of the topological sort, the prerequisite
-                # should already have been run.
-                assert results.has_key(prerequisite_id)
-                # Did the prerequisite produce the required outcome?
-                prerequisite_result = results[prerequisite_id]
-                if prerequisite_result.GetOutcome() != outcome:
-                    # No.  As a result, we won't run this test.  Create
-                    # a result object with the UNTESTED outcome.
-                    result = Result(outcome=Result.UNTESTED,
-                                    failed_prerequisite=prerequisite_id)
-                    break
-                else:
-                    # Properties added to the context by the
-                    # prerequisite test are to be available to this
-                    # test.
-                    extra_context_properties.update(
-                        prerequisite_result.GetContextProperties())
-
-            # Do setup resources (unless a prerequisite failed).  This
-            # is done only for the first test that references the
-            # resource.  If a setup resource fails, generate an UNTESTED
-            # result for this test and stop processing setup resources.
-
-            if result is not None:
-                # Don't bother with setup resources if we already have a
-                # test result indicating a failed prerequisite.
-                pass
-            else:
-                # Loop over resources referenced by this test.
-                for resource_id in resource_ids:
-                    # Have we already done the setup for this resource?
-                    if setup_attributes.has_key(resource_id):
-                        # The resource has already been run.  Look up the
-                        # context properties that the setup function
-                        # generated.
-                        added_attributes = setup_attributes[resource_id]
-                        if added_attributes is None:
-                            # The resource failed when it was run, so don't
-                            # run this test.
-                            result = Result(outcome=Result.UNTESTED,
-                                            failed_setup_resource=resource_id)
-                            break
-                    else:
-                        # This is the first test to reference this resource.
-                        # Look up the resource.
-                        try:
-                            resource = database.GetResource(resource_id)
-                        except NoSuchResourceError:
-                            # Oops, it's missing.  Don't run the test.
-                            result = Result(outcome=Result.UNTESTED,
-                                            missing_resource=resource_id)
-                            break
-
-                        # Make another context wrapper for the setup
-                        # function.  The setup function shouldn't see any
-                        # properties added by prerequisite tests or other
-                        # resources.  Also, we need to isolate the
-                        # properties added by this function.
-                        wrapper = ContextWrapper(context)
-
-                        # Do the setup resource.
-                        progress_callback("resource %-43s: " % resource_id)
-                        try:
-                            resource.DoSetup(wrapper)
-                        except:
-                            # The resource raised an exception.  Don't run
-                            # the test.
-                            progress_callback("SETUP ERROR\n")
-                            result = Result(Result.UNTESTED,
-                                            failed_setup_resource=resource_id)
-                            # Add some information about the traceback.
-                            exc_info = sys.exc_info()
-                            result["setup_exception_" + resource_id] = \
-                                             "%s: %s" % exc_info[:2]
-                            result["setup_traceback_" + resource_id] = \
-                                             qm.format_traceback(exc_info)
-                            # Record 'None' for this resource, indicating
-                            # that it failed.
-                            setup_attributes[resource_id] = None
-                            break
-                        else:
-                            # The resource completed successfully.
-                            progress_callback("SETUP\n")
-                            # Extract the context properties added by the
-                            # setup function.
-                            added_attributes = wrapper.GetAddedProperties()
-                            # Store them for other tests that reference
-                            # this resource.
-                            setup_attributes[resource_id] = added_attributes
-
-                    # Accumulate the properties generated by this setup
-                    # resource. 
-                    extra_context_properties.update(added_attributes)
-
-            # We're done with prerequisites and setup resources, and it's
-            # time to run the test.
-            progress_callback("test %-45s: " % test_id)
-
-            # If we don't already have a result (all prerequisites
-            # checked out and setup resources succeeded), actually run the
-            # test.
-            if result is None:
-                # Create a context wrapper that we'll use when running
-                # the test.  It includes the original context, plus
-                # additional properties added by prerequisite tests and
-                # setup resources.
-                context_wrapper = ContextWrapper(context,
-                                                 extra_context_properties)
-                try:
-                    # Run the test.
-                    result = test.Run(context_wrapper)
-                except KeyboardInterrupt:
-                    # Let this propagate out, so the user can kill the
-                    # test run.
-                    raise
-                except:
-                    # The test raised an exception.  Create a result
-                    # object for it.
-                    result = make_result_for_exception(sys.exc_info())
-                else:
-                    # The test ran to completion.  It should have
-                    # returned a 'Result' object.
-                    if not isinstance(result, qm.test.base.Result):
-                        # Something else.  That's an error.
-                        raise RuntimeError, \
-                              qm.error("invalid result",
-                                       id=test_id,
-                                       test_class=test.GetClass().__name__,
-                                       result=repr(result))
-
-            # Invoke the callback.
-            progress_callback(result.GetOutcome() + "\n")
-
-            # Finally, run cleanup resources for this test.  Run them no
-            # matter what the test outcome is, even if prerequisites or
-            # setup resources failed.  If a cleanup resource fails, try
-            # running the other cleanup resources anyway.
-
-            # Loop over resources referenced by this test.
-            for resource_id in resource_ids:
-                if cleanup_resource_map[resource_id] != test_id:
-                    # This is not the last test to require this cleanup
-                    # resource, so don't do it yet.
-                    continue
-                if not setup_attributes.has_key(resource_id):
-                    # The setup resource was never run, so don't run the
-                    # cleanup resource.
-                    continue
-                # Loop up the resource.
-                resource = database.GetResource(resource_id)
-
-                # Create a context wrapper for running the cleanup
-                # method.  It includes the original context, plus any
-                # additional properties added by the setup method of the
-                # same resource.
-                properties = setup_attributes[resource_id]
-                if properties is None:
-                    # The setup method failed, but we're running the
-                    # cleanup method anyway.  Don't use any extra
-                    # properties.
-                    properties = {}
-                wrapper = ContextWrapper(context, properties)
-
-                # Now run the cleanup resource.
-                progress_callback("resource %-43s: " % resource_id)
-                try:
-                    resource.DoCleanup(wrapper)
-                except:
-                    # It raised an exception.  No biggie; just record
-                    # some information in the result.
-                    progress_callback("CLEANUP ERROR\n")
-                    exc_info = sys.exc_info()
-                    result["cleanup_exception_" + resource_id] = \
-                                     "%s: %s" % exc_info[:2]
-                    result["cleanup_traceback_" + resource_id] = \
-                                     qm.format_traceback(exc_info)
-                else:
-                    # The cleanup resource succeeded.
-                    progress_callback("CLEANUP\n")
-
-            # Record the test ID and context by wrapping the result.
-            result = ResultWrapper(test_id, context_wrapper, result)
-            # Store the test result.
-            results[test_id] = result
-
-        return results.AsMap()
-
-
-
-class ConcurrentEngine(Engine):
-    """An engine that runs tests in concurrent threads of execution.
-
-    This is a base class for engines that distribute tests across
-    multiple threads of execution, on a single host or multiple hosts.
-    Subclasses, which provide a concrete implementation for the threads
-    of execution (threads, local processes, remote processes, etc.)
-    override the '_Run' method."""
-
-    def __init__(self, concurrency):
-        """Create a new engine.
-
-        'concurrency' -- The number of concurrent threads of execution
-        in which to run tests."""
-
-        Engine.__init__(self)
-        self.__concurrency = concurrency
-
-
-    def RunTests(self, test_ids, context, progress_callback=None):
-        # Construct a schedule of tests to run in each test.  Call the
-        # subclass's '_Run' method actually to run them.
-        
-        database = get_database()
-        concurrency = self.__concurrency
-
-        # Construct a map-like object for test prerequisites.
-        prerequisite_map = PrerequisiteMapAdapter(database)
-        # Partition tests.  Tests related by a prerequisite relationship
-        # are placed in the same partition.
-        partitions = qm.graph.partition(test_ids, prerequisite_map)
-        # Sort the tests by decreasing partition size.
-        partitions.sort(lambda p1, p2: cmp(len(p2), len(p1)))
-
-        # Zig-zag round-robin through the partitions, assigning the
-        # tests in each to consecutive threads.
-        schedule = []
-        for i in range(0, concurrency):
-            schedule.append([])
-        for i in range(0, len(partitions)):
-            # Compute the next thread index.  Count up from zero and
-            # then back down again, e.g. 0 1 2 3 3 2 1 0 0 1 2 ...
-            thread_index = i % (2 * concurrency)
-            if thread_index >= concurrency:
-                thread_index = 2 * concurrency - thread_index - 1
-            # Assign the tests to that thread.
-            schedule[thread_index].extend(partitions[i])
-
-        return self._Run(schedule, context)
-
-
-    def _Run(self, schedule, context):
-        """Run tests in concurrent processes.
-
-        'schedule' -- A schedule indicating tests to run.  The value is
-        a sequence, and each element of the list is a sequence
-        contianing the IDs of tests to run in a single thread.  The
-        length of 'schedule' is the number of concurrent threads to use.
-
-        'context' -- The test execution context.
-
-        returns -- A map from test IDs to corresponding 'Result'
-        objects."""
-
-        raise qm.common.MethodMustBeOverriddenError("ConcurrentEngine._Run")
-
-
-
-class SubprocessEngine(ConcurrentEngine):
-    # Note that there is no test database locking across processes,
-    # currently.  This implementation assumes that the database is not
-    # modified, so locking is unnecessary.
-
-    def __init__(self, engines):
-        ConcurrentEngine.__init__(self, len(engines))
-        self.__engines = engines
-
-
-    def _Run(self, schedule, context):
-        # Make sure there is one element in 'schedule' for each of our
-        # subprocess engines.
-        assert len(self.__engines) == len(schedule)
-
-        qmtest_executable = sys.argv[0]
-        database = get_database()
-        db_path = database.GetPath()
-
-        # Keep track of child processes.  Each element is a tuple of the
-        # child process ID and the name of the file in which it stores
-        # its results. 
-        children = []
-        # Spawn the children.
-        for i in range(0, len(schedule)):
-            test_ids_for_process = schedule[i]
-            engine = self.__engines[i]
-
-            # Create a temporary file name, into which the child process
-            # will write its results.
-            results_file_name = tempfile.mktemp()
-
-            # Fork a process.
-            child_pid = os.fork()
-
-            if child_pid > 0:
-                # This is the parent process.  Remember our child.
-                qm.common.print_message(3,
-                    "Child process %d created." % child_pid)
-                children.append((child_pid, results_file_name))
-
-            else:
-                # This is the child process.  Run the tests in an
-                # ordinary in-process engine.
-                try:
-                    results = engine.RunTests(test_ids_for_process, context)
-
-                # Something went wrong.  Generate results, with an
-                # 'ERROR' outcome for each test we were supposed to run
-                # in this process.
-                except CommandFailedError:
-                    exc_info = sys.exc_info()
-                    exception = exc_info[1]
-                    results = {}
-                    result = Result(Result.ERROR,
-                                    cause=str(exception),
-                                    arguments=exception.arguments,
-                                    exit_code=exception.exit_code,
-                                    stdout=exception.stdout,
-                                    stderr=exception.stderr)
-                    for test_id in test_ids_for_process:
-                        results[test_id] = ResultWrapper(test_id,
-                                                         context, result)
-                except:
-                    results = {}
-                    result = make_result_for_exception(
-                        sys.exc_info(),
-                        outcome=Result.ERROR,
-                        cause="Error running subprocess.")
-                    for test_id in test_ids_for_process:
-                        results[test_id] = ResultWrapper(test_id,
-                                                         context, result)
-
-                # Write the results to a file.  Use Python pickle format
-                # instead of XML since it's faster.
-                results_file = open(results_file_name, "w")
-                cPickle.dump(results, results_file)
-                results_file.close()
-                # End this process unceremoniously.
-                os._exit(0)
-
-        # Accumulate results from across children here.
-        results = {}
-        # Wait for children to complete.
-        for child_pid, results_file_name in children:
-            # Wait until the child process is done.
-            pid, exit_status = os.waitpid(child_pid, 0)
-            assert pid == child_pid
-            qm.common.print_message(3, "Child process %d completed." % pid)
-            # Load its results.
-            results_file = open(results_file_name, "r")
-            child_results = cPickle.load(results_file)
-            results_file.close()
-            results.update(child_results)
-            # Clean up the results file.
-            os.unlink(results_file_name)
-
-        return results
-
-
-
-class MultiProcessEngine(SubprocessEngine):
-    """An engine that runs tests in several concurrent local processes."""
-
-    def __init__(self, concurrency):
-        """Create a new engine.
-
-        'concurrency' -- The number of concurrent subprocesses in which
-        to run tests."""
-
-        # Make a set of 'concurrency' instances of 'InProcessEngine'.
-        # These are the engines we'll run in each process.
-        engines = map(lambda x: InProcessEngine(), concurrency * (None, ))
-        # Initialize the base class.
-        SubprocessEngine.__init__(self, engines)
-
-
-
-class MultiThreadEngine(ConcurrentEngine):
-    """An engine that runs tests in concurrent Python threads.
-
-    **WARNING**: Due to a Python bug involving adverse interactions
-    between Python threads and the 'os.fork' call, this implementation
-    does not work reliably on some systems.  Particularly, some test
-    classes may use 'os.fork' to execute a tested program in a separate
-    process.  The bug may cause the Python interpreter to hang
-    unpredictably when calls to 'os.fork' are made from Python threads.
-
-    Therefore, this class is currently not used."""
-
-    def _Run(self, schedule, context):
-        import threading
-
-        # Create threads.
-        threads = []
-        thread_count = len(schedule)
-        for test_ids_for_thread in schedule:
-            # Pass the context and the thread IDs to run in the thread.
-            thread_args = (test_ids_for_thread, context)
-            # Create the thread.
-            thread = threading.Thread(target=self.__ThreadFunction,
-                                      args=thread_args) 
-            thread.__results = {}
-            # Start the thread.
-            qm.common.print_message(2, "starting thread %s\n"
-                                    % thread.getName())
-            thread.start()
-            # Remember the thread for later.
-            threads.append(thread)
-
-        # Join all the threads.  Accumulate test results from each.
-        results = {}
-        for thread in threads:
-            qm.common.print_message(2, "joining thread %s\n"
-                                    % thread.getName())
-            # Wait for the thread to complete.
-            thread.join()
-            # Grab its results.
-            results.update(thread.__results)
-
-        # All done.
-        return results
-
-
-    def __ThreadFunction(self, test_ids, context):
-        """The thread function for threads running tests.
-
-        'test_ids' -- A sequence of test IDs to run.
-
-        'context' -- The test context object."""
-        
-        import threading
-
-        # Run the tests using an ordinary 'InProcessEngine'.
-        engine = InProcessEngine()
-        results = engine.RunTests(test_ids, context)
-        # Append it to the provided list.
-        threading.currentThread().__results = results
-
-
-
-class CommandEngine(Engine):
-    """Engine that runs tests by invoking the 'qmtest' command.
-
-    This is a base class for engine classes which run tests by invoking
-    the 'qmtest' command directly.  The invocation may be local or
-    remote.  Subclasses should override the '_Run' method to implement
-    the actual command invocation."""
-
-    def __init__(self,
-                 qmtest_executable,
-                 db_path,
-                 extra_args=[]):
-        """Create a new engine.
-
-        'qmtest_executable' -- The path to the 'qmtest' executable, in
-        the context in which it will be run.
-
-        'db_path' -- The path to the test database, in the context tests
-        will be run.
-
-        'extra_args' -- Additional command-line arguments (generally,
-        options) to pass to the 'qmtest' command."""
-        
-        self.__qmtest_executable = qmtest_executable
-        self.__db_path = db_path
-        self.__extra_args = []
-
-
-    def RunTests(self, test_ids, context, progress_callback=None):
-        # Construct the argument list for running 'qmtest'.
-        args = [
-            self.__qmtest_executable,
-            "--db-path", self.__db_path,
-            "run",
-            "--output", "-",
-            "--no-summary",
-            "--context-file", "-",
-            ] + self.__extra_args + test_ids
-        # We'll feed the test execution context to the command
-        # invocation on standard input.  Generate the context in the
-        # right format.
-        context_input = map(lambda (k, v): "%s=%s" % (k, v),
-                            context.items())
-
-        context_input = string.join(context_input, "\n")
-
-        # Run the command.
-        exit_code, stdout, stderr = self._Run(args, stdin=context_input)
-
-        # If something appeared on standard error, write it, to help
-        # diagnose problems.
-        if stderr != "":
-            sys.stderr.write(stderr)
-
-        if exit_code == 0:
-            # The command succeeded.  Standard output contains the XML
-            # representation of the results.  Parse it.
-            results_file = cStringIO.StringIO(stdout)
-            results_document = qm.xmlutil.load_xml(results_file)
-            # Extract the result elements.
-            return _results_from_dom(results_document.documentElement)
-        else:
-            # The command failed.
-            exception = CommandFailedError(args, exit_code, stdout, stderr)
-            raise exception
-
-
-    def _Run(self, args, stdin):
-        """Invoke the 'qmtest' command.
-
-        'args' -- The argument list for the complete 'qmtest' command.
-        The executable itself is 'args[0]'.
-
-        'stdin' -- Text to feed the command on standard input.
-
-        returns -- An exit code, standard output, standard error
-        triplet."""
-
-        raise qm.common.MethodShouldBeOverriddenError, "CommandEngine._Run"
-
-
-
-class LocalCommandEngine(CommandEngine):
-    """Command engine to invoke the 'qmtest' command locally."""
-
-    def __init__(self):
-        """Create a new engine."""
-        
-        # Use the current executable.
-        qmtest_exectuable = sys.argv[0]
-        # Use the current database path.
-        db_path = get_database().GetPath()
-        # Initialize the base class.
-        CommmandEngine.__init__(self, qmtest_exectuable, db_path)
-
-
-    def _Run(self, args, stdin):
-        # Just run it directly.
-        return qm.platform.run_program_captured(args[0], args, stdin=stdin)
-
-
-
-class MultiRshEngine(SubprocessEngine):
-
-    def __init__(self, hosts, rsh_program="/usr/bin/ssh"):
-        """Create a new engine.
-
-        'hosts' -- A sequence of 'RemoteTestHost' instances describing
-        the remote hosts on which to run tests.
-
-        'rsh_program' -- The remote shell program to use to invoke
-        'qmtest' on the remote host."""
-
-        engines = map(lambda host, rsh=rsh_program: RshEngine(host, rsh),
-                      hosts)
-        # Initialize the base class.
-        SubprocessEngine.__init__(self, engines)
-        
-
-
-class RshEngine(CommandEngine):
-    """Command engine to invoke 'qmtest' remotely via a remote shell.
-
-    This engine uses a remote shell connection to invoke the 'qmtest'
-    command on another host.  The remote shell is implemented using a
-    command such as 'rsh' or 'ssh'.
-
-    This engine assumes that the same version of QMTest is installed
-    correctly on the remote machine, and that the test database (or an
-    identical copy) is accessible there as well."""
-
-    def __init__(self,
-                 remote_host,
-                 rsh_program="/usr/bin/ssh"):
-        """Create a new engine.
-
-        'remote_host' -- A 'RemoteTestHost' instance describing the
-        remote host on which to run tests.
-
-        'rsh_program' -- The remote shell program to use to invoke
-        'qmtest' on the remote host."""
-
-        # Initialize the base class.
-        CommandEngine.__init__(self,
-                               remote_host.qmtest_path,
-                               remote_host.db_path,
-                               remote_host.extra_args)
-        self.__remote_host = remote_host
-        self.__rsh_program = rsh_program
-        
-
-    def _Run(self, args, stdin):
-        remote_host = self.__remote_host
-        # Construct the command line for the remote program.
-        ssh_args = [self.__rsh_program, remote_host.host_name]
-        # Should we specify the remote user name?
-        if remote_host.user_name is not None:
-            # Yes.  Use the '-l' option.
-            ssh_args.append("-l")
-            ssh_args.append(self.__remote_user)
-        # Add to the end the 'qmtest' invocation itself.
-        ssh_args.extend(args)
-        # Do it.
-        exit_code, stdout, stderr = qm.platform.run_program_captured(
-            ssh_args[0], ssh_args, stdin=stdin)
-        # Did the remote command succeed?
-        if exit_code == 0:
-            # Yes.  Pass our results up.
-            return exit_code, stdout, stderr
-        else:
-            # No.  Raise the exception here, so that the exception
-            # contains the full remote invocation argument list.
-            exception = CommandFailedError(ssh_args, exit_code,
-                                           stdout, stderr)
-            raise exception
-
-
-
 ########################################################################
 # functions
 ########################################################################
@@ -2128,22 +1323,35 @@ def load_outcomes(path):
     return outcomes
 
 
-def write_results(results, output):
+def write_results(test_results, resource_results, output):
     """Write results in XML format.
 
-    'results' -- A sequence of 'ResultWrapper' objects.
+    'test_results' -- A sequence of 'ResultWrapper' objects for tests.
+
+    'resource_results' -- A sequence of 'ResultWrapper' objects for
+    resource functions.
 
     'output' -- A file object to which to write the results."""
 
     document = qm.xmlutil.create_dom_document(
         public_id=dtds["result"],
         dtd_file_name="result.dtd",
-        document_element_tag="results"
+        document_element_tag="test-run"
         )
+    # Add an element for grouping test results.
+    test_results_element = document.createElement("test-results")
+    document.documentElement.appendChild(test_results_element)
     # Add a result element for each test that was run.
-    for result in results:
+    for result in test_results:
         result_element = result.MakeDomNode(document)
-        document.documentElement.appendChild(result_element)
+        test_results_element.appendChild(result_element)
+    # Add an element for grouping resource function results.
+    resource_results_element = document.createElement("resource-results")
+    document.documentElement.appendChild(resource_results_element)
+    # Add a result element for each resource function that was run.
+    for result in resource_results:
+        result_element = result.MakeDomNode(document)
+        resource_results_element.appendChild(result_element)
     # Generate output.
     qm.xmlutil.write_dom_document(document, output)
     
@@ -2168,8 +1376,11 @@ def read_results(input):
     returns -- A map from test IDs to 'ResultWrapper' objects."""
     
     results_document = qm.xmlutil.load_xml(input)
+    test_results_elements = \
+        results_document.getElementsByTagName("test-results")
+    assert len(test_results_elements) == 1
     # Extract the result elements.
-    return _results_from_dom(results_document.documentElement)
+    return _results_from_dom(test_results_elements[0])
 
 
 def load_results(path):
@@ -2180,8 +1391,11 @@ def load_results(path):
     returns -- A map from test IDs to 'ResultWrapper' objects."""
     
     results_document = qm.xmlutil.load_xml_file(path)
+    test_results_elements = \
+        results_document.getElementsByTagName("test-results")
+    assert len(test_results_elements) == 1
     # Extract the result elements.
-    return _results_from_dom(results_document.documentElement)
+    return _results_from_dom(test_results_elements[0])
 
 
 def _results_from_dom(results_node):
@@ -2191,12 +1405,11 @@ def _results_from_dom(results_node):
 
     returns -- A map from test IDs to 'ResultWrapper' objects."""
 
-    assert results_node.tagName == "results"
     # Extract one result for each result element.
     results = {}
     for result_node in results_node.getElementsByTagName("result"):
         result = _result_from_dom(result_node)
-        results[result.GetTestId()] = result
+        results[result.GetId()] = result
     return results
 
 
@@ -2225,6 +1438,95 @@ def _result_from_dom(result_node):
     context = None
     # Construct a result wrapper around the result.
     return ResultWrapper(test_id, context, result)
+
+
+def run_test(test_id, context):
+    """Run a test.
+
+    'test_id' -- The ID of the test to run.
+
+    'context' -- The 'Context' object with which to run it.
+
+    returns -- A complete 'ResultWrapper' object for the test."""
+
+    test = get_database().GetTest(test_id)
+
+    try:
+        # Run the test.
+        result = test.Run(context)
+    except KeyboardInterrupt:
+        # Let this propagate out, so the user can kill the test run.
+        raise
+    except:
+        # The test raised an exception.  Create a result object for it.
+        result = make_result_for_exception(sys.exc_info())
+    else:
+        # The test ran to completion.  It should have returned a
+        # 'Result' object.
+        if not isinstance(result, qm.test.base.Result):
+            # Something else.  That's an error.
+            raise RuntimeError, \
+                  qm.error("invalid result",
+                           id=test_id,
+                           test_class=test.GetClass().__name__,
+                           result=repr(result))
+
+    # Wrap the result with additional information.
+    return ResultWrapper(test_id, context, result)
+
+
+def set_up_resource(resource_id, context):
+    """Set up a resource.
+
+    'test_id' -- The ID of the resource to set up.
+
+    'context' -- The 'Context' object with which to run it.
+
+    returns -- A complete 'ResultWrapper' object for the setup function."""
+
+    resource = get_database().GetResource(resource_id)
+
+    # Set up the resoure.
+    try:
+        result = resource.SetUp(context)
+    except:
+        # The resource raised an exception.  
+        result = Result(Result.ERROR, cause="Uncaught exception.")
+        # Add some information about the traceback.
+        exc_info = sys.exc_info()
+        result["exception"] = "%s: %s" % exc_info[:2]
+        result["traceback"] = qm.common.format_traceback(exc_info)
+    # Indicate in the result what we did.
+    result["action"] = "setup"
+    # Wrap it up.
+    return ResultWrapper(resource_id, context, result)
+
+
+def clean_up_resource(resource_id, context):
+    """Clean up a resource.
+
+    'test_id' -- The ID of the resource to clean up.
+
+    'context' -- The 'Context' object with which to run it.
+
+    returns -- A complete 'ResultWrapper' object for the cleanup function."""
+
+    resource = get_database().GetResource(resource_id)
+
+    # Clean up the resource.
+    try:
+        result = resource.CleanUp(context)
+    except:
+        # The resource raised an exception.  
+        result = Result(Result.ERROR, cause="Uncaught exception.")
+        # Add some information about the traceback.
+        exc_info = sys.exc_info()
+        result["exception"] = "%s: %s" % exc_info[:2]
+        result["traceback"] = qm.common.format_traceback(exc_info)
+    # Indicate in the result what we did.
+    result["action"] = "cleanup"
+    # Wrap it up.
+    return ResultWrapper(resource_id, context, result)
 
 
 ########################################################################

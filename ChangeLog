@@ -1,3 +1,89 @@
+2001-08-16  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/common.py (__host_name): Remove.
+	(get_host_name): Likewise.
+	(shuffle): New function.
+	(sequence_difference): Likewise.
+	* qm/async.py: New file.
+	* qm/web.py (HTTPServer.server_bind): Use platform.get_host_name.
+	* qm/platform_win32.py (get_host_name): New function.
+	(_get_host_name): Likewise.
+	* qm/platform_linux.py (run_program): Fix comment.
+	(get_host_name): New function.
+
+	* qm/track/cmdline.py (Command.__PerformServer): Use
+	platform.get_host_name. 
+	* qm/track/triggers/notification.py (_NotifyTrigger.__init__):
+	Likewise. 
+
+	* qm/test/run.py: New file.
+	* qm/test/cmdline.py (Command.summary_option_spec): Remove
+	short-form option. 
+	(Command.profile_option_spec): Adjust.
+	(Command.concurrent_option_spec): Likewise.
+	(Command.remote_option_spec): Remove.
+	(Command.targets_option_spec): New attribute.
+	(Command.seed_option_spec): Likewise.
+	(Command.commands_spec): Remove remote_option_spec.  Add
+	targets_option_spec and seed_option_spec.  Sort.
+	(Command.add_test_id): Adjust for new test run mechanism.
+	(Command.__ExecuteServer): Use platform.get_host_name.
+	(Command.__WriteSummary): Summarize resource results too.  Adjust
+	output. 
+	* qm/test/base.py (dtds): Add target DTD.
+	(Resource.DoSetup): Rename to...
+	(Resource.SetUp): ... this.
+	(Resource.DoCleanup): Rename to...
+	(Resource.CleanUp): ... this.
+	(Resource.__Do): Use SetUp and CleanUp.
+	(ResultWrapper.GetTestId): Rename to...
+	(ResultWrapper.GetId): ... this.
+	(ResultWrapper.MakeDomNode): Adjust accordingly.
+	(ResultWrapper.__setitem__): New method.
+	(ResultWrapper.__delitem__): Likewise.
+	(PrerequisiteMapAdapter): Remove.
+	(RemoteTestHost): Likewise.
+	(Engine): Likewise.
+	(InProcessEngine): Likewise.
+	(ConcurrentyEngine): Likewise.
+	(SubprocessEngine): Likewise.
+	(MultiProcessEngine): Likewise.
+	(MultiThreadEngine): Likewise.
+	(CommandEngine): Likewise.
+	(LocalCommandEngine): Likewise.
+	(MultiRshEngine): Likewise.
+	(RshEngine): Likewise.
+	(write_results): Write resource results too.
+	(read_results): Adjust for new DTD.
+	(load_results): Likewise.
+	(_results_from_dom): Likewise.
+	(run_test): New function.
+	(set_up_resource): Likewise.
+	(clean_up_resource): Likewise.
+	* qm/test/classes/temporary.py (TempDirectoryResource.DoSetup):
+	Rename to...
+	(TempDirectoryResource.SetUp): ... this.  Handle errors.
+	(TempDirectoryResource.DoCleanup): Rename to...
+	(TempDirectoryResource.CleanUp): ... this.  Handle errors.
+
+	* share/xml/CATALOG: Add target DTD.
+	* share/xml/result.dtd: Adjust to include resource results.
+	(results): Rename to...
+	(test-run): ... this.
+	(test-results): New element.
+	(resource-results): Likewise.
+	* share/xml/target.dtd: New file.
+	* share/diagnostics/test.txt (concurrency not integer): New
+	diagnostic. 
+	(failed resource): Likewise.
+	(incorrect prerequisite outcome): Likewise.
+	(no target for group): Likewise.
+	(seed not integer): Likewise.
+	* tests/unit/common/parser_create.qmt: Adjust.
+	* tests/unit/common/parser_parse.qmt: Likewise.
+	* tests/unit/common/parser_help.qmt: Likewise.
+	* tests/unit/test/classes/tempdir1.qmt: Likewise.
+	
 2001-07-20  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/xmldb.py (Database.__ParseResourceDocument): Fix wrong

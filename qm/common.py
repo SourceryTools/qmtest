@@ -41,9 +41,11 @@ import cPickle
 import cStringIO
 import gzip
 import imp
+import operator
 import os
 import os.path
 import quopri
+import random
 import re
 import socket
 import string
@@ -597,48 +599,6 @@ def get_doc_directory(*components):
     return apply(os.path.join, (path, ) + components)
 
 
-__host_name = None
-
-def get_host_name():
-    """Return the name of this computer."""
-
-    global __host_name
-
-    # FIXME:  Should we try the 'hostname' command here?
-
-    # Figure out the host name the first time this function is called.
-    if __host_name is None:
-        # First try to look up our own address in DNS.
-        try:
-            name = socket.gethostbyname_ex(socket.gethostname())[0]
-        except socket.error:
-            name = None
-
-        if name is None:
-            # That didn't work.  Just use the local name.
-            try:
-                name = socket.gethostname()
-            except socket.error:
-                pass
-
-        if name is None:
-            # That didn't work either.  Check if the host name is stored
-            # in the environment.
-            try:
-                name = os.environ["HOSTNAME"]
-            except KeyError:
-                pass
-
-        if name is None:
-            # We're stumped.  Use localhost.
-            name = "localhost"
-
-        # Store the name for next time.
-        __host_name = name
-
-    return __host_name
-
-
 def format_exception(exc_info):
     """Format an exception as structured text.
 
@@ -808,7 +768,7 @@ def load_class(name, path):
     nested in another class.
 
     'path' -- A sequence of directory paths in which to search for the
-    containing module, analogous to 'PYTHONPATH'.
+    containing module, analogous to 'sys.path'.
 
     returns -- A class object.
 
@@ -1175,6 +1135,42 @@ def format_time(time_secs, local_time_zone=1):
     # Generate the format.
     return "%(year)4d-%(month)02d-%(day)02d " \
            "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
+
+
+def shuffle(items, generator=None):
+    """Randomize the order of elements in place.
+
+    'items' -- A list, or other mutable sequence.
+
+    'generator' -- The random number generator, implementing Python's
+    random number generator, to use.  If 'None', use the Python 'random'
+    module. 
+
+    The elements of 'items' are rearranged randomly."""
+
+    if generator is None:
+        generator = random
+
+    length = len(items)
+    # For each element in 'items', swap the element with a
+    # randomly-chosen element that appears after it.
+    for i in range(0, length - 3):
+        j = generator.randint(i + 1, length - 1)
+        swap = items[j]
+        items[j] = items[i]
+        items[i] = swap
+
+
+def sequence_difference(seq1, seq2):
+    """Returns a sequence of items in 'seq1' but not in 'seq2'.
+
+    'seq1', 'seq2' -- Sequences."""
+
+    result = []
+    for item in seq1:
+        if item not in seq2:
+            result.append(item)
+    return result
 
 
 # No 'time.strptime' on non-UNIX systems, so use this instead.  This

@@ -42,9 +42,11 @@ import qm
 import qm.cmdline
 import qm.platform
 import qm.xmlutil
+import run
 import string
 import sys
 import web.web
+import whrandom
 
 ########################################################################
 # classes
@@ -98,7 +100,7 @@ class Command:
         )
 
     no_summary_option_spec = (
-        "S",
+        None,
         "no-summary",
         None,
         "Don't generate test summary."
@@ -156,29 +158,36 @@ class Command:
     profile_option_spec = (
         None,
         "profile",
-        "PROFILE-FILE",
-        "Profile test execution to PROFILE-FILE."
+        "FILE",
+        "Profile test execution to FILE."
         )
 
     concurrent_option_spec = (
         "j",
-        "threads",
+        "concurrency",
         "COUNT",
         "Execute tests in COUNT concurrent threads."
         )
 
-    remote_option_spec = (
-        "r",
-        "remote-hosts",
-        "HOST,...",
-        "Execute test on HOSTs."
+    targets_option_spec = (
+        "T",
+        "targets",
+        "FILE",
+        "Load target specification from FILE."
+        )
+
+    seed_option_spec = (
+        None,
+        "seed",
+        "INTEGER",
+        "Seed the random number generator."
         )
 
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
         ( summary_option_spec, no_summary_option_spec ),
-        ( concurrent_option_spec, remote_option_spec ),
+        ( concurrent_option_spec, targets_option_spec ),
         )
 
     global_options_spec = [
@@ -194,11 +203,20 @@ class Command:
          "This command runs tests, prints their outcomes, and writes "
          "test results.  Specify one or more test IDs and "
          "suite IDs as arguments.",
-         ( help_option_spec, output_option_spec, no_output_option_spec,
-           summary_option_spec, no_summary_option_spec,
-           outcomes_option_spec, context_option_spec, context_file_spec,
-           profile_option_spec, concurrent_option_spec,
-           remote_option_spec, )
+         (
+           concurrent_option_spec,
+           context_file_spec,
+           context_option_spec,
+           help_option_spec,
+           no_output_option_spec,
+           no_summary_option_spec,
+           outcomes_option_spec,
+           output_option_spec,
+           profile_option_spec, 
+           seed_option_spec,
+           summary_option_spec,
+           targets_option_spec,
+           )
          ),
 
         ("server",
@@ -383,7 +401,9 @@ class Command:
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""
         
-        # Handle result options.
+        database = self.GetDatabase()
+
+        # Handle 'result' options.
         result_file_name = self.GetCommandOption("output")
         if result_file_name is None:
             # By default, no result output.
@@ -395,7 +415,7 @@ class Command:
             # A named file.
             result_file = open(result_file_name, "w")
 
-        # Handle summary options.
+        # Handle 'summary' options.
         summary_file_name = self.GetCommandOption("summary")
         # The default is generate a summary to standard output.
         if self.GetCommandOption("no-summary") is not None:
@@ -411,109 +431,134 @@ class Command:
         else:
             summary_file = open(summary_file_name, "w")
 
-        # Handle the outcome option.
+        # Handle the 'outcome' option.
         outcomes_file_name = self.GetCommandOption("outcomes")
         if outcomes_file_name is not None:
             outcomes = base.load_outcomes(outcomes_file_name)
         else:
             outcomes = None
+            
+        # Handle the 'seed' option.  First create the random number
+        # generator we will use.
+        generator = whrandom.whrandom()
+        seed = self.GetCommandOption("seed")
+        if seed is None:
+            # No seed was specified.  Seed the random number generator
+            # from the system time. 
+            generator.seed()
+        else:
+            # A seed was specified.  It should be an integer.
+            try:
+                seed = int(seed)
+            except ValueError:
+                raise qm.cmdline.CommandError, \
+                      qm.error("seed not integer", seed=seed)
+            # Use the specified seed.
+            generator.seed(seed, 0, 0)
 
-        database = self.GetDatabase()
         # Make sure some arguments were specified.  The arguments are
         # the IDs of tests and suites to run.
         if len(self.__arguments) == 0:
             raise qm.cmdline.CommandError, qm.error("no ids specified")
-        try:
-            # We'll collect all the tests to run in this map. 
-            test_ids = qm.common.OrderedMap()
-            # This function adds a test to 'test_ids'.
-            def add_test_id(test_id, test_ids=test_ids):
-                test_ids[test_id] = None
-            # Validate test IDs and expand test suites in the arguments.
-            for argument in self.__arguments:
-                if database.HasSuite(argument):
-                    # It's a test suite.  Add all the test IDs in the
-                    # suite. 
-                    suite = database.GetSuite(argument)
-                    map(add_test_id, suite.GetTestIds())
-                elif database.HasTest(argument):
-                    # It's a test.  Add it.
-                    add_test_id(argument)
-                else:
-                    # It doesn't look like a test or suite.
-                    raise qm.cmdline.CommandError, \
-                          qm.error("unknown test or suite id", id=argument)
-            test_ids = test_ids.keys()
 
-            # Set up a test engine for running tests.
-            remote_hosts = self.GetCommandOption("remote-hosts", None)
-            concurrency = self.GetCommandOption("threads", None)
-            
-            if remote_hosts is not None:
-                # The user specified remote hosts.  Run tests there.
-                remote_hosts = string.split(remote_hosts, ",")
-                remote_hosts = map(lambda host_name:
-                                       base.RemoteTestHost(host_name),
-                                   remote_hosts)
-                rsh_program = qm.rc.Get("remote_shell",
-                                        section="common",
-                                        default="/usr/bin/ssh")
-                engine = base.MultiRshEngine(remote_hosts, rsh_program)
+        # We'll collect all the tests to run in this map. 
+        test_ids = {}
+        # This function adds a test to 'test_ids'.
+        def add_test_id(test_id, test_ids=test_ids):
+            test_ids[test_id] = None
+        # Validate test IDs and expand test suites in the arguments.
+        for argument in self.__arguments:
+            if database.HasSuite(argument):
+                # It's a test suite.  Add all the test IDs in the
+                # suite. 
+                suite = database.GetSuite(argument)
+                map(add_test_id, suite.GetTestIds())
+            elif database.HasTest(argument):
+                # It's a test.  Add it.
+                add_test_id(argument)
+            else:
+                # It doesn't look like a test or suite.
+                raise qm.cmdline.CommandError, \
+                      qm.error("unknown test or suite id", id=argument)
+        test_ids = test_ids.keys()
 
-            elif concurrency is not None:
-                # The user specified concurrent testing.  Use the
-                # multiprocess engine.
+        if qm.common.verbose > 0:
+            # If running verbose, specify a callback function to
+            # display test results while we're running.
+            message_function = self.__ProgressCallback
+        else:
+            # Otherwise no progress messages.
+            message_function = None
+
+        target_file_name = self.GetCommandOption("targets", None)
+        if target_file_name is None:
+            # No target file specified.  We'll use a single
+            # 'SubprocessTarget' for running tests locally.  But perhaps
+            # a concurrency value was specified.
+            concurrency = self.GetCommandOption("concurrency", None)
+            if concurrency is None:
+                # No concurrency specified.  Run single-threaded.
+                concurrency = 1
+            else:
+                # Convert the concurrency to an integer.
                 try:
                     concurrency = int(concurrency)
-                except:
-                    concurrency = -1
-                if concurrency < 1:
-                    raise CommandError, qm.error("invalid concurrency")
-                engine = base.MultiProcessEngine(concurrency)
+                except ValueError:
+                    raise qm.cmdline.CommandError, \
+                          qm.error("concurrency not integer",
+                                   value=concurrency)
+            # Construct the target spec.
+            # FIXME: Determine target group.
+            target_specs = [
+                run.TargetSpec("local",
+                               "qm.test.run.SubprocessTarget",
+                               "",
+                               concurrency,
+                               {}),
+                ]
+            
+        else:
+            # A target file was specified.  Load target specs from it.
+            target_specs = run.load_target_specs(target_file_name)
 
-            else:
-                # Nothing special; execute tests serially, in-process.
-                engine = base.InProcessEngine()
+        context = self.MakeContext()
+        self.__output = output
 
-            context = self.MakeContext()
-            self.__output = output
-            if qm.common.verbose > 0:
-                # If running verbose, specify a callback function to
-                # display test results while we're running.
-                callback = self.__ProgressCallback
-            else:
-                # Otherwise no progress messages.
-                callback = None
-                
-            # Run the tests.
-            if self.HasCommandOption("profile"):
-                # Profiling was requested.  Run in the profiler.
-                profile_file = self.GetCommandOption("profile")
-                p = profile.Profile()
-                local_vars = locals()
-                p = p.runctx("results = "
-                             "engine.RunTests(test_ids, context, callback)",
-                             globals(), local_vars)
-                results = local_vars["results"]
-                p.dump_stats(profile_file)
-            else:
-                results = engine.RunTests(test_ids, context, callback)
+        # Randomize the order of the tests.
+        qm.common.shuffle(test_ids, generator=generator)
 
-            run_test_ids = results.keys()
-            # Summarize outcomes.
-            if summary_file is not None:
-                self.__WriteSummary(test_ids, results, outcomes, summary_file)
-                # Close it unless it's standard output.
-                if summary_file is not sys.stdout:
-                    summary_file.close()
-            # Write out results.
-            if result_file is not None:
-                self.__WriteResults(test_ids, results, result_file)
-                # Close it unless it's standard output.
-                if result_file is not sys.stdout:
-                    result_file.close()
-        except ValueError, test_id:
-            raise RuntimeError, qm.error("missing test id", test_id=test_id)
+        # Run the tests.
+        if self.HasCommandOption("profile"):
+            # Profiling was requested.  Run in the profiler.
+            profile_file = self.GetCommandOption("profile")
+            p = profile.Profile()
+            local_vars = locals()
+            p = p.runctx(
+                "results = run.test_run(test_ids, context, "
+                "target_specs, message_function)",
+                globals(), local_vars)
+            results = local_vars["results"]
+            p.dump_stats(profile_file)
+        else:
+            results = run.test_run(test_ids, context, target_specs,
+                                   message_function)
+
+        test_results, resource_results = results
+
+        # Summarize outcomes.
+        if summary_file is not None:
+            self.__WriteSummary(test_ids, test_results,
+                                resource_results, outcomes, summary_file)
+            # Close it unless it's standard output.
+            if summary_file is not sys.stdout:
+                summary_file.close()
+        # Write out results.
+        if result_file is not None:
+            self.__WriteResults(test_ids, test_results,
+                                resource_results, result_file)
+            # Close it unless it's standard output.
+            if result_file is not sys.stdout:
+                result_file.close()
                                                     
 
     def __ProgressCallback(self, message):
@@ -556,7 +601,7 @@ class Command:
 
         # Construct the URL to the main page on the server.
         if address == "":
-            url_address = qm.common.get_host_name()
+            url_address = qm.platform.get_host_name()
         else:
             url_address = address
         url = "http://%s:%d/test/dir" % (url_address, port_number)
@@ -573,13 +618,16 @@ class Command:
         server.Run()
     
     
-    def __WriteSummary(self, test_ids, results, expected_outcomes, output):
+    def __WriteSummary(self, test_ids, test_results, resource_results,
+                       expected_outcomes, output):
         """Generate test result summary.
 
         'test_ids' -- The test IDs that were requested for the test run.
 
-        'results' -- A mapping from test ID to result for tests that
+        'test_results' -- A mapping from test ID to result for tests that
         were actually run.
+
+        'resource_results' -- A sequence of resource results.
 
         'expected_outcomes' -- A map from test IDs to expected outcomes,
         or 'None' if there are no expected outcomes.
@@ -591,7 +639,7 @@ class Command:
 
         output.write("\n")
         output.write(divider("STATISTICS"))
-        num_tests = len(results)
+        num_tests = len(test_results)
         output.write("  %6d        tests total\n\n" % num_tests)
 
         if expected_outcomes is not None:
@@ -605,8 +653,8 @@ class Command:
             # expected outcome.
             count_expected = 0
             # Count tests by expected outcome.
-            for test_id in results.keys():
-                result = results[test_id]
+            for test_id in test_results.keys():
+                result = test_results[test_id]
                 outcome = result.GetOutcome()
                 # Get the expected outcome for this test; if one isn't
                 # specified, assume PASS.
@@ -639,7 +687,7 @@ class Command:
         for outcome in base.Result.outcomes:
             count_by_outcome[outcome] = 0
         # Count tests by outcome.
-        for result in results.values():
+        for result in test_results.values():
             outcome = result.GetOutcome()
             count_by_outcome[outcome] = count_by_outcome[outcome] + 1
         # Summarize these counts.
@@ -648,7 +696,7 @@ class Command:
             if count > 0:
                 output.write("  %6d (%3.0f%%) tests %s\n"
                              % (count, (100. * count) / num_tests, outcome))
-        output.write("\n")
+        output.write("\n\n")
 
         # If we have been provided with expected outcomes, report each
         # test whose outcome doesn't match the expected outcome.
@@ -659,7 +707,7 @@ class Command:
             # is not as expected in 'expected_outcomes'.
             def unexpected_filter(result, eo=expected_outcomes):
                 outcome = result.GetOutcome()
-                test_id = result.GetTestId()
+                test_id = result.GetId()
                 expected_outcome = eo.get(test_id, base.Result.PASS)
                 return outcome != expected_outcome
                 
@@ -667,8 +715,8 @@ class Command:
             # expected outcome for the result.  The secondary key is the
             # test ID.
             def unexpected_sorter(r1, r2, eo=expected_outcomes):
-                tid1 = r1.GetTestId()
-                tid2 = r2.GetTestId()
+                tid1 = r1.GetId()
+                tid2 = r2.GetId()
                 o1 = eo.get(tid1, base.Result.PASS)
                 o2 = eo.get(tid2, base.Result.PASS)
                 if o1 != o2:
@@ -678,7 +726,8 @@ class Command:
                     return cmp(tid1, tid2)
 
             # Find results with unexpected outcomes.
-            unexpected_results = filter(unexpected_filter, results.values())
+            unexpected_results = filter(unexpected_filter,
+                                        test_results.values())
             # Put them in an order convenient for users.
             unexpected_results.sort(unexpected_sorter)
             # Count 'em up.
@@ -688,7 +737,7 @@ class Command:
                 # Report IDs of tests with unexpected outcomes.
                 output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
                 for result in unexpected_results:
-                    test_id = result.GetTestId()
+                    test_id = result.GetId()
                     # This test produced an unexpected outcome, so report it.
                     outcome = result.GetOutcome()
                     expected_outcome = expected_outcomes.get(test_id,
@@ -697,51 +746,76 @@ class Command:
                                  % (test_id, outcome, expected_outcome))
                 output.write("\n")
 
+        # Summarize tests that didn't pass.
         output.write(divider("TESTS THAT DID NOT PASS"))
         non_passing_count = 0
-        for test_id in results.keys():
-            result = results[test_id]
+        for test_id in test_results.keys():
+            result = test_results[test_id]
             outcome = result.GetOutcome()
-            extra = ""
             if outcome == base.Result.PASS:
                 # Don't list tests that passed.
                 continue
             # Keep count of how many didn't pass.
             non_passing_count = non_passing_count + 1
-            if outcome == base.Result.UNTESTED:
-                # If the test was not run, try to give some indication
-                # of why.
-                if result.has_key("failed_prerequisite"):
-                    prerequisite = result["failed_prerequisite"]
-                    prerequisite_outcome = results[prerequisite].GetOutcome()
-                    extra = "[%s was %s]" \
-                            % (prerequisite, prerequisite_outcome)
-                elif result.has_key("failed_setup_resource"):
-                    resource_id = result["failed_setup_resource"]
-                    extra = "[setup %s failed]" % resource_id
-            elif outcome == base.Result.FAIL \
-                 or outcome == base.Result.ERROR:
-                # If the result has a cause property, use it.
-                if result.has_key("cause"):
-                    extra = "[%s]" % result["cause"]
-            output.write("  %-32s: %-8s %s\n" % (test_id, outcome, extra))
+            # Print the test's ID and outcome.
+            output.write("  %-63s: %-8s\n" % (test_id, outcome))
+            # If a cause was specified, print it too.
+            cause = result.get("cause", None)
+            if cause is not None:
+                # Abbreviate the cause, if necessary.
+                if len(cause) > 70:
+                    cause = cause[:67] + "..."
+                output.write("      %s\n\n" % cause)
 
         if non_passing_count == 0:
             output.write("  (None)\n")
         output.write("\n")
 
+        # Summarize failed resource functions.
+        output.write(divider("RESOURCES THAT DID NOT PASS"))
+        non_passing_count = 0
+        for result in resource_results:
+            outcome = result.GetOutcome()
+            if outcome != base.Result.PASS:
+                # Keep count of how many didn't pass.
+                non_passing_count = non_passing_count + 1
+                # Extract information from the result.
+                resource_id = result.GetId()
+                action = resource_id + " " + result["action"]
+                # If the name of the target on which the function ran is
+                # specified, include that in the output.
+                target = result.get("target", None)
+                if target is not None:
+                    action = action + " on " + target
+                # Print the resource ID and outcome.
+                output.write("  %-63s: %-8s\n" % (action, outcome))
+                # If a cause was specified, print it too.
+                cause = result.get("cause", None)
+                if cause is not None:
+                    # Abbreviate the cause, if necessary.
+                    if len(cause) > 70:
+                        cause = cause[:67] + "..."
+                    output.write("      %s\n\n" % cause)
+                
+        if non_passing_count == 0:
+            output.write("  (None)\n")
+        output.write("\n")
 
-    def __WriteResults(self, test_ids, results, output):
+
+ 
+    def __WriteResults(self, test_ids, test_results, resource_results, output):
         """Generate full test results in XML format.
 
         'test_ids' -- The test IDs that were requested for the test run.
 
-        'results' -- A mapping from test ID to result for tests that
-        were actually run.
+        'test_results' -- A mapping from test ID to result for tests
+        in the test run.
+
+        'resource_results' -- A sequence of results of resource functions.
 
         'output' -- A file object to which to write the results."""
 
-        base.write_results(results.values(), output)
+        base.write_results(test_results.values(), resource_results, output)
 
 
 

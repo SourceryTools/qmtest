@@ -44,6 +44,7 @@ import qm
 import qm.common
 import qm.cmdline
 import qm.fields
+import qm.platform
 import qm.structured_text
 import qm.track
 import qm.track.issue
@@ -967,7 +968,7 @@ class Command:
     
         # Construct the URL to the main page on the server.
         if address == "":
-            url_address = qm.common.get_host_name()
+            url_address = qm.platform.get_host_name()
         else:
             url_address = address
         url = "http://%s:%d/track/" % (url_address, port_number)

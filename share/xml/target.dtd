@@ -1,11 +1,11 @@
 <!--
 
-  File:   results.dtd
+  File:   target.dtd
   Author: Alex Samuel
-  Date:   2001-03-14
+  Date:   2001-08-11
 
   Contents:
-    DTD for test result sets.
+    DTD for test execution targets.
 
   Copyright (C) 2001 CodeSourcery LLC.  All rights reserved.
 
@@ -31,23 +31,25 @@
 
 -->
 
-<!-- The results of a test run.  -->
-<!ELEMENT test-run (test-results, resource-results)>
+<!-- A collection of test execution targets.  -->
+<!ELEMENT targets (target*)>
 
-<!-- A set of results of running tests.  -->
-<!ELEMENT test-results (result*)>
+<!-- A target for executing tests.  -->
+<!ELEMENT target (name, class, group, concurrency, property*)>
 
-<!-- A set of results of running resource functions.  -->
-<!ELEMENT resource-results (result*)>
+<!-- The name of a target.  -->
+<!ELEMENT name (#PCDATA)>
 
-<!-- The result of executing a single test or resource function.  -->
-<!ELEMENT result (outcome, property*)>
-<!ATTLIST result id CDATA #REQUIRED>
+<!-- The target group containing this target.  -->
+<!ELEMENT group (#PCDATA)>
 
-<!-- The outcome of a test or resource function.  -->
-<!ELEMENT outcome (#PCDATA)>
+<!-- The name of the Python class representing this target.  -->
+<!ELEMENT class (#PCDATA)>
 
-<!-- An additional annotation to the result.  -->
+<!-- The number of tests that may be run simulaneous on this target.  -->
+<!ELEMENT concurrency (#PCDATA)>
+
+<!-- A miscellaneous named property of the target.  -->
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA #REQUIRED>
 

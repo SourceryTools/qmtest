@@ -46,6 +46,7 @@ import htmlentitydefs
 import md5
 import os
 import common
+import qm.platform
 import qm.user
 import re
 import SimpleHTTPServer
@@ -667,7 +668,7 @@ class HTTPServer(BaseHTTPServer.HTTPServer):
                         break
         except socket.error:
             # If it bombs, use our more lenient method.
-            hostname = qm.get_host_name()
+            hostname = qm.platform.get_host_name()
 
         self.server_name = hostname
         self.server_port = port

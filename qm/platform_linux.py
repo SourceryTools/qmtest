@@ -38,6 +38,7 @@
 import common
 import cPickle
 import os
+import posix
 import qm
 import select
 import signal
@@ -383,8 +384,7 @@ def run_program(program,
     if child_pid == 0:
         # This is the child process.  We only write to the pipe.
         os.close(pipe_read)
-        # Call recursively, but with 'replace' set to false, to
-        # actually run the program.
+        # Actually run the program.
         try:
             replace_program(program, arguments, environment,
                             stdin, stdout, stderr)
@@ -517,6 +517,12 @@ def get_user_name():
 
     # FIXME: Security.
     return os.environ["USER"]
+
+
+def get_host_name():
+    """Return the name of this computer."""
+
+    return posix.uname()[1]
 
 
 ########################################################################

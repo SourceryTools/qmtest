@@ -72,6 +72,42 @@ def get_user_name():
     return os.environ["USERNAME"]
 
 
+def get_host_name():
+    """Return the name of this computer."""
+
+    # This function caches the result of '_get_host_name' by replacing
+    # itself with a lambda that returns the cached value.
+    global get_host_name()
+    get_host_name = lambda host_name=_get_host_name(): host_name
+
+
+def _get_host_name():
+    """Return the name of this computer."""
+
+    # First try to look up our own address in DNS.
+    try:
+        return socket.gethostbyname_ex(socket.gethostname())[0]
+    except socket.error:
+        pass
+
+    # That didn't work.  Just use the local name.
+    try:
+        return socket.gethostname()
+    except socket.error:
+        pass
+
+    # That didn't work either.  Check if the host name is stored in the
+    # environment.
+    try:
+        return os.environ["HOSTNAME"]
+    except KeyError:
+        pass
+
+    # We're stumped.  Use something dumb.
+    return "localhost"
+
+
+
 ########################################################################
 # Local Variables:
 # mode: python

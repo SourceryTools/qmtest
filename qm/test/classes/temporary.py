@@ -38,6 +38,7 @@
 import os
 import qm
 import qm.fields
+from   qm.test.base import Result
 import tempfile
 
 ########################################################################
@@ -79,26 +80,42 @@ class TempDirectoryResource:
         self.__delete_recursively = delete_recursively
     
 
-    def DoSetup(self, context):
+    def SetUp(self, context):
         # FIXME: Security.
         # Generate a temporary file name.
         dir_path = tempfile.mktemp()
-        # Create the directory.
-        os.mkdir(dir_path, 0700)
-        # Store the path to the directory where tests can get at it. 
-        context[self.__dir_path_property] = dir_path
+        try:
+            # Create the directory.
+            os.mkdir(dir_path, 0700)
+        except OSError, error:
+            # Setup failed.
+            cause = "Directory creation failed.  %s" % str(error)
+            return Result(Result.FAIL, cause=cause)
+        else:
+            # Store the path to the directory where tests can get at it. 
+            context[self.__dir_path_property] = dir_path
+            # Setup succeeded.
+            return Result(Result.PASS)
     
 
-    def DoCleanup(self, context):
+    def CleanUp(self, context):
         # Extract the path to the directory.
         dir_path = context[self.__dir_path_property]
         # Make sure it's a directory.
         assert os.path.isdir(dir_path)
         # Clean up the directory.
-        if self.__delete_recursively:
-            qm.remove_directory_recursively(dir_path)
+        try:
+            if self.__delete_recursively:
+                qm.remove_directory_recursively(dir_path)
+            else:
+                os.rmdir(dir_path)
+        except OSError, error:
+            # Cleanup failed.
+            cause = "Directory cleanup failed.  %s" % str(error)
+            return Result(Result.FAIL, cause=cause)
         else:
-            os.rmdir(dir_path)
+            # Cleanup succeeded.
+            return Result(Result.PASS)
 
 
 

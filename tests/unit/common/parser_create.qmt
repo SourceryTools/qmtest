@@ -3,8 +3,7 @@
 <test>
  <class>python.ExecTest</class>
  <argument name='source'>
-  <text>
-import qm.cmdline
+  <text>import qm.cmdline
 
 name = 'qmtrack'
 option_a = ('a', 'a_option', None, 'Option A Description')
@@ -31,15 +30,9 @@ options = [ option_a, option_b, option_c ]
 commands = [ command_1, command_2, command_3 ]
 
 parser = qm.cmdline.CommandParser(name, options, commands)
-context["parser_create.parser"] = parser
 </text>
  </argument>
+ <argument name='expression'>
+  <text>1</text>
+ </argument>
 </test>
-<!--
-  Local Variables:
-  mode: xml
-  indent-tabs-mode: nil
-  fill-column: 72
-  sgml-indent-step: 1
-  End:
--->
