@@ -459,7 +459,7 @@ class ShellCommandTest(ExecTest):
             description="""The arguments to the shell.
 
             This field contains the arguments that are passed to the
-            shell.  It should contain the path to the shell itself.
+            shell.  It should not contain the path to the shell itself.
 
             If this field is left blank, the shell is run without
             arguments."""
