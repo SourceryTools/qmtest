@@ -308,8 +308,7 @@
       &qmtrack; features and modules may rely on standard fields for
       thier operation.  A component of &qmtrack; or a module which
       uses a standard field must always check first whether the field
-      is present, and degrade gracefully if it is not.  The names of
-      standard fields are prefixed with "<symbol>qm_</symbol>".</para>
+      is present, and degrade gracefully if it is not..</para>
      </listitem>
 
      <listitem>
@@ -323,9 +322,11 @@
    <section id="sec-mandatory-fields">
     <title id="sec-mandatory-fields-title">Mandatory fields</title>
 
-    <para>This section describes mandatory fields.</para>
+    <para><xref linkend="tab-mandatory-fields"/> describes mandatory
+    fields.</para>
 
-    <informaltable>
+    <table id="tab-mandatory-fields">
+     <title>Mandatory fields</title>
      <tgroup cols="2">
       <thead>
        <row>
@@ -376,18 +377,32 @@
         joined with other issues; the iid of all children if this issue
         was split; an empty set otherwise</entry>
        </row>
+       <row>
+        <entry>state</entry>
+        <entry><literal>enumeration</literal></entry>
+        <entry>the state in the issue data model for this class; see
+        the <link linkend="sec-state-model">state model
+        trigger</link></entry>
+       </row>
+       <row>
+        <entry>user</entry>
+        <entry><constant>uid</constant></entry>
+        <entry>the user who created this revision</entry>
+       </row>
       </tbody>
      </tgroup>
-    </informaltable>
+    </table>
 
    </section>
 
    <section id="sec-standard-fields">
     <title id="sec-standard-fields-title">Standard fields</title>
 
-    <para>This section describes standard fields.</para>
+    <para><xref linkend="tab-standard-fields"/> describes standard
+    fields.</para>
 
-    <informaltable>
+    <table id="tab-standard-fields">
+     <title>Standard fields</title>
      <tgroup cols="2">
       <thead>
        <row>
@@ -399,13 +414,26 @@
       <tbody>
        <row>
         <entry>attachments</entry>
-        <entry>attachment set</entry>
+        <entry><literal>attachment set</literal></entry>
         <entry>a collection of zero or more file attachments containing
         arbitrary data</entry>
        </row>
+       <row>
+        <entry>nosy_list</entry>
+        <entry><literal>uid set</literal></entry>
+        <entry>a collection of users who wish to be notified of
+        changes to this issue; see <xref
+        linkend="sec-notification"/>.</entry>
+       </row>
+       <row>
+        <entry>severity</entry>
+        <entry><literal>enumeration</literal></entry>
+        <entry>a measure of the importance of this issue; the
+        enumerals are user-defined</entry>
+       </row>
       </tbody>
      </tgroup>
-    </informaltable>
+    </table>
 
    </section>
 
@@ -519,6 +547,9 @@
   implementation-defined.  An implementation may, but is not required
   to, implement a larger subset of valid Python boolean
   expressions.</para>
+
+  <para>The same query interface is used for preparation of reports on
+  the contents of the &idb;.</para>
 
   <section>
    <title>Query examples</title>

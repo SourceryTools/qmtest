@@ -1,3 +1,25 @@
+2000-12-06  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/qm.mod (idb): Remove entity.
+	(iid): Likewise.
+	(faq): New entity.
+	
+	* doc/design/qmtest/refs.xml: Strip linefeeds.
+
+	* doc/design/qmtrack/qmtrack.xml (idb): New entity.
+	(iid): Likewise.
+	(uid): Likewise.
+	* doc/design/qmtrack/concepts.xml: Edit.
+	* doc/design/qmtrack/implementation.xml: Likewise.
+	* doc/design/qmtrack/triggers.xml: Likewise.
+	* doc/design/qmtrack/user-interface.xml: Likewise.
+	* doc/design/qmtrack/xml-repr.xml: Likewise.
+	* doc/design/qmtrack/introduction.xml: Incorporate new text.
+	* doc/design/qmtrack/requirements.xml: Likewise.
+	* doc/design/qmtrack/references.xml: New file.
+	* doc/design/qmtrack/state-model-example.dia: Likewise.
+	* doc/design/qmtrack/state-model-example.png: Likewise.
+	
 2000-12-06  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* doc/design/qmtrack/create1.html: New file.

@@ -552,7 +552,7 @@ class Trigger:
         """Return the name of this trigger instance."""
 
 
-    def Invoke(self, issue, previous_issue):
+    def __call__(self, issue, previous_issue):
         """Invoke the trigger.
 
         'issue' -- An 'IssueRecord' instance.  For a "get" trigger,
@@ -762,7 +762,16 @@ class Trigger:
    The third would contain elements of the "attachments" field.</para>
 
    <para>If this issue class contained a single issue, with two
-   revisions, given by this &xml; element,
+   revisions, as given by the &xml; issue representation in <xref
+   linkend="example-sql-xml-issue"/>, the three tables would look like
+   these: <xref linkend="tab-sql-example-main"/> is the main table for
+   issue revisions, <xref linkend="tab-sql-example-categories"/>
+   stores entries in the "categories" field, and <xref
+   linkend="tab-sql-example-attachments"/> stores entries in the
+   "attachments" field.</para>
+
+   <example id="example-sql-xml-issue">
+    <title>&xml; representation of sample issue in &rdbms;</title>
     <programlisting><![CDATA[
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -792,12 +801,7 @@ class Trigger:
   </field-data>
 </issue>
     ]]></programlisting>
-   the three tables would look like this: <xref
-   linkend="tab-sql-example-main"/> is the main table for issue
-   revisions, <xref linkend="tab-sql-example-categories"/> stores
-   entries in the "categories" field, and <xref
-   linkend="tab-sql-example-attachments"/> stores entries in the
-   "attachments" field.</para>
+   </example>
 
    <table id="tab-sql-example-main">
     <title>Example: main table for issue class "bugs"</title>

@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   references.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Chapter `References' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-references">
+ <title id="chap-references-title">References</title>
+
+ <para>This design is based on Ka-Ping Yee's Roundup design, submitted
+ to the Software Carpentry sc-track competitions.  Yee's design is
+ described in his <ulink
+ url="http://www.software-carpentry.com/entries/track/Roundup/Roundup.html">first
+ round</ulink> and <ulink
+ url="http://www.software-carpentry.com/entries/second-round/track/Roundup/">second
+ round</ulink> submissions.</para>
+
+ <para>This design also draws ideas from other Software Carpentry
+ design submissions, including John Martin's <ulink
+ url="http://www.software-carpentry.com/entries/second-round/track/EGad/">EGad</ulink>
+ and Alex Samuel's and Mark Mitchell's <ulink
+ url="http://www.software-carpentry.com/entries/track/TotalTrack/TotalTrack.html">TotalTrack</ulink>.
+ Additional suggestions are drawn from discussions help on the
+ Software Carpentry <ulink
+ url="http://www.software-carpentry.com/lists/sc-discuss/threads.html">sc-discuss</ulink>
+ mailing list.</para>
+
+ <para>Other major Open Source or free software bug tracking systems
+ include,
+  <itemizedlist>
+   <listitem>
+    <para><ulink url="http://sources.redhat.com/gnats/">GNATS, The GNU
+    Bug Tracking System</ulink></para>
+   </listitem>
+
+   <listitem>
+    <para><ulink
+    url="http://bugzilla.mozilla.org/">Bugzilla</ulink></para>
+   </listitem>
+
+   <listitem>
+    <para><ulink
+    url="http://samba.anu.edu.au/cgi-bin/jitterbug">Jitterbug</ulink></para>
+   </listitem>
+  </itemizedlist>
+ Web directories such as <ulink
+ url="http://directory.google.com/Top/Computers/Software/Configuration_Management/Bug_Tracking/Free/">Google</ulink>
+ list others.</para>
+
+ <para>David Eaton's <ulink
+ url="http://www.iac.honeywell.com/Pub/Tech/CM/PMTools.html">Problem
+ Management Tools Summary page</ulink> includes links to many
+ commercial and non-commercial systems.  <ulink
+ url="http://www.rational.com/products/clearddts/">ClearDDTS</ulink>
+ is another interesting commercial system, as are <ulink
+ url="http://www.research.att.com/library/books/reuse/">Yeast and
+ Provence</ulink>.</para>
+
+ <para>The comp.software.config-mgmt &faq; has an <ulink
+ url="http://www.iac.honeywell.com/Pub/Tech/CM/PMTools.html">issue
+ tracking section</ulink>.</para>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("introduction.xml" "book" "chapter")
+  End:
+-->

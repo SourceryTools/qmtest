@@ -22,7 +22,7 @@
 
   <para>This section describes the different methods the user can use
   to create issues, edit issues, and query the database. We invision
-  three main modes for interaction: command line, email, and
+  three main modes for interaction: command line, e-mail, and
   web. However, based on the specification in the previous section,
   any mode may be added.</para>
 
@@ -282,7 +282,7 @@ Date: Tue, 5 Dec 2000 23:42:15 -0800 (PST)
 edit iss2
     </programlisting>
    with no arguments to the edit command except for the issue. Sending
-   an email of this form will cause the database to send you the
+   an e-mail of this form will cause the database to send you the
    following message:
     <programlisting><![CDATA[
 Subject: Re: edit
@@ -324,7 +324,7 @@ edit
     ]]></programlisting>
    (removing the category "foo") and send back to the database.  If
    you wish to add an attachment to this revision of the issue, you
-   can simply attach it to the email. In either case, you after the
+   can simply attach it to the e-mail. In either case, you after the
    edit is complete, you would receive a message that looked like
    this: 
    <programlisting>

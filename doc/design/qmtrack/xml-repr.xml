@@ -28,13 +28,16 @@
   <section id="sec-issue-dtd">
    <title id="sec-issue-dtd-title">Issue &dtd;</title>
 
-   <para>This &dtd; is the canonical representation for &qmtrack;
-   issues in &xml;.  While &idb; implementations may choose a
-   different &dtd; for their internal storage mechanism, issues should
-   be represented according to this &dtd; for all user-visible &xml;
-   output.</para>
+   <para><xref linkend="fig-issue-dtd"/> shows the &dtd; for the
+   canonical representation for &qmtrack; issues in &xml;.  While
+   &idb; implementations may choose a different &dtd; for their
+   internal storage mechanism, issues should be represented according
+   to this &dtd; for all user-visible &xml; output.</para>
 
-   <programlisting><![CDATA[
+   <figure id="fig-issue-dtd">
+    <title>Issue &dtd;</title>
+
+    <programlisting><![CDATA[
 <!ELEMENT issue (class, iid, field-data*)>
 
 <!ELEMENT field-data (field*)>
@@ -56,7 +59,8 @@
 <!ELEMENT mime-type (#PCDATA)>
 
 <!ELEMENT external-name (#PCDATA)>
-]]></programlisting>
+    ]]></programlisting>
+   </figure>
 
    <para>The formal public identifier for this &dtd; is
     <programlisting>
@@ -99,7 +103,13 @@
   <section>
    <title>&xml; example</title>
 
-   <para>Below is an example of an issue for a compiler bug report.
+   <para><xref linkend="example-xml-issue"/> shows an example of an
+   issue for a compiler bug report.</para>
+
+   <example id="example-xml-issue">
+    <title>Canonical &xml; representation of sample bug report
+    issue</title>
+
     <programlisting><![CDATA[
 <?xml version="1.0"?>
 <!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
@@ -134,7 +144,7 @@ int foo (char* p) {
   </field-data>
 </issue>
     ]]></programlisting>
-   </para>
+   </example>
 
    <para>This example is an issue in the issue class "bug", which is
    used for bug reports (as opposed to, for instance, feature requests

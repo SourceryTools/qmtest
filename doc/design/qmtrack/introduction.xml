@@ -44,6 +44,21 @@
  <para>Specific feature requirements are discussed in <xref
  linkend="chap-requirements"/>.</para>
 
+ <para>The problem of keeping track of issues and ideas during a
+ software development project is as old as software development
+ itself.  The FAQ for comp.software.config-mgmt, for example, lists
+ several dozen commercial and non-commercial solutions, and thousands
+ of home-grown tools have been developed during the past forty
+ years.</para>
+
+ <para>Despite this, most small software projects do not track issues
+ in any methodical way, and most developers on large projects view
+ issue tracking as a burden.  This is partly the fault of educational
+ programs, which tend to skirt around projects and tools that require
+ students to work together.  However, much of the blame also lies with
+ the awkward interfaces, and complex configuration processes, of most
+ existing tools.</para>
+
  <para>This design draws on experience from an existing issue-tracking
  system called <ulink
  url="http://www.software-carpentry.com/entries/second-round/track/Roundup/">

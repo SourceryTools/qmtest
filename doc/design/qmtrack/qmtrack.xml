@@ -24,7 +24,10 @@
   <!ENTITY % qm SYSTEM "../../qm.mod">
   %qm;
 
+  <!ENTITY idb "<acronym>IDB</acronym>">
+  <!ENTITY iid "<acronym>IID</acronym>">
   <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
+  <!ENTITY uid "<acronym>UID</acronym>">
 
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->
@@ -36,6 +39,7 @@
   <!ENTITY implementation.xml SYSTEM "implementation.xml">
   <!ENTITY triggers.xml SYSTEM "triggers.xml">
   <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
+  <!ENTITY references.xml SYSTEM "references.xml">
 ]>
 <book>
  <bookinfo>
@@ -62,6 +66,7 @@
  &requirements.xml;
  &concepts.xml;
  &implementation.xml;
+ &references.xml;
 
 </book>
 

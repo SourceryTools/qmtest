@@ -30,8 +30,7 @@
 <!ENTITY api "<acronym>API</acronym>">
 <!ENTITY dtd "<acronym>DTD</acronym>">
 <!ENTITY dtml "<acronym>DTML</acronym>">
-<!ENTITY idb "<acronym>IDB</acronym>">
-<!ENTITY iid "<acronym>IID</acronym>">
+<!ENTITY faq "<acronym>FAQ</acronym>">
 <!ENTITY rdbms "<acronym>RDBMS</acronym>">
 <!ENTITY sql "<acronym>SQL</acronym>">
 <!ENTITY xml "<acronym>XML</acronym>">
