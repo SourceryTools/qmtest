@@ -916,7 +916,7 @@ procedures by which an issue is normally resolved.""",
             name="summary",
             title="Summary",
             description="A brief description of this issue.",
-            nonempty="true")
+            not_empty_text="true")
         self.AddField(field)
 
         # The categories field.

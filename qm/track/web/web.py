@@ -158,6 +158,7 @@ class HistoryPageFragment(DtmlPage):
         differences = []
         for field in fields:
             field_name = field.GetName()
+            field_title = field.GetTitle()
             value = revision1.GetField(field_name)
 
             if isinstance(field, qm.fields.SetField):
@@ -173,7 +174,7 @@ class HistoryPageFragment(DtmlPage):
                     if el not in value:
                         removed_elements.append(el)
                 if len(removed_elements) > 0:
-                    description = "removed from %s: " % field_name \
+                    description = "removed from %s: " % field_title \
                         + field.FormatValueAsHtml(removed_elements, "brief")
                     differences.append(description)
 
@@ -184,7 +185,7 @@ class HistoryPageFragment(DtmlPage):
                     if el not in previous_value:
                         new_elements.append(el)
                 if len(new_elements) > 0:
-                    description = "added to %s: " % field_name \
+                    description = "added to %s: " % field_title \
                         + field.FormatValueAsHtml(new_elements, "brief")
                     differences.append(description)
 
@@ -192,7 +193,7 @@ class HistoryPageFragment(DtmlPage):
                 # All other (non-set) field types.
                 formatted_value = field.FormatValueAsHtml(value, "brief")
                 description = "%s changed to %s" \
-                              % (field_name, formatted_value)
+                              % (field_title, formatted_value)
                 differences.append(description)
 
         # Build a complete string.

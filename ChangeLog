@@ -1,3 +1,24 @@
+2001-07-13  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (TextField.property_declarations): Rename nonempty
+	to not_empty_text. 
+	(TextField.CompareValues): Re-compare strings case-sensitively. 
+	(TextField.Validate): Adjust for not_empty_text.  
+	(TextField.GetHelp): Likewise.
+	(SetField.set_property_declarations): New attribute.
+	(SetField.__init__): Use it.
+	(SetField.CompareValues): Recompare set contents if they're the
+	same length. 
+	(SetField.Validate): Check not_empty_set attribute.
+	* qm/track/issue_class.py (IssueClass.__init__): Use
+	not_empty_text. 
+	* qm/track/web/web.py (HistoryPageFragment.FormatRevisionDiff):
+	Use field titles in output.
+	* share/diagnostics/common.txt (empty set field value): New
+	diagnostic.
+	(empty text field value): Likewise.
+	* share/diagnostics/track.txt (empty field value): Remove.
+
 2001-07-12  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (Field.ValuesAreEqual): Rename to...

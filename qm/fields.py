@@ -741,7 +741,7 @@ class TextField(Field):
             ),
 
         FieldPropertyDeclaration(
-            name="nonempty",
+            name="not_empty_text",
             description="""The value of this field is considered invalid
             if it empty or composed only of whitespace.""",
             default_value="false"
@@ -759,7 +759,14 @@ class TextField(Field):
 
     def CompareValues(self, value1, value2):
         # FIXME: Localization?
-        return cmp(string.lower(value1), string.lower(value2))
+        # First, compare strings case-insensitively.
+        comparison = cmp(string.lower(value1), string.lower(value2))
+        if comparison == 0:
+            # If the strings are the same ignoring case, re-compare them
+            # taking case into account.
+            return cmp(value1, value2)
+        else:
+            return comparison
 
 
     def GetTypeDescription(self):
@@ -774,15 +781,16 @@ class TextField(Field):
         if not self.IsAttribute("verbatim"):
             # Remove leading whitespace.
             value = string.lstrip(value)
-        # If this field has the nonempty attribute set, make sure the
+        # If this field has the not_empty_text attribute set, make sure the
         # value complies.
-        if self.IsAttribute("nonempty") and value == "":
+        if self.IsAttribute("not_empty_text") and value == "":
             raise ValueError, \
-                  qm.error("empty field value", field_name=self.GetTitle()) 
+                  qm.error("empty text field value",
+                           field_title=self.GetTitle()) 
         # If this is not a multi-line text field, remove line breaks
         # (and surrounding whitespace).
         if not self.IsAttribute("multiline"):
-            value = re.replace(" *\n+ *", " ", value)
+            value = re.sub(" *\n+ *", " ", value)
         return value
 
 
@@ -926,7 +934,7 @@ class TextField(Field):
             help = help + """
             The text is stored verbatim; whitespace and indentation are
             preserved.  """
-        if self.IsAttribute("nonempty"):
+        if self.IsAttribute("not_empty_text"):
             help = help + """
             This field may not be empty.  """
         help = help + """
@@ -949,8 +957,8 @@ class TextField(Field):
             "verbatim":
                 self._MakeBooleanPropertyControl("verbatim"),
 
-            "nonempty":
-                self._MakeBooleanPropertyControl("nonempty"),
+            "not_empty_text":
+                self._MakeBooleanPropertyControl("not_empty_text"),
 
             })
 
@@ -1010,6 +1018,17 @@ class SetField(Field):
 
     The default field value is set to an empty set."""
 
+    set_property_declarations = [
+        FieldPropertyDeclaration(
+            name="not_empty_set",
+            description="""If true, this field may not be empty,
+            i.e. the value of this field must contain at least one
+            element.""",
+            default_value="false"
+            ),
+        
+        ]
+
     def __init__(self, contained):
         """Create a set field.
 
@@ -1021,7 +1040,7 @@ class SetField(Field):
 
         raises -- 'ValueError' if 'contained' is a set field.
 
-        raises -- 'TypeError' if 'contained' is not an 'Field'."""
+        raises -- 'TypeError' if 'contained' is not a 'Field'."""
 
         # A set field may not contain a set field.
         if isinstance(contained, SetField):
@@ -1035,14 +1054,20 @@ class SetField(Field):
         # Remeber the contained field type.
         self.__contained = contained
         # Masquerade property declarations as for contained field.
-        self.property_declarations = contained.property_declarations
+        self.property_declarations = contained.property_declarations \
+                                     + self.set_property_declarations
         # Set the default field value to any empty set.
         self.SetDefaultValue([])
 
 
     def CompareValues(self, value1, value2):
         # Sort set values by length.
-        return cmp(len(value1), len(value2))
+        comparison = cmp(len(value1), len(value2))
+        # If they're the same length, compare the contents themselves.
+        if comparison == 0:
+            return cmp(value1, value2)
+        else:
+            return comparison
 
 
     def GetTypeDescription(self):
@@ -1051,6 +1076,12 @@ class SetField(Field):
     
 
     def Validate(self, value):
+        # If this field has the not_empty_set attribute set, make sure
+        # the value complies.
+        if self.IsAttribute("not_empty_set") and len(value) == 0:
+            raise ValueError, \
+                  qm.error("empty set field value",
+                           field_title=self.GetTitle()) 
         # Assume 'value' is a sequence.  Copy it, simultaneously
         # validating each element in the contained field.
         result = []
@@ -1244,7 +1275,11 @@ class SetField(Field):
 
     def MakePropertyControls(self):
         # Use property controls for the contained field.
-        return self.GetContainedField().MakePropertyControls()
+        controls = self.GetContainedField().MakePropertyControls()
+        # Add controls for properties in 'set_property_declarations'.
+        controls["not_empty_set"] = \
+            self._MakeBooleanPropertyControl("not_empty_set")
+        return controls
 
 
 
@@ -1753,7 +1788,7 @@ class EnumerationField(TextField):
         controls = TextField.MakePropertyControls(self)
         controls["structured"] = None
         controls["verbatim"] = None
-        controls["nonempty"] = None
+        controls["not_empty_text"] = None
 
         # Now to add controls for editing the set of available
         # enumerals.  Construct query field names.
