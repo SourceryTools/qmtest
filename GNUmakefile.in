@@ -367,7 +367,7 @@ lib-install:
 	  if test -e qm/$$tool/classes/classes.qmc; then \
 	    $(INSTALL_DIR) "$(INSTALLLIBDIR)/qm/$$tool/classes"; \
 	    $(INSTALL_DATA) qm/$$tool/classes/classes.qmc \
-	      "$(INSTALLLIBDIR)/qm/$$tool/classes.qmc"; \
+	      "$(INSTALLLIBDIR)/qm/$$tool/classes/classes.qmc"; \
 	  fi; \
 	done
 
