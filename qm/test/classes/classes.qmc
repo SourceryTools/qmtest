@@ -8,6 +8,7 @@
  <class kind="result_stream" name="sql_result_stream.SQLResultStream"/>
  <class kind="result_stream" name="text_result_stream.TextResultStream"/>
  <class kind="result_stream" name="xml_result_stream.XMLResultStream"/>
+ <class kind="result_stream" name="tet_stream.TETStream"/>
  <class kind="resource" name="temporary.TempDirectoryResource"/>
  <class kind="target" name="process_target.ProcessTarget"/>
  <class kind="target" name="rsh_target.RSHTarget"/>

@@ -572,6 +572,20 @@ def format_time_iso(time_secs):
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time_secs))
 
 
+def parse_time_iso(time_string):
+    """Parse a ISO8601-compliant formatted date and time.
+
+    See also 'format_time_iso'.
+
+    'time_string' -- The string to be parsed, as returned by
+    e.g. 'format_time_iso'.
+
+    returns -- The time as a float, like that returned by
+    'time.time'."""
+
+    return time.mktime(time.strptime(time_string, "%Y-%m-%dT%H:%M:%SZ"))
+
+
 def make_unique_tag():
     """Return a unique tag string."""
 
