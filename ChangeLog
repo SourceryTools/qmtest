@@ -1,5 +1,10 @@
 2001-05-29  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/issue.py (Issue.GetField): Use field's default if the
+	issue doesn't have a value.
+
+2001-05-29  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (make_select): Add form_name parameter.
 	* qm/track/web/query.py (QueryPageInfo.__init__): Don't get field
 	names. 

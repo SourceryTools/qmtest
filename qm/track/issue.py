@@ -174,7 +174,19 @@ class Issue:
     def GetField(self, name):
         """Return the value of the field 'name'."""
 
-        return self.__fields[name]
+        try:
+            return self.__fields[name]
+        except KeyError:
+            # Hmm... no value for this field.  Maybe the field was added
+            # subsequently.  Use the default value of this field, if it
+            # has one.
+            issue_class = self.GetClass()
+            field = self.GetClass().GetField(name)
+            if field.HasDefaultValue():
+                return field.GetDefaultValue()
+            else:
+                # No default value; rethrow the exception.
+                raise
 
 
     def SetField(self, name, value):
