@@ -540,10 +540,19 @@ class Suite:
 class Database:
     """A database containing tests."""
 
+    def __init__(self, path):
+        """Construct a new database.
+
+        'path' -- The absolute path to the directory that represents
+        the database."""
+
+        self._path = path
+
+        
     def GetPath(self):
         """Return the path to the database."""
 
-        raise qm.MethodShouldBeOverriddenError, "Database.GetPath"
+        return self._path
     
 
     def GetClassPaths(self):

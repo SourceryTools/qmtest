@@ -98,11 +98,14 @@ class Database(base.Database, qm.common.MutexMixin):
     def __init__(self, path, create=0):
         """Open a connection to a database.
 
-        'path' -- The path to the database.
+        'path' -- The absolute path to the directory that represents
+        the database.
 
         'create' -- If true, the database is created.  Otherwise, it
         must already exist."""
 
+        # Initialize base classes.
+        base.Database.__init__(self, path)
         # Create a new database, if requested.
         if create:
             if os.path.exists(path):
@@ -113,8 +116,6 @@ class Database(base.Database, qm.common.MutexMixin):
         if not os.path.isdir(path):
             raise ValueError, \
                   qm.error("db path doesn't exist", path=path)
-        # Remember the path.
-        self.__path = path
         # Cache loaded objects in these attributes.
         self.__tests = {}
         self.__suites = {}
@@ -126,17 +127,11 @@ class Database(base.Database, qm.common.MutexMixin):
     def GetClassPaths(self):
         lock = self.GetLock()
         # Specify the '_classes' subdirectory, if it exists.
-        class_dir = os.path.join(self.__path, "_classes")
+        class_dir = os.path.join(self.GetPath(), "_classes")
         if os.path.isdir(class_dir):
             return [class_dir]
         else:
             return []
-
-
-    def GetPath(self):
-        """Return the path to the database."""
-
-        return self.__path
 
 
     def GetTest(self, test_id):

@@ -346,6 +346,11 @@ The summary is written to standard output.
                       qm.error("no db specified",
                                envvar=self.db_path_environment_variable)
         try:
+            # If the path is not already absolute, make it into an
+            # absolute path at this point.
+            if not os.path.isabs(db_path):
+                db_path = os.path.join(os.getcwd(), db_path)
+            # Create the database.
             base.load_database(db_path)
         except ValueError, exception:
             raise RuntimeError, str(exception)

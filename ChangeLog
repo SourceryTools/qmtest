@@ -1,3 +1,15 @@
+2001-10-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (Database.__init__): New method.
+	(Database.GetPath): Return the stored value.
+	* qm/test/cmdline.py (Command.Execute): Convert the database
+	path to an absolute path, if it isn't already one.
+	* qm/test/xmldb.py (Database.__init__): Call the base class
+	initializer.  Don't store path.
+	(Database.GetClassPaths): Use GetPath, not __path, to retrieve
+	the database path.
+	(Database.GetPath): Remove.
+
 2001-10-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* Makefile.in (SUBDIRS): Add doc.
