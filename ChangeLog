@@ -1,4 +1,10 @@
-2002-11-29    <Mark Mitchell <mark@codesourcery.com>>
+2002-12-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (SetPopupPage): Remove.
+	(TupleField.GetValueFromDomNode): Fix typo.
+	(TupleField.MakeDomNodeForValue): Likewise.
+
+2002-11-29  Mark Mitchell <mark@codesourcery.com>
 
 	* qm/web.py (WebRequestHandler.__HandleFileRequest): Open files in 
 	binary mode.

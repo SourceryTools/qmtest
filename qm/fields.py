@@ -1059,48 +1059,6 @@ class TextField(Field):
 
 ########################################################################
 
-class SetPopupPage(web.DtmlPage):
-    """Page for specifying an element to add to a set field.
-
-    The template 'set.dtml' is used to generate a popup HTML page for
-    specifying a new element to add to a set field."""
-
-    def __init__(self, set_field, control_name, select_name):
-        """Construct a new context.
-
-        'set_field' -- The 'SetField' instance for which the page is
-        being generated.
-
-        'control_name' -- The name of the hidden HTML input in which the
-        encoded set contents are stored.
-
-        'select_name' -- The name of the user-visible HTML select input
-        displaying the set contents."""
-        
-        # Construct a null 'WebRequest' object, since we don't need it.
-        web.DtmlPage.__init__(self,
-                              "set.dtml",
-                              field=set_field,
-                              field_name=control_name,
-                              select_name=select_name)
-
-
-    def MakeElementControl(self):
-        """Make HTML controls for editing a value of the contained field."""
-
-        contained_field = self.field.GetContainedField()
-        default_value = contained_field.GetDefaultValue()
-        return contained_field.FormatValueAsHtml(default_value, "new",
-                                                 name="item")
-
-
-    def MakeTitle(self):
-        """Return the page title."""
-
-        return "Add an Element to %s" % self.field.GetTitle()
-
-
-
 class TupleField(Field):
     """A 'TupleField' contains zero or more other 'Field's.
 
@@ -1161,9 +1119,8 @@ class TupleField(Field):
     def GetValueFromDomNode(self, node, attachment_store):
 
         values = []
-        for f, element in map(None, self.__fields,
-                              node.getElementsByTagName("element")):
-            values.append(f.GetValueFromDom(element))
+        for f, element in map(None, self.__fields, node.childNodes):
+            values.append(f.GetValueFromDomNode(element, attachment_store))
 
         return values
 
@@ -1172,7 +1129,7 @@ class TupleField(Field):
 
         element = document.createElement("tuple")
         for f, v in map(None, self.__fields, value):
-            element.appendChild(f.MakeDomNodeForValue(value))
+            element.appendChild(f.MakeDomNodeForValue(v, document))
 
         return element
     
