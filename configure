@@ -14,6 +14,8 @@ ac_help=
 ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
+  --enable-maintainer-mode configure for development"
+ac_help="$ac_help
   --with-python=PATH      specify the Python interpreter"
 ac_help="$ac_help
   --with-docbook-dtd=PATH directory containing the docbook DTD."
@@ -529,6 +531,21 @@ fi
 
 
 
+# Check whether --enable-maintainer-mode or --disable-maintainer-mode was given.
+if test "${enable_maintainer_mode+set}" = set; then
+  enableval="$enable_maintainer_mode"
+  if test x${enableval} = xno; then
+                MAINTAINER_MODE=0
+              else
+                MAINTAINER_MODE=1
+              fi
+else
+  MAINTAINER_MODE=0
+fi
+
+
+	     
+
 QM_MAJOR_VER=1
 QM_MINOR_VER=0
 QM_RELEASE_VER=0
@@ -549,7 +566,7 @@ fi
 
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-echo "configure:553: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:570: checking whether ${MAKE-make} sets \${MAKE}" >&5
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -606,7 +623,7 @@ ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:610: checking for a BSD compatible install" >&5
+echo "configure:627: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -674,7 +691,7 @@ if test -n "$PYTHON" -a "$PYTHON" != yes; then
   # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:678: checking for $ac_word" >&5
+echo "configure:695: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -704,7 +721,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:708: checking for $ac_word" >&5
+echo "configure:725: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -755,7 +772,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:759: checking for $ac_word" >&5
+echo "configure:776: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -787,7 +804,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:791: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:808: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -798,12 +815,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 802 "configure"
+#line 819 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:807: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:824: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -829,12 +846,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:833: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:850: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:838: checking whether we are using GNU C" >&5
+echo "configure:855: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -843,7 +860,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:847: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:864: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -862,7 +879,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:866: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:883: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -896,7 +913,7 @@ fi
 
 ac_safe=`echo "$PYTHON" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $PYTHON""... $ac_c" 1>&6
-echo "configure:900: checking for $PYTHON" >&5
+echo "configure:917: checking for $PYTHON" >&5
 if eval "test \"`echo '$''{'ac_cv_file_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -923,7 +940,7 @@ else
   # Extract the first word of "python", so it can be a program name with args.
 set dummy python; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:927: checking for $ac_word" >&5
+echo "configure:944: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_PYTHON'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -960,19 +977,19 @@ fi
 
 
 echo $ac_n "checking Python version""... $ac_c" 1>&6
-echo "configure:964: checking Python version" >&5
+echo "configure:981: checking Python version" >&5
 PYTHON_VERSION=`$PYTHON -c "import sys; import string; print string.split(sys.version, ' ')[0][:3]"`
 echo "$ac_t""$PYTHON_VERSION" 1>&6
 
 
 echo $ac_n "checking Python prefix""... $ac_c" 1>&6
-echo "configure:970: checking Python prefix" >&5
+echo "configure:987: checking Python prefix" >&5
 PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
 echo "$ac_t""$PYTHON_PREFIX" 1>&6
 
 
 echo $ac_n "checking Python platform""... $ac_c" 1>&6
-echo "configure:976: checking Python platform" >&5
+echo "configure:993: checking Python platform" >&5
 PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()"`
 echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 
@@ -981,7 +998,7 @@ echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 # Extract the first word of "happydoc", so it can be a program name with args.
 set dummy happydoc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:985: checking for $ac_word" >&5
+echo "configure:1002: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1019,7 +1036,7 @@ fi
 # Extract the first word of "jade", so it can be a program name with args.
 set dummy jade; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1023: checking for $ac_word" >&5
+echo "configure:1040: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1055,7 +1072,7 @@ fi
 # Extract the first word of "tidy", so it can be a program name with args.
 set dummy tidy; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1059: checking for $ac_word" >&5
+echo "configure:1076: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1092,7 +1109,7 @@ fi
 
 if test "$JADE" != no; then
   echo $ac_n "checking xml.dcl""... $ac_c" 1>&6
-echo "configure:1096: checking xml.dcl" >&5
+echo "configure:1113: checking xml.dcl" >&5
   XML_DCL=no
   for file in \
     /usr/share/doc/jade*/pubtext/xml.dcl \
@@ -1110,7 +1127,7 @@ fi
 
 
 echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
-echo "configure:1114: checking DocBook stylesheets" >&5
+echo "configure:1131: checking DocBook stylesheets" >&5
 DOCBOOK_STYLESHEETS=no
 for dir in \
   /usr/lib/sgml/stylesheets/docbook \
@@ -1126,7 +1143,7 @@ echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
 
 DOCBOOK_DTD=
 echo $ac_n "checking for dobook DTD""... $ac_c" 1>&6
-echo "configure:1130: checking for dobook DTD" >&5
+echo "configure:1147: checking for dobook DTD" >&5
 # Check whether --with-docbook-dtd or --without-docbook-dtd was given.
 if test "${with_docbook_dtd+set}" = set; then
   withval="$with_docbook_dtd"
@@ -1142,13 +1159,21 @@ fi
 echo "$ac_t""$DOCBOOK_DTD" 1>&6
 
 
-
 if test "$JADE" = no -o "$XML_DCL" = no -o "$DOCBOOK_DTD" = no; then
   echo "configure: warning: Documentation will not be built." 1>&2
   DOCUMENTATION=no
 else
   DOCUMENTATION=yes
 fi
+
+# Do not try to build documentation unless --enable-maintainer-mode
+# was specified.  The documentation is pre-generated for releases.
+
+if test $DOCUMENTATION = yes && test $MAINTAINER_MODE = 0; then
+  echo "configure: warning: Documentation is only built in maintainer mode." 1>&2
+  DOCUMENTATION=no
+fi
+
 
 
 
@@ -1269,9 +1294,7 @@ trap 'rm -fr `echo "standard.mk
   Makefile
   qm.spec
   doc/Makefile
-  doc/design/qmconfig/Makefile
   doc/design/qmtest/Makefile
-  doc/design/qmtrack/Makefile
   doc/manual/Makefile
   qm/Makefile
   qm/setup_path.py
@@ -1309,6 +1332,7 @@ s%@includedir@%$includedir%g
 s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
+s%@MAINTAINER_MODE@%$MAINTAINER_MODE%g
 s%@QM_MAJOR_VER@%$QM_MAJOR_VER%g
 s%@QM_MINOR_VER@%$QM_MINOR_VER%g
 s%@QM_RELEASE_VER@%$QM_RELEASE_VER%g
@@ -1374,9 +1398,7 @@ CONFIG_FILES=\${CONFIG_FILES-"standard.mk
   Makefile
   qm.spec
   doc/Makefile
-  doc/design/qmconfig/Makefile
   doc/design/qmtest/Makefile
-  doc/design/qmtrack/Makefile
   doc/manual/Makefile
   qm/Makefile
   qm/setup_path.py

@@ -1,5 +1,9 @@
 2001-12-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in: Add --enable-maintainer-mode.
+	* standard.mk.in (docbook-html): Do not create an HTML tar file.
+	* scripts/qm-release: Copy documentation to source release.
+
 	* qm/test/classes/command.py (ShellCommandTest): Use
 	ShellCommandTest.command_shell, not just command_shell, as a
 	context variable.

@@ -61,6 +61,31 @@ changedir() {
 	error "Could not change directory to $1"
 }
 
+# Build QM itself from the source distribution.
+
+build_qm() {
+    echo "Building QM..."
+
+    # Remove any old source distribution.
+    rm -rf qm-${QM_VERSION}
+    # Untar the source distribution.
+    tar xzf ${QM_SOURCE_TAR_GZ} || \
+      error "Could not unpack source distribution"
+    changedir qm-${QM_VERSION}
+    # Create an installation directory.
+    mkdir qm-${QM_VERSION}-install || \
+      error "Could not create installation directory"
+    # Configure QM.
+    ./configure --prefix=../qm-${QM_VERSION}-install "$@" || \
+      error "Could not configure QM"
+    # Build it.
+    make || error "Could not build QM"
+    # Install it.
+    make install || error "Could not install QM"
+    # Go back to the directory we started in.
+    changedir ..
+}
+
 # Build the source distribution.
 
 build_source() {
@@ -70,6 +95,24 @@ build_source() {
     cvs -f -z9 -Q export -d qm-${QM_VERSION} \
       -r release-${QM_MAJOR_VER}-${QM_MINOR_VER}-branch qm || \
       error "Could not check out QM"
+    tar czf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION} || \
+      error "Could not create tar file"
+    # Build QM to obtain documentation files.
+    build_qm --enable-maintainer_mode
+    # Recreate the source directory.
+    echo "Copying documentation..."
+    rm -rf qm-${QM_VERSION}
+    tar xzf ${QM_SOURCE_TAR_GZ} || \
+      error "Could not unpack source distribution"
+    (mkdir qm-${QM_VERSION}/doc/manual/html &&
+     cp -r qm-${QM_VERSION}-install/share/doc/qm/manual/* \
+          qm-${QM_VERSION}/doc/manual/html) || \
+      error "Could not copy HTML manual"
+    cp -r qm-${QM_VERSION}-install/share/doc/qm/manual.pdf \
+          qm-${QM_VERSION}/doc/manual/print || \
+      error "Could not copy PDF manual"
+    # Copy the documentation into the source directory.
+    cp -r qm-${QM_VERSION}/doc/manual/{html,print} 
     tar czf ${QM_SOURCE_TAR_GZ} qm-${QM_VERSION} || \
       error "Could not create tar file"
 }
@@ -91,24 +134,8 @@ build_rpm() {
 # Build the binary distribution.
 
 build_binary() {
+    build_qm
     echo "Building binary distribution..."
-    # Remove any old source distribution.
-    rm -rf qm-${QM_VERSION}
-    # Untar the source distribution.
-    tar xzf ${QM_SOURCE_TAR_GZ} || \
-      error "Could not unpack source distribution"
-    changedir qm-${QM_VERSION}
-    # Create an installation directory.
-    mkdir qm-${QM_VERSION}-install || \
-      error "Could not create installation directory"
-    # Configure QM.
-    ./configure --prefix=`pwd`/qm-${QM_VERSION}-install || \
-      error "Could not configure QM"
-    # Build it.
-    make || error "Could not build QM"
-    # Install it.
-    make install || error "Could not install QM"
-    # Build a tar file.
     changedir qm-${QM_VERSION}-install
     tar czf ../../${QM_BINARY_TAR_GZ} . || \
       error "Could not create tar file"

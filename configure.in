@@ -36,6 +36,20 @@ divert(0)
 AC_INIT(configure.in)
 
 dnl ####################################################################
+dnl Enable maintainer mode.
+dnl ####################################################################
+
+AC_ARG_ENABLE(maintainer-mode, 
+              [  --enable-maintainer-mode configure for development],
+              if test x${enableval} = xno; then
+                MAINTAINER_MODE=0
+              else
+                MAINTAINER_MODE=1
+              fi,
+              MAINTAINER_MODE=0)
+AC_SUBST(MAINTAINER_MODE)
+	     
+dnl ####################################################################
 dnl Set the version numbers for QM.  These values should be set here 
 dnl and nowhere else in QM.
 dnl ####################################################################
@@ -178,16 +192,21 @@ AC_ARG_WITH(docbook-dtd,
 AC_MSG_RESULT($DOCBOOK_DTD)
 AC_SUBST(DOCBOOK_DTD)
 
-dnl ####################################################################
-dnl Warn if we do not have enough to build documentation
-dnl ####################################################################
-
 if test "$JADE" = no -o "$XML_DCL" = no -o "$DOCBOOK_DTD" = no; then
   AC_MSG_WARN(Documentation will not be built.)
   DOCUMENTATION=no
 else
   DOCUMENTATION=yes
 fi
+
+# Do not try to build documentation unless --enable-maintainer-mode
+# was specified.  The documentation is pre-generated for releases.
+
+if test $DOCUMENTATION = yes && test $MAINTAINER_MODE = 0; then
+  AC_MSG_WARN(Documentation is only built in maintainer mode.)
+  DOCUMENTATION=no
+fi
+
 AC_SUBST(DOCUMENTATION)
 
 dnl ####################################################################
@@ -199,9 +218,7 @@ AC_OUTPUT(
   Makefile
   qm.spec
   doc/Makefile
-  doc/design/qmconfig/Makefile
   doc/design/qmtest/Makefile
-  doc/design/qmtrack/Makefile
   doc/manual/Makefile
   qm/Makefile
   qm/setup_path.py
