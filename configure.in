@@ -113,102 +113,11 @@ dnl ####################################################################
 
 AC_PATH_PROG(HAPPYDOC, happydoc)
 
-dnl ####################################################################
-dnl Jade and Tidy are used to generate documentation.  Without Jade,
-dnl documentation will not be built.
-dnl ####################################################################
-
-AC_PATH_PROG(JADE, jade, no)
-AC_PATH_PROG(TIDY, tidy, no)
-
-dnl ####################################################################
-dnl We need XML declarations for Jade, in xml.dcl.  This file should be 
-dnl included with Jade.  Look for it in some usual places.
-dnl ####################################################################
-
-if test "$JADE" != no; then
-  AC_MSG_CHECKING(xml.dcl)
-  XML_DCL=no
-  for file in \
-    /usr/share/doc/jade*/pubtext/xml.dcl \
-    /usr/share/doc/openjade*/pubtext/xml.dcl \
-    /usr/doc/jade*/pubtext/xml.dcl \
-    /usr/share/sgml/declaration/xml.dcl \
-  ; do
-    if test -r "$file"; then
-      XML_DCL=$file
-      break
-    fi
-  done
-  AC_MSG_RESULT($XML_DCL)
-  AC_SUBST(XML_DCL)
-fi
-
-dnl ####################################################################
-dnl To build documentation, we need DSSSL stylesheets for DocBook.  Look
-dnl for them in some usual places.
-dnl ####################################################################
-
-AC_MSG_CHECKING(DocBook stylesheets)
-DOCBOOK_STYLESHEETS=no
-for dir in \
-  /usr/lib/sgml/stylesheets/docbook \
-  /usr/lib/sgml/stylesheet/dsssl/docbook \
-; do
-  if test -d $dir; then
-    DOCBOOK_STYLESHEETS=$dir
-    break
-  fi
-done
-AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
-AC_SUBST(DOCBOOK_STYLESHEETS)
-
-dnl #####################
-dnl Find the Docbook DTD.
-dnl #####################
-
-DOCBOOK_DTD=
-AC_MSG_CHECKING(for docbook DTD)
-AC_ARG_WITH(docbook-dtd, 
-            [  --with-docbook-dtd=PATH directory containing the docbook DTD.],
-            [case $withval in
-               yes) DOCBOOK_DTD=/usr/lib/sgml;;
-               no)  ;;
-               *)   DOCBOOK_DTD=$withval;;
-             esac],
-            DOCBOOK_DTD=/usr/lib/sgml)
-AC_MSG_RESULT($DOCBOOK_DTD)
-AC_SUBST(DOCBOOK_DTD)
-
-if test "$JADE" = no -o "$XML_DCL" = no -o "$DOCBOOK_DTD" = no; then
-  AC_MSG_WARN(Documentation will not be built.)
-  DOCUMENTATION=no
-else
-  DOCUMENTATION=yes
-fi
-
 # Do not try to build documentation unless --enable-maintainer-mode
 # was specified.  The documentation is pre-generated for releases.
-if test $DOCUMENTATION = yes && test $MAINTAINER_MODE = 0; then
-  AC_MSG_WARN(Documentation is only built in maintainer mode.)
-  DOCUMENTATION=no
+if test $MAINTAINER_MODE = 0; then
+  AC_MSG_WARN(Documentation is only built with --enable-maintainer-mode.)
 fi
-
-# Maintainers should be building documentation.
-if test $DOCUMENTATION = no && test $MAINTAINER_MODE = 1; then
-  AC_MSG_WARN(Documentation will not be built despite --enable-maintainer-mode.)
-  AC_MSG_WARN(Check that Jade and Docbook have been installed.)
-fi
-
-if test $DOCUMENTATION = yes \
-   || test -f "$srcdir/qm/test/doc/print/manual.pdf"; then
-  INSTALL_DOCUMENTATION=yes
-else
-  INSTALL_DOCUMENTATION=no
-fi
-
-AC_SUBST(DOCUMENTATION)
-AC_SUBST(INSTALL_DOCUMENTATION)
 
 dnl ####################################################################
 dnl Generate results

@@ -1,3 +1,12 @@
+2003-11-09  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in (DOCUMENTATION): Set value to MAINTAINER_MODE.
+	(TIDY): Likewise.
+	(TIDYFLAGS): Likewise.
+	* configure.in: Do not search for Jade, tidy, DocBook stylesheets,
+	etc.
+	* configure: Regenerated.
+
 2003-10-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (SetField.ParseFormValue): Correct logic

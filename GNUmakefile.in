@@ -32,11 +32,7 @@ PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHONDIRS	= $(TOPDIR)
 
 # Whether or not we should generate documentation.
-DOCUMENTATION = @DOCUMENTATION@
-
-# Tidy configuration.
-TIDY 		= @TIDY@
-TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
+DOCUMENTATION = @MAINTAINER_MODE@
 
 # HappyDoc configuration.
 HAPPYDOC	= @HAPPYDOC@
@@ -54,7 +50,7 @@ bindir		= @bindir@
 
 .PHONY: all
 all:
-ifeq ($(DOCUMENTATION), yes)
+ifeq ($(DOCUMENTATION),1)
 	$(PYTHON) ./setup.py build_doc
 endif
 	$(PYTHON) ./setup.py build
