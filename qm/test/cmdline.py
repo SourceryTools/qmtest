@@ -17,7 +17,6 @@
 # Imports
 ########################################################################
 
-from   __future__ import nested_scopes
 import base
 import database
 import os
@@ -28,7 +27,6 @@ import qm.platform
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.result_stream import ResultStream
-from   qm.test.text_result_stream import *
 from   qm.trace import *
 import qm.test.web.web
 import qm.xmlutil
@@ -543,18 +541,16 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         # We have not yet loaded the database.
         self.__database = None
-        # The class to use when writing results files has not yet been
-        # determined.
-        self.__result_stream_class = None
         # We have not yet computed the set of available targets.
         self.targets = None
 
         # The result stream class used for results files is the pickling
-        # verison.
+        # version.
         self.__file_result_stream_class_name \
             = "pickle_result_stream.PickleResultStream"
-        # We haven't loaded the actual class yet.
-        self.__file_result_stream_class = None
+        # The result stream class used for textual feed back.
+        self.__text_result_stream_class_name \
+            = "text_result_stream.TextResultStream"
         # The expected outcomes have not yet been loaded.
         self.__expected_outcomes = None
 
@@ -837,14 +833,19 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         returns -- The 'ResultStream' class used for results files."""
 
-        if not self.__file_result_stream_class:
-            self.__file_result_stream_class \
-                = get_extension_class(self.__file_result_stream_class_name,
-                                      "result_stream",
-                                      self.GetDatabase())
+        return get_extension_class(self.__file_result_stream_class_name,
+                                   "result_stream",
+                                   self.GetDatabase())
 
-        return self.__file_result_stream_class
+    def GetTextResultStreamClass(self):
+        """Return the 'ResultStream' class used for textual feedback.
 
+        returns -- the 'ResultStream' class used for textual
+        feedback."""
+
+        return get_extension_class(self.__text_result_stream_class_name,
+                                   "result_stream",
+                                   self.GetDatabase())
         
     def _GetVersionString(self):
         """Return the version string for this version of QMTest.
@@ -1591,7 +1592,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         if format != "none":
             as = { "format" : format }
             as.update(arguments)
-            stream = TextResultStream(as)
+            stream = self.GetTextResultStreamClass()(as)
             result_streams.append(stream)
         
         f = lambda n: qm.test.base.get_extension_class(n,

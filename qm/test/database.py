@@ -17,7 +17,6 @@
 # imports
 ########################################################################
 
-from   __future__ import nested_scopes
 import os.path
 import qm
 from   qm.common import *

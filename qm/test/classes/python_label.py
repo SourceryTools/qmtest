@@ -15,7 +15,6 @@
 # Imports
 ########################################################################
 
-from   __future__ import nested_scopes
 from   qm.label   import *
 import re
 

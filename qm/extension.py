@@ -426,7 +426,7 @@ def parse_descriptor(descriptor, class_loader):
 
     'descriptor' -- A string representing an instance of 'Extension'.
     The 'descriptor' has the form 'class(arg1 = "val1", arg2 = "val2",
-    ...)'.  The arguments and the parentheses are option.
+    ...)'.  The arguments and the parentheses are optional.
 
     If 'class' names a file in the file system, it is assumed to be an
     extension file.  Any attributes provided in the descriptor

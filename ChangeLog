@@ -1,3 +1,37 @@
+2003-06-15  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/text_result_stream.py: Move into classes/.
+	* qm/test/classes/classes.qmc: Add TextResultStream.
+	* qm/test/cmdline.py: Don't import text_result_stream.
+	(QMTest.__init__): New variable	__text_result_stream_class_name.
+	(QMTest.GetTextResultStreamClass): New function.
+	(QMTest.__GetResultStream): Use it.
+	
+	* qm/test/cmdline.py (QMTest.__init__): Remove variable
+	__file_result_stream_class.
+	(QMTest.GetFileResultStreamClass): Don't use it.
+	(QMTest.__init__): Remove unused variable
+	__result_stream_class.
+	
+	* qm/test/cmdline.py (QMTest.__init__): Typo in comment.
+	
+	* qm/test/execution_engine.py (ExecutionEngine.__init__):
+	Remove unused variables self.__test_results,
+	self.__resource_results.
+	(ExecutionEngine._AddResult): Likewise.
+
+	* qm/test/web/web.py: Remove from __future__ import
+	nested_scopes line.
+	* qm/test/cmdline.py: Likewise.
+	* qm/fields.py: Likewise.
+	* qm/test/classes/file_label.py: Likewise.
+	* qm/test/classes/xml_database.py: Likewise.
+	* qm/test/classes/python_label.py: Likewise.
+	* qm/test/test.py: Likewise.
+	* qm/test/database.py: Likewise.
+	
+	* qm/extension.py (parse_descriptor): Typo in docstring.
+		
 2003-06-12  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/qm.sh (qm_python_path_dir): New variable.

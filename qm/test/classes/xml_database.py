@@ -17,7 +17,6 @@
 # imports
 ########################################################################
 
-from   __future__ import nested_scopes
 import dircache
 import os
 import qm.common

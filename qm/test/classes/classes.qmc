@@ -16,6 +16,7 @@
 <class kind="target">rsh_target.RSHTarget</class>
 <class kind="label">file_label.FileLabel</class>
 <class kind="label">python_label.PythonLabel</class>
+<class kind="result_stream">text_result_stream.TextResultStream</class>
 <class kind="result_stream">xml_result_stream.XMLResultStream</class>
 <class kind="result_stream">pickle_result_stream.PickleResultStream</class>
 <class kind="result_stream">dejagnu_stream.DejaGNUStream</class>

@@ -101,9 +101,6 @@ class ExecutionEngine:
         self.__descriptors = {}
         self.__descriptor_graph = {}
         
-        # There are no results yet.
-        self.__test_results = {}
-        self.__resource_results = []
         self.__any_unexpected_outcomes = 0
         
         # Termination has not yet been requested.
@@ -442,14 +439,11 @@ class ExecutionEngine:
         if not target:
             self._Trace("No target for %s." % result.GetId())
                         
-        # Store the result.
-        if result.GetKind() == Result.TEST:
-            self.__test_results[result.GetId()] = result
-            if (self.__expectations.get(result.GetId(), Result.PASS)
+        # Check for unexpected outcomes.
+        if result.GetKind() == Result.TEST  \
+           and (self.__expectations.get(result.GetId(), Result.PASS)
                 != result.GetOutcome()):
-                self.__any_unexpected_outcomes = 1
-        else:
-            self.__resource_results.append(result)
+            self.__any_unexpected_outcomes = 1
             
         # This target might now be idle.
         if (target and target not in self.__idle_targets

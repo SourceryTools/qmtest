@@ -17,7 +17,6 @@
 # Imports
 ########################################################################
 
-from   __future__ import nested_scopes
 import qm
 import qm.fields
 import qm.test.cmdline
