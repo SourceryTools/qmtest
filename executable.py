@@ -27,13 +27,17 @@ import select
 class Executable:
     """An 'Executable' is a program that the operating system can run."""
 
-    def __init__(self, path):
+    def __init__(self, path, dir = None):
         """Construct a new 'Executable'.
 
-        'path' -- A string giving the location of the executable."""
+        'path' -- A string giving the location of the executable.
+
+        'dir' -- If not 'None', the directory to which the child
+        should change before executing."""
 
         self.__path = path
-
+        self.__dir = dir
+        
 
     def GetPath(self):
         """Return the location of the executable.
@@ -65,14 +69,13 @@ class Executable:
         self.__child = os.fork()
 
         if self.__child == 0:
-            # Initialize the child.
-            self._InitializeChild()
-
-            # Exec the program.
             try:
+                # Initialize the child.
+                self._InitializeChild()
+                # Exec the program.
                 os.execvp(self.GetPath(), arguments)
             except:
-                # If 'execvp' fails, exit immediately.
+                # Exit immediately.
                 os._exit(1)
 
             # This code should never be reached.
@@ -121,7 +124,8 @@ class Executable:
         child a chance to initialize itself.  '_InitializeParent' will
         already have been called in the parent process."""
 
-        pass
+        if self.__dir:
+            os.chdir(self.__dir)
 
 
     def _DoParent(self):
@@ -163,6 +167,9 @@ class RedirectedExecutable(Executable):
         child a chance to initialize itself.  '_InitializeParent' will
         already have been called in the parent process."""
 
+        # Let the base class do any initialization required.
+        Executable._InitializeChild(self)
+        
         # Close the pipe ends that we do not need.
         if self._stdin_pipe:
             os.close(self._stdin_pipe[1])

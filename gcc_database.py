@@ -30,6 +30,13 @@ import re
 import string
 import tempfile
 
+# See if we have thread support.
+try:
+    from threading import *
+    _have_threads = 1
+except:
+    _have_threads = 0
+    
 ########################################################################
 # Classes
 ########################################################################
@@ -37,10 +44,12 @@ import tempfile
 class Demangler(RedirectedExecutable):
     """A 'Demangler' demangles its standard input."""
 
-    def __init__(self, path, input):
+    def __init__(self, path, dir, input):
         """Construct a new 'Demangler'.
 
         'path' -- The path to the demangler.
+
+        'dir' -- The directory in which to run the demangler.
         
         'input' -- A string giving the input to be provided to the
         demangler."""
@@ -93,7 +102,6 @@ class GCCTest(CompilerTest):
            )
     """A sequence of regular expressions matching diagnostics to ignore."""
 
-    
     def __init__(self, **arguments):
         """Construct a new 'GCCTest'."""
 
@@ -350,61 +358,7 @@ class GCCTest(CompilerTest):
         return words
 
 
-    def _MakeDirectoryRecursively(self, directory):
-        """Create 'directory' and its parents.
 
-        'directory' -- The name of the directory to create.  It must
-        be a relative path"""
-
-        (parent, base) = os.path.split(directory)
-        # Make sure the parent directory exists.
-        if parent and not os.path.isdir(parent):
-            self._MakeDirectoryRecursively(parent)
-        # Create the final directory.
-        try:
-            os.mkdir(directory)
-        except EnvironmentError, e:
-            # It's OK if the directory already exists.
-            if e.errno == errno.EEXIST:
-                pass
-            else:
-                raise
-            
-            
-    def _MakeDirectoryForTest(self):
-        """Create a directory in which to place generated files.
-
-        'returns' -- The name of the directory created."""
-
-        # Get the directory name by turning the label into a path
-        # name.
-        directory = os.path.join(".", qm.label.to_path(self.GetId()))
-        # Create it.
-        self._MakeDirectoryRecursively(directory)
-
-        return directory
-
-
-    def _EnterDirectoryForTest(self):
-        """Create and enter the directory for generated files.
-
-        The caller should subsequently call '_ExitDirectoryForTest'
-        to restore the current directory."""
-    
-        directory = self._MakeDirectoryForTest()
-        self._saved_directory = os.getcwd()
-        os.chdir(directory)
-
-        
-    def _ExitDirectoryForTest(self):
-        """Leave the directory created for generated files.
-
-        The caller must have previously called '_EnterDirectoryForTest'."""
-
-        os.chdir(self._saved_directory)
-
-
-        
 class GPPTest(GCCTest):
     """A 'GPPTest' is a test for 'g++'."""
 
@@ -420,6 +374,12 @@ class GPPTest(GCCTest):
 
     _v3_directory = None
     """The directory containing libstdc++-v3."""
+    
+    # If we have thread support, we must synchronize access to the class
+    # variables.
+    if _have_threads:
+        _lock = Lock()
+
     
     def __init__(self, **arguments):
         """Construct a new 'GCCTest'."""
@@ -437,41 +397,72 @@ class GPPTest(GCCTest):
         executed."""
 
         if not GPPTest._compiler:
-            # Compute the path to the compiler.
-            if context.has_key("GCCTest.prefix"):
-                path = os.path.join(context["GCCTest.prefix"],
-                                    "bin", "g++")
-            else:
-                path = context["GPPTest.gpp"]
-            # There are no compiler options yet.
-            options = []
-            # Make error messages easier to parse.
-            options.append('-fmessage-length=0')
-            # See if there are any compiler options specified in the
-            # context.
-            options += string.split(context.get("GCCTest.flags", ""))
-            options += string.split(context.get("GPPTest.flags", ""))
+            if _have_threads:
+                self._lock.acquire()
+            try:
+                if GPPTest._compiler:
+                    return GPPTest._compiler
+                # Compute the path to the compiler.
+                if context.has_key("GCCTest.prefix"):
+                    path = os.path.join(context["GCCTest.prefix"],
+                                        "bin", "g++")
+                else:
+                    path = context["GPPTest.gpp"]
+                # There are no compiler options yet.
+                options = []
+                # Make error messages easier to parse.
+                options.append('-fmessage-length=0')
+                # See if there are any compiler options specified in the
+                # context.
+                options += string.split(context.get("GCCTest.flags", ""))
+                options += string.split(context.get("GPPTest.flags", ""))
+
+                # Create the 'Compiler'.
+                compiler = GPP(path, options)
+
+                # Get the base of the objdir; the libraries can be found
+                # relative to that.
+                objdir = context['GCCTest.objdir']
+                # Run the compiler to find out what multilib directory is
+                # in use.
+                executable = CompilerExecutable(compiler)
+                executable.Run([compiler.GetPath()] + compiler.GetOptions() 
+                               + ['--print-multi-dir'])
+                directory = executable.stdout[:-1]
+                # Add the V3 library directory.
+                self._v3_directory \
+                    = os.path.join(objdir,
+                                   self._GetTargetPlatform(context),
+                                   directory,
+                                   "libstdc++-v3")
+                GPPTest._library_directories.append(os.path.join
+                                                    (self._v3_directory,
+                                                     "src", ".libs"))
+                # Add the directory containing libgcc.
+                GPPTest._library_directories.append(os.path.join(objdir, "gcc",
+                                                                 directory))
+                # Add -L options for all the directories we should search
+                # for libraries.
+                for d in GPPTest._library_directories:
+                    options.append("-L" + d)
+                
+                # Run a script to findout what flags to use when compiling
+                # for the V3 library.
+                executable = \
+                    RedirectedExecutable(os.path.join(self._v3_directory,
+                                                      "testsuite_flags"))
+                executable.Run(["testsuite_flags", "--build-includes"])
+                options += string.split(executable.stdout)
+                compiler.SetOptions(options)
+                
+                GPPTest._compiler = compiler
+            finally:
+                if _have_threads:
+                    self._lock.release()
                     
-            # Create the 'Compiler'.
-            GPPTest._compiler = GPP(path, options)
-
-            # Add -L options for all the directories we should search
-            # for libraries.
-            for d in self._GetLibraryDirectories(context):
-                options.append("-L" + d)
-
-            # Run a script to findout what flags to use when compiling
-            # for the V3 library.
-            executable = RedirectedExecutable(os.path.join(self._v3_directory,
-                                                           "testsuite_flags"))
-            executable.Run(["testsuite_flags", "--build-includes"])
-            options += string.split(executable.stdout)
-            
-            GPPTest._compiler.SetOptions(options)
-
         return GPPTest._compiler
-        
 
+        
     def _GetLibraryDirectories(self, context):
         """Returns the directories to search for libraries.
 
@@ -481,29 +472,10 @@ class GPPTest(GCCTest):
         returns -- A sequence of strings giving the paths to the
         directories to search for libraries."""
 
-        if not GPPTest._library_directories:
-            # Get the base of the objdir; the libraries can be found
-            # relative to that.
-            objdir = context['GCCTest.objdir']
-            # Run the compiler to find out what multilib directory is
-            # in use.
-            compiler = self._GetCompiler(context)
-            executable = CompilerExecutable(compiler)
-            executable.Run([compiler.GetPath()] + compiler.GetOptions() 
-                           + ['--print-multi-dir'])
-            directory = executable.stdout[:-1]
-            # Add the V3 library directory.
-            self._v3_directory = os.path.join(objdir,
-                                              self._GetTargetPlatform(context),
-                                              directory,
-                                              "libstdc++-v3")
-            GPPTest._library_directories.append(os.path.join
-                                                (self._v3_directory,
-                                                 "src", ".libs"))
-            # Add the directory containing libgcc.
-            GPPTest._library_directories.append(os.path.join(objdir, "gcc",
-                                                             directory))
-
+        # Make sure that the compiler exists; initializing it creates
+        # _library_directories.
+        self._GetCompiler(context)
+        
         return GPPTest._library_directories
 
     
@@ -628,12 +600,9 @@ class OldDejaGNUTest(GPPTest):
 
         # So that we are thread safe, all work is done in a directory
         # corresponding to this test.
-        self._EnterDirectoryForTest()
-        try:
-            # Run the test.
-            GCCTest.Run(self, context, result)
-        finally:
-            self._ExitDirectoryForTest()
+        self._MakeDirectoryForTest()
+        # Run the test.
+        GCCTest.Run(self, context, result)
 
 
 
@@ -860,70 +829,78 @@ class DGTest(GPPTest):
 
         # So that we are thread safe, all work is done in a directory
         # corresponding to this test.
-        self._EnterDirectoryForTest()
-        try:
-            # If checking coverage information, make sure there are no
-            # stale coverage files around.
-            if self._check_coverage:
-                for f in glob.glob("*.da"):
-                    os.remove(f)
-                    
-            # Run the test.
-            if not GCCTest.Run(self, context, result):
-                return
+        self._MakeDirectoryForTest()
+        # If checking coverage information, make sure there are no
+        # stale coverage files around.
+        if self._check_coverage:
+            for f in glob.glob(os.path.join(self._GetDirectoryForTest(),
+                                            "*.da")):
+                os.remove(f)
 
-            # If the test isn't passing at this point, there's no point in
-            # doing additional work.
-            if result.GetOutcome() != Result.PASS:
-                return
+        # Run the test.
+        if not GCCTest.Run(self, context, result):
+            return
 
-            # See if there are assembly patterns for which to look.
-            if (self._assembly_patterns
-                or self._demangled_assembly_patterns
-                or self._forbidden_assembly_patterns):
-                # Get the basename for the source file.
-                file_name \
-                    = os.path.split(self.source_file.GetDataFile())[1]
-                # Get the assembly file in which we are supposed to look.
-                file_name = os.path.splitext(file_name)[0] + ".s"
-                # Read the contents of the file.
-                file = open(file_name)
-                asm_contents = file.read()
-                file.close()
+        # If the test isn't passing at this point, there's no point in
+        # doing additional work.
+        if result.GetOutcome() != Result.PASS:
+            return
 
-                # See if all the desired patterns are there.
-                for p in self._assembly_patterns:
-                    if not re.search(p, asm_contents):
-                        result.Fail("Assembly file does not contain '%s'."
-                                    % p,
-                                    { "DGTest.pattern" : p })
-                        return
+        # See if there are assembly patterns for which to look.
+        if (self._assembly_patterns
+            or self._demangled_assembly_patterns
+            or self._forbidden_assembly_patterns
+            or self._forbidden_demangled_assembly_patterns):
+            # Get the basename for the source file.
+            file_name \
+                = os.path.split(self.source_file.GetDataFile())[1]
+            # Get the assembly file in which we are supposed to look.
+            file_name = os.path.join(self._GetDirectoryForTest(),
+                                     os.path.splitext(file_name)[0] + ".s")
+            # Read the contents of the file.
+            file = open(file_name)
+            asm_contents = file.read()
+            file.close()
 
-                # Make sure that the forbidden patterns are not there.
-                for p in self._forbidden_assembly_patterns:
-                    if re.search(p, asm_contents):
-                        result.Fail("Assembly file contains '%s'." % p,
-                                    { "DGTest.pattern" : p})
-                        
-                # If we have to demangle the contents, do it.
-                if self._demangled_assembly_patterns:
-                    demangler = Demangler(context["DGTest.demangler"],
-                                          asm_contents)
-                    demangler.Run([demangler.GetPath()])
-                    asm_contents = demangler.stdout
+            # See if all the desired patterns are there.
+            for p in self._assembly_patterns:
+                if not re.search(p, asm_contents):
+                    result.Fail("Assembly file does not contain '%s'."
+                                % p,
+                                { "DGTest.pattern" : p })
+                    return
 
-                # See if all the patterns are there.
-                for p in self._demangled_assembly_patterns:
-                    if not re.search(p, asm_contents):
-                        result.Fail("Assembly file does not contain '%s'."
-                                    % p,
-                                    { "DGTest.pattern" : p })
-                        return
+            # Make sure that the forbidden patterns are not there.
+            for p in self._forbidden_assembly_patterns:
+                if re.search(p, asm_contents):
+                    result.Fail("Assembly file contains '%s'." % p,
+                                { "DGTest.pattern" : p})
 
-            # Check the coverage data.
-            self._CheckCoverage(context, result)
-        finally:
-            self._ExitDirectoryForTest()
+            # If we have to demangle the contents, do it.
+            if (self._demangled_assembly_patterns
+                or self._forbidden_demangled_assembly_patterns):
+                demangler = Demangler(context["DGTest.demangler"],
+                                      self._GetDirectoryForTest(),
+                                      asm_contents)
+                demangler.Run([demangler.GetPath()])
+                asm_contents = demangler.stdout
+
+            # See if all the patterns are there.
+            for p in self._demangled_assembly_patterns:
+                if not re.search(p, asm_contents):
+                    result.Fail("Assembly file does not contain '%s'."
+                                % p,
+                                { "DGTest.pattern" : p })
+                    return
+
+            # Make sure that the forbidden patterns are not there.
+            for p in self._forbidden_demangled_assembly_patterns:
+                if re.search(p, asm_contents):
+                    result.Fail("Assembly file contains '%s'." % p,
+                                { "DGTest.pattern" : p})
+
+        # Check the coverage data.
+        self._CheckCoverage(context, result)
 
 
     def _GetCompilationSteps(self):
@@ -1077,6 +1054,7 @@ class DGTest(GPPTest):
         self._assembly_patterns = []
         self._demangled_assembly_patterns = []
         self._forbidden_assembly_patterns = []
+        self._forbidden_demangled_assembly_patterns = []
         # And there is no coverage testing.
         self._check_coverage = 0
         self._check_branches = 0
@@ -1152,7 +1130,8 @@ class DGTest(GPPTest):
                 # See if it's an assembly-scanning command. 
                 if (command == "scan-assembler"
                     or command == "scan-assembler-dem"
-                    or command == "scan-assembler-not"):
+                    or command == "scan-assembler-not"
+                    or command == "scan-assembler-dem-not"):
                     if len(arguments) != 1:
                         raise QMException, "Incorrect usage of %s." % command
                     pattern = arguments[0]
@@ -1160,8 +1139,11 @@ class DGTest(GPPTest):
                         self._assembly_patterns.append(pattern)
                     elif command == "scan-assembler-dem":
                         self._demangled_assembly_patterns.append(pattern)
-                    else:
+                    elif command == "scan-assembler-not":
                         self._forbidden_assembly_patterns.append(pattern)
+                    elif command == "scan-assembler-dem-not":
+                        self._forbidden_demangled_assembly_patterns.append(
+                            pattern)
                 elif command == "run-gcov":
                     self._check_coverage = 1
                     self._coverage_arguments = arguments
@@ -1250,14 +1232,17 @@ class DGTest(GPPTest):
             return
 
         # Run "gcov".
-        gcov = RedirectedExecutable(context.get("GCCTest.gcov", "gcov"))
+        gcov = RedirectedExecutable(context.get("GCCTest.gcov", "gcov"),
+                                    self._GetDirectoryForTest())
         status = gcov.Run(["gcov"] + self._coverage_arguments)
         prefix = self._GetAnnotationPrefix() + "gcov_"
         if not self._CheckStatus(result, prefix, "Coverage tool", status):
             return
 
         # Get the contents of the gcov output file.
-        lines = open(self._coverage_arguments[-1] + ".gcov").readlines()
+        filename = os.path.join(self._GetDirectoryForTest(),
+                                self._coverage_arguments[-1] + ".gcov")
+        lines = open(filename).readlines()
         
         # Check line execution counts.
         line_number = 0
@@ -1367,7 +1352,7 @@ class InitPriorityTest(DGTest):
             try:
                 file = open(filename, "w")
             except EnvironmentError, e:
-                if e.errno == EEXIST:
+                if e.errno == errno.EEXIST:
                     continue
         # Create the contents of the file.
         try:
@@ -1376,7 +1361,8 @@ class InitPriorityTest(DGTest):
             file.close()
             # Compile the file.
             compiler = self._GetCompiler(context)
-            output = compiler.Compile(Compiler.MODE_COMPILE, [filename])[1]
+            output = compiler.Compile(Compiler.MODE_COMPILE, [filename],
+                                      self._GetDirectoryForTest())[1]
             # If there are any diagnostics, the compiler does not
             # understand the attribute.
             if (compiler.ParseOutput(output)):
@@ -1424,55 +1410,55 @@ class GPPBprobTest(GPPTest):
         modified by this method to indicate outcomes other than
         'Result.PASS' or to add annotations."""
 
-        self._EnterDirectoryForTest()
-        try:
-            # Remove any stale profiling files.
-            for f in glob.glob("*.da"):
-                os.remove(f)
-                
-            compiler = self._GetCompiler(context)
-            path = self.source_file.GetDataFile()
-            options = string.split(self.options)
-            
-            # Build the test with "-fprofile-arcs"
-            base = qm.label.split(self.GetId())[1]
-            profiled_exe_path = os.path.join(".", base + "1.exe")
-            (status, output, command) \
-                = compiler.Compile(Compiler.MODE_LINK,
-                                   [path],
-                                   options + ["-fprofile-arcs"],
-                                   profiled_exe_path)
-            prefix = self._GetAnnotationPrefix() + "profile_arcs_"
-            result[prefix + "output"] = output
-            result[prefix + "command"] = string.join(command)
-            if not self._CheckStatus(result, prefix, "Compiler", status):
-                return
-            
-            # Run the program.
-            executable = \
-                CompiledExecutable(profiled_exe_path,
-                                   self._GetLibraryDirectories(context),
-                                   context.get("CompilerTest.interpreter"))
-            status = executable.Run([profiled_exe_path])
-            prefix = self._GetAnnotationPrefix() + "execution_"
-            if not self._CheckStatus(result, prefix, "Executable", status):
-                return
-            
-            # Build the test with "-fbranch-probabilities"
-            profiled_exe_path = os.path.join(".", base + "2.exe")
-            (status, output, command) \
-                = compiler.Compile(Compiler.MODE_LINK,
-                                   [path],
-                                   options + ["-fbranch-probabilities"],
-                                   profiled_exe_path)
-            prefix = self._GetAnnotationPrefix() + "branch_probs_"
-            result[prefix + "output"] = output
-            result[prefix + "command"] = string.join(command)
-            if not self._CheckStatus(result, prefix, "Compiler", status):
-                return
-            
-        finally:
-            self._ExitDirectoryForTest()
+        self._MakeDirectoryForTest()
+        # Remove any stale profiling files.
+        for f in glob.glob(os.path.join(self._GetDirectoryForTest(),
+                                        "*.da")):
+            os.remove(f)
+
+        compiler = self._GetCompiler(context)
+        path = self.source_file.GetDataFile()
+        options = string.split(self.options)
+
+        # Build the test with "-fprofile-arcs"
+        base = qm.label.split(self.GetId())[1]
+        profiled_exe_path = os.path.join(".", base + "1.exe")
+        (status, output, command) \
+            = compiler.Compile(Compiler.MODE_LINK,
+                               [path],
+                               self._GetDirectoryForTest(),
+                               options + ["-fprofile-arcs"],
+                               profiled_exe_path)
+        prefix = self._GetAnnotationPrefix() + "profile_arcs_"
+        result[prefix + "output"] = output
+        result[prefix + "command"] = string.join(command)
+        if not self._CheckStatus(result, prefix, "Compiler", status):
+            return
+
+        # Run the program.
+        executable = \
+            CompiledExecutable(profiled_exe_path,
+                               self._GetDirectoryForTest(),
+                               self._GetLibraryDirectories(context),
+                               context.get("CompilerTest.interpreter"))
+        status = executable.Run([profiled_exe_path])
+        prefix = self._GetAnnotationPrefix() + "execution_"
+        if not self._CheckStatus(result, prefix, "Executable", status):
+            return
+
+        # Build the test with "-fbranch-probabilities"
+        profiled_exe_path = os.path.join(".", base + "2.exe")
+        (status, output, command) \
+            = compiler.Compile(Compiler.MODE_LINK,
+                               [path],
+                               self._GetDirectoryForTest(),
+                               options + ["-fbranch-probabilities"],
+                               profiled_exe_path)
+        prefix = self._GetAnnotationPrefix() + "branch_probs_"
+        result[prefix + "output"] = output
+        result[prefix + "command"] = string.join(command)
+        if not self._CheckStatus(result, prefix, "Compiler", status):
+            return
 
         
     

@@ -28,12 +28,15 @@ import sys
 class CompilerExecutable(RedirectedExecutable):
     """A 'CompilerExecutable' is a 'Compiler' that is being run."""
 
-    def __init__(self, compiler):
+    def __init__(self, compiler, dir = None):
         """Construct a new 'CompilerExecutable'.
 
-        'compiler' -- The 'Compiler' to run."""
+        'compiler' -- The 'Compiler' to run.
 
-        RedirectedExecutable.__init__(self, compiler.GetPath())
+        'dir' -- If not 'None', The directory in which to run the
+        compiler."""
+
+        RedirectedExecutable.__init__(self, compiler.GetPath(), dir)
 
 
     def _InitializeChild(self):
@@ -101,7 +104,7 @@ class Compiler:
         self.SetOptions(options or [])
             
 
-    def Compile(self, mode, files, options=[], output=None):
+    def Compile(self, mode, files, dir, options=[], output=None):
         """Compile the 'files'.
         
         'mode' -- The compilation mode (one of the 'Compiler.modes')
@@ -111,6 +114,8 @@ class Compiler:
         files (including, in general, assembly files, object files,
         and libraries) that should be compiled.
 
+        'dir' -- The directory in which to run the compiler.
+        
         'options' -- A sequence of strings indicating additional
         options that should be provided to the compiler.
 
@@ -128,7 +133,7 @@ class Compiler:
         # Get the command to use.
         command = self.GetCompilationCommand(mode, files, options, output)
         # Invoke the compiler.
-        executable = CompilerExecutable(self)
+        executable = CompilerExecutable(self, dir)
         status = executable.Run(command)
         # Return all of the information.
         return (status, executable.stdout, command)

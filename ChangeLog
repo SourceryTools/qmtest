@@ -1,3 +1,34 @@
+2002-05-27  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* compiler.py (CompilerExecutable.__init__): Add dir parameter.
+	(CompilerExecutable.Compile): Likewise.
+	* compiler_test.py (CompiledExecutable): Likewise.
+	(CompilerTest.__init__): Compute the directory in which test 
+	outputs wil lbe placed.
+	(CompilerTest.Run): Pass it to Compiler.Compile.
+	(CompilerTest._GetDirectoryForTest): New method.
+	(CompilerTest._MakeDirectoryRecursively): Likewise.
+	(CompilerTest._MakeDirectoryForTest): Likewise.
+	* executable.py (__init__): Add dir parameter.
+	(Executable.Spawn): Do not allow exceptions to escape the child.
+	(Executable._InitializeChild): If the initial working directory
+	for the child is specified, enter that directory.
+	(RedirectedExecutable._InitializeChild): Call
+	Executable._InitializeChild.
+	* gcc_database.py (Demangler.__init__): Add 'dir' parameter.
+	(GCCTest._MakeDirectoryRecursively): Remove.
+	(GCCTest._MakeDirectoryForTest): Likewise.
+	(GCCTest._EnterDirectoryForTest): Likewise.
+	(GCCTest._ExitDirectoryForTest): Likewise.
+	(GPPTest._lock): New variable.
+	(GPPTest._GetCompiler): Be threadsafe.  Calculate library
+	directories here ...
+	(GPPTest._GetLibraryDirectories): ... rather than here.
+	(OldDejaGNUTest.Run): Do not use _EnterDirectoryForTest and
+	_ExitDirectoryForTest.
+	(DGTest.Run): Likewise.
+	(GPPBprobTest): Likewise.
+	
 2002-05-19  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
 
 	* COPYING: New file.
