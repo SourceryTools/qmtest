@@ -212,13 +212,3 @@ AC_OUTPUT(
   qm.spec
   qm/setup_path.py
 )
-
-dnl ####################################################################
-dnl This follows the setup instructions in the Gadfly package.  The
-dnl target is a file generated in the setup procedure.  See
-dnl gadfly/index.html.
-dnl ####################################################################
-
-if test -d gadfly; then
-  cd gadfly && $PYTHON gfinstall.py
-fi

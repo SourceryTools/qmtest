@@ -1,3 +1,9 @@
+2002-06-09  Zack Weinberg  <zack@codesourcery.com>
+
+	* qm/track: Remove .cvsignore files.
+	* configure.in: No need to configure gadfly.
+	* configure: Regenerate.
+
 2002-05-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* share/web/images/left-arrow.gif: Merge from release-1-1-branch.
