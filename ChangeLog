@@ -1,3 +1,10 @@
+2001-06-06  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/qm.mod (qmtest-cmd): New entity.
+	(qmtrack-cmd): Likewise.
+	* doc/manual/track-manual.xml (sec-issue-ids): New section.
+	* doc/manual/test-manual.xml: Update.
+
 2001-05-31  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/test/base.py (RemoteTestHost.__init__): Change default qmtest

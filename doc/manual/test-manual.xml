@@ -392,7 +392,11 @@
 
    <para>Most of the properties of the context are the same for all
    tests and actions run during a single test run.  These properties
-   include... </para>
+   are configured as part of the test run.  For example, when you run
+   tests using the command line &qmtest-cmd; command, you may specify
+   individual context properties with command-line options, and you
+   may specify one or more files containing property definitions to be
+   included in the test execution context.</para>
 
    <para>In addition, a test or an action's setup method may add
    additional properties to a context.  These added properties do not
