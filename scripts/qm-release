@@ -282,6 +282,9 @@ UPLOAD=0
 # Main Program
 ########################################################################
 
+# Set our umask so that everyone can read the files created.
+umask 002
+
 # Parse options.
 while getopts "u" ARG; do
     case $ARG in
