@@ -1,0 +1,89 @@
+<?xml version="1.0" standalone="yes"?>
+
+<?abbrev sapcat =<Sys acronym="Site and Platform Customization Administration Tool">SapCat</Sys> ?>
+<?abbrev rpm=<Sys acronym="RedHat Package Manager">RPM</Sys>?>
+
+<Doc style="sapcat">
+<title>SapCat: Manual page</title>
+<subdoc name="sub">
+
+<ManPage command="sapcat" description="Site and Platform Customization Adminstration Tool">
+    <ManPage-Synopsis>
+      <code>sapcat check</code><br/>
+      <code>sapcat customize <var>OPTIONS -gui</var></code><br/>
+      <code>sapcat generate</code><br/>
+      <code>sapcat glossary</code>
+    </ManPage-Synopsis>
+    <ManPage-Description>
+      <p>
+        The <code>sapcat</code> command is used to build
+        <code>Customize</code> scripts for packages.  It can also
+        directly build the package from the <code>SapCat</code>
+        description files.  <br/><br/>
+      </p>
+     </ManPage-Description>
+
+     <ManPage-Section title="OPERATION">
+        <p>
+           The <code>sapcat</code> command has several modes of
+           operation, depending on the command line.  The modes are:
+        </p>
+        <dl>
+	  <dt><code>sapcat check</code></dt>
+	  <dd>
+            <p>
+	      Check that the {:sapcat:} description files are
+	      syntactically correct, that all files referenced by the
+	      {:sapcat:} description files actually exist, and that
+	      symbols being substituted actually exist.</p>
+	  </dd>
+
+	<dt><code>sapcat customize</code> <var>OPTIONS -gui</var></dt>
+	<dd>
+           <p>
+	      Customize the package.  If the <var>-gui</var> flag is
+	      specified, then a graphical user interface is created to
+	      select options.  <var>OPTIONS</var> control
+	      customization values.  The <code>sapcat customize</code>
+	      command is equivalent to running the
+	      <code>Customize</code> script, except it is run directly
+	      from the <code>SapCat</code> description files, and
+	      provides additional features (such as the GUI).  </p>
+	</dd>
+
+	<dt><code>sapcat generate</code></dt>
+	<dd><p>
+	  Create the files needed to support customization of the
+	  package.  One file is the <code>Customize</code> script, a
+	  Bourne-shell script that can be used to customize the
+	  package.  This command creates the <code>Makefile.in</code>
+	  files, which are needed to build the package.  It scans
+	  sources for symbols that are defined by tests, and assembles
+	  the directory of test scripts.  </p>
+	</dd>
+
+	<dt><code>sapcat glossary</code></dt>
+	<dd><p>
+	  Generate a glossary of symbols defined in the set of unit
+	  files.  </p>
+	</dd>
+      </dl>
+    </ManPage-Section>
+    <ManPage-Section title="BUGS">
+      <p>
+        The major defect is that the {:sapcat:} system is still
+        vaporware.
+      </p>
+      <p>
+	This manual page is not complete.  It needs to describe the
+	format for description files, units, etc.
+      </p>
+    </ManPage-Section>
+</ManPage>
+
+
+</subdoc>
+<!-- Local Variables: -->
+<!-- mode: xml -->
+<!-- End: -->
+</Doc>

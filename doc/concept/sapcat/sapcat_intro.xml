@@ -1,0 +1,366 @@
+<?xml version="1.0" standalone="yes"?>
+
+<Doc style="sapcat" abbrevs="sapcat_abbrevs">
+<title>SapCat: Introduction</title>
+<h1>SapCat: Introduction</h1>
+
+<contents/>
+
+<subdoc name="sub">
+
+<h2>Introduction</h2>
+
+<p>
+    The goal of the {:scconfig:} competition is a tool to support
+    <q>platform investigation and program configuration</q>, a process
+    variously called <dfn>configuration</dfn>,
+    <dfn>customization</dfn>, or <dfn>tailoring</dfn>.  One such a
+    tool is GNU {:autoconf:}; the {:scconfig:} competition is also
+    described as the development of a replacement for {:autoconf:}.
+    This document describes our entry to this competition, the
+    <em>Site and Platform Customization Adminstration Tool</em>,
+    {:sapcat:}.
+</p>
+<p>
+    We do, of course, entertain hopes of winning this competition.
+    However, we have personally had to deal with (or implement)
+    various {:autoconf:}-style tools in various roles, and believe our
+    perspective on this tool's requirments is important.  We sincerely
+    hope that the implementers of the ultimate {:scconfig:} tool,
+    whether or not it is our entry, will consider our use cases,
+    presented in Chapter&nbsp;<ref key="scReq"/>, and our vision of an
+    installation wizard, presented in Section&nbsp;<ref
+    key="instwiz"/>.
+</p>
+
+
+<h3>Motivation</h3>
+
+<p>
+    We would like to be able to write software that is portable across
+    computer platforms, where a <dfn>platform</dfn> is the combination
+    of hardware architecture, operating system, and applications
+    installed on a computer.  By <dfn>portable</dfn>, we mean that at
+    most minor changes need to be made to the software to successfully
+    compile and install it on any given platform.
+</p>
+<p>
+    But making software portable is difficult, because different
+    platforms vary dramatically.  For instance, {:unix:} and
+    {:windows:} are very different.  Even the various flavors of
+    {:unix:} have differences, although standards such as {:posix:}
+    have helped considerably to reduce these differences.  Programs
+    written in lower-level languages, such as C, must deal with the
+    widely disparate features of different platforms.  Higher-level
+    languages, such as {:python:}, {:perl:}, or {:tcl:}, can hide some
+    but not all of the feature differences.
+</p>
+<p>
+    Apart from the feature differences of the computing platforms,
+    systems administrators use diverse <dfn>site conventions</dfn>,
+    the local rules specifying where software is
+    installed,<footnote>For example, on many {:unix:} systems,
+    programs are installed into the <code>/usr/local/bin</code>
+    directory, or some other common location.  But some sites store
+    every program in its own directory.  See, for instance, how
+    {:RPI:} stores applications individually in its {:AFS:} cell in a
+    structure called <a
+    href="http://www.rpi.edu/~toddr/Archives/1991/a01g-cfs/"><code>/campus</code></a>.</footnote>
+    how email is retrieved, which web browser is preferred, etc.
+    Robust portable software must cope with these different site
+    conventions.
+</p>
+<p>
+    These factors conspire to make the development of portable
+    software difficult.  But installing portable software can be
+    difficult, too.  Often much of the burden of porting the software
+    falls to the person trying installing it on a computer.  This
+    person may not necessarily be a programmer ready and willing to
+    spend time on a porting project.  This is especially true when
+    software must be ported to a less common platform, or if the
+    computer is administered with different site conventions than the
+    software developer expected.
+</p>
+<p>
+    Sometimes software comes with tools to help port, adapt, or
+    install it.  These tools, if not carefully designed, can actually
+    get in the way.  Often these tools get any information they need
+    to perform their functions through a {:gui:}.  While a {:gui:} may
+    be fine for someone who only occasionally installs software, they
+    tend to be a real nuisance for someone who must install dozens of
+    software systems on several different platforms.
+</p>
+<p>
+    Given the difficulties with porting software, we might ask
+    ourselves, <q>Is it worth it?</q> The answer is a qualified
+    <q>Yes.</q> By making software portable, it becomes available on
+    more platforms than if it had to be individually developed for
+    each platform.  Software that does not interact directly with the
+    operating system can often be easily ported; most of the porting
+    details will have to do with compilers and site conventions.  But
+    other software is more difficult to port.  The operating system
+    interface supporting graphical user interfaces is vastly different
+    between {:windows:} and {:unix:}; so different, in fact, that any
+    source code relating to the native {:gui:} will have very little
+    in common between these platform.  But we hasten to observe that
+    there is very much useful software can be written portably.
+    Furthermore, a system to deal with different site conventions
+    would be useful even when the software is not
+</p>
+<p>
+    Our proposed system, {:sapcat:}, deals with the specific problem
+    of customizing software for different platforms.  It will generate
+    probes to determine what features are available on different
+    platforms, and make this information available to the software's
+    build procedures.  Our system will also provide mechanisms to
+    specify site conventions.  For the software developer, our system
+    will make it easier to provide these features than if they had to
+    be developed afresh.  For the software installer, our system will
+    provide flexible and simple ways to reliably adapt to the software
+    platform and customize for the site.
+</p>
+<p>
+    Note that there are other pieces that should be provided to
+    enhance our prospects of successfully porting software.  One is a
+    common <q>build</q> system, such as the result of the {:scbuild:}
+    competition.  The availability of common programming languages is
+    essential.  Libraries providing common {:api:}s to inherently
+    non-portable system interfaces, such as the {:gui:}, can also go a
+    long way to aiding portability.  While these area go beyond the
+    scope of the {:scconfig:} competition and our {:sapcat:} proposal,
+    we nevertheless hope to see further work along these lines.
+</p>
+
+
+<h3>Prior art</h3>
+
+<p>
+    The idea of creating a tool to assist in adapting software is not
+    new.  As mentioned above, there have been other systems (like
+    {:autoconf:}) developed to assist in adapting software to
+    different platforms.  There have also been many ad hoc schemes
+    devices.  Originally, portable Unix software came with a Makefile
+    (or build scripts) and one or more header files that were to be
+    edited by the installer.  When this was not enough, more complex
+    systems were devised.  In some cases, these systems took on a life
+    of their own (like {:imake:}, described below).
+</p>
+<p>
+    We are not familiar with tools developed for the {:windows:}
+    platform.  Because {:windows:} provided a widespread and
+    consistent platform, it was far more common to distribute binaries
+    than source code.
+</p>
+<p>
+    In this section, we will survey a few of these systems porting
+    aides.
+</p>
+
+
+<h4><Sys>imake</Sys></h4>
+
+<p>
+    The {:imake:} system comes with the <a href="http://www.x.org/">X
+    Window System</a> source distribution.  It converts
+    platform-independent <code>Imakefile</code>s into site-specific
+    <code>Makefile</code>s by first determining what sort of system it
+    is running on.  Then, central configuration files for that system
+    type are used.  These files provide the details needed to build X
+    for a particular platform.
+</p>
+<p>
+    The central configuration files can be adapted for different site
+    conventions, but this is limited by certain assumptions, such as
+    that all X programs are installed in the same location.  This
+    assumption may not be bad for X alone, but it becomes a hindrance
+    when {:imake:} is used with programs outside the X distribution.
+</p>
+<p>
+     The suggested technique for creating an <code>Imakefile</code> is
+     to find an existing <code>Imakefile</code> that almost does the
+     right thing, and edit that.  Using this technique, it is fairly
+     easy to do otherwise difficult tasks, like building shared
+     libraries.  But it can be daunting to build an
+     <code>Imakefile</code> from scratch, particularly since it is
+     hard to find all the documentation needed.
+</p>
+<p>
+    The most serious weakness of {:imake:} is its requirement that
+    there be configuration files for each platform type.  These files
+    are tedious to prepare when new new platforms or new platform
+    dependencies are needed.  Consequently, programs end up riddled
+    with tests based on platform names rather than feature
+    availability.
+</p>
+
+<h4><Sys>iffe</Sys></h4>
+<p>
+    The {:iffe:} system<footnote>Glenn S. Fowler, David G. Korn, John
+    J. Snyder, Kiem-Phong Vo, Feature-Based Portability, In
+    <cite>Proceedings of the USENIX Symposium on Very High Level
+    Languages</cite>, pp.&nbsp;197-207, October, 1994.</footnote> is a
+    language and programming style to facilitate software portability.
+    Feature test files are run by the {:iffe:} script, which
+    interprets <dfn>feature test files</dfn>.  From these, header
+    files are generated which encapsulate the platform feature
+    information as macros.  Source code can include these header file,
+    parameterized with these macros.  The {:iffe:} script, which with
+    the necessary feature test files usually ships with each package
+    using it, does note appear to affect the <code>Makefile</code>s or
+    otherwise support site conventions.
+</p>
+
+<h4>Larry Wall's <code>metaconfig (dist)</code></h4>
+<p>
+    <a href="http://www.wall.org/~larry/">Larry Wall's</a>
+    {:metaconfig:} (part of a larger package called <a
+    href="http://search.cpan.org/search?mode=dist&amp;query=dist"><Sys>dist</Sys></a>)
+    creates the <code>Configure</code> script found with {:perl:}.
+    Where {:iffe:} had feature test files, {:metaconfig:} has
+    <dfn>units</dfn>, shell code that tests for platform features.
+    The results of a unit are expressed as shell symbols and C macros.
+    The {:metaconfig:} command scans source files for occurrences of
+    these macros and symbols, choosing the units needed to define
+    these (which in turn may depend on other units).  The selected
+    units become the bulk of the <code>Configure</code> script.
+</p>
+<p>
+    The resulting <code>Configure</code> script is powerful and highly
+    interactive.  It is possible to define the values of symbols on
+    the command line and suppress the interactivity, but it is
+    difficult to determine what symbols are used by a particular
+    <code>Configure</code> script or what those symbols mean.  This
+    makes the <code>Configure</code> scripts a nuisance to a systems
+    administrator who does not have the time to sit and interact with
+    the script.
+</p>
+<p>
+    The fact that {:metaconfig:} automatically scans source code for
+    symbols is a very nice feature.  There are also tools to help wrap
+    shell scripts, header files, and other items that may need symbols
+    substituted into them.  We find it surprising that {:metaconfig:}
+    has not seen more widespread use.
+</p>
+
+<h4><Sys>autoconf</Sys></h4>
+<p>
+    Similar in spirit to {:metaconfig:} is the {:autoconf:} system,
+    and its companions {:automake:} and {:libtool:}.  {:autoconf:}
+    builds a non-interactive Bourne shell script called
+    <code>configure</code> which accepts options to tailor the build
+    system for site conventions, compilation environment, etc.  Like
+    {:iffe:} and {:metaconfig:} <code>Configure</code>,
+    <code>configure</code> compiles and runs probes to discover
+    operating system features.  It defines symbols representing
+    features it discovers, and uses these values to transform template
+    header files and <code>Makefile</code>s.
+</p>
+<p>
+    The developer must write a file, <code>configure.in</code>,
+    consisting of {:m4:} macros, to specify the feature probes it
+    needs; {:autoconf:} does not scan source code.<footnote>The
+    {:autoconf:} tool does include a script called
+    <code>autoscan</code>, but currently this usually does only part
+    of the job.</footnote> The <code>configure.in</code> file is also
+    where the developer can specify searches for other software
+    packages, indicate optional features of the software, and
+    generally perform any other operations neeed to adapt the
+    software.
+</p>
+<p>
+    The related {:libtool:} package adds support for shared libraries,
+    otherwise very difficult to do portably.  The {:automake:} package
+    eases development of the complex <code>Makefile</code> templates
+    used by <code>configure</code>.
+</p>
+<p>
+    {:autoconf:} and its companions constitute by far the most
+    successful general customization system.  We can identify a number
+    of factors for their sucess:
+</p>
+<ul>
+    <li> {:autoconf:} uses tools, like Bourne shell and
+    <Sys>make</Sys>, that are already familiar to most {:unix:}
+    developers.  (Most {:autoconf:} scripts do not actually require
+    {:m4:} programming.  Those that do generally need only a little
+    bit, what is documented in the {:autoconf:} manual.</li>
+
+    <li> The {:automake:} system allows very complicated
+    <code>Makefile</code>s to be constructed with relatively little
+    effort.  It really is easier to write the <code>Makefile.am</code>
+    files used by {:automake:} than to write reasonably useful
+    <code>Makefile</code>s.</li>
+
+    <li>The generated <code>configure</code> scripts are ideal for
+    busy systems administrators, as they both provide help and do not
+    need continual interactive responses.  They are not particularly
+    difficult for the casual user, especially on common platforms
+    where the defaults for options and site conventions are
+    appropriate.</li>
+
+    <li> The {:autoconf:} manual is thorough enough to be useful.</li>
+
+    <li> {:autoconf:} works well enough to be very useful.</li>
+
+    <li> The GNU project strongly encouraged the use of {:autoconf:}.</li>
+</ul>
+<p>
+    Nonetheless, there are a few deficiencies with {:autoconf:}:
+</p>
+<ul>
+    <li>There is no automatic scanning of source files to determine
+    what feature probes are needed.  This is despite the fact that C
+    macros are needed to program in response to probe results.  (Last
+    we checked, <code>autoscan</code> would overwrite the
+    <code>configure.in</code> file if used later in project
+    development.)  This is an added burden on the programmer.</li>
+
+    <li>Hidden dependencies mean that some probes are executed more
+    than once, through both explicit and implicit invocations.
+    Caching can help, but the result is still a bloated
+    <code>configure</code> script.</li>
+
+    <li>The order of probes in <code>configure.in</code> can be
+    important.</li>
+
+    <li>When additional probes are needed, they require the use of
+    {:m4:} macros with arcane quoting rules.</li>
+
+    <li>It is difficult to debug a probe.</li>
+</ul>
+<p>
+    Both {:imake:} and {:autoconf:} have their proponents, but sane
+    developers have been moving toward {:autoconf:}.  The need to have
+    produce specialized configuration platforms is too burdensome; it
+    requires the software developer to have access to every platform
+    on which his or her software will be used.  But with {:autoconf:},
+    it often happens that a program will build and work the first time
+    it is attempted on a new platform.  When there are problems, the
+    solutions usually improve the general portability of the program.
+</p>
+
+<h3>Our Proposal</h3>
+
+<p>
+    Our proposal is a system we call {:sapcat:}, which will (a) use
+    <dfn>project description files</dfn> to identify source files,
+    parameterized source files, the products of processing source
+    files, installation locations, and any additional options
+    affecting customization of the package, (b) scan the parameterized
+    source files for <dfn>tailoring symbols</dfn>, used to tailor for
+    platform features, (c) determine the probes needed to define these
+    tailoring symbols, arranging the probes in correct order, (d)
+    provide an execution environment for conducting those probes, (e)
+    process parameterized files, sustituting the values determined for
+    the customization symbols, and (f) prepare the files needed by
+    build system.  In many ways our system resembles {:metaconfig:},
+    with additional features drawn from {:iffe:} and {:autoconf:}.
+    Section&nbsp;<ref key="scOver"/> presents detailed description of
+    how {:sapcat:} can actually be used.
+</p>
+
+</subdoc>
+<!-- Local Variables: -->
+<!-- mode: xml -->
+<!-- End: -->
+</Doc>

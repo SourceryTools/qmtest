@@ -1,0 +1,69 @@
+<?xml version="1.0" standalone="yes"?>
+
+<Doc style="sapcat" abbrevs="sapcat_abbrevs">
+
+   <title>Proposal for SapCat: Site and Platform Customization
+   Administration Tool</title>
+
+<h1>Proposal for SapCat: Site and Platform Customization Administration Tool</h1>
+<address>
+	<a href="http://www.rpi.edu/~toddr/">R. Lindsay Todd, Ph.D.</a><br/>
+	P.O.&nbsp;Box&nbsp;75<br/>
+	Sand&nbsp;Lake, NY 12153-0075<br/>
+	<a href="mailto:l.todd@acm.org">l.todd@acm.org</a>
+</address>
+
+<abstract>
+<p>
+    We present the {:sapcat:} system, a tool to help make software
+    portable.  Programmers can parameterize their source code with
+    macros or symbols that indicate the results of feature probes.
+    {:sapcat:} will automatically scan the source code for occurrences
+    of these symbols, perform operating system probes, and adapt files
+    to make sure the correct values for these symbols are used.  In
+    some cases, {:sapcat:} can even generate <q>bootstrap scripts</q>
+    that will perform these probes and substitutions, even on systems
+    without {:sapcat:} or {:python:}.
+</p>
+<p>
+    {:sapcat:} relies on a <q>package description database</q>, a
+    collection of files created by the package developer.  This
+    database indicates dependencies between objects and their
+    immediate sources, optional features of the package, and
+    information regarding how to contact the maintainer.  From the
+    dependency information, {:sapcat:} is able to both determine
+    source files to be scanned and interact with the build system.
+</p>
+<p>
+    While easy for programmers, we take care not neglect the final end
+    users, those who will be using {:sapcat:} to tailor their
+    software.  We provide <q>casual installers</q> with an
+    installation wizard, and a command line interface for
+    <q>professional systems administrators</q> who need to script
+    their operations.  We even consider <q>systems integrators</q> who
+    wish to create binary distributions of packages.
+</p>
+</abstract>
+
+<contents/>
+
+<include file="sapcat_intro.xml" target="sub"/>
+<include file="sapcat_req.xml" target="sub"/>
+<include file="sapcat_over.xml" target="sub"/>
+<include file="sapcat_design.xml" target="sub"/>
+<include file="sapcat_devplan.xml" target="sub"/>
+<include file="sapcat_summary.xml" target="sub"/>
+
+<footnotes/>
+
+
+<hr/>
+<address><a href="mailto:l.todd@acm.org">R. Lindsay Todd</a></address>
+<!-- Created: Thu Jun  8 15:40:08 EDT 2000 -->
+<!-- hhmts start -->
+Last modified: Fri Jun 30, 2000
+<!-- hhmts end -->
+<!-- Local Variables: -->
+<!-- mode: xml -->
+<!-- End: -->
+</Doc>

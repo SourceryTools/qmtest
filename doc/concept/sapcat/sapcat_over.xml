@@ -1,0 +1,338 @@
+<?xml version="1.0" standalone="yes"?>
+
+<Doc style="sapcat" abbrevs="sapcat_abbrevs">
+<title>SapCat: Overview</title>
+<h1>SapCat: Overview</h1>
+
+<contents/>
+
+<subdoc name="sub">
+
+<h2 key="scOver">Overview of {:sapcat:}</h2>
+<p>
+    This chapter is introduces the {:sapcat:} tool.  Whereas
+    Chapter&nbsp;<ref key="scReq"/> introduced the requirements for
+    {:sapcat:}, this chapter discusses scenarios of how {:sapcat:}
+    could actually be used to meet these requirments.
+</p>
+<p>
+    {:sapcat:} comes in both {:gui:} and command line variants.  The
+    {:gui:} command can be invoked with no arguments, in which case it
+    opens a window with menus leading to all its various operations,
+    or it may be invoked (perhaps through a {:windows:} association)
+    with a {:scPDD:} file given as a parameter, in which case it
+    begins a dialog for tailoring the kit.  The command line version
+    also specify the name of a {:scPDD:} file, followed by switches
+    controlling tailoring features, to indicate that a kit should be
+    tailored.  It may also be specified with other switches to invoke
+    other operations.  Everything that can be done through the {:gui:}
+    can also be done through the command line version.
+</p>
+<p>
+    A {:tailor:} has quite a different perception of the {:sapcat:}
+    tool than a {:softdev:}.  A {:tailor:} is interested in using
+    {:sapcat:} to tailor software, usually to compile and install it,
+    possible to create {:bindists:}.  A {:softdev:} is mainly
+    concerned about creating {:srcdists:}, getting everything correct
+    so that {:sapcat:} will function for the {:tailor:}.  Of course, a
+    {:softdev:} will probably tailor projects in the course of
+    development and testing.
+</p>
+<p>
+    Because these two perspectives are very different, we will present
+    overviews from each of these points of view.  We will consider the
+    view of the {:tailor:} first, since {:sapcat:} is primarily
+    intended to serve the {:tailor:}.
+</p>
+
+<h3>{:Tailors:}' Perspective of {:sapcat:}</h3>
+<p>
+    As we discussed in section&nbsp;<ref key="actors_tailors"/>,
+    {:tailors:} range from {:casinsts:} to {:proinsts:} to
+    {:sysints:}.  Each of these has different ways of using {:sapcat:}
+</p>
+
+<h4>{:CasInsts:} Use of {:sapcat:}</h4>
+<p>
+    We expect {:casinst:} to run {:sapcat:} on systems where it has
+    already been installed, either as part of the operating system, by
+    a {:proinst:}, or possibly through installation of a {:bindist:}.
+    In the sections that follow, it should be understood that
+    {:sapcat:} may have some system-wide configuration files that
+    alter the default behaviour (generally to support site
+    conventions).
+</p>
+
+<h5 key="instwiz">Installation through the {:sapcat:} Wizard</h5>
+<p>
+    Ideally, a {:casinst:} can receive a {:srcdist:} and simply apply
+    start {:sapcat:} in its <q>wizard</q> mode.  With {:windows:},
+    this would be done by receiving a {:zip:} file and unpacking it;
+    then clicking on the {:sapcat:} icon in the {:kit:} (which would
+    be associated with the {:sapcat:} project file for the
+    package).<footnote>It might be possible to have some sort of
+    archive that unpacks and automatically starts {:sapcat:}.  This
+    would be better yet.</footnote> A {:casinst:} on a {:linux:} might
+    be able to operate in the same manner.  People working on legacy
+    {:unix:} systems might need to start {:sapcat:} from a command
+    line.
+</p>
+<p>
+    Once the {:sapcat:} {:gui:} started, it presents a pane with some
+    information about the package, like its name, version, and a brief
+    description.  Buttons appear to indicate whether to
+    <q>continue</q> or <q>cancel</q> installation.  There is also a
+    button for entering <q>advanced</q> mode.
+</p>
+<p>
+    Since we are talking about the {:casinst:}, we assume that the
+    <q>continue</q> button is chosen, and the pane shows the next
+    view.  If there is information that <em>must</em> be entered by
+    everyone, the next few panes will present opportunities to enter
+    this data.  Each pane will present buttons to <q>continue</q>,
+    <q>cancel</q>, get <q>help</q>, or go <q>back</q>.
+</p>
+<p>
+    After all needed data are entered, the view changes to show the
+    status of the process of probing the operating system.  Should
+    this step fail, a problem report would be presented, along with
+    any information that may have been supplied with the package to
+    help in this case, and an opportunity to send a bug report to the
+    package's maintainers.
+</p>
+<p>
+    Once probing has completed, the status view changes to show the
+    progress of actually tailoring the {:kit:}.  Then a pane would be
+    presented giving the {:tailor:} the chance to <q>build</q> the
+    package or to <q>quit</q>.
+</p>
+<p>
+    We assume here that the <q>build</q> button is chosen.  The
+    package is now built, and a pane shows the progress.  As with the
+    probing phase, we present a problem report if this step fails.
+    (It is almost certain that a problem in this step should be
+    reported to the package maintainer.)
+</p>
+<p>
+    If the package includes any self-tests, a pane appears allowing
+    testing to proceed or be skipped.  After testing, another pane
+    appears allowing a choice of installing or quitting.
+</p>
+<p>
+    Installation is an interesting problem on multiuser systems, since
+    there are likely access controls preventing a system-wide
+    installation.  Furthermore, the software is likely to need to be
+    tailored differently for each of these cases.  Probably the choice
+    of installation type will have been presented as one of the
+    questions asked when data was collected.
+</p>
+<p>
+    After installation, {:sapcat:} will offer to clean the {:kit:}
+    directory of unnecessary files (such as object code).
+</p>
+<p>
+    The package may have tests to check if installation was
+    successful.  If so, the {:tailor:} will be given a chance to run
+    these tests.  (Note that if the {:kit:} directory is not first
+    cleaned, there is a possibility that these tests will falsely
+    succeed due to the presence of some file that should have been
+    removed!)
+</p>
+<p>
+    Our hope is that it will be as easy to install Open Source
+    software using {:sapcat:} as it is to install {:bindists:} with
+    wizards on {:windows:} today.  But we also hope eventually to do
+    even better than we have described here, and support getting
+    package updates, automatically getting prerequisites, etc.
+</p>
+
+<h5>Using the {:sapcat:} {:gui:}</h5>
+<p>
+    Even a {:casinst:} may decide to change some of the default
+    decisions made by the {:sapcat:} wizard.  This can be done by
+    clicking on the <q>advanced</q> button on the initial pane.
+</p>
+<p>
+    Once this is done, a pane appears with <q>tabs</q> to select
+    different pages.  The initial page allows entry of data needed to
+    tailor the package, installation directory locations, prerequisite
+    package locations, and option choices (if any) for the package.  A
+    second page lists each of the probes used in tailoring this
+    package, allowing the {:tailor:} to override their results.
+</p>
+<p>
+    After these choices are made, the <q>continue</q> button can be
+    pressed, and probing begins.  The {:tailor:} can choose to build,
+    install, and test the package.
+</p>
+
+<h4>{:ProInsts:} Use of {:sapcat:}</h4>
+<p>
+    A {:proinst:} may use {:sapcat:} just like a {:casinst:}.
+    However, a {:proinst:} may wish to use the command line interface,
+    so that {:sapcat:} can be used in scripts.  A {:proinst:} may also
+    need to install {:sapcat:} on systems where it is not already
+    available, configure site conventions, and configure for
+    parallelism.
+</p>
+
+<h5>Using the {:sapcat:} Command Line Interface</h5>
+<p>
+    Both the command line and {:gui:} versions of {:sapcat:} accept
+    various <q>help</q> options that can be used to determine what
+    customization options are available in a {:kit:}, what probes will
+    be executed, and what site conventions are tested.  The {:gui:}
+    version can even be used to create a file containing the selected
+    options and probe result overrides that will automatically be used
+    by {:sapcat:} when it is invoked.  Alternatively, once the
+    {:proinst:} has determined the available options, he or she can
+    construct an appropriate command line invocation.
+</p>
+<p>
+    The command line interface is not as <q>wizardly</q> as the
+    {:gui:}.  It performs a distinct task, such as getting help text,
+    tailoring (probing and adapting source files), invoking the build
+    system, installing, etc.  But this level of control is what is
+    needed for effective scripting.
+</p>
+
+<h5>Bootstrapping {:sapcat:}</h5>
+<p>
+    Usecases <UseCase-Ref key="ucInstSCPre"/> and <UseCase-Ref
+    key="ucInstSC"/> detail the need for a {:proinst:} to be able to
+    install {:sapcat:} or a prerequisite on a system that does not
+    already have {:sapcat:}.  The various packages need to be
+    installed in the correct order.  Each package would have one or
+    more bootstrap scripts; it might be necessary to invoke the
+    appropriate one for the platform (e.g., a batch file on
+    {:windows:} or a Bourne shell script on {:unix:}).
+</p>
+<p>
+    Other packages could ship with bootstrap scripts besides those
+    needed to get {:sapcat:} running.  However, these may introduce
+    requirments that do not exist when they are not used.  For
+    instance, a package implemented in Java is not likely to need a C
+    compiler.  However, the bootstrap script may need a C compiler to
+    build tools needed to perform its tasks.
+</p>
+
+<h5>Maintaining {:sapcat:}</h5>
+<p>
+    There are a number ways in which {:sapcat:} needs periodic
+    maintenance.  We would expect that a {:casinst:} would use {:rpm:}
+    packages (or similar) to keep {:sapcat:} maintained on a system.
+    We hope to provide tools to make it easier to maintain {:sapcat:}
+    from source.
+</p>
+<p>
+    One thing that all {:tailors:} are likely to need to do
+    periodically is update the cache of probe results.  This obviously
+    needs to be done if we update the probe collection.  However,
+    operating system updates can also invalidate the probe cache.  So
+    can adding or updating other packages, such as
+    libraries.<footnote>Why not rely on packages to also provide
+    updates to the probe cache?  Because this information is sensitive
+    to the gestalt of all packages installed on the <em>running</em>
+    system, which may not be the same as the system on which a
+    {:bindist:} was built.</footnote> {:sapcat:} has an option for
+    updating this cache.
+</p>
+
+
+<h5>Site Conventions and other Customizations</h5>
+<p>
+    When a {:tailor:} runs {:sapcat:}, it is possible to specify every
+    directory in which the package will be installed.  Like
+    {:autoconf:}, many of these directory paths will take on default
+    values relative to <code>$prefix</code> and
+    <code>$exec_prefix</code>, which in turn will take on
+    platform-specific default values.  But if desired, extension
+    modules, written in {:python:}, can be added to compute alternate
+    default values, parameterized on the package name, version number,
+    architecture, etc.  Other common parameters can be given
+    site-specific default values.
+</p>
+
+
+<h4>{:SysInts:} Use of {:sapcat:}</h4>
+<p>
+    A {:sysint:} prepares {:bindists:} for other users.  This
+    probably, goes beyond the scope of the actual {:scconfig:}
+    competition, but it makes sense to incorporate some support within
+    {:sapcat:} for a couple of reasons.
+</p>
+<p>
+    First, the installed components of some packages may divide nicely
+    into several different {:bindists:}.  For instance, a {:kit:} for
+    the X&nbsp;Window System might create clients, development tools,
+    X servers, and runtime libraries.<footnote>It always irks me that
+    IBM's AIX insists on putting X servers on systems with no graphics
+    systems, since that is part of the <q>X11 run-time
+    environment</q>.  Apparently someone forgot that X is
+    networked.</footnote> The {:softdev:} is in the position of best
+    knowing how a package could be divided into distributions, but it
+    is the {:sysint:} that actually creates distributions.  It makes
+    sense to include this information in the {:scPDD:}.
+</p>
+<p>
+    Second, determining what distribution builders are available on a
+    platform is a tailoring operation, as is customizing the build
+    system to be able to build distributions.  It is also possible to
+    extend knowledge of other build systems to {:sapcat:}.
+</p>
+<p>
+    A {:sysint:} would tailor and build a {:kit:} as appropriate.
+    However, instead of allowing {:sapcat:} to install the package, he
+    or she would instead invoke {:sapcat:} with its distribution
+    builder option.  From the command line interface, this would need
+    to request which distribution builder is to be used, and which
+    {:bindists:} should be constructed.  From the {:gui:}, menus and
+    checkboxes would be used to identify how and what to construct.
+</p>
+<p>
+    As we mentioned above, a {:proinst:} may create a file containing
+    tailoring information to be used when {:sapcat:} later tailors the
+    {:kit:}.  A {:sysint:} may create this file and create a
+    {:tsrcdist:}, in much the same way as a {:softdev:} creates a
+    {:srcdist:}.
+</p>
+
+
+<h3>{:SoftDevs:}' Perspective of {:sapcat:}</h3>
+<p>
+    A {:softdev:} creates {:srcdists:}.  Our focus will be on how to
+    incorporate {:sapcat:}.
+</p>
+<p>
+    {:sapcat:} relies on a {:scPDD:} to specify what is built, which
+    source files are needed, what options may be specified, etc.  From
+    this information, {:sapcat:} determines what files need to be
+    scanned for symbols defined by probes.  This is used to determine
+    what probes will be used at tailoring time.  This database can be
+    distributed over multiple directories, since a {:scPDD:} file can
+    specify that other directories are included.
+</p>
+<p>
+    Source files must be parameterized based on macros or other
+    symbols that {:sapcat:} can identify as indicating the results of
+    a feature test or package option specification.  Complete
+    information on the probes included with {:sapcat:} will be
+    available in the documentation.
+</p>
+<p>
+    Ultimately, it may be useful to provide one or more libraries of
+    common operations that programmers can use.  These libraries would
+    provide uniform interfaces, while themselves being parameterized
+    on operating system features.  These libraries would also simplify
+    operations like building path names relative to options specified
+    when the package was tailored.  However, portable librares are not
+    a pancea for writing portable software, since they usually incur a
+    performance hit.
+</p>
+
+
+</subdoc>
+<!-- Local Variables: -->
+<!-- mode: xml -->
+<!-- End: -->
+</Doc>
