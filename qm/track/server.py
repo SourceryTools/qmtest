@@ -112,6 +112,8 @@ def start_server(port, log_file=None):
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",
                                    os.path.join(web_directory, "stylesheets"))
+    server.RegisterPathTranslation("/images",
+                                   os.path.join(web_directory, "images"))
     # Register the remote command handler.
     server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 
@@ -188,6 +190,9 @@ def execute(command, output_file, error_file):
                 # comprehensible to the user.
                 error_file.write(str(msg) + "\n")
                 return 1
+            except KeyboardInterrupt:
+                # User killed the server; let it through.
+                raise
             except:
                 # For other exceptions, for now, just dump out the
                 # stack trace.

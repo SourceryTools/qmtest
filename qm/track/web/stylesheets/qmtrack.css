@@ -36,7 +36,6 @@ body {
 }
 
 table {
-    background-color: "#efefef";
 }
 
 th {
@@ -63,4 +62,10 @@ a#colhead {
 span#fieldname {
     text-decoration: bold;
     color: red;
+}
+
+
+span#button {
+    color: red;
+    background-color: black;
 }

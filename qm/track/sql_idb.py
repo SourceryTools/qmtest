@@ -196,8 +196,8 @@ class SqlIdb(qm.track.IdbBase):
         returned.  If 'issue_class' is 'None', returns all issues in
         all classes.
 
-        returns -- Returns a list of all the issues in the
-        database."""
+        returns -- Returns a list of the current revisions of all
+        issues in the database."""
 
         # If 'issue_class' is the name of an issue class, look up the
         # class itself.
@@ -298,7 +298,7 @@ class SqlIdb(qm.track.IdbBase):
                 raise KeyError, "no issue with IID '%s' found" % iid
             else:
                 raise KeyError, "no revision %d of issue IID '%s' found" \
-                      % (iid, revision)
+                      % (revision, iid)
 
         if revision == None:
             # The current revision was requested; find it.  All
@@ -680,6 +680,7 @@ class SqlIdb(qm.track.IdbBase):
             return str(value)
         elif isinstance(field, IssueFieldText):
             # Express the text as an SQL string literal.
+            value = escape_for_sql(value)
             return make_sql_string_literal(value)
         elif isinstance(field, IssueFieldSet):
             # Set fields are implemented with auxiliary tables.
@@ -726,6 +727,7 @@ class SqlIdb(qm.track.IdbBase):
 
         elif isinstance(field, IssueFieldText):
             value = str(row[0])
+            value = unescape_for_sql(value)
             new_row = row[1:]
 
         elif isinstance(field, IssueFieldSet):
@@ -834,6 +836,23 @@ def make_sql_string_literal(s):
     s = string.replace(str(s), "'", "''")
     # Construct the literal.
     return "'" + s + "'"
+
+
+def escape_for_sql(s):
+    """Modify 's' so it's safe to use as an SQL string."""
+    
+    # Some databases choke on newlines.  Linefeeds seem to be safe
+    # though. 
+    s = string.replace(s, "\n", "\r")
+    return s
+
+
+def unescape_for_sql(s):
+    """Reverse the effects of 'escape_for_sql'."""
+
+    s = string.replace(s, "\r", "\n")
+    return s
+    
 
 
 ########################################################################

@@ -111,6 +111,49 @@ class PageInfo:
         return "</body>"
 
 
+    def MakeUrlButton(self, url, text=None):
+        """Generate HTML for a (non-form) action button."""
+
+        return '''
+          <table cellpadding="4" cellspacing="0" border="0">
+           <tr bgcolor="#006090">
+            <td><a href="%s"><font color="white">%s</font></a></td>
+           </tr>
+          </table>
+          ''' % (url, text)
+
+
+    def MakeImageUrl(self, image):
+        """Generate a URL for an image."""
+
+        return "/images/%s" % image
+
+
+    def MakeSpacer(self, width=1, height=1):
+        """Generate a spacer.
+
+        'width' -- The width of the spacer, in pixels.
+
+        'height' -- The height of the spacer, in pixels.
+
+        returns -- A transparent image of the requested size."""
+        
+        # 'clear.gif' is an image file containing a single transparent
+        # pixel, used for generating fixed spacers
+        return '<img border="0" width="%d" height="%d" src="%s"/>' \
+               % (width, height, self.MakeImageUrl("clear.gif"))
+
+
+    def MakeRule(self, color="black"):
+        """Generate a plain horizontal rule."""
+
+        return '''
+          <table border="0" cellpadding="0" cellspacing="0" width="100%%">
+           <tr bgcolor="%s"><td>%s</td></tr>
+          </table>
+          ''' % (color, self.MakeSpacer())
+
+
 
 class HttpRedirect(Exception):
     """Exception signalling an HTTP redirect response.

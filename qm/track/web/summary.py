@@ -73,12 +73,9 @@ class SummaryPageInfo(web.PageInfo):
         # FIXME: For now, show these fields.
         self.field_names = [ "iid", "summary", "timestamp", "state" ]
 
-        # FIXME: For now, summarize all issues.
+        # FIXME: For now, summarize all issues (in all casses!).
         idb = qm.track.get_idb()
-        iids = idb.GetIids()
-        self.issues = []
-        for iid in iids:
-            self.issues.append(idb.GetIssue(iid))
+        self.issues = idb.GetIssues()
 
         # Did the request specify a sort order?
         if self.request.has_key("sort"):

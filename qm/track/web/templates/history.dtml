@@ -1,0 +1,71 @@
+<dtml-comment><!--
+
+  File:   history.dtml
+  Author: Alex Samuel
+  Date:   2001-02-21
+
+  Contents:
+    Document template to produce an HTML fragment showing an issue's
+    revision history.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+
+<table <dtml-var name="table_attributes"> 
+       width="100%">
+ <tbody>
+   <dtml-in expr="revisions">
+   <dtml-let revision=sequence-item
+             revision_number="revision.GetRevision()"
+             index=sequence-index>
+    <tr bgcolor="white">
+     <td colspan="3"><dtml-var expr="MakeSpacer(0, 0)"></td>
+    </tr>
+    <tr bgcolor="#e0e0e0">
+     <td>
+      <dtml-if expr="revision_number == current_revision_number">
+       =&gt;
+      <dtml-else>
+       &nbsp;
+      </dtml-if>
+     </td>
+     <td align="right">
+      <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
+       <b><dtml-var expr="revision.GetRevision()"></b>
+      </a>
+     </td>
+     <td>
+      <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
+       <dtml-var expr="revision.GetField('timestamp')">
+       &nbsp;&nbsp;&nbsp;
+       by <dtml-var expr="revision.GetField('user')">
+      </a>
+     </td>
+    </tr>
+    <dtml-if expr="revision_number != 0">
+     <tr bgcolor="#e0e0e0">
+      <td colspan="2">
+       &nbsp;
+      </td>
+      <td width="100%">
+       <dtml-var expr="FormatRevisionDiff(revision, revisions[index + 1])">
+      </td>
+     </tr>
+    </dtml-if>
+   </dtml-let>
+   </dtml-in>
+ </tbody>
+</table>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

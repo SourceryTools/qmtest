@@ -96,6 +96,10 @@ except qm.cmdline.CommandError, msg:
                      % script_name)
     exit_code = 2
 
+except KeyboardInterrupt:
+    # User killed it; that's OK.
+    exit_code = 0
+
 # End the program.
 sys.exit(exit_code)
 

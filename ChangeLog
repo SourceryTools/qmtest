@@ -1,3 +1,41 @@
+2001-02-21  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.MakeUrlButton): New method.
+	(PageInfo.MakeImageUrl): Likewise.
+	(PageInfo.MakeSpacer): Likewise.
+	(PageInfo.MakeRule): Likewise.
+
+	* qm/track/sql_idb.py (SqlIdb.__BuildSqlForFieldValue): Call
+	escape_for_sql. 
+	(SqlIdb.__GetFieldFromRow): Call unescape_for_sql.
+	(escape_for_sql): New function.
+	(unescape_for_sql): Likewise.
+	* qm/track/server.py (start_server): Register image path.
+	(execute): Pass through KeyboardInterrupt.
+	* qm/track/qmtrack.in: Handle KeyboardInterrupt.
+	* qm/track/issue_class.py (IssueField.ValuesAreEqual): New method.
+	* qm/track/issue.py (get_differing_fields): New function.
+	* qm/track/gadfly_idb.py (GadflyCursor.execute): Flush log file.
+
+	* qm/track/web/web.py (HistoryPageInfo): New class.
+	(format_text_field_value): Fix brief output of multiline text.
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Use
+	GetIssues.
+	* qm/track/web/show.py (ShowPageInfo.IsShowField): Show revision
+	if it's not current.
+	(ShowPageInfo.FormatFieldValue): Generate revision specially.
+	(ShowPageInfo.MakeEditUrl): Adjust url.
+	(ShowPageInfo.MakeHistoryUrl): Likewise.
+	(ShowPageInfo.MakeShowRevisionUrl): New method.
+	(ShowPageInfo.FormatHistory): Likewise.
+	(handle_show): Set up extra stuff for history or past revisions.
+	(handle_new): Fix typo.
+	* qm/track/web/templates/show.dtml: Adjust formatting for history.
+	* qm/track/web/templates/history.dtml: New file.
+
+	* qm/track/web/images: New directory.
+	* qm/track/web/images/clear.gif: New file.
+
 2001-02-20  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (UserError): New class.

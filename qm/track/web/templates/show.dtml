@@ -43,6 +43,25 @@
           value="<dtml-var expr="issue.GetRevision()">">
   </dtml-if>
 
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td><b><font size="+1">
+     <dtml-if expr="style == 'new'">
+      New Issue
+     <dtml-else>
+      Issue <dtml-var expr="issue.GetId()">
+     </dtml-if>
+    </font></b></td>
+    <td align="right">
+     <dtml-if expr="style == 'full' or style == 'history'">
+      <dtml-var expr="MakeUrlButton(MakeEditUrl(), text='Edit Issue')">
+     <dtml-else>
+      &nbsp;
+     </dtml-if>
+    </td>
+   </tr>
+  </table>
+
   <table <dtml-var name="table_attributes">
          width="100%"
          columns="2">
@@ -50,7 +69,7 @@
     <dtml-in name="fields">
     <dtml-with expr="_.namespace(field=_['sequence-item'])">
      <dtml-if expr="IsShowField(field)">
-      <tr>
+      <tr bgcolor="#e0f8ff">
        <td><span id="fieldname"><dtml-var expr="field.GetName()"></span></td>
        <td><dtml-var expr="FormatFieldValue(field)"></td>
       </tr>
@@ -68,23 +87,30 @@
    </form>
   </dtml-if>
 
-  <dtml-comment><!-- FIXME: Enable this later.
   <dtml-if name="show_history">
-   <p><b>REVISION HISTORY HERE</b></p>
+   <br>
+   <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+     <td><b>Revision History</b></td>
+     <td align="right">
+      <dtml-var expr="MakeUrlButton(MakeHistoryUrl(show=0), 'Hide History')">
+     </td>
+    </tr>
+   </table>
+   <dtml-var expr="FormatHistory()">
   </dtml-if>
-  --></dtml-comment>
 
-  <dtml-if expr="style == 'full' or style == 'history'">
-   <p><a href="<dtml-var expr="MakeEditUrl()">">Click here to edit this
-   issue.</a></p>
-  </dtml-if>
-
-  <dtml-comment><!-- FIXME: Enable this later.
   <dtml-if expr="style == 'full' and not show_history">
-   <p><a href="<dtml-var expr="MakeHistoryUrl()">">Click here to show
-   revision history.</a></p>
+   <br>
+   <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+     <td>&nbsp;</td>
+     <td align="right">
+      <dtml-var expr="MakeUrlButton(MakeHistoryUrl(show=1), 'Show History')">
+     </td>
+    </tr>
+   </table>
   </dtml-if>
-  --></dtml-comment>
 
   <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">

@@ -106,6 +106,10 @@ class ShowPageInfo(web.PageInfo):
             self.show_history = int(request["history"])
         else:
             self.show_history = 0
+        if self.style == "edit":
+            # Since we're editing the issue, show it with an
+            # incremented revision number.
+            issue.SetField("revision", issue.GetField("revision") + 1)
 
 
     def IsForm(self):
@@ -117,6 +121,12 @@ class ShowPageInfo(web.PageInfo):
     def IsShowField(self, field):
         """Return a true value if 'field' should be displayed."""
 
+        # If we're showing a specific revision of the issue, rather
+        # than the current revision, display the revision number.
+        if field.GetName() == "revision" \
+           and self.request.has_key("revision"):
+            return 1
+        # Show all other fields that aren't hidden.
         return not field.IsAttribute("hidden")
 
 
@@ -124,7 +134,17 @@ class ShowPageInfo(web.PageInfo):
         """Return an HTML rendering of the value for 'field'."""
 
         value = self.issue.GetField(field.GetName())
-        return web.format_field_value(field, value, self.style)
+        result = web.format_field_value(field, value, self.style)
+
+        if field.GetName() == "revision" \
+           and self.request.has_key("revision"):
+            # Doctor the value of the result field slightly to
+            # indicate we're not showing the current revision.
+            result = result \
+                     + " (current revision is %d)" \
+                     % self.current_revision.GetRevision()
+
+        return result
 
 
     def MakeSubmitUrl(self):
@@ -136,19 +156,54 @@ class ShowPageInfo(web.PageInfo):
     
 
     def MakeEditUrl(self):
-        """Generate a URL for editing the issue beign shown."""
+        """Generate a URL for editing the issue being shown."""
 
         request = self.request.copy()
         request["style"] = "edit"
+        # Always edit the current revision.
+        if request.has_key("revision"):
+            del request["revision"]
+        if request.has_key("history"):
+            del request["history"]
         return qm.web.make_url_for_request(request)
 
 
-    def MakeHistoryUrl(self):
-        """Generate a URL for editing the issue beign shown."""
+    def MakeHistoryUrl(self, show=1):
+        """Generate a URL for showing or hiding the revision history.
+
+        'show' -- If true, show the revision history.  Otherwise,
+        don't."""
 
         request = self.request.copy()
-        request["history"] = "1"
+        # Use the argument 'history=1' to show the history; omit this
+        # argument to hide.
+        if show:
+            request["history"] = "1"
+            request["revision"] = self.issue.GetRevision()
+        else:
+            if request.has_key("history"):
+                del request["history"]
+            if request.has_key("revision"):
+                del request["revision"]
         return qm.web.make_url_for_request(request)
+
+
+    def MakeShowRevisionUrl(self, revision_number):
+        """Generate a URL to show a revision of this issue."""
+
+        request = self.request.copy()
+        request["revision"] = "%d" % revision_number
+        return qm.web.make_url_for_request(request)
+
+
+    def FormatHistory(self):
+        """Generate HTML for the revision history of this issue."""
+
+        page_info = web.HistoryPageInfo(self.revisions,
+                                        self.issue.GetRevision())
+        page_info.MakeShowRevisionUrl = self.MakeShowRevisionUrl
+        return web.generate_html_from_dtml("history.dtml", page_info)
+
 
 
 
@@ -163,12 +218,25 @@ def handle_show(request):
 
     # Determine the issue to show.
     iid = request["iid"]
-    issue = qm.track.get_idb().GetIssue(iid)
-    # Since we're editing it, show it with an incremented revision
-    # number. 
-    issue.SetField("revision", issue.GetField("revision") + 1)
+    idb = qm.track.get_idb()
+
+    # Get the issue.
+    if request.has_key("revision"):
+        # A specific revision was requested.
+        issue = idb.GetIssue(iid, int(request["revision"]))
+    else:
+        # Use the current revision.
+        issue = idb.GetIssue(iid)
 
     page_info = ShowPageInfo(request, issue)
+    # If we're be showing a revision history, we need to provide all
+    # previous revisions too 
+    if request.has_key("history"):
+        page_info.revisions = idb.GetAllRevisions(iid, issue.GetClass())
+    # If we're showing an old revision, grab the current revision too.
+    if request.has_key("revision"):
+        page_info.current_revision = idb.GetIssue(iid)
+    # Generate HTML.
     return web.generate_html_from_dtml("show.dtml", page_info)
 
 
@@ -182,7 +250,7 @@ def handle_new(request):
     if request.has_key("class"):
         issue_class_name = request["class"]
     else:
-        issue_class = qm.track.get_configuration()["default_class"]
+        issue_class_name = qm.track.get_configuration()["default_class"]
     issue_class = idb.GetIssueClass(issue_class_name)
     # Create a new issue.
     issue = qm.track.Issue(issue_class, "")
@@ -241,4 +309,5 @@ def handle_submit(request):
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

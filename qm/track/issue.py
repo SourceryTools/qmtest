@@ -196,7 +196,38 @@ class IssueSortPredicate:
 
 
 ########################################################################
+# functions
+########################################################################
+
+def get_differing_fields(iss1, iss2):
+    """Return a list of fields that differ between two issues.
+
+    'iss1', 'iss2' -- The issues to compare.  They must be in the same
+    class.
+
+    returns -- A sequence 'IssueField' items for fields that
+    differ."""
+
+    # Make sure the issues are in the same class.
+    issue_class = iss1.GetClass()
+    if iss2.GetClass() != issue_class:
+        raise ValueError, 'issue classes are different'
+    # Loop over fields.
+    differing_fields = []
+    for field in issue_class.GetFields():
+        field_name = field.GetName()
+        # Extract the values.
+        value1 = iss1.GetField(field_name)
+        value2 = iss2.GetField(field_name)
+        # Record this field if they're not the same.
+        if not field.ValuesAreEqual(value1, value2):
+            differing_fields.append(field)
+    return differing_fields
+
+
+########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

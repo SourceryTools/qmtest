@@ -37,6 +37,7 @@
 
 import qm
 import qm.track
+import string
 import time
 import types
 
@@ -180,6 +181,12 @@ class IssueField:
         this field."""
 
         raise qm.MethodShouldBeOverriddenError, "IssueField.Validate"
+
+
+    def ValuesAreEqual(self, value1, value2):
+        """Return true if 'value1' and 'value2' are the same."""
+
+        return value1 == value2
 
 
 

@@ -177,23 +177,22 @@ class GadflyCursor(gadfly.GF_Cursor):
 
         # Extract a pointer back to the IDB.
         idb = self.idb
-        # Extract the method for writing to the log file.
-        if idb.sql_log != None:
-            write = idb.sql_log.write
-        else:
-            write = None
+        log = idb.sql_log
         # Write the statement being executed.
-        if write != None:
-            write("SQL STATEMENT:\n  %s" % statement)
+        if log is not None:
+            log.write("SQL STATEMENT:\n  %s" % statement)
             if params != None:
-                write(str(params))
-            write("\n")
-        # Execute the statement.
-        gadfly.GF_Cursor.execute(self, statement, params)
-        # Write the result.
-        if write != None:
-            write("SQL RESULT:\n  %s\n" % self.pp())
-            write("\n")
+                log.write(str(params))
+            log.write("\n")
+        try:
+            # Execute the statement.
+            gadfly.GF_Cursor.execute(self, statement, params)
+            # Write the result.
+            if log is not None:
+                log.write("SQL RESULT:\n  %s\n\n" % self.pp())
+        finally:
+            if log is not None:
+                log.flush()
 
 
         

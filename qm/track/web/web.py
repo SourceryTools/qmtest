@@ -90,7 +90,62 @@ class PageInfo(qm.web.PageInfo):
 <br>
 ''' % qm.web.PageInfo.table_attributes
 
+
+
+class HistoryPageInfo(PageInfo):
+    """Context for genering revision history HTML fragment.
+
+    This 'PageInfo' class is used with 'history.dtml', which generates
+    an HTML fragment displaying the revision history of an issue."""
     
+
+    def __init__(self, revisions, current_revision_number=None):
+        """Initialize a new info object.
+
+        'revisions' -- A sequenceo of revision of the issue, in
+        revision number order.
+
+        'current_revision_number' -- If not 'None', the revision with
+        this number is indicated specially."""
+
+        # We want the revisions from newest to oldest, so reverse the
+        # list. 
+        revisions = revisions[:]
+        revisions.reverse()
+        # Store stuff.
+        self.revisions = revisions
+        self.current_revision_number = current_revision_number
+    
+
+    def FormatRevisionDiff(self, revision1, revision2):
+        """Generate HTML fir differences between two revisions.
+
+        'revision1' -- The newer revision.
+
+        'revision2' -- The older revision."""
+
+        # Find the fields that differ between the revisions.
+        fields = qm.track.get_differing_fields(revision1, revision2)
+        # Certain fields we expect to differ or are irrelevant to the
+        # revision history; supress these from the list.
+        ignore_fields = ("revision", "timestamp", "user")
+        filter_function = lambda field, ignore_fields=ignore_fields: \
+                          field.GetName() not in ignore_fields
+        fields = filter(filter_function, fields)
+        
+        # Build a list of strings describing differences.
+        differences = []
+        for field in fields:
+            # FIXME: We need specific support for sets and attachments.
+            field_name = field.GetName()
+            value = revision1.GetField(field_name)
+            formatted_value = format_field_value(field, value, "brief")
+            description = "%s changed to %s" % (field_name, formatted_value)
+            differences.append(description)
+        # Build a complete string.
+        return string.join(differences, "<br>\n")
+
+
 
 ########################################################################
 # functions
@@ -179,7 +234,10 @@ def format_text_field_value(field, value, style):
         elif field.IsAttribute("structured"):
             # Use only the first line of text.
             value = string.split(value, "\n", 1)
-            return qm.web.format_structured_text(value)
+            result = qm.web.format_structured_text(value[0])
+            if len(value) > 1:
+                result = result + "..."
+            return result
         else:
             return qm.web.escape(value)
 
