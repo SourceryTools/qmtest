@@ -1,5 +1,9 @@
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* install-sh: Restore, with corrected permissions.
+	
+2001-09-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* install-sh: Remove.
 	
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
