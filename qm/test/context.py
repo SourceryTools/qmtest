@@ -165,6 +165,20 @@ class Context(types.DictType):
                 raise ContextException(key)
 
 
+    def items(self):
+
+        if self.__context is None:
+            return super(Context, self).items()
+        else:
+            # Have to be careful, because self.__context and self may
+            # contain different values for the same keys, and the values
+            # defined in self should override the values defined in
+            # self.__context.
+            unified_dict = dict(self.__context.items())
+            unified_dict.update(self)
+            return unified_dict.items()
+
+
     # Helper methods.
 
     def GetAddedProperties(self):

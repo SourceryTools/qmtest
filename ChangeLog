@@ -1,3 +1,7 @@
+2003-07-09  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/context.py (Context.items): New method.
+
 2003-07-02  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/base.py (load_results): Rename 'ResultSource' to
