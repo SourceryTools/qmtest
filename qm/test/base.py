@@ -156,7 +156,7 @@ def create_database(db_path, class_name):
     
     # Make sure the path doesn't already exist.
     if os.path.exists(db_path):
-        raise ValueError, qm.error("db path exists", path=db_path)
+        raise RuntimeError, qm.error("db path exists", path=db_path)
     # Create an empty directory.
     os.mkdir(db_path)
     # Create the configuration directory.

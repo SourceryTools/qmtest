@@ -92,7 +92,7 @@ class ProgramTerminatedBySignalError(RunProgramError):
 
 
 
-class SignalException(Exception):
+class SignalException(RuntimeError):
     """An exception raised in response to a signal."""
 
     def __init__(self, signal_number):

@@ -1,6 +1,6 @@
 ########################################################################
 #
-# File:   run.py
+# File:   execution_thread.py
 # Author: Alex Samuel
 # Date:   2001-08-04
 #
@@ -78,16 +78,22 @@ class IncorrectOutcomeError(Exception):
 
 
 
+class TerminatedError(Exception):
+    """Test execution was terminated."""
+
+    pass
+
+
+    
 ########################################################################
 # classes
 ########################################################################
 
-class TestRun:
-    """A test run.
+class ExecutionThread(Thread):
+    """A 'ExecutionThread' executes tests.
 
-    A 'TestRun' object represents the execution of a collection of
-    tests.  Generally, each invocation of QMTest results in a single
-    test run, incorporating all the specified tests.
+    A 'ExecutionThread' object handles the execution of a collection
+    of tests.
 
     This class schedules the tests, plus the setup and cleanup of any
     resources they require, across one or more targets.  The schedule
@@ -114,20 +120,8 @@ class TestRun:
       * Tests and resource functions may be run concurrently on targets
         which support that. 
 
-      * Subject to the above rules, tests are started in the order
-        specified.  They may complete in a different order, however.
-
     This class schedules tests and resource functions incrementally,
-    using a simple greedy algorithm.
-
-    Note that this class does not parallelize the communications with
-    multiple concurrent targets and their concurrent subcomponents.  The
-    'Schedule' method should be called iteratively, interleved with
-    polls of the targets' IPC mechanism, to complete the schedule
-    incrementally.  Each call to 'Schedule' attempts to keep all the
-    targets busy, but does not necessarily schedule all tests.  When
-    processing the replies from targets (handled elsewhere), call the
-    'AddResult' method to accumulate results."""
+    using a simple greedy algorithm."""
 
     # Attributes:
     #
@@ -171,7 +165,7 @@ class TestRun:
                  test_ids,
                  context,
                  targets,
-                 result_streams=[]):
+                 result_streams=None):
         """Set up a test run.
 
         'database' -- The 'Database' containing the tests that will be
@@ -186,13 +180,21 @@ class TestRun:
         targets on which tests may be run.
 
         'result_streams' -- A sequence of 'ResultStream' objects.  Each
-        stream will be provided with results as they are available."""
+        stream will be provided with results as they are available.
+        This thread will not perform any locking of these streams as
+        they are written to; each stream must provide its own
+        synchronization if it will be accessed before 'run' returns."""
 
+        Thread.__init__(self, None, None, None)
+                        
         self.__database = database
         self.__test_ids = test_ids
         self.__context = context
         self.__targets = targets
-        self.__result_streams = result_streams
+        if result_streams is not None:
+            self.__result_streams = result_streams
+        else:
+            self.__result_streams = []
         
         # For each target, construct an initially empty map of resources
         # active for that target.
@@ -205,9 +207,35 @@ class TestRun:
         self.__failed_resources = {}
         self.__valid_tests = {}
         self.__remaining_test_ids = list(test_ids)
+        self.__terminated = 0
+        # Access to __terminated is guarded with this lock.
+        self.__lock = Lock()
+        
 
+    def RequestTermination(self):
+        """Request termination.
 
-    def Run(self):
+        Request that the execution thread be terminated.  This may
+        take some time; tests that are already running will continue
+        to run, for example."""
+
+        self.__lock.acquire()
+        self.__terminated = 1
+        self.__lock.release()
+        
+        
+    def IsTerminationRequested(self):
+        """Returns true if termination has been requested.
+
+        return -- True if Terminate has been called."""
+
+        self.__lock.acquire()
+        terminated = self.__terminated
+        self.__lock.release()
+        return terminated
+    
+        
+    def run(self):
         """Run the tests.
 
         This method runs the tests specified in the __init__
@@ -225,7 +253,7 @@ class TestRun:
             # Schedule the first batch of work.
             count = self.Schedule()
             # If some work was scheduled, process it.
-            while count != 0:
+            while count != 0 or self.__remaining_test_ids:
                 # Loop until we've received responses for all of the tests
                 # and resources that have been scheduled.
                 while count > 0:
@@ -300,21 +328,19 @@ class TestRun:
             try:
                 # Is it ready to run?
                 test_is_ready = self.__TestIsReady(test)
-
             except NoTargetForGroupError:
                 # There is no target whose target group is allowable for
                 # this test.  We therefore can't run this test.  Add an
                 # 'UNTESTED' result for it.
                 cause = qm.message("no target for group")
                 group_pattern = test.GetTargetGroup()
-                result = Result(test_id, Result.TEST,
+                result = Result(Result.TEST, test_id, 
                                 self.__context, Result.UNTESTED,
                                 { Result.CAUSE : cause,
                                   'group_pattern' : group_pattern })
                 self.AddResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
-
             except IncorrectOutcomeError, error:
                 prerequisite_id = str(error)
                 # One of the test's prerequisites was run and produced
@@ -324,7 +350,7 @@ class TestRun:
                 prerequisite_outcome = \
                     self.__test_results[prerequisite_id].GetOutcome()
                 expected_outcome = test.GetPrerequisites()[prerequisite_id]
-                result = Result(test_id, Result.TEST,
+                result = Result(Result.TEST, test_id, 
                                 self.__context, Result.UNTESTED,
                                 { Result.CAUSE : cause,
                                   'prerequisite_id' : prerequisite_id,
@@ -334,21 +360,26 @@ class TestRun:
                 self.AddResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
-
             except FailedResourceError, error:
                 resource_id = str(error)
                 # One of the resources required for this test failed
                 # during setup, so we can't run the test.  Add an
                 # 'UNTESTED' result for it.
                 cause = qm.message("failed resource")
-                result = Result(test_id, Result.TEST, self.__context,
+                result = Result(Result.TEST, test_id, self.__context,
                                 Result.UNTESTED)
                 result[Result.CAUSE] = cause
                 result['resource_id'] = resource_id
                 self.AddResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
-
+            except TerminatedError:
+                result = Result(Result.TEST, test_id, self.__context,
+                                Result.UNTESTED)
+                result[Result.CAUSE] = qm.message("execution terminated")
+                self.AddResult(result)
+                self.__remaining_test_ids.remove(test_id)
+                continue
             else:
                 if not test_is_ready:
                     # The test isn't ready yet.  Defer it.
@@ -492,19 +523,16 @@ class TestRun:
 
         # Find a target in the correct group.
         group_pattern = test.GetTargetGroup()
-        match = 0
         for target in self.__targets:
             if target.IsInGroup(group_pattern):
-                # Found a match.
-                match = 1
-                break
-        if not match:
-            # No target is in a matching group.  This test can't be
-            # run with the specified set of targets.
-            raise NoTargetForGroupError, test_id
-        
-        # Mark the test as checked, so it isn't re-checked next time.
-        self.__valid_tests[test_id] = None
+                # Found a match.  Mark the test as checked, so it isn't
+                # re-checked next time.
+                self.__valid_tests[test_id] = None
+                return
+
+        # No target is in a matching group.  This test can't be run with
+        # the specified set of targets.
+        raise NoTargetForGroupError, test_id
 
 
     def __TestIsReady(self, test):
@@ -525,6 +553,9 @@ class TestRun:
         has failed during setup.  The exception string is the ID of the
         resource."""
 
+        if self.IsTerminationRequested():
+            raise TerminatedError
+        
         # Check the test itself.
         self.__ValidateTest(test)
 

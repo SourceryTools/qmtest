@@ -198,13 +198,19 @@ class DtmlPage:
         return apply(WebRequest, (script_url, self.request), fields)
 
 
-    def GenerateHtmlHeader(self, description):
-        """Return the header for an HTML document."""
+    def GenerateHtmlHeader(self, description, headers=""):
+        """Return the header for an HTML document.
+
+        'description' -- A string describing this page.
+
+        'headers' -- Any additional HTML headers to place in the
+        '<head>' section of the HTML document."""
 
         return \
 '''<head>
  <meta http-equiv="Content-Type" 
-       content="text/html: charset=iso-8859-1"/>
+       content="text/html; charset=iso-8859-1"/>
+ %s      
  <meta http-equiv="Content-Style-Type" 
        content="text/css"/>
  <link rel="stylesheet" 
@@ -214,7 +220,7 @@ class DtmlPage:
        content="%s"/>
  <title>%s: %s</title>
 </head>
-''' % (self.html_stylesheet, self.GetProgramName(),
+''' % (headers, self.html_stylesheet, self.GetProgramName(),
        self.GetProgramName(), description)
 
 
@@ -998,8 +1004,11 @@ class WebServer(HTTPServer):
         preconditions -- The server must be bound."""
 
         qm.common.print_message(2, "Web server running.\n")
-        while not self.__shutdown_requested:
-            self.handle_request()
+        try:
+            while not self.__shutdown_requested:
+                self.handle_request()
+        except Exception, exc:
+            raise RuntimeError, str(exc)
         qm.common.print_message(2, "Web server stopped.\n")
 
 
@@ -2599,7 +2608,7 @@ def get_from_cache(request, session_id=None):
 _handle_problems = DtmlPage.default_class("problems.dtml")
 
 
-def _handle_root(requets):
+def _handle_root(request):
     """Respond to a request for the root page on this server."""
 
     raise HttpRedirect, WebRequest("/static/index.html")

@@ -233,7 +233,9 @@ ifeq ($(DOCUMENTATION),yes)
 	  -t tex -d $(PRINTSS) \
 	  $(JADEEXTRA) \
 	  $<
-	mv $(PRINTTEX) $(PRINTDIR)/
+	# Change -- into -{-} so that TeX does not generate long 
+	# dashes.
+	sed -e 's|--|-{-}|g' < $(PRINTTEX) > $@
 
   # Process the TeX file to PDF, in the print directory.  
   $(PRINTDIR)/$(PRINTPDF): \

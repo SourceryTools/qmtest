@@ -59,6 +59,9 @@ A problem occurred while loading the XML resource file "%(resource_id)s":
 A problem occurred while loading the XML test file "%(test_id)s":
 %(message)s.
 
+@ execution terminated
+Termination was requested before this test was executed.
+
 @ failed prerequisite
 A prerequisite produced an incorrect outcome.
 
