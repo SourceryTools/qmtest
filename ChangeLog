@@ -1,3 +1,16 @@
+2001-05-15  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/platform.py: Remove contents and split it into...
+	* qm/platform_linux.py: ... this new file, and...
+	* qm/platform_win32.py: ... this, likewise.
+	* qm/track/server.py (execute): Let SignalException through.
+	* qm/track/qmtrack.in: Handle SignalException.
+	* qm/track/memory_idb.py (MemoryIdb.Close): Call __Write.
+	(MemoryIdb.__Write): New method.
+	(MemoryIdb.AddIssueClass): Call __Write.
+	(MemoryIdb.__InsertIssue): Likewise.
+	* qm/test/qmtest.in: Import qm.platform.
+
 2001-05-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (make_url_for_request): Remove.

@@ -38,6 +38,7 @@
 import os
 import qm
 import qm.attachment
+import qm.platform
 import qm.structured_text
 import qm.track.cmdline
 import qm.track.config
@@ -246,6 +247,9 @@ def execute(command, output_file, error_file):
         return exception.errno
     except KeyboardInterrupt:
         # User killed the server; let it through.
+        raise
+    except qm.platform.SignalException:
+        # The server was killed by a signal.  Let the exception through.
         raise
     except:
         # For other exceptions, for now, just dump out the

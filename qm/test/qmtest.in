@@ -40,6 +40,7 @@ execfile("@qm_setup_path_script@")
 
 import qm
 import qm.cmdline
+import qm.platform
 import qm.structured_text
 import qm.test.cmdline
 import sys

@@ -93,6 +93,14 @@ class MemoryIdb(qm.track.IdbBase):
     def Close(self):
         """Close an IDB connection and write out the IDB state."""
         
+        self.__Write()
+        # Perform base class operation.
+        qm.track.IdbBase.Close(self)
+
+
+    def __Write(self):
+        """Write out the IDB state."""
+
         # Open a pickle file.
         pickle_file = open(self.__GetPicklePath(), "w")
         # The persistent state consists of a tuple containing the
@@ -103,8 +111,6 @@ class MemoryIdb(qm.track.IdbBase):
             )
         cPickle.dump(persistent, pickle_file)
         pickle_file.close()
-        # Perform base class operation.
-        qm.track.IdbBase.Close(self)
 
 
     def __GetPicklePath(self):
@@ -130,6 +136,7 @@ class MemoryIdb(qm.track.IdbBase):
             raise KeyError, "issue class name %s already exists" % name
 
         self.__issue_classes[name] = issue_class
+        self.__Write()
 
 
     def AddIssue(self, issue):
@@ -351,6 +358,9 @@ class MemoryIdb(qm.track.IdbBase):
 
         # Invoke postupdate triggers.
         self._IdbBase__InvokePostupdateTriggers(issue, previous_issue)
+
+        # Commit the changes to disk.
+        self.__Write()
 
         return 1
 

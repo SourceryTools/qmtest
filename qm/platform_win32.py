@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   platform.py
+# File:   platform_win32.py
 # Author: Alex Samuel
-# Date:   2001-04-30
+# Date:   2001-05-13
 #
 # Contents:
-#   Platform-specific code.
+#   Platform-specific function for Win32.
 #
 # Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -38,6 +38,7 @@
 import common
 import os
 import qm
+import signal
 import string
 import sys
 
@@ -45,28 +46,24 @@ import sys
 # classes
 ########################################################################
 
-class MailError(RuntimeError):
+# Win32 doesn't provide signals, but we include this anyway so that code
+# may attempt to catch this exception without conditionalizing.
 
-    pass
+class SignalException(Exception):
+
+    def __init__(self, *args):
+        raise NotImplementedError, "No 'SignalException' on Win32."
 
 
 
 ########################################################################
-# initialization
+# functions
 ########################################################################
 
-if sys.platform[:5] == "linux":
-    from platform_linux import *
+def open_in_browser(url):
+    # FIXME.
+    raise NotImplementedError, "open_in_browser on win32"
 
-elif sys.platform == "win32":
-    from platform_win32 import *
-
-    def open_in_browser(url):
-        # FIXME.
-        raise NotImplementedError, "open_in_browser on win32"
-
-else:
-    raise RuntimeError, "unsupported platform: %s" % sys.platform
 
 ########################################################################
 # Local Variables:
