@@ -1,3 +1,11 @@
+2001-12-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* README: Remove stale link.
+	* doc/manual/test-tour.xml: Fix typos.
+	* qm/Makefile.in (SCRIPTS): Do not hard code prefix.
+	* qm/test/cmdline.py: Do not import run.
+	* scripts/qm-release (build_exec): New function.
+
 2001-12-05  Mark Mitchell  <mark@codesourcery.com>
 
 	* configure.in: Remove divert statements.

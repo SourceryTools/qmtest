@@ -72,7 +72,7 @@
     </screen>
    On Windows, use:
     <screen>
-     set PATH C:\progra~1\qm\bin:%PATH%
+     &prompt;<userinput>PATH C:\progra~1\qm\bin;%PATH%</userinput>
     </screen>
    In order to avoid having to retype these commands every time you
    want to use &qmtest;, you can set up your system so that these

@@ -57,6 +57,6 @@ $(SCRIPTS): Makefile
 	echo "@echo off" > $@
 	echo "set QM_HOME=$(prefix)" >> $@
 	echo "set QM_BUILD=0" >> $@
-	echo -n "$(PYTHONEXE) \"$(prefix)\\lib\\qm\\qm\\$@.py\" " >> $@
+	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\" " >> $@
 	echo "%1 %2 %3 %4 %5 %6 %7 %8 %9" >> $@
 endif

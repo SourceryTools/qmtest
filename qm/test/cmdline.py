@@ -49,7 +49,6 @@ from   qm.test.xml_result_stream import *
 import qm.xmlutil
 import Queue
 from   result import *
-import run
 import string
 import sys
 import web.web
