@@ -1,3 +1,10 @@
+2003-08-28  Stefan Seefeld  <stefan.seefeld@orthosoft.ca>
+
+	* setup.py: Make documentation compliant with qmtest's standard.
+	(qm_build_doc): Tidy up the code and make it more clear.
+	(qm_build_doc): Use os.path.join and os.path.normpath for better
+	portability.
+
 2003-08-27  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* setup.py: Add build_doc command.
