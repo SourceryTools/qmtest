@@ -230,6 +230,13 @@ for script_name, build_location in scripts.items():
     shutil.copy(build_location, script_path)
     os.chmod(script_path, 0755)
 
+# Install the class manifest.
+
+class_manifest = os.path.join(lib_dir, "qm", "test", "classes",
+                              "classes.qmc")
+shutil.copy("qm/test/classes/classes.qmc", class_manifest)
+os.chmod(class_manifest, 0644)
+    
 # Create the parent of the share directory.
 share_parent_dir = os.path.dirname(share_dir)
 if not os.path.exists(share_parent_dir):

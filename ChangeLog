@@ -1,5 +1,7 @@
 2001-10-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* install.py: Install the class manifest.
+
 	* qm/async.py: Remove.
 	* qm/common.py (parse_time): Handle Windows format for GMT.
 	* qm/qm.sh: Handle qmtest-remote correctly.
