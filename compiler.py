@@ -387,19 +387,6 @@ class GPP(Compiler):
     by this regular expression, the error message indicates an
     internal error in the compiler."""
 
-    def GetObjectNames(self, source_files):
-        """Return the names of the object files built from the 'source_files'.
-
-        'source_files' -- A sequence of strings giving the names of
-        the source files.
-
-        returns -- A sequence of strings giving the names of the
-        object files generated from the 'source_files'."""
-
-        return map(lambda s: os.path.splitext(s)[0] + ".o",
-                   source_files)
-            
-        
     def ParseOutput(self, output, ignore_regexps = ()):
         """Return the 'Diagnostic's indicated in the 'output'.
 
@@ -460,6 +447,46 @@ class GPP(Compiler):
                 diagnostic = Diagnostic(source_position,
                                         severity,
                                         message)
+                diagnostics.append(diagnostic)
+
+
+        return diagnostics
+
+
+
+class EDG(Compiler):
+    """An 'EDG' is the Edison Design Group compiler."""
+
+    __diagnostic_regexp = re.compile('^"(?P<file>.*)", line (?P<line>.*): '
+                                     '(?P<severity>.*): (?P<message>.*)$')
+    
+    def ParseOutput(self, output, ignore_regexps = ()):
+        """Return the 'Diagnostic's indicated in the 'output'.
+
+        'output' -- A string giving the output from the compiler.
+
+        'ignore_regexps' -- A sequence of regular expressions.  If a
+        diagnostic message matches one of these regular expressions,
+        it will be ignored.
+        
+        returns -- A list of 'Diagnostic's corresponding to the
+        messages indicated in 'output', in the order that they were
+        emitted."""
+
+        # Assume there were no diagnostics.
+        diagnostics = []
+        # Create a file object containing the 'output'.
+        f = StringIO.StringIO(output)
+        # Reall all of the output, line by line.
+        for line in f.readlines():
+            match = self.__diagnostic_regexp.match(line)
+            if match:
+                source_position = SourcePosition(match.group('file'),
+                                                 int(match.group('line')),
+                                                 0)
+                diagnostic = Diagnostic(source_position,
+                                        match.group('severity'),
+                                        match.group('message'))
                 diagnostics.append(diagnostic)
 
 

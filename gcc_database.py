@@ -85,7 +85,7 @@ class GCCTest(CompilerTest):
             name="options",
             title="Options",
             description="""Compiler command-line options.""",
-            default="(None)"),
+            default_value="(None)"),
     ]
 
     _severities = [ 'warning', 'error' ]
@@ -103,10 +103,10 @@ class GCCTest(CompilerTest):
            )
     """A sequence of regular expressions matching diagnostics to ignore."""
 
-    def __init__(self, **arguments):
+    def __init__(self, arguments, **extras):
         """Construct a new 'GCCTest'."""
 
-        apply(CompilerTest.__init__, (self,), arguments)
+        CompilerTest.__init__(self, arguments, **extras)
         # The primary source file has not yet been read.
         self._source = None
         
@@ -383,10 +383,10 @@ class GPPTest(GCCTest):
         _lock = Lock()
 
     
-    def __init__(self, **arguments):
+    def __init__(self, arguments, **extras):
         """Construct a new 'GCCTest'."""
 
-        apply(GCCTest.__init__, (self,), arguments)
+        GCCTest.__init__(self, arguments, **extras)
 
         # Assume that we do not need to run the generated executable.
         self._run_executable = 0
@@ -404,67 +404,75 @@ class GPPTest(GCCTest):
             try:
                 if GPPTest._compiler:
                     return GPPTest._compiler
-                # Compute the path to the compiler.
-                if context.has_key("GCCTest.prefix"):
-                    path = os.path.join(context["GCCTest.prefix"],
-                                        "bin", "g++")
-                else:
-                    path = context["GPPTest.gpp"]
-                # There are no compiler options yet.
-                options = []
-                # Make error messages easier to parse.
-                options.append('-fmessage-length=0')
-                # See if there are any compiler options specified in the
-                # context.
-                options += string.split(context.get("GCCTest.flags", ""))
-                options += string.split(context.get("GPPTest.flags", ""))
-
-                # Create the 'Compiler'.
-                compiler = GPP(path, options)
-
-                # Get the base of the objdir; the libraries can be found
-                # relative to that.
-                objdir = context['GCCTest.objdir']
-                # Run the compiler to find out what multilib directory is
-                # in use.
-                executable = CompilerExecutable(compiler)
-                executable.Run([compiler.GetPath()] + compiler.GetOptions() 
-                               + ['--print-multi-dir'])
-                directory = executable.stdout[:-1]
-                # Add the V3 library directory.
-                self._v3_directory \
-                    = os.path.join(objdir,
-                                   self._GetTargetPlatform(context),
-                                   directory,
-                                   "libstdc++-v3")
-                GPPTest._library_directories.append(os.path.join
-                                                    (self._v3_directory,
-                                                     "src", ".libs"))
-                # Add the directory containing libgcc.
-                GPPTest._library_directories.append(os.path.join(objdir, "gcc",
-                                                                 directory))
-                # Add -L options for all the directories we should search
-                # for libraries.
-                for d in GPPTest._library_directories:
-                    options.append("-L" + d)
-                
-                # Run a script to findout what flags to use when compiling
-                # for the V3 library.
-                executable = \
-                    RedirectedExecutable(os.path.join(self._v3_directory,
-                                                      "testsuite_flags"))
-                executable.Run(["testsuite_flags", "--build-includes"])
-                options += string.split(executable.stdout)
-                compiler.SetOptions(options)
-                
-                GPPTest._compiler = compiler
+                GPPTest._compiler = self._CreateCompiler(context)
             finally:
                 if _have_threads:
                     self._lock.release()
                     
         return GPPTest._compiler
 
+
+    def _CreateCompiler(self, context):
+        """Create the 'Compiler' to use.
+
+        returns -- The 'Compiler' created."""
         
+        # Compute the path to the compiler.
+        if context.has_key("GCCTest.prefix"):
+            path = os.path.join(context["GCCTest.prefix"],
+                                "bin", "g++")
+        else:
+            path = context["GPPTest.gpp"]
+        # There are no compiler options yet.
+        options = []
+        # Make error messages easier to parse.
+        options.append('-fmessage-length=0')
+        # See if there are any compiler options specified in the
+        # context.
+        options += string.split(context.get("GCCTest.flags", ""))
+        options += string.split(context.get("GPPTest.flags", ""))
+
+        # Create the 'Compiler'.
+        compiler = GPP(path, options)
+
+        # Get the base of the objdir; the libraries can be found
+        # relative to that.
+        objdir = context['GCCTest.objdir']
+        # Run the compiler to find out what multilib directory is
+        # in use.
+        executable = CompilerExecutable(compiler)
+        executable.Run([compiler.GetPath()] + compiler.GetOptions() 
+                       + ['--print-multi-dir'])
+        directory = executable.stdout[:-1]
+        # Add the V3 library directory.
+        self._v3_directory \
+            = os.path.join(objdir,
+                           self._GetTargetPlatform(context),
+                           directory,
+                           "libstdc++-v3")
+        GPPTest._library_directories.append(os.path.join
+                                            (self._v3_directory,
+                                             "src", ".libs"))
+        # Add the directory containing libgcc.
+        GPPTest._library_directories.append(os.path.join(objdir, "gcc",
+                                                         directory))
+        # Add -L options for all the directories we should search
+        # for libraries.
+        for d in GPPTest._library_directories:
+            options.append("-L" + d)
+
+        # Run a script to findout what flags to use when compiling
+        # for the V3 library.
+        executable = \
+            RedirectedExecutable(os.path.join(self._v3_directory,
+                                              "testsuite_flags"))
+        executable.Run(["testsuite_flags", "--build-includes"])
+        options += string.split(executable.stdout)
+        compiler.SetOptions(options)
+
+        return compiler
+                
+
     def _GetLibraryDirectories(self, context):
         """Returns the directories to search for libraries.
 

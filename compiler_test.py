@@ -17,6 +17,7 @@ from   compiler import *
 import errno
 from   qm.test.result import *
 from   qm.test.test import *
+import string
 
 ########################################################################
 # Classes
@@ -137,12 +138,14 @@ class CompilerTest(Test):
     _ignored_diagnostic_regexps = ()
     """A sequence of regular expressions matching diagnostics to ignore."""
 
-    def __init__(self, **arguments):
-        """Construct a new 'CompilerTest'."""
-
-        Test.__init__(self, **arguments)
-
-        
+    arguments = [
+        qm.fields.TextField(
+            name="directory",
+            title="Directory",
+            description="""The directory in which to run the test.""",
+            default_value=""),
+        ]
+    
     def Run(self, context, result):
         """Run the test.
 
@@ -249,7 +252,7 @@ class CompilerTest(Test):
         returns -- A sequence of strings giving the paths to the
         directories to search for libraries."""
 
-        return string.split(context.get("CompilerTest.library_dirs", ""))
+        return context.get("CompilerTest.library_dirs", "").split()
 
 
     def _RunExecutable(self, path, context, result):

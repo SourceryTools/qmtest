@@ -1,3 +1,12 @@
+2002-10-31  Mark Mitchell  <mark@codesourcery.com>
+
+	* compiler.py (GPP.GetObjectNames): Remove.
+	(EDG): New class.
+	* compiler_test.py (CompilerTest.__init__): Remove.
+	* gcc_database.py (GCCTest.__init__): Add **extras parameter.
+	(CPPTest.__init__): Likewise.
+	(GPPTest._CreateCompiler): New method.
+	
 2002-06-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* compiler.py (Compiler.ParseOutput): Raise NotImplementedError,
