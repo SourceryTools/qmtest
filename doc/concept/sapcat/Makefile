@@ -22,7 +22,9 @@ sapcat_final.htm: \
     sapcat_intro.xml \
     sapcat_req.xml \
     sapcat_over.xml \
-    sapcat_design.xml
+    sapcat_design.xml \
+    sapcat_devplan.xml \
+    sapcat_app_ideas.xml
 	rm -f out.htm sapcat_final.htm
 	doccvt/doccvt.py sapcat_final.xml
 	$(TIDY) -n out.htm > sapcat_final.htm
