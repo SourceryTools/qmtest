@@ -84,3 +84,67 @@ Instructions for writing documention:
 
     This requirement will probably be relaxed at a later data.
 
+
+Instructions for writing code:
+
+Software Carpentry software should be written in standard Python 1.X.X.
+
+Python source code should adhere to Guido van Rossum's "Python Style
+Guide", available from <XXX>, subject to the following modifications
+and clarifications:
+
+  - Source text should ideally be wrapped at 72 columns.
+    Occasionally, source code may extend to column 78, if this
+    produces substantially clearer formatting.
+
+  - All unary operators should be followed by a single space.  All
+    binary operators should have a single space on each side.
+
+    Examples:
+      c = (a + b) * (a - b)
+      substring = x[ : i - 4]
+
+    Exceptions:
+      unary minus:              c = -b
+      comma:                    (a, b, c)    (a, b, c, )
+      colon in statements:      if x == 4:
+
+  - When breaking lines at operators, place the operator on the second
+    line.
+
+    Example:
+      if some_condition () \
+         and j < i + 2:
+	  c = first_function (i) \
+	      + second_function (j)
+
+  - All comments and doc strings should be written in complete, proper
+    English sentences.  Do not use phrases that are incomplete
+    sentences.  Capitalize the first word of the sentence, unless it
+    is a name from source code (and try to avoid this case).  End each
+    sentence with punctuation, followed by two blank spaces.
+
+  - Avoid placing comments on the same line as code.  A comment in the
+    body of a function should be placed on the line(s) above the code
+    it comments.
+
+  - Do not use special CVS substitution keywords ("$Id$, "$Author$",
+    etc.) in source code.
+
+  - Always use the followng naming conventions:
+
+      Item               Style
+      ----------------------------------------
+      modules            underscore_delimited
+      classes            CamelCaps
+      global names       underscore_delimited
+      class fields       CamelCaps
+      local variables    underscore_delimited
+
+Doc strings should be written in formatted text.  In addition to the
+guidelines in von Rossum's style guide, follow these rules:
+
+  - TBD
+
+All source code checked into the Software Carpentry source repository
+should comply with these guidelines.  

@@ -1,3 +1,10 @@
+2000-10-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/process-xhtml.py: Convert to coding standards.
+	* doc/qm.css (div.api): New style.
+	* templates/html: Remove emacs variable stuff.
+	* templates/py: Add emacs variable stuff.
+	
 2000-10-25  Alex Samuel  <samuel@codesourcery.com>
 
 	* stanard.mk: Add comments.

@@ -120,7 +120,7 @@ span.Dfn {
 a.TermDef {
    color: #000060;
    backgrond-color: white;
-   font-style: italic;
+    font-style: italic;
 }
 
 a.Term:link, a.Term:visited {
@@ -143,3 +143,9 @@ a.Term:active, a.Term:hover {
 code {
 }
 
+/* Use <div class="api">...</div> when presenting official public
+   APIs.  */
+
+div.api {
+    font: XXX;
+}
