@@ -122,7 +122,7 @@ class Command:
 
     context_file_spec = (
         "C",
-        "context-file",
+        "load-context",
         "FILE",
         "Read context from a file (- for stdin)."
         )

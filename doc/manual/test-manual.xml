@@ -628,7 +628,7 @@
    you may specify individual context properties with the <link
    linkend="opt-test-run-context"><option>&dashdash;context</option>
    (<option>-c</option>)</link> or <link
-   linkend="opt-test-run-context-file"><option>&dashdash;context-file</option>
+   linkend="opt-test-run-context-file"><option>&dashdash;load-context</option>
    (<option>-C</option>)</link> options.</para>
 
    <para>In addition, a resource setup function may add additional

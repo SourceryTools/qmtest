@@ -1,5 +1,16 @@
 2001-09-05  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/Makefile.in (setup_path.py): Use left-quotes.
+	($(SCRIPTS):%): Likewise.
+	* qm/platform.py: Use Linux module for Irix.
+	* qm/test/cmdline.py (Command.context_file_spec): Rename long
+	option to load-context.
+	* share/web/stylesheets/qm.css (a.help-link): Adjust color.
+	* doc/manual/test-manual.xml: Adjust accordingly.
+	* doc/manual/test-reference.xml: Likewise.
+
+2001-09-05  Alex Samuel  <samuel@codesourcery.com>
+
 	* configure.in: Set up gadfly.
 	* configure: Regenerate.
 	* Makefile.in (setup): Remove rule.

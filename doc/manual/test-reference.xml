@@ -157,7 +157,7 @@
 
     <glossentry id="opt-test-run-context-file">
      <glossterm>
-      <option>&dashdash;context-file</option> <replaceable>FILE</replaceable>
+      <option>&dashdash;load-context</option> <replaceable>FILE</replaceable>
       (<option>-C</option>)
      </glossterm>
      <glossdef>

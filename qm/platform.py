@@ -55,7 +55,7 @@ class MailError(RuntimeError):
 # initialization
 ########################################################################
 
-if sys.platform[:5] == "linux":
+if sys.platform[:5] == "linux" or  sys.platform[:4] == "irix":
     from platform_linux import *
 
 elif sys.platform == "win32":
