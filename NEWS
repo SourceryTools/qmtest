@@ -3,6 +3,12 @@ NEWS
 
 This file describes user visible changes to QM.
 
+QM 2.0.1
+========
+
+A bug that prevented the "New Resource" entry on the "File" menu from
+working has been fixed.
+
 QM 2.0
 ======
 
