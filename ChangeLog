@@ -1,3 +1,7 @@
+2000-12-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* README.sources: Update ChangeLog and documentation instructions. 
+
 2000-12-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Copy bitmaps into print
