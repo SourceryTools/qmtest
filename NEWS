@@ -3,6 +3,13 @@ NEWS
 
 This file describes user visible changes to QM.
 
+QM 2.0
+======
+
+Tests are no longer run in a random order by default.  To run tests in
+a random order, you must now use the "--random" option to "qmtest run".
+
+
 QM 1.1.5
 ========
 

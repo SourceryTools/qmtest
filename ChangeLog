@@ -1,5 +1,8 @@
 2002-06-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: Mention that --random is no longer the default.
+	* qm/test/doc/reference.xml: Update accordingly.
+	
 	* qm/common.py (shuffle): Remove.
 	* qm/test/cmdline.py (whrandom): Do not import.
 	(random): Import.

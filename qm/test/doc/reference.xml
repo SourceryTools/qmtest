@@ -963,6 +963,19 @@
      </varlistentry> 
 
      <varlistentry>
+      <term>
+       <option>&dashdash;random</option>
+      </term>
+      <listitem>
+       <para>Run the tests in a random order.</para>
+    
+       <para>This option can be used to find hidden dependencies
+       between tests in the testsuite.  (You may not notice the
+       dependencies if you always run the tests in the same order.)</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
       <term><option>-s</option> <replaceable>file</replaceable></term>
       <term>
        <option>&dashdash;summary</option> <replaceable>file</replaceable> 
@@ -994,12 +1007,11 @@
        <option>&dashdash;seed</option> <replaceable>integer</replaceable>
       </term>
       <listitem>
-       <para>For each test run, &qmtest; randomizes the order in which
-       tests are run, subject to the constraints described in <xref
-       linkend="sec-ordering-and-dependencies"/>.  The random number
-       generator is seeded using the system time.  This maximizes the
-       chance of detecting unanticipated dependencies among tests across
-       multiple test runs.</para>
+       <para>If the <option>--random</option> is used, &qmtest;
+       randomizes the order in which tests are run, subject to the
+       constraints described in <xref
+       linkend="sec-ordering-and-dependencies"/>.  By default, the
+       random number generator is seeded using the system time.</para>
 
        <para>For debugging purposes, it is sometimes necessary to obtain
        a reproducible sequence of tests.  Use the
@@ -1007,9 +1019,8 @@
        random number generator.</para>
 
        <para>Note that even with the same random number seed, if tests
-       are run on targets with a concurrency greater than one, scheduling
-       uncertainty may still produce variation in the order in which
-       tests are run.</para>
+       are run in parallel, scheduling uncertainty may still produce
+       variation in the order in which tests are run.</para>
       </listitem>
      </varlistentry>
 
