@@ -1,5 +1,10 @@
 2000-12-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Return true even if empty
+	$(DOCBITMAPS).
+
+2000-12-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Handle empty $(DOCBITMAPS).
 
 2000-12-14  Alex Samuel  <samuel@codesourcery.com>

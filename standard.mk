@@ -166,7 +166,7 @@ $(PRINTDIR)/$(PRINTTEX): \
 # Process the TeX file to PDF, in the print directory.  
 $(PRINTDIR)/$(PRINTPDF): \
 		$(PRINTDIR)/$(PRINTTEX)
-	test "$(DOCBITMAPS)" && cp $(DOCBITMAPS) $(PRINTDIR)/
+	test "$(DOCBITMAPS)" && cp $(DOCBITMAPS) $(PRINTDIR)/ || true
 	cd $(PRINTDIR); \
 	    pdfjadetex $(PRINTTEX) 
 
