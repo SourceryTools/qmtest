@@ -1,3 +1,7 @@
+2004-02-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* setup.py: Install both "qmtest" and "qmtest.py" on all systems.
+
 2004-02-20  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (format_time_iso): Make argument default to
