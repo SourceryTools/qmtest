@@ -260,7 +260,7 @@ class TemporaryAttachmentStore(AttachmentStore):
         # attachment was submitted.
         return '''
         <html><body>
-        <script language="JavaScript">
+        <script type="text/javascript" language="JavaScript">
         window.close();
         </script>
         </body></html>

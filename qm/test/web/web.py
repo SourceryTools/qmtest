@@ -190,7 +190,7 @@ class QMTestPage(DefaultDtmlPage):
                               edit_menu_items=edit_menu_items,
                               view_menu_items=self.view_menu_items,
                               run_menu_items=run_menu_items)
-            return "<body>%s<br>" % navigation_bar(self.request)
+            return "<body>%s<br />" % navigation_bar(self.request)
         else:
             return "<body>"
 
@@ -1926,6 +1926,12 @@ class QMTestServer(qm.web.WebServer):
         return ResourceDescriptor(self.GetDatabase(), resource_id,
                                   resource_class_name, arguments)
 
+
+    def _HandleRoot(self, request):
+        """Handle the '/' URL."""
+
+        raise qm.web.HttpRedirect, qm.web.WebRequest("/test/dir")
+        
 ########################################################################
 # initialization
 ########################################################################

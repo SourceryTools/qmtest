@@ -14,7 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<form>
+<form action="get">
 <table width="100%" 
        class="navbar"
        border="0"
@@ -95,7 +95,7 @@
 </table>
 </form>
 
-<script language="JavaScript">
+<dtml-var expr="GenerateStartScript()">
 function handle_menu_select(sel) 
 {
   value = sel.options[sel.selectedIndex].value;
@@ -120,7 +120,7 @@ function load_expected_results()
    window.open("load-expected-results", "load_expected_results", 
                "dependent,height=200,width=640");
 }
-</script>
+<dtml-var expr="GenerateEndScript()">
 
 <dtml-comment><!-- 
   Local Variables:

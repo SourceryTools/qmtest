@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xhtmlns="http://www.w3.org/1999/xhtml">
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader('New Test Suite')">
  <dtml-var expr="GenerateStartBody()">
 
@@ -26,7 +23,7 @@
  <form name="form"
        method="post"
        action="<dtml-var expr="WebRequest('create-suite').AsUrl()">"
-       enctype="multipart/form-data"/>
+       enctype="multipart/form-data">
 
   <table border="0"
          cellpadding="4"
@@ -63,7 +60,7 @@
                size="40" 
                value="<dtml-var name="suite_id">"/>
         <dtml-if expr="field_errors.has_key('_id')">
-         <br>
+         <br />
          <span class="error">
           <dtml-var expr="field_errors['_id']">
          </span>
@@ -77,7 +74,7 @@
 
     <tr class="heading">
      <td colspan="2">
-      <input type="submit" value=" Next > ">
+      <input type="submit" value=" Next > " />
       <dtml-var expr="MakeButton('Cancel', 'dir')">
      </td>
     </tr>

@@ -302,12 +302,14 @@ class Result:
         
         # In the "full" format, print all result properties.
         if format == "full":
-            for name, value in self.items():
+	    keys = self.keys()
+	    keys.sort()
+            for name in keys:
                 # The CAUSE property has already been displayed."
                 if name == Result.CAUSE:
                     continue
                 # Add an item to the list
-                text = text + "\n'%s' -- %s\n" % (name, value)
+                text = text + "\n'%s' -- %s\n" % (name, self[name])
 
         return text
 

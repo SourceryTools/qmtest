@@ -17,4 +17,9 @@
 
 <class kind="resource">temporary.TempDirectoryResource</class>
 
+<!-- Target classes -->
+
+<class kind="target">thread_target.ThreadTarget</class>
+<class kind="target">rsh_target.RSHTarget</class>
+
 </class-directory>

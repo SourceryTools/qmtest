@@ -38,5 +38,7 @@ DOCBOOKMAIN	= manual.xml
 
 include $(TOPDIR)/standard.mk
 
+all:: doc-all
+
 clean::
 	rm -rf html print

@@ -12,9 +12,7 @@
 
       http://www.python.org/sigs/distutils-sig/download.html
 
-    This requirement will be obviated when QM updates to a newer version
-    of Python.
-
+    You must use GNU Make to build QM.
 
 ------------------------------------------------------------------------
 

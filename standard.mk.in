@@ -64,7 +64,8 @@ DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
 PYTHONBIN	= @PYTHON@
-PYTHON		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) $(PYTHONBIN)
+PYTHON 		= env PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
+		  $(PYTHONBIN) -O
 PYTHON_VERSION	= @PYTHON_VERSION@
 PYTHON_PREFIX   = @PYTHON_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -124,6 +125,10 @@ TESTFLAGS	= -v -k
 
 # The install program.
 INSTALL		= @INSTALL@
+INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_DIR     = $(INSTALL) -d
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT  = @INSTALL_SCRIPT@
 
 # Places to install things.
 prefix		= @prefix@
@@ -142,22 +147,18 @@ INSTALLDOCDIR   = @datadir@/doc/qm
 # Rules
 ########################################################################
 
-NULLSTRING	:=
-SPACE		:= $(NULLSTRING) # Leave this comment here.
+ifeq ($(PYTHON_PLATFORM),win32)
+SCRIPT_EXT = .bat
+else
+SCRIPT_EXT =
+endif
 
-all:		doc subdirs
+all::		subdirs
 
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
 	@cd $@ && make
-
-doc:		
-ifneq ($(SUBDIRS),)
-	@for subdir in $(SUBDIRS); do \
-          (cd $${subdir} && make $@); \
-        done
-endif
 
 # Generate documentation from Python sources using HappyDoc.
 ifneq ($(PYTHONDOCDIRS),)
@@ -170,7 +171,7 @@ endif
 # Generate html and print documentation from DocBook source, if it was
 # specified.
 ifeq ($(DOCUMENTATION),yes)
-  doc:		doc-html doc-print
+  doc-all:	doc-html doc-print
 
   ifneq ($(DOCBOOKMAIN),)
     doc-html:	docbook-html
@@ -245,7 +246,8 @@ ifeq ($(DOCUMENTATION),yes)
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) ; \
 	    pdfjadetex $(PRINTTEX) 
-
+else
+  doc-all:
 endif
 
 clean::

@@ -51,7 +51,7 @@
     </screen>
    Of course, If you installed &qmtest; in another directory,
    substitute that directory for <filename>/usr/local</filename> or
-   <filename>c:\progra~1</filename> in the commands above.</para>
+   <filename>c:\progra~1\qm</filename> in the commands above.</para>
 
    <para>Then, enter the new directory you have created.  On both UNIX
    and Windows systems, you can do this with this command:
@@ -106,7 +106,9 @@ QMTest running at http://127.0.0.1:1158/test/dir
    browser window does not open, you will have to manually enter the
    URL that &qmtest; printed out
    (<literal>http://127.0.0.1:1158/test/dir</literal> in the example
-   above) into your browser.</para>
+   above) into your browser.  Alterantively, you can edit your <link
+   linkend="chap-common-manual">QM configuration file</link> to tell
+   QM how to invoke your browser and then start the GUI again.</para>
 
    <para>The page you see in your browser shows the contents of the
    test database.  You can see that there are three tests in the
@@ -176,7 +178,8 @@ QMTest running at http://127.0.0.1:1158/test/dir
    you used when you told &qmtest; when you asked it to save your
    results earlier.</para>
    
-   <para>Then, &qmtest; will show you a list of all your tests,
+   <para>Then, &qmtest; will display a page allowing you to edit the
+   expectations.  You will see a list of the tests in the database,
    together with their current expectations.  You can see that
    <filename>exec1</filename> is expected to fail; the other tests are
    expected to pass.  Now, rerun your tests by choosing <guibutton>All
@@ -324,10 +327,10 @@ QMTest running at http://127.0.0.1:1158/test/dir
    For example, in the command:
 
    <screen>
-    &prompt;<userinput>qmtest -D tdb run -f full exec1</userinput>
+    &prompt;<userinput>qmtest -D . run -f full exec1</userinput>
    </screen>
 
-   the <option>-D tdb</option> option is a general &qmtest-cmd;
+   the <option>-D .</option> option is a general &qmtest-cmd;
    option, <command>run</command> is the &qmtest; command, the
    <option>-f full</option> applies to the <command>run</command>
    command, and <filename>exec1</filename> is an argument to the run
@@ -343,36 +346,29 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <command>qmtest <replaceable>command</replaceable>
    &dashdash;help</command>.</para>
 
-   <para>You can always tell &qmtest; which test database to use
-   either by specifying the <option>-D</option> option and providing
-   the path to the test database, or by setting the environment
-   variable <envar>QMTEST_DB_PATH</envar> to the test database
-   path.  If you do not specify a test database, &qmtest; assumes that
-   you want to use the current directory as the test database.</para>
-
-   <para>If you're using the Bourne shell under UNIX, you can use
-   these commands To set the <envar>QMTEST_DB_PATH</envar> environment
-   variable:
-   <screen>
-&prompt<userinput>QMTEST_DB_PATH=tdb</userinput>
-&prompt<userinput>export QMTEST_DB_PATH</userinput>
-   </screen>
-   If you're using the C shell, use this command:
-   <screen>
-&prompt<userinput>setenv QMTEST_DB_PATH tdb</userinput>
-   </screen>
-   On Windows, the command is:
-   <screen>
-&prompt<userinput>set QMTEST_DB_PATH tdb</userinput>
-   </screen>
-   If you are using another shell, consult your shell's manual for
-   instructions about how to set an environment variable.</para>
+   <para>By this point, you have modified the test database using the
+   GUI and have fixed the failing test.  Recreate the original
+   database now by removing and recreating the <filename>tdb</filename>
+   directory.  On a UNIX system use these commands:
+    <screen>
+     &prompt;<userinput>cd ..</userinput>
+     &prompt;<userinput>rm -rf tdb</userinput>
+     &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb tdb</userinput>
+     &prompt;<userinput>cd tdb</userinput>
+    </screen>
+   On a Windows system, use these commands instead:
+    <screen>
+     &prompt;<userinput>cd ..</userinput>
+     &prompt;<userinput>rmdir /s tdb</userinput>
+     &prompt;<userinput>xcopy c:\progra~1\qm\share\qm\tutorial\test\tdb tdb\ /s</userinput>
+     &prompt;<userinput>cd tdb</userinput>
+    </screen>
+   </para>
 
    <para>The command for running tests is <command>&qmtest-cmd;
    run</command>.  Assuming you made a copy of the example test
    database as described in the previous section, execute the
-   following command to run all the tests in the database, from the
-   directory containing the <filename>tdb</filename> directory:</para>
+   following command to run all the tests in the database:</para>
 
    <screen>
 &prompt;<userinput>qmtest run</userinput>

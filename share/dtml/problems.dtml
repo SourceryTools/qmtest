@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xhtmlns="http://www.w3.org/1999/xhtml">
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader('Solutions to Problems with QM Tools')">
  <dtml-var expr="GenerateStartBody()">
 
@@ -41,12 +38,12 @@
    popup_qm_bug_system();">QM Tools bug tracking system</a>.  You can
    also browse the bug tracking system to check whether someone else has
    reported the problem you are encountering.</p>
-   <script language="JavaScript">
+   <dtml-var expr="GenerateStartScript()">
    function popup_qm_bug_system()
    {
      window.open("<dtml-var name="qm_bug_system_url">", "qm_bug_system");
    }
-   </script>
+   <dtml-var expr="GenerateEndScript()">
   </li>
  </ul>
 
