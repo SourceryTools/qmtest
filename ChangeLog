@@ -1,5 +1,33 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* instally.py (packages): Remove gadfly.
+	* gadfly: Remove all files in this directory.
+	* Makefile.in (install): Do not install Gadfly.
+
+	Revert these changes:
+
+	2001-11-16  Mark Mitchell  <mark@codesourcery.com>
+	
+	* Makefile.in (QM_SRPM): Remove target.
+	* Makefile.in (QM_TAR_GZ): Modify logic.
+
+	2001-11-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* Makefile.in (QM_MAJOR_VER): New variable.
+	(QM_MINOR_VER): Likewise.
+	(QM_VERSION): Likewise.
+	(QM_TAR_GZ): Likewise.
+	(CVS_SERVER): Likewise.
+	(CVS_REPOSITORY): Likewise.
+	(CVS): Likewise.
+	(RPM_ARCH): Likewise.
+	(RPM_BASE): Likewise.
+	(QM_RPM): Likewise.
+	(QM_SRPM): Likewise.
+	(dist): New target.
+	(rpm): Likewise.
+	(release): Likewise.
+
 	* Makefile.in (QM_SRPM): Remove target.
 	* qm.spec.in: Make relocatable, use build root.
 

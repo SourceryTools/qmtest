@@ -54,7 +54,6 @@ setup_path_script_template_path = "qm/setup_path.py.in"
 # Package directories containing Python files that need to be installed
 # in the lib area.
 packages = [
-    "gadfly",
     "zope-dtml",
     "sgmlop",
     "xmlrpc",
