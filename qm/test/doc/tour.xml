@@ -114,17 +114,16 @@ QMTest running at http://127.0.0.1:1158/test/dir
    linkend="chap-common-manual">QM configuration file</link> to tell
    QM how to invoke your browser and then start the GUI again.</para>
 
+   <para>As you can see, &qmtest; creates a graphical user interface
+   using your web browser.</para>
+
    <para>The page you see in your browser shows the contents of the
    test database.  You can see that there are three tests in the
    database, named <filename>exec0</filename>, <filename>exec1</filename>,
-   and <filename>exec2</filename>.  You can always click on the
-   <guilabel>Home</guilabel> link in the upper-right corner to
-   return to this page.</para>
+   and <filename>exec2</filename>.  You can always click on 
+   <guilabel>Directory</guilabel> under &qmtest's
+   <guilabel>View</guilabel> menu to see this display.</para>
      
-   <para>&qmtest; creates a traditional graphical user interface using
-   your web browser.  The black bar across the top of the browser
-   window is &qmtest;'s menu bar.</para>
-
   </section><!-- sec-testtut-gui -->
 
   <section id="sec-testtut-running-tests">
@@ -293,8 +292,8 @@ QMTest running at http://127.0.0.1:1158/test/dir
    that the arguments are different.  The arguments are different
    because you're creating a different kind of test.  Enter
    <literal>echo</literal> in the <guilabel>Program</guilabel> field.
-   Click on the <guibutton>Add</guibutton> button to add a program
-   argument and enter <literal>test</literal> in the popup dialog box.
+   Click on the <guibutton>Add Another</guibutton> button to add a program
+   argument and enter <literal>test</literal> in the box that appears.
    At this point, you've told qmtest that you want to run the command
    <command>echo test</command>.  This command will produce an output
    (the word <literal>test</literal>) as output, so find the
@@ -382,24 +381,31 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <screen><computeroutput><![CDATA[
 --- TEST RESULTS -------------------------------------------------------------
 
-  exec2                                                          : PASS    
+  exec0                                         : PASS    
 
-  exec0                                                          : PASS    
+  exec1                                         : FAIL    
+    Expression evaluates to false.
 
-  exec1                                                          : FAIL    
-    Expression evaluates to false. 
+    ExecTest.expr:
+      x + x == 5
+
+    ExecTest.value:
+      0
+
+  exec2                                         : PASS    
 
 
 --- STATISTICS ---------------------------------------------------------------
 
        3        tests total
-       2 ( 67%) tests PASS
        1 ( 33%) tests FAIL
+       2 ( 67%) tests PASS
 
 --- TESTS THAT DID NOT PASS --------------------------------------------------
 
-  exec1                                                          : FAIL    
-    Expression evaluates to false. 
+  exec1                                         : FAIL    
+    Expression evaluates to false.
+
 ]]></computeroutput></screen>
 
    <para>&qmtest; shows you the result of the tests as they execute.
@@ -442,10 +448,18 @@ QMTest running at http://127.0.0.1:1158/test/dir
 <computeroutput><![CDATA[
 --- TEST RESULTS -------------------------------------------------------------
 
-  exec2                                         : PASS
-  exec0                                         : PASS
-  exec1                                         : XFAIL
-    Expression evaluates to false. 
+  exec0                                         : PASS    
+
+  exec1                                         : XFAIL   
+    Expression evaluates to false.
+
+    ExecTest.expr:
+      x + x == 5
+
+    ExecTest.value:
+      0
+
+  exec2                                         : PASS    
 
 
 --- STATISTICS ---------------------------------------------------------------
@@ -456,6 +470,7 @@ QMTest running at http://127.0.0.1:1158/test/dir
 --- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
 
   None.
+
 ]]></computeroutput></screen>
 
    Note that &qmtest; indicates that there were no tests with
@@ -488,31 +503,30 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <screen><computeroutput><![CDATA[
 --- TEST RESULTS -------------------------------------------------------------
 
-  exec2                                                          : PASS    
-  exec0                                                          : PASS    
-  exec1                                                          : FAIL    
-    Expression evaluates to false. 
+  exec0                                         : PASS    
 
-
---- STATISTICS ---------------------------------------------------------------
-
-       3        tests total
-       2 ( 67%) tests PASS
-       1 ( 33%) tests FAIL
-
---- TESTS THAT DID NOT PASS --------------------------------------------------
-
-  exec1                                                          : FAIL    
-    Expression evaluates to false. 
+  exec1                                         : FAIL    
+    Expression evaluates to false.
 
     ExecTest.expr:
       x + x == 5
 
     ExecTest.value:
-      0 
+      0
 
-    qmtest.target:
-      local 
+  exec2                                         : PASS    
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+       1 ( 33%) tests FAIL
+       2 ( 67%) tests PASS
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
 
 ]]></computeroutput></screen>
 

@@ -1,5 +1,9 @@
 2002-12-01  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/doc/tour.xml: Update for QM 2.0.
+
+2002-12-01  Mark Mitchell  <mark@codesourcery.com>
+
 	* qm/fields.py (SetPopupPage): Remove.
 	(TupleField.GetValueFromDomNode): Fix typo.
 	(TupleField.MakeDomNodeForValue): Likewise.

@@ -79,7 +79,7 @@ class TextResultStream(ResultStream):
             self.__resource_results.append(result)
 
 	# Display the result.
-	self._DisplayResult(result, "brief")
+	self._DisplayResult(result, self.__format)
 
         # Display annotations associated with the test.
         if (self.__format == "full"
