@@ -220,6 +220,7 @@
 
   <!ENTITY D-kit '<link linkend="D-kit">kit</link>'>
   <!ENTITY D-kits '<link linkend="D-kit">kits</link>'>
+  <!ENTITY D-Kits '<link linkend="D-kit">Kits</link>'>
   <!ENTITY D-Kits- 'Kits'>
 
   <!ENTITY D-packdev '<link linkend="D-packdev">package developer</link>'>

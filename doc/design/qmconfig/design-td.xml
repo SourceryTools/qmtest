@@ -71,16 +71,137 @@
  &D-Kits; tailored using bootstrap scripts will use a small C
  program<footnote> <para>Why C?  We reason that the only time we
  <emphasis>must</emphasis> run a bootstrap script is to tailor
- &Q-python; or one of its prerequisites, and these are programmed in C
+ &Qpython; or one of its prerequisites, and these are programmed in C
  &mdash; so C must be available, or the exercise is moot.</para>
   </footnote>
  to access the &M-TD; and adapt files, so we expect these to
  <emphasis>only</emphasis> support the &Q-XML; local file
  format.</para>
 
- <para><programlisting>
-<![CDATA[
-class TailorDB:
+ <para>The module <classname role="module">tailor_sym</classname>
+ contains the definitions for symbols and symbol types:
+ <programlisting>
+ <![CDATA[ class SymbolType:
+
+    """Base class for symbol types."""
+
+    def IsValid(self, val):
+
+        """Test if a value is valid for this type.
+
+        'val' -- Value to be tested.
+
+        returns -- 1 if 'val' is valid for this type; 0 otherwise."""
+
+
+class Symbol:
+
+    """Class representing symbols."""
+
+    def __init__(self, symbol_name, symbol_type, def_val,
+                 short_doc, long_doc):
+
+        """Define a new symbol.
+
+        'symbol_name' -- Name of the new symbol.
+
+        'symbol_type' -- Type of the new symbol.  $$$ What are our
+        types?  Need to be able to include enumerations!
+
+        'def_val' -- Default value for this symbol.
+
+        $$$ Do we want some sort of substitution to take place?  If
+        so, then ideally it is Pythonic.  But some of the most useful
+        substitutions would take place at tailoring time, making it
+        necessary to have Python available then.  Other possibilities
+        are a shell-like format, or different versions for different
+        probe platforms.
+
+        'short_doc' -- Brief description for this symbol.
+
+        'long_doc' -- Longer description for this symbol."""
+
+
+    def AddDescription(self, lang, short_doc, long_doc=None):
+
+        """Add a description for this symbol in some natural language.
+
+        'lang' -- Designator for a natural language.
+
+        'short_doc' -- Short documentation string for this symbol,
+        presumably written in the natural language indicated by
+        'lang'.  (The 'short_doc' string is used when the symbol was
+        created is a fallback description.)
+
+        'long_doc' -- Longer documentation string for the symbol,
+        again presumably written in the natural language indicated by
+        'lang'.  If 'long_doc' is None, then there is no longer
+        documentation string."""
+
+
+    def SetProbeSource(self, probe_name, probe_dp={}):
+
+        """Indicate this symbol is the result of a probe.
+
+        'probe_name' -- Name of the probe being specified as the
+        source.
+
+        'probe_dp' -- Distinguished parameters for 'probe_name'.  This
+        is a mapping of parameter names to values.
+
+        returns -- None"""
+
+
+    def GetName(self):
+
+        """Get the name of this symbol.
+
+        returns -- The name of the symbol."""
+
+
+    def GetType(self):
+
+        """Get the type of this symbol.
+
+        returns -- The type of this symbol."""
+
+
+    def GetDefault(self):
+
+        """Get the default value for this symbol.
+
+        returns -- The default value for this symbol, or None if there
+        is no default."""
+
+
+    def GetShortDescription(self, lang=None):
+
+        """Get the short documentation string for this symbol for the
+        specified language.  If not found, return the fallback short
+        documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The short documentation string."""
+
+
+    def GetLongDescription(self, lang=None):
+
+        """Get the long documentation string for this symbol for the
+        specified language.  If not found, return the fallback long
+        documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The long documentation string."""
+]]></programlisting></para>
+
+   <para>The module <classname role="module">tailor_db</classname>
+   contains the class definitions for the tailoring database
+   itself: <programlisting>
+<![CDATA[ class TailorDB:
 
     """Base class for tailoring databases.  Instances of these classes
     represent tailoring databases.  Project may be tailored using a
