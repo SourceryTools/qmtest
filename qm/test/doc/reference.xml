@@ -159,12 +159,19 @@
 
    <para>A <firstterm id="def-context">context</firstterm> gives users
    a way of conveying this kind of information to tests.  The context
-   is a set of key/value pairs.  The keys and values are always
-   strings.  In general, all tests in a given use of &qmtest; will
-   have the same context.  However, when a resource is set up, it may
-   place additional information in the context of those tests that
-   depend upon it; the tests can use this information to locate the
-   resource.</para>
+   is a set of key/value pairs.  The keys are always strings.  The
+   values of all context properties provided by the user are strings.
+   In general, all tests in a given use of &qmtest; will have the same
+   context.  However, when a resource is set up, it may place
+   additional information in the context of those tests that depend
+   upon it; the tests can use this information to locate the resource.
+   The values inserted by the resource may have any types.</para>
+
+   <para>All context properties whose names begin with
+   &quot;<literal>qmtest.</literal>&quot; are reserved for use by
+   &qmtest;.  The values inserted by &qmtest; may have any type.  Test
+   and resource classes should not depend on the presence or absence
+   of these properites.</para>
 
   </section> <!-- sec-context -->
 
@@ -1479,10 +1486,13 @@
        "<replaceable>VARIABLE</replaceable>=<replaceable>VALUE</replaceable>".</para>
 
        <para><classname>command.ExecTest</classname> adds additional
-       environment variables automatically.  Each context property is
+       environment variables automatically.</para>
+
+       <para>In addition, every context property whose key does not
+       contain a &quot;.&quot; and whose value is a string is
        accessible as an environment variable; the name of the
        environment variable is the name of the context property,
-       prefixed with "<envar>QMV_</envar>".</para>
+       prefixed with &quot;<envar>QMV_</envar>&quot;.</para>
       </glossdef>
      </glossentry>
 

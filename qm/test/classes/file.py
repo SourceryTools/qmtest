@@ -213,15 +213,6 @@ class FileContentsTest(Test):
         ]
 
 
-    def __init__(self, arguments):
-
-        Test.__init__(self, arguments)
-        
-        # Might as well perform substitutions on the expected contents here.
-        self.expected_contents = \
-          self.__PerformSubstitutions(self.expected_contents)
-
-
     def Run(self, context, result):
         # Extract the path to the file we're testing.
         try:
@@ -240,6 +231,8 @@ class FileContentsTest(Test):
                         annotations={ "FileContentsTest.error"
                                       : str(exception) })
         # Perform substitutions on the file contents.
+        self.expected_contents = \
+          self.__PerformSubstitutions(self.expected_contents)
         contents = self.__PerformSubstitutions(contents)
         # Compare the contents to the expected contents.
         if contents != self.expected_contents:

@@ -23,10 +23,11 @@ import os
 import qm.common
 import qm.fields
 import qm.test.base
-from   qm.test.result import *
-from   qm.test.test import *
+from   qm.test.test import Test
+from   qm.test.result import Result
 import string
 import sys
+import types
 from   threading import *
 
 ########################################################################
@@ -171,8 +172,9 @@ class ExecTestBase(Test):
         environment = os.environ.copy()
         # Copy context variables into the environment.
         for key, value in context.items():
-            name = "QMV_" + key
-            environment[name] = value
+            if "." not in key and type(value) == types.StringType:
+                name = "QMV_" + key
+                environment[name] = value
         # Extract additional environment variable assignments from the
         # 'Environment' field.
         for assignment in self.environment:

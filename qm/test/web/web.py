@@ -1612,7 +1612,7 @@ class QMTestServer(qm.web.WebServer):
         # Extract the suite ID of the new suite from the request.
         suite_id = request["id"]
         # Check that the ID is valid.
-        if not database.IsValidLabel(suite_id):
+        if not database.IsValidLabel(suite_id, is_component = 0):
             field_errors["_id"] = qm.error("invalid id", id=suite_id)
         # Check that the ID doesn't already exist.
         elif database.HasSuite(suite_id):
@@ -1926,7 +1926,7 @@ class QMTestServer(qm.web.WebServer):
             # First perform some validation.
             field_errors = {}
             # Check that the ID is valid.
-            if not database.IsValidLabel(item_id):
+            if not database.IsValidLabel(item_id, is_component = 0):
                 field_errors["_id"] = qm.error("invalid id", id=item_id)
             else:
                 # Check that the ID doesn't already exist.

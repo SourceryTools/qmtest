@@ -14,17 +14,17 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import qm
-import qm.extension
+import qm.test.runnable
 
 ########################################################################
 # classes
 ########################################################################
 
-class Resource(qm.extension.Extension):
+class Resource(qm.test.runnable.Runnable):
     """A 'Resource' sets up before a test and cleans up afterwards.
 
     Some tests take a lot of work to set up.  For example, a database
@@ -70,17 +70,6 @@ class Resource(qm.extension.Extension):
     exception that is not caught within the method itself, QMTest will
     catch the exception and continue processing."""
     
-    arguments = [
-        qm.fields.TextField(
-            name="id",
-            title="Resource Name",
-            description="""The name of this resource.
-
-            A label naming the resource.""",
-            computed="true",
-            default_value=""),
-        ]
-
     kind = "resource"
     
     def SetUp(self, context, result):

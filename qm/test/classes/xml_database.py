@@ -89,17 +89,10 @@ class XMLDatabase(ExtensionDatabase):
 
     def WriteTest(self, test):
 
-        # Generate the document and document type for XML test files.
-        document = qm.xmlutil.create_dom_document(
-            public_id=qm.test.base.dtds["test"],
-            dtd_file_name="test.dtd",
-            document_element_tag="test"
-            )
-        # Construct the test element node.
-        document.documentElement \
-            = qm.extension.make_dom_element(test.GetClass(),
-                                            test.GetArguments(),
-                                            document)
+        # Generate the document.
+        document = \
+            qm.extension.make_dom_document(test.GetClass(),
+                                           test.GetArguments())
         # Find the file system path for the test file.
         test_path = self.GetTestPath(test.GetId())
         # If the file is in a new subdirectory, create it.
@@ -125,17 +118,10 @@ class XMLDatabase(ExtensionDatabase):
 
     def WriteResource(self, resource):
 
-        # Generate the document and document type for XML resource files.
-        document = qm.xmlutil.create_dom_document(
-            public_id=qm.test.base.dtds["resource"],
-            dtd_file_name="resource.dtd",
-            document_element_tag="resource"
-            )
-        # Construct the resource element node.
-        document.documentElement \
-            = qm.extension.make_dom_element(resource.GetClass(),
-                                            resource.GetArguments(),
-                                            document)
+        # Generate the document.
+        document = \
+            qm.extension.make_dom_document(resource.GetClass(),
+                                           resource.GetArguments())
         # Find the file system path for the resource file.
         resource_path = self.GetResourcePath(resource.GetId())
         # If the file is in a new subdirectory, create it.
@@ -218,7 +204,7 @@ class XMLDatabase(ExtensionDatabase):
                (document.documentElement,
                 lambda n : qm.test.base.get_test_class(n, self)))
         test_class_name = qm.extension.get_extension_class_name(test_class)
-        # For backwards compatibility, look for "test" elements.
+        # For backwards compatibility, look for "prerequisite" elements.
         for p in document.documentElement.getElementsByTagName("prerequisite"):
             if not arguments.has_key("prerequisites"):
                 arguments["prerequisites"] = []

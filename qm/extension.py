@@ -227,7 +227,7 @@ def validate_arguments(extension_class, arguments):
     return converted_arguments
 
 
-def make_dom_element(extension_class, arguments, document):
+def make_dom_element(extension_class, arguments, document, element = None):
     """Create a DOM node for an instance of 'extension_class'.
 
     'extension_class' -- A class derived from 'Extension'.
@@ -237,6 +237,10 @@ def make_dom_element(extension_class, arguments, document):
     'document' -- The DOM document that will contain the new
     element.
 
+    'element' -- If not 'None' the extension element to which items
+    will be added.  Otherwise, a new element will be created by this
+    function.
+
     returns -- A new DOM element corresponding to an instance of the
     extension class.  The caller is responsible for attaching it to
     the 'document'."""
@@ -244,8 +248,11 @@ def make_dom_element(extension_class, arguments, document):
     # Get the dictionary of 'Field's for this extension class.
     field_dictionary = get_class_arguments_as_dictionary(extension_class)
 
-    # Create the target element.
-    extension_element = document.createElement("extension")
+    # Create the element.
+    if element:
+        extension_element = element
+    else:
+        extension_element = document.createElement("extension")
     # Create an attribute describing the kind of extension.
     extension_element.setAttribute("kind", extension_class.kind)
     # Create an ttribute naming the extension class.
@@ -269,6 +276,27 @@ def make_dom_element(extension_class, arguments, document):
 
     return extension_element
 
+
+def make_dom_document(extension_class, arguments):
+    """Create a DOM document for an instance of 'extension_class'.
+
+    'extension_class' -- A class derived from 'Extension'.
+
+    'arguments' -- The arguments to the extension class.
+
+    returns -- A new DOM document corresponding to an instance of the
+    extension class."""
+
+    document = qm.xmlutil.create_dom_document(
+            public_id=qm.test.base.dtds["extension"],
+            dtd_file_name="extension",
+            document_element_tag="extension"
+            )
+    make_dom_element(extension_class, arguments, document,
+                     document.documentElement)
+    return document
+    
+        
 
 def parse_dom_element(element, class_loader):
     """Parse a DOM node representing an instance of 'Extension'.

@@ -1,3 +1,34 @@
+2002-10-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (make_dom_element): Add element parameter.
+	(make_dom_document): New method.
+	* qm/test/base.py (dtds): Update.
+	* qm/test/database.py: Import Runnable.
+	(ItemDescriptor.GetItem): Pass along the test database to the
+	newly created item.
+	* qm/test/resource.py (Resource): Derive from Runnable.
+	(Resource.arguments): Remove.
+	* qm/test/result.py: Fix formatting.
+	* qm/test/runnable.py (Runnable): New file.
+	* qm/test/test.py (Test): Derive from Runnable.
+	(Test.arguments): Remove.
+	(Test.GetId): Remove.
+	* qm/test/classes/command.py (ExecTestBase.GetEnvironment): Be
+	careful about what kinds of context variables are propagated into
+	the environment.
+	* qm/test/classes/file.py (FileContentsTest): Simplify.
+	* qm/test/clasess/python.py (ExecTest): Likewise.
+	* qm/test/classes/xml_database.py (WriteTest): Just use
+	make_dom_document.
+	(WriteResource): Likewise.
+	* qm/test/doc/reference.xml: Update context documentation.
+	* qm/test/web/web.py (QMTestServer): Adjust checking of new test
+	names.
+	* tests/xmldb/QMTest/.cvsignore: New file.
+	* tests/xmldb/QMTest/classes.qmc: Likewise.
+	* tests/xmldb/QMTest/test_interface.py: Likewise.
+	* tests/xmldb/api.qms/test.qms/test_interface.qmt: Likewise.
+
 2002-10-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (check-threads): Create the target file on the

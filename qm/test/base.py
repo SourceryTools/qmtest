@@ -41,6 +41,7 @@ import types
 dtds = {
     "class-directory":
                     "-//Software Carpentry//QMTest Class Directory V0.1//EN",
+    "extension":    "-//Software Carpentry//QMTest Extension V0.1//EN",
     "tdb-configuration":
                     "-//Software Carpentry//QMTest TDB Configuration V0.1//EN",
     "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",

@@ -24,6 +24,7 @@ import qm.extension
 import qm.fields
 from   qm.label import *
 from   qm.test.base import *
+from   qm.test.runnable import Runnable
 
 ########################################################################
 # Classes
@@ -131,10 +132,10 @@ class ItemDescriptor:
         returns -- An instance of the class returned by 'GetClass'."""
 
         if not self.__item:
-            arguments = self.GetArguments().copy()
-            arguments["id"] = self.GetId()
-            self.__item = self.GetClass()(arguments)
-
+            extras = { Runnable.EXTRA_ID : self.GetId(),
+                       Runnable.EXTRA_DATABASE : self.GetDatabase() }
+            self.__item = self.GetClass()(self.GetArguments(), **extras)
+            
         return self.__item
     
         

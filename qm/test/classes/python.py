@@ -72,11 +72,9 @@ class ExecTest(Test):
         ]
 
 
-    def __init__(self, arguments):
+    def Run(self, context, result):
 
-        Test.__init__(self, arguments)
-        
-        # Store stuff for later.
+        # Adjust the source code.
         if self.source is None:
             self.source = ""
         else:
@@ -85,9 +83,6 @@ class ExecTest(Test):
             # missing. 
             if self.source[-1] != "\n":
                 self.source = self.source + "\n" 
-
-
-    def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         # Execute the source code.
         try:
@@ -153,16 +148,12 @@ class BaseExceptionTest(Test):
         ]
 
 
-    def __init__(self, arguments):
+    def Run(self, context, result):
 
-        Test.__init__(self, arguments)
-        
-        # Store stuff for later.
+        # Adjust the exception argument.
         if string.strip(self.exception_argument) != "":
             self.exception_argument = eval(self.exception_argument, {}, {})
 
-
-    def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         try:
             # Execute the test code.

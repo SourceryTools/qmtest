@@ -20,9 +20,9 @@
 from   __future__ import nested_scopes
 import qm
 import qm.fields
-from   qm.test.cmdline import *
+import qm.test.cmdline
 import qm.test.result
-import qm.extension
+import qm.test.runnable
 
 ########################################################################
 # Classes
@@ -53,7 +53,7 @@ class TargetGroupField(qm.fields.TextField):
         return desc
 
 
-class Test(qm.extension.Extension):
+class Test(qm.test.runnable.Runnable):
     """A 'Test' is run to check for correct behavior.
 
     A 'Test' performs some check on the system being tested, and
@@ -110,14 +110,6 @@ class Test(qm.extension.Extension):
 
 
     arguments = [
-        qm.fields.TextField(
-            name="id",
-            title="Test Name",
-            description="""The name of this test.
-
-            A label naming the test.""",
-            computed="true",
-            default_value=""),
         TargetGroupField(
             name="target_group",
             title="Target Group Pattern",
@@ -194,13 +186,6 @@ class Test(qm.extension.Extension):
         return self.target_group
 
 
-    def GetId(self):
-        """Returns the name of this test.
-
-        returns -- A string giving the label naming this test."""
-
-        return self.id
-    
 ########################################################################
 # Local Variables:
 # mode: python
