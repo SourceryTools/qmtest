@@ -81,6 +81,12 @@ The user name or password you entered is invalid.  Please log in again.
 The property '%(error)s' is invalid.  Use the form 'NAME=VALUE' to
 specify properties.  
 
+@ invalid set value
+The set value provided could not be parsed.  The invalid part of the
+value is "%(start)s".
+
+A valid set value has the form "[ 'value1', 'value2', ... ]".
+
 @ missing command
 Specify a command.
 

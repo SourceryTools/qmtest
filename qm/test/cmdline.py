@@ -276,7 +276,7 @@ class QMTest:
         "a",
         "attribute",
         "KEY=VALUE",
-        "Set a database attribute."
+        "Set an attribute of the extension class."
         )
 
     extension_kind_option_spec = (

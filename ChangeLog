@@ -1,5 +1,17 @@
 2003-09-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/fields.py (cStringIO): Do not import.
+	(StringIO): Import.
+	(tokenize): Import.
+	(Field.FormatValueAsText): Use StringIO.
+	(Field.ParseTextValue): Improve documentation.
+	(SetField.FormatValueAsText): Make output match format expected 
+	by ...
+	(SetField.ParseTextField): ... this new method.
+	* qm/test/cmdline.py (QMTest.attribute_option_spec): Generalize
+	help text.
+	* share/diagnostics/common.txt (invalid set value): New message.
+
 	* NEWS: Mention correction of critical resource defect.
 
 2003-09-05  Mark Mitchell  <mark@codesourcery.com>

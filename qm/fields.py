@@ -42,16 +42,17 @@ of test names."""
 
 import attachment
 import common
-import cStringIO
 import formatter
 import htmllib
 import os
 import re
 import qm
 import string
+import StringIO
 import structured_text
 import sys
 import time
+import tokenize
 import types
 import urllib
 import web
@@ -227,11 +228,11 @@ class Field(object):
         returns -- A plain-text string representing 'value'."""
 
         # Create a file to hold the result.
-        text_file = cStringIO.StringIO()
+        text_file = StringIO.StringIO()
         # Format the field as HTML.
-        html_file = cStringIO.StringIO(self.FormatValueAsHtml(None,
-                                                              value,
-                                                              "brief"))
+        html_file = StringIO.StringIO(self.FormatValueAsHtml(None,
+                                                             value,
+                                                             "brief"))
 
         # Turn the HTML into plain text.
         parser = htmllib.HTMLParser(formatter.AbstractFormatter
@@ -309,7 +310,9 @@ class Field(object):
 
         'value' -- A string representing the value.
 
-        returns -- The corresponding field value."""
+        returns -- The corresponding field value.  The value returned
+        should be processed by 'Validate' to ensure that it is valid
+        before it is returned."""
 
         raise NotImplemented
     
@@ -870,8 +873,8 @@ class SetField(Field):
         formatted_items = []
         for item in value:
             formatted_item = contained_field.FormatValueAsText(item, columns)
-            formatted_items.append(formatted_item)
-        result = string.join(formatted_items, ", ")
+            formatted_items.append(repr(formatted_item))
+        result = "[ " + string.join(formatted_items, ", ") + " ]"
         return qm.common.wrap_lines(result, columns)
 
 
@@ -981,6 +984,59 @@ class SetField(Field):
                    value)
 
 
+    def ParseTextValue(self, value):
+
+        def invalid(tok):
+            """Raise an exception indicating a problem with 'value'.
+            
+            'tok' -- A token indicating the position of the problem.
+
+            This function does not return; instead, it raises an
+            appropriate exception."""
+
+            raise qm.QMException, \
+                  qm.error("invalid set value", start = value[tok[2][1]:])
+            
+        # Use the Python parser to handle the elements of the set.
+        s = StringIO.StringIO(value)
+        g = tokenize.generate_tokens(s.readline)
+        
+        # Read the opening square bracket.
+        tok = g.next()
+        if tok[0] != tokenize.OP or tok[1] != "[":
+            invalid(tok)
+
+        # There are no elements yet.
+        elements = []
+
+        # Keep going until we find the closing bracket.
+        while 1:
+            # If we've reached the closing bracket, the set is
+            # complete.
+            tok = g.next()
+            if tok[0] == tokenize.OP and tok[1] == "]":
+                break
+            # If this is not the first element of the set, there should
+            # be a comma before the next element.
+            if elements:
+                if tok[0] != tokenize.OP or tok[1] != ",":
+                    invalid(tok)
+                tok = g.next()
+            # The next token should be a string constant.
+            if tok[0] != tokenize.STRING:
+                invalid(tok)
+            # Parse the string constant.
+            v = eval(tok[1])
+            elements.append(self.GetContainedField().ParseTextValue(v))
+
+        # There should not be any tokens left over.
+        tok = g.next()
+        if not tokenize.ISEOF(tok[0]):
+            invalid(tok)
+
+        return self.Validate(elements)
+        
+                       
     def ParseFormValue(self, request, name, attachment_store):
 
         values = []
