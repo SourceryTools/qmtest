@@ -41,17 +41,28 @@
     string values (the <literal>"contents"</literal> attribute of a
     set field, described <link
     linkend="sec-issuefieldset">below</link> is a special-case
-    exception).  For boolean attributes, the value is either
+    exception).  An attribute applies to a field of an issue classe,
+    not to the issues in that issue class or the issues' field values.
+    A single field of an issue class may have values for several
+    attributes.  For boolean attributes, the value is either
     <literal>"true"</literal> or <literal>"false"</literal>.</para>
+
+    <para>Modules written to extend &qmtest; may define additional
+    attributes, with which to attach hints or other information to
+    issue fields.</para>
 
     <para>Each field has a an attribute called
     <literal>"name"</literal>, which contains the name of the field.
     Other attributes are used for various properties of other field
     types.  Some attributes are used as hints, providing information
     to the &qmtrack; user interface implementations and database
-    implemnetations about how the field value should be displayed and
+    implmenetations about how the field value should be displayed and
     stored, respectively.  User extensions to &qmtrack; may define and
     use additional attributes as well.</para>
+
+    <para>The "read-only" attribute may be defined for any field.  If
+    defined to a true value, a user may not change the value of that
+    field for any issue after that issue has been created.</para>
 
    </section>
 
@@ -255,11 +266,26 @@ class IssueFieldEnumeration(IssueField):
 
    </section>
 
+   <section>
+    <title>Field type extensions</title>
+
+    <para>Extensions to &qmtest; may add additional field types.  A
+    new field type must be implemented as a subclass for one of the
+    standard field types, and it must be possible (if suboptimal) to
+    store the field contents using the representation of the
+    base-class field type.  This allows &idb; implementations
+    unfamiliar with the extended field type to store those fields
+    regardless.  An &idb; implementation may also check for the
+    extended field type and use a more optimized representation for
+    those fields.</para>
+
+   </section>
+
   </section>
 
   <section id="sec-issueclass">
    <title id="sec-issueclass-title"><classname>IssueClass</classname></title>
-
+    
    <para>An issue class is represented by an instance of
    <classname>IssueClass</classname>.</para>
 
@@ -298,9 +324,9 @@ class IssueClass:
    </programlisting>
 
   </section>
-
+   
  </section>
-
+  
  <section id="sec-idb-api">
   <title id="sec-idb-api-title">Issue database API</title>
 
@@ -357,7 +383,8 @@ class IdbBase:
 
   <para>See <link linkend="sec-trigger-api"
   endterm="sec-trigger-api-title"></link> for
-  <classname>IdbBase</classname> methods for registering triggers.</para>
+  <classname>IdbBase</classname> methods for registering
+  triggers.</para>
 
  </section>
 
@@ -426,9 +453,9 @@ class IssueRecord:
    <function>GetRevisionNumber</function> for such an object is a pair
    of numbers, <varname>(from_rev, to_rev)</varname>.  To obtain the
    issue record corresponding to revision number
-   <varname>to_rev</varname>, retrieve the issue record
-   corresponding to revision number <varname>from_rev</varname>, and
-   replace any fields present in the difference issue record.</para>
+   <varname>to_rev</varname>, retrieve the issue record corresponding
+   to revision number <varname>from_rev</varname>, and replace any
+   fields present in the difference issue record.</para>
 
    <para>Functions are provided to obtain a difference given two issue
    records, and to apply a difference to an issue record to obtain the
@@ -544,27 +571,6 @@ class Trigger:
 ]]>
   </programlisting>
 
-  <para>A trigger is registered with the &idb; for one of three
-  trigger types:
-   <orderedlist>
-    <listitem>
-     <para>A <literal>"get"</literal> trigger is called before an
-     issue is returned from a query or another retrieval
-     operation.</para>
-    </listitem>
-
-    <listitem>
-     <para>A <literal>"preupdate"</literal> trigger is called before
-     an update to an issue takes place.</para>
-    </listitem>
-
-    <listitem>
-     <para>A <literal>"postupdate"</literal> trigger is called after
-     an update to an issue takes place.</para>
-    </listitem>
-   </orderedlist>
-  </para>
-
   <para>Triggers are registered with the &idb; instance.</para>
 
   <programlisting>
@@ -629,7 +635,7 @@ class Trigger:
      silently.</para>
     </listitem>
    </orderedlist>
-   </para>
+  </para>
 
   <para>Triggers may perform other actions as side effects.  Note that
   if multiple "preupdate" triggers are registered and the second or a
