@@ -70,13 +70,13 @@ class SubstitutionField(qm.fields.TextField):
     # from a value of this field.
 
 
-    def __init__(self, name, **attributes):
+    def __init__(self, name, **properties):
         """Create a new 'SubstitutionField'.
 
         By default, the pattern and replacement string are empty."""
 
         # Initialize the base class.
-        apply(qm.fields.TextField.__init__, (self, name, ";"), attributes)
+        apply(qm.fields.TextField.__init__, (self, name, ";"), properties)
 
 
     def SplitValue(self, value):
@@ -188,7 +188,7 @@ class FileContentsTest:
 
     The path to the file itself is not specified explicitly in the test.
     Instead, it is taken from a contex property; the name of that
-    variable is specified in the **Path Attribute** field.
+    variable is specified in the **Path Property** field.
 
     Optionally, the test may specify one or more substitutions.  Each
     substitution consists of a regular expression pattern and a
@@ -199,8 +199,8 @@ class FileContentsTest:
 
     fields = [
         qm.fields.TextField(
-            name="path_attribute",
-            title="Path Attribute",
+            name="path_property",
+            title="Path Property",
             description="""The context property naming the file.
 
             The context property given here will contain the path name
@@ -230,10 +230,10 @@ class FileContentsTest:
 
 
     def __init__(self,
-                 path_attribute,
+                 path_property,
                  expected_contents,
                  substitutions):
-        self.__path_attribute = path_attribute
+        self.__path_property = path_property
         self.__substitutions = substitutions
         # Might as well perform substitutions on the expected contents here.
         expected_contents = self.__PerformSubstitutions(expected_contents)
@@ -243,13 +243,13 @@ class FileContentsTest:
     def Run(self, context):
         # Extract the path to the file we're testing.
         try:
-            path = context[self.__path_attribute]
+            path = context[self.__path_property]
         except KeyError:
             # The path is not present in the context under the expected
-            # attribute name.
+            # property name.
             return Result(Result.FAIL,
-                          cause="Missing attribute '%s' in context." %
-                          self.__path_attribute)
+                          cause="Missing property '%s' in context." %
+                          self.__path_property)
         # Read the contents of the file.
         try:
             contents = open(path, "r").read()

@@ -812,7 +812,7 @@ class ResultWrapper:
 
 
     def GetContextProperties(self):
-        """Return the attributes added to the context by this test."""
+        """Return the properties added to the context by this test."""
 
         return self.__context.GetAddedProperties()
 
@@ -900,14 +900,14 @@ class Context:
     A 'Context' object is effectively a mapping object whose keys must
     be labels and values must be strings."""
 
-    def __init__(self, **initial_attributes):
+    def __init__(self, **initial_properties):
         """Construct a new context.
 
-        'initial_attributes' -- Initial key/value pairs to include in
+        'initial_properties' -- Initial key/value pairs to include in
         the context."""
 
-        self.__attributes = initial_attributes
-        for key, value in self.__attributes.items():
+        self.__properties = initial_properties
+        for key, value in self.__properties.items():
             self.ValidateKey(key)
 
         # Stuff everything in the RC configuration into the context.
@@ -916,7 +916,7 @@ class Context:
             self.ValidateKey(option)
             value = qm.rc.Get(option, None)
             assert value is not None
-            self.__attributes[option] = value
+            self.__properties[option] = value
 
         self.__temporaries = {}
 
@@ -924,38 +924,38 @@ class Context:
     # Methods to simulate a map object.
 
     def __getitem__(self, key):
-        return self.__attributes[key]
+        return self.__properties[key]
 
 
     def __setitem__(self, key, value):
         self.ValidateKey(key)
-        self.__attributes[key] = value
+        self.__properties[key] = value
 
 
     def __delitem__(self, key):
-        del self.__attributes[key]
+        del self.__properties[key]
 
 
     def has_key(self, key):
-        return self.__attributes.has_key(key)
+        return self.__properties.has_key(key)
 
 
     def keys(self):
-        return self.__attributes.keys()
+        return self.__properties.keys()
 
 
     def values(self):
-        return self.__attributes.values()
+        return self.__properties.values()
 
 
     def items(self):
-        return self.__attributes.items()
+        return self.__properties.items()
 
 
     def copy(self):
         # No need to re-validate.
         result = Context()
-        result.__attributes = self.__attributes.copy()
+        result.__properties = self.__properties.copy()
         return result
 
 
@@ -1049,8 +1049,8 @@ class ContextWrapper:
             # '__setitem__'.
             if self.__extra.has_key(key) or self.__context.has_key(key):
                 raise RuntimeError, \
-                      qm.error("context attribute cannot be deleted",
-                               attribute=key)
+                      qm.error("context property cannot be deleted",
+                               property=key)
             else:
                 # The property didn't exist at all.
                 raise

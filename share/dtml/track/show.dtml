@@ -55,8 +55,7 @@
                                                MakeHistoryUrl(show=1))">
       </dtml-if>
       <dtml-if expr="style == 'full' or style == 'history'">
-       <dtml-var expr="web.make_button_for_url('Edit Issue...', 
-                                               MakeEditUrl())">
+       <dtml-var expr="web.make_button_for_url('Edit', MakeEditUrl())">
       <dtml-else>
        &nbsp;
       </dtml-if>

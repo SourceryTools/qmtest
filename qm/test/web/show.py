@@ -135,9 +135,9 @@ class ShowPage(web.DtmlPage):
             value = field.GetDefaultValue()
         # Format it appropriately.
         if self.edit:
-            if field.IsAttribute("hidden"):
+            if field.IsProperty("hidden"):
                 return field.FormatValueAsHtml(value, "hidden")
-            elif field.IsAttribute("read_only"):
+            elif field.IsProperty("read_only"):
                 # For read-only fields, we still need a form input, but
                 # the user shouldn't be able to change anything.  Use a
                 # hidden input, and display the contents as if this

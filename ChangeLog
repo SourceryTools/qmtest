@@ -1,5 +1,43 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/fields.py (Field): Rename __attributes to __properties
+	throughout. 
+	(Field.GetAttribute): Rename to...
+	(Field.GetProperty): ... this.
+	(Field.SetAttribute): Rename to...
+	(Field.SetProperty): ... this.	
+	(Field.GetAttributeNames): Rename to ...
+	(Field.GetPropertyNames): ... this.
+	(Field.IsAttribute): Rename to...
+	(Field.IsProperty): ... this.
+	Adjust accordingly throughout.
+	* qm/track/issue_class.py (StateField.GetStateModel): Use
+	GetProperty. 
+	(StateField.SetStateModel): Use SetProperty.
+	* qm/test/base.py (ContextWrapper): Rename attributes to
+	properties throughout.
+	* qm/test/web/show.py (ShowPage.FormatFieldValue): Use IsAttribute.
+	* qm/test/classes/file.py (SubstitutionField.__init__): Rename
+	attributes to properties.
+	(SubstitutionField): Rename path_attribute to path_property
+	throughout. 
+	* qm/track/cmdline.py (Command.__PrintResults): Likewise.
+	* qm/track/triggers/notification.py
+	(_NotifyTrigger.__MakeMessage): Likewise. 
+	* qm/track/web/show.py (ShowPage.IsShowField): Likewise.
+	(ShowPage.FormatFieldValue): Likewise.
+	* qm/track/web/summary.py (DisplayOptionsPage.__init__): Likewise.
+	* qm/track/web/issue_class.py (handle_submit_subscription): Use
+	SetProperty.
+	* share/dtml/track/issue-class.dtml: Use IsAttribute.
+	* share/dtml/track/subscription.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.
+	* share/diagnostics/test.txt 
+	(context attribute cannot be deleted): Rename to ...
+	(context property cannot be deleted): ... this.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/classes/file.py (SubstitutionField.class_name): New
 	attribute. 
 	(SubstitutionField.GetHelp): Fix link in help text.

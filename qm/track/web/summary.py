@@ -286,7 +286,7 @@ class DisplayOptionsPage(web.DtmlPage):
         # 'included_field_names'.
         excluded_field_names = []
         for field_name, field in field_dictionary.items():
-            if not field.IsAttribute("hidden") \
+            if not field.IsProperty("hidden") \
                and field_name not in included_field_names:
                 excluded_field_names.append(field_name)
 

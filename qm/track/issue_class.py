@@ -118,14 +118,14 @@ class IidField(qm.fields.TextField):
 
     class_name = "qm.track.issue_class.IidField"
 
-    def __init__(self, name, default_value="", **attributes):
+    def __init__(self, name, default_value="", **properties):
         """Create an IID field."""
         
         # Do base-class initialization, with different defaults.
-        attributes = attributes.copy()
+        properties = properties.copy()
         apply(qm.fields.TextField.__init__,
               (self, name, default_value),
-              attributes)
+              properties)
 
 
     def GetTypeDescription(self):
@@ -647,10 +647,10 @@ class StateField(qm.fields.EnumerationField):
         ]
 
 
-    def __init__(self, name, **attributes):
+    def __init__(self, name, **properties):
         """Construct a new field.
 
-        The 'state_model' attribute must be initialized, to the encoded
+        The 'state_model' property must be initialized, to the encoded
         state model for this field (or a 'StateModel' instance).
 
         'name' -- The name of this field.
@@ -658,7 +658,7 @@ class StateField(qm.fields.EnumerationField):
         postconditions -- The default value of this field is set to the
         state model's initial state."""
 
-        state_model = attributes["state_model"]
+        state_model = properties["state_model"]
         if not isinstance(state_model, StateModel):
             state_model = decode_state_model(state_model)
 
@@ -670,11 +670,11 @@ class StateField(qm.fields.EnumerationField):
         enumerals = state_model.GetStateNames()
         # Initialize the base class.
         qm.common.purge_keys(
-            attributes,
+            properties,
             ["name", "initial_state_name", "enumerals", "state_model"])
         apply(qm.fields.EnumerationField.__init__,
               (self, name, initial_state_name, enumerals),
-              attributes)
+              properties)
 
         self.SetStateModel(state_model)
 
@@ -682,13 +682,13 @@ class StateField(qm.fields.EnumerationField):
     def SetStateModel(self, state_model):
         """Set the state model for this field."""
 
-        self.SetAttribute("state_model", encode_state_model(state_model))
+        self.SetProperty("state_model", encode_state_model(state_model))
 
 
     def GetStateModel(self):
         """Return the state model for this field."""
         
-        return decode_state_model(self.GetAttribute("state_model"))
+        return decode_state_model(self.GetProperty("state_model"))
 
 
     def GetEnumerals(self):
@@ -805,7 +805,7 @@ class StateField(qm.fields.EnumerationField):
                onclick="window.open('%s', 'popup',
                         'width=540,height=640,resizeable,scrollbars');"
         />''' % request.AsUrl()
-        # Use these controls for the 'state_model' attribute.
+        # Use these controls for the 'state_model' property.
         controls["state_model"] = hidden + button
 
         return controls

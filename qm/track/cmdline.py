@@ -1250,7 +1250,7 @@ parent.""",
         elif self.format_name == 'long' or self.format_name == "full":
             for issue in issues:
                 for field in issue.GetClass().GetFields():
-                    if field.IsAttribute("hidden"):
+                    if field.IsProperty("hidden"):
                         continue
                     value = str(issue.GetField(field.GetName()))
                     output.write("%-24s: %s\n" % (field.GetTitle(), value))

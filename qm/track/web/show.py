@@ -147,7 +147,7 @@ class ShowPage(web.DtmlPage):
            and self.request.has_key("revision"):
             return 1
         # Show all other fields that aren't hidden.
-        return not field.IsAttribute("hidden")
+        return not field.IsProperty("hidden")
 
 
     def FormatFieldValue(self, field):
@@ -170,12 +170,12 @@ class ShowPage(web.DtmlPage):
 
         # If the user shouldn't be allowed to initialize or edit this
         # field, don't render it as editiable.
-        if field.IsAttribute("read_only") \
+        if field.IsProperty("read_only") \
            and style in ["new", "edit"]:
             style = "full"
-        if field.IsAttribute("initialize_only") and style == "edit":
+        if field.IsProperty("initialize_only") and style == "edit":
             style = "full"
-        if field.IsAttribute("initialize_to_default") \
+        if field.IsProperty("initialize_to_default") \
            and style == "new":
             style = "full"
 

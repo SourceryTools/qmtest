@@ -132,7 +132,7 @@ class FieldEditPage(web.DtmlPage):
         
         # Initialize the base class.
         web.DtmlPage.__init__(self, "field.dtml")
-        # Store attributes for later.
+        # Store properties for later.
         self.field = field
         self.property_controls = field.MakePropertyControls()
         self.submit_request = submit_request
@@ -150,9 +150,9 @@ class FieldEditPage(web.DtmlPage):
         # Only include properties for which there is no control in
         # 'property_controls'. 
         properties = {}
-        for name in self.field.GetAttributeNames():
+        for name in self.field.GetPropertyNames():
             if not self.property_controls.has_key(name):
-                value = self.field.GetAttribute(name)
+                value = self.field.GetProperty(name)
                 properties[name] = value
         # Generate the inputs.
         return qm.web.make_properties_control(form_name="form",
@@ -183,7 +183,7 @@ class FieldEditPage(web.DtmlPage):
     def MakeDefaultValueControl(self, field):
         """Return a control for editing the default value of a field."""
 
-        if field.IsAttribute("read_only"):
+        if field.IsProperty("read_only"):
             style = "full"
         else:
             style = "new"
@@ -239,33 +239,33 @@ class Field:
         ]
 
 
-    def __init__(self, name, default_value, **attributes):
+    def __init__(self, name, default_value, **properties):
         """Create a new (generic) field.
 
-        'name' -- The value of the name attribute.  Must be a valid
+        'name' -- The value of the name property.  Must be a valid
         label.
 
         'default_value' -- The default value for this field.
 
-        'attributes' -- A mapping of additional attribute assignments
+        'properties' -- A mapping of additional property assignments
         to set."""
 
         if not label.is_valid(name):
             raise ValueError, \
                   qm.error("invalid field name", field_name=name)
 
-        self.__attributes = {}
+        self.__properties = {}
         # Initialize declared properties to their default values.
         for declaration in self.property_declarations:
-            self.__attributes[declaration.name] = \
+            self.__properties[declaration.name] = \
                 declaration.default_value
         # Set the name.
-        self.__attributes["name"] = name
+        self.__properties["name"] = name
         # Use the name as the title, if no other was specified.
-        if not attributes.has_key("title"):
-            self.__attributes["title"]
+        if not properties.has_key("title"):
+            self.__properties["title"]
         # Update any additional properties provided explicitly.
-        self.__attributes.update(attributes)
+        self.__properties.update(properties)
         self.SetDefaultValue(default_value)
 
 
@@ -276,13 +276,13 @@ class Field:
     def GetName(self):
         """Return the name of the field."""
 
-        return self.GetAttribute("name")
+        return self.GetProperty("name")
 
 
     def GetTitle(self):
         """Return the user-friendly title of the field."""
 
-        return self.GetAttribute("title")
+        return self.GetProperty("title")
 
 
     def GetDescription(self):
@@ -291,7 +291,7 @@ class Field:
         This description is used when displaying detailed help
         information about the field."""
 
-        return self.GetAttribute("description")
+        return self.GetProperty("description")
 
 
     def GetBriefDescription(self):
@@ -324,58 +324,58 @@ class Field:
         return common.copy(self.default_value)
 
 
-    def GetAttribute(self, attribute_name, default_value=None):
-        """Return the value of an attribute.
+    def GetProperty(self, property_name, default_value=None):
+        """Return the value of a property.
 
-        Return the value of the attribute named by 'attribute_name'.
-        If that attribute is not set, return 'default_value'."""
+        Return the value of the property named by 'property_name'.
+        If that property is not set, return 'default_value'."""
 
-        if self.__attributes.has_key(attribute_name):
-            return self.__attributes[attribute_name]
+        if self.__properties.has_key(property_name):
+            return self.__properties[property_name]
         else:
             if default_value is None:
                 for declaration in self.property_declarations:
-                    if declaration.name == attribute_name:
+                    if declaration.name == property_name:
                         return declaration.default_value
                 raise RuntimeError, \
-                      "no default value for %s" % attribute_name
+                      "no default value for %s" % property_name
             else:
                 return default_value
 
 
-    def IsAttribute(self, attribute_name):
-        """Return a true value if an attribute has the value "true"."""
+    def IsProperty(self, property_name):
+        """Return a true value if a property has the value "true"."""
 
-        return self.GetAttribute(attribute_name, "false") == "true"
-
-
-    def GetAttributeNames(self):
-        """Return a sequence of names of attributes defined for this field."""
-
-        return self.__attributes.keys()
+        return self.GetProperty(property_name, "false") == "true"
 
 
-    def SetAttribute(self, attribute_name, value):
-        """Set the value of an attribute."""
+    def GetPropertyNames(self):
+        """Return a sequence of names of properties defined for this field."""
 
-        self.__attributes[attribute_name] = value
-
-
-    def SetAttributes(self, attributes):
-        """Set the value of several attributes.
-
-        'attributes' -- A map from attribute names to values."""
-
-        self.__attributes.update(attributes)
+        return self.__properties.keys()
 
 
-    def UnsetAttribute(self, attribute_name):
-        """Remove an attribute.
+    def SetProperty(self, property_name, value):
+        """Set the value of a property."""
 
-        If there is no attribute named 'attribute_name', does nothing."""
+        self.__properties[property_name] = value
 
-        if self.__attributes.has_key(attribute_name):
-            del self.__attributes[attribute_name]
+
+    def SetProperties(self, properties):
+        """Set the value of several properties.
+
+        'properties' -- A map from property names to values."""
+
+        self.__properties.update(properties)
+
+
+    def UnsetProperty(self, property_name):
+        """Remove a property.
+
+        If there is no property named 'property_name', does nothing."""
+
+        if self.__properties.has_key(property_name):
+            del self.__properties[property_name]
 
 
     def Validate(self, value):
@@ -551,7 +551,7 @@ class Field:
 
         return '<input type="text" name="%s%s" size="40" value="%s"/>' \
                % (query_field_property_prefix, property_name,
-                  self.GetAttribute(property_name))
+                  self.GetProperty(property_name))
 
 
     def _MakeBooleanPropertyControl(self, property_name):
@@ -562,7 +562,7 @@ class Field:
         returns -- HTML text for form inputs suitable for use in
         'MakePropertyControls'."""
 
-        property_value = self.GetAttribute(property_name)
+        property_value = self.GetProperty(property_name)
         assert property_value in ["true", "false"]
         if property_value == "true":
             true_checked = "checked"
@@ -601,7 +601,7 @@ class Field:
 
             # FIXME: The name is made read-only here.  Is that good?
             "name":
-                self.GetAttribute("name"),
+                self.GetProperty("name"),
 
             "description":
                 '''<textarea name="%sdescription"
@@ -641,7 +641,7 @@ class Field:
                 # Yes.  Trim the prefix to obtain the property name.
                 name = name[len(query_field_property_prefix):]
                 value = str(value)
-                self.SetAttribute(name, value)
+                self.SetProperty(name, value)
 
         # The submission contains an additional field,
         # 'extra_properties', that contains other properties of the
@@ -649,7 +649,7 @@ class Field:
         extra_properties = request["extra_properties"]
         extra_properties = qm.web.decode_properties(extra_properties)
         # Set them.
-        self.SetAttributes(extra_properties)
+        self.SetProperties(extra_properties)
 
 
     def MakeDomNode(self, document):
@@ -676,7 +676,7 @@ class Field:
         element.appendChild(default_element)
 
         # Create an element for each property.
-        for name, value in self.__attributes.items():
+        for name, value in self.__properties.items():
             if name == "name":
                 continue
             property_element = xmlutil.create_dom_text_element(
@@ -695,7 +695,7 @@ class IntegerField(Field):
 
     class_name = "qm.fields.IntegerField"
 
-    def __init__(self, name, default_value=0, **attributes):
+    def __init__(self, name, default_value=0, **properties):
         """Create an integer field.
 
         The field must be able to represent a 32-bit signed
@@ -704,7 +704,7 @@ class IntegerField(Field):
         'default_value' -- The default value for the field."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, default_value), attributes)
+        apply(Field.__init__, (self, name, default_value), properties)
 
 
     def GetTypeDescription(self):
@@ -827,11 +827,11 @@ class TextField(Field):
         ]
 
 
-    def __init__(self, name, default_value="", **attributes):
+    def __init__(self, name, default_value="", **properties):
         """Create a text field."""
 
         # Perform base class initialization.
-        apply(Field.__init__, (self, name, default_value), attributes)
+        apply(Field.__init__, (self, name, default_value), properties)
 
 
     def CompareValues(self, value1, value2):
@@ -855,26 +855,26 @@ class TextField(Field):
         # isn't one.
         value = str(value)
         # Clean up unless it's a verbatim string.
-        if not self.IsAttribute("verbatim"):
+        if not self.IsProperty("verbatim"):
             # Remove leading whitespace.
             value = string.lstrip(value)
-        # If this field has the not_empty_text attribute set, make sure the
+        # If this field has the not_empty_text property set, make sure the
         # value complies.
-        if self.IsAttribute("not_empty_text") and value == "":
+        if self.IsProperty("not_empty_text") and value == "":
             raise ValueError, \
                   qm.error("empty text field value",
                            field_title=self.GetTitle()) 
         # If this is not a multi-line text field, remove line breaks
         # (and surrounding whitespace).
-        if not self.IsAttribute("multiline"):
+        if not self.IsProperty("multiline"):
             value = re.sub(" *\n+ *", " ", value)
         return value
 
 
     def FormatValueAsText(self, value, columns=72):
-        if self.IsAttribute("structured"):
+        if self.IsProperty("structured"):
             return structured_text.to_text(value, width=columns)
-        elif self.IsAttribute("verbatim"):
+        elif self.IsProperty("verbatim"):
             return value
         else:
             return common.wrap_lines(value, columns)
@@ -891,7 +891,7 @@ class TextField(Field):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            if self.IsAttribute("multiline"):
+            if self.IsProperty("multiline"):
                 result = '<textarea cols="64" rows="8" name="%s">' \
                          '%s</textarea>' \
                          % (name, web.escape(value))
@@ -901,7 +901,7 @@ class TextField(Field):
                     % (name, web.escape(value))
             # If this is a structured text field, add a note to that
             # effect, so users aren't surprised.
-            if self.IsAttribute("structured"):
+            if self.IsProperty("structured"):
                 result = result \
                 + '<br><font size="-1">This is a ' \
                 + qm.web.make_help_link_html(
@@ -915,7 +915,7 @@ class TextField(Field):
                    % (name, web.escape(value))            
 
         elif style == "brief":
-            if self.IsAttribute("structured"):
+            if self.IsProperty("structured"):
                 # Use only the first line of text.
                 value = string.split(value, "\n", 1)
                 value = web.format_structured_text(value[0])
@@ -927,10 +927,10 @@ class TextField(Field):
             if len(value) > 80:
                 value = value[:80] + "..."
 
-            if self.IsAttribute("verbatim"):
+            if self.IsProperty("verbatim"):
                 # Put verbatim text in a <tt> element.
                 return '<tt>%s</tt>' % web.escape(value)
-            elif self.IsAttribute("structured"):
+            elif self.IsProperty("structured"):
                 # It's already formatted as HTML; don't escape it.
                 return value
             else:
@@ -938,7 +938,7 @@ class TextField(Field):
                 return web.escape(value)
 
         elif style == "full":
-            if self.IsAttribute("verbatim"):
+            if self.IsProperty("verbatim"):
                 # Wrap lines before escaping special characters for
                 # HTML.  Use a special tag to indicate line breaks.  If
                 # we were to escape first, line lengths would be
@@ -955,7 +955,7 @@ class TextField(Field):
                                        break_delimiter, r"<blink>\</blink>")
                 # Place verbatim text in a <pre> element.
                 return '<pre>%s</pre>' % value
-            elif self.IsAttribute("structured"):
+            elif self.IsProperty("structured"):
                 return web.format_structured_text(value)
             else:
                 if value == "":
@@ -1003,18 +1003,18 @@ class TextField(Field):
     def GetHelp(self):
         help = """
             A text field.  """
-        if self.IsAttribute("structured"):
+        if self.IsProperty("structured"):
             help = help + '''
             The text is interpreted as structured text, and formatted
             appropriately for the output device.  See "Structured Text
             Formatting
             Rules":http://www.python.org/sigs/doc-sig/stext.html for
             more information.  '''
-        elif self.IsAttribute("verbatim"):
+        elif self.IsProperty("verbatim"):
             help = help + """
             The text is stored verbatim; whitespace and indentation are
             preserved.  """
-        if self.IsAttribute("not_empty_text"):
+        if self.IsProperty("not_empty_text"):
             help = help + """
             This field may not be empty.  """
         help = help + """
@@ -1130,9 +1130,9 @@ class SetField(Field):
                   "A set field may not contain a set field."
         if not isinstance(contained, Field):
             raise TypeError, "A set must contain another field."
-        # Use the attributes from the contained field, rather than
+        # Use the properties from the contained field, rather than
         # making a different set.
-        self._Field__attributes = contained._Field__attributes
+        self._Field__properties = contained._Field__properties
         # Remeber the contained field type.
         self.__contained = contained
         # Masquerade property declarations as for contained field.
@@ -1158,9 +1158,9 @@ class SetField(Field):
     
 
     def Validate(self, value):
-        # If this field has the not_empty_set attribute set, make sure
+        # If this field has the not_empty_set property set, make sure
         # the value complies.
-        if self.IsAttribute("not_empty_set") and len(value) == 0:
+        if self.IsProperty("not_empty_set") and len(value) == 0:
             raise ValueError, \
                   qm.error("empty set field value",
                            field_title=self.GetTitle()) 
@@ -1408,7 +1408,7 @@ class UploadAttachmentPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "attachment.dtml")
         # Use a brand-new location for the attachment data.
         self.location = attachment.make_temporary_location()
-        # Set up attributes.
+        # Set up properties.
         self.field_name = field_name
         self.encoding_name = encoding_name
         self.summary_field_name = summary_field_name
@@ -1454,13 +1454,13 @@ class AttachmentField(Field):
     """
 
 
-    def __init__(self, name, **attributes):
+    def __init__(self, name, **properties):
         """Create an attachment field.
 
         Sets the default value of the field to 'None'."""
 
         # Perform base class initialization. 
-        apply(Field.__init__, (self, name, None), attributes)
+        apply(Field.__init__, (self, name, None), properties)
 
 
     def GetTypeDescription(self):
@@ -1556,7 +1556,7 @@ class AttachmentField(Field):
             # Generate controls for this form.
             
             # A text control for the user-visible summary of the
-            # attachment.  The "readonly" attribute isn't supported in
+            # attachment.  The "readonly" property isn't supported in
             # Netscape, so prevent the user from typing into the form by
             # forcing focus away from the control.
             text_control = '''
@@ -1718,7 +1718,7 @@ class EnumerationField(TextField):
     """A field that contains an enumeral value.
 
     The enumeral value is selected from an enumerated set of values.
-    An enumeral field uses the following attributes:
+    An enumeral field uses the following properties:
 
     enumeration -- A mapping from enumeral names to enumeral values.
     Names are converted to strings, and values are stored as integers.
@@ -1741,7 +1741,7 @@ class EnumerationField(TextField):
                  name,
                  default_value=None,
                  enumerals=[],
-                 **attributes):
+                 **properties):
         """Create an enumeration field.
 
         'enumerals' -- A sequence of strings of available
@@ -1757,7 +1757,7 @@ class EnumerationField(TextField):
         if not default_value in enumerals and len(enumerals) > 0:
             default_value = enumerals[0]
         # Perform base class initialization.
-        apply(TextField.__init__, (self, name, default_value), attributes)
+        apply(TextField.__init__, (self, name, default_value), properties)
         # Set the enumerals.
         self.SetEnumerals(enumerals)
 
@@ -1789,9 +1789,9 @@ class EnumerationField(TextField):
                            values=string.join(values, ", "))
 
 
-    def SetAttribute(self, enumeral_name, value):
+    def SetProperty(self, enumeral_name, value):
         # Call the base implementation.
-        Field.SetAttribute(self, enumeral_name, value)
+        Field.SetProperty(self, enumeral_name, value)
             
 
     def SetEnumerals(self, enumerals):
@@ -1799,7 +1799,7 @@ class EnumerationField(TextField):
 
         'enumerals' -- A list of strings representing enumeral names."""
 
-        self.SetAttribute("enumerals", string.join(enumerals, ","))
+        self.SetProperty("enumerals", string.join(enumerals, ","))
 
 
     def GetEnumerals(self):
@@ -1808,7 +1808,7 @@ class EnumerationField(TextField):
         returns -- A sequence consisting of string enumerals objects, in
         the appropriate order."""
 
-        enumerals = self.GetAttribute("enumerals")
+        enumerals = self.GetProperty("enumerals")
         if enumerals == "":
             return []
         else:
@@ -1938,7 +1938,7 @@ class TimeField(IntegerField):
 
     class_name = "qm.fields.TimeField"
 
-    def __init__(self, name, **attributes):
+    def __init__(self, name, **properties):
         """Create a time field.
 
         The field is given a default value for this field is 'None', which
@@ -1946,7 +1946,7 @@ class TimeField(IntegerField):
         created."""
 
         # Perform base class initalization.
-        apply(IntegerField.__init__, (self, name), attributes)
+        apply(IntegerField.__init__, (self, name), properties)
         # Set the default value.
         self.default_value = None
 
@@ -2038,11 +2038,11 @@ class UidField(TextField):
 
     class_name = "qm.fields.UidField"
 
-    def __init__(self, name, **attributes):
+    def __init__(self, name, **properties):
         default_user_id = user.database.GetDefaultUserId()
         apply(TextField.__init__,
               (self, name, default_user_id),
-              attributes)
+              properties)
 
 
     def GetTypeDescription(self):

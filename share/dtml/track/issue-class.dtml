@@ -182,14 +182,14 @@
      <td>
       <b>Properties:</b>
       <table border="0" cellpadding="0" cellspacing="0">
-       <dtml-in expr="field.GetAttributeNames()">
+       <dtml-in expr="field.GetPropertyNames()">
        <dtml-let name=sequence-item>
         <dtml-if expr="name not in ['name', 'title', 'description']">
          <tr valign="top">
           <td>&nbsp;&nbsp;</td>
           <td><dtml-var expr="name"></td>
           <td>&nbsp;=&nbsp;</td>
-          <td><dtml-var expr="field.GetAttribute(name)"></td>
+          <td><dtml-var expr="field.GetProperty(name)"></td>
          </tr>
         </dtml-if>
        </dtml-let>

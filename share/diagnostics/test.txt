@@ -42,8 +42,8 @@ QMTest could not find a class named "%(class_name)s".
 @ concurrency not integer
 The target concurrency "%(value)s" is not a positive integer.
 
-@ context attribute cannot be deleted
-The attribute %(attribute)s cannot be deleted from this context.
+@ context property cannot be deleted
+The property %(property)s cannot be deleted from this context.
 
 @ db path doesn't exist
 The path you specified for the test database, %(path)s, does not exist. 

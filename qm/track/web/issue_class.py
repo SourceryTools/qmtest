@@ -613,7 +613,7 @@ changes to this issue."""))
     else:
         subscribers_field = issue_class.GetField("subscribers")
     # Set the "hidden" attribute appropriately.
-    subscribers_field.SetAttribute("hidden", hide_subscription)
+    subscribers_field.SetProperty("hidden", hide_subscription)
     # Construct the trigger.
     from qm.track.triggers.notification import NotifyByUidFieldTrigger
     trigger = NotifyByUidFieldTrigger("subscription",

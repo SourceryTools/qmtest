@@ -182,7 +182,7 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         # Briefly summarize the change to each field.
         for field in fields_to_show:
             # Skip hidden fields.
-            if field.IsAttribute("hidden"):
+            if field.IsProperty("hidden"):
                 continue
             name = field.GetName()
             # Extract the value and convert it to plain text.
