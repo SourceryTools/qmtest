@@ -437,7 +437,11 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
             # Yes.
             uid = issue.GetField("user")
             current_subscribers = issue.GetField(self._field_name)
-            previous_subscribers = previous_issue.GetField(self._field_name)
+            if previous_issue is None:
+                previous_subscribers = []
+            else:
+                previous_subscribers = previous_issue.GetField(
+                    self._field_name)
             # First check if the user was explicitly unsubscribed as
             # part of this revision (i.e. was previously in the
             # subscriber list but is no longer). 

@@ -1,5 +1,10 @@
 2001-05-15  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/triggers/notification.py
+	(NotifyByUidFieldTrigger.Preupdate): Handle new issues correctly.
+
+2001-05-15  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/issue_class.py (IssueClass.__init__): Adjust default
 	state model.
 	* qm/track/issue.py (eval_revision_expression): Improve doc
