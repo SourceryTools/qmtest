@@ -1,3 +1,37 @@
+2001-11-27  Mark Mitchell  <mark@codesourcery.com>
+
+	* PyXML/xml/parsers/xmlproc/xmlproc.py (XMLProcessor.parse_start_tag):
+	Handle out-of-data condition correctly.
+
+	* qm/test/base.py (get_class_arguments): Fix typo in comment.
+	(get_class_description): 
+	* qm/test/cmdline.py (Command): Rename to ...
+	(QMTest): ... this.
+	(_the_qmtest): New variable.
+	(QMTest.__init__): Set it.
+	(QMTest.GetTargets): Store the resulting list of targets.
+	(get_qmtest): New function.
+	* qm/test/database.py (Database.GetTestClasses): Rename to 
+	...
+	(Database.GetTestClassNames): ... this.
+	(Database.GetResourceClasses): Rename to ...
+	(Database.GetResourceClassNames): ... this.
+	* qm/test/qmtest.py: Create a QMTest object, not a Command object.
+	* qm/test/test.py (TargetGroupField): New class.
+	(Test.arguments): Use it.
+	* qm/test/web/web.py (NewItemPage.__init__): Adjust for Database
+	method name changes.
+	(NewItemPage.GetClassDescriptions): New method.
+	(ShowItemPage.GetClassDescription): Use get_class_description.
+	(ShowItemPage.GetBriefClassDescription): Likewise.
+	(QMTestServer.MakeNewTest): Fix typo.
+	(QMTestServer.MakeNewResource): Likewise.
+	* share/diagnostics/test-help.txt: Update.
+	* share/diagnostics/test.txt: Likewise.
+	* share/dtml/problems.dtml: Remove references to Software Carpentry.
+	* share/dtml/test/new.dtml: Update online help.
+	* share/dtml/test/show.dtml: Improve resource formatting.
+	
 2001-11-21  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/web/web.py (FormatId): Add documentation.

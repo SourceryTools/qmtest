@@ -77,22 +77,16 @@ select it in the list and click on *Remove*.
 @ resource class control
 **Resource Class**
 
-The resource class determines how the resource is parameterized, and
-provides the mechanism by which the resource is run.
+The "resource class" associated with a test indicates what kind of test
+it is.  Select one of the available resource classes.
 
-%(program_name)s provides a collection of built-in resource classes
-which you may use to create resources.  To use one of these, select it
-from the *Standard Classes* list.
+If %(program_name)s cannot find a resource class that you think you have
+installed, you may need to set the 'QMTEST_CLASS_PATH' environment
+variable.  This variable is like the 'PATH' environment variable, but
+contains a list of directories where %(program_name)s will look for
+resource classes.
 
-You may also create your own resource classes.  An resource class is
-represented by a Python class included in a Python module.  Specify the
-class in the text control, using the syntax *module-name.class-name*.
-
-So that %(program_name)s can find the Python module file, you must
-include the directory containing it in the environment variable
-'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
-'_classes' of your test database directory.
-
+%(classes)s
 
 @ resource ID
 **Resource ID**
@@ -232,12 +226,12 @@ The "test class" associated with a test indicates what kind of test it
 is.  Select one of the available test classes.
 
 If %(program_name)s cannot find a test class that you think you have
-installed, you may need to set the 'QMTEST_CLASSPATH' environment
-variable.  This variable contains a colon-separate list of directories,
-just like the 'PATH' environment variable.  %(program_name)s will look
-for test classes in each of these directories.  %(program_name)s will
-also look in the '_classes' subdirectory of your test database
-directory.
+installed, you may need to set the 'QMTEST_CLASS_PATH' environment
+variable.  This variable is like the 'PATH' environment variable, but
+contains a list of directories where %(program_name)s will look for test
+classes.
+
+%(classes)s
 
 @ test ID 
 **Test ID**

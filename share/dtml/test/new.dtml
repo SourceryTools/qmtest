@@ -93,27 +93,23 @@
        </dtml-if>
         >
      <td>
-      <dtml-if expr="type == 'test'">
-       <b>Test Class</b>
-
-       <p>The kind of test to create.</p>
-      <dtml-else>
-       <b>Resource Class</b>
-
-       <p>The resource class determines how the resource is parameterized,
-       and provides the mechanism by which the resource is run.</p>
-      </dtml-if>
+      <b><dtml-var type capitalize> Class</b>
+      <p>The kind of <dtml-var type> to create.</p>
      </td>
      <td>
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
        <tr valign="top"><td>
         Class:
         <select name="class">
-         <option value="">Select A Class</option>
+         <option value="" 
+                 <dtml-unless class_name>selected</dtml-unless> >
+          Select A Class
+         </option>
          <dtml-in name="class_names">
-         <dtml-let class_name=sequence-item>
-          <option value="<dtml-var name="class_name">">
-           <dtml-var name="class_name">
+         <dtml-let name=sequence-item>
+          <option value="<dtml-var name>"
+           <dtml-if expr="name == class_name">selected</dtml-if> >
+           <dtml-var name>
           </option>
          </dtml-let>
          </dtml-in>
@@ -126,9 +122,11 @@
         </dtml-if>
        </td><td align="right">
         <dtml-if expr="type == 'test'">
-         <dtml-var expr="web.make_help_link('test class control')">
+         <dtml-var expr="web.make_help_link('test class control',
+                                            classes=GetClassDescriptions())">
         <dtml-else>
-         <dtml-var expr="web.make_help_link('resource class control')">
+         <dtml-var expr="web.make_help_link('resource class control',
+                                            classes=GetClassDescriptions())">
         </dtml-if>
        </td></tr>
       </table>

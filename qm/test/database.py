@@ -900,7 +900,7 @@ class Database:
         return [config_dir]
 
 
-    def GetTestClasses(self):
+    def GetTestClassNames(self):
         """Return the kinds of tests that the database can store.
 
         returns -- A sequence of strings.  Each string names a
@@ -914,7 +914,7 @@ class Database:
         return qm.test.base.get_extension_class_names('test', self)
 
 
-    def GetResourceClasses(self):
+    def GetResourceClassNames(self):
         """Return the kinds of resources that the database can store.
 
         returns -- A sequence of strings.  Each string names a

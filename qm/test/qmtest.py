@@ -90,7 +90,7 @@ program_name = os.path.basename(os.path.splitext(sys.argv[0])[0])
 
 try:
     # Parse the command line.
-    command = qm.test.cmdline.Command(program_name, sys.argv[1:])
+    command = qm.test.cmdline.QMTest(program_name, sys.argv[1:])
     # Execute the command.
     command.Execute(sys.stdout)
     exit_code = 0

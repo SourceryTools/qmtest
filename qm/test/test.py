@@ -36,11 +36,38 @@
 ########################################################################
 
 import qm
+from   qm.fields import *
+from   qm.test.cmdline import *
 
 ########################################################################
 # classes
 ########################################################################
 
+class TargetGroupField(TextField):
+    """A 'TargetGroupField' contains a target group pattern.
+
+    A 'TargetGroupField' is a 'TextField' that has been specialized to
+    store target group specifications."""
+
+    def GetDescription(self):
+        """Return a description of this field.
+
+        This description is used when displaying detailed help
+        information about the field."""
+
+        # Get the basic description.
+        desc = TextField.GetDescription(self)
+        # Add a list of the available targets.
+        desc = desc + "\n\n**Available Target Groups**\n\n"
+        groups = map(lambda t: t.GetGroup(), get_qmtest().GetTargets())
+        for g in groups:
+            desc = desc + "  * " + g + "\n"
+
+        print desc
+        
+        return desc
+    
+        
 class Test:
     """A 'Test' is run to check for correct behavior.
 
@@ -82,7 +109,7 @@ class Test:
     catch the exception and continue processing."""
 
     arguments = [
-        qm.fields.TextField(
+        TargetGroupField(
             name="target_group",
             title="Target Group Pattern",
             description="""The targets on which this test can run.
@@ -148,3 +175,10 @@ class Test:
         on targets in that group."""
 
         return self.target_group
+
+########################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

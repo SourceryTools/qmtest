@@ -104,7 +104,7 @@ The test %(id)s of class %(test_class)s returned an invalid result,
 problem was: %(problem)s.
 
 @ invalid id
-The ID "%(id)s" is not valid.  Test IDs may contain lower-case letters,
+The name "%(id)s" is not valid.  Names may contain lower-case letters,
 digits, and underscores, and periods.
 
 @ invalid results format

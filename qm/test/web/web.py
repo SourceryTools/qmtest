@@ -344,13 +344,14 @@ class NewItemPage(DtmlPage):
         DtmlPage.__init__(self, "new.dtml")
         # Set up attributes.
         assert type in ["test", "resource"]
+        self.database = database
         self.type = type
         self.item_id = item_id
         self.class_name = class_name
         if type == "test":
-            self.class_names = database.GetTestClasses()
+            self.class_names = database.GetTestClassNames()
         elif type == "resource":
-            self.class_names = database.GetResourceClasses()
+            self.class_names = database.GetResourceClassNames()
         self.field_errors = field_errors
 
 
@@ -360,6 +361,22 @@ class NewItemPage(DtmlPage):
         return "Create a New %s" % string.capwords(self.type)
 
 
+    def GetClassDescriptions(self):
+        """Return a description of the available classes.
+
+        returns -- Structured text describing each of the available
+        test or resource classes."""
+
+        desc = "**Available Classes**\n\n"
+        for n in self.database.GetTestClassNames():
+            c = qm.test.base.get_extension_class(n, self.type,
+                                                 self.database)
+            d = qm.test.base.get_class_description(c, brief=1)
+            desc = desc + "  * " + n + "\n\n    " +  d + "\n\n"
+
+        return desc
+    
+            
     def MakeSubmitUrl(self):
         """Return the URL for submitting the form.
 
@@ -508,12 +525,8 @@ class ShowItemPage(DtmlPage):
 
         returns -- The description, formatted as HTML."""
 
-        # Extract the class's doc string.
-        doc_string = self.item.GetClass().__doc__
-        if doc_string is not None:
-            return qm.web.format_structured_text(doc_string)
-        else:
-            return "&nbsp;"
+        d = qm.test.base.get_class_description(self.item.GetClass())
+        return qm.web.format_structured_text(d)
 
 
     def GetBriefClassDescription(self):
@@ -521,13 +534,9 @@ class ShowItemPage(DtmlPage):
 
         returns -- The brief description, formatted as HTML."""
 
-        # Extract the class's doc string.
-        doc_string = self.item.GetClass().__doc__
-        if doc_string is not None:
-            doc_string = qm.structured_text.get_first(doc_string)
-            return qm.web.format_structured_text(doc_string)
-        else:
-            return "&nbsp;"
+        d = qm.test.base.get_class_description(self.item.GetClass(),
+                                               brief=1)
+        return qm.web.format_structured_text(d)
 
 
     def MakeEditUrl(self):
@@ -1757,7 +1766,8 @@ class QMTestServer(qm.web.WebServer):
 
         returns -- A new 'TestDescriptor' object."""
 
-        test_class = qm.test.base.get_test_class(test_class_name, self)
+        test_class = qm.test.base.get_test_class(test_class_name,
+                                                 self.GetDatabase())
         # Make sure there isn't already such a test.
         if self.GetDatabase().HasTest(test_id):
             raise RuntimeError, qm.error("test already exists",
@@ -1783,7 +1793,9 @@ class QMTestServer(qm.web.WebServer):
 
         returns -- A new 'ResourceDescriptor' object."""
 
-        resource_class = qm.test.base.get_resource_class(resource_class_name)
+        resource_class \
+          = qm.test.base.get_resource_class(resource_class_name,
+                                            self.GetDatabase())
         # Make sure there isn't already such a resource.
         if self.GetDatabase().HasResource(resource_id):
             raise RuntimeError, qm.error("resource already exists",
