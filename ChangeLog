@@ -1,3 +1,19 @@
+2003-06-16  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/qmtest.py: Import sys.
+	(_required_python_version): New variable.
+	(check_python_version): New function.
+	(main): Call it.
+	* qm/setup_path.py.in (__unsupported_python_version): Remove,
+	and remove calls below.
+
+	* qm/setup_path.py.in (add_to_python_path): Remove, and don't
+	call it.
+	(__doc__): Remove now inaccurate docstring.
+
+	* qm/setup_path.py.in: Move warnings filtering to...
+	* qm/external/__init__.py: ...here.
+
 2003-06-15  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/text_result_stream.py: Move into classes/.

@@ -13,7 +13,13 @@
 #
 ########################################################################
 
-# Nothing here!
+# DocumentTemplate uses regex and regsub, which are obsolete.  Prevent
+# Python from warning about these modules.
+import warnings
+warnings.filterwarnings("ignore",
+                        r".*(regex|regsub).*",
+                        DeprecationWarning,
+                        r".*(DocumentTemplate|regsub).*")
 
 ########################################################################
 # Local Variables:

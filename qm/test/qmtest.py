@@ -33,6 +33,7 @@ execfile(os.path.join(os.environ["QM_TRUE_LIBDIR"], "setup_path.py"))
 # imports
 ########################################################################
 
+import sys
 import gc
 import qm
 import qm.cmdline
@@ -54,12 +55,34 @@ def print_error_message(message):
     sys.stderr.write(message)
 
 
+_required_python_version = (2, 2)
+def check_python_version():
+    """Check to see if the Python interpreter in use is acceptable.
+
+    If the Python interpreter is not sufficiently recent, issue an
+    error message and exit."""
+
+    version_str = ".".join(_required_python_version)
+    message = "Python " + version_str + " or higher is required.\n"
+    message += "Set QM_PYTHON to an appropriate Python interpreter.\n"
+    try:
+        if sys.version_info < _required_python_version:
+            print_error_message(message)
+            sys.exit(1)
+    except AttributeError:
+        print_error_message(message)
+        sys.exit(1)
+
+
 def main():
     """Run QMTest.
 
     returns -- The exit code that should be provided to the operating
     system."""
     
+    # Make sure our Python is recent enough.
+    check_python_version()
+
     # Parse the command line.
     command = qm.test.cmdline.QMTest(sys.argv[1:],
                                      major_version, minor_version,
