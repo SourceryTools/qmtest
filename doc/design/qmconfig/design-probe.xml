@@ -172,6 +172,6 @@
   sgml-always-quote-attributes: t
   sgml-general-insert-case: lower
   sgml-minimize-attributes: nil
-  sgml-parent-document: ("design.xml" "book" "section")
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter" "section")
   End:
 -->

@@ -1,3 +1,7 @@
+2000-12-05  R. Lindsay Todd  <toddr@rpi.edu>
+
+	* doc/design/qmconfig/design-td.xml: New file
+
 2000-12-05  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtrack/Makefile (DOCBITMAPS): Add *.png.

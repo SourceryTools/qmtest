@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design-td.xml
+  Author: R. Lindsay Todd
+  Date:   2000-12-05
+
+  Contents:
+    Design of qmconfig tailoring database.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<section><title>&M-TD;</title>
+
+ <figure id="fig-cl-tailor" float="1">
+  <title>Tailoring Database</title>
+  <mediaobject>
+
+   <imageobject>
+    <imagedata align="center"
+               fileref="figures/cl_tailor.eps" />
+   </imageobject>
+
+   <imageobject>
+    <imagedata align="center"
+               fileref="figures/cl_tailor.png" />
+   </imageobject>
+
+   <textobject>
+    <phrase>Tailoring database</phrase>
+   </textobject>
+
+  </mediaobject>
+ </figure>
+
+ <para><xref linkend="fig-cl-tailor" /> shows the &M-TD;.  Before a
+ probe is conducted, the &M-TD; is consulted.  Likewise, the &M-ADAPT;
+ uses the &M-TD; to extract symbol values.</para>
+
+ <para>In reality, the &M-TD; is implemented over several databases.
+ There is a system-wide cache, which should be protected so that only
+ trusted users can regenerate it.  When a &D-kit; is tailored, probe
+ information is cached in the &D-kit; directory.  Finally, a
+ &D-tailor; may manually enter information into a configuration file
+ in a &D-kit; to provide values to &qmconfig;.</para>
+
+</section>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter" "section")
+  End:
+-->

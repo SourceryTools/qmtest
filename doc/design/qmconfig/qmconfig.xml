@@ -278,8 +278,9 @@
   <!ENTITY requirements.xml SYSTEM "requirements.xml">
   <!ENTITY overview.xml SYSTEM "overview.xml">
   <!ENTITY design.xml SYSTEM "design.xml">
-    <!ENTITY design-probe.xml SYSTEM "design-probe.xml">
     <!ENTITY design-lm.xml SYSTEM "design-lm.xml">
+    <!ENTITY design-probe.xml SYSTEM "design-probe.xml">
+    <!ENTITY design-td.xml SYSTEM "design-td.xml">
   <!ENTITY biblio.xml SYSTEM "biblio.xml">
 ]>
 <book>
