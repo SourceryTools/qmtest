@@ -32,3 +32,4 @@ rm -rf qm-@version@
 /usr/local/share/qm/*
 /usr/local/bin/qmtest
 /usr/local/bin/qmtrack
+/usr/local/share/doc/qm/*

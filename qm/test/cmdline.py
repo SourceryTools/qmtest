@@ -357,9 +357,8 @@ class Command:
                 # Close it unless it's standard output.
                 if result_file is not sys.stdout:
                     result_file.close()
-        except:
-            # FIXME: What exceptions need to be handled here?
-            raise
+        except ValueError, test_id:
+            raise RuntimeError, qm.error("missing test id", test_id=test_id)
                                                     
 
     def __ProgressCallback(self, test_id, result):
@@ -434,6 +433,8 @@ class Command:
         test_class_name, test_id = self.__arguments
         try:
             test_class = base.get_test_class(test_class_name)
+        except ValueError:
+            raise RuntimeError, qm.error("test class not fully specified")
         except ImportError:
             raise RuntimeError, qm.error("invalid class",
                                          class_name=test_class_name)
@@ -544,6 +545,7 @@ class Command:
 
         # If we have been provided with expected outcomes, report each
         # test whose outcome doesn't match the expected outcome.
+        unexpected_count = 0
         if expected_outcomes is not None:
             output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
             # Scan over tests.
@@ -557,12 +559,18 @@ class Command:
                 if outcome == expected_outcome:
                     # The outcome of this test is as expected; move on.
                     continue
+                # Keep track of the number of tests with unexpected
+                # outcomes. 
+                unexpected_count = unexpected_count + 1
                 # This test produced an unexpected outcome, so report it.
                 output.write("  %-32s: %-8s [expected %s]\n"
                              % (test_id, outcome, expected_outcome))
+            if unexpected_count == 0:
+                output.write("  (None)\n")
             output.write("\n")
 
         output.write(divider("TESTS THAT DID NOT PASS"))
+        non_passing_count = 0
         for test_id in results.keys():
             result = results[test_id]
             outcome = result.GetOutcome()
@@ -570,7 +578,9 @@ class Command:
             if outcome == base.Result.PASS:
                 # Don't list tests that passed.
                 continue
-            elif outcome == base.Result.UNTESTED:
+            # Keep count of how many didn't pass.
+            non_passing_count = non_passing_count + 1
+            if outcome == base.Result.UNTESTED:
                 # If the test was not run, print the failed prerequisite.
                 prerequisite = result["failed_prerequisite"]
                 prerequisite_outcome = results[prerequisite].GetOutcome()
@@ -581,6 +591,9 @@ class Command:
                 if result.has_key("cause"):
                     extra = "[%s]" % result["cause"]
             output.write("  %-32s: %-8s %s\n" % (test_id, outcome, extra))
+
+        if non_passing_count == 0:
+            output.write("  (None)\n")
         output.write("\n")
 
 

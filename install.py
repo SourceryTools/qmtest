@@ -65,6 +65,12 @@ scripts = {
     "qmtrack": "qm/track/qmtrack.in",
     }
 
+# Documentation files to install.
+doc_files = [
+    "README",
+    "COPYING",
+    ]
+
 ########################################################################
 # functions
 ########################################################################
@@ -134,12 +140,13 @@ def set_data_file_permissions(arg, dirname, names):
 
 # Skip the first argument; that's the name of this script.
 arguments = sys.argv[1:]
-# There should be three arguments exactly.
-if len(arguments) != 3:
-    sys.stderr.write("Usage: python install.py BINDIR LIBDIR SHAREDIR\n")
+# There should be four arguments exactly.
+if len(arguments) != 4:
+    sys.stderr.write("Usage: python install.py "
+                     "BINDIR LIBDIR SHAREDIR DOCDIR\n")
     sys.exit(1)
 # Unpack them.
-bin_dir, lib_dir, share_dir = arguments
+bin_dir, lib_dir, share_dir, doc_dir = arguments
 
 # This is the first line that's added to generated scripts.
 bin_handler = "#!%s\n" % sys.executable
@@ -187,6 +194,18 @@ print "copying %s" % share_dir
 shutil.copytree("share", share_dir)
 # Set the permissions of the files in the tree.
 os.path.walk(share_dir, set_data_file_permissions, None)
+
+# Create the doc directory if it doesn't exit.
+if not os.path.exists(doc_dir):
+    os.makedirs(doc_dir, 0755)
+    os.chmod(doc_dir, 0755)
+# Copy documentation files there.
+for doc_file in doc_files:
+    print "installing %s" % dest
+    dest = os.path.join(doc_dir, os.path.basename(doc_file))
+    shutil.copy(doc_file, dest)
+    os.chmod(dest, 0644)
+
 
 ########################################################################
 # Local Variables:

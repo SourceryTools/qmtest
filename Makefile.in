@@ -75,7 +75,7 @@ sgmlop/Makefile:
 # Run the install.py script to install everything.
 install:
 	$(INSTALL) -d $(INSTALLBINDIR) $(INSTALLLIBDIR)
-	$(PYTHON) install.py \
-	    $(INSTALLBINDIR) $(INSTALLLIBDIR) $(INSTALLSHAREDIR)
+	$(PYTHON) install.py $(INSTALLBINDIR) $(INSTALLLIBDIR) \
+	    $(INSTALLSHAREDIR) $(INSTALLDOCDIR)
 	cd $(INSTALLLIBDIR)/gadfly; $(PYTHON) gfinstall.py
 	chmod 0644 $(INSTALLLIBDIR)/gadfly/sql.mar

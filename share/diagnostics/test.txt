@@ -65,6 +65,9 @@ letters, digits, and underscores, and periods.
 @ missing arg for template
 Specify the name of the test class and the test ID of the new test.
 
+@ missing test id
+There is no test with ID "%(test_id)s".
+
 @ no db specified
 You must specify the location of the test database.  
 
@@ -81,6 +84,13 @@ You must specify one or more test or suite IDs.
 
 @ test already exists
 There is already a test with ID "%(test_id)s".
+
+@ test class not fully specified
+You must specify the Python path to the test class, including the
+packages or modules containig the class.  
+
+For example, for test "MyTest" in module "mymod" of package "mypack",
+specify "mypack.mymod.MyTest".
 
 @ unknown id
 There is no test with ID "%(test_id)s" in the database.

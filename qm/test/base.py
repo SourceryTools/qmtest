@@ -750,7 +750,7 @@ def get_test_class(test_class_name, extra_paths=[]):
     # Extract paths from the 'QMTEST_CLASSPATH' environment variable. 
     try:
         user_class_path = os.environ["QMTEST_CLASSPATH"]
-        user_class_path = string.split(user_classpath, ":")
+        user_class_path = string.split(user_class_path, ":")
     except KeyError:
         # The environment variable isn't set.
         user_class_path = []

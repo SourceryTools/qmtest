@@ -121,6 +121,7 @@ exec_prefix	= @exec_prefix@
 INSTALLBINDIR	= @bindir@
 INSTALLLIBDIR	= @libdir@/qm
 INSTALLSHAREDIR	= @datadir@/qm
+INSTALLDOCDIR   = @datadir@/doc/qm
 
 .PHONY:		all clean doc setup subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print doc-python

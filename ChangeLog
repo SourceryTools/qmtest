@@ -1,5 +1,22 @@
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk.in (INSTALLDOCDIR): New variable.
+	* qm.spec (files): Include doc files.
+	* install.py (doc_files): New variable.
+	Take doc dir as argument.  Install documentation.
+	* README: Improve formatting.  Describe new track features, and
+	add test tutorial.
+	* Makefile.in (install): Pass doc directory to install script.
+	* share/diagnostics/test.txt (missing test id): New diagnostic.
+	(test class not fully specified): Likewise.
+	* qm/test/cmdline.py (Command.__ExecuteRun): Handle ValueError.
+	(Command.__ExecuteTemplate): Likewise.
+	(Command.divider): Generate an indication if no tests failed, or
+	if no tests produced unexpected outcomes.
+	* qm/test/base.py (get_test_class): Fix typo.
+
+2001-03-30  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm.spec (BuildRoot): Reove.
 
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
