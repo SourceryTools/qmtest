@@ -243,6 +243,22 @@ class NotifyFixedTrigger(_NotifyTrigger):
 
     class_name = "qm.track.triggers.notification.NotifyFixedTrigger"
 
+    property_declarations = \
+        _NotifyTrigger.property_declarations + (
+        qm.fields.PropertyDeclaration(
+            name="recipient_addresses",
+            description="A comma-separated list of email addresses "
+            "of subscribers.",
+            default_value=""),
+
+        qm.fields.PropertyDeclaration(
+            name="recipient_uids",
+            description="A comma-separated list of user IDs of "
+            "subscribers.",
+            default_value=""),
+
+        )
+
 
     def __init__(self,
                  name,
@@ -294,7 +310,11 @@ class NotifyFixedTrigger(_NotifyTrigger):
     def GetRecipientAddresses(self):
         """Return a sequence of recipients specified by email address."""
 
-        return string.split(self.GetProperty("recipient_addresses"), ",")
+        addresses = self.GetProperty("recipient_addresses")
+        if addresses == "":
+            return []
+        else:
+            return string.split(addresses, ",")
 
 
     def SetRecipientUids(self, user_ids):
@@ -309,7 +329,11 @@ class NotifyFixedTrigger(_NotifyTrigger):
     def GetRecipientUids(self):
         """Return a sequence of recipients specified by user ID."""
 
-        return string.split(self.GetProperty("recipient_uids"), ",")
+        uids = self.GetProperty("recipient_uids")
+        if uids == "":
+            return []
+        else:
+            return string.split(uids, ",")
 
 
     def AddRecipientAddress(self, address):
@@ -568,15 +592,16 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
         if result:
             # Yes.
             uid = issue.GetField("user")
-            current_subscribers = issue.GetField(self._field_name)
+            field_name = self.GetProperty("field_name")
+            current_subscribers = issue.GetField(field_name)
             # Is the user already subscribed?
             if uid not in current_subscribers:
                 # Find out who was subscribed before the revision.
                 if previous_issue is None:
                     previous_subscribers = []
                 else:
-                    previous_subscribers = previous_issue.GetField(
-                        self._field_name)
+                    previous_subscribers = \
+                        previous_issue.GetField(field_name)
                 # First check if the user was explicitly unsubscribed as
                 # part of this revision (i.e. was previously in the
                 # subscriber list but is no longer). 
@@ -587,7 +612,7 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
                 else:
                     # Subscribe the user.
                     current_subscribers.append(uid)
-                    issue.SetField(self._field_name, current_subscribers)
+                    issue.SetField(field_name, current_subscribers)
         # Proceed as usual.
         return TriggerResult(self, TriggerResult.ACCEPT)
 

@@ -1,3 +1,13 @@
+2001-11-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/memory_issue_store.py (IssueStore.__Write): Store
+	issues safely.  
+	* qm/track/triggers/notification.py
+	(NotifyFixedTrigger.property_declarations): New attribute.
+	(NotifyFixedTrigger.GetRecipientAddresses): Handle empty list.
+	(NotifyFixedTrigger.GetRecipientUids): Likewise.
+	(NotifyByUidFieldTrigger.Preupdate): Use field_name property.
+
 2001-11-11  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/platform_unix.py (send_email): Reimplement, with support for

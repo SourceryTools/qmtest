@@ -48,6 +48,7 @@ import issue_class
 import issue_store
 import os
 import qm.common
+import shutil
 
 _builtin_open = __builtin__.open
 
@@ -258,13 +259,22 @@ class IssueStore(issue_store.IssueStore):
     def __Write(self):
         """Write out the IDB state."""
 
-        # Open the file in which to write the issues.
-        file = _builtin_open(_get_issue_path(self.path), "w")
-        # Write out issues.
-        issue.write_issue_histories(self.__issues.values(), file)
-        # All done.
-        file.close()
+        # We write the issues to a temporary file, and then copy this
+        # file over the main issues file.  This is done for safety: if
+        # the write is interrupted, we haven't corrupted the old issue
+        # file, at least.
 
+        # Construct the temporary file name.
+        temporary_path = _get_issue_path(self.path) + ".crash"
+        # Write the issues to the temporary file.
+        file = _builtin_open(temporary_path, "w")
+        issue.write_issue_histories(self.__issues.values(), file)
+        file.close()
+        # Overwrite the main issues file.
+        shutil.copy(temporary_path, _get_issue_path(self.path))
+        # Remove the temporary file.
+        os.unlink(temporary_path)
+        
 
 
 ########################################################################
