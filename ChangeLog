@@ -1,5 +1,7 @@
 2004-02-08  Mark Mitchell  <mark@codesourcery.com>
 
+	* NEWS: Remove "Not yet released" markers from news for 2.1.
+
 	* qm/test/web/web.py (ShowSuitePage.MakeDeleteScript): Return the
 	result of MakeConfirmationDialog.
 
