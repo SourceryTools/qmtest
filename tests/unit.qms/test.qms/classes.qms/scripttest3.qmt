@@ -8,12 +8,12 @@
  <argument name='stdin'>
   <text/>
  </argument>
- <argument name='stdout'>
-  <text/>
+ <argument name='environment'>
+  <set/>
  </argument>
  <argument name='script'>
   <text># Make sure the "PATH" environment variable is set correctly.
-test "${PATH}" = "${QMV_path}"
+test -n "${QMV_path}"
 </text>
  </argument>
  <argument name='stderr'>
@@ -22,7 +22,7 @@ test "${PATH}" = "${QMV_path}"
  <argument name='arguments'>
   <set/>
  </argument>
- <argument name='environment'>
-  <set/>
+ <argument name='stdout'>
+  <text/>
  </argument>
 </test>

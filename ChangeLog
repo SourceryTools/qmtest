@@ -1,3 +1,11 @@
+2001-10-04  Alex Samuel  <samuel@codesourcery.com>
+
+	* unit.qms/test.qms/classes.qms/scripttest3.qmt: Update.
+	* unit.qms/track.qms/export.qms/export1.qmt: Remove obsolete test.
+	* unit.qms/track.qms/export.qms/export2.qmt: Likewise.
+	* unit.qms/track.qms/export.qms/setup_idb.qmt: Likewise.
+	* unit.qms/track.qms/export.qms/idb.qma: Remove action.
+
 2001-10-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/web.py (WebServer.__init__): Document meaning of using
