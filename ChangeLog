@@ -1,5 +1,9 @@
 2003-09-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/qm-opl.xml: Remove Software Carpentry references.
+	* doc/manual/common-manual.xml: Likewise.
+	* qm/test/doc/manual.xml: Update version number.
+
 	* qm/test/doc/reference.xml: Remove documentation for non-existant
 	--summary and --no-summary options to "qmtest run".  Fix typo in
 	-O documentation for "qmtest summarize".  Improve --pid-file

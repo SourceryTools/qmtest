@@ -61,14 +61,7 @@
    <holder>CodeSourcery LLC</holder>
   </copyright>
   <legalnotice>&qmlicense;</legalnotice>
-  <releaseinfo>Version 1.0</releaseinfo>
-  <revhistory>
-   <revision>
-    <revnumber>1.0&nbsp;</revnumber>
-    <date></date>
-    <revremark>Initial revision.</revremark>
-   </revision>
-  </revhistory>
+  <releaseinfo>Version 2.1</releaseinfo>
  </bookinfo>
 
  &introduction.xml;
