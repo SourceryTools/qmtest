@@ -127,7 +127,8 @@ class DGTest(DejaGNUTest):
         if path.startswith(root):
             self._name = path[len(root) + 1:]
         else:
-            self._name = os.path.basename(path)
+            # We prepend "./" for compatibility with DejaGNU.
+            self._name = os.path.join(".", os.path.basename(path))
         for l in open(path).xreadlines():
             line_num += 1
             m = self.__dg_command_regexp.search(l)
@@ -345,7 +346,7 @@ class DGTest(DejaGNUTest):
 
 
     def _DGbogus(self, line_num, args, context):
-        """Emulate the 'dg-warning' command.
+        """Emulate the 'dg-bogus' command.
 
         'line_num' -- The number at which the command was found.
 
@@ -417,7 +418,7 @@ class DGTest(DejaGNUTest):
         if len(args) >= 2:
             comment = args[1]
         else:
-            comment = None
+            comment = ""
             
         self._diagnostics.append((line_num, kind, expectation,
                                   args[0], comment))

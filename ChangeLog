@@ -1,3 +1,11 @@
+2004-01-14  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/classes/dg_test.py (DGTest._RunDGTest): Fix formatting
+	of paths to match DejaGNU.
+	(DGTest._DGBogus): Fix copy/paste error in docstring.
+	(DGTest.__ExpectDiagnostic): Use "" rather than 'None' to denote
+	empty comment, to match DejaGNU.
+
 2004-03-02  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/explicit_suite.py (arguments): Fix formatting
