@@ -52,6 +52,7 @@ packages = [
     "zope-dtml",
     "sgmlop",
     "xmlrpc",
+    "PyXML/build/lib.linux-i686-1.5",
     "qm"
     ]
 

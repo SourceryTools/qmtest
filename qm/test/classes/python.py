@@ -66,6 +66,7 @@ class ExecTest:
             description="Python source code to execute.  This may "
             "contain class and function definitions.",
             verbatim="true",
+            multiline="true",
             default_value="pass"
             ),
 
@@ -78,6 +79,7 @@ class ExecTest:
             passing value, so the test will always pass unless the code
             specified for the 'source' parameter raises an exception.""",
             verbatim="true",
+            multiline="true",
             default_value="1"
             ),
         
@@ -148,6 +150,7 @@ class BaseExceptionTest:
             title="Python Source Code",
             description="Python source code to execute.",
             verbatim="true",
+            multiline="true",
             default_value="pass"
             ),
 
@@ -202,9 +205,11 @@ class BaseExceptionTest:
             # Yes.  Extract the exception argument.
             argument = exc_info[1]
             if cmp(argument, self.exception_argument):
-                cause = qm.message("test raised wrong argument",
-                                   argument=repr(argument))
-                return Result(Result.FAIL, cause=cause)
+                cause = qm.message("test raised wrong argument")
+                return Result(Result.FAIL,
+                              cause=cause,
+                              type=str(exc_info[0]),
+                              argument=repr(argument))
         return None
 
 
@@ -314,9 +319,11 @@ class ExceptionTest(BaseExceptionTest):
             # Compare the actual argument to the expectation.
             if cmp(expected_argument, argument) != 0:
                 # We got a different argument.  The test fails.
-                cause = qm.message("test raised wrong argument",
-                                   argument=repr(argument))
-                return Result(Result.FAIL, cause=cause)
+                cause = qm.message("test raised wrong argument")
+                return Result(Result.FAIL,
+                              cause=cause,
+                              type=str(exc_info[0]),
+                              argument=repr(argument))
 
         return None
 

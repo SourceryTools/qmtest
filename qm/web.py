@@ -2636,7 +2636,7 @@ def format_color(red, green, blue):
     return "#%02x%02x%02x" % (red, green, blue)
 
 
-def escape(text):
+def javascript_escape(text):
     """Equivalent to the JavaScript 'escape' built-in function."""
 
     text = urllib.quote(text)
@@ -2644,7 +2644,7 @@ def escape(text):
     return text
 
 
-def unescape(text):
+def javascript_unescape(text):
     """Equivalent to the JavaScript 'unescape' built-in function."""
 
     return urllib.unquote(text)

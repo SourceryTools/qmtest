@@ -35,6 +35,7 @@ TOPDIR		= @top_srcdir@
 
 SUBDIRS		= zope-dtml/ExtensionClass \
 		  sgmlop \
+		  PyXML \
 		  qm
 
 # These are a bloody nuisance to build every time, and there's no good
@@ -53,8 +54,6 @@ doc:
 
 # Some modules require one-time setup.
 setup:		gadfly/sqlwhere.py
-#		sgmlop/Makefile
-#		zope-dtml/ExtensionClass/Makefile \
 
 
 # This follows the setup instructions in the Gadfly package.  The
@@ -74,6 +73,10 @@ sgmlop/Makefile:
 	cd sgmlop; \
 	cp /usr/lib/python1.5/config/Makefile.pre.in .; \
 	make -f Makefile.pre.in boot
+
+# Build the PyXML package.
+PyXML:
+	cd PyXML; $(PYTHON) ./setup.py build
 
 # Run the install.py script to install everything.
 install:

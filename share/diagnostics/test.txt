@@ -150,8 +150,7 @@ The test code raised an exception that isn't a string.  The type of the
 exception was '%(exc_type)s'.
 
 @ test raised wrong argument
-The test code raised an exception with an unexpected exception argument
-'%(argument)s'.
+The test code raised an exception with an unexpected exception argument.
 
 @ test raised wrong class
 The test code raised an exception of the unexpected class type

@@ -1,5 +1,30 @@
 2001-07-16  Alex Samuel  <samuel@codesourcery.com>
 
+	* PyXML: New imported module.
+	* install.py (packages): Include PyXML dir.
+	* Makefile.in (SUBDIRS): Add PyXML.
+	(PyXML): New rule.
+	* qm/setup_path.py.in: Add PyXML dir to Python path.
+
+	* qm/web.py (escape): Rename second definition to...
+	(javascript_escape): ... this.
+	(unescape): Rename second definition to...
+	(javascript_unescape): ... this.
+	* qm/track/issue_class.py (encode_state): Use javascript_escape.
+	(encode_transition): Likewise.
+	(decode_state): Use javascript_unescape.
+	(decode_transition): Likewise.
+	* qm/test/classes/python.py (ExecTest.fields): Make text fields
+	multiline. 
+	(BaseExceptionTest.fields): Likewise.
+	(BaseExceptionTest.CheckArgument): Improve diagnostic.
+	(ExceptionTest.CheckArgument): Likewise.
+	* qm/test/classes/file.py (FileContentsField.fields): Make text
+	field multiline.
+	* share/diagnostics/test.txt (test raised wrong argument): Reword.
+	
+2001-07-16  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (DtmlPage.__init__): Remove show_decorations parameter.
 	(DtmlPage.GenerateStartBody): Add decorations parameter.
 	(DtmlPage.GenerateEndBody): Likewise.

@@ -1182,7 +1182,7 @@ def encode_state_model(state_model):
       <transition>  ::= <start-state-name> "," <end-state-name> "," <condition>
 
     The values of <description> and <condition> are URL-escaped (see
-    'qm.web.escape').
+    'qm.web.javascript_escape').
 
     Use 'decode_state_model' to reverse this encoding."""
 
@@ -1215,7 +1215,7 @@ def encode_state(state):
     See 'encode_state_model' for a description of the encoding scheme."""
 
     result = state.GetName() + "," \
-             + qm.web.escape(state.GetDescription()) + "," \
+             + qm.web.javascript_escape(state.GetDescription()) + "," \
              + str(state.IsOpen())
     return result
 
@@ -1235,7 +1235,7 @@ def encode_transition(transition):
     # Now encode the condition.
     condition = transition.GetCondition()
     if condition is not None:
-        result = result + qm.web.escape(condition.GetExpression())
+        result = result + qm.web.javascript_escape(condition.GetExpression())
     else:
         # No condition; leave it blank.
         pass
@@ -1271,7 +1271,7 @@ def decode_state(encoding):
     See 'encode_state_model' for a description of the encoding scheme."""
 
     name, description, is_open = string.split(encoding, ",")
-    return State(name, qm.web.unescape(description), int(is_open))
+    return State(name, qm.web.javascript_unescape(description), int(is_open))
 
 
 def decode_transition(encoding):
@@ -1284,13 +1284,14 @@ def decode_transition(encoding):
     See 'encode_state_model' for a description of the encoding scheme."""
 
     start, end, condition = string.split(encoding, ",")
-    condition = string.strip(qm.web.unescape(condition))
+    condition = string.strip(qm.web.javascript_unescape(condition))
     # Decode the condition.
     if condition == "":
         # An empty string signifies no condition.
         condition = None
     else:
-        condition = TransitionCondition("", qm.web.unescape(condition))
+        condition = TransitionCondition(
+            "", qm.web.javascript_unescape(condition))
     return Transition(start, end, condition)
     
 

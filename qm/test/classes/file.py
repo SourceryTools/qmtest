@@ -207,7 +207,8 @@ class FileContentsTest:
             name="expected_contents",
             title="Expected Contents",
             description="""The expected contents of the file.""",
-            verbatim="true"),
+            verbatim="true",
+            multiline="true"),
 
         qm.fields.SetField(SubstitutionField(
             name="substitutions",

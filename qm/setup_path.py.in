@@ -72,6 +72,7 @@ add_to_python_path("zope-dtml")
 add_to_python_path("zope-dtml", "ExtensionClass")
 add_to_python_path("sgmlop")
 add_to_python_path("xmlrpc")
+add_to_python_path("PyXML/build/lib.linux-i686-1.5")
 
 # Now store the QM directories in the environment, so that other modules
 # can access them.
