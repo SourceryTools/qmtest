@@ -67,6 +67,12 @@ import label
 import xmlutil
 
 ########################################################################
+# constants
+########################################################################
+
+xml_user_database_dtd = "-//Software Carpentry//User Database V0.1//EN"
+
+########################################################################
 # classes
 ########################################################################
 
@@ -86,9 +92,37 @@ class AccountDisabledError(AuthenticationError):
 
 
 class User:
-    """A user account record."""
+    """A user account record.
 
-    def __init__(self, user_id, role="user", enabled=1):
+    User accounts contain three sets of properties.  Each property
+    is a name-value pair.  The three sets of properties are:
+
+      informational properties -- General information about the
+      user.  This may include the user's real name, contact
+      information, etc.  These properties are generally
+      user-visible, and should be modified only at the user's
+      request.
+
+      configuration properties -- Program-specific per-user
+      configuration.  This includes user's preferences, such as
+      preferred layout and output options.  These properties are
+      typically hidden as implementation details, and are often
+      changed implicitly as part of other operations.
+
+      authentication properties -- Information used to authenticate
+      the user.  This may include such things as passwords, PGP
+      keys, and digital certificates.  There are no accessors for
+      these properties; they should be used by authenticators only.
+    """
+
+
+    def __init__(self,
+                 user_id,
+                 role="user",
+                 enabled=1,
+                 information_properties={},
+                 configuration_properties={},
+                 authentication_properties={}):
         """Create a new user account.
 
         'user_id' -- The ID for the user.
@@ -100,37 +134,24 @@ class User:
         account.
 
         'enabled' -- If true, this account is enabled; otherwise,
-        disabled. 
+        disabled.
 
-        User accounts contain three sets of properties.  Each property
-        is a name-value pair.  The three sets of properties are:
+        'information_properties' -- A map contianing information
+        properties.
 
-          informational properties -- General information about the
-          user.  This may include the user's real name, contact
-          information, etc.  These properties are generally
-          user-visible, and should be modified only at the user's
-          request.
+        'configuration_properties' -- A map containing configuration
+        properties.
 
-          configuration properties -- Program-specific per-user
-          configuration.  This includes user's preferences, such as
-          preferred layout and output options.  These properties are
-          typically hidden as implementation details, and are often
-          changed implicitly as part of other operations.
-
-          authentication properties -- Information used to authenticate
-          the user.  This may include such things as passwords, PGP
-          keys, and digital certificates.  There are no accessors for
-          these properties; they should be used by authenticators only.
-
-        """
+        'authentication_properties' -- A map containing authentication
+        properties."""
         
         self.__id = user_id
         self.__role = role
         self.__is_enabled = enabled
         # Initialize properties.
-        self.__authentication = {}
-        self.__configuration = {}
-        self.__info = {}
+        self.__authentication = authentication_properties.copy()
+        self.__configuration = configuration_properties.copy()
+        self.__info = information_properties.copy()
 
 
     def GetId(self):
@@ -176,7 +197,7 @@ class User:
         'default' -- The value to return if this property is not
         specified for the user account."""
 
-        return self.__info.get(name,default)
+        return self.__info.get(name, default)
 
 
     def SetInfoProperty(self, name, value):
@@ -319,58 +340,6 @@ class DefaultAuthenticator(Authenticator):
 
 
 
-class XmlDatabaseUser(User):
-    """A user account loaded from an XML user database."""
-
-    def __init__(self, user_node):
-        """Read in a user account.
-
-        'user_node' -- A tag element DOM node representing the user."""
-
-        # The user ID is stored in the ID attribute of the user element.
-        user_id = user_node.getAttribute("id")
-        # Also the role.
-        role = user_node.getAttribute("role")
-        # Determine whether the account is disabled.
-        enabled = user_node.getAttribute("disabled") == "no"
-        # Perform base class initialization.
-        User.__init__(self, user_id, role, enabled)
-        # Read informational properties.
-        self.__GetProperties(user_node, "info",
-                             self._User__info)
-        # Read authentication properties.
-        self.__GetProperties(user_node, "authentication",
-                             self._User__authentication)
-        # Read configuration properties.
-        self.__GetProperties(user_node, "configuration",
-                             self._User__configuration)
-
-
-    def __GetProperties(self, node, tag, map):
-        """Load properties from a DOM node.
-
-        Load properties from property child elements of the unique child
-        element 'tag' of DOM 'node'.  Store the properties in 'map'."""
-
-        # Find all child elements of 'node' with 'tag'.
-        elements = node.getElementsByTagName(tag)
-        if len(elements) == 0:
-            # The child may be omitted; that's OK.
-            return
-        # There element, if provided, should be unique.
-        assert len(elements) == 1
-        element = elements[0]
-
-        # Loop over property sub-elements.
-        for property_node in element.getElementsByTagName("property"):
-            # The property name is stored in the name attribute.
-            name = property_node.getAttribute("name")
-            # The property value is stored as child CDATA.
-            value = xmlutil.get_dom_text(property_node)
-            map[name] = value
-
-
-
 class XmlDatabase:
     """An XML user database.
 
@@ -381,6 +350,7 @@ class XmlDatabase:
         """Read in the XML user database."""
 
         document = xmlutil.load_xml_file(database_path)
+        self.__path = database_path
 
         node = document.documentElement
         assert node.tagName == "users"
@@ -391,7 +361,7 @@ class XmlDatabase:
 
         # Load users.
         for user_node in node.getElementsByTagName("user"):
-            user = XmlDatabaseUser(user_node)
+            user = get_user_from_dom(user_node)
             # Store the account.
             self.__users[user.GetId()] = user
             # Make note if this is the default user.
@@ -403,17 +373,15 @@ class XmlDatabase:
 
         # Load groups.
         for group_node in node.getElementsByTagName("group"):
-            group_id = group_node.getAttribute("id")
-            user_ids = xmlutil.get_dom_children_texts(group_node, "user-id")
+            group = get_group_from_dom(group_node)
             # Make sure all the user IDs listed for this group are IDs
             # we know. 
-            for user_id in user_ids:
+            for user_id in group:
                 if not self.__users.has_key(user_id):
                     raise XmlDatabaseError, "user %s in group %s is unknown" \
                           % (user_id, group_id)
-            # Make the group.
-            group = Group(group_id, user_ids)
-            self.__groups[group_id] = group
+            # Store the group.
+            self.__groups[group.GetId()] = group
             
 
 
@@ -433,6 +401,30 @@ class XmlDatabase:
         """Return the group with ID 'group_id'."""
 
         return self.__groups[group_id]
+
+
+    def Write(self):
+        """Write out the user database."""
+
+        # Create a DOM document for the database.
+        document = xmlutil.create_dom_document(
+            public_id=xml_user_database_dtd,
+            dtd_file_name="user.dtd",
+            document_element_tag="users"
+            )
+        document_element = document.documentElement
+        # Create elements for users in the database.
+        for user in self.__users.values():
+            user_element = create_dom_for_user(document, user)
+            document_element.appendChild(user_element)
+        # Create elements for user groups.
+        for group in self.__groups.values():
+            group_element = create_dom_for_group(document, group)
+            document_element.appendChild(group_element)
+        # Write out the database.
+        user_db_file = open(self.__path, "w")
+        qm.xmlutil.write_dom_document(document, user_db_file)
+        user_db_file.close()
 
 
     # Methods for emulating a map object.
@@ -519,6 +511,145 @@ def load_xml_database(path):
         database = xml_database
         authenticator = xml_authenticator
     
+
+def get_user_from_dom(user_node):
+    """Construct a 'User' object from a user DOM element.
+
+    'user_node' -- A "user" DOM element.
+
+    returns -- A 'User' object."""
+
+    assert user_node.tagName == "user"
+
+    # The user ID is stored in the ID attribute of the user element.
+    user_id = user_node.getAttribute("id")
+    # Also the role.
+    role = user_node.getAttribute("role")
+    # Determine whether the account is disabled.
+    enabled = user_node.getAttribute("disabled") == "no"
+    # Read properties.
+    info_properties = _get_dom_properties(user_node, "info")
+    auth_properties = _get_dom_properties(user_node, "authentication")
+    conf_properties = _get_dom_properties(user_node, "configuration")
+    # Create the user object.
+    return User(user_id, role, enabled,
+                info_properties, conf_properties, auth_properties)
+
+
+def _get_dom_properties(node, tag):
+    """Return a dictionary of properties from a user DOM element node.
+
+    'node' -- A "user" DOM element.
+
+    'tag' -- The tag of the child element in which to look for
+    properties.
+
+    returns -- A map from property names to values."""
+
+    # Find all child elements of 'node' with 'tag'.
+    elements = node.getElementsByTagName(tag)
+    if len(elements) == 0:
+        # The child may be omitted; that's OK.
+        return {}
+    # There element, if provided, should be unique.
+    assert len(elements) == 1
+    element = elements[0]
+    # Start a map of properties.
+    properties = {}
+    # Loop over property sub-elements.
+    for property_node in element.getElementsByTagName("property"):
+        # The property name is stored in the name attribute.
+        name = property_node.getAttribute("name")
+        # The property value is stored as a child text node.
+        value = xmlutil.get_dom_text(property_node)
+        properties[name] = value
+    return properties
+    
+
+def create_dom_for_user(document, user):
+    """Create a DOM element node for 'user'.
+
+    'document' -- The DOM document object in which to create the
+    element.
+
+    'user' -- A 'User' instance.
+
+    returns -- A DOM element node."""
+
+    # Create the user element.
+    element = document.createElement("user")
+    element.setAttribute("id", user.GetId())
+    element.setAttribute("role", user.GetRole())
+    if user.IsEnabled():
+        disabled_attribute = "no"
+    else:
+        disabled_attribute = "yes"
+    element.setAttribute("disabled", disabled_attribute)
+    # Add informational properties.
+    info_properties_element = document.createElement("info")
+    _create_dom_properties(info_properties_element, user._User__info)
+    element.appendChild(info_properties_element)
+    # Add authentication properties.
+    auth_properties_element = document.createElement("authentication")
+    _create_dom_properties(auth_properties_element, user._User__authentication)
+    element.appendChild(auth_properties_element)
+    # Add configuration properties.
+    conf_properties_element = document.createElement("configuration")
+    _create_dom_properties(conf_properties_element, user._User__configuration)
+    element.appendChild(conf_properties_element)
+    # All done.
+    return element
+
+
+def _create_dom_properties(element, properties):
+    """Add user properties to a DOM element.
+
+    'element' -- A DOM element node to which properties are to be added
+    as children.
+
+    'properties' -- A map from property names to values."""
+
+    document = element.ownerDocument
+    for name, value in properties.items():
+        prop_element = xmlutil.create_dom_text_element(
+            document, "property", str(value))
+        prop_element.setAttribute("name", name)
+        element.appendChild(prop_element)
+        
+
+def get_group_from_dom(group_node):
+    """Construct a 'Group' object from a DOM element.
+
+    'group_node' -- A DOM "group" element node.
+
+    returns -- A 'Group' object."""
+
+    assert group_node.tagName == "group"
+
+    group_id = group_node.getAttribute("id")
+    user_ids = xmlutil.get_dom_children_texts(group_node, "user-id")
+    # Make the group.
+    return Group(group_id, user_ids)
+
+
+def create_dom_for_group(document, group):
+    """Create a DOM element node for 'group'.
+
+    'document' -- The DOM document object in which to create the
+    element.
+
+    'group' -- A 'Group' instance.
+
+    returns -- A DOM element node."""
+
+    element = document.createElement("group")
+    element.setAttribute("id", group.GetId())
+    for user_id in group:
+        user_id_element = xmlutil.create_dom_text_element(
+            document, "user-id", user_id)
+        element.appendChild(user_id_element)
+    return element
+
 
 ########################################################################
 # variables

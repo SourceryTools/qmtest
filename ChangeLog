@@ -1,5 +1,41 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/xmlutil.py (create_dom_text_element): Don't add child for
+	empty string.
+	* qm/web.py (PageInfo.__init__): Make request optional.
+	(PageInfo.FormatUserId): Remove.
+	(WebServer.__init__): Adjust for _handle_problems and
+	_handle_root.
+	(_get_path_for_cache_page): New function.
+	(get_from_cache): Use it.
+	(handle_problems): Rename to...
+	(_handle_problems): ... this.
+	(handle_root): Rename to...
+	(_handle_root): ... this.
+	(format_user_id): New function.
+	* qm/user.py (xml_user_database_dtd): New variable.
+	(User.__init__): Add property parameters.
+	(XmlDatabaseUser): Remove class.
+	(XmlDatabase.__init__): Remember path.  Use get_user_from_dom and
+	get_group_from_dom. 
+	(XmlDatabase.Write): New method.
+	(get_user_from_dom): New function.
+	(_get_dom_properties): Likewise.
+	(create_dom_for_user): Likewise.
+	(_create_dom_properties): Likewise.
+	(get_group_from_dom): Likewise.
+	(create_dom_for_group): Likewise.
+	* qm/fields.py (UidField.FormatValueAsHtml): Use format_user_id.
+	* qm/track/config.py (close_idb): Write user database.
+	* share/web/stylesheets/qm.css (span.userid): Adjust.
+	(a.userid): New class.
+	* share/web/images/right-arrow.gif: New bitmap.
+	* share/dtml/track/index.dtml: Adjust formatting.
+	* share/dtml/track/history.dtml: Use bitmap arrow.  Adjust
+	formatting. 
+
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/fields.py (TimeField.GetCurrentTime): Return an int.
 	* qm/track/web/web.py (HistoryPageInfo.GetRevisionTime): New method.
 	* share/dtml/track/history.dtml: Use it.

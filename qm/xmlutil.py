@@ -169,8 +169,14 @@ def create_dom_text_element(document, tag, text):
     'text' -- The text contents of the text node."""
 
     element = document.createElement(tag)
-    text_node = document.createTextNode(text)
-    element.appendChild(text_node)
+    if text != "":
+        text_node = document.createTextNode(text)
+        element.appendChild(text_node)
+    else:
+        # Don't create a child node in this case.  For some reason, it
+        # gets written out with an extraneous newline, and therefore
+        # when the text is read in, its no longer an empty string.
+        pass
     return element
 
 

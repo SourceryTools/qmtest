@@ -29,22 +29,18 @@
     <tr bgcolor="#e0e0e0">
      <td>
       <dtml-if expr="revision_number == current_revision_number">
-       =&gt;
+       <img src="/images/right-arrow.gif"/>
       <dtml-else>
        &nbsp;
       </dtml-if>
      </td>
      <td align="right">
       <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
-       <b><dtml-var expr="revision.GetRevision()"></b>
-      </a>
+       <b>revision <dtml-var expr="revision.GetRevision()"></b></a>
      </td>
      <td>
-      <a href="<dtml-var expr="MakeShowRevisionUrl(revision_number)">">
-       <dtml-var expr="GetRevisionTime(revision)">
-       &nbsp;&nbsp;&nbsp;
-       by <dtml-var expr="revision.GetField('user')">
-      </a>
+      <dtml-var expr="GetRevisionTime(revision)">
+      by <dtml-var expr="web.format_user_id(revision.GetField('user'))">
      </td>
     </tr>
     <dtml-if expr="revision_number != 0">

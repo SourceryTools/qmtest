@@ -227,13 +227,14 @@ class PageInfo:
     </script>
     '''
 
-    def __init__(self, request):
+    def __init__(self, request=None):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
         request."""
 
-        # Remember the request.
+        if request is None:
+            request = WebRequest("?")
         self.request = request
 
 
@@ -400,12 +401,6 @@ class PageInfo:
            <tr bgcolor="%s"><td>%s</td></tr>
           </table>
           ''' % (color, self.MakeSpacer())
-
-
-    def FormatUserId(self, user_id):
-        """Generate HTML for a user ID."""
-
-        return '<span class="userid">%s</span>' % user_id
 
 
     def UserIsInGroup(self, group_id):
@@ -827,8 +822,8 @@ class WebServer(HTTPServer):
         self.__xml_rpc_path = xml_rpc_path
         self.__shutdown_requested = 0
 
-        self.RegisterScript("/problems.html", handle_problems)
-        self.RegisterScript("/", handle_root)
+        self.RegisterScript("/problems.html", _handle_problems)
+        self.RegisterScript("/", _handle_root)
 
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
@@ -2403,6 +2398,24 @@ def cache_page(page_text, session_id=None):
     return request
 
 
+def _get_path_for_cache_page(request, session_id):
+    """Return the path for a cached page.
+
+    'request' -- The URL requesting the page from the cache.
+
+    'session_id' -- The session ID for the request, or 'None'."""
+    
+    if session_id is None:
+        dir_path = _page_cache_path
+    else:
+        # Construct the path to the directory containing pages in the
+        # cache for 'session_id'.
+        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
+    # Construct the path to the file containing the page.
+    page_name = request["page"]
+    return os.path.join(dir_path, page_name)
+
+
 def get_from_cache(request, session_id=None):
     """Retrieve a page from the page cache.
 
@@ -2417,16 +2430,7 @@ def get_from_cache(request, session_id=None):
     page cache.  Otherwise, it is retrieved from the session page cache
     for that session."""
     
-    if session_id is None:
-        dir_path = _page_cache_path
-    else:
-        # Construct the path to the directory containing pages in the
-        # cache for 'session_id'.
-        dir_path = os.path.join(_page_cache_path, "sessions", session_id)
-
-    # Construct the path to the file containing the page.
-    page_name = request["page"]
-    page_file_name = os.path.join(dir_path, page_name)
+    page_file_name = _get_path_for_cache_page(request, session_id)
     if os.path.isfile(page_file_name):
         # Return the page.
         return open(page_file_name, "r").read()
@@ -2445,17 +2449,53 @@ def get_from_cache(request, session_id=None):
         """ % url
 
 
-def handle_problems(request):
+def _handle_problems(request):
     """Generate and return the problems page in response to a web request."""
 
     page_info = PageInfo.default_class(request)
     return generate_html_from_dtml("problems.dtml", page_info)
 
 
-def handle_root(requets):
+def _handle_root(requets):
     """Respond to a request for the root page on this server."""
 
     raise HttpRedirect, "/static/index.html"
+
+
+def format_user_id(user_id):
+    """Generate HTML for a user ID."""
+
+    try:
+        # Look up the user in the user database.
+        user_item = user.database[user_id]
+    except KeyError:
+        # The user isn't in the database.  Oops.
+        return "<blink>%s</blink>" % user_id
+    else:
+        # Have we already generated and cached a user information page
+        # for this user?
+        if not hasattr(user_item, "__page_cache_request"):
+            # No.  Generate it now.
+            page_info = PageInfo()
+            page_info.user_id = user_id
+            page_info.user = user_item
+            user_page = generate_html_from_dtml("user.dtml", page_info)
+            # Put it in the page cache.
+            user_page_request = cache_page(user_page)
+            # Attach it to the user item.
+            user_item.__page_cache_request = user_page_request
+        else:
+            # Yes, we generated the page previously. 
+            user_page_request = user_item.__page_cache_request
+
+        # Return a link that pops up a window display the user
+        # information page.
+        return '''
+        <a href="javascript: void(0);"
+           onclick="window.open('%s', 'popup',
+                                'height=200,width=300,resizeable');"
+           class="userid">%s</a>''' \
+            % (user_page_request.AsUrl(), user_id)
 
 
 ########################################################################

@@ -272,6 +272,8 @@ def close_idb():
 
     mode = state["mode"]
     if mode == "local":
+        # Write the user database.
+        qm.user.database.Write()
         # We should have the global lock.
         assert __global_lock.IsLocked()
         # Close the IDB, if it was ever initialized.

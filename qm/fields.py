@@ -1562,12 +1562,12 @@ class UidField(TextField):
         if name is None:
             name = self.GetHtmlFormFieldName()
 
-        if style == "new" or style == "edit":
+        if style in ["new", "edit"]:
             uids = qm.user.database.keys()
             return qm.web.make_select(name, uids, value)
 
-        elif style == "full" or style == "brief":
-            return value
+        elif style in ["brief", "full"]:
+            return web.format_user_id(value)
 
         else:
             raise ValueError, style

@@ -102,11 +102,15 @@ tr.heading {
 }
 
 span.userid {
-    color: green;
-    font-weight: bold;
+    color: 102050;
+}
+
+a.userid {
+    color: 102050;
 }
 
 a.help-link {
     font-size: xx-small;
-    color: #402090;
+    color: 402090;
 }
+

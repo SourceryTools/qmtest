@@ -32,11 +32,11 @@
    <tbody>
     <tr>
      <td valign="top" width="25%" bgcolor="#f0f0f0">
-      <table border="0" cellspacing="0" cellpadding="8">
-       <tr><td>
-        Logged in as:<br>
-        <dtml-var expr="FormatUserId(request.GetSession().GetUserId())">
-       </td></tr>
+      <table border="0" cellspacing="0" cellpadding="6" width="100%">
+       <tr><th>
+        Logged In As
+        <dtml-var expr="web.format_user_id(request.GetSession().GetUserId())">
+       </td></th>
        <tr><td>
         <dtml-if expr="request.GetSession().IsDefaultUser()">
          <dtml-var expr="MakeLoginForm()">
