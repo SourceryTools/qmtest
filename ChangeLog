@@ -1,5 +1,12 @@
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (PageInfo.common_javascript): Add popup_manual.
+	* qm/test/web/web.py (PageInfo.GenerateStartBody): Add manual link.
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Likewise.
+	* share/dtml/test/dir.dtml: Use GenerateEndBody.
+	
+2001-06-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (WebRequest.__init__): Copy client_address.
 	* qm/fields.py (TimeField.GetDefaultValue): Use
 	IntegerField.GetDefaultValue. 

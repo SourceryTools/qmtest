@@ -88,13 +88,16 @@ class PageInfo(qm.web.PageInfo):
   <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
   src="/images/sc-logo.png"></a></td>
   <td align="right">
+   <a href="javascript: popup_manual();"><font
+     color="white">QM Manual</font></a>
+   &nbsp;&nbsp;
    <a href="%s"><font color="white">%s</font></a>
    &nbsp;&nbsp;
   </td>
  </tr>
 </table>
 <br>
-''' % (self.MakeIndexUrl(), self.GetName())
+''' % (self.MakeIndexUrl(), "Main Page")
 
 
     def MakeIndexUrl(self):

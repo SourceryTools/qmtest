@@ -210,6 +210,12 @@ class PageInfo:
 
       select.selectedIndex = new_index;
     }
+
+    function popup_manual()
+    {
+      window.open("/manual/index.html", "manual",
+                  "resizeable,toolbar,scrollbars");
+    }
     </script>
     '''
 

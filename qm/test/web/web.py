@@ -69,6 +69,9 @@ class PageInfo(qm.web.PageInfo):
   <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
   src="/images/sc-logo.png"></a></td>
   <td align="right">
+   <a href="javascript: popup_manual();"><font
+     color="white">QM Manual</font></a>
+   &nbsp;&nbsp;
    <a href="%s" class="reverse">Full Listing</a>
    &nbsp;&nbsp;
   </td>
