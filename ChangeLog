@@ -1,4 +1,10 @@
-2002-12-02  Mark Mitchell <mark@codesourcery.com>
+2002-12-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/web/web.py (NewItemPage.GetClassDescriptions): Use
+	self.class_names to get the list of classes.
+	* NEWS: Note that "File/New Resource" now operates correctly.
+
+2002-12-02    <Mark Mitchell <mark@codesourcery.com>>
 
 	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Use binary mode
 	to read and write results files.

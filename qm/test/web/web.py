@@ -821,7 +821,7 @@ class NewItemPage(QMTestPage):
         test or resource classes."""
 
         desc = "**Available Classes**\n\n"
-        for n in self.database.GetTestClassNames():
+        for n in self.class_names:
             c = qm.test.base.get_extension_class(n, self.type,
                                                  self.database)
             d = qm.extension.get_class_description(c, brief=1)
