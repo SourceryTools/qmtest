@@ -416,7 +416,7 @@ class FileDatabase(Database):
         if self._AreLabelsPaths():
             return label
 
-        path = os.path.join(self.GetLabelComponents(label))
+        return os.path.join(*self.GetLabelComponents(label))
 
 
 

@@ -1,3 +1,7 @@
+2004-01-13  Stefan Seefeld  <seefeld@sympatico.ca>
+
+	* qm/test/file_database.py: Fix little bug.
+
 2004-01-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/share/dtml/show.dtml: Add is_new field to form.
