@@ -1,5 +1,12 @@
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (Database.GetTestClasses): New method.
+	* qm/test/web/show.py (NewItemPage.__init__): Use it, instead
+	of qm.test.base.standard_test_class_names.
+	* share/dtml/test/new.dtml: Remove test class text field.
+	* share/dtml/test/show.dtml: Only show explanatory text about
+	properties when editing.
+	
 	* qm/fields.py (Field.GetDescription): Update docstring.
 	(Field.GetBriefDescription): New method.
 	* qm/structured_text.py (StructuredTextProcessor.__call__): Use

@@ -96,8 +96,7 @@
       <dtml-if expr="type == 'test'">
        <b>Test Class</b>
 
-       <p>The test class determines how the test is parameterized, and
-       provides the mechanism by which the test is run.</p>
+       <p>The kind of test to create.</p>
       <dtml-else>
        <b>Resource Class</b>
 
@@ -108,10 +107,9 @@
      <td>
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
        <tr valign="top"><td>
-        Standard Classes:
-        <select name="class_list"
-                onchange="set_class();">
-         <option value=""> </option>
+        Class:
+        <select name="class">
+         <option value="">Select A Class</option>
          <dtml-in name="class_names">
          <dtml-let class_name=sequence-item>
           <option value="<dtml-var name="class_name">">
@@ -120,12 +118,6 @@
          </dtml-let>
          </dtml-in>
         </select>
-        <input name="class" 
-               type="text" 
-               size="40" 
-               value="<dtml-var name="class_name">"
-               onkeydown="document.form.class_list.selectedIndex = 0;"
-               />
         <dtml-if expr="field_errors.has_key('_class')">
          <br>
          <span class="error">
@@ -153,18 +145,6 @@
   </table>
 
  </form>
-
- <script language="JavaScript">
- function set_class()
- {
-   var select = document.form.class_list;
-   var index = select.selectedIndex;
-   if(index > 0)
-     // "class" is a reserved word in JavaScript, so access the class 
-     // input by index.
-     document.form[2].value = select[index].value;
- }
- </script>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

@@ -710,7 +710,14 @@ class Database:
         raise qm.MethodShouldBeOverriddenError, "Database.GetAttachmentStore"
 
 
+    def GetTestClasses(self):
+        """Return a list of test classes that the database can store.
 
+        Each acceptable test class is returned as a string."""
+
+        return standard_test_class_names
+    
+    
 class Result:
     """The result of running a test.
 

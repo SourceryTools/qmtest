@@ -330,7 +330,7 @@ class NewItemPage(web.DtmlPage):
         self.item_id = item_id
         self.class_name = class_name
         if type == "test":
-            self.class_names = qm.test.base.standard_test_class_names
+            self.class_names = qm.test.base.get_database().GetTestClasses()
         elif type == "resource":
             self.class_names = qm.test.base.standard_resource_class_names
         self.field_errors = field_errors

@@ -304,7 +304,9 @@
     <tr class="field" valign="top">
      <td>
       <b>Properties</b>
-      <p>Properties of the <dtml-var name="type">.</p>
+      <dtml-if expr="edit">
+        <p>Properties of the <dtml-var name="type">.</p>
+      </dtml-if>
      </td>
      <td>
       <dtml-if expr="edit">
