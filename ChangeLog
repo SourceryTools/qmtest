@@ -1,3 +1,13 @@
+2001-02-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/server.py (start_server): Bind the server.
+	* qm/web.py (HTTPServer): New class.
+	(WebServer): Derive from HTTPServer.
+	(WebServer.GetXmlRpcUrl): Use GetServerAddress.
+	(WebServer.Run): Don't bind here.
+	(WebServer.Bind): New function.
+	(WebServer.GetServerAddress): New method.
+
 2001-02-27  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/cmdline.py (__Parse): Change formatting to happen from

@@ -42,6 +42,8 @@ import cgi
 import os
 import qm.common
 import SimpleHTTPServer
+import SocketServer
+import socket
 import string
 import sys
 import traceback
@@ -331,7 +333,59 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 
-class WebServer(BaseHTTPServer.HTTPServer):
+class HTTPServer(BaseHTTPServer.HTTPServer):
+    """Workaround for problems in 'BaseHTTPServer.HTTPServer'.
+
+    The Python 1.5.2 library's implementation of
+    'BaseHTTPServer.HTTPServer.server_bind' seems to have difficulties
+    when the local host address cannot be resolved by 'gethostbyaddr'.
+    This may happen for a variety of reasons, such as reverse DNS
+    misconfiguration.  This subclass fixes that problem."""
+
+    def server_bind(self):
+        """Override server_bind to store the server name."""
+
+        # The problem occurs when an empty host name is specified as the
+        # local address to which the socket binds.  Specifying an empty
+        # host name causes the socket to bind to 'INADDR_ANY', which
+        # indicates that the socket should be bound to all interfaces.
+        #
+        # If the socket is bound to 'INADDR_ANY', 'gethostname' returns
+        # '0.0.0.0'.  In this case, 'BaseHTTPServer' tries unhelpfully
+        # to obtain a host name to associate with the socket by calling
+        # 'gethostname' and then 'gethostbyaddr' on the result.  This
+        # will raise a socket error if reverse lookup on the (primary)
+        # host address fails.  So, we use our own method to retrieve the
+        # local host name, which fails more gracefully under this
+        # circumstance. 
+
+        SocketServer.TCPServer.server_bind(self)
+        host, port = self.socket.getsockname()
+
+        # Use the primary host name if we're bound to all interfaces.
+        # This is a bit misleading, because the primary host name may
+        # not be bound to all interfaces.
+        if not host or host == '0.0.0.0':
+            host = socket.gethostname()
+
+        # Try the broken 'BaseHTTPServer' implementation.
+        try:
+            hostname, hostnames, hostaddrs = socket.gethostbyaddr(host)
+            if '.' not in hostname:
+                for host in hostnames:
+                    if '.' in host:
+                        hostname = host
+                        break
+        except socket.error:
+            # If it bombs, use our more lenient method.
+            hostname = qm.get_host_name()
+
+        self.server_name = hostname
+        self.server_port = port
+    
+
+
+class WebServer(HTTPServer):
     """A web server that serves ordinary files, dynamic content, and XML-RPC.
 
     To configure the server to serve ordinary files, register the
@@ -371,7 +425,8 @@ class WebServer(BaseHTTPServer.HTTPServer):
         'xml_rpc_path' -- The script path at which to accept XML-RPC
         requests.   If 'None', XML-RPC is disabled for this server.
 
-        The server is not started until the 'Run' method is invoked."""
+        The server is not started until the 'Bind' and 'Run' methods are
+        invoked."""
 
         self.__port = port
         self.__log_file = log_file
@@ -387,13 +442,15 @@ class WebServer(BaseHTTPServer.HTTPServer):
     def GetXmlRpcUrl(self):
         """Return the URL at which this server accepts XML-RPC.
 
+        preconditions -- The server must be bound.
+
         returns -- The URL, or 'None' if XML-RPC is disabled."""
 
         if self.__xml_rpc_path is None:
             return None
         else:
-            return "http://%s:%d%s" % (qm.common.get_host_name(),
-                                       self.__port, self.__xml_rpc_path) 
+            host_name, port = self.GetServerAddress()
+            return "http://%s:%d%s" % (host_name, port, self.__xml_rpc_path) 
 
 
     def RegisterScript(self, script_path, script):
@@ -523,12 +580,23 @@ class WebServer(BaseHTTPServer.HTTPServer):
         return self.__xml_rpc_methods[method_name]
 
 
-    def Run(self):
-        """Start the web server."""
+    def Bind(self):
+        """Bind the server to the specified address and port.
 
-        # Initialize the base class here.  This causes the server to start.
-        BaseHTTPServer.HTTPServer.__init__(self, ('', self.__port), 
+        Does not start serving."""
+
+        # Initialize the base class here.  This binds the server
+        # socket. 
+        BaseHTTPServer.HTTPServer.__init__(self,
+                                           ('', self.__port), 
                                            WebRequestHandler)
+
+
+    def Run(self):
+        """Start the web server.
+
+        preconditions -- The server must be bound."""
+
         self.serve_forever()
 
 
@@ -538,6 +606,14 @@ class WebServer(BaseHTTPServer.HTTPServer):
         if self.__log_file is not None:
             self.__log_file.write(message)
             self.__log_file.flush()
+
+
+    def GetServerAddress(self):
+        """Return the host address on which this server is running.
+
+        returns -- A pair '(hostname, port)'."""
+
+        return (self.server_name, self.server_port)
 
 
 
@@ -646,7 +722,7 @@ class CGIWebRequest:
         for key in self.keys():
             fields[key] = self[key]
         return apply(WebRequest, (self.GetUrl(), ), fields)
-            
+
 
 
 ########################################################################

@@ -109,11 +109,12 @@ def start_server(port, log_file=None):
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
+        ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
         ( "submit", qm.track.web.show.handle_submit ),
         ( "summary", qm.track.web.summary.handle_summary ),
-        ( "new", qm.track.web.show.handle_new ),
+        # ( "upload-attachment", qm.track.web.handle_upload_attachment ),
         ]:
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",
@@ -122,6 +123,9 @@ def start_server(port, log_file=None):
                                    os.path.join(web_directory, "images"))
     # Register the remote command handler.
     server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
+
+    # Bind the server to the specified address.
+    server.Bind()
 
     # Write the URL file.  It contains the XML-RPC URL for this server.
     url_path = qm.track.state["server_url_path"]
