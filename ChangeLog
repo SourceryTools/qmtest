@@ -1,5 +1,10 @@
 2000-12-21  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/.cvsignore: New file.
+	* qm/track/.cvsignore: Likewise.
+	
+2000-12-21  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk (PRINTTEX): Define as dummy if there's no DocBook.
 	(PRINTPDF): Likewise.
 	(test): New target.
