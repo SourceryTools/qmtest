@@ -5,7 +5,6 @@ Release: @release@
 Copyright: Copyright (C) CodeSourcery LLC.
 Group: Development/Tools
 Source0: qm-@version@.tgz
-Buildroot: /var/tmp/qm
 Url: http://www.software-carpentry.com
 Provides: qm
 
@@ -26,7 +25,7 @@ make
 make install
 
 %clean
-rm -rf qm
+rm -rf qm-@version@
 
 %files
 /usr/local/lib/qm/*

@@ -1,6 +1,6 @@
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
-	* Makefile.in (install): Clean up share directory.
+	* qm.spec (BuildRoot): Reove.
 
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
