@@ -42,7 +42,7 @@ AC_PATH_PROG(JADE, jade, jade)
 AC_PATH_PROG(PYTHON, python, python)
 AC_PATH_PROG(TIDY, tidy, tidy)
 
-AC_CHECK_FILE(/ddusr/doc/jade-1.2.1/pubtext/xml.dcl, , echo 'WARNING: Cannot build documentation.')
+AC_CHECK_FILE(/usr/doc/jade-1.2.1/pubtext/xml.dcl, , echo 'WARNING: Cannot build documentation.')
 AC_CHECK_FILE(/usr/lib/sgml/stylesheets/docbook, , echo 'WARNING: Cannot build documentation.')
 
 AC_CONFIG_SUBDIRS()
