@@ -1,3 +1,8 @@
+2004-03-02  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/classes/explicit_suite.py (arguments): Fix formatting
+	of description for 'is_implicit'.
+
 2004-03-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Under Windows, convert all
