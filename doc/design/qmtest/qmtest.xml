@@ -33,6 +33,7 @@
   <!ENTITY req.xml SYSTEM "req.xml">
   <!ENTITY core.xml SYSTEM "core.xml">
   <!ENTITY impl.xml SYSTEM "impl.xml">
+  <!ENTITY iface.xml SYSTEM "iface.xml">
   <!ENTITY refs.xml SYSTEM "refs.xml">
 ]>
 <book>
@@ -43,12 +44,12 @@
    <surname>Mitchell</surname>
   </author>
   <author>
-   <firstname>Greg</firstname>
-   <surname>Wilson</surname>
-  </author>
-  <author>
    <firstname>Alex</firstname>
    <surname>Samuel</surname>
+  </author>
+  <author>
+   <firstname>Greg</firstname>
+   <surname>Wilson</surname>
   </author>
  </bookinfo>
 
@@ -278,6 +279,7 @@
  &req.xml;
  &core.xml;
  &impl.xml;
+ &iface.xml;
  &refs.xml;
 
 </book>

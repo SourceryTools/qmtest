@@ -34,4 +34,4 @@
 DOCBOOK		= $(wildcard *.xml)
 DOCBOOKMAIN	= qmtest.xml
 
-include $(TOPDIR)/standard.mk
+include ../../../standard.mk

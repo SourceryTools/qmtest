@@ -2,7 +2,7 @@
 <!--
 
   File:   core.xml
-  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Author: Mark Mitchell, Alex Samuel, Greg Wilson
   Date:   2000-11-01
 
   Contents:
@@ -155,14 +155,22 @@
   being <link linkend="req-multi">generated on the fly</link>.</para>
 
   <para>Finally, it must be possible to <phrase
-  id="discuss-separate-prep">separate setup and teardown from
-  particular tests</phrase>, so that the modified fixtures required
-  for dependent tests are not destroyed before those tests are
-  executed.  &qmtest; must <phrase id="discuss-trace-dependency">trace
-  dependencies between tests</phrase>, and automatically determine
-  when to set up and tear down fixtures.  If possible, &qmtest; should
-  share dependency detection and management functionality with
-  &qmbuild;.</para>
+  id="discuss-separate-prep">separate setup and cleanup from
+  particular tests</phrase>, so that the modified environments
+  required for dependent tests are not destroyed before those tests
+  are executed.  &qmtest; must <phrase
+  id="discuss-trace-dependency">trace dependencies between
+  tests</phrase>, and automatically determine when to set up and clean
+  up.  If possible, &qmtest; should share dependency
+  detection and management functionality with &qmbuild;.</para>
+
+  <para>One situation in which significant setup or cleanup actions
+  are required would be for database testing.  The test system should
+  be able to populate an empty database with several million records,
+  perform tests that query the database, and then remove the database
+  from the user's system.  It would be woefully inefficient to
+  repopulate the database for each test, so the setup and cleanup
+  actions must be able to span multiple tests.</para>
 
  </section>
 
@@ -245,27 +253,29 @@
 
  </section>
 
- <section><title>Test Suites</title>
+ <section id="req-suites"><title>Test Suites</title>
 
-  <para>In order to make test management practical, &qmtest; must
-  allow test authors to <phrase id="discuss-test-suites">aggregate
-  tests into test suites</phrase>.  Further, <phrase
-  id="discuss-suite-prep">test suites must support setup and
-  teardown</phrase>, i.e. it must be possible for a suite author to
-  specify some initialization that is to be performed before any of
-  the tests in a suite are executed, and some finalization that is to
-  be performed after all of the suite's tests have completed.</para>
+  <para>&qmtest; must allow test authors to <phrase
+  id="discuss-test-suites">aggregate tests into test suites</phrase>
+  so that large collections of tests can be run at once.  It is
+  natural to allow test suites to contain other test suites.  For
+  example, this facilitates building a test suite for an entire
+  program out of the test suites for each component of the
+  program.</para>
 
-  <para>It must be possible to <phrase id="discuss-whole-part">make
-  tests and test suites members of suites</phrase>.  However, <phrase
-  id="discuss-suites-not-tests">test suites do not generate test
-  results</phrase>, i.e. there is no sense in which a suite "passes"
-  or "fails".  The reason for this is that the results of individual
-  tests are not binary: there is no sensible way in which to classify
-  an arbitrary combination of pass, fail, and error outcomes into a
-  single result.  However, as discussed below, <link
-  linkend="req-summary-reporting">summary reporting</link> &qmtest;
-  does provide summary results.</para>
+  <para>Although test suites may contain other test suites, test
+  suites do not in general form a tree.  For example, an organization
+  might wish to execute a few representative tests from the component
+  test suites each time a change was made to any part of the product.
+  Thus, a single test can be more in more than one test suite.</para>
+
+  <para>Because test suites are collections of tests, there is no
+  sense in which a suite "passes" or "fails".  There is no sensible
+  way in which to classify an arbitrary combination of pass, fail, and
+  error outcomes into a single result.  However, as discussed below
+  users can use <link linkend="req-summary-reporting">summary
+  reports</link> to obtain information about the number of tests which
+  passed or failed within a particular suite.</para>
 
  </section>
 
@@ -285,9 +295,9 @@
   <title id="req-summary-reporting-title">Summary Reporting</title>
 
   <para>&qmtest; must <phrase id="discuss-summarize-results">summarize
-  the outcomes of the tests executed</phrase> by producing a count of
-  the number of tests which have passed, failed, generated an error,
-  or been deferred.  This <phrase
+  the outcomes (passes or failures) of the tests executed</phrase> by
+  producing a count of the number of tests for which each outcome
+  occurred.  This <phrase
   id="discuss-hierarchical-reporting">reporting must be
   hierarchical</phrase>: users must be able to inspect the summaries
   for suites, the testsuites within those suites, and so on.  Finally,
@@ -301,23 +311,21 @@
  <section id="req-info">
   <title id="req-info-title">Extra Information</title>
 
-  <para>Developers may want tests to report extra information along
-  with a standard outcome (pass, fail, error, or deferred).  For
-  example, it may be desirable to have tests report execution time,
-  memory usage, number of context switches, or code coverage.
-  &qmtest; <phrase id="discuss-extra-values">must allow tests to
-  contain and report extra named values</phrase>, while the <phrase
+  <para>In many cases, it is useful to include more information than
+  simply the outcome (pass or fail) of the test.  For example, it may
+  be desirable to have tests report execution time, memory usage,
+  number of context switches, or code coverage.  &qmtest; <phrase
+  id="discuss-extra-values">must allow tests to contain and report
+  extra named values</phrase>, while the <phrase
   id="discuss-summarize-extra-values">summary reporting system must
   allow extra named values to be combined
   hierarchically</phrase>.</para>
 
   <para>One common case in which extra information is provided is to
   <phrase id="discuss-explain-deferral">explain why specific tests
-  were deferred</phrase>.  If a test cannot be executed except when
-  certain conditions (such as the day of the week) hold, then the
-  factors that caused the deferral to occur must be included in the
-  result.  This topic is revisited in the discussion of <link
-  linkend="req-traversal">test traversal</link> below.</para>
+  were untested</phrase>.  If a test cannot be executed except when
+  certain conditions hold, then the factors that caused the test not
+  to be executed should be included in the result.</para>
 
  </section>
 
@@ -503,9 +511,9 @@
   <para>As well as reading test specifications from standard &qmtest;
       specification files, &qmtest; must be able to extract test
       specifications from arbitrary legacy test descriptions, using
-      special filters.  For example, if Daryl Dowhile already has 1200
+      special filters.  For example, if Diana Dowhile already has 1200
       test specifications embedded as specially-formatted comments in
-      program source files; &qmtest; must allow him to recycle those
+      program source files; &qmtest; must allow her to recycle those
       files.</para>
 
  </section>
@@ -525,25 +533,25 @@
  </section>
 
  <section id="req-updown">
-  <title id="req-updown-title">Setup and Teardown</title>
+  <title id="req-updown-title">Setup and Cleanup</title>
 
   <para>Individual tests and test suites may require arbitrary setup
-  before, and teardown after, their execution.  In order to simplify
+  before, and cleanup after, their execution.  In order to simplify
   test management, &qmtest; requires that <phrase
-  id="discuss-prep-in-spec">setup and teardown must be specified in
+  id="discuss-prep-in-spec">setup and cleanup must be specified in
   the test specification</phrase>, that <phrase
-  id="discuss-log-prep">setup and teardown operations must be
+  id="discuss-log-prep">setup and cleanup operations must be
   logged</phrase> when tests are executed, and that <phrase
   id="discuss-test-after-setup">tests are only executed if their setup
   operations complete successfully</phrase>.  Users are encouraged to
-  specify teardown operations so that they will execute correctly
+  specify cleanup operations so that they will execute correctly
   (i.e. return the environment to its pre-test state) even if setup
   and the test itself failed partially or completely.</para>
 
   <para>In order to avoid drowning users in detail, &qmtest; must log
-  setup failure as a reason for deferral for all tests, but <phrase
-  id="discuss-first-error">only report significant setup errors by
-  default</phrase>.  For example, if test B depends on test A, and
+  setup failure as a reason for to execute a test, but <phrase
+  id="discuss-first-error">should only report significant setup errors
+  by default</phrase>.  For example, if test B depends on test A, and
   test A's setup fails, &qmtest; should not report that test B has
   failed, since the root cause is the failure in test A's
   setup.</para>

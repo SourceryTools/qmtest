@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   core.xml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Core architecture of qmtest.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="iface"><title>User Interface</title>
+
+<para>&qmtest; will provide two user interfaces: a command-line
+interface, and a graphical interface.  The graphical interface has not
+yet been designed.</para>
+
+<section><title>Command-Line Interface</title>
+
+<para>
+<programlisting>
+<![CDATA[
+Usage:
+
+qmtest [ options ] [ suites ]
+
+]]>
+</programlisting>
+</para>
+
+<informaltable>
+<tgroup cols="2">
+<thead>
+ <row>
+  <entry>flag</entry>
+  <entry>description</entry>
+ </row>
+</thead>
+<tbody>
+ <row>
+  <entry>-c [label [label]]</entry> 
+  <entry>Compare two sets of test results.  If no label is specified,
+  compare current run with most recent results in database.  If one
+  label is specified, compare current run (or most recent run) with
+  run identified by label.  If two labels are specified, compare those
+  two archived results.</entry>
+ </row>
+ <row>
+  <entry>-d database</entry>
+  <entry>Test database to use.  If not specified, use database
+  specified in QMTEST_DATABASE environment variable (if it
+  exists).</entry>
+ </row>
+ <row>
+  <entry>-e</entry> 
+  <entry>Report result of each test on a separate line.  By default,
+  qmtest produces a one-line summary of results for all tests.</entry>
+ </row>
+ <row>
+   <entry>-f [test_filter]*</entry>
+   <entry>Filter expression(s) to apply to tests.  Only tests that
+    meet the filter criteria are executed.  If multiple test filters
+    are provided, tests must satisfy all (implicit and).  If no
+    filters are provided, all tests are run.  Note that allowing users
+    to specify test IDs directly is redundant (since these are
+    equivalent to "-t 'id==name'").  Direct test ID specification is
+    provided for convenience.</entry>
+ </row>
+ <row>
+   <entry>-H hostfile</entry>
+   <entry>Path to file containing names of remote hosts on which to
+ 	  run tests.</entry>
+ </row>
+ <row>
+   <entry>-h</entry>
+   <entry>Display usage information.</entry>
+ </row>
+ <row>
+   <entry>-o output</entry>
+   <entry>Where to send output.  The default for command-line
+	execution is standard output.</entry>
+ </row>
+ <row>
+  <entry>-r [report_filter]*</entry>
+  <entry>Filter expression(s) to apply to output.  Only test results
+  that meet the filter criteria are included in the report.  If
+  multiple filters are provided, test results must satisfy all
+  (implicit and).  If no filters are provided, all test results are
+  reported, so that "qmtest -r" reports all results of most recently
+  archived run.</entry>
+ </row>
+ <row>
+  <entry>-s report_style</entry>
+  <entry>Desired output format.  Options include "text", "html", and
+  "python" (where the latter creates a Python data structure
+  representing the test results).</entry>
+ </row>
+ <row>
+  <entry>-t test_id+</entry>
+  <entry>Test IDs of the tests of interest.  This
+  option is strictly redundant (since tests can be selected using
+  filters), but the "-t" option is provided as a convenience.</entry>
+ </row>
+ <row>
+  <entry>-v [N]</entry>
+  <entry>verbose (optionally to level N)</entry>
+ </row>
+ <row>
+  <entry>-w [label]</entry>
+  <entry>Write results to test database.  If a label is not specified,
+  GMT is used.</entry>
+ </row>
+ <row>
+   <entry>suites</entry>
+   <entry>Name(s) of test suites from which to execute tests.  If no
+   suite is specified, all tests in the database (that meet the filter 
+   specifications given by <literal>-f</literal> and
+   <literal>-t</literal> options.</entry>
+  </row>
+</tbody>
+</tgroup>
+</informaltable>
+
+<section><title>Examples</title>
+
+<programlisting>
+
+Examples:
+
+qmtest parser
+
+	Run all of the tests in the parser testsuite, providing a one
+	line summary on the standard output.
+
+qmtest -f "target_os == 'solaris'" -c release_2 parser
+
+	Run all Solaris-specific tests in (or below) a.txt, and
+	compare their results with those for release_2 in the
+	database.
+
+qmtest -t rng.uniform -r "outcome != success"
+
+	Run the test "rng.uniform", and report any errors, failures,
+	or untested tests.
+
+</programlisting>
+
+</section>
+
+</section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtest.xml" "book" "chapter")
+  End:
+-->
+

@@ -17,11 +17,116 @@
 -->
 <chapter id="impl"><title>Implementation</title>
   
- <para>This chapter describes the Python implementation of the core
- &qmtest; components.  For some components, many implementations are
- envisioned; the requirements for these implementations are
- given.</para>
-  
+ <para>This chapter describes the Python classes that correspond to
+ the major &qmtest; <link linkend="concepts">concepts</link>.  Most of
+ these classes are designed as polymorphic classes that can be
+ replaced by users to create customized testing environments.
+ Therefore, the information provided here does not go beyond the
+ interfaces of these classes; a valid implementation of each class
+ must provide at least the functionality described in these
+ interfaces.</para>
+
+  <section><title>Major Classes</title>
+
+  <para>The most important classes provided by the
+  <classname>QMTest</classname> package are
+  <classname>Engine</classname>, <classname>Suite</classname>,
+  <classname>Test</classname>, <classname>Result</classname>,
+  <classname>Filter</classname>.  
+
+  The <classname>Engine</classname> class traverses the tree of suites
+  and tests specified by the user.  It performs setup and cleanup,
+  filters tests based on the users' criteria (if any), runs tests, and
+  collates their results.  Users do <emphasis>not</emphasis> override
+  the <classname>Engine</classname> class. </para>
+
+  <para>The <classname>Suite</classname> and
+  <classname>Test</classname> classes provide information about suites
+  and tests respectively.  Both are derived from an abstract class
+  <classname>QMTest.Testable</classname>, so that they share methods
+  such as <classname>setup</classname>,
+  <classname>cleanup</classname>, <classname>getProperty</classname>,
+  <classname>run</classname>, and so on. </para>
+
+  <para>The <classname>Suite</classname> class has a method
+  <classname>getChildren</classname>, which returns a list of the
+  tests and suites it contains.  This method may return an empty list
+  (e.g. if it is a placeholder while tests are being written, or if
+  none of its children survive filtering).  If this method returns
+  <classname>None</classname>, however, the execution engine will then
+  try to iterate on the suite object, using the standard Python
+  iteration protocol.  This allows dynamic generation of large numbers
+  (millions) of tests without excessive memory requirements; it also
+  simplifies task farming of parallelizable tests. Note that the
+  engine does <emphasis>not</emphasis> guarantee to execute tests in the order
+  in which the suite provides them, as it may need to delay execution
+  of a test until its prerequisites have been run. </para>
+
+  <para>The <classname>Result</classname> class is purely
+  informational. A single instance of this class is returned each time
+  <classname>QMTestable.run</classname> is called.  The
+  <classname>Engine</classname> class translates the
+  <classname>Result</classname> instance into a test database
+  record. </para>
+
+  <para>The <classname>Filter</classname> class encapsulates a
+  function which produces a Boolean result from a test's properties,
+  the current state of the engine, and the contents of the test
+  database. </para>
+
+  </section>
+
+  <section><title>Execution Model</title>
+
+  <para>The engine works by translating the contents of input files
+  into instances of appropriate classes, running the instance methods,
+  and capturing any <classname>Result</classname> objects that are
+  produced. </para>
+
+   <section><title>Invoking Instance Methods</title>
+
+   <para>As an input file is translated into one or more class
+   instances, the engine passes those instances through its filters.
+   The prerequisites of any objects which survive filtering are then
+   examined.  If those prerequisites have already been satisfied, the
+   object is placed in the engine's "ready" pool.  If they have not,
+   the object is placed in the engine's "ready" pool.</para>
+
+   <para>The engine repeatedly removes items from its "ready" pool,
+   and invokes their setup, execution, and cleanup methods in order.
+   The execution of a test produces a result object; the execution of
+   a suite produces more objects for the "pending" and "ready" pools.
+   Once an object's cleanup method has been executed, the engine
+   checks its "pending" pool to see whether any pending objects are
+   now ready.  If so, it moves them to its ready pool.  If at any
+   point the ready pool is empty, and there are items in the pending
+   pool, "DEFERRED" records are created for them, with "unsatisfied
+   prerequisite" listed as a reason. </para>
+
+   </section>
+
+   <section><title>Capturing Results</title>
+
+   <para>As with input, the simplest way for a test or suite to report
+   results from the engine's point of view is for it to explicitly
+   create a <classname>Result</classname> object.  However, this is a
+   burden for novice test authors, and is not even be possible for
+   tests written in other languages, or which are specified using flat
+   text or XML. </para>
+
+   <para>The raw results of executing a test (including exit status,
+   return value, and standard stream output) are therefore passed to a
+   <classname>Translator</classname> object.  This object then creates
+   a <classname>Result</classname>, which is passed in turn to the
+   engine.  Translators are stacked, in the same way as environment
+   changes, so that suites and individual tests can safely specify how
+   to interpret their results.  Any translators specified in setup
+   methods are automatically removed during cleanup.</para>
+
+  </section>
+
+  </section>
+
  <section><title>Test representation</title>
    
   <section><title>Test class implementations</title>
