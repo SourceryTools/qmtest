@@ -1,3 +1,8 @@
+2003-06-12  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/qm.sh (qm_python_path_dir): New variable.
+	(PYTHONPATH): Use it.
+
 2003-06-10  Ricardo Anguiano  <anguiano@codesourcery.com>
 
 	* qm/test/doc/reference.xml: Fixed typo.
