@@ -25,6 +25,8 @@
   <!ENTITY qmbuild "qmbuild">
   <!ENTITY qmtest "qmtest">
 
+  <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
+
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->
 
@@ -568,6 +570,87 @@
    </section>
 
   </section>
+
+ </chapter>
+
+ <chapter id="chap-references">
+  <title>References</title>
+
+   <para>Brian Marick (a judge in both rounds of the Software
+   Carpentry design competition) is the author of a thorough survey of
+   the art called <citetitle pubwork="book">The Craft of Software
+   Testing</citetitle>.  Many of his other writings are available
+   on-line at: <ulink
+   url="http://www.testing.com">http://www.testing.com</ulink></para>
+
+   <para><citetitle pubwork="book">Testing Computer
+   Software</citetitle>, by Cem Kaner, Hung Quoc Nguyen, and Jack
+   Falk, is a good look at testing in the real world.</para>
+
+   <para><citetitle pubwork="book">The Pragmatic
+   Programmer</citetitle>, by Andy Hunt and Dave Thomas (both judges
+   in the Software Carpentry design competition), includes a lot of
+   good material on when and how to test during development.  The
+   book's web site is at: <ulink
+   url="http://www.pragmaticprogrammer.com">
+   http://www.pragmaticprogrammer.com</ulink></para>
+
+   <para>Some existing testing tools used in Open Source development
+   include:
+    <informaltable frame="none">
+     <tgroup cols="2">
+     <tbody>
+      <row>
+       <entry>Expect</entry>
+       <entry><ulink
+       url="http://expect.nist.gov/">http://expect.nist.gov/</ulink></entry>
+      </row>
+
+      <row>
+       <entry>DejaGnu</entry>
+       <entry><ulink
+       url="http://www.gnu.org/software/dejagnu/dejagnu.html">http://www.gnu.org/software/dejagnu/dejagnu.html</ulink></entry>
+      </row>
+
+      <row>
+       <entry>TET</entry>
+       <entry><ulink url="http://tetworks.opengroup.org/">
+       http://tetworks.opengroup.org/</ulink></entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </informaltable>
+   </para>
+
+  <para>The FAQ for comp.software.testing is available at: 
+  <ulink url="http://www.landfield.com/faqs/software-eng/testing-faq/">
+  http://www.landfield.com/faqs/software-eng/testing-faq/</ulink>.</para>
+
+  <para>The <ulink
+  url="http://www.visualizationtoolkit.org">Visualization
+  Toolkit</ulink> (<acronym>VTK</acronym>) stands out among large Open
+  Source projects for the amount and thoroughness of its testing.  The
+  procedures <acronym>VTK</acronym> uses are described in a paper by
+  William Lorensen and James Miller, which is available on-line at:
+  <ulink
+  url="ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf">
+  ftp://www.visualizationtoolkit.org/pub/vtk/ExtremeTestingPaper.pdf</ulink>
+  </para>
+
+  <para>Highlights from the &sc; discussion list are summarized at:
+  <ulink url="http://www.software-carpentry.com/sc_test/#highlights">
+  http://www.software-carpentry.com/sc_test/#highlights</ulink>.  The
+  entire discussion list is archived at: <ulink
+  url="http://www.software-carpentry.com/lists/sc-discuss/maillist.html">
+  http://www.software-carpentry.com/lists/sc-discuss/maillist.html</ulink>
+  </para>
+
+  <para>James Bach's paper <citetitle pubwork="article">Test Automation
+  Snake Oil</citetitle> discusses why full automation of testing is
+  not possible, practical, or desirable: <ulink
+  url="http://www.satisfice.com/articles/test_automation_snake_oil.pdf">
+  http://www.satisfice.com/articles/test_automation_snake_oil.pdf</ulink>
+  </para>
 
  </chapter>
 
