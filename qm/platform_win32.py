@@ -60,11 +60,6 @@ class SignalException(Exception):
 # functions
 ########################################################################
 
-def open_in_browser(url):
-    # FIXME.
-    raise NotImplementedError, "open_in_browser on win32"
-
-
 def get_user_name():
     """Return the name user running the current program."""
 

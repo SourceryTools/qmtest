@@ -56,6 +56,8 @@ import types
 ########################################################################
 
 dtds = {
+    "tdb-configuration":
+                    "-//Software Carpentry//QMTest TDB Configuration V0.1//EN",
     "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",
     "result":       "-//Software Carpentry//QMTest Result V0.3//EN",
     "suite":        "-//Software Carpentry//QMTest Suite V0.1//EN",
@@ -843,28 +845,57 @@ def get_database():
     return _database
 
 
-def load_database(path):
-    """Load the database from 'path'."""
+def _get_db_configuration_directory(db_path):
+    """Return the path to the test database's configuration directory."""
+    
+    return os.path.join(db_path, "QMTest")
+
+
+def _get_db_configuration_path(db_path):
+    """Return the path to a test database's configuration file.
+
+    'db_path' -- The path to the test database."""
+
+    return os.path.join(_get_db_configuration_directory(db_path),
+                        "configuration")
+
+
+def is_database(db_path):
+    """Returns true if 'db_path' looks like a test database."""
+
+    # A test database is a directory.
+    if not os.path.isdir(db_path):
+        return 0
+    # A test database contains a configuration subdirectory.
+    if not os.path.isdir(_get_db_configuration_directory(db_path)):
+        return 0
+    # It probably is OK.
+    return 1
+
+
+def load_database(db_path):
+    """Load the database from 'db_path'."""
 
     # Make sure it is a directory.
-    if not os.path.isdir(path):
-        raise ValueError, "Database path %s is not a directory." % path
+    if not is_database(db_path):
+        raise ValueError, \
+              qm.error("not test database", path=db_path)
 
     # Figure out which class implements the database.  Start by looking
     # for a file called 'configuration' in the directory corresponding
     # to the database.
-    config_path = os.path.join(path, 'configuration')
+    config_path = _get_db_configuration_path(db_path)
     if os.path.isfile(config_path):
         # Load the configuration file.
         document = qm.xmlutil.load_xml_file(config_path)
         # Get the root node in the document.
         database = document.documentElement
-        # Load the database class tag.
+        # Load the database class name.
         database_class_name = qm.xmlutil.get_child_text(database,
-                                                        'class_name')
+                                                        "class-name")
         # Get the database class.
         database_class = get_extension_class(database_class_name,
-                                             'database')
+                                             "database")
     else:
         # If 'configuration' did not exist, fall back to the 'xmldb'
         # database.
@@ -873,7 +904,39 @@ def load_database(path):
     
     # Create the database.
     global _database
-    _database = database_class(path)
+    _database = database_class(db_path)
+
+
+def create_database(db_path, class_name):
+    """Create a new test database.
+
+    'db_path' -- The path to the test database.
+
+    'class_name' -- The class name of the test database implementation.
+
+    raises -- 'ValueError' if 'db_path' already exists."""
+    
+    # Make sure the path doesn't already exist.
+    if os.path.exists(db_path):
+        raise ValueError, qm.error("db path exists", path=db_path)
+    # Create an empty directory.
+    os.mkdir(db_path)
+    # Create the configuration directory.
+    os.mkdir(_get_db_configuration_directory(db_path))
+
+    # Now create an XML document for the configuration file.
+    document = qm.xmlutil.create_dom_document(
+        public_id=dtds["tdb-configuration"],
+        dtd_file_name="tdb_configuration.dtd",
+        document_element_tag="tdb-configuration"
+        )
+    # Create an element containign the class name.
+    class_element = qm.xmlutil.create_dom_text_element(
+        document, "class-name", class_name)
+    document.documentElement.appendChild(class_element)
+    # Write it.
+    configuration_path = _get_db_configuration_path(db_path)
+    qm.xmlutil.write_dom_document(document, open(configuration_path, "w"))
 
 
 def get_extension_directories(kind):
@@ -1139,7 +1202,8 @@ def _result_from_dom(node):
 
     'node' -- A DOM node corresponding to a "result" element.
 
-    returns -- A 'Result' object."""
+    returns -- A 'Result' object.  The context for the result is 'None',
+    since context is not represented in a result DOM node."""
 
     assert node.tagName == "result"
     # Extract the outcome.
@@ -1147,7 +1211,7 @@ def _result_from_dom(node):
     # Extract the test ID.
     test_id = node.getAttribute("id")
     kind = node.getAttribute("kind")
-    # FIXME: Load context?
+    # The context is not represented in the DOM node.
     context = None
     # Build a Result.
     result = Result(kind, test_id, context, outcome)

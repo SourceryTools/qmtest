@@ -526,8 +526,18 @@ def get_temp_directory():
 def get_user_name():
     """Return the name user running the current program."""
 
-    # FIXME: Security.
-    return os.environ["USER"]
+    # Get the numerical user ID.
+    user_id = os.getuid()
+    # To convert it to a name, we have to consult the system password file.
+    for line in open("/etc/passwd", "r").readlines():
+        # Each row is constructed of parts delimited by colons.
+        parts = string.split(line, ":")
+        # The third element is the user ID.  Does it match?
+        if int(parts[2]) == user_id:
+            # Yes.  Return the first part, the user name.
+            return parts[0]
+    # No match.
+    raise RuntimeError, "user not found in /etc/passwd"
 
 
 def get_host_name():

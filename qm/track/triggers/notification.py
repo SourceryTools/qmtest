@@ -333,7 +333,6 @@ class NotifyFixedTrigger(_NotifyTrigger):
         try:
             user = database[uid]
         except KeyError:
-            # FIXME?
             # Silently ignore invalid user IDs.
             return
         else:
@@ -529,7 +528,6 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
             try:
                 user = database[uid]
             except KeyError:
-                # FIXME?
                 # Silently ignore invalid user IDs.
                 pass
             else:

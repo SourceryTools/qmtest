@@ -64,12 +64,13 @@ _script_base = "/track/"
 class WebServer(qm.web.WebServer):
     """The QMTrack web server.
 
-    This server enhance the base class version by attaching an
+    This server enhances the base class version by attaching an
     '_IssueDatabase' instance to each session as the 'idb' attribute."""
 
-    # FIXME: Implement virtual hosting by configuring the server with
-    # multiple IDBs.  The server can choose the appropriate one from the
-    # host name in the web request.
+    # Note: Virtual hosting can be implemented easily by configuring the
+    # server with multiple IDBs.  The server need only choose the
+    # appropriate one from the host name in the web request.
+
 
     def __init__(self,
                  idb,

@@ -120,6 +120,9 @@ A value for the "%(title)s" parameter is missing.
 @ missing test id
 There is no test with ID "%(test_id)s".
 
+@ new db message
+QMTest has created a new test database at %(path)s.
+
 @ no db specified
 You must specify the location of the test database.  
 
@@ -160,6 +163,9 @@ There is no test with the test ID "%(test_id)s".
 
 @ no target for group
 No target which matches the group pattern specified for this test.
+
+@ not test database
+The path you specified, %(path)s, is not a test database.
 
 @ seed not integer
 The random number generator seed you specified, "%(seed)s", is not an

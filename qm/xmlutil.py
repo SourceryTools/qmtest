@@ -72,13 +72,8 @@ def load_xml_file(path, validate=1):
     valid."""
 
     # Open the file.
-    try:
-        file = open(path, "r")
-    except:
-        # FIXME.  Any errors that need to be handled here?
-        raise
-    else:
-        return load_xml(file, whence=path, validate=validate)
+    file = open(path, "r")
+    return load_xml(file, whence=path, validate=validate)
 
 
 def load_xml(file, whence="(input)", validate=1):

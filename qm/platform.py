@@ -62,10 +62,6 @@ if sys.platform[:5] == "linux" \
 elif sys.platform == "win32":
     from platform_win32 import *
 
-    def open_in_browser(url):
-        # FIXME.
-        raise NotImplementedError, "open_in_browser on win32"
-
 else:
     raise RuntimeError, "unsupported platform: %s" % sys.platform
 

@@ -421,7 +421,12 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         # We only know how to handle form-data submissions.
         if content_type == "multipart/form-data":
             # Parse the form data.
-            fields = parse_form_query(self.rfile, params)
+            fields = cgi.parse_multipart(self.rfile, params) 
+            # For each field, take the first value, discarding others.
+            # We don't support multi-valued fields.
+            for name, value in fields.items():
+                if len(value) == 1:
+                    fields[name] = value[0]
             # There may be additional query arguments in the URL, so
             # parse that too.
             script_url, url_fields = parse_url_query(self.path)
@@ -527,8 +532,10 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 exc_info = sys.exc_info()
                 response = xmlrpclib.Fault(1, "%s : %s"
                                            % (exc_info[0], exc_info[1]))
-                # FIXME: For ease of debugging, dump exceptions out.
-                sys.stderr.write(qm.format_exception(exc_info))
+                # For debugging, dump exceptions out if verbose.
+                message = diagnostic.error(
+                    "xmlrpc exception", exception=format_exception(exc_info))
+                common.print_message(3, message)
 
         # Encode the reponse.
         response_string = xmlrpclib.dumps(response)
@@ -1403,24 +1410,6 @@ def parse_url_query(url):
     script_url = urllib.unquote(script_url)
     return (script_url, fields)
 
-
-def parse_form_query(input_file, content_type_params):
-    """Parse an HTTP form-encoded query.
-
-    'input_file' -- The to read the HTTP query from.
-
-    'content_type_params' -- The parameters of the Content-type
-    header.
-
-    returns -- A dictionary mapping query argument names to values."""
-
-    fields = cgi.parse_multipart(input_file, content_type_params)
-    # FIXME.  What's the policy here?
-    for name, value in fields.items():
-        if len(value) == 1:
-            fields[name] = value[0]
-    return fields
-    
 
 def http_return_html(html_text, stream=sys.stdout):
     """Generate an HTTP response consisting of HTML text.

@@ -590,6 +590,45 @@
   command for a description of the command and a list of of available
   options for that command.</para>
 
+  <section id="sec-testcmd-create-tdb">
+   <title>The <command>&qmtest-cmd; create-tdb</command> Command</title>
+
+   <para>The <command>&qmtest-cmd; create-tdb</command> creates a new,
+   empty test database.  A test database consists of a directory in
+   which &qmtest; stores configuration files, tests, and other data.
+   (Certain test database implementations may also store data elsewhere,
+   such as in an external relational database.)</para>
+
+   <para>When you create a new test database, you must specify the path
+   you wish to use in one of the usual ways: either use the
+   <option>&dashdash;tdb</option> (<option>-D</option>) option, or
+   specify the <envar>QMTEST_DB_PATH</envar> environment variable.  The
+   path you specify for the new test database must not exist.</para>
+
+   <para>By default, &qmtest; creates a new test database that uses the
+   standard XML-based implementation.  (See <xref
+   linkend="sec-ref-writing-database-classes"></xref> for information
+   about writing a test database class.)  To create a test database with
+   a different test database implementation, use the
+   <option>&dashdash;class</option> (<option>-c</option>) option, and
+   specify the class name of the test database implementation, including
+   the module or package containing it.  This module or package must be
+   in your <envar>PYTHONPATH</envar>.  Once you create a test database,
+   you may not change the test database implementation it uses.</para>
+
+   <para>For example, to use the test database implementation class
+   <classname>MyTestDatabase</classname> located in the package file
+   <filename>my_tdb.py</filename>, invoke</para>
+
+   <screen>
+&prompt;<userinput>qmtest create-tdb --class my_tdb.MyTestDatabase</userinput>
+   </screen>
+
+   <para>and make sure <filename>my_tdb.py</filename> is in a directory
+   in your <envar>PYTHONPATH</envar>.</para>
+
+  </section> <!-- sec-testcmd-create-tdb -->
+
   <section id="sec-testcmd-run">
    <title>The <command>&qmtest-cmd; run</command> Command</title>
 
@@ -1483,21 +1522,11 @@
   need to be overridden.
   </para>
   
-  <para>To use your new database class, create a file called
-  <filename>configuration</filename> in the directory containing 
-  your test database.  This file should look like:
-   <programlisting>
-<![CDATA[<?xml version='1.0'?>
-<!DOCTYPE tdb-configuration PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "http://www.software-carpentry.com/qm/xml/tdb_configuration.dtd">
-<tdb-configuration>
-  <class_name>mydatabase.Database</class_name>
-</tdb-configuration>
-]]>
-  </programlisting>
-  Replace <classname>mydatabase.Database</classname> with the name of
-  your database class, including the module in which it is
-  located.</para>
-  
+  <para>To use your new database class, create a new test database using
+  the <link
+  linkend="sec-testcmd-create-tdb"><option>&dashdash;class</option>
+  (<option>-c</option>) option</link>.</para>
+
  </section> <!-- sec-ref-writing-database-classes -->
 
 </chapter>

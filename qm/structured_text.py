@@ -512,7 +512,9 @@ class StructuredTextProcessor:
     def NormalizeSpaces(self, text):
         """Return 'text' with spaces normalized."""
 
-        # FIXME: Handle tabs and other unholy whitespace here.
+        # Convert tabs to spaces.
+        text = string.replace(text, "\t", "    ")
+        # Normalize leading and trailing whitespace.
         return string.strip(text) + " "
 
 
@@ -859,7 +861,7 @@ def get_first_paragraph(structured_text):
 # Write a regular expression for finding characters that need to be
 # escaped as HTML entities.
 __entity_char_regex = htmlentitydefs.entitydefs.values()
-# FIXME: Only handle single-byte characters.
+# We only handle single-byte characters.
 __entity_char_regex = filter(lambda l: len(l) == 1, __entity_char_regex)
 __entity_char_regex = "[" + string.join(__entity_char_regex, "") + "]"
 __entity_char_regex = re.compile(__entity_char_regex)

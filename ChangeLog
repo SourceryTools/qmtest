@@ -1,3 +1,71 @@
+2001-10-19  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py (load_xml_file): Don't handle exceptions here.
+	* qm/web.py (WebRequestHandler.do_POST): Expand fields here.
+	(WebRequestHandler.__HandleXmlRpcRequest): Dump exception if
+	verbose. 
+	(parse_form_query): Remove.
+	* qm/structured_text.py (StructuredTextProcessor.NormalizeSpaces):
+	Remove FIXME.  Expand tabs.
+	(__entity_char_regex): Remove FIXME.
+	* qm/platform.py (open_in_browser): Remove.
+	* qm/platform_win32.py (open_in_browser): Remove.
+	* qm/platform_unix.py (get_user_name): Reimplement.
+	* qm/fields.py (Field.MakePropertyControls): Remove FIXME.
+	(TextField.CompareValues): Likewise.
+	* qm/common.py (RcConfiguration): Remove FIXME.
+	(format_traceback): Likewise.
+	(find_program_in_path): Use os.pathsep.  Use is_executable.
+	(is_executable): Rewrite.
+	(split_argument_list): Remove FIXME.
+	(parse_time): Change FIXME to note.
+	* qm/track/server.py (_script_base): Remove FIXME.
+	* qm/track/issue_database.py (open): Remove FIXMEs.
+	* qm/track/cmdline.py (Command.__PerformCreate): Remove FIXME.
+	(Command.__PerformCreateIdb): Likewise.
+	(Command.__ImportIssues): Likewise.
+	* qm/track/web/query.py (QueryPage.MakePythonQueryHelp): Remove
+	FIXME. 
+	(QueryPage.MakeCategorySelect): Likewise.
+	(QueryPage.MakeStateSelect): Likewise.
+	* qm/track/web/issue_class.py: Remove FIXME.
+	(handle_submit_class): Remove FIXME.  Don't try to handle new
+	issue classes here.
+	* qm/track/triggers/notification.py
+	(NotifyFixedTrigger.GetSubscriberAddresses): Remove FIXME.
+	(NotifyByUidFieldTrigger.GetSubscriberAddresses): Likewise. 
+	* qm/test/result.py (Result.MakeDomNode): Update comment.
+	* qm/test/cmdline.py (Command.tdb_class_option_spec): New
+	attribute. 
+	(Command.commands_spec): Add create-tdb.  Alphabetize.
+	(Command.Execute): Reorganize.  Handle create-tdb.
+	(Command.__ExecuteCreateTdb): New. 
+	(Command.__ExecuteRun): Remove FIXME.
+	* qm/test/base.py (dtds): Add tdb-configuration.
+	(_get_db_configuration_directory): New function.
+	(_get_db_configuration_path): Likewise.
+	(is_database): Likewise.
+	(load_database): Use them.
+	(create_database): Change database directory semantics.
+	(_result_from_dom): Remove FIXME.
+	* qm/test/web/web.py (QMTestServer.HandleRunTests): Remove FIXME.
+	* qm/test/classes/command.py (make_result_for_exception): Rename
+	to... 
+	(_make_result_for_exception): ... this.  Comment it.
+	Update accordingly throughout.
+	* share/xml/tdb-configuration.dtd (class_name): Rename to...
+	(class-name): ... this.
+	* share/diagnostics/common.txt (xmlrpc exception): New
+	diagnostic. 
+	* share/diagnostics/test.txt (new db message): Likewise
+	(not test database): Likewise.
+	* doc/manual/test-manual.xml (sec-testcmd-create-tdb): New
+	section. 
+	(sec-reg-writing-database-classes): Update.
+	* doc/manual/test-tour.xml (sec-testtut-setting-up): Likewise.
+	* tests/QMTest: New directory.
+	* tests/QMTest/configuration: New file.
+
 2001-10-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/run.py (CommandThread.__init__): Initialize Queue

@@ -184,6 +184,13 @@ class Command:
         "Specify the summary format."
         )
 
+    tdb_class_option_spec = (
+        "c",
+        "class",
+        "CLASS-NAME",
+        "Specify the test database class."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -197,19 +204,19 @@ class Command:
         ]
 
     commands_spec = [
-        ("summarize",
-         "Summarize results from a test run.",
-         "[FILE [ ID ... ]]",
-         """
-Loads a test results file and summarizes the results.  FILE is the path
-to the results file.  Optionally, specify one or more test or suite IDs
-whose results are shown.  If none are specified, shows all tests that
-did not pass.
+        ("create-tdb",
+         "Create a new test database.",
+         "",
+         "Create a new test database.",
+         ( help_option_spec, tdb_class_option_spec, )
+         ),
 
-Use the '--format' option to specify the output format for the summary.
-Valid formats are "full" (the default), "brief", "stats", and "none".
-         """,
-         ( help_option_spec, format_option_spec, outcomes_option_spec )
+        ("gui",
+         "Start the QMTest GUI.",
+         "",
+         "Start the QMTest graphical user interface.",
+         ( help_option_spec, port_option_spec, address_option_spec,
+           log_file_option_spec, no_browser_option_spec )
          ),
 
         ("run",
@@ -242,12 +249,19 @@ The summary is written to standard output.
            )
          ),
 
-        ("gui",
-         "Start the QMTest GUI.",
-         "",
-         "Start the QMTest graphical user interface.",
-         ( help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec, no_browser_option_spec )
+        ("summarize",
+         "Summarize results from a test run.",
+         "[FILE [ ID ... ]]",
+         """
+Loads a test results file and summarizes the results.  FILE is the path
+to the results file.  Optionally, specify one or more test or suite IDs
+whose results are shown.  If none are specified, shows all tests that
+did not pass.
+
+Use the '--format' option to specify the output format for the summary.
+Valid formats are "full", "brief" (the default), "stats", and "none".
+         """,
+         ( help_option_spec, format_option_spec, outcomes_option_spec )
          ),
 
         ]
@@ -349,23 +363,30 @@ The summary is written to standard output.
                 raise RuntimeError, \
                       qm.error("no db specified",
                                envvar=self.db_path_environment_variable)
-        try:
-            # If the path is not already absolute, make it into an
-            # absolute path at this point.
-            if not os.path.isabs(db_path):
-                db_path = os.path.join(os.getcwd(), db_path)
-            # Create the database.
-            base.load_database(db_path)
-        except ValueError, exception:
-            raise RuntimeError, str(exception)
+        # If the path is not already absolute, make it into an
+        # absolute path at this point.
+        if not os.path.isabs(db_path):
+            db_path = os.path.join(os.getcwd(), db_path)
 
-        # Dispatch to the appropriate method.
-        method = {
-            "summarize": self.__ExecuteSummarize,
-            "run" : self.__ExecuteRun,
-            "gui": self.__ExecuteServer,
-            }[self.__command]
-        method(output)
+        # Some commands don't require a test database.  
+        if self.__command == "create-tdb":
+            self.__ExecuteCreateTdb(output, db_path)
+        else:
+            # For the rest of the commands, we need to open the test
+            # database first.
+            try:
+                # Create the database.
+                base.load_database(db_path)
+            except ValueError, exception:
+                raise RuntimeError, str(exception)
+
+            # Dispatch to the appropriate method.
+            method = {
+                "gui": self.__ExecuteServer,
+                "run" : self.__ExecuteRun,
+                "summarize": self.__ExecuteSummarize,
+                }[self.__command]
+            method(output)
 
 
     def GetDatabase(self):
@@ -427,6 +448,21 @@ The summary is written to standard output.
             # The format of the context key is invalid, but
             # raise a 'CommandError' instead.
             raise qm.cmdline.CommandError, msg
+
+
+    def __ExecuteCreateTdb(self, output, db_path):
+        """Handle the command for creating a new test database.
+
+        'db_path' -- The path at which to create the new test database."""
+
+        # Extract the test database class name.  Use the standard XML
+        # implementation, if none was specified.
+        class_name = self.GetCommandOption(
+            "class", "qm.test.xmldb.Database")
+        # Create the test database.
+        base.create_database(db_path, class_name)
+        # Print a helpful message.
+        output.write(qm.message("new db message", path=db_path) + "\n")
 
 
     def __ExecuteSummarize(self, output):
@@ -574,8 +610,8 @@ The summary is written to standard output.
                     raise qm.cmdline.CommandError, \
                           qm.error("concurrency not integer",
                                    value=concurrency)
-            # Construct the target spec.
-            # FIXME: Determine target group.
+            # Construct the target spec.  Set the target group to an
+            # empty string, for lack of better information.
             target_specs = [
                 run.TargetSpec("local",
                                "qm.test.run.SubprocessTarget",

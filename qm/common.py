@@ -312,7 +312,6 @@ class RcConfiguration:
     Configuration files are in the format parsed by the standard
     'ConfigParser' module, namely 'win.ini'--style files."""
 
-    # FIXME: Call it "qm.ini" under Windows?
     user_rc_file_name = ".qmrc"
     """The name of the user configuration file."""
 
@@ -575,7 +574,6 @@ def format_traceback(exc_info):
 
     returns -- A string containing a the formatted traceback."""
 
-    # FIXME.  We can do better by looking into the traceback ourselves. 
     return string.join(traceback.format_tb(exc_info[2]))
 
 
@@ -794,8 +792,6 @@ def encode_data_as_text(data, mime_type="application/octet-stream"):
 
     base_type = string.split(mime_type, "/", 1)[0]
 
-    # FIXME: Support automatic data compression here?
-
     # For the text base MIME type, use a quoted-printable encoding.
     # This makes the encoded data more human-friendly.
     if base_type == "text":
@@ -911,15 +907,13 @@ def find_program_in_path(program_name, path):
     found."""
 
     # Split the path into directories.
-    # FIXME: Do the Windows thing.
-    path_separator = ":"
+    path_separator = os.pathsep
     directories = string.split(path, path_separator)
     # Loop over directories.
     for directory in directories:
         program_path = os.path.join(directory, program_name)
         # Is there such a file, and is it executable?
-        # FIXME: This won't work for Windows.
-        if os.access(program_path, os.X_OK):
+        if is_executable(program_path):
             # Good -- that's the result.
             return program_path
     # Couldn't find it.
@@ -929,8 +923,14 @@ def find_program_in_path(program_name, path):
 def is_executable(path):
     """Return true if 'path' is an executable file."""
 
-    # FIXME: Windows.
-    return os.path.isfile(path) and os.access(path, os.X_OK)
+    # Make sure 'path' exists.
+    if not os.path.isfile(path):
+        return 0
+    # If we have 'os.access' available, check for executability.
+    if hasattr(os, "access") and not os.access(path, os.X_OK):
+        return 0
+    # Looks OK.
+    return 1
 
 
 def starts_with(text, prefix):
@@ -1191,7 +1191,6 @@ def split_argument_list(command):
     # Strip leading and trailing whitespace.
     command = string.strip(command)
     # Split the command into argument list elements at spaces.
-    # FIXME: Honor additional quoting rules?
     argument_list = re.split(" +", command)
     return argument_list
 
@@ -1293,8 +1292,8 @@ if "timegm" in dir(calendar):
     from calendar import timegm
 
 else:
-    # FIXME: Remove this if we migrate to a later Python version
-    # permanently. 
+    # Note: This function can be removed if we migrate permanently to a
+    # newer Python version which includes 'timegm'.
 
     # This function is borrowed from the Python 1.6.1 distribution's
     # 'calendar' module.  According to the Python 1.5.2 library

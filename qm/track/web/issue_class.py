@@ -31,10 +31,6 @@
 #
 ########################################################################
 
-# FIXME security: Check authorization throughout -- make sure the user
-# is in the administrators group before displaying edit pages or
-# processing any IDB modifications.
-
 ########################################################################
 # imports
 ########################################################################
@@ -394,21 +390,11 @@ def handle_submit_class(request):
     issue_class = _get_issue_class_for_session(request)
     issue_class_name = issue_class.GetName()
 
-    # Is this a new issue class, or a revision to an existing one?
-    # Determine by checking whether there is already an issue class in
-    # the IDB with the same name.
-    try:
-        idb = session.idb
-        previous_issue_class = idb.GetIssueClass(issue_class_name)
-
-    except KeyError:
-        # This is a new issue class.
-        # FIXME: Implement this.
-        raise NotImplemenedError, "new issue class"
-
-    else:
-        # This is a new revision of an exising issue class.
-        idb.UpdateIssueClass(issue_class)
+    # This should be a revision to an existing issue class.
+    idb = session.idb
+    previous_issue_class = idb.GetIssueClass(issue_class_name)
+    # Replace it.
+    idb.UpdateIssueClass(issue_class)
 
     # Dissociate the issue class from the session. 
     del session.__issue_class    

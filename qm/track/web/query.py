@@ -66,7 +66,10 @@ class QueryPage(web.DtmlPage):
     def MakePythonQueryHelp(self):
         """Construct a link to popup help about Python queries."""
 
-        # FIXME: These are only the fields for the default issue class.
+        # To construct help information about fields in all issue
+        # classes, and present this in a way that would make sense to
+        # users, would be quite difficult.  For now, we punt and show
+        # information only about fields in the default class.
         try:
             default_class = \
                 self.request.GetSession().idb.GetDefaultIssueClass()
@@ -80,8 +83,9 @@ class QueryPage(web.DtmlPage):
         help_text = qm.web.format_structured_text(help_text)
         # Append a list of names of fields available in expressions.
         help_text = help_text + '''
-        <p>You may use the following names in your query to refer to 
-        issue field values:</p>
+        <p>You may use the names listed below in your query to refer to 
+        issue field values.  (Note that issues in some issue classes may
+        have different fields.)</p>
         <div align="center"><table>
          <thead>
           <tr>
@@ -112,7 +116,8 @@ class QueryPage(web.DtmlPage):
     def MakeCategorySelect(self):
         """Make a list control displaying available categories."""
 
-        # FIXME.
+        # Punt on listing categories for all issue classes.  Show only
+        # those for the default issue class.
         try:
             default_class = \
                 self.request.GetSession().idb.GetDefaultIssueClass()
@@ -131,7 +136,8 @@ class QueryPage(web.DtmlPage):
     def MakeStateSelect(self):
         """Make a list control displaying available states."""
 
-        # FIXME.
+        # Punt on listing states for all issue classes.  Show only those
+        # for the default issue class.
         try:
             default_class = \
                 self.request.GetSession().idb.GetDefaultIssueClass()

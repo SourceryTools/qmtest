@@ -33,15 +33,15 @@
    <title>Setting Up</title>
 
    <para>A test database is a directory that &qmtest; uses to store
-   tests.  If you wish to create a new, empty test database from
-   scratch, you can simply create an empty directory.  For this
-   tutorial, however, you should use the sample test database provided
-   with &qmtest;.  Since you'll modify the test database later in the
-   tutorial, start by making a copy of it.  Copy the entire test
-   database directory tree to another location.  If you've installed
-   &qmtest; in the default location (<filename>/usr/local</filename>),
-   you can make a copy of the sample database in your home directory
-   by running this command:</para>
+   tests.  If you wanted to create a new, empty test database from
+   scratch, you would use the <command>&qmtest-cmd; create-tdb</command>
+   command, but for this tutorial, you should use the sample test
+   database provided with &qmtest;.  Since you'll modify the test
+   database later in the tutorial, start by making a copy of it.  Copy
+   the entire test database directory tree to another location.  If
+   you've installed &qmtest; in the default location
+   (<filename>/usr/local</filename>), you can make a copy of the sample
+   database in your home directory by running this command:</para>
 
    <screen>
     &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb $HOME/tdb</userinput>

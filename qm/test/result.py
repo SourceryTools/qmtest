@@ -253,6 +253,8 @@ class Result:
     def MakeDomNode(self, document):
         """Generate a DOM element node for this result.
 
+        Note that the context is not represented in the DOM node.
+
         'document' -- The containing DOM document."""
 
         # The node is a result element.

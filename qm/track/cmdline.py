@@ -672,8 +672,7 @@ parent.""",
         # fields that they specify.
         self.__CheckFieldTypes(hash, icl)
 
-        # FIXME: Are there any fields that have to be specified
-        # explicitly? 
+        # No fields have to be specified explicitly (for now).
         mandatory_fields = []
 
         missing = []
@@ -1059,10 +1058,8 @@ parent.""",
 
         idb_path = self.GetIdbPath()
 
-        # Determine the IDB class name from the command line or
-        # default.
-
-        # FIXME: Use the MemoryIdb implementation by default, for now.
+        # Determine the IDB class name from the command line, or
+        # use the memory issue store implementation by default.
         issue_store_module_name = self.GetCommandOption(
             "issue-store", "qm.track.memory_issue_store")
 
@@ -1209,7 +1206,6 @@ parent.""",
     def __ImportIssueHistories(self, idb_, node):
         """Import issue histories from DOM element 'node' into 'idb_'."""
 
-        # FIXME: Handle any errors?
         issue_classes = qm.common.make_map_from_list(
             idb_.GetIssueClasses(), lambda c: c.GetName())
         issue_histories = issue.get_histories_from_dom_node(

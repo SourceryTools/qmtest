@@ -381,8 +381,7 @@ class _IssueDatabase:
         issue_classes_path = _get_issue_classes_path(self.__path)
         issue_class.save(issue_classes_path, self.__issue_classes.values())
         del self.__issue_classes
-        # Write the user database.
-        # FIXME.
+        # FIXME: Write the user database.
         # self.__user_database.Write()
         del self.__user_database
         # Unlock the IDB.
@@ -590,7 +589,6 @@ def open(path):
 
             # Good to go.  Construct the issue database object.
             qm.common.print_message(2, "IDB at %s opened.\n" % path) 
-            # FIXME: Attachment store.
             return _IssueDatabase(path=path,
                                   lock=lock,
                                   issue_classes=issue_classes,
@@ -601,7 +599,6 @@ def open(path):
 
     # We've exceeded the maximum number of attempts so bail with an
     # exception.
-    # FIXME: Detect and remove stale locks automatically?
     raise IdbError, \
           qm.error("idb locked", idb_path=path, lock_path=lock.GetPath())
 

@@ -127,6 +127,11 @@ Please check that your temporary directory is configured correctly.
 @ unrecognized command
 %(program_name)s does not recognize the command "%(command)s".
 
+@ xmlrpc exception
+An XML/RPC invocation caused an exception.
+
+%(exception)s
+
 @ xml parse error
 The XML parser encountered an error at line %(line)d, character
 %(character)d of the file %(file_name)s:

@@ -38,6 +38,7 @@
 import cPickle
 import errno
 import os
+import qm.common
 import qm.fields
 import qm.test.base
 from   qm.test.result import *
@@ -59,12 +60,27 @@ STDERR_FILENO = sys.stderr.fileno()
 # functions
 ########################################################################
 
-def make_result_for_exception(cause):
+def _make_result_for_exception(cause):
+    """Return data for a result indicating an exception.
+
+    This function doesn't return a 'Result' object, but it does return
+    the data necessary to note an exception in a 'Result' object.
+
+    preconditions -- 'sys.exc_info()' returns information about the
+    current exception.
+
+    'cause' -- The text to annotate as the cause in the result.
+
+    returns -- A pair 'outcome, annotation_map', where 'outcome' is is
+    the result outcome to use, and 'annotation_map' is a map from
+    names to values of annotations to include in the result."""
+
     exc_info = sys.exc_info()
     return (Result.ERROR,
             { Result.CAUSE : cause,
               Result.EXCEPTION : "%s: %s" % exc_info[:2],
               Result.TRACEBACK : qm.format_traceback(exc_info) })
+
     
 ########################################################################
 # classes
@@ -275,7 +291,7 @@ class ExecTest(Test):
                     except:
                         # Perhaps something went wrong while setting up
                         # the standard stream files.
-                        result = make_result_for_exception(
+                        result = _make_result_for_exception(
                             "Exception setting up test.")
                     else:
                         # Run the target program.  If the target executes
@@ -416,7 +432,7 @@ class ExecTest(Test):
             annotations["ExecTest.path"] = path
             return (Result.ERROR, annotations)
         # Make sure it's an executable.
-        if not qm.is_executable(program):
+        if not qm.common.is_executable(program):
             annotations[Result.CAUSE] = \
               "Program '%s' is not an executable." % program
             return (Result.ERROR, annotations)
@@ -436,9 +452,10 @@ class ExecTest(Test):
                     return (Result.ERROR, annotations)
                 raise
         except:
-            return make_result_for_exception("Exception running program.")
+            return _make_result_for_exception("Exception running program.")
         # We should never get here.
         assert 0
+
 
 
 class ShellCommandTest(ExecTest):
@@ -503,7 +520,7 @@ class ShellCommandTest(ExecTest):
             # Otherwise, use a platform-specific default.
             shell = qm.platform.get_shell_for_command()
         # Make sure the interpreter exists.
-        if not qm.is_executable(shell[0]):
+        if not qm.common.is_executable(shell[0]):
             return (Result.ERROR,
                     { Result.CAUSE : qm.message("no shell executable"),
                       "ShellCommandTest.executable" : shell_exectuable })
@@ -513,7 +530,7 @@ class ShellCommandTest(ExecTest):
             # Run the interpreter.
             os.execve(arguments[0], arguments, self.environment)
         except:
-            return make_result_for_exception("Exception invoking command.")
+            return _make_result_for_exception("Exception invoking command.")
         # We should never reach here.
         assert 0
 
@@ -600,7 +617,7 @@ class ShellScriptTest(ExecTest):
             # Otherwise, use a platform-specific default.
             shell = qm.platform.get_shell_for_script()
         # Make sure the interpreter exists.
-        if not qm.is_executable(shell[0]):
+        if not qm.common.is_executable(shell[0]):
             return (Result.ERROR,
                     { Result.CAUSE : qm.message("no shell executable"),
                       "ShellScriptTest.executable" : shell_executable })
@@ -614,8 +631,10 @@ class ShellScriptTest(ExecTest):
             # Run the script.
             os.execve(arguments[0], arguments, self.environment)
         except:
-            return make_result_for_exception(
+            return _make_result_for_exception(
                 "Exception while running script.")
+
+
 
 ########################################################################
 # Local Variables:

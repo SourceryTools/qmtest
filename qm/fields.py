@@ -600,7 +600,9 @@ class Field:
             "title":
                 self._MakeTextPropertyControl("title"),
 
-            # FIXME: The name is made read-only here.  Is that good?
+            # The name is made read-only here.  It should not be changed
+            # after the field has been created, to preserve referential
+            # integrity. 
             "name":
                 self.GetProperty("name"),
 
@@ -836,7 +838,6 @@ class TextField(Field):
 
 
     def CompareValues(self, value1, value2):
-        # FIXME: Localization?
         # First, compare strings case-insensitively.
         comparison = cmp(string.lower(value1), string.lower(value2))
         if comparison == 0:

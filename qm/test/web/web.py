@@ -303,7 +303,8 @@ class QMTestServer(qm.web.WebServer):
         test_ids, suite_ids = qm.test.base.expand_ids(ids)
 
         context = self.__context
-        # FIXME: Determine target group.
+        # Run in a single local subprocess.  As yet, we don't support
+        # target configuration when running tests from the web GUI.
         target_specs = [
             qm.test.run.TargetSpec("local",
                                    "qm.test.run.SubprocessTarget",
