@@ -1,5 +1,26 @@
 2001-01-09  Alex Samuel  <samuel@codesourcery.com>
 
+	* README.sources: Clarify naming conventions.
+	* templates/py: Add section banners.
+	
+	* configure.in: New file.
+	* install-sh: Likewise.
+	* configure: Likewise.
+	* standard.mk.in: New file.
+	* standard.mk: Remove.
+	* Makefile.in: New file.
+	* Makefile: Remove.
+	* doc/Makefile.in: New file.
+	* doc/Makefile: Remove.
+	* doc/design/qmconfig/Makefile.in: New file.
+	* doc/design/qmconfig/Makefile: Remove.
+	* doc/design/qmtest/Makefile.in: New file.
+	* doc/design/qmtest/Makefile: Remove.
+	* doc/design/qmtrack/Makefile.in: New file.
+	* doc/design/qmtrack/Makefile: Remove.
+	
+2001-01-09  Alex Samuel  <samuel@codesourcery.com>
+
 	* README: New file.
 
 2001-01-08  Alex Samuel  <samuel@codesourcery.com>

@@ -1,11 +1,11 @@
 ######################################################### -*-Makefile-*-
 #
 # File:   Makefile
-# Author: Alex Samuel
-# Date:   2000-10-20
+# Author: R. Lindsay Todd
+# Date:   2000-11-10
 #
 # Contents:
-#   Makefile for documentation tree.
+#   Makefile for qmconfig design document
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -31,6 +31,10 @@
 #
 ########################################################################
 
-SUBDIRS		= design/qmtrack design/qmtest
+TOPDIR		= @top_srcdir@
 
-include ../standard.mk
+DOCBOOK		= $(wildcard *.xml)
+DOCBOOKMAIN	= qmconfig.xml
+DOCBITMAPS	= $(wildcard figures/*.png)
+
+include $(TOPDIR)/standard.mk

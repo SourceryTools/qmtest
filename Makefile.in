@@ -2,10 +2,10 @@
 #
 # File:   Makefile
 # Author: Alex Samuel
-# Date:   2000-10-20
+# Date:   2000-12-20
 #
 # Contents:
-#   Makefile for qmtrack design document
+#   Top-level qm makefile.
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -31,10 +31,21 @@
 #
 ########################################################################
 
-DOCBOOK		= $(wildcard *.xml)
-DOCBOOKMAIN	= qmtrack.xml
+TOPDIR		= @top_srcdir@
 
-DOCBITMAPS      = $(wildcard *.jpg) $(wildcard *.png)
+SUBDIRS		= doc
 
 include $(TOPDIR)/standard.mk
 
+########################################################################
+# additional rules
+########################################################################
+
+# The Gadfly module requires one-time setup.
+setup:		gadfly/sqlwhere.py
+
+# This follows the setup instructions in the Gadfly package.  The
+# target is a file generated in the setup procedure.  See
+# gadfly/index.html.
+gadfly/sqlwhere.py:
+	cd gadfly; python gfinstall.py

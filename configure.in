@@ -1,13 +1,14 @@
-######################################################### -*-Makefile-*-
+divert(-1)
+########################################################################
 #
-# File:   Makefile
-# Author: R. Lindsay Todd
-# Date:   2000-11-10
+# File:   configure.in
+# Author: Alex Samuel
+# Date:   2001-01-09
 #
 # Contents:
-#   Makefile for qmconfig design document
-# 
-# Copyright (C) 2000 CodeSourcery LLC
+#   Autoconf configuration for QM.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,8 +31,23 @@
 # SOFTWARE.
 #
 ########################################################################
+divert(0)
 
-DOCBOOK		= $(wildcard *.xml)
-DOCBOOKMAIN	= qmconfig.xml
-DOCBITMAPS	= $(wildcard figures/*.png)
-include $(TOPDIR)/standard.mk
+AC_INIT(configure.in)
+
+AC_PROG_MAKE_SET
+AC_PATH_PROG(HAPPYDOC, happydoc, happydoc)
+AC_PATH_PROG(JADE, jade, jade)
+AC_PATH_PROG(PYTHON, python, python)
+AC_PATH_PROG(TIDY, tidy, tidy)
+
+AC_CHECK_FILE(/usr/doc/jade-1.2.1/pubtext/xml.dcl, , exit 1)
+AC_CHECK_FILE(/usr/lib/sgml/stylesheets/docbook, , exit 1)
+
+AC_CONFIG_SUBDIRS()
+AC_OUTPUT(standard.mk
+	  Makefile
+	  doc/Makefile
+ 	  doc/design/qmconfig/Makefile
+	  doc/design/qmtest/Makefile
+	  doc/design/qmtrack/Makefile)

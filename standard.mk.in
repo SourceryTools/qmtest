@@ -1,14 +1,14 @@
 ######################################################### -*-Makefile-*-
 #
-# File:   standard.mk
+# File:   standard.mk.in
 # Author: Alex Samuel
-# Date:   2000-10-20
+# Date:   2001-01-09
 #
 # Contents:
 #   GNU Makefile fragment with common rules amd configuration.
 #
 # Usage:
-#   GNUmakefiles in subdirectories should define relevant variables,
+#   Makefiles in subdirectories should define relevant variables,
 #   and then include this fragment:
 #
 #     include $(TOPDIR)/standard.mk
@@ -22,7 +22,7 @@
 #
 #     DOCBITMAPS:   Bitmap files used in the HTML documentation.
 # 
-# Copyright (C) 2000 CodeSourcery LLC
+# Copyright (C) 2001 CodeSourcery LLC
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,22 +50,22 @@
 # Configuration
 ########################################################################
 
-# Full path to the qm project.
-TOPDIR		= $(HOME)/qm
+# Assign MAKE correctly, for recursive makes.
+@SET_MAKE@
 
 # Output directories.
 BUILDDIR	= $(TOPDIR)/build
 DOCDIR		= $(BUILDDIR)/doc
 
 # Python configuration.
-PYTHON		= PYTHONPATH=$(TOPDIR) python 
+PYTHON		= PYTHONPATH=$(TOPDIR) @PYTHON@
 
 # Tidy configuration.
-TIDY 		= tidy
+TIDY 		= @TIDY@
 TIDYFLAGS	= -wrap 72 -i --indent-spaces 1
 
 # Jade configuration,
-JADE		= jade
+JADE		= @JADE@
 JADEEXTRA	= /usr/doc/jade-1.2.1/pubtext/xml.dcl
 
 # Modular DSSSL stylesheet configuration.  The system identifiers are
@@ -87,7 +87,7 @@ HTMLMANIFEST	= $(HTMLDIR)/docbook-html.manifest
 HTMLTARBALL	= $(HTMLDIR)/$(DOCBOOKMAIN:.xml=.tgz)
 
 # HappyDoc configuration.
-HAPPYDOC	= happydoc
+HAPPYDOC	= @HAPPYDOC@
 
 # Output directory and output files generated with the DSSSL stylesheet
 # for TeX.
@@ -119,7 +119,7 @@ all:		subdirs doc
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
-	cd $@ && make TOPDIR=$(TOPDIR)
+	cd $@ && make
 
 doc:		doc-html doc-print doc-python
 

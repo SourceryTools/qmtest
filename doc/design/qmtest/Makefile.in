@@ -31,7 +31,9 @@
 #
 ########################################################################
 
+TOPDIR	        = @top_srcdir@
+
 DOCBOOK		= $(wildcard *.xml)
 DOCBOOKMAIN	= qmtest.xml
 
-include ../../../standard.mk
+include $(TOPDIR)/standard.mk

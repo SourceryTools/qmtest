@@ -1,13 +1,13 @@
-########################################################################
+######################################################### -*-Makefile-*-
 #
-# File:   Fill me in!
-# Author: Fill me in!
-# Date:   YYYY-MM-DD
+# File:   Makefile
+# Author: Alex Samuel
+# Date:   2000-10-20
 #
 # Contents:
-#   Fill me in!
-#
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#   Makefile for qmtrack design document
+# 
+# Copyright (C) 2000 CodeSourcery LLC
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,26 +31,11 @@
 #
 ########################################################################
 
-########################################################################
-# imports
-########################################################################
+TOPDIR		= @top_srcdir@
 
-# Import modules here.
+DOCBOOK		= $(wildcard *.xml)
+DOCBOOKMAIN	= qmtrack.xml
 
-########################################################################
-# classes
-########################################################################
+DOCBITMAPS      = $(wildcard *.jpg) $(wildcard *.png)
 
-# Place class definitions here.
-
-########################################################################
-# functions
-########################################################################
-
-# Place function definitions here.
-
-########################################################################
-# Local Variables:
-# mode: python
-# indent-tabs-mode: nil
-# End:
+include $(TOPDIR)/standard.mk
