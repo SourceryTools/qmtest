@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest diagnostic message templates.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -92,7 +92,7 @@ properties using the syntax KEY=VALUE.
 
 @ invalid context key
 The context key "%(key)s" is not valid.  Context keys may contain
-letters, digits, underscores, and periods.
+letters, digits, hyphens, underscores, and periods.
 
 @ invalid environment assignment
 The string '%(assignment)s' is not a valid environment element.
@@ -108,7 +108,7 @@ problem was: %(problem)s.
 
 @ invalid id
 The name "%(id)s" is not valid.  Names may contain lower-case letters,
-digits, and underscores, and periods.
+digits, hyphens, underscores, and periods.
 
 @ invalid results format
 "%(format)s" is not a valid format for test results.  Possible formats are

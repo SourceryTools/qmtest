@@ -193,6 +193,10 @@ class ExecutionEngine:
                         self.__pending.remove(descriptor)
                         # Run it.
                         target.RunTest(descriptor, self.__context)
+                        # If the target is no longer idle, remove it
+                        # from the idle_targets list.
+                        if not target.IsIdle():
+                            self.__idle_targets.remove(target)
                         # We have done something useful on this
                         # iteration.
                         wait = 0
@@ -294,7 +298,7 @@ class ExecutionEngine:
             assert 0
             
         # This target might now be idle.
-        if target.IsIdle():
+        if target not in self.__idle_targets and target.IsIdle():
             self.__idle_targets.append(target)
 
         # Report the result.

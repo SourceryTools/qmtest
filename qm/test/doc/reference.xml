@@ -508,10 +508,10 @@
   responsibility to ensure the integrity and validity of the XML
   contents of each file.  For example, file and directory names should
   contain only characters allowed in identifiers (lower-case letters,
-  digits, and underscores); a period should only be used before a file
-  extension, such as <filename>.qmt</filename>.  Also, the files and
-  directories in a test database should not be modified directly while
-  &qmtest; is running with that test database.</para>
+  digits, hyphens, and underscores); a period should only be used
+  before a file extension, such as <filename>.qmt</filename>.  Also,
+  the files and directories in a test database should not be modified
+  directly while &qmtest; is running with that test database.</para>
 
  </section> <!-- sec-database-contents -->
 
@@ -1643,8 +1643,8 @@
 
     <para>A context object is simply a dictionary of properties.  Use
     Python's map syntax to access a context's properties.  A property
-    key is always a string composed of lower-case letters and
-    underscores.  Property values are strings.</para>
+    key is always a string composed of letters, digits, hyphens,
+    underscores, and periods.  Property values are strings.</para>
 
     <para>A test's <function>Run</function> function only sees context
     properties added by &qmtest; itself and properties added by the

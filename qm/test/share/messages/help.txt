@@ -7,7 +7,7 @@
 # Contents:
 #   Common QMTest help message templates.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -95,8 +95,8 @@ An resource ID is a label that identifies an resource.  Resource IDs are
 unique within a single test database, but are distinct from test IDs and
 suite IDs.
 
-The resource ID may be composed of lower-case letters, digits, and
-underscores.
+The resource ID may be composed of lower-case letters, digits, hyphens,
+and underscores.
 
 You may optionally organize resources in a hierarchy using a period as
 the path separator.
@@ -135,8 +135,8 @@ A test suite ID is a label that identifies a test suite.  Test suite IDs
 are unique within a single test database, but are distinct from test IDs
 and resource IDs.
 
-The test suite ID may be composed of lower-case letters, digits, and
-underscores.
+The test suite ID may be composed of lower-case letters, digits,
+hyphens, and underscores.
 
 The IDs of tests in a test suite are specified relative to the test
 suite's ID.  For instance, if your test database contains the tests
@@ -240,7 +240,7 @@ A test ID is a label that identifies a test.  Test IDs are unique within
 a single test database, but are distinct from resource IDs and suite
 IDs.
 
-The test ID may be composed of lower-case letters, digits, and
+The test ID may be composed of lower-case letters, digits, hyphens, and
 underscores.
 
 You may optionally organize tests in a hierarchy using a period as the

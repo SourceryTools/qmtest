@@ -71,12 +71,6 @@ fi
 AC_SUBST(QM_VERSION)
 
 dnl ####################################################################
-dnl Find some common programs.
-dnl ####################################################################
-
-AC_PROG_MAKE_SET
-
-dnl ####################################################################
 dnl Find the Python interpreter.  If the user specified the 
 dnl --with-python option, use its value, after checking that it exists.
 dnl Otherwise, look in the PATH.

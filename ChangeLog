@@ -1,5 +1,27 @@
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/label.py (__label_regex): Add hyphens.
+	(__label_regex_with_sep): Likewise.
+	* qm/xmlutil.py (discard_node): Implement with
+	xml.dom.ext.ReleaseNode.
+	* qm/test/context.py (Context.ValidateKey): Allow hyphens.
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Keep
+	the list of idle targets up to date.
+	(ExecutionEngine._AddResult): Likewise.
+	* qm/test/text_result_stream.py (TextResultStream._DisplayResult):
+	Use XPASS and XFAIL where possible.
+	(TextResultStream._WriteOutcome): New method.
+	* qm/test/classes/ThreadTarget.py (TestResultStream.RunTest): Add
+	assertions.
+	* qm/test/share/messages/diagnostics.txt: Update documentation
+	about labels.
+	* qm/test/share/messages/help.txt: Likewise.
+	* qm/track/share/messages/diagnostics.txt: Likewise.
+	* qm/track/share/messages/help.txt: Likewise.
+	* qm/test/doc/reference.xml: Likewise.
+	* share/xml/.cvsignore: Add *.dtd.
+	* configure.in (AC_PROG_MAKE_SET): Remove.
+
 	* qm/test/share/dtds/result.dtd: Correct version number.
 
 2002-01-06  Zack Weinberg  <zack@codesourcery.com>

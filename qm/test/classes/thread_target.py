@@ -162,10 +162,16 @@ class ThreadTarget(Target):
 
         Derived classes may override this method."""
 
-        # Use an idle thread to execute the test.
         self.__ready_threads_lock.acquire()
+
+        # The execution engine should never be trying to run a test
+        # when the target is not already idle.
+        assert self.__ready_threads
+        # Pick an idle thread to run the test.
         thread = self.__ready_threads.pop(0)
+        
         self.__ready_threads_lock.release()
+
         thread.RunTest(descriptor, context)
             
 
@@ -277,4 +283,3 @@ class ThreadTarget(Target):
         finally:
             # Release the lock.
             self.__ready_threads_lock.release()
-

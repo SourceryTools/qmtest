@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest TextResultStream class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -269,11 +269,19 @@ class TextResultStream(ResultStream):
 	    # If expected outcomes were specified, print the expected
 	    # outcome too.
 	    expected_outcome = \
-	      self.__expected_outcomes.get(id_, Result.PASS)
-	    self.__file.write("  %-46s: %-8s, expected %-8s\n"
-			      % (id_, outcome, expected_outcome))
+	        self.__expected_outcomes.get(id_, Result.PASS)
+            if (outcome == Result.PASS
+                and expected_outcome == Result.FAIL):
+                self._WriteOutcome(id_, "XPASS")
+            elif (outcome == Result.FAIL
+                  and expected_outcome == Result.FAIL):
+                self._WriteOutcome(id_, "XFAIL")
+            elif outcome != expected_outcome:
+                self._WriteOutcome(id_, outcome, expected_outcome)
+            else:
+                self._WriteOutcome(id_, outcome)
 	else:
-	    self.__file.write("  %-63s: %-8s\n" % (id_, outcome))
+            self._WriteOutcome(id_, outcome)
 
 	# Get a description of the result as structured text.
 	description = result.AsStructuredText(format)
@@ -281,8 +289,24 @@ class TextResultStream(ResultStream):
 	description = qm.structured_text.to_text(description, 72, 4)
 	# Write it out.
 	self.__file.write(description)
- 
-	
+
+
+    def _WriteOutcome(self, name, outcome, expected_outcome=None):
+        """Write a line indicating the outcome of a test or resource.
+
+        'name' -- The name of the test or resource.
+
+        'outcome' -- A string giving the outcome.
+
+        'expected_outcome' -- If not 'None', the expected outcome."""
+
+        if expected_outcome:
+	    self.__file.write("  %-46s: %-8s, expected %-8s\n"
+			      % (name, outcome, expected_outcome))
+	else:
+	    self.__file.write("  %-46s: %-8s\n" % (name, outcome))
+
+            
     def _DisplayHeading(self, heading):
         """Display 'heading'.
 

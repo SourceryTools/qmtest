@@ -7,7 +7,7 @@
 # Contents:
 #   Common QMTrack diagnostic message templates.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -68,7 +68,7 @@ You must specify a value for the "%(field_title)s" field.
 
 @ invalid enum key
 The string "%(key)s" is not a valid enumeral.  Enumeral names must be
-composed of lower-case letters, digits, and underscores.
+composed of lower-case letters, digits, hyphens, and underscores.
 
 @ invalid enum value
 The value "%(value)s" is not allowed for field "%(field_title)s".  The

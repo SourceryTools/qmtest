@@ -7,7 +7,7 @@
 # Contents:
 #   Functions for manipulating lowest-common-demoniator labels.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -148,8 +148,8 @@ class AsRelative:
 # functions
 ########################################################################
 
-__label_regex = re.compile("[a-z0-9_]+$")
-__label_regex_with_sep = re.compile("[a-z0-9_%s]+$" % sep)
+__label_regex = re.compile("[-a-z0-9_]+$")
+__label_regex_with_sep = re.compile("[-a-z0-9_%s]+$" % sep)
 
 def is_valid(label, user=1, allow_separator=0):
     """Test whether 'label' is a valid label.

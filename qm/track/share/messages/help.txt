@@ -7,7 +7,7 @@
 # Contents:
 #   Common QMTtack help message templates.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -70,12 +70,12 @@ the state model includes a transition from the issue's current state to
 the new state.
 
 Each state is identified by its name, which must be unique in the state
-model, and can consist of lower-case letters, digits, and underscores.
-A state can also include a more complete description, which helps users
-understand what the state signifies.  Some states are also flagged as
-*open states*; an issue not in an open state is considered no longer to
-be under consideration.  The *initial state* is the state assigned to
-all new issues.
+model, and can consist of lower-case letters, digits, hyphens, and
+underscores.  A state can also include a more complete description,
+which helps users understand what the state signifies.  Some states are
+also flagged as *open states*; an issue not in an open state is
+considered no longer to be under consideration.  The *initial state* is
+the state assigned to all new issues.
 
 Some typical states that might be included in a bug-tracking state model
 are,

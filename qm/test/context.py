@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest Context class
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 ########################################################################
 
@@ -129,7 +129,7 @@ class Context:
 
         if not isinstance(key, types.StringType):
             raise ValueError, "context key must be a string"
-        if not re.match("[A-Za-z0-9_.]+", key):
+        if not re.match("[-A-Za-z0-9_.]+", key):
             raise ValueError, \
                   qm.error("invalid context key", key=key)
 

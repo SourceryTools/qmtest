@@ -7,7 +7,7 @@
 # Contents:
 #   Diagnostic message templates.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -154,18 +154,18 @@ There is already an issue in the IDB with the issue ID "%(iid)s".
 
 @ invalid class name
 "%(class_name)s" is not a valid name for an issue class.  An issue class
-name may be composed of lower-case letters, digits, and underscores, and
-may not begin with an underscore.
+name may be composed of lower-case letters, digits, hyphens, and
+underscores, and may not begin with an underscore.
 
 @ invalid enum key
 "%(key)s" is not a valid enumeral name.  The name may be composed of
-lower-case letters, digits, and underscores, and may not begin with an
-underscore. 
+lower-case letters, digits, hyphens, and underscores, and may not begin
+with an underscore.
 
 @ invalid field name
 "%(field_name)s" is not a valid field name.  A field name may be
-composed of lower-case letters, digits, and underscores, and may not
-begin with an underscore.
+composed of lower-case letters, digits, hyphens, and underscores, and
+may not begin with an underscore.
 
 @ invalid field type
 "'%(field_type)s'" is not a valid field type.  A field type must be a
@@ -173,8 +173,8 @@ Python class that is a subclass of 'qm.fields.Field'.
 
 @ invalid iid
 "%(iid)s" is not a valid issue ID.  An issue ID may be composed of
-lower-case letters, digits, and underscores, and may not begin with an
-underscore. 
+lower-case letters, digits, hyphens, and underscores, and may not begin
+with an underscore.
 
 @ issue store module error
 The issue store implementation module '%(name)s' could not be loaded.
