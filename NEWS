@@ -16,6 +16,9 @@ QM 2.0.3
 A JavaScript issue that prevented the pop-up menus in the GUI from
 working correctly with Mozilla 1.0.1 was corrected.
 
+A bug that could cause QMTest to hang when running tests in parallel
+has been corrected.
+
 QM 2.0.2
 ========
 
