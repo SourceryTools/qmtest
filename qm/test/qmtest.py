@@ -93,6 +93,9 @@ def main():
 # script
 ########################################################################
 
+# Assume that something will go wrong.
+exit_code = 1
+
 try:
     # Set the program name.
     qm.common.program_name = "QMTest"
@@ -109,27 +112,20 @@ try:
         print_error_message(msg)
         sys.stderr.write(
             "Run 'qmtest --help' to get instructions about how to use QMTest.\n")
-        exit_code = 2
     except qm.common.QMException, msg:
         print_error_message(msg)
-        exit_code = 1
     except NotImplementedError:
         exc_info = sys.exc_info()
         method_name = traceback.extract_tb(exc_info[2])[-1][2]
         print_error_message(qm.message("not implemented",
                                        method_name = method_name))
         sys.stderr.write(qm.common.format_traceback(exc_info))
-        exit_code = 1
     except KeyboardInterrupt:
-        # User killed it; that's OK.
         sys.stderr.write("\nqmtest: Interrupted.\n")
-        exit_code = 0
     except qm.platform.SignalException, se:
-        # SIGTERM indicates a request to shut down.
-        if se.GetSignalNumber() == signal.SIGTERM:
-            exit_code = 1
-        # Other signals should be handled earlier.
-        else:
+        # SIGTERM indicates a request to shut down.  Other signals
+        # should be handled earlier.
+        if se.GetSignalNumber() != signal.SIGTERM:
             raise
 finally:
     # Collect garbage so that any "__del__" methods with externally

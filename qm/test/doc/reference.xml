@@ -1548,6 +1548,28 @@
     </glosslist>
 
   </section> <!-- sec-config-file -->
+
+  <section id="sec-return-value">
+   <title>Return Value</title>
+
+   <para>If QMTest successfully performed the action requested,
+   &qmtest; returns 0.  For the <command>&qmtest-cmd; run</command> or
+   <command>&qmtest-cmd; summarize</command> commands, success implies
+   not only that the tests ran, but also that all of the tests passed
+   (if the <option>&dashdash;outcomes</option> option was not used) or
+   had their expected outcomes (if the
+   <option>&dashdash;outcomes</option> option was used).</para>
+
+   <para>If QMTest could not perform the action requested,
+   &qmtest-cmd; returns 1.</para>
+
+   <para>If either the <command>run</command> command or the
+   <command>summarize</command> command was used, and at least one
+   test failed (if the <option>&dashdash;outcomes</option> option was
+   not used) or had an unexpected outcome (if the
+   <option>&dashdash;outcomes</option> option was used), &qmtest-cmd;
+   returns 2.</para> 
+  </section> <!-- sec-return-value -->
   
  </section>
 

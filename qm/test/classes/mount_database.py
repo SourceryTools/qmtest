@@ -35,7 +35,7 @@ class MountDatabase(Database):
 
     The contained databases are found by looking for subdirectories of
     the 'MountDatabase' directory.  Every immediate subdirectory which
-    is itself a QMTest database is mounted; it's mount point is the
+    is itself a QMTest database is mounted; its mount point is the
     name of the subdirectory."""
 
     class MountedSuite(Suite):

@@ -638,8 +638,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         
         # Dispatch to the appropriate method.
         if self.__command == "create-tdb":
-            self.__ExecuteCreateTdb(db_path)
-            return 0
+            return self.__ExecuteCreateTdb(db_path)
         
         method = {
             "create" : self.__ExecuteCreate,
@@ -893,7 +892,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                      
         # Write out the file.
         qm.extension.write_extension_file(extension_class, arguments, file)
-        
+
+        return 0
+    
         
     def __ExecuteCreateTdb(self, db_path):
         """Handle the command for creating a new test database.
@@ -927,7 +928,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Print a helpful message.
         self._stdout.write(qm.message("new db message", path=db_path) + "\n")
 
+        return 0
 
+    
     def __ExecuteCreateTarget(self):
         """Create a new target file."""
 
@@ -1050,6 +1053,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 description += "\n\n"
                 
             self._stdout.write(qm.structured_text.to_text(description))
+
+        return 0
             
 
     def __ExecuteRegister(self):
@@ -1221,7 +1226,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         for s in streams:
             s.Summarize()
 
-        return any_unexpected_outcomes
+        if any_unexpected_outcomes:
+            return 2
+        
+        return 0
         
 
     def __ExecuteRemote(self):
@@ -1354,7 +1362,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         engine = ExecutionEngine(database, test_ids, context, targets,
                                  result_streams,
                                  self.__GetExpectedOutcomes())
-        return engine.Run()
+        if engine.Run():
+            return 2
+
+        return 0
                                                     
 
     def __ExecuteServer(self):

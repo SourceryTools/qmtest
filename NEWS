@@ -30,6 +30,10 @@ outcomes, even when working within in the GUI.
 There is a new "--result-stream" option to "qmtest run" and "qmtest
 summarize" that allows users to specify custom result streams.
 
+The exit code returned by QMTest is now documented, and now
+distinguishes between a failure of QMTest to carry out the action
+requested by the user and the failure of a test run by QMTest.
+
 A defect that could cause a multi-threaded or multi-process tests run
 to hang if a resource could not be set up has been corrected.
 
