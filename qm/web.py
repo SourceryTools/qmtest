@@ -1075,6 +1075,7 @@ class WebRequest:
             session = base.GetSessionId()
             if session is not None:
                 self.SetSessionId(session)
+                self.client_address = base.client_address
 
 
     def __str__(self):

@@ -1,5 +1,17 @@
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (WebRequest.__init__): Copy client_address.
+	* qm/fields.py (TimeField.GetDefaultValue): Use
+	IntegerField.GetDefaultValue. 
+	(TimeField.GetHelp): Use default_value attribute.
+	* qm/track/issue.py (Issue.GetFieldAsText): New method.
+	* qm/track/triggers/discussion.py (DiscussionTrigger.Preupdate):
+	Use GetFieldAsText.
+	* qm/track/triggers/notification.py
+	(_NotifyTrigger.__MakeMessage): Likewise.
+
+2001-06-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/common.py (format_time): New function.
 	(parse_time): Likewise.
 	(timegm): Import or define here.

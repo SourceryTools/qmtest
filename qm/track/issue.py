@@ -264,6 +264,14 @@ class Issue:
         self.SetField("timestamp", timestamp_field.GetCurrentTime())
 
 
+    def GetFieldAsText(self, field_name):
+        """Get the value of 'field_name' and format it as text."""
+
+        value = self.GetField(field_name)
+        field = self.GetClass().GetField(field_name)
+        return field.FormatValueAsText(value)
+
+
     def IsDeleted(self):
         """Return true if this issue has been deleted.
 

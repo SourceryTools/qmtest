@@ -165,8 +165,8 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         the update, or 'None' if this is a new issue."""
         
         # Write a summary of who changed the issue and when.
-        user = issue.GetField("user")
-        timestamp = issue.GetField("timestamp")
+        user = issue.GetFieldAsText("user")
+        timestamp = issue.GetFieldAsText("timestamp")
         if previous_issue is None:
             message = "The issue %s was created by %s on %s.\n\n" \
                       % (issue.GetId(), user, timestamp) 

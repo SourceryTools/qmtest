@@ -82,8 +82,8 @@ class DiscussionTrigger(qm.track.issue_class.Trigger):
             if value != "":
                 # The user added a new discussion element.  Prepend a
                 # line stating the user's ID and the current time.
-                user = issue.GetField("user")
-                timestamp = issue.GetField("timestamp")
+                user = issue.GetFieldAsText("user")
+                timestamp = issue.GetFieldAsText("timestamp")
                 value = "On %s, %s wrote:\n%s" % (timestamp, user, value)
                 # Append the discussion element to the previous value of
                 # this field.

@@ -1498,7 +1498,7 @@ class TimeField(IntegerField):
 
 
     def GetDefaultValue(self):
-        default_value = TextField.GetDefaultValue(self)
+        default_value = IntegerField.GetDefaultValue(self)
         if default_value is None:
             return self.GetCurrentTime() 
         else:
@@ -1525,7 +1525,7 @@ class TimeField(IntegerField):
             time zone component is omitted, the local time zone is
             used.
         """ % time_zones
-        default_value = self.GetDefaultValue()
+        default_value = self.default_value
         if default_value is None:
             help = help + """
             The default value for this field is the current time.
