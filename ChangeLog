@@ -1,3 +1,57 @@
+2003-07-02  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/test/base.py (load_results): Rename 'ResultSource' to
+	'ResultReader' everywhere.
+	(extension_kinds): Rename "result_source" kind to
+	"result_reader".
+	(__extension_bases): Likewise.  And same for the imports just
+	above.
+	* qm/test/result_source.py: Rename to...
+	* qm/test/result_reader.py: ...this.  Also rename classes, etc.
+	* qm/test/file_result_source.py: Rename to...
+	* qm/test/file_result_reader.py: ...this.  Also rename classes,
+	etc.
+	
+	* qm/common.py (format_time_iso): New function.
+	* qm/db.py: New file.
+	* qm/extension.py (get_class_arguments): Support diamond
+	inheritance.
+
+	* qm/test/classes/pickle_result_source.py: Remove.
+	(PickleResultSource): Move to...
+	* qm/test/classes/pickle_result_stream.py: ...here.
+	(PickleResultSource): Rename to 'PickleResultReader'.  Also
+	rewrite for new metadata handling regime.
+	(PickleResultStream): Rewrite for new metadata handling regime.
+	* qm/test/classes/xml_result_source.py: Remove.
+	(XMLResultSource): Move to...
+	* qm/test/classes/xml_result_stream.py: ...here.
+	(XMLResultSource): Rename to 'XMLResultReader', plus associated
+	renames.  Update for new metadata handling regime.
+	(XMLResultStream): Update for new metadata handling regime.
+	
+	* qm/test/result_stream.py (ResultStream.WriteAnnotation): New
+	function.
+	(ResultStream.WriteAllAnnotations): New function.
+	(ResultStream.WriteResult): More detail in docstring.
+	
+	* qm/test/classes/classes.qmc: Add SQL result handling classes,
+	rename 'ResultSource' to 'ResultReader'.
+	
+	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Copy
+	metadata.
+	* qm/test/execution_engine.py: import time.
+	(ExecutionEngine.Run): Create and write metadata.
+	* qm/test/web.py (StorageResultsStream.__init__): Use 'super'.
+	Handle annotations.
+	(StorageResultsStream.GetAnnotations): New method.
+	(StorageResultsStream.WriteAnnotations: New method.
+	(QMTestServer.HandleSubmitResults): Write out annotations.
+	(QMTestServer.HandleSaveResults): Likewise.
+	
+	* scripts/create-test-database.py: New file.
+	* qm/test/classes/sql_result_stream.py: New file.
+	
 2003-07-03  Vladimir Prus <ghost@cs.msu.su>
 
 	* qm/attachment.py (AttachmentStore.GetIndex): Remove.

@@ -133,12 +133,7 @@ def get_class_arguments(extension_class):
         arguments = []
         dictionary = {}
         # Start with the most derived class.
-        classes = [extension_class]
-        while classes:
-            # Pull the first class off the list.
-            c = classes.pop(0)
-            # Add all of the new base classes to the end of the list.
-            classes.extend(c.__bases__)
+        for c in extension_class.__mro__:
             # Add the arguments from this class.
             new_arguments = c.__dict__.get("arguments", [])
             for a in new_arguments:

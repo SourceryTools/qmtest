@@ -5,7 +5,7 @@
 # Date:   10/10/2001
 #
 # Contents:
-#   QMTest XMLResultSream class.
+#   XMLResultStream, XMLResultReader
 #
 # Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -15,8 +15,10 @@
 # Imports
 ########################################################################
 
-from   qm.test.file_result_stream import FileResultStream
 import qm.xmlutil
+from   qm.test.file_result_reader import FileResultReader
+from   qm.test.result import Result
+from   qm.test.file_result_stream import FileResultStream
 
 ########################################################################
 # classes
@@ -36,7 +38,7 @@ class XMLResultStream(FileResultStream):
     def __init__(self, arguments):
 
         # Initialize the base class.
-        FileResultStream.__init__(self, arguments)
+        super(XMLResultStream, self).__init__(arguments)
         
         # Create an XML document, since the DOM API requires you
         # to have a document when you create a node.
@@ -51,6 +53,17 @@ class XMLResultStream(FileResultStream):
                            qm.xmlutil.make_system_id("result.dtd")))
         # Begin the list of results.
         self.file.write("<results>\n")
+
+
+    def WriteAnnotation(self, key, value):
+
+            element = self.__document.createElement("annotation")
+            element.setAttribute("key", key)
+            text = self.__document.createTextNode(value)
+            element.appendChild(text)
+            element.writexml(self.file)
+            # Following increases readability of output:
+            self.file.write("\n")
 
 
     def WriteResult(self, result):
@@ -75,3 +88,74 @@ class XMLResultStream(FileResultStream):
         self.file.write("\n</results>\n")
 
         FileResultStream.Summarize(self)
+
+
+
+class XMLResultReader(FileResultReader):
+    """Reads in 'Result's from an XML-formatted results file.
+
+    To write such a file, see 'XMLResultStream'."""
+
+    def __init__(self, arguments):
+
+        super(XMLResultReader, self).__init__(arguments)
+
+        document = qm.xmlutil.load_xml(self.file)
+        node = document.documentElement
+        results = qm.xmlutil.get_children(node, "result")
+        self.__node_iterator = iter(results)
+
+        # Read out annotations
+        self._annotations = {}
+        annotation_nodes = qm.xmlutil.get_children(node, "annotation")
+        for node in annotation_nodes:
+            key = node.getAttribute("key")
+            value = qm.xmlutil.get_dom_text(node)
+            self._annotations[key] = value
+
+
+    def GetAnnotations(self):
+
+        return self._annotations
+
+
+    def _result_from_dom(self, node):
+        """Extract a result from a DOM node.
+
+        'node' -- A DOM node corresponding to a "result" element.
+
+        returns -- A 'Result' object."""
+
+        assert node.tagName == "result"
+        # Extract the outcome.
+        outcome = qm.xmlutil.get_child_text(node, "outcome")
+        # Extract the test ID.
+        test_id = node.getAttribute("id")
+        kind = node.getAttribute("kind")
+        # Build a Result.
+        result = Result(kind, test_id, outcome)
+        # Extract properties, one for each property element.
+        for property_node in node.getElementsByTagName("property"):
+            # The name is stored in an attribute.
+            name = property_node.getAttribute("name")
+            # The value is stored in the child text node.
+            value = qm.xmlutil.get_dom_text(property_node)
+            # Store it.
+            result[name] = value
+
+        return result
+
+
+    def GetResult(self):
+
+        try:
+            return self._result_from_dom(self.__node_iterator.next())
+        except StopIteration:
+            return None
+
+########################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

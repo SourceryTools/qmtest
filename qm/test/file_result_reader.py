@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   file_result_source.py
+# File:   file_result_reader.py
 # Author: Nathaniel Smith
 # Date:   2003-06-23
 #
 # Contents:
-#   FileResultSource
+#   FileResultReader
 #
 # Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -18,18 +18,18 @@
 ########################################################################
 
 import qm.fields
-from qm.test.result_source import ResultSource
+from qm.test.result_reader import ResultReader
 import sys
 
 ########################################################################
 # Classes
 ########################################################################
 
-class FileResultSource(ResultSource):
-    """A 'FileResultSource' gets its input from a file.
+class FileResultReader(ResultReader):
+    """A 'FileResultReader' gets its input from a file.
 
-    A 'FileResultSource' is an abstract base class for other result
-    source classes that read results from a single file.  The file
+    A 'FileResultReader' is an abstract base class for other result
+    reader classes that read results from a single file.  The file
     from which results should be read can be specified using either
     the 'filename' argument or the 'file' argument.  The latter is for
     use by QMTest internally."""
@@ -57,7 +57,7 @@ class FileResultSource(ResultSource):
     
     def __init__(self, arguments):
 
-        super(FileResultSource, self).__init__(arguments)
+        super(FileResultReader, self).__init__(arguments)
 
         if not self.file:
             if self.filename and self.filename != "-":

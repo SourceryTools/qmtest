@@ -52,8 +52,38 @@ class ResultStream(qm.extension.Extension):
            name = "suite_ids"),
         ]
     
+    def WriteAnnotation(self, key, value):
+        """Output an annotation for this run.
+
+        Subclasses should override this if they want to store/display
+        annotations; the default implementation simply discards them.
+
+        'key' -- the key value as a string.
+
+        'value' -- the value of this annotation as a string."""
+
+        pass
+    
+
+    def WriteAllAnnotations(self, annotations):
+        """Output all annotations in 'annotations' to this stream.
+
+        Currently this is the same as making repeated calls to
+        'WriteAnnotation', but in the future, as special annotation
+        types like timestamps are added, this will do the work of
+        dispatching to functions like 'WriteTimestamp'.
+
+        Should not be overridden by subclasses."""
+
+        for key, value in annotations.iteritems():
+            self.WriteAnnotation(key, value)
+
+
     def WriteResult(self, result):
         """Output a test result.
+
+        Subclasses must override this method; the default
+        implementation raises a 'NotImplementedError'.
 
         'result' -- A 'Result'."""
 

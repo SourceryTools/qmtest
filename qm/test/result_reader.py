@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   result_source.py
+# File:   result_reader.py
 # Author: Nathaniel Smith
 # Date:   2003-06-23
 #
 # Contents:
-#   QMTest ResultSource class.
+#   QMTest ResultReader class.
 #
 # Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -23,20 +23,27 @@ import qm.extension
 # Classes
 ########################################################################
 
-class ResultSource(qm.extension.Extension):
-    """A 'ResultSource' provides access to stored test results.
+class ResultReader(qm.extension.Extension):
+    """A 'ResultReader' provides access to stored test results.
 
-    For instance, a 'ResultSource' may load 'Result's from a pickle
+    For instance, a 'ResultReader' may load 'Result's from a pickle
     file or an XML file.
 
     This is an abstract class.
 
     See also 'ResultStream'."""
 
-    kind = "result_source"
+    kind = "result_reader"
+
+    def GetAnnotations(self):
+        """Return this run's dictionary of annotations."""
+
+        # For backwards compatibility, don't raise an exception.
+        return {}
+
 
     def GetResult(self):
-        """Return the next 'Result' from this source.
+        """Return the next 'Result' from this reader.
 
         returns -- A 'Result', or 'None' if there are no more results.
         """
@@ -45,7 +52,7 @@ class ResultSource(qm.extension.Extension):
 
 
     def __iter__(self):
-        """A 'ResultSource' can be iterated over."""
+        """A 'ResultReader' can be iterated over."""
 
         return iter(self.GetResult, None)
 

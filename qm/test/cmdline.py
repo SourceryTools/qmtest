@@ -1227,6 +1227,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # written.
         streams = self.__GetResultStreams(suite_ids)
         
+        # Send the annotations through.
+        for s in streams:
+            s.WriteAllAnnotations(results.GetAnnotations())
+
         # Get the expected outcomes.
         outcomes = self.__GetExpectedOutcomes()
 

@@ -27,6 +27,7 @@ import qm.xmlutil
 from   result import *
 import select
 import sys
+import time
 
 ########################################################################
 # Classes
@@ -133,6 +134,12 @@ class ExecutionEngine:
 
         returns -- True if any tests had unexpected outcomes."""
 
+        # Write out all the currently known annotations.
+        start_time_str = qm.common.format_time_iso(time.time())
+        for rs in self.__result_streams:
+            rs.WriteAllAnnotations(self.__context)
+            rs.WriteAnnotation("qmtest.run.start_time", start_time_str)
+
         # Start all of the targets.
         for target in self.__targets:
             target.Start(self.__response_queue, self)
@@ -153,7 +160,9 @@ class ExecutionEngine:
             
             # Let all of the result streams know that the test run is
             # complete.
+            end_time_str = qm.common.format_time_iso(time.time())
             for rs in self.__result_streams:
+                rs.WriteAnnotation("qmtest.run.end_time", end_time_str)
                 rs.Summarize()
 
         return self.__any_unexpected_outcomes

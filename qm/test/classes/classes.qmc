@@ -18,8 +18,10 @@
 <class kind="label">python_label.PythonLabel</class>
 <class kind="result_stream">text_result_stream.TextResultStream</class>
 <class kind="result_stream">xml_result_stream.XMLResultStream</class>
-<class kind="result_source">xml_result_source.XMLResultSource</class>
+<class kind="result_reader">xml_result_stream.XMLResultReader</class>
 <class kind="result_stream">pickle_result_stream.PickleResultStream</class>
-<class kind="result_source">pickle_result_source.PickleResultSource</class>
+<class kind="result_reader">pickle_result_stream.PickleResultReader</class>
+<class kind="result_stream">sql_result_stream.SQLResultStream</class>
+<class kind="result_reader">sql_result_stream.SQLResultReader</class>
 <class kind="result_stream">dejagnu_stream.DejaGNUStream</class>
 </class-directory>

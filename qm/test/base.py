@@ -347,7 +347,7 @@ def load_results(file, database):
 
     'database' -- The current database.
 
-    returns -- A 'ResultSource' object."""
+    returns -- A 'ResultReader' object."""
 
     # For backwards compatibility, look at the first few bytes of the
     # file to see if it is an XML results file.
@@ -355,16 +355,16 @@ def load_results(file, database):
     file.seek(0)
     
     if tag == "<?xml":
-        source_cls = \
-         get_extension_class("xml_result_source.XMLResultSource",
-                             "result_source",
+        reader_cls = \
+         get_extension_class("xml_result_stream.XMLResultReader",
+                             "result_reader",
                              database)
     else:
-        source_cls = \
-         get_extension_class("pickle_result_source.PickleResultSource",
-                             "result_source",
+        reader_cls = \
+         get_extension_class("pickle_result_stream.PickleResultReader",
+                             "result_reader",
                              database)
-    return source_cls({"file": file})
+    return reader_cls({"file": file})
 
 
 def _result_from_dom(node):
@@ -425,7 +425,7 @@ def split_results_by_expected_outcome(results, expected_outcomes):
 extension_kinds = [ 'database',
                     'label',
                     'resource',
-                    'result_source',
+                    'result_reader',
                     'result_stream',
                     'target',
                     'test', ]
@@ -444,7 +444,7 @@ for kind in extension_kinds:
 import qm.test.database
 import qm.label
 import qm.test.resource
-import qm.test.result_source
+import qm.test.result_reader
 import qm.test.result_stream
 import qm.test.target
 import qm.test.test
@@ -453,7 +453,7 @@ __extension_bases = {
     'database' : qm.test.database.Database,
     'label' : qm.label.Label,
     'resource' : qm.test.resource.Resource,
-    'result_source' : qm.test.result_source.ResultSource,
+    'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test

@@ -1206,7 +1206,7 @@ class StorageResultsStream(ResultStream):
     def __init__(self):
         """Construct a 'StorageResultsStream'."""
 
-        ResultStream.__init__(self, {})
+        super(StorageResultsStream, self).__init__({})
         self.__test_results = {}
         self.__test_results_in_order = []
         self.__resource_results = {}
@@ -1218,6 +1218,17 @@ class StorageResultsStream(ResultStream):
         # 'Summarize') and the GUI thread (which will call
         # 'GetTestResults' and 'IsFinished').
         self.__lock = Lock()
+
+
+    def GetAnnotations(self):
+        """Return the annotations for this run."""
+
+        return self.__annotations
+
+
+    def WriteAnnotation(self, key, value):
+
+        self.__annotations[key] = value
 
 
     def WriteResult(self, result):
@@ -1898,6 +1909,8 @@ class QMTestServer(qm.web.WebServer):
         # Create a results stream for storing the results.
         rsc = qm.test.cmdline.get_qmtest().GetFileResultStreamClass()
         rs = rsc({ "file" : s })
+        # Write all the annotations.
+        rs.WriteAllAnnotations(self.__results_stream.GetAnnotations())
         # Write all the results.
         for r in self.__results_stream.GetTestResults().values():
             rs.WriteResult(r)
@@ -2332,6 +2345,8 @@ class QMTestServer(qm.web.WebServer):
         results = qm.test.base.load_results(f, self.GetDatabase())
         # Enter them into a new results stream.
         self.__results_stream = StorageResultsStream()
+        annotations = results.GetAnnotations()
+        self.__results_stream.WriteAllAnnotations(annotations)
         for r in results:
             self.__results_stream.WriteResult(r)
         self.__results_stream.Summarize()
