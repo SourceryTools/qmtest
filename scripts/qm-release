@@ -165,7 +165,7 @@ build_binary() {
 # Build a self-extracting executable.
 
 build_exec() {
-    build_qm --with-python=/cygdrive/c/Python21/Python.exe
+    build_qm --with-python=/cygdrive/c/Python22/Python.exe
     echo "Building ZIP file..."
     changedir ${QM_INSTALL_DIR}
     rm -f ${QM_BINARY_ZIP}
