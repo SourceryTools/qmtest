@@ -33,11 +33,6 @@
        <dtml-var expr="FormatId(suite.GetId(), 'suite', 'navigation')">
       </dtml-if>
      </h3>
-     <dtml-if expr="suite.IsImplicit()">
-      <p>This is an implicit test suite.  Every test whose ID has
-      <dtml-var expr="FormatId(suite.GetId(), 'suite', 'plain')"> as a
-      prefix is included in this suite.</p>
-     </dtml-if>
     </td>
     <td align="right">
      <form>

@@ -83,7 +83,9 @@ class DefaultDtmlPage(qm.web.DtmlPage):
         request = qm.web.WebRequest(script, base=self.request, id=id)
         url = request.AsUrl()
         parent_suite_id, name = qm.label.split(id)
-
+        if name == "":
+            name = "."
+            
         if style == "plain":
             return '<span class="id">%s</span>' % id
 
@@ -94,16 +96,14 @@ class DefaultDtmlPage(qm.web.DtmlPage):
             if parent_suite_id == qm.label.root:
                 parent = ""
             else:
-                parent = self.FormatId(parent_suite_id, "suite", style) \
+                parent = self.FormatId(parent_suite_id, "dir", style) \
                          + qm.label.sep
             return parent \
                    + '<a href="%s"><span class="id">%s</span></a>' \
                    % (url, name)
 
         elif style == "tree":
-            return "&nbsp;&nbsp;&nbsp;" \
-                   * (len(qm.label.split_fully(id)) - 1) \
-                   + '<a href="%s"><span class="id">%s</span></a>' \
+            return '<a href="%s"><span class="id">%s</span></a>' \
                    % (url, name)
 
         else:
@@ -172,6 +172,7 @@ def make_server(database, port, address, log_file=None):
         ( "new-suite", qm.test.web.suite.handle_new ),
         ( "new-test", qm.test.web.show.handle_new_test ),
         ( "run-tests", qm.test.web.run.handle_run_tests ),
+        ( "show-dir", qm.test.web.dir.handle_dir ),
         ( "show-resource", qm.test.web.show.handle_show ),
         ( "show-suite", qm.test.web.suite.handle_show ),
         ( "show-test", qm.test.web.show.handle_show ),

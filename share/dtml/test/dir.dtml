@@ -26,11 +26,7 @@
    <tr>
     <td>
      <h3>
-      <dtml-if expr="path == '.'">
-       Full Test Database Listing
-      <dtml-else>
-       Test Database Listing of <dtml-var name="path">.
-      </dtml-if>
+       Directory for <dtml-var expr="FormatId(path, 'dir', 'navigation')">
      </h3>
     </td>
     <td align="right">
@@ -49,21 +45,46 @@
         cellpadding="2"
         width="100%">
   <tbody>
-   <dtml-in expr="items">
-   <dtml-let item=sequence-item
-             index=sequence-index>
-    <tr><td align="center">
-     <dtml-if expr="item.type != 'test'">
-      [<dtml-var expr="item.type">]&nbsp;&nbsp;
-     <dtml-else>
-      &nbsp;
-     </dtml-if>
-    </td><td width="100%">
-      <dtml-var expr="FormatId(item.id, item.type, 'tree')">
-    </td></tr>
-   </dtml-let>
-   </dtml-in>
-
+   <dtml-if subdir_ids>
+    <tr><th width="100%">Subdirectories</th></tr>
+    <dtml-in expr="subdir_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'dir', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if test_ids>
+    <tr><th width="100%">Tests</th></tr>
+    <dtml-in expr="test_ids">
+      <dtml-let item=sequence-item>
+       <tr><td width="100%">
+        <dtml-var expr="FormatId(item, 'test', 'tree')">
+       </td></tr>
+      </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if suite_ids>
+    <tr><th width="100%">Suites</th></tr>
+    <dtml-in expr="suite_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'suite', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if resource_ids>
+    <tr><th width="100%">Resources</th></tr>
+    <dtml-in expr="resource_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'resource', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
   </tbody>
  </table>
  </td></tr>

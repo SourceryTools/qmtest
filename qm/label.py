@@ -78,56 +78,71 @@ root = sep
 # classes
 ########################################################################
 
-class MakeRelativeTo:
-    """Callable to process relative labels."""
+class AsAbsolute:
+    """An 'AsAbsolute' turns relative labels into absolute labels.
 
-    def __init__(self, path):
-        """Construct a new instance.
+    An 'AsAbsolute' stores a directory.  When applied to a label, the
+    directory and the label are 'join'ed."""
+        
+    def __init__(self, directory):
+        """Construct a new 'AsAbsolute'.
 
-        'path' -- Labels are made relative to this path.  For instance,
-        if 'path' is "foo.bar", the label "baz" would be transformed to
-        "foo.bar.baz"."""
+        'directory' -- A label indicating a directory.  Labels provided
+        to the '__call__' method will be treated as relative to
+        'directory'."""
 
-        self.__path = path
-
-
-    def __call__(self, label):
-        """Return 'label' interpreted as a relative label."""
-
-        return join(self.__path, label)
-
-
-
-class UnmakeRelativeTo:
-    """Callable to undo 'MakeRelativeTo'."""
-
-    def __init__(self, path):
-        """Construct a new instance.
-
-        'path' -- Labels must be relative to this path, and the path
-        prefix is removed.  For instance, if 'path' is "foo.bar", the
-        label "foo.bar.baz" would be transformed to "baz"."""
-
-        self.__path = path
+        self.__directory = directory
 
 
     def __call__(self, label):
-        """Return 'label' interpreted as a relative label.
+        """Return an absolute label for 'label'.
 
-        raises -- 'ValueError' if the path specified in the initializer
-        function isn't a prefix of 'label'."""
+        'label' -- A relative label.
 
-        path_len = len(self.__path)
+        returns -- An absolute label, constructed by 'join'ing the
+        'directory' used to construct the 'AsAbsolute' with 'label'."""
+
+        return join(self.__directory, label)
+
+
+
+class AsRelative:
+    """An 'AsRelative' transforms absolute labels into relative labels.
+
+    An 'AsAbsolute' stores a directory.  When applied to a label, the
+    portion of the label that is relative to the directory is
+    returned."""
+
+    def __init__(self, directory):
+        """Construct a new 'AsRelative'.
+
+        'directory' -- A label naming a directory."""
+        
+        self.__directory = directory
+
+
+    def __call__(self, label):
+        """Return a relative label for 'label'.
+
+        'label' -- An absolute label, whose prefix is the 'directory'.
+        used to to construct the 'AsRelative'.
+        
+        returns -- A relative label.  Applying 'join' to the 'directory'
+        and the returned value will yield the original 'label'.
+
+        raises -- 'ValueError' if the 'directory' is nott a prefix of
+        'label'."""
+
+        path_len = len(self.__directory)
         if path_len == 0:
             return label
         if len(label) < path_len + 1 \
-           or label[:path_len] != self.__path:
+           or label[:path_len] != self.__directory:
             raise ValueError, \
                   "path %s is not a prefix of label %s" \
-                  % (self.__path, label)
+                  % (self.__directory, label)
         return label[:path_len + 1]
 
-    
 
 ########################################################################
 # functions

@@ -315,7 +315,10 @@ class Database:
         named 'test_id'.
 
         All databases must have an implicit suite called '.' that
-        contains all tests in the database.
+        contains all tests in the database.  More generally, for each
+        directory in the database, there must be a corresponding suite
+        that contains all tests in that directory and its
+        subdirectories.
 
         Derived classes must override this method."""
 
@@ -368,7 +371,10 @@ class Database:
         'GetSuite' is called.
 
         All databases must have an implicit suite called '.' that
-        contains all tests in the database.
+        contains all tests in the database.  More generally, for each
+        directory in the database, there must be a corresponding suite
+        that contains all tests in that directory and its
+        subdirectories.
 
         Derived classes may override this method."""
 
@@ -484,6 +490,19 @@ class Database:
 
     # Miscellaneous methods.
 
+    def GetSubdirectories(self, directory):
+        """Return the immediate subdirectories of 'directory'.
+
+        'directory' -- A label indicating a directory in the database.
+
+        returns -- A sequence of (relative) labels indictating the
+        immediate subdirectories of 'directory'.  For example, if "a.b"
+        and "a.c" are directories in the database, this method will
+        return "b" and "c" given "a" as 'directory'."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.GetSubdirectories"
+        
+        
     def GetPath(self):
         """Return the directory containing the database.
 
@@ -542,7 +561,7 @@ class Database:
         implementation allows all available test classes, but the
         derived class may allow only a subset."""
 
-        return qm.base.standard_test_class_names
+        return qm.test.base.standard_test_class_names
 
 
     def GetResourceClasses(self):
@@ -556,7 +575,7 @@ class Database:
         implementation allows all available resource classes, but the
         derived class may allow only a subset."""
 
-        return qm.base.standard_resource_class_names
+        return qm.test.base.standard_resource_class_names
 
 ########################################################################
 # Local Variables:

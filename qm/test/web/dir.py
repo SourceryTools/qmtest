@@ -35,6 +35,7 @@
 # imports
 ########################################################################
 
+import qm.label
 import qm.test.base
 import qm.web
 import web
@@ -43,51 +44,41 @@ import web
 # classes
 ########################################################################
 
-class DirItem:
-    """A generic item in the directory listing.
-
-    'DirItem' objects have two attributes:
-
-    'type' -- One of "test", "suite", or "resource".
-
-    'id' -- The item's ID."""
-
-    def __init__(self, type, item_id):
-        self.type = type
-        self.id = item_id
-
-
-
 class DirPage(web.DtmlPage):
-    """Main directory page for a test database.
+    """A test database directory page.
 
     These attributes are available in DTML:
 
-    'path' -- The path to the top of the tree being displayed.  If the
-    entire database is displayed, the path is ".".
+    'path' -- The label directory that is being displayed.
 
-    'items' -- A sorted list of 'DirItem' objects representing the items
-    to display."""
+    'subdirs' -- A sequence of labels giving the subdirectories of
+    this directory.
+    
+    'test_ids' -- A sequence of labels giving the tests in this
+    directory.
+    
+    'suite_ids' -- A sequence of labels giving the suites in this
+    directory.
+
+    'resource_ids' -- A sequence of labels giving the resources in
+    this directory."""
 
     def __init__(self, path):
+        """Construct a 'DirPage'.
+
+        'path' -- The label directory to display."""
+        
         # Initialize the base class.
         web.DtmlPage.__init__(self, "dir.dtml")
-        # Set up attributes.
-        self.path = path
         
         database = qm.test.base.get_database()
 
-        # Construct 'DirItem' objects for tests, resources, and suites. 
-        test_ids = map(lambda i: DirItem("test", i),
-                       database.GetTestIds(path))
-        resource_ids = map(lambda i: DirItem("resource", i),
-                           database.GetResourceIds(path))
-        suite_ids = map(lambda i: DirItem("suite", i),
-                        database.GetSuiteIds(path))
-        # Mix them together and sort them by ID.
-        self.items = suite_ids + test_ids + resource_ids
-        self.items.sort(lambda i1, i2: cmp(i1.id, i2.id))
-
+        self.path = path
+        self.subdir_ids = database.GetSubdirectories(path)
+        self.subdir_ids = map(qm.label.AsAbsolute(path), self.subdir_ids)
+        self.test_ids = database.GetTestIds(path, scan_subdirs=0)
+        self.suite_ids = database.GetSuiteIds(path, scan_subdirs=0)
+        self.resource_ids = database.GetResourceIds(path, scan_subdirs=0)
 
 
 ########################################################################
@@ -108,7 +99,7 @@ def handle_dir(request):
 
     # Was a path specified?
     try:
-        path = request["path"]
+        path = request["id"]
     except:
         # No.  Use the root path.
         path = "."

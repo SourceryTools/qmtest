@@ -390,6 +390,30 @@ class FileDatabase(Database):
         return (os.path.splitext(path)[1] == self.__resource_extension
                 and os.path.isfile(path))
     
+    # Miscellaneous methods.
+
+    def GetSubdirectories(self, directory):
+        """Return the subdirectories of 'directory'.
+
+        'directory' -- A label indicating a directory in the database.
+
+        returns -- A sequence of (relative) labels indictating the
+        subdirectories of 'directory'.  For example, if "a.b" and "a.c"
+        are directories in the database, this method will return "b" and
+        "c" given "a" as 'directory'."""
+
+        subdirs = []
+        file_dir = self.GetSuitePath(directory)
+        for entry in dircache.listdir(file_dir):
+            root = os.path.splitext(entry)[0]
+            if not qm.label.is_valid(root, user=1, allow_separator=0):
+                continue
+            entry_path = os.path.join(file_dir, entry)
+            if (self._IsSuiteFile(entry_path)
+                and os.path.isdir(entry_path)):
+                subdirs.append(root)
+        return subdirs
+        
     # Derived classes must override these methods.
 
     def _GetTestFromPath(self, test_id, path):
@@ -478,27 +502,27 @@ class FileDatabase(Database):
 
         labels = []
         # Create an object that can relativize any labels we find.
-        make_relative = qm.label.MakeRelativeTo(label)
+        as_absolute = qm.label.AsAbsolute(label)
         # Go through all of the files (and subdirectories) in that
         # directory.
         for entry in dircache.listdir(directory):
-            # Compute the full path to 'entry'.
-            entry_path = os.path.join(directory, entry)
             # If the entry name is not a valid label, then pretend it
             # does not exist.  It would not be valid to create an entity
             # with such an id.
-            (root, ext) = os.path.splitext(entry)
+            root = os.path.splitext(entry)[0]
             if not qm.label.is_valid(root, user=1, allow_separator=0):
                 continue
+            # Compute the full path to 'entry'.
+            entry_path = os.path.join(directory, entry)
             # If it satisfies the 'predicate', add it to the list.
             if predicate(entry_path):
-                labels.append(make_relative(root))
+                labels.append(as_absolute(root))
             # If it is a subdirectory, recurse.
             if (scan_subdirs and os.path.isdir(entry_path)
                 and self._IsSuiteFile(entry_path)):
                 labels.extend(self._GetLabels(entry_path,
                                               scan_subdirs,
-                                              make_relative(root),
+                                              as_absolute(root),
                                               predicate))
 
         return labels

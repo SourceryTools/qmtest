@@ -481,7 +481,7 @@ class Suite:
    def IsImplicit(self):
        """Return true if this is an implicit test suite.
 
-       Implicit test suites should not be explicitly editable."""
+       Implicit test suites cannot be edited."""
 
        return self.__implicit
 
@@ -659,6 +659,8 @@ class ResultWrapper:
 
         returns -- Structured text describing the result."""
 
+        text = ""
+        
         # Print the cause of the failure.
         if self.has_key("cause"):
             text = self["cause"] + '\n'

@@ -1,3 +1,33 @@
+2001-10-07  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/label.py (MakeRelativeTo): Rename to ...
+	(AsAbsolute): ... this.
+	(UnmakeRelativeTo): Rename to ...
+	(AsRelative): ... this.
+	* qm/test/base.py (Suite.IsImplicit): Update comment.
+	(ResultWrapper.AsStructuredText): Fix thinko.
+	* qm/test/database.py (Database.GetSuite): Update documentation.
+	(Database.HasSuite): Likewise.
+	(Database.GetSubdirectories): New method.
+	(Database.GetTestClasses): Fix typo.
+	(Database.GetResourceClasses): Fix typo.
+	* qm/test/file_database.py (FileDatabase.GetSubdirectories): New
+	method.
+	(FileDatabase._GetLabels): Use AsAbsolute, not MakeRelativeTo.
+	* qm/test/web/dir.py (DirItem): Remove.
+	(DirPage.__init__): Store subdirectories, tests, suites, and
+	resources.
+	(handle_dir): Use the 'id' attribute to figure out which directory
+	to display.
+	* qm/test/web/show.py (NewItemPage.__init__): Use
+	Database.GetResourceClasses.
+	* qm/test/web/web.py (FormatId): Handle '.' specially.
+	(make_server): Register 'show-dir'.
+	* qm/test/share/dtml/test/dir.dtml: Rework for hierarchical
+	directory display.
+	* qm/share/dtml/test/suite.dtml: Remove bogus commentary about
+	implicit suites.
+
 2001-10-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/label.py (to_path): Add extension parameter.

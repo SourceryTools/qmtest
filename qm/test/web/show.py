@@ -334,7 +334,7 @@ class NewItemPage(web.DtmlPage):
         if type == "test":
             self.class_names = qm.test.base.get_database().GetTestClasses()
         elif type == "resource":
-            self.class_names = qm.test.base.standard_resource_class_names
+            self.class_names = qm.test.base.get_database().GetResourceClasses()
         self.field_errors = field_errors
 
 
