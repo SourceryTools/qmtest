@@ -1,5 +1,8 @@
 2003-04-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/read_thread.py: Remove.
+	* qm/write_thread.py: Likewise.
+
 	* qm/qm.sh: Remove qmtest-remote handling.
 
 2003-03-28  Mark Mitchell  <mark@codesourcery.com>
