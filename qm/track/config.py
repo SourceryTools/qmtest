@@ -74,6 +74,9 @@ __gobal_lock = None
 # local mode; otherwise always 'None'.
 __idb = None
 
+# The set of diagnostics for this program.
+__diagnostics = None
+
 ########################################################################
 # functions
 ########################################################################
@@ -130,6 +133,12 @@ def get_idb():
     return __idb
 
 
+def get_idb_lock(path):
+    """Return the mutex protecting the IDB at 'path'."""
+    
+    return qm.FileSystemMutex(os.path.join(path, "lock"))
+
+
 def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
     """Open a QMTrack session.
 
@@ -168,7 +177,7 @@ def open_idb(path, max_attempts=10, attempt_sleep_time=0.1):
               % parent_path
     
     # Set up a mutex instance.
-    __global_lock = qm.FileSystemMutex(os.path.join(path, "lock"))
+    __global_lock = get_idb_lock(path)
 
     # The path to the file that contains the server URL.
     server_url_path = os.path.join(path, "server.url")
@@ -350,35 +359,29 @@ def setup_idb_for_test():
 
     precondition -- A local session is open."""
 
-    import random
-
     idb = get_idb()
 
     icl = qm.track.IssueClass("test_class")
     get_configuration()["default_class"] = "test_class"
 
     field = qm.track.IssueFieldAttachment("attachments")
+    field.SetAttribute("title", "File Attachments")
     field = qm.track.IssueFieldSet(field)
     icl.AddField(field)
 
     field = qm.track.IssueFieldText("description")
+    field.SetAttribute("title", "Full Description")
     field.SetAttribute("structured", "true")
     icl.AddField(field)
 
     severity_enum = {
-        'critical' : 5,
-        'severe' : 4,
-        'major' : 3,
-        'minor' : 2,
-        'insignificant' : 1,
+        "high" : 3,
+        "medium" : 2,
+        "low" : 1,
         }
-    field = qm.track.IssueFieldEnumeration("severity", severity_enum, "major")
+    field = qm.track.IssueFieldEnumeration("severity", severity_enum, "medium")
+    field.SetAttribute("title", "Severity")
     field.SetAttribute("ordered", "true")
-    icl.AddField(field)
-
-    field = qm.track.IssueFieldText("problem_reports")
-    field.SetAttribute("structured", "true")
-    field = qm.track.IssueFieldSet(field)
     icl.AddField(field)
 
     idb.AddIssueClass(icl)
@@ -386,7 +389,7 @@ def setup_idb_for_test():
     for counter in range(1, 10):
         i = qm.track.Issue(icl, "iss%02d" % counter)
         i.SetField("summary",
-                   "This is issue number %d." % random.randint(1, 100))
+                   "This is issue number %d." % counter)
         idb.AddIssue(i)
     
 

@@ -91,7 +91,7 @@
           </dtml-if>
           >
        <td width="25%">
-        <span class="fieldname"><dtml-var expr="field.GetName()"></span>
+        <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
        </td>
        <td width="75%">
         <dtml-var expr="FormatFieldValue(field)">

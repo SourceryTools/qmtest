@@ -366,6 +366,14 @@ def format_byte_count(bytes):
     return "%d bytes" % bytes
 
 
+def remove_directory_recursively(path):
+    """Remove the directory at 'path' and everything under it."""
+
+    assert os.path.isdir(path)
+    # FIXME: Make this portable, or provide a Windows implementation.
+    os.system('rm -rf "%s"' % path)
+
+
 ########################################################################
 # Local Variables:
 # mode: python

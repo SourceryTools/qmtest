@@ -113,6 +113,7 @@ def start_server(port, log_file=None):
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
+        ( "shutdown", handle_shutdown ),
         ( "submit", qm.track.web.show.handle_submit ),
         ( "submit-attachment", qm.track.web.handle_submit_attachment ),
         ( "summary", qm.track.web.summary.handle_summary ),
@@ -142,6 +143,12 @@ def start_server(port, log_file=None):
     finally:
         # Clean up the URL file.
         os.remove(url_path)
+
+
+def handle_shutdown(request):
+    """Handle a request to shut down the server."""
+
+    raise SystemExit, None
 
 
 def execute(command, output_file, error_file):

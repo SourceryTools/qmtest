@@ -51,11 +51,9 @@ import types
 # FIXME: These are bogus test values.  Put something better here.
 
 default_categories = {
-    "core" : 0,
-    "web_ui" : 1,
-    "cmdline_ui" : 2,
-    "mem_idb" : 3,
-    "gadfly_idb" : 4,
+    "crash" : 0,
+    "documentation" : 1,
+    "improvement": 2,
 }
 
 
@@ -85,29 +83,47 @@ class IssueField:
     hidden -- If true, the field is for internal purposes, and not
     shown in user interfaces."""
 
-    def __init__(self, name):
+    def __init__(self, name, attributes={}):
         """Create a new (generic) field.
 
         'name' -- The value of the name attribute.  Must be a valid
         label.
 
-        'attributes' -- Additional attribute assignments to set."""
+        'attributes' -- A mapping of additional attribute assignments
+        to set."""
 
         if not qm.is_valid_label(name):
             raise ValueError, "%s is not a valid field name" % name
 
         self.__attributes = {
             "name" : name,
+            "title" : name,
             "read_only" : "false",
             "initialize_only" : "false",
             "hidden" : "false",
             }
+        self.__attributes.update(attributes)
+        # Use the name as the title, if no other was specified.
+        if not self.__attributes.has_key("title"):
+            self.__attributes["title"]
 
 
     def GetName(self):
         """Return the name of the field."""
 
         return self.GetAttribute("name")
+
+
+    def GetTitle(self):
+        """Return the user-friendly title of the field."""
+
+        return self.GetAttribute("title")
+
+
+    def GetDescription(self):
+        """Return a description of this field."""
+
+        return self.GetAttribute("description", "(no description)")
 
 
     def SetDefaultValue(self, value):
@@ -296,8 +312,9 @@ class IssueFieldSet(IssueField):
                   "A set field may not contain a set field."
         if not isinstance(contained, IssueField):
             raise TypeError, "A set must contain another field."
-        # Perform base class initialization.
-        IssueField.__init__(self, contained.GetName())
+        # Use the attributes from the contained field, rather than
+        # making a different set.
+        self._IssueField__attributes = contained._IssueField__attributes
         # Remeber the contained field type.
         self.__contained = contained
         # Set the default field value to any empty set.
@@ -540,6 +557,7 @@ class IssueClass:
         
         # The issue id field.
         field = IssueFieldIid("iid")
+        field.SetAttribute("title", "Issue ID")
         field.SetAttribute("initialize_only", "true")
         # We do not want the iid to have a default value. It
         # always must be specified.
@@ -548,26 +566,31 @@ class IssueClass:
 
         # The revision number field.
         field = IssueFieldInteger("revision")
+        field.SetAttribute("title", "Revision Number")
         field.SetAttribute("hidden", "true")
         self.AddField(field)
 
         # The revision timestamp field.
         field = IssueFieldTime("timestamp")
+        field.SetAttribute("title", "Last Modification Time")
         field.SetAttribute("read_only", "true")
         self.AddField(field)
 
         # The user id field.
         field = IssueFieldUid("user")
+        field.SetAttribute("title", "Last Modifying User")
         field.SetAttribute("read_only", "true")
         self.AddField(field)
 
         # The summary field.
         field = IssueFieldText("summary")
+        field.SetAttribute("title", "Description")
         field.SetAttribute("nonempty", "true")
         self.AddField(field)
 
         # The categories field.
         field = IssueFieldEnumeration("categories", categories)
+        field.SetAttribute("title", "Categories")
         field = IssueFieldSet(field)
         self.AddField(field)
 
@@ -584,6 +607,7 @@ class IssueClass:
         # The state field.
         field = IssueFieldEnumeration("state", states,
                                       default_value="active")
+        field.SetAttribute("title", "State")
         self.AddField(field)
 
 

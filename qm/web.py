@@ -234,6 +234,9 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_header("Location", location)
             self.end_headers()
             return
+        except SystemExit:
+            self.server.RequestShutdown()
+            script_output = "<html><b>Server shut down.</b></html>"
         except:
             # Oops, the script raised an exception.  Show
             # information about the exception instead.
@@ -256,7 +259,7 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_header("Content-Length", len(data))
         self.end_headers()
         self.wfile.write(data)
-
+        
 
     def __HandleXmlRpcRequest(self):
         content_length = int(self.headers["Content-length"])
@@ -447,6 +450,7 @@ class WebServer(HTTPServer):
         self.__translations = {}
         self.__xml_rpc_methods = {}
         self.__xml_rpc_path = xml_rpc_path
+        self.__shutdown_requested = 0
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
@@ -611,7 +615,14 @@ class WebServer(HTTPServer):
 
         preconditions -- The server must be bound."""
 
-        self.serve_forever()
+        while not self.__shutdown_requested:
+            self.handle_request()
+
+
+    def RequestShutdown(self):
+        """Shut the server down after processing the current request."""
+
+        self.__shutdown_requested = 1
 
 
     def LogMessage(self, message):

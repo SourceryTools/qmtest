@@ -34,7 +34,7 @@
      <td>
       Create a new issue.
       <dtml-var expr="MakeNewForm()">
-       <input type="submit" value="New"/>
+       <input type="submit" value=" New "/>
       </form>
      </td>
     </tr>
@@ -44,7 +44,7 @@
       Show an existing issue.
       <dtml-var expr="MakeShowForm()">
        Issue Id: <input type="text" size="8" name="iid"/>
-       <input type="submit" value="Show"/>
+       <input type="submit" value=" Show "/>
       </form>
      </td>
     </tr>
@@ -54,7 +54,7 @@
       Edit an issue.
       <dtml-var expr="MakeEditForm()">
        Issue ID: <input type="text" size="8" name="iid"/>
-       <input type="submit" value="Edit"/>
+       <input type="submit" value=" Edit "/>
       </form>
      </td>
     </tr>
@@ -63,7 +63,7 @@
      <td>
       Show all issues.
       <dtml-var expr="MakeShowAllForm()">
-       <input type="submit" value="Show All"/>
+       <input type="submit" value=" Show All "/>
       </form>
      </td>
     </tr>
@@ -73,10 +73,21 @@
       Search for issues.
       <dtml-var expr="MakeQueryForm()">
        Query: <input type="text" size="40" name="query"/>
-       <input type="submit" value="Search"/>
+       <input type="submit" value=" Search "/>
       </form>
       See the <a href="<dtml-var expr="MakeQueryUrl()">">search page</a>
       for instructions.
+     </td>
+    </tr>
+
+    <tr><td></td></tr>
+
+    <tr>
+     <td>
+      Shut down server.
+      <dtml-var expr="MakeShutdownForm()">
+       <input type="submit" value=" Shut Down "/>
+      </form>
      </td>
     </tr>
    </tbody>

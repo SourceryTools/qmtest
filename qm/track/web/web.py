@@ -84,22 +84,24 @@ class PageInfo(qm.web.PageInfo):
         return \
 '''
 <body>
-<table width="100%%" %s>
+<table width="100%%" border="0" cellspacing="0" cellpadding="0" bgcolor="black">
  <tr bgcolor="black">
-  <td>
-   <a href="/track/"><span id="colhead"><b>%s</b></span></a>
-  </td>
+  <td>&nbsp;<a href="http://www.software-carpentry.com/"><img border="0"
+  width="204" height="28" src="/images/sc-logo.png"></a></td>
   <td align="right"><font color="white">
+   <a href="/track/"><span id="colhead">%s</span></a>
+   &nbsp;&nbsp;
    <a href="/track/new"><span id="colhead">New Issue</span></a>
    &nbsp;&nbsp;
    <a href="/track/summary"><span id="colhead">All Issues</span></a>
    &nbsp;&nbsp;
    <a href="/track/query"><span id="colhead">Query</span></a>
+   &nbsp;
   </font></td>
  </tr>
 </table>
 <br>
-''' % (qm.web.PageInfo.table_attributes, self.GetName(), )
+''' % self.GetName()
 
 
 

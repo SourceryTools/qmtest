@@ -83,6 +83,11 @@ class IndexPageInfo(web.PageInfo):
         return qm.web.make_url_for_request(request)
 
 
+    def MakeShutdownForm(self):
+        request = qm.web.WebRequest("shutdown")
+        return qm.web.make_form_for_request(request)
+
+
 
 ########################################################################
 # functions

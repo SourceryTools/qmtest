@@ -40,10 +40,15 @@
    executable provides all QMTrack functionality.  There is no need to
    set up your PYTHONPATH; this is set automatically by the script.
 
-   First, create a new issue database with the initialize command.
-   Specify the path to the new database.  If you specify the
-   --test-values option, QMTrack adds to the IDB a sample test class and
-   a few sample issues to start you off.
+   Before using QMTrack, you'll have to create an issue database (IDB).
+   The IDB containes QMTrack's configuration plus the state and revision
+   history of issues tracked by the system.
+
+   To create a new IDB, use the initialize command.  Specify the path to
+   the new database.  Specify the --test-values option so that QMTrack
+   adds to the IDB a sample test issue class (the schema that defines
+   what information is stored for each issue) and a few sample issues to
+   start you off.
 
      qmtrack initialize --test-values /path/to/idb
 
@@ -55,11 +60,12 @@
    You should then be able to poke around at the IDB.  For instance,
    to list the issue ids of all issues,
 
-     qmtrack --format iid query 1
+     qmtrack query --format iid 1
 
-   (The query expression "1" always evaluates to true, so all issues
-   match.)  Use the --help option to learn more about using the
-   qmtrack command.
+   The query expression "1" always evaluates to true, so all issues
+   match.  Without the --format iid option, QMTrack displays more
+   information about each issue.  Use the --help option to learn more
+   about using the qmtrack command.
 
 
    To start the web server, use the qmtrack server command.  For
@@ -73,6 +79,14 @@
      http://my.host:9000/track/summary
 
    and click around.
+
+   Note that at present, QMTrack binds binds the port number you specify
+   on all network interfaces.  As a result, anyone with network access
+   to your computer will be able to access the QMTrack server.
+
+   When you're done, you can erase the IDB with
+
+     qmtrack destroy /path/to/idb
 
 
 ------------------------------------------------------------------------

@@ -1,3 +1,32 @@
+2001-03-01  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: Update.
+	* qm/web.py (WebRequestHandler.__HandleScriptRequest): Handle
+	SystemExit. 
+	(WebServer.__init__): Initialize __shutdown_requested.
+	(WebServer.Run): Run until shutdown request.
+	(WebServer.RequestShutdown): New method.
+	* qm/common.py (remove_directory_recursively): New function.
+	* qm/track/web/templates/show.dtml: Use field title.
+	* qm/track/web/templates/index.dtml: Adjust.  Add shutdown.
+	* qm/track/web/images/sc-logo.png: New file.
+	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust title
+	bar. 
+	* qm/track/web/index.py (IndexPageInfo.MakeShutdownForm): New
+	method. 
+	* qm/track/issue_class.py (default_categories): Adjust.
+	(IssueField.GetTitle): New method.
+	(IssueField.GetDescription): Likewise.
+	(IssueFieldSet.__init__): Use attributes from contained field.
+	(IssueClass.__init__): Adjust mandatory fields.
+	* qm/track/config.py (get_idb_lock): New function.
+	(open_idb): Use it.
+	(setup_idb_for_test): Adjust test values.
+	* qm/track/cmdline.py: Adjust command descriptions.  Add destroy
+	command. 
+	(Command.__init__): Register destroy.
+	(Command.__PerformDestroy): New method.
+
 2001-02-28  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/sql_idb.py (Query): Define.

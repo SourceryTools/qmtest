@@ -35,6 +35,7 @@
 # imports
 ########################################################################
 
+import config
 import os
 import os.path
 import sys
@@ -91,7 +92,7 @@ class Command:
     qmtrack_commands = [
 
         ('create',
-         'Create a new issue',
+         'Create a new issue.',
          '-c classname field[=,+=]value...',
          "This command will create an issue. The field/value pairs "
          "indicate attributes for the given issue. You must specify the "
@@ -102,7 +103,7 @@ class Command:
          ),
         
         ('edit',
-         'Edit an issue',
+         'Edit an issue.',
          'id field[=,+=,-=]value...',
          "This command will edit an issue. The 'id' is the issue's "
          "id. The field/value pairs represent the fields you wish to "
@@ -111,7 +112,7 @@ class Command:
          ),
         
         ('split',
-         'Split an issue',
+         'Split an issue.',
          'id',
          "This command will split a single issue into two issues. The "
          "new issues will be the children of the original issue and it "
@@ -120,7 +121,7 @@ class Command:
          ),
         
         ('join',
-         'Join two issues',
+         'Join two issues.',
          'id1 id2',
          "This command will join two issues into a single issue. The "
          "resulting issue will be the child of each of the original "
@@ -129,7 +130,7 @@ class Command:
          ),
 
         ('query',
-         'Query the database',
+         'Query the database.',
          'expression',
          "This command will query the database to find all issues for "
          "which the query expression evalutes to true.",
@@ -137,7 +138,7 @@ class Command:
          ),
 
         ('server',
-         'Start the server',
+         'Start the server.',
          '',
          "This command starts the QMTrack server.  The server provides "
          "a web user interface and remote command access over HTTP.",
@@ -145,7 +146,7 @@ class Command:
          ),
     
         ('show',
-         'Display an issue',
+         'Display an issue.',
          'id',
          "This command displays a single issue.  This command is a "
          "shortcut for 'query iid==value'.",
@@ -153,13 +154,21 @@ class Command:
          ),
 
         ('initialize',
-         'Initialize an IDB',
+         'Initialize an IDB.',
          'path',
-         "This command initializes a new issue database (IDB).  Valid "
+         "This command initializes a new issue database.  Valid "
          "IDB types are 'MemoryIdb' and 'GadflyIdb'.",
          [ help_option, idb_type_option, test_values_option ],
         ),
         
+        ('destroy',
+         'Destroy an IDB.',
+         'path',
+         "This command destroys an issue database and removes " 
+         "associated files.",
+         [ help_option ],
+         ),
+
     ]
     """All the commands for qmtrack."""
 
@@ -210,6 +219,7 @@ class Command:
         # Build a map used to dispatch command names to handlers.
         self.__command_dispatch = {
             'create': self.__PerformCreate,
+            'destroy': self.__PerformDestroy,
             'edit': self.__PerformEdit,
             'initialize': self.__PerformInitialize,
             'join': self.__PerformJoin,
@@ -268,7 +278,7 @@ class Command:
         if self.GetCommandOptions().has_key('help'):
             return 0
         # Some commands don't require an IDB connection.
-        if self.GetCommand() in ('initialize', ):
+        if self.GetCommand() in ('initialize', 'destroy', ):
             return 0
         # All other commands require an IDB.
         return 1
@@ -805,6 +815,50 @@ class Command:
             qm.track.open_idb(idb_path)
             qm.track.setup_idb_for_test()
             qm.track.close_idb()
+
+
+    def __PerformDestroy(self, output):
+        """Process the destroy command."""
+
+        command_options = self.GetCommandOptions()
+        # For this command, the IDB path is provided as an argument.
+        # Make sure the --idb flag wasn't specified, to make sure
+        # users aren't confused.
+        if self.GetGlobalOptions().has_key('idb'):
+            raise qm.cmdline.CommandError, \
+                  self.initialize_wrong_flag
+        # Make sure the argument was provided.
+        if len(self.__arguments) != 1:
+            raise qm.cmdline.CommandError, \
+                  self.initialize_no_idb_path
+        idb_path = self.__arguments[0]
+
+        # Lock the IDB, to make sure we don't delete it under some
+        # other process.
+        lock = qm.track.config.get_idb_lock(idb_path)
+        lock.Lock(0)
+
+        while 1:
+            # Ask the user for for confirmation.
+            sys.stdout.write("Are you sure you want to delete the IDB "
+                             "at %s? [y/n] " % idb_path)
+            sys.stdout.flush()
+            # Get an answer.
+            input = string.lower(sys.stdin.readline())
+            if input[0] == 'y':
+                # Confirmed; fall out of this loop and proceded.
+                break
+            elif input[0] == 'n':
+                # Aborted.  Unlock and return.
+                lock.Unlock()
+                return
+            else:
+                # Otherwise, loop.
+                continue
+
+        # Destroy the IDB.
+        qm.remove_directory_recursively(idb_path)
+        # Don't try to release the lock.  It vanished with the IDB.
 
 
     def __PrintResults(self, output, *issues):
