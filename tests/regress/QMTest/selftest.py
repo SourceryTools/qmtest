@@ -68,6 +68,7 @@ class RegTest(Test):
         results = os.path.join(path, "results.qmr")
         output = os.path.join(path, "output.qmr")
         context_file = os.path.join(path, "context")
+        ids_file = os.path.join(path, "ids")
 
         # Sanity check the target location.
         assert os.path.isdir(os.path.join(path, "QMTest"))
@@ -86,6 +87,10 @@ class RegTest(Test):
         # And if there is a context file, use it.
         if os.path.exists(context_file):
             argv += ("-C", context_file)
+
+        # And if there is a file containing ids to run, use it.
+        if os.path.exists(ids_file):
+            argv += tuple(open(ids_file).readline().split())
 
         e = qm.executable.RedirectedExecutable()
         status = e.Run(argv)
