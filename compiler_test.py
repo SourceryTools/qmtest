@@ -213,7 +213,7 @@ class CompilerTest(Test):
         'context' -- The 'Context' in which this test is being
         executed."""
 
-        assert None
+        raise NotImplementedError
         
         
     def _GetCompilationSteps(self):
@@ -221,7 +221,7 @@ class CompilerTest(Test):
 
         returns -- A sequence of 'CompilationStep' objects."""
 
-        assert None
+        raise NotImplementedError
 
 
     def _IsExecutionRequired(self):

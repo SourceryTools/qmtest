@@ -1,5 +1,11 @@
 2002-06-30  Mark Mitchell  <mark@codesourcery.com>
 
+	* compiler.py (Compiler.ParseOutput): Raise NotImplementedError,
+	rather than using an assert, to indicate a method that must be
+	overridden.
+	* compiler_test.py (CompilerTest._GetCompiler): Likewise.
+	(CompilerTest._GetCompilationSteps): Likewise.
+
 	* compiler.py (GPP.GetExecutableName): Remove.
 
 2002-06-19  Mark Mitchell  <mark@codesourcery.com>

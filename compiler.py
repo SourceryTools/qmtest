@@ -191,7 +191,7 @@ class Compiler:
         messages indicated in 'output', in the order that they were
         emitted."""
 
-        assert None
+        raise NotImplementedError
         
         
     def GetPath(self):
