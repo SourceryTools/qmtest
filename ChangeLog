@@ -1,3 +1,7 @@
+2002-12-31  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/doc/reference.xml: Fix typo.
+
 2002-12-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (get_class_arguments): Use the __dict__ of the
