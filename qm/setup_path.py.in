@@ -27,18 +27,18 @@ def __unsupported_python_version():
     """Tell the user that their version of Python is unsupported."""
 
     sys.exit(
-        "qm: error: Python 2.1 or higher is required.\n"
+        "qm: error: Python 2.2 or higher is required.\n"
         "           Set QM_PYTHON to an appropriate Python interpreter.\n")
 
 # Check to see that the version of Python being used is recent
 # enough.
 
 try:
-    # If the version of Python in use is lower than 2.1, it is too
+    # If the version of Python in use is lower than 2.2, it is too
     # old.
     if (sys.version_info[0] < 2
         or (sys.version_info[0] == 2
-            and sys.version_info[1] < 1)):
+            and sys.version_info[1] < 2)):
         __unsupported_python_version()
 except:
     # If the sys.version_info variable does not exist, the version of

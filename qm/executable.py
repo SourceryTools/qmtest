@@ -16,8 +16,10 @@
 #######################################################################
 
 import os
+import signal
 import string
 import sys
+import time
 
 # The classes in this module are implemented differently depending on
 # the operating system in use.
@@ -47,8 +49,18 @@ else:
 # Classes
 #######################################################################
 
-class Executable:
-    """An 'Executable' is a program that the operating system can run."""
+class Executable(object):
+    """An 'Executable' is a program that the operating system can run.
+
+    'Exectuable' (and classes derived from it) create child
+    processes.  The 'Spawn' function creates child processes that
+    execute asynchronousl.  The 'Run' function creates child processes
+    that execute synchrounously, i.e,. the 'Run' function does not
+    return until the child process has completed its execution.
+
+    It is safe to reuse a particular 'Executable' instance (by calling
+    'Spawn' or 'Run' more than once), so long as the uses are not
+    interleaved."""
 
     def __init__(self):
         """Construct a new 'Executable'."""
@@ -96,6 +108,14 @@ class Executable:
         path using 'dir' as the base, or the current directory if
         'dir' is not set."""
 
+        # None of the hook functions have been run yet.  These flags
+        # are maintained so as to support multiple inheritance; in
+        # that situation these functions in this class may be called
+        # more than once.
+        self.__has_initialize_child_run = 0
+        self.__has_initialize_parent_run = 0
+        self.__has_do_parent_run = 0
+        
         # Remember the directory in which the execution will occur.
         self.__dir = dir
 
@@ -197,7 +217,12 @@ class Executable:
 
         returns -- The status returned by the program.  Under UNIX,
         this is the value returned by 'waitpid'; under Windows, it is
-        the value returned by 'GetExitCodeProcess'."""
+        the value returned by 'GetExitCodeProcess'.
+
+        After invoking 'Spawn', this function invokes '_DoParent' to
+        allow the parent process to perform whatever actions are
+        required.  After that function returns, the parent waits for
+        the child process to exit."""
 
         # If fork succeeds, but the exec fails, we want information
         # about *why* it failed.  The exit code from the subprocess is
@@ -254,6 +279,8 @@ class Executable:
         explaining how the child should be initialized.  On other
         systems, the return value is ignored."""
 
+        self.__has_initialize_parent_run = 1
+
         if sys.platform == "win32":
             return win32process.STARTUPINFO()
 
@@ -269,6 +296,8 @@ class Executable:
 
         assert sys.platform != "win32"
         
+        self.__has_initialize_child_run = 1
+        
         if self.__dir:
             os.chdir(self.__dir)
 
@@ -276,9 +305,18 @@ class Executable:
     def _DoParent(self):
         """Perform actions required in the parent after 'Spawn'."""
 
-        pass
+        self.__has_do_parent_run = 1
     
 
+    def _GetChildPID(self):
+        """Return the process ID for the child process.
+
+        returns -- The process ID for the child process, in the native
+        operating system format."""
+
+        return self.__child
+    
+        
     def __CreateCommandLine(self, arguments):
         """Return a string giving the process command line.
 
@@ -633,3 +671,131 @@ class RedirectedExecutable(Executable):
                                         0,
                                         0,
                                         win32con.DUPLICATE_SAME_ACCESS)
+
+
+
+class TimeoutExecutable(Executable):
+    """A 'TimeoutExecutable' runs for a limited time.
+
+    If the timer expires, the child process is killed.
+
+    In order to implement this functionality, the child process is
+    placed into its own process group.  An additional monitoring
+    process is created whose sole job is to kill the primary child's
+    process group if the timeout expires.  Process groups are used
+    so that if the child process spawns additional processes they
+    are killed too.  A separate monitoring process is used so as not
+    to block the parent.
+
+    The 'Run' method will automatically start the monitoring process.
+    The 'Spawn' method does not start the monitoring process.  User's
+    of 'Spawn' should invoke '_DoParent' in order to start the
+    monitoring process.  Derived class '_DoParent' functions should
+    call the version defined in this class."""
+
+    def __init__(self, timeout):
+        """Construct a new 'TimeoutExecutable'.
+
+        'timeout' -- The number of seconds that the child is permitted
+        to run.  This value may be a floating-point value.  However,
+        the value may be rounded to an integral value on some systems."""
+
+        # This functionality is not yet supported under Windows.
+        assert sys.platform != "win32"
+        
+        self.__timeout = timeout
+
+
+    def _InitializeChild(self):
+
+        # Put the child into its own process group.  This step is
+        # performed in both the parent and the child; therefore both
+        # processes can safely assume that the creation of the process
+        # group has taken place.
+        os.setpgid(0, 0)
+        
+        return Executable._InitializeChild(self)
+
+    
+    def _DoParent(self):
+
+        # Put the child into its own process group.  This step is
+        # performed in both the parent and the child; therefore both
+        # processes can safely assume that the creation of the process
+        # group has taken place.
+        child_pid = self._GetChildPID()
+        try:
+            os.setpgid(child_pid, child_pid)
+        except:
+            # The call to setpgid may fail if the child has exited,
+            # or has already called 'exec'.  In that case, we are
+            # guaranteed that the child has already put itself in the
+            # desired process group.
+            pass
+                   
+        # Create the monitoring process.
+        #
+        # If the monitoring process is in parent's process group and
+        # kills the child after waitpid has returned in the parent, we
+        # may end up trying to kill a process group other than the one
+        # that we intend to kill.  Therefore, we put the monitoring
+        # process in the same process group as the child; that ensures
+        # that the process group will persist until the monitoring
+        # process kills it.
+        self.__monitor_pid = os.fork()
+        if self.__monitor_pid != 0:
+            # Make sure that the monitoring process is placed into the
+            # child's process group before the parent process calls
+            # 'waitpid'.  In this way, we are guaranteed that the process
+            # group as the child 
+            os.setpgid(self.__monitor_pid, child_pid)
+        else:
+            try:
+                # Put the monitoring process into the child's process
+                # group.  We know the process group still exists at this
+                # point because either (a) we are in the process
+                # group, or (b) the parent has not yet called waitpid.
+                os.setpgid(0, child_pid)
+                # Give the child time to run.
+                time.sleep (self.__timeout)
+                # Kill all processes in the child process group.
+                os.kill(0, signal.SIGKILL)
+            finally:
+                # Exit.  This code is in a finally clause so that
+                # we are guaranteed to get here no matter what.
+                os._exit(0)
+
+        return Executable._DoParent(self)
+
+
+    def Run(self, arguments=[], environment = None, dir = None,
+            path = None):
+
+        # Run the process.
+        Executable.Run(self, arguments, environment, dir, path)
+        # Clean up the monitoring program; it is no longer needed.
+        os.kill(self.__monitor_pid, signal.SIGKILL)
+        os.waitpid(self.__monitor_pid, 0)
+
+
+
+class TimeoutRedirectedExecutable(TimeoutExecutable,
+                                  RedirectedExecutable):
+    """An 'Executable' that runs for a limited time with redirected output."""
+                                  
+    def _InitializeChild(self):
+
+        TimeoutExecutable._InitializeChild(self)
+        RedirectedExecutable._InitializeChild(self)
+
+
+    def _InitializeParent(self):
+
+        TimeoutExecutable._InitializeParent(self)
+        RedirectedExecutable._InitializeParent(self)
+
+
+    def _DoParent(self):
+
+        TimeoutExecutable._DoParent(self)
+        RedirectedExecutable._DoParent(self)

@@ -1,5 +1,25 @@
 2003-04-12  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/executable.py (signal): Import it.
+	(time): Likewise.
+	(Executable): Derive from object.
+	(Executable.Spawn): Deal with multiple inheritance.
+	(Executable._InitializeParent): Likewise.
+	(Executable._InitializeChild): Likewise.
+	(Executable._DoParent): Likewise.
+	(Executable._GetChildPID): New method.
+	(TimeoutExecutable): New class.
+	(TimeoutRedirectedExecutable): Likewise.
+	* NEWS: Mention TimeoutExecutable.
+	* README: Note that Python 2.2 is now required.
+	* qm/setup_path.py.in: Reflect Python 2.2 requirement.
+
+	* qm/test/classes/process_target.py (ProcessTarget.RunTest):
+	Handle unexpected death of the child process.
+	(ProcessTarget.__ReadResults): Likewise.
+	
+2003-04-12  Mark Mitchell  <mark@codesourcery.com>
+
 	* qm/read_thread.py: Remove.
 	* qm/write_thread.py: Likewise.
 

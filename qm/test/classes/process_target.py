@@ -196,9 +196,18 @@ class ProcessTarget(Target):
         child = self.__idle_children.pop(0)
         self.__busy_children.append(child)
         # Write the test to the file.
-        cPickle.dump(("RunTest", descriptor.GetId(), context),
-                     child[2])
-
+        try:
+            cPickle.dump(("RunTest", descriptor.GetId(), context),
+                         child[2])
+        except:
+            # We could not write to the child.  (One situation in
+            # which this happens is that the child process has been
+            # killed.)
+            result = Result(Result.TEST, descriptor.GetId(), context)
+            result.NoteException()
+            self._RecordResult(result)
+            self.__idle_children.append(child)
+            
 
     def _GetInterpreter(self):
         """Return the interpreter to use.
@@ -228,4 +237,5 @@ class ProcessTarget(Target):
                     idle = 1
         except EOFError:
             self.__idle_children.append(child)
-            self.__busy_children.remove(child)
+            if child in self.__busy_children:
+                self.__busy_children.remove(child)
