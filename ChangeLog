@@ -1,5 +1,9 @@
 2002-03-06  Mark Mitchell  <mark@codesourcery.com>
 
+	* compiler.py (SourcePosition.__str__): Refine.
+	* compiler_test.py (CompilerTest._DiagnosticsToString): Format
+	list of diagnostics with one diagnostic per line.
+
 	* compiler.py: Massive revisions.
 	* compiler_test.py: Likewise.
 	* gcc_database.py: Likewise.
