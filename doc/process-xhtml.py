@@ -126,7 +126,7 @@ while 1:
         ref = "index.html"
     # Add the ref attribute to the anchor element.
     input = input[ : match.start()] \
-            + '<a class="Term" ref="%s">%s</a>' % (ref, term) \
+            + '<a class="Term" href="%s">%s</a>' % (ref, term) \
             + input[match.end() : ]
 
 # Write the result to standard output.

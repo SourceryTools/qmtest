@@ -30,5 +30,127 @@
     <a name="CHAP-architecture">
       <h3>Architecture</h3>
     </a>
+
+    <p>This chapter describes the architecture of the core
+    components of qmtrack.</p>
+
+    <h4>Issue Database</h4>
+
+    <p>The <a class="Term">issue database</a> is an abstract database
+    model used by qmtrack to store, retrieve, and query issues.
+    Qmtrack issues the idb via an abstract interface, which allows
+    multiple implementations with varying performance and maintenance
+    attributes.  All implementations must support the behaviour
+    specified here.</p>
+
+    <p>The idb consists of a single table.  Each row of this table
+    corresponds to a single revision of an issue.</p>
+
+    <h5>Field types</h5>
+
+    <p>The idb supports the following field data types:</p>
+    <ol>
+      <li><span class="Identifier">string</span> fields contain short
+      character strings.  These fields should not contain newlines,
+      carriage returns, tabs, or other control characters (but are
+      under no fixed length limit).  Database implementations should
+      validate that <span class="Identifier">string</span> fields
+      contain appropriate values only.</li>
+
+      <li><span class="Identifier">text</span> fields contain
+      arbitrary text.  By convention, the text is not broken into
+      lines with newlines (user interfaces will wrap text as
+      necessary).  Paragraphs are ended with two newline characters.
+      There is no length limit on text fields.</li>
+
+      <li><span class="Identifier">integer</span> fields contain a
+      signed 32-bit integer.</li>
+    </ol>
+
+    <p>The data types listed below are also stored in the idb, but
+    require no additional data type support from the underlying
+    database.</p>
+    <ol>
+      <li><span class="Identifier">time</span> fields store a UTC
+      date/time.  Time is stored as a string, with the format
+      &quot;%Y-%m-%d %H:%M:%S&quot;.</li>
+
+      <li><span class="Identifier">user id</span> fields store a <a
+      class="Term">user id</a> as a <span
+      class="Identifier">string</span>.</li>
+
+      <li><span class="Identifier">issue id</span> fields contain a
+      reference to another issue in the same idb as an <span
+      class="Identifier">integer</span> field.</li>
+    </ol>
+
+    <h5>Issue id</h5>
+
+    <p>Each issue is assigned a unique <a class="Term">issue id</a> at
+    creation.  Issue ids are assigned sequentially starting from zero
+    for each idb instance.</p>
+
+    <h5>Revisions and audit</h5>
+
+    <p>Rows in the idb are read-only; in normal circumstances, rows
+    are never modified or removed from the table.  Instead, a new row
+    is added whenever an issue is modified.</p>
+
+    <p>The idb schema includes a <a class="TermDef">revision
+    number</a> field.  The revision number value for a row indicates
+    which revision of the issue it corresponds to.  When a new issue
+    is submitted to the idb, a new <a class="Term">iid</a> is assigned
+    and a new row is added to the idb with revision number zero.  When
+    this issue is subsequently modified, another row is added
+    containing the revised data, and an incremented sequece number.
+    Previous rows are never deleted.  For an issue, the idb row with
+    the corresponding iid and the highest revision number is the <a
+    class="TermDef">current revision</a>.  (When we refer to an issue
+    in this document or in the qmtrack API, we're referring to the
+    current revision unless we specify a revision number
+    explicitly.)</p>
+
+    <p>An audit trail for an issue is obtained by querying the idb for
+    all rows matching the corresponding idb, and sorting by sequence
+    number for chronological order.</p>
+
+    <p>Issues may not be deleted.  Rows are generally not deleted from
+    the idb, except for housecleaning purposes.</p>
+
+    <h4>Issue database API</h4>
+
+    <p>The <span class="Class">IdbBase</span> class is the base class
+    for idb implementations.</p>
+
+    <p>Creation and setup methods.</p>
+
+    <div class="API">
+<pre>
+class IdbBase:
+    """Base class for idb implementations."""
+</pre>
+    </div>
+
+    <p>Methods for retrieving issues and revisions.</p>
+
+    <div class="API">
+<pre>
+    def GetIssue(self, iid):
+        """Return the current revision of the issue corresponding to
+        iid."""
+
+    def GetIssueRevision(self, iid, revision_number):
+        """Return the issue revision corresponding to iid and
+        revision_number."""
+
+    def GetIssueAllRevisions(self, iid):
+        """Returns an array of revisions of the issue given by iid.
+        The array index is the revision number."""
+
+    def GetCurrentRevisionNumber(self, iid):
+        """Return the revision number of the current revision of the
+        issue given by iid."""
+</pre>
+    </div>
   </body>
 </html>

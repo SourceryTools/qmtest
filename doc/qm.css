@@ -120,7 +120,7 @@ span.Dfn {
 a.TermDef {
    color: #000060;
    backgrond-color: white;
-    font-style: italic;
+   font-style: italic;
 }
 
 a.Term:link, a.Term:visited {
@@ -143,9 +143,28 @@ a.Term:active, a.Term:hover {
 code {
 }
 
-/* Use <div class="api">...</div> when presenting official public
-   APIs.  */
+/* Use <div class="API"><pre>...</pre></div> when presenting official
+   public APIs.  */
 
-div.api {
-    font: XXX;
+div.API {
+    background-color: #f0e0ff;
+    border: none;
+    padding: 1ex;
+}
+
+/* Use <span class="Identifier">...</span> for identifiers and other
+   names used in source code.  */
+
+span.Identifier {
+    color: #ff0000;
+    font: Courier;
+    font-style: bold;
+}
+
+/* Use <span class="Class">...</span> for the name of a class.  */
+
+span.Class {
+    color: #ff0000;
+    font: Courier;
+    font-style: bold;
 }

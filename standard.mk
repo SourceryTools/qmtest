@@ -79,5 +79,5 @@ $(SUBDIRS):
 
 %.html:		%.xhtml
 	$(XHTMLPROCESS) $^ \
-	  | $(TIDY) $(TIDYFLAGS) -xml $^ \
+	  | $(TIDY) $(TIDYFLAGS) -xml \
 	  > $@

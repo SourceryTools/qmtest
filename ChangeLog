@@ -1,3 +1,15 @@
+2000-10-31  Alex Samuel  <samuel@codesourcery.com>
+
+	* standard.mk (%.html): Fix.
+	* doc/process-xhtml.py: Fix href attribute.
+	* doc/qm.css (a.TermDef): Fix font-style.
+	(div.api): Rename to...
+	(div.API): ... this.
+	(span.Identifier): New class.
+	(span.Class): Likewise.
+	
+	* doc/design/qmtest/terms.xhtml: New file.
+	
 2000-10-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/html: Use Open Publication License.
