@@ -45,11 +45,11 @@ else:
 class Executable(object):
     """An 'Executable' is a program that the operating system can run.
 
-    'Exectuable' (and classes derived from it) create child
-    processes.  The 'Spawn' function creates child processes that
-    execute asynchronousl.  The 'Run' function creates child processes
-    that execute synchrounously, i.e,. the 'Run' function does not
-    return until the child process has completed its execution.
+    'Exectuable' (and classes derived from it) create child processes.
+    The 'Spawn' function creates child processes that execute
+    asynchronously.  The 'Run' function creates child processes that
+    execute synchrounously, i.e,. the 'Run' function does not return
+    until the child process has completed its execution.
 
     It is safe to reuse a particular 'Executable' instance (by calling
     'Spawn' or 'Run' more than once), so long as the uses are not

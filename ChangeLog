@@ -1,3 +1,7 @@
+2003-08-13  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/executable.py (Executable): Typo in docstring.
+
 2003-08-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/text_result_stream.py
