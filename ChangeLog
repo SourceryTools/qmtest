@@ -1,3 +1,7 @@
+2003-06-04  Mark Mitchell  <mark@codesourcery.com>
+
+	* zope-dtml/DocumentTemplate/.cvsignore: Remove.
+
 2003-06-03  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dg_test.py (DGTest.DGException): New class.
