@@ -57,6 +57,14 @@
 
 import os
 import os.path
+import sys
+
+# The Python interpreter will place the directory containing this
+# script in the default path to search for modules.  That is
+# unncessary for QMTest, and harmful, since then "import resource"
+# imports the resource module in QMTest, not the global module of
+# the same name.
+sys.path = sys.path[1:]
 
 if os.environ['QM_BUILD'] == '1':
     setup_path_dir = os.path.join(os.environ['QM_HOME'], 'qm')
@@ -73,7 +81,7 @@ import qm.common
 import qm.cmdline
 import qm.platform
 import qm.structured_text
-import qm.test.base
+from   qm.test.base import *
 import qm.test.run
 import Queue
 import sys
@@ -99,6 +107,9 @@ program_name = os.path.splitext(sys.argv[0])[0]
 diagnostic_file = qm.get_share_directory("diagnostics", "test.txt")
 qm.diagnostic.diagnostic_set.ReadFromFile(diagnostic_file)
 
+# Load RC options.
+qm.rc.Load("test")
+
 try:
     # This script must be run with exactly two command-line arguments.
     if len(sys.argv) != 3:
@@ -110,7 +121,7 @@ try:
         database_path = sys.argv[1]
         concurrency = sys.argv[2]
         # Load the test database,
-        qm.test.base.load_database(database_path)
+        database = qm.test.base.load_database(database_path)
 
         # Create the queue that the local threads will use to write
         # replies.
@@ -124,51 +135,44 @@ try:
         # subprocesses, and multiplex their replies.
         target_spec = qm.test.run.TargetSpec(
             name=None,
-            class_name="qm.test.run.SubprocessTarget",
+            class_name="thread_target.ThreadTarget",
             group=None,
             concurrency=concurrency,
             properties={})
         # Instantiate the proxy target.
-        target = qm.test.run.SubprocessTarget(target_spec, response_queue)
+        target_class = get_extension_class(target_spec.class_name,
+                                           'target', database)
+        # Build the target.
+        target = target_class(target_spec, database, response_queue)
 
         # Read commands from standard input, and reply to standard
         # output.
         while 1:
-            # The number of replies that we expect.
-            expected_replies = 0
+            # Read the command.
+            command = cPickle.load(sys.stdin)
             
-            # Fill up the target's queue.
-            while target.GetQueueLength() < 0:
-                # Read a command.
-                command_type, id, context = cPickle.load(sys.stdin)
-                # Provide it to the target.
-                target.EnqueueCommand(command_type, id, context)
-                # If we got the quit command, exit.
-                if command_type == "quit":
-                    break
-                # We expect a reply to every command except "quit".
-                expected_replies = expected_replies + 1
-                
-            # Ask the target to process the queue.
-            target.ProcessQueue()
+            # If the command is just a string, it should be
+            # the 'Stop' command.
+            if isinstance(command, types.StringType):
+                assert command == "Stop"
+                target.Stop()
+                break
 
-            while expected_replies > 0:
-                # Read the result.
-                target, response = response_queue.get()
-                # Allow the local target to process the response.
-                target.OnReply(response, None)
-                # Pass the result back.
-                cPickle.dump(response[0], sys.stdout)
-                # We've gotten one reply.
-                expected_replies = expected_replies - 1
-
+            # Decompose command.
+            method, id, context = command
+            # Spin until the target is idle.
+            while not target.IsIdle():
+                pass
+            # Run it.
+            target.__class__.__dict__[method](target, id, context)
+            # Read the result.
+            result = response_queue.get()
+            # Pass the result back.
+            cPickle.dump(result, sys.stdout)
             # The standard output stream is bufferred, but the master
             # will block waiting for a response, so we must flush
             # the buffer here.
             sys.stdout.flush()
-            
-            if command_type == "quit":
-                break;
                 
         # All is well.
         exit_code = 0

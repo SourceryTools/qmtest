@@ -602,8 +602,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         target_file_name = self.GetCommandOption("targets", None)
         if target_file_name is None:
             # No target file specified.  We'll use a single
-            # 'SubprocessTarget' for running tests locally.  But perhaps
-            # a concurrency value was specified.
+            # 'ThreadTarget' for running tests locally.  But perhaps a
+            # concurrency value was specified.
             concurrency = self.GetCommandOption("concurrency", None)
             if concurrency is None:
                 # No concurrency specified.  Run single-threaded.
@@ -620,7 +620,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # empty string, for lack of better information.
             target_specs = [
                 run.TargetSpec("local",
-                               "qm.test.run.SubprocessTarget",
+                               "thread_target.ThreadTarget",
                                "",
                                concurrency,
                                {}),

@@ -97,7 +97,7 @@ class CommandFailedError(RuntimeError):
 # classes
 ########################################################################
 
-class InstanceBase:
+class ItemDescriptor:
     """Common base class for test and resource descriptors."""
 
     def __init__(self,
@@ -180,7 +180,7 @@ class InstanceBase:
 
 
 
-class TestDescriptor(InstanceBase):
+class TestDescriptor(ItemDescriptor):
     """A test instance."""
 
     def __init__(self,
@@ -218,8 +218,8 @@ class TestDescriptor(InstanceBase):
         on targets in that group."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, database,
-                              test_id, test_class_name, arguments)
+        ItemDescriptor.__init__(self, database,
+                                test_id, test_class_name, arguments)
         self.__prerequisites = prerequisites
         self.__categories = categories
         self.__resources = resources
@@ -244,12 +244,6 @@ class TestDescriptor(InstanceBase):
 
         return self.__categories
     
-
-    def IsInCategory(self, category):
-        """Return true if this test is in 'category'."""
-
-        return category in self.__categories
-
 
     def GetPrerequisites(self):
         """Return a map from prerequisite test IDs to required outcomes."""
@@ -304,7 +298,7 @@ class TestDescriptor(InstanceBase):
 
 
 
-class ResourceDescriptor(InstanceBase):
+class ResourceDescriptor(ItemDescriptor):
     """A resource instance."""
 
     def __init__(self,
@@ -324,8 +318,8 @@ class ResourceDescriptor(InstanceBase):
         'arguments' -- This resource's arguments to the resource class."""
 
         # Initialize the base class.
-        InstanceBase.__init__(self, database, resource_id,
-                              resource_class_name, arguments)
+        ItemDescriptor.__init__(self, database, resource_id,
+                                resource_class_name, arguments)
         # Don't instantiate the resource yet.
         self.__resource = None
 
@@ -1189,7 +1183,10 @@ def clean_up_resource(resource, context):
 # variables
 ########################################################################
 
-extension_kinds = [ 'test', 'resource', 'database' ]
+extension_kinds = [ 'database',
+                    'resource',
+                    'target',
+                    'test', ]
 """Names of different kinds of QMTest extension classes."""
 
 __class_caches = {}

@@ -1,3 +1,27 @@
+2001-11-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (InstanceBase): Rename to ...
+	(InstanceDescriptor): ... this.
+	(TestDescriptor): Derive from InstanceDescriptor.
+	(ResourceDescriptor): Likewise.
+	(extension_kinds): Add "target".
+	* qm/test/cmdline.py: Use "ThreadTarget" not "SubprocessTarget".
+	* qm/test/qmtest-remote.py: Adjust for reworking of target
+	machinery.
+	* qm/test/run.py (CommandThread): Remove.
+	(Target): Likewise.
+	(LocalThread): Likewise.
+	(SubprocessTarget): Likewise.
+	(RemoteThread): Likewise.
+	(RemoteShellTarget): Likewise.
+	(TestRun.Schedule): Simplify.
+	(TestRun.AddResult): Likewise.
+	(TestRun.__TargetIsReady): Remove.
+	(test_run): Simplify.
+	* qm/test/target.py: New file.
+	* qm/test/classes/rsh_target.py: Likewise.
+	* qm/test/classes/thread_target.py: Likewise.
+	
 2001-10-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/resource.py: New file.
