@@ -120,7 +120,7 @@ HAPPYDOC	= @HAPPYDOC@
 # The install program.
 INSTALL		= @top_srcdir@/install-sh -c
 INSTALL_DATA    = $(INSTALL) -m 644
-INSTALL_DIR     = $(INSTALL) -d
+INSTALL_DIR     = $(INSTALL) -d -m 755
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_SCRIPT  = $(INSTALL_PROGRAM)
 
