@@ -1,4 +1,11 @@
 2002-06-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/file_database.py (ExtensionDatabase): New class, split
+	out from ...
+	(FileDatabase): ... here.
+	* qm/test/xmldb.py (Database): Use 'ExtensionDatabase' as the
+	immediate base class.
+	(Database.__init__): Adjust accordingly.
 	
 	* qm/common.py (timegm): Remove.
 

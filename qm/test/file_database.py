@@ -5,7 +5,8 @@
 # Date:   2001-10-05
 #
 # Contents:
-#   QMTest FileDatabase class.
+#   FileDatabase
+#   ExtensionFileDatabase
 #
 # Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -14,7 +15,7 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import dircache
@@ -24,48 +25,20 @@ from   qm.test.database import *
 from   qm.test.directory_suite import *
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class FileDatabase(Database):
     """A 'FileDatabase' stores each test as a single file.
 
     A 'FileDatabase' is a 'Database' that stores each test, suite,
-    or resource as a single file with an extension indicating whether
-    it a test, suite, or resource.  In addition, every subdirectory
-    that ends with an extension that would normally indicate a suite
-    is itself considered an implicit suite.  The contents of the
+    or resource as a single file.  In addition, some subdirectories
+    can be considered implicit suites.  The contents of the
     implicit suite are all of the tests and suites contained in the
     subdirectory.
 
     'FileDatabase' is an abstract class."""
 
-    def __init__(self, path, 
-                 test_extension = '.qmt',
-                 suite_extension = '.qms',
-                 resource_extension = '.qma'):
-        """Construct a 'FileDatabase'.
-
-        'path' -- A string containing the absolute path to the directory
-        containing the database.
-
-        'test_extension' -- The extension (including the leading period)
-        that indicates that a file is a test.
-
-        'suite_extension' -- The extension (including the leading
-        period) that indicates that a subdirectory, or file, is a test
-        suite.
-
-        'resource_extension' -- The extension (including the leading
-        period) that indicates that a file is a resource."""
-        
-	# Initialize base classes.
-	qm.test.database.Database.__init__(self, path)
-        # Save the test extension and suite extension.
-        self.__test_extension = test_extension
-        self.__suite_extension = suite_extension
-        self.__resource_extension = resource_extension
-    
     # Methods that deal with tests.
 
     def GetTest(self, test_id):
@@ -98,8 +71,7 @@ class FileDatabase(Database):
         Derived classes may override this method if they need to remove
         additional information from the database."""
 
-        self.__RemoveEntity(test_id, self.__test_extension,
-                            NoSuchTestError)
+        self.__RemoveEntity(self.GetTestPath(test_id), NoSuchTestError)
 
 
     def GetTestIds(self, directory="", scan_subdirs=1):
@@ -130,20 +102,13 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file that contains, or
         would contain, 'test_id'.  This method works even if no test
-        named 'test_id' exists."""
+        named 'test_id' exists.
 
-        return self._GetPathFromLabel(test_id) + self.__test_extension
+        Derived classes may override this method."""
+
+        raise self._GetPathFromLabel(test_id)
 
 
-    def GetTestExtension(self):
-        """Return the extension that indicates a file is a test.
-
-        returns -- The extension (including the leading period) that
-        indicates that a file is a test."""
-
-        return self.__test_extension
-    
-        
     def _IsTestFile(self, path):
         """Returns true if 'path' is a test file.
 
@@ -153,14 +118,10 @@ class FileDatabase(Database):
 
         returns -- True iff the file corresponds to a test.
 
-        Derived classes may override this method, but only to restrict
-        the set of test files.  In particular, a derived class method
-        may return false where this method would return true, but
-        never vice versa."""
+        Derived classes must override this method."""
 
-        return (os.path.splitext(path)[1] == self.__test_extension
-                and os.path.isfile(path))
-                   
+        raise NotImplementedError
+        
     # Methods that deal with suites.
 
     def GetSuite(self, suite_id):
@@ -200,8 +161,7 @@ class FileDatabase(Database):
         Derived classes may override this method if they need to remove
         additional information from the database."""
 
-        self.__RemoveEntity(suite_id, self.__suite_extension,
-                            NoSuchSuiteError)
+        self.__RemoveEntity(self.GetSuitePath(suite_id), NoSuchSuiteError)
 
 
     def GetSuiteIds(self, directory="", scan_subdirs=1):
@@ -232,25 +192,13 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file (or directory)
         that contains, or would contain, 'suite_id'.  This method works
-        even if no suite named 'suite_id' exists."""
+        even if no suite named 'suite_id' exists.
 
-        # The implicit "" suite corresponds to the directory in which
-        # the database is located.
-        if suite_id == "":
-            return self.GetPath()
-        else:
-            return self._GetPathFromLabel(suite_id) + self.__suite_extension
+        Derived classes may override this method."""
+
+        return self._GetPathFromLabel(suite_id)
 
 
-    def GetSuiteExtension(self):
-        """Return the extension that indicates a file is a suite.
-
-        returns -- The extension (including the leading period) that
-        indicates that a file is a suite."""
-
-        return self.__suite_extension
-    
-        
     def _IsSuiteFile(self, path):
         """Returns true if 'path' is a test suite file or directory.
 
@@ -263,12 +211,12 @@ class FileDatabase(Database):
         Derived classes may override this method, but only to restrict
         the set of suites.  In particular, a derived class method
         may return false where this method would return true, but
-        never vice versa."""
+        never vice versa.
 
-        return (path == self.GetPath()
-                or (os.path.splitext(path)[1] == self.__suite_extension
-                    and (os.path.isfile(path) or os.path.isdir(path))))
+        Derived classes must override this method."""
 
+        raise NotImplementedError
+    
     # Methods that deal with resources.
 
     def GetResource(self, resource_id):
@@ -302,7 +250,7 @@ class FileDatabase(Database):
         Derived classes may override this method if they need to remove
         additional information from the database."""
 
-        self.__RemoveEntity(resource_id, self.__resource_extension,
+        self.__RemoveEntity(self.GetResourcePath(resource_id),
                             NoSuchResourceError)
 
 
@@ -334,19 +282,11 @@ class FileDatabase(Database):
 
         returns -- The absolute file name of the file that contains, or
         would contain, 'resource_id'.  This method works even if no
-        Resource named 'resource_id' exists."""
+        Resource named 'resource_id' exists.
 
-        return self._GetPathFromLabel(resource_id) \
-               + self.__resource_extension
+        Derived classes may override this method."""
 
-
-    def GetResourceExtension(self):
-        """Return the extension that indicates a file is a resource.
-
-        returns -- The extension (including the leading period) that
-        indicates that a file is a resource."""
-
-        return self.__resource_extension
+        return self._GetPathFromLabel(resource_id)
 
 
     def _IsResourceFile(self, path):
@@ -356,15 +296,11 @@ class FileDatabase(Database):
         components in the path name have already been checked to
         ensure that they are valid labels.
 
-        returns -- True iff the file corresponds to a test.
+        returns -- True iff the file corresponds to a resource.
 
-        Derived classes may override this method, but only to restrict
-        the set of resources.  In particular, a derived class method may
-        return false where this method would return true, but never vice
-        versa."""
+        Derived classes must override this method."""
 
-        return (os.path.splitext(path)[1] == self.__resource_extension
-                and os.path.isfile(path))
+        raise NotImplementedError
     
     # Miscellaneous methods.
 
@@ -437,7 +373,6 @@ class FileDatabase(Database):
 
         raise NotImplementedError
 
-    # Derived classes must not override any methods below this point.
 
     def _GetPathFromLabel(self, label):
         """Returns the file system path corresponding to 'label'.
@@ -449,10 +384,9 @@ class FileDatabase(Database):
 
         Derived classes must not override this method."""
 
-        return os.path.join(self.GetPath(),
-                            self._LabelToPath(label,
-                                              self.__suite_extension))
+        return os.path.join(self.GetPath(), self._LabelToPath(label))
 
+    # Derived classes must not override any methods below this point.
 
     def _GetLabels(self, directory, scan_subdirs, label, predicate):
         """Returns the labels of entities in 'directory'.
@@ -501,25 +435,126 @@ class FileDatabase(Database):
         return labels
         
         
-    def __RemoveEntity(self, entity_id, extension, exception):
+    def __RemoveEntity(self, path, exception):
         """Remove an entity.
 
-        'entity_id' -- The name of a test, suite, or resource.
-
-        'extension' -- The extension that will be present on the file
-        representing this entity.
+        'path' -- The name of the file containing the entity.
 
         'exception' -- The type of exception to raise if the file
         is not present.
 
         Derived classes must not override this method."""
 
-        path = self._GetPathFromLabel(entity_id) + extension
         if not os.path.isfile(path):
             raise exception, entity_id
 
         os.remove(path)
+
+
+
+class ExtensionDatabase(FileDatabase):
+    """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
+    entity (test, suite, resource) has a particular extension.
+
+    'ExtensionDatabase' is an abstract class."""
+
+    def __init__(self, path,
+                 test_extension = ".qmt",
+                 suite_extension = ".qms",
+                 resource_extension = ".qma",
+                 **attributes):
+        """Construct a new 'ExtensionDatabase'.
+
+        'test_extension' -- The extension (including the leading period)
+        that indicates that a file is a test.
+        
+        'suite_extension' -- The extension (including the leading period)
+        that indicates that a file (or directory) is a suite.
+
+        'resource_extension' -- The extension (including the leading period)
+        that indicates that a file is a resource."""
+
+        # Initialize the base class.
+        FileDatabase.__init__(self, path, **attributes)
+        
+        self.__test_extension = test_extension
+        self.__suite_extension = suite_extension
+        self.__resource_extension = resource_extension
+
+        
+    def GetTestExtension(self):
+        """Return the extension that indicates a file is a test.
+
+        returns -- The extension (including the leading period) that
+        indicates that a file is a test."""
+
+        return self.__test_extension
     
+        
+    def GetSuiteExtension(self):
+        """Return the extension that indicates a file is a suite.
+
+        returns -- The extension (including the leading period) that
+        indicates that a file is a suite."""
+
+        return self.__suite_extension
+    
+        
+    def GetResourceExtension(self):
+        """Return the extension that indicates a file is a resource.
+
+        returns -- The extension (including the leading period) that
+        indicates that a file is a resource."""
+
+        return self.__resource_extension
+
+
+    def GetTestPath(self, test_id):
+
+        return self._GetPathFromLabel(test_id) + self.__test_extension
+
+
+    def _IsTestFile(self, path):
+        
+        return (os.path.splitext(path)[1] == self.__test_extension
+                and os.path.isfile(path))
+
+
+    def GetSuitePath(self, suite_id):
+
+        # The top-level suite is just the directory containing the
+        # database; no extension is required.
+        if suite_id == "":
+            return self.GetPath()
+        else:
+            return self._GetPathFromLabel(suite_id) + self.__suite_extension
+
+
+    def _IsSuiteFile(self, path):
+
+        return (path == self.GetPath() 
+                or (os.path.splitext(path)[1] == self.__suite_extension
+                    and (os.path.isfile(path) or os.path.isdir(path))))
+
+
+    def GetResourcePath(self, resource_id):
+
+        return self._GetPathFromLabel(resource_id) \
+               + self.__resource_extension
+        
+
+    def _IsResourceFile(self, path):
+
+        return (os.path.splitext(path)[1] == self.__resource_extension
+                and os.path.isfile(path))
+
+
+    def _GetPathFromLabel(self, label):
+
+        return os.path.join(self.GetPath(),
+                            self._LabelToPath(label,
+                                              self.__suite_extension))
+        
 ########################################################################
 # Local Variables:
 # mode: python

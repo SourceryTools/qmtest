@@ -58,7 +58,7 @@ class TestFileError(RuntimeError):
 
 
 
-class Database(FileDatabase):
+class Database(ExtensionDatabase):
     """A database represnting tests as XML files in a directory tree."""
 
     # When processing the DOM tree for an XML test file, we may
@@ -76,7 +76,7 @@ class Database(FileDatabase):
         the database."""
 
         # Initialize base classes.
-        FileDatabase.__init__(self, path)
+        ExtensionDatabase.__init__(self, path)
         # Create an AttachmentStore for this database.
         self.__store = AttachmentStore(path, self)
         # Make sure the database path exists.
