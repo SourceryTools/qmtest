@@ -136,6 +136,10 @@ field may take the values %(values)s.
 composed of lower-case letters, digits, and underscores, and may not
 begin with an underscore.
 
+@ invalid field type
+"'%(field_type)s'" is not a valid field type.  A field type must be a
+Python class that is a subclass of 'qm.fields.Field'.
+
 @ invalid iid
 "%(iid)s" is not a valid issue ID.  An issue ID may be composed of
 lower-case letters, digits, and underscores, and may not begin with an

@@ -46,6 +46,19 @@ import types
 # constants
 ########################################################################
 
+mandatory_field_names = [
+    "iid",
+    "revision",
+    "timestamp",
+    "user",
+    "state",
+    "summary",
+    "categories",
+    "parents",
+    "children",
+    ]
+"""Names of mandatory issue class fields."""
+
 # The default categories enumeration to use for a new issue class, if
 # one is not provided.
 
@@ -1035,16 +1048,25 @@ class IssueClass:
 
         'field' -- An instance of a subclass of 'Field' which describes
         the field to be added.  The object is copied, and subsequent
-        modifications to it will not affect the issue class.
-
-        'default_value' -- The value to assign for this field to
-        existing issues of the issue class.  If 'None', there is no
-        default, and each newly-created issue must assign this field.
-        Otherwise, must be a valid field value."""
+        modifications to it will not affect the issue class."""
 
         name = field.GetName()
         self.__fields_by_name[name] = field
         self.__fields.append(field)
+
+
+    def RemoveField(self, field):
+        """Remove a field from the issue class.
+
+        'field' -- A field currently part of the issue class."""
+
+        name = field.GetName()
+        # Make sure this field is in the issue class.
+        assert self.__fields_by_name[name] is field
+        assert self.__fields.count(field) == 1
+        # Remove it.
+        del self.__fields_by_name[name]
+        self.__fields.remove(field)
 
 
     def DiagnosticPrint(self, file):

@@ -59,9 +59,8 @@
         <b>Fields</b>
        </td>
        <td align="right">
-        <input type="button"
-               value=" Add Field... "
-               onclick="request.copy('add-issue-field').AsUrl()"/>
+        <dtml-var expr="MakeUrlButton('Add Field...',
+                                  request.copy('add-issue-field').AsUrl())">
        </td>
       </tr>
      </table>
@@ -77,7 +76,7 @@
      </td>     
      <td>
       <table border="0" cellpadding="0" cellspacing="4" width="100%">
-       <tr>
+       <tr valign="top">
         <td><b>Title:</b></td>
         <td width="100%"><dtml-var expr="field.GetTitle()"></td>
         <td rowspan="4">
@@ -88,8 +87,11 @@
                                      field=field.GetName()).AsUrl()">',
                     'field', 'resizeable,scrollbars');"
          />
-         <input type="button"
-                value=" Delete "/>
+         <dtml-if expr="field.GetName() not in mandatory_field_names">
+          <dtml-var expr="MakeUrlButton('Delete',
+                                        request.copy('delete-issue-field',
+                                            field=field.GetName()).AsUrl())">
+         </dtml-if>
         </td>
        </tr>
        <tr>

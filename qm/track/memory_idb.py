@@ -91,6 +91,16 @@ class MemoryIdb(qm.track.IdbBase):
             # The pickle contains a tuple of these two items.
             self.__issue_classes, self.__issues = persistent
 
+            # Sanity checks.  
+            for issue_history in self.__issues.values():
+                issue_class = issue_history[0].GetClass()
+                # Make sure all revisions of an issue have the same class.
+                for revision in issue_history:
+                    assert revision.GetClass() is issue_class
+                # Make sure the issue class for each issue is in the
+                # issue class list.
+                assert self.__issue_classes[issue_class.GetName()] \
+                       is issue_class
 
     def Close(self):
         """Close an IDB connection and write out the IDB state."""
@@ -361,27 +371,51 @@ class MemoryIdb(qm.track.IdbBase):
         issue_class_name = issue_class.GetName()
         old_issue_class = self.GetIssueClass(issue_class_name)
 
-        old_fields = old_issue_class.GetFields()
-        old_field_names = map(lambda f: f.GetName(), old_fields)
-        new_fields = issue_class.GetFields()
-        new_field_names = map(lambda f: f.GetName(), new_fields)
-
         # Determine whether any fields were added or removed.
         added_fields = []
-        for field in new_fields:
-            if not field.GetName() in old_field_names:
-                added_fields.append(field)
         removed_fields = []
-        for field in old_fields:
-            if not field.GetName() in new_field_names:
+        for field in issue_class.GetFields():
+            field_name = field.GetName()
+            try:
+                old_field = old_issue_class.GetField(field_name)
+            except KeyError:
+                # There is no field by this name in the old issue
+                # class.  It's a new field.
+                added_fields.append(field)
+            else:
+                if old_field.__class__ is not field.__class__:
+                    # There is a field by the same name, but it's a
+                    # different type.
+                    removed_fields.append(old_field)
+                    added_fields.append(field)
+        for field in old_issue_class.GetFields():
+            if not issue_class.HasField(field.GetName()):
+                # A field in the old class with no corresponding field
+                # in the new class.  
                 removed_fields.append(field)
-
-        # FIXME: Implement this.
-        if len(added_fields) > 0 or len(removed_fields) > 0:
-            raise NotImplementedError, "add or remove fields from issue class"
 
         # Replace the the old issue class with the new one.
         self.__issue_classes[issue_class_name] = issue_class
+
+        # Update all the issues in this class.
+        for issue_history in self.__issues.values():
+            if issue_history[0].GetClass() is old_issue_class:
+                # Scan over revisions of this issue.
+                for revision in issue_history:
+                    # For each field removed from the issue class,
+                    # remove the corresponding value.
+                    for field in removed_fields:
+                        del revision._Issue__fields[field.GetName()]
+                    # For each field added to the issue class, set the
+                    # issue's value to the default value for the field.
+                    for field in added_fields:
+                        revision._Issue__fields[field.GetName()] = \
+                            field.GetDefaultValue()
+                    # Point the issue at the new, revised issue class
+                    # object.
+                    revision._Issue__issue_class = issue_class
+
+        # Write it out.
         self.__Write()
 
 

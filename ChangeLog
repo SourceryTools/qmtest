@@ -1,3 +1,27 @@
+2001-07-01  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/server.py (start_server): Move imports of qm.track.web
+	modules here.  Register add-issue-field, delete-issue-field,
+	new-issue-field.
+	* qm/track/memory_idb.py (MemoryIdb.__init__): Add sanity checks.
+	(MemoryIdb.UpdateIssueClass): Rewrite field handling code.  Update
+	issues. 
+	* qm/track/issue_class.py (mandatory_field_names): New constant.
+	(IssueClass.RemoveField): New method.
+	* qm/track/web/summary.py (SummaryPageInfo.FormatFieldValue):
+	Watch for missing fields.
+	* qm/track/web/issue_class.py (ShowPageInfo.madatory_field_names):
+	New attribute.
+	(NewFieldPageInfo): New class.
+	(handle_delete_field): New function.
+	(handle_add_field): Likewise.
+	(handle_new_field): Likewise.
+	* share/dtml/track/issue-class.dtml: Use MakeButton.  Activate
+	buttons.
+	* share/dtml/track/add-issue-field.dtml: New template.
+	* share/diagnostics/track.txt (invalid field type): New
+	diagnostic. 
+
 2001-06-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/idb.py: Remove obsolete imports.

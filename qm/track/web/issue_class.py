@@ -36,10 +36,15 @@
 ########################################################################
 
 import copy
+import qm.common
 import qm.fields
+import qm.label
 import qm.track
 import qm.track.idb
+import qm.track.issue_class
 import qm.web
+import string
+import sys
 import web
 
 ########################################################################
@@ -47,6 +52,9 @@ import web
 ########################################################################
 
 class ShowPageInfo(web.PageInfo):
+    """DTML context for displaying an issue class."""
+
+    mandatory_field_names = qm.track.issue_class.mandatory_field_names
 
     def __init__(self, request, issue_class):
         # Initialize the base class.
@@ -62,6 +70,49 @@ class ShowPageInfo(web.PageInfo):
                    % (field.__class__, field.GetContainedField().__class__)
         else:
             return "<tt>%s</tt>" % field.__class__
+
+
+
+class NewFieldPageInfo(web.PageInfo):
+    """DTML context for the form to add a field to an issue class."""
+
+    field_types = [
+        ("integer field", "qm.fields.IntegerField"),
+        ("text field", "qm.fields.TextField"),
+        ("attachment field", "qm.fields.AttachmentField"),
+        ("enumeration field", "qm.fields.EnumerationField"),
+        ("time field", "qm.fields.TimeField"),
+        ("user ID field", "qm.fields.UidField"),
+        ]
+    """Names and Python class names of standard field types."""
+
+
+    def __init__(self,
+                 request,
+                 field_name="",
+                 field_class_name="",
+                 is_set=0,
+                 errors={}):
+        """Create a new 'PageInfo' context.
+
+        'errors' -- A map of field errors.  If not empty, we're
+        redisplaying the new field form to display errors from an
+        invalid form submission.  Each key in 'errors' is a field name,
+        either "name" or "type", and the corresponding value is a
+        structured text error message describing the problem with the
+        value of that field."""
+        
+        # Initialize the base class.
+        web.PageInfo.__init__(self, request)
+        # Store attributes for use in DTML.
+        self.field_name = field_name
+        self.field_class_name = field_class_name
+        self.is_set = is_set
+        # Convert the error messages in 'errors' from structured text to
+        # HTML. 
+        for key, value in errors.items():
+            errors[key] = qm.structured_text.to_html(value)
+        self.errors = errors
 
 
 
@@ -234,6 +285,100 @@ def handle_submit_class(request):
     # Redirect to the IDB configuration page.
     raise qm.web.HttpRedirect, \
           qm.web.WebRequest("config-idb", base=request).AsUrl()
+
+
+def handle_delete_field(request):
+    """Handle a 'delete-issue-field' request.
+
+    This request removes a field from the issue class currently being
+    edited in the request's session.  The "field" query attribute
+    contains the name of the field to delete."""
+
+    # Get hold of the field to delete.
+    issue_class = _get_issue_class_for_session(request)
+    field_name = request["field"]
+    field = issue_class.GetField(field_name)
+    # Remove it.
+    issue_class.RemoveField(field)
+    # Redisplay the issue class.
+    show_request = request.copy("show-issue-class")
+    del show_request["field"]
+    raise qm.web.HttpRedirect, show_request.AsUrl()
+
+
+def handle_add_field(request):
+    """Handle an 'add-issue-field' request.
+
+    This request shows a form for adding a new field to the issue class
+    currently being edited in the request's session."""
+
+    issue_class = _get_issue_class_for_session(request)
+    page_info = NewFieldPageInfo(request)
+    return web.generate_html_from_dtml("add-issue-field.dtml", page_info)
+
+
+def handle_new_field(request):
+    """Handle a 'new-issue-field' request.
+
+    Processes the addition of a new field to the issue class currently
+    being editied in the request's session.  These query attributes are
+    used from the request:
+
+      'name' -- The name of the new field.
+
+      'type' -- The Python class name of the field type.
+
+      'is_set' -- Either "true" or "false", for whether this is a set
+      field.  If it is, 'type' is the name of the contained field type.
+    """
+
+    issue_class = _get_issue_class_for_session(request)
+    errors = {}
+
+    # Extract the field name.
+    field_name = string.strip(request["name"])
+    if not qm.label.is_valid(field_name):
+        errors["name"] = qm.error("invalid field name", field_name=field_name)
+    # Extract the name of the field type.
+    field_class_name = string.strip(request["type"])
+    try:
+        # Load the class.
+        field_class = qm.common.load_class(field_class_name, sys.path)
+    except (ImportError, ValueError), err:
+        # Couldn't load the class.
+        errors["type"] = qm.error("invalid field type",
+                                  field_type=field_class_name)
+    else:
+        # Make sure the field type is a subclass of 'Field'.
+        if not issubclass(field_class, qm.fields.Field) \
+           or field_class is qm.fields.Field:
+            errors["type"] = qm.error("invalid field type",
+                                      field_type=field_class.__name__)
+    # Is this a set field?
+    is_set = ["false", "true"].index(request["is_set"])
+
+    if len(errors) > 0:
+        # There were errors.  Redisplay the form for adding a new field,
+        # showing the values already entered, and the appropriate error
+        # messages. 
+        page_info = NewFieldPageInfo(request, field_name,
+                                     field_class_name, is_set, errors)
+        return web.generate_html_from_dtml("add-issue-field.dtml",
+                                           page_info)
+    else:
+        # Good to go.  Instantiate a field object.
+        field = field_class(field_name, title=field_name)
+        # If a set was requested, wrap it in a 'SetField'.
+        if is_set:
+            field = qm.fields.SetField(field)
+        # Add it to the issue class.
+        issue_class.AddField(field)
+
+        # Redirect to the page displaying the issue class.
+        show_request = request.copy("show-issue-class")
+        for attribute_name in ["name", "type", "is_set"]:
+            del show_request[attribute_name]
+        raise qm.web.HttpRedirect, show_request.AsUrl()
 
 
 ########################################################################

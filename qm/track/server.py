@@ -43,11 +43,6 @@ import qm.structured_text
 import qm.track.cmdline
 import qm.track.config
 import qm.track.web
-import qm.track.web.index
-import qm.track.web.issue_class
-import qm.track.web.query
-import qm.track.web.show
-import qm.track.web.summary
 import qm.user
 import qm.web
 import StringIO
@@ -103,6 +98,12 @@ def start_server(port, address="", log_file=None):
 
     Does not return until the server shuts down."""
 
+    import qm.track.web.index
+    import qm.track.web.issue_class
+    import qm.track.web.query
+    import qm.track.web.show
+    import qm.track.web.summary
+
     # FIXME.  Can we hard code less stuff here?
 
     # Path to the QMTrack web subdirectory.
@@ -119,12 +120,15 @@ def start_server(port, address="", log_file=None):
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
+        ( "add-issue-field", qm.track.web.issue_class.handle_add_field ),
         ( "config-idb", qm.track.web.issue_class.handle_config_idb ),
+        ( "delete-issue-field", qm.track.web.issue_class.handle_delete_field ),
         ( "download-attachment", qm.track.web.handle_download_attachment ),
         ( "index", qm.track.web.index.handle_index ),
         ( "login", qm.web.handle_login ),
         ( "logout", qm.web.handle_logout ),
         ( "new", qm.track.web.show.handle_new ),
+        ( "new-issue-field", qm.track.web.issue_class.handle_new_field ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
         ( "show-issue-class", qm.track.web.issue_class.handle_show_class ),

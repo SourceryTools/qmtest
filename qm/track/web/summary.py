@@ -180,9 +180,15 @@ class SummaryPageInfo(web.PageInfo):
 
         returns -- The field value, formatted for HTML."""
 
-        field = issue.GetClass().GetField(field_name)
-        value = issue.GetField(field_name)
-        return field.FormatValueAsHtml(value, style="brief")
+        issue_class = issue.GetClass()
+        try:
+            field = issue_class.GetField(field_name)
+        except KeyError:
+            # This issue does not have a field by this name.  Skip it.
+            return "&nbsp;"
+        else:
+            value = issue.GetField(field_name)
+            return field.FormatValueAsHtml(value, style="brief")
 
 
     def MakeResortUrl(self, field_name):
