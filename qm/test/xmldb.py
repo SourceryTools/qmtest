@@ -437,7 +437,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
 
         result = {}
         # The fields in the test class.
-        fields = klass.fields
+        fields = klass.arguments
 
         # Loop over argument child elements.
         for arg_node in node.getElementsByTagName("argument"):
@@ -632,7 +632,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
             # whose name matches this argument.  There should be exactly
             # one. 
             field = filter(lambda f, name=name: f.GetName() == name,
-                           item_class.fields)
+                           item_class.arguments)
             assert len(field) == 1
             field = field[0]
             # Add a comment describing the field, if requested.

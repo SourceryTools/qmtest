@@ -42,6 +42,7 @@ import qm.async
 import qm.common
 import qm.xmlutil
 import re
+from   result import *
 import string
 import sys
 
@@ -727,10 +728,10 @@ class TestRun:
     # '__targets' -- The sequence of 'Target' objects on which to run
     # tests.
     #
-    # '__test_results' -- A map from test ID to the 'ResultWrapper'
-    # object for that test.
+    # '__test_results' -- A map from test ID to the 'Result' object for
+    # that test.
     #
-    # '__resource_results' -- A sequence of 'ResultWrapper' objects for
+    # '__resource_results' -- A sequence of 'Result' objects for
     # resource functions that have been run.
     #
     # '__failed_resources' -- A map indicating resources whose setup
@@ -846,10 +847,9 @@ class TestRun:
                 # 'UNTESTED' result for it.
                 cause = qm.message("no target for group")
                 group_pattern = test.GetProperty("group")
-                result = base.Result(base.Result.UNTESTED,
-                                     cause=cause,
-                                     group_pattern=group_pattern)
-                result = base.ResultWrapper(test_id, self.__context, result)
+                result = Result(test_id, self.__context, Result.UNTESTED,
+                                { Result.CAUSE : cause,
+                                  'group_pattern' : group_pattern })
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
@@ -863,13 +863,12 @@ class TestRun:
                 prerequisite_outcome = \
                     self.__test_results[prerequisite_id].GetOutcome()
                 expected_outcome = test.GetPrerequisites()[prerequisite_id]
-                result = base.Result(
-                    base.Result.UNTESTED,
-                    cause=cause,
-                    prerequisite_id=prerequisite_id,
-                    prerequisite_outcome=prerequisite_outcome,
-                    expected_outcome=expected_outcome)
-                result = base.ResultWrapper(test_id, self.__context, result)
+                result = Result(test_id, self.__context, Result.UNTESTED,
+                                { Result.CAUSE : cause,
+                                  'prerequisite_id' : prerequisite_id,
+                                  'prerequisite_outcome' :
+                                    prerequisite_outcome,
+                                  'expected_outcome' : expected_outcome })
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
@@ -880,10 +879,9 @@ class TestRun:
                 # during setup, so we can't run the test.  Add an
                 # 'UNTESTED' result for it.
                 cause = qm.message("failed resource")
-                result = base.Result(base.Result.UNTESTED,
-                                     cause=cause,
-                                     resource_id=resource_id)
-                result = base.ResultWrapper(test_id, self.__context, result)
+                result = Result(test_id, self.__context, Result.UNTESTED)
+                result[Result.CAUSE] = cause
+                result['resource_id'] = resource_id
                 self.AddTestResult(result)
                 self.__remaining_test_ids.remove(test_id)
                 continue
@@ -944,57 +942,57 @@ class TestRun:
         return 0
 
 
-    def AddTestResult(self, result_wrapper, target=None):
+    def AddTestResult(self, result, target=None):
         """Report the result of running a test.
 
-        'result_wrapper' -- A 'ResultWrapper' object representing the
-        result of running a test.
+        'result' -- A 'Result' object representing the result of running
+        a test.
 
         'target' -- The target on which the test was run, if any."""
 
         # If a target was specified, record its name in the result.
         if target is not None:
-            result_wrapper["target"] = target.GetName()
+            result[Result.TARGET] = target.GetName()
         # Store the result.
-        self.__test_results[result_wrapper.GetId()] = result_wrapper
+        self.__test_results[result.GetId()] = result
         # Print a progress message.
-        test_id = result_wrapper.GetId()
-        outcome = result_wrapper.GetOutcome()
+        test_id = result.GetId()
+        outcome = result.GetOutcome()
         message = "test %-60s: %s\n" % (test_id, outcome)
         self.__ProgressMessage(message)
 
 
-    def AddResourceResult(self, result_wrapper, target):
+    def AddResourceResult(self, result, target):
         """Report the result of running a resource function.
 
-        'result_wrapper' -- A 'ResultWrapper' object representing the
-        result of running the resource function.
+        'result' -- A 'Result' object representing the result of running
+        the resource function.
 
         'target' -- The target on which the resource function was
         run.""" 
 
         # If a target was specified, record its name in the result.
-        result_wrapper["target"] = target.GetName()
+        result[Result.TARGET] = target.GetName()
         # Store the result.
-        self.__resource_results.append(result_wrapper)
+        self.__resource_results.append(result)
 
         # Extract information from the result.
-        resource_id = result_wrapper.GetId()
-        outcome = result_wrapper.GetOutcome()
-        action = result_wrapper["action"]
+        resource_id = result.GetId()
+        outcome = result.GetOutcome()
+        action = result["action"]
         assert action in ["setup", "cleanup"]
 
-        if action == "setup" and outcome == base.Result.PASS:
+        if action == "setup" and outcome == Result.PASS:
             # A resource has successfully been set up.  Record it as an
             # active resource for the target.  For that resource and
             # target combination, store the context properties that were
-            # added by the resource setup function, so that tese can be
+            # added by the resource setup function, so that these can be
             # made available to tests that use the resource.
             added_properties = \
-                result_wrapper.GetContext().GetAddedProperties()
+                result.GetContext().GetAddedProperties()
             self.__resources[target][resource_id] = added_properties
 
-        elif action == "setup" and outcome != base.Result.PASS:
+        elif action == "setup" and outcome != Result.PASS:
             # A resource's setup function failed.  Note this, so that
             # the resource setup is not reattempted.
             self.__failed_resources[resource_id] = None
@@ -1003,14 +1001,14 @@ class TestRun:
             context_wrapper = base.ContextWrapper(self.__context)
             target.EnqueueCleanUpResource(resource_id, context_wrapper)
 
-        elif action == "cleanup" and outcome == base.Result.PASS:
+        elif action == "cleanup" and outcome == Result.PASS:
             # A resource has successfully been cleaned up.  Remove it
             # from the list of active resources for the target.
             del self.__resources[target][resource_id]
 
         # Print a progress message.
-        resource_id = result_wrapper.GetId()
-        outcome = result_wrapper.GetOutcome()
+        resource_id = result.GetId()
+        outcome = result.GetOutcome()
         if action == "setup":
             message = "resource setup %-50s: %s\n" % (resource_id, outcome)
         else:
@@ -1212,9 +1210,9 @@ def test_run(test_ids,
     string message.
 
     returns -- A pair '(test_results, resource_results)'.
-    'test_results' is a map from test IDs to corresponding
-    'ResultWrapper' objects.  'resource_results' is a sequence of
-    'ResultWrapper' objects for resource functions that were run."""
+    'test_results' is a map from test IDs to corresponding 'Result'
+    objects.  'resource_results' is a sequence of 'Result' objects for
+    resource functions that were run."""
     
     # We'll use this multiplexer to coordinate the responses from the
     # various threads of execution that test targets may set up.

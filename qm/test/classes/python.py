@@ -40,7 +40,8 @@
 import qm
 import qm.fields
 import qm.test.base
-from   qm.test.base import Result
+from   qm.test.result import *
+from   qm.test.test import *
 import string
 import sys
 import types
@@ -49,7 +50,7 @@ import types
 # classes
 ########################################################################
 
-class ExecTest:
+class ExecTest(Test):
     """Check the result of a Python expression.
 
     An 'ExecTest' test consists of Python source code together with
@@ -58,7 +59,7 @@ class ExecTest:
     If the optional expression is present, it is then evaluated.  If it
     evaluates to false, the test fails.  Otherwise, the test passes."""
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="source",
             title="Python Source Code",
@@ -104,18 +105,15 @@ class ExecTest:
         self.__expression = expression
 
 
-    def Run(self, context):
+    def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         # Execute the source code.
         try:
             exec self.__source in global_namespace, local_namespace
         except:
             # The source raised an unhandled exception, so the test
-            # fails. 
-            result = qm.test.base.make_result_for_exception(
-                sys.exc_info(),
-                outcome=Result.FAIL,
-                cause="Exception executing source.")
+            # fails
+            result.NoteException(cause="Exception executing source.")
         else:
             # The source code execute OK.  Was an additional expression
             # provided? 
@@ -127,33 +125,24 @@ class ExecTest:
                 except:
                     # Oops, an exception while evaluating the
                     # expression.  The test fails.
-                    result = qm.test.base.make_result_for_exception(
-                        sys.exc_info(),
-                        outcome=Result.FAIL,
-                        cause="Exception evaluating expression.")
+                    result.NoteException(cause=
+                                         "Exception evaluating expression.")
                 else:
                     # We evaluated the expression.  The test passes iff
                     # the expression's value is boolean true.
-                    if value:
-                        result = Result(Result.PASS)
-                    else:
-                        result = Result(
-                            Result.FAIL,
-                            cause="Expression evaluates to false.",
-                            value=repr(value))
+                    if not value:
+                        result.Fail("Expression evaluates to false.",
+                                    { "ExecTest.value" : repr(value) })
             else:
-                # No expression provided; if we got this far, the text
+                # No expression provided; if we got this far, the test
                 # passes. 
-                result = Result(Result.PASS)
-
-        return result
+                pass
 
 
-
-class BaseExceptionTest:
+class BaseExceptionTest(Test):
     """Base class for tests of exceptions."""
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="source",
             title="Python Source Code",
@@ -189,7 +178,7 @@ class BaseExceptionTest:
             self.exception_argument = eval(exception_argument, {}, {})
 
 
-    def Run(self, context):
+    def Run(self, context, result):
         global_namespace, local_namespace = make_namespaces(context)
         try:
             # Execute the test code.
@@ -197,23 +186,20 @@ class BaseExceptionTest:
         except:
             exc_info = sys.exc_info()
             # Check the exception argument.
-            result = self.CheckArgument(exc_info)
-            if result is not None:
-                return result
+            self.CheckArgument(exc_info, result)
+            if result.GetOutcome() != Result.PASS:
+                return
             # Check that the exception itself is OK.
-            return self.MakeResult(exc_info)
+            self.MakeResult(exc_info, result)
         else:
             # The test code didn't raise an exception.
-            return Result(Result.FAIL,
-                          cause=qm.message("test did not raise"))
+            result.Fail(qm.message("test did not raise"))
 
 
-    def CheckArgument(self, exc_info):
+    def CheckArgument(self, exc_info, result):
         """Check that the exception argument matches expectations.
 
-        returns -- 'None' if the exception argument matches
-        expectations.  Otherwise, a 'Result' object indicating
-        failure."""
+        'result' -- The result object for this test."""
 
         # Was an expected exception argument specified?
         if hasattr(self, "exception_argument"):
@@ -221,19 +207,19 @@ class BaseExceptionTest:
             argument = exc_info[1]
             if cmp(argument, self.exception_argument):
                 cause = qm.message("test raised wrong argument")
-                return Result(Result.FAIL,
-                              cause=cause,
-                              type=str(exc_info[0]),
-                              argument=repr(argument))
-        return None
+                result.Fail(cause,
+                            { "BaseExceptionTest.type" :
+                              str(exc_info[0]),
+                              "BaseExceptionTest.argument" :
+                               repr(argument) })
 
 
-    def MakeResult(self, exc_info):
+    def MakeResult(self, exc_info, result):
         """Check the exception in 'exc_info' and construct the result.
 
-        returns -- A 'Result' instance for the test."""
+        'result' -- The result object for this test."""
 
-        return Result(Result.PASS)
+        pass
 
 
 
@@ -246,8 +232,8 @@ class ExceptionTest(BaseExceptionTest):
     the expected value.  If the code fails to raise an exception, the
     test fails."""
 
-    fields = [
-        BaseExceptionTest.fields[0],
+    arguments = [
+        BaseExceptionTest.arguments[0],
 
         qm.fields.TextField(
             name="exception_argument",
@@ -289,29 +275,23 @@ class ExceptionTest(BaseExceptionTest):
         self.__exception_class_name = exception_class
                  
 
-    def MakeResult(self, exc_info):
+    def MakeResult(self, exc_info, result):
         # Make sure the exception is an object.
         if not type(exc_info[0]) is types.ClassType:
-            cause = qm.message("test raised non-object",
-                               exc_type=str(type(exc_info[0])))
-            return Result(Result.FAIL, cause=cause)
+            result.Fail(qm.message("test raised non-object",
+                                   exc_type=str(type(exc_info[0]))))
         # Make sure it's an instance of the right class.
         exception_class_name = exc_info[0].__name__
         if exception_class_name != self.__exception_class_name:
             cause = qm.message("test raised wrong class",
                                class_name=exception_class_name)
-            return Result(Result.FAIL, cause=cause)
-
-        # OK, it checks out.
-        return Result(Result.PASS)
+            result.Fail(cause=cause)
 
 
-    def CheckArgument(self, exc_info):
+    def CheckArgument(self, exc_info, result):
         """Check that the exception argument matches expectations.
 
-        returns -- 'None' if the exception argument matches
-        expectations.  Otherwise, a 'Result' object indicating
-        failure."""
+        'result' -- The result object for this test."""
 
         # Was an expected argument specified?
         if hasattr(self, "exception_argument"):
@@ -336,12 +316,9 @@ class ExceptionTest(BaseExceptionTest):
             if cmp(expected_argument, argument) != 0:
                 # We got a different argument.  The test fails.
                 cause = qm.message("test raised wrong argument")
-                return Result(Result.FAIL,
-                              cause=cause,
-                              type=str(exc_info[0]),
-                              argument=repr(argument))
-
-        return None
+                result.Fail(cause,
+                            { "ExceptionTest.type" : str(exc_info[0]),
+                              "ExceptionTest.argument" : repr(argument) })
 
 
 
@@ -352,7 +329,7 @@ class StringExceptionTest(BaseExceptionTest):
     an exception.  The exception must be a string and must have
     the expected value."""
 
-    fields = BaseExceptionTest.fields + [
+    arguments = BaseExceptionTest.arguments + [
         qm.fields.TextField(
             name="exception_text",
             title="Exception Text",
@@ -370,20 +347,15 @@ class StringExceptionTest(BaseExceptionTest):
         self.__exception_text = exception_text
 
 
-    def MakeResult(self, exc_info):
+    def MakeResult(self, exc_info, result):
         # Make sure the exception is an object.
         if not type(exc_info[0]) is types.StringType:
-            cause = qm.message("test raised non-string",
-                               exc_type=str(type(exc_info[0])))
-            return Result(Result.FAIL, cause=cause)
+            result.Fail(qm.message("test raised non-string",
+                                   exc_type=str(type(exc_info[0]))))
         # Make sure it's the right string.
         if exc_info[0] != self.__exception_text:
-            cause = qm.message("test raised wrong string",
-                               text=exc_info[0])
-            return Result(Result.FAIL, cause=cause)
-
-        # OK, it checks out.
-        return Result(Result.PASS)
+            result.Fail(qm.message("test raised wrong string",
+                                   text=exc_info[0]))
         
 
 

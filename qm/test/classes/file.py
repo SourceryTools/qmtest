@@ -39,7 +39,8 @@
 
 import qm.fields
 import qm.test.base
-from   qm.test.base import Result
+from   qm.test.result import *
+from   qm.test.test import *
 import qm.web
 import re
 import string
@@ -240,34 +241,31 @@ class FileContentsTest:
         self.__expected_contents = expected_contents
 
 
-    def Run(self, context):
+    def Run(self, context, result):
         # Extract the path to the file we're testing.
         try:
             path = context[self.__path_property]
         except KeyError:
             # The path is not present in the context under the expected
             # property name.
-            return Result(Result.FAIL,
-                          cause="Missing property '%s' in context." %
-                          self.__path_property)
+            result.Fail("Missing property '%s' in context." %
+                        self.__path_property)
         # Read the contents of the file.
         try:
             contents = open(path, "r").read()
         except IOError, exception:
             # Couldn't read the file.
-            return Result(Result.FAIL,
-                          cause="Could not open file '%s'." % path,
-                          error=str(exception))
+            result.Fail(cause="Could not open file '%s'." % path,
+                        annotations={ "FileContentsTest.error"
+                                      : str(exception) })
         # Perform substitutions on the file contents.
         contents = self.__PerformSubstitutions(contents)
-        # Compare the contnets to the expected contents.
-        if contents == self.__expected_contents:
-            return Result(Result.PASS)
-        else:
-            return Result(Result.FAIL,
-                          cause="Contents do not match expected contents.",
-                          contents=contents,
-                          expected_contents=self.__expected_contents)
+        # Compare the contents to the expected contents.
+        if contents != self.__expected_contents:
+            result.Fail(cause="Contents do not match expected contents.",
+                        { "FileContentsTest.contents" : contents,
+                          "FileContentsTest.expected_contents" :
+                          self.__expected_contents })
 
 
     def __PerformSubstitutions(self, text):

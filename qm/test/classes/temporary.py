@@ -38,7 +38,8 @@
 import os
 import qm.common
 import qm.fields
-from   qm.test.base import Result
+from   qm.test.result import *
+from   qm.test.test import *
 import tempfile
 
 ########################################################################
@@ -52,7 +53,7 @@ class TempDirectoryResource:
     setup, and deletes it during cleanup.  The full path to the
     directory is available to tests via a context property."""
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="dir_path_property",
             title="Directory Path Property Name",
@@ -80,7 +81,7 @@ class TempDirectoryResource:
         self.__delete_recursively = delete_recursively
     
 
-    def SetUp(self, context):
+    def SetUp(self, context, result):
         # FIXME: Security.
         # Generate a temporary file name.
         dir_path = tempfile.mktemp()
@@ -90,15 +91,14 @@ class TempDirectoryResource:
         except OSError, error:
             # Setup failed.
             cause = "Directory creation failed.  %s" % str(error)
-            return Result(Result.FAIL, cause=cause)
+            result.Fail(cause)
         else:
-            # Store the path to the directory where tests can get at it. 
+            # Setup succeeded.  Store the path to the directory where
+            # tests can get at it. 
             context[self.__dir_path_property] = dir_path
-            # Setup succeeded.
-            return Result(Result.PASS)
     
 
-    def CleanUp(self, context):
+    def CleanUp(self, context, result):
         # Extract the path to the directory.
         dir_path = context[self.__dir_path_property]
         # Make sure it's a directory.
@@ -112,11 +112,10 @@ class TempDirectoryResource:
         except OSError, error:
             # Cleanup failed.
             cause = "Directory cleanup failed.  %s" % str(error)
-            return Result(Result.FAIL, cause=cause)
+            Result.Fail(cause=cause)
         else:
             # Cleanup succeeded.
-            return Result(Result.PASS)
-
+            pass
 
 
 ########################################################################

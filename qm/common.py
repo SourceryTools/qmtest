@@ -671,6 +671,7 @@ def load_module(name, path=sys.path):
     except KeyError:
         # No; that's OK.
         pass
+
     # The module may be in a package.  Split the module path into
     # components. 
     components = string.split(name, ".")

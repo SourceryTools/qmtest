@@ -55,6 +55,7 @@ import qm.fields
 import qm.label
 import qm.structured_text
 import qm.test.base
+from   qm.test.result import *
 import qm.web
 import string
 import sys
@@ -92,7 +93,7 @@ class ShowPage(web.DtmlPage):
         web.DtmlPage.__init__(self, "show.dtml")
         # Set up attributes.
         self.item = item
-        self.fields = item.GetClass().fields
+        self.fields = item.GetClass().arguments
         self.edit = edit
         self.new = new
         assert type in ["test", "resource"]
@@ -274,7 +275,7 @@ class ShowPage(web.DtmlPage):
 class AddPrerequisitePage(web.DtmlPage):
     """Page for specifying a prerequisite test to add."""
 
-    outcomes = qm.test.base.Result.outcomes
+    outcomes = Result.outcomes
     """The list of possible test outcomes."""
 
 
@@ -537,7 +538,7 @@ def handle_submit(request):
     # Extract the class and field specification.
     item_class_name = request["class"]
     item_class = qm.test.base.get_extension_class(item_class_name, type)
-    fields = item_class.fields
+    fields = item_class.arguments
 
     # We'll perform various kinds of validation as we extract form
     # fields.  Errors are placed into this map; later, if it's empty, we
@@ -585,7 +586,7 @@ def handle_submit(request):
             # Unencode.
             test_id, outcome = string.split(preq, ";", 1)
             # Make sure this outcome is one we know about.
-            if not outcome in qm.test.base.Result.outcomes:
+            if not outcome in Result.outcomes:
                 raise RuntimeError, "invalid outcome"
             # Store it.
             prerequisites[test_id] = outcome

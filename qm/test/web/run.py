@@ -40,6 +40,7 @@
 ########################################################################
 
 import qm.test.base
+from   qm.test.result import *
 import qm.test.run
 import qm.web
 import string
@@ -55,10 +56,10 @@ class TestResultsPage(web.DtmlPage):
     def __init__(self, test_results, resource_results):
         """Construct a new DTML page.
 
-        'test_results' -- A map from test ID to 'ResultWrapper' objects
-        for tests that were run.
+        'test_results' -- A map from test ID to 'Result' objects for
+        tests that were run.
 
-        'resource_results' -- A sequence of 'ResultWrapper' objects for
+        'resource_results' -- A sequence of 'Result' objects for
         resource functions that were run."""
         
         # Initialize the base class.
@@ -71,7 +72,7 @@ class TestResultsPage(web.DtmlPage):
     def FormatResult(self, result):
          """Return HTML for displaying a test result.
 
-         'result' -- A ResultWrapper.
+         'result' -- A 'Result'.
 
          returns -- HTML displaying the result."""
 
@@ -86,7 +87,6 @@ class TestResultsPage(web.DtmlPage):
         elements.  See 'qm.css'."""
 
         outcome = result.GetOutcome()
-        Result = qm.test.base.Result
         return {
             Result.PASS: "pass",
             Result.FAIL: "fail",

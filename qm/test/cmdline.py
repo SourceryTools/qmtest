@@ -43,6 +43,7 @@ import qm
 import qm.cmdline
 import qm.platform
 import qm.xmlutil
+from   result import *
 import run
 import string
 import sys
@@ -714,11 +715,10 @@ The summary is written to standard output.
 
         'format' -- The summary format.
 
-        'test_results' -- A sequence of 'ResultWrapper' objects for
-        tests.
+        'test_results' -- A sequence of 'Result' objects for tests.
 
-        'resource_results' -- A sequence of 'ResultWrapper' objects for
-        resources. 
+        'resource_results' -- A sequence of 'Result' objects for
+        resources.
 
         'suite_ids' -- IDs of suites to report separately for the run.
 
@@ -766,7 +766,7 @@ The summary is written to standard output.
                 # No expected outcomes were specified, so show all tests
                 # that did not pass.
                 bad_results = filter(
-                    lambda r: r.GetOutcome() != base.Result.PASS,
+                    lambda r: r.GetOutcome() != Result.PASS,
                     test_results)
                 output.write(divider("NON-PASSING TESTS"))
                 base.summarize_results(
@@ -775,7 +775,7 @@ The summary is written to standard output.
             # Sort resource results by ID.
             resource_results.sort(compare_ids)
             bad_results = filter(
-                lambda r: r.GetOutcome() != base.Result.PASS,
+                lambda r: r.GetOutcome() != Result.PASS,
                 resource_results)
             if len(bad_results) > 0:
                 # Print individual resource results.

@@ -1,5 +1,51 @@
 2001-10-10  Mark Mitchell  <mark@codesourcery.com>
 
+	Use 'arguments' not 'fields' in test classes.
+	Change API for 'Run' method in tests.
+	* qm/test/base.py: Import qm.test.result.
+	(standard_test_class_names): Remove.
+	(standard_resource_class_names): Likewise.
+	(InstanceBase.__MakeItem): Use 'arguments', not 'fields'.
+	(Test.Run): Take result parameter.
+	(Resource.SetUp): Likewise.
+	(Resource.CleanUp): Likewise.
+	(Resource.__Do): Likewise.
+	(Result): Remove.
+	(ResultWrapper): Remove.
+	(make_result_for_exception): Likewise.
+	(make_new_test): Use arguments, not fields.
+	(make_new_resource): Likewise.
+	(write_results): Adjust documentation.
+	(save_results): Likewise.
+	(load_results): Likewise.
+	(_test_results_from_dom): Likewise.
+	(_result_from_dom): Construct a Result, not a ResultWrapper.
+	(split_results_by_expected_outcome): Adjust documentation.
+	(summarize_relative_test_stats): Likewise.
+	(summarize_test_suite_stats): Likewise.
+	(summarize_results): Likewise.
+	(run_test): Adjust for new API.
+	(set_up_resource): Likewise.
+	(clean_up_resource): Likewise.
+	* qm/test/cmdline.py (Command): Adjust documentation.
+	(Command.__SummarizeResults): Tweak.
+	* qm/test/result.py: New file.
+	* qm/test/run.py (TestRun): Adjustments throughout to use
+	Result instead of ResultWrapper.
+	* qm/test/test.py: New file.
+	* qm/test/xmldb.py (Database.__GetArgumentsFromDomNode): Use
+	arguments, not fields.
+	(Database.__MakeDomNodeForItem): Likewise.
+	* qm/test/command.py: Adjustments throughout.
+	* qm/test/file.py: Likewise.
+	* qm/test/python.py: Likewise.
+	* qm/test/temporary.py: Likewise.
+	* qm/test/web/run.py (TestResultsPage.__init__): Adjust
+	documentation.
+	(TestResultsPage.FormatResult): Likewise.
+	* qm/test/web/show.py (ShowPage.AddPrerequisitePage): Tweak.
+	(handle_submit): Likewise.
+	
 	* qm/test/base.py (InstanceBase.GetClass): Use
 	get_extension_class.
 	(load_databse): Likewise.

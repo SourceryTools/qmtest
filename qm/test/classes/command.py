@@ -40,7 +40,8 @@ import errno
 import os
 import qm.fields
 import qm.test.base
-from   qm.test.base import Result
+from   qm.test.result import *
+from   qm.test.test import *
 import string
 import sys
 import tempfile
@@ -55,10 +56,21 @@ STDOUT_FILENO = sys.stdout.fileno()
 STDERR_FILENO = sys.stderr.fileno()
 
 ########################################################################
+# functions
+########################################################################
+
+def make_result_for_exception(cause):
+    exc_info = sys.exc_info()
+    return (Result.ERROR,
+            { Result.CAUSE : cause,
+              Result.EXCEPTION : "%s: %s" % exc_info[:2],
+              Result.TRACEBACK : qm.format_traceback(exc_info) })
+    
+########################################################################
 # classes
 ########################################################################
 
-class ExecTest:
+class ExecTest(Test):
     """Check a program's output and exit code.
 
     An 'ExecTest' runs a program and compares its standard output,
@@ -69,7 +81,7 @@ class ExecTest:
     The test passes if the standard output, standard error, and
     exit code are identical to the expected values."""
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="program",
             title="Program",
@@ -203,7 +215,7 @@ class ExecTest:
         return environment
 
 
-    def Run(self, context):
+    def Run(self, context, result):
         # Names of temporary files.  The file have been created iff the
         # corresponding file name variable is not 'None'.
         stdin_file_name = None
@@ -261,9 +273,8 @@ class ExecTest:
                     except:
                         # Perhaps something went wrong while setting up
                         # the standard stream files.
-                        result = qm.test.base.make_result_for_exception(
-                            sys.exc_info(),
-                            cause="Exception setting up test.")
+                        result = make_result_for_exception(
+                            "Exception setting up test.")
                     else:
                         # Run the target program.  If the target executes
                         # successfully, this call does not return.
@@ -301,7 +312,10 @@ class ExecTest:
             # Did we get back something (that should be a pickle)?
             if len(result_pickle) > 0:
                 # Yes; unpickle it.
-                result = cPickle.loads(result_pickle)
+                (outcome, annotations) = cPickle.loads(result_pickle)
+                result.setOutcome(outcome)
+                for k in annotations.keys():                    
+                    result[k] = annotations[k]
             # Otherwise no: the child ran the target program successfully.
 
             elif os.WIFEXITED(exit_status):
@@ -325,48 +339,39 @@ class ExecTest:
                 if exit_code == self.exit_code \
                    and stdout == expected_stdout \
                    and stderr == expected_stderr: 
-                    # Yes -- that's a pass.
-                    result = Result(Result.PASS)
+                    # The test passed.
+                    pass
                 else:
                     # No.  The test has failed.  Construct a failing
                     # result, including the outputs that didn't match
                     # expectations. 
-                    result = Result(Result.FAIL)
                     causes = []
                     if exit_code != self.exit_code:
                         causes.append("exit code")
-                        result["exit_code"] = str(exit_code)
+                        result["ExecTest.exit_code"] = str(exit_code)
                     if stdout != expected_stdout:
                         causes.append("standard output")
-                        result["stdout"] = stdout
+                        result["ExecTest.stdout"] = stdout
                     if stderr != expected_stderr:
                         causes.append("standard error")
-                        result["stderr"] = stderr
-                    result["cause"] = "Unexpected %s." \
-                                      % string.join(causes, ", ") 
-
+                        result["ExecTest.stderr"] = stderr
+                    result.FAIL("Unexpected %s." % string.join(causes, ", ")) 
             elif os.WSIGNALED(exit_status):
                 # The target program terminated with a signal.  Construe
                 # that as a test failure.
                 signal_number = str(WTERMSIG(exit_status))
-                result = Result(Result.FAIL,
-                                cause="Program terminated by signal.",
-                                signal_number=signal_number)
-
+                result.FAIL("Program terminated by signal.")
+                result["ExecTest.signal_number"] = signal_number
             elif os.WIFSTOPPED(exit_status):
                 # The target program was stopped.  Construe that as a
                 # test failure.
                 signal_number = str(WSTOPSIG(exit_status))
-                result = Result(Result.FAIL,
-                                cause="Program stopped by signal.",
-                                signal_number=signal_number)
-
+                result.FAIL("Program stopped by signal.")
+                result["ExecTest.signal_number"] = signal_number
             else:
                 # The target program terminated abnormally in some other
                 # manner.  (This shouldn't normally happen...)
-                result = Result(Result.FAIL,
-                                cause="Program did not terminate normally.")
-
+                result.Fail("Program did not terminate normally.")
         finally:
             # Clean things up.
             if result_pipe_file is not None:
@@ -380,20 +385,21 @@ class ExecTest:
                 os.close(stderr_fd)
                 os.remove(stderr_file_name)
 
-        return result
-
 
     def RunProgram(self, context):
         """Run the target program.
 
         This function will not return if the target program executes
         (whether the test passes or fails).  However, if a problem
-        occurs while running the target program, this function returns a
-        'Result' object indicating the error."""
+        occurs while running the target program, this function returns
+        an '(outcome, annotations)' pair describing the error."""
+
+        annotations = {}
         
         # Was the program not specified?
         if string.strip(self.program) == "":
-            return Result(Result.ERROR, cause="No program specified.")
+            annotations[Result.CAUSE] = "No program specified."
+            return (Result.ERROR, annotations)
         # Locate the program executable in the path specified in the
         # context. 
         path = context["path"]
@@ -401,15 +407,15 @@ class ExecTest:
         # Did we find it?
         if program is None:
             # No.  That's an error.
-            return Result(Result.ERROR,
-                          cause="Could not locate program '%s'."
-                          % self.program,
-                          path=path)
+            annotations[Result.CAUSE] = \
+              "Could not locate program '%s'." % self.program
+            annotations["ExecTest.path"] = path
+            return (Result.ERROR, annotations)
         # Make sure it's an executable.
         if not qm.is_executable(program):
-            return Result(Result.ERROR,
-                          cause="Program '%s' is not an executable."
-                          % program)
+            annotations[Result.CAUSE] = \
+              "Program '%s' is not an executable." % program
+            return (Result.ERROR, annotations)
 
         # The name of the program is the first element of its argument
         # list. 
@@ -421,12 +427,12 @@ class ExecTest:
             # Handle selected failures specially.
             except os.error, os_error:
                 if os_error.errno == errno.EACCES:
-                    return Result("ERROR",
-                                  cause="Access error running %s." % program)
+                    annotations[Result.CAUSE] = \
+                      "Access error running %s." % program
+                    return (Result.ERROR, annotations)
                 raise
         except:
-            return qm.test.base.make_result_for_exception(
-                sys.exc_info(), cause="Exception running program.")
+            return make_result_for_exception("Exception running program.")
         # We should never get here.
         assert 0
 
@@ -452,7 +458,7 @@ class ShellCommandTest(ExecTest):
 
     """
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="command",
             title="Command",
@@ -465,7 +471,7 @@ class ShellCommandTest(ExecTest):
             arguments."""
             ),
 
-        ] + ExecTest.fields[2:]
+        ] + ExecTest.arguments[2:]
 
     
     def __init__(self,
@@ -494,17 +500,16 @@ class ShellCommandTest(ExecTest):
             shell = qm.platform.get_shell_for_command()
         # Make sure the interpreter exists.
         if not qm.is_executable(shell[0]):
-            return Result(Result.ERROR,
-                          cause=qm.message("no shell executable"),
-                          executable=shell_executable)
+            return (Result.ERROR,
+                    { Result.CAUSE : qm.message("no shell executable"),
+                      "ShellCommandTest.executable" : shell_exectuable })
         # Append the command at the end of the argument list.
         arguments = shell + [ self.command ]
         try: 
             # Run the interpreter.
             os.execve(arguments[0], arguments, self.environment)
         except:
-            return qm.test.base.make_result_for_exception(
-                sys.exc_info(), cause="Exception invoking command.")
+            return make_result_for_exception("Exception invoking command.")
         # We should never reach here.
         assert 0
 
@@ -531,7 +536,7 @@ class ShellScriptTest(ExecTest):
 
     """
 
-    fields = [
+    arguments = [
         qm.fields.TextField(
             name="script",
             title="Script",
@@ -548,7 +553,7 @@ class ShellScriptTest(ExecTest):
             multiline="true",
             ),
 
-        ] + ExecTest.fields[1:]
+        ] + ExecTest.arguments[1:]
 
     def __init__(self,
                  script,
@@ -567,7 +572,7 @@ class ShellScriptTest(ExecTest):
         self.stderr = stderr
 
 
-    def Run(self, context):
+    def Run(self, context, result):
         # Create a temporary file for the script.
         self.__script_file_name, script_file = qm.open_temporary_file() 
         try:
@@ -575,11 +580,10 @@ class ShellScriptTest(ExecTest):
             script_file.write(self.script)
             script_file.close()
             # Run the script.
-            result = ExecTest.Run(self, context)
+            ExecTest.Run(self, context, result)
         finally:
             # Clean up the script file.
             os.remove(self.__script_file_name)
-        return result
         
 
     def RunProgram(self, context):
@@ -593,9 +597,9 @@ class ShellScriptTest(ExecTest):
             shell = qm.platform.get_shell_for_script()
         # Make sure the interpreter exists.
         if not qm.is_executable(shell[0]):
-            return Result(Result.ERROR,
-                          cause=qm.message("no shell executable"),
-                          executable=shell_executable)
+            return (Result.ERROR,
+                    { Result.CAUSE : qm.message("no shell executable"),
+                      "ShellScriptTest.executable" : shell_executable })
         # Construct the argument list.  The argument list for the
         # interpreter is followed by the name of the script
         # temporary file, and then the arguments to the script.
@@ -606,11 +610,8 @@ class ShellScriptTest(ExecTest):
             # Run the script.
             os.execve(arguments[0], arguments, self.environment)
         except:
-            return qm.test.base.make_result_for_exception(
-                sys.exc_info(),
-                cause="Exception while running script.")
-
-
+            return make_result_for_exception(
+                "Exception while running script.")
 
 ########################################################################
 # Local Variables:
