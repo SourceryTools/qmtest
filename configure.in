@@ -79,9 +79,24 @@ dnl ####################################################################
 dnl Determine the Python version, installation prefix, and and platform.
 dnl ####################################################################
 
+# The code used to check the version only reports the version accurately
+# with Python 2.0 or greater -- but the minimum acceptable version of
+# Python is already higher than that.
 AC_MSG_CHECKING(Python version)
-PYTHON_MAJOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[[0]]"`
-PYTHON_MINOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[[1]]"`
+PYTHON_MAJOR=`$PYTHON <<EOF
+try:
+  import sys
+  print sys.version_info[[0]]
+except:
+  print 0
+EOF`
+PYTHON_MINOR=`$PYTHON <<EOF
+try:
+  import sys
+  print sys.version_info[[1]]
+except:
+  print 0
+EOF`
 PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 AC_MSG_RESULT($PYTHON_VERSION)
 AC_SUBST(PYTHON_VERSION)

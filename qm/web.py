@@ -22,7 +22,6 @@
 import BaseHTTPServer
 import cgi
 import diagnostic
-import DocumentTemplate
 import errno
 import htmlentitydefs
 import md5
@@ -45,6 +44,15 @@ import urllib
 import user
 import whrandom
 import xmlrpclib
+
+# If the binary modules that are used in the DTML implementation are
+# linked against more recent versions of the C library than are found on
+# the present system, we will get an ImportError.  Catch the exception
+# and pass it on.
+try:
+    import DocumentTemplate
+except ImportError, message:
+    raise qm.common.QMException, message
 
 ########################################################################
 # constants

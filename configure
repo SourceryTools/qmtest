@@ -862,10 +862,25 @@ fi
 fi
 
 
+# The code used to check the version only reports the version accurately
+# with Python 2.0 or greater -- but the minimum acceptable version of
+# Python is already higher than that.
 echo $ac_n "checking Python version""... $ac_c" 1>&6
-echo "configure:867: checking Python version" >&5
-PYTHON_MAJOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[0]"`
-PYTHON_MINOR=`$PYTHON -c "import sys; import string; print string.split(sys.version, '.')[1]"`
+echo "configure:870: checking Python version" >&5
+PYTHON_MAJOR=`$PYTHON <<EOF
+try:
+  import sys
+  print sys.version_info[0]
+except:
+  print 0
+EOF`
+PYTHON_MINOR=`$PYTHON <<EOF
+try:
+  import sys
+  print sys.version_info[1]
+except:
+  print 0
+EOF`
 PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
 echo "$ac_t""$PYTHON_VERSION" 1>&6
 
@@ -878,13 +893,13 @@ if test "$PYTHON_MAJOR" -lt 2 || \
 fi
 
 echo $ac_n "checking Python prefix""... $ac_c" 1>&6
-echo "configure:882: checking Python prefix" >&5
+echo "configure:897: checking Python prefix" >&5
 PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
 echo "$ac_t""$PYTHON_PREFIX" 1>&6
 
 
 echo $ac_n "checking Python platform""... $ac_c" 1>&6
-echo "configure:888: checking Python platform" >&5
+echo "configure:903: checking Python platform" >&5
 PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()" 2>/dev/null`
 if test $? -ne 0; then
   echo "$ac_t""could not be determined" 1>&6
@@ -897,7 +912,7 @@ echo "$ac_t""$PYTHON_PLATFORM" 1>&6
 # Extract the first word of "happydoc", so it can be a program name with args.
 set dummy happydoc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:901: checking for $ac_word" >&5
+echo "configure:916: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_HAPPYDOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -935,7 +950,7 @@ fi
 # Extract the first word of "jade", so it can be a program name with args.
 set dummy jade; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:939: checking for $ac_word" >&5
+echo "configure:954: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -971,7 +986,7 @@ fi
 # Extract the first word of "tidy", so it can be a program name with args.
 set dummy tidy; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:975: checking for $ac_word" >&5
+echo "configure:990: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_TIDY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1008,7 +1023,7 @@ fi
 
 if test "$JADE" != no; then
   echo $ac_n "checking xml.dcl""... $ac_c" 1>&6
-echo "configure:1012: checking xml.dcl" >&5
+echo "configure:1027: checking xml.dcl" >&5
   XML_DCL=no
   for file in \
     /usr/share/doc/jade*/pubtext/xml.dcl \
@@ -1027,7 +1042,7 @@ fi
 
 
 echo $ac_n "checking DocBook stylesheets""... $ac_c" 1>&6
-echo "configure:1031: checking DocBook stylesheets" >&5
+echo "configure:1046: checking DocBook stylesheets" >&5
 DOCBOOK_STYLESHEETS=no
 for dir in \
   /usr/lib/sgml/stylesheets/docbook \
@@ -1044,7 +1059,7 @@ echo "$ac_t""$DOCBOOK_STYLESHEETS" 1>&6
 
 DOCBOOK_DTD=
 echo $ac_n "checking for docbook DTD""... $ac_c" 1>&6
-echo "configure:1048: checking for docbook DTD" >&5
+echo "configure:1063: checking for docbook DTD" >&5
 # Check whether --with-docbook-dtd or --without-docbook-dtd was given.
 if test "${with_docbook_dtd+set}" = set; then
   withval="$with_docbook_dtd"
