@@ -30,8 +30,8 @@
   database be tested by performing unit tests on the C code that makes
   up the database, or by performing integration tests using SQL queries?
   How should the output of a query asking for a set of records be
-  compared to expected output?  Does the order in which the records
-  presented in matter?  These are questions that only someone who
+  compared to expected output?  Does the order in which records are
+  presented matter?  These are questions that only someone who
   understands the application domain can answer.</para>
 
   <para>The domain-independent part of the problem is managing the

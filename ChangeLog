@@ -1,3 +1,7 @@
+2003-06-10  Ricardo Anguiano  <anguiano@codesourcery.com>
+
+	* qm/test/doc/reference.xml: Fixed typo.
+
 2003-06-08  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/base.py (get_extension_directories): Search for
