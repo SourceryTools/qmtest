@@ -213,7 +213,7 @@ fi
 qm_script=`basename $0`
 
 case ${qm_script} in
-    qmtest | qmtest-remote) qm_script_dir=test;;
+    qmtest) qm_script_dir=test;;
     qmtrack) qm_script_dir=track;;
 esac
 

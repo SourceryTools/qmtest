@@ -1,3 +1,7 @@
+2003-04-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/qm.sh: Remove qmtest-remote handling.
+
 2003-03-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/process_target.py (ProcessTarget.__init):  Move
