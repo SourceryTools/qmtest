@@ -1,3 +1,10 @@
+2002-12-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (ChoiceField): New class.
+	* qm/test/test.py (Test.ResourceField): Likewise.
+	(Test.TestField): Likewise.
+	(Test.arguments): Use them.
+
 2002-12-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/result.py (Result): Update documentation string to more

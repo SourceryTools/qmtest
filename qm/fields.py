@@ -2000,7 +2000,44 @@ class BooleanField(EnumerationField):
                                   ["true", "false"], **properties)
 
         
-                                  
+
+class ChoiceField(TextField):
+    """An 'ChoiceField' allows choosing one of several values.
+
+    An 'ChoiceField' is similar to an 'EnumerationField' -- but the
+    choices for an 'ChoiceField' are computed dynamically, rather than
+    chosen statically."""
+
+    def FormatValueAsHtml(self, value, style, name = None):
+
+        if style not in ("new", "edit"):
+            return qm.fields.TextField.FormatValueAsHtml(self, value,
+                                                         style, name)
+
+        # For an editable field, give the user a choice of available
+        # resources.
+        result = "<select"
+        if name:
+            result += ' name="%s"' % name
+        result += ">"
+        for r in self.GetItems():
+            result += '<option value="%s"' % r
+            if r == value:
+                result += ' selected="1"'
+            result += '>%s</option>' % r
+        result += "</select>"
+
+        return result
+    
+
+    def GetItems(self):
+        """Return the options from which to choose.
+
+        returns -- A sequence of strings, each of which will be
+        presented as a choice for the user."""
+
+        raise NotImplementedError
+        
 ########################################################################
 
 class TimeField(IntegerField):

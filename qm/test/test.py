@@ -53,6 +53,7 @@ class TargetGroupField(qm.fields.TextField):
         return desc
 
 
+
 class Test(qm.test.runnable.Runnable):
     """A 'Test' is run to check for correct behavior.
 
@@ -109,6 +110,29 @@ class Test(qm.test.runnable.Runnable):
 
 
 
+    class ResourceField(qm.fields.ChoiceField):
+        """A 'ResourceField' contains the name of a resource.
+
+        The exact format of the name depends on the test database in use."""
+
+        def GetItems(self):
+
+            database = qm.test.cmdline.get_qmtest().GetDatabase()
+            return database.GetResourceIds()
+
+
+
+    class TestField(qm.fields.ChoiceField):
+        """A 'TestField' contains the name of a resource.
+
+        The exact format of the name depends on the test database in use."""
+
+        def GetItems(self):
+
+            database = qm.test.cmdline.get_qmtest().GetDatabase()
+            return database.GetTestIds()
+
+
     arguments = [
         TargetGroupField(
             name="target_group",
@@ -124,7 +148,7 @@ class Test(qm.test.runnable.Runnable):
         qm.fields.SetField(
             qm.fields.TupleField(
                 "prerequisites",
-                (qm.fields.TextField(
+                (TestField(
                     name = "test_id",
                     title = "Test",
                     description = """The name of the prerequisite test.""",
@@ -147,7 +171,7 @@ class Test(qm.test.runnable.Runnable):
                 have the outcome indicated, this test will not be run.""",
                 )),
         qm.fields.SetField(
-            qm.fields.TextField(
+            ResourceField(
                 name = "resources",
                 title = "Resources",
                 description = """Resources on which this test depends.""",
