@@ -1,3 +1,7 @@
+2004-01-08  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/doc/reference.xml: Fix typo.
+
 2004-01-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (Extension.MakeDomElement): New method.

@@ -1123,7 +1123,7 @@
 
     <para>The <replaceable>kind</replaceable> argument tells QMTest
     what kind of extension class you are registering.  If you invoke 
-    <command&qmtest-cmd; register</command> with no arguments it will
+    <command>&qmtest-cmd; register</command> with no arguments it will
     provide you with a list of the available extension kinds.</para>
 
     <para>The <replaceable>class-name</replaceable> argument gives the
