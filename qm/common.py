@@ -35,15 +35,19 @@
 # imports
 ########################################################################
 
+import ConfigParser
 import cPickle
+import imp
 import os
 import os.path
 import re
 import socket
 import string
+import sys
 import time
 import traceback
 import types
+import xml.dom
 
 ########################################################################
 # exceptions
@@ -263,22 +267,120 @@ class MapReplacer:
 
 
 
+class RcConfiguration:
+    """Interface object to QM configuration files.
+
+    Configuration files are in the format parsed by the standard
+    'ConfigParser' module, namely 'win.ini'--style files."""
+
+    # FIXME: Call it "qm.ini" under Windows?
+    user_rc_file_name = ".qmrc"
+    """The name of the user configuration file."""
+
+
+    def __init__(self):
+        """Create a new configuration instance."""
+
+        self.__parser = None
+
+
+    def Load(self, section):
+        """Load configuration.
+
+        'section' -- The configuration section from which subsequent
+        varaibles are loaded."""
+
+        self.__parser = self.__Load()
+        self.__section = section
+
+
+    def Get(self, option, default, section=None):
+        """Retrieve a configuration variable.
+
+        'option' -- The name of the option to retrieve.
+
+        'default' -- The default value to return if the option is not
+        found.
+
+        'section' -- The section from which to retrieve the option.
+        'None' indicates the section specified to the 'Load' method for
+        this instance.  Use '"DEFAULT"' for the default section, i.e. to
+        access options declared outside of another section.
+
+        precondition -- The RC configuration must be loaded."""
+
+        assert self.__parser is not None
+        
+        # Use the previously-specified default section, if one wasn't
+        # specified explicitly.
+        if section is None:
+            section = self.__section
+
+        try:
+            # Try to get the requested option.
+            return self.__parser.get(self.__section, option)
+        except ConfigParser.NoSectionError:
+            # Couldn't find the section.
+            return default
+        except ConfigParser.NoOptionError:
+            # Couldn't find the option.
+            return default
+
+
+    def GetOptions(self, section=None):
+        """Return a sequence of options.
+
+        'section' -- The section for which to list options, or 'None'
+        for the section specified to 'Load'.
+
+        precondition -- The RC configuration must be loaded."""
+
+        # Use the previously-specified default section, if one wasn't
+        # specified explicitly.
+        if section is None:
+            section = self.__section
+        try:
+            options = self.__parser.options(section)
+        except ConfigParser.NoSectionError:
+            # Couldn't find the section.
+            return []
+        else:
+            # 'ConfigParser' puts in a magic option '__name__', which is
+            # the name of the section.  Remove it.
+            if "__name__" in options:
+                options.remove("__name__")
+            return options
+
+
+    def __Load(self):
+        """Load the configuration from the appropriate places."""
+
+        # Construct the path to the user's rc file.
+        # FIXME: Do something different under Windows.  
+        home_directory = os.environ["HOME"]
+        rc_file = os.path.join(home_directory, self.user_rc_file_name)
+        # Create a parser, and read the configuration.
+        parser = ConfigParser.ConfigParser()
+        parser.read(rc_file)
+        # Note that 'read' returns silently if the file is missing;
+        # that's fine.
+        return parser
+
+
 ########################################################################
 # functions
 ########################################################################
 
-base_directory = None
-
 def get_base_directory():
     """Return the absolute path to the top QM Python directory."""
 
-    assert base_directory is not None
-    return base_directory
+    return os.environ["QM_BASE_PATH"]
 
 
 __label_regex = re.compile("[a-z0-9_]+$")
+__label_regex_with_dot = re.compile("[a-z0-9_.]+$")
 
-def is_valid_label(label, user=1):
+def is_valid_label(label, user=1, allow_periods=0):
     """Test whether 'label' is a valid label.
 
     A valid label is a string consisting of lower-case letters,
@@ -290,9 +392,18 @@ def is_valid_label(label, user=1):
     rejected.  Labels beginning with an underscore are reserved for
     internal use.
 
+    'allow_periods' -- If true, allow a period in the label, as a path
+    separator. 
+
     returns -- True if 'label' is valid."""
 
-    if not __label_regex.match(label):
+    # Choose the appropriate regular expression.
+    if allow_periods:
+        regex = __label_regex_with_dot
+    else:
+        regex = __label_regex
+    # Try to match.
+    if not regex.match(label):
         return 0
     # The regex doesn't match empty strings, so this indexing is OK.
     if user and label[0] == '_':
@@ -341,22 +452,26 @@ def get_host_name():
             name = socket.gethostbyname_ex(socket.gethostname())[0]
         except socket.error:
             name = None
-        # That didn't work.  Just use the local name.
+
         if name is None:
+            # That didn't work.  Just use the local name.
             try:
                 name = socket.gethostname()
             except socket.error:
                 pass
-        # That didn't work either.  Check if the host name is stored in
-        # the environment.
+
         if name is None:
+            # That didn't work either.  Check if the host name is stored
+            # in the environment.
             try:
                 name = os.environ["HOSTNAME"]
             except KeyError:
                 pass
-        # We're stumped.  Use localhost.
+
         if name is None:
+            # We're stumped.  Use localhost.
             name = "localhost"
+
         # Store the name for next time.
         __host_name = name
 
@@ -391,10 +506,10 @@ def format_byte_count(bytes):
     tb = gb * 1024
     
     for name, order in [
-        ("TB", 1024.0 ** 4),
-        ("GB", 1024.0 ** 3),
-        ("MB", 1024.0 ** 2),
-        ("KB", 1024.0 ** 1),
+        ("TB", tb),
+        ("GB", gb),
+        ("MB", mb),
+        ("KB", kb),
         ]:
         if bytes >= order:
             return "%.1f %s" % (bytes / order, name)
@@ -444,6 +559,166 @@ def convert_from_dos_text(text):
 
     return string.replace(text, "\n\r", "\n")
 
+
+def get_dom_node_text(node):
+    """Return the text contained in DOM 'node'.
+
+    'node' -- A DOM element node.
+
+    prerequisites -- 'node' is an element node with exactly one child,
+    which is a text node."""
+
+    assert node.nodeType == xml.dom.Node.ELEMENT_NODE
+    assert len(node.childNodes) == 1
+    child = node.childNodes[0]
+    assert child.nodeType == xml.dom.Node.TEXT_NODE
+    return child.data
+
+
+def get_child_dom_node_text(node, child_tag):
+    """Return the text contained in a child of DOM 'node'.
+
+    'child_tag' -- The tag of the child node whose text is to be
+    retrieved.
+
+    prerequisites -- 'node' is an element node with exactly one child
+    with the tag 'child_tag'.  That child has exactly one child, which
+    is a text node."""
+
+    assert node.nodeType == xml.dom.Node.ELEMENT_NODE
+    children = node.getElementsByTagName(child_tag)
+    assert len(children) == 1
+    return get_dom_node_text(children[0])
+
+
+def load_module(name, path):
+    """Load a Python module.
+
+    'name' -- The fully-qualified name of the module to load, for
+    instance 'package.subpackage.module'.
+
+    'path' -- A sequence of directory paths in which to search for the
+    module, analogous to 'PYTHONPATH'.
+
+    returns -- A module object.
+
+    raises -- 'ImportError' if the module cannot be found."""
+
+    # The implementation of this function follows the prescription in
+    # the documentation for the standard Python 'imp' module.  See also
+    # the 'knee' package included unofficially in the standard Python
+    # library. 
+
+    # Is the module already loaded?
+    try:
+        module = sys.modules[name]
+        # It's listed; is there a module instance there?
+        if module is not None:
+            return module
+        # Nope; go on loading.
+    except KeyError:
+        # No; that's OK.
+        pass
+    # The module may be in a package.  Split the module path into
+    # components. 
+    components = string.split(name, ".")
+    if len(components) > 1:
+        # The module is in a package.  Construct the name of the
+        # containing package.
+        parent_package = string.join(components[:-1], ".")
+        # Load the containing package.
+        package = load_module(parent_package, path)
+        # Look for the module in the parent package.
+        path = package.__path__
+    else:
+        # No containing package.
+        package = None
+    # The name of the module itself is the last component of the module
+    # path.  
+    module_name = components[-1]
+    # Locate the module.
+    file, file_name, description = imp.find_module(module_name, path)
+    # Find the module.
+    try:
+        module = imp.load_module(name, file, file_name, description)
+        # Loaded successfully.  If it's contained in a package, put it
+        # into that package's name space.
+        if package is not None:
+            setattr(package, module_name, module)
+        return module
+    finally:
+        # Close the module file, if one was opened.
+        if file is not None:
+            file.close()
+        
+        
+def load_class(name, path):
+    """Load a Python class.
+
+    'name' -- The fully-qualified (including package and module names)
+    class name, for instance 'package.subpackage.module.MyClass'.  The
+    class must be at the top level of the module's namespace, i.e. not
+    nested in another class.
+
+    'path' -- A sequence of directory paths in which to search for the
+    containing module, analogous to 'PYTHONPATH'.
+
+    returns -- A class object.
+
+    raises -- 'ImportError' if the module containing the class can't be
+    imported, or if there is no class with the specified name in that
+    module, or if 'name' doesn't correspond to a class."""
+
+    # Make sure the class name is fully-qualified.  It must at least be
+    # in a top-level module, so there should be at least one module path
+    # separator. 
+    if not "." in name:
+        raise ValueError, \
+              "%s it not a fully-qualified class name" % name
+    # Split the module path into components.
+    components = string.split(name, ".")
+    # Reconstruct the full path to the containing module.
+    module_name = string.join(components[:-1], ".")
+    # The last element is the name of the class.
+    class_name = components[-1]
+    # Load the containing module.
+    module = load_module(module_name, path)
+    # Exctract the requested class.
+    try:
+        klass = module.__dict__[class_name]
+        if not isinstance(klass, types.ClassType):
+            # There's something by that name, but it's not a class
+            raise ImportError, "%s is not a class" % name
+        return klass
+    except KeyError:
+        # There's no class with the requested name.
+        raise ImportError, \
+              "no class named %s in module %s" % (class_name, module_name)
+    
+    
+def split_path_fully(path):
+    """Split 'path' into components.
+
+    Uses 'os.path.split' recursively on the directory components of
+    'path' to separate all path components.
+
+    'path' -- The path to split.
+
+    returns -- A list of path componets."""
+
+    dir, entry = os.path.split(path)
+    if dir == "" or dir == os.sep:
+        return [ entry ]
+    else:
+        return split_path_fully(dir) + [ entry ]
+
+
+########################################################################
+# variables
+########################################################################
+
+rc = RcConfiguration()
+"""The configuration stored in system and user rc files."""
 
 ########################################################################
 # Local Variables:

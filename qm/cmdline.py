@@ -249,7 +249,7 @@ class CommandParser:
 
         help_string = "Usage: %s " % self.__name
         help_string = help_string \
-                      + "[ flags ] command [ command-flags ] [ arguments ]\n\n"
+                      + "[ FLAGS ] COMMAND [ COMMAND-FLAGS ] [ ARGUMENTS ]\n\n"
         help_string = help_string + "flags:\n"
         help_string = help_string + self.GetOptionsHelp(self.__options)
         help_string = help_string + "\ncommands:\n"
@@ -258,8 +258,9 @@ class CommandParser:
             help_add = "%-30s: %s"%(command[0], command[1])
             help_string = help_string + "  %s\n"%(help_add)
         help_string = help_string \
-                      + "\nInvoke %s command --help for additional " \
-                      "usage information.\n\n" % self.__name
+                      + "\nInvoke\n  %s COMMAND --help\n" \
+                      "for information about " \
+                      "COMMAND-FLAGS and ARGUMENTS.\n\n" % self.__name
 
         return help_string
 
@@ -271,7 +272,7 @@ class CommandParser:
 
         returns -- A string of help for a given command."""
 
-        help_string = "Usage: %s %s [ flags ] "%(self.__name, command)
+        help_string = "Usage: %s %s [ FLAGS ] "%(self.__name, command)
         for command_item in self.__commands:
             if command_item[0] == command:
                 help_string = help_string + command_item[2] + "\n\n"

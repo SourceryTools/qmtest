@@ -15,6 +15,17 @@
     for more information on obtaining the tools.
 
 
+    To run QM, you will need a Python 1.5.2 distribution.  In addition,
+    you'll need the PyXML package.  This is not included in the QM
+    distribution, and must be installed separately.  The package is
+    availabe from
+
+      http://sourceforge.net/projects/pyxml
+
+    Future versions of Python include this as part of the standard
+    Python library; when QM updates to a newer version, this requirement
+    will be removed.
+
 ------------------------------------------------------------------------
 
 2.  BUILDING QM

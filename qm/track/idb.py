@@ -438,33 +438,6 @@ def get_idb_class(idb_type):
         raise ValueError, "unknown IDB type %s" % idb_type
 
 
-def get_field_type_description_for_query(field):
-    """Return a summary of how to use 'field' in Python query expressions."""
-
-    if isinstance(field, qm.fields.EnumerationField):
-        enumerals = field.GetEnumerals()
-        enumerals = map(lambda x: '"%s"' % x[0], enumerals)
-        return "an enumeration of %s" % string.join(enumerals, ", ")
-    elif isinstance(field, qm.fields.TimeField):
-        return "a date/time (right now, it is %s)" % field.GetCurrentTime()
-    elif isinstance(field, issue_class.IidField):
-        return "a valid issue ID"
-    elif isinstance(field, qm.fields.UidField):
-        return "a valid user ID"
-    elif isinstance(field, qm.fields.IntegerField):
-        return "an integer"
-    elif isinstance(field, qm.fields.TextField):
-        return "a string"
-    elif isinstance(field, qm.fields.SetField):
-        contained_field = field.GetContainedField()
-        return "a sequence; each element is %s" \
-               % get_field_type_description_for_query(contained_field)
-    elif isinstance(field, qm.fields.AttachmentField):
-        return "an attachment; may not be used in queries"
-    else:
-        raise NotImplementedError
-
-
 ########################################################################
 # Local Variables:
 # mode: python

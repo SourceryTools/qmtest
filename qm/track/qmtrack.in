@@ -72,12 +72,8 @@ try:
                 # The environment variable isn't set.  We don't know where to
                 # find the IDB, so bail.
                 raise qm.cmdline.CommandError, \
-"""Could not find the issue database (IDB).
-
-You may specify the path to the issue base by
-  * using the '--idb' command option
-  * or setting the %s environment variable to the IDB path.
-""" % environment_variable_name
+                      qm.error("missing idb",
+                               envvar=environment_variable_name)
 
         # Open a session to the IDB.
         qm.track.open_idb(idb_path)

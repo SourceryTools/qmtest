@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   query.py
-# Author: Alex Samue,
-# Date:   2001-02-21
+# File:   __init__.py
+# Author: Alex Samuel
+# Date:   2001-03-14
 #
 # Contents:
-#   Web form for initiating queries.
+#   Initialization for module containing standard test classes.
 #
 # Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -31,58 +31,9 @@
 #
 ########################################################################
 
-"""Web form for initiating queries.
-
-This form is generated from the DTML template query.dtml."""
-
 ########################################################################
 # imports
 ########################################################################
-
-import qm.track
-import qm.track.sql_idb
-import qm.web
-import web
-
-########################################################################
-# classes
-########################################################################
-
-class QueryPageInfo(web.PageInfo):
-    """DTML context for generating 'query.dtml'."""
-
-    def __init__(self, request):
-        # Perform base class initialization.
-        web.PageInfo.__init__(self, request)
-        # Grab the list of fields available in a query.
-        # FIXME: For now use, fields of the default class.
-        default_class = qm.track.get_default_class()
-        self.fields = default_class.GetFields()
-
-
-    def MakeQueryForm(self):
-        request = qm.web.WebRequest("summary")
-        return qm.web.make_form_for_request(request)
-
-
-    def GetFieldTypeDescription(self, field):
-        """Return a description of how to use this field."""
-
-        description = field.GetTypeDescription()
-        return qm.web.format_structured_text(description)
-            
-
-
-########################################################################
-# functions
-########################################################################
-
-def handle_query(request):
-    """Generate the query page."""
-
-    page_info = QueryPageInfo(request)
-    return web.generate_html_from_dtml("query.dtml", page_info)
-
 
 ########################################################################
 # Local Variables:

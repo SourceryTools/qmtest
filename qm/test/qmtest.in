@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   query.py
-# Author: Alex Samue,
-# Date:   2001-02-21
+# File:   qmtest.in
+# Author: Alex Samuel
+# Date:   2001-03-15
 #
 # Contents:
-#   Web form for initiating queries.
+#   QMTest command line application.
 #
 # Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -31,62 +31,52 @@
 #
 ########################################################################
 
-"""Web form for initiating queries.
-
-This form is generated from the DTML template query.dtml."""
+# Set up the Python module lookup path to find QMTrack.
+execfile("@qm_setup_path_script@")
 
 ########################################################################
 # imports
 ########################################################################
 
-import qm.track
-import qm.track.sql_idb
-import qm.web
-import web
-
-########################################################################
-# classes
-########################################################################
-
-class QueryPageInfo(web.PageInfo):
-    """DTML context for generating 'query.dtml'."""
-
-    def __init__(self, request):
-        # Perform base class initialization.
-        web.PageInfo.__init__(self, request)
-        # Grab the list of fields available in a query.
-        # FIXME: For now use, fields of the default class.
-        default_class = qm.track.get_default_class()
-        self.fields = default_class.GetFields()
-
-
-    def MakeQueryForm(self):
-        request = qm.web.WebRequest("summary")
-        return qm.web.make_form_for_request(request)
-
-
-    def GetFieldTypeDescription(self, field):
-        """Return a description of how to use this field."""
-
-        description = field.GetTypeDescription()
-        return qm.web.format_structured_text(description)
-            
-
+import cmdline
+import qm.cmdline
+import sys
 
 ########################################################################
 # functions
 ########################################################################
 
-def handle_query(request):
-    """Generate the query page."""
+def print_error_message(self, message):
+    sys.stderr.write("%s: %s\n" % (program_name, message))
 
-    page_info = QueryPageInfo(request)
-    return web.generate_html_from_dtml("query.dtml", page_info)
 
+########################################################################
+# script
+########################################################################
+
+program_name = sys.argv[0]
+
+try:
+    # Parse the command line.
+    command = cmdline.Command(program_name, sys.argv[1:])
+    # Execute the command.
+    command.Execute(sys.stdout)
+    exit_code = 0
+
+except RuntimeError, msg:
+    print_error_message(msg)
+    exit_code = 1
+
+except qm.cmdline.CommandError, msg:
+    print_error_message(msg
+                        + "\n\nInvoke %s --help for help with usage.\n")
+    exit_code = 2
+
+# End the program.
+sys.exit(exit_code)
 
 ########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
-# fill-column: 72
 # End:

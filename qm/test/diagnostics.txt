@@ -1,13 +1,13 @@
 ########################################################################
 #
-# File:   __init__.py
+# File:   diagnostics.txt
 # Author: Alex Samuel
-# Date:   2000-12-20
+# Date:   2001-03-08
 #
 # Contents:
-#   Initialization for module qm.
+#   QMTest diagnostic message templates.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,15 +31,49 @@
 #
 ########################################################################
 
-########################################################################
-# imports
-########################################################################
+# Please keep diagnostics in alphabetical order by tag.
 
-from qm.common import *
-from qm.diagnostic import error, warning
+@ class is not test class
+The class %(class_name)s is not a test class.  A test class must be a
+subclass of 'qm.test.base.Test'.
+
+@ db path doesn't exist
+The path you specified for the test database, %(path)s, does not exist. 
+
+@ db path exists
+The path you specified for the test database, %(path)s, already exists.
+
+@ invalid context key
+The context key "%(key)s" is not valid.  Context keys may contain
+lower-case letters, digits, underscores, and periods.
+
+@ invalid test id
+The test ID "%(id)s" is not valid.  Test IDs may contain lower-case
+letters, digits, and underscores, and periods.
+
+@ no db specified
+You must specify the location of the test database.  
+
+  * Specify the '--db-path' option with the path to the database.
+
+  * Or, set the '%(envvar)s' environment variable to the path to the
+    database. 
+
+@ no ids specified
+You must specify one or more test or suite IDs.
+
+@ unknown id in suite
+The ID "%(id)s" in suite "%(suite)s" does not exist.
+
+@ xml invalid arg name
+The $(name) is not the name of an argument of this test class.
+
+@ xml not int value
+The text "$(value)" is not an integer value.
 
 ########################################################################
 # Local Variables:
-# mode: python
+# mode: text
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

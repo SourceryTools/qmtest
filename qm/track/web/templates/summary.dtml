@@ -46,38 +46,50 @@
 
      <dtml-in name="issue_classes">
      <dtml-let issue_class=sequence-item
+               index=sequence-index
                issues="issue_map[issue_class]">
 
-      <tr bgcolor="white">
-       <th class="issue_class" 
-           colspan="<dtml-var expr="_.len(field_names)">">
-        <dtml-var expr="issue_class.GetTitle()">
-       </th>
-      </tr>
+      <dtml-comment><!--
+        If the results contain issues from more than one class, precede
+        the issues of each class with the class title.
+      --></dtml-comment>
+      <dtml-if expr="_.len(issue_classes) > 1">
+       <tr>
+        <th class="issue_class" 
+            colspan="<dtml-var expr="_.len(field_names)">">
+        </th>
+       </tr>
+       <tr>
+        <th class="issue_class" 
+            colspan="<dtml-var expr="_.len(field_names)">">
+         <dtml-var expr="issue_class.GetTitle()">
+        </th>
+       </tr>
+      </dtml-if>
 
-       <dtml-in name="issues">
-       <dtml-with expr="_.namespace(issue=_['sequence-item'])">
-        <dtml-if expr="IsIssueShown(issue)">
-         <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
-          <dtml-in name="field_names">
-          <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
-           <td>
-            <dtml-if expr="IsLinkToIssue(issue, field_name)">
-             <a href="<dtml-var expr="MakeIssueUrl(issue)">">
-            </dtml-if>
-            <font color="<dtml-var expr="GetForegroundColor(issue)">">
-             <dtml-var expr="FormatFieldValue(issue, field_name)">
-            </font>
-            <dtml-if expr="IsLinkToIssue(issue, field_name)">
-             </a>
-            </dtml-if>
-           </td>
-          </dtml-with>
-          </dtml-in>
-         </tr>
-        </dtml-if>
-       </dtml-with>
-       </dtml-in>
+      <dtml-in name="issues">
+      <dtml-with expr="_.namespace(issue=_['sequence-item'])">
+       <dtml-if expr="IsIssueShown(issue)">
+        <tr bgcolor="<dtml-var expr="GetBackgroundColor(issue)">">
+         <dtml-in name="field_names">
+         <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
+          <td>
+           <dtml-if expr="IsLinkToIssue(issue, field_name)">
+            <a href="<dtml-var expr="MakeIssueUrl(issue)">">
+           </dtml-if>
+           <font color="<dtml-var expr="GetForegroundColor(issue)">">
+            <dtml-var expr="FormatFieldValue(issue, field_name)">
+           </font>
+           <dtml-if expr="IsLinkToIssue(issue, field_name)">
+            </a>
+           </dtml-if>
+          </td>
+         </dtml-with>
+         </dtml-in>
+        </tr>
+       </dtml-if>
+      </dtml-with>
+      </dtml-in>
 
      </dtml-let>
      </dtml-in>

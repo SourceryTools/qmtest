@@ -97,8 +97,12 @@ begin with an underscore.
 lower-case letters, digits, and underscores, and may not begin with an
 underscore. 
 
-@ command error
-No command specified. You must specify a command to qmtrack.
+@ missing idb
+You did not specify an issue database (IDB).  Either
+
+  * Specify the '--idb' command option to the IDB path.
+
+  * Or, set the '%(envvar)s' environment variable to the IDB path.
 
 @ create no equals
 Incorrect argument "%(arg)". Must have an = in the argument passed to the
@@ -180,3 +184,10 @@ The --idb option is not allowed to this command.
 
 @ initialize no idb path
 You must specify an IDB path to the initialize command.
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

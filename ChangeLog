@@ -1,3 +1,81 @@
+2001-03-16  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: Update requirements.
+	* qm/__init__.py: Import error and warning.
+	* qm/diagnostic.py: Add doc string.  Improve comments.
+	(DiagnosticSet.__init__): Don't take program name.  Don't load.
+	(DiagnosticSet.ReadFile): Rename to...
+	(DiagnosticSet.ReadFromFile): ... this.
+	(DiagnosticSet.Generate): Rewrite.
+	(error): New function.
+	(warning): Likewise.
+	(diagnostic_set): New variable.
+	Initialize generic diagnostics.
+	* qm/diagnostics.txt: New file.
+	* qm/setup_path.py.in: Put base directory in environment.
+	* qm/common.py (base_directory): Remove.
+	(get_base_directory): Get from environment.
+	(RcConfiguration): New class.
+	(__label_regex_with_dot): New variable.
+	(is_valid_label): Add allow_periods parameter.
+	(get_host_name): Improve comments.
+	(format_byte_count): Use constants.
+	(get_dom_node_text): New function.
+	(get_child_dom_node_text): Likewise.
+	(load_module): Likewise.
+	(load_class): Likewise.
+	(split_path_fully): Likewise.
+	(rc): New variable.
+	* qm/cmdline.py (CommandParser.GetBasicHelp): Adjust output.
+	(CommandParser.GetCommandHelp): Likewise,
+	* qm/fields.py (DomNodeError): New class.
+	(Field.GetTypeDescription): New method.
+	(Field.GetValueFromDomNode): Likewise.
+	(IntegerField.GetTypeDescription): Likewise.
+	(IntegerField.GetValueFromDomNode): Likewise.
+	(TextField.GetTypeDescription): Likewise.
+	(TextField.GetValueFromDomNode): Likwise.
+	(SetField.GetTypeDescription): Likewise.
+	(SetField.GetValueFromDomNode): Likewise.
+	(AttachmentField.GetTypeDescription): Likewise.
+	(AttachmentField.GetValueFromDomNode): Likewise.
+	(EnumerationField.GetTypeDescription): Likewise.
+	(EnumerationField.GetValueFromDomNode): Likewise.a
+	(TimeField.GetTypeDescription): Likewise.
+	(UidField.GetTypeDescription): Likewise.
+
+	* qm/track/__init__.py: Import error and warning.
+	* qm/track/qmtrack.in: Use diagnostic "missing idb".
+	* qm/track/issue_class.py (IidField.GetTypeDescription): New method.
+	* qm/track/idb.py (get_field_type_description_for_query): Remove.
+	* qm/track/diagnostics.txt (command error): Remove.
+	(missing idb): New diagnostic.
+	* qm/track/config.py (__diagnostics): Remove.
+	(diagnostic): Likewise.
+	(error): Likewise.
+	(warning): Likewise.
+	Load diagnostics.
+	* qm/track/cmdline.py (Command.command): Remove.
+	(Command.Execute): Use "missing command" diagnostic.
+
+	* qm/track/web/query.py (QueryPageInfo.GetFieldTypeDescription):
+	Use GetTypeDescription method. 
+	* qm/track/web/templates/summary.dtml: Show groupings only if
+	there is more than one issue class.  Improve formatting.
+	* qm/track/web/stylesheets/qmtrack.css (th.issue_class): Set
+	background-color to grey.
+
+	* qm/test: New directory.
+	* qm/test/__init__.py: New file.
+	* qm/test/base.py: Likewise.
+	* qm/test/cmdline.py: Likewise.
+	* qm/test/diagnostics.txt: Likewise.
+	* qm/test/qmtest.in: Likewise.
+	* qm/test/test.dtd: Likewise.
+	* qm/test/xmldb.py: Likewise.
+	* qm/test/classes: New directory.
+	* qm/test/classes/__init__.py: New file.
+
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PrivilegedPortError): New class.

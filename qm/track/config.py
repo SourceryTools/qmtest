@@ -76,9 +76,6 @@ __gobal_lock = None
 # local mode; otherwise always 'None'.
 __idb = None
 
-# The set of diagnostics for this program.
-__diagnostics = None
-
 ########################################################################
 # functions
 ########################################################################
@@ -465,49 +462,6 @@ def setup_idb_for_test():
         idb.AddIssue(i)
     
 
-def diagnostic(tag, severity, output, **substitutions):
-    """Generate or emit a diagnostic.
-
-    'tag' -- The associated tag.
-
-    'severity' -- A severity code.
-
-    'output' -- A file object to which to write the diagnostic, or
-    'None'.
-
-    returns -- The diagnostic."""
-
-    global __diagnostics
-
-    # Perform one-time initialization, if it hasn't been done.
-    if __diagnostics is None:
-        diagnostics_file = os.path.join(qm.common.base_directory,
-                                        "track",
-                                        "diagnostics.txt")
-        __diagnostics = qm.diagnostic.DiagnosticSet(diagnostics_file,
-                                                    get_name())
-    # Generate or emit the diagnostic.
-    return apply(__diagnostics.Generate,
-                 (tag, severity, output),
-                 substitutions)
-
-
-def error(tag, output=None, **substitutions):
-    """Generate or emit an error diagnostic.
-
-    Like 'diagnostic', with 'severity' set to error."""
-
-    return apply(diagnostic, (tag, "error", output, ), substitutions)
-
-    
-def warning(tag, output=None, **substitutions):
-    """Generate or emit an error diagnostic.
-
-    Like 'diagnostic', with 'severity' set to warning."""
-
-    return apply(diagnostic, (tag, "warning", output, ), substitutions)
-
-    
 # Local helper functions.
 
 def __get_configuration_path(path):
@@ -519,7 +473,15 @@ def __get_configuration_path(path):
 
 
 ########################################################################
+# initialization
+########################################################################
+
+# Load QMTrack diagnostics.
+qm.diagnostic.diagnostic_set.ReadFromFile("track", "diagnostics.txt")
+                                                       
+########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

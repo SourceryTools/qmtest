@@ -1,13 +1,13 @@
 ########################################################################
 #
-# File:   __init__.py
+# File:   diagnostics.txt
 # Author: Alex Samuel
-# Date:   2000-12-20
+# Date:   2001-03-08
 #
 # Contents:
-#   Initialization for module qm.
+#   Common QMTrack diagnostic message templates.
 #
-# Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,15 +31,22 @@
 #
 ########################################################################
 
-########################################################################
-# imports
-########################################################################
+# Please keep diagnostics in alphabetical order by tag.
 
-from qm.common import *
-from qm.diagnostic import error, warning
+@ missing command
+You must specify a command.  Use the '--help' option to list commands.
+
+@ dom bad integer
+The value "%(value)s" is not an integer.  The contents of an '<integer>'
+node must be an integer.
+
+@ dom wrong tag for field
+A '<%(wrong_tag)s>' element is not allowed for field %(field)s.  Only a
+'<%(right_tag)s>' element may be used.
 
 ########################################################################
 # Local Variables:
-# mode: python
+# mode: text
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

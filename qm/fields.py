@@ -35,11 +35,27 @@
 # imports
 ########################################################################
 
+import common
 import mimetypes
 import qm
+import diagnostic
 import string
 import time
 import urllib
+import xml.dom
+
+########################################################################
+# exceptions
+########################################################################
+
+class DomNodeError(Exception):
+    """An error extracting a field value from an XML DOM node.
+
+    See 'Field.GetValueFromDomNode'."""
+
+    pass
+
+
 
 ########################################################################
 # classes
@@ -166,6 +182,12 @@ class Field:
         """Return a description of this field."""
 
         return self.GetAttribute("description", "(no description)")
+
+
+    def GetTypeDescription(self):
+        """Return a structured text description of valid values."""
+
+        raise qm.MethodShouldBeOverriddenError
 
 
     def SetDefaultValue(self, value):
@@ -311,9 +333,22 @@ class Field:
 
 
     def FormDecodeValue(self, encoding):
-        """Unencode the form-encoded 'encoding' and return a value."""
+        """Unencode the HTML form-encoded 'encoding' and return a value."""
 
         raise qm.MethodShouldBeOverriddenError, "Field.FormDecodeValue"
+
+
+    def GetValueFromDomNode(self, node):
+        """Return a value for this field represented by DOM 'node'.
+
+        This method does not validate the value for this particular
+        instance; it only makes sure the node is well-formed, and
+        returns a value of the correct Python type.
+
+        raises -- 'DomNodeError' if the node's structure or contents are
+        incorrect for this field."""
+
+        raise qm.MethodShouldBeOverriddenError, "Field.GetValueFromDomNode"
 
 
 
@@ -333,6 +368,10 @@ class IntegerField(Field):
         Field.__init__(self, name)
         # Set the default value.
         self.SetDefaultValue(default_value)
+
+
+    def GetTypeDescription(self):
+        return "an integer"
 
 
     def Validate(self, value):
@@ -367,6 +406,25 @@ class IntegerField(Field):
     def FormDecodeValue(self, encoding):
         return int(encoding)
     
+
+    def GetValueFromDomNode(self, node):
+        # Make sure 'node' is an '<integer>' element.
+        if node.nodeType != xml.dom.Node.ELEMENT_NODE \
+           or node.tagName != "integer":
+            raise DomNodeError, \
+                  diagnostic.error("dom wrong tag for field",
+                                   name=self.GetName(),
+                                   right_tag="integer",
+                                   wrong_tag=node.tagName)
+        # Retrieve the contained text.
+        value = common.get_dom_node_text(node)
+        # Convert it to an integer.
+        try:
+            return int(value)
+        except ValueError:
+            raise DomNodeError, \
+                  diagnostic.error("dom bad integer", value=value)
+
 
 
 ########################################################################
@@ -405,6 +463,10 @@ class TextField(Field):
         # Set the default field value.
         self.SetDefaultValue(default_value)
 
+
+    def GetTypeDescription(self):
+        return "a string"
+    
 
     def Validate(self, value):
         # Be forgiving, and try to convert 'value' to a string if it
@@ -487,6 +549,19 @@ class TextField(Field):
         return urllib.unquote(encoding)
 
 
+    def GetValueFromDomNode(self, node):
+        # Make sure 'node' is a '<text>' element.
+        if node.nodeType != xml.dom.Node.ELEMENT_NODE \
+           or node.tagName != "text":
+            raise DomNodeError, \
+                  diagnostic.error("dom wrong tag for field",
+                                   name=self.GetName(),
+                                   right_tag="text",
+                                   wrong_tag=node.tagName)
+        # Just the text, ma'am.
+        return common.get_dom_node_text(node)
+
+
 
 ########################################################################
 
@@ -525,6 +600,11 @@ class SetField(Field):
         # Set the default field value to any empty set.
         self.SetDefaultValue([])
 
+
+    def GetTypeDescription(self):
+        return "a sequence; each element is %s" \
+               % self.GetContainedField().GetTypeDescription()
+    
 
     def Validate(self, value):
         # Assume 'value' is a sequence.  Copy it, simultaneously
@@ -765,6 +845,21 @@ class SetField(Field):
         raise NotImplementedError
 
 
+    def GetValueFromDomNode(self, node):
+        # Make sure 'node' is a '<set>' element.
+        if node.nodeType != xml.dom.Node.ELEMENT_NODE \
+           or node.tagName != "set":
+            raise DomNodeError, \
+                  diagnostic.error("dom wrong tag for field",
+                                   name=self.GetName(),
+                                   right_tag="set",
+                                   wrong_tag=node.tagName)
+        # Use the contained field to extract values for the children of
+        # this node, which are the set elements.
+        contained_field = self.GetContainedField()
+        return map(contained_field.GetValueFromDomNode, node.childNodes)
+
+
 
 ########################################################################
 
@@ -789,6 +884,10 @@ class AttachmentField(Field):
         Field.__init__(self, name)
         # Set the default value of this field.
         self.SetDefaultValue(None)
+
+
+    def GetTypeDescription(self):
+        return "an attachment"
 
 
     def Validate(self, value):
@@ -990,7 +1089,33 @@ class AttachmentField(Field):
             return ""
         else:
             return attachment.GetDescription()
-        
+
+
+    def GetValueFromDomNode(self, node):
+        # Make sure 'node' is an '<attachment>' element.
+        if node.nodeType != xml.dom.Node.ELEMENT_NODE \
+           or node.tagName != "attachment":
+            raise DomNodeError, \
+                  diagnostic.error("dom wrong tag for field",
+                                   name=self.GetName(),
+                                   right_tag="attachment",
+                                   wrong_tag=node.tagName)
+        # There should be only four child nodes.
+        assert len(node.childNodes) == 4
+        # One is the description.
+        description = common.get_child_dom_node_text(node, "description")
+        # One is the MIME type.
+        mime_type = common.get_child_dom_node_text(node, "mime_type")
+        # One is the file name.
+        file_name = common.get_child_dom_node_text(node, "file_name")
+        # One is the location.
+        location = common.get_child_dom_node_text(node, "location")
+        # Construct the resulting attachment.
+        return Attachment(location=location,
+                          mime_type=mime_type,
+                          description=description,
+                          file_name=file_name)
+
 
 
 ########################################################################
@@ -1037,6 +1162,12 @@ class EnumerationField(IntegerField):
         IntegerField.__init__(self, name, default_value)
         # Store the enumeration as an attribute.
         self.SetAttribute("enumeration", repr(enumeration))
+
+
+    def GetTypeDescription(self):
+        enumerals = self.GetEnumerals()
+        enumerals = map(lambda en: "'%s'" % en[0], enumerals)
+        return "an enumeration of " + string.join(enumerals, ", ")
 
 
     def Validate(self, value):
@@ -1142,6 +1273,25 @@ class EnumerationField(IntegerField):
             raise ValueError, style
 
 
+    def GetValueFromDomNode(self, node):
+        # Make sure 'node' is an '<enumeral>' element.
+        if node.nodeType != xml.dom.Node.ELEMENT_NODE \
+           or node.tagName != "enumeral":
+            raise DomNodeError, \
+                  diagnostic.error("dom wrong tag for field",
+                                   name=self.GetName(),
+                                   right_tag="enumeral",
+                                   wrong_tag=node.tagName)
+        # Extract the value.
+        value = common.get_dom_node_text(node)
+        try:
+            # The value might be a number.
+            return int(value)
+        except ValueError:
+            # Not a number; assume it's an enumeral name.
+            return value
+
+
 
 ########################################################################
 
@@ -1161,6 +1311,9 @@ class TimeField(TextField):
         # Perform base class initalization.
         TextField.__init__(self, name, default_value=None)
 
+
+    def GetTypeDescription(self):
+        return "a date/time (right now, it is %s)" % self.GetCurrentTime()
 
     def Validate(self, value):
         # Parse and reformat the time value.
@@ -1194,13 +1347,10 @@ class UidField(TextField):
         # default value.
         TextField.__init__(self, name, default_value="default_user")
 
+    def GetTypeDescription(self):
+        return "a user ID"
 
 
-########################################################################
-# functions
-########################################################################
-
-# Place function definitions here.
 
 ########################################################################
 # Local Variables:

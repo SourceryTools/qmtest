@@ -71,10 +71,9 @@ add_to_python_path("zope-dtml", "ExtensionClass")
 add_to_python_path("sgmlop")
 add_to_python_path("xmlrpc")
 
-# Now store the top QM Python directory where other modules can access
-# it.
-import qm.common
-qm.common.base_directory = os.path.normpath(os.path.join(__base_dir, "qm"))
+# Now store the top QM Python directory in the environment, so that
+# other modules can access it.
+os.environ["QM_BASE_PATH"] = os.path.normpath(os.path.join(__base_dir, "qm"))
 
 #######################################################################
 # Local Variables:

@@ -81,6 +81,10 @@ class IidField(qm.fields.TextField):
         qm.fields.TextField.__init__(self, name, default_value=None)
 
 
+    def GetTypeDescription(self):
+        return "an issue ID"
+
+
     def Validate(self, value):
         value = str(value)
         if not qm.is_valid_label(value):

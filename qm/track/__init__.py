@@ -39,6 +39,7 @@ from config import *
 from idb import *
 from issue import *
 from issue_class import *
+from qm.diagnostic import error, warning
 from server import execute, start_server
 
 ########################################################################

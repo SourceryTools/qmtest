@@ -1,0 +1,43 @@
+<!ELEMENT test
+    ( class, 
+      ( argument | category | prerequisite | preaction | postaction )* 
+    )
+>
+
+<!ELEMENT class (#PCDATA)>
+
+<!ELEMENT argument (integer | text | set | attachment | enumeral)>
+<!ATTLIST argument
+    name CDATA #REQUIRED
+    eval ( yes | no ) "no"
+>
+
+<!ELEMENT integer (#PCDATA)>
+
+<!ELEMENT text (#PCDATA)>
+
+<!ELEMENT set ( ( integer | text | attachment | enumeral )* )>
+
+<!ELEMENT attachment ( description,
+                       mime_type,
+                       file_name,
+                       location
+                     )>
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT mime_type (#PCDATA)>
+
+<!ELEMENT file_name (#PCDATA)>
+
+<!ELEMENT location (#PCDATA)>
+
+<!ELEMENT enumeral (#PCDATA)>
+
+<!ELEMENT category (#PCDATA)>
+
+<!ELEMENT prerequisite (#PCDATA)>
+
+<!ELEMENT preaction (#PCDATA)>
+
+<!ELEMENT postaction (#PCDATA)>

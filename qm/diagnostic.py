@@ -31,10 +31,43 @@
 #
 ########################################################################
 
+"""Table-based diagnostic message generation.
+
+Diagnostics are loaded from text files.  These files are laid out
+according to special rules:
+
+  - Lines beginning with a hash mark are ignored.
+
+  - Each diagnostic begins with a line that contains an at sign (@) and
+    a tag used to identify the diagnostic.
+
+  - Subsequent text until the start of the next diagnostic is
+    the diagnostic template.
+
+  - Diagnostic templates may contain named-substition tokens as
+    used by the Python % operator on a string.
+
+  - Diagnostic messages are interpreted as structured text.
+
+For example:
+
+    # This line is a comment
+
+    @ my first diagnostic
+    The command you entered, '$(command)s', is bogus.
+
+    @ my second diagnostic
+    The value you specified, '$(value)d', is completely bogus.  Don't
+    even bother trying again.
+
+"""
+
 ########################################################################
 # imports
 ########################################################################
 
+import common
+import os
 import re
 import string
 import types
@@ -45,25 +78,46 @@ import types
 
 class DiagnosticSet:
 
-    comment_regex = re.compile("^[ \t]*#.*$", re.MULTILINE)
-    separator_regex = re.compile("^@", re.MULTILINE)
+    # Regular expression to match comment lines.
+    __comment_regex = re.compile("^[ \t]*#.*$", re.MULTILINE)
 
-    def __init__(self, path, program_name):
-        self.__program_name = program_name
+    # Regular express that matches the start of a new diagnostic entry. 
+    __separator_regex = re.compile("^@", re.MULTILINE)
+
+    program_name = "?"
+    """The name of the program, as it should appear in diagnostics."""
+
+
+    def __init__(self):
+        """Initialize a new set of diagnostics."""
+
         self.__diagnostics = {}
-        self.ReadFile(path)
 
 
-    def ReadFile(self, path):
+    def ReadFromFile(self, *path_components):
+        """Load diagnostics from a file.
+
+        'path_components' -- Path components, relative to the base QM
+        directory, to the file containing diagnostics."""
+
+        # Construct the path to the diagnostics file.
+        path = apply(os.path.join,
+                     ( common.get_base_directory(), ) + path_components)
+        # Read the file.
         file = open(path, "r")
         contents = file.read()
-        contents = self.comment_regex.sub("", contents)
-        entries = self.separator_regex.split(contents)
+        file.close()
+        # Erase comment lines.
+        contents = self.__comment_regex.sub("", contents)
+        # Split the file's contents into entries.
+        entries = self.__separator_regex.split(contents)
                 
         for entry in entries:
             if not "\n" in entry:
                 continue
+            # The tag is everything up to the first newline.
             tag, message = string.split(entry, "\n", 1)
+            # Clean up the tag and the diagnostic message.
             tag = string.strip(tag)
             message = string.strip(message)
             # Store it.
@@ -71,13 +125,27 @@ class DiagnosticSet:
 
 
     def Generate(self, tag, severity="error", output=None, **substitutions):
+        """Generate a diagnostic message.
+
+        'tag' -- The tag of the diagnostic to generate.
+
+        'severity' -- A string representing the severity of the
+        diagnostic, for instance "warning" or "error".
+
+        'output' -- If not 'None', the a file object to which the
+        a full diagnostic is written.
+
+        'substitutions' -- Named values for substitution into the
+        diagnostic message.
+
+        returns -- The bare diagnostic message."""
         
         message = self.__diagnostics[tag] % substitutions
         if output is None:
             pass
         else:
             output.write("%s: %s: %s\n"
-                         % (self.__program_name, severity, message)) 
+                         % (self.program_name, severity, message)) 
         return message
 
 
@@ -86,7 +154,37 @@ class DiagnosticSet:
 # functions
 ########################################################################
 
-# Place function definitions here.
+def error(tag, output=None, **substitutions):
+    """Generate or emit an error diagnostic."""
+
+    global diagnostic_set
+    return apply(diagnostic_set.Generate,
+                 (tag, "error", output, ),
+                 substitutions)
+
+    
+def warning(tag, output=None, **substitutions):
+    """Generate or emit a warning diagnostic."""
+
+    global diagnostic_set
+    return apply(diagnostic_set.Generate,
+                 (tag, "warning", output, ),
+                 substitutions)
+
+    
+########################################################################
+# variables
+########################################################################
+
+diagnostic_set = DiagnosticSet()
+"""The 'DiagnosticSet' object from which diagnostics are generated."""
+
+########################################################################
+# initialization
+########################################################################
+
+# Load common diagnostics.
+diagnostic_set.ReadFromFile("diagnostics.txt")
 
 ########################################################################
 # Local Variables:

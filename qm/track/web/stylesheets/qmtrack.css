@@ -49,7 +49,7 @@ td {
 }
 
 th.issue_class {
-    background-color: white;
+    background-color: #e0e0e0;
     color: black;
     text-align: left;
     text-decoration: bold;
@@ -86,3 +86,4 @@ tr.field {
 tr.field-error {
     background-color: fff0f8;
 }
+

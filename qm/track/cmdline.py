@@ -60,9 +60,6 @@ class Command:
     name = "qmtrack"
     """The name of the application."""
     
-    command = ""
-    """The command line as given to us."""
-    
     formats = (
         'none', 'iid', 'iid-single', 'summary', 'short', 'long',
         'full', 'xml'
@@ -292,7 +289,7 @@ class Command:
         if self.__command_name == '':
             # The user did not specify a command so we report an error.
             raise qm.cmdline.CommandError, \
-                  qm.track.error("command error")
+                  qm.track.error("missing command")
         else:
             # Look up a handler for the command.  The command parser
             # should already have flagged the case where the command
