@@ -34,9 +34,11 @@
 
       ./configure
 
-    You'll have to do a one-time setup as well:
+    The configuration script looks for a Python interpreter executable
+    in your PATH.  To specify a different interpreter, specify the
+    option 
 
-      make setup
+      --with-python=INTERPRETER_PATH
 
     Then build things:
 

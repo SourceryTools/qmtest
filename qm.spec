@@ -18,7 +18,6 @@ Software Carpentry project.  The suite includes a software testing tool
 
 %build
 ./configure
-make setup
 make
 
 %install

@@ -131,7 +131,7 @@ INSTALLLIBDIR	= @libdir@/qm
 INSTALLSHAREDIR	= @datadir@/qm
 INSTALLDOCDIR   = @datadir@/doc/qm
 
-.PHONY:		all clean doc setup subdirs test
+.PHONY:		all clean doc subdirs test
 .PHONY:         doc-html doc-print docbook-html docbook-print doc-python
 .PHONY:		install
 .PHONY:		$(SUBDIRS)
@@ -249,5 +249,3 @@ test:
 	  $(PYTHON) $${test} $(TESTFLAGS); \
 	  echo; \
 	done
-
-setup:

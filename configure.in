@@ -166,3 +166,11 @@ AC_OUTPUT(
   sgmlop/Makefile
   zope-dtml/ExtensionClass/Makefile
 )
+
+dnl ####################################################################
+dnl This follows the setup instructions in the Gadfly package.  The
+dnl target is a file generated in the setup procedure.  See
+dnl gadfly/index.html.
+dnl ####################################################################
+
+(cd gadfly; $PYTHON gfinstall.py)

@@ -1,3 +1,14 @@
+2001-09-05  Alex Samuel  <samuel@codesourcery.com>
+
+	* configure.in: Set up gadfly.
+	* configure: Regenerate.
+	* Makefile.in (setup): Remove rule.
+	(gadfly/sqlwhere.py): Likewise.
+	* standard.mk.in (.PHONY): Remove setup.
+	(setup): Remove rule.
+	* qm.spec (build): Don't make setup.
+	* README: Adjust accordingly.
+
 2001-09-04  Alex Samuel  <samuel@codesourcery.com>
 
 	* configure.in: Extract PYTHON_VERSION, PYTHON_PREFIX,
