@@ -1,5 +1,12 @@
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
+	* qm/executable.py (TimeoutExecutable._HandleChild): Close all
+	fds in the monitor process.
+	* tests/xmldb/test.qms/classes.qms/scripttest_closes_stdin.qmt:
+	New test.
+	
+2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
+
 	* qm/executable.py (RedirectedExecutable._InitializeChild): Fix
 	indentation.
 

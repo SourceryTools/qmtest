@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//Software Carpentry//QMTest Extension V0.1//EN'
+  'http://www.software-carpentry.com/qm/xml/extension'>
+<extension class="command.ShellScriptTest" kind="test"><argument name="stdin"><text>foo</text></argument><argument name="stdout"><text>Going to read, expecting data
+Read foo
+Going to read, expecting nothing
+Read </text></argument><argument name="stderr"><text/></argument><argument name="script"><text>echo &quot;Going to read, expecting data&quot;
+read FOO
+echo &quot;Read $FOO&quot;
+echo &quot;Going to read, expecting nothing&quot;
+read BAR
+echo &quot;Read $BAR&quot;</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="environment"><set/></argument><argument name="arguments"><set/></argument><argument name="timeout"><integer>5</integer></argument><argument name="resources"><set/></argument></extension>

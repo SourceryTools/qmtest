@@ -464,6 +464,22 @@ class TimeoutExecutable(Executable):
                 # group as the child 
                 os.setpgid(self.__monitor_pid, child_pid)
             else:
+                # Close all open file descriptors.  They are not needed
+                # in the monitor process.  Furthermore, when the parent
+                # closes the write end of the stdin pipe to the child,
+                # we do not want the pipe to remain open; leaving the
+                # pipe open in the monitor process might cause the child
+                # to block waiting for additional input.
+                try:
+                    max_fds = os.sysconf("SC_OPEN_MAX")
+                except:
+                    max_fds = 256
+                for fd in xrange(max_fds):
+                    try:
+                        os.close(fd)
+                    except:
+                        pass
+
                 try:
                     # Put the monitoring process into the child's process
                     # group.  We know the process group still exists at this
