@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from qm.version import version, version_info
 from qm.common import *
 from qm.diagnostic import error, warning, message
 

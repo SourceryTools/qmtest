@@ -1,3 +1,24 @@
+2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/version.py.in: New file.
+	* qm/setup_path.py.in: Remove version handling, and rename to...
+	* qm/setup_path.py: ...this.
+	* qm/.cvsignore: Add version.py, remove setup_path.py.
+	* configure.in (AC_OUTPUT): Munge qm/version.py.in instead of
+	qm/setup_path.py.in.
+	* configure: Regenerate.
+	* GNUmakefile.in (all): Remove qm/setup_path.py.
+	(distclean): Delete qm/version.py, don't delete
+	qm/setup_path.py.
+	* qm/__init__.py: Import version, version_info from qm.version.
+	* qm/test/qmtest.py (main): Don't pass version to QMTest
+	initializer.
+	* qm/test/cmdline.py (QMTest.__init__): Don't accept or record
+	version information.
+	(QMTest.GetVersion): Remove.
+	(QMTest.Execute): Don't call QMTest._GetVersionString.
+	(QMTest._GetVersionString): Remove.
+	
 2003-08-08  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/context.py (ContextException.__safe_for_unpickling__):

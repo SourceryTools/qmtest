@@ -491,8 +491,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     There is one fill-in, for a string, which should contain the version
     number."""
     
-    def __init__(self, argument_list,
-                 major_version, minor_version, release_version):
+    def __init__(self, argument_list):
         """Construct a new QMTest.
 
         Parses the argument list but does not execute the command.
@@ -535,11 +534,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # If available, record the path to the qmtest executable.
         self.__qmtest_path = os.environ.get("QM_PATH")
         
-        # Record the version information.
-        self._major_version = major_version
-        self._minor_version = minor_version
-        self._release_version = release_version
-
         # We have not yet loaded the database.
         self.__database = None
         # We have not yet computed the set of available targets.
@@ -556,18 +550,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         self.__expected_outcomes = None
 
 
-    def GetVersion(self):
-        """Returns the version of QMTest being used.
-
-        returns -- A tuple of the form '(major, minor, release)'.  Each
-        of the entries in the tuple is an integer.  For version X.Y.Z,
-        'major' will be X, 'minor' will be 'Y', and 'release' will be
-        'Z'."""
-
-        return (self._major_version, self._minor_version,
-                self._release_version)
-
-        
     def HasGlobalOption(self, option):
         """Return true if 'option' was specified as a global command.
 
@@ -625,8 +607,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # (The GNU coding standards require that the program take no
         # further action after seeing --version.)
         if self.HasGlobalOption("version"):
-            self._stderr.write(self.__version_output
-                               % self._GetVersionString())
+            self._stderr.write(self.__version_output % qm.version)
             return 0
         # If the global help option was specified, display it and stop.
         if (self.GetGlobalOption("help") is not None 
@@ -859,18 +840,6 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return get_extension_class(self.__text_result_stream_class_name,
                                    "result_stream",
                                    self.GetDatabase())
-        
-    def _GetVersionString(self):
-        """Return the version string for this version of QMTest.
-
-        returns -- The version string for this version of QMTest.  The
-        string returned does not contain the name of the application; it
-        contains only the version numbers."""
-
-        version_string = "%d.%d" % (self._major_version, self._minor_version)
-        if self._release_version:
-            version_string += ".%d" % self._release_version
-        return version_string
         
 
     def __GetAttributeOptions(self):

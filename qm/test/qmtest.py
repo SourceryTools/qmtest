@@ -84,9 +84,8 @@ def main():
     check_python_version()
 
     # Parse the command line.
-    command = qm.test.cmdline.QMTest(sys.argv[1:],
-                                     major_version, minor_version,
-                                     release_version)
+    command = qm.test.cmdline.QMTest(sys.argv[1:])
+
     # Execute the command.
     exit_code = command.Execute()
 
