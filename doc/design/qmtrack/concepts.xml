@@ -148,42 +148,41 @@
    optimization.
     <orderedlist>
      <listitem>
-      <para><constant>string</constant> fields contain short character
-      strings.  These fields should not contain newlines, carriage
-      returns, tabs, or other control characters (but are under no
-      fixed length limit).  Database implementations should validate
-      that <constant>string</constant> fields contain appropriate
-      values only.</para>
+      <para><constant>time</constant> fields store a UTC date/time.
+      This type field is based on the <constant>text</constant> field
+      type.</para>
      </listitem>
 
      <listitem>
-      <para><constant>time</constant> fields store a UTC
-      date/time.</para>
-     </listitem>
-
-     <listitem>
-      <para><constant>uid</constant> fields store a user id as a
-      <constant>string</constant>.</para>
+      <para><constant>uid</constant> fields store a user id.  This
+      field type is based on the <constant>text</constant> field
+      type.</para>
      </listitem>
 
      <listitem>
       <para><constant>iid</constant> fields contain an issue id as a
-      <constant>text</constant> field.</para>
-     </listitem>
-
-     <listitem>
-      <para><constant>iid set</constant> fields contain zero or more
-      references to other issues in the same &idb;.  These fields are
-      typically stored as <constant>integer list</constant> fields in
-      the underlying &idb; implementation.</para>
+      <constant>text</constant> field.  This field type is based on
+      the <constant>text</constant> field type.</para> 
+      <!-- FIXME: Should these be integers, instead?  -->
      </listitem>
 
      <listitem>
       <para><constant>enumeration</constant> fields contain an
       enumerated value: exactly one value selected from a
-      preconfigured set of alternatives.  Enumeration values are
-      typically stored as integers; the mapping between values and
-      enumerals is part of the &idb; configuration.</para>
+      preconfigured set of alternatives.  This field type is based on
+      <constant>integer</constant> fields; the mapping between values
+      and enumerals is part of the &idb; configuration.</para>
+     </listitem>
+
+     <listitem>
+      <para>The set of fields supported by &qmtrack; may be extended.
+      However, each new field type must be based on one of the
+      fundamental field types above.  This decouples &idb;
+      implementations from field type extensions by allowing &idb;
+      implementations to store custom field types using the underlying
+      field representation.  However, specific &idb; implementations
+      may understand a customized field type and handle it
+      differently, as an optimization.</para>
      </listitem>
     </orderedlist>
    </para>    

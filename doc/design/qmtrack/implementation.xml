@@ -363,7 +363,7 @@ class IdbBase:
 
         'iid' -- The issue of which to retrieve all revisions.
 
-        returns -- A sequence of 'IssueRecord' objects, all
+        returns -- A sequence of 'Issue' objects, all
         corresponding to 'iid', indexed by revision number."""
 
 
@@ -374,7 +374,7 @@ class IdbBase:
     def Query(self, query_record, current_revision_only=1):
         """Return a sequence of issues matching 'query_record'.
 
-        'query_record' -- An instance of IssueRecord specifying the query.
+        'query_record' -- An instance of Issue specifying the query.
 
         'current_revision_only -- If true, don't match revisions other
         than the current revision of each issue."""
@@ -392,11 +392,11 @@ class IdbBase:
   <title id="sec-issue-api-title">Issues</title>
 
   <para>The canonical in-memory representation of an issue is an
-  <classname>IssueRecord</classname> instance.</para>
+  <classname>Issue</classname> instance.</para>
 
   <programlisting>
 <![CDATA[
-class IssueRecord:
+class Issue:
     """The canonical representation of an issue."""
 
     def GetClassName(self):
@@ -443,7 +443,7 @@ class IssueRecord:
   <section id="sec-diff-issue-records">
    <title id="sec-diff-issue-records-title">Difference issue records</title>
 
-   <para>An <classname>IssueRecord</classname> instance may also be
+   <para>An <classname>Issue</classname> instance may also be
    used to represent the <emphasis>difference</emphasis> between two
    revisions of the same issue.  Only fields that differ between the
    two issue revisions are included in the issue record; other fields
@@ -464,9 +464,9 @@ class IssueRecord:
 def issue_record_diff(from_record, to_record):
     """Calculate the difference between two issue records.
 
-    'from_record' -- An 'IssueRecord' instance.
+    'from_record' -- An 'Issue' instance.
 
-    'to_record' -- An 'IssueRecord' instance corresponding to a
+    'to_record' -- An 'Issue' instance corresponding to a
     revision of the same issue given by 'from_record'.
 
     returns -- A difference issue record between 'from_record' and
@@ -476,9 +476,9 @@ def issue_record_diff(from_record, to_record):
 def issue_record_patch(from_record, diff_record):
     """Apply a difference  to a full issue record.
 
-    'from_record' -- An 'IssueRecord' instance.
+    'from_record' -- An 'Issue' instance.
 
-    'diff_record' -- A difference 'IssueRecord' instance.
+    'diff_record' -- A difference 'Issue' instance.
 
     returns -- An issue record containing 'from_record' with all
     fields present in 'diff_record' replaced.
@@ -541,7 +541,7 @@ class Attachment:
   <para>A <link linkend="def-trigger">trigger</link> is implemented as
   an instance of a subclass of <classname>Trigger</classname>.  The
   principal method is <function>Invoke</function>, which is passed two
-  arguments, both <classname>IssueRecord</classname> instances.</para>
+  arguments, both <classname>Issue</classname> instances.</para>
 
   <programlisting>
 <![CDATA[
@@ -555,11 +555,11 @@ class Trigger:
     def Invoke(self, issue, previous_issue):
         """Invoke the trigger.
 
-        'issue' -- An 'IssueRecord' instance.  For a "get" trigger,
+        'issue' -- An 'Issue' instance.  For a "get" trigger,
          the issue being retrieved.  For update triggers, the state of
          the issue as it will be or is after the update.
 
-        'previous_issue' -- An 'IssueRecord' instance.  For a "get"
+        'previous_issue' -- An 'Issue' instance.  For a "get"
         trigger, 'None'.  For update triggers, the state of the issue
         before the update.
 
@@ -591,7 +591,7 @@ class Trigger:
              updated.  
 
          'trigger' -- The trigger, a callable object.  The trigger
-         takes two arguments, both instances of 'IssueRecord'.
+         takes two arguments, both instances of 'Issue'.
 
          The same trigger may be registered more than once for each
          type, or for multiple types."""

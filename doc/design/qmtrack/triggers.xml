@@ -39,7 +39,27 @@
    </orderedlist>
   </para>
 
- 
+  <para>A trigger is registered with the &idb; for one of three
+  trigger types:
+   <orderedlist>
+    <listitem>
+     <para>A <literal>"get"</literal> trigger is called before an
+     issue is returned from a query or another retrieval
+     operation.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <literal>"preupdate"</literal> trigger is called before
+     an update to an issue takes place.</para>
+    </listitem>
+
+    <listitem>
+     <para>A <literal>"postupdate"</literal> trigger is called after
+     an update to an issue takes place.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
  </section>
  
 <!--
