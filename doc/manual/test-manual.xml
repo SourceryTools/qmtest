@@ -333,7 +333,7 @@
    <title>Targets</title>
 
    <para>A <firstterm id="def-target">target</firstterm> is &qmtest;'s
-   abstraction a machine.  By using multiple targets, you can run your
+   abstraction of a machine.  By using multiple targets, you can run your
    tests on multiple machines at one.  If you have many tests, and
    many machines, you can greatly reduce the amount of time it takes
    to run all of your tests by distributing the tests across multiple
@@ -530,15 +530,15 @@
  </section> <!-- sec-database-contents -->
 
  <section id="sec-test-command-line">
-  <title>Command Line Reference</title>
+  <title>Invoking &qmtest;</title>
 
   <para>The &qmtest-cmd; program understands these general options.
   They can be used with any command, and should precede the command name
   on the command line.</para>
 
-  <para>All options are available in a "long form," prefixed with
+  <para>All options are available in a "long form" prefixed with
   "&dashdash;" (two hyphens).  Some options also may be specified in a
-  "short form," consisting of a single hyphen and a one-letter
+  "short form" consisting of a single hyphen and a one-letter
   abbreviation (listed below in parentheses).  Short-form options may be
   combined in the manner typical for UNIX programs; for example,
   <command>-abc</command> is equivalent to <command>-a -b
@@ -594,39 +594,42 @@
   <section id="sec-testcmd-create-tdb">
    <title>The <command>&qmtest-cmd; create-tdb</command> Command</title>
 
-   <para>The <command>&qmtest-cmd; create-tdb</command> creates a new,
-   empty test database.  A test database consists of a directory in
-   which &qmtest; stores configuration files, tests, and other data.
-   (Certain test database implementations may also store data elsewhere,
-   such as in an external relational database.)</para>
+   <para>The <command>&qmtest-cmd; create-tdb</command> command
+   creates a new, empty test database.  A test database consists of a
+   directory in which &qmtest; stores configuration files, tests, and
+   other data.  (Certain test database implementations may also store
+   data elsewhere, such as in an external relational database.)</para>
 
-   <para>When you create a new test database, you must specify the path
-   you wish to use in one of the usual ways:  use the
-   <option>&dashdash;tdb</option> (<option>-D</option>) option, or
-   specify the <envar>QMTEST_DB_PATH</envar> environment variable.  The
-   path you specify for the new test database must not exist.</para>
+   <para>When you create a new test database, you must specify the
+   path you wish to use by using the <option>&dashdash;tdb</option>
+   (<option>-D</option>) option or by setting the
+   <envar>QMTEST_DB_PATH</envar> environment variable.  The path you
+   specify for the new test database must not exist.</para>
 
    <para>By default, &qmtest; creates a new test database that uses the
    standard XML-based implementation.  (See <xref
    linkend="sec-ref-writing-database-classes"></xref> for information
-   about writing a test database class.)  To create a test database with
-   a different test database implementation, use the
-   <option>&dashdash;class</option> (<option>-c</option>) option, and
-   specify the class name of the test database implementation, including
-   the module or package containing it.  This module or package must be
-   in your <envar>PYTHONPATH</envar>.  Once you create a test database,
-   you may not change the test database implementation it uses.</para>
+   about writing a test database class.)</para>
 
-   <para>For example, to use the test database implementation class
-   <classname>MyTestDatabase</classname> located in the package file
-   <filename>my_tdb.py</filename>, invoke</para>
+   <para>The <command>create-tdb</command> accepts these options:</para>
 
-   <screen>
-&prompt;<userinput>qmtest create-tdb --class my_tdb.MyTestDatabase</userinput>
-   </screen>
+   <glosslist>
+    <glossentry> 
+     <glossterm>
+      <option>&dashdash;class</option> <replaceable>CLASS</replaceable>
+      (<option>-c</option>) 
+     </glossterm>
+     <glossdef>
+      <para>Use the test database class given by
+      <replaceable>CLASS</replaceable>.  Once you create a test
+      database, you may not change the test database implementation it
+      uses.  If you do not use this option, &qmtest; will use the 
+      default test database implementation, which uses an XML file
+      format to store tests.</para>
+     </glossdef>
+    </glossentry>
 
-   <para>and make sure <filename>my_tdb.py</filename> is in a directory
-   in your <envar>PYTHONPATH</envar>.</para>
+   </glosslist>
 
   </section> <!-- sec-testcmd-create-tdb -->
 
@@ -825,7 +828,7 @@
      </glossterm>
      <glossdef>
       <para>For details about this option, see the description of the 
-      <command>&qmtest; run</command>.</para>
+      <command>qmtest run</command> command.</para>
      </glossdef>
     </glossentry>
 
@@ -836,7 +839,7 @@
      </glossterm>
      <glossdef>
       <para>For details about this option, see the description of the 
-      <command>&qmtest; run</command>.</para>
+      <command>qmtest run</command> command.</para>
      </glossdef>
     </glossentry>
 
@@ -847,7 +850,7 @@
      </glossterm>
      <glossdef>
       <para>For details about this option, see the description of the 
-      <command>&qmtest; run</command>.</para>
+      <command>qmtest run</command> command.</para>
      </glossdef>
     </glossentry>
 
@@ -857,7 +860,7 @@
      </glossterm>
      <glossdef>
       <para>Do not attempt to start a web browser when starting the
-      GUI.  QMTest will still print out the URL at which the server
+      GUI.  &qmtest; will still print out the URL at which the server
       can be accessed.  You can then connect to this URL
       manually using the browser of your choice.</para>
      </glossdef>
@@ -869,8 +872,8 @@
      </glossterm>
      <glossdef>
       <para>Specify the <replaceable>PORT</replaceable> on which the
-      QMTest GUI will listen for connections.  If this option is not
-      provided, QMTest will select an available port
+      &qmtest; GUI will listen for connections.  If this option is not
+      provided, &qmtest; will select an available port
       automatically.</para>
      </glossdef>
     </glossentry>
@@ -882,7 +885,7 @@
      </glossterm>
      <glossdef>
       <para>For details about this option, see the description of the 
-      <command>&qmtest; run</command>.</para>
+      <command>qmtest run</command> command.</para>
      </glossdef>
     </glossentry>
 
@@ -890,6 +893,59 @@
 
   </section> <!-- sec-testcmd-gui -->
 
+  <section id="sec-env-vars">
+  <title>Environment Variables</title>
+
+  <para>&qmtest; recognizes the following environment variables:</para>
+
+  <glosslist>
+   <glossentry>
+    <glossterm>
+     <envar>QM_PYTHON</envar>
+    </glossterm>
+    <glossdef>
+     <para>If this environment variable is set, &qmtest; uses it as as
+     the path to the Python interpreter.  If this environment variable
+     is not set, &qmtest; looks for a file named
+     <filename>python</filename> in the <filename>bin</filename>
+     directory where QM is installed.  If this file does not exist,
+     &qmtest; searches for <filename>python</filename> in the
+     directories listed in the <envar>PATH</envar> environment
+     variable.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <envar>QMTEST_CLASS_PATH</envar>
+    </glossterm>
+    <glossdef>
+     <para>If this environment variable is set, it should contain a
+     list of directories, in the same format as used for the system's
+     <envar>PATH</envar> environment variable.  These directories
+     are searched (before the directories that &qmtest; searches by
+     default) when looking for extension classes such as test classes
+     and database classes.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <envar>QMTEST_DB_PATH</envar>
+    </glossterm>
+    <glossdef>
+     <para>If this environment variable is set, its value is used as
+     the location of the test database, unless the
+     <option>&dashdash;tdb</option> (<option>-D</option>) option is
+     used.  If this environment variable is not set, and the
+     <option>&dashdash;tdb</option> option is not used, the current
+     directory is used as the test database.</para>
+    </glossdef>
+   </glossentry>
+  </glosslist>
+    
+  </section> <!-- sec-env-vars -->
+  
  </section>
 
  <section id="sec-ref-classes">
@@ -1518,7 +1574,7 @@
 
    <itemizedlist>
     <listitem>
-     <para>If the environment variable <envar>QMTEST_CLASSPATH</envar>
+     <para>If the environment variable <envar>QMTEST_CLASS_PATH</envar>
      is defined, &qmtest first checks any directories listed in it.
      This value of this environment variable should be a list of
      directories to check for the module file, in the same format as

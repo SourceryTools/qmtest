@@ -80,7 +80,9 @@ class TextResultStream(ResultStream):
         self.__test_results = []
         self.__resource_results = []
 
-
+        self._DisplayHeading("TEST RESULTS")
+        
+        
     def WriteResult(self, result):
         """Output a test or resource result.
 
@@ -94,6 +96,9 @@ class TextResultStream(ResultStream):
         else:
             assert 0
 
+	# Display the result.
+	self._DisplayResult(result, "brief")
+
 
     def Summarize(self):
         """Output summary information about the results.
@@ -103,11 +108,8 @@ class TextResultStream(ResultStream):
         Any finalization, such as the closing of open files, should
         also be performed at this point."""
         
-        def divider(text):
-            return "--- %s %s\n\n" % (text, "-" * (73 - len(text)))
-
         self.__file.write("\n")
-        self.__file.write(divider("STATISTICS"))
+        self._DisplayHeading("STATISTICS")
 
         # Summarize the test statistics.
         if self.__expected_outcomes:
@@ -119,7 +121,7 @@ class TextResultStream(ResultStream):
         if self.__format in ("full", "stats") \
            and len(self.__suite_ids) > 0:
             # Print statistics by test suite.
-            self.__file.write(divider("STATISTICS BY TEST SUITE"))
+            self._DisplayHeading("STATISTICS BY TEST SUITE")
             self._SummarizeTestSuiteStats()
 
         if self.__format in ("full", "brief"):
@@ -132,7 +134,7 @@ class TextResultStream(ResultStream):
                 # Show tests that produced unexpected outcomes.
                 bad_results = split_results_by_expected_outcome(
                     self.__test_results, self.__expected_outcomes)[1]
-                self.__file.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
+                self._DisplayHeading("TESTS WITH UNEXPECTED OUTCOMES")
                 self._SummarizeResults(bad_results)
             if not self.__expected_outcomes or self.__format == "full":
                 # No expected outcomes were specified, so show all tests
@@ -140,7 +142,7 @@ class TextResultStream(ResultStream):
                 bad_results = filter(
                     lambda r: r.GetOutcome() != Result.PASS,
                     self.__test_results)
-                self.__file.write(divider("TESTS THAT DID NOT PASS"))
+                self._DisplayHeading("TESTS THAT DID NOT PASS")
                 self._SummarizeResults(bad_results)
 
             # Sort resource results by ID.
@@ -150,7 +152,7 @@ class TextResultStream(ResultStream):
                 self.__resource_results)
             if len(bad_results) > 0:
                 # Print individual resource results.
-                self.__file.write(divider("RESOURCES THAT DID NOT PASS"))
+                self._DisplayHeading("RESOURCES THAT DID NOT PASS")
                 self._SummarizeResults(bad_results)
 
         # Invoke the base class method.
@@ -248,24 +250,44 @@ class TextResultStream(ResultStream):
             return
 
         # Generate them.
-        for result in results:
-            id_ = result.GetId()
-            outcome = result.GetOutcome()
+	for result in results:
+            self._DisplayResult(result, self.__format)
 
-            # Print the ID and outcome.
-            if self.__expected_outcomes:
-                # If expected outcomes were specified, print the expected
-                # outcome too.
-                expected_outcome = \
-                  self.__expected_outcomes.get(id_, Result.PASS)
-                self.__file.write("  %-46s: %-8s, expected %-8s\n"
-                                  % (id_, outcome, expected_outcome))
-            else:
-                self.__file.write("  %-63s: %-8s\n" % (id_, outcome))
 
-            # Get a description of the result as structured text.
-            description = result.AsStructuredText(self.__format)
-            # Format it as plain text.
-            description = qm.structured_text.to_text(description, 72, 4)
-            # Write it out.
-            self.__file.write(description)
+    def _DisplayResult(self, result, format):
+	"""Display 'result'.
+
+	'result' -- The 'Result' of a test or resource execution.
+
+        'format' -- The format to use when displaying results."""
+
+	id_ = result.GetId()
+	outcome = result.GetOutcome()
+
+	# Print the ID and outcome.
+	if self.__expected_outcomes:
+	    # If expected outcomes were specified, print the expected
+	    # outcome too.
+	    expected_outcome = \
+	      self.__expected_outcomes.get(id_, Result.PASS)
+	    self.__file.write("  %-46s: %-8s, expected %-8s\n"
+			      % (id_, outcome, expected_outcome))
+	else:
+	    self.__file.write("  %-63s: %-8s\n" % (id_, outcome))
+
+	# Get a description of the result as structured text.
+	description = result.AsStructuredText(format)
+	# Format it as plain text.
+	description = qm.structured_text.to_text(description, 72, 4)
+	# Write it out.
+	self.__file.write(description)
+ 
+	
+    def _DisplayHeading(self, heading):
+        """Display 'heading'.
+
+        'heading' -- The string to use as a heading for the next
+        section of the report."""
+
+        self.__file.write("--- %s %s\n\n" %
+                          (heading, "-" * (73 - len(heading))))

@@ -194,7 +194,7 @@ def get_extension_directories(kind, database):
 
     The directories that are returned are, in order:
 
-    1. Those directories present in the 'QMTEST_CLASSPATH' environment
+    1. Those directories present in the 'QMTEST_CLASS_PATH' environment
        variable.
 
     2. Those directories specified by the 'GetClassPaths' method on the
@@ -202,7 +202,7 @@ def get_extension_directories(kind, database):
 
     3. The directories containing classes that come with QMTest.
 
-    By placing the 'QMTEST_CLASSPATH' directories first, users can
+    By placing the 'QMTEST_CLASS_PATH' directories first, users can
     override test classes with standard names."""
 
     global extension_kinds
@@ -216,8 +216,8 @@ def get_extension_directories(kind, database):
         
     # Start with the directories that the user has specified in the
     # QNTEST_CLASSPATH environment variable.
-    if os.environ.has_key('QMTEST_CLASSPATH'):
-        dirs = string.split(os.environ['QMTEST_CLASSPATH'], ':')
+    if os.environ.has_key('QMTEST_CLASS_PATH'):
+        dirs = string.split(os.environ['QMTEST_CLASS_PATH'], ':')
     else:
         dirs = []
 
