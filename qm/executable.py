@@ -500,6 +500,11 @@ class TimeoutExecutable(Executable):
     def Run(self, arguments=[], environment = None, dir = None,
             path = None):
 
+        if self.__UseSeparateProcessGroupForChild():
+            self.__monitor_pid = None
+        elif self.__timeout >= 0 and sys.platform == "win32":
+            self.__monitor_thread = None
+            
         # Run the process.
         try:
             status = super(TimeoutExecutable, self).Run(arguments,
@@ -510,10 +515,12 @@ class TimeoutExecutable(Executable):
             if self.__UseSeparateProcessGroupForChild():
                 # Clean up the monitoring program; it is no longer needed.
                 os.kill(-self._GetChildPID(), signal.SIGKILL)
-                os.waitpid(self.__monitor_pid, 0)
+                if self.__monitor_pid is not None:
+                    os.waitpid(self.__monitor_pid, 0)
             elif self.__timeout >= 0 and sys.platform == "win32":
                 # Join the monitoring thread.
-                self.__monitor_thread.join()
+                if self.__monitor_thread is not None:
+                    self.__monitor_thread.join()
                 
         return status
 

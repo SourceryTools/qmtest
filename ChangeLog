@@ -1,3 +1,10 @@
+2004-02-18  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/__version.py: Advance to 2.1.1.
+
+	* qm/executable.py (TimeoutExecutable.Run): Handle failure to
+	locate the executable file robustly under Windows.
+
 2004-02-15  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (open_temporary_file_fd): Change default suffix to
