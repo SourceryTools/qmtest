@@ -35,11 +35,15 @@
 # imports
 ########################################################################
 
+import base64
 import common
 import cPickle
+import cStringIO
+import MimeWriter
 import os
 import posix
 import qm
+import quopri
 import select
 import signal
 import string
@@ -157,7 +161,7 @@ def open_in_browser(url):
     os.system("%s '%s' &" % (browser_executable, url))
 
 
-def send_email(body,
+def send_email(body_text,
                subject,
                recipients,
                ccs=[],
@@ -167,7 +171,7 @@ def send_email(body,
                headers={}):
     """Send an email message.
 
-    'body' -- The message body text.
+    'body_text' -- The message body text.
 
     'subject' -- The message subject.
 
@@ -183,16 +187,13 @@ def send_email(body,
     'from_address' -- The message's originating address.  If 'None',
     the system will fill in the sending user's address.
 
-    'attachments' -- A sequence of email attachments.  Each
-    attachment is a triplet of '(description, MIME type,
-    attachment_data)'. 
+    'attachments' -- A sequence of email attachments.  Each attachment
+    is a tuple containing '(description, mime_type, file_name,
+    attachment_data)'.  An appropriate encoding is chosen for the data
+    based on the MIME type.
 
     'headers' -- Additional RFC 822 headers in a map.  Keys are
     header names and values are corresponding header contents."""
-
-    if len(attachments) > 0:
-        # FIXME: implement this.
-        raise NotImplementedError, "attachments not implemented"
 
     # Figure out which sendmail (or equivalent) to use.
     sendmail_path = common.rc.Get("sendmail", "/usr/lib/sendmail",
@@ -207,20 +208,73 @@ def send_email(body,
     addresses = map(lambda a: "'%s'" % a, recipients + ccs + bccs)
     sendmail_command = sendmail_path + " " + string.join(addresses, " ")
     sendmail = os.popen(sendmail_command, "w")
+    message = MimeWriter.MimeWriter(sendmail)
 
-    # Construct and send the entire RFC 822 message.
+    # Construct mail headers.
     if from_address is not None:
-        sendmail.write("From: %s\n" % from_address)
-    sendmail.write("To: %s\n" % string.join(recipients, ", "))
+        message.addheader("From", from_address)
+    message.addheader("To", string.join(recipients, ", "))
     if len(ccs) > 0:
-        sendmail.write("Cc: %s\n" % string.join(ccs, ", "))
+        message.addheader("CC", string.join(ccs, ", "))
     if len(bccs) > 0:
-        sendmail.write("Bcc: %s\n" % string.join(bccs, ", "))
+        message.addheader("BCC", string.join(bccs, ", "))
     for name, value in headers.items():
-        sendmail.write("%s: %s\n" % (name, value))
-    sendmail.write("Subject: %s\n" % subject)
-    sendmail.write("\n")
-    sendmail.write(body)
+        message.addheader(name, value)
+    message.addheader("Subject", subject)
+
+    # Handle messages with attachments differently.
+    if len(attachments) > 0:
+        # Set the MIME version header.
+        message.addheader("MIME-Version", "1.0")
+        # A message with attachments has a content type
+        # "multipart/mixed". 
+        body = message.startmultipartbody("mixed")
+
+        # The text of the message body goes in the first message part.
+        body_part = message.nextpart()
+        body_part.addheader("Content-Description", "message body text")
+        body_part.addheader("Content-Transfer-Encoding", "7bit")
+        body_part_body = body_part.startbody("text/plain")
+        body_part_body.write(body_text)
+
+        # Add the attachments, each in a separate message part.
+        for attachment in attachments:
+            # Unpack the attachment tuple.
+            description, mime_type, file_name, data = attachment
+            # Choose an encoding based on the MIME type.
+            if mime_type == "text/plain":
+                # Plain text encoded as-is.
+                encoding = "7bit"
+            elif mime_type[:4] == "text":
+                # Other types of text are encoded quoted-printable.
+                encoding = "quoted-printable"
+            else:
+                # Everything else is base 64-encoded.
+                encoding = "base64"
+            # Create a new message part for the attachment.
+            part = message.nextpart()
+            part.addheader("Content-Description", description)
+            part.addheader("Content-Disposition",
+                           'attachment; filename="%s"' % file_name)
+            part.addheader("Content-Transfer-Encoding", encoding)
+            part_body = part.startbody('%s; name="%s"'
+                                       % (mime_type, file_name))
+            # Write the attachment data, encoded appropriately.
+            if encoding is "7bit":
+                part_body.write(data)
+            elif encoding is "quoted-printable":
+                quopri.encode(cStringIO.StringIO(data), part_body, quotetabs=0)
+            elif encoding is "base64":
+                base64.encode(cStringIO.StringIO(data), part_body)
+
+        # End the multipart message. 
+        message.lastpart()
+
+    else:
+        # If the message has no attachments, don't use a multipart
+        # format.  Instead, just write the essage bdoy.
+        body = message.startbody("text/plain")
+        body.write(body_text)
 
     # Finish up.
     exit_code = sendmail.close()

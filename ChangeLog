@@ -1,3 +1,8 @@
+2001-11-11  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/platform_unix.py (send_email): Reimplement, with support for
+	attachments.
+
 2001-11-09  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (TestDescriptor.GetTargetGroup): Robustify.
