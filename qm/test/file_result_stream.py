@@ -15,6 +15,7 @@
 # Imports
 ########################################################################
 
+import qm.common
 import qm.fields
 from   qm.test.result_stream import ResultStream
 import sys
@@ -65,6 +66,9 @@ class FileResultStream(ResultStream):
                 else:
                     mode = "w"
                 self.file = open(self.filename, mode, 0)
+                # Child processes do not need to write to the results
+                # file.
+                qm.common.close_file_on_exec(self.file)
             else:
                 self.file = sys.stdout
             

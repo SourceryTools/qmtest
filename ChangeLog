@@ -1,5 +1,16 @@
 2003-11-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (fnctl): Import it.
+	(close_file_on_exec): New method.
+	* qm/executable.py (qm.common): Import it.
+	(Executable.Run): Use close_file_on_exec.
+	(Executable._MakeCloseOnExec): Remove.
+	(RedirectedExecutable._CreatePipe): Use close_file_on_exec.
+	* qm/test/file_result_stream.py (qm.common): Import it.
+	(FileResultStream.__init__): Use close_file_on_exec.
+
+2003-11-24  Mark Mitchell  <mark@codesourcery.com>
+
 	* GNUmakefile.in (QM_TOOLS): Do not set it.
 	(clean): Remove generated documentation.
 	(distclean): Do not remove qm/__version.py.

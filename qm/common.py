@@ -39,7 +39,9 @@ import tempfile
 import time
 import traceback
 import types
-
+if sys.platform != "win32":
+    import fcntl
+    
 ########################################################################
 # program name
 ########################################################################
@@ -538,6 +540,26 @@ def open_temporary_file():
 
     file_name, fd = open_temporary_file_fd()
     return (file_name, os.fdopen(fd, "w+b"))
+
+
+def close_file_on_exec(fd):
+    """Prevent 'fd' from being inherited across 'exec'.
+    
+    'fd' -- A file descriptor, or object providing a 'fileno()'
+    method.
+
+    This function has no effect on Windows."""
+
+    if sys.platform != "win32":
+        flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        try:
+            flags |= fcntl.FD_CLOEXEC
+        except AttributeError:
+            # The Python 2.2 RPM shipped with Red Hat Linux 7.3 does
+            # not define FD_CLOEXEC.  Fortunately, FD_CLOEXEC is 1 on
+            # every UNIX system.
+            flags |= 1
+        fcntl.fcntl(fd, fcntl.F_SETFD, flags)
 
 
 def copy(object):
