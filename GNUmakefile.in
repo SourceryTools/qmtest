@@ -87,6 +87,7 @@ clean::
 
 distclean: clean
 	rm -f GNUmakefile config.cache config.status config.log
+	rm -f MANIFEST
 
 ########################################################################
 # Installation Rules

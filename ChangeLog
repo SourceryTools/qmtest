@@ -1,5 +1,13 @@
 2004-05-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* GNUmakefile.in (distclean): Remove MANIFEST.
+	* setup.py: Install documentation stylesheet.
+	* doc/qm-sgml.dsl: Use documentation stylesheet.
+	* doc/qm.css: Incorporate bits of CodeSourcery web site
+	look-and-feel.
+	* qmdist/command/build_doc.py (build_doc.run): Copy documentation
+	stylesheet to HTML directory.
+	
 	* qm/test/doc/manual.xml: Update copyright date and version
 	number.
 

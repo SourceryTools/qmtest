@@ -39,6 +39,10 @@
 ;; Turn on Cascading Style Sheets markup in the resulting HTML.
 (define %css-decoration% #t)
 
+;; Use our stylesheet.
+(define %stylesheet-type% "text/css")
+(define %stylesheet% "qm.css")
+
 ;; Assign numbers to sections and subsections.
 (define %section-autolabel% #t)
 

@@ -13,41 +13,6 @@
 
 ***********************************************************************/
 
-/* Document body.  */
-
-body {
-    margin-left: 10%;
-    margin-right: 10%;
-    color: black;
-    background: white;
-}
-
-
-/* Links.  */
-
-:link {
-    color: blue;
-    background-color: white;
-}
-
-:visited {
-    color: blue;
-    background-color: white;
-}
-
-:active {
-    color: blue;
-    background-color: white;
-    text-decoration: none;
-}
-
-:hover {
-    color: blue;
-    background-color: #ffccff;
-    text-decoration: none;
-}
-
-
 /* Headings.  Use
      <h1>...</h1> for titles.
      <h2>...</h2> for subtitles.
@@ -56,16 +21,13 @@ body {
      <h5>...</h5> for subsection headings.
      <h6>...</h6> for subsubsection headings.  */
 
-h1 {
-    text-align: center;
-}
+/* Document body.  */
 
-h2 {
-    margin-left: -8%;
-}
-
-h3,h4,h5,h6 {
-    margin-left: -4%;
+body {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: black;
+    background: white;
 }
 
 
@@ -188,3 +150,75 @@ span.Fixme {
     color: red;
 }
 
+/***********************************************************************
+ CodeSourcery Styles
+***********************************************************************/
+
+/***
+
+  The styles below this point are taken from:
+	
+    http://www.codesourcery.com/codesourcerystyles.css
+
+***/
+
+h1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #757c96;
+}
+
+
+h1  {
+	margin-top: 2px;
+	margin-bottom: 0px;
+	padding-top: 2px;
+	padding-bottom: 0px;
+}
+
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: bold;
+	font-variant: normal;
+	text-transform: capitalize;
+	color: #333333;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+h3 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	color: #000000;
+	font-style: italic;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+a:hover {
+	color: #bdaa7a;
+}
+
+a {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: normal;
+        color: #3050c0;
+	text-decoration: none;
+}
+
+.code,.filename,.command,.symbol,.literal,.userinput,.screen,.classname,.property {
+	font-family: "Courier New", Courier, mono;
+	font-size: small;
+	font-weight: normal;
+	text-transform: none;
+}

@@ -131,7 +131,8 @@ setup(name="qm",
                   ("qm/dtml/test", test_dtml_files),
                   # The documentation.
                   ('qm/doc', ('README', 'COPYING')),
-                  ('qm/doc/test/html', ['qm/test/doc/html/*.html']),
+                  ('qm/doc/test/html', ['qm/test/doc/html/*.html',
+                                        'qm/test/doc/html/qm.css']),
                   ('qm/doc/test/print', ["qm/test/doc/print/*.pdf"]),
                   # The tutorial.
                   ("qm/tutorial/test/tdb", tutorial_files),

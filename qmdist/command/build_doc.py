@@ -20,7 +20,7 @@ from distutils.dir_util import copy_tree, remove_tree
 from distutils.file_util import copy_file
 import os
 import os.path
-from   os.path import normpath
+from   os.path import join, normpath
 import string
 import glob
 
@@ -158,6 +158,8 @@ class build_doc(build.build):
                            '--indent-spaces', '1',
                            '-f', '/dev/null',
                            '-asxml', '-modify', f])
+            # Copy the appropriate stylseheet into the HTML directory.
+            copy_file(join("doc", "qm.css"), join(html_dir, "qm.css"))
 
         target = normpath("qm/test/doc/print/manual.tex")
         if newer_group(source_files, target):
