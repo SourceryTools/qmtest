@@ -66,14 +66,14 @@ class check(Command):
             self.rsh = 1
 
 
-    qmtest = 'qm/test/qmtest.py'
+    qmtest = 'qm/test/qmtest'
 
     def check_serial(self):
         """Perform serial tests."""
 
         cmd = [check.qmtest,
                '-D', 'tests', 'run', '-c',
-               norm('qmtest_path=qm/test/qmtest.py')]
+               norm('qmtest_path=qm/test/qmtest')]
         spawn(cmd)
 
     def check_threads(self):
@@ -88,7 +88,7 @@ class check(Command):
         cmd = [check.qmtest,
                '-D', 'tests', 'run',
                '-T', norm('tests/QMTest/thread_target'),
-               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest.py'),
+               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest'),
                '-c', 'qmtest_target=%s'%norm('tests/QMTest/thread_target')]
         spawn(cmd)
 
@@ -104,7 +104,7 @@ class check(Command):
         cmd = [check.qmtest,
                '-D', 'tests', 'run',
                '-T', norm('tests/QMTest/process_target'),
-               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest.py'),
+               '-c', 'qmtest_path=%s'%norm('qm/test/qmtest'),
                '-c', 'qmtest_target=%s'%norm('tests/QMTest/process_target')]
         spawn(cmd)
 
@@ -121,7 +121,7 @@ class check(Command):
         cmd = [check.qmtest,
                '-D', 'tests', 'run',
                '-T', norm('tests/QMTest/rsh_target'),
-               '-c', 'qmtest_path=%s'%norm('%s/qm/test/qmtest.py'%os.getcwd()),
+               '-c', 'qmtest_path=%s'%norm('%s/qm/test/qmtest'%os.getcwd()),
                '-c', 'qmtest_target=%s'%norm('%s/tests/QMTest/rsh_target'%os.getcwd())]
         spawn(cmd)
 

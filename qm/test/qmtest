@@ -2,7 +2,7 @@
 
 ########################################################################
 #
-# File:   qmtest.py
+# File:   qmtest
 # Author: Alex Samuel
 # Date:   2001-03-15
 #
@@ -15,13 +15,17 @@
 #
 ########################################################################
 
-# Set up the Python module lookup path to find QM.
+########################################################################
+# Imports
+########################################################################
 
 import errno
+import gc
 import os
 import os.path
 import sys
 import string
+import traceback
 
 # The Python interpreter will place the directory containing this
 # script in the default path to search for modules.  That is
@@ -30,37 +34,51 @@ import string
 # the same name.
 sys.path = sys.path[1:]
 
-########################################################################
-# imports
-########################################################################
+rel_prefix = os.path.join(os.pardir, os.pardir)
+"""The relative path to the installation prefix.
 
-import sys
-import gc
+This string gives the relative path from the directory containing this
+script to the installation directory.  The value above is correct when
+QMTest is being run out of the source tree.  When QMTest is installed,
+this value is updated appropriately."""
 
-# This executable is supposed to live in ${QM_HOME}/bin (posix)
-# or ${QM_HOME}\Scripts (nt) so we deduce the QM_HOME variable
-# by stripping off the last two components of the path.
-_qm_home = os.environ.get("QM_HOME",
-                          os.path.dirname(os.path.dirname(os.path.abspath
-                                                          (sys.argv[0]))))
-os.environ['QM_HOME']=_qm_home
+rel_libdir = ""
+"""The relative path from the prefix to the library directory.
+
+This path gives the relative path from the prefix to the library
+directory.  The value above is correct when QMTest is being run out of
+the source tree.  When QMTest is installed, this value is updated
+appropriately."""
+
+# Get the path to this script.
+qm_path = os.path.abspath(sys.argv[0])
+
+# Get the root of the QMTest installation.
+qm_home = os.environ.get("QM_HOME")
+if qm_home is None:
+    # Get the path to the installation directory.
+    qm_home = os.path.normpath(os.path.join(os.path.dirname(qm_path),
+                                            rel_prefix))
+
+# Update sys.path so that we can find the rest of QMTest.
+libdir = os.path.normpath(os.path.join(qm_home, rel_libdir))
+if libdir not in sys.path:
+    sys.path.insert(0, libdir)
 
 import qm
 
-class config:
-    pass
-qm.config = config()
-qm.config.data_dir = os.path.join(_qm_home, 'share', 'qm')
+# Set the prefix variable so that the rest of QMTest can find
+# documentation files, test classes, and so forth.
+qm.prefix = qm_home
 
 import qm.cmdline
 import qm.diagnostic
 import qm.platform
 import qm.structured_text
 import qm.test.cmdline
-import traceback
 
 ########################################################################
-# functions
+# Functions
 ########################################################################
 
 def print_error_message(message):
@@ -100,7 +118,7 @@ def main():
     check_python_version()
 
     # Parse the command line.
-    command = qm.test.cmdline.QMTest(sys.argv[1:])
+    command = qm.test.cmdline.QMTest(sys.argv[1:], qm_path)
 
     # Execute the command.
     exit_code = command.Execute()

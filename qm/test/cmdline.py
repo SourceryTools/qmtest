@@ -482,13 +482,15 @@ Valid formats are %s.
     There is one fill-in, for a string, which should contain the version
     number."""
     
-    def __init__(self, argument_list):
+    def __init__(self, argument_list, path):
         """Construct a new QMTest.
 
         Parses the argument list but does not execute the command.
 
         'argument_list' -- The arguments to QMTest, not including the
-        initial argv[0]."""
+        initial argv[0].
+
+        'path' -- The path to the QMTest executable."""
 
         global _the_qmtest
         
@@ -517,7 +519,7 @@ Valid formats are %s.
           ) = components
 
         # If available, record the path to the qmtest executable.
-        self.__qmtest_path = os.environ.get("QM_PATH")
+        self.__qmtest_path = path
         
         # We have not yet loaded the database.
         self.__database = None

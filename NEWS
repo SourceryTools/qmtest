@@ -51,11 +51,15 @@ readable, and to make it easier to postprocess the XML.
 QMTest now correctly uses ";" as the separator in QMTEST_CLASS_PATH on
 Windows.
 
-QM 2.0.4 (Not Yet Released)
-===========================
-
 A defect that could cause crashes in the RSHTarget class has been
 corrected.
+
+The QM_PYTHON environment variable is no longer honored by QMTest.  To
+control which Python interpreter is used, run:
+
+  /path/to/python /path/to/prefix/bin/qmtest 
+
+explicitly.
 
 QM 2.0.3
 ========

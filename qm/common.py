@@ -29,6 +29,7 @@ import lock
 import operator
 import os
 import os.path
+import qm
 import quopri
 import re
 import socket
@@ -222,21 +223,16 @@ class RcConfiguration(ConfigParser.ConfigParser):
 def get_share_directory(*components):
     """Return the path to a file in the QM data file directory."""
 
-    home_dir = os.environ["QM_HOME"]
-    if not is_installed:
-        return os.path.join(home_dir, "share", *components)
-    else:
-        return os.path.join(home_dir, "share", "qm", *components)
+    return os.path.join(qm.prefix, qm.data_dir, *components)
 
 
 def get_doc_directory(*components):
     """Return a path to a file in the QM documentation file directory."""
 
-    home_dir = os.environ["QM_HOME"]
     if not is_installed:
-        return os.path.join(home_dir, "qm", *components)
+        return os.path.join(qm.prefix, "qm", *components)
     else:
-        return os.path.join(home_dir, "share", "doc", "qm", *components)
+        return os.path.join(get_share_directory("doc"), *components)
 
 
 def format_exception(exc_info):

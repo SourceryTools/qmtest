@@ -13,22 +13,63 @@
 #
 ########################################################################
 
-from distutils.core import setup
+########################################################################
+# Imports
+########################################################################
+
+from   distutils.core import setup
 import sys
 import os
 import os.path
 import string
 import glob
+from   qmdist.command.build_doc import build_doc
+from   qmdist.command.install_data import install_data
+from   qmdist.command.install_scripts import install_scripts
+from   qmdist.command.check import check
 
 ########################################################################
-# imports
+# Functions
 ########################################################################
 
-from qmdist.command.build_doc import build_doc
-from qmdist.command.install_data import install_data
-from qmdist.command.check import check
+def prefix(list, pref):
 
-def prefix(list, pref): return map(lambda x, p=pref: p + x, list)
+    return map(lambda x, p=pref: os.path.join(p, x), list)
+
+
+def files_with_ext(dir, ext):
+    """Return all files in 'dir' with a particular extension.
+
+    'dir' -- The name of a directory.
+
+    'ext' -- The extension.
+
+    returns -- A sequence consisting of the filenames in 'dir' whose
+    extension is 'ext'."""
+
+    return prefix(filter(lambda f: f.endswith(ext),
+                         os.listdir(dir)),
+                  dir)
+
+
+def select_share_files(share_files, dir, files):
+    """Find installable files in 'dir'.
+
+    'share_files' -- A dictionary mapping directories to lists of file
+    names.
+
+    'dir' -- The directory in which the 'files' are located.
+
+    'files' -- A list of the files contained in 'dir'."""
+    
+    exts = (".txt", ".dtml", ".css", ".js", ".gif", ".dtd", ".mod")
+    files = filter(lambda f: \
+                     f == "CATALOG" or (os.path.splitext(f)[1] in exts),
+                   files)
+    if files:
+        files = prefix(files, dir)
+        dir = os.path.join("qm", dir[len("share/"):])
+        share_files[dir] = files
 
 packages=['qm',
           'qm/external',
@@ -48,32 +89,46 @@ html_docs = []
 print_docs = []
 
 if not os.path.isdir(os.path.normpath('qm/test/doc/html')):
-    print """Warning: to include documentation into the package please run
-         the \'build_doc\' command first."""
+    print """Warning: to include documentation run the
+             \'build_doc\' command first."""
 
 else:
-    html_docs = filter(lambda f: f[-5:] == '.html',
+    html_docs = filter(lambda f: f.endswith(".html"),
                        os.listdir(os.path.normpath('qm/test/doc/html')))
-    print_docs = ['manual.tex', 'manual.pdf']
+    print_docs = [ 'manual.pdf']
+
+tutorial_files = files_with_ext("qm/test/share/tutorial/tdb", ".qmt")
+test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
+
+share_files = {}
+os.path.walk("share", select_share_files, share_files)
 
 setup(cmdclass={'build_doc': build_doc,
-                #'build': qm_build,
                 'install_data': install_data,
+                'install_scripts' : install_scripts,
                 'check': check},
       name="qm", 
       version="2.1",
       packages=packages,
-      scripts=['qm/test/qmtest.py'],
-      data_files=[('share/qm/test/classes',
-                   prefix(classes,'qm/test/classes/')),
-                  ('share/qm/diagnostics',
-                   prefix(diagnostics,'share/diagnostics/')),
-                  ('share/qm/messages/test',
-                   prefix(messages,'qm/test/share/messages/')),
-                  ('share/qm/doc/html',
-                   prefix(html_docs, 'qm/test/doc/html/')),
-                  ('share/qm/doc/print',
-                   prefix(print_docs, 'qm/test/doc/print/'))])
+      scripts=['qm/test/qmtest'],
+      data_files=[('qm/test/classes',
+                   prefix(classes, 'qm/test/classes')),
+                  ('qm/messages/test',
+                   prefix(messages, 'qm/test/share/messages')),
+                  # DTML files for the GUI.
+                  ("qm/dtml/test", test_dtml_files),
+                  # The documentation.
+                  ('qm/doc', ('README', 'COPYING')),
+                  ('qm/doc/test/html',
+                   prefix(html_docs, 'qm/test/doc/html')),
+                  ('qm/doc/test/print',
+                   prefix(print_docs, 'qm/test/doc/print')),
+                  # The tutorial.
+                  ("qm/tutorial/test/tdb", tutorial_files),
+                  ("qm/tutorial/test/tdb/QMTest",
+                   ("qm/test/share/tutorial/tdb/QMTest/configuration",))]
+                 # The files from the top-level "share" directory.
+                 + share_files.items())
 
 ########################################################################
 # Local Variables:

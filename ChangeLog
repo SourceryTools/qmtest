@@ -1,3 +1,29 @@
+2003-10-14  Mark Mitchell  <mark@codesourcery.com>
+
+	* GNUmakefile.in: Sipmlify drastically, relying on distutils to do
+	all of the work.
+	* setup.py: Tidy.  Add support for DTML files and other missing
+	GUI functionality.
+	* qm/__init__.py: Pull in data_dir from the configuration file.
+	* qm/common.py (get_share_directory): Use it.
+	(get_doc_directory): Likewise.
+	* qm/qm.sh: Remove.
+	* qm/test/.cvsignore: Remove qmtest and qmtest.bat.
+	* qm/test/base.py (get_extension_directories): Use
+	get_share_directory to find test classes.
+	* qm/test/cmdline.py (QMTest.__init__): Add 'path' argument.
+	* qm/test/qmtest.py: Rename to ...
+	* qm/test/qmtest: ... this.  Add logic to allow QMTest to find its
+	own modules.
+	* qm/test/doc/reference.xml: Remove QM_PYTHON.
+	* qmdist/command/__init__.py (get_relative_path): New function.
+	* qmdist/command/check.py: Revise to reference "qmtest", not
+	"qmtest.py".
+	* qmdist/command/install_data.py (install_data.run): Output
+	data_dir as a relative path.
+	* qmdist/command/install_scripts.py: New file.
+	* NEWS: Update.
+		
 2003-10-02  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qm/test/share/dtds/result.dtd: Convert 'outcome' to an attribute.

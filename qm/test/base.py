@@ -110,13 +110,15 @@ def get_extension_directories(kind, database, database_path = None):
     elif database_path:
         dirs.append(qm.test.database.get_configuration_directory
                     (database_path))
-        
-    # When running from the source tree, we look for path relative
-    # to this file.
-    dirs.append(os.path.join(os.path.dirname(__file__), "classes"))
-    # In an installed version of QMTest, the config object tells us
-    # where to look.
-    dirs.append(os.path.join(qm.config.data_dir, 'test', 'classes'))
+
+    if qm.common.is_installed:
+        # In an installed version of QMTest, the config object tells us
+        # where to look.
+        dirs.append(qm.common.get_share_directory('test', 'classes'))
+    else:
+        # When running from the source tree, we look for path relative
+        # to this file.
+        dirs.append(os.path.join(os.path.dirname(__file__), "classes"))
 
     return dirs
 

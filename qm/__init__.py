@@ -23,13 +23,14 @@ from qm.diagnostic import error, warning, message
 
 try:
     # The config file is created during "make install" by setup.py.
-    from qm.config import version
+    from qm.config import version, data_dir
     version_info = tuple(string.split(version, '.'))
     """The version of QM as a tuple of '(major, minor, release)'."""
 except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0
     from qm.__version import version, version_info
+    data_dir = "share"
     
 ########################################################################
 # Local Variables:
