@@ -80,7 +80,7 @@ $(SCRIPTS):
 	echo -e "@echo off\r" > $@
 	echo -e "set QM_HOME=$(prefix)\r" >> $@
 	echo -e "set QM_BUILD=0\r" >> $@
-	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\r\" " >> $@
+	echo -n "$(PYTHONEXE) \"%QM_HOME%\\lib\\qm\\qm\\$@.py\r\" " >> $@ # "
 	echo -e "%1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
 endif
 
@@ -109,23 +109,30 @@ install: \
 # Install Python packages that use distutils.
 .PHONY: $(PYTHON_PACKAGES_INSTALL)
 
+# Distutils requires relative paths on Windows.  For consistency,
+# we use the same technique everywhere.
+RELLIBDIR := $(shell expr "$(INSTALLLIBDIR)" : '$(prefix)/\(.*\)')
+RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
+
 # Unfortunately, some versions of Python's Distutils do not set modes
 # on the installed files so we have to do it manually here.  There is
 # no easy way to get the permissions set correctly on the directories
-# created; the directories are not output by Distutils.
+# created; the directories are not output by Distutils.  The "root"
+# option is undocumented, but apparently necessary, when using 
+# relative paths for --install-purelib and such.
 $(PYTHON_PACKAGES_INSTALL):
 	cd $(@:-install=) && \
 		MANIFEST=$(notdir $(@:-install=))-manifest && \
 		$(PYTHON) ./setup.py install -O1 \
-	        --prefix="$(prefix)" \
-		--install-purelib="$(INSTALLLIBDIR)" \
-                --install-platlib="$(INSTALLLIBDIR)" \
-                --install-scripts="$(INSTALLSHAREDIR)" \
-		--install-data="$(INSTALLSHAREDIR)" \
+	        --prefix="$(prefix)" --root="$(prefix)" \
+		--install-purelib="$(RELLIBDIR)" \
+                --install-platlib="$(RELLIBDIR)" \
+                --install-scripts="$(RELSHAREDIR)" \
+		--install-data="$(RELSHAREDIR)" \
 		--record=$$MANIFEST && \
 		for x in `cat $$MANIFEST`; do \
-			test -x $$x && chmod 0755 $$x || \
-				chmod 0644 $$x; \
+			test -x $$x && chmod 0755 $(prefix)/$$x || \
+				chmod 0644 $(prefix)/$$x; \
 		done && \
 		rm $$MANIFEST
 

@@ -1,5 +1,8 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (PYTHON_PACKAGES_INSTALL): Use relative paths.
+	* README: Document Distutils version required.
+
 	* Makefile.in (SCRIPTS): Fix typo.
 	* qm.spec (Release): Increment.
 
