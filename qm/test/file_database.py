@@ -106,7 +106,7 @@ class FileDatabase(Database):
 
         Derived classes may override this method."""
 
-        raise self._GetPathFromLabel(test_id)
+        return self._GetPathFromLabel(test_id)
 
 
     def _IsTestFile(self, path):
@@ -397,6 +397,19 @@ class FileDatabase(Database):
 
         return os.path.join(self.GetRoot(), self._LabelToPath(label))
 
+
+    def _GetLabelFromBasename(self, basename):
+        """Returns the label associated with a file named 'basename'.
+
+        'basename' -- The basename of a file, including the extension.
+
+        returns -- The corresponding label.
+
+        Derived classes may override this method."""
+ 
+        return basename
+
+
     # Derived classes must not override any methods below this point.
 
     def _GetLabels(self, directory, scan_subdirs, label, predicate):
@@ -424,23 +437,24 @@ class FileDatabase(Database):
         # Go through all of the files (and subdirectories) in that
         # directory.
         for entry in dircache.listdir(directory):
-            # If the entry name is not a valid label, then pretend it
+            entry_label = self._GetLabelFromBasename(entry)
+            # If the label is not valid then pretend it
             # does not exist.  It would not be valid to create an entity
             # with such an id.
-            root = os.path.splitext(entry)[0]
-            if not self.IsValidLabel(root):
+            if not self.IsValidLabel(entry_label):
                 continue
             # Compute the full path to 'entry'.
             entry_path = os.path.join(directory, entry)
             # If it satisfies the 'predicate', add it to the list.
             if predicate(entry_path):
-                labels.append(self.JoinLabels(label, root))
+                labels.append(self.JoinLabels(label, entry_label))
             # If it is a subdirectory, recurse.
             if (scan_subdirs and os.path.isdir(entry_path)
                 and self._IsSuiteFile(entry_path)):
                 labels.extend(self._GetLabels(entry_path,
                                               scan_subdirs,
-                                              self.JoinLabels(label, root),
+                                              self.JoinLabels(label, 
+                                                              entry_label),
                                               predicate))
 
         return labels
@@ -565,7 +579,13 @@ class ExtensionDatabase(FileDatabase):
         return os.path.join(self.GetRoot(),
                             self._LabelToPath(label,
                                               self.__suite_extension))
+
         
+    def _GetLabelFromBasename(self, basename):
+
+        return os.path.splitext(basename)[0]
+
+
 ########################################################################
 # Local Variables:
 # mode: python
