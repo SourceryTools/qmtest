@@ -1,0 +1,118 @@
+<dtml-comment><!--
+
+  File:   subscription.dtml
+  Author: Alex Samuel
+  Date:   2001-08-02
+
+  Contents:
+    Form for adding a subscription field to an issue class.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Email Subscription')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="request.copy('submit-subscription').AsUrl()">"
+       enctype="multipart/form-data"/>
+
+ <h3>Email Subscriptions</h3>
+
+ <p><dtml-var expr="GetName()"> can send notification email messages to
+ a list of subscribers specific to each issue.  Optionally, <dtml-var
+ expr="GetName()"> users can be subscribed automatically for
+ notification when they modify the issue.</p>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+
+  <tr valign="top" class="field">
+   <td class="field">
+    <b>Notification Condition</b>
+
+    <p>Send an email notification whenever this Python expression is true
+    for a new or modified issue.</p> 
+
+    <p>Use "<tt>1</tt>" to send a notification always.</p>
+   </td>
+   <td>
+    <input type="text"
+           name="notification_condition"
+           size="40"
+          <dtml-if expr="trigger">
+           value="<dtml-var expr="trigger.GetCondition()">"
+          <dtml-else>
+           value="1"
+          </dtml-if>
+    />
+   </td>
+  </tr>
+
+  <tr valign="top" class="field">
+   <td class="field">
+    <b>Automatic Subscription Condition</b>
+
+    <p>Automatically subscribe the user who adds or modifies the issue
+    whenever this Python expression is true.</p>
+
+    <p>Use "<tt>0</tt>" never to subscribe a user automatically, or
+    "<tt>1</tt>" always to do so.</p>
+   </td>
+   <td>
+    <input type="text"
+           name="subscription_condition"
+           size="40"
+          <dtml-if expr="trigger">
+           value="<dtml-var expr="trigger.GetAutomaticSubscriptionCondition()">"
+          <dtml-else>
+           value="0"
+          </dtml-if>
+    />
+   </td>
+  </tr>
+
+  <tr valign="top" class="field">
+   <td>
+    <b>Hide Subscribers</b>
+   </td>
+   <td>
+    <input type="checkbox"
+           name="hide_subscription"
+           value="true"
+          <dtml-if expr="not field or field.GetAttribute('hidden') == 'true'">
+           checked 
+          </dtml-if>
+    />
+    Hide the list of subscribers when displaying an issue.
+   </td>
+  </tr>
+
+ </table>
+
+ <input type="button"
+        value=" OK "
+        onclick="document.form.submit();"/>
+ <dtml-var expr="MakeUrlButton('Cancel',
+                     request.copy('show-issue-class').AsUrl())">
+
+ </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

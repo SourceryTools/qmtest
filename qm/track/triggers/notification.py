@@ -218,7 +218,11 @@ class NotifyFixedTrigger(_NotifyTrigger):
     The notification subscribers are part of the trigger's configuration.
     Subscribers may be specified by email address or by user ID."""
 
-    def __init__(self, name, condition, subscriber_addresses=[]):
+    def __init__(self,
+                 name,
+                 condition,
+                 recipient_addresses=[],
+                 recipient_users=[]):
         """Create a new trigger instance.
 
         'name' -- The name of the trigger instance.
@@ -226,33 +230,61 @@ class NotifyFixedTrigger(_NotifyTrigger):
         'condition' -- A Python expression representing the condition
         under which to send notification.
 
-        'subscriber_addresses' -- A sequence of email addresses of
-        subscribers."""
+        'recipient_addresses' -- A sequence of email addresses of
+        recipients.
+
+        'recipient_users' -- A sequence of user IDs of recipients."""
         
         # Initialize the base class.
         _NotifyTrigger.__init__(self, name, condition)
         # Store any subscribers that were specified here.
-        self.__subscribers = list(subscriber_addresses)
+        self.__recipient_addresses = list(recipient_addresses)
+        self.__recipient_users = list(recipient_users)
 
 
     def GetSubscriberAddresses(self, issue):
         """Return a sequence of email addresses of subscribers."""
         
-        return self.__subscribers
+        # Start with subscribers listed by email address.
+        result = self.__recipient_addresses[:]
+        # Add email addresses of subscribed users.
+        for user in self.__recipient_users:
+            # Get the user's email address.
+            email_address = user.GetInfoProperty("email", None)
+            if email_address is None:
+                # Silently ignore if 'user' has no email address.
+                continue
+            else:
+                # Add the email address.
+                result.append(email_address)
+        return result
 
 
-    def AddSubscriberAddress(self, address):
-        """Add email 'address' to the list of subscribers."""
+    def GetRecipientAddresses(self):
+        """Return a sequence of recipients specified by email address."""
 
-        self.__subscribers.append(address)
+        return self.__recipient_addresses
 
 
-    def AddSubscriberUid(self, uid):
-        """Add the user with ID 'uid' to the list of subscribers.
+    def GetRecipientUids(self):
+        """Return a sequence of recipients specified by user ID."""
+
+        return self.__recipient_users
+
+
+    def AddRecipientAddress(self, address):
+        """Add email 'address' to the list of recipients."""
+
+        self.__recipoent_addresses.append(address)
+
+
+    def AddRecipientUid(self, uid):
+        """Add the user with ID 'uid' to the list of recipients.
 
         Adds the user's email address, if it is specified in the user
-        database.  If there is no user with ID 'uid', or if the user
-        has no email address specified, does nothing."""
+        database.  If there is no user with ID 'uid', does nothing.
+        Note that notification email is sent only to users for whom an
+        email address is specified in the user database."""
 
         database = qm.user.database
         # Extract the user with ID 'uid'.
@@ -262,14 +294,8 @@ class NotifyFixedTrigger(_NotifyTrigger):
             # FIXME?
             # Silently ignore invalid user IDs.
             return
-        # Get the user's email address.
-        email_address = user.GetInfoProperty("email", None)
-        if email_address is None:
-            # FIXME?
-            # Silently ignore if 'user' has no email address.
-            return
-        # Add the email address.
-        self.__subscribers.append(email_address)
+        else:
+            self.__recipient_users.append(user)
 
 
 
@@ -442,6 +468,12 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
         Automatic subscription is off by default."""
 
         self.__subscription_condition = condition
+
+
+    def GetAutomaticSubscriptionCondition(self):
+        """Return the condition under which users are subscribed."""
+
+        return self.__subscription_condition
 
 
     def Preupdate(self, issue, previous_issue):

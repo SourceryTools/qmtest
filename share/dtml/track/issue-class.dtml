@@ -55,13 +55,77 @@
    <tr class="heading">
     <td colspan="2">
      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+       <td colspan="2">
+        <b>Fields</b>
+
+        <p>Fields specify the information stored for each issue in this
+        issue class.</p>
+       </td>
+      </tr>
+
       <tr>
        <td>
-        <b>Fields</b>
+        <p>You may add additional fields to the issue class, using
+        <dtml-var expr="GetName()">'s built-in field types or your own
+        custom types.</p>
        </td>
        <td align="right">
         <dtml-var expr="MakeUrlButton('Add a New Field...',
                                   request.copy('add-issue-field').AsUrl())">
+       </td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+   
+   <tr class="heading">
+    <td colspan="2">
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+       <td colspan="2">
+        <b>Special Features</b>
+
+        <p><dtml-var expr="GetName()"> can help you configure features
+        for the issue class:</p>
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Notification: Email a notification message to a
+        predetermined list of recipients when an issue changes.
+       </td>
+       <td align="right">
+        <dtml-var expr="MakeUrlButton('Configure...',
+                        request.copy('show-notification').AsUrl())">
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Subscription: Allow users to subscribe to email notification
+        messages for specific issues.
+       </td>
+       <td align="right">
+        <dtml-var expr="MakeUrlButton('Configure...',
+                        request.copy('show-subscription').AsUrl())">
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Discussion: Add a field to each issue containing an ongoing
+        user discussion.
+       </td>
+       <td align="right">
+        <dtml-if expr="issue_class.HasField('discussion') and
+                       issue_class.GetTrigger('discussion')">
+         (already present)
+        <dtml-else>
+         <dtml-var expr="MakeUrlButton('Add',
+                         request.copy('add-discussion').AsUrl())">
+        </dtml-if>
        </td>
       </tr>
      </table>

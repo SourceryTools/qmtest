@@ -162,6 +162,76 @@ class AddClassPageInfo(web.PageInfo):
 
 
 
+class NotificationPageInfo(web.PageInfo):
+    """DTML context for the form to add notification to an issue class."""
+
+    def __init__(self, request, trigger):
+        # Initialize the base class.
+        web.PageInfo.__init__(self, request)
+        # Set attributes.
+        self.trigger = trigger
+
+
+    def MakeRecipientAddressesControl(self):
+        """Construct controls for selecting recipient email addresses."""
+
+        # Field names.
+        field_name = "recipient_addresses"
+        select_name = "_set_" + field_name
+        # Make the popup page for specifying a new address.
+        page_info = qm.web.PageInfo(self.request)
+        page_info.field_name = field_name
+        page_info.select_name = select_name
+        add_page = web.generate_html_from_dtml(
+            "add-notification-address.dtml", page_info)
+        # If there already is a notification trigger, include recipients
+        # specified in it.
+        if self.trigger is not None:
+            recipients = self.trigger.GetRecipientAddresses()
+            recipients = map(lambda r: (r, r), recipients)
+        else:
+            recipients = []
+        # Build the controls.
+        return qm.web.make_set_control(
+            form_name="form",
+            field_name=field_name,
+            select_name=select_name,
+            add_page=add_page,
+            request=self.request,
+            initial_elements=recipients)
+
+
+    def MakeRecipientUidsControl(self):
+        """Construct controls for selecting recipient UIDs."""
+
+        # Field names.
+        field_name = "recipient_uids"
+        select_name = "_set_" + field_name
+        # Make the popup page for selecting a UID to add.
+        page_info = qm.web.PageInfo(self.request)
+        page_info.field_name = field_name
+        page_info.select_name = select_name
+        page_info.uids = qm.user.database.keys()
+        add_page = web.generate_html_from_dtml(
+            "add-notification-uid.dtml", page_info)
+        # If there is already a notification trigger, include recipient
+        # users specified in it.
+        if self.trigger is not None:
+            recipients = self.trigger.GetRecipientUids()
+            recipients = map(lambda r: (r, r), recipients)
+        else:
+            recipients = []
+        # Build the controls.
+        return qm.web.make_set_control(
+            form_name="form",
+            field_name=field_name,
+            select_name=select_name,
+            add_page=add_page,
+            request=self.request,
+            initial_elements=recipients)
+
+
+
 ########################################################################
 # functions
 ########################################################################
@@ -481,6 +551,158 @@ def handle_new_class(request):
         qm.track.get_configuration()["default_class"] = class_name
     # Redirect to the IDB configuration page.
     show_request = request.copy("config-idb")
+    raise qm.web.HttpRedirect, show_request.AsUrl()
+
+
+def handle_show_notification(request):
+    """Handle an 'show-notification' request.
+
+    This request shows a form for configuring a notification trigger."""
+
+    issue_class = _get_issue_class_for_session(request)
+    notification_trigger = issue_class.GetTrigger("notification")
+    page_info = NotificationPageInfo(request, trigger=notification_trigger)
+    return web.generate_html_from_dtml("notification.dtml",
+                                       page_info)
+
+
+def handle_submit_notification(request):
+    """Handle submission of a change to the notification trigger.
+
+    These fields are used in the request:
+
+      'recipient_addresses' -- A list of email addresses of recipients.
+
+      'recipient_uids' -- A list of user IDs of recipients.
+
+      'notification_condition' -- A Python expression on an issue
+      indicating when notification is sent.
+    """
+
+    # Extract parameters from the request.
+    recipient_addresses = qm.web.decode_set_control_contents(
+        request["recipient_addresses"])
+    recipient_uids = qm.web.decode_set_control_contents(
+        request["recipient_uids"])
+    condition = request["notification_condition"]
+    # Construct the trigger.
+    from qm.track.triggers.notification import NotifyFixedTrigger
+    trigger = NotifyFixedTrigger("notification",
+                                 condition,
+                                 recipient_addresses,
+                                 recipient_uids)
+    # Insert it.
+    issue_class = _get_issue_class_for_session(request)
+    issue_class.RegisterTrigger(trigger)
+    # Redirect to the page displaying the issue class.
+    show_request = request.copy("show-issue-class")
+    for attribute_name in [
+        "recipient_addresses",
+        "recipient_uids",
+        "notification_condition"
+        ]:
+        del show_request[attribute_name]
+    raise qm.web.HttpRedirect, show_request.AsUrl()
+
+
+def handle_show_subscription(request):
+    """Handle a 'show-subscription' request.
+
+    This request shows a form for configuring a subscription field and
+    trigger."""
+
+    issue_class = _get_issue_class_for_session(request)
+    page_info = web.PageInfo(request)
+    try:
+        page_info.field = issue_class.GetField("subscribers")
+    except KeyError:
+        page_info.field = None
+    page_info.trigger = issue_class.GetTrigger("subscription")
+    return web.generate_html_from_dtml("subscription.dtml", page_info)
+
+
+def handle_submit_subscription(request):
+    """Handle submission of a change to the subscription trigger.
+
+    These fields are used in the request:
+
+      'notification_condition' -- The condition under which notification
+      messages are sent.
+
+      'subscription_condition' -- The condition under which users are
+      subscribed automatically.
+
+      'hide_subscription' -- Whether to hide the subscription list.
+    """
+
+    issue_class = _get_issue_class_for_session(request)
+
+    # Extract parameters from the request.
+    notification_condition = request["notification_condition"]
+    subscription_condition = request["subscription_condition"]
+    if request.get("hide_subscription") == "true":
+        hide_subscription = "true"
+    else:
+        hide_subscription = "false"
+    # Construct the field, if it doesn't exist.
+    if not issue_class.HasField("subscribers"):
+        subscribers_field = qm.fields.SetField(qm.fields.UidField(
+            name="subscribers",
+            title="Subscribers",
+            description=
+"""User IDs of users subscribed to receive automatic notification of
+changes to this issue."""))
+        issue_class.AddField(subscribers_field)
+    else:
+        subscribers_field = issue_class.GetField("subscribers")
+    # Set the "hidden" attribute appropriately.
+    subscribers_field.SetAttribute("hidden", hide_subscription)
+    # Construct the trigger.
+    from qm.track.triggers.notification import NotifyByUidFieldTrigger
+    trigger = NotifyByUidFieldTrigger("subscription",
+                                      notification_condition,
+                                      "subscribers")
+    trigger.SetAutomaticSubscription(subscription_condition)
+    # Insert it.
+    issue_class = _get_issue_class_for_session(request)
+    issue_class.RegisterTrigger(trigger)
+    # Redirect to the page displaying the issue class.
+    show_request = request.copy("show-issue-class")
+    for attribute_name in [
+        "notification_condition",
+        "subscription_condition",
+        "hide_subscription"
+        ]:
+        if show_request.has_key(attribute_name):
+            del show_request[attribute_name]
+    raise qm.web.HttpRedirect, show_request.AsUrl()
+
+
+def handle_add_discussion(request):
+    """Handle a 'add-discussion' request.
+
+    This request adds a discussion field to the issue class being modified.""" 
+
+    issue_class = _get_issue_class_for_session(request)
+    page_info = web.PageInfo(request)
+    # Construct the field, if it doesn't exist.
+    if not issue_class.HasField("discussion"):
+        discussion_field = qm.track.issue_class.DiscussionField(
+            name="discussion",
+            title="Discussion",
+            description="Follow-up discussion of this issue.",
+            structured="true")
+        issue_class.AddField(discussion_field)
+    else:
+        discussion_field = issue_class.GetField("discussion")
+    # Construct the trigger.
+    from qm.track.triggers.discussion import DiscussionTrigger
+    trigger = DiscussionTrigger("discussion", discussion_field.GetName())
+    # Insert it.
+    issue_class = _get_issue_class_for_session(request)
+    issue_class.RegisterTrigger(trigger)
+    # Redirect to the page displaying the issue class.
+    show_request = request.copy("show-issue-class")
     raise qm.web.HttpRedirect, show_request.AsUrl()
 
 

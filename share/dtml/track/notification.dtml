@@ -1,0 +1,99 @@
+<dtml-comment><!--
+
+  File:   notification.dtml
+  Author: Alex Samuel
+  Date:   2001-08-02
+
+  Contents:
+    Form for adding a notificaton field to an issue class.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Email Notification')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="request.copy('submit-notification').AsUrl()">"
+       enctype="multipart/form-data"/>
+
+ <h3>Email Notification</h3>
+
+ <p><dtml-var expr="GetName()"> can send notification email messages to
+ fixed list of recipients when an issue of this issue class is added or
+ changed.</p>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+
+  <tr valign="top" class="field">
+   <td class="field">
+    <b>Recipient Addresses</b>
+
+    <p>Specify Internet email addresses of notification recipients.</p>
+   </td>
+   <td>
+    <dtml-var expr="MakeRecipientAddressesControl()">
+   </td>
+  </tr>
+
+  <tr valign="top" class="field">
+   <td class="field">
+    <b>Recipient User IDs</b>
+
+    <p>Specify user IDs of notification recipients.</p>
+   </td>
+   <td>
+    <dtml-var expr="MakeRecipientUidsControl()">
+   </td>
+  </tr>
+
+  <tr valign="top" class="field">
+   <td>
+    <b>Condition</b>
+
+    <p>Send an email notification whenever this Python expression is true
+    for a new or modified issue.  Use "<tt>1</tt>" to send a notification
+    always.</p>
+   </td>
+   <td>
+    <input type="text"
+           name="notification_condition"
+           size="40"
+          <dtml-if expr="trigger">
+           value="<dtml-var expr="trigger.GetCondition()">"
+          <dtml-else>
+           value="1"
+          </dtml-if>
+    />
+   </td>
+  </tr>
+
+ </table>
+
+ <input type="button"
+        value=" OK "
+        onclick="document.form.submit();"/>
+ <dtml-var expr="MakeUrlButton('Cancel',
+                     request.copy('show-issue-class').AsUrl())">
+
+ </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

@@ -1,3 +1,35 @@
+2001-07-03  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/web/issue_class.py (NotificationPageInfo): New class.
+	(handle_show_notification): New function.
+	(handle_submit_notification): Likewise.
+	(handle_show_subscription): Likewise.
+	(handle_submit_subscription): Likewise.
+	(handle_add_discussion): Likewise.
+	* qm/track/triggers/notification.py (NotifyFixedTrigger.__init__):
+	Separate recpients by email address and UID.
+	(NotifyFixedTrigger.GetSubscriberAddresses): Reimplement.
+	(NotifyFixedTrigger.GetRecipientAddresses): New method.
+	(NotifyFixedTrigger.GetRecipientUids): Likewise.
+	(NotifyFixedTrigger.AddSubscriberAddress): Rename to...
+	(NotifyFixedTrigger.AddRecipientAddress): ... this.
+	(NotifyFixedTrigger.AddSubscriberUid): Rename to...
+	(NotifyFixedTrigger.AddRecipientUid): ... this.
+	* qm/track/server.py (start_server): Register add-discussion,
+	show-notification, show-subscription, submit-notification,
+	submit-subscription. 
+	* qm/track/issue_class.py (IssueClass.__init__): Adjust descriptions.
+	(IssueClass.RegisterTrigger): Remove existing trigger.
+	(IssueClass.GetTrigger): New method.
+
+	* share/dtml/track/issue-class.dtml: Add buttons for special
+	features. 
+	* share/dtml/track/add-notification-address.dtml: New template.
+	* share/dtml/track/add-notification-uid.dtml: Likewise.
+	* share/dtml/track/subscription.dtml: Likewise.
+	* share/dtml/track/notification.dtml: Likewise.
+	* share/dtml/track/add-issue-class.dtml: Clean up.
+
 2001-07-02  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (make_set_control): Add ellipsis to Add...

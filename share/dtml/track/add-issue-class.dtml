@@ -26,7 +26,7 @@
        action="<dtml-var expr="request.copy('new-issue-class').AsUrl()">"
        enctype="multipart/form-data"/>
 
- <h3>New Issue Class Wizard</h3>
+ <h3>Add a New Issue Class</h3>
 
  <dtml-if expr="_.len(errors) > 0">
   <p><span class="error">Your submission contained errors.  Please
@@ -99,89 +99,6 @@
     <dtml-var expr="MakeCategoriesControl()">
    </td>
   </tr>
-
-<dtml-comment><!--
-  <tr valign="top" class="field">
-   <td>
-    <b>Notification</b>
-    <p><dtml-var expr="GetName()"> can send notification email messages
-    to fixed list of recipients when an issue of this issue class is
-    added or changed.</p>
-   </td>
-   <td>
-    Specify whom to notify:
-    <br>
-    <dtml-var expr="MakeNotificationControl()">
-    <br>
-    Send an email notification whenever this Python expression is true
-    for a new or modified issue (use "<tt>1</tt>" to send a notification
-    always):
-    <br>
-    <input type="text"
-           name="notification_condition"
-           size="40"
-           value="1"/>
-   </td>
-  </tr>
-
-    def MakeNotificationControl(self):
-        field_name = "notification_subscribers"
-        select_name = "_set_" + field_name
-
-        page_info = qm.web.PageInfo(self.request)
-        page_info.field_name = field_name
-        page_info.select_name = select_name
-
-        page_info.uids = filter(
-            lambda uid: 
-            qm.user.database[uid].GetInfoProperty("email") is not None,
-            qm.user.database.keys())
-        
-        add_page = web.generate_html_from_dtml(
-            "add-notification-subscriber.dtml", page_info)
-
-        return qm.web.make_set_control(
-            form_name="form",
-            field_name=field_name,
-            select_name=select_name,
-            add_page=add_page,
-            request=self.request)
-
-
-  <tr valign="top" class="field">
-   <td>
-    <b>Subscription</b>
-    <p><dtml-var expr="GetName()"> can also send notification email
-    messages to a list of subscribers specific to each issue.
-    Optionally, <dtml-var expr="GetName()"> users can be subscribed
-    automatically for notification when they modify the issue.</p>
-   </td>
-   <td>
-    Send an email notification whenever this Python expression is true
-    for a new or modified issue (use "<tt>1</tt>" to send a notification
-    always):
-    <br>
-    <input type="text"
-           name="subscription_notification_condition"
-           size="40"
-           value="1"/>
-    <br>
-    Automatically subscribe the user who adds or modifies the issue
-    whenever this Python expression is true (use "<tt>0</tt>" never to
-    subscribe a user automatically, or "<tt>1</tt>" always to do so):
-    <br>
-    <input type="text"
-           name="subscription_condition"
-           size="40"
-           value="1"/>
-    <br>
-    <input type="checkbox"
-           name="hide_subscription"
-           checked />
-    Hide the list of subscribers when displaying an issue.
-   </td>
-  </tr>
---></dtml-comment>
 
  </table>
 

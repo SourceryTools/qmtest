@@ -935,11 +935,10 @@ class IssueClass:
             name="state",
             title="State",
             state_model=state_model,
-            description="""
-            The state of this issue in the issue class's state model.
-            The state reflects the status of this issue within the set of
-            procedures by which an issue is normally resolved.
-            """,
+            description=
+"""The state of this issue in the issue class's state model.
+The state reflects the status of this issue within the set of
+procedures by which an issue is normally resolved.""",
             initialize_to_default="true")
         self.AddField(field)
 
@@ -964,11 +963,11 @@ class IssueClass:
             name="categories",
             enumeration=categories_enum,
             title="Categories",
-            description="""
-            The names of categories to which this issue belongs.  A
-            category is a group of issues that share a similar feature,
-            for instance all bugs in the particular component.
-            """)
+            description=
+"""The names of categories to which this issue belongs.  A category is a
+group of issues that share a similar feature, for instance all bugs in
+the particular component."""
+            )
         field = qm.fields.SetField(field)
         self.AddField(field)
 
@@ -976,11 +975,9 @@ class IssueClass:
         field = IidField(
             name="parents",
             title="Parents",
-            description="""
-            The issue ID of the issue from which this issue was split,
-            or the issue IDs of the issues from which this issue was
-            joined.
-            """,
+            description=
+"""The issue ID of the issue from which this issue was split, or the
+issue IDs of the issues from which this issue was joined.""",
             hidden="true")
         field = qm.fields.SetField(field)
         self.AddField(field)
@@ -989,11 +986,10 @@ class IssueClass:
         field = IidField(
             name="children",
             title="Children",
-            description="""
-            The issue IDs of issues into which this issue was split, or
-            the issue ID of the issue which resulted when this issue was
-            joined with other issues.
-            """,
+            description=
+"""The issue IDs of issues into which this issue was split, or the issue
+ID of the issue which resulted when this issue was joined with other
+issues.""",
             hidden="true")
         field = qm.fields.SetField(field)
         self.AddField(field)
@@ -1090,6 +1086,11 @@ class IssueClass:
 
         'trigger' -- An instance of a 'Trigger' subclass."""
         
+        # Remove any existing trigger with the same name.
+        current_trigger = self.GetTrigger(trigger.GetName())
+        if current_trigger is not None:
+            self.__triggers.remove(current_trigger)
+        # Add the trigger.
         self.__triggers.append(trigger)
 
 
@@ -1097,6 +1098,19 @@ class IssueClass:
         """Return a sequence of triggers registered for this class."""
 
         return self.__triggers
+
+
+    def GetTrigger(self, name, default=None):
+        """Return the trigger.
+
+        returns -- The trigger whose name is 'name', or 'default' if no
+        such trigger is registered for this class."""
+
+        for trigger in self.__triggers:
+            if trigger.GetName() == name:
+                return trigger
+        # No luck.
+        return default
 
 
 
