@@ -79,6 +79,7 @@ class Command:
     query_class_option = ('c', 'class', 'NAME',
                           'Class of issues to query.')
     port_option = ('P', 'port', 'PORT', 'Server port number.')
+    address_option = ('A', 'address', 'ADDRESS', 'Local address.')
     log_file_option = (None, 'log-file', 'PATH', 'Log file name.')
     idb_type_option = (None, 'idb-type', 'TYPE', 'IDB type.')
     test_values_option = (None, 'test-values', None,
@@ -145,7 +146,7 @@ class Command:
          '',
          "This command starts the QMTrack server.  The server provides "
          "a web user interface and remote command access over HTTP.",
-         [ help_option, port_option, log_file_option ]
+         [ help_option, port_option, address_option, log_file_option ]
          ),
     
         ('show',
@@ -733,6 +734,10 @@ class Command:
         # Get the port number specified by a command option, if any.
         # Otherwise use a default value.
         port_number = int(command_options.get('port', 8000))
+        # Get the local address specified by a command option, if any.
+        # If not was specified, use the empty string, which corresponds
+        # to all local addresses.
+        address = command_options.get('address', '')
         # Was a log file specified?
         try:
             log_file_path = command_options['log-file']
@@ -747,7 +752,7 @@ class Command:
             # --log-file wasn't specified, so no logging.
             log_file = None
         # Start the server.
-        qm.track.start_server(port_number, log_file)
+        qm.track.start_server(port_number, address, log_file)
     
     
     def __PerformShow(self, output):

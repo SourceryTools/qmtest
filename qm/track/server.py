@@ -84,12 +84,15 @@ def do_command_for_xml_rpc(argument_list):
     return result
 
 
-def start_server(port, log_file=None):
+def start_server(port, address="", log_file=None):
     """Start an HTTP server.
 
     preconditions -- An IDB connection in local mode.
 
     'port' -- The port number on which to accept HTTP requests.
+
+    'address' -- The local address to which to bind the server.  An
+    empty string indicates all local addresses.
 
     'log_file' -- A file object to which the server will log requests.
     'None' for no logging.
@@ -105,6 +108,7 @@ def start_server(port, log_file=None):
 
     # Create a new server instance.  Enable XML-RPM.
     server = qm.web.WebServer(port,
+                              address,
                               log_file=log_file,
                               xml_rpc_path="/xml-rpc")
     # Register all our web pages.

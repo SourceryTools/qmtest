@@ -1,5 +1,14 @@
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (WebServer.__init__): Add address parameter.
+	(WebServer.Bind): Use __address.
+	* qm/track/server.py (start_server): Add address parameter.
+	* qm/track/cmdline.py (Command.address_option): New variable.
+	(Command.qmtrack_commands): Use it.
+	(Command.__PerformServer): Handle address option.
+	
+2001-03-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/structured_text.py (TextFormatter.__init__): Set default
 	width to 78.  Initialize __depth.
 	(TextFormatter.StartList): Don't indent outermost paragraphs.

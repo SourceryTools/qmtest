@@ -374,7 +374,7 @@ class HTTPServer(BaseHTTPServer.HTTPServer):
     misconfiguration.  This subclass fixes that problem."""
 
     def server_bind(self):
-        """Override server_bind to store the server name."""
+        """Override 'server_bind' to store the server name."""
 
         # The problem occurs when an empty host name is specified as the
         # local address to which the socket binds.  Specifying an empty
@@ -445,10 +445,17 @@ class WebServer(HTTPServer):
        returned."""
 
 
-    def __init__(self, port, log_file=sys.stderr, xml_rpc_path=None):
+    def __init__(self,
+                 port,
+                 address="",
+                 log_file=sys.stderr,
+                 xml_rpc_path=None):
         """Create a new web server.
 
         'port' -- The port on which to accept connections.
+
+        'address' -- The local address to which to bind.  An empty
+        string means bind to all local addresses.
 
         'log_file' -- A file object to which to write log messages.
         If it's 'None', no logging.
@@ -460,6 +467,7 @@ class WebServer(HTTPServer):
         invoked."""
 
         self.__port = port
+        self.__address = address
         self.__log_file = log_file
         self.__scripts = {}
         self.__translations = {}
@@ -622,7 +630,7 @@ class WebServer(HTTPServer):
         # socket. 
         try:
             BaseHTTPServer.HTTPServer.__init__(self,
-                                               ('', self.__port), 
+                                               (self.__address, self.__port), 
                                                WebRequestHandler)
         except socket.error, error:
             error_number, message = error
