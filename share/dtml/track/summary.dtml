@@ -20,7 +20,19 @@
 <html>
  <dtml-var expr="GenerateHtmlHeader('Issue Summary')">
  <dtml-var expr="GenerateStartBody()">
-  <p>Click on a column heading to sort by that field.</p>
+
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <p>Click on a column heading to sort by that field.</p>
+    </td>
+    <td align="right">
+     <form name="navigation">
+      <dtml-var name="display_options_button">
+     </form>
+    </td>
+   </tr>
+  </table>
 
   <dtml-if expr="issue_map != {}">
 
@@ -74,14 +86,14 @@
          <dtml-in name="field_names">
          <dtml-with expr="_.namespace(field_name=_['sequence-item'])">
           <td>
-           <dtml-if expr="IsLinkToIssue(issue, field_name)">
-            <a href="<dtml-var expr="MakeIssueUrl(issue)">">
-           </dtml-if>
-           <font color="<dtml-var expr="GetForegroundColor(issue)">">
-            <dtml-var expr="FormatFieldValue(issue, field_name)">
-           </font>
-           <dtml-if expr="IsLinkToIssue(issue, field_name)">
-            </a>
+           <dtml-if expr="field_name == 'iid'">
+            <a href="<dtml-var expr="MakeIssueUrl(issue)">"><font
+            color="<dtml-var expr="GetForegroundColor(issue)">"><dtml-var
+            expr="FormatFieldValue(issue, field_name)"></font></a>
+           <dtml-else>
+            <font color="<dtml-var expr="GetForegroundColor(issue)">">
+             <dtml-var expr="FormatFieldValue(issue, field_name)">
+            </font>
            </dtml-if>
           </td>
          </dtml-with>
@@ -102,6 +114,7 @@
    <p><i>No issues.</i></p>
 
   </dtml-if>
+
   <dtml-var name="html_footer">
  <dtml-var expr="GenerateEndBody()">
 </html>

@@ -128,7 +128,7 @@ class PageInfo:
     {
       if(select.selectedIndex != -1)
         select.options[select.selectedIndex] = null;
-      update_set(select, contents);
+      update_from_select_list(select, contents);
       return false;
     }
 
@@ -140,11 +140,11 @@ class PageInfo:
           return false;
       if(value != "")
         options[options.length] = new Option(text, value);
-      update_set(select, contents);
+      update_from_select_list(select, contents);
       return false;
     }
 
-    function update_set(select, contents)
+    function update_from_select_list(select, contents)
     {
       var result = "";
       for(var i = 0; i < select.options.length; ++i) {
@@ -181,6 +181,34 @@ class PageInfo:
         debug_window.document.open("text/plain", "replace");
       }
       debug_window.document.writeln(msg);
+    }
+
+    function move_option(src, dst)
+    {
+      if(src.selectedIndex == -1)
+        return;
+      var option = src[src.selectedIndex];
+      dst[dst.length] = new Option(option.text, option.value);
+      src[src.selectedIndex] = null;
+    }
+
+    function swap_option(select, offset)
+    {
+      var index = select.selectedIndex;
+      if(index == -1)
+        return;
+      var new_index = index + offset;
+      if(new_index < 0 || new_index >= select.length)
+        return;
+      
+      var text = select[index].text;
+      var value = select[index].value;
+      select[index].text = select[new_index].text;
+      select[index].value = select[new_index].value;
+      select[new_index].text = text;
+      select[new_index].value = value;
+
+      select.selectedIndex = new_index;
     }
     </script>
     '''
@@ -1129,7 +1157,7 @@ class Session:
         generator = whrandom.whrandom()
         # Seed it with the system time.
         generator.seed()
-        # FIXME: Is this OK?
+        # FIXME: Security: Is this OK?
         digest = md5.new("%f" % generator.random()).digest()
         # Convert the digest, which is a 16-character string,
         # to a sequence hexadecimal bytes.
@@ -1590,9 +1618,6 @@ def generate_login_form(redirect_request, message=None):
     return generate_html_from_dtml("login_form.dtml", page_info)
 
 
-# Used to generate locally unique names.
-__counter = 0
-
 def make_set_control(form_name,
                      field_name,
                      select_name=None,
@@ -1660,9 +1685,9 @@ def make_set_control(form_name,
 
     # Construct a unique name for the JavaScript function for responding
     # to the "Add..." button.
-    global __counter
-    add_function = "_set_add_%d" % __counter
-    __counter = __counter + 1
+    global _counter
+    add_function = "_set_add_%d" % _counter
+    _counter = _counter + 1
     # Construct the "Add..." button.
     add_button = '''
     <input type="button"
@@ -1705,7 +1730,7 @@ def make_set_control(form_name,
         # popup window and writes the HTML page directly into it.   The
         # HTML page is encoded as a JavaScript string literal.
 
-        page_contents_var = "_page_contents_%d" % (__counter - 1)
+        page_contents_var = "_page_contents_%d" % (_counter - 1)
         add_script = """
         <script language="JavaScript">
         var %s = %s;
@@ -1796,8 +1821,6 @@ def make_help_link(help_text_tag, label, **substitutions):
     return make_help_link_html(help_text, label)
 
 
-_help_counter = 0
-
 def make_help_link_html(help_text, label):
     """Make a link to pop up help text.
 
@@ -1805,7 +1828,7 @@ def make_help_link_html(help_text, label):
 
     'label' -- The help link label."""
 
-    global _help_counter
+    global _counter
 
     # Wrap the help text in a complete HTML page.
     page_info = PageInfo(WebRequest(""))
@@ -1816,8 +1839,8 @@ def make_help_link_html(help_text, label):
 
     # Construct the name for the JavaScript variable which will hold the
     # help page. 
-    help_variable_name = "_help_text_%d" % _help_counter
-    _help_counter = _help_counter + 1
+    help_variable_name = "_help_text_%d" % _counter
+    _counter = _counter + 1
 
     # Construct the link.
     return '''
@@ -1949,8 +1972,8 @@ def make_popup_page(message, buttons, title=""):
 def make_select(field_name,
                 items,
                 default_value,
-                item_to_text,
-                item_to_value):
+                item_to_text=str,
+                item_to_value=str):
     """Construct HTML controls for selecting an item from a list.
 
     'field_name' -- The name of the form control which will contain the
@@ -2004,6 +2027,210 @@ def make_select(field_name,
     return result
     
 
+def make_choose_control(field_name,
+                        included_label,
+                        included_items,
+                        excluded_label,
+                        excluded_items,
+                        item_to_text=str,
+                        item_to_value=str,
+                        ordered=0):
+    """Construct HTML controls for selecting a subset.
+
+    The user is presented with two list boxes next to each other.  The
+    box on the left lists items included in the subset.  The box on the
+    right lists items excluded from the subset but available for
+    inclusion.  Between the boxes are buttons for adding and removing
+    items from the subset.
+
+    If 'ordered' is true, buttons are also shown for reordering items in
+    the included list.
+
+    'field_name' -- The name of an HTML hidden form field that will
+    contain an encoding of the items included in the subset.  The
+    encoding consists of the values corresponding to included items, in
+    a comma-separated list.
+
+    'included_label' -- HTML source for the label for the left box,
+    which displays the included items.
+
+    'included_items' -- Items initially included in the subset.  This is
+    a sequence of arbitrary objects or values.
+
+    'excluded_label' -- HTML source for the label for the right box,
+    which displays the items available for inclusion but not currently
+    included.
+
+    'excluded_items' -- Items not initially included but available for
+    inclusion.  This is a sequence of arbitrary objects or values.
+
+    'item_to_text' -- A function that produces a user-visible text
+    description of an item.
+
+    'item_to_value' -- A function that produces a value for an item,
+    used as the value for an HTML option object.
+
+    'ordered' -- If true, additional controls are displayed to allow the
+    user to manipulate the order of items in the included set.
+
+    returns -- HTML source for the items.  Must be placed in a
+    form."""
+    
+    # We'll construct an array of buttons.  Each element is an HTML
+    # input control.
+    buttons = []
+    # Construct the encoding for the items initially included.
+    initial_value = string.join(map(item_to_value, included_items), ",")
+    # The hidden control that will contain the encoded representation of
+    # the included items.
+    hidden_control = '<input type="hidden" name="%s" value="%s">' \
+                     % (field_name, initial_value)
+    # Construct names for the two select controls.
+    included_select_name = "_inc_" + field_name
+    excluded_select_name = "_exc_" + field_name
+
+    # The select control for included items.  When the user selects an
+    # item in this list, deselect the selected item in the excluded
+    # list, if any.
+    included_select = '''
+    <select name="%s"
+            width="160"
+            size="8"
+            onchange="document.form.%s.selectedIndex = -1;">''' \
+    % (included_select_name, excluded_select_name)
+    # Build options for items initially selected.
+    for item in included_items:
+        option = '<option value="%s">%s</option>\n' \
+                 % (item_to_value(item), item_to_text(item))
+        included_select = included_select + option
+    included_select = included_select + '</select>\n'
+
+    # The select control for excluded items.  When the user selects an
+    # item in this list, deselect the selected item in the included
+    # list, if any.
+    excluded_select = '''
+    <select name="%s"
+            width="160"
+            size="8"
+            onchange="document.form.%s.selectedIndex = -1;">''' \
+    % (excluded_select_name, included_select_name)
+    # Build options for items initially excluded.
+    for item in excluded_items:
+        option = '<option value="%s">%s</option>\n' \
+                 % (item_to_value(item), item_to_text(item))
+        excluded_select = excluded_select + option
+    excluded_select = excluded_select + '</select>\n'
+
+    # The Add button.
+    button = '''
+    <input type="button"
+           value=" << Add "
+           onclick="move_option(document.form.%s, document.form.%s);
+                    update_from_select_list(document.form.%s,
+                                            document.form.%s);">
+    ''' % (excluded_select_name, included_select_name,
+           included_select_name, field_name)
+    buttons.append(button)
+
+    # The Remove button.
+    button = '''
+    <input type="button"
+           value=" Remove >> "
+           onclick="move_option(document.form.%s, document.form.%s);
+                    update_from_select_list(document.form.%s,
+                                            document.form.%s);">
+    ''' % (included_select_name, excluded_select_name,
+           included_select_name, field_name)
+    buttons.append(button)
+
+    if ordered:
+        # The Move Up button.
+        button = '''
+        <input type="button"
+               value=" Move Up "
+               onclick="swap_option(document.form.%s, -1);
+                        update_from_select_list(document.form.%s,
+                                                document.form.%s);">
+        ''' % (included_select_name, included_select_name, field_name)
+
+        buttons.append(button)
+
+        # The Move Down button.
+        button = '''
+        <input type="button"
+               value=" Move Down "
+               onclick="swap_option(document.form.%s, 1);
+                        update_from_select_list(document.form.%s,
+                                                document.form.%s);">
+        ''' % (included_select_name, included_select_name, field_name)
+        buttons.append(button)
+
+    # Arrange everything properly.
+    buttons = string.join(buttons, "\n<br>\n")
+    return '''
+    %(hidden_control)s
+    <table border="0" cellpadding="0" cellspacing="0">
+     <tr valign="center">
+      <td>
+       %(included_label)s:
+       <br>
+       %(included_select)s
+      </td>
+      <td align="center">
+       %(buttons)s
+      </td>
+      <td>
+       %(excluded_label)s:<br>
+       %(excluded_select)s
+      </td>
+     </tr>
+    </table>
+    ''' % locals()
+
+
+def make_button_for_popup(label,
+                          html_text,
+                          window_width=480,
+                          window_height=240):
+    """Construct a button for displaying a popup page.
+
+    'label' -- The button label.
+
+    'html_text' -- The HTML source of the popup page.
+
+    'window_width' -- The width, in pixels, of the popup window.
+
+    'window_height' -- The height, in pixels, of the popup window.
+
+    returns -- HTML source for the button.  The button must be placed
+    within a form element."""
+
+    # Construct names for the variable which will contain the HTML text,
+    # and the function for showing the popup window.
+    global _counter
+    variable_name = "_page_%d" % _counter
+    function_name = "_popup_%d" % _counter
+    _counter = _counter + 1
+    # The HTML text is encoded in a JavaScript string literal.
+    html_text_string = make_javascript_string(html_text)
+    # Construct arguments for 'Window.open'.
+    window_args = "resizeable,width=%d,height=%s" \
+                  % (window_width, window_height)
+    # Generate it.
+    return """
+    <input type="button"
+           value=" %(label)s "
+           onclick="%(function_name)s();">
+    <script language="JavaScript">
+    var %(variable_name)s = %(html_text_string)s;
+    function %(function_name)s ()
+    {
+      window.open('javascript: window.opener.%(variable_name)s;',
+                  'popup', '%(window_args)s');
+    }
+    </script>
+    """ % locals()
+
 
 ########################################################################
 # variables
@@ -2011,6 +2238,8 @@ def make_select(field_name,
 
 sessions = {}
 """A mapping from session IDs to 'Session' instances."""
+
+_counter = 0
 
 ########################################################################
 # Local Variables:

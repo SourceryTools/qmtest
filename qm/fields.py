@@ -1285,9 +1285,8 @@ class EnumerationField(IntegerField):
 
 
     def GetTypeDescription(self):
-        enumerals = self.GetEnumerals()
-        enumerals = map(lambda en: '"%s"' % str(en), enumerals)
-        return "an enumeration of " + string.join(enumerals, ", ")
+        enumerals = map(str, self.GetEnumerals())
+        return 'an enumeration of "%s"' % string.join(enumerals, '," "')
 
 
     def Validate(self, value):
@@ -1497,7 +1496,7 @@ class UidField(TextField):
 
         if style == "new" or style == "edit":
             uids = qm.user.database.keys()
-            return qm.web.make_select(name, uids, value, str, str)
+            return qm.web.make_select(name, uids, value)
 
         elif style == "full" or style == "brief":
             return value

@@ -1,3 +1,29 @@
+2001-05-11  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (PageInfo.common_javascript): Rename update_set to
+	update_from_select_list.  Add move_option and swap_option.
+	(__counter): Remove.
+	(make_set_control): Use _counter.
+	(_help_counter): Remove.
+	(make_help_link_html): Use _counter.
+	(make_select): Add default arguments.
+	(make_choose_control): New function.
+	(make_button_for_popup): Likewise.
+	(_counter): New variable.
+	* qm/fields.py (EnumerationField.GetTypeDescription): Fix quoting.
+	(UidField.FormatValueAsHtml): Remove extraneous arguments to
+	make_select. 
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Add
+	field_names parameter.  Generate display options page.
+	(SummaryPageInfo.IsLinkToIssue): Remove.
+	(DisplayOptionsPageInfo): New class.
+	(handle_summary): Figure out fields to show.
+	* share/dtml/track/summary.dtml: Add Display Options button.
+	Adjust. 
+	* share/dtml/track/summary-display-options.dtml: New file.
+
+	* doc/manual/manual.xml: Fix title.
+
 2001-05-10  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (make_select): New function.

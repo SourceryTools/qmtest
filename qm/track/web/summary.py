@@ -66,7 +66,7 @@ class SummaryPageInfo(web.PageInfo):
 
     'issues' -- A sequence of issues to display in the table."""
 
-    def __init__(self, request, issues):
+    def __init__(self, request, issues, field_names):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
@@ -76,8 +76,7 @@ class SummaryPageInfo(web.PageInfo):
 
         qm.web.PageInfo.__init__(self, request)
 
-        # FIXME: For now, show these fields.
-        self.field_names = [ "iid", "summary", "timestamp", "state" ]
+        self.field_names = field_names
 
         # Partition issues by issue class.  'self.issue_map' is a map
         # from issue class onto a sequence of issues.
@@ -112,6 +111,18 @@ class SummaryPageInfo(web.PageInfo):
         sort_predicate = lambda cl1, cl2: \
                          cmp(cl1.GetTitle(), cl2.GetTitle())
         self.issue_classes.sort(sort_predicate)
+
+        # Generate the HTML page for the popup window for selecting
+        # display options.
+        display_options_page_info = DisplayOptionsPageInfo(
+            request, self.issue_map.keys(), self.field_names)
+        display_options_page = web.generate_html_from_dtml(
+            "summary-display-options.dtml", display_options_page_info)
+        # Construct the Display Options button, which pops up a window
+        # showing this page.
+        self.display_options_button = qm.web.make_button_for_popup(
+            "Change Display Options...", display_options_page,
+            window_width=640, window_height=320)
 
 
     def IsIssueShown(self, issue):
@@ -165,17 +176,77 @@ class SummaryPageInfo(web.PageInfo):
         return qm.web.make_url_for_request(new_request)
 
 
-    def IsLinkToIssue(self, issue, field_name):
-        """Return true if the value of this field should link to the issue."""
-
-        return field_name == "iid" or field_name == "summary"
-
-
     def MakeIssueUrl(self, issue):
         """Generate a URL to show an individual issue."""
 
         request = self.request.copy("show", iid=issue.GetId())
         return qm.web.make_url_for_request(request)
+
+
+
+class DisplayOptionsPageInfo(web.PageInfo):
+    """DTML context for generating 'summary-display-options.dtml'.
+
+    The following attributes are availablet as DTML variables.
+
+    'field_controls' -- The HTML controls for selecting the fields to
+    display.
+
+    'base_url' -- The base URL to redisplay the issue summary."""
+
+    def __init__(self, request, issue_classes, included_field_names):
+        """Create a new page info context.
+
+        'request' -- A 'WebRequest' object.
+
+        'issue_classes' -- A sequence of all issue classes available in
+        the issue summary.
+
+        'included_field_names' -- A sequence of names of all fields
+        currently included in the issue summary display."""
+
+        # Initialize the base class.
+        qm.web.PageInfo.__init__(self, request)
+
+        # Construct a map from field name to field object for all fields
+        # in all issue classes.
+        fields = {}
+        for issue_class in issue_classes:
+            for field in issue_class.GetFields():
+                fields[field.GetName()] = field
+        # Find all field names that aren't in 'included_field_names'.
+        excluded_field_names = []
+        for field_name in fields.keys():
+            if not field_name in included_field_names:
+                excluded_field_names.append(field_name)
+
+        # This function returns the title of the field whose name is
+        # 'field_name'.  If it isn't a field we know about here, just
+        # return the field name.
+        def get_title(field_name, fields=fields):
+            if fields.has_key(field_name):
+                return fields[field_name].GetTitle()
+            else:
+                return field_name
+
+        # Construct the controls for selecting fields to display.
+        self.fields_controls = qm.web.make_choose_control(
+            "fields",
+            "Show Fields",
+            included_field_names,
+            "Don't Show Fields",
+            excluded_field_names,
+            item_to_text=get_title,
+            ordered=1)
+
+        # Build the base URL for redisplaying the issue summary.  The
+        # form will add fields to this URL to reflect the display
+        # options selected in the form.  Blank out the fields that the
+        # form will add.
+        redisplay_request = request.copy()
+        if redisplay_request.has_key("fields"):
+            del redisplay_request["fields"]
+        self.base_url = qm.web.make_url_for_request(redisplay_request)
 
 
 
@@ -187,6 +258,8 @@ def handle_summary(request):
     """Generate the summary page.
 
     'request' -- A 'WebRequest' object."""
+
+    user = request.GetSession().GetUser()
 
     idb = qm.track.get_idb()
     if request.has_key("query"):
@@ -219,8 +292,26 @@ def handle_summary(request):
         issues = idb.GetIssues()
         # ... that aren't deleted.
         issues = filter(lambda iss: not iss.IsDeleted(), issues)
-        
-    page_info = SummaryPageInfo(request, issues)
+
+    # The request may specify the fields to display in the summary.  Are
+    # they specified?
+    if request.has_key("fields"):
+        # Yes; use them.
+        field_names = request["fields"]
+        # Save them as the default for next time in the user record.
+        user.SetConfigurationProperty("summary_fields", field_names)
+    else:
+        # No.  Retrieve the fields to show from the user record, or use
+        # a default if they're not listed there.
+        field_names = user.GetConfigurationProperty(
+            "summary_fields", "iid,summary,timestamp,state")
+    # Split field names into a sequence.
+    field_names = string.split(field_names, ",")
+    # Make sure the IID field is in there somewhere.
+    if not "iid" in field_names:
+        field_names.insert(0, "iid")
+
+    page_info = SummaryPageInfo(request, issues, field_names)
     return web.generate_html_from_dtml("summary.dtml", page_info)
 
 
