@@ -1,5 +1,7 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* .cvsignore: Add qm.spec.
+
 	* scripts/qm-release: Add support for binary releases.
 
 	* configure.in: Remove references to Gadfly.
