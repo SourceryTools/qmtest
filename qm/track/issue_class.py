@@ -681,7 +681,7 @@ class StateField(qm.fields.EnumerationField):
                 state_name)
             if len(transitions_to) > 0:
                 transitions_to = map(lambda t: '"%s"' % t, transitions_to)
-                transitions_to = string.join(transitions_to, ", ")
+                transitions_to = string.join(transitions_to, " , ")
             else:
                 transitions_to = "None"
             help = help + \

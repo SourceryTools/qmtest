@@ -136,6 +136,9 @@ def start_server(port, address="", log_file=None):
         "/stylesheets", qm.get_share_directory("web", "stylesheets"))
     server.RegisterPathTranslation(
         "/images", qm.get_share_directory("web", "images"))
+    # Register the QM manual.
+    server.RegisterPathTranslation(
+        "/manual", qm.get_doc_directory("manual", "html"))
     # Register the remote command handler.
     server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 

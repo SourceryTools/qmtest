@@ -124,7 +124,7 @@
            </span>
           </dtml-if>
          </td><td>
-          <dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp())">
+          &nbsp;&nbsp;<dtml-var expr="MakeHelpLinkHtml(field.GetHtmlHelp())">
          </td></tr>
         </table>  
        </td>

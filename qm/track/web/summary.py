@@ -61,18 +61,21 @@ class SummaryPageInfo(web.PageInfo):
 
     The following attributes are available as DTML variables.
 
-    'field_names' -- A sequence of field names to display in the
-    table.
-
     'issues' -- A sequence of issues to display in the table."""
 
-    def __init__(self, request, issues, field_names):
+    def __init__(self, request, issues, field_names, sort_order):
         """Create a new page.
 
         'request' -- A 'WebRequest' object containing the page
         request.
 
-        'issues' -- A sequence of issues to summarize."""
+        'issues' -- A sequence of issues to summarize.
+
+        'field_names' -- A comma-separated list of field names to
+        display.
+
+        'sort_order' -- The name of the field by which to sort entries.
+        If prefixed with a minus sign, sort in reverse order."""
 
         qm.web.PageInfo.__init__(self, request)
 
@@ -88,22 +91,19 @@ class SummaryPageInfo(web.PageInfo):
             else:
                 self.issue_map[issue_class] = [ issue ]
 
-        # Did the request specify a sort order?
-        if self.request.has_key("sort"):
-            # Yes.  Sort each list of issues accordingly.
-            sort_field = self.request["sort"]
-            # If the first character of the sort field is a hyphen, that
-            # indicates a reverse sort.
-            if sort_field[0] == "-":
-                reverse = 1
-                # The rest is the field name.
-                sort_field = sort_field[1:]
-            else:
-                reverse = 0
-            sort_predicate = qm.track.IssueSortPredicate(sort_field,
-                                                         reverse)
-            for issue_list in self.issue_map.values():
-                issue_list.sort(sort_predicate)
+        # If the first character of the sort order is a hyphen, that
+        # indicates a reverse sort.
+        if sort_order[0] == "-":
+            reverse = 1
+            # The rest is the field name.
+            sort_field = sort_order[1:]
+        else:
+            reverse = 0
+            sort_field = sort_order
+        sort_predicate = qm.track.IssueSortPredicate(sort_field,
+                                                     reverse)
+        for issue_list in self.issue_map.values():
+            issue_list.sort(sort_predicate)
 
         # Extract a list of issue classes we need to show.
         self.issue_classes = self.issue_map.keys()
@@ -310,14 +310,26 @@ def handle_summary(request):
         # No.  Retrieve the fields to show from the user record, or use
         # a default if they're not listed there.
         field_names = user.GetConfigurationProperty(
-            "summary_fields", "iid,summary,timestamp,state")
+            "summary_fields", "iid,summary,state,categories")
+
+    # The request may specify the sort order.  Is it specified?
+    if request.has_key("sort"):
+        # Yes; use it.
+        sort_order = request["sort"]
+        # Save it for next time.
+        user.SetConfigurationProperty("summary_sort", sort_order)
+    else:
+        # No.  Retrieve the sort order from the user record, os use a
+        # default if it's not listed there.
+        sort_order = user.GetConfigurationProperty("summary_sort", "iid")
+
     # Split field names into a sequence.
     field_names = string.split(field_names, ",")
     # Make sure the IID field is in there somewhere.
     if not "iid" in field_names:
         field_names.insert(0, "iid")
 
-    page_info = SummaryPageInfo(request, issues, field_names)
+    page_info = SummaryPageInfo(request, issues, field_names, sort_order)
     return web.generate_html_from_dtml("summary.dtml", page_info)
 
 

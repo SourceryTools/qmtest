@@ -261,8 +261,10 @@ class Field:
             return self.form_field_prefix + self.GetName()
 
 
-    def FormatValueAsText(self, value):
-        """Return a plain text rendering of a 'value' for this field."""
+    def FormatValueAsText(self, value, columns=72):
+        """Return a plain text rendering of a 'value' for this field.
+
+        'columns' -- The maximum width of each line of text."""
 
         raise qm.MethodShouldBeOverriddenError, "Field.FormatValueAsText"
 
@@ -350,15 +352,16 @@ class Field:
 
         return '''
         <h3>%s</h3>
-        <p><font size="-1">Refer to this field as <tt>%s</tt> in Python
-        expressions.</font></p>
-        <hr noshade size="2">
         <h4>About This Field</h4>
         %s
         <hr noshade size="2">
         <h4>About This Field\'s Values</h4>
         %s
-        ''' % (self.GetTitle(), self.GetName(), description, help)
+        <hr noshade size="2">
+        <p><font size="-1">Refer to this field as <tt>%s</tt> in Python
+        expressions such as queries.</font></p>
+        ''' % (self.GetTitle(), description, help, self.GetName(), )
+
 
 
 ########################################################################
@@ -387,7 +390,7 @@ class IntegerField(Field):
         return int(value)
 
 
-    def FormatValueAsText(self, value):
+    def FormatValueAsText(self, value, columns=72):
         return str(value)
     
 
@@ -518,8 +521,11 @@ class TextField(Field):
         return value
 
 
-    def FormatValueAsText(self, value):
-        return value
+    def FormatValueAsText(self, value, columns=72):
+        if self.IsAttribute("structured"):
+            return structured_text.to_text(value, width=columns)
+        else:
+            return common.wrap_lines(value, columns)
     
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -533,7 +539,7 @@ class TextField(Field):
         if style == "new" or style == "edit":
             if self.IsAttribute("verbatim") \
                or self.IsAttribute("structured"):
-                return '<textarea cols="40" rows="6" name="%s">' \
+                return '<textarea cols="64" rows="8" name="%s">' \
                        '%s</textarea>' \
                        % (name, web.escape(value))
             else:
@@ -566,7 +572,12 @@ class TextField(Field):
             elif self.IsAttribute("structured"):
                 return web.format_structured_text(value)
             else:
-                return web.escape(value)
+                if value == "":
+                    # Browsers don't deal nicely with empty table cells,
+                    # so put an extra space here.
+                    return "&nbsp;"
+                else:
+                    return web.escape(value)
 
         else:
             raise ValueError, style
@@ -729,12 +740,19 @@ class SetField(Field):
         return self.__contained
 
 
-    def FormatValueAsText(self, value):
+    def FormatValueAsText(self, value, columns=72):
+        # If the set is empty, indicate this specially.
+        if len(value) == 0:
+            return "None"
         # Format each element of the set, and join them into a
         # comma-separated list. 
         contained_field = self.GetContainedField()
-        value = map(contained_field.FormatValueAsText, value)
-        return string.join(value, ", ")
+        formatted_items = []
+        for item in value:
+            formatted_item = contained_field.FormatValueAsText(item, columns)
+            formatted_items.append(formatted_item)
+        result = string.join(formatted_items, ", ")
+        return qm.common.wrap_lines(result, columns)
 
 
     def FormatValueAsHtml(self, value, style, name=None):
@@ -977,7 +995,7 @@ class AttachmentField(Field):
         return value
 
 
-    def FormatValueAsText(self, value):
+    def FormatValueAsText(self, value, columns=72):
         return self.FormatSummary(value)
 
 
@@ -1323,7 +1341,7 @@ class EnumerationField(IntegerField):
         return common.Enumeral(self.__enumeration, encoding)
 
 
-    def FormatValueAsText(self, value):
+    def FormatValueAsText(self, value, columns=72):
         return str(value)
     
 

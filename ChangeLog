@@ -1,5 +1,33 @@
 2001-05-17  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (escape): Don't handle empty strings specially.
+	(make_help_link_html): Adjust spacing.
+	* qm/fields.py (Field.FormatValueAsText): Add columns parameter.
+	(Field.GetHtmlHelp): Mention field name at end.
+	(IntegerField.FormatValueAsText): Add columns parameter.
+	(TextField.FormatValueAsText): Likewise.
+	(TextField.FormatValueAsHtml): Adjust output.
+	(SetField.FormatValueAsText): Add columns parameter.
+	(AttachmentField.FormatValueAsText): Likewise.
+	(EnumerationField.FormatValueAsText): Likewise.
+	* qm/common.py (indent_lines): New function.
+	(wrap_lines): Likewise.
+	* qm/track/web/summary.py (SummaryPageInfo.__init__): Add
+	sort_order parameter.
+	(handle_summary): Put sort order in user configuration.
+	* qm/track/web/show.py (handle_submit): Don't format structured
+	text errors here.
+	* qm/track/triggers/notification.py
+	(_NotifyTrigger.__MakeMessage): Improve output format.
+	* qm/track/server.py (start_server): Register path to manual.
+	* qm/track/qmtrack.in: Set qm.common.program_name.
+	* qm/track/issue_class.py (StateField.GetHelp): Fix spacing in
+	enumeral list.
+	* share/web/stylesheets/qm.css (span.error): Use darker red.
+	* share/dtml/track/show.dtml: Space Help buttons.
+
+2001-05-17  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.MakeLoginForm): Adjust HTML.
 	(PageInfo.UserIsInGroup): New method.
 	(make_form_for_request): Add name parameter.

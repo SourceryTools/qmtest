@@ -165,12 +165,13 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
         timestamp = issue.GetField("timestamp")
         if previous_issue is None:
             message = "The issue %s was created by %s on %s.\n\n" \
-                      % (issue.GetId(), user, timestamp)
+                      % (issue.GetId(), user, timestamp) 
             # Show all fields in the notification.
             fields_to_show = issue.GetClass().GetFields()
         else:
             message = "The issue %s was changed by %s on %s.\n\n" \
-                      % (issue.GetId(), user, timestamp)
+                      % (issue.GetId(), user, timestamp) \
+                      + "The following fields were modified:\n\n"
             # Find the fields that have been changed in the new revision.
             fields_to_show = qm.track.issue.get_differing_fields(
                 previous_issue, issue)
@@ -180,10 +181,20 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
             if field.IsAttribute("hidden"):
                 continue
             name = field.GetName()
+            # Extract the value and convert it to plain text.
             value = issue.GetField(name)
-            message = message + \
-                      "  %s changed to %s\n" % (name,
-                                                field.FormatValueAsText(value))
+            value = field.FormatValueAsText(value, columns=66)
+            message = message + "  %s: " % field.GetTitle()
+            # Does it require more than one line?
+            if "\n" in value:
+                # Yes.  Break it into lines and indent it, for
+                # readability. 
+                message = message + "\n" \
+                          + qm.common.indent_lines(value, 6)
+            else:
+                # One line; nothing special to do.
+                message = message + value
+            message = message + "\n"
         # All done.
         return message
 

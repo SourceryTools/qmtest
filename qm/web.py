@@ -1454,14 +1454,10 @@ def format_exception(exc_info):
 """ % (type, value, traceback_listing)
 
 
-# Build a map from characters for which we have an HTML entity mapping
 def escape(text):
     """Escape special characters in 'text' for formatting as HTML."""
 
-    if text == "":
-        return "&nbsp;"
-    else:
-        return structured_text.escape_html_entities(text)
+    return structured_text.escape_html_entities(text)
 
 
 # A regular expression that matches anything that looks like an entity.
@@ -1904,10 +1900,10 @@ def make_help_link_html(help_text, label):
     _counter = _counter + 1
 
     # Construct the link.
-    return '''
-    <a class="help-link"
-       href="javascript: void(0)"
-       onclick="show_help(%s);">%s</a>
+    return \
+    '''<a class="help-link"
+          href="javascript: void(0)"
+          onclick="show_help(%s);">%s</a>
     <script language="JavaScript">
     var %s = %s;
     </script>

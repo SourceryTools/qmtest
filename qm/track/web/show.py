@@ -398,8 +398,7 @@ def handle_submit(request):
         # There are invalid fields.  Instead of putting the submission
         # through, reshow the form, indicating the problems.
         for field_name, exc_info in invalid_fields.items():
-            msg = qm.web.format_structured_text(str(exc_info[1]))
-            errors[field_name] = msg
+            errors[field_name] = str(exc_info[1])
 
     # If this is a new revision of an existing issue, find the changes
     # made relative to the previous revision.

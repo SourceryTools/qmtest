@@ -1067,6 +1067,58 @@ def copy(object):
         return object
 
 
+def indent_lines(text, indent):
+    """Indent each line of 'text' by 'indent' spaces."""
+
+    indentation = ' ' * indent
+    # Break into lines.
+    lines = string.split(text, "\n")
+    # Indent each.
+    lines = map(lambda line, ind=indentation: ind + line, lines)
+    # Rejoin.
+    return string.join(lines, "\n")
+
+
+def wrap_lines(text, columns=72, break_delimiter="\\"):
+    """Wrap lines in 'text' to 'columns' columns.
+
+    'text' -- The text to wrap.
+
+    'columns' -- The maximum number of columns of text.
+
+    'break_delimiter' -- Text to place at the end of each broken line
+    (may be an empty string).
+
+    returns -- The wrapped text."""
+
+    # Break into lines.
+    lines = string.split(text, "\n")
+    # The length into which to break lines, leaving room for the
+    # delimiter. 
+    new_length = columns - len(break_delimiter)
+    # Loop over lines.
+    for index in range(0, len(lines)):
+        line = lines[index]
+        # Too long?
+        if len(line) > columns:
+            # Yes.  How many times will we have to break it?
+            breaks = len(line) / new_length
+            new_line = ""
+            # Construct the new line, disassembling the old as we go.
+            while breaks > 0:
+                new_line = new_line \
+                           + line[:new_length] \
+                           + break_delimiter \
+                           + "\n"
+                line = line[new_length:]
+                breaks = breaks - 1
+            new_line = new_line + line
+            # Replace the old line with the new.
+            lines[index] = new_line
+    # Rejoin lines.
+    return string.join(lines, "\n")
+
+
 ########################################################################
 # variables
 ########################################################################
