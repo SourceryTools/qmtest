@@ -43,19 +43,6 @@
        </dtml-if>
       </h3>
      </td>
-     <td align="right">
-      <dtml-if expr="not edit">
-       <form>
-        <dtml-if expr="type == 'test'">
-         <dtml-var expr="MakeButton('Run', 'run-tests', ids=item.GetId())">
-        </dtml-if>
-        <dtml-var expr="MakeButton('Edit', 'edit-' + type, id=item.GetId())">
-        <input type="button"
-               value=" Delete "
-               onclick="<dtml-var expr="MakeDeleteScript()">"/>
-       </form>
-      </dtml-if>
-     </td>
     </tr>
 
     <dtml-if expr="field_errors != {}">
@@ -351,6 +338,20 @@
   <dtml-if expr="edit">
    </form>
   </dtml-if>
+
+  <script language="JavaScript">
+   function edit_item() {
+    location = '<dtml-var "MakeEditUrl()">';
+   }
+
+   function delete_item() {
+    <dtml-var "MakeDeleteScript()">
+   }
+
+   function run_test() {
+    location = '<dtml-var "MakeRunUrl()">';
+   }
+  </script>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

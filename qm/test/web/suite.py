@@ -65,6 +65,13 @@ class ShowPage(web.DtmlPage):
         self.suite_ids = suite.GetSuiteIds()
         self.edit = edit
 
+        if not suite.IsImplicit():
+            self.edit_menu_items.append(("Edit Suite", " edit_isuite()"))
+            self.edit_menu_items.append(("Delete Suite", " delete_suite()"))
+
+        if not edit:
+            self.run_menu_items.append(("This Suite", " run_suite()"))
+            
         if edit:
             # Find the directory path containing this suite.
             dir_id = qm.label.split(suite.GetId())[0]
@@ -106,6 +113,24 @@ class ShowPage(web.DtmlPage):
         return qm.label.join(self.suite.GetId(), raw_id)
 
 
+    def MakeEditUrl(self):
+        """Return the URL for editing this suite."""
+
+        return qm.web.WebRequest("edit-suite",
+                                 base=self.request,
+                                 id=self.suite.GetId()) \
+               .AsUrl()
+
+        
+    def MakeRunUrl(self):
+        """Return the URL for running this suite."""
+
+        return qm.web.WebRequest("run-tests",
+                                 base=self.request,
+                                 ids=self.suite.GetId()) \
+               .AsUrl()
+
+    
     def MakeDeleteScript(self):
         """Make a script to confirm deletion of the suite.
 

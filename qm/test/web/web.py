@@ -54,6 +54,23 @@ class DefaultDtmlPage(qm.web.DtmlPage):
 
 
     def __init__(self, dtml_template, **attributes):
+        # Set up the menus first; the attributes might override them.
+        self.file_menu_items = [
+            ('New Test', 'new-test'),
+            ('New Suite', 'new-suite'),
+            ('New Resource', 'new-resource'),
+            ('Exit', 'shutdown')
+            ]
+        self.edit_menu_items = [
+            ('Edit Context', 'edit-context')
+            ]
+        self.view_menu_items = [
+            ('View Results', 'show-results')
+            ]
+        self.run_menu_items = [
+            ('All Tests', 'run-tests')
+            ]
+
         # Initialize the base class.
         apply(qm.web.DtmlPage.__init__, (self, dtml_template), attributes)
 
@@ -71,7 +88,11 @@ class DefaultDtmlPage(qm.web.DtmlPage):
     def GenerateStartBody(self, decorations=1):
         if decorations:
             # Include the navigation bar.
-            navigation_bar = DtmlPage("navigation-bar.dtml")
+            navigation_bar = DtmlPage("navigation-bar.dtml",
+                                      file_menu_items=self.file_menu_items,
+                                      edit_menu_items=self.edit_menu_items,
+                                      view_menu_items=self.view_menu_items,
+                                      run_menu_items=self.run_menu_items)
             return "<body>%s<br>" % navigation_bar(self.request)
         else:
             return "<body>"
@@ -227,6 +248,7 @@ class QMTestServer(qm.web.WebServer):
             ( "show-dir", qm.test.web.dir.handle_dir ),
             ( "show-resource", qm.test.web.show.handle_show ),
             ( "show-result", self.HandleShowResult ),
+            ( "show-results", self.HandleShowResults ),
             ( "show-suite", qm.test.web.suite.handle_show ),
             ( "show-test", qm.test.web.show.handle_show ),
             ( "shutdown", self.HandleShutdown ),
@@ -258,8 +280,11 @@ class QMTestServer(qm.web.WebServer):
                             attachment_store.HandleDownloadRequest)
 
         # Create an empty context.
-        self.__context = qm.test.base.Context(a='b', c='d', d='e')
-        
+        self.__context = qm.test.base.Context()
+
+        # There are no results yet.
+        self.__results_stream = StorageResultsStream()
+
         # Bind the server to the specified address.
         try:
             self.Bind()
@@ -299,7 +324,10 @@ class QMTestServer(qm.web.WebServer):
         """
         
         # Extract and expand the IDs of tests to run.
-        ids = string.split(request["ids"], ",")
+        if request.has_key("ids"):
+            ids = string.split(request["ids"], ",")
+        else:
+            ids = ["."]
         test_ids, suite_ids = qm.test.base.expand_ids(ids)
 
         context = self.__context
@@ -313,16 +341,14 @@ class QMTestServer(qm.web.WebServer):
                                    {}),
             ]
 
-        
-        # Run the tests.
+        # Flush existing results.
         self.__results_stream = StorageResultsStream()
+        # Run the tests.
         qm.test.run.test_run(test_ids, self.__context, target_specs,
                              [self.__results_stream])
 
         # Display the results.
-        results_page = \
-            qm.test.web.run.TestResultsPage(self.__results_stream.test_results)
-        return results_page(request)
+        return self.HandleShowResults(request)
 
 
     def HandleShowResult(self, request):
@@ -333,7 +359,18 @@ class QMTestServer(qm.web.WebServer):
         result = self.__results_stream.test_results[request["id"]]
         return ResultPage(result)(request)
     
-    
+
+    def HandleShowResults(self, request):
+        """Handle a request to show results.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Display the results.
+        results_page = \
+            qm.test.web.run.TestResultsPage(self.__results_stream.test_results)
+        return results_page(request)
+
+
     def HandleShutdown(self, request):
         """Handle a request to shut down the server.
 

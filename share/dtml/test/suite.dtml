@@ -34,17 +34,6 @@
       </dtml-if>
      </h3>
     </td>
-    <td align="right">
-     <form>
-      <dtml-var expr="MakeButton('Run', 'run-tests', ids=suite.GetId())">
-      <dtml-if expr="not suite.IsImplicit() and not edit">
-       <dtml-var expr="MakeButton('Edit', 'edit-suite', id=suite.GetId())">
-       <input type="button"
-              value=" Delete "
-              onclick="<dtml-var expr="MakeDeleteScript()">"/>
-      </dtml-if>
-     </form>
-    </td>
    </tr>
   </tbody>
  </table>
@@ -185,6 +174,20 @@
   }
   </script>
  </dtml-if>
+
+  <script language="JavaScript">
+   function edit_suite() {
+    location = '<dtml-var "MakeEditUrl()">';
+   }
+
+   function delete_suite() {
+    <dtml-var "MakeDeleteScript()">
+   }
+
+   function run_suite() {
+    location = '<dtml-var "MakeRunUrl()">';
+   }
+  </script>
 
  <dtml-var expr="GenerateEndBody()">
 </html>

@@ -14,32 +14,102 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
+<form>
 <table width="100%" 
        class="navbar"
        border="0"
        cellspacing="0"
        cellpadding="0">
  <tr>
-  <td width="45%" height="28">
+  <td width="14%" height="28">
    &nbsp;&nbsp;
    <b><font size="+1" color="#d0edef">QM</font><font size="+2"
    color="white">Test</font></b>
   </td>
+  
+  <!-- File Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="file">File</option>
+    <dtml-in file_menu_items>
+     <dtml-let desc=sequence-key
+               url=sequence-item>
+      <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
 
-  <td class="navbar" width="12%" align="center">
+  <!-- Edit Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="edit">Edit</option>
+    <dtml-in edit_menu_items>
+     <dtml-let desc=sequence-key
+               url=sequence-item>
+      <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <!-- View Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="view">View</option>
+    <dtml-in view_menu_items>
+     <dtml-let desc=sequence-key
+                 url=sequence-item>
+        <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <!-- Run Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="view">Run</option>
+    <dtml-in run_menu_items>
+     <dtml-let desc=sequence-key
+                 url=sequence-item>
+        <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <td class="navbar" width="13%" align="center">
    <a class="navbar"
       href="<dtml-var expr="web.WebRequest('/test/dir', 
                             base=request).AsUrl()">"
-   >Main Page</a>
+   >Home</a>
   </td>
 
-  <td class="navbar" width="12%" align="center">
+  <td class="navbar" width="13%" align="center">
    <a class="navbar"
       href="javascript: void(0);"
-      onclick="popup_manual();">Manual</a>
+      onclick="popup_manual();">Help</a>
   </td>
  </tr>
 </table>
+</form>
+
+<script language="JavaScript">
+function handle_menu_select(sel) 
+{
+  value = sel.options[sel.selectedIndex].value;
+  if (value == "shutdown") {
+   <dtml-var expr="web.make_confirmation_dialog(
+                   'Are you sure you want to exit?', 'shutdown')">
+  } else if (value[0] == " ") {
+    eval(value)
+  } else if (sel.selectedIndex != 0) {
+    location = value; 
+  }
+}
+</script>
+
 <dtml-comment><!-- 
   Local Variables:
   mode: xml

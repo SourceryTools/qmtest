@@ -100,6 +100,14 @@ class ShowPage(web.DtmlPage):
         self.type = type
         self.field_errors = field_errors
 
+        self.edit_menu_items.append(("Edit %s" % string.capitalize(type),
+                                     " edit_item()"))
+        self.edit_menu_items.append(("Delete %s" % string.capitalize(type),
+                                     " delete_item()"))
+
+        if type == "test" and not edit:
+            self.run_menu_items.append(("This Test", " run_test()"))
+        
         # Some extra attributes that don't apply to resources.
         if self.type is "test":
             self.prerequisites = item.GetPrerequisites()
@@ -180,6 +188,24 @@ class ShowPage(web.DtmlPage):
             return "&nbsp;"
 
 
+    def MakeEditUrl(self):
+        """Return the URL for editing this item."""
+
+        return qm.web.WebRequest("edit-" + self.type,
+                                 base=self.request,
+                                 id=self.item.GetId()) \
+               .AsUrl()
+
+        
+    def MakeRunUrl(self):
+        """Return the URL for editing this item."""
+
+        return qm.web.WebRequest("run-tests",
+                                 base=self.request,
+                                 ids=self.item.GetId()) \
+               .AsUrl()
+
+
     def MakeShowUrl(self):
         """Return the URL for showing this item."""
 
@@ -257,8 +283,8 @@ class ShowPage(web.DtmlPage):
     def MakeDeleteScript(self):
         """Make a script to confirm deletion of the test or resource.
 
-        returns -- JavaScript source for a function, 'delete_script',
-        which shows a popup confirmation window."""
+        returns -- JavaScript source to handle deletion of the
+        test or resource."""
 
         item_id = self.item.GetId()
         delete_url = qm.web.make_url("delete-" + self.type,
@@ -268,7 +294,6 @@ class ShowPage(web.DtmlPage):
         <p>Are you sure you want to delete the %s %s?</p>
         """ % (self.type, item_id)
         return qm.web.make_confirmation_dialog(message, delete_url)
-
 
 
 

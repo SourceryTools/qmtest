@@ -29,14 +29,6 @@
        Directory for <dtml-var expr="FormatId(path, 'dir', 'navigation')">
      </h3>
     </td>
-    <td align="right">
-     <form>
-      <dtml-var expr="MakeButton('New Test', 'new-test')">
-      <dtml-var expr="MakeButton('New Suite', 'new-suite')">
-      <dtml-var expr="MakeButton('New Resource', 'new-resource')">
-      <dtml-var expr="MakeButton('Edit Context', 'edit-context')">
-     </form>
-    </td>
    </tr>
   </tbody>
  </table>
@@ -90,22 +82,8 @@
  </table>
  </td></tr>
 
- <table border="0" cellspacing="0" cellpadding="2">
-  <tr><td>&nbsp;</td></tr>
-  <tr>
-   <td colspan="2">
-    <form>
-     <input type="button"
-            value=" Shut Down "
-            onclick="<dtml-var expr="web.make_confirmation_dialog(
-                                     'Are you sure you want to shut '
-                                     'down the server?', 'shutdown')">"/>
-    </form>
-   </td>
-  </tr>
- </table>
-
  <dtml-var expr="GenerateEndBody()">
+
 </html>
 
 <dtml-comment><!-- 

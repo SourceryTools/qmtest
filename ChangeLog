@@ -1,5 +1,32 @@
 2001-10-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/web.py (DtmlPage.MakeMenuItem): New method.
+	(WebRequestHandler): Print thank you message when shutting down.
+	(WebServer.Bind): Remove getsockname call.
+	* qm/test/web/show.py (ShowPage.__init__): Add menu items.
+	(ShowPage.MakeEditUrl): New method.
+	(ShowPage.MakeRunUrl): Likewise.
+	(ShowPage.MakeDeleteScript):  Fix comment.
+	* qm/test/web/suite.py (ShowPage.__init__): Add menu items.
+	(ShowPage.MakeEditUrl): New method.
+	(ShowPage.MakeRunUrl): Likewise.
+	(ShowPage.MakeDeleteScript):  Fix comment.
+	* qm/test/web/web.py (DefaultDtmlPage.__init__): Set up menu
+	items.
+	(DefaultDtmlPage.GenerateStartBody): Provide the menu items to
+	the navigation bar.
+	(QMTestServer.__init__): Handle show-results.  Store results
+	permanently.
+	(QMTestServer.HandleRunTests): Treat an empty set of test
+	ids as the "." test suite.  Use HandleShowResults to implement
+	results display.
+	(QMTestServer.HandleShowResults): New method.
+	* share/dtml/test/dir.dtml: Rework for menus.
+	* share/dtml/test/navigation-bar.dtml: Likewise.
+	* share/dtml/test/results.dtml: Likewise.
+	* share/dtml/test/show.dtml: Likewise.
+	* share/dtml/test/suite.dtml: Likewise.
+	
 	* qm/platform_win32.py (open_in_browser): Implement.
 
 2001-10-19  Alex Samuel  <samuel@codesourcery.com>

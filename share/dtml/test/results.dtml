@@ -55,8 +55,12 @@
     <td align="right"><dtml-var total></td>
     <td align="right">100</td>
     <td align="right"><dtml-var total_unexp></td>
-    <td align="right"><dtml-var 
-                      expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
+    <td align="right">
+     <dtml-if total>
+       <dtml-var expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
+     <dtml-else>
+      &nbsp;</td>
+     </dtml-if>
    </tr>
   </dtml-let>
  </table>

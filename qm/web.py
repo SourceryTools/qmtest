@@ -296,6 +296,18 @@ class DtmlPage:
         return make_button_for_request(title, request, css_class)
 
 
+    def MakeMenuItem(self, description, url):
+        """Generate HTML for a menu item.
+
+        'description' -- The name of the menu item.
+        
+        'url' -- The URL to which the user will be sent if this item
+        is selected."""
+        
+        return ('''<option value="%s">%s</option>'''
+                % (url, description))
+    
+        
     def MakeImageUrl(self, image):
         """Generate a URL for an image."""
 
@@ -474,7 +486,8 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return
         except SystemExit:
             self.server.RequestShutdown()
-            script_output = "<html><b>Server shut down.</b></html>"
+            script_output = ("<html><b>Thank you for using %s.</b></html>"
+                             % qm.common.program_name)
         except:
             # Oops, the script raised an exception.  Show
             # information about the exception instead.
@@ -959,10 +972,6 @@ class WebServer(HTTPServer):
             self.socket = socket.socket(self.address_family,
                                         self.socket_type)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            # If no port was specified, find out what port the system
-            # assigned.
-            if self.__port == 0:
-                self.__port = self.socket.getsockname()[1]
             self.server_address = (self.__address, self.__port)
             self.server_bind()
             self.server_activate()
