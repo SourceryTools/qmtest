@@ -1,3 +1,10 @@
+2003-06-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/dg_test.py (DGTest.DGException): New class.
+	(DGTest._RunDGTest): Tweak annotation formatting.
+	(DGTest._ExecuteFinalCommand): Use DGException to signal problems,
+	rather than NotImplementedError.
+
 2003-06-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (INSTALL_DOCUMENTATION): New variable.

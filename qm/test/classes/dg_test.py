@@ -33,6 +33,16 @@ class DGTest(DejaGNUTest):
     This test class emulates the 'dg.exp' source file in the DejaGNU
     distribution."""
 
+    class DGException(Exception):
+        """The exception class raised by 'DGTest'.
+
+        When a 'DGTest' method detects an error situation, it raises
+        an exception of this type."""
+
+        pass
+
+
+
     __dg_command_regexp \
          = re.compile(r"{[ \t]+dg-([-a-z]+)[ \t]+(.*)[ \t]+}[^}]*$")
     """A regular expression matching commands embedded in the source file."""
@@ -174,7 +184,7 @@ class DGTest(DejaGNUTest):
         message = self._name + " (test for excess errors)"
         if output != "":
             self._RecordDejaGNUOutcome(result, self.FAIL, message)
-            result["DGTest.excess_errors"] = output
+            result["DGTest.excess_errors"] = "<pre>" + output + "</pre>"
         else:
             self._RecordDejaGNUOutcome(result, self.PASS, message)
 
@@ -215,7 +225,8 @@ class DGTest(DejaGNUTest):
 
         'result' -- The 'Result' of this test."""
 
-        raise NotImplementedError
+        raise self.DGException, \
+              'dg-final command \"%s\" is not implemented' % command
         
         
     def _PruneOutput(self, output):
