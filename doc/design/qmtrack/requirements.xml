@@ -17,8 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter>
- <title>Requirements</title>
+<chapter id="chap-requirements">
+ <title id="chap-requirements-title">Requirements</title>
 
  <para>The guiding principles of the &qmtrack; design are listed here.</para> 
 
@@ -62,8 +62,8 @@
 
  </formalpara>
 
- <section>
-  <title>Feature requirements</title>
+ <section id="sec-feature-requirements">
+  <title id="sec-feature-requirements-title">Feature requirements</title>
 
   <orderedlist>
    <listitem>

@@ -107,8 +107,8 @@
    <title id="sec-fields-types-title">Field types</title>
 
    <para>The &idb; consists of a set of tables corresponding to issue
-   classes.  Each row of this table corresponds to a single revision
-   of an issue.</para>
+   classes.  Each row of this table corresponds to a single <link
+   linkend="def-revision">revision</link> of an issue.</para>
 
    <para>The &idb; supports the following field data types:
     <orderedlist>
@@ -200,8 +200,8 @@
     <orderedlist>
      <listitem>
       <para>The &iid;s may be placed in a flat namespace.  The &iid;
-      values are arbitrary, and may contain any characters other than
-      a period (".").</para>
+      values are arbitrary, and may contain lower-case letters,
+      decimal digits, and underscores.</para>
      </listitem>
 
      <listitem>
@@ -226,7 +226,10 @@
 
    <para>Rows in the &idb; are read-only; in normal circumstances,
    rows are never modified or removed from the table.  Instead, a new
-   row is added whenever an issue is modified.</para>
+   row is added whenever an issue is modified.  Each row corresponds
+   to a single <firstterm id="def-revision">revision</firstterm> of
+   the issue, and the latest revision of an issue is considered its
+   current state.</para>
 
    <para>The &idb; schema includes a <firstterm>revision
    number</firstterm> field.  The revision number value for a row
@@ -246,7 +249,13 @@
    sequence number for chronological order.</para>
 
    <para>Issues may not be deleted.  Rows are generally not deleted
-   from the &idb;, except for housecleaning purposes.</para>
+   from the &idb;, during normal use.  However, they may be for
+   housecleaning purposes; for instance, older revisions of retired
+   issues may be removed to reduce the size of the &idb;.  The current
+   revision of an issue may not be removed, though.  To maintain
+   referential integrity in the &idb;, there may be no persistent
+   reference to a particular revision of an issue.  All persistent
+   references are by &iid; only.</para>
 
   </section>
 
@@ -295,7 +304,8 @@
     </orderedlist>
    </para>
 
-   <section><title>Mandatory fields</title>
+   <section id="sec-mandatory-fields">
+    <title id="sec-mandatory-fields-title">Mandatory fields</title>
 
     <para>This section describes mandatory fields.</para>
 
@@ -356,7 +366,8 @@
 
    </section>
 
-   <section><title>Standard fields</title>
+   <section id="sec-standard-fields">
+    <title id="sec-standard-fields-title">Standard fields</title>
 
     <para>This section describes standard fields.</para>
 
@@ -384,7 +395,8 @@
 
   </section>
 
-  <section><title>Attachments</title>
+  <section id="sec-attachments">
+   <title id="sec-attachments-title">Attachments</title>
 
    <para>Arbitrary file attachments may be associated with an issue in
    the &idb;.  For most record-oriented implementations of the &idb;,

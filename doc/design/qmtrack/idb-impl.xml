@@ -17,8 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<section>
- <title>Issue Database Implementations</title>
+<section id="idb-impl">
+ <title id="idb-impl-title">Issue Database Implementations</title>
 
  <para>In this chapter, we present two implementations of the
  &qmtrack; <link linkend="class-IdbBase">issue database</link>.

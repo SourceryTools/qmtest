@@ -20,8 +20,8 @@
 <chapter id="chap-implementation">
  <title id="chap-implementation-title">Implementation</title>
 
- <section>
-  <title>Issue Classes</title>
+ <section id="sec-issue-classe-api">
+  <title id="sec-issue-classe-api-title">Issue Classes</title>
 
   <section>
    <title>Issue Fields</title>
@@ -257,8 +257,8 @@ class IssueFieldEnumeration(IssueField):
 
   </section>
 
-  <section>
-   <title><classname>IssueClass</classname></title>
+  <section id="sec-issueclass">
+   <title id="sec-issueclass-title"><classname>IssueClass</classname></title>
 
    <para>An issue class is represented by an instance of
    <classname>IssueClass</classname>.</para>
@@ -361,7 +361,8 @@ class IdbBase:
 
  </section>
 
- <section><title>Issues</title>
+ <section id="sec-issue-api">
+  <title id="sec-issue-api-title">Issues</title>
 
   <para>The canonical in-memory representation of an issue is an
   <classname>IssueRecord</classname> instance.</para>

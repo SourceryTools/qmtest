@@ -17,8 +17,8 @@
     http://www.software-carpentry.com/openpub-license.html
 
 -->
-<chapter>
- <title>Introduction</title>
+<chapter id="chap-introduction">
+ <title id="chap-introduction-title">Introduction</title>
 
  <para>This document outlines the design of &qmtrack;, an
  Internet-enabled issue-tracking system which will manage a number of
@@ -57,8 +57,8 @@
  round</ulink> proposals to the &sc; project design
  competitions.</para>
 
- <section>
-  <title>Background</title>
+ <section id="sec-background">
+  <title id="sec-background-title">Background</title>
 
   <para>A typical software project requires the management of many
   tasks, usually distributed among several collaborators.  In fact,
@@ -104,8 +104,8 @@
 
  </section>
 
- <section>
-  <title>User Interface</title>
+ <section id="sec-ui-intro">
+  <title id="sec-ui-intro-title">User Interface</title>
 
   <para>The effective power of many systems is diminished or negated
   by hard-to-use interfaces.  If it is tedious or difficult to enter,

@@ -1,5 +1,14 @@
 2000-12-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/design/qmtrack/concepts.xml: Edit.  Add ids.
+	* doc/design/qmtrack/idb-impl.xml: Likewise.
+	* doc/design/qmtrack/implementation.xml: Likewise.
+	* doc/design/qmtrack/introduction.xml: Likewise.
+	* doc/design/qmtrack/requirements.xml: Likewise.
+	* doc/design/qmtrack/xml-impl.xml: Likewise.
+	
+2000-12-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk (HTMLINDEX): New macro.
 	(PRINTDIR): Likewise.
 	(PRINTTEX): Likewise.
