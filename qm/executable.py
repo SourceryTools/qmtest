@@ -40,7 +40,7 @@ else:
 
     # Unfortunately, Python does not provide symbolic constants for
     # F_GETFD, F_SETFD, and FD_CLOEXEC.  Fortunately, they are the
-    # same on virtuall all UNIX systems.
+    # same on virtually all UNIX systems.
     F_GETFD = 1
     F_SETFD = 2
     FD_CLOEXEC = 1
