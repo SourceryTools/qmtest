@@ -346,6 +346,26 @@ def format_exception(exc_info):
     return "Exception '%s : %s'\n%s\n" % (type, value, traceback_listing)
 
 
+def format_byte_count(bytes):
+    """Return the traditional representation of 'bytes' bytes."""
+
+    kb = 1024.0
+    mb = kb * 1024
+    gb = mb * 1024
+    tb = gb * 1024
+    
+    for name, order in [
+        ("TB", 1024.0 ** 4),
+        ("GB", 1024.0 ** 3),
+        ("MB", 1024.0 ** 2),
+        ("KB", 1024.0 ** 1),
+        ]:
+        if bytes >= order:
+            return "%.1f %s" % (bytes / order, name)
+
+    return "%d bytes" % bytes
+
+
 ########################################################################
 # Local Variables:
 # mode: python

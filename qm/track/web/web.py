@@ -157,11 +157,35 @@ class HistoryPageInfo(PageInfo):
 
 
 
+class UploadAttachmentPageInfo(PageInfo):
+    """DTML context for generating upload-attachment.dtml."""
+
+    def __init__(self, request):
+        """Create a new 'PageInfo' object."""
+
+        PageInfo.__init__(self, request)
+        # Use a brand-new location for the attachment data.
+        idb = qm.track.get_idb()
+        self.location = idb.GetNewAttachmentLocation()
+
+
+    def MakeSubmitUrl(self):
+        """Return the URL for submitting this form."""
+
+        request = qm.web.WebRequest("submit-attachment")
+        return qm.web.make_url_for_request(request)
+
+
+
 ########################################################################
 # functions
 ########################################################################
 
 form_field_prefix = "_field_"
+attachment_description_prefix = "_atdesc"
+attachment_mime_type_prefix = "_attype"
+attachment_location_prefix = "_atlocn"
+attachment_file_name_prefix = "_atflnm"
 
 
 def make_form_field_name(field):
@@ -219,10 +243,9 @@ def format_field_value(field, value, style, name=None):
         return format_text_field_value(field, value, style, name)
     elif isinstance(field, qm.track.IssueFieldSet):
         return format_set_field_value(field, value, style, name)
+    elif isinstance(field, qm.track.IssueFieldAttachment):
+        return format_attachment_field_value(field, value, style, name)
     else:
-        # FIXME:
-        # IssueFieldAttachment.
-        # IssueFieldTime.
         raise NotImplementedError, \
               "Can't render a %s value." % field.__class__.__name__
 
@@ -239,6 +262,8 @@ def format_int_field_value(field, value, style, name):
                % (name, value)
     elif style == "full" or style == "brief":
         return '<tt>%d</tt>' % value
+    elif style == "form_encoded":
+        return "%d" % value
     else:
         raise ValueError, style
 
@@ -286,6 +311,9 @@ def format_text_field_value(field, value, style, name):
         else:
             return qm.web.escape(value)
 
+    elif style == "form_encoded":
+        return urllib.quote(value)
+
     else:
         raise ValueError, style
 
@@ -300,14 +328,21 @@ def format_set_field_value(field, value, style, name):
     contained_field = field.GetContainedField()
 
     if style == "brief" or style == "full":
+        if len(value) == 0:
+            # An empty set.
+            return "&nbsp;"
         formatted = []
         for element in value:
+            # Format each list element in the indicated style.
             formatted.append(format_field_value(contained_field,
-                                                element, "full"))
-        if len(formatted) == 0:
-            return "&nbsp;"
+                                                element, style))
+        if style == "brief":
+            # In the brief style, list elements separated by commas.
+            separator = ", "
         else:
-            return string.join(formatted, ", ")
+            # In the full style, list elements one per line.
+            separator = "<br>\n"
+        return string.join(formatted, separator)
 
     elif style == "new" or style == "edit":
         # To edit a set field, we generate form and script elements to
@@ -334,19 +369,24 @@ def format_set_field_value(field, value, style, name):
         <table border="0" cellpadding="0" cellspacing="0">
         <tr><td>'''
         # Create the hidden field that will carry the field value. 
-        text_elements = map(lambda x: urllib.quote(str(x)), value)
+        current_value = format_set_field_value(field, value,
+                                               "form_encoded", name)
         form = form \
                + '<input type="hidden" name="%s" value="%s"/>\n' \
-               % (name, string.join(text_elements, ","))
+               % (name, current_value)
         # Start a select control to show the set elements.
         form = form + '''
          <select size="6" name="_list_%s" width="200">
         ''' % field_name
         # Add an option element for each element of the set.
         for item in value:
-            brief_item = format_field_value(contained_field, item, "brief")
-            form = form + '<option value="%s">%s</option>\n' \
-                   % (urllib.quote(str(item)), brief_item)
+            item_text = format_field_value(contained_field, item,
+                                           "brief")
+            item_value = format_field_value(contained_field, item,
+                                           "form_encoded")
+            form = form \
+                   + '<option value="%s">%s</option>\n' \
+                   % (item_value, item_text)
         # End the select control.  Put everything else next to it.
         form = form + '''
          </select>
@@ -376,11 +416,13 @@ def format_set_field_value(field, value, style, name):
         </td></tr>
         </table>
         '''
-        # Generate JavaScript functions for adding and deleting
-        # elements.  Also generate a function that updates the value
-        # of the hidden field from the values in the select element.
+
+        # Now generate the scripts that make it all happen.
+        form = form + '<script language="JavaScript">\n'
+
+        # The script for removing an element is the same, no matter
+        # what's in the set.
         form = form + '''
-        <script language="JavaScript">
         function _delete_selected_%s()
         {
           var list = document.form._list_%s;
@@ -389,32 +431,11 @@ def format_set_field_value(field, value, style, name):
           _update_%s();
           return false;
         }
-
-        function _add_%s()
-        {
-          var options = document.form._list_%s.options;
-          var input = document.form._new_item_%s;
-          var text;
-          var value;
-          if(input.type == "select-one" || input.type == "select-multiple") {
-            text = input.options[input.selectedIndex].text;
-            value = input.options[input.selectedIndex].value;
-          }
-          else {
-            text = input.value;
-            value = escape(input.value);
-          }
-          for(var i = 0; i < options.length; ++i)
-            if(options[i].value == value)
-              return false;
-          if(value != "")
-            options[options.length] = new Option(text, value);
-          input.value = "";
-          input.focus();
-          _update_%s();
-          return false;
-        }  
-
+        ''' % (field_name, field_name, field_name)
+        # Also a function to update the field that actually contains the
+        # submitted value of the set.  That field contains a
+        # comma-separated list of the values of the set's elements.
+        form = form + '''
         function _update_%s()
         {
           var list = document.form._list_%s;
@@ -426,10 +447,91 @@ def format_set_field_value(field, value, style, name):
           }
           document.form.%s.value = result;
         }
-        </script>
-        ''' % (9 * (field_name, ) + (name, ))
+        ''' % (field_name, field_name, name, )
+
+        # The function that adds an element to the list differs
+        # depending on the set contents, since the values we submit in
+        # the form vary.
+
+        form = form + '''
+        function _add_%s()
+        {
+          var options = document.form._list_%s.options;
+          var text;
+          var value;
+        ''' % (field_name, field_name)
+        if isinstance(contained_field, qm.track.IssueFieldEnumeration):
+            # The value of an enum field is specified with a set
+            # control.  Use the value of the currently-selected element.
+            form = form + '''
+              var input = document.form._new_item_%s;
+              text = input.options[input.selectedIndex].text;
+              value = input.options[input.selectedIndex].value;
+            ''' % field_name
+        elif isinstance(contained_field, qm.track.IssueFieldAttachment):
+            # There are three data we need to collect for attachment
+            # elements: the description, MIME type, location, and file
+            # name.  URL-encode all four and group them into a
+            # semicolon-separated list.
+            form = form + '''
+              var input = document.form._atdesc_new_item_%s;
+              text = input.value;
+              var mime_type = escape(document.form._attype_new_item_%s.value);
+              var location_field = document.form._atlocn_new_item_%s
+              var location = escape(location_field.value);
+              var file_name = escape(document.form._atflnm_new_item_%s.value);
+              // Make sure an attachment was uploaded.
+              if (location == "")
+                return false;
+              // Clear the location field to prevent double additions.
+              location_field.value = ""
+              // Lump the parts together into a semicolon-separated list.
+              value = escape(text)
+                      + ";" + mime_type
+                      + ";" + location
+                      + ";" + file_name;
+            ''' % (field_name, field_name, field_name, field_name)
+        else:
+            # Other fields use text controls.  The contents have to be
+            # URL-encoded to protect them when we roll them into a list
+            # of set items.
+            form = form + '''
+              var input = document.form._new_item_%s;
+              text = input.value;
+              value = escape(input.value);
+              // Clear the value, to prevent double additions.
+              input.value = "";
+            ''' % field_name
+        # Now code that checks for duplicates in the list, adds the
+        # option, and calls the update function to update the master set
+        # value. 
+        form = form + '''
+          // Skip the addition if there is already another element in
+          // the set with the same value.
+          for(var i = 0; i < options.length; ++i)
+            if(options[i].value == value)
+              return false;
+          if(value != "")
+            options[options.length] = new Option(text, value);
+          // Give focus so that the user can add another element easily.
+          input.focus();
+          // Update the master set field value.
+          _update_%s();
+          return false;
+        }  
+        ''' % field_name
+
+        form = form + '</script>\n'
+
         # All done.
         return form
+
+    elif style == "form_encoded":
+        result = []
+        for element in value:
+            result.append(format_field_value(contained_field,
+                                             element, "form_encoded"))
+        return string.join(result, ",")
 
 
 def format_enum_field_value(field, value, style, name):
@@ -458,8 +560,220 @@ def format_enum_field_value(field, value, style, name):
     elif style == "full" or style == "brief":
         return field.ValueToName(value)
 
+    elif style == "form_encoded":
+        return "%d" % value
+
     else:
         raise ValueError, style
+
+
+def format_attachment_field_value(field, value, style, name):
+    """Return an HTML representation of an attachment field."""
+
+    field_name = field.GetName()
+    idb = qm.track.get_idb()
+
+    if value is None:
+        # The attachment field value may be 'None', indicating no
+        # attachment. 
+        pass
+    elif isinstance(value, qm.track.Attachment):
+        location = value.GetLocation()
+        type = value.GetMimeType()
+        description = value.GetDescription()
+    else:
+        raise ValueError, "'value' must be 'None' or an 'Attachment'"
+
+    if style == "full" or style == "brief":
+        if value is None:
+            return "none"
+        # Link the attachment description to the data itself.
+        download_url = make_url_for_attachment(value)
+        result = '<a href="%s"><tt>%s</tt></a>' % (download_url,
+                                                   description)
+        # For the full style, display the MIME type.
+        if style == "full":
+            size = idb.GetAttachmentSize(location)
+            size = qm.format_byte_count(size)
+            result = result + ' (%s; %s)' % (type, size)
+        return result
+
+    elif style == "new" or style == "edit":
+
+        # Some trickiness here.
+        #
+        # For attachment fields, the user specifies the file to upload
+        # via a popup form, which is shown in a new browser window.
+        # When that form is submitted, the attachment data is immediately
+        # uploaded to the server.
+        #
+        # The information that's stored for an attachment is made of
+        # three parts: a description, a MIME type, and the location of
+        # the data itself.  The user enters the description directly here;
+        # the popup form is responsible for obtaining the location and
+        # MIME type.  It fills these two values into hidden fields on
+        # this form.
+        #
+        # Also, when the popup form is submitted, the attachment data is
+        # uploaded and stored by the IDB.  By the time this form is
+        # submitted, the attachment data should be uploaded already.
+
+        # Generate field names for the controls on this form.  They
+        # include 'name' so that they won't collide with other
+        # attachment fields that may appear on this form.
+        description_field_name = attachment_description_prefix + name
+        location_field_name = attachment_location_prefix + name
+        mime_type_field_name = attachment_mime_type_prefix + name
+        file_name_field_name = attachment_file_name_prefix + name
+        
+        # Generate controls for this form.  These include,
+        #
+        #   - A text control for the description.
+        # 
+        #   - A button to pop up the upload form.  It calls the
+        #     upload_file JavaScript function.
+        #
+        #   - A hidden control for the MIME type, whose value is set by
+        #     the popup form.
+        #
+        #   - A hidden control for the attachment location, whose value
+        #     is set by the popup form.
+        #
+        #   - A hidden control for the uploaded file name.  This is used
+        #     to determine the file's MIME type automatically, if
+        #     requested. 
+        #
+
+        # Fill in the description if there's already an attachment.
+        if value is None:
+            description_value = ""
+            location_value = ' value=""'
+            mime_type_value = 'value="application/octet-stream"'
+        else:
+            description_value = 'value="%s"' \
+                                % qm.web.escape(value.GetDescription())
+            location_value = 'value="%s"' % value.GetLocation()
+            mime_type_value = 'value="%s"' % value.GetMimeType()
+        result = '''
+        Description:
+        <input type="text" readonly size="32" name="%s" %s>
+        <input type="button"
+               name="_upload_%s"
+               size="20"
+               value=" Upload "
+               onclick="javascript: upload_file_%s()">
+        <input type="hidden"
+               name="%s"
+               %s>
+        <input type="hidden"
+               name="%s"
+               %s>
+        <input type="hidden"
+               name="%s"
+               value="">
+        ''' % (description_field_name,
+               description_value,
+               field_name,
+               field_name,
+               mime_type_field_name,
+               mime_type_value,
+               location_field_name,
+               location_value,
+               file_name_field_name)
+
+        # Now the JavaScript function that's called when the use clicks
+        # the Upload button.  It opens a window showing the upload form,
+        # and passes in the field names in this form, which the popup
+        # form will fill in.
+        result = result + '''
+        <script language="JavaScript">
+        function upload_file_%s()
+        {
+          var win = window.open("upload-attachment"
+                                + "?location_field=%s"
+                                + "&mime_type_field=%s"
+                                + "&description_field=%s"
+                                + "&file_name_field=%s"
+                                + "&field_name=%s",
+                                "upload_%s",
+                                "height=240,width=480");
+        }
+        </script>
+        ''' % (field_name,
+               location_field_name,
+               mime_type_field_name,
+               description_field_name,
+               file_name_field_name,
+               field_name, field_name)
+
+        # Phew!  All done.
+        return result
+
+    elif style == "form_encoded":
+        # We shouldn't have to form-encode a null attachment.
+        assert value is not None
+        # The encoding is made of four parts; the fourth is the uploaded
+        # file name, which we no longer have.
+        parts = (description, type, location, "")
+        # Each part is URL-encoded.
+        map(urllib.quote, parts)
+        # The parts are joined into a semicolon-delimited list.
+        return string.join(parts, ";")
+
+    else:
+        raise ValueError, style
+
+
+def handle_upload_attachment(request):
+    """Generate the attachment upload popup form.
+
+    The form is generated from the DTML template
+    upload-attachment.dtml. 
+
+    See 'format_attachment_field_value', which generates code that
+    instigates the popup."""
+
+    page_info = UploadAttachmentPageInfo(request)
+    return generate_html_from_dtml("upload-attachment.dtml", page_info)
+    
+
+def handle_submit_attachment(request):
+    """Process submission of attachment data.
+
+    This submission is generated by the attachment data popup form
+    produced by 'handle_upload_attachment'."""
+    
+    # The location at which to store the attachment data is stored in
+    # the form and submitted in the request.
+    location = request["location"]
+    # Store the attachment data in the IDB.
+    idb = qm.track.get_idb()
+    data = request["file_data"]
+    idb.SetAttachmentData(location, data)
+
+    # Return a page that closes the popup window.
+    return '''
+    <html>
+     <body>
+      <script language="JavaScript">
+      window.close();
+      </script>
+     </body>
+    </html>
+    '''
+
+
+def handle_download_attachment(request):
+    """Process a request to download attachment data."""
+
+    # Get the attachment location and MIME type from the request.
+    location = request["location"]
+    mime_type = request["mime_type"]
+    # Get the attachment data.
+    idb = qm.track.get_idb()
+    data = idb.GetAttachmentData(location)
+    # Send it back to the client.
+    return (mime_type, data)
 
 
 def generate_html_from_dtml(template_name, page_info):
@@ -496,8 +810,18 @@ def generate_error_page(request, error_text):
     return generate_html_from_dtml("error.dtml", page_info)
 
 
+def make_url_for_attachment(attachment):
+    """Return a URL to download 'attachment'."""
+
+    request = qm.web.WebRequest("download-attachment",
+                                location=attachment.GetLocation(),
+                                mime_type=attachment.GetMimeType())
+    return qm.web.make_url_for_request(request)
+
+
 ########################################################################
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

@@ -73,12 +73,7 @@ class MemoryIdb(qm.track.IdbBase):
         specified path.  Otherwise, loads in an existing IDB."""
 
         # Perform base class initialization.
-        qm.track.IdbBase.__init__(self)
-        # Store away the path.
-        self.path = path
-        # If this is a new IDB, create the directory to contain it.
-        if create_idb and not os.path.isdir(path):
-            os.mkdir(path)
+        qm.track.IdbBase.__init__(self, path, create_idb)
 
         if create_idb:
             # Initially there are no issues and issue classes.
@@ -106,6 +101,8 @@ class MemoryIdb(qm.track.IdbBase):
             )
         cPickle.dump(persistent, pickle_file)
         pickle_file.close()
+        # Perform base class operation.
+        qm.track.IdbBase.Close(self)
 
 
     def __GetPicklePath(self):

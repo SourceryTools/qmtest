@@ -74,10 +74,8 @@ class GadflyIdb(sql_idb.SqlIdb):
         Otherwise, connects to an existing IDB."""
 
         # Perform base class initialiation.
-        sql_idb.SqlIdb.__init__(self)
+        sql_idb.SqlIdb.__init__(self, path, create_idb)
 
-        # Store away the path to the database.
-        self.path = path
         # Create or connect to the Gadfly database.
         if create_idb:
             self.__Create()
@@ -95,9 +93,6 @@ class GadflyIdb(sql_idb.SqlIdb):
 
         preconditions -- 'self.path' must be set."""
 
-        # Create the directory if it doesn't exist.
-        if not os.path.isdir(self.path):
-            os.mkdir(self.path)
         # Create the database.
         connection = gadfly.gadfly()
         connection.startup(GadflyIdb.idb_database_name, self.path)
@@ -139,6 +134,8 @@ class GadflyIdb(sql_idb.SqlIdb):
         pickle_file = open(pickle_path, "w")
         cPickle.dump(self.issue_classes, pickle_file)
         pickle_file.close()
+        # Do any base class operations we might need to.
+        sql_idb.SqlIdb.Close(self)
 
 
     def __GetPicklePath(self):

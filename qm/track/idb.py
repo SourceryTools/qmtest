@@ -35,9 +35,12 @@
 # imports
 ########################################################################
 
+import cPickle
 import rexec
 import qm
+import issue
 import issue_class
+import os
 import string
 import types
 
@@ -136,14 +139,86 @@ class IdbBase:
     # configuration.
 
 
-    def __init__(self):
+    def __init__(self, path, create_idb):
         """Create a new IDB connection."""
 
+        self.path = path
+        # If this is a new IDB, create the directory to contain it.
+        if create_idb:
+            if not os.path.isdir(path):
+                if os.path.exists(path):
+                    raise ValueError, \
+                          'IDB path %s alread exists' % path
+                else:
+                    os.mkdir(path)
+            attachment_path = self.__GetAttachmentPath("")
+            os.mkdir(attachment_path)
+        # Initialize trigger lists.
         self.__triggers = {
             "get" : [],
             "preupdate" : [],
             "postupdate" : []
             }
+
+        if create_idb:
+            # Start numbering attachments from zero
+            self.__next_attachment_index = 0
+        else:
+            # Read the index of the next attachment from a file.
+            path = self.__GetAttachmentPath("next")
+            index_file = open(path, "r")
+            self.__next_attachment_index = int(index_file.read())
+            index_file.close()
+            
+
+    def Close(self):
+        """Shut down the IDB connection."""
+
+        # Write out the next attachment index.
+        path = self.__GetAttachmentPath("next")
+        index_file = open(path, "w")
+        index_file.write("%d\n" % self.__next_attachment_index)
+        index_file.close()
+
+
+    def GetNewAttachmentLocation(self):
+        """Return a location for the data for a new attachment."""
+
+        location = "%06d.bin" % self.__next_attachment_index
+        self.__next_attachment_index = self.__next_attachment_index + 1
+        return location
+
+
+    def SetAttachmentData(self, location, data):
+        """Set the data for the attachment at 'location' to 'data'."""
+
+        # Find the file system path to the attachment data.
+        path = self.__GetAttachmentPath(location)
+        # Write the data.
+        attachment_file = open(path, "w")
+        attachment_file.write(data)
+        attachment_file.close()
+
+
+    def GetAttachmentData(self, location):
+        """Return the data for the attachment at 'location'."""
+
+        # Find the file system path to the attachment data.
+        path = self.__GetAttachmentPath(location)
+        # Read the data.
+        attachment_file = open(path, "r")
+        data = attachment_file.read()
+        attachment_file.close()
+        return data
+
+
+    def GetAttachmentSize(self, location):
+        """Return the size in bytes of the attachment at 'location'."""
+
+        # Find the file system path to the attachment data.
+        path = self.__GetAttachmentPath(location)
+        # Use 'stat' to return the file size.
+        return os.stat(path)[6]
 
 
     def RegisterTrigger(self, type, trigger):
@@ -273,6 +348,12 @@ class IdbBase:
         
     # Functions for derived classes.
 
+    def __GetAttachmentPath(self, location):
+        """Return the path to the attachment at 'location'."""
+
+        return os.path.join(self.path, "attachments", location)
+    
+
     def __InvokeGetTriggers(self, issue):
 
         # Retrieve all the get triggers.
@@ -380,8 +461,7 @@ def get_field_type_description_for_query(field):
         return "a sequence; each element is %s" \
                % get_field_type_description_for_query(contained_field)
     elif isinstance(field, issue_class.IssueFieldAttachment):
-        # FIXME.
-        raise NotImplementedError
+        return "an attachment; may not be used in queries"
     else:
         raise NotImplementedError
 
@@ -390,4 +470,5 @@ def get_field_type_description_for_query(field):
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

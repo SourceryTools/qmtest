@@ -58,6 +58,7 @@ edit -- Edit an existing issue."""
 # imports
 ########################################################################
 
+import mimetypes
 import qm.web
 import string
 import urllib
@@ -280,6 +281,94 @@ def handle_new(request):
     return web.generate_html_from_dtml("show.dtml", page_info)
 
 
+def validate_mime_type(mime_type, file_name=None):
+    """Validate a MIME type.
+
+    'file_name' -- The file name from which to guess the MIME type, if
+    'mime_type' is empty.
+
+    returns -- The validated MIME type."""
+
+    if mime_type == "":
+        if file_name is None:
+            mime_type = None
+        else:
+            # No MIME type but a file name was specified, so try to
+            # guess from the file extension.
+            mime_type = mimetypes.guess_type(file_name)[0]
+        # If we couldn't figure anything out, use a safe default.
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+    return mime_type
+
+
+def extract_attachment_field_value(request, field_name):
+    """Extract the attachment data for 'field_name' from 'request'.
+
+    'request' -- A 'WebRequest' object representing the submitted form.
+
+    'field_name' -- The name of the attachment field.
+
+    returns -- An 'Attachment' object, or 'None' if the field is
+    empty."""
+
+    # Extract the form values that contain the data specifying the
+    # attachment.
+    suffix = web.form_field_prefix + field_name
+    description = request[web.attachment_description_prefix + suffix]
+    mime_type = request[web.attachment_mime_type_prefix + suffix]
+    location = request[web.attachment_location_prefix + suffix]
+    # Validate the MIME type.
+    file_name = request[web.attachment_file_name_prefix + suffix]
+    mime_type = validate_mime_type(mime_type, file_name)
+
+    if location == "":
+        return None
+    else:
+        return qm.track.Attachment(location, mime_type, description)
+
+
+def decode_set_field_value(field, value):
+    """Decode the value of a set field as submitted from a web form.
+
+    'field' -- The set field whose value is being decoded.
+
+    'value' -- The value as submitted by a form.
+
+    returns -- A sequence of elements corresponding to set items as
+    submitted."""
+
+    # The value of a set field is is encoded as a comma-separated list
+    # of URL-encoded elements.
+    value = string.split(value, ",")
+    if value == [""]:
+        value = []
+
+    # If this is a set of attachments, we have to decode further.  
+    contained_field = field.GetContainedField()
+    if isinstance(contained_field, qm.track.IssueFieldAttachment):
+        attachment_list = []
+        for element in value:
+            # Each value is a semicolon-separated triplet of
+            # description, MIME type, and location.
+            parts = string.split(element, ";")
+            # Undo the URL encoding of each component.
+            parts = map(urllib.unquote, parts)
+            # Unpack the results.
+            description, mime_type, location, file_name = parts
+            # Validate the MIME type.
+            mime_type = validate_mime_type(mime_type, file_name)
+            # Create the attachment.
+            attachment = qm.track.Attachment(location, mime_type, description)
+            attachment_list.append(attachment)
+        # Return the seqeunce of attachments instead of the the strings
+        # encoding them.
+        return attachment_list
+    # For other field types, undo the URL encoding of the values.
+    else:
+        return map(urllib.unquote, value)
+
+
 def handle_submit(request):
     """Process a submission of a new or modified issue."""
 
@@ -317,6 +406,15 @@ def handle_submit(request):
         if string.find(name, web.form_field_prefix) == 0:
             # Yes -- trim off the prefix to obtain the field name.
             field_name = name[len(web.form_field_prefix):]
+        elif string.find(name, web.attachment_description_prefix
+                         + web.form_field_prefix) == 0:
+            # No, but it looks like one of the three fields used to
+            # encode an attachment.  Obtain the field name by cutting
+            # off this prefix, and the form field prefix which follows.
+            field_name = name[len(web.attachment_description_prefix)
+                              + len(web.form_field_prefix) :]
+            # Extract the attachment.
+            value = extract_attachment_field_value(request, field_name)
         else:
             # No, so skip it.
             continue
@@ -324,12 +422,7 @@ def handle_submit(request):
         field = issue_class.GetField(field_name)
         # Set fields need to be handled specially.
         if isinstance(field, qm.track.IssueFieldSet):
-            # The value of a set field is is encoded as a
-            # comma-separated list of URL-encoded elements.
-            value = string.split(value, ",")
-            if value == [""]:
-                value = []
-            value = map(urllib.unquote, value)
+            value = decode_set_field_value(field, value)
         # Interpret the query argument value as the field value.
         issue.SetField(field_name, value)
 
@@ -357,8 +450,14 @@ def handle_submit(request):
         # Add the new issue.
         idb.AddIssue(issue)
     else:
-        # Add the new revision.
-        idb.AddRevision(issue)
+        previous_revision = idb.GetIssue(iid)
+        differences = qm.track.get_differing_fields(issue, previous_revision)
+        if len(differences) == 0:
+            # Nothing has changed, so don't update.
+            pass
+        else:
+            # Add the new revision.
+            idb.AddRevision(issue)
 
     # Don't respond directly with the show page for the newly-created
     # or -modified issue.  Instead, redirect to it.  That way, if the

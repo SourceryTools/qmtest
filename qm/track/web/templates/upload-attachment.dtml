@@ -1,0 +1,147 @@
+<dtml-comment><!--
+
+  File:   upload-attachment.dtml
+  Author: Alex Samuel
+  Date:   2001-02-24
+
+  Contents:
+    Popup form for uploading an attachment.
+
+  Some trickiness here.  See
+  qm.track.web.web.format_attachment_field_value et seq. to see how this
+  popup is generated and used.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('File Attachment Upload')">
+ <body>
+  <form name="upload_form"
+        method="post"
+        action="<dtml-var expr="MakeSubmitUrl()">"
+        enctype="multipart/form-data"
+        onsubmit="javascript: inform_parent()">
+   <dtml-comment><!-- 
+     The id at which the attachment will be stored.  The
+     interpretation of the id is specific to the attachment
+     database implementation; here, it's just stored as a cookie.
+   --></dtml-comment>
+   <input type="hidden" 
+          name="location" 
+          value="<dtml-var expr="location">">
+   <dtml-comment><!--
+     A field for the user to upload a file.
+   --></dtml-comment>
+   Upload file contents for field 
+   <span class="fieldname"><dtml-var expr="request['field_name']"></span>:
+   <br>
+   <input type="file" 
+          size="40" 
+          name="file_data">
+   <br>
+   <dtml-comment><!--
+     The user may specify a MIME type explicitly, or request that it be
+     determined automatically.  
+   --></dtml-comment>
+   <table border="0">
+    <tr>
+     <td>
+      MIME&nbsp;type:
+     </td>
+     <td>
+      <input type="radio" 
+             name="detect_mime_type" 
+             value="true"
+             checked 
+             />&nbsp;Detect&nbsp;Automatically
+     </td>
+    </tr>
+    <tr>
+     <td>
+      &nbsp;
+     </td>
+     <td>
+      <input type="radio"
+             name="detect_mime_type"
+             value="false"/>
+      Specify:
+      <input type="text" 
+             size="32"
+             name="mime_type"
+             value="application/octet-stream"
+	     onkeydown="javascript: set_no_detect_mime_type()"/>
+     </td>
+    </tr>
+   </table>
+   <br>
+   <input type="submit" 
+          value=" Upload "/>
+  </form>
+
+ <dtml-comment><!--
+   This script fills in fields of the parent form.  See 
+   qm.track.web.web.format_attachment_field_value.
+ --></dtml-comment>
+ <script language="JavaScript">
+ function inform_parent()
+ {
+   var parent_form = window.opener.document.form;
+
+   // Set the location field in the form that invoked this popup to
+   // the attachment location provided by the server.  This allows the
+   // parent form to locate the attachment data later.
+   parent_form.<dtml-var expr="request['location_field']">.value =
+     document.upload_form.location.value;
+
+   // Set the MIME type in the invoking form.  Use an empty MIME type
+   // to indicate auto-detect.
+   if(document.upload_form.detect_mime_type[0].checked)
+     parent_form.<dtml-var expr="request['mime_type_field']">.value = "";
+   else
+     parent_form.<dtml-var expr="request['mime_type_field']">.value = 
+       document.upload_form.mime_type.value;
+
+   // Get the name of the uploaded file.
+   var file_name = document.upload_form.file_data.value;
+   // Keep the file name only; discard directories.
+   file_name = file_name.replace(/.*\//, "");
+   file_name = file_name.replace(/.*\\/, "");
+
+   // Fill the file name into the description field, if it's empty.
+   var desc_field = 
+     parent_form.<dtml-var expr="request['description_field']">;
+   if(desc_field.value == "" || desc_field.value == null)
+     desc_field.value = file_name;
+
+   // Also tell the parent form the uploaded file's name.  This way we
+   // can try to guess its MIME type later.
+   parent_form.<dtml-var expr="request['file_name_field']">.value =
+     file_name;
+ }
+
+ // This function is used to select the "Specify" radio button when
+ // the user types into the MIME type text input.
+ function set_no_detect_mime_type()
+ {
+   document.upload_form.detect_mime_type[1].checked = true;
+ }
+ </script>
+
+ </body>
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

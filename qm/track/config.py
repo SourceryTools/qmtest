@@ -357,6 +357,10 @@ def setup_idb_for_test():
     icl = qm.track.IssueClass("test_class")
     get_configuration()["default_class"] = "test_class"
 
+    field = qm.track.IssueFieldAttachment("attachments")
+    field = qm.track.IssueFieldSet(field)
+    icl.AddField(field)
+
     field = qm.track.IssueFieldText("description")
     field.SetAttribute("structured", "true")
     icl.AddField(field)

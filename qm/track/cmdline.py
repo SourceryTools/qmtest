@@ -783,7 +783,7 @@ class Command:
         try:
             idb_class = qm.track.idb.get_idb_class(idb_class_name)
         except ValueError:
-            raise qm.cmdline.ConfigurationError, \
+            raise qm.ConfigurationError, \
                   self.initialize_invalid_idb_class % idb_class_name
         # For this command, the IDB path is provided as an argument.
         # Make sure the --idb flag wasn't specified, to make sure

@@ -1,3 +1,61 @@
+2001-02-28  Alex Samuel  <samuel@codesourcery.com>
+
+	Support attachments in the web UI.
+	
+	* qm/web.py (WebRequestHandler.__HandleScriptRequest): Handle
+	results that aren't HTML.
+	* qm/common.py (format_byte_count): New function.
+
+	* qm/track/sql_idb.py (SqlIdb.__init__): Pass arguments to base
+	class. 
+	(SqlIdb.Close): New method.
+	* qm/track/server.py (start_server): Add upload-attachment,
+	submit-attachment, and download-attachment handlers.
+	* qm/track/memory_idb.py (MemoryIdb.__init__): Pass arguments to
+	base initializer.  Don't create directory.
+	(MemoryIdb.Close): Call base-class Close.
+	* qm/track/issue.py (Attachment.__init__): Add parameter defaults.
+	(Attachment.__cmp__): New method.
+	* qm/track/idb.py (IdbBase.__init__): Take more arugments.  Create
+	the directory.  Set up attachments.
+	(IdbBase.Close): New method.
+	(IdbBase.GetNewAttachmentLocation): Likewise.
+	(IdbBase.SetAttachmentData): Likewise.
+	(IdbBase.GetAttachmentData): Likewise.
+	(IdbBase.GetAttachmentSize): Likewise.
+	(IdbBase.__GetAttachmentPath): Likewise.
+	(get_field_type_description_for_query): Describe attachments.
+	* qm/track/gadfly_idb.py (GadflyIdb.__init__): Pass arguments to
+	base initializer.  Don't create directory.
+	(GadflyIdb.Close): Call base-class Close.
+	* qm/track/config.py (setup_idb_for_test): Add attachments field.
+	* qm/track/cmdline.py (Command.__PerformInitialize): Fix exception.
+
+	* qm/track/web/show.py (validate_mime_type): New function.
+	(extract_attachment_field_value): Likewise.
+	(decode_set_field_value): Likewise.
+	(handle_submit): Process attachments and sets using above.  Don't
+	add an identical revision.
+	* qm/track/web/web.py (UploadAttachmentPageInfo): New class.
+	(attachment_description_prefix): New variable.
+	(attachment_mime_type_prefix): Likewise.
+	(attachment_location_prefix): Likewise.
+	(attachment_file_name_prefix): Likewise.
+	(format_field_value): Handle attachments.
+	(format_int_field_value): Handle form_encoded style.
+	(format_text_field_value): Likewise.
+	(format_set_field_value): Likewise.  Format brief and full
+	differently.  Fill option values with form-encoded elements.
+	Generate add function differently for different contained field
+	types. 
+	(format_enum_field_value): Handle form_encoded style.
+	(format_attachment_field_value): New function.
+	(handle_upload_attachment): Likewise.
+	(handle_submit_attachment): Likewise.
+	(handle_download_attachment): Likewise.
+	(make_url_for_attachment): Likewise.
+	* qm/track/web/templates/upload-attachment.dtml: New file.
+
 2001-02-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/server.py (start_server): Bind the server.

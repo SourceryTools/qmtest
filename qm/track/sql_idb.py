@@ -106,9 +106,14 @@ class SqlIdb(idb.IdbBase):
     # second. 
     
 
-    def __init__(self):
+    def __init__(self, path, create_idb):
         # Perform base class initialization.
-        idb.IdbBase.__init__(self)
+        idb.IdbBase.__init__(self, path, create_idb)
+
+
+    def Close(self):
+        # Perform base class operation.
+        idb.IdbBase.Close(self)
 
 
     def GetIssueClass(self, name):

@@ -183,16 +183,29 @@ class Issue:
 
 
 
-
 class Attachment:
     """A file attachment."""
 
-    def __init__(self, location, mime_type, description):
+    def __init__(self,
+                 location,
+                 mime_type="application/octet-stream",
+                 description=""):
         """Creates a new attachment object."""
 
         self.location = location
         self.mime_type = mime_type
         self.description = description
+
+
+    def __cmp__(self, other):
+        if other is None:
+            return -1
+        if self.location == other.location \
+           and self.description == other.description \
+           and self.mime_type == other.mime_type:
+            return 0
+        else:
+            return 1
 
 
     def GetLocation(self):

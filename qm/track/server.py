@@ -109,12 +109,14 @@ def start_server(port, log_file=None):
     # Register all our web pages.
     for name, function in [
         ( "", qm.track.web.index.handle_index ),
+        ( "download-attachment", qm.track.web.handle_download_attachment ),
         ( "new", qm.track.web.show.handle_new ),
         ( "query", qm.track.web.query.handle_query ),
         ( "show", qm.track.web.show.handle_show ),
         ( "submit", qm.track.web.show.handle_submit ),
+        ( "submit-attachment", qm.track.web.handle_submit_attachment ),
         ( "summary", qm.track.web.summary.handle_summary ),
-        # ( "upload-attachment", qm.track.web.handle_upload_attachment ),
+        ( "upload-attachment", qm.track.web.handle_upload_attachment ),
         ]:
         server.RegisterScript(script_base + name, function)
     server.RegisterPathTranslation(script_base + "stylesheets",

@@ -239,10 +239,23 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # information about the exception instead.
             script_output = format_exception(sys.exc_info())
         # Send its output.
+        if isinstance(script_output, types.StringType):
+            # The return value from the script is a string.  Assume it's
+            # HTML text, and send it appropriate.ly.
+            mime_type = "text/html"
+            data = script_output
+        elif isinstance(script_output, types.TupleType):
+            # The return value from the script is a tuple.  Assume the
+            # first element is a MIME type and the second is result
+            # data.
+            mime_type, data = script_output
+        else:
+            raise ValueError
         self.send_response(200)
-        self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Type", mime_type)
+        self.send_header("Content-Length", len(data))
         self.end_headers()
-        self.wfile.write(script_output)
+        self.wfile.write(data)
 
 
     def __HandleXmlRpcRequest(self):
@@ -471,7 +484,8 @@ class WebServer(HTTPServer):
 
         The script is passed a single argument, a 'WebRequest'
         instance.  It returns the HTML source, as a string, of the
-        page it generates.
+        page it generates.  If it returns a tuple instead, the first
+        element is taken to be a MIME type and the second is the data.
 
         The script may instead raise an 'HttpRedirect' instance,
         indicating an HTTP redirect response should be sent to the
