@@ -1,5 +1,9 @@
 2001-07-16  Alex Samuel  <samuel@codesourcery.com>
 
+	* README: No longer require PyXML.
+
+2001-07-16  Alex Samuel  <samuel@codesourcery.com>
+
 	* PyXML: New imported module.
 	* install.py (packages): Include PyXML dir.
 	* Makefile.in (SUBDIRS): Add PyXML.

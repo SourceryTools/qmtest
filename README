@@ -15,25 +15,15 @@
     for more information on obtaining the tools.
 
 
-    To run QM, you will need a Python 1.5.2 distribution.  In addition,
-    you'll need the PyXML package.  This is not included in the QM
-    distribution, and must be installed separately.  The package is
-    availabe from
-
-      http://sourceforge.net/projects/pyxml
-
-    Future versions of Python include this as part of the standard
-    Python library; when QM updates to a newer version, this requirement
-    will be removed.
-
+    To run QM, you will need a Python 1.5.2 distribution.  
 
     Additionally, if you are building QM yourself, you will need the
     Distutils package.  You can get Distutils from
 
       http://www.python.org/sigs/distutils-sig/download.html
 
-    This requirement, too, will be obviated when QM updates to a newer
-    version of Python.
+    This requirement will be obviated when QM updates to a newer version
+    of Python.
 
 
 ------------------------------------------------------------------------
@@ -476,6 +466,10 @@
 
      - The xmlrpc module contains a Python implementation of XML/RPC by
        Fredrik Lundh and Secret Labs AB.
+
+     - The PyXML package contains XML-related software written by and/or
+       copyright by Fourthought, Inc., BeOpen, CNRI, CWI, Greg Stein,
+       Secret Labs AB, and Lars Marius Carshol.
        
    Please consult the corresponding READMEs, license files, etc. for
    applicable copyright notices.
