@@ -1294,7 +1294,6 @@ trap 'rm -fr `echo "standard.mk
   doc/Makefile
   doc/design/qmtest/Makefile
   doc/manual/Makefile
-  qm/Makefile
   qm/setup_path.py
 " | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
@@ -1396,7 +1395,6 @@ CONFIG_FILES=\${CONFIG_FILES-"standard.mk
   doc/Makefile
   doc/design/qmtest/Makefile
   doc/manual/Makefile
-  qm/Makefile
   qm/setup_path.py
 "}
 EOF

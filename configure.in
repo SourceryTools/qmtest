@@ -218,7 +218,6 @@ AC_OUTPUT(
   doc/Makefile
   doc/design/qmtest/Makefile
   doc/manual/Makefile
-  qm/Makefile
   qm/setup_path.py
 )
 

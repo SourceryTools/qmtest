@@ -73,11 +73,11 @@ build_qm() {
       error "Could not unpack source distribution"
     changedir qm-${QM_VERSION}
     # Create an installation directory.
-    rm -rf ../${QM_INSTALL_DIR}
-    mkdir -p ../${QM_INSTALL_DIR} || \
+    rm -rf ${QM_INSTALL_DIR}
+    mkdir -p ${QM_INSTALL_DIR} || \
       error "Could not create installation directory"
     # Configure QM.
-    ./configure --prefix=../${QM_INSTALL_DIR} "$@" || \
+    ./configure --prefix=${QM_INSTALL_DIR} "$@" || \
       error "Could not configure QM"
     # Build it.
     make || error "Could not build QM"
@@ -114,7 +114,7 @@ build_source() {
           qm-${QM_VERSION}/doc/manual/html || \
       error "Could not copy HTML manual"
     (mkdir qm-${QM_VERSION}/doc/manual/print && \
-     cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual.pdf \
+     cp -r ${QM_INSTALL_DIR}/share/doc/qm/manual/print/manual.pdf \
           qm-${QM_VERSION}/doc/manual/print) || \
       error "Could not copy PDF manual"
     tar czf ${QM_SOURCE_TAR_GZ} ${TAR_OPTS} qm-${QM_VERSION} || \
@@ -152,7 +152,7 @@ build_binary() {
 build_exec() {
     build_qm --with-python=/cygdrive/c/Python21/Python.exe
     # Fix the qmtest.bat to use the default prefix.
-    (sed -e "s|../${QM_INSTALL_DIR}|c:\\\\Program Files\\\\QM|g" \
+    (sed -e "s|${QM_INSTALL_DIR}|c:\\\\Program Files\\\\QM|g" \
       < ${QM_INSTALL_DIR}/bin/qmtest.bat \
       > ${QM_INSTALL_DIR}/bin/qmtest.bat.new && 
       mv ${QM_INSTALL_DIR}/bin/qmtest.bat.new \
@@ -237,7 +237,7 @@ QM_SOURCE_TAR_GZ=qm-${QM_VERSION}.tar.gz
 QM_BINARY_TAR_GZ=qm-${QM_VERSION}-binary.tar.gz
 QM_BINARY_ZIP=${QM_RELEASE_DIR}/qm-${QM_VERSION}.zip
 QM_BINARY_EXE=${QM_RELEASE_DIR}/qm-${QM_VERSION}.exe
-QM_INSTALL_DIR=install/qm-${QM_VERSION}
+QM_INSTALL_DIR=${QM_RELEASE_DIR}/install/qm-${QM_VERSION}
 
 # Handle the major modes.
 while [ $# -ne 0 ]; do
