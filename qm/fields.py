@@ -1361,33 +1361,9 @@ class EnumerationField(IntegerField):
             name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
-            select_name = "_enumsel_" + name
-            # Add a hidden control with the specified field name.  This
-            # input will contain the value of the currently-selected
-            # item. 
-            result = '<input type="hidden" name="%s" value="%s"/>' \
-                     % (name, self.FormEncodeValue(value))
-            # Write the handler to update the hidden control when the
-            # selection changes in the select control.
-            on_change = "update_from_select(document.form.%s, " \
-                        "document.form.%s)" \
-                        % (select_name, name)
-            # Generate a '<select>' control droplist.
-            result = result + '<select name="%s" onchange="%s">\n' \
-                     % (select_name, on_change)
-            # Generate an '<option>' element for each available enumeral.
             enumerals = self.__GetAvailableEnumerals(value)
-            for enumeral in enumerals:
-                # Specify the 'select' attribute if this enumeral
-                # corresponds to the current field value.
-                if enumeral == value:
-                    is_selected = "selected"
-                else:
-                    is_selected = ""
-                result = result + '<option value="%s" %s>%s</option>\n' \
-                         % (str(enumeral), is_selected, str(enumeral))
-            result = result + '</select>\n'
-            return result
+            return qm.web.make_select(name, enumerals, value,
+                                      str, self.FormEncodeValue)
 
         elif style == "full" or style == "brief":
             return str(value)
@@ -1509,6 +1485,25 @@ class UidField(TextField):
 
     def GetTypeDescription(self):
         return "a user ID"
+
+
+    def FormatValueAsHtml(self, value, style, name=None):
+        # Use default value if requested.
+        if value is None:
+            value = self.GetDefaultValue()
+        # Use the default field form field name if requested.
+        if name is None:
+            name = self.GetHtmlFormFieldName()
+
+        if style == "new" or style == "edit":
+            uids = qm.user.database.keys()
+            return qm.web.make_select(name, uids, value, str, str)
+
+        elif style == "full" or style == "brief":
+            return value
+
+        else:
+            raise ValueError, style
 
 
 

@@ -1946,6 +1946,65 @@ def make_popup_page(message, buttons, title=""):
     return page
 
 
+def make_select(field_name,
+                items,
+                default_value,
+                item_to_text,
+                item_to_value):
+    """Construct HTML controls for selecting an item from a list.
+
+    'field_name' -- The name of the form control which will contain the
+    currently-selected item.  This is a hidden control; the actual HTML
+    select control is given a different name.
+
+    'items' -- A sequence of items.  The items may be of any type.
+
+    'default_value' -- The item which should initially be selected.  The
+    value must appear in 'items'.
+
+    'item_to_text' -- A function that returns the text representation of
+    an item.
+
+    'item_to_value' -- A function that returns the value representation
+    of an item.
+
+    returns -- The HTML text for the controls.  
+
+    For each item, 'item_to_text' and 'item_to_value' are used to
+    construct the text and value attributes for the corresponding HTML
+    select option."""
+
+    assert default_value in items
+
+    select_name = "_select_" + field_name
+    # Add a hidden control with the specified field name.  This
+    # input will contain the value of the currently-selected
+    # UID.
+    result = '<input type="hidden" name="%s" value="%s"/>' \
+             % (field_name, item_to_value(default_value))
+    # Write the handler to update the hidden control when the
+    # selection changes in the select control.
+    on_change = "update_from_select(document.form.%s, " \
+                "document.form.%s)" \
+                % (select_name, field_name)
+    # Generate a '<select>' control droplist.
+    result = result + '<select name="%s" onchange="%s">\n' \
+             % (select_name, on_change)
+    # Generate an '<option>' element for each item.
+    for item in items:
+        # Specify the 'select' attribute if this item represents the
+        # default value.
+        if item == default_value:
+            is_selected = "selected"
+        else:
+            is_selected = ""
+        result = result + '<option value="%s" %s>%s</option>\n' \
+                 % (item_to_value(item), is_selected, item_to_text(item))
+    result = result + '</select>\n'
+    return result
+    
+
+
 ########################################################################
 # variables
 ########################################################################

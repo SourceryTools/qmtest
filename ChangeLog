@@ -1,5 +1,19 @@
 2001-05-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (make_select): New function.
+	* qm/user.py (DefaultDatabase.keys): New method.
+	(XmlDatabase.keys): Likewise.
+	* qm/fields.py (EnumerationField.FormatValueAsHtml): Use
+	make_select.
+	(UidField.FormatValueAsHtml): New method.
+	* share/xml/users.xml.test-values: New file.
+	* qm/track/config.py (initialize_idb): Add test_values parameter.
+	Initialize test values and test user database.
+	* qm/track/cmdline.py (Command.__PerformInitialize): Don't
+	generate test values here.
+
+2001-05-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (make_javascript_string): Don't escape slashes.
 	* qm/platform.py: New class.
 	(MailError.send_email): New function.

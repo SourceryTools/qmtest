@@ -195,6 +195,10 @@ class DefaultDatabase:
         return self.default_user.GetId()
 
 
+    def keys(self):
+        return [self.GetDefaultUserId()]
+
+
     def __getitem__(self, user_id):
         default_user_id = self.default_user.GetId()
         if user_id == default_user_id:
@@ -318,7 +322,10 @@ class XmlDatabase:
 
     def get(self, user_id, default=None):
         return self.__get(user_id, default)
-            
+
+
+    def keys(self):
+        return self.__users.keys()
 
 
 class XmlDatabaseAuthenticator(Authenticator):

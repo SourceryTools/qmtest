@@ -301,13 +301,16 @@ def close_idb():
     state["mode"] = "none"
 
 
-def initialize_idb(path, idb_class_name):
+def initialize_idb(path, idb_class_name, test_values=0):
     """Initialize a new IDB.
 
     'path' -- The path to the new IDB.  The path must not exist.
 
     'idb_class_name' -- The name of the IDB implementation class to
     use.
+
+    'test_values' -- If true, populate the IDB and user database with
+    test values.
 
     raises -- 'ValueError' if 'idb_class_name' is not recognized as a
     name of an IDB implementation.
@@ -347,8 +350,11 @@ def initialize_idb(path, idb_class_name):
     configuration.Save()
 
     # Copy in the user database template.
-    user_db_template_path = qm.common.get_share_directory("xml",
-                                                          "users.xml.template")
+    if test_values:
+        database_file = "users.xml.test-values"
+    else:
+        database_file = "users.xml.template"
+    user_db_template_path = qm.common.get_share_directory("xml", database_file)
     user_db_path = os.path.join(path, "users.xml")
     shutil.copy(user_db_template_path, user_db_path)
 
@@ -357,6 +363,12 @@ def initialize_idb(path, idb_class_name):
     # Close it immediately.
     idb.Close()
 
+    # Add test stuff to the IDB, if requested.
+    if test_values:
+        open_idb(path)
+        setup_idb_for_test()
+        close_idb()
+        
 
 def get_default_class():
     """Return the default issue class for the current IDB."""

@@ -850,16 +850,11 @@ class Command:
         idb_path = self.__arguments[0]
 
         # Create the IDB.
-        qm.track.initialize_idb(idb_path, idb_class_name)
+        test_values =command_options.has_key('test-values')
+        qm.track.initialize_idb(idb_path, idb_class_name, test_values)
 
         # If requested, populate the IDB with test values.
-        if command_options.has_key('test-values'):
-            qm.track.open_idb(idb_path)
-            qm.track.setup_idb_for_test()
-            qm.track.close_idb()
-
-        # If requested, populate the IDB with test values.
-        elif command_options.has_key('internal'):
+        if command_options.has_key('internal'):
             qm.track.open_idb(idb_path)
             qm.track.setup_idb_for_internal_use()
             qm.track.close_idb()
