@@ -85,8 +85,8 @@
 
       make install
 
-    By default, this installs files under /usr/local; to use a different
-    prefix, specify the --prefix option to configure.
+    By default, this command installs files under /usr/local; to use a
+    different prefix, specify the --prefix option to configure.
 
 
 ------------------------------------------------------------------------
