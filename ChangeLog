@@ -1,5 +1,12 @@
 2002-08-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (get_extension_directories): Make sure the
+	QMTest subdirectory of the database is searched
+	* qm/test/datbase.py (Database.GetClassPaths): Do not search it
+	here.
+	* qm/test/doc/reference.xml: Update description of locations
+	searched for test classes.
+
 	* GNUmakefile.in (doc-python): Simplify.
 
 	* qm/fields.py (Field.__init__): Check that properties provided

@@ -951,12 +951,7 @@ class Database(qm.extension.Extension):
         returned by the default implementation (but probably should
         be)."""
 
-        # Specify the configuration subdirectory.
-        config_dir = get_db_configuration_directory(self.GetPath())
-        # It should exist.
-        assert os.path.isdir(config_dir)
-        # That's where test and resources classes go.
-        return [config_dir]
+        return []
 
 
     def GetTestClassNames(self):

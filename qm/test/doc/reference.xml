@@ -2024,13 +2024,12 @@
     </listitem>
 
     <listitem>
-     <para>A test database may specify locations to check for module
-     files when loading a class.  &qmtest; test database implementations
-     generally check the subdirectory named <filename>QMTest</filename>
-     in the top test database directory for test and resource classes.
-     (Note that &qmtest; may place other files in this directory; you
-     should not disturb them.)  Module files containing test and
-     resource classes may be placed in this directory.</para>
+     <para>A test database may specify additional locations to check.</para>
+    </listitem>
+
+    <listitem>
+     <para>QMTest checks the configuration directory (the subdirectory
+     named <filename>QMTest</filename> of a test database).</para>
     </listitem>
 
     <listitem>
@@ -2046,8 +2045,10 @@
    directory, unless you plan to use the test classes in more than one
    test database.</para>
 
-   <para>You must then use the <command>&qmtest-cmd;
-   register</command> command to register your new extension class.</para>
+   <para>You must use the <command>&qmtest-cmd; register</command>
+   command to register your new extension class.  You must perform
+   this step no matter where you place the module containing your
+   extension class.</para>
 
    <para>You can refer to the new extension class using the syntax
    <classname>module.Class</classname>, where

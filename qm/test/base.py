@@ -216,6 +216,8 @@ def get_extension_directories(kind, database):
     # Search directories specified by the database.
     if database:
         dirs = dirs + database.GetClassPaths()
+        # Search the database configuration directory.
+        dirs.append(get_db_configuration_directory(database.GetPath()))
 
     # Search the builtin directory, too.
     dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
