@@ -1,3 +1,10 @@
+2001-02-16  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/command_line.py: Fix coding standards issues.
+	* qm/track/idb.py (IdbBase::PerformQuery): Define.
+	* qm/track/qmtrack.py: Fix split up strings to use 'printf' syntax.
+	(CommandLine::PerformQuery): Move code into idb.py. Only do UI stuff.
+	
 2001-02-15  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/qmtrack.py: Fix coding standards issues.

@@ -68,30 +68,30 @@ class CommandParser:
         """Create a new command parser.
 
         'name' -- The name of the executable that we are currently
-        using. This will normally be argv[0].
+        using.  This will normally be argv[0].
         
         'options' -- A list of 4-tuples specifying flags that you wish
-        this parser to accept. The 4-tuple has the following form:
-        (short_form, long_form, flags, description). 'short_form' must be
-        exactly one character. 'long_form' must be specified for every
-        flag in the list. 'arg_name' is a string representing the name of
-        the argument that is passed to this flag. If it is 'None,' then
-        this flag doesn't take an argument. 'description' is a string
+        this parser to accept.  The 4-tuple has the following form:
+        (short_form, long_form, flags, description).  'short_form' must be
+        exactly one character.  'long_form' must be specified for every
+        flag in the list.  'arg_name' is a string representing the name of
+        the argument that is passed to this flag.  If it is 'None,' then
+        this flag doesn't take an argument.  'description' is a string
         describing the flag.
 
         'commands' -- A list of 5-tuples specifying commands to be
-        accepted after the command line flags. The 5-tuple has the
+        accepted after the command line flags.  The 5-tuple has the
         following form: (name, short_description, args_string,
-        long_description, flags). 'name' is the string for the
-        command. 'short_description' is a short description of the command
-        to be printed out in general help. 'args_string' is the string
+        long_description, flags).  'name' is the string for the
+        command.  'short_description' is a short description of the command
+        to be printed out in general help.  'args_string' is the string
         that will be printed after the command in the command specific
-        help. 'long_description' is the long description to be printed out
-        in the command specfic help. 'flags' is a list of 4-tuples of the
+        help.  'long_description' is the long description to be printed out
+        in the command specfic help.  'flags' is a list of 4-tuples of the
         same form as the 'options' described above.
 
         'output' -- The place where the error handler should output
-        the errors and warnings. This should be a python file object that
+        the errors and warnings.  This should be a python file object that
         has been opened for writing."""
 
         self.__name = name
@@ -139,12 +139,11 @@ class CommandParser:
     def ErrorHandler(self, fatal, msg, help, which):
         """Handle errors and warnings that come up during execution.
 
-        This function is the one to be called when the program needs
-        to issue a warning or an error. It can print out help based
-        on a command, if specified, or help based on the general
-        program.
+        This function is the one to be called when the program needs to
+        issue a warning or an error.  It can print out help based on a
+        command, if specified, or help based on the general program.
 
-        'fatal' -- 1 if the error is fatal, 0 otherwise. If 1 is passed,
+        'fatal' -- 1 if the error is fatal, 0 otherwise.  If 1 is passed,
         this method will exit the program immediately and not return.
 
         'msg' -- The message to be printed.
@@ -172,15 +171,15 @@ class CommandParser:
     def CheckOptions(self, options):
         """Check that a list of options 4-tuples is correct.
 
-        'options' -- a list of 4-tuples as described above.
+        'options' -- A list of 4-tuples as described above.
 
         returns -- 1 if the options are all valid, 0 otherwise."""
 
         for short_option, long_option, flags, descripton in options:
-            # Short form of the option must have exactly 1 character.
+            # The short form of the option must have exactly 1 character.
             if short_option != None and len(short_option) != 1:
                 raise ValueError, "Short option must have exactly 1 character"
-            # Long form of the option must be specified.
+            # The long form of the option must be specified.
             if long_option == None or len(long_option) == 0:
                 raise ValueError, "Long option must be specified"
         
@@ -190,15 +189,15 @@ class CommandParser:
     def BuildGetoptList(self, options):
         """Build a getopt list for the long options.
 
-        'options' -- a list of 4-tuples as described above.
+        'options' -- A list of 4-tuples as described above.
 
-        returns -- a list to be passed to getopt to parse long options."""
+        returns -- A list to be passed to getopt to parse long options."""
 
-        # Build the options string for getopt
+        # Build the options string for getopt.
         getopt_list = []
 
         for option in options:
-            # Takes an argument
+            # Tell getopt that this option takes an argument.
             if option[2] != None:
                 getopt_list.append(option[1] + '=')
             else:
@@ -210,17 +209,17 @@ class CommandParser:
     def BuildGetoptString(self, options):
         """Build a getopt string for the options passed in.
 
-        'options' -- a list of 4-tuples as described above.
+        'options' -- A list of 4-tuples as described above.
 
-        returns -- a string to be passed to getopt to parse the
+        returns -- A string to be passed to getopt to parse the
         options."""
 
-        # Build the options string for getopt
+        # Build the options string for getopt.
         getopt_string = ''
 
         for option in options:
             getopt_string = getopt_string + option[0]
-            # Takes an argument
+            # Tell getopt that this option takes an argument.
             if option[2] != None:
                 getopt_string = getopt_string + ':'
 
@@ -230,9 +229,9 @@ class CommandParser:
     def GetOptionsHelp(self, options):
         """Return a string that is the basic help for options.
 
-        options -- a list of options to get the help string for.
+        options -- A list of options to get the help string for.
 
-        returns -- a string to be printed for the options."""
+        returns -- A string to be printed for the options."""
 
         help_string = ""
 
@@ -252,7 +251,7 @@ class CommandParser:
     def GetBasicHelp(self):
         """Return a string that is the basic help for the commands.
 
-        returns -- a string to be printed with basic functionality of
+        returns -- A string to be printed with basic functionality of
         arguments and commands."""
 
         help_string = "Usage: %s"%(self.__name)
@@ -273,9 +272,9 @@ class CommandParser:
     def GetCommandHelp(self, command):
         """Return a string that is the help for a specific command.
 
-        command -- a string of the command that you want help for.
+        command -- A string of the command that you want help for.
 
-        returns -- a string of help for a given command."""
+        returns -- A string of help for a given command."""
 
         help_string = "Usage: %s %s [ flags ] "%(self.__name, command)
         for command_item in self.__commands:
@@ -295,16 +294,16 @@ class CommandParser:
         """Parse a command line.
 
         'argv' -- A string containing the command line starting with
-        argv[1]. Should not contain the name of the executed program.
+        argv[1].  It should not contain the name of the executed program.
 
         returns -- A 4-tuple of the flags given, the command given, the
-        command flags, and the command arguments. Its form is this:
-        (flags, command, command_flags, command_args). 'flags' is a list
+        command flags, and the command arguments.  Its form is this:
+        (flags, command, command_flags, command_args).  'flags' is a list
         of 2-tuples indicating each flag specified and the argument given
-        to that flag (if applicable). 'command' is the command
-        given. 'command_flags' is a list of 2-tuples indicating each flag
-        given to the command and its possible argument. 'command-args' is
-        a list of arguments as given to the command. If no command is
+        to that flag (if applicable).  'command' is the command given.
+        'command_flags' is a list of 2-tuples indicating each flag given
+        to the command and its possible argument.  'command-args' is a
+        list of arguments as given to the command.  If no command is
         given, then the function will return '' for the command, [] for
         the arguments, and [] for the command flags."""
 

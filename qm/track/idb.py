@@ -32,6 +32,15 @@
 ########################################################################
 
 ########################################################################
+# imports
+########################################################################
+
+import rexec
+from types import *
+import qm
+from qm.track import *
+
+########################################################################
 # classes
 ########################################################################
 
@@ -179,6 +188,84 @@ class IdbBase:
         return self.__GetTriggerListForType(type)[:]
 
 
+    def GetIssues(self):
+        """Return a list of all the issues.
+
+        FOR INTERNAL USE ONLY."""
+        # This function should be overridden by derived classes.
+        raise NotImplementedError, "__call__ method must be overridden"
+
+    
+    def PerformQuery(self, query_str, class_name):
+        """Perform a query on the database.
+        
+        query_str -- The string with the python expression to be evaluated
+        on each issue to determine if the issue matches.
+        
+        class_name -- The name of the class of which you wish to query
+        issues.  Only issues of that class will be queried.  If this
+        argument is '', all issues in the database will be queried.
+        
+        returns -- This function returns a list of issues that match a
+        query.
+
+        raises -- Any error that can be raised by the 'rexec' function."""
+
+        self.results = [ ]
+        for issue in self.GetIssues():
+            # We have a list of revisions; we want only the last one.
+            issue = issue[len(issue) - 1]
+            query_env = rexec.RExec()
+            # Import string operations so that they may be used in
+            # a query.
+            query_env.r_exec("import string");
+            c = issue.GetClass()
+
+            # We should only do the query if the issue is of the correct
+            # class.
+            if class_name == '' or c.GetName() == class_name:
+                # Set up the execution environment for the expression.
+                for field in c.GetFields():
+                    field_name = field.GetName()
+                    # Set each field to be its current value in the issue.
+                    field_value = issue.GetField(field_name)
+                    if type(field_value) == StringType:
+                        field_value = "'" + field_value + "'"
+                    query_env.r_exec("%s = %s" % (field_name, field_value))
+                    # We have to check to see if this class is an
+                    # enumeration.  If it is, grab the mapping and use
+                    # that.  Alternately, it might be a set of
+                    # enumerations, in which case we need to fish
+                    # into the set to get the mapping of each thing
+                    # that could be in the set.
+                    enum_type = qm.track.issue_class.IssueFieldEnumeration
+                    enum = None
+                    if not isinstance(field, enum_type):
+                        try:
+                            contained = field.GetContainedField()
+                            if isinstance(contained, enum_type):
+                                enum = contained.GetEnumeration()
+                        except:
+                            pass
+                    else:
+                        enum = field.GetEnumeration()
+
+                    # Set all the enumerals to be their value.
+                    if enum != None:
+                        for key, value in enum.items():
+                            query_env.r_exec("%s = %d" % (str(key),
+                                                          int(value)))
+
+                # Execute the expression.  If it's true, add this issue to
+                # the results to be printed.  For exceptions that are raised,
+                # we don't catch them; the calling function must handle
+                # the errors.  We might want to change this in the future.
+                if query_env.r_eval(query_str):
+                    self.results.append(issue)
+                
+        return self.results
+
+        
     # Functions for derived classes.
 
     def __InvokeGetTriggers(self, issue):

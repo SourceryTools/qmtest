@@ -77,6 +77,8 @@ class CommandLine:
     database_option = ('d', 'database', 'location', 'Database location')
     help_option = ('h', 'help', None, 'Help')
     class_option = ('c', 'class', 'class_name', 'Class for new issue')
+    query_class_option = ('c', 'class', 'class_name',
+                          'Class of issues to query')
     
     create_command = ('create', 'Create a new issue',
                       '-c classname field[=,+=]value...',
@@ -105,7 +107,7 @@ class CommandLine:
     query_command = ('query', 'Query the database', 'expression',
                      "This command will query the database to find all"
                      " issues that cause the given 'expression' to"
-                     " evalute to true.", [ help_option ])
+                     " evalute to true.", [ help_option, query_class_option ])
     
     qmtrack_options = [ format_option, database_option, help_option ]
     """All the command line options for qmtrack."""
@@ -121,16 +123,13 @@ class CommandLine:
     database_exist_error = 'Database does not exist.'
     command_error = 'Must specify a command.'
     unrecognized_error = 'Unrecognized command.'
-    field_exist_begin = 'No field of name "'
-    field_exist_end = '" exists in the issue class.'
-    field_set_use_equal_begin = 'Cannot use operator "=" on field "'
-    field_set_use_equals_end = '" of set type.'
-    field_set_use_plus_begin = 'Cannot use operators "+=" or "-=" on field "'
-    field_set_use_plus_end = '" of non-set type.'
+    field_exist = 'No field of name "%s" exists in the issue class.'
+    field_set_use_equal = 'Cannot use operator "=" on field "%s" of set type'
+    field_set_use_plus \
+    = 'Cannot use operators "+=" or "-=" on field "%s" of non-set type.'
     create_class_error_syn \
     = 'Must specify an issue class when creating an issue.'
-    create_field_error_begin = 'Missing mandatory field(s) "'
-    create_field_error_end = '" in create command.'
+    create_field_error = 'Missing mandatory field(s) "%s" in create command.'
     create_class_error_sem = 'Given issue class does not exist.'
     create_issue_error = 'An issue with that iid already exists.'
     create_no_equals_error = 'Must specify a field and a value.'
@@ -141,13 +140,11 @@ class CommandLine:
     split_iid_error_sem \
     = 'Split causes a iid conflict with another issue.'
     join_issue_error_syn = 'Must specify 2 issues to join.'
-    join_issue_error_sem_begin = 'Cannot find issue "'
-    join_issue_error_sem_end = '" to join in database.'
+    join_issue_error_sem = 'Cannot find issue "%s" to join in database.'
     join_iid_error_sem = 'Join causes an iid conflict with another issue.'
-    query_invalid_id_begin = 'Unknown identifier "'
-    query_invalid_id_end = '" in query string.'
-    query_invalid_att_begin = 'Unknown attribute "'
-    query_invalid_att_end = '" in query string.'
+    query_error_syn = 'Must specify a string to query.'
+    query_invalid_id = 'Unknown identifier "%s" in query string.'
+    query_invalid_att = 'Unknown attribute "%s" in query string.'
     query_exception = 'Exception occured while evaluating query string'
     unimplemented = 'Unimplemented feature.'
     
@@ -353,9 +350,8 @@ class CommandLine:
             # If there is no such field by the given name, we must
             # report the error.
             if not issue_class.HasField(field_name):
-                self.parser.ErrorHandler(1, self.field_exist_begin
-                                         + field_name
-                                         + self.field_exist_end, 0, '')
+                self.parser.ErrorHandler(1, self.field_exist % field_name,
+                                         0, '')
                 return 1
 
             # If the field does exist, get the field.
@@ -364,20 +360,16 @@ class CommandLine:
             # for a non-set type, report an error.
             if isinstance(field, qm.track.issue_class.IssueFieldSet):
                 if set == 0:
-                    self.parser.ErrorHandler(1,
-                                             self.field_set_use_equals_begin
-                                             + field_name
-                                             + self.field_set_use_equals_end,
+                    self.parser.ErrorHandler(1, self.field_set_use_equal
+                                             % field_name,
                                              0, '')
                     return 1
             # Conversely, if the field is of a non-set type, and they
             # used the syntax for a set type, report an error.
             else:
                 if set == 1:
-                    self.parser.ErrorHandler(1,
-                                             self.field_set_use_plus_begin
-                                             + field_name
-                                             + self.field_set_use_plus_end,
+                    self.parser.ErrorHandler(1, self.field_set_use_plus
+                                             % field_name,
                                              0, '')
                     return 1
             
@@ -434,9 +426,8 @@ class CommandLine:
 
         # If some mandatory fields were missing, report an error.
         if missing != []:
-            self.parser.ErrorHandler(1, self.create_field_error_begin
-                                     + string.join(missing[0:], ',')
-                                     + self.create_field_error_end, 0, '')
+            self.parser.ErrorHandler(1, self.create_field_error
+                                     % string.join(missing[0:], ','), 0, '')
             return 1
         
         # Once we have checked that everything is in order to create the
@@ -605,17 +596,13 @@ class CommandLine:
             issue1 = self.idb.GetIssue(iid1)
         except KeyError:
             self.parser.ErrorHandler(1,
-                                     self.join_issue_error_sem_begin
-                                     + iid1
-                                     + self.join_issue_error_sem_end, 0, '')
+                                     self.join_issue_error_sem % iid1, 0, '')
             return 1
         try:
             issue2 = self.idb.GetIssue(iid2)
         except KeyError:
             self.parser.ErrorHandler(1,
-                                     self.join_issue_error_sem_begin
-                                     + iid2
-                                     + self.join_issue_error_sem_end, 0, '')
+                                     self.join_issue_error_sem % iid2, 0, '')
             return 1
 
         # How are we supposed to map over all the fields to combine
@@ -649,71 +636,43 @@ class CommandLine:
 
         returns -- This function returns 0 on success, 1 on failure."""
 
+        # Get the class of the issue from the command line.
+        class_value = self.GetCommandOption('class')
+
+        # If it was not specified, set the class value to nothing.
+        if class_value[0] == 0:
+            class_value = ''
+        # Otherwise, set the class value to the string of the class name.
+        else:
+            class_value = class_value[1]
+            
+        # If there are no command arguments to the command, they did
+        # not specify a query string to be use and we report an error.
+        if len(self.command_args) == 0:
+            self.parser.ErrorHandler(1, self.query_error_syn, 1, 'query')
+            return 1
+
         # Combine the arguments to the query into one string so that
         # the expression may be passed to the python expression
         # evaluator.
         query_str = string.join(self.command_args[0:])
 
-        self.results = [ ]
-        for issue in self.idb.GetIssues():
-            # We have a list of revisions; we want only the last one.
-            issue = issue[len(issue) - 1]
-            query_env = rexec.RExec()
-            # Import string operations so that they may be used in
-            # a query.
-            query_env.r_exec("import string");
-            c = issue.GetClass()
-            # Set up the execution environment for the expression.
-            for field in c.GetFields():
-                field_name = field.GetName()
-                # Set each field to be its current value in the issue.
-                field_value = issue.GetField(field_name)
-                if type(field_value) == StringType:
-                    field_value = "'" + field_value + "'"
-                query_env.r_exec("%s = %s" % (field_name, field_value))
-                # We have to check to see if this class is an enumeration.
-                # If it is, grab the mapping and use that.  Alternately, it
-                # might be a set of enumerations, in which case we need to
-                # fish into the set to get the mapping of each thing
-                # that could be in the set.
-                enum_type = qm.track.issueclass.IssueFieldEnumeration
-                enum = None
-                if not isinstance(field, enum_type):
-                    try:
-                        contained = field.GetContainedField()
-                        if isinstance(contained, enum_type):
-                            enum = contained.GetEnumeration()
-                    except:
-                        pass
-                else:
-                    enum = field.GetEnumeration()
-
-                # Set all the enumerals to be their value.
-                if enum != None:
-                    for key, value in enum.items():
-                        query_env.r_exec("%s = %d" % (str(key), int(value)))
-
-            # Execute the expression.  If it's true, add this issue to
-            # the results to be printed.  For exceptions that are raised,
-            # try to print a meaningful message about what we wrong.
-            try:
-                if query_env.r_eval(query_str):
-                    self.results.append(issue)
-            except NameError, msg:
-                self.parser.ErrorHandler(1, self.query_invalid_id_begin
-                                         + str(msg)
-                                         + self.query_invalid_id_end,
-                                         0, '')
-                return 0
-            except AttributeError, msg:
-                self.parser.ErrorHandler(1, self.query_invalid_att_begin
-                                         + str(msg)
-                                         + self.query_invalid_att_end,
-                                         0, '')
-                return 0
-            except:
-                self.parser.ErrorHandler(1, self.query_exception, 0, '')
-                return
+        try:
+            # Ask the database to perform the query based on the given
+            # command line string.
+            self.results = self.idb.PerformQuery(query_str, class_value)
+        # Catch the errors that can occur and report the errors.
+        except NameError, msg:
+            self.parser.ErrorHandler(1, self.query_invalid_id
+                                     % str(msg), 0, '')
+            return 0
+        except AttributeError, msg:
+            self.parser.ErrorHandler(1, self.query_invalid_att
+                                     % str(msg), 0, '')
+            return 0
+        except:
+            self.parser.ErrorHandler(1, self.query_exception, 0, '')
+            return 0
 
         # Report the total number of issues that matched the query.
         self.output.write("Issues found: %d\n" % len(self.results))
