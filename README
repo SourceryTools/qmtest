@@ -247,9 +247,10 @@
      </test>
 
     Note that there are two <argument> elements, one for each argument.
-
-    Create a directory named tdb, and store this XML source as
-    tdb/test1.qmt.
+    
+    A sample test database is included in the QM distribution, in
+    /usr/local/share/qm/tutorial/test/tdb.  This example is included in
+    that database, as "test1" (stored in the file test1.qmt).
 
 
   - TEST CLASSES
@@ -310,14 +311,15 @@
 		return Result(Result.FAIL)
 
 
-    To use this class, create a file named count.py and place this
-    Python source in it.  The module name is "count" and the class name
-    is "Count", so you must specify the class name as "count.Count" in
-    the <class> element of your test files, as illustrated above.
+    The module containing this sample test class is included in the QM
+    distribution, in /usr/local/share/qm/tutorial/test/count.py.  The
+    module name is "count" and the class name is "Count", so you must
+    specify the class name as "count.Count" in the <class> element of
+    your test files, as illustrated above.
 
     Also, you must tell QMTest where to find the count module.  Set the
     environment variable QMTEST_CLASSPATH to the directory containing
-    count.py. 
+    count.py, in this case /usr/local/share/qm/tutorial/test.
 
 
   - RUNNING TESTS
@@ -329,18 +331,15 @@
 
     For example, 
 
-      $ ls -o /tmp/qmtest-demo/
-      total 12
-      -rw-r-----    1 samuel       1009 Mar 30 11:34 count.py
-      drwxr-x---    2 samuel       4096 Mar 30 11:28 tdb
+      $ ls /usr/local/share/qm/tutorial/test/
+      count.py  tdb
 
-      $ ls -o /tmp/qmtest-demo/tdb
-      total 4
-      -rw-r-----    1 samuel        280 Mar 30 11:28 test1.qmt
+      $ ls /usr/local/share/qm/tutorial/test/tdb
+      test1.qmt  test2.qmt 
 
-      $ export QMTEST_CLASSPATH=/tmp/qmtest-demo
+      $ export QMTEST_CLASSPATH=/usr/local/share/qm/tutorial/test/
 
-      $ export QMTEST_DB_PATH=/tmp/qmtest-demo/tdb
+      $ export QMTEST_DB_PATH=/usr/local/share/qm/tutorial/test/tdb/
 
     Now you can run tests using the qmtest run command.  Specify the
     test IDs to run on the command line.
@@ -357,9 +356,9 @@
 
         (None)
 
-    QMTest runs test1, which passes.  To see what happens if it fails,
-    edit test1.qmt and change the expected_value argument to some other
-    number. 
+    QMTest runs test1, which passes.  To see what happens if a test
+    fails, try running test2, which is the same as test1 except that a
+    different value is specified for the expected_value parameter.
 
 
   - FULL TEST RESULTS
@@ -367,7 +366,11 @@
     Specify the --output option to generate a full test result listing
     in XML format.  For example,
 
-      qmtest run --output results.xml test1
+      qmtest run --output results.xml .
+
+    The period at the end of the file indicates the (implicit) test
+    suite corresponding to the top of the test database tree, which
+    includes all tests in the test database.
 
 
   - EXPECTED TEST RESULTS

@@ -20,6 +20,7 @@
 
 <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
 
+<!ENTITY qm "<application>QM</application>">
 <!ENTITY qmbuild "<application>QMBuild</application>">
 <!ENTITY qmconfig "<application>QMConfig</application>">
 <!ENTITY qmtest "<application>QMTest</application>">

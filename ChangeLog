@@ -1,3 +1,14 @@
+2001-04-03  Alex Samuel  <samuel@codesourcery.com>
+
+	* README: Update.
+	* qm/test/qmtest.in: Fix import.
+	* share/tutorial/: New directory.
+	* share/tutorial/test/: Likewise.
+	* share/tutorial/test/tdb/: Likewise.
+	* share/tutorial/test/count.py: New file.
+	* share/tutorial/test/tdb/test1.qmt: Likewise.
+	* share/tutorial/test/tdb/test2.qmt: Likewise.
+	
 2001-03-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* install.py: Fix order.

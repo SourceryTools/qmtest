@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "">
+<test>
+ <class>count.Count</class>
+ <argument name="input">
+  <text>This is the input.</text>
+ </argument>
+ <argument name="expected_value">
+  <integer>17</integer>
+ </argument>
+</test>

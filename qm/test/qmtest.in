@@ -38,9 +38,9 @@ execfile("@qm_setup_path_script@")
 # imports
 ########################################################################
 
-import cmdline
 import qm
 import qm.cmdline
+import qm.test.cmdline
 import sys
 
 ########################################################################
@@ -66,7 +66,7 @@ program_name = sys.argv[0]
 
 try:
     # Parse the command line.
-    command = cmdline.Command(program_name, sys.argv[1:])
+    command = qm.test.cmdline.Command(program_name, sys.argv[1:])
     # Execute the command.
     command.Execute(sys.stdout)
     exit_code = 0
