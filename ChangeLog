@@ -1,3 +1,9 @@
+2001-10-26  Alex Samuel  <samuel@codesourcery.com>
+
+	* doc/manual/manual.xml (track-email): New entity.
+	* doc/manual/track-manual.xml: Reference it (but commented out).
+	* doc/manual/track-email.xml: New file.
+	
 2001-10-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/doc/manual/common-manual.xml: Adjust configuration file

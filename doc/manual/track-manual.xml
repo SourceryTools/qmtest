@@ -149,6 +149,10 @@
 
  </section>
 
+ <!-- This section is temporarily omitted, pending implementation of the
+      features described.  -->
+ <!-- &track-email.xml; -->
+
  <section id="sec-qmtrack-configuration">
   <title>Issue Database Configuration</title>
 
@@ -228,7 +232,7 @@
 
   <para>A trigger class must satisfy the following requirements:</para>
  
-  <orderedlist>
+  <itemizedlist>
    <listitem>
     <para>The class must be a (direct or indirect) subclass of
     <classname>qm.track.issue_class.Trigger</classname>.</para>
@@ -318,7 +322,7 @@
     prevent the action.</para>
    </listitem>
 
-  </orderedlist>  
+  </itemizedlist>
 
   <section id="sec-trigger-results">
    <title>Trigger Results</title>

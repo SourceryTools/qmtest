@@ -43,6 +43,7 @@
   <!ENTITY track-tour.xml SYSTEM "track-tour.xml">
   <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
   <!ENTITY track-reference.xml SYSTEM "track-reference.xml">
+  <!ENTITY track-email.xml SYSTEM "track-email.xml">
 ]>
 <book>
  <bookinfo>
