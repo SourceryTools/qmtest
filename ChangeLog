@@ -1,5 +1,10 @@
 2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
+	* qm/test/target.py (Target._RecordResult): Always record the
+	target which the concurrent execution code assumes exists.
+
+2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
+
 	* qm/test/execution_engine.py (ExecutionEngine._RunTests): Fix
 	documentation mistake.  Fix typo in comment.
 	(ExecutionEngine._Trace): Remove extraneous comma in parameter
