@@ -65,6 +65,9 @@ subject to the following modifications and clarifications:
   - Leave two blank lines between all functions.  Leave three blank
     lines after class definitions. 
 
+  - Use double quotes for string literals, unless there is a reason to
+    use single quotes (such as that the literal contains double quotes).
+
   - All unary operators should be followed by a single space.  All
     binary operators should have a single space on each side.
 
