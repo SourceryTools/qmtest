@@ -1,5 +1,10 @@
 2001-11-16  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/web.py (WebServer.RegisterPathTranslation): Do not require
+	the target path to be an extant directory.
+
+2001-11-16  Mark Mitchell  <mark@codesourcery.com>
+
 	* Makefile.in (QM_SRPM): Remove target.
 	* qm.spec.in: Make relocatable, use build root.
 

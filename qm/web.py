@@ -848,7 +848,7 @@ class WebServer(HTTPServer):
         which 'url_path' is a prefix can be translated.
 
         'file_path' -- The file system path corresponding to
-        'url_path'.  Must be the path to an accessible directory.
+        'url_path'.
 
         For example, if you register
 
@@ -857,8 +857,6 @@ class WebServer(HTTPServer):
         the the URL 'http://my.server.com/images/big/tree.gif' will be
         mapped to the file path '/path/to/pictures/big/tree.gif'."""
 
-        if not os.path.isdir(file_path):
-            raise ValueError, "%s is not a directory" % file_path
         self.__translations[url_path] = file_path
 
 
