@@ -8,7 +8,6 @@ suite_ids = expand_ids(['unit.test.test_suite1'])[1]
 </text>
  </argument>
  <argument name='expression'>
-  <text>len(suite_ids) == 0
-</text>
+  <text>suite_ids == ['unit.test.test_suite1']</text>
  </argument>
 </test>

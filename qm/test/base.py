@@ -1173,6 +1173,7 @@ def expand_ids(ids):
             continue
         # Is this a suite ID?
         if database.HasSuite(id):
+            add_suite_id(id)
             # Yes.  Load the suite.
             suite = database.GetSuite(id)
             # Determine all the tests and suites contained directly and
@@ -1359,10 +1360,11 @@ def load_outcomes(path):
     returns -- A map from test IDs to outcomes."""
 
     # Load full results.
-    outcomes = load_results(path)
-    # Replace full results with outcomes only.
-    for test_id in outcomes.keys():
-        outcomes[test_id] = outcomes[test_id].GetOutcome()
+    test_results = load_results(path)[0]
+    # Keep test outcomes only.
+    outcomes = {}
+    for test_id in test_results.keys():
+        outcomes[test_id] = test_results[test_id].GetOutcome()
     return outcomes
 
 
@@ -1411,64 +1413,71 @@ def save_results(results, path):
     results_file.close()
 
 
-def read_results(input):
-    """Read test results from XML format.
-
-    'input' -- A file object from which to read the results.
-
-    returns -- A map from test IDs to 'ResultWrapper' objects."""
-    
-    results_document = qm.xmlutil.load_xml(input)
-    test_results_elements = \
-        results_document.getElementsByTagName("test-results")
-    assert len(test_results_elements) == 1
-    # Extract the result elements.
-    return _results_from_dom(test_results_elements[0])
-
-
 def load_results(path):
     """Read test results from a file.
 
     'path' -- The file from which to read the results.
 
-    returns -- A map from test IDs to 'ResultWrapper' objects."""
+    returns -- A pair, '(test_results, resource_results)'.
+    'test_results' is map from test IDs to 'ResultWrapper' objects.
+    'resource_results' is a sequence of resource 'ResultWrapper' objects."""
     
     results_document = qm.xmlutil.load_xml_file(path)
-    test_results_elements = \
-        results_document.getElementsByTagName("test-results")
-    assert len(test_results_elements) == 1
-    # Extract the result elements.
-    return _results_from_dom(test_results_elements[0])
+    node = results_document.documentElement
+    # Extract the test result elements.
+    test_results_element = qm.xmlutil.get_child(node, "test-results")
+    test_results = _test_results_from_dom(test_results_element)
+    # Extract the resource result elements.
+    resource_results_element = qm.xmlutil.get_child(node, "resource-results")
+    resource_results = _resource_results_from_dom(resource_results_element)
+    # That's it.
+    return test_results, resource_results
 
 
-def _results_from_dom(results_node):
-    """Extract results from a results element.
+def _test_results_from_dom(results_node):
+    """Extract test results from a DOM node.
 
-    'results_node' -- A DOM node corresponding to a results element.
+    'results_node' -- A DOM node for a "test-results" element.
 
     returns -- A map from test IDs to 'ResultWrapper' objects."""
 
     # Extract one result for each result element.
     results = {}
-    for result_node in results_node.getElementsByTagName("result"):
-        result = _result_from_dom(result_node)
+    for node in qm.xmlutil.get_children(results_node, "result"):
+        result = _result_from_dom(node)
         results[result.GetId()] = result
     return results
 
 
-def _result_from_dom(result_node):
-    """Extract a result from a result element.
+def _resource_results_from_dom(results_node):
+    """Extract resource results from a DOM node.
 
-    'result_node' -- A DOM node corresponding to a result element.
+    'results_node' -- A DOM node for a "resource-results" element.
+
+    returns -- A sequence of 'ResultWrapper' objects for resource
+    results."""
+
+    # Extract one result for each result element.
+    results = []
+    for node in qm.xmlutil.get_children(results_node, "result"):
+        result = _result_from_dom(node)
+        results.append(result)
+    return results
+
+
+def _result_from_dom(node):
+    """Extract a result from a DOM node.
+
+    'node' -- A DOM node corresponding to a "result" element.
 
     returns -- A 'ResultWrapper' object."""
 
-    assert result_node.tagName == "result"
+    assert node.tagName == "result"
     # Extract the outcome, and build a base 'Result' object.
-    outcome = qm.xmlutil.get_child_text(result_node, "outcome")
+    outcome = qm.xmlutil.get_child_text(node, "outcome")
     result = Result(outcome)
     # Extract properties, one for each property element.
-    for property_node in result_node.getElementsByTagName("property"):
+    for property_node in node.getElementsByTagName("property"):
         # The name is stored in an attribute.
         name = property_node.getAttribute("name")
         # The value is stored in the child text node.
@@ -1476,11 +1485,204 @@ def _result_from_dom(result_node):
         # Store it.
         result[name] = value
     # Extract the test ID.
-    test_id = result_node.getAttribute("id")
+    test_id = node.getAttribute("id")
     # FIXME: Load context?
     context = None
     # Construct a result wrapper around the result.
     return ResultWrapper(test_id, context, result)
+
+
+def _count_outcomes(results):
+    """Count results by outcome.
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    returns -- A map from outcomes to counts of results with that
+    outcome.""" 
+
+    counts = {}
+    for outcome in Result.outcomes:
+        counts[outcome] = 0
+    for result in results:
+        outcome = result.GetOutcome()
+        counts[outcome] = counts[outcome] + 1
+    return counts
+
+
+def split_results_by_expected_outcome(results, expected_outcomes):
+    """Partition a sequence of results by expected outcomes.
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'expected_outcomes' -- A map from ID to corresponding expected
+    outcome.
+
+    returns -- A pair of lists.  The first contains results that
+    produced the expected outcome.  The second contains results that
+    didn't."""
+
+    expected = []
+    unexpected = []
+    for result in results:
+        expected_outcome = expected_outcomes.get(result.GetId(), Result.PASS)
+        if result.GetOutcome() == expected_outcome:
+            expected.append(result)
+        else:
+            unexpected.append(result)
+    return expected, unexpected
+
+
+def summarize_test_stats(output, results):
+    """Generate a summary of test result statistics.
+
+    'output' -- A file object to which to write the summary.
+
+    'results' -- A sequece of 'ResultWrapper' objects."""
+
+    num_tests = len(results)
+    output.write("  %6d        tests total\n" % num_tests)
+
+    # No tests?  Bail.
+    if num_tests == 0:
+        return
+
+    counts_by_outcome = _count_outcomes(results)
+    for outcome in Result.outcomes:
+        count = counts_by_outcome[outcome]
+        if count > 0:
+            output.write("  %6d (%3.0f%%) tests %s\n"
+                         % (count, (100. * count) / num_tests, outcome))
+    output.write("\n")
+
+
+def summarize_relative_test_stats(output,
+                                  results,
+                                  expected_outcomes):
+    """Generate statistics of test results relative to expected outcomes.
+
+    'output' -- A file object to which to write the summary.
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'expected_outcomes' -- A map from test ID to corresponding expected
+    outcome."""
+
+    num_tests = len(results)
+    output.write("  %6d        tests total\n" % num_tests)
+
+    # No tests?  Bail.
+    if num_tests == 0:
+        return
+
+    # Split the results into those that produced expected outcomes, and
+    # those that didn't.
+    expected, unexpected = \
+        split_results_by_expected_outcome(results, expected_outcomes)
+    # Report the number that produced expected outcomes.
+    output.write("  %6d (%3.0f%%) tests as expected\n"
+                 % (len(expected), (100. * len(expected)) / num_tests))
+    # For results that produced unexpected outcomes, break them down by
+    # actual outcome.
+    counts_by_outcome = _count_outcomes(unexpected)
+    for outcome in Result.outcomes:
+        count = counts_by_outcome[outcome]
+        if count > 0:
+            output.write("  %6d (%3.0f%%) tests unexpected %s\n"
+                         % (count, (100. * count) / num_tests, outcome))
+    output.write("\n")
+
+
+def summarize_test_suite_stats(output,
+                               results,
+                               suite_ids,
+                               expected_outcomes):
+    """Generate a summary of test results statistics by suite.
+
+    'output' -- A file object to which to write the summary.
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'suite_ids' -- A sequence of IDs ot suites by which to group
+    attachments.
+
+    'expected_outcomes' -- A map from ID to expected outcomes, or
+    'None'."""
+
+    database = get_database()
+
+    for suite_id in suite_ids:
+        # Expand the contents of the suite.
+        suite = database.GetSuite(suite_id)
+        ids_in_suite = get_suite_contents_recursively(suite, database)[0]
+        # Determine the results belonging to tests in the suite.
+        results_in_suite = []
+        for result in results:
+            if result.GetId() in ids_in_suite:
+                results_in_suite.append(result)
+        # If there aren't any, skip.
+        if len(results_in_suite) == 0:
+            continue
+
+        output.write("  %s\n" % suite.GetId())
+        if expected_outcomes is None:
+            summarize_test_stats(output, results_in_suite)
+        else:
+            summarize_relative_test_stats(
+                output, results_in_suite, expected_outcomes)
+
+
+def summarize_results(output, format, results, expected_outcomes=None):
+    """Generate a summary of results.
+
+    'output' -- A file object to which to write the summary.
+
+    'format' -- The summary format.  Must be "full" or "brief".
+
+    'results' -- A sequence of 'ResultWrapper' objects.
+
+    'expected_outcomes' -- A map from ID to expected outcomes, or 'None'."""
+
+    if len(results) == 0:
+        output.write("  None.\n\n")
+        return
+
+    # Function to format a result property nicely.
+    def format_property(name, value):
+        if "\n" in value or len(value) > 72 - len(name):
+            value = qm.common.wrap_lines(value, columns=70,
+                                         break_delimiter="", indent="        ")
+            return "    %s:\n%s\n" % (name, value)
+        else:
+            return "    %s: %s\n" % (name, value)
+
+    # Generate them.
+    for result in results:
+        id_ = result.GetId()
+        outcome = result.GetOutcome()
+
+        # Print the ID and outcome.
+        if expected_outcomes:
+            # If expected outcomes were specified, print the expected
+            # outcome too.
+            expected_outcome = expected_outcomes.get(id_, Result.PASS)
+            output.write("  %-46s: %-8s, expected %-8s\n"
+                         % (id_, outcome, expected_outcome))
+        else:
+            output.write("  %-63s: %-8s\n" % (id_, outcome))
+
+        if format == "full":
+            # In the "full" format, print all result properties.
+            for name, value in result.items():
+                output.write(format_property(name, value))
+            output.write("\n")
+        elif format == "brief":
+            # In the "brief" format, print only the "cause" property, if
+            # specified.
+            if result.has_key("cause"):
+                output.write(format_property("cause", result["cause"]))
+
+    if format == "brief":
+        output.write("\n")
 
 
 def run_test(test_id, context):

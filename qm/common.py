@@ -1011,7 +1011,7 @@ def indent_lines(text, indent):
     return string.join(lines, "\n")
 
 
-def wrap_lines(text, columns=72, break_delimiter="\\"):
+def wrap_lines(text, columns=72, break_delimiter="\\", indent=""):
     """Wrap lines in 'text' to 'columns' columns.
 
     'text' -- The text to wrap.
@@ -1020,6 +1020,9 @@ def wrap_lines(text, columns=72, break_delimiter="\\"):
 
     'break_delimiter' -- Text to place at the end of each broken line
     (may be an empty string).
+
+    'indent' -- Text to place at the start of each line.  The length of
+    'indent' does not count towards 'columns'.
 
     returns -- The wrapped text."""
 
@@ -1041,12 +1044,14 @@ def wrap_lines(text, columns=72, break_delimiter="\\"):
                 new_line = new_line \
                            + line[:new_length] \
                            + break_delimiter \
-                           + "\n"
+                           + "\n" + indent
                 line = line[new_length:]
                 breaks = breaks - 1
             new_line = new_line + line
             # Replace the old line with the new.
             lines[index] = new_line
+    # Indent each line.
+    lines = map(lambda l, i=indent: i + l, lines)
     # Rejoin lines.
     return string.join(lines, "\n")
 

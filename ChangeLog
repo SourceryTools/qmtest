@@ -1,5 +1,40 @@
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/common.py (wrap_lines): Add indent parameter.
+	* qm/test/cmdline.py (Command.summary_formats): New attribute.
+	(Command.summary_option_spec): Remove.
+	(Command.no_summary_option_spec): Likewise.
+	(Command.conflicting_option_specs): Remove them.
+	(Command.format_option_spec): New attribute.
+	(Command.comamnds_spec): Add "summarize".  Adjust.
+	(Command.Execute): Handle summarize.
+	(Command.__ExecuteSummarize): New method.
+	(Command.__ExecuteRun): Open results file later.  Adjust for
+	__SummarizeResults.
+	(Command.__WriteSummary): Remove.
+	(Command.__SummarizeResults): New method.
+	* qm/test/base.py (load_outcomes): Adjust for load_results.
+	(read_results): Remove.
+	(load_results): Return resource results too.
+	(_results_from_dom): Remove.
+	(_test_results_from_dom): New function.
+	(_resource_results_from_dom): Likewise.
+	(_result_from_dom): Adjust.
+	(_count_outcomes): New function.
+	(split_results_by_expected_outcomes): Likewise.
+	(summarize_test_stats): Likewise.
+	(summarize_relative_test_stats): Likewise.
+	(summarize_test_suite_stats): Likewise.
+	(summarize_results): Likewise.
+	* share/diagnostics/test.txt (invalid results file): New
+	diagnostic.
+	(invalid results format): Likewise.
+	(no results file specified): Likewise.
+	(no such ID): Likewise.
+	* tests/unit.qms/test.qms/suite3.qmt (suite_ids): Update.
+
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/label.py (thunk): Call normpath on result.
 	* qm/attachment.py (AttachmentStore): Add to doc string.
 	(_temporary_location_prefix): Change.

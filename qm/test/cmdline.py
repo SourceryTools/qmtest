@@ -56,6 +56,10 @@ class Command:
     """A QMTest command."""
 
     db_path_environment_variable = "QMTEST_DB_PATH"
+    """The environment variable specifying the test database path."""
+
+    summary_formats = ("full", "brief", "stats", "none")
+    """Valid formats for result summaries."""
 
     help_option_spec = (
         "h",
@@ -92,25 +96,11 @@ class Command:
         "Don't generate test results."
         )
 
-    summary_option_spec = (
-        "s",
-        "summary",
-        "FILE",
-        "Write test summary to FILE (- for stdout)."
-        )
-
-    no_summary_option_spec = (
-        None,
-        "no-summary",
-        None,
-        "Don't generate test summary."
-        )
-
     outcomes_option_spec = (
         "O",
         "outcomes",
         "FILE",
-        "Load expected outcomes from FILE."
+        "Use expected outcomes in FILE."
         )
 
     context_option_spec = (
@@ -183,10 +173,16 @@ class Command:
         "Seed the random number generator."
         )
 
+    format_option_spec = (
+        "f",
+        "format",
+        "FORMAT",
+        "Specify the summary format."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
-        ( summary_option_spec, no_summary_option_spec ),
         ( concurrent_option_spec, targets_option_spec ),
         )
 
@@ -197,24 +193,47 @@ class Command:
         ]
 
     commands_spec = [
+        ("summarize",
+         "Summarize results from a test run.",
+         "FILE [ ID ... ]",
+         """
+Loads a test results file and summarizes the results.  FILE is the path
+to the results file.  Optionally, specify one or more test or suite IDs
+whose results are shown.  If none are specified, shows all tests that
+did not pass.
+
+Use the '--format' option to specify the output format for the summary.
+Valid formats are "full" (the default), "brief", "stats", and "none".
+         """,
+         ( help_option_spec, format_option_spec, outcomes_option_spec )
+         ),
+
         ("run",
          "Run one or more tests.",
          "[ ID ... ]",
-         "This command runs tests, prints their outcomes, and writes "
-         "test results.  You may specify test IDs and test suite IDs "
-         "to run; omit arguments to run the entire test database.",
+         """
+Runs tests.  Optionally, generates a summary of the test run and a
+record of complete test results.  You may specify test IDs and test
+suite IDs to run; omit arguments to run the entire test database.
+
+Test results are written to "results.qmr".  Use the '--output' option to
+specify a different output file, or '--no-output' to supress results.
+
+Use the '--format' option to specify the output format for the summary.
+Valid formats are "full", "brief" (the default), "stats", and "none".
+The summary is written to standard output.
+         """,
          (
            concurrent_option_spec,
            context_file_spec,
            context_option_spec,
+           format_option_spec,
            help_option_spec,
            no_output_option_spec,
-           no_summary_option_spec,
            outcomes_option_spec,
            output_option_spec,
            profile_option_spec, 
            seed_option_spec,
-           summary_option_spec,
            targets_option_spec,
            )
          ),
@@ -223,8 +242,8 @@ class Command:
          "Start the web GUI server.",
          "",
          "Start the QMTest web GUI server.",
-         [ help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec, start_browser_option_spec ]
+         ( help_option_spec, port_option_spec, address_option_spec,
+           log_file_option_spec, start_browser_option_spec )
          ),
 
         ]
@@ -333,6 +352,7 @@ class Command:
 
         # Dispatch to the appropriate method.
         method = {
+            "summarize": self.__ExecuteSummarize,
             "run" : self.__ExecuteRun,
             "server": self.__ExecuteServer,
             }[self.__command]
@@ -400,38 +420,86 @@ class Command:
             raise qm.cmdline.CommandError, msg
 
 
+    def __ExecuteSummarize(self, output):
+        """Read in test run results and summarize."""
+
+        # Look up the specified format.
+        format = self.GetCommandOption("format", "full")
+        if format not in self.summary_formats:
+            # Invalid format.  Complain.
+            valid_format_string = string.join(
+                map(lambda f: '"%s"' % f, self.summary_formats), ", ")
+            raise qm.cmdline.CommandError, \
+                  qm.error("invalid results format",
+                           format=format,
+                           valid_formats=valid_format_string)
+
+        # Make sure a results file was specified.
+        if len(self.__arguments) == 0:
+            raise qm.cmdline.CommandError, \
+                  qm.error("no results file specified")
+        results_path = self.__arguments[0]
+        # Load results.
+        try:
+            test_results, resource_results = base.load_results(results_path)
+        except (IOError, qm.xmlutil.ParseError), exception:
+            raise RuntimeError, \
+                  qm.error("invalid results file",
+                           path=results_path,
+                           problem=str(exception))
+        else:
+            # Don't need the map here.
+            test_results = test_results.values()
+
+        # Handle the 'outcome' option.
+        outcomes_file_name = self.GetCommandOption("outcomes")
+        if outcomes_file_name is not None:
+            outcomes = base.load_outcomes(outcomes_file_name)
+        else:
+            outcomes = None
+            
+        # The remaining arguments, if any, are test and suite IDs.
+        id_arguments = self.__arguments[1:]
+        # Are there any?
+        if len(id_arguments) > 0:
+            # Expand arguments into test IDs.
+            try:
+                test_ids, suite_ids = base.expand_ids(id_arguments)
+            except (base.NoSuchTestError, base.NoSuchSuiteError), exception:
+                raise qm.cmdline.CommandError, str(exception)
+            except ValueError, exception:
+                raise qm.cmdline.CommandError, \
+                      qm.error("no such ID", id=str(exception))
+            # Show only test results whose IDs were specified.
+            test_results = filter(lambda r, ids=test_ids: r.GetId() in ids, 
+                                  test_results)
+            # Don't display any resource results.
+            resource_results = []
+        else:
+            # No IDs specified.  Show all test and resource results.
+            # Don't show any results by test suite though.
+            suite_ids = []
+
+        # Do it.
+        self.__SummarizeResults(output, format, test_results,
+                                resource_results, suite_ids, outcomes)
+
+
     def __ExecuteRun(self, output):
         """Execute a 'run' command."""
         
         database = self.GetDatabase()
 
-        # Handle 'result' options.
-        result_file_name = self.GetCommandOption("output")
-        if result_file_name is None:
-            # By default, no result output.
-            result_file = None
-        elif result_file_name == "-":
-            # Use standard output.
-            result_file = sys.stdout
-        else:
-            # A named file.
-            result_file = open(result_file_name, "w")
-
-        # Handle 'summary' options.
-        summary_file_name = self.GetCommandOption("summary")
-        # The default is generate a summary to standard output.
-        if self.GetCommandOption("no-summary") is not None:
-            # User asked to supress summary.
-            summary_file = None
-        elif summary_file_name is None:
-            # User didn't specify anything, so by default write summary
-            # to standard output.
-            summary_file = sys.stdout
-        elif summary_file_name == "-":
-            # User specified standard output explicitly.
-            summary_file = sys.stdout
-        else:
-            summary_file = open(summary_file_name, "w")
+        # Look up the summary format.
+        format = self.GetCommandOption("format", "brief")
+        if format not in self.summary_formats:
+            # Invalid format.  Complain.
+            valid_format_string = string.join(
+                map(lambda f: '"%s"' % f, self.summary_formats), ", ")
+            raise qm.cmdline.CommaneError, \
+                  qm.error("invalid results format",
+                           format=format,
+                           valid_formats=valid_format_string)
 
         # Handle the 'outcome' option.
         outcomes_file_name = self.GetCommandOption("outcomes")
@@ -467,8 +535,11 @@ class Command:
         # Expand arguments in test IDs.
         try:
             test_ids, test_suites = base.expand_ids(self.__arguments)
-        except (base.NoSuchTestError, base.NoSuchSuiteError), error:
-            raise qm.cmdline.CommandError, str(error)
+        except (base.NoSuchTestError, base.NoSuchSuiteError), exception:
+            raise qm.cmdline.CommandError, str(exception)
+        except ValueError, exception:
+            raise qm.cmdline.CommandError, \
+                  qm.error("no such ID", id=str(exception))
 
         if qm.common.verbose > 0:
             # If running verbose, specify a callback function to
@@ -510,7 +581,6 @@ class Command:
             target_specs = run.load_target_specs(target_file_name)
 
         context = self.MakeContext()
-        self.__output = output
 
         # Randomize the order of the tests.
         qm.common.shuffle(test_ids, generator=generator)
@@ -534,12 +604,26 @@ class Command:
         test_results, resource_results = results
 
         # Summarize outcomes.
-        if summary_file is not None:
-            self.__WriteSummary(test_ids, test_suites, test_results,
-                                resource_results, outcomes, summary_file)
-            # Close it unless it's standard output.
-            if summary_file is not sys.stdout:
-                summary_file.close()
+        self.__SummarizeResults(output, format, test_results.values(),
+                                resource_results, test_suites, outcomes)
+
+        # Handle 'result' options.
+        if self.HasCommandOption("no-output"):
+            # User specified no output.
+            result_file = None
+        else:
+            result_file_name = self.GetCommandOption("output", None)
+            if result_file_name is None:
+                # By default, write results to a default file.
+                result_file_name = "results.qmr"
+
+            if result_file_name == "-":
+                # Use standard output.
+                result_file = sys.stdout
+            else:
+                # A named file.  
+                result_file = open(result_file_name, "w")
+
         # Write out results.
         if result_file is not None:
             self.__WriteResults(test_ids, test_results,
@@ -554,8 +638,7 @@ class Command:
 
         'message' -- A message indicating testing progress."""
 
-        self.__output.write(message)
-        self.__output.flush()
+        sys.stderr.write(message)
 
 
     def __ExecuteServer(self, output):
@@ -608,229 +691,86 @@ class Command:
         server.Run()
     
     
-    def __WriteSummary(self,
-                       test_ids,
-                       test_suites,
-                       test_results,
-                       resource_results,
-                       expected_outcomes,
-                       output):
-        """Generate test result summary.
+    def __SummarizeResults(self,
+                           output,
+                           format,
+                           test_results,
+                           resource_results,
+                           suite_ids,
+                           expected_outcomes):
+        """Write a test result summary.
 
-        'test_ids' -- The test IDs that were requested for the test run.
+        'output' -- A file object to which to write the summary.
 
-        'test_suites' -- IDs of test suites to report separately for the
-        run. 
+        'format' -- The summary format.
 
-        'test_results' -- A mapping from test ID to result for tests that
-        were actually run.
+        'test_results' -- A sequence of 'ResultWrapper' objects for
+        tests.
 
-        'resource_results' -- A sequence of resource results.
+        'resource_results' -- A sequence of 'ResultWrapper' objects for
+        resources. 
+
+        'suite_ids' -- IDs of suites to report separately for the run.
 
         'expected_outcomes' -- A map from test IDs to expected outcomes,
-        or 'None' if there are no expected outcomes.
+        or 'None' if there are no expected outcomes."""
 
-        'output' -- A file object to which to write the summary."""
+        if format == "none":
+            # Nothing to do.
+            return
 
         database = base.get_database()
 
         def divider(text):
             return "--- %s %s\n\n" % (text, "-" * (73 - len(text)))
 
+        # Print statistics, either absolute or relative.
         output.write("\n")
-        output.write(divider("TEST RUN STATISTICS"))
-        num_tests = len(test_results)
-        output.write("  %6d        tests total\n\n" % num_tests)
+        output.write(divider("STATISTICS"))
+        if expected_outcomes is None:
+            base.summarize_test_stats(output, test_results)
+        else:
+            base.summarize_relative_test_stats(
+                output, test_results, expected_outcomes)
 
-        # No tests?  All done.
-        if num_tests == 0:
-            return
-
-        if expected_outcomes is not None:
-            output.write("  Test results relative to expected outcomes:\n\n")
-            # Initialize a map with which we will count the number of
-            # tests with each unexpected outcome.
-            count_by_unexpected = {}
-            for outcome in base.Result.outcomes:
-                count_by_unexpected[outcome] = 0
-            # Also, we'll count the number of tests that resulted in the
-            # expected outcome.
-            count_expected = 0
-            # Count tests by expected outcome.
-            for test_id in test_results.keys():
-                result = test_results[test_id]
-                outcome = result.GetOutcome()
-                # Get the expected outcome for this test; if one isn't
-                # specified, assume PASS.
-                expected_outcome = expected_outcomes.get(test_id,
-                                                         base.Result.PASS)
-                if outcome == expected_outcome:
-                    # Outcome as expected.
-                    count_expected = count_expected + 1
-                else:
-                    # Unexpected outcome.  Count by actual (not
-                    # expected) outcome.
-                    count_by_unexpected[outcome] = \
-                        count_by_unexpected[outcome] + 1
-
-            output.write("  %6d (%3.0f%%) tests as expected\n"
-                         % (count_expected,
-                            (100. * count_expected) / num_tests))
-            for outcome in base.Result.outcomes:
-                count = count_by_unexpected[outcome]
-                if count > 0:
-                    output.write("  %6d (%3.0f%%) tests unexpected %s\n"
-                                 % (count, (100. * count) / num_tests,
-                                    outcome))
-            output.write("\n")
-            output.write("  Actual test results:\n\n")
-
-        # Initialize a map with which we will count the number of tests
-        # with each outcome.
-        count_by_outcome = {}
-        for outcome in base.Result.outcomes:
-            count_by_outcome[outcome] = 0
-        # Count tests by outcome.
-        for result in test_results.values():
-            outcome = result.GetOutcome()
-            count_by_outcome[outcome] = count_by_outcome[outcome] + 1
-        # Summarize these counts.
-        for outcome, count in count_by_outcome.items():
-            if count > 0:
-                output.write("  %6d (%3.0f%%) tests %s\n"
-                             % (count, (100. * count) / num_tests, outcome))
-        output.write("\n")
-
-        # Report results for test suites.
-        if len(test_suites) > 0:
+        if format in ("full", "stats") and len(suite_ids) > 0:
+            # Print statistics by test suite.
             output.write(divider("STATISTICS BY TEST SUITE"))
-            for suite_id in test_suites:
-                tests_in_suite = database.GetSuite(suite_id).GetTestIds()
-                # Initialize a map with which we will count the number
-                # of tests with each outcome.
-                count_by_outcome = {}
-                for outcome in base.Result.outcomes:
-                    count_by_outcome[outcome] = 0
-                # Count tests by outcome.
-                for test_id in tests_in_suite:
-                    result = test_results[test_id]
-                    outcome = result.GetOutcome()
-                    count_by_outcome[outcome] = count_by_outcome[outcome] + 1
-                # Print results.
-                output.write("  %s\n" % suite_id)
-                suite_size = len(tests_in_suite)
-                for outcome, count in count_by_outcome.items():
-                    if count > 0:
-                        output.write("  %6d (%3.0f%%) tests %s\n"
-                                     % (count,
-                                        (100. * count) / suite_size,
-                                        outcome))
-                output.write("\n")
+            base.summarize_test_suite_stats(
+                output, test_results, suite_ids, expected_outcomes)
 
-        # If we have been provided with expected outcomes, report each
-        # test whose outcome doesn't match the expected outcome.
-        if expected_outcomes is not None:
-            unexpected_ids = []
+        if format in ("full", "brief"):
+            compare_ids = lambda r1, r2: cmp(r1.GetId(), r2.GetId())
 
-            # Filter function that keeps a test 'result' if its outcome
-            # is not as expected in 'expected_outcomes'.
-            def unexpected_filter(result, eo=expected_outcomes):
-                outcome = result.GetOutcome()
-                test_id = result.GetId()
-                expected_outcome = eo.get(test_id, base.Result.PASS)
-                return outcome != expected_outcome
-                
-            # Sort function for results.  The primary key is the
-            # expected outcome for the result.  The secondary key is the
-            # test ID.
-            def unexpected_sorter(r1, r2, eo=expected_outcomes):
-                tid1 = r1.GetId()
-                tid2 = r2.GetId()
-                o1 = eo.get(tid1, base.Result.PASS)
-                o2 = eo.get(tid2, base.Result.PASS)
-                if o1 != o2:
-                    return cmp(base.Result.outcomes.index(o1),
-                               base.Result.outcomes.index(o2))
-                else:
-                    return cmp(tid1, tid2)
-
-            # Find results with unexpected outcomes.
-            unexpected_results = filter(unexpected_filter,
-                                        test_results.values())
-            # Put them in an order convenient for users.
-            unexpected_results.sort(unexpected_sorter)
-            # Count 'em up.
-            unexpected_count = len(unexpected_results)
-            
-            if unexpected_count > 0:
-                # Report IDs of tests with unexpected outcomes.
+            # Sort test results by ID.
+            test_results.sort(compare_ids)
+            # Print individual test results.
+            if expected_outcomes is None:
+                # No expected outcomes were specified, so show all tests
+                # that did not pass.
+                bad_results = filter(
+                    lambda r: r.GetOutcome() != base.Result.PASS,
+                    test_results)
+                output.write(divider("NON-PASSING TESTS"))
+            else:
+                # Show tests that produced unexpected outcomes.
+                bad_results = base.split_results_by_expected_outcome(
+                    test_results, expected_outcomes)[1]
                 output.write(divider("TESTS WITH UNEXPECTED OUTCOMES"))
-                for result in unexpected_results:
-                    test_id = result.GetId()
-                    # This test produced an unexpected outcome, so report it.
-                    outcome = result.GetOutcome()
-                    expected_outcome = expected_outcomes.get(test_id,
-                                                             base.Result.PASS)
-                    output.write("  %-32s: %-8s [expected %s]\n"
-                                 % (test_id, outcome, expected_outcome))
-                output.write("\n")
 
-        # Count the number of tests that didn't pass.
-        not_passing_count = len(filter(
-            lambda r: r.GetOutcome() != base.Result.PASS,
-            test_results.values()))
+            base.summarize_results(
+                output, format, bad_results, expected_outcomes)
 
-        # Summarize tests that didn't pass.
-        if not_passing_count > 0:
-            output.write(divider("TESTS THAT DID NOT PASS"))
-            for test_id, result in test_results.items():
-                outcome = result.GetOutcome()
-                if outcome == base.Result.PASS:
-                    # Don't list tests that passed.
-                    continue
-                # Print the test's ID and outcome.
-                output.write("  %-63s: %-8s\n" % (test_id, outcome))
-                # If a cause was specified, print it too.
-                cause = result.get("cause", None)
-                if cause is not None:
-                    # Abbreviate the cause, if necessary.
-                    if len(cause) > 70:
-                        cause = cause[:67] + "..."
-                    output.write("      %s\n\n" % cause)
-            output.write("\n")
-
-        # Count the number of failing resource functions.
-        not_passing_count = len(filter(
-            lambda r: r.GetOutcome() != base.Result.PASS,
-            resource_results))
-
-        # Summarize failed resource functions.
-        if not_passing_count > 0:
-            output.write(divider("RESOURCES THAT DID NOT PASS"))
-            for result in resource_results:
-                outcome = result.GetOutcome()
-                if outcome != base.Result.PASS:
-                    # Extract information from the result.
-                    resource_id = result.GetId()
-                    action = resource_id + " " + result["action"]
-                    # If the name of the target on which the function ran is
-                    # specified, include that in the output.
-                    target = result.get("target", None)
-                    if target is not None:
-                        action = action + " on " + target
-                    # Print the resource ID and outcome.
-                    output.write("  %-63s: %-8s\n" % (action, outcome))
-                    # If a cause was specified, print it too.
-                    cause = result.get("cause", None)
-                    if cause is not None:
-                        # Abbreviate the cause, if necessary.
-                        if len(cause) > 70:
-                            cause = cause[:67] + "..."
-                        output.write("      %s\n\n" % cause)
-            output.write("\n")
+            # Sort resource results by ID.
+            resource_results.sort(compare_ids)
+            # Print individual resource results.
+            output.write(divider("NON-PASSING RESOURCES"))
+            bad_results = filter(
+                lambda r: r.GetOutcome() != base.Result.PASS,
+                resource_results)
+            base.summarize_results(output, format, bad_results, None)
 
 
- 
     def __WriteResults(self, test_ids, test_results, resource_results, output):
         """Generate full test results in XML format.
 

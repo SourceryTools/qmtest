@@ -99,9 +99,17 @@ Environment elements must have the form 'variable=value'.
 The test %(id)s of class %(test_class)s returned an invalid result,
 '%(result)s'. 
 
+@ invalid results file
+%(program_name)s could not open the test results file, %(path)s.  The
+problem was: %(problem)s.
+
 @ invalid id
 The ID "%(id)s" is not valid.  Test IDs may contain lower-case letters,
 digits, and underscores, and periods.
+
+@ invalid results format
+"%(format)s" is not a valid format for test results.  Possible formats are
+%(valid_formats)s.
 
 @ missing arg for template
 Specify the name of the test class and the test ID of the new test.
@@ -129,11 +137,17 @@ You must specify the ID of the item to show.
 @ no id for submit
 You must speicfy the ID of the item to submit.
 
+@ no results file specified
+You must specify a test run results file.
+
 @ no shell executable
 Cannot execute the shell interpreter.
 
 @ no such action
 There is no action with the action ID "%(action_id)s".
+
+@ no such ID
+There is no test or suite with ID "%(id)s".
 
 @ no such suite
 There is no suite with the suite ID "%(suite_id)s".
