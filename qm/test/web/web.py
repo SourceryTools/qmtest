@@ -727,7 +727,7 @@ class LoadContextPage(QMTestPage):
     heading = "Load the context from a file."
     """The heading printed across the top of the page."""
     
-    prompt = "The file from which to load the context."""
+    prompt = "The file from which to load the context."
     """The prompt for the file name."""
     
     submit_url = "submit-context-file"
