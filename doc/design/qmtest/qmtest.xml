@@ -365,7 +365,6 @@
 
  &req.xml;
  &core.xml;
- &arch.xml;
  &impl.xml;
  &refs.xml;
 
