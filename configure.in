@@ -53,7 +53,7 @@ dnl and nowhere else in QM.
 dnl ####################################################################
 
 QM_MAJOR_VER=1
-QM_MINOR_VER=0
+QM_MINOR_VER=1
 QM_RELEASE_VER=0
 
 AC_SUBST(QM_MAJOR_VER)

@@ -45,6 +45,7 @@ from   qm.test.database import *
 from   qm.test.execution_thread import *
 from   qm.test.result import *
 from   qm.test.result_stream import *
+from   qm.test.suite import *
 from   qm.test.xml_result_stream import *
 import qm.web
 import string
@@ -1214,7 +1215,7 @@ class QMTestServer(qm.web.WebServer):
             return NewSuitePage(self, suite_id, field_errors)(request)
         else:
             # Everything looks good.  Make an empty suite.
-            suite = qm.test.base.Suite(self.__database, suite_id)
+            suite = Suite(self.__database, suite_id)
             # Show the editing page.
             return ShowSuitePage(self, suite, edit=1)(request)
 
@@ -1598,7 +1599,7 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite = database.GetSuite(suite_id)
         # Generate HTML.
-        return ShowSuitePage(self.__database, suite, edit)(request)
+        return ShowSuitePage(self, suite, edit)(request)
 
 
     def HandleShutdown(self, request):
@@ -1882,10 +1883,7 @@ class QMTestServer(qm.web.WebServer):
         else:
             suite_ids = string.split(suite_ids, ",")
         # Construct a new suite.
-        suite = qm.test.base.Suite(self,
-                                   suite_id,
-                                   test_ids=test_ids,
-                                   suite_ids=suite_ids)
+        suite = Suite(self, suite_id, test_ids=test_ids, suite_ids=suite_ids)
         # Store it.
         database.WriteSuite(suite)
         # Redirect to a page that displays the newly-edited item.
