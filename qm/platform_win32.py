@@ -102,6 +102,12 @@ def _get_host_name():
     return "localhost"
 
 
+def open_in_browser(url):
+    """Open a browser window and point it at 'url'.
+
+    The browser is run in a separate, independent process."""
+
+    os.startfile(url)
 
 ########################################################################
 # Local Variables:

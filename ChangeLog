@@ -1,3 +1,7 @@
+2001-10-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/platform_win32.py (open_in_browser): Implement.
+
 2001-10-19  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/manual/test-manual.xml (sec-specifying-test-class): Update.
