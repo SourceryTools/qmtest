@@ -170,7 +170,7 @@
 
  </section>
 
- <section><title>Expected and Unexpected Results</title>
+ <section id="req-expected"><title>Expected and Unexpected Results</title>
 
   <para>There are often periods in a development cycle during which
   certain tests are expected to fail.  For example, if Extreme
@@ -181,6 +181,15 @@
   id="discuss-reported-expected-failures">report expected failures
   separately from passes, unexpected failures, and other
   results</phrase>.</para>
+
+  <para>In many cases, tests will fail under some configurations and
+  not others.  For example, a compiler might generate correct code for
+  a PowerPC but incorrect code for a SPARC.  Similarly, a scientific
+  application might perform correctly when using a conventional matrix
+  representation, but incorrectly when using an optimized
+  representation.  Therefore users must be able to indicate that
+  certain tests are expected to fail only in certain
+  circumstances.</para>
 
  </section>
 
@@ -229,7 +238,7 @@
 
  </section>
 
- <section><title>Regeneration of Reference Results</title>
+ <section id="req-reference"><title>Regeneration of Reference Results</title>
 
   <para>Users are often interested in checking whether or not a
   particular change to a program causes new failures.  Therefore,

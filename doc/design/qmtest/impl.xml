@@ -26,272 +26,173 @@
  must provide at least the functionality described in these
  interfaces.</para>
 
-  <section><title>Major Classes</title>
+ <section><title>Class <classname>Test</classname></title>
 
-  <para>The most important classes provided by the
-  <classname>QMTest</classname> package are
-  <classname>Engine</classname>, <classname>Suite</classname>,
-  <classname>Test</classname>, <classname>Result</classname>, and
-  <classname>Filter</classname>.  
+ <para>Each test class must derive from the
+ <classname>Test</classname> class, which has the following interface:
+   <programlisting>
+<![CDATA[
+class Test:
+   """A test instance."""
 
-  The <classname>Engine</classname> class traverses the tree of suites
-  and tests specified by the user.  It performs setup and cleanup,
-  filters tests based on the users' criteria (if any), runs tests, and
-  collates their results.  Users do <emphasis>not</emphasis> override
-  the <classname>Engine</classname> class. </para>
+   def __init__(id):
+       """Initialize this instance.  ID is the id for this test."""
 
-  <para>The <classname>Suite</classname> and
-  <classname>Test</classname> classes provide information about suites
-  and tests respectively.  Both are derived from an abstract class
-  <classname>QMTest.Testable</classname>, so that they share methods
-  such as <classname>setup</classname>,
-  <classname>cleanup</classname>, <classname>getProperty</classname>,
-  <classname>run</classname>, and so on. </para>
+   def GetID():
+       """Returns the ID for this instance."
 
-  <para>The <classname>Suite</classname> class has a method
-  <classname>getChildren</classname>, which returns a list of the
-  tests and suites it contains.  This method may return an empty list
-  (e.g. if it is a placeholder while tests are being written, or if
-  none of its children survive filtering).  If this method returns
-  <classname>None</classname>, however, the execution engine will then
-  try to iterate on the suite object, using the standard Python
-  iteration protocol.  This allows dynamic generation of large numbers
-  (millions) of tests without excessive memory requirements; it also
-  simplifies task farming of parallelizable tests. Note that the
-  engine does <emphasis>not</emphasis> guarantee to execute tests in the order
-  in which the suite provides them, as it may need to delay execution
-  of a test until its prerequisites have been run. </para>
+   def Run(context):
+       """Execute this test, returning a Result describing the outcome
+       of the test.  The CONTEXT gives information about the
+       environment in which the test is being executed."""
+]]>
+   </programlisting></para>
 
-  <para>The <classname>Result</classname> class is purely
-  informational. A single instance of this class is returned each time
-  <classname>QMTestable.run</classname> is called.  The
-  <classname>Engine</classname> class translates the
-  <classname>Result</classname> instance into a test database
-  record. </para>
+ </section>
 
-  <para>The <classname>Filter</classname> class encapsulates a
-  function which produces a Boolean result from a test's properties,
-  the current state of the engine, and the contents of the test
-  database. </para>
+ <section><title>Class <classname>Suite</classname></title>
 
-  </section>
+ <para>The <classname>Suite</classname> class has the following
+ interface:
+<programlisting>
+<![CDATA[
+class Suite:
+   """A suite of tests."""
 
-  <section><title>Execution Model</title>
+   def __init__(id): 
+       """Initialize this test suite.  ID is the id for this test
+       suite."""
 
-  <para>The engine works by translating the contents of input files
-  into instances of appropriate classes, running the instance methods,
-  and capturing any <classname>Result</classname> objects that are
-  produced. </para>
+   def GetTestIDs():
+       """Returns a list of the test IDs for the tests in this suite."""
+]]>
+</programlisting>
+ </para>
 
-   <section><title>Invoking Instance Methods</title>
+ </section>
 
-   <para>As an input file is translated into one or more class
-   instances, the engine passes those instances through its filters.
-   The prerequisites of any objects which survive filtering are then
-   examined.  If those prerequisites have already been satisfied, the
-   object is placed in the engine's "ready" pool.  If they have not,
-   the object is placed in the engine's "ready" pool.</para>
+ <section><title>Class <classname>Action</classname></title>
 
-   <para>The engine repeatedly removes items from its "ready" pool,
-   and invokes their setup, execution, and cleanup methods in order.
-   The execution of a test produces a result object; the execution of
-   a suite produces more objects for the "pending" and "ready" pools.
-   Once an object's cleanup method has been executed, the engine
-   checks its "pending" pool to see whether any pending objects are
-   now ready.  If so, it moves them to its ready pool.  If at any
-   point the ready pool is empty, and there are items in the pending
-   pool, <literal>UNTESTED</literal> records are created for them,
-   with "unsatisfied prerequisite" listed as a reason. </para>
-
-   </section>
-
-   <section><title>Capturing Results</title>
-
-   <para>As with input, the simplest way for a test or suite to report
-   results from the engine's point of view is for it to explicitly
-   create a <classname>Result</classname> object.  However, this is a
-   burden for novice test authors, and is not even be possible for
-   tests written in other languages, or which are specified using flat
-   text or XML. </para>
-
-   <para>The raw results of executing a test (including exit status,
-   return value, and standard stream output) are therefore passed to a
-   <classname>Translator</classname> object.  This object then creates
-   a <classname>Result</classname>, which is passed in turn to the
-   engine.  Translators are stacked, in the same way as environment
-   changes, so that suites and individual tests can safely specify how
-   to interpret their results.  Any translators specified in setup
-   methods are automatically removed during cleanup.</para>
-
-  </section>
-
-  </section>
-
- <section><title>Test representation</title>
+ <para>Each action class must derive from the
+ <classname>Action</classname> class:
+<programlisting>
+<![CDATA[
+class Action:
+   """Actions to be taken before and after executing a test."""
    
-  <section><title>Test class implementations</title>
+   def __init__(id):
+       """Initialize this instance.  ID is the id for this action."""
 
-   <para>Each &qmtest; test class is implemented as a Python class.
-   Though &qmtest; does not recognize any notion of test class
-   inheritance, this may be produced in effect via Python class
-   inheritance.</para>
+   def GetID():
+       """Returns the ID for this instance."
 
-   <para>A test class should have the following members:
-    <itemizedlist>
-     <listitem>
-      <para>An initialization method (<function>__init__</function>),
-      that is used to instantiate test instances.  Test instances are
-      Python instances of the Python class corresponding to the test
-      class.  The parameters of the <function>__init__</function>
-      method are the test class parameters.  All parameters must be
-      named; positional parameters are not allowed.  A final
-      <token>**</token> parameter is allowed.</para>
+   def Setup(context):
+       """Execute the action that should be taken to set up the test
+       execution.  Throw an exception if the action cannot be
+       taken.  The CONTEXT gives information about the
+       environment in which the test is being executed."""
 
-      <para>If a new test class is created via inheritance from a
-      previous test class, the derived <function>__init__</function>
-      is expected to invoke the base class
-      <function>__init__</function>, passing unused parameters.</para>
-     </listitem>
+   def Cleanup(context):
+       """Execute the action that should be taken to clean up after
+       test execution.  The CONTEXT gives information about the
+       environment in which the test is being executed."""
+]]>
+</programlisting>
+ </para>
 
-     <listitem>
-      <para>An <function>is_valid</function> method.  This method
-      takes a <classname>Configuration</classname> object and returns
-      as boolean whether the particular test instance is appropriate
-      to run on that configuration.</para>
-     </listitem>
+ </section>
 
-     <listitem>
-      <para>A <function>run</function> method.  The
-      <function>run</function> method is passed the same configuration
-      that was previously validated by the same test instance's
-      <function>is_valid</function> method.
-      <!-- FIXME: What are the parameters to the run method? -->
-      </para>
-     </listitem>
-    </itemizedlist>
-   </para>
+ <section><title>Class <classname>Database</classname></title>
 
-   <para>After this point, we will use the term test to refer to the
-   corresponding Python class sometimes, when there is no
-   ambiguity.</para>
+ <para>The <classname>Database</classname> class has the following
+ interface:
+<programlisting>
+<![CDATA[
+class Database:
+   """A test database."""
+   
+   def GetTestInstance(id):
+       """Return the Test associated with the indicated ID.  Returns
+       None if the indicated ID is not present in the database."""
 
-   <para>Instantiating a test instance requires locating and
-   instantiating test class.  This is done via these two methods:
-    <orderedlist>
-     <listitem>
-      <para>The test class is located in the Python execution
-      environment in the usual way, using the
-      <envar>PYTHONPATH</envar> mechanism.</para>
-     </listitem>
+   def GetActionInstance(id):
+       """Return the Action associated with the indicated ID.  Returns
+       None if the indicated Action is not present in the databse."""
 
-     <listitem>
-      <para>If the class has not been found, the test is asked to
-      locate the test class.  The test database is provided with the
-      name of the test class and also with the test identifier being
-      instantiated.  (This allows the test database to handle relative
-      paths in its conceptual tree, between the test id and the test
-      class.)</para>
-     </listitem>
-    </orderedlist>
+   def GetSuiteInstance(id):
+       """Return the Suite associated with the indicated ID.  Returns
+       None if the indicated Suite is not present in the database."""
+
+   def GetTestIDs():
+       """Return the IDs of all tests present in the indicated database."""
+
+   def GetSuiteIDs():
+       """Return the IDs of all suites present in the indicated database."""
+
+   def GetActionIDs():
+       """Return the IDs of all actions present in the indicated database."""
+]]>
+</programlisting>
+  </para>
+
+ </section>
+
+  <section><title>Class <classname>Engine</classname></title>
+
+  <para>The <classname>Engine</classname> class has the following
+  interface:
+<programlisting>
+<![CDATA[
+class Engine:
+   """A test execution engine."""
+
+   def ExecuteTest(database, properties, testid):
+       """Execute the test with the indicated TESTID from the
+       DATABASE.  The PROPERTIES are a list of key-value pairs that
+       will be available while the test is executing."""
+
+   def ExecuteTests(database, properties, testids):
+       """Execute the tests with the indicated TESTIDs from the
+       DATABASE.  The PROPERTIES are a list of key-value pairs that
+       will be available while the tests are executing."""
+
+   def ExecuteSuite(database, properties, suiteid):
+       """Execute the suite with the indicated SUITEID from the
+       DATABASE.  The PROPERTIES are a list of key-value pairs that
+       will be available while the tests are executing."""
+]]>
+</programlisting></para>
+
+  </section>
+
+  <section><title>Class <classname>Context</classname></title>
+
+  <para>An instance of the <classname>Context</classname> class is
+  passed to each test when it is run.  By examining the context
+  object, the test can obtain configuration parameters provided by the
+  tester, such as the current machine architecture, or optional
+  arguments to provide to the tested program, or the paths to programs
+  that must be invoked.</para>
+
+  <para>The <classname>Context</classname> class has the following
+  interface:
+  <programlisting>
+<![CDATA[
+class Context:
+   """Information about the context in which the tests are being
+   executed."""
+
+   def GetPropertyValue(key):
+       """Returns the value associated with the indicated KEY."""
+
+   def GetProperties():
+       """Returns a dictionary containing all of the key-value pairs
+       in this context."""
+]]>
+  </programlisting>
   </para>
 
   </section>
-
-  <section><title>Test records</title>
-
-   <para>Test records are represented by instances of the class
-   <classname>&qmtest;.TestRecord</classname>.  This class has the
-   following members:</para>
-
-   <para><programlisting>
-<![CDATA[
-class TestRecord:
-   """The canonical representation of a test."""
-
-   def GetId(self):
-       """Return the test id of this test."""
-
-   def GetClassName(self):
-       """Return the name of the test class of which this is an
-       instance."""
-
-   def GetArguments(self):
-       """Returns the arguments to the test class.  Arguments are
-       presented as a mapping from text argument names to argument
-       values.  Argument values are text Python expressions."""
-
-   def GetCategories(self):
-       """Return a sequence of names of categories to which this test
-       belongs."""
-
-   def GetPrerequisites(self):
-       """Return a sequence of pairs representing prerequisite tests
-       for this test.  The first element of the pair is the test id
-       of the prerequisite test.  The second element is the outcome
-       that that test must produce for the prerequisite to be
-       considered met.  If the second element is None, any outcome is
-       considered sufficient."""
-
-   def GetPreactions(self):
-       """Return a sequence of action ids of actions that must be run
-       and produce a successful outcome before this test is run."""
-
-   def GetPostactions(self):
-       """Return a sequence of action ids of actions that must be run
-       after this test is run."""
-
-   def GetDesignTimeArguments(self):
-       """Fix me."""
-]]>
-   </programlisting></para>
-   
-   <para>Note that test record objects are not polymorphic, regardless
-   of the test class of the test.</para>
-
-   <para>Test records are the representation of tests that are stored
-   in and returned by test databases.  Most test database
-   implementations will externalize test records to a persistent
-   store.  The preferred text-based format for doing this is
-   XML.</para>
-
-  </section>
-
-  <section><title>Test instances</title>
-
-   <para>A <firstterm>test instance</firstterm> is an instance of a
-   test classes.  For a test to be run, a test instance must be
-   created.  To do this, the test class is first obtained from the
-   test class name stored in the test record.  The test arguments are
-   extracted from the test record and evaluated in the test-time
-   execution context.  The results are passed to the initialization
-   function of the test class to create the instance.  To run the
-   test, the instance's run method is invoked.</para>
-   
-  </section>
-
- </section>
-
- <section>
-  <title>The test system</title>
-
-  <section><title>Action implementation</title>
-
-   <para>
-   <!-- FIXME: Same as test implementation, except we do somethign
-   different with the outcomes, right?  Or is there a different set
-   of outcomes for actions? -->
-   </para>
-
-  </section>
-
-  <section><title>Test result implementation</title>
-
-   <para></para>
-
-  </section>
-
- </section>
-
 </chapter>
 
 <!--
