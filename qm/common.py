@@ -304,7 +304,7 @@ def get_host_name():
         try:
             name = socket.gethostbyname_ex(socket.gethostname())[0]
         except socket.error:
-            pass
+            name = None
         # That didn't work.  Just use the local name.
         if name is None:
             try:
