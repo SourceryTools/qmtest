@@ -409,11 +409,11 @@
   <para>Start the main Web user interface with the <command>qmtrack
   server</command> command.  The options to this command are similar to
   those of the configuration server command, <command>&qmtrack-cmd;
-  configure</command>, described in <xref
-  linkend="sec-tracktut-configuration"/>.  Specify the TCP port number on
-  which to run the server with the <option>&dashdash;port</option>
-  (<option>-P</option>) option.  Don't forget to specify the path to the
-  &idb;.</para>
+  configure-idb</command>, described in <xref
+  linkend="sec-tracktut-configuration"/>.  If you do not specify an
+  address or port, &qmtrac; will automatically pick a port on your
+  local machine.  Remember to specify the path to the &idb; with the
+  <option>-D</option> option.</para>
 
   <para>If you specify the <option>&dashdash;start-browser</option>
   (<option>-b</option>) option, &qmtrack; will open a browser window and

@@ -677,6 +677,9 @@ parent.""",
 
         missing = []
         for field in mandatory_fields:
+            # The iid field is supplied automatically.
+            if field.GetName() == "iid":
+                continue
             # The field could be a normal field or a set.  Notice that for
             # set fields, we only look for the '+' operator because a '-'
             # operator in a create will not do us much good for setting
@@ -692,7 +695,7 @@ parent.""",
         
         # Once we have checked that everything is in order to create the
         # new issue, we build it based on the argument pairs.
-        iid = hash['iid']
+        iid = icl.AllocateNextId()
         new_issue = qm.track.issue.Issue(icl, iid=iid)
         for key, value in hash.items():
             if key != 'iid':
@@ -927,12 +930,12 @@ parent.""",
         apply(self.__PrintResults, (idb, output, ) + tuple(results))
 
 
-    def __HandleServerOptions(self, default_address=""):
+    def __HandleServerOptions(self, default_address="", default_port=0):
         # Get the port number specified by a command option, if any.
         port_number = self.GetCommandOption("port", None)
         if port_number is None:
             # The port number was not specified.  Use a default value.
-            port_number = 8000
+            port_number = default_port
         else:
             try:
                 port_number = int(port_number)
@@ -964,17 +967,14 @@ parent.""",
     def __PerformConfigureIdb(self, idb, output):
         """Process the server command."""
 
-        # FIXME: Security.  Restrict access to the configuration
-        # database with a cookie value in the URL?
-
-        # FIXME: Default to binding to localhost only?
-
         # Construct the server.
-        port_number, address, log_file = self.__HandleServerOptions()
+        port_number, address, log_file \
+            = self.__HandleServerOptions("127.0.0.1", 0)
         web_server = server.make_configuration_server(idb, port_number,
                                                       address, log_file)
 
         # Construct the URL to the main page on the server.
+        port_number = web_server.GetServerAddress()[1]
         if address == "":
             url_address = qm.platform.get_host_name()
         else:
@@ -997,7 +997,8 @@ parent.""",
         """Process the server command."""
 
         # Construct the server.
-        port_number, address, log_file = self.__HandleServerOptions()
+        port_number, address, log_file = \
+            self.__HandleServerOptions(default_port=8000)
         web_server = server.make_server(idb, port_number, address, log_file)
 
         # Construct the URL to the main page on the server.

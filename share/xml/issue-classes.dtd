@@ -39,9 +39,9 @@
 <!ELEMENT issue-classes (issue-class*)>
 
 <!-- The specification of an issue class.  -->
-<!-- FIXME: Triggers.  -->
 <!ELEMENT issue-class (title, description, field*, trigger*)>
-<!ATTLIST issue-class name CDATA #REQUIRED>
+<!ATTLIST issue-class name CDATA #REQUIRED
+                      next-id CDATA #REQUIRED>
 
 <!-- The user-visible title of an issue class.  -->
 <!ELEMENT title (#PCDATA)>

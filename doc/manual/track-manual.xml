@@ -48,15 +48,8 @@
    <title>Issue IDs</title>
 
    <para>Each issue is represented by a unique <firstterm>issue
-   ID</firstterm>, or <firstterm>IID</firstterm>.  The issue ID is a
-   tag composed of lower case letters, digits, and underscores.</para>
-
-   <para>When you create a new issue, you may choose any issue ID you
-   wish, unless another issue already exists with the same issue ID in
-   the issue database, or unless the issue database has been
-   configured to assign issue IDs automatically.  Try to choose an
-   issue ID that is short, and that is reminiscent of the just of the
-   issue.</para>
+   ID</firstterm>, or <firstterm>IID</firstterm>.  The issue ID is 
+   automatically chosen by &qmtrack;.</para>
 
   </section> <!-- sec-issue-ids -->
 

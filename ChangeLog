@@ -1,3 +1,24 @@
+2001-10-28  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/track-manual.xml: Revise section on issue IDs.
+	* doc/manual/track-tour.xml: Likewise.
+	* qm/track/cmdline.py (Command.__PerformCreate): Assign issue
+	IDs automatically.
+	(Command.__HandleServerOptions): Add default_port parameter.
+	(Command.__PerformConfigureIdb): By default, only allow
+	connections from localhost.
+	* qm/track/issue_class.py (IssueClass.__init__): Add next_id
+	parameter.  Make the iid field hidden.
+	(IssueClass.AllocateNextId): New method.
+	(IssueClass.MakeDomNode): Write out the next available ID.
+	(from_dom_node): Read it back in.
+	* qm/track/web/show.py (handle_submit): Assign issue IDs 
+	automatically.
+	* share/diagnostics/track.txt: After creating an issue database,
+	tell the user how to configure it.
+	* share/xml/issue-classes.dtd (issue-class): Add next-id
+	attribute.
+	
 2001-10-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Note that -D is no lnoger required.

@@ -326,7 +326,6 @@ def handle_new(request):
 def handle_submit(request):
     """Process a submission of a new or modified issue."""
 
-    iid = request["iid"]
     requested_revision = int(request["revision"])
     idb = request.GetSession().idb
     istore = idb.GetIssueStore()
@@ -337,10 +336,12 @@ def handle_submit(request):
         
     if is_new:
         # Create a new issue instance.
+        iid = issue_class.AllocateNextId()
         issue = qm.track.issue.Issue(issue_class, iid=iid)
     else:
         # It's a new revision of an existing issue.  Retrieve the
-        # latter. 
+        # latter.
+        iid = request["iid"]
         issue = istore.GetIssue(iid)
         # Make sure the requested revision is one greater than the
         # most recent stored revision for this issue.  If it's not,

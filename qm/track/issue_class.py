@@ -1003,6 +1003,7 @@ class IssueClass:
 
     def __init__(self,
                  name,
+                 next_id=1,
                  title=None,
                  description="",
                  categories=default_categories,
@@ -1011,6 +1012,8 @@ class IssueClass:
 
         'name' -- The name of this issue class.
 
+        'next_id' -- The next available issue ID for this class.
+        
         'title' -- A user-friendly name.  If 'None', the value of 'name'
         is used.
 
@@ -1026,6 +1029,7 @@ class IssueClass:
         first two fields added, and as returned by 'GetFields()'."""
 
         self.__name = name
+        self.__next_id = next_id
         if title is None:
             self.__title = name
         else:
@@ -1039,7 +1043,7 @@ class IssueClass:
         # fields; the mapping is for fast lookups by field name.
         self.__fields = []
         self.__fields_by_name = {}
-
+        
         # Create mandatory fields.
         
         # The issue id field.
@@ -1047,7 +1051,8 @@ class IssueClass:
             name="iid",
             title="Issue ID",
             description="The issue's unique identifier.",
-            initialize_only="true")
+            initialize_only="true",
+            hidden="true")
         self.AddField(field)
 
         # The revision number field.
@@ -1258,6 +1263,21 @@ issues.""",
         return default
 
 
+    def AllocateNextId(self):
+        """Allocate the next available issue ID.
+
+        returns -- The next available issue ID.  Multiple calls to
+        this function will always return distinct issue IDs."""
+
+        # Compute the issue ID to return.
+        iid = "%s_%d" % (self.GetName(), self.__next_id)
+        # Increment the counter so that we do not return the same ID
+        # again.
+        self.__next_id = self.__next_id + 1
+        
+        return iid
+    
+        
     def MakeDomNode(self, document):
         """Construct a DOM node describing the issue class.
 
@@ -1267,8 +1287,8 @@ issues.""",
 
         # Create the main element node.
         element = document.createElement("issue-class")
-        # Set the name in an attribute.
         element.setAttribute("name", self.GetName())
+        element.setAttribute("next-id", "%d" % self.__next_id)
         # Annotate the title and description.
         title_element = qm.xmlutil.create_dom_text_element(
             document, "title", self.GetTitle())
@@ -1466,6 +1486,7 @@ def from_dom_node(node, attachment_store):
 
     # Get the main properties for the issue class.
     name = node.getAttribute("name")
+    next_id = int(node.getAttribute("next-id"))
     title = qm.xmlutil.get_child_text(node, "title")
     description = qm.xmlutil.get_child_text(node, "description")
     
@@ -1484,7 +1505,7 @@ def from_dom_node(node, attachment_store):
         triggers.append(trigger)
 
     # Construct the issue class.
-    issue_class = IssueClass(name, title, description)
+    issue_class = IssueClass(name, next_id, title, description)
     issue_class._IssueClass__fields = fields
     issue_class._IssueClass__fields_by_name = fields_by_name
     issue_class._IssueClass__triggers = triggers

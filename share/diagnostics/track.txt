@@ -210,6 +210,8 @@ You must specify one or more files from which to import issues.
 Either set the '%(envvar)s' environment variable to this path, or use
 the '--idb' option when you invoke QMTrack.
 
+To configure the database run 'qmtrack configure-idb'.
+
 @ no changes
 You have specified no changes to the issue.  A new revision has not been
 created. 
