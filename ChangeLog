@@ -2,7 +2,8 @@
 
 	* qm/common.py (parse_time_iso): New function.
 	* qm/test/classes/tet_stream.py: New file.
-	
+	* qm/test/classes/classes.qmc (tet_stream.TETStream): Add.
+
 2004-02-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/__version.py: Advance to 2.2.0.
