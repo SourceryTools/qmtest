@@ -3,6 +3,14 @@ NEWS
 
 This file describes user visible changes to QM.
 
+QM 1.1.5
+========
+
+When loading a test, resource, or database class, the directory
+containing the extension class is placed at the front of the path used
+to search for modules.  In previous versions of QMTest, it was placed
+at the back.
+
 QM 1.1.4
 ========
 

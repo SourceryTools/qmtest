@@ -1,3 +1,10 @@
+2002-05-20  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
+
+	* qm/common.py (load_module): Insert the path appropriate for the
+	loaded module in front of the default directories, rather than
+	behind them.
+	* NEWS: Update it.
+
 2002-05-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release (upload): Update Windows logic.
