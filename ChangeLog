@@ -1,5 +1,7 @@
 2001-12-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in: Remove divert statements.
+
 	* configure.in: Add --enable-maintainer-mode.
 	* standard.mk.in (docbook-html): Do not create an HTML tar file.
 	* scripts/qm-release: Copy documentation to source release.
