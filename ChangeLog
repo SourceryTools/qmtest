@@ -1,5 +1,10 @@
 2001-01-09  Alex Samuel  <samuel@codesourcery.com>
 
+	* Makefile.in (PYTHONDOCDIRS): New variable.
+	* standard.mk.in (doc-python): Build for PYTHONDOCDIRS only.
+
+2001-01-09  Alex Samuel  <samuel@codesourcery.com>
+
 	* README.sources: Clarify naming conventions.
 	* templates/py: Add section banners.
 	

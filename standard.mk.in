@@ -192,8 +192,12 @@ $(PRINTDIR)/$(PRINTPDF): \
 	    pdfjadetex $(PRINTTEX) 
 
 # Generate documentation from Python sources using HappyDoc.
-doc-python:
-	$(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset qm
+ifneq ($(PYTHONDOCDIRS),)
+doc-python:	$(PYTHONDOCDIRS)
+	for dir in $(PYTHONDOCDIRS); do \
+	  $(HAPPYDOC) -d $(DOCDIR) -F htmltable -T docset $${dir}; \
+	done
+endif
 
 # Run regression tests.  Regression tests are stored in files named
 # test.py.  The file may be present for each package under qm.

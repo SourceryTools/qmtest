@@ -35,6 +35,8 @@ TOPDIR		= @top_srcdir@
 
 SUBDIRS		= doc
 
+PYTHONDOCDIRS	= qm
+
 include $(TOPDIR)/standard.mk
 
 ########################################################################
