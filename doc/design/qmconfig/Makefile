@@ -34,4 +34,6 @@
 DOCBOOK		= $(wildcard *.xml)
 DOCBOOKMAIN	= qmconfig.xml
 
+DOCBITMAPS      = $(wildcard figures/*.png)
+
 include $(TOPDIR)/standard.mk

@@ -48,10 +48,8 @@
     <tbody>
      <row>
       <entry><command>test</command>
-      <replaceable>suites</replaceable></entry>
-      <entry>Run tests.  The <command>test</command>sub command may be
-      omitted; if no other subcommand is recognized,
-      <command>test</command> is assumed.</entry>
+      <replaceable>suite</replaceable> ...</entry>
+      <entry>Run the specified test suites.</entry>
      </row>
      <row>
       <entry><command>compare</command>

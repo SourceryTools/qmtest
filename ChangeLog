@@ -1,5 +1,11 @@
 2000-12-13  Alex Samuel  <samuel@codesourcery.com>
 
+	* standard.mk ($(PRINTDIR)/$(PRINTPDF)): Set TEXINPUTS.
+	* doc/design/qmconfig/Makefile (DOCBITMAPS): Set it.
+	* doc/design/qmtext/iface.xml: Always require qmtest subcommand.
+
+2000-12-13  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/design/qmtest/iface.xml: Twiddle command-line syntax.
 
 	* doc/design/qmtest/core.xml: Regularize entity ids.
