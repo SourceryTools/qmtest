@@ -400,15 +400,22 @@ class RcConfiguration:
     def __Load(self):
         """Load the configuration from the appropriate places."""
 
-        # Construct the path to the user's rc file.
-        # FIXME: Do something different under Windows.  
-        home_directory = os.environ["HOME"]
-        rc_file = os.path.join(home_directory, self.user_rc_file_name)
-        # Create a parser, and read the configuration.
+	# Create a parser.
         parser = ConfigParser.ConfigParser()
-        parser.read(rc_file)
-        # Note that 'read' returns silently if the file is missing;
-        # that's fine.
+
+        # Construct the path to the user's rc file.
+        if os.environ.has_key("HOME"):
+	        home_directory = os.environ["HOME"]
+	        rc_file = os.path.join(home_directory, self.user_rc_file_name)
+	        # Note that it's OK to call 'read' even if the file doesn't
+		# exist.  In that, case the parser simply will not accumulate
+		# any data.
+	        parser.read(rc_file)
+	else:	
+		# If we cannot find the user's home directory, do not
+		# even try to read the configuration.
+		pass
+
         return parser
 
 

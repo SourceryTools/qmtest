@@ -1,5 +1,8 @@
 2001-10-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (RcConfiguration.__Load): Do not crash if the
+	HOME environment variable is not defined.
+
 	* doc/manual/common-manual.xml: Revise.
 	* doc/manual/manual.xml: Likewise.
 	* doc/manual/test-manual.xml: Likewise.
