@@ -1,5 +1,7 @@
 2002-05-14  Mark Mitchell  <mark@codesourcery.com>
 
+	* scripts/qm-release (tag_qm): New function.
+
 	* version: New file.
 
 2002-05-12  Mark Mitchell  <mark@codesourcery.com>
