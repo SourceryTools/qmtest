@@ -20,6 +20,7 @@
 import qm
 import Queue
 from   threading import *
+import sys
 import types
 
 ########################################################################
@@ -70,13 +71,17 @@ class CommandThread(Thread):
                 # the 'Stop' command.
                 if isinstance(command, types.StringType):
                     assert command == "Stop"
+                    self._Trace("Received stop command")
                     self._Stop()
                     break
 
                 # Decompose command.
-                method, id, context = command
+                method, desc, context = command
+                assert method == "_RunTest"
                 # Run it.
-                eval ("self.%s(id, context)" % method)
+                self._Trace("About to run test " + desc.GetId())
+                self._RunTest(desc, context)
+                self._Trace("Finished running test " + desc.GetId())
         except:
             # Exceptions should not occur in the above loop.  However,
             # in the event that one does occur it is easier to debug
@@ -140,3 +145,13 @@ class CommandThread(Thread):
         Derived classes may override this method."""
 
         pass
+
+
+    def _Trace(self, message):
+        """Write a trace 'message'.
+
+        'message' -- A string to be output as a trace message."""
+
+        if __debug__:
+            tracer = qm.test.cmdline.get_qmtest().GetTracer()
+            tracer.Write(message, "command_thread")

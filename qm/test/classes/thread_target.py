@@ -18,6 +18,7 @@
 ########################################################################
 
 from   qm.test.base import *
+import qm.test.cmdline
 from   qm.test.command_thread import *
 from   qm.test.target import *
 import Queue
@@ -152,6 +153,8 @@ class ThreadTarget(Target):
 
         Derived classes may override this method."""
 
+        self._Trace("About to dispatch test to thread " + descriptor.GetId())
+        
         self.__ready_threads_lock.acquire()
 
         # The execution engine should never be trying to run a test
@@ -163,7 +166,10 @@ class ThreadTarget(Target):
         self.__ready_threads_lock.release()
 
         thread.RunTest(descriptor, context)
-            
+        
+        self._Trace("Finished dispatching test to thread "
+                    + descriptor.GetId())
+
 
     def _RunTest(self, descriptor, context):
         """Run the test given by 'descriptor'.
@@ -218,7 +224,7 @@ class ThreadTarget(Target):
                     return rop
                 # If this resource has already been set up, we do not
                 # need to do anything more.
-                if rop[0]:
+                if rop[1]:
                     return rop
                 # Otherwise, some other thread is in the process of
                 # setting up this resource so we just wait for it to
@@ -273,3 +279,13 @@ class ThreadTarget(Target):
         finally:
             # Release the lock.
             self.__ready_threads_lock.release()
+
+
+    def _Trace(self, message):
+        """Write a trace 'message'.
+
+        'message' -- A string to be output as a trace message."""
+
+        if __debug__:
+            tracer = qm.test.cmdline.get_qmtest().GetTracer()
+            tracer.Write(message, "thread_target")

@@ -13,6 +13,9 @@ There is a new "--result-format" option to "qmtest run" and "qmtest
 gui".  This option controls the format of the results file, i.e.,
 whether the binary or XML file format is used.
 
+A defect that could cause a multi-threaded or multi-process test run
+to hang if a resource could not be set up has been corrected.
+
 QM 2.0.3
 ========
 

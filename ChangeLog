@@ -1,3 +1,17 @@
+2003-03-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/command_thread.py (sys): Import it.
+	(CommandThread.run): Remove use of eval.  Make use of trace
+	facilities.
+	(CommandThread._Trace): Use it.
+	* qm/test/target.py (Target.__ResourceSetUpException): New class.
+	(Target.RunTest): Make it exception-safe.
+	(Target.__BeginResourceSetUp): 	Do not create results here when a
+	test cannot be set up; instead, raise an exception.
+	(Target._SetUpResource0: Make it exception-safe.
+	* qm/test/classes/thread_target.py: Add trace messages throughout.
+	* NEWS: Mention defect correction.
+	
 2003-02-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (_make_comma_separated_string): New

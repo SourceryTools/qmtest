@@ -71,7 +71,20 @@ class Target(qm.extension.Extension):
         ]
 
     kind = "target"
-    
+
+    class __ResourceSetUpException(Exception):
+        """An exception indicating that a resource could not be set up."""
+
+        def __init__(self, resource):
+            """Construct a new 'ResourceSetUpException'.
+
+            'resource' -- The name of the resoure that could not be
+            set up."""
+
+            self.resource = resource
+            
+
+            
     def __init__(self, database, properties):
         """Construct a 'Target'.
 
@@ -180,15 +193,15 @@ class Target(qm.extension.Extension):
         'context' -- The 'Context' in which to run the test.
 
         Derived classes may override this method."""
-        
-        # There are not yet any additional context properties that
-        # need to be passed to the test.
-        properties = self.__SetUpResources(descriptor, context)
-        # Create the modified context.
-        context = ContextWrapper(context, properties)
-        # Run the test.
+
+        # Create the result.
         result = Result(Result.TEST, descriptor.GetId(), context)
         try:
+            # Set up any required resources.
+            properties = self.__SetUpResources(descriptor, context)
+            # Create the modified context.
+            context = ContextWrapper(context, properties)
+            # Run the test.
             descriptor.Run(context, result)
         except KeyboardInterrupt:
             result.NoteException(cause = "Interrupted.")
@@ -197,6 +210,10 @@ class Target(qm.extension.Extension):
             # engine to stop.
             if self.__engine:
                 self.__engine.RequestTermination()
+        except self.__ResourceSetUpException, e:
+            result.SetOutcome(Result.UNTESTED)
+            result[Result.CAUSE] = qm.message("failed resource")
+            result[Result.RESOURCE] = e.resource
         except:
             result.NoteException()
         # Record the result.
@@ -223,15 +240,17 @@ class Target(qm.extension.Extension):
 
         'resource_name' -- A string naming a resource.
 
-        returns -- If the resource has already been set up, returns a
-        tuple '(resource, outcome, properties)'.  The 'resource' is
-        the 'Resource' object itself.  The 'outcome' indicates the
-        outcome that resulted when the resource was set up.  The
-        'properties' are a map from strings to strings indicating
-        properties added by this resource.  If the resource has not
-        been set up, but _BeginResourceSetUp has already been called
-        for the resource, then the contents of the tuple will all be
-        'None'.
+        returns -- If at attempt to set up the resource has already
+        been made, returns a tuple '(resource, outcome, properties)'.
+        The 'resource' is the 'Resource' object itself, but may be
+        'None' if the resource could not be set up.  The 'outcome'
+        indicates the outcome that resulted when the resource was set
+        up.  The 'properties' are a map from strings to strings
+        indicating properties added by this resource.
+
+        If the resource has not been set up, but _BeginResourceSetUp
+        has already been called for the resource, then the contents of
+        the tuple will all be 'None'.
 
         If this is the first time _BeginResourceSetUp has been called
         for this resource, then 'None' is returned, but the resource
@@ -255,7 +274,7 @@ class Target(qm.extension.Extension):
         resource.
 
         returns -- A tuple of the same form as is returned by
-        '_BeginResourceSetUp' with the resource has already been set
+        '_BeginResourceSetUp' when the resource has already been set
         up."""
 
         rop = (resource,
@@ -286,12 +305,7 @@ class Target(qm.extension.Extension):
             # If the resource was not set up successfully,
             # indicate that the test itself could not be run.
             if outcome != Result.PASS:
-                result = Result(Result.TEST, descriptor.GetId(),
-                                context, Result.UNTESTED)
-                result[Result.CAUSE] = qm.message("failed resource")
-                result[Result.RESOURCE] = resource
-                self._RecordResult(result)
-                return
+                raise self.__ResourceSetUpException, resource
             # Update the list of additional context properties.
             properties.update(resource_properties)
 
@@ -318,18 +332,24 @@ class Target(qm.extension.Extension):
         context = ContextWrapper(context)
         result = Result(Result.RESOURCE_SETUP, resource_name, context,
                         Result.PASS)
+        resource = None
         # Get the resource descriptor.
         try:
-            resource = self.GetDatabase().GetResource(resource_name)
+            resource_desc = self.GetDatabase().GetResource(resource_name)
+            # Set up the resources on which this resource depends.
+            self.__SetUpResources(resource_desc, context)
+            # Set up the resource itself.
+            resource_desc.SetUp(context, result)
+            # Obtain the resource with the try-block so that if it
+            # cannot be obtained the exception is handled below.
+            resource = resource_desc.GetItem()
+        except self.__ResourceSetUpException, e:
+            result.Fail(qm.message("failed resource"),
+                        { result.RESOURCE : e.resource })
         except NoSuchResourceError:
             result.NoteException(cause="Resource is missing from the database.")
             self._RecordResult(result)
             return (None, result, None)
-        # Set up the resources on which this resource depends.
-        self.__SetUpResources(resource, context)
-        # Set up the resource.
-        try:
-            resource.SetUp(context, result)
         except KeyboardInterrupt:
             result.NoteException()
             # We received a KeyboardInterrupt, indicating that the
@@ -342,7 +362,7 @@ class Target(qm.extension.Extension):
         # Record the result.
         self._RecordResult(result)
         # And update the table of available resources.
-        return self._FinishResourceSetUp(resource.GetItem(), result)
+        return self._FinishResourceSetUp(resource, result)
 
 
     def _CleanUpResource(self, name, resource):
