@@ -53,6 +53,7 @@ be shown.  If omitted, the value 0 is impled."""
 
 import qm.web
 import string
+import sys
 import web
 
 ########################################################################
@@ -279,9 +280,13 @@ class DisplayOptionsPageInfo(web.PageInfo):
 
         self.open_only = open_only
         # Construct a list of names of open states in the state model
-        # for this issue class.
-        state_model = issue_class.GetField("state").GetStateModel()
-        self.open_state_names = state_model.GetOpenStateNames()
+        # for these issue classes.
+        if len(issue_classes) > 0:
+            issue_class = issue_classes[0]
+            state_model = issue_class.GetField("state").GetStateModel()
+            self.open_state_names = state_model.GetOpenStateNames()
+        else:
+            self.open_state_names = []
 
 
 
@@ -307,19 +312,16 @@ def handle_summary(request):
             for issue_class in idb.GetIssueClasses():
                 issues = issues + idb.Query(query, issue_class.GetName())
         except NameError, name:
-            msg = """
-            %s cannot understand the name %s in the query you specified:
-
-              '%s'
-            """ % (qm.track.get_name(), name, query)
+            msg = qm.error("query name error", name=name, query=query)
             return qm.web.generate_error_page(request, msg)
         except SyntaxError:
-            msg = """
-            %s encountered a syntax error while processing the query
-            you specified:
-
-              '%s'
-            """ % (qm.track.get_name(), query)
+            msg = qm.error("query syntax error", query=query)
+            return qm.web.generate_error_page(request, msg)
+        except:
+            # Don't let other exceptions slip through either.
+            exception = sys.exc_info()[1]
+            msg = qm.error("query misc error", query=query,
+                           error=str(exception))
             return qm.web.generate_error_page(request, msg)
 
     else:

@@ -1,5 +1,20 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (PageInfo.web): New attribute.
+	* qm/common.py (Enumeral.__repr__): Fix typo.
+	(Enumeral.__cmp__): Don't check strings against enumeration.
+	* qm/track/web/summary.py (DisplayOptionsPageInfo.__init__): Check
+	for no issue classes.
+	(handle_summary): Handle all exceptions during queries.
+	* qm/test/web/web.py (make_server): Register shutdown.
+	(handle_shutdown): New function.
+	* share/dtml/test/dir.dtml: Add shutdown button.
+	* share/diagnostics/track.txt (query misc error): New diagonstic.
+	(query name error): Likewise.
+	(query syntax error): Likewise.
+
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/platform_linux.py (find_in_path): New function.
 	(open_in_browser): Use it.
 	(send_email): Use /usr/lib/sendmail as default.

@@ -197,6 +197,7 @@ def make_server(port, address="", log_file=None):
         ( "show-action", qm.test.web.show.handle_show ),
         ( "show-suite", qm.test.web.suite.handle_show ),
         ( "show-test", qm.test.web.show.handle_show ),
+        ( "shutdown", handle_shutdown ),
         ( "submit-action", qm.test.web.show.handle_submit ),
         ( "submit-suite", qm.test.web.suite.handle_submit ),
         ( "submit-test", qm.test.web.show.handle_submit ),
@@ -221,6 +222,12 @@ def make_server(port, address="", log_file=None):
         raise RuntimeError, qm.error("privileged port", port=port)
 
     return server
+
+
+def handle_shutdown(request):
+    """Handle a request to shut down the server."""
+
+    raise SystemExit, None
 
 
 ########################################################################

@@ -122,7 +122,7 @@ class Enumeral:
 
 
     def __repr__(self):
-        return "<enumral %s %d>" % (self.__GetName(), self.__value)
+        return "<enumeral %s %d>" % (self.__GetName(), self.__value)
 
 
     def __str__(self):
@@ -141,7 +141,7 @@ class Enumeral:
             if type(other) is types.StringType \
                and other not in self.__enumeration.keys():
                 # It's a string that isn't in the enumeration.
-                raise ValueError, "\"%s\" isn't a valid enumeral" % other
+                return 1
             else:
                 other = str(other)
                 return cmp(self.__GetName(), other)

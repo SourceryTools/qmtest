@@ -123,6 +123,26 @@ The transition from state "%(starting_state_name)s" to state
 @ not initial state
 A new issue must have the initial state "%(initial_state_name)s".
 
+@ query misc error
+%(program_name)s encountered an error while evaluating the Python query
+expression you specified.  
+
+The error was: *%(error)s*.
+
+Your query was "'%(query)s'".
+
+@ query name error
+%(program_name)s cannot understand the name "%(name)s" in the Python
+query expression you specified.
+
+Your query was "'%(query)s'".
+
+@ query syntax error
+%(program_name)s encountered a syntax error while processing the Python
+query you expression you specified.
+
+Your query was "'%(query)s'".
+
 @ transition condition failed
 The transition from state "%(starting_state_name)s" to state
 "%(ending_state_name)s" is not permitted.  This condition %(name)s,

@@ -114,6 +114,12 @@ class PageInfo:
     may derive a 'PageInfo' subclass and point 'default_class' to it to
     obtain customized behavior."""
 
+    # Nothing special about 'InvalidSessionError' here; we just need any
+    # class defined in this module, to extract the module name.  We
+    # can't use 'PageInfo', since it's not defined yet.
+    web = sys.modules[InvalidSessionError.__module__]
+    """Make the functions in this module accessible."""
+
     html_header = ""
 
     html_footer = ""
