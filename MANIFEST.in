@@ -24,6 +24,7 @@ include             qm/test/qmtest
 # These are all docs, in (docbook) xml, html, tex, and pdf format.
 include             qm/test/doc/*.xml
 include             qm/test/doc/html/*.html
+include		    qm/test/doc/html/qm.css
 include             qm/test/doc/print/manual.pdf
 recursive-include   doc *
 # These are data files used by various parts of QMTest.
