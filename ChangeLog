@@ -1,3 +1,13 @@
+2001-05-21  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/common.py (print_message): New function.
+	(verbose): New variable.
+	* qm/test/cmdline.py (Command.profile_option_spec): New attribute.
+	(Command.commands_spec): Include it.
+	(Command.Execute): Set global verbose value.
+	(Command.add_test_id): Add profiling.
+	* qm/test/base.py (Engine.null_function): Add messages.
+
 2001-05-18  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/triggers/notification.py (_NotifyTrigger.Postupdate):

@@ -1119,9 +1119,25 @@ def wrap_lines(text, columns=72, break_delimiter="\\"):
     return string.join(lines, "\n")
 
 
+def print_message(text, min_verbose=1):
+    """Print a status message, if the verbose level is high enough.
+
+    'text' -- The text of the message.
+
+    'min_verbose' -- The minimum verbose level for which this message
+    will be printed."""
+
+    assert min_verbose > 0
+    if min_verbose >= verbose:
+        sys.stdout.write(text)
+
+
 ########################################################################
 # variables
 ########################################################################
+
+verbose = 0
+"""The verbosity level.  Higher values specify more output."""
 
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""

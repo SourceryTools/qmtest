@@ -37,6 +37,8 @@
 
 import base
 import os
+import profile
+import qm
 import qm.cmdline
 import qm.platform
 import qm.xmlutil
@@ -113,8 +115,7 @@ class Command:
         "c",
         "context",
         "KEY=VALUE",
-        "Add or override a context property.  You may specify this "
-        "option more than once."
+        "Add or override a context property."
         )
 
     port_option_spec = (
@@ -145,6 +146,13 @@ class Command:
         "Start a browser and point it at the server."
         )
 
+    profile_option_spec = (
+        None,
+        "profile",
+        "PROFILE-FILE",
+        "Profile test execution to PROFILE-FILE."
+        )
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -166,7 +174,7 @@ class Command:
          "suite IDs as arguments.",
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
-           outcomes_option_spec, context_option_spec )
+           outcomes_option_spec, context_option_spec, profile_option_spec )
          ),
 
         ("server",
@@ -258,7 +266,7 @@ class Command:
 
         # Handle the verbose option.  The verbose level is the number of
         # times the verbose option was specified.
-        self.__verbose = self.__global_options.count(("verbose", ""))
+        qm.verbose = self.__global_options.count(("verbose", ""))
 
         # Make sure a command was specified.
         if self.__command == "":
@@ -388,7 +396,7 @@ class Command:
             engine = base.Engine(database)
             context = self.MakeContext()
             self.__output = output
-            if self.__verbose > 0:
+            if qm.verbose > 0:
                 # If running verbose, specify a callback function to
                 # display test results while we're running.
                 callback = self.__ProgressCallback
@@ -397,7 +405,15 @@ class Command:
                 callback = None
                 
             # Run the tests.
-            results = engine.RunTests(test_ids, context, callback)
+            if self.HasCommandOption("profile"):
+                # Profiling was requested.  Run in the profiler.
+                profile_file = self.GetCommandOption("profile")
+                p = profile.Profile()
+                p = p.runctx("results = engine.RunTests(test_ids, context, callback)",
+                             globals(), locals())
+                p.dump_stats(profile_file)
+            else:
+                results = engine.RunTests(test_ids, context, callback)
 
             run_test_ids = results.keys()
             # Summarize outcomes.

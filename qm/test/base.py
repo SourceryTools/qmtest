@@ -1128,6 +1128,8 @@ class Engine:
                pass
            progress_callback = null_function
 
+       qm.print_message("Computing test order.\n", 2)
+
        # Construct a map-like object for test prerequisites.
        prerequisite_map = PrerequisiteMapAdapter(self.__database)
        # Perform a topological sort to determine the tests that will be
@@ -1138,6 +1140,8 @@ class Engine:
 
        # This map associates a test with each test ID.
        tests = {}
+
+       qm.print_message("Computing required actions.\n", 2)
 
        # This map contains information about when cleanup actions should
        # be run.  There is an entry for each action referenced by at
@@ -1166,6 +1170,8 @@ class Engine:
        # from property name to value).  If the setup action failed, the
        # corresponding value is 'None'.
        setup_attributes = {}
+
+       qm.print_message("Running tests.\n", 2)
 
        # Run tests.  Store the results in an ordered map so that we can
        # retrieve results by test ID efficiently, and also preserve the
