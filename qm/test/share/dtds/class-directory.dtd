@@ -7,20 +7,20 @@
   Contents:
     DTD for class directory files.
 
-  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+  Copyright (C) 2001, 2002, 2003 CodeSourcery LLC.  All rights reserved.
 
   For license terms see the file COPYING.
 
 -->
 
-<!-- NAME: QMTest Class Directory V0.1 -->
+<!-- NAME: QMTest Class Directory -->
 
 <!-- A class directory. -->
 <!ELEMENT class-directory (class*)>
 
 <!-- A class. -->
 <!ELEMENT class (#PCDATA)>
-<!ATTLIST class kind (database | file | resource | target | test) #REQUIRED>
+<!ATTLIST class kind CDATA #REQUIRED>
 
 <!-- 
   Local Variables:

@@ -389,8 +389,7 @@ class XmlDatabase:
 
         # Create a DOM document for the database.
         document = xmlutil.create_dom_document(
-            public_id=xml_user_database_dtd,
-            dtd_file_name="user.dtd",
+            public_id = "User",
             document_element_tag="users"
             )
         document_element = document.documentElement

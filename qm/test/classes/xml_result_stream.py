@@ -43,14 +43,13 @@ class XMLResultStream(FileResultStream):
         # Create an XML document, since the DOM API requires you
         # to have a document when you create a node.
         self.__document = qm.xmlutil.create_dom_document(
-            public_id=qm.test.base.dtds["result"],
-            dtd_file_name="result.dtd",
+            public_id="QMTest/Result",
             document_element_tag="results")
         # Write out the prologue.
         self.file.write("<?xml version='1.0' encoding='ISO-8859-1'?>\n")
         self.file.write('<!DOCTYPE results PUBLIC "%s" "%s">\n'
-                        % (qm.test.base.dtds["result"],
-                           qm.xmlutil.make_system_id("result.dtd")))
+                        % (qm.xmlutil.make_public_id("QMTest/Result"),
+                           qm.xmlutil.make_system_id("qmtest/result.dtd")))
         # Begin the list of results.
         self.file.write("<results>\n")
 

@@ -27,10 +27,24 @@ import xml.dom.minidom
 # functions
 ########################################################################
 
-def make_system_id(name):
-    """Construct a system ID for the file 'name'."""
+def make_public_id(name):
+    """Return a public ID for the DTD with the given 'name'.
 
-    return "http://www.software-carpentry.com/qm/xml/%s" % name
+    'name' -- The name of the DTD.
+
+    returns -- A public ID for the DTD."""
+
+    return "-//QM/%s/%s//EN" % (qm.version, name)
+
+    
+def make_system_id(name):
+    """Return a system ID for the DTD with the given 'name'.
+
+    'name' -- The name of the DTD, as a relative UNIX path.
+
+    returns -- A URL for the DTD."""
+
+    return "http://www.codesourcery.com/qm/dtds/%s/%s" % (qm.version, name)
 
 
 def load_xml_file(path):
@@ -176,18 +190,17 @@ def create_dom_text_element(document, tag, text):
 
 __dom_implementation = xml.dom.minidom.getDOMImplementation()
 
-def create_dom_document(public_id, dtd_file_name, document_element_tag):
+def create_dom_document(public_id, document_element_tag):
     """Create a DOM document.
 
-    'public_id' -- The public ID of the DTD to use for this document.
-
-    'dtd_file_name' -- The name of the DTD file for this document.
+    'public_id' -- The (partial) public ID for the DTD.
 
     'document_element_tag' -- The tag of the main document element.
 
     returns -- A DOM document node."""
 
-    system_id = make_system_id(dtd_file_name)
+    public_id = make_public_id(public_id)
+    system_id = make_system_id(public_id.lower() + ".dtd")
     # Create the document type for the XML document.
     document_type = __dom_implementation.createDocumentType(
         qualifiedName=document_element_tag,
@@ -195,12 +208,12 @@ def create_dom_document(public_id, dtd_file_name, document_element_tag):
         systemId=system_id
         )
     # Create a new DOM document.
-    return __dom_implementation.createDocument(
-        namespaceURI=None,
-        qualifiedName=document_element_tag,
-        doctype=document_type
-        )
-    
+    document = __dom_implementation.\
+                    createDocument(namespaceURI=None,
+                                   qualifiedName=document_element_tag,
+                                   doctype=document_type)
+    return document
+
 
 __hyphen_regex = re.compile("(--+)")
 

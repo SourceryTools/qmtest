@@ -34,27 +34,6 @@ import tempfile
 import types
 
 ########################################################################
-# constants
-########################################################################
-
-dtds = {
-    "class-directory":
-                    "-//Software Carpentry//QMTest Class Directory V0.1//EN",
-    "extension":    "-//Software Carpentry//QMTest Extension V0.1//EN",
-    "tdb-configuration":
-                    "-//Software Carpentry//QMTest TDB Configuration V0.1//EN",
-    "resource":     "-//Software Carpentry//QMTest Resource V0.1//EN",
-    "result":       "-//Software Carpentry//QMTest Result V0.3//EN",
-    "suite":        "-//Software Carpentry//QMTest Suite V0.1//EN",
-    "target":       "-//Software Carpentry//QMTest Target V0.1//EN",
-    "test":         "-//Software Carpentry//QMTest Test V0.1//EN",
-    }
-"""A mapping for DTDs used by QMTest.
-
-Keys are DTD types ("resource", "result", etc).  Values are the
-corresponding DTD public identifiers."""
-
-########################################################################
 # Exceptions
 ########################################################################
 

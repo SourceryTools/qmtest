@@ -119,8 +119,7 @@ class XMLDatabase(ExtensionDatabase):
 
         # Generate the document and document type for XML suite files.
         document = qm.xmlutil.create_dom_document(
-            public_id=qm.test.base.dtds["suite"],
-            dtd_file_name="suite.dtd",
+            public_id="QMTest/Suite",
             document_element_tag="suite"
             )
         # Construct the suite element node by adding children for test

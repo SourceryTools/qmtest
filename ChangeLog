@@ -1,3 +1,19 @@
+2003-09-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (make_dom_document): Simplify.
+	* qm/user.py (XmlDatabase.Write): Likewise.
+	* qm/xmlutil.py (make_system_id): Use CodeSourcery URLs.
+	(make_public_id): New function.
+	(create_dom_document): Compute full system and public identifiers
+	here.
+	* qm/test/base.py (dtds): Remove.
+	* qm/test/cmdline.py (QMTest.__ExecuteCreateTarget): Adjust call
+	to create_dom_document.
+	(QMTest.__ExecuteRegister): Likewise.
+	* qm/test/classes/xml_database.py: Likewise.
+	* qm/test/classes/xml_result_stream.py: Likewise.
+	
+
 2003-09-14  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (TimeoutExecutable.__init__): Ignore timeouts

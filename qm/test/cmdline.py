@@ -978,8 +978,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 duplicate.unlink()
         else:
             document = (qm.xmlutil.create_dom_document
-                        (public_id = dtds["target"],
-                         dtd_file_name = "target.dtd",
+                        (public_id = "QMTest/Target",
                          document_element_tag = "targets"))
             targets_element = document.documentElement
             
@@ -1122,8 +1121,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             document = qm.xmlutil.load_xml_file(classes_file_name)
         except:
             document = (qm.xmlutil.create_dom_document
-                        (public_id=qm.test.base.dtds["class-directory"],
-                         dtd_file_name="class-directory.dtd",
+                        (public_id = "Class-Directory",
                          document_element_tag="class-directory"))
 
         # Remove any previous entries for this class.

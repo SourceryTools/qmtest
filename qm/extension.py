@@ -314,9 +314,8 @@ def make_dom_document(extension_class, arguments):
     extension class."""
 
     document = qm.xmlutil.create_dom_document(
-            public_id=qm.test.base.dtds["extension"],
-            dtd_file_name="extension",
-            document_element_tag="extension"
+            public_id = "Extension",
+            document_element_tag = "extension"
             )
     make_dom_element(extension_class, arguments, document,
                      document.documentElement)
