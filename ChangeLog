@@ -1,5 +1,7 @@
 2002-05-28  Mark Mitchell  <mark@codesourcery.com>
 
+	* share/web/images/left-arrow.gif: Merge from release-1-1-branch.
+
 	* GNUMakefile.in (PYTHON_PACKAGES): Remove PyXML and xmlrpc.
 	* README: Update licensing information about zope-dtml.
 	* qm/fields.py (SetField.GetValueFromDomNode): Be tolerant of
