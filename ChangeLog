@@ -1,3 +1,38 @@
+2001-07-14  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/fields.py (Field.GetHtmlHelp): Don't print field name in
+	smaller font.
+	* qm/structured_text.py (TextFormatter.__init__): Add attributes.
+	(TextFormatter.End): New method.
+	(TextFormatter.StartLink): Implement.
+	(TextFormatter.EndLink): Likewise.
+	(HtmlFormatter.End): New method.
+	(StructuredTextProcessor.__punctuation): Reformat.
+	(StructuredTextProcessor.__verbatim_regex): Accept line-end
+	terminator. 
+	(StructuredTextProcessor.__strong_regex): Likewise.
+	(StructuredTextProcessor.__emph_regex): Likewise.
+	(StructuredTextProcessor.__underline_regex): Likewise.
+	(StructuredTextProcessor.__link1_regex): Remove.
+	(StructuredTextProcessor.__link2_regex): Likewise.
+	(StructuredTextProcessor.__link_regex): New attribute.
+	(StructuredTextProcessor.__link_footnote_regex): Likewise.
+	(StructuredTextProcessor.__init__): Add attribute.
+	(StructuredTextProcessor.__call__): Process hyperlink footnotes. 
+	(StructuredTextProcessor.End): Call formatter's End method.
+	(StructuredTextProcessor.__WriteText): Rewrite hyperlink
+	processing. 
+	* qm/track/web/summary.py (SummaryPage.__init__): Build dictionary
+	map.
+	(SummaryPage.MakeDisplayOptionsButton): Pass field dictionary to
+	DisplayOptionsPage. 
+	(SummaryPage.MakeColorKeyButton): Pass fields to ColorKeyPage.
+	(DisplayOptionsPage.__init__): Take field dictionary parameter.  
+	(DisplayOptionsPage.GetTitle): Handle IndexError.
+	(ColorKeyPage.__init__): Take field parameters.
+	(_hls_transform): Improve doc string.
+	* share/dtml/track/summary.dtml: Adjust formatting.
+
 2001-07-13  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/web/index.py (handle_index): Make a function.

@@ -134,6 +134,23 @@ class TextFormatter(Formatter):
         self.__indent_size = indent_size
         self.__list_bullet = list_bullet
         self.__list_depth = 0
+        self.__current_link_target = None
+        self.__link_targets = []
+
+
+    def End(self):
+        """End the processed text document."""
+
+        # If there were any hyperlink references placed, we need to list
+        # the link targets at the end of the document.
+        if len(self.__link_targets) > 0:
+            self.__NextLine()
+            for index in range(0, len(self.__link_targets)):
+                # Print the reference number and link target, one to a
+                # line. 
+                target = self.__link_targets[index]
+                self.WriteText("[%d] %s" % (index + 1, target))
+                self.__NextLine()
 
 
     def WriteText(self, text):
@@ -231,13 +248,33 @@ class TextFormatter(Formatter):
     def StartLink(self, target):
         """Being a hyperlink to 'target'."""
 
-        pass
+        # Links should not be nested.
+        assert self.__current_link_target is None
+        # Store the link target, which we'll need at the end of the
+        # link. 
+        self.__current_link_target = target
 
 
     def EndLink(self):
         """End a hyperlink."""
 
-        pass
+        # Retrieve the link target, which was stored from when we
+        # started the link.
+        target = self.__current_link_target
+        assert target is not None
+        self.__current_link_target = None
+        # Check if we've already placed a link to this target.  If we
+        # have, use the same reference number as before.
+        try:
+            reference_number = self.__link_targets.index(target) + 1
+        except ValueError:
+            # This is the first time we're placing a reference to this
+            # link target.  Add it to the list of links, and assign a
+            # new reference number.
+            self.__link_targets.append(target)
+            reference_number = len(self.__link_targets)
+        # Write the reference number.
+        self.__Write(" [%d]" % reference_number)
 
 
     # Helper methods.
@@ -313,6 +350,12 @@ class HtmlFormatter(Formatter):
         self.__output_file = output_file
 
 
+    def End(self):
+        """End the processed text document."""
+
+        pass
+
+
     def WriteText(self, text):
         """Write ordinary text."""
         
@@ -385,7 +428,7 @@ class StructuredTextProcessor:
     """Parser and formatter for Python structured text."""
 
     # Regex fragment matching a single punctuation or space character.
-    __punctuation = "[].,!?;:'\"()[ ]"
+    __punctuation = "[%s]" % "][)(.,!?;:'\" "
 
     # Regex matching paragraph separators.
     __paragraph_regex = re.compile("(?:\n *)+\n", re.MULTILINE)
@@ -409,32 +452,31 @@ class StructuredTextProcessor:
     # Regex matching single-quoted verbatim text.  Group 1 is leading
     # spaces; group 2 is the verbatim text; group 3 is trailing spaces
     # and/or punctuation.
-    __verbatim_regex = re.compile("(^| +)'([^']+)'(%s+)" % __punctuation)
+    __verbatim_regex = re.compile("( +|^)'([^']+)'(%s+|$)" % __punctuation)
 
     # Regex matching emphasized text.  Group 1 is leading spaces;
     # group 2 is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __strong_regex = re.compile("(^| +)\*\*([^*]+)\*\*(%s+)" % __punctuation)
+    __strong_regex = re.compile("( +|^)\*\*([^*]+)\*\*(%s+|$)" % __punctuation)
 
     # Regex matching strong text.  Group 1 is leading spaces; group 2
     # is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __emph_regex = re.compile("(^| +)\*([^*]+)\*(%s+)" % __punctuation)
+    __emph_regex = re.compile("( +|^)\*([^*]+)\*(%s+|$)" % __punctuation)
 
     # Regex matching underlined text.  Group 1 is leading spaces;
     # group 2 is the verbatim text; group 3 is trailing spaces and/or
     # punctuation.
-    __underline_regex = re.compile("(^| +)_([^_]+)_(%s+)" % __punctuation)
+    __underline_regex = re.compile("( +|^)_([^_]+)_(%s+|$)" % __punctuation)
 
-    # Regex matching double-quoted hyperlinks using colon syntax.
-    # Group 1 is the link text; group 2 is the link target group 3 is
-    # trailing spaces and/or punctuation.
-    __link1_regex = re.compile('"([^"]*)":([^ ]+?)(%s? +)' % __punctuation)
+    # Regex matching double-quoted text that may be a hyperlink.  If
+    # there is a matching link footnote, the contents of the double
+    # quotes, group 1, is a hyperlink.
+    __link_regex = re.compile('"([^"]*)"')
 
-    # Regex matching double-quoted hyperlinks using comma syntax.
-    # Group 1 is the link text; group 2 is the link target group 3 is
-    # trailing spaces and/or punctuation.
-    __link2_regex = re.compile('"([^"]*)", +([^ ]+?)(%s? +)' % __punctuation)
+    # Regex matching hyperlink footnotes.  Group one is the link text;
+    # group 2 is the link target URL.
+    __link_footnote_regex = re.compile('\n\\.\\. *"([^"]*)" *([^ \n]*)[^\n]*')
 
     # List types which may not include other environments nested
     # inside their items.
@@ -450,6 +492,7 @@ class StructuredTextProcessor:
         
         self.__stack = []
         self.__formatter = formatter
+        self.__hyperlinks = {}
 
 
     def NormalizeSpaces(self, text):
@@ -461,6 +504,26 @@ class StructuredTextProcessor:
 
     def __call__(self, text):
         """Process structured text 'text'."""
+
+        # Look for hyperlink footnotes, and build a map of hyperlinked
+        # phrases.  Keep track of where the last match was.
+        position = 0
+        while position < len(text):
+            # Look for the next hyperlink footnote match.
+            match = self.__link_footnote_regex.search(text[position:])
+            if match is None:
+                # No more; all done.
+                break
+            else:
+                # Record the hyperlink.
+                link_text = string.strip(match.group(1))
+                link_target = match.group(2)
+                self.__hyperlinks[link_text] = link_target
+                # Remove the footnote from the text.
+                text = text[:match.start() + position] \
+                       + text[match.end() + position:]
+                # Next, try searching from the text following the match.
+                position = match.start()
 
         # Split text into paragraphs.
         paragraphs = self.__paragraph_regex.split(text)
@@ -540,6 +603,8 @@ class StructuredTextProcessor:
             self.__formatter.EndItem(top_type)
             # End the environment.
             self.__PopType()
+        # Finish up the formatter.
+        self.__formatter.End()
 
 
     # Helper methods.
@@ -650,25 +715,29 @@ class StructuredTextProcessor:
                 return
 
         # Look for hyperlink markup.
-        for regex in [
-            self.__link1_regex,
-            self.__link2_regex,
-            ]:
-            # Find the first match.
-            match = regex.search(text)
-            if match is not None:
-                # Found a match.  Recursively format everything up to
-                # the start of the match.
+        match = self.__link_regex.search(text)
+        if match is not None:
+            link_text = string.strip(match.group(1))
+            # Is there a footnote providing a link target for this
+            # phrase? 
+            if self.__hyperlinks.has_key(link_text):
+                # Yes.  Emit a hyperlink.
+                link_target = self.__hyperlinks[link_text]
+                # Recursively format everything up to the start of the
+                # match.
                 self.__WriteText(text[:match.start(0)])
                 # Generate the start of the link.
-                self.__formatter.StartLink(match.group(2))
-                # Recureively format the link text.
+                self.__formatter.StartLink(link_target)
+                # Recursively format the link text.
                 self.__WriteText(match.group(1))
                 # End the link.
                 self.__formatter.EndLink()
                 # Recursively format everything following the match.
-                self.__WriteText(text[match.start(3):])
+                self.__WriteText(text[match.end(1) + 1:])
                 return
+            else:
+                # Fall through and format the entire text as usual.
+                pass
 
         # Nothing special.  Write ordinary text.
         self.__formatter.WriteText(text)

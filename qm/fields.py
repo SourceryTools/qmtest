@@ -502,8 +502,8 @@ class Field:
         <h4>About This Field\'s Values</h4>
         %s
         <hr noshade size="2">
-        <p><font size="-1">Refer to this field as <tt>%s</tt> in Python
-        expressions such as queries.</font></p>
+        <p>Refer to this field as <tt>%s</tt> in Python expressions such
+        as queries.</p>
         ''' % (self.GetTitle(), description, help, self.GetName(), )
 
 

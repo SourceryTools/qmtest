@@ -70,14 +70,13 @@
       --></dtml-comment>
       <dtml-if expr="_.len(issue_classes) > 1">
        <tr>
-        <th class="issue_class" 
+        <td class="issue_class" 
             colspan="<dtml-var expr="_.len(field_names)">">
         </th>
        </tr>
        <tr>
-        <th class="issue_class" 
-            colspan="<dtml-var expr="_.len(field_names)">">
-         <dtml-var expr="issue_class.GetTitle()">
+        <td colspan="<dtml-var expr="_.len(field_names)">">
+         <b><dtml-var expr="issue_class.GetTitle()"></b>
         </th>
        </tr>
       </dtml-if>

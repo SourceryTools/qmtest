@@ -114,6 +114,17 @@ class SummaryPage(web.DtmlPage):
             else:
                 self.issue_map[issue_class] = [ issue ]
 
+        # Build a map of all fields in all issue classes we're showing.
+        # If a field is present in more than one issue class, choose one
+        # instance arbitrarily.  We need this because the summary can
+        # contain issues from several different issue classes, each of
+        # which have their own fields, yet some aspects of this page
+        # (such as display options) are common to all fields.
+        self.field_dictionary = {}
+        for issue_class in self.issue_map.keys():
+            for field in issue_class.GetFields():
+                self.field_dictionary[field.GetName()] = field
+
         if sort_order[0] == "-":
             # If the first character of the sort order is a hyphen, that
             # indicates a reverse sort.
@@ -146,7 +157,7 @@ class SummaryPage(web.DtmlPage):
         # Generate the HTML page for the popup window for selecting
         # display options.
         display_options_page = DisplayOptionsPage(
-            self.issue_map.keys(),
+            self.field_dictionary,
             self.field_names,
             self.open_only,
             str(self.hue_field_name),
@@ -171,14 +182,14 @@ class SummaryPage(web.DtmlPage):
            and self.lightness_field_name is None:
             return ""
 
-        # FIXME.
-        page = ColorKeyPage(self.issue_classes[0],
-                            self.hue_field_name,
-                            self.lightness_field_name,
-                            self.saturation_field_name)(self.request)
+        page = ColorKeyPage(
+            self.field_dictionary.get(self.hue_field_name, None),
+            self.field_dictionary.get(self.lightness_field_name, None),
+            self.field_dictionary.get(self.saturation_field_name, None)
+            )
         return qm.web.make_button_for_popup(
             "Color Key",
-            page,
+            page(self.request),
             request=self.request,
             window_width=480,
             window_height=480)
@@ -246,7 +257,7 @@ class DisplayOptionsPage(web.DtmlPage):
       'base_url' -- The base URL to redisplay the issue summary."""
 
     def __init__(self,
-                 issue_classes,
+                 field_dictionary,
                  included_field_names,
                  open_only,
                  hue_field_name,
@@ -254,8 +265,8 @@ class DisplayOptionsPage(web.DtmlPage):
                  saturation_field_name):
         """Create a new page info context.
 
-        'issue_classes' -- A sequence of all issue classes available in
-        the issue summary.
+        'field_dictionary' -- A map from field names to 'Field'
+        instances for fields in issue classes of issues in the summary.
 
         'included_field_names' -- A sequence of names of all fields
         currently included in the issue summary display.
@@ -271,23 +282,18 @@ class DisplayOptionsPage(web.DtmlPage):
                               lightness_field_name=lightness_field_name,
                               saturation_field_name=saturation_field_name)
 
-        # Construct a map from field name to field object for all fields
-        # in all issue classes.
-        fields = {}
-        for issue_class in issue_classes:
-            for field in issue_class.GetFields():
-                if not field.IsAttribute("hidden"):
-                    fields[field.GetName()] = field
-        # Find all field names that aren't in 'included_field_names'.
+        # Find all names of non-hidden fields that aren't in
+        # 'included_field_names'.
         excluded_field_names = []
-        for field_name in fields.keys():
-            if not field_name in included_field_names:
+        for field_name, field in field_dictionary.items():
+            if not field.IsAttribute("hidden") \
+               and field_name not in included_field_names:
                 excluded_field_names.append(field_name)
 
         # This function returns the title of the field whose name is
         # 'field_name'.  If it isn't a field we know about here, just
         # return the field name.
-        def get_title(field_name, fields=fields):
+        def get_title(field_name, fields=field_dictionary):
             if fields.has_key(field_name):
                 return fields[field_name].GetTitle()
             else:
@@ -304,22 +310,25 @@ class DisplayOptionsPage(web.DtmlPage):
             ordered=1)
 
         self.open_only = open_only
+
         # Construct a list of names of open states in the state model
         # for these issue classes.
-        if len(issue_classes) > 0:
-            issue_class = issue_classes[0]
-            state_model = issue_class.GetField("state").GetStateModel()
-            self.open_state_names = state_model.GetOpenStateNames()
-        else:
+        try:
+            state_field = field_dictionary["state"]
+        except KeyError:
+            # No state field, probably because there are no issues in
+            # the summary.
             self.open_state_names = []
+        else:
+            state_model = state_field.GetStateModel()
+            self.open_state_names = state_model.GetOpenStateNames()
 
         # Construct a list of names of fields that can be used for
         # coloring summary rows.
-        colorable_fields = []
-        for field in issue_classes[0].GetFields():
+        self.colorable_fields = []
+        for field in field_dictionary.values():
             if isinstance(field, qm.fields.EnumerationField):
-                colorable_fields.append(field)
-        self.colorable_fields = colorable_fields
+                self.colorable_fields.append(field)
 
 
     def MakeBaseUrl(self):
@@ -366,10 +375,13 @@ class DisplayOptionsPage(web.DtmlPage):
             default = none_field
         else:
             # Find the field matching this name.
-            default = filter(lambda f, d=default_field_name:
-                             f.GetName() == d,
-                             self.colorable_fields) \
-                             [0]
+            try:
+                default = filter(lambda f, d=default_field_name:
+                                 f.GetName() == d,
+                                 self.colorable_fields) \
+                                 [0]
+            except IndexError:
+                default = none_field
 
         # Construct the select control.  The elements are the fields
         # themselves.  The user-visible text for each option in the
@@ -388,18 +400,15 @@ class ColorKeyPage(web.DtmlPage):
     """Popup page displaying the color key for the issue summary page."""
 
     def __init__(self,
-                 issue_class,
-                 hue_field_name,
-                 lightness_field_name,
-                 saturation_field_name):
+                 hue_field,
+                 lightness_field,
+                 saturation_field):
         """Create a new page.
 
-        'issue_class' -- The issue class for which field names apply.
-
-        'hue_field_name', 'lightness_field_name', 'saturation_field_name' --
-        Names of fields from which HLS channel values are taken.  These
-        are enumeration fields.  Values may also be 'None', indicating
-        no variation in this channel."""
+        'hue_field', 'lightness_field', 'saturation_field' -- Fields
+        from which HLS channel values are taken.  These are enumeration
+        fields.  Values may also be 'None', indicating no variation in
+        this channel."""
 
         # Initialize the base class.
         web.DtmlPage.__init__(self, "summary-color-key.dtml",
@@ -415,45 +424,42 @@ class ColorKeyPage(web.DtmlPage):
 
         # Construct the color chart for hues, if hues are varied
         # according to an issue field.
-        if hue_field_name is None:
+        if hue_field is None:
             self.hues = None
         else:
             self.hues = []
-            field = issue_class.GetField(hue_field_name)
-            enumerals = field.GetEnumerals()
+            enumerals = hue_field.GetEnumerals()
             for enumeral in enumerals:
                 color = _hls_transform(
                     hue=_color_value_for_enum(enumeral, enumerals))
                 self.hues.append(Color(enumeral, color))
-            self.hue_field_title = field.GetTitle()
+            self.hue_field_title = hue_field.GetTitle()
                 
         # Construct the color chart for lightness values, if lightness
         # is varied according to an issue field.
-        if lightness_field_name is None:
+        if lightness_field is None:
             self.lightnesses = None
         else:
             self.lightnesses = []
-            field = issue_class.GetField(lightness_field_name)
-            enumerals = field.GetEnumerals()
+            enumerals = lightness_field.GetEnumerals()
             for enumeral in enumerals:
                 color = _hls_transform(
                     lightness=_color_value_for_enum(enumeral, enumerals))
                 self.lightnesses.append(Color(enumeral, color))
-            self.lightness_field_title = field.GetTitle()
+            self.lightness_field_title = lightness_field.GetTitle()
                 
         # Construct the color chart for saturation values, if saturation
         # is varied according to an issue field.
-        if saturation_field_name is None:
+        if saturation_field is None:
             self.saturations = None
         else:
             self.saturations = []
-            field = issue_class.GetField(saturation_field_name)
-            enumerals = field.GetEnumerals()
+            enumerals = saturation_field.GetEnumerals()
             for enumeral in enumerals:
                 color = _hls_transform(
                     saturation=_color_value_for_enum(enumeral, enumerals))
                 self.saturations.append(Color(enumeral, color))
-            self.saturation_field_title = field.GetTitle()
+            self.saturation_field_title = saturation_field.GetTitle()
                 
                 
 
@@ -632,6 +638,10 @@ def _color_value_for_enum(value, enumerals):
 
 def _hls_transform(hue=None, lightness=None, saturation=None):
     """Transform HLS color values for an issue.
+
+    The input channel values each range, in general, between 0 and 1.
+    The output values are transformed from the input values to provide
+    pleasing color output.
 
     'hue', 'lightness', 'saturation' -- HLS channel values.  A default
     value is used for each that is 'None'.
