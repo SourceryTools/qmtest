@@ -37,7 +37,9 @@
 
 import os
 import qm
+import qm.graph
 import qm.label
+import string
 import sys
 import types
 
@@ -64,51 +66,85 @@ class NoSuchSuiteError(Exception):
 ########################################################################
 
 class Test:
-   """A test instance."""
+    """A test instance."""
 
-   def __init__(self, id):
-       """Create a new test instance.
+    def __init__(self,
+                 test_id,
+                 test_class,
+                 arguments,
+                 prerequisites,
+                 categories):
+        """Create a new test instance.
 
-       'id' -- The test ID."""
+        'test_id' -- The test ID.
 
-       self.__id = id
-       self.__categories = []
+        'test_class' -- The name of the test class of which this is an
+        instance.
 
+        'arguments' -- This test's arguments to the test class.
 
-   def GetId(self):
-       """Return the ID for this instance."
+        'categories' -- A sequence of names of categories to which this
+        test belongs.
 
-       return self.__id
+        'prerequisites' -- A mapping from prerequisite test ID to
+        required outcomes.
 
+        Additional arguments are ignored."""
 
-   # The fields in this test class.  A mapping from field names to
-   # 'Field' instances."""
-   fields = {}
+        self.__id = test_id
+        self.__test_class = test_class
+        self.__arguments = arguments
+        self.__prerequisites = prerequisites
+        self.__categories = categories
 
-
-   def IsInCategory(self, category):
-       """Return true if this test is in 'category'."""
-
-       return category in self.__categories
-
-
-   def AddCategory(self, category):
-       """Add 'category' to the list of categories of this test."""
-
-       if not category in self.__categories:
-           self.__categories.append(category)
+        # Don't instantiate the test yet.
+        self.__test = None
 
 
-   def Run(self, context):
-       """Execute this test.
+    def GetTest(self):
+        """Return the underlying user test object."""
 
-       'context' -- Information about the environment in which the
-       test is being executed.
+        # Perform just-in-time instantiation.
+        if self.__test is None:
+            self.__test = apply(self.__test_class, [], self.__arguments)
 
-       returns -- A 'Result' describing the outcome of the test."""
+        return self.__test
 
-       raise qm.MethodShouldBeOverriddenError, "Test.Run"
-  
+
+    def GetClass(self):
+        """Return the test class of this test."""
+
+        return self.__test_class
+    
+
+    def GetId(self):
+        """Return the ID for this instance."""
+        
+        return self.__id
+
+
+    def IsInCategory(self, category):
+        """Return true if this test is in 'category'."""
+
+        return category in self.__categories
+
+
+    def GetPrerequisites(self):
+        """Return a map from prerequisite test IDs to required outcomes."""
+
+        return self.__prerequisites
+
+
+    def Run(self, context):
+        """Execute this test.
+
+        'context' -- Information about the environment in which the test
+        is being executed.
+        
+        returns -- A 'Result' describing the outcome of the test."""
+
+        return self.GetTest().Run(context)
+
 
 
 class Suite:
@@ -172,13 +208,17 @@ class Database:
 
 
 class Result:
-    """The result of running a test."""
+    """The result of running a test.
+
+    A result object stores an outcome"""
 
     # Outcome constants.
     PASS = "PASS"
     FAIL = "FAIL"
     ERROR = "ERROR"
     UNTESTED = "UNTESTED"
+
+    outcomes = [ PASS, FAIL, ERROR, UNTESTED ]
     
 
     def __init__(self, outcome, context=None, **properties):
@@ -189,10 +229,10 @@ class Result:
 
 
     def __str__(self):
-        result = "  OUTCOME: %s\n" % self.__outcome
-        for key, value in self.__properties.items():
-            result = result + "  %s: %s" % (key, value)
-        return result
+        parts = map(lambda kv: "%s=%s" % (kv[0], repr(kv[1])),
+                    self.__properties.items())
+        parts = [ self.__outcome ] + parts
+        return "Result(%s)" % string.join(parts, ", ")
 
 
     def GetOutcome(self):
@@ -211,6 +251,10 @@ class Result:
 
     def __delitem__(self, key):
         del self.__properties[key]
+
+
+    def get(self, key, default=None):
+        return self.__properties.get(key, default)
         
 
 
@@ -317,6 +361,23 @@ class Context:
 
 
 
+class PrerequisiteMapAdapter:
+    """A map-like object associating prerequisites with test IDs."""
+
+    def __init__(self, database):
+        """Construct a new map."""
+        
+        self.__database = database
+
+
+    def __getitem__(self, test_id):
+        """Return a sequence of IDs of prerequisite tests of 'test_id'."""
+
+        test = self.__database.GetTest(test_id)
+        return test.GetPrerequisites().keys()
+
+
+
 class Engine:
    """The test execution engine."""
 
@@ -349,31 +410,80 @@ class Engine:
 
        'context' -- Context to pass to the tests.
 
-       returns -- A map from test IDs to 'Result' objects.  There
-       may be IDs in the map which are not in 'test_ids', since
-       additional prerequisite tests may have been run."""
+       returns -- A map from test IDs to 'Result' objects of tests that
+       were run.  The tests that were run is a superset of
+       'test_ids'."""
 
+       # Construct a map-like object for test prerequisites.
+       prerequisite_map = PrerequisiteMapAdapter(self.__database)
+       # Perform a topological sort to determine the tests that will be
+       # run and the order in which to run them.  The sort may return a
+       # superset of the original 'test_ids'.
+       test_ids = qm.graph.topological_sort(test_ids,
+                                            prerequisite_map)
        # Construct a map from test IDs to test objects.
        tests = {}
        for test_id in test_ids:
            tests[test_id] = self.__database.GetTest(test_id)
 
-       # FIXME: Handle prerequisites and preactions here.
-
-       # Run tests.
-       results = {}
+       # Run tests.  Store the results in an ordered map so that we can
+       # retrieve results by test ID efficiently, and also preserve the
+       # order in which tests were run.
+       results = qm.OrderedMap()
        for test_id in test_ids:
            test = tests[test_id]
-           try:
-               result = test.Run(context)
-           except:
-               # The test raised an exception.  Create a result object
-               # with the ERROR outcome.
-               exception = qm.format_exception(sys.exc_info())
-               result = Result(outcome=Result.ERROR,
-                               context=context,
-                               exception=exception)
+           result = None
+
+           # Check the test's prerequisites.
+           for prerequisite_id, outcome in test.GetPrerequisites().items():
+               # Because of the topological sort, the prerequisite
+               # should already have been run.
+               assert results.has_key(prerequisite_id)
+               # Did the prerequisite produce the required outcome?
+               if results[prerequisite_id].GetOutcome() != outcome:
+                   # No.  As a result, we won't run this test.  Create
+                   # a result object with the UNTESTED outcome.
+                   result = Result(outcome=Result.UNTESTED,
+                                   failed_prerequisite=prerequisite_id)
+                   # Don't look at other prerequisites.
+                   break
+
+           # If we don't already have a result (all prerequisites
+           # checked out), actually run the test.
+           if result is None:
+               try:
+                   result = test.Run(context)
+               except:
+                   # The test raised an exception.  Create a result
+                   # object with the ERROR outcome.
+                   exception = qm.format_exception(sys.exc_info())
+                   print exception
+                   result = Result(outcome=Result.ERROR,
+                                   context=context,
+                                   exception=exception)
+               else:
+                   # What did the test return?
+                   # Use the full module path to the 'Result' class,
+                   # since that's how test classes refer to it.
+                   if isinstance(result, qm.test.base.Result):
+                       # A 'Result' instance.  Good; keep it.
+                       pass
+                   elif result in Result.outcomes:
+                       # Just an outcome.  Construct a 'Result' instance
+                       # with it.
+                       result = Result(outcome=result,
+                                       context=context)
+                   else:
+                       # Something else.  That's an error.
+                       raise RuntimeError, \
+                             qm.error("invalid result",
+                                      id=test_id,
+                                      test_class=test.GetClass().__name__,
+                                      result=repr(result))
+
+           # Store the test result.
            results[test_id] = result
+
        return results
 
 
@@ -384,10 +494,9 @@ class Engine:
 
        'context' -- Context to pass to the tests.
 
-       returns -- A map from test IDs to 'Result' objects for the tests
-       that were run.  There may be IDs in the map which are not in the
-       specified suite, since additional prerequisite tests may have
-       been run."""
+       returns -- A map from test IDs to 'Result' objects of tests that
+       were run.  The tests that were run is a superset of the tests in
+       'suite_id'."""
 
        suite = self.__database.GetSuite(suite_id)
        return self.RunTests(suite.GetTestIds(), context)

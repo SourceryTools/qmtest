@@ -277,4 +277,5 @@ class IssueClass:
 # Local Variables:
 # mode: python
 # indent-tabs-mode: nil
+# fill-column: 72
 # End:

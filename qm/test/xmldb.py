@@ -73,6 +73,15 @@ class TestFileError(Exception):
 class Database(base.Database):
     """A database represnting tests as XML files in a directory tree."""
 
+    # This value, used in the test and suite caches, indicates that the
+    # corresponding ID doesn't correspond to an existing test or suite.
+    __DOES_NOT_EXIST = "does not exist"
+
+    # This value, used in the test and suite caches, indicates that the
+    # corresponding ID corresponds to an existing test or suite, but the
+    # test or suite hasn't been loaded.
+    __NOT_LOADED = "not loaded"
+
     # When processing the DOM tree for an XML test file, we may
     # encounter two kinds of errors.  One indicates an invalid DOM tree,
     # i.e. the structure is at variance with the test DTD.  We can use
@@ -101,6 +110,12 @@ class Database(base.Database):
                   qm.error("db path doesn't exist", path=path)
         # Remember the path.
         self.__path = path
+        # Cache results in these attributes.  The keys are test or suite
+        # IDs, and the values are either the loaded test or suite
+        # objects, or the special values '__DOES_NOT_EXIST' or
+        # '__NOT_LOADED'. 
+        self.__tests = {}
+        self.__suites = {}
 
 
     def GetPath(self):
@@ -112,71 +127,115 @@ class Database(base.Database):
     def HasTest(self, test_id):
         """Return true if the database contains a test with 'test_id'."""
 
-        # Turn the period-separated test ID into a file system path,
-        # relative to the top of the test database.
-        path = self.IdToPath(test_id, absolute=1) + test_file_extension
-        # Does the test file exist?
-        return os.path.isfile(path)
+        try:
+            # Try looking it up in the cache.
+            return self.__tests[test_id] is not self.__DOES_NOT_EXIST
+        except KeyError:
+            # Not found in the cache, so check in the file system.  Turn
+            # the period-separated test ID into a file system path,
+            # relative to the top of the test database.
+            path = self.IdToPath(test_id, absolute=1) + test_file_extension
+            # Does the test file exist?
+            if os.path.isfile(path):
+                # Yes.  Enter into the cache that the test exists but is
+                # not loaded.
+                self.__tests[test_id] = self.__NOT_LOADED
+                return 1
+            else:
+                # No.  Enter into the cache that the test does not exist.
+                self.__tests[test_id] = self.__DOES_NOT_EXIST
+                return 0
 
 
     def GetTest(self, test_id):
-        # Turn the period-separated test ID into a file system path,
-        # relative to the top of the test database.
-        path = self.IdToPath(test_id, absolute=1) + test_file_extension
-        # Does the test file exist?
-        if not os.path.isfile(path):
+        if not self.HasTest(test_id):
             raise base.NoSuchTestError, test_id
-        # Open it.
-        try:
-            file = open(path, "r")
-        except:
-            # FIXME.  Any errors that need to be handled here?
-            raise
-        # Create a validating DOM reader.
-        reader = xml.dom.ext.reader.Sax.Reader(validate=1)
-        try:
-            # Read and parse XML.
-            test_document = reader.fromStream(file)
-        except:
-            # FIXME.  How should we handle parse errors?
-            raise
-        file.close()
-        # Turn it into a test object.
-        return self.__ParseTestDocument(test_id, test_document)
+
+        # Look in the cache.
+        test = self.__tests[test_id]
+        if test == self.__NOT_LOADED:
+            # The test exists, but hasn't been loaded, so we'll have to
+            # load it here.  Turn the period-separated test ID into a
+            # file system path, relative to the top of the test
+            # database.
+            path = self.IdToPath(test_id, absolute=1) + test_file_extension
+            # Open it.
+            try:
+                file = open(path, "r")
+            except:
+                # FIXME.  Any errors that need to be handled here?
+                raise
+            # Create a validating DOM reader.
+            reader = xml.dom.ext.reader.Sax.Reader(validate=1)
+            try:
+                # Read and parse XML.
+                test_document = reader.fromStream(file)
+            except:
+                # FIXME.  How should we handle parse errors?
+                raise
+            file.close()
+            # Turn it into a test object.
+            test = self.__ParseTestDocument(test_id, test_document)
+            # Enter it into the cache.
+            self.__tests[test_id] = test
+            return test
+        else:
+            # Already loaded; return the cached value.
+            return test
         
 
     def HasSuite(self, suite_id):
         """Return true if the database contains a suite with 'suite_id'."""
 
-        id_path = self.IdToPath(suite_id, absolute=0)
-        path = self.IdToPath(suite_id, absolute=1)
-        # Is there a directory corresponding to the ID?
-        if os.path.isdir(path):
-            return 1
-        # Is there an explicit suite file corresponding to the ID?
-        id_path = id_path + suite_file_extension
-        path = path + suite_file_extension
-        if os.path.isfile(path):
-            # Yes.
-            return 1
-        # No suite found.
-        return 0
+        try:
+            # Check the cache.  If there's an entry for this suite ID,
+            # use the caches state.
+            return self.__suites[suite_id] is not self.__DOES_NOT_EXIST
+        except KeyError:
+            # It's not in the cache, so check the file system.
+            id_path = self.IdToPath(suite_id, absolute=0)
+            path = self.IdToPath(suite_id, absolute=1)
+            # Is there a directory corresponding to the ID?
+            if os.path.isdir(path):
+                # Yes.  Indicate in the cache that the suite exists.
+                self.__suites[suite_id] = self.__NOT_LOADED
+                return 1
+            # Is there an explicit suite file corresponding to the ID?
+            id_path = id_path + suite_file_extension
+            path = path + suite_file_extension
+            if os.path.isfile(path):
+                # Yes.  Indicate in the cache that the suite exists.
+                self.__suites[suite_id] = self.__NOT_LOADED
+                return 1
+            # No suite found.  Enter that into the cache.
+            self.__suites[suite_id] = self.__DOES_NOT_EXIST
+            return 0
 
 
     def GetSuite(self, suite_id):
-        path = self.IdToPath(suite_id, absolute=1)
-        # Is there a directory corresponding to the ID?
-        if os.path.isdir(path):
-            # Yes.  Return the virtual suite corresponding to that
-            # directory. 
-            return DirectorySuite(suite_id, self)
-        # Is there an explicit suite file corresponding to the ID?
-        path = path + suite_file_extension
-        if os.path.isfile(path):
-            # Yes.  Build a suite from that file.
-            return FileSuite(suite_id, self)
-        # Otherwise, we can't find the suite.
-        raise base.NoSuchSuiteError, "no test suite with ID %s" % suite_id
+        if not self.HasSuite(suite_id):
+            raise base.NoSuchSuiteError, "no test suite with ID %s" % suite_id
+
+        # Look in the cache.
+        suite = self.__suites[suite_id]
+        if suite == self.__NOT_LOADED:
+            path = self.IdToPath(suite_id, absolute=1)
+            # The suite exists, but is not loaded.  We'll have to load
+            # it here.  Is there a directory corresponding to the ID?
+            if os.path.isdir(path):
+                # Return the virtual suite corresponding to that
+                # directory.
+                suite = DirectorySuite(suite_id, self)
+            else:
+                # Build a suite from a file.
+                path = path + suite_file_extension
+                suite = FileSuite(suite_id, self)
+            # Enter the suite into the cache.
+            self.__suites[suite_id] = suite
+            return suite
+        else:
+            # Already loaded; return cached value.
+            return suite
         
 
     def IdToPath(self, id_, absolute=0):
@@ -209,17 +268,21 @@ class Database(base.Database):
         # Extract the pieces.
         test_class = self.__GetClass(test_node)
         arguments = self.__GetArguments(test_node, test_class)
-        categories = qm.common.get_dom_children_texts(test_node, "categories")
+        categories = qm.common.get_dom_children_texts(test_node, "category")
         prerequisites = self.__GetPrerequisites(test_node, test_id)
         # Construct the test object.
-        test = apply(test_class, [ test_id ], arguments)
-        for category in categories:
-            test.AddCategory(category)
+        test = apply(test_class, [], arguments)
+        # Construct a test wrapper around it.
+        test = base.Test(test_id,
+                         test_class,
+                         arguments,
+                         prerequisites,
+                         categories)
         return test
         
 
     def __GetClass(self, test_node):
-        """Return the test class of a test.
+        """Return the name of the test class of a test.
 
         'test_node' -- A DOM node for a test element.
 
@@ -257,11 +320,15 @@ class Database(base.Database):
         for arg_node in test_node.getElementsByTagName("argument"):
             # Extract the (required) name attribute.  
             name = arg_node.getAttribute("name")
-            try:
-                # Is there a corresponding field?
-                field = fields[name]
-            except KeyError:
-                # Nope; that's an error.
+            # Look for a field with the same name.
+            field = None
+            for f in fields:
+                if f.GetName() == name:
+                    field = f
+                    break
+            # Did we find a field by this name?
+            if field is None:
+                # No.  That's an error.
                 raise TestFileError, \
                       qm.error("xml invalid arg name", name=name)
             # The argument element should have exactly one child, the
@@ -280,17 +347,27 @@ class Database(base.Database):
 
 
     def __GetPrerequisites(self, test_node, test_id):
-        """Return IDs of prerequisite tests.
+        """Return the prerequisite tests for 'test_node'.
 
         'test_node' -- A DOM node for a test element.
 
-        'test_id' -- The corresponding test ID."""
+        'test_id' -- The corresponding test ID.
+
+        returns -- A mapping from prerequisite test ID to the outcome
+        required for that test."""
         
+        rel = qm.label.MakeRelativeTo(label=test_id)
         # Extract the contents of all prerequisite elements.
-        results = qm.common.get_dom_children_texts(test_node, "prerequisite")
-        # These test IDs are relative to the path containing this test.
-        # Make them absolute.
-        return map(qm.label.MakeRelativeTo(label=test_id), results)
+        results = {}
+        for child_node in test_node.getElementsByTagName("prerequisite"):
+            test_id = qm.common.get_dom_node_text(child_node)
+            # These test IDs are relative to the path containing this
+            # test.  Make them absolute.
+            test_id = rel(test_id)
+            # Get the required outcome.
+            outcome = child_node.getAttribute("outcome")
+            results[test_id] = outcome
+        return results
 
 
 

@@ -37,6 +37,9 @@
 <!ELEMENT category (#PCDATA)>
 
 <!ELEMENT prerequisite (#PCDATA)>
+<!ATTLIST prerequisite
+    outcome ( PASS | FAIL | ERROR | UNTESTED ) "PASS"
+>
 
 <!ELEMENT preaction (#PCDATA)>
 

@@ -65,6 +65,14 @@ class Command:
         "Path to the test database."
         )
 
+    all_results_option_spec = (
+        "A",
+        "all-results",
+        None,
+        "Display results of all tests, including those not explicitly "
+        "requested."
+        )
+
     global_options_spec = [
         help_option_spec,
         db_path_option_spec,
@@ -77,7 +85,7 @@ class Command:
          "This command runs tests, prints their outcomes, and writes "
          "test results.  Specify one or more test IDs and "
          "suite IDs as arguments.",
-         ( help_option_spec, )
+         ( help_option_spec, all_results_option_spec )
          ),
 
         ]
@@ -106,6 +114,9 @@ class Command:
           self.__command_options,
           self.__arguments
           ) = components
+
+        # Set defaults.
+        self.__show_all_results = 0
 
 
     def GetGlobalOption(self, option):
@@ -157,6 +168,10 @@ class Command:
                                envvar=self.db_path_environment_variable)
         self.__database = xmldb.Database(db_path)
 
+        # Handle other configuration.
+        if self.GetCommandOption("all-results") is not None:
+            self.__show_all_results = 1
+
         # Dispatch to the appropriate method.
         method = {
             "run" : self.__ExecuteRun,
@@ -180,15 +195,28 @@ class Command:
             raise CommandError, qm.error("no ids specified")
         try:
             test_ids = []
+            # Validate test IDs and expand test suites in the arguments.
             base.expand_and_validate_ids(database,
                                          self.__arguments,
                                          test_ids)
-
+            # Run the tests.
             engine = base.Engine(database)
             context = base.Context()
             results = engine.RunTests(test_ids, context)
 
-            self.__WriteOutcomes(test_ids, results, output)
+            if self.__show_all_results:
+                # Show results for all the tests that were run, in the
+                # order they were run.
+                show_test_ids = results.keys()
+            else:
+                # Show only tests that were run, in the order they were
+                # specified.
+                show_test_ids = test_ids
+                # FIXME: Should we perhaps show tests in the order they
+                # were actually run instead?
+            # Summarize outcomes.
+            self.__WriteOutcomes(show_test_ids, results, output)
+
         except:
             raise
                                                     
@@ -206,12 +234,6 @@ class Command:
             output.write(format % (test_id, result.GetOutcome()))
 
 
-
-########################################################################
-# functions
-########################################################################
-
-# Place function definitions here.
 
 ########################################################################
 # script

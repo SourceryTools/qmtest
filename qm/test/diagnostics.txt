@@ -47,6 +47,10 @@ The path you specified for the test database, %(path)s, already exists.
 The context key "%(key)s" is not valid.  Context keys may contain
 lower-case letters, digits, underscores, and periods.
 
+@ invalid result
+The test %(id)s of class %(test_class)s returned an invalid result,
+'%(result)s'. 
+
 @ invalid test id
 The test ID "%(id)s" is not valid.  Test IDs may contain lower-case
 letters, digits, and underscores, and periods.

@@ -367,6 +367,101 @@ class RcConfiguration:
         return parser
 
 
+
+class OrderedMap:
+    """A map that preserves the order of elements inserted into it.
+
+    An 'OrderedMap' object behaves in many ways like a map.
+
+      - It supports efficient lookup of value by key.
+
+      - It supports 'keys' and 'values' operations efficiently.  Both
+        these lists present their elements in the order they were
+        inserted into the map.
+
+      - It does not support the 'items' operation.
+
+      - It takes more space than an ordinary map.
+
+      - It does not support deleting of elements.  The value of an
+        exisiting key may be replaced efficiently, though; this does not
+        change the position of the key in the order.
+    """
+
+    # The '__keys' and '__values' lists store keys and values at
+    # corresponding indices.  The '__key_map' map associates keys with
+    # indices in these two lists.
+
+    def __init__(self):
+        self.__keys = []
+        self.__values = []
+        self.__key_map = {}
+
+
+    def __getitem__(self, key):
+        return self.__values[self.__key_map[key]]
+
+
+    def __setitem__(self, key, value):
+        try:
+            index = self.__key_map[key]
+        except KeyError:
+            index = len(self.__keys)
+            self.__keys.append(key)
+            self.__values.append(value)
+            self.__key_map[key] = index
+        else:
+            self.__values[index] = value
+
+
+    def has_key(self, key):
+        return self.__key_map.has_key(key)
+
+
+    def keys(self):
+        return self.__keys
+
+
+    def values(self):
+        return self.__values
+
+
+    def get(self, key, default=None):
+        try:
+            index = self.__key_map[key]
+        except KeyError:
+            return default
+        else:
+            return self.__values[index]
+
+
+    def clear(self):
+        self.__keys = []
+        self.__values = []
+        self.__key_map.clear()
+
+
+    def copy(self):
+        result = OrderedMap()
+        result.__keys = self.__keys[:]
+        result.__values = self.__values[:]
+        result.__key_map = self.__key_map.copy()
+        return result
+
+
+    def update(self, map):
+        for key, value in map.items():
+            self[key] = value
+            
+
+    def __str__(self):
+        pairs = map(lambda i, k=self.__keys, v=self.__values: 
+                        repr(k[i]) + ": " + repr(v[i]),
+                    range(0, len(self.__keys)))
+        return "OrderedMap{%s}" % string.join(pairs, ", ")
+
+
+
 ########################################################################
 # functions
 ########################################################################

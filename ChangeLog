@@ -1,3 +1,38 @@
+2001-03-18  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/graph.py: Fix code formatting.
+	* qm/common.py (OrderedMap): New class.
+	* qm/test/cmdline.py (Command.all_results_option_spec): New
+	variable.
+	(Command.commands_spec): Include it.
+	(Command.__init__): Initialize __show_all_results.
+	(Command.Execute): Handle all-results option.
+	(Command.__ExecuteRun): Show all results if specified.
+	* qm/test/base.py (Test.__init__): Add parameters.
+	(Test.GetTest): New method.
+	(Test.GetClass): Likewise.
+	(Test.AddCategory): Remove.
+	(Test.GetPrerequisites): New method.
+	(Test.Run): Use GetTest.
+	(Result.outcomes): New variable.
+	(Result.__str__): Reimplement.
+	(Result.get): New method.
+	(PrerequisiteMapAdapter): New class.
+	(Engine.RunTests): Handle prerequisites.
+	* qm/test/xmldb.py (Database.__DOES_NOT_EXIST): New constant.
+	(Database.__NOT_LOADED): Likewise.
+	(Database.__init__): Initialize test and suite caches.
+	(Database.HasTest): Use caches.
+	(Database.GetTest): Likewise.
+	(Database.HasSuite): Likewise.
+	(Database.GetSuite): Likewise.
+	(Database.__ParseTestDocument): Parse prerequisites.  Pass info to
+	Test initializer.
+	(Database.__GetArguments): Treat fields as list.
+	(Database.__GetPrerequisites): Get outcome attribute.
+	* qm/test/test.dtd (prerequisite): Add attlist.
+	* qm/test/diagnostics.txt (invalid result): New diagnostic.
+
 2001-03-17  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/common.py (__label_regex): Remove.
