@@ -438,26 +438,24 @@ class NotifyByUidFieldTrigger(_NotifyByFieldTrigger):
             uid = issue.GetField("user")
             current_subscribers = issue.GetField(self._field_name)
             # Is the user already subscribed?
-            if uid in current_subscribers:
-                continue
-            # Find out who was subscribed before the revision.
-            if previous_issue is None:
-                previous_subscribers = []
-            else:
-                previous_subscribers = previous_issue.GetField(
-                    self._field_name)
-            # First check if the user was explicitly unsubscribed as
-            # part of this revision (i.e. was previously in the
-            # subscriber list but is no longer). 
-            if uid in previous_subscribers \
-               and uid not in current_subscribers:
-                # Let's not be obnoxious and forcefully resubscribe the
-                # user.
-                pass
-            else:
-                # Subscribe the user.
-                current_subscribers.append(uid)
-                issue.SetField(self._field_name, current_subscribers)
+            if uid not in current_subscribers:
+                # Find out who was subscribed before the revision.
+                if previous_issue is None:
+                    previous_subscribers = []
+                else:
+                    previous_subscribers = previous_issue.GetField(
+                        self._field_name)
+                # First check if the user was explicitly unsubscribed as
+                # part of this revision (i.e. was previously in the
+                # subscriber list but is no longer). 
+                if uid in previous_subscribers:
+                    # Let's not be obnoxious and forcefully resubscribe the
+                    # user.
+                    pass
+                else:
+                    # Subscribe the user.
+                    current_subscribers.append(uid)
+                    issue.SetField(self._field_name, current_subscribers)
         # Proceed as usual.
         return TriggerResult(self, TriggerResult.ACCEPT)
 
