@@ -92,6 +92,11 @@ class ExecTest:
             self.__source = ""
         else:
             self.__source = source
+            # Make sure the source ends with a newline.  A user is
+            # likely to be confused by the error message if it's
+            # missing. 
+            if self.__source[-1] != "\n":
+                self.__source = self.__source + "\n" 
         self.__expression = expression
 
 

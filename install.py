@@ -35,6 +35,7 @@
 # imports
 ########################################################################
 
+import dircache
 import os
 import py_compile
 import re
@@ -84,6 +85,57 @@ doc_dirs = [
 ########################################################################
 # functions
 ########################################################################
+
+def copy_tree(src, dst, expand_symlinks=0):
+    """Copy a directory tree, recursively.
+
+    Unlike 'shutil.copytree', it's OK if 'dst' and subdirectories of it
+    exist, as long as no files under 'dst' conflict with corresponding
+    directories under 'src'.
+    
+    'src' -- The source directory to copy.
+
+    'dst' -- The destination directory.
+
+    'expand_symlinks' -- If true, the copy reads through symlinks and
+    expands their targets.  If false, symlinks are copied as such.
+
+    raises -- 'RuntimeError' if an existing file in or under 'dst'
+    conflicts with a directory in 'src'.
+
+    raises -- 'RuntimeError' if 'src' contains, directly or indirectly,
+    an entry that is not a file, directory, or symbolic link."""
+    
+    # Create the 'dst' directory, if it doesn't exist.
+    if not os.path.isdir(dst):
+        if os.path.exists(dst):
+            raise RuntimeError, \
+                  "%s exists but is not a directory" % dst
+        os.mkdir(dst)
+
+    # Scan over directory contents.
+    entries = dircache.listdir(src)
+    for entry in entries:
+        # Construct paths to corresponding source and destination.
+        src_entry = os.path.join(src, entry)
+        dst_entry = os.path.join(dst, entry)
+        # Handle symlinks specially, if 'expand_symlinks' is not true.
+        # Otherwise, treat that entry as the target to which the symlink
+        # points. 
+        if not expand_symlinks and os.path.islink(src_entry):
+            # Create an equivalent symlink.
+            target = os.readlink(src_entry)
+            os.symlink(target, dst_entry)
+        elif os.path.isfile(src_entry):
+            # Copy a file.
+            shutil.copy(src_entry, dst_entry)
+        elif os.path.isdir(src_entry):
+            # Copy a directory, recursively.
+            copy_tree(src_entry, dst_entry)
+        else:
+            # We don't try to copy pipes, sockets, devices, etc.
+            raise RuntimeError, "cannot copy %s" % src_entry
+
 
 def install_package(src, dst):
     """Install a package from 'src' to 'dst'.
@@ -200,11 +252,9 @@ share_parent_dir = os.path.dirname(share_dir)
 if not os.path.exists(share_parent_dir):
     os.makedirs(share_parent_dir, 0755)
     os.chmod(share_parent_dir, 0755)
-# 'copytree' wants 'share_dir' not to exist, though.    
-assert not os.path.exists(share_dir)
 # Copy the share directory tree wholesale.
 print "copying %s" % share_dir
-shutil.copytree("share", share_dir)
+copy_tree("share", share_dir)
 # Set the permissions of the files in the tree.
 os.path.walk(share_dir, set_data_file_permissions, None)
 
@@ -225,7 +275,7 @@ for dir in doc_dirs:
     if not os.path.isdir(dest_dir):
         os.makedirs(dest_dir, 0755)
     print "copying %s" % src
-    shutil.copytree(src, dest)
+    copy_tree(src, dest)
 
 ########################################################################
 # Local Variables:

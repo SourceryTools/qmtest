@@ -1,5 +1,12 @@
 2001-09-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* install.py (copy_tree): New function.
+	Use it.
+	* qm/test/classes/python.py (ExecTest.__init__): Make sure source
+	is newline-terminated.
+
+2001-09-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* install.py: Substitute @python_version@ and @python_platform@.
 
 2001-09-06  Alex Samuel  <samuel@codesourcery.com>
