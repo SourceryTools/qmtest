@@ -1,5 +1,14 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/web.py (make_button_for_popup): Spell "resizeable" without
+	the "e" in JavaScript code.
+	(format_user_id): Likewise.
+	* share/dtml/help.dtml (popup_manual): Likewise.
+	* share/web/common.js (show_help): Likewise.
+	(popup_manual): Likewise.
+	
+	* share/dtml/test/result.dtml: Sort the annotations.
+
 	* Makefile.in (doc-install): Do not assume $(INSTALL) understands
 	wildcards.
 	* scripts/qm-release (build_qm): Do not rely on tar to do 

@@ -40,7 +40,7 @@
    function popup_manual()
    {
      window.open("/manual/index.html", "manual",
-                 "resizeable,toolbar,scrollbars");
+                 "resizable,toolbar,scrollbars");
    }
   <dtml-var expr="GenerateEndScript()">
  </body>

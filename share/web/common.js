@@ -136,7 +136,7 @@ function show_help(help_page)
   if(help_window != null && !help_window.closed)
     help_window.close();
   help_window = window.open("", "help",
-                "resizeable,scrollbars");
+                "resizable,scrollbars");
   help_window.document.open("text/html", "replace");
   help_window.document.write(help_page);
   help_window.document.close();
@@ -183,7 +183,7 @@ function swap_option(select, offset)
 function popup_manual()
 {
   window.open("/manual/index.html", "manual",
-          "resizeable,toolbar,scrollbars");
+          "resizable,toolbar,scrollbars");
 }
 
 

@@ -2494,7 +2494,7 @@ def make_button_for_popup(label,
     page_url = cache_page(html_text, session_id).AsUrl()
 
     # Construct arguments for 'Window.open'.
-    window_args = "resizeable,width=%d,height=%s" \
+    window_args = "resizable,width=%d,height=%s" \
                   % (window_width, window_height)
     # Generate it.
     return """
@@ -2648,7 +2648,7 @@ def format_user_id(user_id):
         return '''
         <a href="javascript: void(0);"
            onclick="window.open('%s', 'popup',
-                                'height=200,width=300,resizeable');"
+                                'height=200,width=300,resizable');"
            class="userid">%s</a>''' \
             % (user_page_request.AsUrl(), user_id)
 
