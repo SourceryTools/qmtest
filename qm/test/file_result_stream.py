@@ -64,7 +64,7 @@ class FileResultStream(ResultStream):
                     mode = "wb"
                 else:
                     mode = "w"
-                    self.file = open(self.filename, mode, 0)
+                self.file = open(self.filename, mode, 0)
             else:
                 self.file = sys.stdout
             

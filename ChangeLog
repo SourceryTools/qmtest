@@ -1,5 +1,22 @@
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
+	* qm/executable.py (Executable.Spawn): Remove __has_*_run variables.
+	(Executable._InitializeParent): Likewise.
+	(Executable._HandleChild): Likewise.
+	(Executable._InitializeChild): Likewise.
+	(Executable._DoParent): Likewise.
+	* qm/platform_win32.py (get_user_name): Remove.
+	* qm/platform_unix.py (send_email): Remove.
+	(get_user_name): Remove.
+	* qm/regression_test.py: Remove file.	
+	
+	* qm/test/doc/reference.xml (Field Classes): Fix typo.
+
+	* qm/test/file_result_stream.py (FileResultStream.__init__): Fix
+	indentation.
+	
+2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
+
 	* qm/executable.py (TimeoutExecutable._HandleChild): Close all
 	fds in the monitor process.
 	* tests/xmldb/test.qms/classes.qms/scripttest_closes_stdin.qmt:

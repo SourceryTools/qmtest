@@ -48,12 +48,6 @@ class SignalException(Exception):
 # functions
 ########################################################################
 
-def get_user_name():
-    """Return the name user running the current program."""
-
-    return os.environ["USERNAME"]
-
-
 def get_host_name():
     """Return the name of this computer."""
 

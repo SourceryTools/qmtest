@@ -2070,7 +2070,7 @@
   <para>A &field_class; is a named, typed component of a data
   structure.  A <classname>Field</classname> can read and write XML
   representations of values, generate HTML representations of values,
-  or present HTML forms that permit the user to pudate the value of
+  or present HTML forms that permit the user to update the value of
   the field.  There are several classes derived from
   <classname>Field</classname> that you can use in extension classes.
   If none of those classes satisfy your needs, you can create a new

@@ -97,15 +97,6 @@ class Executable(object):
         path using 'dir' as the base, or the current directory if
         'dir' is not set."""
 
-        # None of the hook functions have been run yet.  These flags
-        # are maintained so as to support multiple inheritance; in
-        # that situation these functions in this class may be called
-        # more than once.
-        self.__has_initialize_child_run = 0
-        self.__has_initialize_parent_run = 0
-        self.__has_handle_child_run = 1
-        self.__has_do_parent_run = 0
-        
         # Remember the directory in which the execution will occur.
         self.__dir = dir
 
@@ -272,10 +263,8 @@ class Executable(object):
         explaining how the child should be initialized.  On other
         systems, the return value is ignored."""
 
-        if not self.__has_initialize_parent_run:
-            self.__has_initialize_parent_run = 1
-            if sys.platform == "win32":
-                return win32process.STARTUPINFO()
+        if sys.platform == "win32":
+            return win32process.STARTUPINFO()
 
 
     def _HandleChild(self):
@@ -287,7 +276,7 @@ class Executable(object):
 
         Derived class versions must call this method."""
 
-        self.__has_handle_child_run = 1
+        pass
     
         
     def _InitializeChild(self):
@@ -301,16 +290,14 @@ class Executable(object):
 
         assert sys.platform != "win32"
 
-        if not self.__has_initialize_child_run:
-            self.__has_initialize_child_run = 1
-            if self.__dir:
-                os.chdir(self.__dir)
+        if self.__dir:
+            os.chdir(self.__dir)
 
 
     def _DoParent(self):
         """Perform actions required in the parent after 'Spawn'."""
 
-        self.__has_do_parent_run = 1
+        pass
     
 
     def _GetChildPID(self):
