@@ -17,6 +17,7 @@
 # imports
 ########################################################################
 
+from   __future__ import nested_scopes
 import base
 import database
 import os
@@ -175,6 +176,13 @@ class QMTest:
         None,
         "Run the tests in a random order."
         )
+
+    rerun_option_spec = (
+        None,
+        "rerun",
+        "FILE",
+        "Rerun the tests that failed."
+        )
     
     seed_option_spec = (
         None,
@@ -280,6 +288,7 @@ The summary is written to standard output.
            outcomes_option_spec,
            output_option_spec,
            random_option_spec,
+           rerun_option_spec,
            seed_option_spec,
            targets_option_spec,
            )
@@ -658,12 +667,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                            path=results_path,
                            problem=str(exception))
 
-        # Handle the 'outcome' option.
-        outcomes_file_name = self.GetCommandOption("outcomes")
-        if outcomes_file_name is not None:
-            outcomes = base.load_outcomes(open(outcomes_file_name, "r"))
-        else:
-            outcomes = None
+        # Get the expected outcomes.
+        outcomes = self.__GetExpectedOutcomes()
             
         # The remaining arguments, if any, are test and suite IDs.
         id_arguments = self.__arguments[1:]
@@ -769,13 +774,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                            format=format,
                            valid_formats=valid_format_string)
 
-        # Handle the 'outcome' option.
-        outcomes_file_name = self.GetCommandOption("outcomes")
-        if outcomes_file_name is not None:
-            outcomes = base.load_outcomes(open(outcomes_file_name, "r"))
-        else:
-            outcomes = None
-            
+        # Get the expected outcomes.
+        expectations = self.__GetExpectedOutcomes()
+
         # Handle the 'seed' option.  First create the random number
         # generator we will use.
         seed = self.GetCommandOption("seed")
@@ -789,8 +790,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Use the specified seed.
             random.seed(seed)
 
-        # Make sure some arguments were specified.  The arguments are
-        # the IDs of tests and suites to run.
+        # Figure out what tests to run.
         if len(self.__arguments) == 0:
             # No IDs specified; run the entire test database.
             self.__arguments.append("")
@@ -806,6 +806,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             raise qm.cmdline.CommandError, \
                   qm.error("no such ID", id=str(exception))
 
+        # Filter the set of tests to be run, eliminating any that should
+        # be skipped.
+        test_ids = self.__FilterTestsToRun(test_ids, expectations)
+        
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
@@ -815,7 +819,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # a results file.
         result_streams = []
         if format != "none":
-            stream = TextResultStream(output, format, outcomes,
+            stream = TextResultStream(output, format, expectations,
                                       self.GetDatabase(), test_suites)
             result_streams.append(stream)
 
@@ -920,6 +924,57 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         # Accept requests.
         server.Run()
 
+
+    def __GetExpectedOutcomes(self):
+        """Return the expected outcomes for this test run.
+
+        returns -- A map from test names to outcomes corresponding to
+        the expected outcome files provided on the command line.  If no
+        expected outcome files are provided, 'None' is returned."""
+
+        outcomes_file_name = self.GetCommandOption("outcomes")
+        if not outcomes_file_name:
+            return None
+
+        try:
+            return base.load_outcomes(open(outcomes_file_name, "r"))
+        except IOError, e:
+            raise qm.cmdline.CommandError, str(e)
+        
+        
+    def __FilterTestsToRun(self, test_names, expectations):
+        """Return those tests from 'test_names' that should be run.
+
+        'test_names' -- A sequence of test names.
+
+        'expectations' -- A map from test names to expected outcomes, or
+        'None' if there are no expected outcomes.
+        
+        returns -- Those elements of 'test_names' that are not to be
+        skipped.  If 'a' precedes 'b' in 'test_names', and both 'a' and
+        'b' are present in the result, 'a' will precede 'b' in the
+        result."""
+
+        # The --rerun option indicates that only failing tests should
+        # be rerun.
+        rerun_file_name = self.GetCommandOption("rerun")
+        if rerun_file_name:
+            # Load the outcomes from the file specified.
+            outcomes = base.load_outcomes(open(rerun_file_name))
+            # We can avoid treating the no-expectation case as special
+            # by creating an empty map.
+            if expectations is None:
+                expectations = {}
+            # Filter out tests that have unexpected outcomes.
+            test_names \
+                = filter(lambda n: \
+                             (outcomes.get(n, Result.PASS) 
+                              != expectations.get(n, Result.PASS)),
+                         test_names)
+        
+        return test_names
+
+                       
 ########################################################################
 # functions
 ########################################################################

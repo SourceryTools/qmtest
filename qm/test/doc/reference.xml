@@ -956,7 +956,7 @@
      <varlistentry>
       <term><option>-O</option> <replaceable>file</replaceable></term>
       <term>
-       <option>&dashdash;option</option> <replaceable>file</replaceable>
+       <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
       </term>
       <listitem>
        <para>Treat <replaceable>file</replaceable> as a set of
@@ -977,6 +977,32 @@
        <para>This option can be used to find hidden dependencies
        between tests in the testsuite.  (You may not notice the
        dependencies if you always run the tests in the same order.)</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>&dashdash;rerun</option> 
+            <replaceable>file</replaceable></term>
+      <listitem>
+       <para>Rerun only those tests that had unexpected outcomes.</para>
+  
+       <para>The tests run are determined as follows.  QMTest starts
+       with all of the tests specified on the command line, or, if no
+       tests are explicitly specified, all of the tests in the
+       database.  If no expectations file is specified (see the
+       description of the <option>&dashdash;outcomes</option> option),
+       then all tests that passed in the results file indicated by the
+       <option>&dashdash;rerun</option> option are removed form the
+       set of eligible tests.  If an expectations file is specified,
+       then the tests removed are tests whose outcome in the results
+       file indicated by the <option>&dashdash;rerun</option> option
+       is the same as in the expectations file.</para>
+
+       <para>The <option>&dashdash;rerun</option> provides a simple
+       way of rerunning failing tests.  If you run your tests and
+       notice failures, you might try to fix those failing tests.
+       Then, you can rerun the failing tests to see if you succeeded
+       by using the <option>&dashdash;rerun</option> option.</para>
       </listitem>
      </varlistentry>
 

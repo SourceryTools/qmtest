@@ -1,3 +1,16 @@
+2002-07-04  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention qmtest run --rerun.
+	* qm/test/base.py (get_class_arguments): Remove Python 1.5.2
+	compatibility code.
+	* qm/test/cmdline.py (QMTest.rerun_option_spec): New class
+	variable.
+	(QMTest.commands_spec): Use it.
+	(QMTest.__ExecuteSummarize): Use __GetExpectedOutcomes.
+	(QMTest.__ExecuteRun): Likewise.  Use __FilterTestsToRun.
+	(QMTest.__GetExpectedOutcomes): New method.
+	(QMTest.__FilterTestsToRun): Likewise.
+	
 2002-06-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/file_database.py (FileDatabase.GetTestPath): Fix typo.

@@ -11,6 +11,10 @@ a random order, you must now use the "--random" option to "qmtest run".
 
 QMTest now has a "--version" option.
 
+The "qmtest run" command now has a "--rerun" option to rerun only
+those tests which had unexpected outcomes when the tests were last
+run.  See the manual for more information.
+
 QM 1.1.5
 ========
 
