@@ -1,3 +1,15 @@
+2000-10-25  Alex Samuel  <samuel@codesourcery.com>
+
+	* standard.mk: New file.
+	* doc/GNUmakefile: Likewise.
+	* doc/qm.css: Likewise.
+	* doc/design/qmtrack/GNUmakefile: Likewise.
+	* templates/html: Update for XHTML.
+	
+2000-10-24  Alex Samuel  <samuel@codesourcery.com>
+
+	* templates/html (DOCTYPE): Add.
+
 2000-10-24  Alex Samuel  <samuel@codesourcery.com>
 
 	* templates/py: New file.

@@ -18,12 +18,69 @@ in code and documentation for the Software Carpentry project.
 
     ChangeLog entries are not required for documentation changes.
     However, all changes to Makefiles and other mechanisms used for
-    machine processing of documentation should be accompanies by
-    ChangeLog entries.
+    machine processing of documentation, and changes to style sheets
+    and related meta-information, should be accompanied by ChangeLog
+    entries.
 
 
   - When creating a new source file, use the appropriate template from
     the templates subdirectory.  The template contains the project's
     copyright banner and similar formatting.
 
+    All source files, documentation files, Makefiles, etc. must carry
+    the standard copyright banner and a summary of the file's
+    contents.
+
+
+  - Wrap all text to 72 columns.
+
+
+Instructions for writing documention:
+
+  - Documentation should be written in XHTML, using the standard
+    strict XHTML DTD (we do not use a custom DTD).  See
+    <http://www.w3.org/MarkUp/> for information about XHTML.
+
+    XHTML is the anointed successor to HTML 4, but, as a subset of
+    XML, somewhat stricter.  People who are accustomed to previous
+    versions of HTML should watch out for these things:
+
+      o All elements must be closed.  For instance, each paragraph
+        must be enclosed in <p>...</p>.  The closing tag is no longer
+        optional.
+
+        Even elements that don't delimit anything, such as <img> and
+        <br>, must be closed.  For these, you can as shorthand close
+        the element by placing a slash before the closing angle
+        bracket.  For instance <br/> is considered a complete tag
+        pair.
+
+      o Element names must be in lower-case.
+
+      o Attribute values must be quoted, with double-quotes.  For
+        instance, <tr valign=top> is no longer OK; you must use 
+	<tr valign="top">.
+
+
+  - Use the .xhtml extension for documentation files.  These files are
+    processed to generate .html files by the make system.
+
+
+  - Before writing any documentation, please read the QM style sheet,
+    doc/qm.css.  The comments in the style sheet explain the standard
+    element classes used throughout the documentation.  Please use
+    these classes as much as possible to express the logical structure
+    of your document.
+
+
+  - Don't use any formatting markup in documents, or define new
+    classes.  Use logical markup only.
+
+
+  - The tidy utility is required to generate HTML from XHTML.  You can
+    obtain tidy as source or prebuilt for a variety of platforms from
+    <http://www.w3.org/People/Raggett/tidy/>.  You must place tidy
+    somewhere in your path, or modify the Makefiles accordingly.
+
+    This requirement will probably be relaxed at a later data.
 
