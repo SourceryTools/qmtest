@@ -1,5 +1,12 @@
 2001-10-02  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (load_database): Rework.
+	(get_extension_directories): New function.
+	(get_class): Use it.
+	(get_database_class): New function.
+	* share/xml/tdb-configuration.dtd: New file.
+	* share/xml/CATALOG: Add it.
+
 	* qm/common.py (rmdir_recursively): Remove the directory itself.
 
 	* qm/attachment.py (TemporaryAttachmentStore): Derived from

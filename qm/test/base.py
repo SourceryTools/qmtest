@@ -1222,37 +1222,47 @@ def load_database(path):
     if not os.path.isdir(path):
         raise ValueError, "Database path %s is not a directory." % path
 
-    # Try to load the database implementation from a file named
-    # '_classes/database.py' in the test database.
-    classes_path = [os.path.join(path, "_classes")]
-    database_class = None
-    try:
-        database_module = qm.common.load_module("database", classes_path)
-    except ImportError, e:
-        # Couldn't import the module.
-        pass
+    # Figure out which class implements the database.  Start by looking
+    # for a file called 'database.qtb' in the directory corresponding
+    # to the database.
+    config_path = os.path.join(path, 'configuration')
+    print config_path
+    if os.path.isfile(config_path):
+        # Load the configuration file.
+        document = qm.xmlutil.load_xml_file(config_path)
+        # Get the root node in the document.
+        database = document.documentElement
+        # Load the database class tag.
+        database_class_name = qm.xmlutil.get_child_text(database,
+                                                        'class_name')
+        # Get the database class.
+        database_class = get_database_class(database_class_name)
     else:
-        # Look for a class named 'Database' in the module.
-        try:
-            db = database_module.Database
-        except AttributeError:
-            # No such attribute in the module.
-            pass
-        else:
-            # Make sure it's a class.
-            if type(db) is types.ClassType:
-                database_class = db
-
-    # Did we find the class?
-    if database_class is None:
-        # No.  Fall back to the default XML test database implementation.
+        # If 'database.qtb' did not exist, fall back to the 'xmldb'
+        # database.
         import xmldb
         database_class = xmldb.Database
-
-    # Load the database.
+    
+    # Create the database.
     global _database
     _database = database_class(path)
 
+
+def get_extension_directories():
+    """Return the directories to search for QMTest extensions.
+
+    returns -- A sequence of strings.  Each string is the path to a
+    directory that should be searched for QMTest extensions.  The
+    directories must be searched in order; the first directory
+    containing the desired module is the one from which the module is
+    loaded."""
+
+    if os.environ.has_key('QMTEST_CLASSPATH'):
+        dirs = string.split(os.environ['QMTEST_CLASSPATH'], ':')
+    else:
+        dirs = []
+
+    return dirs + __builtin_class_path
 
 
 def get_class(class_name):
@@ -1275,23 +1285,37 @@ def get_class(class_name):
         # Nope; that's OK.
         pass
 
-    # Extract paths from the 'QMTEST_CLASSPATH' environment variable. 
-    try:
-        user_class_path = os.environ["QMTEST_CLASSPATH"]
-        user_class_path = string.split(user_class_path, ":")
-    except KeyError:
-        # The environment variable isn't set.
-        user_class_path = []
+    class_path = get_extension_directories()
     # The test database may also provide places for class files.
-    database = get_database()
-    extra_paths = database.GetClassPaths()
+    extra_paths = get_database().GetClassPaths()
     # Construct the full set of paths to search in.
-    paths = user_class_path + extra_paths + __builtin_class_path
+    paths = extra_paths + class_path
     # Load it.
     klass = qm.common.load_class(class_name, paths)
     # Cache it.
     __loaded_classes[class_name] = klass
     # All done.
+    return klass
+
+
+def get_database_class(name):
+    """Return the database class with the indicated name.
+
+    returns -- A class object for the database class with the indicated
+    name."""
+
+    global __loaded_classes
+
+    # If the test class has already been loaded, just return it.
+    if __loaded_classes.has_key(name):
+        return __loaded_classes[name]
+    # Get the list of directories in which to search.
+    dirs = get_extension_directories()
+    # Load the class.
+    klass = qm.common.load_class(name, dirs)
+    # Cache it.
+    __loaded_classes[name] = klass
+    
     return klass
 
 
