@@ -1,5 +1,16 @@
 2002-01-07  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/queue.py: New file.
+	* qm/test/base.py (get_extension_class_names_in_directory): Remove
+	debugging statement.
+	* qm/test/cmdline.py (web.web): Do not import it unconditionally.
+	(QMTest.__ExecuteServer): Import it here.
+	* qm/test/execution_engine.py (Queue): Do not import it.
+	(qm.queue): Import it.
+	(ExecutionEngine.__init__): Use qm.queue.Queue, not Queue.Queue.
+	(ExecutionEngine.__CheckForResponse): Use qm.queue.Empty, not
+	Queue.Empty.
+	
 	* qm/test/execution_engine.py (ExecutionEngine.Run): Pass 
 	self to Target.Start.
 	(ExecutionEngine._RunTests): Do not add untested results for
