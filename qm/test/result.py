@@ -48,11 +48,18 @@ class Result:
     will be used.'
 
     The annotations are a dictionary, mapping strings to strings.
+    
     The indices should be of the form 'class.name' where 'class' is
     the name of the test class that created the annotation.  Any
     annotations created by QMTest, as opposed to the test class, will
-    have indices of the form 'qmtest.name'.  Currently, QMTest
-    recognizes the following annotations:
+    have indices of the form 'qmtest.name'.
+
+    The annotation values are HTML.  When displayed in the GUI, the
+    HTML is inserted directly into the result page; when the
+    command-line interface is used the HTML is converted to plain
+    text.
+    
+    Currently, QMTest recognizes the following built-in annotations:
 
     'Result.CAUSE' -- For results whose outcome is not 'FAIL', this
     annotation gives a brief description of why the test failed.  The

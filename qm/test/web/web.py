@@ -875,16 +875,23 @@ class ResultPage(QMTestPage):
 
         QMTestPage.__init__(self, "result.dtml", server)
         self.result = result
-        self.run_menu_items.append(("This Test", "javascript:run_test();"))
+        if result.GetKind() == Result.TEST:
+            self.run_menu_items.append(("This Test",
+                                        "javascript:run_test();"))
+
+    def GetResultURL(self, id):
+
+        return qm.web.WebRequest("show-result",
+                                 base = self.request,
+                                 id = id).AsUrl()
 
 
-    def MakeRunUrl(self):
-        """Return the URL for running the test."""
+    def GetRunURL(self):
 
         return qm.web.WebRequest("run-tests",
-                                 base=self.request,
-                                 ids=self.result.GetId()).AsUrl()
-        
+                                 base = self.request,
+                                 ids = self.result.GetId()).AsUrl()
+
 
 
 class SetExpectationPage(QMTestPage):
@@ -1301,6 +1308,21 @@ class StorageResultsStream(ResultStream):
         self.__lock.release()
         return results
 
+
+    def GetResult(self, name):
+        """Return the 'Result' with the indicated 'name'.
+
+        'name' -- A string giving the name of a test or resource result.
+
+        returns -- The 'Result' instance corresponding to 'name'."""
+
+        self.__lock.acquire()
+        result = self.__test_results.get(name)
+        if not result:
+            result = self.__resource_results.get(name)
+        self.__lock.release()
+
+        return result
 
 
 class TestResultsPage(QMTestPage):
@@ -2015,7 +2037,8 @@ class QMTestServer(qm.web.WebServer):
 
         'request' -- The 'WebRequest' that caused the event."""
 
-        result = self.__results_stream.GetTestResults()[request["id"]]
+        name = request["id"]
+        result = self.__results_stream.GetResult(name)
         return ResultPage(self, result)(request)
     
 
