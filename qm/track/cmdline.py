@@ -40,6 +40,7 @@ import issue
 import os
 import os.path
 import qm
+import qm.common
 import qm.cmdline
 import qm.fields
 import qm.structured_text
@@ -71,117 +72,216 @@ class Command:
     # these, simply add or remove one in this style, and then add or
     # remove it from the appropriate array directly below these
     # definitions.
-    format_option = ('f', 'format', 'TYPE', 'Format for output.')
-    database_option = ('i', 'idb', 'PATH', 'Path to IDB.')
-    help_option = ('h', 'help', None, 'Display usage summary.')
-    class_option = ('c', 'class', 'NAME', 'Class for new issue.')
-    query_class_option = ('c', 'class', 'NAME',
-                          'Class of issues to query.')
-    port_option = ('P', 'port', 'PORT', 'Server port number.')
-    address_option = ('A', 'address', 'ADDRESS', 'Local address.')
-    log_file_option = (None, 'log-file', 'PATH', 'Log file name.')
-    idb_type_option = (None, 'idb-type', 'TYPE', 'IDB type.')
-    test_values_option = (None, 'test-values', None,
-                          'Populate IDB with values for testing.')
-    internal_option = (None, 'internal', None,
-                       'Set up IDB for internal use.')
-    output_option = ('o', 'output', 'FILE',
-                     'Write output to FILE (- for stdout).')
 
-    qmtrack_options = [
-        database_option,
-        help_option,
+    format_option_spec = (
+        "f",
+        "format",
+        "TYPE",
+        "Format for output."
+        )
+
+    database_option_spec = (
+        "i",
+        "idb",
+        "PATH",
+        "Path to IDB."
+        )
+
+    help_option_spec = (
+        "h",
+        "help",
+        None,
+        "Display usage summary."
+        )
+
+    class_option_spec = (
+        "c",
+        "class",
+        "NAME",
+        "Class for new issue."
+        )
+    
+    query_class_option_spec = (
+        "c",
+        "class",
+        "NAME",
+        "Class of issues to query."
+        )
+    
+    port_option_spec = (
+        "P",
+        "port",
+        "PORT",
+        "Server port number."
+        )
+
+    address_option_spec = (
+        "A",
+        "address",
+        "ADDRESS",
+        "Local address."
+        )
+
+    log_file_option_spec = (
+        None,
+        "log-file",
+        "PATH",
+        "Log file name."
+        )
+    
+    idb_type_option_spec = (
+        None,
+        "idb-type",
+        "TYPE",
+        "IDB type."
+        )
+
+    test_values_option_spec = (
+        None,
+        "test-values",
+        None,
+        "Populate IDB with values for testing."
+        )
+    
+    internal_option_spec = (
+        None,
+        "internal",
+        None,
+        "Set up IDB for internal use."
+        )
+    
+    output_option_spec = (
+        "o",
+        "output",
+        "FILE",
+        "Write output to FILE (- for stdout)."
+        )
+
+    verbose_option_spec = (
+        "v",
+        "verbose",
+        None,
+        "Display informational messages."
+        )
+
+    qmtrack_option_specs = [
+        database_option_spec,
+        help_option_spec,
+        verbose_option_spec,
         ]
     """All the command line options for qmtrack."""
     
     qmtrack_commands = [
 
-        ('create',
-         'Create a new issue.',
-         '-c classname field[=,+=]value...',
-         "This command will create an issue. The field/value pairs "
-         "indicate attributes for the given issue. You must specify the "
-         "class for the field with the" " class flag. You must also "
-         "specify the mandatory fields, 'id', 'categories', and " 
-         "'summary'.",
-         [ help_option, class_option, format_option, output_option ]
+        ("create",
+         "Create a new issue.",
+         "-c classname field[=,+=]value...",
+         """
+         This command will create an issue. The field/value pairs
+         indicate attributes for the given issue. You must specify the
+         class for the field with the" " class flag. You must also
+         specify the mandatory fields, 'id', 'categories', and
+         'summary'.
+         """,
+         [ help_option_spec, class_option_spec, format_option_spec,
+           output_option_spec ]
          ),
         
-        ('destroy',
-         'Destroy an IDB.',
-         'path',
-         "This command destroys an issue database and removes " 
-         "associated files.",
-         [ help_option ],
+        ("destroy",
+         "Destroy an IDB.",
+         "path",
+         """
+         This command destroys an issue database and removes associated
+         files.
+         """,
+         [ help_option_spec ],
          ),
 
-        ('edit',
-         'Edit an issue.',
-         'id field[=,+=,-=]value...',
-         "This command will edit an issue. The 'id' is the issue's "
-         "id. The field/value pairs represent the fields you wish to "
-         "edit. A new revision of the issue will be created.",
-         [ help_option, format_option, output_option ]
+        ("edit",
+         "Edit an issue.",
+         "id field[=,+=,-=]value...",
+         """
+         This command will edit an issue. The 'id' is the issue's
+         id. The field/value pairs represent the fields you wish to
+         edit. A new revision of the issue will be created.
+         """,
+         [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
-        ('import',
-         'Import issues from XML files.',
-         'FILE ...',
-         "This command imports issues or issue revisions stored in "
-         "an XML file.",
-         [ help_option, format_option, output_option ]
+        ("import",
+         "Import issues from XML files.",
+         "FILE ...",
+         """
+         This command imports issues or issue revisions stored in an XML
+         file.
+         """,
+         [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
-        ('initialize',
-         'Initialize an IDB.',
-         'path',
-         "This command initializes a new issue database.  Valid "
-         "IDB types are 'MemoryIdb' and 'GadflyIdb'.",
-         [ help_option, idb_type_option, test_values_option,
-           internal_option, output_option ],
+        ("initialize",
+         "Initialize an IDB.",
+         "path",
+         """
+         This command initializes a new issue database.  Valid IDB types
+         are 'MemoryIdb' and 'GadflyIdb'.
+         """,
+         [ help_option_spec, idb_type_option_spec, test_values_option_spec,
+           internal_option_spec, output_option_spec ],
 
         ),
         
-        ('join',
-         'Join two issues.',
-         'id1 id2',
-         "This command will join two issues into a single issue. The "
-         "resulting issue will be the child of each of the original "
-         "issues and they will be its parent.",
-         [ help_option, format_option, output_option ]
+        ("join",
+         "Join two issues.",
+         "id1 id2",
+         """
+         This command will join two issues into a single issue. The
+         resulting issue will be the child of each of the original
+         issues and they will be its parent.
+         """,
+         [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
-        ('query',
-         'Query the database.',
-         'expression',
-         "This command will query the database to find all issues for "
-         "which the query expression evalutes to true.",
-         [ help_option, query_class_option, format_option, output_option ]
+        ("query",
+         "Query the database.",
+         "expression",
+         """
+         This command will query the database to find all issues for
+         which the query expression evalutes to true.
+         """,
+         [ help_option_spec, query_class_option_spec,
+           format_option_spec, output_option_spec ]
          ),
 
-        ('server',
-         'Start the server.',
-         '',
-         "This command starts the QMTrack server.  The server provides "
-         "a web user interface and remote command access over HTTP.",
-         [ help_option, port_option, address_option, log_file_option ]
+        ("server",
+         "Start the server.",
+         "",
+         """
+         This command starts the QMTrack server.  The server provides a
+         web user interface and remote command access over HTTP.
+         """,
+         [ help_option_spec, port_option_spec, address_option_spec,
+           log_file_option_spec ]
          ),
     
-        ('show',
-         'Display an issue.',
-         'id',
-         "This command displays a single issue.  This command is a "
-         "shortcut for 'query iid==value'.",
-         [ help_option, format_option, output_option ]
+        ("show",
+         "Display an issue.",
+         "id",
+         """
+         This command displays a single issue.  This command is a
+         shortcut for 'query iid==value'.
+         """,
+         [ help_option_spec, format_option_spec, output_option_spec ]
          ),
 
-        ('split',
-         'Split an issue.',
-         'id',
-         "This command will split a single issue into two issues. The "
-         "new issues will be the children of the original issue and it "
-         "will be their parent.",
-         [ help_option, format_option, output_option ]
+        ("split",
+         "Split an issue.",
+         "id",
+         """
+         This command will split a single issue into two issues. The new
+         issues will be the children of the original issue and it will
+         be their parent.
+         """,
+         [ help_option_spec, format_option_spec, output_option_spec ]
          ),
         
     ]
@@ -189,7 +289,7 @@ class Command:
 
     # The following are the strings for all the warnings and errors
     # that can be encountered in this module.
-    initialize_no_idb_path = 'initialize: missing IDB path'
+    initialize_no_idb_path = "initialize: missing IDB path"
     
     def __init__(self, argument_list):
         """Create a new command processor.
@@ -235,35 +335,47 @@ class Command:
         return self.__argument_list
 
 
-    def GetGlobalOptions(self):
-        """Return a dictionary containing global options.
+    def HasGlobalOption(self, option):
+        """Return true if global 'option' was specified."""
 
-        returns -- A dictionary whose keys are the long names of
-        global options that were specified on the command line.  For
-        flags that take arguments, the corresponding value is the flag
-        argument."""
-
-        return self.__global_options
+        for opt, opt_arg in self.__global_options:
+            if opt == option:
+                return 1
+        return 0
 
 
-    def GetCommandOptions(self):
-        """Return a dictionary containing command options.
+    def GetGlobalOption(self, option, default=None):
+        """Return the value of global 'option', or 'default' if omitted."""
 
-        returns -- A dictionary whose keys are the long names of
-        command options that were specified on the command line.  For
-        flags that take arguments, the corresponding value is the flag
-        argument."""
+        for opt, opt_arg in self.__global_options:
+            if opt == option:
+                return opt_arg
+        return default
 
-        return self.__command_options
+
+    def HasCommandOption(self, option):
+        """Return true if command 'option' was specified."""
+
+        for opt, opt_arg in self.__command_options:
+            if opt == option:
+                return 1
+        return 0
+    
+
+    def GetCommandOption(self, option, default=None):
+        """Return the value of command 'option', or 'default' if ommitted."""
+
+        for opt, opt_arg in self.__command_options:
+            if opt == option:
+                return opt_arg
+        return default
 
 
     def RequiresIdb(self):
         """Return true if this command requires an IDB connection."""
 
         # If a help option was specified, we won't need the IDB.
-        if self.GetGlobalOptions().has_key('help'):
-            return 0
-        if self.GetCommandOptions().has_key('help'):
+        if self.HasGlobalOption("help") or self.HasCommandOption("help"):
             return 0
         # Some commands don't require an IDB connection.
         if self.GetCommand() in ('initialize', 'destroy', ):
@@ -290,10 +402,9 @@ class Command:
         """Execute the command."""
 
         # Was the output option specified?
-        command_options = self.GetCommandOptions()
-        if command_options.has_key("output"):
+        output_file_name = self.GetCommandOption("output", None)
+        if output_file_name is not None:
             # Export to the specified file name.
-            output_file_name = command_options["output"]
             output_file = open(output_file_name, "w")
             output = output_file
         else:
@@ -302,13 +413,13 @@ class Command:
 
         # If the user specified the help command, print out the help
         # and exit.
-        if self.GetGlobalOptions().has_key('help'):
+        if self.HasGlobalOption("help"):
             output.write(self.parser.GetBasicHelp())
             return
 
         # If the user asked for help for a specific command, print out
         # the help for that command and exit.
-        if self.GetCommandOptions().has_key('help'):
+        if self.HasCommandOption("help"):
             output.write(self.parser.GetCommandHelp(self.__command_name))
             return
 
@@ -385,30 +496,19 @@ class Command:
         error."""
 
         self.parser = qm.cmdline.CommandParser(self.name,
-                                               self.qmtrack_options,
+                                               self.qmtrack_option_specs,
                                                self.qmtrack_commands)
-        ( flags,
+        ( self.__global_options,
           self.__command_name,
-          command_flags,
+          self.__command_options,
           self.__arguments
           ) = self.parser.ParseCommandLine(self.__argument_list)
 
-        # For global flags, build a mapping from flag names to flag
-        # arguments for flags that were specified.
-        self.__global_options = {}
-        for flag, flag_argument in flags:
-            self.__global_options[flag] = flag_argument
-        # Do the same for command flags.
-        self.__command_options = {}
-        for flag, flag_argument in command_flags:
-            self.__command_options[flag] = flag_argument
-
-        # Did the user specify a format style?
-        if self.__command_options.has_key('format'):
-            # Yes, use it.
-            self.format_name = self.__command_options['format']
-        else:
-            # Choose a default, depending on the command.
+        # Did the user specify a format style?  If so, use it.
+        self.format_name = self.GetCommandOption("format", None)
+        if self.format_name is None:
+            # No format specified. Choose a default, depending on the
+            # command.
             if self.__command_name in ("query", "show"):
                 # For these commands, more thorough output makes sense
                 # by default.
@@ -416,6 +516,10 @@ class Command:
             else:
                 # For other commands, just show the issue id.
                 self.format_name = "iid"
+
+        # Handle the verbose option.  The verbose level is the number of
+        # times the verbose option was specified.
+        qm.common.verbose = self.__global_options.count(("verbose", ""))
 
         # Make sure the format is valid.
         if not self.format_name in self.formats:
@@ -479,9 +583,8 @@ class Command:
         """Create an issue because the create command was given."""
 
         # Get the class of the issue from the command line.
-        try:
-            issue_class_name = self.GetCommandOptions()['class']
-        except KeyError:
+        issue_class_name = self.GetCommandOption("class", None)
+        if issue_class_name is None:
             # The class was not specified.  Report an error.
             raise qm.cmdline.CommandError, \
                   qm.track.error("create class error syn")
@@ -735,7 +838,7 @@ class Command:
 
         # Get the class of the issue from the command line.  Use
         # 'None' if the class was not specified.
-        issue_class_name = self.GetCommandOptions().get('class', None)
+        issue_class_name = self.GetCommandOption("class", None)
 
         # If there are no command arguments to the command, they did
         # not specify a query string to be use and we report an error.
@@ -768,29 +871,29 @@ class Command:
     def __PerformServer(self, output):
         """Process the server command."""
 
-        command_options = self.GetCommandOptions()
         # Get the port number specified by a command option, if any.
         # Otherwise use a default value.
+        port_number = self.GetCommandOption("port", 8000)
         try:
-            port_number = int(command_options.get('port', 8000))
+            port_number = int(port_number)
         except ValueError:
             raise qm.cmdline.CommandError, qm.error("bad port number")
         # Get the local address specified by a command option, if any.
         # If not was specified, use the empty string, which corresponds
         # to all local addresses.
-        address = command_options.get('address', '')
+        address = self.GetCommandOption("address", "")
         # Was a log file specified?
-        try:
-            log_file_path = command_options['log-file']
+        log_file_path = self.GetCommandOption("log-file", None)
+        if log_file_path is not None:
             # Yes.
-            if log_file_path == '-':
+            if log_file_path == "-":
                 # A hyphen path name means standard output.
                 log_file = sys.stdout
             else:
                 # Otherwise, it's a file name.  Open it for append.
                 log_file = open(log_file_path, "a+")
-        except KeyError:
-            # --log-file wasn't specified, so no logging.
+        else:
+            # The option '--log-file' wasn't specified, so no logging.
             log_file = None
         # Start the server.
         qm.track.start_server(port_number, address, log_file)
@@ -821,15 +924,10 @@ class Command:
     def __PerformInitialize(self, output):
         """Process the initialize command."""
 
-        command_options = self.GetCommandOptions()
         # Determine the IDB class name from the command line or
         # default.
-        try:
-            idb_class_name = command_options['idb-type']
-        except KeyError:
-            # FIXME: Use the MemoryIdb implementation by default, for
-            # now. 
-            idb_class_name = 'MemoryIdb'
+        # FIXME: Use the MemoryIdb implementation by default, for now.
+        idb_class_name = self.GetCommandOption("idb-type", "MemoryIdb")
         # Make sure the class name is valid.
         try:
             idb_class = qm.track.idb.get_idb_class(idb_class_name)
@@ -840,7 +938,7 @@ class Command:
         # For this command, the IDB path is provided as an argument.
         # Make sure the --idb flag wasn't specified, to make sure
         # users aren't confused.
-        if self.GetGlobalOptions().has_key('idb'):
+        if self.HasGlobalOption("idb"):
             raise qm.cmdline.CommandError, \
                   qm.track.error("initialize wrong flag")
         # Make sure the argument was provided.
@@ -850,11 +948,11 @@ class Command:
         idb_path = self.__arguments[0]
 
         # Create the IDB.
-        test_values =command_options.has_key('test-values')
+        test_values = self.HasCommandOption("test-values")
         qm.track.initialize_idb(idb_path, idb_class_name, test_values)
 
         # If requested, populate the IDB with test values.
-        if command_options.has_key('internal'):
+        if self.HasCommandOption("internal"):
             qm.track.open_idb(idb_path)
             qm.track.setup_idb_for_internal_use()
             qm.track.close_idb()
@@ -871,11 +969,10 @@ class Command:
     def __PerformDestroy(self, output):
         """Process the destroy command."""
 
-        command_options = self.GetCommandOptions()
         # For this command, the IDB path is provided as an argument.
         # Make sure the --idb flag wasn't specified, to make sure
         # users aren't confused.
-        if self.GetGlobalOptions().has_key('idb'):
+        if self.HasGlobalOption("idb"):
             raise qm.cmdline.CommandError, \
                   qm.track.error("initialize wrong flag")
         # Make sure the argument was provided.

@@ -1,5 +1,26 @@
 2001-06-11  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/web.py (WebServer.GetXmlRpcUrl): Use the explicitly-specified
+	host name.
+	(WebServer.Bind): Add messages.
+	(WebServer.Run): Likewise.
+	(handle_login): Close other sessions for same user.
+	* qm/track/server.py (start_server): Print XML-RPC URL.
+	* qm/track/cmdline.py: Reformat code.
+	(Command.verbose_option_spec): New attribute.
+	(Command.qmtrack_option_specs): Include it.
+	(Command.GetGlobalOptions): Remove.
+	(Command.GetCommandOptions): Likewise.
+	(Command.HasGlobalOption): New method.
+	(Command.GetGlobalOption): Likewise.
+	(Command.HasCommandOption): Likewise.
+	(Command.GetCommandOption): Likewise.
+	Use them throughout.
+	(Command.__Parse): Handle verbose option.
+	* qm/track/qmtrack.in: Use GetGlobalOption.  Add messages. 
+
+2001-06-11  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Use self as
 	page info.
 

@@ -744,7 +744,14 @@ class WebServer(HTTPServer):
         if self.__xml_rpc_path is None:
             return None
         else:
-            host_name, port = self.GetServerAddress()
+            # Use the explicitly-specified host name, if provided.
+            # Otherwise, determine it from the socket.
+            host_name = self.__address
+            if host_name == "":
+                host_name = self.server_name
+            # Get the port from the socket; that works fine.
+            port = self.server_port
+            # Construct the URL.
             return "http://%s:%d%s" % (host_name, port, self.__xml_rpc_path) 
 
 
@@ -910,6 +917,8 @@ class WebServer(HTTPServer):
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server_bind()
             self.server_activate()
+            qm.common.print_message(2, "Web server active on %s:%d.\n"
+                                    % self.GetServerAddress())
         except socket.error, error:
             error_number, message = error
             if error_number == errno.EADDRINUSE:
@@ -932,8 +941,10 @@ class WebServer(HTTPServer):
 
         preconditions -- The server must be bound."""
 
+        qm.common.print_message(2, "Web server running.\n")
         while not self.__shutdown_requested:
             self.handle_request()
+        qm.common.print_message(2, "Web server stopped.\n")
 
 
     def RequestShutdown(self):
@@ -1563,6 +1574,13 @@ def handle_login(request, default_redirect_url="/"):
         message = qm.error("disabled account")
         redirect_request = WebRequest(redirect_url)
         return generate_login_form(redirect_request, message)
+
+    # Check if there is currently a session open for the same user ID.
+    for session in sessions.values():
+        if session.GetUserId() == user_id:
+            # Yup.  There should be only one session at a time for any
+            # given user. Close that session.
+            del sessions[session.GetId()]
 
     session = Session(request, user_id)
     session_id = session.GetId()
