@@ -1,5 +1,8 @@
 2002-01-15  Mark Mitchell  <mark@codesourcery.com>
 
+	* configure.in (QM_MINOR_VER): Increment.
+	* configure: Regenerated.
+
 	* scripts/qm-release (build_source): Correct copying of PDF
 	documentation.
 
