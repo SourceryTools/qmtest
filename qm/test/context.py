@@ -18,6 +18,7 @@
 import qm
 import qm.common
 import re
+import sys
 import types
 
 ########################################################################
@@ -77,6 +78,37 @@ class Context:
         self.__temporaries = {}
 
 
+    def Read(self, file_name):
+        """Read the context file 'file_name'.
+
+        'file_name' -- The name of the context file.
+
+        Reads the context file and adds the context properties in the
+        file to 'self'."""
+
+        if file_name == "-":
+            # Read from standard input.
+            file = sys.stdin
+        else:
+            # Read from a named file.
+            try:
+                file = open(file_name, "r")
+            except:
+                raise qm.cmdline.CommandError, \
+                      qm.error("could not read file", path=file_name)
+        # Read the assignments.
+        assignments = qm.common.read_assignments(file)
+        # Add them to the context.
+        for (name, value) in assignments.items():
+            try:
+                # Insert it into the context.
+                self[name] = value
+            except ValueError, msg:
+                # The format of the context key is invalid, but
+                # raise a 'CommandError' instead.
+                raise qm.cmdline.CommandError, msg
+
+    
     # Methods to simulate a map object.
 
     def __getitem__(self, key):

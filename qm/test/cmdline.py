@@ -680,32 +680,23 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
 
         context = Context()
 
+        # First, see if a context file was specified on the command
+        # line.
+        use_implicit_context_file = 1
+        for option, argument in self.__command_options:
+            if option == "load-context":
+                use_implicit_context_file = 0
+                break
+
+        # If there is no context file, read the default context file.
+        if (use_implicit_context_file
+            and os.path.isfile(self.context_file_name)):
+            context.Read(self.context_file_name)
+                
         for option, argument in self.__command_options:
             # Look for the '--load-context' option.
             if option == "load-context":
-                if argument == "-":
-                    # Read from standard input.
-                    file = sys.stdin
-                else:
-                    # Read from a named file.
-                    try:
-                        file = open(argument, "r")
-                    except:
-                        raise qm.cmdline.CommandError, \
-                              qm.error("could not read file",
-                                       path=argument)
-                # Read the assignments.
-                assignments = qm.common.read_assignments(file)
-                # Add them to the context.
-                for (name, value) in assignments.items():
-                    try:
-                        # Insert it into the context.
-                        context[name] = value
-                    except ValueError, msg:
-                        # The format of the context key is invalid, but
-                        # raise a 'CommandError' instead.
-                        raise qm.cmdline.CommandError, msg
-
+                context.Read(argument)
             # Look for the '--context' option.
             elif option == "context":
                 # Parse the argument.

@@ -35,6 +35,10 @@ classes and to try loading an extension class.
 
 The "qmtest help" command is a synonym for "qmtest --help".
 
+The "qmtest run" and "qmtest gui" commands now use a file named
+"context" in the current directory as a context file if no explict -C
+option is provided.
+
 QM 1.1.5
 ========
 

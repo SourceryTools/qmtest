@@ -128,36 +128,6 @@ class PythonException(QMException):
 # classes
 ########################################################################
 
-class MapReplacer:
-    """A callable object to replace text according to a map."""
-
-    def __init__(self, replacements):
-        """Generate a function to replace text according to a map.
-
-        'replacements' -- A mapping of replacements.  For each element,
-        the key is the text to match, and the corresponding value is the
-        replacements for that text."""
-
-        # Construct a regular expression that matches any of the
-        # replacements.
-        keys = map(re.escape, replacements.keys())
-        regex = "(" + string.join(keys, "|") + ")"
-        self.__regex = re.compile(regex)
-        # The replacement function.  It simply looks up the replacement text
-        # in 'replacements'.
-        self.__substitution = lambda match, replacements=replacements: \
-                              replacements[match.group(0)]
-
-
-    def __call__(self, text):
-        """Perform replacements in 'text'.
-
-        returns -- The replaced text."""
-
-        return self.__regex.sub(self.__substitution, text)
-
-
-
 class RcConfiguration:
     """Interface object to QM configuration files.
 
@@ -270,114 +240,6 @@ class RcConfiguration:
         return parser
 
 
-
-class OrderedMap:
-    """A map that preserves the order of elements inserted into it.
-
-    An 'OrderedMap' object behaves in many ways like a map.
-
-      - It supports efficient lookup of value by key.
-
-      - It supports 'keys' and 'values' operations efficiently.  Both
-        these lists present their elements in the order they were
-        inserted into the map.
-
-      - It does not support the 'items' operation.
-
-      - It takes more space than an ordinary map.
-
-      - It does not support deleting of elements.  The value of an
-        exisiting key may be replaced efficiently, though; this does not
-        change the position of the key in the order.
-    """
-
-    # The '__keys' and '__values' lists store keys and values at
-    # corresponding indices.  The '__key_map' map associates keys with
-    # indices in these two lists.
-
-    def __init__(self):
-        self.__keys = []
-        self.__values = []
-        self.__key_map = {}
-
-
-    def __getitem__(self, key):
-        return self.__values[self.__key_map[key]]
-
-
-    def __setitem__(self, key, value):
-        try:
-            index = self.__key_map[key]
-        except KeyError:
-            index = len(self.__keys)
-            self.__keys.append(key)
-            self.__values.append(value)
-            self.__key_map[key] = index
-        else:
-            self.__values[index] = value
-
-
-    def __len__(self):
-        return len(self.__keys)
-    
-
-    def has_key(self, key):
-        return self.__key_map.has_key(key)
-
-
-    def keys(self):
-        return self.__keys
-
-
-    def values(self):
-        return self.__values
-
-
-    def get(self, key, default=None):
-        try:
-            index = self.__key_map[key]
-        except KeyError:
-            return default
-        else:
-            return self.__values[index]
-
-
-    def clear(self):
-        self.__keys = []
-        self.__values = []
-        self.__key_map.clear()
-
-
-    def copy(self):
-        result = OrderedMap()
-        result.__keys = self.__keys[:]
-        result.__values = self.__values[:]
-        result.__key_map = self.__key_map.copy()
-        return result
-
-
-    def update(self, map):
-        for key, value in map.items():
-            self[key] = value
-            
-
-    def __str__(self):
-        pairs = map(lambda i, k=self.__keys, v=self.__values: 
-                        repr(k[i]) + ": " + repr(v[i]),
-                    range(0, len(self.__keys)))
-        return "OrderedMap{%s}" % string.join(pairs, ", ")
-
-
-    def AsMap(self):
-        """Return an ordinary map object."""
-
-        result = {}
-        for i in range(0, len(self.__keys)):
-            result[self.__keys[i]] = self.__values[i]
-        return result
-
-
-
 ########################################################################
 # functions
 ########################################################################
@@ -461,35 +323,6 @@ def rmdir_recursively(path):
             os.unlink(entry_path)
     # Remove the directory itself.
     os.rmdir(path)
-
-
-def replace_by_map(text, replacements):
-    """Perform multiple replacements.
-
-    'text' -- The text in which to make the replacements.
-
-    'replacements' -- A mapping of replacements.  For each element, the
-    key is the text to match, and the corresponding value is the
-    replacements for that text.
-
-    returns -- The replaced text."""
-
-    return MapReplacer(replacements)(text)
-
-
-def invert_map(m):
-    """Return the inverse of 'm'.
-
-    'm' -- A map object.
-
-    returns -- A map of values of 'm' to corresponding keys.  If a value
-    of 'm' is associated with more than one key, it is mapped to one of
-    these keys in the result, but which one is undefined."""
-
-    result = {}
-    for key, value in m.items():
-        result[value] = key
-    return result
 
 
 def convert_from_dos_text(text):

@@ -1086,7 +1086,17 @@
        ignored as comments.</para>
 
        <para>This option may be specified more than once, and used in
-       conjunction with the <option>&dashdash;context</option> option.</para>
+       conjunction with the <option>&dashdash;context</option>
+       option.  All of the context properties specified are added to
+       the eventual context.  If a property is set more than once,
+       the last value provided is the one used.</para>
+
+       <para>If this option is not specified, but a file named
+       <filename>context</filename> exists in the current directory,
+       that file is read.  The properties specified in this file are
+       processed first; the values in this file can be overridden by
+       subsequent uses of the <option>&dashdash;context</option>
+       option on the command line.</para>
       </listitem>
      </varlistentry>
 

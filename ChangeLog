@@ -1,3 +1,14 @@
+2002-11-11  Mark Mitchell  <mark@codesourcery.com>
+
+	* NEWS: Mention automatic use of context files.
+	* qm/common.py (MapReplacer): Remove.
+	(OrderedMap): Likewise.
+	(replace_by_map): Likewise.
+	(invert_map): Likewise.
+	* qm/tetst/cmdline.py (QMTest.MakeContext): Use Context.Read.
+	* qm/test/context.py (Context.Read): New method.
+	* qm/test/doc/reference.xml: Document automatic use of -C option.
+	
 2002-11-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (BooleanField): New class.
