@@ -146,7 +146,7 @@ class _NotifyTrigger(qm.track.issue_class.Trigger):
             else:
                 subject = "modification to issue %s" % issue.GetId()
             # Add the prefix.
-            subject = self.__subject_prefix + " " + subject.
+            subject = self.__subject_prefix + " " + subject
             # Send the message.
             qm.platform.send_email(message,
                                    subject=subject,
