@@ -39,7 +39,7 @@
        <p>Your <dtml-var name="type"> submission contained errors.
        Please correct them and resubmit.</p>
       <dtml-else>
-       <p>First, you must specify the ID and class for the new <dtml-var
+       <p>Specify the name and class for the new <dtml-var
        name="type">.</p>
       </dtml-if>
      </td>
@@ -54,11 +54,11 @@
         >
      <td width="100%">
       <dtml-if expr="type == 'test'">
-       <b>Test ID</b>
-       <p>The test ID identifies the test.</p>
+       <b>Test Name</b>
+       <p>The test name identifies the test.</p>
       <dtml-else>
-       <b>Resource ID</b>
-       <p>The resource ID identifies the resource.</p>
+       <b>Resource Name</b>
+       <p>The resource name identifies the resource.</p>
       </dtml-if>
      </td>
      <td>

@@ -262,7 +262,7 @@ class FileContentsTest:
         contents = self.__PerformSubstitutions(contents)
         # Compare the contents to the expected contents.
         if contents != self.__expected_contents:
-            result.Fail(cause="Contents do not match expected contents.",
+            result.Fail("Contents do not match expected contents.",
                         { "FileContentsTest.contents" : contents,
                           "FileContentsTest.expected_contents" :
                           self.__expected_contents })

@@ -135,7 +135,7 @@ class TextResultStream(ResultStream):
                 bad_results = filter(
                     lambda r: r.GetOutcome() != Result.PASS,
                     self.__test_results)
-                self.__file.write(divider("NON-PASSING TESTS"))
+                self.__file.write(divider("TESTS THAT DID NOT PASS"))
                 self._SummarizeResults(bad_results)
 
             # Sort resource results by ID.
@@ -145,7 +145,7 @@ class TextResultStream(ResultStream):
                 self.__resource_results)
             if len(bad_results) > 0:
                 # Print individual resource results.
-                self.__file.write(divider("NON-PASSING RESOURCES"))
+                self.__file.write(divider("RESOURCES THAT DID NOT PASS"))
                 self._SummarizeResults(bad_results)
 
         # Invoke the base class method.

@@ -45,22 +45,17 @@
 ]>
 <book>
  <bookinfo>
-  <title>QM Tools Manual</title>
-  <authorgroup>
-   <author>
-    <firstname>Alex</firstname>
-    <surname>Samuel</surname>
-   </author>
-  </authorgroup>
+  <title>QMTest and QMTrack: User's Guide and Reference</title>
+  <corpauthor>CodeSourcery, LLC</corpauthor>
   <copyright>
    <year>2001</year>
    <holder>CodeSourcery LLC</holder>
   </copyright>
   <legalnotice>&qmlicense;</legalnotice>
-  <releaseinfo>version 0.0</releaseinfo>
+  <releaseinfo>Version 1.0</releaseinfo>
   <revhistory>
    <revision>
-    <revnumber>0.0&nbsp;</revnumber>
+    <revnumber>1.0&nbsp;</revnumber>
     <date></date>
     <revremark>Initial revision.</revremark>
    </revision>
@@ -69,19 +64,13 @@
 
  &introduction.xml;
 
- <part>
-  <title>A Tour of &qm;</title>
-  &test-tour.xml;
-  &track-tour.xml;
- </part>
+ &test-tour.xml;
+ &track-tour.xml;
 
- <part>
-  <title>Using &qm;</title>
-  &test-manual.xml;
-  &test-reference.xml;
-  &track-manual.xml;
-  &common-manual.xml;
- </part>  
+ &test-manual.xml;
+ &test-reference.xml;
+ &track-manual.xml;
+ &common-manual.xml;
 
 </book>
 

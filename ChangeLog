@@ -1,3 +1,25 @@
+2001-10-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/introduction.xml: Revise.
+	* doc/manual/manual.xml: Likewise.
+	* doc/manual/test-manual.xml: Likewise.
+	* doc/manual/test-tour.xml: Likewise.
+	* qm/test/cmdline.py (Command.db_path_option_spec): Change
+	--db-path to --tdb.
+	(Command.start_browser_option_spec): Remove.
+	(Command.no_browser_option_spec): New variable.
+	(Command.commands_spec): Adjust summarize command syntax.
+	Rename server to gui.
+	* qm/test/text_result_stream.py (TextResultSream.Summarize): Tweak.
+	* qm/test/classes/file.py (FileContentsTest.Run): Fix typo.
+	* share/diagnostics/test-help.txt: Revise description of
+	test classes.
+	* share/dtml/test/new.dtml: Revise.
+	* share/tutorial/test/tdb/exec1.qmt: Right code that throws an 
+	exception, rather than simply computing an incorrect value.
+	* share/tutorial/test/tdb/_classes/count.py: Revise for new test
+	class API.
+	
 2001-10-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (set_up_resource): Set up the action

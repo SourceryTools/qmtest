@@ -17,175 +17,63 @@
 -->
 <chapter id="chap-test-manual">
  <title>Using &qmtest;</title>
- 
- <section id="sec-qmtest-concepts">
+
+ <para>This chapter describes &qmtest; in more detail.  It explains
+ the fundamental concepts that &qmtest; uses, the test classes that
+ come with &qmtest;, and how to extend &qmtest; to support new
+ application domains.</para>
+
+  <section id="sec-qmtest-concepts">
   <title>&qmtest; Concepts</title>
 
-  <para>This section describes the basic concepts of &qmtest;.</para>
+  <para>This section the concepts that underly &qmtest;'s design.  By
+  understanding these concepts, you will be able to better understand
+  how &qmtest; works.  In addition, you will find it easier to extend
+  &qmtest; to new application domains.</para>
 
   <section id="sec-tests">
    <title>Tests</title>
 
-   <para>An individual <firstterm>test</firstterm> is an entity that,
-   when run, produces a single <link
-   linkend="sec-outcomes">outcome</link> indicating success or
-   failure.  A test consists of:
-    <orderedlist>
-     <listitem>
-      <para>A <firstterm>test ID</firstterm>, which uniquely identifies
-      the test in the test database.  A test ID may be composed of
-      lower-case letters, digits, and underscores.  Test IDs may be
-      arranged in a tree hierarchy (like files in a directory tree)
-      using "<literal>.</literal>" (a period) as the path
-      separator.</para>
-     </listitem>
+   <para>A <firstterm>test</firstterm> checks for the correct behavior
+   of the target application.  What constitutes correct behavior will
+   vary depending on the application domain.  For example, correct
+   behavior for a database might mean that it is able to retrieve
+   records correctly while correct behavior for a compiler might mean
+   that it generates correct object code from input source code.</para>
+ 
+   <para>Every test has a name that uniquely identifies the test,
+   within a given <link linkend="sec-test-database">test
+   database</link>.  Test names must be composed entirely of lowercase
+   letters, numbers, the <quote>_</quote> character, and the
+   <quote>.</quote> character.  You can think of test names like file
+   names.  The <quote>.</quote> character takes the place of
+   <quote>/</quote>; it allows you to place a test in a particular
+   <firstterm>directory</firstterm>.  For example, the test name
+   <filename>a.b.c</filename> names a test named
+   <filename>c</filename> in the directory <filename>a.b</filename>.
+   The directory <filename>a.b</filename> is a subdirectory of the
+   directory <filename>a</filename>.</para>
 
-     <listitem>
-      <para>A reference to a single <firstterm>test class</firstterm>,
-      which defines how the test is executed.</para>
-     </listitem>
+   <para>Every test is an instance of some test class.  The test class
+   dictates how the test is run, what consistutes success, and what
+   constitutes failure.  For example, the
+   <classname>command.ExecTest</classname> class that comes with
+   &qmtest; executes the target application and looks at its output.
+   The test passes if the actual output exactly matches the expected
+   output.</para>
 
-     <listitem>
-      <para>A list of <link
-      linkend="def-arguments">arguments</link>, which must match the
-      parameters of the test class.</para>
-     </listitem>
+   <para>The arguments to the test parameterize the test; they are
+   what make two instances of the same test class different from each
+   other.  For example, the arguments to
+   <classname>command.ExecTest</classname> indicate which application to
+   run, what command-line arguments to provide, and what output is
+   expected.</para>
 
-     <listitem>
-      <para>A set of one or more <link
-      linkend="def-properties">properties</link>, which provide extra
-      information about the test.  Each property has a name and a string
-      value.</para>
-     </listitem>
-
-     <listitem>
-      <para>A list of test IDs of <firstterm>prerequisite
-      tests</firstterm>.  Prerequisite tests instruct &qmtest; to skip
-      this test if others have failed in the same test run.</para>
-     </listitem>
-
-     <listitem>
-      <para>A list of IDs of required <firstterm>resources</firstterm>.
-      A resource represents some external entity (for instance, a
-      temporary directory, or a database connection) which the test
-      requires to execute.  Resources are represented by separate
-      objects in the test database.  One resource may be used by more
-      than one test.</para>
-     </listitem>
-
-     <!--
-     <listitem>
-      <para>Categories.</para>
-     </listitem>
-     -->
-
-    </orderedlist>
-   </para>
-
-   <section id="sec-test-ids">
-    <title>Test Identifiers</title>
-
-    <para>A <firstterm>test ID</firstterm> is a string that identifies a
-    test.  Every test must have a unique test ID within the test
-    database that contains it.</para>
-
-    <para>A test ID is composed of digits, lower-case letters, and
-    underscores.  For example, <literal>widget_test_2</literal> is a
-    valid test ID.  You may use sequential test IDs, or choose IDs that
-    help you remember what a test is for.</para>
-
-    <para>In addition, you may optionally arrange test IDs into a tree
-    hierarchy, similar to files and subdirectories in a file system.  To
-    do this, use a period ("<literal>.</literal>") as a path separator.
-    Each component of the path must obey the restrictions for a test ID.
-    Typically, this mechanism is used to arrange tests based on which
-    component or aspect of the tested system they test.  For example,
-    <literal>front_end.gui.widget_test_2</literal> is a valid test ID.
-    In such an arrangement, all tests of the tested system's front end
-    program would have IDs that begin with <literal>front_end</literal>,
-    and all tests of th front end's graphical user interface would have
-    test IDs that begin with <literal>front_end.gui</literal>.</para>
-
-    <para>Path prefixes in the namespace of test IDs, such as
-    <literal>front_end</literal> and <literal>front_end.gui</literal> in
-    the examples above, define <link
-    linkend="sec-implicit-test-suites">implicit test suites</link>,
-    which allow you easily to specify all tests with the same path
-    prefix.  For this reason, a path prefix may not be used as a test
-    ID.  For example, you may not have two tests with IDs
-    <literal>front_end.gui.widget_test_2</literal> and
-    <literal>front_end.gui</literal>.</para>
-
-   </section> <!-- sec-test-ids -->
-
-   <section id="sec-test-classes">
-    <title>Test Classes</title>
-
-    <para>A <firstterm>test class</firstterm> defines how a particular
-    type of test is created and run.  Each test class corresponds to a
-    Python class that contains code to execute the test and to interpret
-    the result of that execution.</para>
-
-    <para>&qmtest; includes a collection of standard test classes, which
-    are useful for writing a wide variety of tests.  These are listed in
-    &fixme;.  You also may use these test classes as a base for creating
-    your own test classes, or you may create new test classes from
-    scratch.</para>
-
-    <para>The name of the test class is composed of the module
-    containing the corresponding Python class, and the name of the
-    Python class.  See <xref linkend="sec-specifying-test-class"/> for a
-    description of the mechanism by which &qmtest; locates Python
-    classes for use as test classes.</para>
-
-   </section> <!-- sec-test-classes -->
-
-   <section>
-    <title>Arguments</title>
-
-    <para>A test specifies <firstterm
-    id="def-arguments">arguments</firstterm> to the test classes.  The
-    arguments must match the parameters of the test class.  An argument
-    is specified by the name of the corresponding test class parameter,
-    which determine the argument value's type.</para>
-
-   </section>
-
-   <section>
-    <title>Properties</title>
-
-    <para><firstterm id="def-properties">Properties</firstterm> are
-    name/value pairs used to provide extra information about tests, such
-    the target type(s) on which it makes sense to run the test.</para>
-
-   </section>
-
-   <section>
-    <title>Prerequisites</title>
-
-    <para>In some circumstances, it may not make sense to run a test if
-    another has failed.  In some test suites, for instance, a failure of
-    a test in a low-level component may obviate the need to run many
-    other tests of higher-level components which depend on it for their
-    functioning.  Prerequisites allow you to specify that a test should
-    not be run if another does not pass (or, in general, does not
-    produce a specified outcome).</para>
-
-    <para>For each test, you may specify multiple prerequisite tests,
-    each with a required outcome.  If any of these prerequisite tests
-    are run in the same test run but do not produce the required
-    outcome, the test is not run either.</para>
-
-   </section>
-
-   <section>
-    <title>Resources</title>
-
-    <para>Resources are discussed in <xref linkend="sec-resources"/>.  Each
-    test specifies a list of IDs of resources it requires.  If for any
-    reason one of these resources cannot be set up correctly, the test
-    is not run.</para>
-   </section>
+   <para>Sometimes, it may be pointless to run one test unless another
+   test has passed.  Therefore, each test can have a set of associated
+   <firstterm>prerequisite tests</firstterm>.  If the prerequisite
+   tests did not pass, &qmtest; will not run the test that depends
+   upon them.</para>
 
   </section> <!-- sec-tests -->
 
@@ -305,7 +193,7 @@
    <section id="sec-implicit-test-suites">
     <title>Implicit Test Suites</title>
 
-    <para><xref linkend="sec-test-ids"/> explains how you may arrange
+    <para><xref linkend="sec-tests"/> explains how you may arrange
     tests in a tree hierarchy, using a period ("<literal>.</literal>")
     as the path separator in test IDs.  &qmtest; defines an
     <firstterm>implicit test suite</firstterm> for each path prefix.

@@ -17,8 +17,18 @@
 -->
 <chapter id="chap-introduction">
  <title>Introduction</title>
- 
- <para>Welcome to &qm;!</para>
+
+  <para>&qmtest; is a testing tool.  You can use &qmtest; to test a
+  software application, such as a database, compiler, or web browser.
+  You can even &qmtest; to test a physical system (like a valve or
+  thermometer) if you have a way of connecting it to your
+  computer.</para>
+
+  <para>&qmtrack; is an issue-tracking tool.  You can use &qmtrack; to
+  track defect reports for a software project, to maintain task lists
+  for a group of people, or to keep track of sales leads.  Each of
+  these applications revolves around keeping track of issues: defect 
+  reports, tasks, or leads.</para>
 
 </chapter>
 <!--

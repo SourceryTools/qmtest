@@ -81,7 +81,7 @@ class Command:
 
     db_path_option_spec = (
         "D",
-        "db-path",
+        "tdb",
         "PATH",
         "Path to the test database."
         )
@@ -142,11 +142,11 @@ class Command:
         "Log file name."
         )
 
-    start_browser_option_spec = (
-        "b",
-        "start-browser",
+    no_browser_option_spec = (
         None,
-        "Open a browser window to the Web interface."
+        "no-browser",
+        None,
+        "Do not open a new browser window."
         )
 
     profile_option_spec = (
@@ -199,7 +199,7 @@ class Command:
     commands_spec = [
         ("summarize",
          "Summarize results from a test run.",
-         "FILE [ ID ... ]",
+         "[FILE [ ID ... ]]",
          """
 Loads a test results file and summarizes the results.  FILE is the path
 to the results file.  Optionally, specify one or more test or suite IDs
@@ -242,12 +242,12 @@ The summary is written to standard output.
            )
          ),
 
-        ("server",
-         "Start the web GUI server.",
+        ("gui",
+         "Start the QMTest GUI.",
          "",
-         "Start the QMTest web GUI server.",
+         "Start the QMTest graphical user interface.",
          ( help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec, start_browser_option_spec )
+           log_file_option_spec, no_browser_option_spec )
          ),
 
         ]
@@ -339,7 +339,7 @@ The summary is written to standard output.
             raise qm.cmdline.CommandError, qm.error("missing command")
 
         # Figure out the path to the test database.
-        db_path = self.GetGlobalOption("db-path")
+        db_path = self.GetGlobalOption("tdb")
         if db_path is None:
             # The db-path option wasn't specified.  Try the environment
             # variable.
@@ -363,7 +363,7 @@ The summary is written to standard output.
         method = {
             "summarize": self.__ExecuteSummarize,
             "run" : self.__ExecuteRun,
-            "server": self.__ExecuteServer,
+            "gui": self.__ExecuteServer,
             }[self.__command]
         method(output)
 
@@ -433,7 +433,7 @@ The summary is written to standard output.
         """Read in test run results and summarize."""
 
         # Look up the specified format.
-        format = self.GetCommandOption("format", "full")
+        format = self.GetCommandOption("format", "brief")
         if format not in self.summary_formats:
             # Invalid format.  Complain.
             valid_format_string = string.join(
@@ -443,11 +443,11 @@ The summary is written to standard output.
                            format=format,
                            valid_formats=valid_format_string)
 
-        # Make sure a results file was specified.
+        # If no results file is specified, use a default value.
         if len(self.__arguments) == 0:
-            raise qm.cmdline.CommandError, \
-                  qm.error("no results file specified")
-        results_path = self.__arguments[0]
+            results_path = "results.qmr"
+        else:
+            results_path = self.__arguments[0]
         # Load results.
         try:
             test_results, resource_results = base.load_results(results_path)
@@ -683,13 +683,13 @@ The summary is written to standard output.
             url_address = address
         url = "http://%s:%d/test/dir" % (url_address, port_number)
 
-        if self.HasCommandOption("start-browser"):
-            # Now that the server is bound to its address, we can point
-            # a browser at it safely.
+        if not self.HasCommandOption("no-browser"):
+            # Now that the server is bound to its address, start the
+            # web browser.
             qm.platform.open_in_browser(url)
-        else:
-            message = qm.message("server url", url=url)
-            qm.common.print_message(0, message + "\n")
+            
+        message = qm.message("server url", url=url)
+        qm.common.print_message(0, message + "\n")
 
         # Accept requests.
         server.Run()

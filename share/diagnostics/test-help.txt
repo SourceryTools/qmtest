@@ -228,22 +228,16 @@ in the *Included Tests* list and click on *Remove >>*.
 @ test class control
 **Test Class**
 
-The test class determines how the test is parameterized, and provides
-the mechanism by which the test is run.
+The "test class" associated with a test indicates what kind of test it
+is.  Select one of the available test classes.
 
-%(program_name)s provides a collection of built-in test classes which
-you may use to create tests.  To use one of these, select it from the
-*Standard Classes* list.
-
-You may also create your own test classes.  An test class is represented
-by a Python class included in a Python module.  Specify the class in the
-text control using the syntax *module-name.class-name*.
-
-So that %(program_name)s can find the Python module file, you must
-include the directory containing it in the environment variable
-'QMTEST_CLASSPATH'.  Or, you can place the file in a subdirectory named
-'_classes' of your test database directory.
-
+If %(program_name)s cannot find a test class that you think you have
+installed, you may need to set the 'QMTEST_CLASSPATH' environment
+variable.  This variable contains a colon-separate list of directories,
+just like the 'PATH' environment variable.  %(program_name)s will look
+for test classes in each of these directories.  %(program_name)s will
+also look in the '_classes' subdirectory of your test database
+directory.
 
 @ test ID 
 **Test ID**

@@ -6,6 +6,6 @@
   <text>pass</text>
  </argument>
  <argument name='expression'>
-  <text>2 + 2 == 5</text>
+  <text>3/0</text>
  </argument>
 </test>
