@@ -114,6 +114,9 @@ There is no action with the action ID you specified, "%(action_id)s".
 @ no such test
 There is no test with the test ID you specified, "%(test_id)s".
 
+@ suite already exists
+There is already a test suite with ID "%(suite_id)s".
+
 @ test already exists
 There is already a test with ID "%(test_id)s".
 

@@ -794,12 +794,6 @@ class Database(base.Database):
         for id_ in test_ids + suite_ids:
             if not qm.label.is_valid(id_, allow_separator=1):
                 raise RuntimeError, qm.error("invalid id", id=id_)
-        # The IDs are relative to the location of the suite.  Construct
-        # absolute IDs.
-        dir_id = qm.label.split(suite_id)[0]
-        rel = qm.label.MakeRelativeTo(dir_id)
-        test_ids = map(rel, test_ids)
-        suite_ids = map(rel, suite_ids)
         # Construct the suite.
         return base.Suite(suite_id, test_ids, suite_ids)
 

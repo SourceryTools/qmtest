@@ -1,3 +1,21 @@
+2001-04-29  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/web.py (make_help_link_html): Use a.help-link CSS class.
+	* qm/test/xmldb.py (Database.__GetSuite): Don't make IDs absolute.
+	* qm/test/web/web.py (start_server): Register create-suite and
+	new-suite scripts.
+	* qm/test/web/suite.py: Improve doc strings.
+	(ShowPageInfo.__init__): Fix exclusion of suite's own ID.
+	(NewPageInfo): New class.
+	(handle_submit): Handle empty ID lists correctly.
+	(handle_new): New function.
+	(handle_create): Likewise.
+	* share/diagnostics/test-help.txt (suite ID): New diagnostic.
+	* share/diagnostics/test.txt (suite already exists): Likewise.
+	* share/web/stylesheets/qm.css (a.help-link): New class.
+	* share/dtml/test/suite.dtml: Adjust.
+	* share/dtml/test/new-suite.dtml: New file.
+
 2001-04-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/web.py (PageInfo.MakeUrl): New method.

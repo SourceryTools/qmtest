@@ -70,7 +70,7 @@
      <p>IDs of tests that are included in this suite.</p>
     </td>
     <td>
-     <table border="0" cellpadding="0" cellspacing="4"><tr>
+     <table border="0" cellpadding="0" cellspacing="4" width="100%"><tr>
       <dtml-if name="edit">
 
        <input type="hidden" 
@@ -113,7 +113,7 @@
          </dtml-in>
         </select>
        </td>
-       <td valign="top">
+       <td valign="top" align="right">
         <dtml-var expr="MakeHelpLink('suite test IDs control')">
        </td>
 
@@ -132,7 +132,7 @@
          None
         </dtml-if>
        </td>
-       <td valign="top">
+       <td valign="top" align="right">
         <dtml-var expr="MakeHelpLink('suite test IDs')">
        </td>
 
@@ -148,7 +148,7 @@
       <p>IDs of other suites that are included in this suite.</p>
      </td>
      <td>
-      <table border="0" cellpadding="0" cellspacing="4"><tr>
+      <table border="0" cellpadding="0" cellspacing="4" width="100%"><tr>
        <dtml-if name="edit">
 
         <input type="hidden" 
@@ -191,7 +191,7 @@
           </dtml-in>
          </select>
         </td>
-        <td valign="top">
+        <td valign="top" align="right">
          <dtml-var expr="MakeHelpLink('suite suite IDs control')">
         </td>
 
@@ -210,7 +210,7 @@
           &nbsp;
          </dtml-if>
         </td>
-        <td>
+        <td valign="top" align="right">
          <dtml-var expr="MakeHelpLink('suite suite IDs')">
         </td>
 

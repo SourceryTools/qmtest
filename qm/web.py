@@ -1823,7 +1823,8 @@ def make_help_link_html(help_text, label):
 
     # Construct the link.
     return '''
-    <a href="javascript: void(0)"
+    <a class="help-link"
+       href="javascript: void(0)"
        onclick="show_help(%s);">%s</a>
     <script language="JavaScript">
     var %s = %s;

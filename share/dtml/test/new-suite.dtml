@@ -1,0 +1,98 @@
+<dtml-comment><!--
+
+  File:   new-suite.dtml
+  Author: Alex Samuel
+  Date:   2001-04-18
+
+  Contents:
+    Document template for new test suite.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('New Test Suite')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>New Test Suite</h3>
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="MakeUrl('create-suite')">"
+       enctype="multipart/form-data"/>
+
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tbody>
+    <tr>
+     <td colspan="2">
+      <dtml-if expr="field_errors != {}">
+       <p>Your issue submission contained errors.  Please correct them
+       and resubmit.</p>
+      <dtml-else>
+       <p>First, you must specify the ID for the new test suite.</p.
+      </dtml-if>
+     </td>
+    </tr>
+
+    <tr valign="top"
+       <dtml-if expr="field_errors.has_key('_id')">
+        class="field-error"
+       <dtml-else>
+        class="field"
+       </dtml-if>
+        >
+     <td width="100%">
+      <b>Test Suite ID</b>
+      <p>The test suite ID identifies the test.</p>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="4" width="100%">
+       <tr valign="top"><td>
+        <input name="id" 
+               type="text" 
+               size="40" 
+               value="<dtml-var name="suite_id">"/>
+        <dtml-if expr="field_errors.has_key('_id')">
+         <br>
+         <span class="error">
+          <dtml-var expr="field_errors['_id']">
+         </span>
+        </dtml-if>
+       </td><td align="right">
+        <dtml-var expr="MakeHelpLink('suite ID')">
+       </td></tr>
+      </table>
+     </td>
+    </tr>
+
+    <tr class="heading">
+     <td colspan="2">
+      <input type="submit" value=" Next > ">
+      <dtml-var expr="MakeButton('Cancel', 'dir')">
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+ </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

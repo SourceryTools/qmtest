@@ -101,3 +101,9 @@ span.userid {
     color: green;
     font-weight: bold;
 }
+
+a.help-link {
+    font-size: xx-small;
+    text-decoration: none;
+    color: #402090;
+}
