@@ -1,3 +1,7 @@
+2001-04-30  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* install.bat: New file.
+
 2001-04-30  Alex Samuel  <samuel@codesourcery.com>
 
 	* doc/design/qmtest/core.xml: Paste in text from design document.
