@@ -84,18 +84,42 @@ class Executable:
         use to communicate an exception to the parent.  This pipe is
         only used on UNIX systems.
 
+        returns -- The PID of the child.
+
         Before creating the child, the parent will call
         'self._InitializeParent'.  On UNIX systems, the child will
         call 'self._InitializeChild' after 'fork', but before 'exec'.
 
-        returns -- The PID of the child."""
+        If the path to the program is absolute, or contains no
+        separator characters, it is not modified.  Otherwise the path
+        to the program is relative, it is transformed into an absolute
+        path using 'dir' as the base, or the current directory if
+        'dir' is not set."""
 
         # Remember the directory in which the execution will occur.
         self.__dir = dir
-        # The path to the executable is the first argument.
+
+        # The path to the executable is the first argument, if not
+        # explicitly specified.
         if not path:
             path = arguments[0]
-        
+
+        # Normalize the path name.
+        if os.path.isabs(path):
+            # An absolute path.
+            pass
+        elif (os.sep in path or (os.altsep and os.altsep in path)):
+            # A relative path name, like "./program".
+            if dir:
+                path = os.path.normpath(os.path.join(dir, path))
+            else:
+                path = os.path.abspath(path)
+        else:
+            # A path with no directory separators.  The program to
+            # execute will be found by searching the PATH environment
+            # variable.
+            pass
+            
         # Initialize the parent.
         startupinfo = self._InitializeParent()
 
@@ -453,7 +477,7 @@ class RedirectedExecutable(Executable):
 
             if self._stderr_pipe:
                 h = self._stderr_pipe[0]
-                self._stderr_pipe[0] = msvcrt.open_osf_handle(h, 0)
+                self._stderr_pipe[0] = msvcrt.open_osfhandle(h, 0)
                 h.Detach()
                 stderr_thread = Thread(target = self.__CallUntilNone,
                                        args = (self._ReadStderr,

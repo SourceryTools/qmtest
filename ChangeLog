@@ -1,3 +1,9 @@
+2002-11-22  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Spawn): Handle relative pathnames
+	in a platform-independent manner.
+	(RedirectedExecutable._DoParent): Fix typo.
+	
 2002-11-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (is_database): Check more carefully.
