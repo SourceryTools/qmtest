@@ -140,6 +140,11 @@
 
   <section><title>User Profiles</title>
 
+   <para>As a way of delimiting the scope of this project, this
+   section describes three typical users whose needs &qmtest; seeks to
+   address.  These user profiles motivate the discussion in the next
+   chapter of system requirements.</para>
+
    <section><title>Bhargan Basepair</title>
 
     <para>Bhargan Basepair develops fuzzy DNA pattern-matching
@@ -201,15 +206,14 @@
 
     <para>Diana studied parsing algorithms for her Master's degree in
     Computer Science at Euphoric State University.  She is now
-    implementing a Fortran-2000 (or "F00") parser for the GNU Compiler
-    Collection (GCC).  The parser currently contains 47,000 executable
-    lines of C and C++ in 350 functions, distributed among 18 files,
-    and is expected to triple in size by the time the project is
-    done.</para>
+    extending the C++ parser for the GNU Compiler Collection (GCC).
+    The parser currently contains 47,000 executable lines of C and C++
+    in 350 functions, distributed among 18 files, and is expected to
+    triple in size by the time the project is done.</para>
 
     <para>Diana starts work on each language feature by writing a few
     new test cases that exercise it.  (Many of these tests are
-    actually not legal F00, since one of her goals is to improve the
+    actually not legal C++, since one of her goals is to improve the
     compiler's error messages.) Diana only starts implementing the
     feature itself once all of her test cases are written and
     failing&mdash;past experience has taught her that if she writes
@@ -218,14 +222,14 @@
     standard.</para>
 
     <para>Diana has inherited a collection of approximately 1200
-    tests, most written to test GCC's existing Fortran-77 parser.
-    These test files are scattered throughout the GCC source tree.
-    Each test consists of one or more specially-formatted comments
-    embedded in a Fortran source file.  A simple shell script extracts
-    these comments, runs the F00 parser with the parameters contained
-    in the comment, and compares the output with the expected output
-    (which is also embedded in the comment). The test is considered a
-    pass if the compiler emits exactly the output expected.</para>
+    tests, most written to test GCC's existing parser.  These test
+    files are scattered throughout the GCC source tree.  Each test
+    consists of one or more specially-formatted comments embedded in a
+    C or C++ source file.  A simple shell script extracts these
+    comments, runs the C++ parser with the parameters contained in the
+    comment, and compares the output with the expected output (which
+    is also embedded in the comment). The test is considered a pass if
+    the compiler emits exactly the output expected.</para>
 
     <para>Diana would like a tool to re-run her tests automatically,
     and to collect statistics on how many tests have been executed,

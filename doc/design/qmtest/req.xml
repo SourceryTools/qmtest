@@ -17,8 +17,6 @@
 -->
 <chapter id="req"><title>Requirements</title>
 
- <section id="req-overview"><title>Overview</title>
-
  <para>This section lists requirements derived from the use cases
  presented above, and from the discussions on the Software Carpentry
  mailing list.  The four most important requirements (<link

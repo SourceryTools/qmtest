@@ -35,7 +35,8 @@
  <para>An <firstterm>author</firstterm> is someone who writes tests.
  A <firstterm>tester</firstterm> is someone who runs tests.  Most
  authors are also testers, but many testers will run tests they did
- not author themselves.</para>
+ not write themselves (particularly when using third-party or open
+ source software).</para>
 
  </section>
 
@@ -88,9 +89,8 @@
   <para>A test's ID is constructed by concatenating its name with the
   ID of the suite that contains it, using "." as a concatenator.
   Suite IDs are constructed similarly.  Each field in the name may
-  contain one or more digits, lower-case letters, or an underscore
-  (i.e. the same characters as class or variable names in C-like
-  languages).  Thus, test IDs are strings like
+  contain one or more digits, lower-case letters, or an underscore.
+  Thus, test IDs are strings like
   <literal>stream.output.unable_to_open_file_for_writing</literal>.
   These restrictions allow safe, easy mapping of test IDs into the
   filesystem.  Test IDs and suite IDs are in separate namespaces;

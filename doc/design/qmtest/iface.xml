@@ -17,9 +17,10 @@
 -->
 <chapter id="iface"><title>User Interface</title>
 
-<para>&qmtest; will provide two user interfaces: a command-line
-interface, and a graphical interface.  The graphical interface has not
-yet been designed.</para>
+<para>&qmtest; will provide both a command-line and a graphical
+interface.  The first version of the latter will mirror the options
+available in the former; later releases will provide more
+sophisticated steering and reporting capabilities.</para>
 
 <section><title>Command-Line Interface</title>
 
@@ -129,25 +130,28 @@ qmtest [ options ] [ suites ]
 
 <section><title>Examples</title>
 
+<para>Some examples of the use of these options are shown below.</para>
+
 <programlisting>
-
-Examples:
-
 qmtest parser
+</programlisting>
 
-	Run all of the tests in the parser testsuite, providing a one
-	line summary on the standard output.
+<para> Run all of the tests in the parser testsuite, providing a one
+line summary on the standard output. </para>
 
+<programlisting>
 qmtest -f "target_os == 'solaris'" -c release_2 parser
+</programlisting>
 
-	Run all Solaris-specific tests in (or below) a.txt, and
-	compare their results with those for release_2 in the
-	database.
+<para> Run all Solaris-specific tests in (or below) a.txt, and compare
+their results with those for release_2 in the database.</para>
 
+<programlisting>
 qmtest -t rng.uniform -r "outcome != success"
+</programlisting>
 
-	Run the test "rng.uniform", and report any errors, failures,
-	or untested tests.
+<para>Run the test "rng.uniform", and report any errors, failures, or
+untested tests.</para>
 
 </programlisting>
 

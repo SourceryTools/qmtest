@@ -31,7 +31,7 @@
   <para>The most important classes provided by the
   <classname>QMTest</classname> package are
   <classname>Engine</classname>, <classname>Suite</classname>,
-  <classname>Test</classname>, <classname>Result</classname>,
+  <classname>Test</classname>, <classname>Result</classname>, and
   <classname>Filter</classname>.  
 
   The <classname>Engine</classname> class traverses the tree of suites
@@ -100,8 +100,8 @@
    checks its "pending" pool to see whether any pending objects are
    now ready.  If so, it moves them to its ready pool.  If at any
    point the ready pool is empty, and there are items in the pending
-   pool, "DEFERRED" records are created for them, with "unsatisfied
-   prerequisite" listed as a reason. </para>
+   pool, <literal>UNTESTED</literal> records are created for them,
+   with "unsatisfied prerequisite" listed as a reason. </para>
 
    </section>
 
