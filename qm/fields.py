@@ -1112,12 +1112,12 @@ class EnumerationField(IntegerField):
 
 
     def FormatValueAsHtml(self, value, style, name=None):
-        # Use default value if requested.
-        if value is None:
-            value = []
         # Use the default field form field name if requested.
+        if value is None:
+            value = self.GetEnumerals()[0][1]
+        # Use default value if requested.
         if name is None:
-            name = self.GetEnumerals()[0][1]
+            name = self.GetHtmlFormFieldName()
 
         if style == "new" or style == "edit":
             # If the field is editable, generate a '<select>' control.

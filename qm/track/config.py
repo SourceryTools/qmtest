@@ -405,12 +405,6 @@ def setup_idb_for_internal_use():
     idb.AddIssueClass(icl)
     get_configuration()["default_class"] = "bug"
 
-    for counter in range(1, 3):
-        i = qm.track.Issue(icl, "iss%02d" % counter)
-        i.SetField("summary",
-                   "This is issue number %d." % counter)
-        idb.AddIssue(i)
-
     icl = qm.track.IssueClass(name="enhancement",
                               title="Enhancement Request",
                               categories=categories,
@@ -429,12 +423,6 @@ def setup_idb_for_internal_use():
     icl.AddField(field)
 
     idb.AddIssueClass(icl)
-
-    for counter in range(4, 6):
-        i = qm.track.Issue(icl, "iss%02d" % counter)
-        i.SetField("summary",
-                   "This is issue number %d." % counter)
-        idb.AddIssue(i)
 
 
 def setup_idb_for_test():
