@@ -486,15 +486,17 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             results_path = self.__arguments[0]
         # Load results.
         try:
-            test_results, resource_results = base.load_results(results_path)
+            results = base.load_results(open(results_path, "r"))
+            test_results = filter(lambda r: r.GetKind() == Result.TEST,
+                                  results)
+            resource_results = \
+                filter(lambda r: r.GetKind() == Result.RESOURCE,
+                       results)
         except (IOError, qm.xmlutil.ParseError), exception:
             raise RuntimeError, \
                   qm.error("invalid results file",
                            path=results_path,
                            problem=str(exception))
-        else:
-            # Don't need the map here.
-            test_results = test_results.values()
 
         # Handle the 'outcome' option.
         outcomes_file_name = self.GetCommandOption("outcomes")

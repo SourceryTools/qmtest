@@ -270,7 +270,6 @@
    <screen><computeroutput><![CDATA[
 QMTest running at http://127.0.0.1:1158/test/dir
 ]]></computeroutput></screen>
-
    </para>
 
    <para>After a moment, a new web browser window will open, and you
@@ -278,13 +277,13 @@ QMTest running at http://127.0.0.1:1158/test/dir
    window does not open, you will have to manually enter the URL that
    &qmtest; printed out
    (<literal>http://127.0.0.1:1158/test/dir</literal> in the example
-   above) into your brwoser.</para>
+   above) into your browser.</para>
 
    <para>The page you see in your browser shows the contents of the
    test database.  You can see that there are three tests in the
    database, named <filename>exec0</filename>, <filename>exec1</filename>,
    and <filename>exec2</filename>.  You can always click on the
-   <guilabel>Main Page</guilabel> link in the upper-right corner to
+   <guilabel>Home</guilabel> link in the upper-right corner to
    return to this page.</para>
 
    <para>Each test name is a hyperlink.  The <filename>exec1</filename>
@@ -322,24 +321,24 @@ QMTest running at http://127.0.0.1:1158/test/dir
    <title>Modifying and Creating Tests</title>
 
    <para>To fix the test, you need to change the arguments to the
-   test.  Click on the <guibutton>Edit</guibutton> button in the
-   upper-right corner of the page.  &qmtest; will display a form that
+   test.  Select <guibutton>Edit Test</guibutton> from the
+   <guilabel>Edit</guilabel> menu.  &qmtest; will display a form that
    allows you to change the arguments to the test.</para>
 
    <para>Change the second argument, labelled "Python Expression," to
    an expression that evaluates to true such as <literal>2 + 2 ==
    4</literal>.  Then click on the <guibutton>OK</guibutton> button at
-   the bottom of the page to save your changes.  Click on the
-   <guibutton>Run</guibutton> button in the upper-right corner of the
-   page and observer that the test now passes.</para>
+   the bottom of the page to save your changes.  Choos <guibutton>This
+   Test</guibutton> from the <guibutton>Run</guibutton> menu and
+   observe that the test now passes.</para>
 
    <para>Creating in a new test works in a similar way.  Click on the
-   <guilabel>Main Page</guilabel> link to return to the main &qmtest;
-   page.  Then, click on the <guibutton>New Test</guibutton> button to
-   create a new test.  &qmtest; displays a form that contains two
-   fields: the test name, and the test class.  The test name
-   identifies the test; the test class indicates what kind of test
-   will be created.</para>
+   <guilabel>Home</guilabel> link to return to the main &qmtest; page.
+   Then, select <guibutton>New Test</guibutton> from the
+   <guilabel>File</guilabel> menu to create a new test.  &qmtest;
+   displays a form that contains two fields: the test name, and the
+   test class.  The test name identifies the test; the test class
+   indicates what kind of test will be created.</para>
 
    <para>Test names must be composed entirely of lowercase letters,
    numbers, the <quote>_</quote> character, and the <quote>.</quote>
@@ -384,12 +383,12 @@ QMTest running at http://127.0.0.1:1158/test/dir
    click the <guibutton>OK</guibutton> button at the bottom of the
    form.</para>
 
-   <para>Now you can click on the <guibutton>Run</guibutton> button to
-   run the test.</para>
+   <para>Now you can select <guibutton>This Test</guibutton> from the
+   <guilabel>Run</guilabel> menu to run the test.</para>
 
-   <para>When you're done experimenting with &qmtest, you can shut it
-   down by clicking the <guibutton>Shut Down</guibutton> button on the
-   main page.</para>
+   <para>When you're done experimenting with &qmtest, choose
+   <guibutton>Exit</guibutton> from the <guilabel>File</guilabel>
+   menu.</para>
 
   </section> <!-- sec-testtut-modifying -->
 

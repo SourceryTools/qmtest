@@ -108,6 +108,13 @@ function handle_menu_select(sel)
     location = value; 
   }
 }
+
+
+function load_results()
+{
+   window.open("load-results", "load_results", 
+               "dependent,height=200,width=640");
+}
 </script>
 
 <dtml-comment><!-- 

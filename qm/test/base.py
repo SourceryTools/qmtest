@@ -1161,40 +1161,32 @@ def load_outcomes(path):
     returns -- A map from test IDs to outcomes."""
 
     # Load full results.
-    test_results = load_results(path)[0]
+    test_results = filter(lambda r: r.GetKind() == Result.TEST,
+                          load_results(open(path, "r")))
     # Keep test outcomes only.
     outcomes = {}
-    for test_id in test_results.keys():
-        outcomes[test_id] = test_results[test_id].GetOutcome()
+    for r in test_results:
+        outcomes[r.GetId()] = r.GetOutcome()
     return outcomes
 
 
-def load_results(path):
+def load_results(file):
     """Read test results from a file.
 
-    'path' -- The file from which to read the results.
+    'file' -- The file object from which to read the results.
 
-    returns -- A pair, '(test_results, resource_results)'.
-    'test_results' is map from test IDs to 'Result' objects.
-    'resource_results' is a sequence of resource 'Result' objects."""
+    returns -- A sequence of 'Result' objects."""
 
-    test_results = {}
-    resource_results = []
+    results = []
     
-    results_document = qm.xmlutil.load_xml_file(path)
+    results_document = qm.xmlutil.load_xml(file)
     node = results_document.documentElement
     # Extract the results.
     results_elements = qm.xmlutil.get_children(node, "result")
     for re in results_elements:
-        r = _result_from_dom(re)
-        if r.GetKind() == Result.TEST:
-            test_results[r.GetId()] = r
-        elif r.GetKind() == Result.RESOURCE:
-            resource_results.append(r)
-        else:
-            assert 0
+        results.append(_result_from_dom(re))
 
-    return test_results, resource_results
+    return results
 
 
 def _result_from_dom(node):

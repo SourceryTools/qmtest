@@ -1599,7 +1599,6 @@ class AttachmentField(Field):
             %s%s
             ''' % (text_control, hidden_control, upload_button, clear_button)
 
-            # Phew!  All done.
             return result
 
         else:

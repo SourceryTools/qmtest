@@ -1,5 +1,24 @@
 2001-10-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/doc/test-manual.xml: Update for changes to GUI.
+	* qm/test/base.py (load_outcomes): Adjust for changes to ...
+	(load_results): ... this function.  Take a file object, not
+	a path, as input.  Return one combined sequence of all results.
+	* qm/test/cmdline.py (Command.__ExecuteSummarize): Adjust
+	accordingly.
+	* qm/test/web/web.py (DefaultDtmlPage): Add loading and
+	saving results to the file menu.
+	(LoadResultsPage): New class.
+	(QMTestServer.__init__): Add support loading and saving
+	results.
+	(QMTestServer.HandleLoadResults): New method.
+	(QMTestServer.HandleSaveResults): Likewise.
+	(QMTestServer.HandleSubmitResults): Likewise.
+	* share/dtml/test/load-results.dtml: New file.
+	* share/dtml/test/navigation-bar.dtml: Add support for
+	loading results.
+	* share/web/common.js: Fix HTML.
+	
 	* qm/web.py (DtmlPage.MakeMenuItem): New method.
 	(WebRequestHandler): Print thank you message when shutting down.
 	(WebServer.Bind): Remove getsockname call.

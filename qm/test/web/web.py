@@ -40,8 +40,10 @@ import qm
 import qm.attachment
 from   qm.test.result import *
 from   qm.test.result_stream import *
+from   qm.test.xml_result_stream import *
 import qm.web
 import string
+import StringIO
 
 ########################################################################
 # classes
@@ -59,6 +61,8 @@ class DefaultDtmlPage(qm.web.DtmlPage):
             ('New Test', 'new-test'),
             ('New Suite', 'new-suite'),
             ('New Resource', 'new-resource'),
+            ('Load Results', ' load_results()'),
+            ('Save Results', 'save-results'),
             ('Exit', 'shutdown')
             ]
         self.edit_menu_items = [
@@ -163,6 +167,15 @@ class ContextPage(DtmlPage):
         self.context = server.GetContext()
         
 
+class LoadResultsPage(DtmlPage):
+    """DTML page for uploading results."""
+
+    def __init__(self):
+        """Construct a new 'LoadResultsPage'."""
+
+        DtmlPage.__init__(self, "load-results.dtml")
+
+        
 class ResultPage(DtmlPage):
     """DTML page for showing result detail."""
 
@@ -241,10 +254,12 @@ class QMTestServer(qm.web.WebServer):
             ( "edit-resource", qm.test.web.show.handle_show ),
             ( "edit-suite", qm.test.web.suite.handle_edit ),
             ( "edit-test", qm.test.web.show.handle_show ),
+            ( "load-results", self.HandleLoadResults ),
             ( "new-resource", qm.test.web.show.handle_new_resource ),
             ( "new-suite", qm.test.web.suite.handle_new ),
             ( "new-test", qm.test.web.show.handle_new_test ),
             ( "run-tests", self.HandleRunTests ),
+            ( "save-results", self.HandleSaveResults ),
             ( "show-dir", qm.test.web.dir.handle_dir ),
             ( "show-resource", qm.test.web.show.handle_show ),
             ( "show-result", self.HandleShowResult ),
@@ -254,6 +269,7 @@ class QMTestServer(qm.web.WebServer):
             ( "shutdown", self.HandleShutdown ),
             ( "submit-context", self.HandleSubmitContext ),
             ( "submit-resource", qm.test.web.show.handle_submit ),
+            ( "submit-results", self.HandleSubmitResults ),
             ( "submit-suite", qm.test.web.suite.handle_submit ),
             ( "submit-test", qm.test.web.show.handle_submit ),
             ]:
@@ -310,7 +326,15 @@ class QMTestServer(qm.web.WebServer):
         context_page = ContextPage(self)
         return context_page(request)
         
+
+    def HandleLoadResults(self, request):
+        """Handle a request to upload results.
         
+        'request' -- The 'WebRequest' that caused the event."""
+
+        return LoadResultsPage()(request)
+
+    
     def HandleRunTests(self, request):
         """Handle a request to run tests.
 
@@ -351,6 +375,30 @@ class QMTestServer(qm.web.WebServer):
         return self.HandleShowResults(request)
 
 
+    def HandleSaveResults(self, request):
+        """Handle a request to show result detail.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Create a string stream to store the results.
+        s = StringIO.StringIO()
+        # Create an XML results stream for storing the results.
+        rs = XMLResultStream(s)
+        # Write all the results.
+        for r in self.__results_stream.test_results.values():
+            rs.WriteResult(r)
+        for r in self.__results_stream.resource_results.values():
+            rs.WriteResult(r)
+        # Terminate the stream.
+        rs.Summarize()
+        # Extract the data.
+        data = s.getvalue()
+        # Close the stream.
+        s.close()
+        
+        return ("application/x-qmtest-results", data)
+    
+                
     def HandleShowResult(self, request):
         """Handle a request to show result detail.
 
@@ -395,7 +443,29 @@ class QMTestServer(qm.web.WebServer):
         request = qm.web.WebRequest("dir", base=request)
         raise qm.web.HttpRedirect, request
 
-        
+
+    def HandleSubmitResults(self, request):
+        """Handle uploading results.
+
+        'request' -- The 'WebRequest' that caused the event."""
+
+        # Get the results file data.
+        data = request["results"]
+        # Create a file object from the data.
+        f = StringIO.StringIO(data)
+        # Read the results.
+        results = qm.test.base.load_results(f)
+        # Enter them into a new results stream.
+        self.__results_stream = StorageResultsStream()
+        for r in results:
+            self.__results_stream.WriteResult(r)
+        self.__results_stream.Summarize()
+        # Close the upload popup window, and redirect the main window
+        # to a view of the results.
+        return """<html><body><script language="JavaScript">
+                  window.opener.location = 'show-results'
+                  window.close();</script></body></html>"""
+    
 ########################################################################
 # initialization
 ########################################################################

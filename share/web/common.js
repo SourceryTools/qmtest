@@ -339,7 +339,8 @@ function popup_box(title, message)
 {
   var popup = window.open("", "popup", "width=480,height=200");
   popup.document.open("text/html");
-  popup.document.write("<html><head><title>" + title + "</title><body>\n"
+  popup.document.write("<html><head><title>" + title 
+                       + "</title></head><body>\n"
                        + "<table border='0' width='100%' height='100%'>"
                        + "<tr><td align='center'><h3>" + title 
                        + "</h3></td></tr>"
