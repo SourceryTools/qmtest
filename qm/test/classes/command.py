@@ -14,13 +14,15 @@
 ########################################################################
 
 ########################################################################
-# imports
+# Imports
 ########################################################################
 
 import cPickle
 import errno
 import os
 import qm.common
+from   qm.read_thread import ReadThread
+from   qm.write_thread import WriteThread
 import qm.fields
 import qm.test.base
 from   qm.test.test import Test
@@ -31,56 +33,9 @@ import types
 from   threading import *
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
-class ReadThread(Thread):
-    """An 'ReadThread' is a thread that reads from a file."""
-
-    def __init__(self, f):
-        """Construct a new 'ReadThread'.
-
-        'f' -- The file object from which to read."""
-
-        Thread.__init__(self, None, None, None)
-
-        self.f = f
-        
-            
-    def run(self):
-        """Read the data from the stream."""
-
-        try:
-            self.data = self.f.read()
-        except:
-            self.data = ""
-	self.f.close()
-
-        
-
-class WriteThread(Thread):
-    """A 'WriteThread' is a thread that writes to a file."""
-
-    def __init__(self, f, data):
-        """Construct a new 'WriteThread'.
-
-        'f' -- The file object to which to write.
-
-        'data' -- The string to be written to the file."""
-
-        Thread.__init__(self, None, None, None)
-
-        self.f = f
-        self.data = data
-        
-
-    def run(self):
-        """Write the data to the stream."""
-        
-        self.f.write(self.data)
-	self.f.close()
-
-        
 class ExecTestBase(Test):
     """Check a program's output and exit code.
 
