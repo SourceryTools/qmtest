@@ -1,5 +1,8 @@
 2002-05-27  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/track: Remove directory.
+	* GNUmakefile.in (QM_TOOLS): Remove QMTrack.
+	
  	Merge from release-1-1-branch.
 
 2002-05-20  Mark Mitchell  <mitchell@doubledemon.codesourcery.com>
