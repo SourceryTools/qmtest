@@ -1226,7 +1226,6 @@ def load_database(path):
     # for a file called 'database.qtb' in the directory corresponding
     # to the database.
     config_path = os.path.join(path, 'configuration')
-    print config_path
     if os.path.isfile(config_path):
         # Load the configuration file.
         document = qm.xmlutil.load_xml_file(config_path)
