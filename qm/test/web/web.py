@@ -2026,19 +2026,17 @@ class QMTestServer(qm.web.WebServer):
             if type is "resource":
                 try:
                     item = database.GetResource(item_id)
-                except qm.test.database.NoSuchTestError:
+                except qm.test.database.NoSuchTestError, e:
                     # An test with the specified test ID was not fount.
                     # Show a page indicating the error.
-                    message = qm.error("no such test", test_id=item_id)
-                    return qm.web.generate_error_page(request, message)
+                    return qm.web.generate_error_page(request, str(e))
             elif type is "test":
                 try:
                     item = database.GetTest(item_id)
-                except qm.test.database.NoSuchResourceError:
+                except qm.test.database.NoSuchResourceError, e:
                     # An test with the specified resource ID was not fount.
                     # Show a page indicating the error.
-                    message = qm.error("no such resource", resource_id=item_id)
-                    return qm.web.generate_error_page(request, message)
+                    return qm.web.generate_error_page(request, str(e))
 
         # Generate HTML.
         return ShowItemPage(self, item, edit, create, type)(request)

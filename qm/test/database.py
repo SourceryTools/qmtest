@@ -25,7 +25,9 @@ import qm.extension
 import qm.fields
 from   qm.label import *
 from   qm.test.base import *
+from   qm.test.directory_suite import DirectorySuite
 from   qm.test.runnable import Runnable
+from   qm.test.test import Test
 
 ########################################################################
 # Classes
@@ -197,7 +199,8 @@ class TestDescriptor(ItemDescriptor):
                                 test_id, test_class_name, arguments)
 
         self.__prerequisites = {}
-        for p, o in self.GetArguments().get("prerequisites", []):
+        for p, o in \
+            self.GetArguments().get(Test.PREREQUISITES_FIELD_ID, []):
             self.__prerequisites[p] = o
             
         # Don't instantiate the test yet.
@@ -319,7 +322,25 @@ class DatabaseError(QMException):
     for the user."""
             
 
-class NoSuchTestError(DatabaseError):
+class NoSuchItemError(DatabaseError):
+    """An exception indicating that a particular item could not be found."""
+
+    def __init__(self, kind, item_id):
+
+        self.kind = kind
+        self.item_id = item_id
+
+
+    def __str__(self):
+        """Return a string describing this exception."""
+
+        return qm.message("no such item",
+                          kind = self.kind,
+                          item_id = self.item_id)
+
+
+
+class NoSuchTestError(NoSuchItemError):
     """The specified test does not exist."""
 
     def __init__(self, test_id):
@@ -327,17 +348,11 @@ class NoSuchTestError(DatabaseError):
 
         'test_id' -- The name of the test that does not exist."""
 
-        self.test_id = test_id
-
-
-    def __str__(self):
-        """Return a string describing this exception."""
-
-        return qm.error("no such test", test_id=self.test_id)
+        NoSuchItemError.__init__(self, Database.TEST, test_id)
 
                         
 
-class NoSuchSuiteError(DatabaseError):
+class NoSuchSuiteError(NoSuchItemError):
     """The specified suite does not exist."""
 
     def __init__(self, suite_id):
@@ -345,17 +360,11 @@ class NoSuchSuiteError(DatabaseError):
 
         'suite_id' -- The name of the suite that does not exist."""
 
-        self.suite_id = suite_id
-
-        
-    def __str__(self):
-        """Return a string describing this exception."""
-
-        return qm.error("no such suite", suite_id=self.suite_id)
+        NoSuchItemError.__init__(self, Database.SUITE, suite_id)
 
 
 
-class NoSuchResourceError(DatabaseError):
+class NoSuchResourceError(NoSuchItemError):
     """The specified resource does not exist."""
 
     def __init__(self, resource_id):
@@ -363,13 +372,7 @@ class NoSuchResourceError(DatabaseError):
 
         'resource_id' -- The name of the resource that does not exist."""
 
-        self.resource_id = resource_id
-
-
-    def __str__(self):
-        """Return a string describing this exception."""
-
-        return qm.error("no such resource", resource_id=self.resource_id)
+        NoSuchItemError.__init__(self, Database.RESOURCE, resource_id)
 
 
 
@@ -470,13 +473,26 @@ class Database(qm.extension.Extension):
             default_value = "true")
         ]
 
-    RESOURCE = "Resource"
-    TEST = "Test"
-    SUITE = "Suite"
+    RESOURCE = "resource"
+    SUITE = "suite"
+    TEST = "test"
     
-    ITEM_KINDS = [RESOURCE, TEST, SUITE]
+    ITEM_KINDS = [RESOURCE, SUITE, TEST]
     """The kinds of items that can be stored in a 'Database'."""
+
+    _item_exceptions = {
+        RESOURCE : NoSuchResourceError,
+        SUITE : NoSuchSuiteError,
+        TEST : NoSuchTestError
+        }
+    """The exceptions to be raised when a particular item cannot be found.
+
+    This map is indexed by the 'ITEM_KINDS'; the value indicates the
+    exception class to be used when the indicated kind cannot be found."""
     
+    kind = "database"
+    """The 'Extension' kind."""
+
     def __init__(self, path, arguments):
         """Construct a 'Database'.
 
@@ -603,7 +619,7 @@ class Database(qm.extension.Extension):
         raises -- 'NoSuchTestError' if there is no test in the database
         named 'test_id'."""
 
-        return self.GetItem(Database.TEST, test_id)
+        raise NoSuchTestError(test_id)
 
 
     def WriteTest(self, test):
@@ -702,7 +718,10 @@ class Database(qm.extension.Extension):
         that contains all tests in that directory and its
         subdirectories."""
 
-        return self.GetItem(Database.SUITE, suite_id)
+        if suite_id == "":
+            return DirectorySuite(self, "")
+
+        raise NoSuchSuiteError(suite_id)
 
 
     def WriteSuite(self, suite):
@@ -793,7 +812,7 @@ class Database(qm.extension.Extension):
         raises -- 'NoSuchResourceError' if there is no resource in the
         database named 'resource_id'."""
 
-        return self.GetItem(Database.RESOURCE, resource_id)
+        raise NoSuchResourceError(resource_id)
 
 
     def WriteResource(self, resource):
@@ -878,9 +897,9 @@ class Database(qm.extension.Extension):
         returns -- A list of all items of the indicated 'kind' located
         within 'directory', as absolute labels.
 
-        Derived classes must override this method."""
+        Derived classes may override this method."""
 
-        raise NotImplementedError
+        return []
 
 
     def GetItem(self, kind, item_id):
@@ -894,9 +913,11 @@ class Database(qm.extension.Extension):
         returns a test descriptor or resource descriptor, respectively.
         If 'kind' is 'Database.SUITE', returns a 'Suite'.
 
-        Derived classes must override this method."""
+        Derived classes may override this method."""
 
-        raise NotImplementedError
+        return { Database.TEST : self.GetTest,
+                 Database.RESOURCE : self.GetResource,
+                 Database.SUITE : self.GetSuite } [kind] (item_id)
 
     
         
@@ -910,9 +931,9 @@ class Database(qm.extension.Extension):
         and "a.c" are directories in the database, this method will
         return "b" and "c" given "a" as 'directory'.
 
-        Derived classes must override this method."""
+        Derived classes may override this method."""
 
-        raise NotImplementedError
+        return []
         
         
     def GetPath(self):
@@ -943,9 +964,9 @@ class Database(qm.extension.Extension):
         returns -- The 'AttachmentStore' containing the attachments
         associated with tests and resources in this database.
 
-        Derived classes must override this method."""
+        Derived classes may override this method."""
 
-        raise NotImplementedError
+        return None
 
 
     def GetClassPaths(self):

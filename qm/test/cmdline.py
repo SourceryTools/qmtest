@@ -1015,19 +1015,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                        file_name = found)))
         
         # We have found the module.  Try loading it.
-        try:
-            extension_class = get_extension_class_from_directory(class_name,
-                                                                 kind,
-                                                                 directory,
-                                                                 directories)
-        except PythonException, pe:
-            # The class could not be loaded.  Show a traceback.
-            self._stderr.write(qm.common.format_exception
-                               ((pe.exc_type, pe.exc_value,
-                                 sys.exc_info()[2])))
-            raise QMException, \
-                  qm.error("could not load extension class",
-                           class_name = class_name)
+        extension_class = get_extension_class_from_directory(class_name,
+                                                             kind,
+                                                             directory,
+                                                             directories)
 
         # Update the classes.qmc file.  If it already exists, we must
         # read it in first.

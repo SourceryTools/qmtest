@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest diagnostic message templates.
 #
-# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -167,14 +167,8 @@ There is no action with the action ID "%(action_id)s".
 @ no such ID
 There is no test or suite with ID "%(id)s".
 
-@ no such resource
-There is no resource with the resource ID "%(resource_id)s".
-
-@ no such suite
-There is no suite with the suite ID "%(suite_id)s".
-
-@ no such test
-There is no test with the test ID "%(test_id)s".
+@ no such item
+There is no %(kind)s with the ID "%(item_id)s".
 
 @ no target for group
 No target which matches the group pattern specified for this test.

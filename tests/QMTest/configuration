@@ -1,2 +1,2 @@
 <?xml version="1.0" ?>
-<tdb-configuration><class-name>selfdb.QMSelftestDatabase</class-name></tdb-configuration>
+<tdb-configuration><class-name>mount_database.MountDatabase</class-name></tdb-configuration>

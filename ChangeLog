@@ -1,3 +1,47 @@
+2003-03-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/common.py (format_traceback): Tweak formatting of generated
+	structured text.
+	* qm/test/base.py (CouldNotLoadExtensionError): New class.
+	(get_extension_class_from_directory): Use it.
+	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Remove explicit
+	exception-handling code.
+	* qm/test/database.py (TestDescriptor.__init__): Use symbolic
+	constants, not hard-coded string, for prerequisites.
+	(NoSuchItemError): New class.
+	(NoSuchTestError): Inherit from it.
+	(NoSuchSuiteError): Likewise.
+	(NoSuchResourceError): Likewise.
+	(Database.RESOURCE): Tweak spelling.
+	(Database.SUITE): Likewise.
+	(Database.TEST): Likewise.
+	(Database._item_exceptions): Likewise.
+	(Database.GetTest): Raise NoSuchTestError.
+	(Database.GetSuite): Raise NoSuchSuiteError.
+	(Database.GetResource): Raise NoSuchResourceError.
+	(Database.GetItem): Implement in terms of GetTest, GetSuite, and
+	GetResource.
+	(Database.GetClassPaths): Do not raise an exception.
+	* qm/test/file_database.py (GetItem): Remove.
+	* qm/test/test.py (Test.PREREQUISITES_FIELD_ID): New variable.
+	* qm/test/classes/classes.qmc: Register
+	mount_database.MountDatabase.
+	* qm/test/classes/mount_database.py: New file.
+	* qm/test/share/messages/diagnostics.txt (no such resource):
+	Remove.
+	(no such test): Likewise.
+	(no such suite): Likewise.
+	(no such item): New message.
+	* qm/test/web/web.py (QMTestServer.HandleShowItem): Simplify.
+	* tests/QMTest/classes.qmc: Remove selftest.RegTest.
+	* tests/QMTest/configuration: Use MountDatabase.
+	* tests/QMTest/selfdb.py: Remove.
+	* tests/QMTest/selftest.py: Likewise.
+	* tests/regress/QMTest/classes.qmc: New file.
+	* tests/regress/QMTest/configuration: Likewise.
+	* tests/regress/QMTest/regression_database.py: Likewise.
+	* tests/regress/QMTest/selftest.py: Likewise.
+
 2003-03-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (ItemDescriptor.GetResources): Use

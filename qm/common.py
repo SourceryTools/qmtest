@@ -7,7 +7,7 @@
 # Contents:
 #   General-purpose classes and functions.
 #
-# Copyright (c) 2000, 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2000, 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -263,7 +263,7 @@ def format_traceback(exc_info):
 
     returns -- A string containing a the formatted traceback."""
 
-    return string.join(traceback.format_tb(exc_info[2]))
+    return string.join(traceback.format_tb(exc_info[2]), "\n")
 
 
 def format_byte_count(bytes):

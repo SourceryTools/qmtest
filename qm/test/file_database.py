@@ -287,18 +287,6 @@ class FileDatabase(Database):
                                lambda p: self._IsFile(kind, p))
 
 
-    def GetItem(self, kind, item_id):
-
-        if kind == Database.TEST:
-            return self.GetTest(item_id)
-        elif kind == Database.RESOURCE:
-            return self.GetResource(item_id)
-        elif kind == Database.SUITE:
-            return self.GetSuite(item_id)
-
-        assert None
-        
-
     def _IsFile(self, kind, path):
         """Returns true if 'path' is a file of the indicated 'kind'.
 

@@ -56,6 +56,25 @@ Keys are DTD types ("resource", "result", etc).  Values are the
 corresponding DTD public identifiers."""
 
 ########################################################################
+# Exceptions
+########################################################################
+
+class CouldNotLoadExtensionError(QMException):
+    """An exception indicating that an extension class could not be loaded."""
+
+    def __init__(self, class_name, exc_info):
+        """Construct a new 'CouldNotLoadExtensionError'.
+
+        'class_name' -- The name of the class.
+
+        'exc_info' -- An exception tuple, as returned by 'sys.exc_info'."""
+        
+        message = qm.common.format_exception(exc_info)
+        message += "\n" + qm.error("could not load extension class",
+                                   class_name = class_name)
+        QMException.__init__(self, message)
+            
+########################################################################
 # Functions
 ########################################################################
 
@@ -216,12 +235,7 @@ def get_extension_class_from_directory(class_name, kind, directory, path):
         klass = qm.common.load_class(class_name, [directory],
                                      path + sys.path)
     except:
-        raise PythonException, \
-              (qm.error("extension class not found",
-                        klass=class_name),
-               sys.exc_info()[0],
-               sys.exc_info()[1]), \
-               sys.exc_info()[2]
+        raise CouldNotLoadExtensionError(class_name, sys.exc_info())
 
     # Make sure the class is derived from the appropriate base class.
     if not issubclass(klass, __extension_bases[kind]):

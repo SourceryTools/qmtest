@@ -1,13 +1,13 @@
 ########################################################################
 #
-# File:   testsuite/QMTest/database.py
+# File:   selftest.py
 # Author: Zack Weinberg
 # Date:   2002-08-05
 #
 # Contents:
 #   Test database specific to QMTest self-test suite.
 #
-# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved.
+# Copyright (c) 2002, 2003 by CodeSourcery, LLC.  All rights reserved.
 #
 # For license terms see the file COPYING.
 #
