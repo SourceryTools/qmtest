@@ -190,7 +190,7 @@ class QMTestPage(DefaultDtmlPage):
                               edit_menu_items=edit_menu_items,
                               view_menu_items=self.view_menu_items,
                               run_menu_items=run_menu_items)
-            return "<body>%s<br>" % navigation_bar(self.request)
+            return "<body>%s<br />" % navigation_bar(self.request)
         else:
             return "<body>"
 

@@ -134,6 +134,8 @@ class DtmlPage:
     html_stylesheet = "/stylesheets/qm.css"
     """The URL for the cascading stylesheet to use with generated pages."""
 
+    common_javascript = "/common.js"
+    
     qm_bug_system_url = "http://qm.codesourcery.com:4224/track/"
     """The public URL for the bug tracking system for the QM tools."""
 
@@ -151,7 +153,7 @@ class DtmlPage:
         self.__dtml_template = dtml_template
         for key, value in attributes.items():
             setattr(self, key, value)
-
+        
 
     def __call__(self, request=None):
         """Generate an HTML page from the DTML template.
@@ -198,6 +200,16 @@ class DtmlPage:
         return apply(WebRequest, (script_url, self.request), fields)
 
 
+    def GenerateXMLHeader(self):
+        """Return the XML header for the document."""
+
+        return \
+            '''<?xml version="1.0" encoding="UTF-8"?>
+               <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+               <html xmlns="http://www.w3.org/1999/xhtml">'''
+    
+
     def GenerateHtmlHeader(self, description, headers=""):
         """Return the header for an HTML document.
 
@@ -234,7 +246,7 @@ class DtmlPage:
         """Return markup to end the body of the HTML document."""
 
         result = """
-        <br><br>
+        <br /><br />
         """
         if decorations:
             result = result + """
@@ -242,13 +254,41 @@ class DtmlPage:
          Problems?  Frustrations? <a href="/problems.html">Click here.</a>
         </font></div>
         """
-        result = result + """
-        <script language="JavaScript">\n%s\n</script>
-        </body>
-        """ % _common_javascript
+        return result + self.GenerateStartScript(self.common_javascript) \
+               + self.GenerateEndScript() + "</body>"
+
+
+    def GenerateStartScript(self, uri=None):
+        """Return the HTML for beginning a script.
+
+        'uri' -- If not None, a string giving the URI of the script.
+        
+        returns -- A string consisting of HTML for beginning an
+        embedded script.
+
+        'GenerateEndScript' must be called later to terminate the script."""
+
+        # XHTML does not allow the "language" attribute but Netscape 4
+        # requires it.  Also, in XHTML we should bracked the included
+        # script as CDATA, but that does not work with Netscape 4
+        # either.
+        result = '<script language="javascript" type="text/javascript"'
+        if uri is not None:
+            result = result + ' src="%s"' % uri
+        result = result + '>'
+
         return result
+        
 
+    def GenerateEndScript(self):
+        """Return the HTML for ending  an embedded script.
 
+        returns -- A string consisting of HTML for ending an
+        embedded script."""
+
+        return '</script>'
+
+        
     def MakeLoginForm(self, redirect_request=None, default_user_id=""):
         if redirect_request is None:
             # No redirection specified, so redirect back to this page.
@@ -409,11 +449,13 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     request.  Instead, store the information in the server instance,
     available through the 'server' attribute."""
 
-    # Update the extensions_map so that stylesheets get the correct
-    # Content-Type.
-    SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map['.css'] \
-      = 'text/css'
-    
+    # Update the extensions_map so that files are mapped to the correct
+    # content-types.
+    SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map.update(
+        { '.css' : 'text/css',
+          '.js' : 'text/javascript' }
+        )
+
     def do_GET(self):
         """Process HTTP GET requests."""
 
@@ -798,6 +840,10 @@ class WebServer(HTTPServer):
         self.RegisterScript("/problems.html", _handle_problems)
         self.RegisterScript("/", self._HandleRoot)
 
+        # Register the common JavaScript.
+        self.RegisterPathTranslation(
+            "/common.js", qm.get_share_directory("web", "common.js"))
+
         # Don't call the base class __init__ here, since we don't want
         # to create the web server just yet.  Instead, we'll call it
         # when it's time to run the server.
@@ -934,7 +980,9 @@ class WebServer(HTTPServer):
                 if os.path.isabs(sub_path):
                     sub_path = sub_path[1:]
                 # Construct the file system path.
-                return os.path.join(file_path, sub_path)
+                if sub_path:
+                    file_path = os.path.join(file_path, sub_path)
+                return file_path
         # No match was found.
         return None
 
@@ -1825,7 +1873,7 @@ def make_set_control(form_name,
       </td>
      </tr>
     </tbody></table>
-    ''' % (select, string.join(buttons, "<br>"))
+    ''' % (select, string.join(buttons, "<br />"))
 
 
 def encode_set_control_contents(values):
@@ -1888,7 +1936,7 @@ def make_properties_control(form_name,
                                                 document.%s.%s,
                                                 document.%s.%s);
                       document.%s.%s.value = ' Change ';"
-    />\n''' \
+    >\n''' \
              % (select_name, form_name, select_name,
                 form_name, name_control_name, form_name, value_control_name,
                 form_name, add_change_button_name)
@@ -1957,7 +2005,7 @@ def make_properties_control(form_name,
     return contents + '''
     <table border="0" cellpadding="0" cellspacing="0"><tbody>
      <tr valign="top">
-      <td colspan="2">%s</td>
+      <td colspan="2" width="240">%s</td>
       <td>&nbsp;</td>
       <td>%s</td>
      </tr>
@@ -2067,9 +2115,9 @@ def make_help_link_html(help_text, label="Help"):
     global _counter
 
     # Wrap the help text in a complete HTML page.
-    help_page = DtmlPage("help.dtml", help_text=help_text)()
+    help_page = DtmlPage("help.dtml", help_text=help_text)
     # Embed the page in a JavaScript string literal.
-    help_page = make_javascript_string(help_page)
+    help_page_string = make_javascript_string(help_page())
 
     # Construct the name for the JavaScript variable which will hold the
     # help page. 
@@ -2081,10 +2129,13 @@ def make_help_link_html(help_text, label="Help"):
     '''<a class="help-link"
           href="javascript: void(0)"
           onclick="show_help(%s);">%s</a>
-    <script language="JavaScript">
+    %s
     var %s = %s;
-    </script>
-    ''' % (help_variable_name, label, help_variable_name, help_page)
+    %s
+    ''' % (help_variable_name, label,
+           help_page.GenerateStartScript(),
+           help_variable_name, help_page_string,
+           help_page.GenerateEndScript())
 
 
 def make_popup_dialog(message, buttons, title=""):
@@ -2395,79 +2446,26 @@ def make_choose_control(field_name,
         buttons.append(button)
 
     # Arrange everything properly.
-    buttons = string.join(buttons, "\n<br>\n")
+    buttons = string.join(buttons, "\n<br />\n")
     return '''
     %(hidden_control)s
     <table border="0" cellpadding="0" cellspacing="0">
      <tr valign="center">
       <td>
        %(included_label)s:
-       <br>
+       <br />
        %(included_select)s
       </td>
       <td align="center">
        %(buttons)s
       </td>
       <td>
-       %(excluded_label)s:<br>
+       %(excluded_label)s:<br />
        %(excluded_select)s
       </td>
      </tr>
     </table>
     ''' % locals()
-
-
-_netscape_is_broken = "yea, verily"
-if not _netscape_is_broken:
-
-    # It would be nice to embed the popup window's HTML page directly
-    # into the containing document.  The following is one way this might
-    # be implemented.  Bugs in Netscape prevent this from working
-    # correctly for many popup pages, though, and at the moment we're
-    # not aware of any workarounds for the bugs.
-
-    def make_button_for_popup(label,
-                              html_text,
-                              window_width=480,
-                              window_height=240):
-        """Construct a button for displaying a popup page.
-
-        'label' -- The button label.
-
-        'html_text' -- The HTML source of the popup page.
-
-        'window_width' -- The width, in pixels, of the popup window.
-
-        'window_height' -- The height, in pixels, of the popup window.
-
-        returns -- HTML source for the button.  The button must be placed
-        within a form element."""
-
-        # Construct names for the variable which will contain the HTML text,
-        # and the function for showing the popup window.
-        global _counter
-        variable_name = "_page_%d" % _counter
-        function_name = "_popup_%d" % _counter
-        _counter = _counter + 1
-        # The HTML text is encoded in a JavaScript string literal.
-        html_text_string = make_javascript_string(html_text)
-        # Construct arguments for 'Window.open'.
-        window_args = "resizeable,width=%d,height=%s" \
-                      % (window_width, window_height)
-        # Generate it.
-        return """
-        <input type="button"
-               value=" %(label)s "
-               onclick="%(function_name)s();">
-        <script language="JavaScript">
-        var %(variable_name)s = %(html_text_string)s;
-        function %(function_name)s ()
-        {
-          window.open('javascript: window.opener.%(variable_name)s;',
-                      'popup', '%(window_args)s');
-        }
-        </script>
-        """ % locals()
 
 
 def make_button_for_popup(label,
@@ -2726,25 +2724,6 @@ _page_cache_name = "page-cache"
 
 _session_cache_name = "session-cache"
 """The URL prefix for the session page cache."""
-
-_common_javascript = None
-"""Boilerplate JavaScript for web pages."""
-
-########################################################################
-# initialization
-########################################################################
-
-def _initialize_module():
-    # Read in the boilerplate JavaScript.
-    global _common_javascript
-    _common_javascript = open(
-        common.get_share_directory("web", "common.js"), "r").read()
-    # Clean out comments, since we're going to include this text in
-    # every page.
-    _common_javascript = re.sub("//.*\n", "", _common_javascript)
-
-
-_initialize_module()
 
 ########################################################################
 # Local Variables:

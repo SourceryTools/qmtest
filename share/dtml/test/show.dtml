@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader(GetTitle())">
  <dtml-var expr="GenerateStartBody()">
 
@@ -75,8 +72,7 @@
   <table border="0"
          cellpadding="4"
          cellspacing="4"
-         width="100%"
-         columns="2">
+         width="100%">
    <tbody>
 
     <dtml-comment><!--
@@ -91,12 +87,11 @@
      </td>
     </tr>
     <tr class="heading">
-      <td colspan=2">
+      <td colspan="2">
          <table border="0"
                 cellpadding="0"
                 cellspacing="0"
-                width="100%"
-                columns="2">
+                width="100%">
            <tr class="heading">
              <td width="100%">
                <dtml-var expr="GetBriefClassDescription()">
@@ -149,7 +144,7 @@
          <tr valign="top"><td width="100%">
           <dtml-var expr="FormatFieldValue(field)">
           <dtml-if expr="field_errors.has_key(field_name)">
-           <br>
+           <br />
            <span class="error">
             <dtml-var expr="field_errors[field_name]">
            </span>
@@ -210,7 +205,7 @@
           <dtml-in name="categories">
           <dtml-let category=sequence-item>
            <dtml-var expr="category"> 
-           <br>
+           <br />
           </dtml-let>
           </dtml-in>
          <dtml-else>
@@ -243,7 +238,7 @@
          <dtml-let prerequisite=sequence-item>
           <dtml-var expr="FormatId(prerequisite, 'test')"> 
           (<dtml-var expr="prerequisites[prerequisite]">)
-          <br>
+          <br />
          </dtml-let>
          </dtml-in>
         <dtml-else>
@@ -274,7 +269,7 @@
          <dtml-in name="resources">
          <dtml-let resource=sequence-item>
           <dtml-var expr="FormatId(resource, 'resource')"> 
-          <br>
+          <br />
          </dtml-let>
          </dtml-in>
         <dtml-else>
@@ -311,7 +306,7 @@
    </form>
   </dtml-if>
 
-  <script language="JavaScript">
+  <dtml-var expr="GenerateStartScript()">
    function edit_item() {
     location = '<dtml-var "MakeEditUrl()">';
    }
@@ -323,7 +318,7 @@
    function run_test() {
     location = '<dtml-var "MakeRunUrl()">';
    }
-  </script>
+  <dtml-var expr="GenerateEndScript()">
 
  <dtml-var expr="GenerateEndBody()">
 </html>

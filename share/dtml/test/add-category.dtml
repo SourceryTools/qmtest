@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader('Specify a Category')">
  <dtml-var expr="GenerateStartBody(decorations=0)">
 
@@ -35,8 +32,7 @@
    <table border="0"
           cellpadding="6"
           cellspacing="4"
-          width="100%"
-          columns="2">
+          width="100%">
     <tbody>
      <tr class="field" valign="top">
       <td>
@@ -61,7 +57,7 @@
 
   </form>
 
-  <script language="JavaScript">
+  <dtml-var expr="GenerateStartScript()">
   function add_category()
   {
     var category = document.form.category.value;
@@ -72,7 +68,7 @@
     window.close();
     return false;
   }
-  </script>
+  <dtml-var expr="GenerateEndScript()">
 
  <dtml-var expr="GenerateEndBody(decorations=0)">
 </html>

@@ -1,20 +1,20 @@
 /* Document body.  */
 
 body {
-    margin-top: 16;
-    margin-left: 16;
-    margin-right: 16;
-    margin-bottom: 16;
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
     color: black;
     background: white;
     font-family: arial,sans-serif;
 }
 
 body.help {
-    margin-top: 8;
-    margin-left: 8;
-    margin-right: 8;
-    margin-bottom: 8;
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
     color: black;
     background: #ffffd0;
 }
@@ -48,17 +48,17 @@ th {
     color: white;
     background-color: black;
     text-align: left;
-    text-decoration: bold;
+    font-weight: bold;
 }
 
 td {
 }
 
-th.issue_class {
+th.issue-class {
     background-color: #e0e0e0;
     color: black;
     text-align: left;
-    text-decoration: bold;
+    font-weight: bold;
 }
 
 span#colhead {
@@ -86,36 +86,36 @@ span#button {
 }
 
 span.error, span.warning {
-    color: c00000;
+    color: #c00000;
 }
 
 tr.field {
-    background-color: f0f8ff;
+    background-color: #f0f8ff;
 }
 
 tr.field-error {
-    background-color: fff0f8;
+    background-color: #fff0f8;
 }
 
 tr.form-submit {
-    background-color: f8ffe8;
+    background-color: #f8ffe8;
 }
 
 tr.heading {
-    background-color: e8e8e8;
+    background-color: #e8e8e8;
 }
 
 span.userid {
-    color: 102050;
+    color: #102050;
 }
 
 a.userid {
-    color: a0a0cf;
+    color: #a0a0cf;
 }
 
 a.help-link {
     font-size: xx-small;
-    color: 402090;
+    color: #402090;
 }
 
 table.navbar {
@@ -127,7 +127,7 @@ td.navbar {
 }
 
 td.unexpected {
-    background-color: ffe0e8;
+    background-color: #ffe0e8;
 }
 
 a.navbar:link {
@@ -147,23 +147,23 @@ a.navbar:hover {
 }
 
 input.submit {
-    background-color: e0e0e0;
+    background-color: #e0e0e0;
 }
 
 tr.pass {
-    background-color: f0f8ff;
+    background-color: #f0f8ff;
 }
 
 tr.fail {
-    background-color: ffe0e8;
+    background-color: #ffe0e8;
 }
 
 tr.untested {
-    background-color: f0f0f0;
+    background-color: #f0f0f0;
 }
 
 tr.error {
-    background-color: ffffe0;
+    background-color: #ffffe0;
 }
 
 span.outcome {
@@ -178,3 +178,4 @@ span.id {
     font-family: monospace;
     font-weight: bold;
 }
+

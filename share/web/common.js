@@ -215,7 +215,7 @@ function property_add_or_change(select, contents, name_text, value_text)
   if(!label_is_valid(name)) {
     popup_box("Error",
               "A property name can consist only of lower-case letters, " +
-              "digits, and underscores, and cannot be empty.");
+              "digits, periods, and underscores, and cannot be empty.");
     return;
   }
 
@@ -358,7 +358,7 @@ function popup_box(title, message)
 
 function label_is_valid(label)
 {
-  return label.match(/^[a-z0-9][a-z0-9_]*$/) != null;
+  return label.match(/^[a-z0-9][a-z0-9_.]*$/) != null;
 }
 
 

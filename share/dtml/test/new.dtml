@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xhtmlns="http://www.w3.org/1999/xhtml">
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader(GetTitle())">
  <dtml-var expr="GenerateStartBody()">
 
@@ -69,7 +66,7 @@
                size="40" 
                value="<dtml-var name="item_id">"/>
         <dtml-if expr="field_errors.has_key('_id')">
-         <br>
+         <br />
          <span class="error">
           <dtml-var expr="field_errors['_id']">
          </span>
@@ -102,20 +99,20 @@
         Class:
         <select name="class">
          <option value="" 
-                 <dtml-unless class_name>selected</dtml-unless> >
+                 <dtml-unless class_name>selected="selected"</dtml-unless> >
           Select A Class
          </option>
          <dtml-in name="class_names">
          <dtml-let name=sequence-item>
           <option value="<dtml-var name>"
-           <dtml-if expr="name == class_name">selected</dtml-if> >
+           <dtml-if expr="name == class_name">selected="selected"</dtml-if> >
            <dtml-var name>
           </option>
          </dtml-let>
          </dtml-in>
         </select>
         <dtml-if expr="field_errors.has_key('_class')">
-         <br>
+         <br />
          <span class="error">
           <dtml-var expr="field_errors['_class']">
          </span>
@@ -135,7 +132,7 @@
 
     <tr class="heading">
      <td colspan="2">
-      <input type="submit" value=" Next > ">
+      <input type="submit" value=" Next > " />
       <dtml-var expr="MakeButton('Cancel', 'dir')">
      </td>
     </tr>

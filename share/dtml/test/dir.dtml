@@ -14,10 +14,7 @@
     http://www.software-carpentry.com/openpub-license.html
 
 --></dtml-comment>
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xhtmlns="http://www.w3.org/1999/xhtml">
+<dtml-var expr="GenerateXMLHeader()">
  <dtml-var expr="GenerateHtmlHeader('Test Database')">
  <dtml-var expr="GenerateStartBody()">
 
@@ -80,15 +77,14 @@
    </dtml-if>
   </tbody>
  </table>
- </td></tr>
 
- <dtml-var expr="GenerateEndBody()">
-
- <script language="JavaScript">
+ <dtml-var expr="GenerateStartScript()">
    function run_dir() {
     location = '<dtml-var "MakeRunUrl()">';
    }
- </script>
+ <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
 
 </html>
 

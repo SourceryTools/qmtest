@@ -1,5 +1,32 @@
 2001-12-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/attachment.py (TemporaryAttachmentStore.HandleUploadRequest):
+	Add type attribute to <script>.
+	* qm/web.py (DtmlPage.common_javascript): New variable.
+	(DtmlPage.GenerateXMLHeader): New method.
+	(DtmlPage.GenerateEndBody): Generate correctl XHTML.
+	(DtmlPage.GenerateStartScript): New method.
+	(DtmlPage.GenerateEndScript): Likewise.
+	(WebRequest): Update extensions_map to map .js to text/javascript.
+	(WebServer.__init__): Register "/common.js".
+	(WebServer.TranslateRequest): Do not add a trailing '/' unless
+	there is going to be something after the '/'.
+	(make_set_control): Generate correct XHTML.
+	(encode_set_control_contents): Likewise.
+	(make_properties_control): Likewise.
+	(make_help_link_html): Likewise.
+	(make_popup_dialog): Likewise.
+	(make_choose_control): Likewise.
+	(_common_javascript): Remove.
+	(_initialize_module): Likewise.
+	* qm/test/web/web.py (QMTestPage.GenerateStartBody): Generate correct
+	XHTML.
+	* share/dtml: Likewise, for all files.
+	* share/web/common.js (property_add_or_change): Change
+	documentation text.
+	(label_is_valid): Allow periods.
+	* share/web/stylesheets/qm.css: Make sure it is valid CSS.
+	
 	* standard.mk.in (all): Remove doc.
 	(doc): Rename to ...
 	(doc-all): ... this.
