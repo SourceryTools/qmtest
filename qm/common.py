@@ -1231,6 +1231,150 @@ def print_message(min_verbose, text):
         sys.stdout.write(text)
 
 
+def format_time(time_secs, local_time_zone=1):
+    """Generate a text format representing a date and time.
+
+    The output is in the format "YYYY-MM-DD HH:MM ZZZ".
+
+    'time_secs' -- The number of seconds since the start of the UNIX
+    epoch, UTC.
+
+    'local_time_zone' -- If true, format the time in the local time
+    zone.  Otherwise, format it as UTC."""
+
+    # Convert the time in seconds to a Python time 9-tuple.
+    if local_time_zone:
+        time_tuple = time.localtime(time_secs)
+        time_zone = time.tzname[time_tuple[8]]
+    else:
+        time_tuple = time.gmtime(time_secs)
+        time_zone = "UTC"
+    # Unpack the tuple.
+    year, month, day, hour, minute, second, weekday, julian_day, \
+          dst_flag = time_tuple
+    # Generate the format.
+    return "%(year)4d-%(month)02d-%(day)02d " \
+           "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
+
+
+# No 'time.strptime' on non-UNIX systems, so use this instead.  This
+# version is more forgiving, anyway, and uses our standardized timestamp
+# format. 
+
+def parse_time(time_string, default_local_time_zone=1):
+    """Parse a date and/or time string.
+
+    'time_string' -- A string representing a date and time in the format
+    returned by 'format_time'.  This function makes a best-effort
+    attempt to parse incomplete strings as well.
+
+    'default_local_time_zone' -- If the time zone is not specified in
+    'time_string' and this parameter is true, assume the time is in the
+    local time zone.  If this parameter is false, assume the time is
+    UTC.
+
+    returns -- An integer number of seconds since the start of the UNIX
+    epoch, UTC.
+
+    Only UTC and the current local time zone may be specified explicitly
+    in 'time_string'."""
+
+    # Sanitize.
+    time_string = string.strip(time_string)
+    time_string = re.sub(" +", " ", time_string)
+    time_string = re.sub("/", "-", time_string)
+    # Break it apart.
+    components = string.split(time_string, " ")
+
+    # Do we have a time zone at the end?
+    if components[-1] == "UTC":
+        # It's explicitly UTC. 
+        utc = 1
+        dst = 0
+        components.pop()
+    elif components[-1] == time.tzname[0]:
+        # It's explicitly our local non-DST time zone.
+        utc = 0
+        dst = 0
+        components.pop()
+    elif time.daylight and components[-1] == time.tzname[1]:
+        # It's explicitly our local DST time zone.
+        utc = 0
+        dst = 1
+        components.pop()
+    else:
+        # No explicit time zone.  Use the specified default.
+        if default_local_time_zone:
+            utc = 0
+            dst = -1
+        else:
+            utc = 1
+            dst = 0
+
+    # Start with the current time, in the appropriate format.
+    if utc:
+        time_tuple = time.gmtime(time.time())
+    else:
+        time_tuple = time.localtime(time.time())
+    # Unpack the date tuple.
+    year, month, day = time_tuple[:3]
+    # Assume midnight.
+    hour = 0
+    minute = 0
+
+    # Look at each part of the date/time.
+    for component in components:
+        if string.count(component, "-") == 2:
+            # Looks like a date.
+            year, month, day = map(int, string.split(component, "-"))
+        elif string.count(component, ":") in [1, 2]:
+            # Looks like a time.
+            hour, minute = map(int, string.split(component, ":")[:2])
+        else:
+            # Don't understand it.
+            raise ValueError
+        
+    # Construct a Python time tuple.
+    time_tuple = (year, month, day, hour, minute, 0, 0, 0, dst)
+    # Convert it to seconds.
+    if utc:
+        return int(timegm(time_tuple))
+    else:
+        return int(time.mktime(time_tuple))
+    
+
+import calendar
+
+if "timegm" in dir(calendar):
+    # Use timegm from the Python library.
+    from calendar import timegm
+
+else:
+    # FIXME: Remove this if we migrate to a later Python version
+    # permanently. 
+
+    # This function is borrowed from the Python 1.6.1 distribution's
+    # 'calendar' module.  According to the Python 1.5.2 library
+    # documentation, it should be present in that version too, but it's
+    # not.
+    def timegm(tuple):
+        from calendar import *
+        EPOCH = 1970
+        year, month, day, hour, minute, second = tuple[:6]
+        assert year >= EPOCH
+        assert 1 <= month <= 12
+        days = 365*(year-EPOCH) + leapdays(EPOCH, year)
+        for i in range(1, month):
+            days = days + mdays[i]
+        if month > 2 and isleap(year):
+            days = days + 1
+        days = days + day - 1
+        hours = days*24 + hour
+        minutes = hours*60 + minute
+        seconds = minutes*60 + second
+        return seconds
+
+
 ########################################################################
 # variables
 ########################################################################

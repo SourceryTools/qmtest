@@ -1,5 +1,19 @@
 2001-06-07  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/common.py (format_time): New function.
+	(parse_time): Likewise.
+	(timegm): Import or define here.
+	* qm/fields.py (SetField.FormatValueAsHtml): Don't coerce to
+	string here.
+	(TimeField): Rewrite class.
+	* tests/unit/common/format_time1.qmt: New test.
+	* tests/unit/common/parse_time1.qmt: Likewise.
+	* tests/unit/common/parse_time2.qmt: Likewise.
+	* tests/unit/common/parse_time3.qmt: Likewise.
+	* tests/unit/common/parse_time4.qmt: Likewise.
+	
+2001-06-07  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/test/classes/python.py (ExecTest.Run): Add expression value
 	to failing result.
 	* qm/test/cmdline.py (Command.add_test_id): Get rsh program from rc.

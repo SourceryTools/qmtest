@@ -809,7 +809,6 @@ class SetField(Field):
             # elements. 
             initial_elements = []
             for element in value:
-                element = str(element)
                 element_value = contained_field.FormEncodeValue(element)
                 if isinstance(contained_field, AttachmentField):
                     element_text = "%s (%s; %s)" \
@@ -1450,11 +1449,13 @@ class EnumerationField(IntegerField):
 
 ########################################################################
 
-class TimeField(TextField):
-    """A field containing a date and time."""
+class TimeField(IntegerField):
+    """A field containing a date and time.
 
-    __time_format = "%Y-%m-%d %H:%M %Z"
-    """The format, ala the 'time' module, used to represent field values."""
+    The data and time is stored as seconds since the start of the UNIX
+    epoch, UTC (the semantics of the standard 'time' function), with
+    one-second precision.  User representations of 'TimeField' fields
+    show one-minue precision."""
 
     def __init__(self, name, **attributes):
         """Create a time field.
@@ -1463,37 +1464,77 @@ class TimeField(TextField):
         causes the current time to be used when an issue is created if no
         field value is provided."""
 
-        default_value = None
-
         # Perform base class initalization.
-        apply(TextField.__init__, (self, name, default_value), attributes)
+        apply(IntegerField.__init__, (self, name), attributes)
         # Set the default value.
-        self.SetDefaultValue(default_value)
+        self.default_value = None
 
 
     def GetTypeDescription(self):
         return "a date/time (right now, it is %s)" % self.GetCurrentTime()
 
 
-    def Validate(self, value):
-        # Parse and reformat the time value.
-        if value == None:
+    def FormatValueAsText(self, value, columns=72):
+        return qm.common.format_time(value, local_time_zone=1)
+
+
+    def FormatValueAsHtml(self, value, style, name=None):
+        value = self.FormatValueAsText(value)
+
+        if style == "new" or style == "edit":
+            return '<input type="text" size="8" name="%s" value="%s"/>' \
+                   % (name, value)
+        elif style == "full" or style == "brief":
             return value
+        elif style == "hidden":
+            return '<input type="hidden" name="%s" value="%s"/>' \
+                   % (name, value)
         else:
-            time_tuple = time.strptime(value, self.__time_format)
-            return time.strftime(self.__time_format, time_tuple)
+            raise ValueError, style
+
+
+    def ParseFormValue(self, value):
+        return qm.common.parse_time(value, default_local_time_zone=1)
 
 
     def GetDefaultValue(self):
         default_value = TextField.GetDefaultValue(self)
-        if default_value == None:
-            default_value = self.GetCurrentTime() 
-        return default_value
+        if default_value is None:
+            return self.GetCurrentTime() 
+        else:
+            return default_value
 
 
     def GetCurrentTime(self):
-        now = time.localtime(time.time())
-        return time.strftime(self.__time_format, now)
+        return time.time()
+
+
+    def GetHelp(self):
+        if time.daylight:
+            time_zones = "%s or %s" % time.tzname
+        else:
+            time_zones = time.tzname[0]
+        help = """
+            This field contains a time and date.  The format for the
+            time and date is 'YYYY-MM-DD HH:MM ZZZ'.  The 'ZZZ' field is
+            the time zone, and may be the local time zone (%s) or
+            "UTC".
+
+            If the date component is omitted, today's date is used.  If
+            the time component is omitted, midnight is used.  If the
+            time zone component is omitted, the local time zone is
+            used.
+        """ % time_zones
+        default_value = self.GetDefaultValue()
+        if default_value is None:
+            help = help + """
+            The default value for this field is the current time.
+            """
+        else:
+            help = help + """
+            The default value for this field is %s.
+            """ % self.FormatValueAsText(default_value)
+        return help
         
 
 

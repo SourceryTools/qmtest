@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text># Format 'time' (in seconds) as a timestamp, then convert it
+# back to seconds.  Return the difference between 'time'
+# and this result.  Since the timestamp format has one-minute
+# precision, this result could normally be as much as 60
+# seconds off.
+
+def delta(time):
+    from qm.common import format_time, parse_time
+    new_time = parse_time(format_time(time))
+    return new_time - time
+
+# Run 'delta' on several different times.
+deltas = map(delta, [0, 10, 100, 1000, 10000, 100000,
+                     1000000, 10000000, 100000000, 100000000])
+
+# Look for cases differing by more than a minute.
+deltas = filter(lambda d: d >= 60, deltas)
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>len(deltas) == 0</text>
+ </argument>
+</test>
