@@ -41,6 +41,9 @@
  managing discussions and notifying interested parties when issues are
  edited.</para>
 
+ <para>Specific feature requirements are discussed in <xref
+ linkend="chap-requirements"/>.</para>
+
  <para>This design draws on experience from an existing issue-tracking
  system called <ulink
  url="http://www.software-carpentry.com/entries/second-round/track/Roundup/">

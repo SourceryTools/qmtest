@@ -19,21 +19,12 @@
 [
   <!-- Internal DTD subset.  Only entities should be defined here. -->
 
-  <!-- Commonly-used symbols, terms, and abbreviations specific to
-  this document.  -->
+  <!-- Include the QM common DTD module.  -->
 
-  <!ENTITY api "<acronym>API</acronym>">
-  <!ENTITY dtd "<acronym>DTD</acronym>">
-  <!ENTITY dtml "<acronym>DTML</acronym>">
-  <!ENTITY idb "<acronym>IDB</acronym>">
-  <!ENTITY iid "<acronym>IID</acronym>">
-  <!ENTITY prompt "<prompt>$ </prompt>">
-  <!ENTITY qmtrack "QMTrack">
+  <!ENTITY % qm SYSTEM "../../qm.mod">
+  %qm;
+
   <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
-  <!ENTITY rdbms "<acronym>RDBMS</acronym>">
-  <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
-  <!ENTITY sql "<acronym>SQL</acronym>">
-  <!ENTITY xml "<acronym>XML</acronym>">
 
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->

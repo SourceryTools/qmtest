@@ -1,5 +1,15 @@
 2000-12-04  Alex Samuel  <samuel@codesourcery.com>
 
+	* doc/qm.mod: New file.
+	* doc/design/qmtest/qmtest.xml: Don't declare phrase entities.
+	Incorporate qm.mod.
+	* doc/design/qmtrack/qmtrack.xml: Likewise.
+	* doc/design/qmtrack/introduction.xml: Add link.
+	* doc/design/qmtrack/user-interface.xml: Fix entity.  Fix ulink.
+	* doc/design/qmtrack/xml-repr.xml: Improve example.
+
+2000-12-04  Alex Samuel  <samuel@codesourcery.com>
+
 	* doc/design/qmtrack/concepts.xml: Edit.  Add ids.
 	* doc/design/qmtrack/idb-impl.xml: Likewise.
 	* doc/design/qmtrack/implementation.xml: Likewise.

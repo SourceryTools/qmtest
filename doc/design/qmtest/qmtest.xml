@@ -19,14 +19,10 @@
 [
   <!-- Internal DTD subset.  Only entities should be defined here. -->
 
-  <!-- Commonly-used symbols, terms, and abbreviations specific to
-  this document.  -->
+  <!-- Include the QM common DTD module.  -->
 
-  <!ENTITY prompt "<prompt>$ </prompt>">
-  <!ENTITY qmbuild "QMBuild">
-  <!ENTITY qmtest "QMTest">
-
-  <!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
+  <!ENTITY % qm SYSTEM "../../qm.mod">
+  %qm;
 
   <!-- Each chapter is contained in a separate file, and included by
   entity reference.  -->
