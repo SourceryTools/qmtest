@@ -67,8 +67,7 @@ packages = [
 # its location in the build directory.
 scripts = {
     "qmtest": "qm/test/qmtest",
-    "qmtest-remote": "qm/test/qmtest-remote",
-    "qmtrack": "qm/track/qmtrack",
+    "qmtest-remote": "qm/test/qmtest-remote"
     }
 
 # Documentation files to install.

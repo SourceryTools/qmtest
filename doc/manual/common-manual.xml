@@ -18,8 +18,8 @@
 <chapter id="chap-common-manual">
  <title>Common Components</title>
  
- <para>This chapter describes features of the &qm; applications that are
- common to &qmtest; and &qmtrack;.</para>
+ <para>This chapter describes features of &qm; that are
+ common to all &qm; applications.</para>
 
  <section id="sec-rc">
   <title>The &qm; Configuration File</title>
@@ -36,8 +36,8 @@
   files.  It is divided into sections by headings in square brackets.
   Three sections are supported: <literal>[common]</literal> contains
   configuration variables common to both the &qm; tools, while
-  <literal>[test]</literal> and <literal>[track]</literal> contain
-  configuration variables specific to one tool or the other.  Within
+  <literal>[test]</literal> contains
+  configuration variables specific to &qmtest;.  Within
   each section, configuration variables are set using the syntax
   <literal><replaceable>variable</replaceable>=<replaceable>value</replaceable></literal>.</para>
 
@@ -160,14 +160,6 @@ path=/usr/bin:/bin
    </glosslist>
 
   </section> <!-- sec-rc-test -->
-
-  <section id="sec-rc-track">
-   <title>&qmtrack; Configuration Variables</title>
-
-   <para>There are no configuration variables used only by &qmtrack;
-   at this time.</para>
-
-  </section> <!-- sec-rc-track -->
 
  </section> <!-- sec-rc -->
 

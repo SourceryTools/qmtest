@@ -40,10 +40,6 @@
   <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
   <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
   <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
-  <!ENTITY track-tour.xml SYSTEM "track-tour.xml">
-  <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
-  <!ENTITY track-reference.xml SYSTEM "track-reference.xml">
-  <!ENTITY track-email.xml SYSTEM "track-email.xml">
 ]>
 <book>
  <bookinfo>
@@ -68,9 +64,6 @@
 
  &test-tour.xml;
  &test-manual.xml;
-
- &track-tour.xml;
- &track-manual.xml;
 
  &common-manual.xml;
 
