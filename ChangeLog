@@ -1,3 +1,7 @@
+2001-04-13  Benjamin Chelf  <chelf@codesourcery.com>
+
+	* qm/label.py (thunk): Remove rand. Change to raise exception.
+
 2001-04-09  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/diagnostic.py (message): New function.

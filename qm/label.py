@@ -64,7 +64,6 @@ Labels are restricted by these rules:
 ########################################################################
 
 import os
-import rand
 import re
 import string
 
@@ -187,7 +186,7 @@ def thunk(label):
         label = label[1:]
     # Make sure the label isn't empty.  If it is, concoct something.
     if label == "":
-        label = "label%d" % rand.rand()
+        raise ValueError, "Empty label"
     return label
 
 
