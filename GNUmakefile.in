@@ -33,15 +33,10 @@ PYTHON 		= PYTHONPATH=$(subst $(SPACE),:,$(PYTHONDIRS)) \
 PYTHON_VERSION	= @PYTHON_VERSION@
 PYTHON_PREFIX   = @PYTHON_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
-PYTHONDIRS	= $(TOPDIR) \
-                  $(TOPDIR)/zope-dtml \
-                  $(TOPDIR)/zope-dtml/ExtensionClass
+PYTHONDIRS	= $(TOPDIR)
 
 # Python packages with installation scripts.
-PYTHON_PACKAGES = \
-	qm \
-	zope-dtml/DocumentTemplate \
-	zope-dtml/ExtensionClass
+PYTHON_PACKAGES = qm
 # The names of rules to install the PYTHON_PACKAGES.
 PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
 

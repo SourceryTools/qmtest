@@ -1,3 +1,20 @@
+2003-04-15  Nathaniel Smith  <njs@pobox.com>
+
+	* zope-dtml/ExtensionClass/: Remove.
+	* qm/external/: New directory.
+	* qm/external/__init__.py: New file.
+	* zope-dtml/DocumentTemplate/: Move to...
+	* qm/external/DocumentTemplate/: ...here.
+	* qm/external/DocumentTemplate/DT_String.py (String._ParseTag):
+	Tweak so it can find modules in the same directory.
+	* qm/external/DocumentTemplate/__init__.py: Tweak to work even if
+	ExtensionClass doesn't exist.
+	* qm/external/local-DocumentTemplate-patch: Record the above two
+	changes to ease future upgrades of DocumentTemplate.
+	* GNUMakefile.in (PYTHONDIRS): Remove mention of zope-dtml/.
+	(PYTHON_PACKAGES): Likewise.
+	* qm/web.py: Import DocumentTemplate from new location.
+
 2003-04-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Remove --result-format item and add --result-stream item.
