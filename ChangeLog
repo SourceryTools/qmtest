@@ -1,3 +1,7 @@
+2002-11-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* README: Update installation instructions.
+
 2002-11-15  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (cPickle): Import it.

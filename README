@@ -42,9 +42,30 @@
 
       --prefix=/path/to/install
 
-    To build QM:
+    If you are building from CVS sources and want to build the
+    documentation add:
+
+      --enable-maintainer-mode
+
+    If you are building from a released version, you do not need to use
+    this option.
+
+    After running configure, run:
 
       make
+
+    to perform the build.  You must use GNU make, which is called
+    "gmake" on some systems.
+
+
+  - TESTING QM
+
+    QM comes with a test suite to testitself.  Of course, this test
+    suite is implemented using QMTest.  To run it, invoke
+
+      make check
+
+    after performing building QM.
 
 
   - INSTALLING QM
@@ -56,19 +77,6 @@
     By default, this installs files under /usr/local; to use a different
     prefix, specify the --prefix option to configure.
 
-
-  - TESTING QM
-
-    QM comes with a test suite to verify its functioning.  Of course,
-    this test suite is implemented using QMTest.  The test suite is
-    located in the tests subdirectory of the source tree.  To run it,
-    invoke
-
-      qmtest -D /path/to/qm/tests run
-
-    This assumes that the qmtest executable you just installed (or
-    another one) is in your PATH, and that /path/to/qm is the path to
-    your QM source tree.
 
 ------------------------------------------------------------------------
 Local Variables:
