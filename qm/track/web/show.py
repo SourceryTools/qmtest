@@ -433,7 +433,8 @@ def handle_submit(request):
         # through, reshow the form, indicating the problems.
         field_errors = {}
         for field_name, exc_info in invalid_fields.items():
-            field_errors[field_name] = str(exc_info[1])
+            msg = qm.web.format_structured_text(str(exc_info[1]))
+            field_errors[field_name] = msg
         if is_new:
             new_request = qm.web.WebRequest("show", style="new")
             new_request["class"] = request["class"]

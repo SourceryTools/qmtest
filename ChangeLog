@@ -1,3 +1,31 @@
+2001-03-05  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/track/web/show.py (handle_submit): Format error messages.
+	* qm/track/server.py (start_server): Handle address in use errors.
+	(execute): Issue diagnostics.
+	* qm/track/issue_class.py: Use diagnostics throughout.
+	(IssueFieldText.Validate): Convert from DOS text.
+	* qm/track/diagnostics.txt: New file.
+	* qm/track/config.py (__diagnostics): New variable.
+	(diagnostic): New function.
+	(error): Likewise.
+	(warning): Likewise.
+	* qm/track/cmdline.py (Command.__PerformDestroy): Handle lock error.
+
+	* qm/web.py (AddressInUseError): New class.
+	(WebServer.Bind): Raise it.
+	(escape): Reimplement.
+	(__entity_regex): New variable.
+	(__replacement_for_entity): New function.
+	(unescape): New function.
+	(format_structured_text): Reimplement.
+	* qm/diagnostic.py: New file.
+	* qm/structured_text.py: Likewise.
+	* qm/common.py (FileSystemMutex.GetPath): New method.
+	(MapReplacer): New class.
+	(replace_by_map): New function.
+	(convert_from_dos_text): Likewise.
+
 2001-03-01  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/track/web/web.py (PageInfo.GenerateStartBody): Adjust

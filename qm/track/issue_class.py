@@ -93,7 +93,8 @@ class IssueField:
         to set."""
 
         if not qm.is_valid_label(name):
-            raise ValueError, "%s is not a valid field name" % name
+            raise ValueError, \
+                  qm.track.error("invalid field name", field_name=name)
 
         self.__attributes = {
             "name" : name,
@@ -276,11 +277,16 @@ class IssueFieldText(IssueField):
         value = str(value)
         # Clean up unless it's a verbatim string.
         if not self.IsAttribute("verbatim"):
-            value = string.strip(value)
+            # Convert to the one true text format.
+            value = qm.convert_from_dos_text(value)
+            # Remove leading whitespace.
+            value = string.lstrip(value)
         # If this field has the nonempty attribute set, make sure the
         # value complies.
         if self.IsAttribute("nonempty") and value == "":
-            raise ValueError, "this field may not be empty"
+            raise ValueError, \
+                  qm.track.error("empty field value",
+                                 field_name=self.GetTitle()) 
         return value
 
 
@@ -352,7 +358,7 @@ class IssueFieldAttachment(IssueField):
 
 
     def Validate(self, value):
-        # The value should be a triplet.
+        # The value should be an instance of 'Attachment', or 'None'.
         if value != None and not isinstance(value, issue.Attachment):
             raise ValueError, \
                   "the value of an attachment field must be an 'Attachment'"
@@ -389,11 +395,12 @@ class IssueFieldEnumeration(IssueFieldInteger):
             value = int(value)
             # Make sure the name is OK.
             if not qm.is_valid_label(key):
-                raise ValueError, '%s is not a valid enumeral' % key
+                raise ValueError, \
+                      qm.track.error("invalid enum key", key=key)
             # Store it.
             self.__enumeration[key] = value
         if len(self.__enumeration) == 0:
-            raise ValueError, "enumeration must not be empty"
+            raise ValueError, qm.track.error("empty enum")
         # If 'default_value' is 'None', use the lowest-numbered enumeral.
         if default_value == None:
             default_value = min(self.__enumeration.values())
@@ -412,7 +419,14 @@ class IssueFieldEnumeration(IssueFieldInteger):
         elif int(value) in self.__enumeration.values():
             return int(value)
         else:
-            raise ValueError, "invalid enumeration value: %s" % str(value)
+            values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
+                                     self.__enumeration.items()),
+                                 ", ")
+            raise ValueError, \
+                  qm.track.error("invalid enum value",
+                                 value=value,
+                                 field_name=self.GetTitle(),
+                                 values=values)
 
 
     def GetEnumerals(self):
@@ -443,7 +457,15 @@ class IssueFieldEnumeration(IssueFieldInteger):
         for en_name, en_val in self.__enumeration.items():
             if value == en_val:
                 return en_name
-        raise ValueError, "invalid enumeration value: %s" % str(value)
+        # No match was found; value must be invalid.
+        values = string.join(map(lambda k, v: "%s (%d)" % (k, v),
+                                 self.__enumeration.items()),
+                             ", ")
+        raise ValueError, \
+              qm.track.error("invalid enum value",
+                             value=str(value),
+                             field_name=self.GetTitle(),
+                             values=values)
 
 
     def GetEnumeration(self):
@@ -515,7 +537,8 @@ class IssueFieldIid(IssueFieldText):
     def Validate(self, value):
         value = str(value)
         if not qm.is_valid_label(value):
-            raise ValueError, "%s is not a valid issue ID label" % value
+            raise ValueError, \
+                  qm.track.error("invalid iid", iid=value) 
         return value
 
 
@@ -641,8 +664,10 @@ class IssueClass:
         try:
             return self.__fields_by_name[name]
         except KeyError:
-            raise KeyError, "%s is not a field of issue class %s" \
-                  % (name, self.GetName())
+            raise KeyError, \
+                  qm.track.error("field not in class",
+                                 field_name=name,
+                                 issue_class_name=self.GetName())
 
         
     def AddField(self, field):

@@ -37,6 +37,7 @@
 
 import os
 import qm
+import qm.diagnostic
 import qm.track.idb
 import string
 import time
@@ -393,6 +394,46 @@ def setup_idb_for_test():
         idb.AddIssue(i)
     
 
+def diagnostic(tag, severity, output, **substitutions):
+    """Generate or emit a diagnostic.
+
+    'tag' -- The associated tag.
+
+    'severity' -- A severity code.
+
+    'output' -- A file object to which to write the diagnostic, or
+    'None'.
+
+    returns -- The diagnostic."""
+
+    global __diagnostics
+
+    # Perform one-time initialization, if it hasn't been done.
+    if __diagnostics is None:
+        __diagnostics = qm.diagnostic.DiagnosticSet("diagnostics.txt",
+                                                    get_name())
+    # Generate or emit the diagnostic.
+    return apply(__diagnostics.Generate,
+                 (tag, severity, output),
+                 substitutions)
+
+
+def error(tag, output=None, **substitutions):
+    """Generate or emit an error diagnostic.
+
+    Like 'diagnostic', with 'severity' set to error."""
+
+    return apply(diagnostic, (tag, "error", output, ), substitutions)
+
+    
+def warning(tag, output=None, **substitutions):
+    """Generate or emit an error diagnostic.
+
+    Like 'diagnostic', with 'severity' set to warning."""
+
+    return apply(diagnostic, (tag, "warning", output, ), substitutions)
+
+    
 # Local helper functions.
 
 def __get_configuration_path(path):

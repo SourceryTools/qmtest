@@ -836,7 +836,11 @@ class Command:
         # Lock the IDB, to make sure we don't delete it under some
         # other process.
         lock = qm.track.config.get_idb_lock(idb_path)
-        lock.Lock(0)
+        try:
+            lock.Lock(0)
+        except qm.MutexLockError:
+            raise RuntimeError, \
+                  qm.track.error("idb locked", lock_path=lock.GetPath())
 
         while 1:
             # Ask the user for for confirmation.

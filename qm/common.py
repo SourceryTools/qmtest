@@ -101,6 +101,12 @@ class FileSystemMutex:
         self.__locked = 0
 
 
+    def GetPath(self):
+        """Return the path of the lock."""
+
+        return self.__path
+
+
     def Lock(self, timeout=None):
         """Aquire a lock.  If the mutex is already held, block.
 
@@ -224,6 +230,36 @@ class Configuration:
 
     def __delitem__(self, key):
         del self.__fields[key]
+
+
+
+class MapReplacer:
+    """A callable object to replace text according to a map."""
+
+    def __init__(self, replacements):
+        """Generate a function to replace text according to a map.
+
+        'replacements' -- A mapping of replacements.  For each element,
+        the key is the text to match, and the corresponding value is the
+        replacements for that text."""
+
+        # Construct a regular expression that matches any of the
+        # replacements.
+        keys = map(re.escape, replacements.keys())
+        regex = "(" + string.join(keys, "|") + ")"
+        self.__regex = re.compile(regex)
+        # The replacement function.  It simply looks up the replacement text
+        # in 'replacements'.
+        self.__substitution = lambda match, replacements=replacements: \
+                              replacements[match.group(0)]
+
+
+    def __call__(self, text):
+        """Perform replacements in 'text'.
+
+        returns -- The replaced text."""
+
+        return self.__regex.sub(self.__substitution, text)
 
 
 
@@ -372,6 +408,41 @@ def remove_directory_recursively(path):
     assert os.path.isdir(path)
     # FIXME: Make this portable, or provide a Windows implementation.
     os.system('rm -rf "%s"' % path)
+
+
+def replace_by_map(text, replacements):
+    """Perform multiple replacements.
+
+    'text' -- The text in which to make the replacements.
+
+    'replacements' -- A mapping of replacements.  For each element, the
+    key is the text to match, and the corresponding value is the
+    replacements for that text.
+
+    returns -- The replaced text."""
+
+    return MapReplacer(replacements)(text)
+
+
+def invert_map(m):
+    """Return the inverse of 'm'.
+
+    'm' -- A map object.
+
+    returns -- A map of values of 'm' to corresponding keys.  If a value
+    of 'm' is associated with more than one key, it is mapped to one of
+    these keys in the result, but which one is undefined."""
+
+    result = {}
+    for key, value in m.items():
+        result[value] = key
+    return result
+
+
+def convert_from_dos_text(text):
+    """Replace CRLF with LF in 'text'."""
+
+    return string.replace(text, "\n\r", "\n")
 
 
 ########################################################################

@@ -39,17 +39,30 @@
 
 import BaseHTTPServer
 import cgi
+import errno
+import htmlentitydefs
 import os
 import qm.common
+import re
 import SimpleHTTPServer
 import SocketServer
 import socket
 import string
+import structured_text
 import sys
 import traceback
 import types
 import urllib
 import xmlrpclib
+
+########################################################################
+# exception classes
+########################################################################
+
+class AddressInUseError(RuntimeError):
+    pass
+
+
 
 ########################################################################
 # classes
@@ -605,9 +618,17 @@ class WebServer(HTTPServer):
 
         # Initialize the base class here.  This binds the server
         # socket. 
-        BaseHTTPServer.HTTPServer.__init__(self,
-                                           ('', self.__port), 
-                                           WebRequestHandler)
+        try:
+            BaseHTTPServer.HTTPServer.__init__(self,
+                                               ('', self.__port), 
+                                               WebRequestHandler)
+        except socket.error, error:
+            error_number, message = error
+            if error_number == errno.EADDRINUSE:
+                # The specified address/port is already in use.
+                raise AddressInUseError, "localhost:%d" % self.__port
+            else:
+                raise
 
 
     def Run(self):
@@ -665,7 +686,7 @@ class WebRequest:
     def __str__(self):
         str = "WebRequest for %s\n" % self.__url
         for name, value in self.__fields.items():
-            str = str + "%s=%s\n" % (name, value)
+            str = str + "%s=%s\n" % (name, repr(value))
         return str
 
 
@@ -866,25 +887,45 @@ def format_exception(exc_info):
 """ % (type, value, traceback_listing)
 
 
+# Build a map from characters for which we have an HTML entity mapping
 def escape(text):
-    """Escape characters in 'text' for formatting as HTML."""
+    """Escape special characters in 'text' for formatting as HTML."""
 
     if text == "":
         return "&nbsp;"
+    else:
+        return structured_text.escape_html_entities(text)
 
-    # FIXME.  Make this more general, and more efficient.
-    text = string.replace(text, "&", "&amp;")
-    text = string.replace(text, "<", "&lt;")
-    text = string.replace(text, ">", "&gt;")
-    text = string.replace(text, '"', "&quot;")
-    return text
+
+# A regular expression that matches anything that looks like an entity.
+__entity_regex = re.compile("&(\w+);")
+
+# A function that returns the replacement for an entity matched by the
+# above expression.
+def __replacement_for_entity(match):
+    entity = match.group(1)
+    print entity
+    try:
+        return htmlentitydefs.entitydefs[entity]
+    except KeyError:
+        return "&%s;" % entity
+
+def unescape(text):
+    """Undo 'escape' by replacing entities with ordinary characters."""
+
+    return __entity_regex.sub(__replacement_for_entity, text)
 
 
 def format_structured_text(text):
     """Render 'text' as HTML."""
 
-    # FIXME.
-    return escape(text)
+    if text == "":
+        # In case the text is the only contents of a table cell -- in
+        # which case an empty string will produce undesirable visual
+        # effects -- return a single space anyway.
+        return "&nbsp;"
+    else:
+        return structured_text.to_html(text)
 
 
 def make_url_for_request(request):

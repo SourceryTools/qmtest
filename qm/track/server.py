@@ -37,6 +37,7 @@
 
 import os
 import qm
+import qm.structured_text
 import qm.track.cmdline
 import qm.track.config
 import qm.track.web
@@ -93,7 +94,7 @@ def start_server(port, log_file=None):
     'log_file' -- A file object to which the server will log requests.
     'None' for no logging.
 
-    Does not return."""
+    Does not return until the server shuts down."""
 
     # FIXME.  Can we hard code less stuff here?
 
@@ -128,7 +129,11 @@ def start_server(port, log_file=None):
     server.RegisterXmlRpcMethod(do_command_for_xml_rpc, "execute_command")
 
     # Bind the server to the specified address.
-    server.Bind()
+    try:
+        server.Bind()
+    except qm.web.AddressInUseError, address:
+        raise RuntimeError, \
+              qm.track.error("address in use", address=address)
 
     # Write the URL file.  It contains the XML-RPC URL for this server.
     url_path = qm.track.state["server_url_path"]
@@ -169,65 +174,73 @@ def execute(command, output_file, error_file):
     
     mode = qm.track.config.state["mode"]
 
-    # Check if this command requires an IDB connection.
-    if command.RequiresIdb() and mode == "remote":
-        # We're in remote mode.  Make sure this command doesn't require
-        # a local connection.
-        if command.RequiresLocalIdb():
-            raise RuntimeError, \
-                  "%s cannot be invoked on a remote IDB" \
-                  % command.GetCommand()
-        # Connect to the server.
-        server_url = qm.track.state["server_url"]
-        server = xmlrpclib.Server(server_url)
-        # Invoke the command on the server.
-        argument_list = command.GetArgumentList()
-        result = server.execute_command(argument_list)
-        # Unpack the results.
-        exit_code, output_text, error_text = result
-        # Write the returned texts to corresponding files.
-        output_file.write(output_text)
-        error_file.write(error_text)
-        # All done.
-        return exit_code
-        
-    elif not command.RequiresIdb() or mode == "local":
-        try:
+    try:
+        # Check if this command requires an IDB connection.
+        if command.RequiresIdb() and mode == "remote":
+            # We're in remote mode.  Make sure this command doesn't require
+            # a local connection.
+            if command.RequiresLocalIdb():
+                raise RuntimeError, \
+                      qm.track.error("cannot invoke remotely",
+                                     command=command.GetCommand())
+                return 1
+            # Connect to the server.
+            server_url = qm.track.state["server_url"]
+            server = xmlrpclib.Server(server_url)
+            # Invoke the command on the server.
+            argument_list = command.GetArgumentList()
+            result = server.execute_command(argument_list)
+            # Unpack the results.
+            exit_code, output_text, error_text = result
+            # Write the returned texts to corresponding files.
+            output_file.write(output_text)
+            error_file.write(error_text)
+            # All done.
+            return exit_code
+        # Run commands locally.
+        elif not command.RequiresIdb() or mode == "local":
             command.Execute(output_file)
             return 0
-        except qm.cmdline.CommandError, msg:
-            script_name = qm.track.state["script_name"]
-            error_file.write("%s: %s\n" % (script_name, msg))
-            error_file.write("Invoke %s --help for help with usage.\n"
-                             % script_name)
-            return 2
-        except qm.UserError, msg:
-            # A user error should come with a message that is
-            # comprehensible to the user.
-            error_file.write(str(msg) + "\n")
-            return 1
-        except qm.ConfigurationError, msg:
-            # A configuration error should come with a message that is
-            # comprehensible to the user.
-            error_file.write(str(msg) + "\n")
-            return 1
-        except OSError, exception:
-            if hasattr(exception, "filename"):
-                message = "%s: %s" \
-                          % (exception.strerror, exception.filename)
-            else:
-                message = exception.strerrro
-            error_file.write(message + "\n")
-            return exception.errno
-        except KeyboardInterrupt:
-            # User killed the server; let it through.
-            raise
-        except:
-            # For other exceptions, for now, just dump out the
-            # stack trace.
-            exception = qm.format_exception(sys.exc_info())
-            error_file.write(exception)
-            return 1
+    except qm.cmdline.CommandError, msg:
+        script_name = qm.track.state["script_name"]
+        msg = qm.structured_text.to_text(str(msg))
+        error_file.write("%s: %s\n" % (script_name, msg))
+        error_file.write("Invoke %s --help for help with usage.\n"
+                         % script_name)
+        return 2
+    except RuntimeError, msg:
+        msg = qm.structured_text.to_text(str(msg))
+        error_file.write(msg)
+        return 1
+    except qm.UserError, msg:
+        # A user error should come with a message that is comprehensible
+        # to the user.
+        msg = qm.structured_text.to_text(str(msg))
+        error_file.write(msg)
+        return 1
+    except qm.ConfigurationError, msg:
+        # A configuration error should come with a message that is
+        # comprehensible to the user.
+        msg = qm.structured_text.to_text(str(msg))
+        error_file.write(msg)
+        return 1
+    except OSError, exception:
+        if hasattr(exception, "filename"):
+            message = "%s: %s" \
+                      % (exception.strerror, exception.filename)
+        else:
+            message = exception.strerrro
+        error_file.write(message + "\n")
+        return exception.errno
+    except KeyboardInterrupt:
+        # User killed the server; let it through.
+        raise
+    except:
+        # For other exceptions, for now, just dump out the
+        # stack trace.
+        exception = qm.format_exception(sys.exc_info())
+        error_file.write(exception)
+        return 1
 
 
 ########################################################################

@@ -1,0 +1,99 @@
+########################################################################
+#
+# File:   diagnostics.txt
+# Author: Alex Samuel
+# Date:   2001-02-27
+#
+# Contents:
+#   Diagnostic message templates.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+########################################################################
+#
+# This file contains templates for diagnostic messages.  This file is
+# parsed by code in qm.diagnostic.
+#
+#   - Lines beginning with a hash mark are ignored.
+#
+#   - Each diagnostic begins with a line that contains an "at" sign (@)
+#     and a tag used to identify the diagnostic.
+#
+#   - Subsequent text until the start of the next diagnostic is
+#     the diagnostic template.
+#
+#   - Diagnostic templates may contain named-substition tokens as
+#     used by the Python % operator on a string.
+#
+#   - Diagnostics are interpreted as structured text.
+#
+# Please keep diagnostics in alphabetical order by tag.
+#
+########################################################################
+
+@ address in use
+The address %(address)s is already in use by another process.  Specify
+a different port for running the server.
+
+@ cannot invoke remotely
+The IDB is currently in use by a QMTrack server, but the command you
+specified, "%(command)s", can only be performed directly on the IDB.
+Please retry this command once the IDB is no longer in use by the
+server.
+
+@ empty enum
+An enumeration must have at least one enumeral value.
+
+@ empty field value
+You must specify a value for the %(field_name)s field.
+
+@ field not in class
+There is no field "%(field_name)s" in issue class %(issue_class_name)s.
+
+@ idb locked
+The IDB is currently locked by another QMTrack process.  Please try
+this command again later.  If you believe the lock file is stale and
+has been left behind by a defuct QMTrack process, delete the directory
+%(lock_path)s and try again.
+
+@ invalid enum key
+"%(key)s" is not a valid enumeral name.  The name may be composed of
+lower-case letters, digits, and underscores, and may not begin with an
+underscore. 
+
+@ invalid enum value
+The value %(value)s is not allowed for field %(field_name)s.  The
+field may take the values %(values)s.
+
+@ invalid field name
+"%(field_name)s" is not a valid field name.  A field name may be
+composed of lower-case letters, digits, and underscores, and may not
+begin with an underscore.
+
+@ invalid iid
+"%(iid)s" is not a valid issue ID.  An issue ID may be composed of
+lower-case letters, digits, and underscores, and may not begin with an
+underscore. 
+
