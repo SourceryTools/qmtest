@@ -110,17 +110,26 @@ class ThreadTarget(Target):
     thread executes one test or resource function at a time."""
 
     def __init__(self, name, group, concurrency, properties,
-                 database, response_queue):
+                 database):
 	"""Construct a 'ThreadTarget'.
 
-        'database' -- The 'Database' containing the tests that will be
-	run.
+        'name' -- A string giving a name for this target.
+
+        'group' -- A string giving a name for the target group
+        containing this target.
+
+        'concurrency' -- The amount of parallelism desired.  If 1, the
+        target will execute only a single command at once.
+
+        'properties'  -- A dictionary mapping strings (property names)
+        to strings (property values).
         
-	'response_queue' -- The queue on which to write responses."""
+        'database' -- The 'Database' containing the tests that will be
+	run."""
 
         # Initialize the base class.
         Target.__init__(self, name, group, concurrency, properties,
-                        database, response_queue)
+                        database)
 
 
         # Create a lock to guard all accesses to __ready_threads.
@@ -150,8 +159,13 @@ class ThreadTarget(Target):
         return idle
 
 
-    def Start(self):
-        """Start the target."""
+    def Start(self, response_queue):
+        """Start the target.
+        
+        'response_queue' -- The 'Queue' in which the results of test
+        executions are placed."""
+
+        Target.Start(self, response_queue)
         
         # Build the threads.
         self.__threads = []

@@ -109,7 +109,8 @@ class Result:
     UNTESTED = "UNTESTED"
 
     # Constants for predefined annotations.
-    
+
+    ACTION = "qmtest.action"
     CAUSE = "qmtest.cause"
     EXCEPTION = "qmtest.exception"
     TARGET = "qmtest.target"

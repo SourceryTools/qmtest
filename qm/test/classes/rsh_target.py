@@ -52,8 +52,6 @@ class RSHThread(CommandThread):
 
 	'target' -- The 'Target' that owns this thread.
 
-	'response_queue' -- The queue on which to write responses.
-
         'write_file' -- The file object to which commands should be
         written.  This file will be closed when the thread exits.
 
@@ -74,8 +72,13 @@ class RSHThread(CommandThread):
         'context' -- The 'Context' in which to run the test."""
 
         command_object = ("RunTest", test_id, context)
-        cPickle.dump(command_object, self.__write_file)
-        result = cPickle.load(self.__read_file)
+        try:
+            cPickle.dump(command_object, self.__write_file)
+            result = cPickle.load(self.__read_file)
+        except:
+            result = Result(Result.TEST, test_id, context)
+            result.NoteException()
+            
         self.RecordResult(result)
         
 
@@ -87,8 +90,13 @@ class RSHThread(CommandThread):
         'context' -- The 'Context' in which to run the resource."""
 
         command_object = ("SetUpResource", resource_id, context)
-        cPickle.dump(command_object, self.__write_file)
-        result = cPickle.load(self.__read_file)
+        try:
+            cPickle.dump(command_object, self.__write_file)
+            result = cPickle.load(self.__read_file)
+        except:
+            result = Result(Result.RESOURCE, resource_id, context,
+                            Result.ERROR, { Result.ACTION : "setup" } )
+            result.NoteException()
         self.RecordResult(result)
 
 
@@ -100,8 +108,13 @@ class RSHThread(CommandThread):
         'context' -- The 'Context' in which to run the resource."""
 
         command_object = ("CleanUpResource", resource_id, context)
-        cPickle.dump(command_object, self.__write_file)
-        result = cPickle.load(self.__read_file)
+        try:
+            cPickle.dump(command_object, self.__write_file)
+            result = cPickle.load(self.__read_file)
+        except:
+            result = Result(Result.RESOURCE, resource_id, context,
+                            Result.ERROR, { Result.ACTION : "cleanup" } )
+            result.NoteException()
         self.RecordResult(result)
 
 
@@ -112,7 +125,14 @@ class RSHThread(CommandThread):
         from the controlling thread.  Derived classes can use this
         method to release resources before the thread is destroyed."""
         
-        cPickle.dump("Stop", self.__write_file)
+        try:
+            cPickle.dump("Stop", self.__write_file)
+        except:
+            # If, for example, the pipe we are writing to has been
+            # closed by the child process we will be unable to issue
+            # the stop command.  By handling the exception, however,
+            # we can avoid crashing QMTest.
+            pass
         self.__write_file.close()
         self.__read_file.close()
 
@@ -163,18 +183,26 @@ class RSHTarget(Target):
 
     """
 
-    def __init__(self, name, group, concurrency, properties,
-                 database, response_queue):
+    def __init__(self, name, group, concurrency, properties, database):
         """Construct a new 'RSHTarget'.
 
-        'target_spec' -- The specification for the target.
+        'name' -- A string giving a name for this target.
 
+        'group' -- A string giving a name for the target group
+        containing this target.
+
+        'concurrency' -- The amount of parallelism desired.  If 1, the
+        target will execute only a single command at once.
+
+        'properties'  -- A dictionary mapping strings (property names)
+        to strings (property values).
+        
         'database' -- The 'Database' containing the tests that will be
         run."""
 
         # Initialize the base class.
         Target.__init__(self, name, group, concurrency, properties,
-                        database, response_queue)
+                        database)
 
         # Create a lock to guard all accesses to __idle.
         self.__lock = Lock()
@@ -201,8 +229,13 @@ class RSHTarget(Target):
         return idle
 
 
-    def Start(self):
-        """Start the target."""
+    def Start(self, response_queue):
+        """Start the target.
+
+        'response_queue' -- The 'Queue' in which the results of test
+        executions are placed."""
+
+        Target.Start(self, response_queue)
 
         # Create two pipes: one to write commands to the remote
         # QMTest, and one to read responses.
@@ -272,7 +305,11 @@ class RSHTarget(Target):
             # This is the parent process.  Remember the child.
             self.__command_queue = []
             self.__child_pid = child_pid
-            self.__ready_threads = self.GetConcurrency()
+
+            # Close the read end of the command pipe.
+            os.close(command_pipe[0])
+            # And the write end of the response pipe.
+            os.close(response_pipe[1])
 
             # Start the thread that will process responses from
             # the child.

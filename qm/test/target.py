@@ -39,6 +39,7 @@ import qm
 from   qm.test.result import *
 import Queue
 from   threading import *
+import re
 import sys
 import types
 
@@ -66,8 +67,7 @@ class Target:
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version."""
 
-    def __init__(self, name, group, concurrency, properties,
-                 database, response_queue):
+    def __init__(self, name, group, concurrency, properties, database):
         """Construct a 'Target'.
 
         'name' -- A string giving a name for this target.
@@ -82,17 +82,13 @@ class Target:
         to strings (property values).
         
         'database' -- The 'Database' containing the tests that will be
-        run.
-
-        'response_queue' -- The 'Queue' in which the results of test
-        executions are placed."""
+        run."""
 
         self.__name = name
         self.__group = group
         self.__concurrency = concurrency
         self.__properties = properties
         self.__database = database
-        self.__response_queue = response_queue
         
 
     def GetName(self):
@@ -158,12 +154,29 @@ class Target:
         raise qm.common.MethodShouldBeOverriddenError, "Target.IsIdle"
 
 
-    def Start(self):
+    def IsInGroup(self, group_pattern):
+        """Returns true if this 'Target' is in a particular group.
+
+        'group_pattern' -- A string giving a regular expression.
+
+        returns -- Returns true if the 'group_pattern' denotes a
+        regular expression that matches the group for this 'Target',
+        false otherwise."""
+
+        return re.match(group_pattern, self.GetGroup())
+        
+        
+    def Start(self, response_queue):
         """Start the target.
 
-        Derived classes must override this method."""
+        'response_queue' -- The 'Queue' in which the results of test
+        executions are placed.
+        
+        Derived classes may override this method, but the overriding
+        method must call this method at some point during its
+        execution."""
 
-        raise qm.common.MethodShouldBeOverriddenError, "Target.Start"
+        self.__response_queue = response_queue
 
         
     def Stop(self):

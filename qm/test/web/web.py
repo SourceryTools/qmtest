@@ -39,6 +39,7 @@ import os
 import qm
 import qm.attachment
 import qm.test.base
+from   qm.test.context import *
 from   qm.test.database import *
 from   qm.test.result import *
 from   qm.test.result_stream import *
@@ -917,7 +918,7 @@ class QMTestServer(qm.web.WebServer):
     """A 'QMTestServer' is the web GUI interface to QMTest."""
 
     def __init__(self, database, port, address, log_file,
-                 targets, response_queue):
+                 targets, context):
         """Create and bind an HTTP server.
 
         'database' -- The test database to serve.
@@ -933,14 +934,13 @@ class QMTestServer(qm.web.WebServer):
         'targets' -- A sequence of 'Target' objects to use when running
         tests.
 
-        'response_queue' -- The 'Queue' on which the targets will write
-        results."""
+        'context' -- The 'Context' in which tests will execute."""
 
         qm.web.WebServer.__init__(self, port, address, log_file=log_file)
 
         self.__database = database
         self.__targets = targets
-        self.__response_queue = response_queue
+        self.__context = context
         
         # Base URL path for QMTest stuff.
         script_base = "/test/"
@@ -1002,9 +1002,6 @@ class QMTestServer(qm.web.WebServer):
         attachment_store = database.GetAttachmentStore()
         self.RegisterScript(qm.fields.AttachmentField.download_url,
                             attachment_store.HandleDownloadRequest)
-
-        # Create an empty context.
-        self.__context = qm.test.base.Context()
 
         # There are no results yet.
         self.__expected_outcomes = {}
@@ -1224,9 +1221,9 @@ class QMTestServer(qm.web.WebServer):
         # Flush existing results.
         self.__results_stream = StorageResultsStream()
         # Run the tests.
-        qm.test.run.test_run(self.__database, test_ids, self.__context,
-                             self.__targets, self.__response_queue,
-                             [self.__results_stream])
+        qm.test.run.TestRun(self.__database, test_ids, self.__context,
+                            self.__targets, 
+                            [self.__results_stream]).Run()
 
         # Display the results.
         return self.HandleShowResults(request)
@@ -1243,8 +1240,7 @@ class QMTestServer(qm.web.WebServer):
         rs = XMLResultStream(s)
         # Write all the results.
         for (id, outcome) in self.__expected_outcomes.items():
-            r = Result(Result.TEST, id, qm.test.base.Context(),
-                       outcome)
+            r = Result(Result.TEST, id, Context(), outcome)
             rs.WriteResult(r)
         # Terminate the stream.
         rs.Summarize()
@@ -1472,7 +1468,7 @@ class QMTestServer(qm.web.WebServer):
         the context variables."""
 
         vars = qm.web.decode_properties(request["context_vars"])
-        self.__context = qm.test.base.Context()
+        self.__context = Context()
         for k in vars.keys():
             self.__context[k] = vars[k]
 

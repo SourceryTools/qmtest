@@ -40,6 +40,7 @@ import cPickle
 import os
 import qm.common
 from   qm.test.base import *
+from   qm.test.context import *
 import qm.xmlutil
 import Queue
 import re
@@ -206,6 +207,47 @@ class TestRun:
         self.__remaining_test_ids = list(test_ids)
 
 
+    def Run(self):
+        """Run the tests.
+
+        This method runs the tests specified in the __init__
+        function."""
+
+        # Create the response queue.
+        response_queue = Queue.Queue(0)
+
+        # Start all of the targets.
+        for target in self.__targets:
+            target.Start(response_queue)
+
+        # Schedule all the tests and resource functions in the test run.
+        try:
+            # Schedule the first batch of work.
+            count = self.Schedule()
+            # If some work was scheduled, process it.
+            while count != 0:
+                # Loop until we've received responses for all of the tests
+                # and resources that have been scheduled.
+                while count > 0:
+                    # Read a reply from the response_queue.
+                    result = response_queue.get()
+                    # Process the response.
+                    self.AddResult(result)
+                    # We're waiting for one less test.
+                    count = count - 1
+
+                # Schedule some more work.
+                count = self.Schedule()
+        finally:
+            # Stop the targets.
+            for target in self.__targets:
+                target.Stop()
+
+            # Let all of the result streams know that the test run is complete.
+            for rs in self.__result_streams:
+                rs.Summarize()
+
+        
     def Schedule(self):
         """Schedule tests and resource functions.
 
@@ -238,7 +280,7 @@ class TestRun:
                     # setup function are available in the cleanup
                     # functions' context.
                     context_wrapper = \
-                        base.ContextWrapper(self.__context, properties)
+                        ContextWrapper(self.__context, properties)
                     target.CleanUpResource(resource_id, context_wrapper)
 		    count = count + 1
 
@@ -339,8 +381,8 @@ class TestRun:
                     properties.update(resource_properties)
                 # These properties are made available to the test
                 # through its context.
-                context_wrapper = base.ContextWrapper(self.__context,
-                                                      properties)
+                context_wrapper = ContextWrapper(self.__context,
+                                                 properties)
                 # Run the test.
                 target.RunTest(test_id, context_wrapper)
 		count = count + 1
@@ -351,7 +393,7 @@ class TestRun:
                 # missing resources.  Defer the test; it'll probably be
                 # scheduled for this target later.
                 for resource_id in missing_resource_ids:
-                    context_wrapper = base.ContextWrapper(self.__context)
+                    context_wrapper = ContextWrapper(self.__context)
                     target.SetUpResource(resource_id, context_wrapper)
 		    count = count + 1
                     if not target.IsIdle():
@@ -381,7 +423,7 @@ class TestRun:
             # Extract information from the result.
             resource_id = result.GetId()
             outcome = result.GetOutcome()
-            action = result["action"]
+            action = result[Result.ACTION]
             assert action in ["setup", "cleanup"]
 
             # Find the target with the name indicated in the result.
@@ -406,7 +448,7 @@ class TestRun:
                 self.__failed_resources[resource_id] = None
                 # Schedule the cleanup function for this resource
                 # immediately. 
-                context_wrapper = base.ContextWrapper(self.__context)
+                context_wrapper = ContextWrapper(self.__context)
                 target.CleanUpResource(resource_id, context_wrapper)
 
             elif action == "cleanup" and outcome == Result.PASS:
@@ -452,7 +494,7 @@ class TestRun:
         group_pattern = test.GetTargetGroup()
         match = 0
         for target in self.__targets:
-            if is_group_match(group_pattern, target.GetGroup()):
+            if target.IsInGroup(group_pattern):
                 # Found a match.
                 match = 1
                 break
@@ -536,7 +578,7 @@ class TestRun:
         # Scan over targets to find the best one.
         for target in targets:
             # Disqualify this target if its group does not match.
-            if not is_group_match(group_pattern, target.GetGroup()):
+            if not target.IsInGroup(group_pattern):
                 continue
             # Count the number of resources required by the test that
             # aren't currently active on this target.
@@ -559,87 +601,6 @@ class TestRun:
 
         # Return the best target we found.
         return best_target
-
-            
-
-########################################################################
-# functions
-########################################################################
-
-def test_run(database,
-             test_ids,
-             context,
-             targets,
-             response_queue,
-             result_streams=[]):
-    """Perform a test run.
-
-    This function coordinates the scheduling of tests and the IPC
-    between the main thread of execution (in which this function is
-    called) and subthreads (created by targets) which run the tests.
-
-    'datbabase' -- The 'Database' containing the tests that will
-    be run.
-    
-    'test_ids' -- The sequence of IDs of tests to include in the test
-    run.
-
-    'context' -- The 'Context' object to use when running tests and
-    resource functions.
-
-    'targets' -- A sequence of 'Target' objects on which the tests can
-    be run.
-
-    'response_queue' - The 'Queue' to which the targets will write
-    results.
-    
-    'result_streams' -- A sequence of 'ResultStream' objects.  Each
-    stream will be provided with results as they are available."""
-    
-    # Construct the test run.
-    run = TestRun(database, test_ids, context, targets, result_streams)
-
-    # Start all of the targets.
-    for target in targets:
-        target.Start()
-    
-    # Schedule all the tests and resource functions in the test run.
-    try:
-        # Schedule the first batch of work.
-        count = run.Schedule()
-        # If some work was scheduled, process it.
-        while count != 0:
-            # Loop until we've received responses for all of the tests
-            # and resources that have been scheduled.
-            while count > 0:
-                # Read a reply from the response_queue.
-                result = response_queue.get()
-                # Process the response.
-                run.AddResult(result)
-                # We're waiting for one less test.
-                count = count - 1
-
-            # Schedule some more work.
-            count = run.Schedule()
-    finally:
-        # Stop the targets.
-        for target in targets:
-            target.Stop()
-
-        # Let all of the result streams know that the test run is complete.
-        for rs in result_streams:
-            rs.Summarize()
-
-
-def is_group_match(group_pattern, group):
-    """Return true if 'group' matches 'group_pattern'.
-
-    'group_pattern' -- A target group pattern.
-
-    'group' -- A target group."""
-
-    return re.match(group_pattern, group)
-
 
 ########################################################################
 # Local Variables:

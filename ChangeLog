@@ -1,3 +1,38 @@
+2001-11-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* doc/manual/test-manual.xml: Fix typos.
+	* qm/test/base.py (CommandFailedError): Remove.
+	(Context): Remove.
+	(ContextWrapper): Remove.
+	(set_up_resource): Use Result.ACTION, not action, to 
+	when constructing the result.
+	(clean_up_resource): Likewise.
+	* qm/test/cmdline.py (Command.commands_spec): Add -C and -c
+	options to the GUI interface.
+	(Command.GetTargets): Remove response_queue parameter.
+	(Command.__ExecuteServer): Adjust.
+	(Command.__ExecuteRun): Likewise.
+	* qm/test/context.py: New file.
+	* qm/test/qmtest-remote.py: Likewise.
+	* qm/test/result.py (Result.ACTION): New constant.
+	* qm/test/run.py (TestRun.Run): New method.
+	(test_run): Remove.
+	* qm/test/target.py (Target.__init__): Remove response_queue
+	parameter.
+	(Target.IsInGroup): New method.
+	(Target.Start): Add response_queue parameter.
+	* qm/test/classes/rsh_target.py (RSHThread._RunTest): Robustify.
+	(RSHThread._SetUpResource): Likewise.
+	(RSHThread._CleanUpResource): Likewise.
+	(RSHThread._Stop): Likewise.
+	(RSHTarget.__init__): Adjust documentation.
+	(RSHTarget.Start): Add response_queue parameter.
+	(ThreadTarget.__init__): Remove response_queue parameter.
+	(ThreadTarget.Start): Add response_queue parameter.
+	* qm/test/web/web.py (QMTestServer.__init__): Remove
+	response_queue parameter.
+	(QMTestServer.HandleRunTests): Use TestRun.
+	
 2001-11-05  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/test-manual.xml: Add command-line reference for

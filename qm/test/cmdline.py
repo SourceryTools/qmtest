@@ -42,6 +42,7 @@ import profile
 import qm
 import qm.cmdline
 import qm.platform
+from   qm.test.context import *
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
 import qm.xmlutil
@@ -219,6 +220,8 @@ class Command:
          (
            address_option_spec,
            concurrent_option_spec,
+           context_file_spec,
+           context_option_spec,
            help_option_spec,
            log_file_option_spec,
            no_browser_option_spec,
@@ -404,11 +407,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return self.__database
 
 
-    def GetTargets(self, response_queue):
+    def GetTargets(self):
         """Return the 'Target' objects specified by the user.
-
-        'response_queue' -- The 'Queue' into which replies from the
-        targets should be written.
 
         returns -- A sequence of 'Target' objects."""
 
@@ -433,8 +433,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             target_class = get_extension_class("thread_target.ThreadTarget",
                                                'target', self.GetDatabase())
             targets = [ target_class("local", "", concurrency,
-                                     {}, self.GetDatabase(),
-                                     response_queue) ]
+                                     {}, self.GetDatabase()) ]
         else:
             document = qm.xmlutil.load_xml_file(file_name)
             targets_element = document.documentElement
@@ -460,8 +459,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                                                    self.GetDatabase())
                 # Build the target.
                 target = target_class(name, group, concurrency,
-                                      properties, self.GetDatabase(),
-                                      response_queue)
+                                      properties, self.GetDatabase())
                 # Accumulate targets.
                 targets.append(target)
             
@@ -471,7 +469,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
     def MakeContext(self):
         """Construct a 'Context' object for running tests."""
 
-        context = base.Context()
+        context = Context()
 
         for option, argument in self.__command_options:
             # Look for the '--context-file' option.
@@ -671,11 +669,9 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             raise qm.cmdline.CommandError, \
                   qm.error("no such ID", id=str(exception))
 
-        # Create the response queue.
-        response_queue = Queue.Queue(0)
         # Figure out which targets to use.
-        targets = self.GetTargets(response_queue)
-
+        targets = self.GetTargets()
+        # Compute the context in which the tests will be run.
         context = self.MakeContext()
 
         # Create ResultStreams for textual output and for generating
@@ -719,14 +715,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             p = profile.Profile()
             local_vars = locals()
             p = p.runctx(
-                "run.test_run(test_ids, context, "
-                "target_specs, result_streams)",
+                "run.TestRun(test_ids, context, "
+                "target_specs, result_streams).Run()",
                 globals(), local_vars)
             results = local_vars["results"]
             p.dump_stats(profile_file)
         else:
-            run.test_run(database, test_ids, context, targets,
-                         response_queue, result_streams)
+            run.TestRun(database, test_ids, context, targets,
+                        result_streams).Run()
 
         # Close the result file.
         if close_result_file:
@@ -762,14 +758,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Otherwise, it's a file name.  Open it for append.
             log_file = open(log_file_path, "a+")
 
-        # Create the response queue.
-        response_queue = Queue.Queue(0)
         # Figure out which targets to use.
-        targets = self.GetTargets(response_queue)
+        targets = self.GetTargets()
+        # Compute the context in which the tests will be run.
+        context = self.MakeContext()
         
         # Set up the server.
         server = web.web.QMTestServer(database, port_number, address,
-                                      log_file, targets, response_queue)
+                                      log_file, targets, context)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.

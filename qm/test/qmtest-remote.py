@@ -123,18 +123,16 @@ try:
         # Load the test database,
         database = qm.test.base.load_database(database_path)
 
-        # Create the queue that the local threads will use to write
-        # replies.
-        response_queue = Queue.Queue(0)
-        
         # Get the target class.
         target_class = get_extension_class("thread_target.ThreadTarget",
                                            'target', database)
         # Build the target.
         target = target_class(None, None, int(concurrency), {},
-                              database, response_queue)
+                              database)
+
         # Start the target.
-        target.Start()
+        response_queue = Queue.Queue(0)
+        target.Start(response_queue)
         
         # Read commands from standard input, and reply to standard
         # output.

@@ -640,7 +640,8 @@
    test suite) are run only once.  Tests may not be run in the order
    listed.</para>
 
-   <para>The <command>run</command> accepts these options:</para>
+   <para>The <command>run</command> command accepts these
+   options:</para>
 
    <glosslist>
     <glossentry>
@@ -795,7 +796,8 @@
    <para>The <command>&qmtest-cmd; gui</command> command starts QMTest's
    web-based graphical user interface.</para>
 
-   <para>The <command>gui</command> accepts these options:</para>
+   <para>The <command>gui</command> command accepts these
+   options:</para>
 
    <glosslist>
     <glossentry>
@@ -820,6 +822,28 @@
      <glossterm>
       <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
       (<option>-j</option>)
+     </glossterm>
+     <glossdef>
+      <para>For details about this option, see the description of the 
+      <command>&qmtest; run</command>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;context</option> <replaceable>NAME=VALUE</replaceable>
+      (<option>-c</option>)
+     </glossterm>
+     <glossdef>
+      <para>For details about this option, see the description of the 
+      <command>&qmtest; run</command>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;load-context</option> <replaceable>FILE</replaceable>
+      (<option>-C</option>)
      </glossterm>
      <glossdef>
       <para>For details about this option, see the description of the 
