@@ -1,3 +1,7 @@
+2003-11-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/common.py (open_temporary_file): Fix typo.
+
 2003-11-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/qmtest: If SIGINT is received, make sure that our exit

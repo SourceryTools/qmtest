@@ -516,7 +516,7 @@ def open_temporary_file_fd():
                      0600)
     except:
         exc_info = sys.exc_info()
-        raise common.QMException, \
+        raise QMException, \
               qm.error("temp file error",
                        file_name=file_name,
                        exc_class=str(exc_info[0]),
