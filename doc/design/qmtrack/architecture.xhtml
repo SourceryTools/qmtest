@@ -36,7 +36,7 @@
 
     <h4>Issue Database</h4>
 
-    <p>The <a class="Term">issue database</a> is an abstract database
+    <p>The <span class="Term">issue database</span> is an abstract database
     model used by qmtrack to store, retrieve, and query issues.
     Qmtrack accesses the idb via an abstract interface, which allows
     multiple implementations with varying performance and maintenance
@@ -60,13 +60,6 @@
 
     <p>The idb supports the following field data types:</p>
     <ol>
-      <li><span class="Identifier">string</span> fields contain short
-      character strings.  These fields should not contain newlines,
-      carriage returns, tabs, or other control characters (but are
-      under no fixed length limit).  Database implementations should
-      validate that <span class="Identifier">string</span> fields
-      contain appropriate values only.</li>
-
       <li><span class="Identifier">text</span> fields contain
       arbitrary text.  By convention, the text is not broken into
       lines with newlines (user interfaces will wrap text as
@@ -78,18 +71,33 @@
 
       <li><span class="Identifier">integer list</span> fields contain
       a list of zero or more 32-bit integers.</li>
+
+      <li><span class="Identifier">attachment</span> fields contain
+      zero or more arbitrary file attachments.  Each attachment
+      consistes of a (text) MIME type, a text description, and the
+      binary data of the file itself.</li>
     </ol>
 
     <p>The data types listed below are also stored in the idb, but
-    require no additional data type support from the underlying
-    database.</p>
+    don't necessarily require additional data type support from the
+    underlying database.  The qmtrack system will supply an
+    implementation of these data types using the above complusory
+    types, if required.  However, implementations may override the
+    implementation for any or all of these types for space or time
+    optimization.</p>
     <ol>
-      <li><span class="Identifier">time</span> fields store a UTC
-      date/time.  Time is stored as a string, with the format
-      &quot;%Y-%m-%d %H:%M:%S&quot;.</li>
+      <li><span class="Identifier">string</span> fields contain short
+      character strings.  These fields should not contain newlines,
+      carriage returns, tabs, or other control characters (but are
+      under no fixed length limit).  Database implementations should
+      validate that <span class="Identifier">string</span> fields
+      contain appropriate values only.</li>
 
-      <li><span class="Identifier">uid</span> fields store a <a
-      class="Term">user id</a> as a <span
+      <li><span class="Identifier">time</span> fields store a UTC
+      date/time.</li>
+
+      <li><span class="Identifier">uid</span> fields store a <span
+      class="Term">user id</span> as a <span
       class="Identifier">string</span>.</li>
 
       <li><span class="Identifier">iid</span> fields contain a
@@ -115,7 +123,7 @@
 
     <h5>Issue id</h5>
 
-    <p>Each issue is assigned a unique <a class="Term">issue id</a> at
+    <p>Each issue is assigned a unique <span class="Term">issue id</span> at
     creation.  Issue ids are assigned sequentially starting from zero
     for each idb instance.</p>
 
@@ -125,19 +133,19 @@
     are never modified or removed from the table.  Instead, a new row
     is added whenever an issue is modified.</p>
 
-    <p>The idb schema includes a <a class="TermDef">revision
-    number</a> field.  The revision number value for a row indicates
-    which revision of the issue it corresponds to.  When a new issue
-    is submitted to the idb, a new <a class="Term">iid</a> is assigned
-    and a new row is added to the idb with revision number zero.  When
-    this issue is subsequently modified, another row is added
-    containing the revised data, and an incremented sequece number.
-    Previous rows are never deleted.  For an issue, the idb row with
-    the corresponding iid and the highest revision number is the <a
-    class="TermDef">current revision</a>.  (When we refer to an issue
-    in this document or in the qmtrack API, we're referring to the
-    current revision unless we specify a revision number
-    explicitly.)</p>
+    <p>The idb schema includes a <span class="TermDef">revision
+    number</span> field.  The revision number value for a row
+    indicates which revision of the issue it corresponds to.  When a
+    new issue is submitted to the idb, a new <span
+    class="Term">iid</span> is assigned and a new row is added to the
+    idb with revision number zero.  When this issue is subsequently
+    modified, another row is added containing the revised data, and an
+    incremented sequece number.  Previous rows are never deleted.  For
+    an issue, the idb row with the corresponding iid and the highest
+    revision number is the <span class="TermDef">current revision</span>.
+    (When we refer to an issue in this document or in the qmtrack API,
+    we're referring to the current revision unless we specify a
+    revision number explicitly.)</p>
 
     <p>An audit trail for an issue is obtained by querying the idb for
     all rows matching the corresponding idb, and sorting by sequence
@@ -148,43 +156,9 @@
 
     <h4>Issue database API</h4>
 
-    <p>The <span class="Class">IdbBase</span> class is the base class
-    for idb implementations.</p>
-
-    <p>Creation and setup methods.</p>
-
-    <div class="API">
-<pre>
-class IdbBase:
-    """Base class for idb implementations."""
-</pre>
-    </div>
-
-    <p>Methods for retrieving issues and revisions.</p>
-
-    <div class="API">
-<pre>
-    def GetIssue(self, iid):
-        """Return the current revision of the issue corresponding to
-        iid."""
-
-    def GetIssueRevision(self, iid, revision_number):
-        """Return the issue revision corresponding to iid and
-        revision_number."""
-
-    def GetIssueAllRevisions(self, iid):
-        """Return an array of revisions of the issue given by iid.
-        The array index is the revision number."""
-
-    def GetCurrentRevisionNumber(self, iid):
-        """Return the revision number of the current revision of the
-        issue given by iid."""
-</pre>
-    </div>
-
     <h4>Issues</h4>
 
-    <p>An <a class="Term">issue</a> is the principal data record in
+    <p>An <span class="Term">issue</span> is the principal data record in
     qmtrack.  Each issue corresponds to a bug report, feature request,
     or other process item in the qmtrack database.</p>
 
@@ -194,17 +168,17 @@ class IdbBase:
     contains fields specified by the columns of the idb schema.
     Fields fall into three categories:</p>
     <ol>
-      <li><a class="TermDef">Mandatory fields</a> are present in any
+      <li><span class="TermDef">Mandatory fields</span> are present in any
       idb schema and thus in every qmtrack issue.  The field type and
       semantics of a mandatory field is invariant; qmtrack relies on
       the presence of these fields for its operation.</li>
 
-      <li><a class="TermDef">Standard fields</a> need not be present,
+      <li><span class="TermDef">Standard fields</span> need not be present,
       but if they are, take a particular field type and have standard
       semantics.  Option qmtrack features and modules may rely on
       standard fields for thier operation.</li>
 
-      <li><a class="TermDef">Custom fields</a> may be configured at
+      <li><span class="TermDef">Custom fields</span> may be configured at
       will in the idb schema.</li>
     </ol>
 
@@ -219,15 +193,15 @@ class IdbBase:
       <tr>
         <td>id</td>
         <td><span class="Identifier">integer</span></td>
-        <td><a class="Term">issue id</a></td>
+        <td><span class="Term">issue id</span></td>
       </tr>
       <tr>
-        <td>revision number</td>
+        <td>revision</td>
         <td><span class="Identifier">integer</span></td>
-        <td><a class="Term">revision number</a></td>
+        <td><span class="Term">revision number</span></td>
       </tr>
       <tr>
-        <td>time stamp</td>
+        <td>time</td>
         <td><span class="Identifier">date</span></td>
         <td>the date and time at which this issue revision was entered
         into the idb</td>
@@ -240,8 +214,8 @@ class IdbBase:
       <tr>
         <td>categories</td>
         <td><span class="Identifier">enumeration set</span></td>
-        <td>the <a class="Term">categories</a> to which the issue
-        belongs</td>
+        <td>the <span class="Term">categories</span> to which the
+        issue belongs</td> 
       </tr>              
       <tr>
         <td>attachments</td>
@@ -283,34 +257,6 @@ class IdbBase:
 
       <li>A description, stored as a string.</li>
     </ol>
-
-    <p>The <span class="Class">IdbAttachment</span> class represents
-    an attachment.</p>
-    <div class="API">
-<pre>
-class IdbAttachment:
-    """A file attachment to an issue."""
-
-    def __init__(self, data, mime_type, description):
-        """Create a new IdbAttachment instance."""
-
-    def GetLocation(self):
-        """Return a string giving the location of the attachment data.
-        The contents of the string are opaque and
-        implementation-defined, but uniquely and completely specify
-        the location of the data."""
-
-    def GetFile(self):
-        """Return a readable file handle to the attachment data,
-        positioned at the beginning."""
-
-    def GetMimeType(self):
-        """Return the MIME type of the attachment."""
-
-    def GetDescription(self):
-        """Return a description of the attachment."""
-</pre>
-    </div>
 
   </body>
 </html>

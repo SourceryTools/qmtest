@@ -20,8 +20,8 @@
 #       of terms.
 #
 # Usage:
-#   This script reads XHTML from standard input and writes to standard
-#   output.  
+#   This script reads XHTML from a single files specified on the
+#   command line, and writes processed XHTML to standard output. 
 #
 # Bugs:
 #   This script, as currently written, is a bit of a hack, but it
@@ -51,11 +51,26 @@
 #
 ########################################################################
 
+import pickle
 import re
 import string
 import sys
 
-terms_filename = ".terms"
+# Terms are caches across invocations in this file, allowing
+# inter-file cross references. 
+terms_filename = '.terms'
+
+# Terms are recognized for these classes of the XHTML <span> element.
+terms_classes = [
+    'Term',
+    'Class',
+    'API'
+    ]
+
+# The same class name with 'Def' appended is taken recognized as the
+# definition of a term.  So, for instance, 'TermDef' is the class for
+# terminology definitions, and 'Term' for corresponding uses.
+terms_def_classes = map(lambda klass: klass + 'Def', terms_classes)
 
 
 def to_camel_caps(str):
@@ -68,9 +83,9 @@ def to_camel_caps(str):
     return string.join(words, '')
     
 
-def make_label(term):
+def make_label(klass, term):
     """Returns an HTML label to be used for a term."""
-    return 'DEF-%s' % to_camel_caps(term)
+    return '%s-%s' % (klass, to_camel_caps(term))
 
 
 def clean_up_term(term):
@@ -81,21 +96,25 @@ def clean_up_term(term):
 # Load terms from the cache file, if it exists.
 try:
     terms_file = open(terms_filename, "r")
-    terms_text = terms_file.read()
+    terms = pickle.load(terms_file)
     terms_file.close()
-    terms = eval(terms_text)
 except:
     terms = {}
 
 # Read input from the specified file.
 input_file = sys.argv[1]
 input = open(input_file, 'r').read()
+input_file = re.sub('\.xhtml', '.html', input_file)
 
 # Regular expression for definitions of terms.
-term_definition_re = re.compile('<a\s*class="TermDef">([^<]*)</a>')
+term_definition_re = re.compile('<span\s*class="(?P<class>%s)">'
+                                % string.join(terms_def_classes, '|')
+                                + '(?P<term>[^<]*)</a>')
 
 # Regular expression for uses of terms.
-term_use_re = re.compile('<a\s*class="Term">([^<]*)</a>')
+term_use_re = re.compile('<span\s*class="(?P<class>%s)">'
+                         % string.join(terms_classes, '|')
+                         + '(?P<term>[^<]*)</span>')
 
 # Fix up definitions of terms.
 while 1:
@@ -103,15 +122,20 @@ while 1:
     if match == None:
         break
 
-    term = clean_up_term(match.group(1))
-    label = make_label(term)
+    klass = match.group('class')
+    term = clean_up_term(match.group('term'))
+    label = make_label(klass, term)
     # Add the name attribute to the anchor element.
     input = input[ : match.start()] \
-            + '<a class="TermDef" name="%s">%s</a>' % (label, term) \
+            + '<a class="%s" name="%s">%s</a>' % (klass, label, term) \
             + input[match.end() : ]
     # Add/update a reference in the terms dictionary.
     ref = '%s#%s' % (input_file, label)
-    terms[term] = ref
+    klass = klass[ : -3]
+    if not terms.has_key(klass):
+        terms[klass] = {}
+    klass_dict = terms[klass]
+    klass_dict[term] = ref
 
 # Fix up uses of terms.
 while 1:
@@ -119,23 +143,31 @@ while 1:
     if match == None:
         break
 
-    term = clean_up_term(match.group(1))
+    klass = match.group('class')
+    term = clean_up_term(match.group('term'))
     # Look up the term in the terms dictionary.
-    if terms.has_key(term):
-        ref = terms[term]
+    if not terms.has_key(klass):
+        terms[klass] = {}
+    klass_dict = terms[klass]
+    if klass_dict.has_key(term):
+        ref = klass_dict[term]
     # If the term ends with 's', naively assume its a pluralized form
     # and try to find the singluar.
-    elif term[-1] == 's' and terms.has_key(term[ : -1]):
-        ref = terms[term[ : -1]]
+    elif term[-1] == 's' and klass_dict.has_key(term[ : -1]):
+        ref = klass_dict[term[ : -1]]
     else:
         # The term is not in our dictionary.  Emit a warning and use a
         # default ref.
         sys.stderr.write('Warning: encountered use of undefined term %s.\n'
                           % term)
-        ref = "index.html"
+        ref = None
     # Add the ref attribute to the anchor element.
+    if ref == None:
+        href_text = ''
+    else:
+        href_text = ' href="%s"' % ref
     input = input[ : match.start()] \
-            + '<a class="Term" href="%s">%s</a>' % (ref, term) \
+            + '<a class="%s"%s>%s</a>' % (klass, href_text, term) \
             + input[match.end() : ]
 
 # Write the result to standard output.
@@ -143,7 +175,7 @@ print input
 
 # Write out the terms cache file.
 terms_file = open(terms_filename, 'w')
-terms_file.write(repr(terms))
+pickle.dump(terms, terms_file)
 terms_file.close()
 
 ########################################################################

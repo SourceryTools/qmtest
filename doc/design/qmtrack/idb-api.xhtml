@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+  File:   idb-api.xhtml
+  Author: Alex Samuel
+  Date:   2000-11-04
+
+  Contents:
+    APIs for accessing the qmtrack issue database (idb).
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+
+    <title>qmtrack Issue Database APIs</title>
+  </head>
+
+  <body>
+    <a name="CHAP-architecture">
+      <h3>Issue Database APIs</h3>
+    </a>
+
+    <h4>Issue database</h4>
+
+    <p>The <span class="Class">IdbBase</span> class is the base class
+    for idb implementations.</p>
+
+    <p>Creation and setup methods.</p>
+
+    <div class="API">
+<pre>
+class IdbBase:
+    """Base class for idb implementations."""
+</pre>
+    </div>
+
+    <p>Methods for retrieving issues and revisions.</p>
+
+    <div class="API">
+<pre>
+    def GetIssue(self, iid):
+        """Return the current revision of the issue corresponding to
+        iid."""
+
+    def GetIssueRevision(self, iid, revision_number):
+        """Return the issue revision corresponding to iid and
+        revision_number."""
+
+    def GetIssueAllRevisions(self, iid):
+        """Return an array of revisions of the issue given by iid.
+        The array index is the revision number."""
+
+    def GetCurrentRevisionNumber(self, iid):
+        """Return the revision number of the current revision of the
+        issue given by iid."""
+</pre>
+    </div>
+
+    <h4>File attachements</h4>
+
+    <p>The <span class="ClassDef">Attachment</span> class represents
+    an attachment.</p>
+    <div class="API">
+<pre>
+class Attachment:
+    """A file attachment to an issue."""
+
+    def __init__(self, data, mime_type, description):
+        """Create a new IdbAttachment instance."""
+
+    def GetLocation(self):
+        """Return a string giving the location of the attachment data.
+        The contents of the string are opaque and
+        implementation-defined, but uniquely and completely specify
+        the location of the data."""
+
+    def GetFile(self):
+        """Return a readable file handle to the attachment data,
+        positioned at the beginning."""
+
+    def GetMimeType(self):
+        """Return the MIME type of the attachment."""
+
+    def GetDescription(self):
+        """Return a description of the attachment."""
+</pre>
+    </div>
+
+  </body>
+</html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->
