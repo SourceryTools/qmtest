@@ -66,8 +66,12 @@ class Extension(object):
             # For backward compatibility, inject all members of the
             # 'arguments' list into the dict.
             for field in dict.get('arguments', []):
-                if (not cls._allow_arg_names_matching_class_vars
-                    and hasattr(cls, field.GetName())):
+                # Only allow name collisions between arguments and
+                # class variables if _allow_arg_names_matching_class_vars
+                # evaluates to True.
+                if (hasattr(cls, field.GetName())
+                    and not cls._argument_dictionary.has_key(field.GetName())
+                    and not cls._allow_arg_names_matching_class_vars):
                     raise qm.common.QMException, \
                           qm.error("ext arg name matches class var",
                                    class_name = name,

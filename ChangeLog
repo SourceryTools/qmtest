@@ -1,3 +1,7 @@
+2005-03-31  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/extension.py: Fix omission (see entry from 2005-03-24).
+
 2005-03-29  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/parameter_database.py: New file.
