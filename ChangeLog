@@ -1,3 +1,24 @@
+2001-11-21  Mark Mitchell  <mark@codesourcery.com>
+
+	* README: Document --prefix.  Remove getting started
+	documentation.
+	* README.sources: Remove obsolete information.  Document
+	environment variable format.
+	* doc/manual/test-manual.xml: Document environment variables
+	used by QMTest.
+	* qm/qm.sh: Use QM_PYTHON to find the Python interpreter if
+	it is set.
+	* qm/test/base.py (get_extension_directories): Change
+	QMTEST_CLASSPATH to QMTEST_CLASS_PATH.
+	* qm/test/text_result_stream.py (TextResultStream.__init__):
+	Display "TEST RESULTS" heading.
+	(TextResultStream.WriteResult): Display the
+	result of the test immediately.
+	(TextResultStream.Summarize): Use _DisplayHeading.
+	(TextResultStream._SummarizeResults): Use _DisplayResult.
+	(TextResultStream._DisplayResult): New method.
+	(TextResultStream._DisplayHeading): Likewise.
+
 2001-11-21  Jeffrey Oldham <oldham@codesourcery.com>
 	    Ricardo Anguiano <anguiano@codesourcery.com>
 

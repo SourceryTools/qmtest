@@ -880,7 +880,7 @@ class Database:
         that should be searched to locate test and resource classes.
         The directories will be searched in the order they appear.
         QMTest will search other directories (like those in the
-        'QMTEST_CLASSPATH' environment variable) in addition to these
+        'QMTEST_CLASS_PATH' environment variable) in addition to these
         directories.
         
         For a given database, this method should always return the same

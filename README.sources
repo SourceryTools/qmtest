@@ -1,10 +1,10 @@
                                                             -*- Text -*-
 
-	       Coding Guidelines for Software Carpentry
+		       Coding Guidelines for QM
 
 
 Please observe these guidelines when writing, modifying, and checking
-in code and documentation for the Software Carpentry project.
+in code and documentation for the QM project.
 
 
   - Create GNU-style ChangeLog entries for all program changes before
@@ -41,18 +41,14 @@ in code and documentation for the Software Carpentry project.
 
 Instructions for writing documention:
 
-  - Documentation should be written in DocBook XML.  There's a page
-    devoted to DocBook information on the Software Carpentry web site,
-    at
-
-      http://www.software-carpentry.com/dev/docbook.html
+  - Documentation should be written in DocBook XML.
 
 
 Instructions for writing code:
 
-Software Carpentry software should be written in standard Python
-1.X.X.  Python source code should adhere to Guido van Rossum's "Python
-Style Guide", available at
+QM software should be written to work with Python
+1.5.2 or higher.  Python source code should adhere to Guido van
+Rossum's "Python Style Guide", available at
 
     http://www.python.org/doc/essays/styleguide.html
 
@@ -159,5 +155,15 @@ information that another programmer needs to know to use the element
 correctly.  Implementation, i.e. how a function actually does its job,
 should be commented using ordinary comments.
 
-All source code checked into the Software Carpentry source repository
-should comply with these guidelines.  
+Environment variable names used in QM (other than those with standard
+meanings like "PATH") should be composed entirely of upper-case
+letters and underscores.  Variables that apply to all QM tools should
+begin with "QM_".  Variables that apply to a particular tool should
+begin with "QM<tool>_".  Examples:
+
+  QM_PYTHON
+  QMTEST_CLASS_PATH
+  QMTRACK_DB_PATH
+
+All source code checked into the QM source repository should comply
+with these guidelines.

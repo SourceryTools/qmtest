@@ -185,13 +185,17 @@ export QM_BUILD
 
 # Decide which Python installation to use in the following way:
 #
-# 1. If ${QM_HOME}/bin/python exists, use it.
+# 1. If ${QM_PYTHON} exists, use it.
 #
-# 2. Otherwise, use whatever `python' is in the path.
+# 2. Otherwise, If ${QM_HOME}/bin/python exists, use it.
+#
+# 3. Otherwise, use whatever `python' is in the path.
 #
 # Set qm_python to this value.
 
-if test -f "${QM_HOME}/bin/python"; then
+if test "x${QM_PYTHON}" != x; then
+    qm_python="${QM_PYTHON}"
+elif test -f "${QM_HOME}/bin/python"; then
     qm_python="${QM_HOME}/bin/python"
 else
     qm_python="python"
