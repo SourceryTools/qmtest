@@ -46,10 +46,6 @@
 ;; the chapter head.
 (define (chunk-skip-first-element-list) (list))
 
-;; Write a manifest of created files to docbook-html.manifest.
-(define html-manifest #t)
-(define html-manifest-filename "docbook-html.manifest")
-
 ;; Use element ids to generate chunk filenames
 (define %use-id-as-filename% #t)
 

@@ -80,15 +80,6 @@ diagnostics=['common.txt','common-help.txt']
 
 messages=['help.txt', 'diagnostics.txt']
 
-if not os.path.isdir(os.path.normpath('qm/test/doc/html')):
-    print """Warning: to include documentation run the
-             \'build_doc\' command first."""
-    html_docs = []
-
-else:
-    html_docs = filter(lambda f: f.endswith(".html"),
-                       os.listdir(os.path.normpath('qm/test/doc/html')))
-
 tutorial_files = files_with_ext("qm/test/share/tutorial/tdb", ".qmt")
 test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
 
@@ -140,10 +131,8 @@ setup(name="qm",
                   ("qm/dtml/test", test_dtml_files),
                   # The documentation.
                   ('qm/doc', ('README', 'COPYING')),
-                  ('qm/doc/test/html',
-                   prefix(html_docs, 'qm/test/doc/html')),
-                  ('qm/doc/test/print',
-                   ["qm/test/doc/print/manual.pdf"]),
+                  ('qm/doc/test/html', ['qm/test/doc/html/*.html']),
+                  ('qm/doc/test/print', ["qm/test/doc/print/*.pdf"]),
                   # The tutorial.
                   ("qm/tutorial/test/tdb", tutorial_files),
                   ("qm/tutorial/test/tdb/QMTest",

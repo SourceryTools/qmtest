@@ -1,3 +1,12 @@
+2003-12-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* setup.py: Use glob expressions for documentation.
+	* doc/qm-sgml.dsl: Do not produce a manifest.
+	* qmdist/command/build_doc.py (build_doc.run): Tidy.
+	* qmdist/command/install_data.py (glob): Import it.
+	(types.StringType): Likewise.
+	(install_data.initialize_options): New method.
+	
 2003-11-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/file_database.py: Remove misleading comments about

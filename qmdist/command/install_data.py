@@ -18,8 +18,10 @@
 ########################################################################
 
 from   distutils.command import install_data as base
+import glob
 import os
 from   qmdist.command import get_relative_path
+from   types import StringType
 
 ########################################################################
 # Classes
@@ -31,8 +33,27 @@ class install_data(base.install_data):
     This module contains data only available at installation time,
     such as installation paths for data files."""
 
-    def run(self):
+    def initialize_options(self):
 
+        base.install_data.initialize_options(self)
+        # Expand glob expressions in 'data_files'.
+        new_data_files = []
+        for f in self.data_files:
+            if type(f) == StringType:
+                f = glob.glob(f)
+            else:
+                dir, fs = f
+                new_fs = []
+                for f in fs:
+                    new_fs.extend(glob.glob(f))
+                f = (dir, new_fs)
+            new_data_files.append(f)
+        self.data_files = new_data_files
+        self.distribution.data_files = new_data_files
+
+
+    def run(self):
+        
         # Do the standard installation.
         base.install_data.run(self)
         

@@ -98,7 +98,7 @@ class build_doc(build.build):
                             'qm/test/doc/introduction.xml',
                             'qm/test/doc/tour.xml',
                             'qm/test/doc/reference.xml'])
-
+        
         jade = find_executable('jade')
         dcl = find_file(map(normpath,
                             ['/usr/share/doc/jade*/pubtext/xml.dcl',
@@ -119,7 +119,7 @@ class build_doc(build.build):
                         os.path.isdir)
 
         if not jade or not dcl or not stylesheets or not dtd:
-            self.warn("can't build documentation")
+            self.warn("cannot build documentation")
             return
 
         # All files that are generated below are generated in the
@@ -130,12 +130,12 @@ class build_doc(build.build):
         #
         # Build html output.
         #
-        target = normpath("qm/test/doc/html")
-        if newer_group(source_files, target):
+        html_dir = os.path.join("qm", "test", "doc", "html")
+        if newer_group(source_files, html_dir):
             self.announce("building html manual")
-            # Remove the target first such that its new mtime reflects
+            # Remove the html_dir first such that its new mtime reflects
             # this build.
-            if os.path.isdir(target): remove_tree(target)
+            if os.path.isdir(html_dir): remove_tree(html_dir)
             self.call_jade(jade, ['-D%s'%dtd, '-D%s'%stylesheets],
                            dcl, 'sgml',
                            normpath('qm/test/doc/manual.xml'),
@@ -177,12 +177,12 @@ class build_doc(build.build):
         #
         # Build pdf output.
         #
-        target = normpath("qm/test/doc/print/manual.pdf")
-        if newer_group(source_files, target):
+        pdf_file = os.path.join("qm", "test", "doc", "print", "manual.pdf")
+        if newer_group(source_files, pdf_file):
             self.announce("building pdf manual")
-            # Remove the target first such that its new mtime reflects
+            # Remove the pdf_file first such that its new mtime reflects
             # this build.
-            if os.path.isfile(target): os.remove(target)
+            if os.path.isfile(pdf_file): os.remove(pdf_file)
             cwd = os.getcwd()
             os.chdir("qm/test/doc/print")
             for i in xrange(3):
