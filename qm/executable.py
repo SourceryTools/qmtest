@@ -32,7 +32,16 @@ if sys.platform == "win32":
     import win32pipe
     import win32process
 else:
+    import cPickle
+    import fcntl
     import select
+
+    # Unfortunately, Python does not provide symbolic constants for
+    # F_GETFD, F_SETFD, and FD_CLOEXEC.  Fortunately, they are the
+    # same on virtuall all UNIX systems.
+    F_GETFD = 1
+    F_SETFD = 2
+    FD_CLOEXEC = 1
     
 ########################################################################
 # Classes
@@ -53,7 +62,7 @@ class Executable:
     
         
     def Spawn(self, arguments=[], environment = None, dir = None,
-              path = None):
+              path = None, exception_pipe = None):
         """Spawn the program.
 
         'arguments' -- The sequence of arguments that should be passed
@@ -71,11 +80,15 @@ class Executable:
         'path' -- If not 'None', the path to the program to run.  If
         'None', 'arguments[0]' is used.
 
+        'exception_pipe' -- If not 'None', a pipe that the child can
+        use to communicate an exception to the parent.  This pipe is
+        only used on UNIX systems.
+
         Before creating the child, the parent will call
         'self._InitializeParent'.  On UNIX systems, the child will
         call 'self._InitializeChild' after 'fork', but before 'exec'.
 
-        The PID of the child is available by calling 'GetChild'."""
+        returns -- The PID of the child."""
 
         # Remember the directory in which the execution will occur.
         self.__dir = dir
@@ -108,6 +121,9 @@ class Executable:
 
             if self.__child == 0:
                 try:
+                    # Close the read end of the pipe.
+                    if exception_pipe:
+                        os.close(exception_pipe[0])
                     # Initialize the child.
                     self._InitializeChild()
                     # Exec the program.
@@ -116,12 +132,23 @@ class Executable:
                     else:
                         os.execvp(path, arguments)
                 except:
-                    # Exit immediately.
+                    if exception_pipe:
+                        # Get the exception information.
+                        exc_info = sys.exc_info()
+                        # Write it to the pipe.  The traceback object
+                        # cannot be pickled, unfortunately, so we
+                        # cannot communicate that information.
+                        cPickle.dump(exc_info[:2],
+                                     os.fdopen(exception_pipe[1], "w"),
+                                     1)
+                    # Exit without running cleanups.
                     os._exit(1)
 
                 # This code should never be reached.
                 assert None
-                
+
+        return self.__child
+
 
     def Run(self, arguments=[], environment = None, dir = None,
             path = None):
@@ -146,27 +173,50 @@ class Executable:
         this is the value returned by 'waitpid'; under Windows, it is
         the value returned by 'GetExitCodeProcess'."""
 
-        # Spawn the program.
-        self.Spawn(arguments, environment, dir, path)
+        # If fork succeeds, but the exec fails, we want information
+        # about *why* it failed.  The exit code from the subprocess is
+        # not nearly as illuminating as the exception raised by exec.
+        # Therefore, we create a pipe between the parent and child;
+        # the child writes the exception into the pipe to communicate
+        # it to the parent.
+        if sys.platform != "win32":
+            exception_pipe = os.pipe()
+            # Mark the write end as close-on-exec so that the file
+            # descriptor is not passed on to the child.
+            fd = exception_pipe[1]
+            fcntl.fcntl(fd, F_SETFD, fcntl.fcntl(fd, F_GETFD) | FD_CLOEXEC)
+        else:
+            exception_pipe = None
+            
+        # Start the program.
+        child = self.Spawn(arguments, environment, dir, path, exception_pipe)
+
+        # Close the write end of the exception pipe.
+        if sys.platform != "win32":
+            os.close(exception_pipe[1])
+            
         # Give the parent a chance to do whatever it needs to do.
         self._DoParent()
+        
         # Wait for the child to exit.
         if sys.platform == "win32":
-            child = self.GetChild()
             win32event.WaitForSingleObject(child, win32event.INFINITE)
             # Get its exit code.
             return win32process.GetExitCodeProcess(child)
         else:
-            return os.waitpid(self.GetChild(), 0)[1]
+            status = os.waitpid(child, 0)[1]
+            # See if an exception was pushed back up the pipe.
+            data = os.fdopen(exception_pipe[0]).read()
+            # If any data was read, then it is data corresponding to
+            # the exception thrown by exec.
+            if data:
+                # Unpickle the data.
+                exc_info = cPickle.loads(data)
+                # And raise it here.
+                raise exc_info[0], exc_info[1]
 
-        
-    def GetChild(self):
-        """Return the PID of the child process.
+            return status
 
-        returns -- The PID of the child process."""
-
-        return self.__child
-        
         
     def _InitializeParent(self):
         """Initialize the parent process.

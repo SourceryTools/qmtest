@@ -19,9 +19,9 @@
 
 import os
 import re
+import qm.executable
 from   qm.test.test import *
 from   qm.test.result import *
-from   qm.platform import run_program_captured, ProgramTerminatedBySignalError
 
 ########################################################################
 # classes
@@ -70,13 +70,10 @@ class RegTest(Test):
 
         argv = (qmtest, "-D", path, "run", "-O", results, "-o", output)
 
-        try:
-            (status, stdout, stderr) = run_program_captured(qmtest, argv)
-        except ProgramTerminatedBySignalError:
-            # A fatal signal counts as a failure, not an error.
-            result.NoteException(cause="Child process received a fatal signal",
-                                 outcome=Result.FAIL)
-            return
+        e = qm.executable.RedirectedExecutable()
+        status = e.Run(argv)
+        stdout = e.stdout
+        stderr = e.stderr
 
         result.Annotate({
             "selftest.RegTest.cmdline"  : ' '.join(argv),

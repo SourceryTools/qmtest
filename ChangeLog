@@ -1,4 +1,26 @@
-2002-11-15    <Mark Mitchell <mark@codesourcery.com>>
+2002-11-15  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (cPickle): Import it.
+	(fcntl): Likewise.
+	(select): Likewise.
+	(F_GETFD): New constant.
+	(F_SETFD): Likewise.
+	(FD_CLOEXEC): Likewise.
+	(Executable.Spawn): Add exception_pipe parameter.  Return the PID
+	of the child.
+	(Executable.Run): Create the exception_pipe.
+	* qm/platform_unix.py (RunProgramError): Remove.
+	(ProgramStoppedError): Likewise.
+	(ProgramTerminatedBySignalError): Likewise.
+	(replace_program): Likewise.
+	(run_program): Likewise.
+	(run_program_captured): Likewise.
+	* qm/test/classes/process_target.py
+	(ProcessTarget.QMTestExecutable): New class.
+	(ProcessTarget.Start): Use it.
+	* tests/QMTest/selftest.py (RegTest.Run): Use Executable.
+	
+2002-11-15 Mark Mitchell <mark@codesourcery.com
 
 	* qm/executable.py (string): Import it.
 	(msvcrt): Likewise.

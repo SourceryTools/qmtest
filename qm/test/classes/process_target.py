@@ -17,6 +17,7 @@
 
 import cPickle
 import os
+import qm.executable
 import qm.test.cmdline
 from   qm.test.target import *
 
@@ -57,7 +58,29 @@ class ProcessTarget(Target):
             program.  This path is used to invoke QMTest.""",
             default_value=""),
         ]
-    
+
+    class QMTestExecutable(qm.executable.Executable):
+        """A 'QMTestExecutable' redirects commands to a chlid process."""
+
+        def _InitializeParent(self):
+
+            self.command_pipe = os.pipe()
+            self.response_pipe = os.pipe()
+
+
+        def _InitializeChild(self):
+
+            # Close the write end of the command pipe.
+            os.close(self.command_pipe[1])
+            # And the read end of the response pipe.
+            os.close(self.response_pipe[0])
+            # Connect the pipes to the standard input and standard
+            # output for the child.
+            os.dup2(self.command_pipe[0], sys.stdin.fileno())
+            os.dup2(self.response_pipe[1], sys.stdout.fileno())
+
+            
+        
     def __init__(self, database, properties):
         """Construct a new 'ProcessTarget'.
 
@@ -98,67 +121,45 @@ class ProcessTarget(Target):
 
         Target.Start(self, response_queue, engine)
 
+        # Determine the test database path to use.
+        database_path = self.database_path
+        if not database_path:
+            database_path = self.GetDatabase().GetPath()
+        # See if the path to the QMTest binary was set in the
+        # target configuration.
+        qmtest_path = self.qmtest
+        if not qmtest_path:
+            # If not, fall back to the value determined when
+            # QMTest was invoked.
+            qmtest_path \
+                = qm.test.cmdline.get_qmtest().GetExecutablePath()
+            # If there is no such value, use a default value.
+            if not qmtest_path:
+                qmtest_path = "/usr/local/bin/qmtest"
+        # Construct the command we want to invoke.
+        arg_list = (self._GetInterpreter() +
+                    [ qmtest_path, '-D', database_path, "remote" ])
+
+        # Create the subprocesses.
         for x in xrange(self.processes):
             # Create two pipes: one to write commands to the remote
             # QMTest, and one to read responses.
-            command_pipe = os.pipe()
-            response_pipe = os.pipe()
+            e = ProcessTarget.QMTestExecutable()
+            child_pid = e.Spawn(arg_list)
             
-            # Create the child process.
-            child_pid = os.fork()
-            
-            if child_pid == 0:
-                # This is the child process.
-                
-                # Close the write end of the command pipe.
-                os.close(command_pipe[1])
-                # And the read end of the response pipe.
-                os.close(response_pipe[0])
-                # Connect the pipes to the standard input and standard
-                # output for the child.
-                os.dup2(command_pipe[0], sys.stdin.fileno())
-                os.dup2(response_pipe[1], sys.stdout.fileno())
-                
-                # Determine the test database path to use.
-                database_path = self.database_path
-                if not database_path:
-                    database_path = self.GetDatabase().GetPath()
-                # See if the path to the QMTest binary was set in the
-                # target configuration.
-                qmtest_path = self.qmtest
-                if not qmtest_path:
-                    # If not, fall back to the value determined when
-                    # QMTest was invoked.
-                    qmtest_path \
-                        = qm.test.cmdline.get_qmtest().GetExecutablePath()
-                    # If there is no such value, use a default value.
-                    if not qmtest_path:
-                        qmtest_path = "/usr/local/bin/qmtest"
-                # Construct the command we want to invoke.
-                arg_list = (self._GetInterpreter() +
-                            [ qmtest_path, '-D', database_path, "remote" ])
-                # Run it.
-                qm.platform.replace_program(arg_list[0], arg_list)
-                # Should be unreachable.
-                assert 0
-                
-            else:
-                # This is the parent process.
-                self.__command_queue = []
-                
-                # Close the read end of the command pipe.
-                os.close(command_pipe[0])
-                # And the write end of the response pipe.
-                os.close(response_pipe[1])
-                
-                # Remember the child.
-                child = (child_pid,
-                         os.fdopen(response_pipe[0], "r"),
-                         os.fdopen(command_pipe[1], "w", 0))
-                self.__children.append(child)
-                self.__idle_children.append(child)
-                self.__children_by_fd[response_pipe[0]] = child
-                engine.AddInputHandler(response_pipe[0], self.__ReadResults)
+            # Close the read end of the command pipe.
+            os.close(e.command_pipe[0])
+            # And the write end of the response pipe.
+            os.close(e.response_pipe[1])
+
+            # Remember the child.
+            child = (child_pid,
+                     os.fdopen(e.response_pipe[0], "r"),
+                     os.fdopen(e.command_pipe[1], "w", 0))
+            self.__children.append(child)
+            self.__idle_children.append(child)
+            self.__children_by_fd[e.response_pipe[0]] = child
+            engine.AddInputHandler(e.response_pipe[0], self.__ReadResults)
 
 
     def Stop(self):
