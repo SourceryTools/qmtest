@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<!DOCTYPE class-directory PUBLIC "-//Software Carpentry//QMTest Class Directory V0.1//EN" "http://www.software-carpentry.com/qm/xml/class-directory.dtd">
+
+<class-directory>
+
+<!-- Test classes -->
+
+<class kind="test">command.ExecTest</class>
+<class kind="test">command.ShellCommandTest</class>
+<class kind="test">command.ShellScriptTest</class>
+<class kind="test">file.FileContentsTest</class>
+<class kind="test">python.ExecTest</class>
+<class kind="test">python.ExceptionTest</class>
+<class kind="test">python.StringExceptionTest</class>
+
+<!-- Resource classes -->
+
+<class kind="resource">temporary.TempDirectoryResource</class>
+
+</class-directory>

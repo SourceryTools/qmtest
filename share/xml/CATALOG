@@ -11,3 +11,5 @@ PUBLIC "-//Software Carpentry//QMTest Result V0.2//EN" "result.dtd"
 PUBLIC "-//Software Carpentry//QMTest Suite V0.1//EN" "suite.dtd"
 PUBLIC "-//Software Carpentry//QMTest Target V0.1//EN" "target.dtd"
 PUBLIC "-//Software Carpentry//QMTest TDB Configuration V0.1//EN" "tdb-configuration.dtd"
+PUBLIC "-//Software Carpentry//QMTest Class Directory V0.1//EN" "class-directory.dtd"
+

@@ -1,3 +1,34 @@
+2001-10-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (InstanceBase.GetClass): Use
+	get_extension_class.
+	(load_databse): Likewise.
+	(get_extension_directories): Add kind parameter.
+	(get_extension_class_names_in_directory): New function.
+	(get_extension_class_names): Likewise.
+	(get_extension_class): Likewise.
+	(get_test_class): Likewise.
+	(get_resource_class): Likewise.
+	(get_class): Remove.
+	(make_new_test): Use get_test_class.
+	(make_new_resource): Use get_resource_class.
+	(__loaded_classes): Remove.
+	(__builtin_class_path): Likewise.
+	(extension_kinds): New variable.
+	(__class_caches): Likewise.
+	* qm/test/database.py (GetTestClasses): Use 
+	get_extension_class_names.
+	(GetResourceClasses): Likewise.
+	* qm/test/run.py (SubprocessTarget.__init__): Fix typo in comment.
+	* qm/test/xmldb.py (Database.__ParseTestDocument): Use get_test_class.
+	(Database.__ParseResourceDocument): Use get_resource_class.
+	* qm/test/classes/__init__.py: Remove.
+	* qm/test/classes/classes.qmc: New file.
+	* qm/test/web/show.py (handle_show): Use get_extension_class.
+	(handle_submit): Likewise.
+	* share/xml/CATALOG: Add class-directory.dtd.
+	* share/xml/class-directory.dtd: New file.
+	
 2001-10-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/label.py (MakeRelativeTo): Rename to ...

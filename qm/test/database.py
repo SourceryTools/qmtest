@@ -561,7 +561,7 @@ class Database:
         implementation allows all available test classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.standard_test_class_names
+        return qm.test.base.get_extension_class_names('test')
 
 
     def GetResourceClasses(self):
@@ -575,7 +575,8 @@ class Database:
         implementation allows all available resource classes, but the
         derived class may allow only a subset."""
 
-        return qm.test.base.standard_resource_class_names
+        return qm.test.base.get_extension_class_names('resource')
+
 
 ########################################################################
 # Local Variables:

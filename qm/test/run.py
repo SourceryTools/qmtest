@@ -347,7 +347,7 @@ class SubprocessTarget(Target):
                 # the channel.
                 self._children.append(self.ChildProcess(child_pid, channel))
 
-        # Initially, all children are reayd 
+        # Initially, all children are ready
         self._ready_children = self._children[:]
         self.__command_queue = []
 

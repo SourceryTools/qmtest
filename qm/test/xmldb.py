@@ -359,7 +359,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
         test_class_name = self.__GetClassNameFromDomNode(test_node)
         # Obtain the test class.
         try:
-            test_class = base.get_class(test_class_name)
+            test_class = base.get_test_class(test_class_name)
         except ImportError:
             raise UnknownTestClassError, \
                   qm.error("unknown test class",
@@ -398,7 +398,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
         resource_class_name = self.__GetClassNameFromDomNode(resource_node)
         # Obtain the test class.
         try:
-            resource_class = base.get_class(resource_class_name)
+            resource_class = base.get_resource_class(resource_class_name)
         except KeyError:
             raise UnknownResourceClassError, class_name
         arguments = self.__GetArgumentsFromDomNode(resource_node,

@@ -133,9 +133,16 @@ class InstanceBase:
 
 
     def GetClass(self):
-        """Return the test class of this test."""
+        """Return the class of this test or resource."""
 
-        return get_class(self.GetClassName())
+        if isinstance(self, Test):
+            kind = 'test'
+        elif isinstance(self, Resource):
+            kind = 'resource'
+        else:
+            assert 0
+            
+        return get_extension_class(self.GetClassName(), kind)
     
 
     def GetArguments(self):
@@ -1075,7 +1082,8 @@ def load_database(path):
         database_class_name = qm.xmlutil.get_child_text(database,
                                                         'class_name')
         # Get the database class.
-        database_class = get_database_class(database_class_name)
+        database_class = get_extension_class(database_class_name,
+                                             'database')
     else:
         # If 'configuration' did not exist, fall back to the 'xmldb'
         # database.
@@ -1087,75 +1095,166 @@ def load_database(path):
     _database = database_class(path)
 
 
-def get_extension_directories():
+def get_extension_directories(kind):
     """Return the directories to search for QMTest extensions.
 
+    kind -- A string giving kind of extension for which we are looking.
+    This must be of the elements of 'extension_kinds'.
+    
     returns -- A sequence of strings.  Each string is the path to a
     directory that should be searched for QMTest extensions.  The
     directories must be searched in order; the first directory
     containing the desired module is the one from which the module is
-    loaded."""
+    loaded.
 
+    The directories that are returned are, in order:
+
+    1. Those directories present in the 'QMTEST_CLASSPATH' environment
+       variable.
+
+    2. Those directories specified by the 'GetClassPaths' method on the
+       test database -- unless 'kind' is 'database'.
+
+    3. The directories containing classes that come with QMTest.
+
+    By placing the 'QMTEST_CLASSPATH' directories first, users can
+    override test classes with standard names."""
+
+    global extension_kinds
+
+    # The kind should be one of the extension_kinds.
+    assert kind in extension_kinds
+
+    # Start with the directories that the user has specified in the
+    # QNTEST_CLASSPATH environment variable.
     if os.environ.has_key('QMTEST_CLASSPATH'):
         dirs = string.split(os.environ['QMTEST_CLASSPATH'], ':')
     else:
         dirs = []
 
-    return dirs + __builtin_class_path
+    # Search directories specified by the database -- unless we are
+    # searching for a database class, in which case we cannot assume
+    # that a database has already been loaded.
+    if kind != 'database':
+        dirs = dirs + get_database().GetClassPaths()
+
+    # Search the builtin directory, too.
+    dirs.append(qm.common.get_lib_directory("qm", "test", "classes"))
+
+    return dirs
 
 
-def get_class(class_name):
-    """Return the test or resource class named 'class_name'.
+def get_extension_class_names_in_directory(directory):
+    """Return the names of QMTest extension classes in 'directory'.
 
-    'class_name' -- A fully-qualified Python class name.
+    'directory' -- A string giving the path to a directory in the file
+    system.
 
-    returns -- A class object for the requested class.
+    returns -- A dictionary mapping the strings in 'extension_kinds' to
+    sequences of strings.  Each element in the sequence names an
+    extension class, using the form 'module.class'"""
 
-    raises -- 'ValueError' if 'class_name' is formatted incorrectly.
+    global extension_kinds
+    
+    # Assume that there are no extension classes in this directory.
+    extensions = {}
+    for kind in extension_kinds:
+        extensions[kind] = []
+        
+    # Look for a file named 'classes.qmc' in this directory.
+    file = os.path.join(directory, 'classes.qmc')
+    # If the file does not exist, there are no extension classes in
+    # this directory.
+    if not os.path.isfile(file):
+        return extensions
 
-    raises -- 'ImportError' if 'class_name' cannot be loaded."""
-
-    global __loaded_classes
-
-    # Have we already loaded this test class?
     try:
-        return __loaded_classes[class_name]
-    except KeyError:
-        # Nope; that's OK.
+        # Load the file.
+        document = qm.xmlutil.load_xml_file(file)
+        # Get the root node in the document.
+        root = document.documentElement
+        # Get the sequence of elements corresponding to each of the
+        # classes listed in the directory.
+        classes = qm.xmlutil.get_children(root, 'class')
+        # Go through each of the classes to see what kind it is.
+        for c in classes:
+            kind = c.getAttribute('kind')
+            # Skip extensions we do not understand.  Perhaps they
+            # are for some other QM tool.
+            if kind not in extension_kinds:
+                continue
+            extensions[kind].append(qm.xmlutil.get_dom_text(c))
+    except:
+        print sys.exc_info()[1]
         pass
 
-    class_path = get_extension_directories()
-    # The test database may also provide places for class files.
-    extra_paths = get_database().GetClassPaths()
-    # Construct the full set of paths to search in.
-    paths = extra_paths + class_path
-    # Load it.
-    klass = qm.common.load_class(class_name, paths)
-    # Cache it.
-    __loaded_classes[class_name] = klass
-    # All done.
-    return klass
+    return extensions
 
 
-def get_database_class(name):
-    """Return the database class with the indicated name.
+def get_extension_class_names(kind):
+    """Return the names of extension classes.
 
-    returns -- A class object for the database class with the indicated
-    name."""
+    'kind' -- The kind of extension class.  This value must be one
+    of the 'extension_kinds'.
 
-    global __loaded_classes
+    returns -- A sequence of strings giving the names of the extension
+    classes with the indicated 'kind', in the form 'module.class'."""
 
-    # If the test class has already been loaded, just return it.
-    if __loaded_classes.has_key(name):
-        return __loaded_classes[name]
-    # Get the list of directories in which to search.
-    dirs = get_extension_directories()
-    # Load the class.
-    klass = qm.common.load_class(name, dirs)
-    # Cache it.
-    __loaded_classes[name] = klass
+    dirs = get_extension_directories(kind)
+    names = []
+    for d in dirs:
+        names.extend(get_extension_class_names_in_directory(d)[kind])
+    return names
+
+
+def get_extension_class(class_name, kind):
+    """Return the extension class named 'class_name'.
+
+    'class_name' -- The name of the class, in the form 'module.class'.
+
+    'kind' -- The kind of class to load.  This value must be one
+    of the 'extension_kinds'.
+
+    returns -- The class object with the indicated 'class_name'."""
+
+    global __class_caches
     
+    # If this class is already in the cache, we can just return it.
+    cache = __class_caches[kind]
+    if cache.has_key(class_name):
+        return cache[class_name]
+
+    # Otherwise, load it now.  Get all the extension directories in
+    # which this class might be located.
+    klass = qm.common.load_class(class_name,
+                                 get_extension_directories(kind))
+    # Cache it.
+    cache[class_name] = klass
+
     return klass
+
+
+def get_test_class(class_name):
+    """Return the test class named 'class_name'.
+
+    'class_name' -- The name of the test class, in the form
+    'module.class'.
+
+    returns -- The test class object with the indicated 'class_name'."""
+    
+    return get_extension_class(class_name, 'test')
+
+
+def get_resource_class(class_name):
+    """Return the resource class named 'class_name'.
+
+    'class_name' -- The name of the resource class, in the form
+    'module.class'.
+
+    returns -- The resource class object with the indicated
+    'class_name'."""
+    
+    return get_extension_class(class_name, 'resource')
 
 
 def make_new_test(test_class_name, test_id):
@@ -1168,7 +1267,7 @@ def make_new_test(test_class_name, test_id):
 
     returns -- A new 'Test' object."""
 
-    test_class = get_class(test_class_name)
+    test_class = get_test_class(test_class_name)
     # Make sure there isn't already such a test.
     database = get_database()
     if database.HasTest(test_id):
@@ -1194,7 +1293,7 @@ def make_new_resource(resource_class_name, resource_id):
 
     returns -- A new 'Resource' object."""
 
-    resource_class = get_class(resource_class_name)
+    resource_class = get_resource_class(resource_class_name)
     # Make sure there isn't already such a resource.
     database = get_database()
     if database.HasResource(resource_id):
@@ -1617,23 +1716,27 @@ def clean_up_resource(resource_id, context):
     # Wrap it up.
     return ResultWrapper(resource_id, context, result)
 
-
 ########################################################################
 # variables
 ########################################################################
+
+extension_kinds = [ 'test', 'resource', 'database' ]
+"""Names of different kinds of QMTest extension classes."""
+
+__class_caches = {}
+"""A dictionary of loaded class caches.
+
+The keys are the kinds in 'extension_kinds'.  The associated value
+is itself a dictionary mapping class names to class objects."""
+
+# Initialize the caches.
+for kind in extension_kinds:
+    __class_caches[kind] = {}
 
 _database = None
 """The global test database instance.
 
 Use 'get_database' to access the global test database."""
-
-__loaded_classes = {}
-"""Cache of loaded test and resource classes."""
-
-__builtin_class_path = [
-    qm.common.get_lib_directory("qm", "test", "classes"),
-    ]
-"""Standard paths to search for test and resource classes."""
 
 ########################################################################
 # Local Variables:

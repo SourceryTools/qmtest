@@ -446,7 +446,7 @@ def handle_show(request):
                                                    test_id=item_id)
         # Check that the class exists.
         try:
-            qm.test.base.get_class(class_name)
+            qm.test.base.get_extension_class(class_name, type)
         except ValueError:
             # The class name was incorrectly specified.
             field_errors["_class"] = qm.error("invalid class name",
@@ -536,7 +536,7 @@ def handle_submit(request):
     database = qm.test.base.get_database()
     # Extract the class and field specification.
     item_class_name = request["class"]
-    item_class = qm.test.base.get_class(item_class_name)
+    item_class = qm.test.base.get_extension_class(item_class_name, type)
     fields = item_class.fields
 
     # We'll perform various kinds of validation as we extract form
