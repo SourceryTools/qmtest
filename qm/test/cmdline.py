@@ -414,7 +414,7 @@ class cannot be loaded, QMTest will issue an error message to help you
 debug the problem.  Otherwise, QMTest will update the 'classes.qmc' file
 in the directory containing the module to mention your new extension class.
          """,
-         ()
+         (help_option_spec,)
          ),
         
         ("remote",
