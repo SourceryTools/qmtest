@@ -1,3 +1,10 @@
+2002-12-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (get_class_arguments): Use the __dict__ of the
+	class, rather than a direct attribute reference, when checking to
+	see if the argument list has already been computed.
+	(get_class_arguments_as_dictionary): Likewise.
+
 2002-12-23  Mark Eichin <eichin@metacarta.com>
 
 	* qm/test/test.py (Test.TestField): Fix typo in comment.
