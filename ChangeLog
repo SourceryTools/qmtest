@@ -1,9 +1,16 @@
+2004-02-15  Nathaniel Smith  <njs@codesourcery.com>
+
+	* qm/common.py (open_temporary_file_fd): Change default suffix to
+	empty string.
+	(open_temporary_file): Likewise.
+	* qm/test/classes/command.py (ShellScriptTest.Run): Likewise.
+	
 2004-02-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (encode_data_as_text): Remove.
 	(decode_data_from_text): Likewise.
 	(format_byte_count): Likewise.
-	
+
 	(base64): Don't import.
 	(cPickle): Likewise.
 	(cStringIO): Likewise.

@@ -394,7 +394,7 @@ def split_path_fully(path):
         return split_path_fully(dir) + [ entry ]
 
 
-def open_temporary_file_fd(suffix = None):
+def open_temporary_file_fd(suffix = ""):
     """Create and open a temporary file.
 
     'suffix' -- The last part of the temporary file name, as for
@@ -407,6 +407,7 @@ def open_temporary_file_fd(suffix = None):
     file."""
 
     file_name = tempfile.mktemp(suffix)
+
     try:
         # Attempt to open the file.
         fd = os.open(file_name,
@@ -422,7 +423,7 @@ def open_temporary_file_fd(suffix = None):
     return (file_name, fd)
 
 
-def open_temporary_file(mode = "w+b", suffix = None):
+def open_temporary_file(mode = "w+b", suffix = ""):
     """Create and open a temporary file.
 
     'mode' -- The mode argument to pass to 'fopen'.
