@@ -80,7 +80,8 @@ class Result:
 
     # Constants for result kinds.
 
-    RESOURCE = "resource"
+    RESOURCE_SETUP = "resource_setup"
+    RESOURCE_CLEANUP = "resource_cleanup"
     TEST = "test"
     
     # Constants for outcomes.
@@ -92,7 +93,6 @@ class Result:
 
     # Constants for predefined annotations.
 
-    ACTION = "qmtest.action"
     CAUSE = "qmtest.cause"
     EXCEPTION = "qmtest.exception"
     RESOURCE = "qmtest.resource"
@@ -101,7 +101,7 @@ class Result:
     
     # Other class variables.
 
-    kinds = [ RESOURCE, TEST ]
+    kinds = [ RESOURCE_SETUP, RESOURCE_CLEANUP, TEST ]
     """A list of the possible kinds."""
     
     outcomes = [ ERROR, FAIL, UNTESTED, PASS ]
@@ -141,8 +141,8 @@ class Result:
     def GetKind(self):
         """Return the kind of result this is.
 
-        returns -- The kind of entity ('Result.TEST' or
-        'Result.RESOURCE') to which this result corresponds."""
+        returns -- The kind of entity (one of the 'kinds') to which
+        this result corresponds."""
 
         return self.__kind
     
@@ -238,7 +238,8 @@ class Result:
         self.SetOutcome(outcome)
         self[Result.CAUSE] = cause
         self[Result.EXCEPTION] = "%s: %s" % exc_info[:2]
-        self[Result.TRACEBACK] = qm.format_traceback(exc_info)
+        self[Result.TRACEBACK] \
+            = "<pre>" + qm.format_traceback(exc_info) + "</pre>"
 
         
     def MakeDomNode(self, document):

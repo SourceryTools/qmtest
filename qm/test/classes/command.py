@@ -282,7 +282,9 @@ class ExecTestBase(Test):
                                   { Result.CAUSE : "Could not execute program",
                                     Result.EXCEPTION : "%s: %s" % exc_info[:2],
                                     Result.TRACEBACK :
-                                      qm.format_traceback(exc_info) })
+                                      "<pre>"
+                                      + qm.format_traceback(exc_info)
+                                      + "</pre>" })
                         cPickle.dump(result, os.fdopen(result_w, "w"))
                         # Exit.
                         os._exit(1)
@@ -380,15 +382,15 @@ class ExecTestBase(Test):
                 # Check to see if the standard output matches.
                 if stdout != self.stdout:
                     causes.append("standard output")
-                    result["ExecTest.stdout"] = "'''" + stdout + "'''"
+                    result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
                     result["ExecTest.expected_stdout"] \
-                        = "'''" + self.stdout + "'''"
+                        = "<pre>" + self.stdout + "</pre>"
                 # Check to see that the standard error matches.
                 if stderr != self.stderr:
                     causes.append("standard error")
-                    result["ExecTest.stderr"] = "'''" + stderr + "'''"
+                    result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
                     result["ExecTest.expected_stderr"] \
-                        = "'''" + self.stderr + "'''"
+                        = "<pre>" + self.stderr + "</pre>"
                 # If anything went wrong, the test failed.
                 if causes:
                     result.Fail("Unexpected %s." % string.join(causes, ", ")) 

@@ -1,3 +1,44 @@
+2002-11-06  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/fields.py (BooleanField): New class.
+	* qm/xmlutil.py (ParseError): Remove.
+	(load_xml_file): Revise docoumentation.
+	(load_xml): Likewise.
+	* qm/test/cmdline.py (__ExecuteSummarize): Handle XML parse errors
+	gracefully.
+	* qm/test/database.py (Database.arguments): Add modifiable.
+	(Database.IsModifiable): New method.
+	* qm/test/execution_engine.py (ExecutionEngine._AddResult): Tweak
+	handling of resource results.
+	* qm/test/file_database.py (FileDatabase._AreLabelsPaths): New
+	method.  Use it throughout.
+	* qm/test/result.py (Result.RESOURCE_SETUP): New variable.
+	(Result.RESOURCE_CLEANUP): Likewise.
+	(Result.ACTION): Remove.
+	(Result.kinds): Update.
+	(Result.NoteException): Use HTML formatting for traceback.
+	* qm/test/target.py (Target._RecordResult): Do not record the
+	target if it is the local target.
+	(Target._SetUpResource): Use RESOURCE_SETUP.
+	(Target._CleanUpResource): Use RESOURCE_CLEANUP.
+	* qm/test/text_result_stream.py (TextResultStream.WriteResult):
+	Tweak handling of resource results.
+	(TextResultStream._DisplayResult): Process HTML formatting.
+	Adjust calls to _WriteOutcome.
+	(TextResultStream._WriteOutcome): Distinguish resource results
+	from test results.
+	* qm/test/classes/command.py (ExecTestBase.Run): Use HTML
+	formatting.
+	* qm/test/classes/file_label.py (FileLabel.IsValid): Remove.
+	* qm/test/classes/xml_database.py (XMLDatabase._GetTestFromPath):
+	Hande XML parse errors gracefully.
+	(XMLDatabase._GetResourceFromPath): Likewise.
+	* qm/test/share/dtml/result.dtml: Take advantage of HTML
+	formatting of annotations.
+	* qm/test/web/web.py (QMTestPage.__init__): Do not show editing
+	choices if the database is not modifiable.
+	* tests/QMTest/.cvsignore: New file.
+	
 2002-11-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (Database._LabelToPath): Rename to ...

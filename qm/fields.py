@@ -2031,6 +2031,19 @@ class EnumerationField(TextField):
 
 
 
+class BooleanField(EnumerationField):
+    """A field containing a boolean value.
+
+    The enumeration contains two values: true and false."""
+
+    def __init__(self, name, default_value = None, **properties):
+
+        # Construct the base class.
+        EnumerationField.__init__(self, name, default_value,
+                                  ["true", "false"], **properties)
+
+        
+                                  
 ########################################################################
 
 class TimeField(IntegerField):

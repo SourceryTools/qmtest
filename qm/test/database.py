@@ -486,14 +486,23 @@ class Database(qm.extension.Extension):
 
     arguments = [
         qm.fields.TextField(
-            name="label_class",
-            title="Label Class",
-            description="""The name of the label class used by this database.
+            name = "label_class",
+            title = "Label Class",
+            description = """The name of the label class used by this database.
 
             The label class is used to separate names of entities used
             by the database into directories and basenames.""",
-            default_value="python_label.PythonLabel"
-            )
+            default_value = "python_label.PythonLabel"
+            ),
+        qm.fields.BooleanField(
+            name = "modifiable",
+            title = "Modifiable?",
+            description = """Whether or not the database can be modified.
+
+            If true, changes (such as the addition or removal of tests,
+            resources, or suites) can be made to the test database.
+            If false, tests can be viewed and run, but not modified.""",
+            default_value = "true")
         ]
 
     kind = "database"
@@ -1045,6 +1054,18 @@ class Database(qm.extension.Extension):
         # Convert the maps to sequences.
         return test_ids.keys(), suite_ids.keys()
 
+
+    def IsModifiable(self):
+        """Returns true iff this database is modifiable.
+
+        returns -- True iff this database is modifiable.  If the
+        database is modifiable, it supports operations like 'WriteTest'
+        that make changes to the structure of the databaes itself.
+        Otherwise, the contents of the database may be viewed, but not
+        modified."""
+
+        return self.modifiable == "true"
+        
 ########################################################################
 # Functions
 ########################################################################

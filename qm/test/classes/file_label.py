@@ -84,16 +84,3 @@ class FileLabel(Label):
         'l.split()[0]'."""
 
         return os.path.dirname(self._label)
-
-
-    def IsValid(self, label, is_component):
-        """Returns true if this label is not valid.
-
-        returns -- True if this label is not valid."""
-
-        if not Label.IsValid(self, label, is_component):
-            # If the label does not meet the basic validity
-            # requirements, reject it.
-            return 0
-
-        return 1

@@ -17,9 +17,12 @@
 # imports
 ########################################################################
 
-from qm.test.base import *
-from qm.test.result import *
-from qm.test.result_stream import *
+import formatter
+import htmllib
+import StringIO
+from   qm.test.base import *
+from   qm.test.result import *
+from   qm.test.result_stream import *
 
 ########################################################################
 # classes
@@ -61,7 +64,6 @@ class TextResultStream(ResultStream):
         self.__database = database
         self.__test_results = []
         self.__resource_results = []
-
         self._DisplayHeading("TEST RESULTS")
         
         
@@ -73,10 +75,8 @@ class TextResultStream(ResultStream):
         # Record the results as they are received.
         if result.GetKind() == Result.TEST:
             self.__test_results.append(result)
-        elif result.GetKind() == Result.RESOURCE:
-            self.__resource_results.append(result)
         else:
-            assert 0
+            self.__resource_results.append(result)
 
 	# Display the result.
 	self._DisplayResult(result, "brief")
@@ -245,6 +245,7 @@ class TextResultStream(ResultStream):
         'format' -- The format to use when displaying results."""
 
 	id_ = result.GetId()
+        kind = result.GetKind()
 	outcome = result.GetOutcome()
 
 	# Print the ID and outcome.
@@ -255,16 +256,16 @@ class TextResultStream(ResultStream):
 	        self.__expected_outcomes.get(id_, Result.PASS)
             if (outcome == Result.PASS
                 and expected_outcome == Result.FAIL):
-                self._WriteOutcome(id_, "XPASS")
+                self._WriteOutcome(id_, kind, "XPASS")
             elif (outcome == Result.FAIL
                   and expected_outcome == Result.FAIL):
-                self._WriteOutcome(id_, "XFAIL")
+                self._WriteOutcome(id_, kind, "XFAIL")
             elif outcome != expected_outcome:
-                self._WriteOutcome(id_, outcome, expected_outcome)
+                self._WriteOutcome(id_, kind, outcome, expected_outcome)
             else:
-                self._WriteOutcome(id_, outcome)
+                self._WriteOutcome(id_, kind, outcome)
 	else:
-            self._WriteOutcome(id_, outcome)
+            self._WriteOutcome(id_, kind, outcome)
 
         # Print the cause of the failure.
         if result.has_key(Result.CAUSE):
@@ -279,21 +280,39 @@ class TextResultStream(ResultStream):
                 if name == Result.CAUSE:
                     continue
                 # Add an item to the list
-                value = qm.structured_text.to_text(result[name], 72, 6)
-                value = string.rstrip(value)
-                self.__file.write("\n    %s:\n%s\n" % (name, value))
+                self.__file.write("\n    %s:\n" % name)
+                
+                # Convert the HTML to text.
+                s = StringIO.StringIO()
+                w = formatter.DumbWriter(s)
+                f = formatter.AbstractFormatter(w)
+                p = htmllib.HTMLParser(f)
+                p.feed(result[name])
+                p.close()
 
+                # Write out the text.
+                for l in s.getvalue().splitlines():
+                    self.__file.write("      " + l + "\n")
+        
         self.__file.write('\n')
+        
 
-    def _WriteOutcome(self, name, outcome, expected_outcome=None):
+    def _WriteOutcome(self, name, kind, outcome, expected_outcome=None):
         """Write a line indicating the outcome of a test or resource.
 
         'name' -- The name of the test or resource.
 
+        'kind' -- The kind of result being displayed.
+        
         'outcome' -- A string giving the outcome.
 
         'expected_outcome' -- If not 'None', the expected outcome."""
 
+        if kind == Result.RESOURCE_SETUP:
+            name = "Setup " + name
+        elif kind == Result.RESOURCE_CLEANUP:
+            name = "Cleanup " + name
+        
         if expected_outcome:
 	    self.__file.write("  %-46s: %-8s, expected %-8s\n"
 			      % (name, outcome, expected_outcome))

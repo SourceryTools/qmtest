@@ -328,7 +328,10 @@ class FileDatabase(Database):
         subdirs = []
         file_dir = self.GetSuitePath(directory)
         for entry in dircache.listdir(file_dir):
-            root = os.path.splitext(entry)[0]
+            if not self._AreLabelsPaths():
+                root = os.path.splitext(entry)[0]
+            else:
+                root = entry
             if not self.IsValidLabel(root):
                 continue
             entry_path = os.path.join(file_dir, entry)
@@ -476,6 +479,19 @@ class FileDatabase(Database):
         os.remove(path)
 
 
+    def _AreLabelsPaths(self):
+        """Returns true if labels are to be thought of as file names.
+
+        returns -- True if labels are to be thought of as file names.
+        If this predicate holds, every label is a path, relative to the
+        root of the database.  If false, the labels are translated to
+        paths by adding the 'suite_extension' between directories and
+        the 'test_extension' or 'resource_extension' at the end of the
+        name."""
+
+        return self.label_class == "file_label.FileLabel"
+
+
 
 class ExtensionDatabase(FileDatabase):
     """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
@@ -539,7 +555,10 @@ class ExtensionDatabase(FileDatabase):
 
     def GetTestPath(self, test_id):
 
-        return self._GetPathFromLabel(test_id) + self.test_extension
+        test_path = self._GetPathFromLabel(test_id)
+        if not self._AreLabelsPaths():
+            test_path += self.test_extension
+        return test_path
 
 
     def _IsTestFile(self, path):
@@ -555,7 +574,10 @@ class ExtensionDatabase(FileDatabase):
         if suite_id == "":
             return self.GetRoot()
         else:
-            return self._GetPathFromLabel(suite_id) + self.suite_extension
+            suite_path = self._GetPathFromLabel(suite_id)
+            if not self._AreLabelsPaths():
+                suite_path += self.suite_extension
+            return suite_path
 
 
     def _IsSuiteFile(self, path):
@@ -567,8 +589,10 @@ class ExtensionDatabase(FileDatabase):
 
     def GetResourcePath(self, resource_id):
 
-        return self._GetPathFromLabel(resource_id) \
-               + self.resource_extension
+        test_path = self._GetPathFromLabel(resource_id)
+        if not self._AreLabelsPaths():
+            test_path += self.resource_extension
+        return test_path
         
 
     def _IsResourceFile(self, path):
@@ -579,13 +603,20 @@ class ExtensionDatabase(FileDatabase):
 
     def _GetPathFromLabel(self, label):
 
-        return os.path.join(self.GetRoot(),
-                            self.LabelToPath(label, self.suite_extension))
+        if self._AreLabelsPaths():
+            path = label
+        else:
+            path = self.LabelToPath(label, self.suite_extension)
+
+        return os.path.join(self.GetRoot(), path)
 
         
     def _GetLabelFromBasename(self, basename):
 
-        return os.path.splitext(basename)[0]
+        if self._AreLabelsPaths():
+            return basename
+        else:
+            return os.path.splitext(basename)[0]
 
 
 ########################################################################

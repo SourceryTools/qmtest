@@ -24,15 +24,6 @@ import xml.dom
 import xml.dom.minidom
 
 ########################################################################
-# exceptions
-########################################################################
-
-class ParseError(Exception):
-    pass
-
-    
-
-########################################################################
 # functions
 ########################################################################
 
@@ -43,11 +34,7 @@ def make_system_id(name):
 
 
 def load_xml_file(path):
-    """Return a DOM document loaded from the XML file 'path'.
-
-    raises -- 'ParseError' if an error occurs while parsing the file.
-    This may occur if the file is either not well-formed or not
-    valid."""
+    """Return a DOM document loaded from the XML file 'path'."""
 
     # Open the file.
     file = open(path, "r")
@@ -57,14 +44,12 @@ def load_xml_file(path):
 def load_xml(file):
     """Return a DOM document loaded from the XML file object 'file'.
 
-    'validate' -- If true, a validating XML parser is used.
+    'validate' -- If true, a validating XML parser is used."""
 
-    raises -- 'ParseError' if an error occurs while parsing the file.
-    This may occur if the file is either not well-formed or not
-    valid."""
-
-    document = xml.dom.minidom.parse(file)
-    file.close()
+    try:
+        document = xml.dom.minidom.parse(file)
+    finally:
+        file.close()
     return document
 
 

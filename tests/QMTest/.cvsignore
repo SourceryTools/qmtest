@@ -1,0 +1,4 @@
+*.pyo
+*.pyc
+process_target
+thread_target

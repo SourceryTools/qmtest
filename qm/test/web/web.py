@@ -98,10 +98,15 @@ class QMTestPage(DefaultDtmlPage):
         'server' -- The 'QMTestServer' creating this page."""
         
         # Set up the menus first; the attributes might override them.
-        self.file_menu_items = [
+        if server.GetDatabase().IsModifiable():
+            self.file_menu_items = [
             ('New Test', "location = 'new-test';"),
             ('New Suite', "location = 'new-suite';"),
             ('New Resource', "location = 'new-resource';"),
+            ]
+        else:
+            self.file_menu_items = []
+        self.file_menu_items.extend([
             ('Load Results', "load_results();"),
             ('Save Results',
              "location = '%s';" % qm.test.cmdline.QMTest.results_file_name),
@@ -114,7 +119,7 @@ class QMTestPage(DefaultDtmlPage):
              "location = '%s';"
              % qm.test.cmdline.QMTest.context_file_name),
             ('Exit', 'shutdown')
-            ]
+            ])
         self.edit_menu_items = [
             ('Clear Results', "location ='clear-results';"),
             ('Edit Context', "location = 'edit-context';"),
@@ -922,10 +927,11 @@ class ShowItemPage(QMTestPage):
         self.type = type
         self.field_errors = field_errors
 
-        self.edit_menu_items.append(("Edit %s" % string.capitalize(type),
-                                     "edit_item();"))
-        self.edit_menu_items.append(("Delete %s" % string.capitalize(type),
-                                     "delete_item();"))
+        if self.__database.IsModifiable():
+            self.edit_menu_items.append(("Edit %s" % string.capitalize(type),
+                                         "edit_item();"))
+            self.edit_menu_items.append(("Delete %s" % string.capitalize(type),
+                                         "delete_item();"))
 
         if type == "test" and not edit:
             self.run_menu_items.append(("This Test", "run_test();"))
@@ -1076,7 +1082,7 @@ class ShowSuitePage(QMTestPage):
         self.edit = edit
         self.is_new_suite = is_new_suite
         
-        if not suite.IsImplicit():
+        if not suite.IsImplicit() and database.IsModifiable():
             self.edit_menu_items.append(("Edit Suite", "edit_suite();"))
             self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
 
@@ -1779,6 +1785,7 @@ class QMTestServer(qm.web.WebServer):
         
         # Create the thread that will run all of the tests.
         del self.__execution_thread
+        test_ids.sort()
         self.__execution_thread = \
           ExecutionThread(self.__database, test_ids, self.__context,
                           self.__targets, [self.__results_stream])

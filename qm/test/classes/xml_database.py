@@ -33,6 +33,7 @@ import shutil
 import string
 import xml
 import xml.dom
+import xml.sax
 
 ########################################################################
 # classes
@@ -78,7 +79,7 @@ class XMLDatabase(ExtensionDatabase):
         try:
             return self.__LoadItem(test_id, test_path,
                                    self.__ParseTestDocument)
-        except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
+        except (qm.fields.DomNodeError, xml.sax.SAXException), \
                exception:
             # Problem while parsing XML.
             message = qm.error("error loading xml test",
@@ -107,7 +108,7 @@ class XMLDatabase(ExtensionDatabase):
         try:
             return self.__LoadItem(resource_id, resource_path,
                                    self.__ParseResourceDocument)
-        except (qm.fields.DomNodeError, qm.xmlutil.ParseError), \
+        except (qm.fields.DomNodeError, xml.sax.SAXException), \
                exception:
             # Problem while parsing XML.
             message = qm.error("error loading xml resource",

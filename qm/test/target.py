@@ -235,7 +235,8 @@ class Target(qm.extension.Extension):
         execution."""
 
         # Record the target in the result.
-        result[Result.TARGET] = self.GetName()
+        if self.GetName() != "local":
+            result[Result.TARGET] = self.GetName()
         # Put the result into the response queue.
         self.__response_queue.put(result)
             
@@ -305,8 +306,8 @@ class Target(qm.extension.Extension):
             return rop
         # Set up the context.
         context = ContextWrapper(context)
-        result = Result(Result.RESOURCE, resource_name, context,
-                        Result.PASS, { Result.ACTION : "setup" } )
+        result = Result(Result.RESOURCE_SETUP, resource_name, context,
+                        Result.PASS)
         # Get the resource descriptor.
         try:
             resource = self.GetDatabase().GetResource(resource_name)
@@ -339,9 +340,8 @@ class Target(qm.extension.Extension):
 
         'name' -- The name of the reosurce itself."""
 
-        result = Result(Result.RESOURCE, name, 
-                        ContextWrapper(Context()),
-                        Result.PASS, { Result.ACTION : "cleanup" } )
+        result = Result(Result.RESOURCE_CLEANUP, name, 
+                        ContextWrapper(Context()))
         # Clean up the resource.
         try:
             val = resource.CleanUp(result)

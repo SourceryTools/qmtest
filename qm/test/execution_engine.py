@@ -432,10 +432,8 @@ class ExecutionEngine:
         # Store the result.
         if result.GetKind() == Result.TEST:
             self.__test_results[result.GetId()] = result
-        elif result.GetKind() == Result.RESOURCE:
-            self.__resource_results.append(result)
         else:
-            assert 0
+            self.__resource_results.append(result)
             
         # This target might now be idle.
         if (target and target not in self.__idle_targets

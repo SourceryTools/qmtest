@@ -37,6 +37,7 @@ from   result import *
 import signal
 import string
 import sys
+import xml.sax
 
 ########################################################################
 # variables
@@ -1032,9 +1033,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             test_results = filter(lambda r: r.GetKind() == Result.TEST,
                                   results)
             resource_results = \
-                filter(lambda r: r.GetKind() == Result.RESOURCE,
-                       results)
-        except (IOError, qm.xmlutil.ParseError), exception:
+                filter(lambda r: r.GetKind() != Result.TEST, results)
+        except (IOError, xml.sax.SAXException), exception:
             raise QMException, \
                   qm.error("invalid results file",
                            path=results_path,
@@ -1053,7 +1053,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                           = self.GetDatabase().ExpandIds(id_arguments)
             except (qm.test.database.NoSuchTestError,
                     qm.test.database.NoSuchSuiteError), exception:
-                raise qm.cmdline.CommandError, str(exception)
+                raise qm.cmdline.CommandError, \
+                      qm.error("no such ID", id=str(exception))
             except ValueError, exception:
                 raise qm.cmdline.CommandError, \
                       qm.error("no such ID", id=str(exception))

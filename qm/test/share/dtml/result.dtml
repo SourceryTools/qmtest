@@ -43,7 +43,7 @@
      <tr class="field">
       <td width="30%"><dtml-var annotation></td>
       <td width="70%">
-       <dtml-var expr="web.format_structured_text(result[annotation])">
+       <dtml-var expr="result[annotation]">
       </td>
      </tr>
     </dtml-if>
