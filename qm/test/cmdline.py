@@ -129,6 +129,13 @@ class Command:
         ]
 
     commands_spec = [
+        ("edit",
+         "Edit a test.",
+         "ID",
+         "This command edits a test.",
+         ( help_option_spec, )
+         ),
+
         ("run",
          "Run one or more tests.",
          "ID ...",
@@ -138,6 +145,13 @@ class Command:
          ( help_option_spec, output_option_spec, no_output_option_spec,
            summary_option_spec, no_summary_option_spec,
            outcomes_option_spec, context_option_spec )
+         ),
+
+        ("template",
+         "Create a template for a new test.",
+         "CLASS ID",
+         "Creates a template for a new class, and starts editing it.",
+         ( help_option_spec, )
          ),
 
         ]
@@ -224,7 +238,9 @@ class Command:
 
         # Dispatch to the appropriate method.
         method = {
+            "edit": self.__ExecuteEdit,
             "run" : self.__ExecuteRun,
+            "template": self.__ExecuteTemplate,
             }[self.__command]
         method(output)
 
@@ -361,6 +377,86 @@ class Command:
         self.__output.flush()
 
 
+    def __ExecuteEdit(self, output):
+        """Handle the edit command."""
+        
+        # FIXME: This assumes the database is an 'XmlDatabase'.  That's
+        # OK for now, since we'll have a GUI editing system later.
+
+        database = self.GetDatabase()
+
+        # Make sure an argument was specified.  The argument is the ID
+        # of test to edit.
+        if len(self.__arguments) != 1:
+            raise qm.cmdline.CommandError, qm.error("no id for edit")
+        # Make sure the argument corresponds to an existing test.
+        test_id = self.__arguments[0]
+        if not database.HasTest(test_id):
+            raise qm.cmdline.CommandError, qm.error("unknown id",
+                                                    test_id=test_id)
+        self.__EditTest(test_id)
+
+
+    def __EditTest(self, test_id):
+        """Start an editing operation on test 'test_id'."""
+        
+        database = self.GetDatabase()
+        # Obtain the full path to the test file.
+        test_path = database.TestIdToPath(test_id, absolute=1)
+
+        # If the user specified an 'xml_editor' in the rc file, use
+        # that.
+        editor = qm.rc.Get("xml_editor", None)
+        if editor is not None:
+            pass
+        # Extract the user's perferred editor from the environment, if
+        # it's specified there.
+        elif os.environ.has_key("EDITOR"):
+            # FIXME: Do something else on Windows?  Perhaps look up the
+            # association with .txt or .xml files in the registry?
+            editor = os.environ["EDITOR"]
+        else:
+            # Otherwise use the One True Program.
+            # FIXME: Use notepad for Windows?
+            editor = "/usr/bin/emacs"
+
+        # Invoke the editor in the usual way, passing the edited file's
+        # path as the command argument.
+        os.system("%s %s" % (editor, test_path))
+
+
+    def __ExecuteTemplate(self, output):
+        database = self.GetDatabase()
+        # Make sure two arguments were specified.  The arguments are the
+        # class name and the ID of the new test.
+        if len(self.__arguments) != 2:
+            raise qm.cmdline.CommandError, qm.error("missing arg for template")
+        test_class_name, test_id = self.__arguments
+        try:
+            test_class = base.get_test_class(test_class_name)
+        except ImportError:
+            raise RuntimeError, qm.error("invalid class",
+                                         class_name=test_class_name)
+
+        # Make sure there isn't already such a test.
+        if database.HasTest(test_id):
+            raise RuntimeError, qm.error("test already exists",
+                                         test_id=test_id)
+        # Even though many arguments can be omitted, construct an
+        # argument map with default values for all arguments.
+        arguments = {}
+        for field in test_class.fields:
+            name = field.GetName()
+            value = field.GetDefaultValue()
+            arguments[name] = value
+        # Construct an empty test instance.
+        test = base.Test(test_id, test_class_name, arguments, {}, [])
+        # Write it out.
+        database.WriteTest(test, comments=1)
+        # Let the user edit it immediately.
+        self.__EditTest(test_id)
+
+
     def __WriteSummary(self, test_ids, results, expected_outcomes, output):
         """Generate test result summary.
 
@@ -479,7 +575,8 @@ class Command:
                 prerequisite = result["failed_prerequisite"]
                 prerequisite_outcome = results[prerequisite].GetOutcome()
                 extra = "[%s was %s]" % (prerequisite, prerequisite_outcome)
-            elif outcome == base.Result.FAIL:
+            elif outcome == base.Result.FAIL \
+                 or outcome == base.Result.ERROR:
                 # If the result has a cause property, use it.
                 if result.has_key("cause"):
                     extra = "[%s]" % result["cause"]
@@ -505,7 +602,7 @@ class Command:
         # Add a result element for each test that was run.
         for test_id in results.keys():
             result = results[test_id]
-            result_element = result.MakeDomElement(document)
+            result_element = result.MakeDomNode(document)
             document.documentElement.appendChild(result_element)
         # Generate output.
         qm.xmlutil.write_dom_document(document, output)

@@ -39,6 +39,7 @@ import base
 import os
 import qm.fields
 import qm.label
+import qm.structured_text
 import qm.xmlutil
 import string
 import xml.dom.ext.reader.Sax
@@ -170,7 +171,30 @@ class Database(base.Database):
         else:
             # Already loaded; return the cached value.
             return test
-        
+
+
+    def WriteTest(self, test, comments=0):
+        # Generate the document and document type for XML test files.
+        document = qm.xmlutil.create_dom_document(
+            public_id="-//Software Carpentry//QMTest Test V0.1//EN",
+            dtd_file_name="test.dtd",
+            document_element_tag="test"
+            )
+        # Construct the test element node.
+        test_id = test.GetId()
+        self.__MakeDomNodeForTest(document, document.documentElement,
+                                  test, comments)
+        # Find the file system path for the test file.
+        test_path = self.TestIdToPath(test_id, absolute=1)
+        # If the file is in a new subdirectory, create it.
+        containing_directory = os.path.dirname(test_path)
+        if not os.path.isdir(containing_directory):
+            os.makedirs(containing_directory)
+        # Write out the test.
+        test_file = open(test_path, "w")
+        qm.xmlutil.write_dom_document(document, test_file)
+        test_file.close()
+
 
     def HasSuite(self, suite_id):
         """Return true if the database contains a suite with 'suite_id'."""
@@ -226,6 +250,12 @@ class Database(base.Database):
             return suite
         
 
+    def TestIdToPath(self, test_id, absolute=0):
+        """Convert a test ID in the database to a path to the test file."""
+
+        return self.IdToPath(test_id, absolute) + test_file_extension
+
+
     def IdToPath(self, id_, absolute=0):
         """Convert an ID in the database to a path.
 
@@ -254,22 +284,25 @@ class Database(base.Database):
         assert len(test_nodes) == 1
         test_node = test_nodes[0]
         # Extract the pieces.
-        test_class = self.__GetClass(test_node)
-        arguments = self.__GetArguments(test_node, test_class)
+        test_class_name = self.__GetClassNameFromDomNode(test_node)
+        # Obtain the test class.
+        try:
+            test_class = base.get_test_class(test_class_name)
+        except KeyError:
+            raise UnknownTestClassError, class_name
+        arguments = self.__GetArgumentsFromDomNode(test_node, test_class)
         categories = qm.xmlutil.get_dom_children_texts(test_node, "category")
-        prerequisites = self.__GetPrerequisites(test_node, test_id)
-        # Construct the test object.
-        test = apply(test_class, [], arguments)
+        prerequisites = self.__GetPrerequisitesFromDomNode(test_node, test_id)
         # Construct a test wrapper around it.
         test = base.Test(test_id,
-                         test_class,
+                         test_class_name,
                          arguments,
                          prerequisites,
                          categories)
         return test
         
 
-    def __GetClass(self, test_node):
+    def __GetClassNameFromDomNode(self, test_node):
         """Return the name of the test class of a test.
 
         'test_node' -- A DOM node for a test element.
@@ -282,15 +315,10 @@ class Database(base.Database):
         assert len(class_nodes) == 1
         class_node = class_nodes[0]
         # Extract the name of the test class.
-        class_name = qm.xmlutil.get_dom_text(class_node)
-        # Obtain the test class.
-        try:
-            return base.get_test_class(class_name)
-        except KeyError:
-            raise UnknownTestClassError, class_name
+        return qm.xmlutil.get_dom_text(class_node)
 
 
-    def __GetArguments(self, test_node, test_class):
+    def __GetArgumentsFromDomNode(self, test_node, test_class):
         """Return the arguments of a test.
 
         'test_node' -- A DOM node for a test element.
@@ -334,7 +362,7 @@ class Database(base.Database):
         return result
 
 
-    def __GetPrerequisites(self, test_node, test_id):
+    def __GetPrerequisitesFromDomNode(self, test_node, test_id):
         """Return the prerequisite tests for 'test_node'.
 
         'test_node' -- A DOM node for a test element.
@@ -344,7 +372,8 @@ class Database(base.Database):
         returns -- A mapping from prerequisite test ID to the outcome
         required for that test."""
         
-        rel = qm.label.MakeRelativeTo(label=test_id)
+        dir_id = qm.label.split(test_id)[0]
+        rel = qm.label.MakeRelativeTo(dir_id)
         # Extract the contents of all prerequisite elements.
         results = {}
         for child_node in test_node.getElementsByTagName("prerequisite"):
@@ -356,6 +385,96 @@ class Database(base.Database):
             outcome = child_node.getAttribute("outcome")
             results[test_id] = outcome
         return results
+
+
+    def __MakeDomNodeForTest(self, document, element, test, comments=0):
+        """Construct a DOM node for a test.
+
+        'document' -- The DOM document in which the node is being
+        constructed.
+
+        'element' -- A test element DOM node in which the test is
+        assembled.  If 'None', a new test element node is created.
+
+        'test' -- The test to write.
+
+        'comments' -- If true, add DOM comment nodes."""
+
+        test_id = test.GetId()
+        test_class = test.GetClass()
+        test_class_name = test.GetClassName()
+
+        # Make an element node unless one was specified.
+        if element is None:
+            element = document.createElement("test")
+        else:
+            assert element.tagName == "test"
+
+        # Build and add the class element, which contains the test class
+        # name. 
+        class_element = document.createElement("class")
+        text = document.createTextNode(test_class_name)
+        class_element.appendChild(text)
+        element.appendChild(class_element)
+        
+        # Build and add argument elements, one for each argument that's
+        # specified for the test.
+        arguments = test.GetArguments()
+        for name, value in arguments.items():
+            arg_element = document.createElement("argument")
+            # Store the argument name in the name attribute.
+            arg_element.setAttribute("name", name)
+            # From the list of fields in the test class, find the one
+            # whose name matches this argument.  There should be exactly
+            # one. 
+            field = filter(lambda f, name=name: f.GetName() == name,
+                           test_class.fields)
+            assert len(field) == 1
+            field = field[0]
+            # Add a comment describing the field, if requested.
+            if comments:
+                # Format the field description as text.
+                description = qm.structured_text.to_text(
+                    field.GetDescription(), indent=8, width=72)
+                # Strip off trailing newlines.
+                description = string.rstrip(description)
+                # Construct the comment, including the field title.
+                comment = "%s:\n%s" % (field.GetTitle(), description)
+                # Build and add a comment node.
+                comment = qm.xmlutil.sanitize_text_for_comment(comment)
+                comment_node = document.createComment(comment)
+                arg_element.appendChild(comment_node)
+            # Construct a node for the argument/field value itself.
+            value_node = field.MakeDomNodeForValue(value, document)
+            arg_element.appendChild(value_node)
+            element.appendChild(arg_element)
+
+        # Build and add category elements.
+        for category in test.GetCategories():
+            cat_element = qm.xmlutil.create_dom_text_element("category",
+                                                             category)
+            element.appendChild(cat_element)
+
+        # Build and add prerequisite elements.  First find the ID path
+        # containing this test.
+        containing_id = qm.label.split(test_id)[0]
+        # Prerequisite IDs are stored relative to this.
+        unrel = qm.label.UnmakeRelativeTo(containing_id)
+        # Loop over prerequisites.
+        print test.GetPrerequisites()
+        for prerequisite_id, outcome in test.GetPrerequisites().items():
+            # The relative ID path to the prerequisite test is stored as
+            # the element contents.
+            relative_id = unrel(prerequisite_id)
+            prq_element = qm.xmlutil.create_dom_text_element(
+                "prerequisite", relative_id)
+            # The outcome is stored as an attribute.
+            prq_element.setAttribute("outcome", outcome)
+            element.appendChild(prq_element)
+
+        # FIXME: Pre/post actions.
+
+        return element
 
 
 
@@ -400,8 +519,8 @@ class FileSuite(base.Suite):
 
         # The content IDs are relative to the location of the suite.
         # Construct absolute IDs.
-        content_ids = map(qm.label.MakeRelativeTo(label=suite_id),
-                          content_ids)
+        dir_id = qm.label.split(suite_id)[0]
+        content_ids = map(qm.label.MakeRelativeTo(dir_id), content_ids)
         
         # Validate the IDs, and expand any suite IDs that may be among
         # them. 
@@ -476,7 +595,7 @@ class DirectorySuite(base.Suite):
 
         sub_id = qm.label.from_path(sub_path)
         dir_id = qm.label.join(self.__suite_id, sub_id)
-        rel = qm.label.MakeRelativeTo(path=dir_id)
+        rel = qm.label.MakeRelativeTo(dir_id)
         # Generate the full path to the directory being scanned.
         path = os.path.join(self.__suite_path, sub_path)
         # Loop over its contents.

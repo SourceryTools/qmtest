@@ -658,12 +658,17 @@ def to_html(structured_text):
     return output_string.getvalue()
     
 
-def to_text(structured_text):
-    """Return 'structured_text' formatted as plain text."""
+def to_text(structured_text, width=78, indent=0):
+    """Return 'structured_text' formatted as plain text.
+
+    'width' -- The width of the text (including the indentation).
+
+    'indent' -- The width of the block indentation of the formatted
+    output."""
 
     # Create a text formatter that dumps its output to a StringIO.
     output_string = cStringIO.StringIO()
-    formatter = TextFormatter(output_string)
+    formatter = TextFormatter(output_string, width=width, indent=indent)
     # Generate output.
     __format(structured_text, formatter)
     # Return the resulting text.

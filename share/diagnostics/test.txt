@@ -51,6 +51,9 @@ lower-case letters, digits, underscores, and periods.
 The string '%(assignment)s' is not a valid environment element.
 Environment elements must have the form 'variable=value'.
 
+@ invalid class
+There is no test class "%(class_name)s".
+
 @ invalid result
 The test %(id)s of class %(test_class)s returned an invalid result,
 '%(result)s'. 
@@ -58,6 +61,9 @@ The test %(id)s of class %(test_class)s returned an invalid result,
 @ invalid test id
 The test ID "%(id)s" is not valid.  Test IDs may contain lower-case
 letters, digits, and underscores, and periods.
+
+@ missing arg for template
+Specify the name of the test class and the test ID of the new test.
 
 @ no db specified
 You must specify the location of the test database.  
@@ -67,8 +73,17 @@ You must specify the location of the test database.
   * Or, set the '%(envvar)s' environment variable to the path to the
     database. 
 
+@ no id for edit
+You must specify the ID of the test to edit.
+
 @ no ids specified
 You must specify one or more test or suite IDs.
+
+@ test already exists
+There is already a test with ID "%(test_id)s".
+
+@ unknown id
+There is no test with ID "%(test_id)s" in the database.
 
 @ unknown id in suite
 The ID "%(id)s" in suite "%(suite)s" does not exist.

@@ -1073,7 +1073,10 @@ class AttachmentField(Field):
 
 
     def MakeDomNodeForValue(self, value, document):
-        return value.MakeDomNode(document)
+        if value is None:
+            return attachment.make_dom_node(None, document)
+        else:
+            return value.MakeDomNode(document)
     
 
 

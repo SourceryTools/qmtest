@@ -37,6 +37,7 @@
 
 import os
 import qm
+import re
 import xml.dom
 import xml.dom.ext 
 import xml.dom.ext.reader.Sax
@@ -196,6 +197,32 @@ def write_dom_document(document, stream):
                             stream=stream,
                             indent=" ",
                             encoding="ISO-8859-1")
+    # Write emacs gunk at the end.
+    stream.write(
+"""<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->
+""")
+
+
+__hyphen_regex = re.compile("(--+)")
+
+def __hyphen_replacement(match):
+    return "-" + " -" * (len(match.group(0)) - 1)
+
+
+def sanitize_text_for_comment(text):
+    """Return 'text' modified so that it is valid for an XML comment."""
+
+    # A comment cannot contain two or more hyphens in a row.
+    text = __hyphen_regex.sub(__hyphen_replacement, text)
+
+    return text
 
 
 ########################################################################

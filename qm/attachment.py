@@ -167,9 +167,9 @@ def make_dom_node(attachment, document, data=None, location=None):
     'location' -- If not 'None', a string containing the external
     location of the attachment's contents.
 
-    Exactly one of 'data' and 'location' should be specified.  Note that
-    the 'location' and 'data' attributes of the attachment object are
-    *not* used automatically.
+    Exactly one of 'data' and 'location' should be specified, unless
+    'attachment' is 'None'.  Note that the 'location' and 'data'
+    attributes of the attachment object are *not* used automatically.
 
     Classes derived from 'Attachment' use this function to implmenet the
     'MakeDomeNode' method, passing either 'data' or 'location'.  This
@@ -182,12 +182,17 @@ def make_dom_node(attachment, document, data=None, location=None):
 
     returns -- A DOM element node."""
 
+    # Create an attachment element.
+    node = document.createElement("attachment")
+    # Is it a null attachment?
+    if attachment is None:
+        # Then that's it.
+        return node
+
     # Exactly one of 'data' and 'location' should be specified.
     assert data is None or location is None
     assert data is not None or location is not None
 
-    # Create an attachment element.
-    node = document.createElement("attachment")
     # Create and add the description node.
     child = xmlutil.create_dom_text_element(document, "description",
                                             attachment.description)
@@ -230,6 +235,10 @@ def from_dom_node(node):
     If the attachment object requires additional context information to
     interpret the location (if it's specified in the attachment
     element), the caller must provide it directly to the object."""
+
+    if len(node.childNodes) == 0:
+        # It's an empty element, signifying a null attachment.
+        return None
 
     # Extract the fixed fields; use a default value for each that is not
     # present. 

@@ -60,7 +60,10 @@
 <!ELEMENT set ((integer | text | attachment | enumeral)*)>
 
 <!-- The value of an attachment field.  -->
-<!ELEMENT attachment (description?, mimetype?, filename?, (location | data))>
+<!ELEMENT attachment ((description?, 
+                       mimetype?, 
+                       filename?, 
+                       (location | data))?)>
 
 <!-- A text description of an attachment.  -->
 <!ELEMENT description (#PCDATA)>

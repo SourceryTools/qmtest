@@ -1,3 +1,61 @@
+2001-03-28  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/xmlutil.py (write_dom_document): Write emacs configury.
+	(__hyphen_regex): New variable.
+	(__hyphen_replacement): New function.
+	(sanitize_text_for_comment): Likewise.
+	* qm/structured_text.py (to_text): Add width and indent
+	parameters.
+	* qm/label.py (MakeRelativeTo.__init__): Remove label parameter.
+	(UnmakeRelativeTo): New class.
+	* qm/common.py (is_executable): New function.
+	* qm/attachment.py (make_dom_node): Handle 'None' attachments.
+	(from_dom_node): Likewise.
+	* qm/fields.py (AttachmentField.MakeDomNodeForValue): Likewise.
+	
+	* share/xml/test.dtd (attachment): Allow empty element.
+	* share/diagnostics/test.txt (invalid class): New diagnostic.
+	(mising arg for template): Likewise.
+	(no id for edit): Likewise.
+	(test already exists): Likewise.
+	(unknown id): Likewise.
+
+	* qm/test/xmldb.py (Database.WriteTest): New method.
+	(Database.TestIdToPath): New method.
+	(Database.__GetClass): Rename to...
+	(Database.__GetClassNameFromDomNode): ... this.
+	(Database.__GetArguments): Rename to...
+	(Database.__GetArgumentsFromDomNode): ... this.
+	(Database.__GetPrerequisites): Rename to...
+	(Database.__GetPrerequisitesFromDomNode): ... this.
+	(Database.__MakeDomNodeForTest): New method.
+	(FileSuite.__init__): Adjust for MakeRelativeTo.
+	(DirectorySuite.__AddTestsInDirectory): Likewise.
+	* qm/test/cmdline.py (Command.commands_spec): Add edit and
+	template commands.
+	(Command.Execute): Dispatch edit and template.
+	(Command.__ExecuteEdit): New method.
+	(Command.__EditTest): Likewise.
+	(Command.__ExecuteTemplate): Likewise.
+	(Command.divider): Print cause on ERROR outcome.
+	* qm/test/base.py (Test.__init__): Take test class name as
+	parameter. 
+	(Test.GetClassName): New method.
+	(Test.GetClass): Adjust.
+	(Test.GetArguments): New method.
+	(Test.GetCategories): Likewise.
+	(Database.WriteTest): Likewise.
+	(ResultWrapper.MakeDomElement): Rename to...
+	(ResultWrapper.MakeDomNode): ... this.
+	* qm/test/classes/command.py (ExecTest.__init__): Make stdin
+	default to None.
+	(ExecTest.Run): Initialize result_pipe_file.  Handle null
+	attachment for stdin, stdout, stderr.  Fix pipe cleanup.
+	(ExecTest.RunProgram): Check executable.  Catch access error.
+	(CommandTest.__init__): Make stdin default to None.
+	(CommandTest.RunProgram): Check interpreter executable.
+	(ScriptTest.__init__): Make stdin default to None.
+
 2001-03-27  Alex Samuel  <samuel@codesourcery.com>
 
 	* qm/fields.py (Field.__init__): Make attributes parameter a

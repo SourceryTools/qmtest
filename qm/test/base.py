@@ -149,7 +149,7 @@ class Test:
 
     def __init__(self,
                  test_id,
-                 test_class,
+                 test_class_name,
                  arguments,
                  prerequisites,
                  categories):
@@ -157,8 +157,8 @@ class Test:
 
         'test_id' -- The test ID.
 
-        'test_class' -- The name of the test class of which this is an
-        instance.
+        'test_class_name' -- The name of the test class of which this is
+        an instance.
 
         'arguments' -- This test's arguments to the test class.
 
@@ -169,7 +169,7 @@ class Test:
         required outcomes."""
 
         self.__id = test_id
-        self.__test_class = test_class
+        self.__test_class_name = test_class_name
         self.__arguments = arguments
         self.__prerequisites = prerequisites
         self.__categories = categories
@@ -183,22 +183,40 @@ class Test:
 
         # Perform just-in-time instantiation.
         if self.__test is None:
-            self.__test = apply(self.__test_class, [], self.__arguments)
+            self.__test = apply(self.GetClass(), [], self.__arguments)
 
         return self.__test
+
+
+    def GetClassName(self):
+        """Return the name of the test class of this test."""
+
+        return self.__test_class_name
 
 
     def GetClass(self):
         """Return the test class of this test."""
 
-        return self.__test_class
+        return get_test_class(self.GetClassName())
     
+
+    def GetArguments(self):
+        """Returns a map from argument names to values."""
+
+        return self.__arguments
+
 
     def GetId(self):
         """Return the ID for this instance."""
         
         return self.__id
 
+
+    def GetCategories(self):
+        """Return the names of categories to which the test belongs."""
+
+        return self.__categories
+    
 
     def IsInCategory(self, category):
         """Return true if this test is in 'category'."""
@@ -265,6 +283,15 @@ class Database:
         with ID 'test_id'."""
 
         raise qm.MethodShouldBeOverriddenError, "Database.GetTest"
+
+
+    def WriteTest(self, test):
+        """Store a in the database.
+
+        'test' -- A test to write.  It may be a new version of an
+        existing test, or a new test."""
+
+        raise qm.MethodShouldBeOverriddenError, "Database.WriteTest"
 
 
     def HasSuite(self, suite_id):
@@ -371,7 +398,7 @@ class ResultWrapper:
         return self.__context
 
 
-    def MakeDomElement(self, document):
+    def MakeDomNode(self, document):
         """Generate a DOM element node for this result.
 
         'document' -- The containing DOM document."""

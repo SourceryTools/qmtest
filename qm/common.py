@@ -865,6 +865,14 @@ def find_program_in_path(program_name, path):
     # Couldn't find it.
     return None
 
+
+def is_executable(path):
+    """Return true if 'path' is an executable file."""
+
+    # FIXME: Windows.
+    return os.path.isfile(path) and os.access(path, os.X_OK)
+
+
 ########################################################################
 # variables
 ########################################################################

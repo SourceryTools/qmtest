@@ -82,30 +82,49 @@ sep = "."
 class MakeRelativeTo:
     """Callable to process relative labels."""
 
-    def __init__(self, path=None, label=None):
+    def __init__(self, path):
         """Construct a new instance.
 
-        'path' -- If not 'None', labels are made relative to this path.
-        For instance, if 'path' is "foo.bar", the label "baz" would be
-        transformed to "foo.bar.baz".
+        'path' -- Labels are made relative to this path.  For instance,
+        if 'path' is "foo.bar", the label "baz" would be transformed to
+        "foo.bar.baz"."""
 
-        'label' -- If not 'None', labels are made relative to the path
-        containing it.  For instance, if 'label' is "foo.bar", the label
-        "baz" would be transformed to "foo.baz"."""
-
-        if (path is None and label is None) \
-           or (path is not None and label is not None):
-            raise RuntimeError, "specify either 'path' or 'label'"
-        if path is not None:
-            self.__path = path
-        else:
-            self.__path = split(label)[0]
+        self.__path = path
 
 
     def __call__(self, label):
         """Return 'label' interpreted as a relative label."""
 
         return join(self.__path, label)
+
+
+
+class UnmakeRelativeTo:
+    """Callable to undo 'MakeRelativeTo'."""
+
+    def __init__(self, path):
+        """Construct a new instance.
+
+        'path' -- Labels must be relative to this path, and the path
+        prefix is removed.  For instance, if 'path' is "foo.bar", the
+        label "foo.bar.baz" would be transformed to "baz"."""
+
+        self.__path = path
+
+
+    def __call__(self, label):
+        """Return 'label' interpreted as a relative label.
+
+        raises -- 'ValueError' if the path specified in the initializer
+        function isn't a prefix of 'label'."""
+
+        path_len = len(self.__path)
+        if len(label) < path_len + 1 \
+           or label[:path_len] != self.__path:
+            raise ValueError, \
+                  "path %s is not a prefix of label %s" \
+                  % (self.__path, label)
+        return label[:path_len + 1]
 
     
 
