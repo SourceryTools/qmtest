@@ -87,11 +87,13 @@ Instructions for writing documention:
 
 Instructions for writing code:
 
-Software Carpentry software should be written in standard Python 1.X.X.
+Software Carpentry software should be written in standard Python
+1.X.X.  Python source code should adhere to Guido van Rossum's "Python
+Style Guide", available at
 
-Python source code should adhere to Guido van Rossum's "Python Style
-Guide", available from <XXX>, subject to the following modifications
-and clarifications:
+    http://www.python.org/doc/essays/styleguide.html
+
+subject to the following modifications and clarifications:
 
   - Source text should ideally be wrapped at 72 columns.
     Occasionally, source code may extend to column 78, if this
