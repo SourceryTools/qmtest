@@ -148,13 +148,13 @@
     <itemizedlist>
 
      <listitem><para><xref linkend="ucInstWiz"
-     endterm="ucInstWiz-f"/></para></listitem>
+     endterm="ucInstWiz-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucGUI"
-     endterm="ucGUI-f"/></para></listitem>
+     endterm="ucGUI-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucRepTP"
-     endterm="ucRepTP-f"/></para></listitem>
+     endterm="ucRepTP-f"></xref></para></listitem>
 
     </itemizedlist>
 
@@ -212,34 +212,34 @@
     <itemizedlist>
 
      <listitem><para><xref linkend="ucInstQMCPre"
-     endterm="ucInstQMCPre-f"/></para></listitem>
+     endterm="ucInstQMCPre-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucInstQMC"
-     endterm="ucInstQMC-f"/></para></listitem>
+     endterm="ucInstQMC-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucUpdtQMC"
-     endterm="ucUpdtQMC-f"/></para></listitem>
+     endterm="ucUpdtQMC-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucUpdtQMCComp"
-     endterm="ucUpdtQMCComp-f"/></para></listitem>
+     endterm="ucUpdtQMCComp-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucUpdtPC"
-     endterm="ucUpdtPC-f"/></para></listitem>
+     endterm="ucUpdtPC-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucScript"
-     endterm="ucScript-f"/></para></listitem>
+     endterm="ucScript-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCfgSite"
-     endterm="ucCfgSite-f"/></para></listitem>
+     endterm="ucCfgSite-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCfgPara"
-     endterm="ucCfgPara-f"/></para></listitem>
+     endterm="ucCfgPara-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCfgOver"
-     endterm="ucCfgOver-f"/></para></listitem>
+     endterm="ucCfgOver-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucInstTest"
-     endterm="ucInstTest-f"/></para></listitem>
+     endterm="ucInstTest-f"></xref></para></listitem>
 
     </itemizedlist>
 
@@ -260,13 +260,13 @@
     <itemizedlist>
 
      <listitem><para><xref linkend="ucPartial"
-     endterm="ucPartial-f"/></para></listitem>
+     endterm="ucPartial-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCreBinDist"
-     endterm="ucCreBinDist-f"/></para></listitem>
+     endterm="ucCreBinDist-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCfgXPlat"
-     endterm="ucCfgXPlat-f"/></para></listitem>
+     endterm="ucCfgXPlat-f"></xref></para></listitem>
 
     </itemizedlist>
 
@@ -319,22 +319,22 @@
     <itemizedlist>
 
      <listitem><para><xref linkend="ucMakeFiles"
-     endterm="ucMakeFiles-f"/></para></listitem>
+     endterm="ucMakeFiles-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCreProj"
-     endterm="ucCreProj-f"/></para></listitem>
+     endterm="ucCreProj-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucAddProbe"
-     endterm="ucAddProbe-f"/></para></listitem>
+     endterm="ucAddProbe-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucTestProbe"
-     endterm="ucTestProbe-f"/></para></listitem>
+     endterm="ucTestProbe-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCreKit"
-     endterm="ucCreKit-f"/></para></listitem>
+     endterm="ucCreKit-f"></xref></para></listitem>
 
      <listitem><para><xref linkend="ucCreSrc"
-     endterm="ucCreSrc-f"/></para></listitem>
+     endterm="ucCreSrc-f"></xref></para></listitem>
 
     </itemizedlist>
 
@@ -387,10 +387,10 @@
     <para>Several use cases are concerned with installing and
     maintaining the &qmconfig; software and its configuration on a
     system.  Since &qmconfig; has prerequisites, these also must be
-    considered.  <xref linkend="fig-uc-maint" /> shows the
+    considered.  <xref linkend="fig-uc-maint"></xref> shows the
     relationships between these use cases.</para>
 
-    <anchor id="ucInstQMCPre" /><variablelist>
+    <anchor id="ucInstQMCPre"></anchor><variablelist>
 
      <title id="ucInstQMCPre-f">UC1: Install &qmconfig;
      Prerequisite</title>
@@ -517,7 +517,7 @@
     </variablelist>
 
 
-    <anchor id="ucInstQMC"/><variablelist>
+    <anchor id="ucInstQMC"></anchor><variablelist>
 
      <title id="ucInstQMC-f">UC2: Install &qmconfig;</title>
      <titleabbrev id="ucInstQMC-a">UC2</titleabbrev>
@@ -563,7 +563,7 @@
     </variablelist>
 
 
-    <anchor id="ucUpdtQMC"/><variablelist>
+    <anchor id="ucUpdtQMC"></anchor><variablelist>
 
      <title id="ucUpdtQMC-f">UC3: Update &qmconfig;</title>
      <titleabbrev id="ucUpdtQMC-a">UC3</titleabbrev>
@@ -589,7 +589,7 @@
     </variablelist>
 
 
-    <anchor id="ucUpdtQMCComp"/><variablelist>
+    <anchor id="ucUpdtQMCComp"></anchor><variablelist>
 
      <title id="ucUpdtQMCComp-f">UC4: Update &qmconfig;
      Components</title>
@@ -622,7 +622,7 @@
     </variablelist>
 
 
-    <anchor id="ucUpdtPC"/><variablelist>
+    <anchor id="ucUpdtPC"></anchor><variablelist>
 
      <title id="ucUpdtPC-f">UC5: Update &qmconfig; Probe Cache</title>
      <titleabbrev id="ucUpdtPC-a">UC5</titleabbrev>
@@ -670,7 +670,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_tailor.png" />
+                  fileref="uc_tailor.png"></imagedata>
       </imageobject>
 
       <textobject>
@@ -682,11 +682,11 @@
 
     <para>The main goal of &qmconfig; is to facilitate software
     tailoring, so we have use cases relating to the tailoring process.
-    <xref linkend="fig-uc-tailor" /> shows the relationships between
-    several of these use cases.  A few additional use cases are listed
-    below.</para>
+    <xref linkend="fig-uc-tailor"></xref> shows the relationships
+    between several of these use cases.  A few additional use cases
+    are listed below.</para>
 
-    <anchor id="ucInstWiz"/><variablelist>
+    <anchor id="ucInstWiz"></anchor><variablelist>
 
      <title id="ucInstWiz-f">UC6: Install with Wizard</title>
      <titleabbrev id="ucInstWiz-a">UC6</titleabbrev>
@@ -707,12 +707,12 @@
        <para>We expect to satisfy this use case as we continue
        developing &qmconfig;.  Ideally, it would be wonderful if any
        missing packages could also be obtained.  <xref
-       linkend="instwiz"/> gives a detailed scenario of how the wizard
-       should work.</para> </listitem></varlistentry>
+       linkend="instwiz"></xref> gives a detailed scenario of how the
+       wizard should work.</para> </listitem></varlistentry>
     </variablelist>
 
 
-    <anchor id="ucGUI"/><variablelist>
+    <anchor id="ucGUI"></anchor><variablelist>
 
      <title id="ucGUI-f">UC7: GUI-controlled Tailoring</title>
      <titleabbrev id="ucGUI-a">UC7</titleabbrev>
@@ -729,17 +729,18 @@
      <varlistentry><term>Discussion</term>
       <listitem>
        <para>This use case generalizes <xref linkend="ucInstWiz"
-       endterm="ucInstWiz-a"/>.  Complete control of customization
-       options is available from the &Qgui;, including overriding
-       probe results.  However, while we do not want to hinder the
-       &D-proinst;, we do not wish to confuse or overwhelm the
-       &D-casinst; either.  So we arrange for the options that will be
-       most useful to casual users to be the most easily accessible.
-       Help text will be available.</para> </listitem></varlistentry>
+       endterm="ucInstWiz-a"></xref>.  Complete control of
+       customization options is available from the &Qgui;, including
+       overriding probe results.  However, while we do not want to
+       hinder the &D-proinst;, we do not wish to confuse or overwhelm
+       the &D-casinst; either.  So we arrange for the options that
+       will be most useful to casual users to be the most easily
+       accessible.  Help text will be available.</para>
+       </listitem></varlistentry>
     </variablelist>
 
 
-    <anchor id="ucScript"/><variablelist>
+    <anchor id="ucScript"></anchor><variablelist>
 
      <title id="ucScript-f">UC8: Script-controlled Tailoring</title>
      <titleabbrev id="ucScript-a">UC8</titleabbrev>
@@ -763,7 +764,7 @@
     </variablelist>
 
 
-    <anchor id="ucPartial"/><variablelist>
+    <anchor id="ucPartial"></anchor><variablelist>
 
      <title id="ucPartial-f">UC9: Partial Tailoring</title>
      <titleabbrev id="ucPartial-a">UC9</titleabbrev>
@@ -785,7 +786,7 @@
     </variablelist>
 
 
-    <anchor id="ucCfgSite"/><variablelist>
+    <anchor id="ucCfgSite"></anchor><variablelist>
 
      <title id="ucCfgSite-f">UC10: Configure &qmconfig; for Site
      Conventions</title>
@@ -811,7 +812,7 @@
     </variablelist>
 
 
-    <anchor id="ucCfgPara"/><variablelist>
+    <anchor id="ucCfgPara"></anchor><variablelist>
 
      <title id="ucCfgPara-f">UC11: Configure &qmconfig; for
      Parallelism</title>
@@ -842,7 +843,7 @@
     </variablelist>
 
 
-    <anchor id="ucCfgOver"/><variablelist>
+    <anchor id="ucCfgOver"></anchor><variablelist>
 
      <title id="ucCfgOver-f">UC12: Configure Overrides</title>
      <titleabbrev id="ucCfgOver-a">UC12</titleabbrev>
@@ -870,7 +871,7 @@
 
     <!-- Another figure here? -->
 
-    <anchor id="ucInstTest"/><variablelist>
+    <anchor id="ucInstTest"></anchor><variablelist>
 
      <title id="ucInstTest-f">UC13: Install Package for
      Testing</title>
@@ -904,7 +905,7 @@
     </variablelist>
 
 
-    <anchor id="ucCreBinDist"/><variablelist>
+    <anchor id="ucCreBinDist"></anchor><variablelist>
 
      <title id="ucCreBinDist-f">UC14: Create a Binary
      Distribution</title>
@@ -936,7 +937,7 @@
     </variablelist>
 
 
-    <anchor id="ucCfgXPlat"/><variablelist>
+    <anchor id="ucCfgXPlat"></anchor><variablelist>
 
      <title id="ucCfgXPlat-f">UC15: Configure Cross-platform
      Tailoring</title>
@@ -979,7 +980,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_softdev.png" />
+                  fileref="uc_softdev.png"></imagedata>
       </imageobject>
 
       <textobject>
@@ -989,12 +990,12 @@
      </mediaobject>
     </figure>
 
-    <para><xref linkend="fig-uc-softdev"/> shows some of the use cases
-    involved with developing software to work with &qmconfig;.  These
-    are discussed below.</para>
+    <para><xref linkend="fig-uc-softdev"></xref> shows some of the use
+    cases involved with developing software to work with &qmconfig;.
+    These are discussed below.</para>
 
 
-    <anchor id="ucMakeFiles"/><variablelist>
+    <anchor id="ucMakeFiles"></anchor><variablelist>
 
      <title id="ucMakeFiles-f">UC16: Make Tailorable Source
      Files</title>
@@ -1054,7 +1055,7 @@
     </variablelist>
 
 
-    <anchor id="ucCreProj"/><variablelist>
+    <anchor id="ucCreProj"></anchor><variablelist>
 
      <title id="ucCreProj-f">UC17: Create or Modify Package
      Description</title>
@@ -1087,7 +1088,7 @@
     </variablelist>
 
 
-    <anchor id="ucAddProbe"/><variablelist>
+    <anchor id="ucAddProbe"></anchor><variablelist>
 
      <title id="ucAddProbe-f">UC18: Add a Probe</title>
      <titleabbrev id="ucAddProbe-a">UC18</titleabbrev>
@@ -1112,7 +1113,7 @@
     </variablelist>
 
 
-    <anchor id="ucTestProbe"/><variablelist>
+    <anchor id="ucTestProbe"></anchor><variablelist>
 
      <title id="ucTestProbe-f">UC19: Test a Probe</title>
      <titleabbrev id="ucTestProbe-a">UC19</titleabbrev>
@@ -1135,7 +1136,7 @@
     </variablelist>
 
 
-    <anchor id="ucIntegrate"/><variablelist>
+    <anchor id="ucIntegrate"></anchor><variablelist>
 
      <title id="ucIntegrate-f">UC20: Integrate Legacy Packages</title>
      <titleabbrev id="ucIntegrate-a">UC20</titleabbrev>
@@ -1175,7 +1176,7 @@
 
       <imageobject>
        <imagedata align="center" width="6in" scale="50" scalefit="1"
-                  fileref="uc_kit.png" />
+                  fileref="uc_kit.png"></imagedata>
       </imageobject>
 
       <textobject>
@@ -1186,10 +1187,10 @@
     </figure>
 
     <para>A &D-softdev; needs to create the &D-srcdists; needed by
-    &D-tailors;.  <xref linkend="fig-uc-kit"/> shows the relationships
-    between these use cases.</para>
+    &D-tailors;.  <xref linkend="fig-uc-kit"></xref> shows the
+    relationships between these use cases.</para>
 
-    <anchor id="ucCreKit"/><variablelist>
+    <anchor id="ucCreKit"></anchor><variablelist>
 
      <title id="ucCreKit-f">UC21: Create Kit</title>
      <titleabbrev id="ucCreKit-a">UC21</titleabbrev>
@@ -1215,7 +1216,7 @@
     </variablelist>
 
 
-    <anchor id="ucCreSrc"/><variablelist>
+    <anchor id="ucCreSrc"></anchor><variablelist>
 
      <title id="ucCreSrc-f">UC22: Create Source Distribution</title>
      <titleabbrev id="ucCreSrc-a">UC22</titleabbrev>
@@ -1247,7 +1248,7 @@
     &qmconfig; needs a problem reporting mechanism.</para>
 
 
-    <anchor id="ucRepTP"/><variablelist>
+    <anchor id="ucRepTP"></anchor><variablelist>
 
      <title id="ucRepTP-f">UC23: Report Tailoring Problem</title>
      <titleabbrev id="ucRepTP-a">UC23</titleabbrev>

@@ -203,15 +203,15 @@
 
    <section><title>Bootstrapping &qmconfig;</title>
 
-    <para><xref linkend="ucInstQMCPre" endterm="ucInstQMCPre-a"/> and
-    <xref linkend="ucInstQMC" endterm="ucInstQMC-a"/> detail the need
-    for a &D-proinst; to be able to install &qmconfig; or a
-    prerequisite on a system that does not already have &qmconfig;.
-    The various packages need to be installed in the correct order.
-    Each package would have one or more bootstrap scripts; it might be
-    necessary to invoke the appropriate one for the platform (e.g., a
-    batch file on &Qwindows; or a Bourne shell script on
-    &Qunix;).</para>
+    <para><xref linkend="ucInstQMCPre"
+    endterm="ucInstQMCPre-a"></xref> and <xref linkend="ucInstQMC"
+    endterm="ucInstQMC-a"></xref> detail the need for a &D-proinst; to
+    be able to install &qmconfig; or a prerequisite on a system that
+    does not already have &qmconfig;.  The various packages need to be
+    installed in the correct order.  Each package would have one or
+    more bootstrap scripts; it might be necessary to invoke the
+    appropriate one for the platform (e.g., a batch file on &Qwindows;
+    or a Bourne shell script on &Qunix;).</para>
 
     <para>Other packages could ship with bootstrap scripts besides
     those needed to get &qmconfig; running.  However, these may
