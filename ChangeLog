@@ -1,5 +1,15 @@
 2002-06-13  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/common.py (shuffle): Remove.
+	* qm/test/cmdline.py (whrandom): Do not import.
+	(random): Import.
+	(QMTest.random_option_spec): New option.
+	(QMTest.commands_spec): Use it.
+	(QMTest.__ExecuteRun): Only randomize test order if --random is
+	present.
+	* qm/test/execution_engine.py (ExecutionEngine._RunTests):
+	Preserve the order that tests were presented in the test queues.
+
 	* qm/fields.py (Field.__init__): Remove check for valid labels.
 	* qm/label.py: Rework completely so that Label is an abstract
 	base class.

@@ -146,7 +146,11 @@ class ExecutionEngine:
         """Run all of the tests.
 
         This function assumes that the targets have already been
-        started."""
+        started.
+
+        The tests are run in the order that they were presented --
+        modulo requirements regarding prerequisites and any
+        nondeterminism introduced by running tests in parallel."""
 
         # Create a directed graph where each node is a pair
         # (descriptor, count).  There is an edge from one node
@@ -157,6 +161,7 @@ class ExecutionEngine:
                 descriptor = self.__database.GetTest(id)
                 self.__descriptors[id] = descriptor
                 self.__descriptor_graph[descriptor] = [0, []]
+                self.__pending.append(descriptor)
             except:
                 result = Result(Result.TEST, id, self.__context)
                 result.NoteException(cause = "Could not load test.",
@@ -164,7 +169,7 @@ class ExecutionEngine:
                 self._AddResult(result)
                 
         # Create the edges.
-        for descriptor in self.__descriptors.values():
+        for descriptor in self.__pending:
             prereqs = descriptor.GetPrerequisites()
             if prereqs:
                 for (prereq_id, outcome) in prereqs.items():
@@ -177,7 +182,6 @@ class ExecutionEngine:
                 self.__ready.append(descriptor)
 
         # Iterate until there are no more tests to run.
-        self.__pending = self.__descriptors.values()
         while ((self.__pending or self.__ready)
                and not self.IsTerminationRequested()):
             # If there are no idle targets, block until we get a

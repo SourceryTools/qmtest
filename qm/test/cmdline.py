@@ -30,10 +30,10 @@ from   qm.test.xml_result_stream import *
 from   qm.trace import *
 import qm.xmlutil
 import Queue
+import random
 from   result import *
 import string
 import sys
-import whrandom
 
 ########################################################################
 # variables
@@ -162,6 +162,13 @@ class QMTest:
         "Load target specification from FILE."
         )
 
+    random_option_spec = (
+        None,
+        "random",
+        None,
+        "Run the tests in a random order."
+        )
+    
     seed_option_spec = (
         None,
         "seed",
@@ -264,6 +271,7 @@ The summary is written to standard output.
            no_output_option_spec,
            outcomes_option_spec,
            output_option_spec,
+           random_option_spec,
            seed_option_spec,
            targets_option_spec,
            )
@@ -711,13 +719,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             
         # Handle the 'seed' option.  First create the random number
         # generator we will use.
-        generator = whrandom.whrandom()
         seed = self.GetCommandOption("seed")
-        if seed is None:
-            # No seed was specified.  Seed the random number generator
-            # from the system time. 
-            generator.seed()
-        else:
+        if seed:
             # A seed was specified.  It should be an integer.
             try:
                 seed = int(seed)
@@ -725,7 +728,7 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
                 raise qm.cmdline.CommandError, \
                       qm.error("seed not integer", seed=seed)
             # Use the specified seed.
-            generator.seed(seed, 0, 0)
+            random.seed(seed)
 
         # Make sure some arguments were specified.  The arguments are
         # the IDs of tests and suites to run.
@@ -781,9 +784,12 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             result_streams.append(XMLResultStream(result_file))
 
         try:
-            # Randomize the order of the tests.
-            qm.common.shuffle(test_ids, generator=generator)
-
+            if self.HasCommandOption("random"):
+                # Randomize the order of the tests.
+                random.shuffle(test_ids)
+            else:
+                test_ids.sort()
+            
             # Run the tests.
             engine = ExecutionEngine(database, test_ids, context, targets,
                                      result_streams)

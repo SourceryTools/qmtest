@@ -28,7 +28,6 @@ import operator
 import os
 import os.path
 import quopri
-import random
 import re
 import socket
 import string
@@ -1014,30 +1013,6 @@ def format_time(time_secs, local_time_zone=1):
     # Generate the format.
     return "%(year)4d-%(month)02d-%(day)02d " \
            "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
-
-
-def shuffle(items, generator=None):
-    """Randomize the order of elements in place.
-
-    'items' -- A list, or other mutable sequence.
-
-    'generator' -- The random number generator, implementing Python's
-    random number generator, to use.  If 'None', use the Python 'random'
-    module. 
-
-    The elements of 'items' are rearranged randomly."""
-
-    if generator is None:
-        generator = random
-
-    length = len(items)
-    # For each element in 'items', swap the element with a
-    # randomly-chosen element that appears after it.
-    for i in range(0, length - 3):
-        j = generator.randint(i + 1, length - 1)
-        swap = items[j]
-        items[j] = items[i]
-        items[i] = swap
 
 
 def sequence_difference(seq1, seq2):
