@@ -6,6 +6,17 @@
 #
 # Contents:
 #   GNU Makefile fragment with common rules amd configuration.
+#
+# Usage:
+#   GNUmakefiles in subdirectories should define relevant variables,
+#   and then include this fragment:
+#
+#     include $(TOPDIR)/standard.mk
+#
+#   Variables handled by these makefile rules include
+#
+#     SUBDIRS:      Subdirectories of the current directory.
+#     HTML:         HTML files to be generated from XHTML.
 # 
 # Copyright (C) 2000 CodeSourcery LLC
 #
@@ -35,10 +46,15 @@
 # Configuration
 ########################################################################
 
+# Full path to the qm project.
+TOPDIR		= $(HOME)/qm
+
 TIDY 		= tidy
 TIDYFLAGS	= -wrap 72 -i
 
-.PHONE:		all clean doc subdirs
+XHTMLPROCESS	= $(TOPDIR)/doc/process-xhtml.py
+
+.PHONY:		all clean doc subdirs
 .PHONY:		$(SUBDIRS)
 
 ########################################################################
@@ -52,11 +68,16 @@ doc:		$(HTML)
 subdirs:	$(SUBDIRS)
 
 $(SUBDIRS):	
-	cd $@ && make
+	cd $@ && make TOPDIR=$(TOPDIR)
 
 ########################################################################
 # Pattern rules
 ########################################################################
 
+# Generate .html files from .xhtml files by applying the XHTML
+# processor script and then feeding the output through tidy.
+
 %.html:		%.xhtml
-	$(TIDY) $(TIDYFLAGS) -xml $^ > $@
+	$(XHTMLPROCESS) $^ \
+	  | $(TIDY) $(TIDYFLAGS) -xml $^ \
+	  > $@

@@ -1,5 +1,18 @@
 2000-10-25  Alex Samuel  <samuel@codesourcery.com>
 
+	* stanard.mk: Add comments.
+	(.PHONY): Fix typo.
+	(TOPDIR): New variable.
+	(XHTMLPROCESS): Likewise.
+	($(SUBDIRS)): Pass TOPDIR to child make processes.
+	(%.html): Use XHTML processor script.
+	* doc/process-xhtml.py: New script.
+	* doc/design/qmtrack/GNUmakefile: Use TOPDIR.
+	
+	* doc/qm.css: Improve comments.
+	
+2000-10-25  Alex Samuel  <samuel@codesourcery.com>
+
 	* standard.mk: New file.
 	* doc/GNUmakefile: Likewise.
 	* doc/qm.css: Likewise.

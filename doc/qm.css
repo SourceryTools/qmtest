@@ -103,7 +103,8 @@ div.Contents {
 /* Definitions.  */
 
 /* Use <a class="TermDef">...</a> for the primary definition of a term
-   or concept.  */
+   or concept.  Do not set the name attribute; this is done
+   automatically by XHTML processing.*/
 
 span.Dfn {
     color: #000060;
@@ -112,7 +113,9 @@ span.Dfn {
 }
 
 /* Use <a class="Term">...</a> for subsequent uses of a defined term
-   or concept.  */
+   or concept.  Do not set the ref attribute; this is done
+   automatically by the XHTML processing.  But be sure to use exactly
+   the same spelling of the term.  */
 
 a.TermDef {
    color: #000060;

@@ -33,4 +33,4 @@
 
 HTML		= $(subst .xhtml,.html,$(wildcard *.xhtml))
 
-include ../../../standard.mk
+include $(TOPDIR)/standard.mk
