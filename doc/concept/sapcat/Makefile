@@ -6,7 +6,8 @@ IMAGES =  \
 	pkg_bdist.png pkg_boot.png pkg_build.png pkg_lang.png pkg_sapcat.png \
 	cl_pdd.png cl_probe.png cl_tailor.png
 
-TIDY = tidy -numeric -indent 
+#TIDY_CMD = $(TIDY) -numeric -indent -n
+TIDY_CMD = cat
 
 all: sapcat_final.htm $(IMAGES)
 
@@ -28,42 +29,42 @@ sapcat_final.htm: \
     sapcat_app_decisions.xml
 	rm -f out.htm sapcat_final.htm
 	doccvt/doccvt.py sapcat_final.xml
-	$(TIDY) -n out.htm > sapcat_final.htm
+	$(TIDY_CMD) out.htm > sapcat_final.htm
 
 sapcat_intro.htm: sapcat_intro.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_intro.htm
 	doccvt/doccvt.py sapcat_intro.xml
-	$(TIDY) -n out.htm > sapcat_intro.htm
+	$(TIDY_CMD) out.htm > sapcat_intro.htm
 
 sapcat_req.htm: sapcat_req.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_req.htm
 	doccvt/doccvt.py sapcat_req.xml
-	$(TIDY) -n out.htm > sapcat_req.htm
+	$(TIDY_CMD) out.htm > sapcat_req.htm
 
 sapcat_over.htm: sapcat_over.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_over.htm
 	doccvt/doccvt.py sapcat_over.xml
-	$(TIDY) -n out.htm > sapcat_over.htm
+	$(TIDY_CMD) out.htm > sapcat_over.htm
 
 sapcat_design.htm: sapcat_design.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_design.htm
 	doccvt/doccvt.py sapcat_design.xml
-	$(TIDY) -n out.htm > sapcat_design.htm
+	$(TIDY_CMD) out.htm > sapcat_design.htm
 
 sapcat_devplan.htm: sapcat_devplan.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_devplan.htm
 	doccvt/doccvt.py sapcat_devplan.xml
-	$(TIDY) -n out.htm > sapcat_devplan.htm
+	$(TIDY_CMD) out.htm > sapcat_devplan.htm
 
 sapcat_app_ideas.htm: sapcat_app_ideas.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_app_ideas.htm
 	doccvt/doccvt.py sapcat_app_ideas.xml
-	$(TIDY) -n out.htm > sapcat_app_ideas.htm
+	$(TIDY_CMD) out.htm > sapcat_app_ideas.htm
 
 sapcat_app_decisions.htm: sapcat_app_decisions.xml sapcat.css sapcat_abbrevs
 	rm -f out.htm sapcat_app_decisions.htm
 	doccvt/doccvt.py sapcat_app_decisions.xml
-	$(TIDY) -n out.htm > sapcat_app_decisions.htm
+	$(TIDY_CMD) out.htm > sapcat_app_decisions.htm
 
 realclean: clean
 	rm -rf SapCat

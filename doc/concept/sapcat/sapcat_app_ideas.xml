@@ -83,7 +83,7 @@
     information.  For instance, a project may require that all
     libraries, etc. use a <Sys>gcc</Sys> with specific options, maybe
     to avoid a hardware bug.  We need to spend a bit more time
-    specifying this registry.
+    specifying this registry.  The {:tan:} proposal is a good start.
 </p>
 
 <h3>Portability Library</h3>
@@ -98,9 +98,14 @@
     While we are not convinced that a portability library providing a
     uniform interface across platforms is a general solution &mdash;
     in particular, it sacrifices performance and useful
-    platform-specific features &mdash; there are a number of 
+    platform-specific features &mdash; there are a number of
     portability problems that may be best addressed using interface
     functions.
+</p>
+<p>
+    One area where some sort of API would be useful is for functions
+    that would simplify querying a configuration registry, getting
+    pathnames set by {:sapcat:}, etc.
 </p>
 
 </subdoc>
