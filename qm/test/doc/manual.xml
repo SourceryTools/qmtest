@@ -48,6 +48,8 @@
   <!ENTITY set_field_class "<ulink url=&#34;&internal_doc_url;/fields/SetField.html&#34;><classname>SetField</classname></ulink>">
   <!ENTITY tuple_field_class "<ulink url=&#34;&internal_doc_url;/fields/TupleField.html&#34;><classname>TupleField</classname></ulink>">
   <!ENTITY test_class "<ulink url=&#34;&internal_doc_url;/test/test/Test.html&#34;><classname>Test</classname></ulink>">
+  <!ENTITY database_class "<ulink url=&#34;&internal_doc_url;/test/database/Database.html&#34;><classname>Database</classname></ulink>">
+  <!ENTITY test_descriptor_class "<ulink url=&#34;&internal_doc_url;/test/database/TestDescriptor.html&#34;><classname>TestDescriptor</classname></ulink>">
 
 ]>
 <book>
@@ -55,7 +57,7 @@
   <title>QMTest: User's Guide and Reference</title>
   <corpauthor>CodeSourcery, LLC</corpauthor>
   <copyright>
-   <year>2002</year>
+   <year>2002, 2003</year>
    <holder>CodeSourcery LLC</holder>
   </copyright>
   <legalnotice>&qmlicense;</legalnotice>

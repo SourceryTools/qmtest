@@ -563,46 +563,26 @@ class Database(qm.extension.Extension):
         return map(str, self.__label_class(label).SplitLeft())
 
 
-    def LabelBasename(self, label):
-        """Return the basename for the 'label'.
+    def GetLabelComponents(self, label):
+        """Return all of the component directories of 'label'.
 
-        returns -- A string giving the basename for the 'label'."""
+        'label' -- A string naming an entity in the database.
 
-        return str(self.__label_class(label).Basename())
+        returns -- A list of strings.  The first string is the first
+        directory in 'label'; the last string is the basename."""
 
+        components = []
+        while label:
+            dirname, label = self.SplitLabelLeft(label)
+            if dirname:
+                components.append(dirname)
+            else:
+                components.append(label)
+                break
 
-    def LabelDirname(self, label):
-        """Return the directory name for the 'label'.
-
-        returns -- A string giving the directory name for the 'label'."""
-
-        return str(self.__label_class(label).Dirname())
+        return components
     
-
-    def LabelSeparator(self):
-        """Return the separator character for labels.
-
-        returns -- A string giving the separator character for
-        labels."""
-
-        return self.__label_class.sep
-    
-    
-    def LabelToPath(self, label, extension=""):
-        """Return a filesystem path corresponding to this label.
-
-        'label' -- A string giving the label.
-        
-        'extension' -- A string which is added to each of the components
-        but the last.  For example, if 'extension' is '.ext', and
-        'Components' returns '('a', 'b', 'c')', the path returned will
-        be 'a.ext/b.ext/c' if '/' is the separator character.
-        
-        returns -- A string giving a relative path in the filesystem
-        corresponding to this label."""
-
-        return self.__label_class(label).ToPath(extension)
-    
+                
     # Methods that deal with tests.
     
     def GetTest(self, test_id):

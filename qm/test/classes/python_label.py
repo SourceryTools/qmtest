@@ -32,10 +32,10 @@ class PythonLabel(Label):
     valid filenames (replacing '.' with '/') and two different labels
     will always map to two different filenames."""
 
-    sep = '.'
+    _sep = '.'
     """The separator character used to separate components."""
 
-    __valid_label_regexp = re.compile("[-a-z0-9_%s]+$" % sep)
+    __valid_label_regexp = re.compile("[-a-z0-9_%s]+$" % _sep)
     """A compiled regular expression that matches valid labels."""
     
     def IsValid(self, label, is_component):

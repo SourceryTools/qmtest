@@ -53,11 +53,7 @@ class XMLDatabase(ExtensionDatabase):
         # Initialize base classes.
         ExtensionDatabase.__init__(self, path, arguments)
         # Create an AttachmentStore for this database.
-        self.__store = AttachmentStore(path, self)
-        # Make sure the database path exists.
-        if not os.path.isdir(path):
-            raise qm.common.QMException, \
-                  qm.error("db path doesn't exist", path=path)
+        self.__store = qm.attachment.FileAttachmentStore()
 
 
     def _GetTestFromPath(self, test_id, test_path):
@@ -163,14 +159,54 @@ class XMLDatabase(ExtensionDatabase):
                 attachment = item.GetArguments()[field.GetName()]
                 if (attachment is not None
                     and attachment.GetStore() != self.__store):
+                    location = \
+                        self.__MakeDataFilePath(item.GetId(),
+                                                attachment.GetFileName())
                     item.GetArguments()[field.GetName()] = \
-                         self.__store.Store(item.GetId(),
-                                            attachment.GetMimeType(),
-                                            attachment.GetDescription(),
-                                            attachment.GetFileName(),
-                                            attachment.GetData())
+                         self.__store.Store(attachment, location)
 
+         
+    def __MakeDataFilePath(self, item_id, file_name):
+        """Construct the path to an attachment data file.
+
+        'item_id' -- The test or resource item of which the attachment
+        is part.
+
+        'file_name' -- The file name specified for the attachment."""
         
+        # Convert the item's containing suite to a path.
+        parent_suite_path \
+            = os.path.dirname(self._GetPathFromLabel(item_id))
+        
+        # Construct a file name free of suspicious characters.
+        base, extension = os.path.splitext(file_name)
+        safe_file_name = qm.label.thunk(base) + extension
+
+        data_file_path = os.path.join(parent_suite_path, safe_file_name)
+        full_data_file_path = os.path.join(self.GetRoot(), data_file_path)
+        # Is the file name by itself OK in this directory?  It must not
+        # have a file extension used by the XML database itself, and
+        # there must be no other file with the same name there.
+        if extension not in [self.__database.GetTestExtension(),
+                             self.__database.GetSuiteExtension(),
+                             self.__database.GetResourceExtension()] \
+           and not os.path.exists(full_data_file_path):
+            return data_file_path
+
+        # No good.  Construct alternate names by appending numbers
+        # incrementally.
+        index = 0
+        while 1:
+            data_file_path = os.path.join(parent_suite_path, safe_file_name) \
+                             + ".%d" % index
+            full_data_file_path = os.path.join(self.GetRoot(), data_file_path)
+            if os.path.exists(full_data_file_path):
+                index = index + 1
+                continue
+            else:
+                return data_file_path
+
+
     def __LoadItem(self, item_id, path, document_parser):
         """Load an item (a test or resource) from an XML file.
 
@@ -288,126 +324,6 @@ class XMLDatabase(ExtensionDatabase):
 
         tracer = qm.test.cmdline.get_qmtest().GetTracer()
         tracer.Write(message, "xmldb")
-    
-
-
-class AttachmentStore(qm.attachment.AttachmentStore):
-    """The attachment store implementation to use with the XML database.
-
-    The attachment store stores attachment data in the same directory
-    hierarchy as test files.  The data file for a test's attachment is
-    stored in the same subdirectory as the test.  Where possible, the
-    attachment's file name is used."""
-
-    def __init__(self, path, database):
-        """Create a connection to an attachment store.
-
-        'path' -- The path to the top of the attachment store directory
-        tree.
-
-        'database' -- The database with which this attachment store is
-        associated."""
-
-        qm.attachment.AttachmentStore.__init__(self)
-
-        self.__path = path
-        self.__database = database
-
-
-    def Store(self, item_id, mime_type, description, file_name, data):
-        """Store attachment data, and construct an attachment object.
-
-        'item_id' -- The ID of the test or resource of which this
-        attachment is part.
-
-        'mime_type' -- The attachment MIME type.
-
-        'description' -- A description of the attachment.
-
-        'file_name' -- The name of the file from which the attachment
-        was uploaded.
-
-        'data' -- The attachment data.
-
-        returns -- An 'Attachment' object, with its location set
-        correctly."""
-
-        # Construct the path at which we'll store the attachment data.
-        data_file_path = self.__MakeDataFilePath(item_id, file_name)
-        # Store it.
-        data_file = open(os.path.join(self.__path, data_file_path), "w")
-        data_file.write(data)
-        data_file.close()
-        # Construct an 'Attachment'.
-        return qm.attachment.Attachment(
-            mime_type,
-            description,
-            file_name,
-            location=data_file_path,
-            store=self)
-
-
-    # Implementation of base class methods.
-
-    def GetData(self, location):
-        data_file_path = os.path.join(self.__path, location)
-        return open(data_file_path, "r").read()
-
-
-    def GetDataFile(self, location):
-        data_file_path = os.path.join(self.__path, location)
-        return data_file_path
-
-
-    def GetSize(self, location):
-        data_file_path = os.path.join(self.__path, location)
-        return os.stat(data_file_path)[6]
-
-
-    # Helper functions.
-
-    def __MakeDataFilePath(self, item_id, file_name):
-        """Construct the path to an attachment data file.
-
-        'item_id' -- The test or resource item of which the attachment
-        is part.
-
-        'file_name' -- The file name specified for the attachment."""
-        
-        # Convert the item's containing suite to a path.
-        parent_suite_id = self.__database.LabelDirname(item_id)
-        extension = self.__database.GetSuiteExtension()
-        parent_suite_path \
-            = self.__database.LabelToPath(parent_suite_id, extension)
-        
-        # Construct a file name free of suspicious characters.
-        base, extension = os.path.splitext(file_name)
-        safe_file_name = qm.label.thunk(base) + extension
-
-        data_file_path = os.path.join(parent_suite_path, safe_file_name)
-        full_data_file_path = os.path.join(self.__path, data_file_path)
-        # Is the file name by itself OK in this directory?  It must not
-        # have a file extension used by the XML database itself, and
-        # there must be no other file with the same name there.
-        if extension not in [self.__database.GetTestExtension(),
-                             self.__database.GetSuiteExtension(),
-                             self.__database.GetResourceExtension()] \
-           and not os.path.exists(full_data_file_path):
-            return data_file_path
-
-        # No good.  Construct alternate names by appending numbers
-        # incrementally.
-        index = 0
-        while 1:
-            data_file_path = os.path.join(parent_suite_path, safe_file_name) \
-                             + ".%d" % index
-            full_data_file_path = os.path.join(self.__path, data_file_path)
-            if os.path.exists(full_data_file_path):
-                index = index + 1
-                continue
-            else:
-                return data_file_path
-        
 
 
 ########################################################################

@@ -1,3 +1,50 @@
+2003-06-22  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/attachment.py (Attachment): Move to start of file.
+	(AttachmentStore.Store): Simplify interface.
+	(FileAttachmentStore.__init__): Remove.
+	(FileAttachmentStore.Store): Adjust.
+	(TemporaryAttachmentStore): Derive from FileAttachmentStore.
+	* qm/fields.py (SetField.__init__): Restore backwards-compatible
+	handling of 'title' and 'description' attributes.
+	(AttachmentField.ParseFormValue): Remove broken code.
+	* qm/label.py (Label): Replace 'sep' with '_sep' throughout.
+	(Label.Components): Remove.
+	(Label.ToPath): Remove.
+	* qm/test/database.py (Database.LabelBasename): Remove.
+	(Database.LabelDirname): Remove.
+	(Database.LabelSeparator): Remove.
+	(Database.GetLabelComponents): Simplify.
+	* qm/test/file_database.py (FileDatabase._IsTestFile): Do not use
+	_IsFile.
+	(FileDatabase._IsResourceFile): Likewise.
+	(FileDatabse._IsSuiteFile): Likewise.
+	(FileDatabase._IsFile): Use _IsTestFile, _IsResourceFile, and
+	_IsSuiteFile.
+	(FileDatabase._GetRelativeLabelPath): New method.
+	(ExtensionDatabase._IsTestFile): New method.
+	(ExtensionDatabase._IsResourceFile): New method.
+	(ExtensionDatabase._IsSuiteFile): New method.
+	(ExtensionDatabase._IsFile): Remove.
+	(ExtensionDatabase._GetRelativeLabelPath): New method.
+	* qm/test/classes/file_label.py (FileLabel.sep): Rename to ...
+	(FileLabel._sep): ... this.
+	(FileLabel.Components): Remove.
+	* qm/test/classes/python_label.py (PythonLabel.sep): Rename to ...
+	(PythonLabel._sep): ... this.
+	(PythonLabel.__valid_label_regexp): Adjust accordingly.
+	* qm/test/classes/xml_database.py (XMLDatabase.__init__): Use
+	FileAttachmentStore for the attachment store.
+	(XMLDatabase.__StoreAttachments): Adjust accordingly.
+	(XMLDatabase.__MakeDataFilePath): New method.
+	(XMLDatabase.AttachmentStore): Remove.
+	* qm/test/web/web.py (QMTestPage.FormatId): Avoid use of label
+	separator.
+	(DirPage.__IsLabelInDirectory): New method.
+	(ShowSuitePage.MakeAbsoluteId): Remove.
+
+	* qm/test/doc/reference.xml: Improve test database documentation.
+
 2003-06-21  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/classes/pickle_result_stream.py: import qm.fields.

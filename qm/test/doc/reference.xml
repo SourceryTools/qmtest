@@ -2319,9 +2319,9 @@
  </section> <!-- sec-writing-resource-classes -->
 
  <section id="sec-ref-writing-database-classes">
-  <title>Writing a Database Class</title>
+  <title>Writing Database Classes</title>
 
-  <para>The database class controls the format in which tests are
+  <para>The test database class controls the format in which tests are
   stored.  &qmtest's default database class stores each test as an XML
   file, but you might want to use a format that is particularly well
   suited to your application domain or to your organization's
@@ -2341,18 +2341,53 @@
   server.</para>
 
   <para>A test database class is a Python class that is derived from
-  <classname>qm.test.database.Database</classname>.  You must define
-  methods that handle retrieving a test from the database, writing a
-  test to the database, and other related tasks.  Read the code for
-  <classname>qm.test.database.Database</classname> to see what methods
-  need to be overridden.
-  </para>
-  
-  <para>To use your new database class, create a new test database using
-  the <link
-  linkend="sec-testcmd-create-tdb"><option>&dashdash;class</option>
-  (<option>-c</option>) option</link>.</para>
+  &database_class;, which is itself derived from
+  <classname>Extension</classname>.  To create a new database class,
+  you must define methods that read and write tests, resources, and
+  suites.</para>
 
+  <para>The database is also responsible for determining how tests
+  (and other entities stored in the database) are named.  Each item
+  stored in the database must have a unique name.  For a database that
+  stores files in the filesystem, the name of the file may be a good
+  name.  For a database of unit tests for Python module, the name of
+  the module might be a good name for the tests.  Choosing the naming
+  convention appropriate requires understanding both the application
+  domain and the way in which the tests will actually be
+  stored.</para>
+  
+  <para>The database class must have a <function>GetTest</function>
+  function which retrieves a test from the database.  The
+  <parameter>test_id</parameter> parameter provide the name of the
+  test.  The <function>GetTest</function> function returns a
+  &test_descriptor_class;.
+  <footnote><para><function>GetTest</function> returns a
+  <classname>TestDescriptor</classname>, rather than a
+  <classname>Test</classname>, because that allows QMTest to avoid
+  loading in the test class.  If you are running many tests in
+  parallel, on many different machines, this indirection makes QMTest
+  more effficient; QMTest only needs to load a particular test class
+  on a particular machine if an instance of that class is being run
+  on that machine.</para></footnote> A
+  <classname>TestDescriptor</classname> indicates the test class, and
+  the arguments to that test class.  QMTest uses that information to
+  instantiate an instance of the test class itself as
+  appropriate.</para>
+
+  <para>The <function>WriteTest</function> is the inverse of
+  <function>GetTest</function>.  The test database is responsible for
+  storing the <classname>TestDescriptor</classname> provided to
+  <function>WriteTest</function>.  The name of test can be obtained
+  by calling <function>TestDescriptor.GetId</function>.  When the
+  <function>RemoveTest</function> function is called the database is
+  responsible for removing the test named by the
+  <parameter>test_id</parameter> parameter.</para>
+
+  <para>The functions that handle resources are analogous to those
+  for tests.  For exmaple, <function>GetResource</function> plays the
+  same role for resources as <function>GetTest</function> does for
+  tests.</para>
+  
  </section> <!-- sec-ref-writing-database-classes -->
 
   <section id="sec-registering-extension-class">

@@ -32,7 +32,7 @@ class FileLabel(Label):
     guarantee that 'FileLabel's will have the same meaning on different
     operating systems."""
 
-    sep = os.sep
+    _sep = os.sep
 
     def Join(self, *labels):
         """Combine this label and the 'labels' into a single label.
@@ -56,15 +56,6 @@ class FileLabel(Label):
         return os.path.split(self._label)
 
 
-    def Components(self):
-        """Split the label into its components.
-
-        returns -- A sequence of labels, each corresponding to a
-        component of this label."""
-
-        return map(self.__class__, self._label.split(self.sep))
-
-                   
     def Basename(self):
         """Return the basename for the label.
 

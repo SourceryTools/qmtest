@@ -811,7 +811,11 @@ class SetField(Field):
 
         raises -- 'TypeError' if 'contained' is not a 'Field'."""
 
-        super(SetField, self).__init__(contained.GetName(), [])
+        super(SetField, self).__init__(
+            contained.GetName(),
+            [],
+            title = contained.GetTitle(),
+            description = contained.GetDescription())
                                        
         # A set field may not contain a set field.
         if isinstance(contained, SetField):
@@ -1343,9 +1347,6 @@ class AttachmentField(Field):
         parts = map(urllib.unquote, parts)
         # Unpack the results.
         description, mime_type, location, file_name = parts
-        # The store is represented by an index.  Retrieve the actual
-        # store itself.
-        store = qm.test.get_qmtest().attachment_store
         # Create the attachment.
         value = attachment.Attachment(mime_type, description,
                                       file_name, location,

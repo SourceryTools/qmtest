@@ -182,8 +182,8 @@ class QMTestPage(DefaultDtmlPage):
             if parent_suite_id == "":
                 parent = ""
             else:
-                parent = self.FormatId(parent_suite_id, "dir", style) \
-                         + self.GetDatabase().LabelSeparator()
+                parent = self.FormatId(parent_suite_id, "dir", style)
+                parent += id[len(parent_suite_id)]
             return parent \
                    + '<a href="%s"><span class="id">%s</span></a>' \
                    % (url, name)
@@ -192,8 +192,7 @@ class QMTestPage(DefaultDtmlPage):
             return '<a href="%s"><span class="id">%s</span></a>' \
                    % (url, name)
 
-        else:
-            assert style
+        assert None
 
 
     def GenerateStartBody(self, decorations=1):
@@ -434,12 +433,7 @@ class DirPage(QMTestPage):
         if directory == "":
             return self.test_results.values()
         
-        # If the directory is not the root, add a trailing ".".
-        if directory:
-            directory += self.GetDatabase().LabelSeparator()
-            
-        return filter(lambda r, d=directory: \
-                        r.GetId()[:len(d)] == d,
+        return filter(lambda r: self.__IsLabelInDirectory(r.GetId()),
                       self.test_results.values())
                       
 
@@ -705,6 +699,20 @@ class DirPage(QMTestPage):
             return 10
         else:
             return 30
+
+
+    def __IsLabelInDirectory(self, id, directory):
+        """Returns true if 'id' is in 'directory'.
+
+        returns -- True if 'id' indicates a test contained in
+        'directory', or one of its subdirectories."""
+        
+        while len(id) >= directory:
+            if id == directory:
+                return 1
+            id = self.GetDatabase().SplitLabel(id)[0]
+
+        return 0
 
 
     
@@ -1152,10 +1160,6 @@ class ShowSuitePage(QMTestPage):
                 self.suite_ids,
                 "Available Suites",
                 excluded_suite_ids)
-
-
-    def MakeAbsoluteId(self, raw_id):
-        return self.GetDatabase().JoinLabels(self.suite.GetId(), raw_id)
 
 
     def MakeEditUrl(self):

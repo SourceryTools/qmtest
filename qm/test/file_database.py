@@ -99,8 +99,8 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        return self._IsFile(Database.TEST, path)
-        
+        raise NotImplementedError
+
     # Methods that deal with suites.
 
     def GetSuite(self, suite_id):
@@ -173,7 +173,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        return self._IsFile(Database.SUITE, path)
+        raise NotImplementedError
     
     # Methods that deal with resources.
 
@@ -237,7 +237,7 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        return self._IsFile(Database.RESOURCE, path)
+        raise NotImplementedError
     
     # Miscellaneous methods.
 
@@ -298,7 +298,9 @@ class FileDatabase(Database):
 
         Derived classes must override this method."""
 
-        raise NotImplementedError
+        return { Database.TEST : self._IsTestFile,
+                 Database.RESOURCE : self._IsResourceFile,
+                 Database.SUITE : self._IsSuiteFile } [kind] (path)
         
     # Derived classes must override these methods.
 
@@ -358,7 +360,8 @@ class FileDatabase(Database):
 
         Derived classes must not override this method."""
 
-        return os.path.join(self.GetRoot(), self.LabelToPath(label))
+        return os.path.join(self.GetRoot(),
+                            self._GetRelativeLabelPath(label))
 
 
     def _GetLabelFromBasename(self, basename):
@@ -452,6 +455,17 @@ class FileDatabase(Database):
         return self.label_class == "file_label.FileLabel"
 
 
+    def _GetRelativeLabelPath(self, label):
+        """Returns a representation of 'label' as a relative filename.
+
+        returns -- A relative filename corresponding to 'label'."""
+
+        if self._AreLabelsPaths():
+            return label
+
+        path = os.path.join(self.GetLabelComponents(label))
+
+
 
 class ExtensionDatabase(FileDatabase):
     """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
@@ -532,6 +546,17 @@ class ExtensionDatabase(FileDatabase):
         return test_path
 
 
+    def _IsTestFile(self, path):
+
+        extension = self.GetTestExtension()
+        if extension:
+            e = os.path.splitext(path)[1]
+            if e != extension:
+                return 0
+
+        return os.path.isfile(path)
+
+    
     def GetSuitePath(self, suite_id):
 
         # The top-level suite is just the directory containing the
@@ -545,6 +570,20 @@ class ExtensionDatabase(FileDatabase):
             return suite_path
 
 
+    def _IsSuiteFile(self, path):
+
+        if path == self.GetRoot():
+            return 1
+        
+        extension = self.GetSuiteExtension()
+        if extension:
+            e = os.path.splitext(path)[1]
+            if e != extension:
+                return 0
+
+        return os.path.isfile(path) or os.path.isdir(path)
+
+
     def GetResourcePath(self, resource_id):
 
         test_path = self._GetPathFromLabel(resource_id)
@@ -553,27 +592,23 @@ class ExtensionDatabase(FileDatabase):
         return test_path
         
 
-    def _IsFile(self, kind, path):
+    def _IsResourceFile(self, path):
 
-        if kind == Database.SUITE and path == self.GetRoot():
-            return 1
-
-        kind_extension = self._extensions[kind]
-        if kind_extension:
-            extension = os.path.splitext(path)[1]
-            if extension != kind_extension:
+        extension = self.GetResourceExtension()
+        if extension:
+            e = os.path.splitext(path)[1]
+            if e != extension:
                 return 0
 
-        return (os.path.isfile(path)
-                or (kind == Database.SUITE and os.path.isdir(path)))
-        
+        return os.path.isfile(path)
 
+        
     def _GetPathFromLabel(self, label):
 
         if self._AreLabelsPaths():
             path = label
         else:
-            path = self.LabelToPath(label, self.suite_extension)
+            path = self._GetRelativeLabelPath(label)
 
         return os.path.join(self.GetRoot(), path)
 
@@ -584,6 +619,25 @@ class ExtensionDatabase(FileDatabase):
             return basename
         else:
             return os.path.splitext(basename)[0]
+
+
+    def _GetRelativeLabelPath(self, label):
+        """Returns a representation of 'label' as a filename.
+
+        returns -- A filename corresponding to 'label'."""
+
+        if self._AreLabelsPaths():
+            return label
+
+        path = ""
+        components = self.GetLabelComponents(label)
+        if not components:
+            return path
+        
+        for c in components[:-1]:
+            path = os.path.join(path, c + self.suite_extension)
+        path = os.path.join(path, components[-1])
+        return path
 
 
 ########################################################################

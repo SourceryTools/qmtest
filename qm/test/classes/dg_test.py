@@ -54,6 +54,11 @@ class DGTest(DejaGNUTest):
     KIND_ASSEMBLE = "assemble"
     KIND_LINK = "link"
     KIND_RUN = "run"
+
+    _default_kind = KIND_COMPILE
+    """The default test kind.
+
+    This value can be overridden by a 'dg-do' command in the test file."""
     
     __test_kinds = (
         KIND_PREPROCESS,
@@ -78,7 +83,7 @@ class DGTest(DejaGNUTest):
     
     def _RunDGTest(self, tool_flags, default_options, context, result,
                    path = None,
-                   default_kind = KIND_COMPILE,
+                   default_kind = None,
                    keep_output = 0):
         """Run a 'dg' test.
 
@@ -97,7 +102,8 @@ class DGTest(DejaGNUTest):
         'path' -- The path to the test file.  If 'None', the main test
         file path is used.
         
-        'default_kind' -- The kind of test to perform.
+        'default_kind' -- The kind of test to perform.  If this value
+        is 'None', then 'self._default_kind' is used.
 
         'keep_output' -- True if the output file should be retained
         after the test is complete.  Otherwise, it is removed.
@@ -105,6 +111,8 @@ class DGTest(DejaGNUTest):
         This function emulates 'dg-test'."""
         
         # Intialize.
+        if default_kind is None:
+            default_kind = self._default_kind
         self._kind = default_kind
         self._selected = None
         self._expectation = None
