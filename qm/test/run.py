@@ -77,71 +77,9 @@ class IncorrectOutcomeError(Exception):
 
 
 
-class ProtocolError(Exception):
-    """A malformed command or reply was received."""
-
-    pass
-
-
-
 ########################################################################
 # classes
 ########################################################################
-
-class TargetSpec:
-    """The specification of a machine or other entity that runs tests."""
-
-    def __init__(self, name, class_name, group, concurrency, properties):
-        """Construct a target specification.
-
-        'name' -- The target's name.
-
-        'class_name' -- The fully-qualified name of the Python class
-        of which the target is to be an instance.
-
-        'group' -- A string specifying the target group.
-
-        'concurrency' -- The number of simultaneous tests and resource
-        functions to run on this target.  Must be a positive integer.
-
-        'properties' -- A map of additional target properties.  Keys and
-        values are strings."""
-
-        self.name = name
-        self.class_name = class_name
-        self.group = group
-        concurrency = int(concurrency)
-        assert concurrency > 0
-        self.concurrency = concurrency
-        self.properties = properties
-
-        
-    def MakeDomNode(self, document):
-        """Construct a DOM element node for this target specification.
-
-        'document' -- The DOM document for which to construct the
-        element."""
-
-        element = document.createElement("target")
-
-        element.appendChild(qm.xmlutil.create_dom_text_element(
-            document, "name", self.name))
-        element.appendChild(qm.xmlutil.create_dom_text_element(
-            document, "class", self.class_name))
-        element.appendChild(qm.xmlutil.create_dom_text_element(
-            document, "group", self.group))
-        element.appendChild(qm.xmlutil.create_dom_text_element(
-            document, "concurrency", str(self.concurrency)))
-
-        for name, value in self.properties.items():
-            property_element = qm.xmlutil.create_dom_text_element(
-                document, "property", value)
-            property_element.setAttribute("name", name)
-            element.appendChild(property_element)
-
-        return element
-
-
 
 class TestRun:
     """A test run.
@@ -469,7 +407,7 @@ class TestRun:
                 # Schedule the cleanup function for this resource
                 # immediately. 
                 context_wrapper = base.ContextWrapper(self.__context)
-                target.EnqueueCleanUpResource(resource_id, context_wrapper)
+                target.CleanUpResource(resource_id, context_wrapper)
 
             elif action == "cleanup" and outcome == Result.PASS:
                 # A resource has successfully been cleaned up.  Remove it
@@ -631,7 +569,8 @@ class TestRun:
 def test_run(database,
              test_ids,
              context,
-             target_specs,
+             targets,
+             response_queue,
              result_streams=[]):
     """Perform a test run.
 
@@ -648,30 +587,23 @@ def test_run(database,
     'context' -- The 'Context' object to use when running tests and
     resource functions.
 
-    'target_specs' -- A sequence of 'TargetSpec' objects representing
-    the targets on which to run the tests.
+    'targets' -- A sequence of 'Target' objects on which the tests can
+    be run.
 
+    'response_queue' - The 'Queue' to which the targets will write
+    results.
+    
     'result_streams' -- A sequence of 'ResultStream' objects.  Each
     stream will be provided with results as they are available."""
     
-    response_queue = Queue.Queue(0)
-
-    targets = []
-    # Set up the targets.
-    for target_spec in target_specs:
-        # Find the target class.
-        target_class = get_extension_class(target_spec.class_name,
-                                           'target', database)
-        # Build the target.
-        target = target_class(target_spec, database, response_queue)
-        # Accumulate targets.
-        targets.append(target)
-
     # Construct the test run.
     run = TestRun(database, test_ids, context, targets, result_streams)
 
+    # Start all of the targets.
+    for target in targets:
+        target.Start()
+    
     # Schedule all the tests and resource functions in the test run.
-
     try:
         # Schedule the first batch of work.
         count = run.Schedule()
@@ -707,46 +639,6 @@ def is_group_match(group_pattern, group):
     'group' -- A target group."""
 
     return re.match(group_pattern, group)
-
-
-def load_target_specs(path):
-    """Read target specs from a file.
-
-    'path' -- The file from which to load the results.
-
-    returns -- A sequence of 'TargetSpec' objects."""
-
-    document = qm.xmlutil.load_xml_file(path)
-    targets_element = document.documentElement
-    assert targets_element.tagName == "targets"
-    target_specs = []
-    for target_spec_node in targets_element.getElementsByTagName("target"):
-        target_spec = _target_spec_from_dom(target_spec_node)
-        target_specs.append(target_spec)
-    return target_specs
-    
-
-def _target_spec_from_dom(node):
-    """Extract a target spec from a DOM element.
-
-    'node' -- A DOM node corresponding to a target spec element.
-
-    returns -- A 'TargetSpec' object."""
-
-    # Extract standard elements.
-    name = qm.xmlutil.get_child_text(node, "name")
-    class_name = qm.xmlutil.get_child_text(node, "class")
-    group = qm.xmlutil.get_child_text(node, "group")
-    concurrency = qm.xmlutil.get_child_text(node, "concurrency")
-    concurrency = int(concurrency)
-    # Extract properties.
-    properties = {}
-    for property_node in node.getElementsByTagName("property"):
-        property_name = property_node.getAttribute("name")
-        value = qm.xmlutil.get_dom_text(property_node)
-        properties[property_name] = value
-    # Construct the target spec.
-    return TargetSpec(name, class_name, group, concurrency, properties)
 
 
 ########################################################################

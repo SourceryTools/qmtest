@@ -411,7 +411,7 @@
   those of the configuration server command, <command>&qmtrack-cmd;
   configure-idb</command>, described in <xref
   linkend="sec-tracktut-configuration"/>.  If you do not specify an
-  address or port, &qmtrac; will automatically pick a port on your
+  address or port, &qmtrack; will automatically pick a port on your
   local machine.  Remember to specify the path to the &idb; with the
   <option>-D</option> option.</para>
 

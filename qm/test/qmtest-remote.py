@@ -127,24 +127,15 @@ try:
         # replies.
         response_queue = Queue.Queue(0)
         
-        # Construct a proxy target specification for the target we'll
-        # use to execute the tests locally.  Since this target is just a
-        # proxy for commands sent to a remote-execution target on the
-        # scheduling node, most of the target parameters are irrelevant.
-        # The target's main responsibility is to divide commands among
-        # subprocesses, and multiplex their replies.
-        target_spec = qm.test.run.TargetSpec(
-            name=None,
-            class_name="thread_target.ThreadTarget",
-            group=None,
-            concurrency=concurrency,
-            properties={})
-        # Instantiate the proxy target.
-        target_class = get_extension_class(target_spec.class_name,
+        # Get the target class.
+        target_class = get_extension_class("thread_target.ThreadTarget",
                                            'target', database)
         # Build the target.
-        target = target_class(target_spec, database, response_queue)
-
+        target = target_class(None, None, int(concurrency), {},
+                              database, response_queue)
+        # Start the target.
+        target.Start()
+        
         # Read commands from standard input, and reply to standard
         # output.
         while 1:

@@ -789,6 +789,83 @@
    
   </section> <!-- sec-testcmd-run -->
 
+  <section id="sec-testcmd-gui">
+   <title>The <command>&qmtest-cmd; gui</command> Command</title>
+
+   <para>The <command>&qmtest-cmd; gui</command> command starts QMTest's
+   web-based graphical user interface.</para>
+
+   <para>The <command>gui</command> accepts these options:</para>
+
+   <glosslist>
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;address</option> <replaceable>ADDRESS</replaceable>
+      (<option>-A</option>)
+     </glossterm>
+     <glossdef>
+      <para>Bind the server to the indicated internet
+       <replaceable>ADDRESS</replaceable>, which should be a dotted
+       quad.  By default, the server binds itself to the address
+       <literal>127.0.0.1</literal>, which is the address of the local
+       machine.  If you specify another address, the server will
+       be accessible to users on other machines.  QMTest does not
+       perform any authentication of remote users, so you should
+       not use this option unless you have a firewall in place that
+       blocks all untrusted users.</para>
+     </glossdef>
+    </glossentry>
+       
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;concurrency</option> <replaceable>COUNT</replaceable>
+      (<option>-j</option>)
+     </glossterm>
+     <glossdef>
+      <para>For details about this option, see the description of the 
+      <command>&qmtest; run</command>.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;no-browser</option>
+     </glossterm>
+     <glossdef>
+      <para>Do not attempt to start a web browser when starting the
+      GUI.  QMTest will still print out the URL at which the server
+      can be accessed.  You can then connect to this URL
+      manually using the browser of your choice.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;port <replaceable>PORT</replaceable></option>
+     </glossterm>
+     <glossdef>
+      <para>Specify the <replaceable>PORT</replaceable> on which the
+      QMTest GUI will listen for connections.  If this option is not
+      provided, QMTest will select an available port
+      automatically.</para>
+     </glossdef>
+    </glossentry>
+
+    <glossentry>
+     <glossterm>
+      <option>&dashdash;targets</option> 
+      <replaceable>FILE</replaceable> (<option>-T</option>)
+     </glossterm>
+     <glossdef>
+      <para>For details about this option, see the description of the 
+      <command>&qmtest; run</command>.</para>
+     </glossdef>
+    </glossentry>
+
+   </glosslist>
+
+  </section> <!-- sec-testcmd-gui -->
+
  </section>
 
  <section id="sec-ref-classes">

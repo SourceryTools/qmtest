@@ -43,6 +43,346 @@ import qm.test.base
 # classes
 ########################################################################
 
+class ItemDescriptor:
+    """An 'ItemDescriptor' describes a test, resource, or similar entity.
+
+    Some 'Database' operations return an instance of a class derived
+    from 'ItemDescriptor', rather than the object described.  For
+    example, 'Database.GetTest' returns a 'TestDescriptor', not a
+    'Test'.  This additional indirection is an optimization; the
+    creation of the actual 'Test' object may be relatively expensive,
+    and in many cases all that is needed is information that can be
+    gleaned from the descriptor."""
+
+    def __init__(self,
+                 database,
+                 instance_id,
+                 class_name,
+                 arguments):
+        """Construct an 'ItemDescriptor'.
+
+        'database' -- The 'Database' object in which this entity is
+        located.
+
+        'instance_id' -- The label for this entity.
+
+        'class_name' -- The name of the extension class for the entity.
+        For example, for a 'TestDescriptor', the 'class_name' is the
+        name of the test class.
+
+        'arguments' -- A dictionary mapping argument names to argument
+        values.  These arguments will be provided to the extension class
+        when the entity is constructed."""
+        
+        qm.test.base.validate_id(instance_id)
+        self.__database = database
+        self.__id = instance_id
+        self.__class_name = class_name
+        self.__arguments = arguments
+        self.__working_directory = None
+        self.__item = None
+        
+
+    def GetDatabase(self):
+        """Return the 'Database' containing this entity.
+
+        returns -- The 'Database' object in which this entity is
+        located."""
+
+        return self.__database
+    
+        
+    def GetClassName(self):
+        """Return the class name of the entity.
+
+        returns -- The name of the extension class for the entity.  For
+        example, for a 'TestDescriptor', this method returns the name of
+        the test class."""
+
+        return self.__class_name
+
+
+    def GetClass(self):
+        """Return the class of the entity.
+
+        returns -- The Python class object for the entity.  For example,
+        for a 'TestDescriptor', this method returns the test class."""
+
+        raise qm.MethodShouldBeOverriddenError, "ItemDescriptor.GetClass"
+    
+
+    def GetArguments(self):
+        """Return the entity arguments.
+
+        returns -- A dictionary mapping argument names to argument
+        values.  These arguments will be provided to the extension class
+        when the entity is constructed."""
+
+        return self.__arguments
+
+
+    def GetId(self):
+        """Return the label for this entity.
+
+        returns -- The label for this entity."""
+        
+        return self.__id
+
+
+    def GetItem(self):
+        """Return the entity.
+
+        returns -- An instance of the class returned by 'GetClass'."""
+
+        if not self.__item:
+            self.__item = self._MakeItem()
+
+        return self.__item
+    
+        
+    def SetWorkingDirectory(self, directory_path):
+        """Set the directory in which this item will execute.
+
+        'directory_path' -- A path.  When the entity is executed, it
+        will execute in this directory."""
+
+        self.__working_directory = directory_path
+
+
+    def GetWorkingDirectory(self):
+        """Return the directory in which this item will execute.
+
+        returns -- The directory in which this entity will execute, or
+        'None' if it will it execute in the current directory."""
+
+        return self.__working_directory
+
+    # Helper functions.
+
+    def _MakeItem(self):
+        """Construct the entity itself.
+
+        returns -- An instance of the class returned by 'GetClass'."""
+
+        arguments = self.GetArguments().copy()
+
+        # Do some extra processing for test arguments.
+        klass = self.GetClass()
+        for field in klass.arguments:
+            name = field.GetName()
+
+            # Use a default value for each field for which an argument
+            # was not specified.
+            if not arguments.has_key(name):
+                arguments[name] = field.GetDefaultValue()
+
+        return apply(klass, [], arguments)
+
+    
+    def _Execute(self, context, result, method):
+        """Execute the entity.
+        
+        'context' -- The 'Context' in which the test should be executed.
+
+        'result' -- The 'Result' object corresponding to this execution.
+
+        'method' -- The method name of the method on the entity that
+        should be invoked to perform the execution."""
+
+        working_directory = self.GetWorkingDirectory()
+        if not working_directory:
+            working_directory = "."
+
+        # Remember the previous working directory so we can restore
+        # it.
+        old_working_directory = os.getcwd()
+        try:
+            # Change to the working directory appropriate for this
+            # test.
+            os.chdir(working_directory)
+            # Get the item.
+            item = self.GetItem()
+            # Execute the indicated method.
+            eval("item.%s(context, result)" % method)
+        finally:
+            # Restore the working directory.
+            os.chdir(old_working_directory)
+
+
+
+class TestDescriptor(ItemDescriptor):
+    """A test instance."""
+
+    def __init__(self,
+                 database,
+                 test_id,
+                 test_class_name,
+                 arguments,
+                 prerequisites={},
+                 categories=[],
+                 resources=[],
+                 target_group=".*"):
+        """Create a new test instance.
+
+        'database' -- The 'Database' containing this test.
+        
+        'test_id' -- The test ID.
+
+        'test_class_name' -- The name of the test class of which this is
+        an instance.
+
+        'arguments' -- This test's arguments to the test class.
+
+        'prerequisites' -- A mapping from prerequisite test ID to
+        required outcomes.
+
+        'categories' -- A sequence of names of categories to which this
+        test belongs.
+
+        'resources' -- A sequence of IDs of resources to run before and
+        after the test is run.
+
+        'target_group' -- A regular expression (represented as a string)
+        that indicates the targets on which this test can be run.  If
+        the pattern matches a particular group name, the test can be run
+        on targets in that group."""
+
+        # Initialize the base class.
+        ItemDescriptor.__init__(self, database,
+                                test_id, test_class_name, arguments)
+        self.__prerequisites = prerequisites
+        self.__categories = categories
+        self.__resources = resources
+        self.__target_group = target_group
+        
+        # Don't instantiate the test yet.
+        self.__test = None
+
+
+    def GetClass(self):
+        """Return the class of the entity.
+
+        returns -- The Python class object for the entity.  For example,
+        for a 'TestDescriptor', this method returns the test class."""
+
+        return qm.test.base.get_extension_class(self.GetClassName(),
+                                                'test',
+                                                self.GetDatabase())
+    
+    
+    def GetTest(self):
+        """Return the 'Test' object described by this descriptor."""
+
+        return self.GetItem()
+
+
+    def GetCategories(self):
+        """Return the names of categories to which the test belongs."""
+
+        return self.__categories
+    
+
+    def GetPrerequisites(self):
+        """Return a map from prerequisite test IDs to required outcomes."""
+
+        return self.__prerequisites
+
+
+    def GetResources(self):
+        """Return the resources required by this test.
+
+        returns -- A sequence of resource names.  Each name indicates a
+        resource that must be available to this test."""
+
+        return self.__resources
+
+
+    def GetTargetGroup(self):
+        """Returns the pattern for the targets that can run this test.
+
+        returns -- A regular expression (represented as a string) that
+        indicates the targets on which this test can be run.  If the
+        pattern matches a particular group name, the test can be run
+        on targets in that group."""
+
+        return self.__target_group
+    
+        
+    def Run(self, context, result):
+        """Execute this test.
+
+        'context' -- The 'Context' in which the test should be executed.
+
+        'result' -- The 'Result' object for this test."""
+
+        self._Execute(context, result, "Run")
+
+
+
+class ResourceDescriptor(ItemDescriptor):
+    """A resource instance."""
+
+    def __init__(self,
+                 database,
+                 resource_id,
+                 resource_class_name,
+                 arguments):
+        """Create a new resource instance.
+
+        'database' -- The 'Database' containing this resource.
+        
+        'resource_id' -- The resource ID.
+
+        'resource_class_name' -- The name of the resource class of which
+        this is an instance.
+
+        'arguments' -- This resource's arguments to the resource class."""
+
+        # Initialize the base class.
+        ItemDescriptor.__init__(self, database, resource_id,
+                                resource_class_name, arguments)
+        # Don't instantiate the resource yet.
+        self.__resource = None
+
+
+    def GetClass(self):
+        """Return the class of the entity.
+
+        returns -- The Python class object for the entity.  For example,
+        for a 'TestDescriptor', this method returns the test class."""
+
+        return qm.test.base.get_extension_class(self.GetClassName(),
+                                                'resource',
+                                                self.GetDatabase())
+
+
+    def GetResource(self):
+        """Return the 'Resource' object described by this descriptor."""
+
+        return self.GetItem()
+
+
+    def SetUp(self, context, result):
+        """Set up the resource.
+
+        'context' -- The 'Context' in which the resource should be executed.
+
+        'result' -- The 'Result' object for this resource."""
+
+        self._Execute(context, result, "SetUp")
+
+
+    def CleanUp(self, context, result):
+        """Clean up the resource.
+
+        'context' -- The 'Context' in which the resource should be executed.
+
+        'result' -- The 'Result' object for this resource."""
+
+        self._Execute(context, result, "CleanUp")
+
+
+
 class DatabaseError(Exception):
     """An exception relating to a 'Database'.
 

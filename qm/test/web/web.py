@@ -39,7 +39,7 @@ import os
 import qm
 import qm.attachment
 import qm.test.base
-from   qm.test.base import TestDescriptor, ResourceDescriptor
+from   qm.test.database import *
 from   qm.test.result import *
 from   qm.test.result_stream import *
 from   qm.test.xml_result_stream import *
@@ -916,7 +916,8 @@ class TestResultsPage(DtmlPage):
 class QMTestServer(qm.web.WebServer):
     """A 'QMTestServer' is the web GUI interface to QMTest."""
 
-    def __init__(self, database, port, address, log_file=None):
+    def __init__(self, database, port, address, log_file,
+                 targets, response_queue):
         """Create and bind an HTTP server.
 
         'database' -- The test database to serve.
@@ -929,12 +930,17 @@ class QMTestServer(qm.web.WebServer):
         'log_file' -- A file object to which the server will log requests.
         'None' for no logging.
 
-        returns -- A web server.  The server is bound to the specified
-        address.  Call its 'Run' method to start accepting requests."""
+        'targets' -- A sequence of 'Target' objects to use when running
+        tests.
+
+        'response_queue' -- The 'Queue' on which the targets will write
+        results."""
 
         qm.web.WebServer.__init__(self, port, address, log_file=log_file)
 
         self.__database = database
+        self.__targets = targets
+        self.__response_queue = response_queue
         
         # Base URL path for QMTest stuff.
         script_base = "/test/"
@@ -1214,21 +1220,13 @@ class QMTestServer(qm.web.WebServer):
         test_ids, suite_ids = self.GetDatabase().ExpandIds(ids)
 
         context = self.__context
-        # Run in a single local subprocess.  As yet, we don't support
-        # target configuration when running tests from the web GUI.
-        target_specs = [
-            qm.test.run.TargetSpec("local",
-                                   "qm.test.run.SubprocessTarget",
-                                   "",
-                                   1,
-                                   {}),
-            ]
 
         # Flush existing results.
         self.__results_stream = StorageResultsStream()
         # Run the tests.
         qm.test.run.test_run(self.__database, test_ids, self.__context,
-                             target_specs, [self.__results_stream])
+                             self.__targets, self.__response_queue,
+                             [self.__results_stream])
 
         # Display the results.
         return self.HandleShowResults(request)
@@ -1628,7 +1626,7 @@ class QMTestServer(qm.web.WebServer):
             target_group = request["target_group"]
             
             # Create a new test.
-            item = qm.test.base.TestDescriptor(
+            item = TestDescriptor(
                     test_id=item_id,
                     test_class_name=item_class_name,
                     arguments=arguments,
@@ -1639,9 +1637,8 @@ class QMTestServer(qm.web.WebServer):
 
         elif type is "resource":
             # Create a new resource.
-            item = qm.test.base.ResourceDescriptor(item_id,
-                                                   item_class_name,
-                                                   arguments)
+            item = ResourceDescriptor(item_id, item_class_name,
+                                      arguments)
 
         # Were there any validation errors?
         if len(field_errors) > 0:

@@ -36,7 +36,6 @@
 ########################################################################
 
 import base
-import database
 import dircache
 from   file_database import *
 import os
@@ -44,6 +43,8 @@ import qm.common
 import qm.fields
 import qm.label
 import qm.structured_text
+from   qm.test.database import *
+from   qm.test.suite import *
 import qm.xmlutil
 import shutil
 import string
@@ -368,14 +369,14 @@ class Database(FileDatabase, qm.common.MutexMixin):
         resources = self.__GetResourcesFromDomNode(test_node)
         target_group = test_node.getAttribute("target-group")
         # Construct a test descriptor for it.
-        test = base.TestDescriptor(self,
-                                   test_id,
-                                   test_class_name,
-                                   arguments,
-                                   prerequisites,
-                                   categories,
-                                   resources,
-                                   target_group)
+        test = TestDescriptor(self,
+                              test_id,
+                              test_class_name,
+                              arguments,
+                              prerequisites,
+                              categories,
+                              resources,
+                              target_group)
         return test
         
 
@@ -402,10 +403,10 @@ class Database(FileDatabase, qm.common.MutexMixin):
         arguments = self.__GetArgumentsFromDomNode(resource_node,
                                                    resource_class)
         # Construct a ResourceDescriptor for it.
-        return base.ResourceDescriptor(self, resource_id,
-                                       resource_class_name,
-                                       arguments)
-
+        return ResourceDescriptor(self, resource_id,
+                                  resource_class_name,
+                                  arguments)
+    
 
     def __GetClassNameFromDomNode(self, node):
         """Return the name of the test or resource class of a test.
@@ -661,7 +662,7 @@ class Database(FileDatabase, qm.common.MutexMixin):
 
         # Make sure there is a file by that name.
         if not os.path.isfile(path):
-            raise database.NoSuchSuiteError, "no suite file %s" % path
+            raise NoSuchSuiteError, "no suite file %s" % path
         # Load and parse the suite file.
         document = qm.xmlutil.load_xml_file(path)
         suite = document.documentElement
@@ -674,11 +675,8 @@ class Database(FileDatabase, qm.common.MutexMixin):
             if not qm.label.is_valid(id_, allow_separator=1):
                 raise RuntimeError, qm.error("invalid id", id=id_)
         # Construct the suite.
-        return base.Suite(self,
-                          suite_id,
-                          implicit=0,
-                          test_ids=test_ids,
-                          suite_ids=suite_ids)
+        return Suite(self, suite_id, implicit=0,
+                     test_ids=test_ids, suite_ids=suite_ids)
 
 
 

@@ -49,7 +49,7 @@ import types
 class Target:
     """Base class for target implementations.
 
-    A target is an entity that can run tests.  QMTest can spread the
+    A 'Target' is an entity that can run tests.  QMTest can spread the
     workload from multiple tests across multiple targets.  In
     addition, a single target can run more that one test at once.
 
@@ -66,18 +66,31 @@ class Target:
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version."""
 
-    def __init__(self, target_spec, database, response_queue):
-        """Instantiate a target.
+    def __init__(self, name, group, concurrency, properties,
+                 database, response_queue):
+        """Construct a 'Target'.
 
-        'target_spec' -- A 'TargetSpec' object describing the target.
+        'name' -- A string giving a name for this target.
 
+        'group' -- A string giving a name for the target group
+        containing this target.
+
+        'concurrency' -- The amount of parallelism desired.  If 1, the
+        target will execute only a single command at once.
+
+        'properties'  -- A dictionary mapping strings (property names)
+        to strings (property values).
+        
         'database' -- The 'Database' containing the tests that will be
         run.
 
         'response_queue' -- The 'Queue' in which the results of test
         executions are placed."""
 
-        self.__spec = target_spec
+        self.__name = name
+        self.__group = group
+        self.__concurrency = concurrency
+        self.__properties = properties
         self.__database = database
         self.__response_queue = response_queue
         
@@ -87,7 +100,7 @@ class Target:
 
         Derived classes must not override this method."""
         
-        return self.__spec.name
+        return self.__name
 
 
     def GetGroup(self):
@@ -95,7 +108,7 @@ class Target:
 
         Derived classes must not override this method."""
 
-        return self.__spec.group
+        return self.__group
 
 
     def GetConcurrency(self):
@@ -103,7 +116,7 @@ class Target:
 
         Derived classes must not override this method."""
 
-        return self.__spec.concurrency
+        return self.__concurrency
 
 
     def GetDatabase(self):
@@ -131,7 +144,7 @@ class Target:
 
         Derived classes must not override this method."""
         
-        return self.__spec.properties.get(name, default)
+        return self.__properties.get(name, default)
 
 
     def IsIdle(self):
@@ -145,6 +158,14 @@ class Target:
         raise qm.common.MethodShouldBeOverriddenError, "Target.IsIdle"
 
 
+    def Start(self):
+        """Start the target.
+
+        Derived classes must override this method."""
+
+        raise qm.common.MethodShouldBeOverriddenError, "Target.Start"
+
+        
     def Stop(self):
         """Stop the target.
 
@@ -209,7 +230,6 @@ class Target:
         self.__response_queue.put(result)
 
 
-
 class CommandThread(Thread):
     """A 'CommandThread' is a thread that executes commands.
 
@@ -241,6 +261,8 @@ class CommandThread(Thread):
 
 
     def run(self):
+        """Execute the thread."""
+        
 	try:
             # Process commands from the queue, until the "quit"
             # command is received.
@@ -258,7 +280,7 @@ class CommandThread(Thread):
                 # Decompose command.
                 method, id, context = command
                 # Run it.
-                self.__class__.__dict__[method](self, id, context)
+                eval ("self.%s(id, context)" % method)
         except:
             # Exceptions should not occur in the above loop.  However,
             # in the event that one does occur it is easier to debug

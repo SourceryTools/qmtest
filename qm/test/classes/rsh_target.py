@@ -163,7 +163,8 @@ class RSHTarget(Target):
 
     """
 
-    def __init__(self, target_spec, database, response_queue):
+    def __init__(self, name, group, concurrency, properties,
+                 database, response_queue):
         """Construct a new 'RSHTarget'.
 
         'target_spec' -- The specification for the target.
@@ -172,7 +173,8 @@ class RSHTarget(Target):
         run."""
 
         # Initialize the base class.
-        Target.__init__(self, target_spec, database, response_queue)
+        Target.__init__(self, name, group, concurrency, properties,
+                        database, response_queue)
 
         # Create a lock to guard all accesses to __idle.
         self.__lock = Lock()
@@ -184,6 +186,23 @@ class RSHTarget(Target):
         if self.__host_name is None:
             # None specified; use the target name.
             self.__host_name = self.GetName()
+
+                        
+    def IsIdle(self):
+        """Return true if the target is idle.
+
+        returns -- True if the target is idle.  If the target is idle,
+        additional tasks may be assigned to it."""
+        
+        self.__lock.acquire()
+        idle = self.__idle
+        self.__lock.release()
+
+        return idle
+
+
+    def Start(self):
+        """Start the target."""
 
         # Create two pipes: one to write commands to the remote
         # QMTest, and one to read responses.
@@ -207,7 +226,7 @@ class RSHTarget(Target):
             
             # Determine the test database path to use.
             database_path = self.GetProperty(
-                "database_path", default=database.GetPath())
+                "database_path", default=self.GetDatabase().GetPath())
             # Determine the path to the remote 'qmtest-remote' command.
             qmtest_remote_path = self.GetProperty(
                 "qmtest_remote", "/usr/local/bin/qmtest-remote")
@@ -262,27 +281,16 @@ class RSHTarget(Target):
                          os.fdopen(command_pipe[1], "w", 0),
                          os.fdopen(response_pipe[0], "r"))
             self.__thread.start()
-            
-            
-    def IsIdle(self):
-        """Return true if the target is idle.
-
-        returns -- True if the target is idle.  If the target is idle,
-        additional tasks may be assigned to it."""
-        
-        self.__lock.acquire()
-        idle = self.__idle
-        self.__lock.release()
-
-        return idle
 
 
     def Stop(self):
         """Stop the target.
 
         postconditions -- The target may no longer be used."""
-        
+
+        # Stop the thread.
         self.__thread.Stop()
+        self.__thread.join()
         # Wait for the remote shell process to terminate.
         os.waitpid(self.__child_pid, 0)
 

@@ -1,5 +1,48 @@
 2001-11-05  Mark Mitchell  <mark@codesourcery.com>
 
+	* doc/manual/test-manual.xml: Add command-line reference for
+	"qmtest gui".
+	* doc/manual/track-tour.xml: Fix typo.
+	* qm/test/base.py (ItemDescriptor): Remove.
+	(TestDescriptor): Likewise.
+	(ResourceDescriptor): Likewise.
+	(Suite): Likewise.
+	* qm/test/cmdline.py (Command.commands_spec): Add -T and -j
+	options to the GUI interface.
+	(Command.GetTargets): New method.
+	(Command.__ExecuteRun): Use it.  Adjust call to test_run.
+	(Command.__ExecuteServer): Use GetTargest.
+	* qm/test/database.py (ItemDescriptor): New class.
+	(TestDescriptor): Likewise.
+	(ResourceDescriptor): Likewise.
+	* qm/test/directory_suite.py: Adjust module from which to import
+	Suite.
+	* qm/test/qmtest-remote.py: Simplify target creation.
+	* qm/test/run.py (ProtocolError): Remove.
+	(TargetSpec): Remove.
+	(test_run): Accept Targets, not TargetSpecs.
+	(load_target_specs): Remove.
+	(_target_spec_from_dom): Remove.
+	* qm/test/target.py (Target.__init__): Remove target_spec
+	parameter and replace with several others.
+	(Target.GetName): Adjust.
+	(Target.GetGroup): Likewise.
+	(Target.GetConcurrency): Likewise.
+	(Target.GetProperties): Likewise.
+	(Target.Start): New method.
+	(CommandThread.run): Simplify dynamic dispatch.
+	* qm/test/xmldb.py: Adjust for changes in locations of descriptors.
+	* qm/test/classes/rsh_target.py (RSHTarget.__init__): Adjust
+	to match changes to Target.__init__.
+	(RSHTarget.Start): New method.
+	(RSHTarget.Stop): Join the thread.
+	* qm/test/classes/thread_target.py (ThreadTarget.__init__): Adjust
+	to match changes to Target.__init__.
+	(ThreadTarget.Start): New method.
+	* qm/test/web/web.py (QMTestServer.__init__): Accept targets as
+	a parameter.
+	(QMTestServer.HandleRunTests): Use them.
+	
 	* qm/test/base.py (InstanceBase): Rename to ...
 	(InstanceDescriptor): ... this.
 	(TestDescriptor): Derive from InstanceDescriptor.

@@ -109,8 +109,9 @@ class ThreadTarget(Target):
     This target starts one thread for each degree of concurrency.  Each
     thread executes one test or resource function at a time."""
 
-    def __init__(self, target_spec, database, response_queue):
-	"""Construct a new 'SubprocessTarget'.
+    def __init__(self, name, group, concurrency, properties,
+                 database, response_queue):
+	"""Construct a 'ThreadTarget'.
 
         'database' -- The 'Database' containing the tests that will be
 	run.
@@ -118,24 +119,13 @@ class ThreadTarget(Target):
 	'response_queue' -- The queue on which to write responses."""
 
         # Initialize the base class.
-        Target.__init__(self, target_spec, database, response_queue)
+        Target.__init__(self, name, group, concurrency, properties,
+                        database, response_queue)
 
-        # Build the threads.
-        self.__threads = []
-        for i in xrange(0, self.GetConcurrency()):
-	    # Create the new thread.
-	    thread = LocalThread(self)
-	    # Start the thread.
-	    thread.start()
-	    # Remember the thread.
-            self.__threads.append(thread)
 
-        # Initially, all threads are ready
-        self.__ready_threads = self.__threads[:]
-        self.__command_queue = []
         # Create a lock to guard all accesses to __ready_threads.
         self.__lock = Lock()
-        
+
 
     def IsIdle(self):
         """Return true if the target is idle.
@@ -159,7 +149,25 @@ class ThreadTarget(Target):
 
         return idle
 
+
+    def Start(self):
+        """Start the target."""
         
+        # Build the threads.
+        self.__threads = []
+        for i in xrange(0, self.GetConcurrency()):
+	    # Create the new thread.
+	    thread = LocalThread(self)
+	    # Start the thread.
+	    thread.start()
+	    # Remember the thread.
+            self.__threads.append(thread)
+
+        # Initially, all threads are ready.
+        self.__ready_threads = self.__threads[:]
+        self.__command_queue = []
+        
+
     def Stop(self):
         """Stop the target.
 

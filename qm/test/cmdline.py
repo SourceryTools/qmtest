@@ -45,6 +45,7 @@ import qm.platform
 from   qm.test.text_result_stream import *
 from   qm.test.xml_result_stream import *
 import qm.xmlutil
+import Queue
 from   result import *
 import run
 import string
@@ -215,8 +216,15 @@ class Command:
          "Start the QMTest GUI.",
          "",
          "Start the QMTest graphical user interface.",
-         ( help_option_spec, port_option_spec, address_option_spec,
-           log_file_option_spec, no_browser_option_spec )
+         (
+           address_option_spec,
+           concurrent_option_spec,
+           help_option_spec,
+           log_file_option_spec,
+           no_browser_option_spec,
+           port_option_spec,
+           targets_option_spec
+           )
          ),
 
         ("run",
@@ -396,6 +404,70 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
         return self.__database
 
 
+    def GetTargets(self, response_queue):
+        """Return the 'Target' objects specified by the user.
+
+        'response_queue' -- The 'Queue' into which replies from the
+        targets should be written.
+
+        returns -- A sequence of 'Target' objects."""
+
+        file_name = self.GetCommandOption("targets", None)
+        if file_name is None:
+            # No target file specified.  We'll use a single
+            # 'ThreadTarget' for running tests locally.  But perhaps a
+            # concurrency value was specified.
+            concurrency = self.GetCommandOption("concurrency", None)
+            if concurrency is None:
+                # No concurrency specified.  Run single-threaded.
+                concurrency = 1
+            else:
+                # Convert the concurrency to an integer.
+                try:
+                    concurrency = int(concurrency)
+                except ValueError:
+                    raise qm.cmdline.CommandError, \
+                          qm.error("concurrency not integer",
+                                   value=concurrency)
+            # Construct the target.
+            target_class = get_extension_class("thread_target.ThreadTarget",
+                                               'target', self.GetDatabase())
+            targets = [ target_class("local", "", concurrency,
+                                     {}, self.GetDatabase(),
+                                     response_queue) ]
+        else:
+            document = qm.xmlutil.load_xml_file(file_name)
+            targets_element = document.documentElement
+            assert targets_element.tagName == "targets"
+            targets = []
+            for node in targets_element.getElementsByTagName("target"):
+                # Extract standard elements.
+                name = qm.xmlutil.get_child_text(node, "name")
+                class_name = qm.xmlutil.get_child_text(node, "class")
+                group = qm.xmlutil.get_child_text(node, "group")
+                concurrency = qm.xmlutil.get_child_text(node, "concurrency")
+                concurrency = int(concurrency)
+                # Extract properties.
+                properties = {}
+                for property_node in node.getElementsByTagName("property"):
+                    property_name = property_node.getAttribute("name")
+                    value = qm.xmlutil.get_dom_text(property_node)
+                    properties[property_name] = value
+
+                # Find the target class.
+                target_class = get_extension_class(class_name,
+                                                   'target',
+                                                   self.GetDatabase())
+                # Build the target.
+                target = target_class(name, group, concurrency,
+                                      properties, self.GetDatabase(),
+                                      response_queue)
+                # Accumulate targets.
+                targets.append(target)
+            
+        return targets
+        
+        
     def MakeContext(self):
         """Construct a 'Context' object for running tests."""
 
@@ -599,36 +671,10 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             raise qm.cmdline.CommandError, \
                   qm.error("no such ID", id=str(exception))
 
-        target_file_name = self.GetCommandOption("targets", None)
-        if target_file_name is None:
-            # No target file specified.  We'll use a single
-            # 'ThreadTarget' for running tests locally.  But perhaps a
-            # concurrency value was specified.
-            concurrency = self.GetCommandOption("concurrency", None)
-            if concurrency is None:
-                # No concurrency specified.  Run single-threaded.
-                concurrency = 1
-            else:
-                # Convert the concurrency to an integer.
-                try:
-                    concurrency = int(concurrency)
-                except ValueError:
-                    raise qm.cmdline.CommandError, \
-                          qm.error("concurrency not integer",
-                                   value=concurrency)
-            # Construct the target spec.  Set the target group to an
-            # empty string, for lack of better information.
-            target_specs = [
-                run.TargetSpec("local",
-                               "thread_target.ThreadTarget",
-                               "",
-                               concurrency,
-                               {}),
-                ]
-            
-        else:
-            # A target file was specified.  Load target specs from it.
-            target_specs = run.load_target_specs(target_file_name)
+        # Create the response queue.
+        response_queue = Queue.Queue(0)
+        # Figure out which targets to use.
+        targets = self.GetTargets(response_queue)
 
         context = self.MakeContext()
 
@@ -679,8 +725,8 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             results = local_vars["results"]
             p.dump_stats(profile_file)
         else:
-            run.test_run(database, test_ids, context, target_specs,
-                         result_streams)
+            run.test_run(database, test_ids, context, targets,
+                         response_queue, result_streams)
 
         # Close the result file.
         if close_result_file:
@@ -716,8 +762,14 @@ Valid formats are "full", "brief" (the default), "stats", and "none".
             # Otherwise, it's a file name.  Open it for append.
             log_file = open(log_file_path, "a+")
 
+        # Create the response queue.
+        response_queue = Queue.Queue(0)
+        # Figure out which targets to use.
+        targets = self.GetTargets(response_queue)
+        
         # Set up the server.
-        server = web.web.QMTestServer(database, port_number, address, log_file)
+        server = web.web.QMTestServer(database, port_number, address,
+                                      log_file, targets, response_queue)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.
