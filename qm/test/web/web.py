@@ -722,7 +722,7 @@ class ShowSuitePage(QMTestPage):
         self.edit = edit
 
         if not suite.IsImplicit():
-            self.edit_menu_items.append(("Edit Suite", "edit_isuite();"))
+            self.edit_menu_items.append(("Edit Suite", "edit_suite();"))
             self.edit_menu_items.append(("Delete Suite", "delete_suite();"))
 
         if not edit:

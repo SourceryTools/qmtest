@@ -1,3 +1,12 @@
+2002-02-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm.spec.in (Release): Increment.
+
+2002-02-13  Vladimir Prus <ghost@cs.msu.su>
+
+	* qm/test/web.py (ShowSuitePage.__init__): Fix typo.
+	* qm/test/file_database.py (FileDatabase._GetLabels): Likewise.
+	
 2002-01-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/result.py (Result.MakeDomNode): Fix typo.

@@ -7,7 +7,7 @@
 # Contents:
 #   QMTest FileDatabase class.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -521,7 +521,7 @@ class FileDatabase(Database):
                 and self._IsSuiteFile(entry_path)):
                 labels.extend(self._GetLabels(entry_path,
                                               scan_subdirs,
-                                              as_absolute(root),
+                                              qm.label.join(label, root),
                                               predicate))
 
         return labels
