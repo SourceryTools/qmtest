@@ -1,3 +1,8 @@
+2001-09-27  Alex Samuel  <samuel@codesourcery.com>
+
+	* qm/test/classes/command.py (ExecTest.Run): Open input files for
+	read. 
+
 2001-09-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (Database.GetTestClasses): New method.
@@ -30,7 +35,7 @@
 	(StringExceptionTest): Likewise.
 
 2001-09-27  Alex Samuel  <samuel@codesourcery.com>
-
+	
 	* qm/common.py (wrap_lines): Add indent parameter.
 	* qm/test/cmdline.py (Command.summary_formats): New attribute.
 	(Command.summary_option_spec): Remove.
