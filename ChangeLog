@@ -1,7 +1,11 @@
 2002-01-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/result.py (Result.MakeDomNode): Fix typo.
-
+	* qm/test/classes/temporary.py (TempDirectoryResource.__init__):
+	Remove.
+	(TempDirectoryResource.SetUp): Fix typo.
+	(TempDirectoryResource.CleanUp): Likewise.
+	
 	* qm/test/database.py (ItemDescriptor._MakeItem): Tell a newly
 	created test or resource what its name is.
 

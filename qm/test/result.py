@@ -271,7 +271,7 @@ class Result:
         outcome_element.appendChild(text)
         element.appendChild(outcome_element)
         # Add a property element for each property.
-        keys = self.items()
+        keys = self.keys()
         keys.sort()
         for key in keys:
             value = self[key]

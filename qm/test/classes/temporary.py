@@ -7,7 +7,7 @@
 # Contents:
 #   Resource classes to manage temporary files and directories.
 #
-# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -74,13 +74,6 @@ class TempDirectoryResource(Resource):
         ]
 
 
-    def __init__(self,
-                 dir_path_property,
-                 delete_recursively):
-        self.__dir_path_property = dir_path_property
-        self.__delete_recursively = delete_recursively
-    
-
     def SetUp(self, context, result):
         # Generate a temporary file name.
         self.__dir_path = tempfile.mktemp()
@@ -94,7 +87,7 @@ class TempDirectoryResource(Resource):
         else:
             # Setup succeeded.  Store the path to the directory where
             # tests can get at it.
-            context[self.__dir_path_property] = self.__dir_path
+            context[self.dir_path_property] = self.__dir_path
     
 
     def CleanUp(self, result):
@@ -102,7 +95,7 @@ class TempDirectoryResource(Resource):
         dir_path = self.__dir_path
         # Clean up the directory.
         try:
-            if self.__delete_recursively:
+            if self.delete_recursively:
                 qm.common.rmdir_recursively(dir_path)
             else:
                 os.rmdir(dir_path)
