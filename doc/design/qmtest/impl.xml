@@ -37,13 +37,29 @@
        <para>An initialization method (<function>__init__</function>),
        that is used to instantiate test instances.  Test instances are
        Python instances of the Python class corresponding to the test
-       class.  The parameters of the initialization method are the
-       test class parameters (which may be explicit or
-       optional).</para>
+       class.  The parameters of the <function>__init__</function>
+       method are the test class parameters.  All parameters must be
+       named; positional parameters are not allowed.  A final
+       <token>**</token> parameter is allowed.</para>
+
+       <para>If a new test class is created via inheritance from a
+       previous test class, the derived <function>__init__</function>
+       is expected to invoke the base class
+       <function>__init__</function>, passing unused parameters.</para>
       </listitem>
 
       <listitem>
-       <para>A <function>run</function> method.
+       <para>An <function>is_valid</function> method.  This method
+       takes a <classname>Configuration</classname> object and returns
+       as boolean whether the particular test instance is appropriate
+       to run on that configuration.</para>
+      </listitem>
+
+      <listitem>
+       <para>A <function>run</function> method.  The
+       <function>run</function> method is passed the same
+       configuration that was previously validated by the same test
+       instance's <function>is_valid</function> method.  
        <!-- FIXME: What are the parameters to the run method? -->
        </para>
       </listitem>

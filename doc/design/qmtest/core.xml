@@ -196,6 +196,19 @@
   its test class.  As with Python functions, a test class may include
   both mandatory and optional (named) parameters.</para>
 
+  <para>Each test class supplies a <firstterm>run method</firstterm>
+  which actually invokes the test.  The run method returns a test
+  <link linkend="term-outcome">outcome</link> describing whether the
+  test passed or failed, or whether some exceptional event occurred
+  while attempting to execute the test.  The run method may also
+  provide other, class-specific output. </para>
+
+  <para>Each test class also supplies a predicate that determines
+  whether the test should be run for a particular <link
+  linkend="term-configuration">configuration</link>.  This may be
+  used, for instance, to flag tests as inappropriate for particular
+  states of the test system.</para>
+
  </section>
 
  <section><title>Test databases</title>
@@ -214,6 +227,54 @@
  <!-- FIXME: How does this work?  Explain the interaction with
  hierarchical test ids. -->
  </para>
+
+ </section>
+
+ <section>
+  <title>Configuration</title>
+
+  <para>Typically, the instance of the system being tested has some
+  state.  This state may vary over the course of the development
+  project, or may vary in other ways.  The state of the system under
+  test is called the <firstterm
+  id="def-configuration">configuration</firstterm>.</para>
+
+  <para>Two types of configuration state are suppored.
+   <orderedlist>
+    <listitem>
+     <para>The <firstterm>version</firstterm> component of the
+     configuration contains aspects of the test system's state that
+     change with time.  Typically, this will consist of a version
+     number, revision control tag, or some other designation that is
+     used elsewhere in the release process.</para>
+    </listitem>
+
+    <listitem>
+     <para>The non-temporal component of the configuration is the
+     <firstterm>target</firstterm>.  This can include, but is not
+     limited to, such details as the hardware architecture and
+     operating system on which the tested system executes, features
+     that are enabled or disabled in the system, and the optimization
+     level with which the tested system has been built.</para>
+    </listitem>
+   </orderedlist>
+  </para>
+
+  <para>Each of the version and target is a text string.  The contents
+  of the test string are user-defined.  For deployments in which the
+  string must encode multiple independent facts, such as the target
+  architecture and operating system, these are conventionally
+  separated by single hyphens.  For example, a system running on SPARC
+  Linux might have a target string of "<literal>sparc-linux</literal>"
+  while the same system running on x86 Windows NT might have the
+  target string "<literal>x86-winnt</literal>".</para>
+
+  <para>A configuration consists of a ( target, version ) pair.</para>
+
+  <para>These configurations may be used, for instance, to specify
+  that a given test is appropriate for certain states of the tested
+  system.  Regular expression and glob-style matching of
+  configurations is provided.</para>
 
  </section>
 
@@ -309,13 +370,14 @@
 
  </section>
 
- <section><title>Outcomes</title>
+ <section>
+  <title>Outcomes</title>
 
-  <para>Each test is primarily characterized by an
-  <firstterm>outcome</firstterm>.  The outcome is one enumeral from a
-  fixed, non-configurable set of possible outcomes.  Actions also use
-  these outcomes to express success or failure.  The set of enumerals
-  are:
+  <para>Each test is primarily characterized by an <firstterm
+  id="term-outcome">outcome</firstterm>.  The outcome is one enumeral
+  from a fixed, non-configurable set of possible outcomes.  Actions
+  also use these outcomes to express success or failure.  The set of
+  enumerals are:
    <itemizedlist>
     <listitem>
      <para><literal>PASS</literal>: The test passed, or the action
