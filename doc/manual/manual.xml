@@ -42,6 +42,7 @@
   <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
   <!ENTITY track-tour.xml SYSTEM "track-tour.xml">
   <!ENTITY track-manual.xml SYSTEM "track-manual.xml">
+  <!ENTITY track-reference.xml SYSTEM "track-reference.xml">
 ]>
 <book>
  <bookinfo>
@@ -70,6 +71,7 @@
  &test-manual.xml;
  &test-reference.xml;
  &track-manual.xml;
+ &track-reference.xml;
  &common-manual.xml;
 
 </book>

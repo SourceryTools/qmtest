@@ -1,5 +1,13 @@
 2001-10-13  Alex Samuel  <samuel@indetermi.net>
 
+	* doc/manual/manual.xml (track-reference): New entity.
+	Reference it.
+	* doc/manual/track-manual.xml (sec-qmtrack-configuration): New
+	section.
+	* doc/manual/track-reference.xml: New file.
+	
+2001-10-13  Alex Samuel  <samuel@indetermi.net>
+
 	* configure.in (DOCBOOK_DTD): Look for it in the standard place.
 	* configure: Regenerate.
 

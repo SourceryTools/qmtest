@@ -96,6 +96,52 @@
 
  </section> <!-- sec-qmtrack-concepts -->
 
+ <section id="sec-qmtrack-configuration">
+  <title>Issue Database Configuration</title>
+
+  <para>This section describes the components of an issue database, and
+  how to configure them.</para>
+
+  <section id="sec-triggers">
+   <title>Triggers</title>
+
+   <para>A <firstterm>trigger</firstterm> is code that is run when an
+   issue is accessed.  A trigger runs when the issue is retrieved from
+   the issue database, and when the issue is modified in the issue
+   database (or a new issue is created).  There are three different
+   trigger behaviors:</para>
+
+   <itemizedlist>
+    <listitem>
+     <para>A trigger's "<firstterm>get</firstterm>" code is invoked when
+     an issue is retrieved from the issue database.  The trigger may
+     forbid the issue's retrieval; this enables the use of triggers for
+     controlling access to issues.</para>
+    </listitem>
+
+    <listitem>
+     <para>A trigger's "<firstterm>preupdate</firstterm>" code is
+     invoked before an issue is changed in the issue database (or before
+     a new issue is inserted).  The trigger may forbid the change; this
+     enables the use of triggers for controlling changes to
+     issues.</para>
+    </listitem>
+
+    <listitem>
+     <para>A trigger's "<firstterm>postupdate</firstterm>" code is
+     invoked after an issue is changed in the issue database (or after a
+     new issue is inserted).</para>
+    </listitem>
+
+   </itemizedlist>
+
+   <para>Triggers are configured independently for each issue class, and
+   each issue class may have more than one trigger.</para>
+ 
+  </section> <!-- sec-triggers -->
+
+ </section> <!-- sec-qmtrack-configuration -->
+
 </chapter> <!-- chap-track-manual -->
 <!--
   Local Variables:
