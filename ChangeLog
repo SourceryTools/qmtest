@@ -1,3 +1,7 @@
+2003-09-26  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Kill): Fix typo.
+
 2003-09-25  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/command.py (ExecTestBase.arguments): Improve

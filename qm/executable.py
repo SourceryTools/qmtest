@@ -278,7 +278,7 @@ class Executable(object):
         if sys.platform == "win32":
             win32process.TerminateProcess(self._GetChildPID(), 1)
         else:
-            os.kill(signal.SIGKILL)
+            os.kill(self._GetChildPID(), signal.SIGKILL)
 
                 
     def _HandleChild(self):
