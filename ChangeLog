@@ -1,5 +1,9 @@
 2001-06-10  Alex Samuel  <samuel@codesourcery.com>
 
+	* share/diagnostics/track.txt: Alphabetize.
+
+2001-06-10  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (PageInfo.web): New attribute.
 	* qm/common.py (Enumeral.__repr__): Fix typo.
 	(Enumeral.__cmp__): Don't check strings against enumeration.

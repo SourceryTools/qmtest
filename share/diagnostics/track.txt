@@ -59,20 +59,68 @@ specified, "%(command)s", can only be performed directly on the IDB.
 Please retry this command once the IDB is no longer in use by the
 server.
 
+@ create build error
+Internal error in creating issue.
+
+@ create class error syn
+You must specify an issue class when creating a new issue.
+
+@ create field error
+Missing mandatory field(s) "%(field)". You must specify all mandatory fields 
+when creating a new issue.
+
+@ create issue error
+An issue with the iid "%(iid)" already exists. Try a different iid.
+
+@ create no equals
+Incorrect argument "%(arg)". Must have an = in the argument passed to the
+create command.
+
+@ edit issue error sem
+The iid "%(iid)" was not found in the database.
+
+@ edit issue error syn
+You must specify an iid to edit.
+
 @ empty enum
 An enumeration must have at least one enumeral value.
 
 @ empty field value
 You must specify a value for the %(field_name)s field.
 
+@ field exist
+No field "%(field)" in issue class "%(issue_class)". You may specify
+only fields that are present in the issue class.
+
 @ field not in class
 There is no field "%(field_name)s" in issue class %(issue_class_name)s.
+
+@ field set use equal
+The operator = is not allowed for a set field "%(field)". You must use the
++= and -= operators for fields of set types.
+
+@ field set use plus
+The operators += and -= are not allowed for a non-set field
+"%(field)". You must use only the = operator for non-set types.
+
+@ format error
+Unknown format "%(format)s". You must specify a valid format to display the
+issues.
 
 @ idb locked
 The IDB is currently locked by another QMTrack process.  Please try
 this command again later.  If you believe the lock file is stale and
 has been left behind by a defuct QMTrack process, delete the directory
 %(lock_path)s and try again.
+
+@ initialize invalid idb class
+IDB type "%(type)" is invalid.
+
+@ initialize no idb path
+You must specify an IDB path to the initialize command.
+
+@ initialize wrong flag
+The --idb option is not allowed to this command.
 
 @ invalid enum key
 "%(key)s" is not a valid enumeral name.  The name may be composed of
@@ -92,6 +140,16 @@ begin with an underscore.
 "%(iid)s" is not a valid issue ID.  An issue ID may be composed of
 lower-case letters, digits, and underscores, and may not begin with an
 underscore. 
+
+@ join iid error sem
+The generated iid "%(iid)" from the two issues to be joined is already 
+in the database.
+
+@ join issue error sem
+The iid "%(iid)" was not found in the database.
+
+@ join issue error syn
+Fewer than two iids specified. You must specified two iids to be joined.
 
 @ missing idb
 You did not specify an issue database (IDB).  Either
@@ -123,6 +181,13 @@ The transition from state "%(starting_state_name)s" to state
 @ not initial state
 A new issue must have the initial state "%(initial_state_name)s".
 
+@ privileged port
+You have attempted use port %(port)d.  This port is privileged; only the
+superuser may use this port.
+
+@ query error syn
+No query string specified. Specify a string to evaluate on all issues.
+
 @ query misc error
 %(program_name)s encountered an error while evaluating the Python query
 expression you specified.  
@@ -143,6 +208,22 @@ query you expression you specified.
 
 Your query was "'%(query)s'".
 
+@ show no iid
+The iid "%(iid)" was not found in the database.
+
+@ show wrong args
+You must specify an iid to show.
+
+@ split issue error sem
+The IID "%(iid)" was not found in the database.
+
+@ split issue error syn
+You must specify an IID to split.
+
+@ split iid error sem
+The IID "%(iid)" already exists. There was a conflict in names in the
+database when splitting the specified issue.
+
 @ transition condition failed
 The transition from state "%(starting_state_name)s" to state
 "%(ending_state_name)s" is not permitted.  This condition %(name)s,
@@ -156,87 +237,6 @@ The issue file contains issues of unknown issue class %(class_name)s.
 @ xml file unknown field
 The issue file contains an unknown field %(field_name)s of issue class
 %(class_name)s. 
-
-@ create no equals
-Incorrect argument "%(arg)". Must have an = in the argument passed to the
-create command.
-
-@ format error
-Unknown format "%(format)s". You must specify a valid format to display the
-issues.
-
-@ field exist
-No field "%(field)" in issue class "%(issue_class)". You may specify
-only fields that are present in the issue class.
-
-@ field set use equal
-The operator = is not allowed for a set field "%(field)". You must use the
-+= and -= operators for fields of set types.
-
-@ field set use plus
-The operators += and -= are not allowed for a non-set field
-"%(field)". You must use only the = operator for non-set types.
-
-@ create class error syn
-You must specify an issue class when creating a new issue.
-
-@ create field error
-Missing mandatory field(s) "%(field)". You must specify all mandatory fields 
-when creating a new issue.
-
-@ create build error
-Internal error in creating issue.
-
-@ create issue error
-An issue with the iid "%(iid)" already exists. Try a different iid.
-
-@ edit issue error syn
-You must specify an iid to edit.
-
-@ edit issue error sem
-The iid "%(iid)" was not found in the database.
-
-@ privileged port
-You have attempted use port %(port)d.  This port is privileged; only the
-superuser may use this port.
-
-@ split issue error syn
-You must specify an iid to split.
-
-@ split issue error sem
-The iid "%(iid)" was not found in the database.
-
-@ split iid error sem
-The iid "%(iid)" already exists. There was a conflict in names in the
-database when splitting the specified issue.
-
-@ join issue error syn
-Fewer than two iids specified. You must specified two iids to be joined.
-
-@ join issue error sem
-The iid "%(iid)" was not found in the database.
-
-@ join iid error sem
-The generated iid "%(iid)" from the two issues to be joined is already 
-in the database.
-
-@ query error syn
-No query string specified. Specify a string to evaluate on all issues.
-
-@ show wrong args
-You must specify an iid to show.
-
-@ show no iid
-The iid "%(iid)" was not found in the database.
-
-@ initialize invalid idb class
-IDB type "%(type)" is invalid.
-
-@ initialize wrong flag
-The --idb option is not allowed to this command.
-
-@ initialize no idb path
-You must specify an IDB path to the initialize command.
 
 ########################################################################
 # Local Variables:
