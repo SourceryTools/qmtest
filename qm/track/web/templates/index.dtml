@@ -38,7 +38,7 @@
          Show a select control to choose the issue class, if there is
          more than one available.
        --></dtml-comment>
-       <dtml-if expr="_len(issue_classes) > 1">
+       <dtml-if expr="_.len(issue_classes) > 1">
         <select name="class">
          <dtml-in name="issue_classes">
          <dtml-let issue_class=sequence-item>

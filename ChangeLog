@@ -1,5 +1,9 @@
 2001-03-14  Alex Samuel  <samuel@codesourcery.com>
 
+	* qm/track/web/templates/index.dtml: Fix typo.
+
+2001-03-14  Alex Samuel  <samuel@codesourcery.com>
+
 	* qm/web.py (WebServer.__init__): Add address parameter.
 	(WebServer.Bind): Use __address.
 	* qm/track/server.py (start_server): Add address parameter.
@@ -179,7 +183,6 @@
 	(Command.__init__): Register destroy.
 	(Command.__PerformDestroy): New method.
 
->>>>>>> 1.100
 2001-02-28  Benjamin Chelf  <chelf@codesourcery.com>
 
 	* qm/track/sql_idb.py (Query): Define.
