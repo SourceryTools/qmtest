@@ -115,28 +115,20 @@ RELLIBDIR := $(shell expr "$(INSTALLLIBDIR)" : '$(prefix)/\(.*\)')
 RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
 RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
 
-# Unfortunately, some versions of Python's Distutils do not set modes
-# on the installed files so we have to do it manually here.  There is
-# no easy way to get the permissions set correctly on the directories
-# created; the directories are not output by Distutils.  The "root"
-# option is undocumented, but apparently necessary, when using 
-# relative paths for --install-purelib and such.
+# Unfortunately, Python's Distutils do not set permissons on on the
+# installed files appropriately.  There is little we can do.
+#
+# The "root" option is undocumented, but apparently necessary, when
+# using relative paths for --install-purelib and such.
 $(PYTHON_PACKAGES_INSTALL):
 	cd $(@:-install=) && \
-		MANIFEST=$(notdir $(@:-install=))-manifest && \
 		$(PYTHON) ./setup.py install -O1 \
-	        --prefix="$(prefix)" --root="$(prefix)" \
+	        --prefix="$(NATPREFIX)" --root="$(NATPREFIX)" \
 		--install-purelib="$(RELLIBDIR)" \
                 --install-platlib="$(RELLIBDIR)" \
                 --install-scripts="$(RELSHAREDIR)" \
 		--install-data="$(RELSHAREDIR)" \
-                --install-headers="$(RELINCDIR)" \
-		--record=$$MANIFEST && \
-		for x in `cat $$MANIFEST`; do \
-			test -x $$x && chmod 0755 $(prefix)/$$x || \
-				chmod 0644 $(prefix)/$$x; \
-		done && \
-		rm $$MANIFEST
+                --install-headers="$(RELINCDIR)"
 
 # Install documentation.
 .PHONY: doc-install

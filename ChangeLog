@@ -1,5 +1,8 @@
 2001-12-11  Mark Mitchell  <mark@codesourcery.com>
 
+	* Makefile.in (PYTHON_PACKAGES_INSTALL): Do not attempt
+	to set permissions on installed files.
+
 	* Makefile.in (RELINCDIR): New variable.
 	(PYTHON_PACKAGES_INSTALL): Use it.
 	* standard.mk.in (INSTALLINCDIR): New variable.
