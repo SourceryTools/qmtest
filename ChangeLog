@@ -1,3 +1,10 @@
+2005-04-14  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/compiler.py: Moved over extension from qmtc.
+	* qm/test/classes/compiler_table.py: Likewise.
+	* qm/test/classes/compiler_test.py: Likewise.
+	* qm/test/classes/classes.qmc: Registered 'CompilerTable' resource.
+
 2005-03-31  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/extension.py: Fix omission (see entry from 2005-03-24).
