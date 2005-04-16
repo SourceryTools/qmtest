@@ -1,3 +1,8 @@
+2005-04-15  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/compiler.py: Add support for new 'ldflags' parameter.
+	* qm/test/classes/compiler_table.py: Likewise.
+
 2005-04-14  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/compiler.py: Moved over extension from qmtc.

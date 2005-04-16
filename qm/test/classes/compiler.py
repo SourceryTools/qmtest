@@ -137,6 +137,7 @@ class Compiler:
         compiler, or 'None' if there are no options."""
 
         self._path = path
+        self._ldflags = []
         self.SetOptions(options or [])
             
 
@@ -171,7 +172,6 @@ class Compiler:
 
         # Get the command to use.
         command = self.GetCompilationCommand(mode, files, options, output)
-        print 'command:', xxx
         # Invoke the compiler.
         return self.ExecuteCommand(dir, command, timeout)
         
@@ -235,6 +235,8 @@ class Compiler:
             command += ["-o", output]
         # Add the input files.
         command += files
+        if mode == MODE_LINK:
+            command += self.GetLDFlags()
 
         return command
         
@@ -281,6 +283,24 @@ class Compiler:
         compiler, or 'None' if there are no options."""
 
         self._options = options
+
+        
+    def GetLDFlags(self):
+        """Return the list of link options.
+
+        returns -- A list of strings giving the link options
+        specified when the 'Compiler' was constructed."""
+
+        return self._ldflags
+
+
+    def SetLDFlags(self, ldflags):
+        """Reset the list of link options.
+        
+        'ldflags' -- A list of strings indicating options to the
+        linker, or 'None' if there are no flags."""
+
+        self._ldflags = ldflags
 
         
     def _GetModeSwitches(self, mode):

@@ -82,18 +82,16 @@ class CompilerTable(Resource):
         # For each language, create a Compiler.
         for l in languages:
             # Retrieve information from the context.
-            kind = context["CompilerTable." + l + "_kind"]
-            path = context["CompilerTable." + l + "_path"]
+            kind = context["CompilerTable." + l + "_kind"].strip()
+            path = context["CompilerTable." + l + "_path"].strip()
             # Look for (optional) command-line options.
-            opts = context.get("CompilerTable." + l + "_options")
-            if opts:
-                opts = opts.split()
-            else:
-                opts = []
+            opts = context.get("CompilerTable." + l + "_options", []).split()
+            ldflags = context.get("CompilerTable." + l + "_ldflags", []).split()
             # Find the Python class corresponding to this compiler.
             compiler_class = compiler.__dict__[kind]
             # Instantiate the compiler.
             c = compiler_class(path, opts)
+            c.SetLDFlags(ldflags)
             # Store it in the compilers map.
             compilers[l] = c
             
