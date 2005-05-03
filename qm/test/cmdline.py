@@ -28,6 +28,7 @@ from   qm.test.result import Result
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.result_stream import ResultStream
+from   qm.test.report import ReportGenerator
 from   qm.trace import *
 import qm.test.web.web
 import qm.xmlutil
@@ -421,6 +422,15 @@ should not directly invoke QMTest with this option.
          (help_option_spec,)
          ),
 
+        ("report",
+         "Generate report from one or more test results.",
+         "[ result ... ]",
+         """
+Generates a test report.
+         """,
+         (help_option_spec, output_option_spec)
+         ),
+
         ("run",
          "Run one or more tests.",
          "[ ID ... ]",
@@ -643,6 +653,7 @@ Valid formats are %s.
             "register" : self.__ExecuteRegister,
             "remote" : self.__ExecuteRemote,
             "run" : self.__ExecuteRun,
+            "report" : self.__ExecuteReport,
             "summarize": self.__ExecuteSummarize,
             }[self.__command]
 
@@ -1282,6 +1293,27 @@ Valid formats are %s.
         return 0
 
 
+    def __ExecuteReport(self):
+        """Execute a 'report' command."""
+
+        output = self.GetCommandOption("output")
+
+        # Check that at least one result file is present.
+        if not output or len(self.__arguments) < 1:
+            self.__WriteCommandHelp("report")
+            return 2
+
+        # If the database can be loaded, use it to find all
+        # available tests.
+        try:
+            database = self.GetDatabase()
+        except:
+            database = None
+
+        report_generator = ReportGenerator(output, database)
+        report_generator.GenerateReport(self.__arguments)
+        
+
     def __ExecuteRun(self):
         """Execute a 'run' command."""
         
@@ -1462,6 +1494,9 @@ Valid formats are %s.
                 else:
                     # Other signals propagate outwards.
                     raise
+            except KeyboardInterrupt:
+                # If we receive a keyboard interrupt (Ctrl-C), shut down.
+                pass
         finally:
             if pid_file:
                 os.remove(pid_file_path)
