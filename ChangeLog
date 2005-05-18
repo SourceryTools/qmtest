@@ -1,3 +1,8 @@
+2005-05-18  Zack Weinberg  <zack@codesourcery.com>
+
+	* qm/test/database.py (ItemDescriptor._Execute): Use getattr
+	and a bound method object instead of eval.
+
 2005-05-03  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/report.py: Add ReportGenerator module.
@@ -122,7 +127,7 @@
 	look-and-feel.
 	* qmdist/command/build_doc.py (build_doc.run): Copy documentation
 	stylesheet to HTML directory.
-	
+
 	* qm/test/doc/manual.xml: Update copyright date and version
 	number.
 
@@ -142,7 +147,7 @@
 	it.
 	(Target.Stop): Use it to determine resource cleanup order.
 	* tests/regress/resource_ordering: New test.
-	
+
 2004-05-21  Nathaniel Smith  <njs@codesourcery.com>
 
 	* Makefile: Switch default copyright date to 2004.
@@ -152,7 +157,7 @@
 	* html: Likewise.
 	* py: Likewise.
 	* xml: Likewise.
-	
+
 2004-05-05  Nathaniel Smith  <njs@codesourcery.com>
 
 	* GNUmakefile.in (build): Force executable bit on scripts in
@@ -167,16 +172,16 @@
 	'qm.sigmask.save_mask'.
 	* qm/executable.py: Import 'qm.sigmask'.
 	(Executable._InitializeChild): Call 'qm.sigmask.restore_mask'.
-	
+
 	* tests/xmldb/signals_unblocked.qmt: New test.
 	* tests/xmldb/signals_unblocked_tmpdir.qma: New resource.
-	
+
 	* qmdist/command/check.py (check): Overhaul to respect
 	QMTESTFLAGS and use the correct path to the QMTest executable.
 	* GNUmakefile.in: Use "setup.py check" to run tests.
 	* qm/test/qmtest (rel_libdir): When running out of source tree,
 	use built library.
-	
+
 2004-03-30  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (htmllib): Import it.
@@ -190,7 +195,7 @@
 	(StringIO): Likewise.
 	(qm.common): Import it.
 	(qm.fields): Likewise.
-	
+
 	* qm/test/result.py (cgi): Import it.
 	(Result.Quote): New function.
 	(Result.NoteException): Use it.
@@ -222,12 +227,12 @@
 	Disambiguate old "qmtest.run.user" annotation by renaming to
 	"qmtest.run.username".
 	Add "qmtest.run.command_line" annotation.
-	
+
 2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
-	
+
 	* qm/test/target.py (Target._SetUpResource): Fix typo from
 	previous commit.
-	
+
 2004-03-15  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/base.py (CouldNotLoadExtensionError.__init__): Save
@@ -245,11 +250,11 @@
 	(DGTest._DGoptions): Convert options immediately from string to
 	list.
 	(DGTest._DGexcess_errors): New method.
-	
+
 	* qm/test/classes/tet_stream.py (TETStream): Add detailed
 	description of TET/LSB and DejaGNU result codes.  Fix mapping
 	between them.
-	
+
 	* qm/test/classes/dejagnu_test.py
 	(DejaGNUTest.TargetExecutable._StdinPipe): Don't override.
 	(DejaGNUTest.BuildExecutable._StdinPipe): Don't override.
@@ -289,7 +294,7 @@
 	* qm/test/execution_engine.py (ExecutionEngine.Run): Don't pass
 	explicit argument to 'format_time_iso'.
 	(ExecutionEngine._WriteInitialAnnotations): Likewise.
-	
+
 	* qm/test/target.py (qm.common): Import.
 	(Target.RunTest): Record start and end times.
 
@@ -318,7 +323,7 @@
 	empty string.
 	(open_temporary_file): Likewise.
 	* qm/test/classes/command.py (ShellScriptTest.Run): Likewise.
-	
+
 2004-02-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (encode_data_as_text): Remove.
@@ -339,7 +344,7 @@
 	* qm/common.py (open_temporary_file_fd): Add suffix parameter.
 	(open_temporary_file): Add mode and suffix parameters.
 	* qm/platform.py (get_shell_for_script): Use /c on Windows.
-	* qm/test/classes/command.py (ShellScriptTest): Make the 
+	* qm/test/classes/command.py (ShellScriptTest): Make the
 	script have a ".bat" extension on Windows.
 	* NEWS: Mention this fix.
 
@@ -354,10 +359,10 @@
 	(MutexLockError): Remove.
 	(ConfigurationError): Remove.
 	(indent_lines): Remove.
-	
+
 2004-02-11  Nathaniel Smith  <njs@codesourcery.com>
 
-	* qm/common.py: Import getpass.  
+	* qm/common.py: Import getpass.
 	(get_username): New function.
 	* qm/test/execution_engine.py
 	(ExecutionEngine._WriteInitialAnnotations): New method.
@@ -365,11 +370,11 @@
 	(TerminationRequested): New exception.
 	(ExecutionEngine._RunTests): Raise it when terminating.
 	(ExecutionEngine.Run): Check for exceptions in _RunTests.
-	
+
 	(ExecutionEngine.RequestTermination): More tracing.
 	(ExecutionEngine.Run): Likewise.
 	(ExecutionEngine._RunTests): Likewise.
-	
+
 2004-02-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Remove "Not yet released" markers from news for 2.1.
@@ -387,7 +392,7 @@
 	* qm/test/classes/explicit_suite.py (ExplicitSuite.is_implicit):
 	Give it a default value of false.
 	(ExplicitSuite.IsImplicit): Fix thinko.
-	* qm/test/classes/xml_database.py (XMLDatabase._GetSuiteFromPath): 
+	* qm/test/classes/xml_database.py (XMLDatabase._GetSuiteFromPath):
 
 2004-01-18  Mark Mitchell  <mark@codesourcery.com>
 
@@ -458,7 +463,7 @@
 	(ExceptionTest.CheckArgument): Likewise.  Handle the case of a
 	class that does not provide the "args" interface.
 	* tests/regress/exception_test/arg1.qmt: New test.
-	
+
 2004-01-08  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/doc/reference.xml: Fix typo.
@@ -519,7 +524,7 @@
 	* qmdist/command/install_data.py (glob): Import it.
 	(types.StringType): Likewise.
 	(install_data.initialize_options): New method.
-	
+
 2003-11-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/file_database.py: Remove misleading comments about
@@ -673,7 +678,7 @@
 	(check-rsh): Likewise.
 
 	* qm/temporary_directory.py (sys): Import it.
-	
+
 	* GNUmakefile.in (DOCUMENTATION): Set value to MAINTAINER_MODE.
 	(TIDY): Likewise.
 	(TIDYFLAGS): Likewise.
@@ -711,7 +716,7 @@
 	data_dir as a relative path.
 	* qmdist/command/install_scripts.py: New file.
 	* NEWS: Update.
-		
+
 2003-10-02  Stefan Seefeld  <seefeld@sympatico.ca>
 
 	* qm/test/share/dtds/result.dtd: Convert 'outcome' to an attribute.
@@ -787,7 +792,7 @@
 	documentation for exit_code.
 	* qm/test/doc/tour.xml: Remove discussion of carriage-returns in
 	execution tests.
-	
+
 	* qm/executable.py (Executable.Kill): New method.
 	(Executable._GetChildPID): Improve documentation.
 	(TimeoutExecutable): Update documentation about timeouts on
@@ -862,8 +867,8 @@
 	* qmdist/command/install_data.py: ...and this.
 	* qmdist/__init__.py: New file.
 	* qmdist/command/__init__.py: New file.
-        * MANIFEST.in: Provide file list for source distribution.
-	
+	* MANIFEST.in: Provide file list for source distribution.
+
 2003-09-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (cStringIO): Do not import.
@@ -871,7 +876,7 @@
 	(tokenize): Import.
 	(Field.FormatValueAsText): Use StringIO.
 	(Field.ParseTextValue): Improve documentation.
-	(SetField.FormatValueAsText): Make output match format expected 
+	(SetField.FormatValueAsText): Make output match format expected
 	by ...
 	(SetField.ParseTextField): ... this new method.
 	* qm/test/cmdline.py (QMTest.attribute_option_spec): Generalize
@@ -895,7 +900,7 @@
 
 	* README: Mention Win32 extensions and update reference to ZPL.
 	* qm/external/DocumentTemplate/LICENSE.txt: New file.
-	
+
 2003-08-28  Stefan Seefeld  <stefan.seefeld@orthosoft.ca>
 
 	* setup.py: Make documentation compliant with qmtest's standard.
@@ -962,20 +967,20 @@
 	* qm/platform_win32.py (get_user_name): Remove.
 	* qm/platform_unix.py (send_email): Remove.
 	(get_user_name): Remove.
-	* qm/regression_test.py: Remove file.	
-	
+	* qm/regression_test.py: Remove file.
+
 	* qm/test/doc/reference.xml (Field Classes): Fix typo.
 
 	* qm/test/file_result_stream.py (FileResultStream.__init__): Fix
 	indentation.
-	
+
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/executable.py (TimeoutExecutable._HandleChild): Close all
 	fds in the monitor process.
 	* tests/xmldb/test.qms/classes.qms/scripttest_closes_stdin.qmt:
 	New test.
-	
+
 2003-08-14  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/executable.py (RedirectedExecutable._InitializeChild): Fix
@@ -1052,7 +1057,7 @@
 	* tests/regress/env_context1/shellcommandtest_dot.qmt: New file.
 	* tests/regress/env_context1/shellscripttest_nodot.qmt: New file.
 	* tests/regress/env_context1/shellscripttest_dot.qmt: New file.
-	
+
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/common.py (get_lib_directory): Remove.
@@ -1064,9 +1069,9 @@
 	* qm/test/qmtest.py: Don't execfile setup_path.py.
 	* GNUmakefile.in ($(SCRIPTS)): Don't set QM_TRUE_LIBDIR.
 	* qm/qm.sh: Don't set QM_TRUE_LIBDIR.
-	
+
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
-	
+
 	* qm/version.py.in: Rename to...
 	* qm/__version.py.in: ...this.
 	* qm/__init__.py: Adjust for new name.
@@ -1074,7 +1079,7 @@
 	* qm/GNUMakefile.in: Likewise.
 	* qm/configure.in: Likewise.
 	* qm/configure: Regenerate.
-	
+
 2003-08-10  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/version.py.in: New file.
@@ -1095,7 +1100,7 @@
 	(QMTest.GetVersion): Remove.
 	(QMTest.Execute): Don't call QMTest._GetVersionString.
 	(QMTest._GetVersionString): Remove.
-	
+
 2003-08-08  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/context.py (ContextException.__safe_for_unpickling__):
@@ -1130,7 +1135,7 @@
 	* tests/results_files/tdb/untested.qmt: New file.
 	* tests/results_files/tdb/tmpdir_resource.qma: New file.
 	* tests/results_files/tdb/fail_with_tmpdir.qmt: New file.
-	
+
 2003-08-07  Nathaniel Smith  <njs@codesourcery.com>
 	    Mark Mitchell  <mark@codesourcery.com>
 
@@ -1159,7 +1164,7 @@
 	* qm/test/classes/xml_database.py: Do not import dircache.
 
 	* scripts/qm-release: Improve snapshot generation.
-	
+
 2003-08-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release: Add support for snapshot releases.
@@ -1195,7 +1200,7 @@
 	* qm/test/classes/text_result_stream.py (TextResultStream): Fix
 	typo in documentation.
 	* qm/test/doc/tour.xml: Update instructions to match GUI changes.
-	
+
 2003-07-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Recommend Mozilla, even on Windows.  Mention use of
@@ -1245,12 +1250,12 @@
 	matching for removal.  Strip slashes after prefix removal.
 	(RELSHAREDIR): Likewise.
 	(RELINCDIR): Likewise.
-	
+
 2003-07-24  Nathaniel Smith  <njs@codesourcery.com>
 
 	* tests/xmldb/common.qms/graph_complete.qmt: Delete.
-        * tests/xmldb/common.qms/graph_cycle.qmt: Likewise.
-        * tests/xmldb/common.qms/graph_pass.qmt: Likewise.
+	* tests/xmldb/common.qms/graph_cycle.qmt: Likewise.
+	* tests/xmldb/common.qms/graph_pass.qmt: Likewise.
 
 2003-07-24  Mark Mitchell  <mark@codesourcery.com>
 
@@ -1283,8 +1288,8 @@
 	allow creation from the GUI.
 	* qm/test/web/web.py (QMTestServer.HandleSubmitItem): Simplify.
 
-	* tests/regress/tuple1: New test.	
-	
+	* tests/regress/tuple1: New test.
+
 2003-07-21  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/fields.py (TupleField.Validate): Return the computed
@@ -1317,12 +1322,12 @@
 
 	* qm/test/web/web.py (DirPage.GetTestResultsForDirectory): Call
 	__IsLabelInDirectory with two parameters.  Fix typo.
-	
+
 	* qm/test/web/web.py (QMTestServer.HandleSaveExpectations): Do not
 	pass 'context' parameter to Result.__init__.
-	
+
 	* qm/test/web/web.py (StorageResultStream.__init__): Initialize
-	__annotations.  
+	__annotations.
 
 2003-07-14  Nathaniel Smith  <njs@codesourcery.com>
 
@@ -1332,7 +1337,7 @@
 	(PickleResultReader.__init__): Likewise.
 	Also, fix typo (call self._ResetUnpickler, not
 	self._ResetPickler).
-	
+
 2003-07-09  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/context.py (Context.items): New method.
@@ -1350,7 +1355,7 @@
 	* qm/test/file_result_source.py: Rename to...
 	* qm/test/file_result_reader.py: ...this.  Also rename classes,
 	etc.
-	
+
 	* qm/common.py (format_time_iso): New function.
 	* qm/db.py: New file.
 	* qm/extension.py (get_class_arguments): Support diamond
@@ -1368,15 +1373,15 @@
 	(XMLResultSource): Rename to 'XMLResultReader', plus associated
 	renames.  Update for new metadata handling regime.
 	(XMLResultStream): Update for new metadata handling regime.
-	
+
 	* qm/test/result_stream.py (ResultStream.WriteAnnotation): New
 	function.
 	(ResultStream.WriteAllAnnotations): New function.
 	(ResultStream.WriteResult): More detail in docstring.
-	
+
 	* qm/test/classes/classes.qmc: Add SQL result handling classes,
 	rename 'ResultSource' to 'ResultReader'.
-	
+
 	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Copy
 	metadata.
 	* qm/test/execution_engine.py: import time.
@@ -1387,10 +1392,10 @@
 	(StorageResultsStream.WriteAnnotations: New method.
 	(QMTestServer.HandleSubmitResults): Write out annotations.
 	(QMTestServer.HandleSaveResults): Likewise.
-	
+
 	* scripts/create-test-database.py: New file.
 	* qm/test/classes/sql_result_stream.py: New file.
-	
+
 2003-07-03  Vladimir Prus <ghost@cs.msu.su>
 
 	* qm/attachment.py (AttachmentStore.GetIndex): Remove.
@@ -1428,7 +1433,7 @@
 	* qm/test/web/web.py (QMTestServer.HandleSubmitExpectations):
 	Likewise.
 	(QMTestServer.HandleSubmitResults): Likewise.
-	
+
 2003-06-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (commands_spec): Add support for "qmtest
@@ -1437,7 +1442,7 @@
 2003-06-23  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/fields.py: Fix typo in comment.
-	
+
 	* qm/test/file_result_stream.py (FileResultStream.__doc__):
 	Fix typo.
 
@@ -1531,11 +1536,11 @@
 	(result_class): Likewise.
 	* qm/test/doc/reference.xml: Update sections on writing test and
 	resource classes.
-	
+
 	* qm/fields.py: More massive reorganization and cleanup.
 	* qm/test/doc/manual.xml: Add links to onlin documentation.
 	* qm/test/doc/reference.xml: Describe Field classes.
-	
+
 2003-06-18  Mark Mitchell  <mark@codesourcery.com>
 
 	* README: Correct typo.
@@ -1554,12 +1559,12 @@
 	* qm/test/share/dtml/show.dtml: Use Field.IsHidden.
 	* qm/test/web/web.py (ShowItemPage.FormatFieldValue): Likewise.
 	(QMTestServer.HandleRunTests): Tidy.
-	
+
 2003-06-16  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/qmtest.py (check_python_version): Call `str' on
 	numbers before joining them.
-	
+
 2003-06-16  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/test/qmtest.py: Import sys.
@@ -1585,15 +1590,15 @@
 	(QMTest.__init__): New variable	__text_result_stream_class_name.
 	(QMTest.GetTextResultStreamClass): New function.
 	(QMTest.__GetResultStream): Use it.
-	
+
 	* qm/test/cmdline.py (QMTest.__init__): Remove variable
 	__file_result_stream_class.
 	(QMTest.GetFileResultStreamClass): Don't use it.
 	(QMTest.__init__): Remove unused variable
 	__result_stream_class.
-	
+
 	* qm/test/cmdline.py (QMTest.__init__): Typo in comment.
-	
+
 	* qm/test/execution_engine.py (ExecutionEngine.__init__):
 	Remove unused variables self.__test_results,
 	self.__resource_results.
@@ -1608,9 +1613,9 @@
 	* qm/test/classes/python_label.py: Likewise.
 	* qm/test/test.py: Likewise.
 	* qm/test/database.py: Likewise.
-	
+
 	* qm/extension.py (parse_descriptor): Typo in docstring.
-		
+
 2003-06-12  Nathaniel Smith  <njs@codesourcery.com>
 
 	* qm/qm.sh (qm_python_path_dir): New variable.
@@ -1682,9 +1687,9 @@
 	(ShowItemPage.MakeDeleteScript): Use
 	WebServer.MakeConfirmationDialog.
 	(ShowSuitePage.MakeDeleteScript): Likewise.
-	
+
 	* qm/external/DocumentTemplate/.cvsignore: Likewise.
-	
+
 2003-06-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_test.py (DejaGNUTest._ParseTclWords):
@@ -1706,7 +1711,7 @@
 	(doc-install): Guard it by testing INSTALL_DOCUMENTATION.
 	* configure.in (INSTALL_DOCUMENTATION): Set it.
 	* configure: Regenerated.
-	
+
 	* README: Mention HappyDoc.
 	* qm/test/classes/dejagnu_stream.py
 	(DejaGNUStream.__summary_outcomes): New variable.
@@ -1719,7 +1724,7 @@
 	* qm/test/classes/dejagnu_base.py: New file.
 	* qm/test/classes/dg_test.py: New file.
 	* qm/test/classes/classes.qmc: Update.
-	
+
 2003-05-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py: Import result_stream.
@@ -1748,7 +1753,7 @@
 	creation of ExecutionThread.
 	* qm/test/doc/reference.xml: Document "batch" output format.
 	* qm/test/doc/tour.xml: Update sample output.
-	
+
 2003-05-09  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/attachment.py (atexit): Do not import it.
@@ -1860,15 +1865,15 @@
 	* qm/test/resource.py (Resource.SetUp): Improve doc-string.
 	* qm/test/target.py (Target._SetUpResource): Fix typo in comment.
 	* qm/test/doc/reference.xml: Improve target documentation.
-	
+
 2003-04-15  Nathaniel Smith  <njs@pobox.com>
 
 	* qm/setup_path.py.in: Make warnings filtering more fine-grained.
-	
+
 2003-04-15  Nathaniel Smith  <njs@pobox.com>
 
 	* qm/test/base.py (get_extension_directories): typo in comment.
-	* qm/test/classes/process_target.py (QMTestExecutable): typo in 
+	* qm/test/classes/process_target.py (QMTestExecutable): typo in
 	docstring.
 
 2003-04-15  Nathaniel Smith  <njs@pobox.com>
@@ -1932,7 +1937,7 @@
 	QMTest.GetFileResultStreamClass.
 	(QMTestServer.HandleSaveExpectations): Likewise.
 	* share/diagnostics/common.txt: Add invalid descriptor syntax message.
-	
+
 	* qm/executable.py: Fix typo in comment.
 
 2003-04-12  Mark Mitchell  <mark@codesourcery.com>
@@ -1958,11 +1963,11 @@
 	(ExecTestBase.Run): Likewise.
 
 	* qm/test/classes/mount_database.py (MountDatabase.GetIds): Fix thinko.
-	
+
 	* qm/test/classes/process_target.py (ProcessTarget.RunTest):
 	Handle unexpected death of the child process.
 	(ProcessTarget.__ReadResults): Likewise.
-	
+
 2003-04-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/read_thread.py: Remove.
@@ -2074,7 +2079,7 @@
 	(Runnable.arguments): Use it.
 	* qm/test/classes/xml_database.py (UnknownTestClassError): Remove.
 	(UnknownResourceClassError): Likewise.
-	
+
 2003-03-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/command_thread.py (sys): Import it.
@@ -2088,7 +2093,7 @@
 	(Target._SetUpResource0: Make it exception-safe.
 	* qm/test/classes/thread_target.py: Add trace messages throughout.
 	* NEWS: Mention defect correction.
-	
+
 2003-02-27  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (_make_comma_separated_string): New
@@ -2104,7 +2109,7 @@
 	parameter.
 	* qm/test/doc/reference.xml: Add documentation for -O.
 	* NEWS: Mention new -O option.
-	
+
 2003-02-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* scripts/qm-release (build_rpm): Use rpmbuild, rather than rpm,
@@ -2114,7 +2119,7 @@
 
 	* qm/test/share/dtml/navigation-bar.dtml (hide_menu): Tweak for
 	Mozilla 1.0.1 compatibility.
-	
+
 2003-02-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/common-manual.xml: Remove documentation about
@@ -2144,7 +2149,7 @@
 	(Test.ResourceField): Remove.
 	(Test.arguments): Remove resources field.
 	* qm/test/classes/file.py (SubstitutionField.class_name): Remove.
-	
+
 2003-01-21  Jeffrey D. Oldham  <oldham@codesourcery.com>
 
 	* qm/fields.py (AttachmentField): Fix typo in introductory
@@ -2171,7 +2176,7 @@
 	(ItemDescriptor._Execute): Do not change directories.
 	* qm/test/classes/xml_database.py (XMLDatabase.__LoadItem): Do not
 	use SetWorkingDirectory.
-	
+
 2003-01-02  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention --result-format.
@@ -2200,7 +2205,7 @@
 	(QMTestServer.HandleSaveExpectations): Use
 	QMTest.GetResultStreamClass.
 	(QMTestServer.HandleSaveResults): Likewise.
-	
+
 2002-12-31  Mark Mitchell  <mark@codesourcery.com>
 
 	* doc/manual/common-manual.xml: Document click_menus option.
@@ -2242,13 +2247,13 @@
 	(FileContentsTest.Run): Remove exception-handling code.
 	(FileContentsTest.__PerformSubstitutions): Correct.
 	* NEWS: Mention change.
-	
+
 2002-12-18  Vladimir Prus <ghost@cs.msu.su>
-            Mark Mitchell  <mark@codesourcery.com>
+	    Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (parse_dom_element): Add attachment_store
 	parameter.
-	* qm/test/classes/xml_database.py: 
+	* qm/test/classes/xml_database.py:
 	(XMLDatabase._StoreAttachments): New method
 	(XMLDatabase.WriteTest): Call it.
 	(XMLDatabase.WriteResource): Likewise.
@@ -2304,9 +2309,9 @@
 
 2002-11-29  Mark Mitchell <mark@codesourcery.com>
 
-	* qm/web.py (WebRequestHandler.__HandleFileRequest): Open files in 
+	* qm/web.py (WebRequestHandler.__HandleFileRequest): Open files in
 	binary mode.
-	* qm/test/share/dtml/dir.dtml: Avoid constructs which IE does not 
+	* qm/test/share/dtml/dir.dtml: Avoid constructs which IE does not
 	like.
 	* qm/test/share/dtml/navigation-bar.dtml: Support IE event model.
 	* qm/test/share/web/images/logo.png: Remove.
@@ -2335,14 +2340,14 @@
 	(is_parent_of): Likewise.
 	* share/web/images/logo.png: New file.
 	* share/web/stylesheets/qm.css: Update style for menus.
-	
+
 2002-11-27  Vladimir Prus <ghost@cs.msu.su>
 
 	* qm/test/web/web.py (ResultPage.__init__): Add "This Test" to run
 	menu.
 	(ResultPage.MakeRunUrl): New method.
 	* qm/test/share/dtml/result.dtml (run_test): New method.
-	
+
 2002-11-25  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (load_results): Support pickled results files.
@@ -2355,7 +2360,7 @@
 	(QMTestServer.HandleSaveResults): Use PickleResultStream.
 	(QMTestServer.HandleSaveExpectations): Likewise.
 	* share/dtml/exception.dtml: Remove out-of-date language.
-	
+
 	* qm/test/context.py (ContextException.__init__): Initialize the
 	base class.
 	* qm/test/result.py (ContextException): Import it.
@@ -2372,7 +2377,7 @@
 	* qm/executable.py (Executable.Spawn): Handle relative pathnames
 	in a platform-independent manner.
 	(RedirectedExecutable._DoParent): Fix typo.
-	
+
 2002-11-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (is_database): Check more carefully.
@@ -2408,7 +2413,7 @@
 	(ProcessTarget.QMTestExecutable): New class.
 	(ProcessTarget.Start): Use it.
 	* tests/QMTest/selftest.py (RegTest.Run): Use Executable.
-	
+
 2002-11-15 Mark Mitchell <mark@codesourcery.com
 
 	* qm/executable.py (string): Import it.
@@ -2450,7 +2455,7 @@
 	* qm/test/share/dtds/target.dtd: Likewise.
 	* qm/test/share/dtds/test.dtd: Likewise.
 	* qm/test/share/dtds/tdb-configuration.dtd: Likewise.
-	
+
 2002-11-11  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention automatic use of context files.
@@ -2461,7 +2466,7 @@
 	* qm/tetst/cmdline.py (QMTest.MakeContext): Use Context.Read.
 	* qm/test/context.py (Context.Read): New method.
 	* qm/test/doc/reference.xml: Document automatic use of -C option.
-	
+
 2002-11-06  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/fields.py (BooleanField): New class.
@@ -2502,7 +2507,7 @@
 	* qm/test/web/web.py (QMTestPage.__init__): Do not show editing
 	choices if the database is not modifiable.
 	* tests/QMTest/.cvsignore: New file.
-	
+
 2002-11-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (Database._LabelToPath): Rename to ...
@@ -2617,7 +2622,7 @@
 	(QMTestServer.SubmitItem): Simplify.
 	* tests/QMTest/selfdb.py (QMSelftestDatabase._QualifyTests):
 	Adjust.
-	
+
 2002-09-29  Mark Mitchell  <mark@codesourcery.com>
 
 	* README: Fix formatting.
@@ -2651,12 +2656,12 @@
 	message.
 	* qm/test/util/README: New file.
 	* qm/test/util/svr4_init/red_hat_linux: Likewise.
-	* qm/test/web/web.py: Use qm.test.cmdline.QMTest instead of QMTest 
+	* qm/test/web/web.py: Use qm.test.cmdline.QMTest instead of QMTest
 	throughout.
-	
+
 2002-08-28  Mark Mitchell  <mark@codesourcery.com>
 
-	* qm/test/execution_engine.py (ExecutionEngine._CheckForResponse): 
+	* qm/test/execution_engine.py (ExecutionEngine._CheckForResponse):
 	Decrement running here.
 	(ExecutionEngine._AddResult): Not here.
 	(ExecutionEngine._AddUntestedResult): Do not muck with running here.
@@ -2693,7 +2698,7 @@
 	* qm/test/share/messages/diagnostics.txt: Add message.
 	* tests/QMTest/thread_target: New file.
 	* tests/QMTest/process_target: New file.
-	
+
 2002-08-08  Zack Weinberg  <zack@codesourcery.com>
 
 	Revised test suite.
@@ -2818,7 +2823,7 @@
 	* qm/test/base.py (get_extension_class_from_directory): Raise
 	a PythonException.
 	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Handle it.
-	
+
 2002-08-07  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (load_database): Add documentation.  Adjust call
@@ -2836,7 +2841,7 @@
 	(ExecutionEngine._AddResult): Add consistency check.
 	(ExecutionEngine._AddUntestedResult): Mark untested tests as
 	running before they are marked as untested.
-	
+
 	* qm/test/base.py (get_extension_directories): Make sure the
 	QMTest subdirectory of the database is searched
 	* qm/test/datbase.py (Database.GetClassPaths): Do not search it
@@ -2861,7 +2866,7 @@
 	* qm/test/share/messages/diagnostics.txt: Move dependency cycle
 	message here.
 	* share/diagnostics/common.txt: Remove it from here.
-	
+
 	* NEWS: Mention "qmtest extensions" and "qmtest register".
 	* qm/common.py (load_module): Separate path parameter into
 	search_path and load_path.
@@ -2943,13 +2948,13 @@
 	* qm/test/web/web.py (ShowSuitePage.__init__): Fix typo.
 	(QMTestServer.HandleSubmitItem): Adjust call to get_class_arguments.
 	* share/diagnostics/common.txt: New messages.
-	
+
 2002-07-31  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Discuss requirement that classes be listed in classes.qmc.
 	* qm/test/share/doc/reference.xml: Update description of extension
 	classes.
-	
+
 2002-07-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* NEWS: Mention ProcessTarget.
@@ -2969,7 +2974,7 @@
 	* qm/test/classes/rsh_target.py: Build atop ProcessTarget
 	* qm/test/doc/reference.xml: Describe ProcessTarget.
 	* qm/test/share/dtds/target.dtd: Remove concurrency field.
-	
+
 2002-07-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* GNUmakefile.in (lib-install): Improve portability.
@@ -2979,7 +2984,7 @@
 	* qm/test/classes/thread_target.py: Remove tabs.
 	* qm/common.py (lock): Import it.
 	(__load_module_lock): New variable.
-	(load_module): Use it to enforce thread safety when loading 
+	(load_module): Use it to enforce thread safety when loading
 	modules.
 	* qm/lock.py: New file.
 	* qm/test/execution_engine.py (ExecutionEngine.__init__): Do not
@@ -3000,14 +3005,14 @@
 	(QMTest.__ExecuteRun): Likewise.  Use __FilterTestsToRun.
 	(QMTest.__GetExpectedOutcomes): New method.
 	(QMTest.__FilterTestsToRun): Likewise.
-	
+
 2002-06-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/file_database.py (FileDatabase.GetTestPath): Fix typo.
 	(FileDatabase._GetLabelFromBasename): New method.
 	(FileDatabase._GetLabels): Use it.
 	(ExtensionDatabase._GetLabelFromBasename): New method.
-	
+
 2002-06-28  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/file_database.py (FileDatabase.GetRoot): New method.
@@ -3022,7 +3027,7 @@
 	* qm/test/xmldb.py (Database): Use 'ExtensionDatabase' as the
 	immediate base class.
 	(Database.__init__): Adjust accordingly.
-	
+
 	* qm/common.py (timegm): Remove.
 
 2002-06-24  Zack Weinberg  <zack@codesourcery.com>

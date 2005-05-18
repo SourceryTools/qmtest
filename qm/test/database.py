@@ -163,11 +163,12 @@ class ItemDescriptor:
 
         # Get the item.
         item = self.GetItem()
+        methobj = getattr(item, method)
         # Execute the indicated method.
         if context is not None:
-            eval("item.%s(context, result)" % method)
+            methobj(context, result)
         else:
-            eval("item.%s(result)" % method)
+            methobj(result)
 
 
 
