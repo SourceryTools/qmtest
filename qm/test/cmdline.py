@@ -24,6 +24,7 @@ import qm
 import qm.attachment
 import qm.cmdline
 import qm.platform
+from   qm.test import test
 from   qm.test.result import Result
 from   qm.test.context import *
 from   qm.test.execution_engine import *
@@ -424,7 +425,7 @@ should not directly invoke QMTest with this option.
 
         ("report",
          "Generate report from one or more test results.",
-         "[ result ... ]",
+         "[ result [-e expected] ]+",
          """
 Generates a test report.
          """,
@@ -484,7 +485,7 @@ Valid formats are %s.
 
     __version_output = \
         ("QMTest %s\n" 
-         "Copyright (C) 2002, 2003, 2004 CodeSourcery, LLC\n"
+         "Copyright (C) 2002, 2003, 2004, 2005 CodeSourcery, LLC\n"
          "QMTest comes with ABSOLUTELY NO WARRANTY\n"
          "For more information about QMTest visit http://www.qmtest.com\n")
     """The string printed when the --version option is used.
@@ -531,8 +532,6 @@ Valid formats are %s.
         # If available, record the path to the qmtest executable.
         self.__qmtest_path = path
         
-        # We have not yet loaded the database.
-        self.__database = None
         # We have not yet computed the set of available targets.
         self.targets = None
 
@@ -545,6 +544,12 @@ Valid formats are %s.
             = "text_result_stream.TextResultStream"
         # The expected outcomes have not yet been loaded.
         self.__expected_outcomes = None
+
+
+    def __del__(self):
+        """Clean up global variables."""
+        
+        test.set_targets([])
 
 
     def HasGlobalOption(self, option):
@@ -638,6 +643,7 @@ Valid formats are %s.
         # Normalize the path so that it is easy for the user to read
         # if it is emitted in an error message.
         self.__db_path = os.path.normpath(db_path)
+        database.set_path(self.__db_path)
 
         error_occurred = 0
         
@@ -663,10 +669,7 @@ Valid formats are %s.
     def GetDatabase(self):
         """Return the test database to use."""
 
-        if not self.__database:
-            self.__database = database.load_database(self.__db_path)
-            
-        return self.__database
+        return database.get_database()
 
 
     def GetTargetFileName(self):
@@ -723,10 +726,10 @@ Valid formats are %s.
 
         returns -- A sequence of 'Target' objects."""
 
-        if self.targets is None:
+        if not test.get_targets():
             file_name = self.GetTargetFileName()
             if os.path.exists(file_name):
-                self.targets = self.GetTargetsFromFile(file_name)
+                test.set_targets(self.GetTargetsFromFile(file_name))
             else:
                 # The target file does not exist.
                 concurrency = self.GetCommandOption("concurrency")
@@ -753,9 +756,9 @@ Valid formats are %s.
                 target_class \
                     = get_extension_class(class_name,
                                           'target', self.GetDatabase())
-                self.targets = [ target_class(self.GetDatabase(), arguments) ]
+                test.set_targets([target_class(self.GetDatabase(), arguments)])
             
-        return self.targets
+        return test.get_targets()
         
 
     def GetTracer(self):

@@ -137,6 +137,13 @@ class ExecTestBase(Test):
         environment = os.environ.copy()
         # Copy context variables into the environment.
         for key, value in context.items():
+            # If the value has unicode type, only transfer
+            # it if it can be cast to str.
+            if  isinstance(value, unicode):
+                try:
+                    value = str(value)
+                except UnicodeEncodeError:
+                    continue
             if  isinstance(value, str):
                 name = "QMV_" + key.replace(".", "__")
                 environment[name] = value

@@ -29,6 +29,15 @@ from   qm.test.runnable import Runnable
 from   qm.test.test import Test
 
 ########################################################################
+# Variables
+########################################################################
+
+__the_database = None
+"""The global 'Database' object."""
+__the_db_path = '.'
+"""The path to the database."""
+
+########################################################################
 # Classes
 ########################################################################
 
@@ -1060,6 +1069,34 @@ def load_database(db_path):
     return database_class(db_path, arguments)
     
     
+########################################################################
+# Functions
+########################################################################
+
+def set_path(path):
+    """Set the database path to be used when the database is loaded.
+
+    'path' -- A string containing the path to the database."""
+
+    global __the_db_path
+
+    __the_db_path = path
+
+
+def get_database():
+    """Returns the global Database object.
+
+    returns -- The 'Database' object that corresponds to the currently
+    executing process. It may be None."""
+
+    global __the_database
+
+    if not __the_database:
+        __the_database = load_database(__the_db_path)
+            
+    return __the_database
+    
+
 ########################################################################
 # Local Variables:
 # mode: python

@@ -1,3 +1,15 @@
+2005-05-31  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/report.py: Support expectation files.
+	* qm/test/cmdline.py: Factor out global database
+	and targets objects to...
+	* qm/test/test.py: ...here.
+	* qm/test/database.py: ...and here.
+	* qm/test/context.py: Add TARGET_CONTEXT_PROPERTY.
+	* qm/test/target.py: Define it.
+	* qm/test/classes/command.py: Use unicode context variables
+	when setting up environment, but only when convertible to str.
+
 2005-05-18  Zack Weinberg  <zack@codesourcery.com>
 
 	* qm/test/database.py (ItemDescriptor._Execute): Use getattr

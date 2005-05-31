@@ -19,9 +19,17 @@
 
 import qm
 import qm.fields
-import qm.test.cmdline
+import qm.test.database
 import qm.test.result
 import qm.test.runnable
+
+########################################################################
+# Variables
+########################################################################
+
+__the_targets = []
+"""The global set of available targets."""
+
 
 ########################################################################
 # Classes
@@ -44,8 +52,7 @@ class TargetGroupField(qm.fields.TextField):
         desc = qm.fields.TextField.GetDescription(self)
         # Add a list of the available targets.
         desc = desc + "\n\n**Available Target Groups**\n\n"
-        groups = map(lambda t: t.GetGroup(),
-                     qm.test.cmdline.get_qmtest().GetTargets())
+        groups = [t.GetGroup() for t in get_targets()]
         for g in groups:
             desc = desc + "  * " + g + "\n"
 
@@ -116,7 +123,7 @@ class Test(qm.test.runnable.Runnable):
 
         def GetItems(self):
 
-            database = qm.test.cmdline.get_qmtest().GetDatabase()
+            database = qm.test.database.get_database()
             return database.GetTestIds()
 
 
@@ -192,6 +199,28 @@ class Test(qm.test.runnable.Runnable):
         on targets in that group."""
 
         return self.target_group
+
+
+########################################################################
+# Functions
+########################################################################
+
+def set_targets(targets):
+    """Set the available target.
+
+    'targets' -- A list of targets available for test execution."""
+
+    global __the_targets
+
+    __the_targets = targets
+
+
+def get_targets():
+    """Get the available target.
+
+    returns -- A list of targets available for test execution."""
+
+    return __the_targets
 
 
 ########################################################################

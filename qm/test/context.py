@@ -74,6 +74,9 @@ class Context(types.DictType):
 
     A 'Context' object is effectively a mapping object whose keys must
     be labels and values must be strings."""
+    
+    TARGET_CONTEXT_PROPERTY = "qmtest.target"
+    """The context variable giving the name of the current target."""
 
     DB_PATH_CONTEXT_PROPERTY = "qmtest.dbpath"
     """The context variable giving the path to the database.

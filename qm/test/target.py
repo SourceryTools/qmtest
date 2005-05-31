@@ -38,17 +38,17 @@ class Target(qm.extension.Extension):
 
     A 'Target' is an entity that can run tests.  QMTest can spread the
     workload from multiple tests across multiple targets.  In
-    addition, a single target can run more that one test at once.
+    addition, a single target can run more than one test at once.
 
     'Target' is an abstract class.
 
     You can extend QMTest by providing your own target class
     implementation.
 
-    To create your own test class, you must create a Python class
+    To create your own target class, you must create a Python class
     derived (directly or indirectly) from 'Target'.  The documentation
     for each method of 'Target' indicates whether you must override it
-    in your test class implementation.  Some methods may be
+    in your target class implementation.  Some methods may be
     overridden, but do not need to be.  You might want to override
     such a method to provide a more efficient implementation, but
     QMTest will work fine if you just use the default version."""
@@ -209,6 +209,7 @@ class Target(qm.extension.Extension):
         try:
             # Augment the context appropriately.
             context = Context(context)
+            context[context.TARGET_CONTEXT_PROPERTY] = self.GetName()
             context[context.TMPDIR_CONTEXT_PROPERTY] \
                 = self._GetTemporaryDirectory()
             context[context.DB_PATH_CONTEXT_PROPERTY] \
@@ -420,7 +421,7 @@ class Target(qm.extension.Extension):
 
         'resource' -- The 'Resource' that should be cleaned up.
 
-        'name' -- The name of the reosurce itself."""
+        'name' -- The name of the resource itself."""
 
         result = Result(Result.RESOURCE_CLEANUP, name)
         # Clean up the resource.
