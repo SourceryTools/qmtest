@@ -21,13 +21,14 @@ from   qm.common import *
 from   qm.diagnostic import error, warning, message
 import string
 import sys
+import os
 
 ########################################################################
 # Variables
 ########################################################################
 
 try:
-    # The config file is created during "make install" by Distutils.
+    # The config file is created during installation by distutils.
     from qm.config import version
     version_info = tuple(string.split(version, '.'))
     """The version of QM as a tuple of '(major, minor, release)'."""
@@ -47,7 +48,7 @@ try:
         # the eventual paths.  Therefore, the value indicated in
         # config.py are incorrect.  The value given below corresponds
         # to the behavior of the binary installer.
-        data_dir = "qm"
+        data_dir = os.path.join("share", "qm")
 except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0

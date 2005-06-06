@@ -38,11 +38,6 @@ import shutil
 # Functions
 ########################################################################
 
-def prefix(list, pref):
-
-    return map(lambda x, p=pref: join(p, x), list)
-
-
 def files_with_ext(dir, ext):
     """Return all files in 'dir' with a particular extension.
 
@@ -53,9 +48,7 @@ def files_with_ext(dir, ext):
     returns -- A sequence consisting of the filenames in 'dir' whose
     extension is 'ext'."""
 
-    return prefix(filter(lambda f: f.endswith(ext),
-                         os.listdir(dir)),
-                  dir)
+    return [join(dir, file) for file in os.listdir(dir) if file.endswith(ext)]
 
 
 def select_share_files(share_files, dir, files):
@@ -69,12 +62,11 @@ def select_share_files(share_files, dir, files):
     'files' -- A list of the files contained in 'dir'."""
     
     exts = (".txt", ".dtml", ".css", ".js", ".gif", ".dtd", ".mod")
-    files = filter(lambda f: \
-                     f == "CATALOG" or (os.path.splitext(f)[1] in exts),
-                   files)
+    files = [join(dir, f)
+             for f in files
+             if f == "CATALOG" or os.path.splitext(f)[1] in exts]
     if files:
-        files = prefix(files, dir)
-        dir = join("qm", dir[len("share/"):])
+        dir = join("share", "qm", dir[len("share/"):])
         share_files[dir] = files
 
 diagnostics=['common.txt','common-help.txt']
@@ -127,18 +119,18 @@ setup(name="qm",
                 'qm/test/web'),
       ext_modules=ext_modules,
       scripts=[qmtest_script, qmtest_py_script],
-      data_files=[('qm/messages/test',
-                   prefix(messages, 'qm/test/share/messages')),
+      data_files=[('share/qm/messages/test',
+                   [join('qm/test/share/messages', m) for m in messages]),
                   # DTML files for the GUI.
-                  ("qm/dtml/test", test_dtml_files),
+                  ("share/qm/dtml/test", test_dtml_files),
                   # The documentation.
-                  ('qm/doc', ('README', 'COPYING')),
-                  ('qm/doc/test/html', ['qm/test/doc/html/*.html',
-                                        'qm/test/doc/html/qm.css']),
-                  ('qm/doc/test/print', ["qm/test/doc/print/*.pdf"]),
+                  ('share/qm/doc', ('README', 'COPYING')),
+                  ('share/qm/doc/test/html', ['qm/test/doc/html/*.html',
+                                              'qm/test/doc/html/qm.css']),
+                  ('share/qm/doc/test/print', ["qm/test/doc/print/*.pdf"]),
                   # The tutorial.
-                  ("qm/tutorial/test/tdb", tutorial_files),
-                  ("qm/tutorial/test/tdb/QMTest",
+                  ("share/qm/tutorial/test/tdb", tutorial_files),
+                  ("share/qm/tutorial/test/tdb/QMTest",
                    ("qm/test/share/tutorial/tdb/QMTest/configuration",))]
                  # The files from the top-level "share" directory.
                  + share_files.items())

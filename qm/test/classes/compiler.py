@@ -37,38 +37,7 @@ if sys.platform != "win32":
 # Classes
 ########################################################################
 
-class TimeoutRedirectedExecutable(RedirectedExecutable):
-    """Support timeouts along with redirection -- if QMTest does.
-
-    Older versions of QMTest did not support timeouts; newer ones do
-    support timeouts."""
-    
-    def __init__(self, timeout = -1):
-        """Construct a new 'TimeoutRedirectedExecutable'.
-
-        'timeout' -- The maximum number of seconds the compiler is
-        permitted to run.  If 'timeout' is -1, the compiler is
-        permitted to run forever."""
-
-        # The compiler is always run in a separate process group.
-        if timeout == -1:
-            timeout = -2
-        # In older version of QMTest, there was no support for
-        # timeouts.  Unfortunately, there was also no support for
-        # version info.
-        try:
-            version = qm.version_info
-        except:
-            version = (0, 0, 0)
-        # Timeouts were first supported in version 2.1.
-        if version[0] > 2 or (version[0] == 2 and version[1] == 1):
-            RedirectedExecutable.__init__(self, timeout)
-        else:
-            RedirectedExecutable.__init__(self)
-
-
-
-class CompilerExecutable(TimeoutRedirectedExecutable):
+class CompilerExecutable(RedirectedExecutable):
     """A 'CompilerExecutable' is a 'Compiler' that is being run."""
 
     def _InitializeChild(self):
@@ -82,7 +51,7 @@ class CompilerExecutable(TimeoutRedirectedExecutable):
         if sys.platform != "win32":
             resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
         # Do whatever the base class version would otherwise do.
-        TimeoutRedirectedExecutable._InitializeChild(self)
+        RedirectedExecutable._InitializeChild(self)
 
 
     def _StdinPipe(self):
@@ -100,7 +69,7 @@ class CompilerExecutable(TimeoutRedirectedExecutable):
 
         returns -- A pipe, or 'None'.  If 'None' is returned, but
         '_StdoutPipe' returns a pipe, then the standard error and
-        standard input will both be redirected to that pipe.  However,
+        standard output will both be redirected to that pipe.  However,
         if '_StdoutPipe' also returns 'None', then the standard error
         will be closed in the child."""
 
@@ -235,7 +204,7 @@ class Compiler:
             command += ["-o", output]
         # Add the input files.
         command += files
-        if mode == MODE_LINK:
+        if mode == Compiler.MODE_LINK:
             command += self.GetLDFlags()
 
         return command

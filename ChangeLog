@@ -1,3 +1,14 @@
+2005-06-06  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* setup.py: Move data into <prefix>/share/qm.
+	* qm/__init__.py: Likewise.
+	* qmdist/command/install_data.py: Likewise.
+	* MANIFEST.in: Cleanup.
+	* Makefile: Removed.
+	* configure: Removed.
+	* configure.in: Removed.
+	* qm/test/classes/compiler.py: Bugfix and cleanup.
+
 2005-06-01  Mark Mitchell  <mark@codesourcery.com>
 
         Test documentation generation again.

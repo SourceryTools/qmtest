@@ -68,7 +68,7 @@ class install_data(base.install_data):
 
         # Record the relative path from the installation prefix to the
         # data directory.
-        data_dir = os.path.join(self.install_dir, "qm")
+        data_dir = os.path.join(self.install_dir, "share", "qm")
         outf.write("data_dir='%s'\n"
                    % get_relative_path (prefix, data_dir))
 
