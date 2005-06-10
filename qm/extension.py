@@ -38,9 +38,9 @@ class Extension(object):
     class Type(type):
 
         def __init__(cls, name, bases, dict):
-            """Generate an '_argument_dictionary' holding all the 'Field' objects.
-            Then replace 'Field' objects by their values for convenient use inside
-            the code."""
+            """Generate an '_argument_dictionary' holding all the
+            'Field' objects.  Then replace 'Field' objects by their
+            values for convenient use inside the code."""
 
             # List all base classes that are themselves of type Extension.
             #
@@ -356,7 +356,7 @@ def make_dom_element(extension_class, arguments, document, element = None):
         extension_element = document.createElement("extension")
     # Create an attribute describing the kind of extension.
     extension_element.setAttribute("kind", extension_class.kind)
-    # Create an ttribute naming the extension class.
+    # Create an attribute naming the extension class.
     extension_element.setAttribute("class",
                                    get_extension_class_name(extension_class))
     # Create an element for each of the arguments.

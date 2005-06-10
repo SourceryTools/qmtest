@@ -1,3 +1,8 @@
+2005-06-10  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (Extension.Type.__init__): Fix overlong lines.
+	(make_dom_element): Fix typo in comment.
+
 2005-06-06  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* setup.py: Move data into <prefix>/share/qm.
