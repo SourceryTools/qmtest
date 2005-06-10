@@ -1,5 +1,24 @@
 2005-06-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/remote_host.py: New file.
+	* qm/test/base.py (__extension_bases): Add "remote_host".
+	(extension_kinds): Derive automatically from __extension_base.
+	* qm/test/classes/classes.qmc: Add local_host.LocalHost,
+	ssh_host.SSHHost, ssh_host.RSHHost, and simulator.Simulator.
+	* qm/test/classes/compiler.py (Compiler.GetExecutableExtension):
+	New method.
+	(Compiler.GetObjectExtension): Likewise.
+	* qm/test/classes/compiler_table.py (CompilerTable.Setup): Fix
+	typos and thinkos.  Set up CompilerTable.target.
+	* qm/test/classes/compiler_test.py (CompiledExecutable): Remove.
+	(CompilerTest._GetObjectFileName): Fix typo in comment.
+	(CompilerTest.Run): Save the compiler.
+	(CompilerTest._RunExecutable): Use the RemoteHost provided by the
+	compiler table.
+	* qm/test/classes/local_host.py: New file.
+	* qm/test/classes/simulator.py: Likewise.
+	* qm/test/classes/ssh_host.py: Likewise.
+
 	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Use
 	__CheckExtensionKind. 
 

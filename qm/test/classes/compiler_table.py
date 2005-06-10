@@ -22,7 +22,9 @@ based on context variables provided by the user."""
 ########################################################################
 
 import compiler
+import qm
 from   qm.test.resource import Resource
+from   local_host import LocalHost
 
 ########################################################################
 # Classes
@@ -64,12 +66,20 @@ class CompilerTable(Resource):
       when run with '-O2', the user would put '-O2' in the 'l_options'
       context variable.
 
-    The 'CompilerTable' resource provides a context variable called
-    'CompilerTable.compilers' to all tests that depend upon the
-    resource.  The 'compilers' variable is a map from language names
-    to instances of 'Compiler'.  Test classes should obtain the
-    'Compiler' to use when compiling source files by using this
-    map."""
+    The 'CompilerTable' resource provides the following context
+    variables to all tests that depend upon the resource:
+
+    - 'CompilerTable.compilers'
+
+       The 'compilers' variable is a map from language names to
+       instances of 'Compiler'.  Test classes should obtain the
+       'Compiler' to use when compiling source files by using this
+       map.
+
+    - 'CompilerTable.target'
+
+       An instance of 'RemoteHost' that can be used to run compiler
+       programs."""
 
     def SetUp(self, context, result):
 
@@ -85,8 +95,10 @@ class CompilerTable(Resource):
             kind = context["CompilerTable." + l + "_kind"].strip()
             path = context["CompilerTable." + l + "_path"].strip()
             # Look for (optional) command-line options.
-            opts = context.get("CompilerTable." + l + "_options", []).split()
-            ldflags = context.get("CompilerTable." + l + "_ldflags", []).split()
+            opts = context.get("CompilerTable." + l + "_options",
+                               "").split()
+            ldflags = context.get("CompilerTable." + l + "_ldflags",
+                                  "").split()
             # Find the Python class corresponding to this compiler.
             compiler_class = compiler.__dict__[kind]
             # Instantiate the compiler.
@@ -96,4 +108,25 @@ class CompilerTable(Resource):
             compilers[l] = c
             
         # Make the table available to tests.
-        context["CompilerTable.compiler_table"] = compilers
+        context["CompilerTable.compilers"] = compilers
+
+        # For backwards compatibility, we recognize this old
+        # context variable here.
+        interpreter = context.get("CompilerTest.interpreter")
+        if interpreter:
+            interpreter = interpreter.split()
+            arguments = { simulator : interpreter[0],
+                          simulator_args : interpreter[1:] }
+            target = qm.test.classes.Simulator(arguments)
+        else:
+            target_desc = context.get("CompilerTable.target")
+            if target_desc is None:
+                target = LocalHost({})
+            else:
+                f = lambda n: qm.test.base.get_extension_class(n,
+                                                               "remote_host",
+                                                               None)
+                host_class, arguments \
+                    = qm.extension.parse_descriptor(target_desc, f)
+                target = host_class(arguments)
+        context["CompilerTable.target"] = target

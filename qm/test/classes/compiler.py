@@ -271,7 +271,31 @@ class Compiler:
 
         self._ldflags = ldflags
 
+
+    def GetExecutableExtension(self):
+        """Return the extension for executables.
+
+        returns -- The extension (including leading '.', if
+        applicable) for executable files created by this compiler."""
+
+        if sys.platform == "win32":
+            return ".exe"
+        else:
+            return ""
+
         
+    def GetObjectExtension(self):
+        """Return the extension for object files.
+
+        returns -- The extension (including leading '.', if
+        applicable) for object files created by this compiler."""
+
+        if sys.platform == "win32":
+            return ".obj"
+        else:
+            return ".o"
+        
+    
     def _GetModeSwitches(self, mode):
         """Return the compilation switches for the compilation 'mode'.
 

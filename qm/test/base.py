@@ -386,28 +386,9 @@ def _result_from_dom(node):
 # variables
 ########################################################################
 
-extension_kinds = [ 'database',
-                    'label',
-                    'resource',
-                    'result_reader',
-                    'result_stream',
-                    'suite',
-                    'target',
-                    'test', ]
-"""Names of different kinds of QMTest extension classes."""
-
-__class_caches = {}
-"""A dictionary of loaded class caches.
-
-The keys are the kinds in 'extension_kinds'.  The associated value
-is itself a dictionary mapping class names to class objects."""
-
-# Initialize the caches.
-for kind in extension_kinds:
-    __class_caches[kind] = {}
-
 import qm.test.database
 import qm.label
+import qm.remote_host
 import qm.test.resource
 import qm.test.result_reader
 import qm.test.result_stream
@@ -418,6 +399,7 @@ import qm.test.test
 __extension_bases = {
     'database' : qm.test.database.Database,
     'label' : qm.label.Label,
+    'remote_host' : qm.remote_host.RemoteHost,
     'resource' : qm.test.resource.Resource,
     'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
@@ -429,6 +411,20 @@ __extension_bases = {
 
 An extension class of a particular 'kind' must be derived from
 'extension_bases[kind]'."""
+
+extension_kinds = __extension_bases.keys()
+"""Names of different kinds of QMTest extension classes."""
+extension_kinds.sort()
+
+__class_caches = {}
+"""A dictionary of loaded class caches.
+
+The keys are the kinds in 'extension_kinds'.  The associated value
+is itself a dictionary mapping class names to class objects."""
+
+# Initialize the caches.
+for kind in extension_kinds:
+    __class_caches[kind] = {}
 
 ########################################################################
 # Local Variables:
