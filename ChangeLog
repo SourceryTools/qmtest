@@ -1,7 +1,7 @@
 2005-06-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/result.py (Result.NoteException): Quote exception
-	stirng. 
+	string. 
 
 	* qm/extension.py (Extension.Type.__init__): Fix overlong lines.
 	(make_dom_element): Fix typo in comment.
