@@ -1,5 +1,8 @@
 2005-06-10  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Use
+	__CheckExtensionKind. 
+
 	* qm/test/result.py (Result.NoteException): Quote exception
 	string. 
 

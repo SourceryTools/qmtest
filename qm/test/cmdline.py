@@ -1076,10 +1076,7 @@ Valid formats are %s.
         class_name = self.__arguments[1]
 
         # Check that the KIND is valid.
-        if kind not in base.extension_kinds:
-            raise qm.cmdline.CommandError, \
-                  qm.error("invalid extension kind",
-                           kind = kind)
+        self.__CheckExtensionKind(self, kind)
 
         # Check that the CLASS_NAME is well-formed.
         if class_name.count('.') != 1:
