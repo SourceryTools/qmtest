@@ -314,7 +314,8 @@ class Result:
             
         self.SetOutcome(outcome)
         self[Result.CAUSE] = cause
-        self[Result.EXCEPTION] = "%s: %s" % exc_info[:2]
+        self[Result.EXCEPTION] \
+            = self.Quote("%s: %s" % exc_info[:2])
         self[Result.TRACEBACK] \
             = self.Quote(qm.format_traceback(exc_info))
 
