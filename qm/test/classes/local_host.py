@@ -17,14 +17,14 @@
 
 import os
 import os.path
-from   qm.remote_host import RemoteHost
+from   qm.host import Host
 import shutil
 
 ########################################################################
 # Classes
 #######################################################################
 
-class LocalHost(RemoteHost):
+class LocalHost(Host):
     """A 'LocalHost' is the machine on which Python is running.
 
     The default directory for a 'LocalHost' is the current working

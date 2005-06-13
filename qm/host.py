@@ -1,11 +1,11 @@
 ########################################################################
 #
-# File:   remote_host.py
+# File:   host.py
 # Author: Mark Mitchell
 # Date:   2005-06-03
 #
 # Contents:
-#   RemoteHost
+#   Host
 #
 # Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -23,8 +23,8 @@ import os.path
 # Classes
 #######################################################################
 
-class RemoteHost(Extension):
-    """A 'RemoteHost' is a logical machine.
+class Host(Extension):
+    """A 'Host' is a logical machine.
 
     Each logical machine has a default directory.  When a file is
     uploaded to or downloaded from the machine, and a relative patch
@@ -32,12 +32,12 @@ class RemoteHost(Extension):
     Similarly, when a program is run on the remote machine, its
     initial working directory is the default directory.
 
-    The interface presented by 'RemoteHost' is a lowest common
+    The interface presented by 'Host' is a lowest common
     denominator.  The objective is not to expose all the functionality
     of any host; rather it is to provide an interface that can be used
     on many hosts."""
 
-    kind = "remote_host"
+    kind = "host"
     
     class Executable(RedirectedExecutable):
         """An 'Executable' is a simple redirected executable.

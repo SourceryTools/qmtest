@@ -27,8 +27,8 @@
  <class kind="label" name="file_label.FileLabel"/>
  <class kind="label" name="python_label.PythonLabel"/>
  <class kind="suite" name="explicit_suite.ExplicitSuite"/>
- <class kind="remote_host" name="local_host.LocalHost"/>
- <class kind="remote_host" name="ssh_host.SSHHost"/>
- <class kind="remote_host" name="ssh_host.RSHHost"/>
- <class kind="remote_host" name="simulator.Simulator"/>
+ <class kind="host" name="local_host.LocalHost"/>
+ <class kind="host" name="ssh_host.SSHHost"/>
+ <class kind="host" name="ssh_host.RSHHost"/>
+ <class kind="host" name="simulator.Simulator"/>
 </class-directory>

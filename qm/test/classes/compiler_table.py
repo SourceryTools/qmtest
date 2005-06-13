@@ -78,7 +78,7 @@ class CompilerTable(Resource):
 
     - 'CompilerTable.target'
 
-       An instance of 'RemoteHost' that can be used to run compiler
+       An instance of 'Host' that can be used to run compiler
        programs."""
 
     def SetUp(self, context, result):
@@ -123,8 +123,7 @@ class CompilerTable(Resource):
             if target_desc is None:
                 target = LocalHost({})
             else:
-                f = lambda n: qm.test.base.get_extension_class(n,
-                                                               "remote_host",
+                f = lambda n: qm.test.base.get_extension_class(n, "host",
                                                                None)
                 host_class, arguments \
                     = qm.extension.parse_descriptor(target_desc, f)

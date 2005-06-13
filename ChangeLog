@@ -1,3 +1,13 @@
+2005-06-13  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/remote_host.py: Rename to ...
+	* qm/host.py: ... this.  Replace "RemoteHost" with "Host"
+	throughout.
+	* qm/test/base.py: Adjust accordingly.
+	* qm/test/classes/classes.qmc: Likewise.
+	* qm/test/classes/compiler_table.py: Likewise.
+	* qm/test/classes/local_host.py: Likewise.
+
 2005-06-10  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/remote_host.py: New file.

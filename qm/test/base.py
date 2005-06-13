@@ -388,7 +388,7 @@ def _result_from_dom(node):
 
 import qm.test.database
 import qm.label
-import qm.remote_host
+import qm.host
 import qm.test.resource
 import qm.test.result_reader
 import qm.test.result_stream
@@ -398,8 +398,8 @@ import qm.test.test
 
 __extension_bases = {
     'database' : qm.test.database.Database,
+    'host' : qm.host.Host,
     'label' : qm.label.Label,
-    'remote_host' : qm.remote_host.RemoteHost,
     'resource' : qm.test.resource.Resource,
     'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
