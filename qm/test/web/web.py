@@ -237,10 +237,9 @@ class QMTestPage(DefaultDtmlPage):
 
 
     def IsFinished(self):
-        """Returns true if tests are still running.
+        """Return true iff no more results are forthcoming.
 
-        returns -- True if the data on this page should be considered
-        incomplete due to the fact that tests are still running."""
+        returns -- True if no more tests are running."""
 
         return 1
 
@@ -681,10 +680,9 @@ class DirPage(QMTestPage):
                                  sort=sort).AsUrl()
     
     def IsFinished(self):
-        """Returns true if tests are still running.
+        """Return true iff no more results are forthcoming.
 
-        returns -- True if the data on this page should be considered
-        incomplete due to the fact that tests are still running."""
+        returns -- True if no more tests are running."""
 
         return self.__is_finished
 
@@ -1468,10 +1466,9 @@ class TestResultsPage(QMTestPage):
 
 
     def IsFinished(self):
-        """Returns true if tests are still running.
+        """Return true iff no more results are forthcoming.
 
-        returns -- True if the data on this page should be considered
-        incomplete due to the fact that tests are still running."""
+        returns -- True if no more tests are running."""
 
         return self.__is_finished
 

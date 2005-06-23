@@ -95,8 +95,8 @@ class FileDatabase(Database):
         returns -- An instance of 'Suite' (or a derived class of
         'Suite') corresponding to 'suite_id'.
         
-        raises -- 'NoSuchSuiteError' if there is no test in the database
-        named 'test_id'."""
+        raises -- 'NoSuchSuiteError' if there is no suite in the database
+        named 'suite_id'."""
 
         path = self.GetSuitePath(suite_id)
         if not self._IsSuiteFile(path):
@@ -423,9 +423,9 @@ class FileDatabase(Database):
 class ExtensionDatabase(FileDatabase):
     """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
     entity (test, suite, resource) has a particular extension.  For
-    examples, if tests have the extension '.qmt', then all files ending
+    example, if tests have the extension '.qmt', then all files ending
     with '.qmt' are considered tests.  If an extension for a particular
-    kind of entity is not specified is the empty string, then all files
+    kind of entity is not specified or is the empty string, then all files
     will be considered to be that kind of entity.
 
     'ExtensionDatabase' is an abstract class."""

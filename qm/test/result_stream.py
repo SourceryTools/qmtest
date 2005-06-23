@@ -35,11 +35,7 @@ class ResultStream(qm.extension.Extension):
 
     'ResultStream' is an abstract class.
     
-    QMTest does not presently have a mechanism for extension in this
-    area.  However, in a future release of QMTest, you will be able to
-    define your own 'ResultStream'.  A typical reason to extend
-    'ResultStream' would be to write out test results in alternative
-    file format."""
+    """
 
     kind = "result_stream"
 

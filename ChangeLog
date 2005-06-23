@@ -1,3 +1,11 @@
+2005-06-23  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/cmdline.py: Enhance documentation for 'report' command.
+	* qm/test/file_database.py: Fix typos.
+	* qm/test/result_stream.py: Remove obsolete comment.
+	* qm/test/doc/reference.xml: Document 'report' command.
+	* qm/test/web/web.py: Fix incorrect documentation strings.
+
 2005-06-13  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/remote_host.py: Rename to ...

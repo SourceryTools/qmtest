@@ -1471,6 +1471,53 @@
    </section>
   </section> <!-- sec-testcmd-summarize -->
 
+  <section id="sec-testcmd-report">
+   <title><command>&qmtest-cmd; report</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>The <command>&qmtest-cmd; report</command> generates
+    an xml report from a set of test result files.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; report <option>-o</option></command>
+     <arg><replaceable>output</replaceable></arg>
+     <arg choice="opt" rep="repeat">
+      <arg choice="plain"><replaceable>report-file</replaceable></arg>
+      <arg choice="opt">-e <replaceable>expectation-file</replaceable></arg>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+    <para>The <command>&qmtest-cmd; report</command> extracts
+    information stored in one or more result files and generates
+    an xml report file from it. This report file is then typically
+    processed using xslt to generate html or pdf versions of the report.
+    </para>
+
+    <para>The <command>report</command> command accepts the
+    following options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term><option>-o</option> <replaceable>output file</replaceable></term>
+      <term>
+       <option>&dashdash;output</option> 
+       <replaceable>output-file</replaceable>
+      </term>
+      <listitem>
+       <para>The name of the file to write the report into.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </section>
+  </section> <!-- sec-testcmd-report -->
+
   <section id="sec-env-vars">
   <title>Environment Variables</title>
 

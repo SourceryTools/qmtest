@@ -288,6 +288,14 @@ class QMTest:
         "Specify the kind of extension class."
         )
 
+    report_output_option_spec = (
+        "o",
+        "output",
+        "FILE",
+        "Write test report to FILE (- for stdout)."
+        )
+
+
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -427,9 +435,10 @@ should not directly invoke QMTest with this option.
          "Generate report from one or more test results.",
          "[ result [-e expected] ]+",
          """
-Generates a test report.
+Generates a test report. The arguments are result files each optionally
+followed by '-e' and an expectation file.
          """,
-         (help_option_spec, output_option_spec)
+         (help_option_spec, report_output_option_spec)
          ),
 
         ("run",
