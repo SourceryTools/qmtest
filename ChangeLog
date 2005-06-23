@@ -1,5 +1,8 @@
 2005-06-23  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/share/xml/report.xslt: New stylesheet to generate html reports.
+	* setup.py: Fix installation paths.
+
 	* qm/__version.py: Increment version_info to (2,3,0).
 
 	* qm/test/cmdline.py: Enhance documentation for 'report' command.

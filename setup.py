@@ -61,7 +61,7 @@ def select_share_files(share_files, dir, files):
 
     'files' -- A list of the files contained in 'dir'."""
     
-    exts = (".txt", ".dtml", ".css", ".js", ".gif", ".dtd", ".mod")
+    exts = (".txt", ".dtml", ".css", ".js", ".gif", ".dtd", ".mod", ".xslt")
     files = [join(dir, f)
              for f in files
              if f == "CATALOG" or os.path.splitext(f)[1] in exts]
@@ -124,10 +124,10 @@ setup(name="qm",
                   # DTML files for the GUI.
                   ("share/qm/dtml/test", test_dtml_files),
                   # The documentation.
-                  ('share/qm/doc', ('README', 'COPYING')),
-                  ('share/qm/doc/test/html', ['qm/test/doc/html/*.html',
+                  ('share/doc/qm', ('README', 'COPYING')),
+                  ('share/doc/qm/test/html', ['qm/test/doc/html/*.html',
                                               'qm/test/doc/html/qm.css']),
-                  ('share/qm/doc/test/print', ["qm/test/doc/print/*.pdf"]),
+                  ('share/doc/qm/test/print', ["qm/test/doc/print/*.pdf"]),
                   # The tutorial.
                   ("share/qm/tutorial/test/tdb", tutorial_files),
                   ("share/qm/tutorial/test/tdb/QMTest",
