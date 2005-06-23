@@ -17,7 +17,7 @@
 # Variables
 ########################################################################
 
-version_info = (2, 2, 0)
+version_info = (2, 3, 0)
 """The version of QM as a tuple of (major, minor, release)."""
 
 version = "%d.%d" % version_info[:-1]

@@ -1,5 +1,7 @@
 2005-06-23  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/__version.py: Increment version_info to (2,3,0).
+
 	* qm/test/cmdline.py: Enhance documentation for 'report' command.
 	* qm/test/file_database.py: Fix typos.
 	* qm/test/result_stream.py: Remove obsolete comment.
