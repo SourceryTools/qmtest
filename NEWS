@@ -3,6 +3,23 @@ NEWS
 
 This file describes user-visible changes to QM.
 
+QM 2.3
+======
+
+There is now a "qmtest report" command-line option that can be used to
+create test reports from multiple result files.
+
+There is a new "host" extension kind (with a built-in set of predefined
+host types such as 'localhost.LocalHost', 'ssh_host.SSHHost', etc.)
+
+QMTest now installs its data into <prefix>/share/qm, and its documentation
+into <prefix>/share/doc/qm.
+
+QMTest has been made robust and more flexible.  In particular,
+QMTest now runs with Python 2.4, and is now suitable for scripting
+as a programmatic way to access and manipulate result (and expectation)
+files, instead of the command line interface.
+
 QM 2.2
 ======
 
