@@ -1,3 +1,7 @@
+2005-07-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.__ExecuteRegister): Fix typo.
+
 2005-06-23  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/share/xml/report.xslt: New stylesheet to generate html reports.
