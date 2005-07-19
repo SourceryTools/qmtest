@@ -1,5 +1,9 @@
 2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 
+	Revert:
+	2005-07-19  Mark Mitchell  <mark@codesourcery.com>
+	* qm/test/doc/manual.xml: Use DocBook 4.2.
+
 	* qm/test/doc/manual.xml: Use DocBook 4.2.
 	* qmdist/command/build_doc.py (find_file): Remove.
 	(build_doc.user_options): New variable.
