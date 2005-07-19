@@ -1,5 +1,8 @@
 2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/doc/reference.xml: Provide example of SetUp and CleanUp
+	methods for resources.
+
 	Revert:
 	2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 	* qm/test/doc/manual.xml: Use DocBook 4.2.
