@@ -476,14 +476,7 @@ class ShellScriptTest(ExecTestBase):
             # Write the script to the temporary file.
             script_file.write(self.script)
             script_file.close()
-            # If the context specifies a shell, use it.
-            if context.has_key("ShellScriptTest.script_shell"):
-                # Split the context value to build the argument list.
-                shell = qm.common.split_argument_list(
-                    context["ShellScriptTest.script_shell"])
-            else:
-                # Otherwise, use a platform-specific default.
-                shell = qm.platform.get_shell_for_script()
+            shell = self._GetShell(context)
             # Construct the argument list.  The argument list for the
             # interpreter is followed by the name of the script
             # temporary file, and then the arguments to the script.
@@ -495,6 +488,27 @@ class ShellScriptTest(ExecTestBase):
             # Clean up the script file.
             os.remove(self.__script_file_name)
 
+
+    def _GetShell(self, context):
+        """Return the shell to use to run this test.
+
+        'context' -- As for 'Test.Run'.
+        
+        returns -- A sequence of strings giving the path and arguments
+        to be supplied to the shell.  The default implementation uses
+        the value of the context property
+        'ShellScriptTest.script_shell', or, if that is not defined, a
+        platform-specific default."""
+        
+        # If the context specifies a shell, use it.
+        if context.has_key("ShellScriptTest.script_shell"):
+            # Split the context value to build the argument list.
+            return qm.common.split_argument_list(
+                context["ShellScriptTest.script_shell"])
+
+        # Otherwise, use a platform-specific default.
+        return qm.platform.get_shell_for_script()
+        
 
 
 ########################################################################

@@ -1,5 +1,9 @@
 2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/command.py (ShellScriptTest._GetShell): New
+	function.
+	(ShellScriptTest.Run): Use it.
+
 	* qm/test/file_database.py: Fix typo in documentation.
 
 2005-07-06  Stefan Seefeld  <stefan@codesourcery.com>
