@@ -1,3 +1,7 @@
+2005-07-19  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/file_database.py: Fix typo in documentation.
+
 2005-07-06  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* NEWS: Report improvements in version 2.3. 

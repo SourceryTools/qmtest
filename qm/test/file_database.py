@@ -421,7 +421,7 @@ class FileDatabase(Database):
 
 
 class ExtensionDatabase(FileDatabase):
-    """An 'ExtensionFileDatabase' is a 'FileDatabase' where each kind of
+    """An 'ExtensionDatabase' is a 'FileDatabase' where each kind of
     entity (test, suite, resource) has a particular extension.  For
     example, if tests have the extension '.qmt', then all files ending
     with '.qmt' are considered tests.  If an extension for a particular
