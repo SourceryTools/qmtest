@@ -1,5 +1,19 @@
 2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/doc/manual.xml: Use DocBook 4.2.
+	* qmdist/command/build_doc.py (find_file): Remove.
+	(build_doc.user_options): New variable.
+	(build_doc.xml_dcl_paths): Likewise.
+	(build_doc.dtd_dirs): Likewise.
+	(build_doc.stylesheet_dirs): Likewise.
+	(build_doc.initialize_options): New function.
+	(build_doc.finalize_options): Likewise.
+	(build_doc.call_jade): Remove dcl parameter.  Use Jade options
+	provided by the user.
+	(build_doc.run): Honor user direction regarding what
+	documentation to build.
+	(build_doc.find_file): New function.
+	
 	* qm/test/classes/command.py (ShellScriptTest._GetShell): New
 	function.
 	(ShellScriptTest.Run): Use it.
