@@ -74,15 +74,13 @@ class ExecTest(Test):
 
     def Run(self, context, result):
 
-        # Adjust the source code.
-        if self.source is None:
-            self.source = ""
-        else:
-            # Make sure the source ends with a newline.  A user is
-            # likely to be confused by the error message if it's
-            # missing. 
-            if self.source[-1] != "\n":
-                self.source = self.source + "\n" 
+        # Adjust the source code.  Make sure the source ends with a
+        # newline.  A user is likely to be confused by the error message
+        # if it's missing.
+        if not self.source:
+            self.source = "\n"
+        elif self.source[-1] != "\n":
+            self.source += "\n" 
         global_namespace, local_namespace = make_namespaces(context)
         # Execute the source code.
         try:

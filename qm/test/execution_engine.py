@@ -549,6 +549,19 @@ class ExecutionEngine:
         if not descriptor:
             return 0
 
+        # Check that all the prerequisites listed are actually present
+        # in the database.  We may not actually run all of them, but if
+        # they're completely missing, that indicates a problem with
+        # either the descriptor or the database.
+        for p in descriptor.GetPrerequisites():
+            if not self.__database.HasTest(p):
+                self.__AddUntestedResult(
+                    test_id,
+                    qm.message("prerequisite not in database",
+                               prerequisite = p)
+                    )
+                return 0
+        
         # Ignore prerequisites that are not going to be run at all.
         prereqs_iter = iter(descriptor.GetPrerequisites())
         relevant_prereqs = filter(self.__statuses.has_key, prereqs_iter)

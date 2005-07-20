@@ -1,5 +1,14 @@
 2005-07-19  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/execution_engine.py (ExecutionEngine.__AddTestToStack):
+	If a test prerequisite does not exist, give the test an error
+	outcome.
+	* qm/test/share/messages/diagnostics.txt (prerequisite not in
+	database): New message.
+	* tests/regress/bad_prereq: New test.
+
+	* qm/test/classes/python.py (ExecTest.Run): Handle empty input.
+
 	* qm/test/doc/reference.xml: Provide example of SetUp and CleanUp
 	methods for resources.
 

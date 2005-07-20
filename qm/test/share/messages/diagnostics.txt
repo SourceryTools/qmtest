@@ -41,11 +41,11 @@ This test depends on itself, either directly or by way of other tests.
 
 @ error loading xml resource
 A problem occurred while loading the XML resource file "%(resource_id)s":
-%(message)s.
+%(message)s
 
 @ error loading xml test
 A problem occurred while loading the XML test file "%(test_id)s":
-%(message)s.
+%(message)s
 
 @ execution terminated
 Termination was requested before this test was executed.
@@ -187,6 +187,9 @@ The following traceback may be helpful to the extension class implementor.
 @ not test database
 "%(path)s" is not a test database.
 
+@ prerequisite not in database
+The non-existant test "%(prerequisite)s" is listed as a prerequisite.
+ 
 @ seed not integer
 The random number generator seed you specified, "%(seed)s", is not an
 integer. 
