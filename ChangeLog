@@ -1,3 +1,21 @@
+2005-07-21  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/extension.py (Extension.GetClassName): New method.
+	(Extension.GetExplicitArguments): Likewise.
+	(Extension.MakeDomEelement): Use GetExplicitArguments.
+	(parse_descriptor): Add extension_loader.
+	* qm/test/cmdline.py (qm.test.runnable.Runnable): Import it.
+	(QMTest.extension_id_option_spec): New variable.
+	(QMTest.conflicting_option_specs): Update.
+	(QMTest.__ExecuteCreate): Support writing extensions to the
+	database.
+	* qm/test/database.py (Database.GetExtension): Fix typo.
+	* qm/test/doc/reference.xml: Document --id option to "qmtest
+	create".
+	* qm/test/share/messages/diagnostics.txt (db not modifiable): New
+	message.
+	(no db specified): Update message.
+
 2005-07-20  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/database.py (qm.test.resource.Resource): Import it.

@@ -689,6 +689,14 @@
     extensions</command>.  The <replaceable>kind</replaceable>
     must be one of these extension kinds.</para>
 
+    <para>If the <option>&dashdash;id</option> option is provided then
+    the new instance is created in the test database.  The argument to
+    the <option>&dashdash;id</option> option gives the name of the
+    instance.  Otherwise, the extension is written as XML to the
+    filename specified by <option>&dashdash;output</option> option, or
+    to the standard output if no <option>&dashdash;output</option> is
+    specified.</para>
+
     <para>The descriptor specifies an extension class and (optionally)
     attributes for that extension class.  The form of the descriptor is
     <command><replaceable>class</replaceable>(<replaceable>attributes</replaceable>)</command>,
@@ -698,15 +706,19 @@
     are no attributes, the parentheses may be omitted.</para>
 
     <para>The <replaceable>class</replaceable> may be either the path
-    to an extension file or a QMTest class name in the form
+    to an extensing extension or a QMTest class name in the form
     <replaceable>module.class</replaceable>.  If the
-    <replaceable>class</replaceable> is the path to an extension file
-    (such as an existing test or resource file), the class name used
-    is the one provided in the file; otherwise the class named used is
-    the name provided on the command line.</para>
+    <option>&dashdash;id</option> option has been provided, QMTest
+    will look for an existing extension in the test database named
+    <replaceable>class</replaceable>.  If the
+    <option>&dashdash;id</option> option has not been provided, QMTest
+    will look for an XML file named <replaceable>class</replaceable>.
+    In either case, if an existing extension cannot be found, the
+    <replaceable>class</replaceable> is interepreted as the name of an
+    extension class.</para>
 
     <para>The attributes used to construct the extension instance come
-    from three sources: the attributes in the extension file (if the
+    from three sources: the attributes in the extant extension (if the
     <replaceable>class</replaceable> is the path to an extension
     file), the <option>&dashdash;attribute</option> options provided
     on the command line, and the explicit attributes provided in the
@@ -716,10 +728,6 @@
     provided in the descriptor, the extension file, or the rightmost
     <option>&dashdash;attribute</option> present on the command
     line.</para>
-
-    <para>The new extension file is written to the file specified with
-    the <option>&dashdash;output</option> option, or to the standard
-    output if no <option>&dashdash;output</option> is specified.</para>
 
     <para>The <command>create</command> command accepts these
     options:</para>    
@@ -740,13 +748,25 @@
      </varlistentry>
 
      <varlistentry>
+      <term><option>-i</option> <replaceable>id</replaceable></term>
+      <term>
+       <option>&dashdash;id</option> 
+       <replaceable>id</replaceable>
+      </term>
+      <listitem>
+       <para>Add the extension instance to the database, using 
+       <replaceable>id</replaceable> as the name of the instance.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
       <term><option>-o</option> <replaceable>file</replaceable></term>
       <term>
        <option>&dashdash;output</option> 
        <replaceable>file</replaceable>
       </term>
       <listitem>
-       <para>Write a description of the extension instance to
+       <para>Write the extension instance to
        <replaceable>file</replaceable>.</para>
       </listitem>
      </varlistentry>
@@ -763,6 +783,24 @@
          result_stream text_result_stream.TextResultStream(filename="rs")]]></userinput></screen>
      creates a file called <filename>rs</filename> containing an
      instance of <classname>TextResultStream</classname>.
+    </para>
+
+    <para>
+     This command:
+     <screen>
+      &prompt;<userinput>qmtest create --id=simple -a program=testprog test command.ExecTest</userinput>
+     </screen>
+     creates a test named &quot;simple&quot; that executes the program 
+     <filename>testprog</filename>:
+    </para>
+
+    <para>
+     This command:
+     <screen>
+      &prompt;<userinput>qmtest create --id=copy test simple</userinput>
+     </screen>
+     creates a copy of the &quot;simple&quot; test, naming the new version
+     &quot;copy&quot;.
     </para>
    </section>
 

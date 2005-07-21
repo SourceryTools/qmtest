@@ -36,6 +36,9 @@ The "%(file)s" target file could not be loaded.
 @ db path doesn't exist
 "%(path)s" does not exist. 
 
+@ db not modifiable
+The test database is not modifiable.
+
 @ dependency cycle
 This test depends on itself, either directly or by way of other tests.
 
@@ -146,8 +149,8 @@ You must specify the location of the test database.
 
   * Specify the '--db-path' option with the path to the database.
 
-  * Or, set the '%(envvar)s' environment variable to the path to the
-    database. 
+  * Or, set the 'QMTEST_DB_PATH' environment variable to the path 
+    to the database. 
 
 @ loading class
 QMTest will load '%(class_name)s' from '%(file_name)s'.

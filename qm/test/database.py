@@ -622,7 +622,7 @@ class Database(qm.extension.Extension):
 
         for kind in (Database.TEST, Database.RESOURCE):
             try:
-                item = self.GetItem(kind, id).GetItem()
+                return self.GetItem(kind, id).GetItem()
             except NoSuchItemError:
                 pass
             

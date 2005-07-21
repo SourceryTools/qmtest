@@ -165,6 +165,36 @@ class Extension(object):
         return field.GetDefaultValue()
 
 
+    def GetClassName(self):
+        """Return the name of the extension class.
+
+        returns -- A string giving the name of this etension class."""
+
+        return get_extension_class_name(self.__class__)
+
+        
+    def GetExplicitArguments(self):
+        """Return the arguments to this extension instance.
+
+        returns -- A dictionary mapping argument names to their
+        values.  Computed arguments are ommitted from the
+        dictionary."""
+        
+        # Get all of the arguments.
+        arguments = get_class_arguments_as_dictionary(self.__class__)
+        # Determine which subset of the 'arguments' have been set
+        # explicitly.
+        explicit_arguments = {}
+        for name, field in arguments.items():
+            # Do not record computed fields.
+            if field.IsComputed():
+                continue
+            if self.__dict__.has_key(name):
+                explicit_arguments[name] = self.__dict__[name]
+
+        return explicit_arguments
+
+        
     def MakeDomElement(self, document, element = None):
         """Create a DOM node for 'self'.
 
@@ -179,19 +209,8 @@ class Extension(object):
         extension class.  The caller is responsible for attaching it to
         the 'document'."""
 
-        # Get all of the arguments.
-        arguments = get_class_arguments_as_dictionary(self.__class__)
-        # Determine which subset of the 'arguments' have been set
-        # explicitly.
-        explicit_arguments = {}
-        for name, field in arguments.items():
-            # Do not record computed fields.
-            if field.IsComputed():
-                continue
-            if self.__dict__.has_key(name):
-                explicit_arguments[name] = self.__dict__[name]
-
-        return make_dom_element(self.__class__, explicit_arguments,
+        return make_dom_element(self.__class__,
+                                self.GetExplicitArguments(),
                                 document, element)
 
 
@@ -237,6 +256,7 @@ def get_class_arguments(extension_class):
 
     assert issubclass(extension_class, Extension)
     return extension_class._argument_list        
+
 
 def get_class_arguments_as_dictionary(extension_class):
     """Return the arguments associated with 'extension_class'.
@@ -489,21 +509,25 @@ def read_extension_file(file, class_loader, attachment_store = None):
                              class_loader,
                              attachment_store)
 
-    
-def parse_descriptor(descriptor, class_loader):
+
+def parse_descriptor(descriptor, class_loader, extension_loader = None):
     """Parse a descriptor representing an instance of 'Extension'.
 
     'descriptor' -- A string representing an instance of 'Extension'.
     The 'descriptor' has the form 'class(arg1 = "val1", arg2 = "val2",
     ...)'.  The arguments and the parentheses are optional.
 
-    If 'class' names a file in the file system, it is assumed to be an
-    extension file.  Any attributes provided in the descriptor
-    override those in the file.
+    'class_loader' -- A callable that, when passed the name of the
+    extension class, will return the actual Python class object.
 
-    'class_loader' -- A callable.  The callable will be passed the
-    name of the extension class and must return the actual class
-    object.
+    'extension_loader' -- A callable that loads an existing extension
+    given the name of that extension and returns a tuple '(class,
+    arguments)' where 'class' is a class derived from 'Extension'.  If
+    'extension_loader' is 'None', or if the 'class' returned is
+    'None', then if a file exists named 'class', the extension is read
+    from 'class' as XML.  Any arguments returned by the extension
+    loader or read from the file system are overridden by the
+    arguments explicitly provided in the descriptor.
 
     returns -- A pair ('extension_class', 'arguments') containing the
     extension class (a class derived from 'Extension') and the
@@ -522,13 +546,20 @@ def parse_descriptor(descriptor, class_loader):
         # parenthesis.
         class_name = descriptor[:open_paren]
 
-    # Load the extension class.
-    if os.path.exists(class_name):
-        extension_class, orig_arguments \
-            = read_extension_file(open(class_name), class_loader)
-    else:
-        extension_class = class_loader(class_name)
-        orig_arguments = {}
+    # Load the extension, if it already exists.
+    extension_class = None
+    if extension_loader:
+        extension = extension_loader(class_name)
+        if extension:
+            extension_class = extension.__class__
+            orig_arguments = extension.GetExplicitArguments()
+    if not extension_class:
+        if os.path.exists(class_name):
+            extension_class, orig_arguments \
+                = read_extension_file(open(filename), class_loader)
+        else:
+            extension_class = class_loader(class_name)
+            orig_arguments = {}
 
     arguments = {}
     

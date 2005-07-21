@@ -29,6 +29,7 @@ from   qm.test.result import Result
 from   qm.test.context import *
 from   qm.test.execution_engine import *
 from   qm.test.result_stream import ResultStream
+from   qm.test.runnable import Runnable
 from   qm.test.report import ReportGenerator
 from   qm.trace import *
 import qm.test.web.web
@@ -139,6 +140,13 @@ class QMTest:
         "output",
         "FILE",
         "Write the extension to FILE.",
+        )
+
+    extension_id_option_spec = (
+        "i",
+        "id",
+        "NAME",
+        "Write the extension to the database as NAME.",
         )
         
     output_option_spec = (
@@ -300,6 +308,7 @@ class QMTest:
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
         ( concurrent_option_spec, targets_option_spec ),
+        ( extension_output_option_spec, extension_id_option_spec ),
         )
 
     global_options_spec = [
@@ -317,11 +326,15 @@ class QMTest:
          The EXTENSION-KIND indicates what kind of extension to
          create; it must be one of """ + __extension_kinds_string + """.
 
-         The CLASS-NAME indicates the name of the extension class.  It
-         must have the form 'MODULE.CLASS'.  For a list of available
-         extension classes use "qmtest extensions".  If the extension
-         class takes arguments, those arguments can be specified after
-         the CLASS-NAME as show above.
+         The CLASS-NAME indicates the name of the extension class, or
+         the name of an existing extension object.  If the CLASS-NAME
+         is the name of a extension in the test database, then the 
+
+         In the former case, it must have the form 'MODULE.CLASS'.  For
+         a list of available extension classes use "qmtest extensions".
+         If the extension class takes arguments, those arguments can be
+         specified after the CLASS-NAME as show above.  In the latter
+         case,
 
          Any "--attribute" options are processed before the arguments
          specified after the class name.  Therefore, the "--attribute"
@@ -329,12 +342,15 @@ class QMTest:
          CLASS-NAME.  If no attributes are specified, the parentheses
          following the 'CLASS-NAME' can be omitted.
 
-         The extension instance is written to the file given by the
-         "--output" option, or to the standard output if no "--output"
-         option is present.""",
+         If the "--id" option is given, the extension is written to the
+         database.  Otherwise, if the "--output" option is given, the
+         extension is written as XML to the file indicated.  If neither
+         option is given, the extension is written as XML to the
+         standard output.""",
          ( attribute_option_spec,
            help_option_spec,
-           extension_output_option_spec,
+           extension_id_option_spec,
+           extension_output_option_spec
            ),
          ),
            
@@ -884,32 +900,53 @@ Valid formats are %s.
         kind = self.__arguments[0]
         self.__CheckExtensionKind(kind)
 
-        # Get the --attribute options.
-        arguments = self.__GetAttributeOptions()
+        extension_id = self.GetCommandOption("id")
+        if extension_id is not None:
+            if not database:
+                raise QMException, qm.error("no db specified")
+            if not database.IsModifiable():
+                raise QMException, qm.error("db not modifiable")
+            extension_loader = database.GetExtension
+        else:
+            extension_loader = None
 
+        class_loader = lambda n: \
+            qm.test.base.get_extension_class(n, kind, database)
+        
         # Process the descriptor.
         (extension_class, more_arguments) \
              = (qm.extension.parse_descriptor
-                (self.__arguments[1],
-                 lambda n: \
-                     qm.test.base.get_extension_class(n, kind, database)))
+                (self.__arguments[1], class_loader, extension_loader))
 
         # Validate the --attribute options.
+        arguments = self.__GetAttributeOptions()
         arguments = qm.extension.validate_arguments(extension_class,
                                                     arguments)
         # Override the --attribute options with the arguments provided
         # as part of the descriptor.
         arguments.update(more_arguments)
 
-        # Figure out what file to use.
-        filename = self.GetCommandOption("output")
-        if filename is not None:
-            file = open(filename, "w")
+        if extension_id is not None:
+            # Create the extension instance.  Objects derived from
+            # Runnable require magic additional arguments.
+            if issubclass(extension_class, Runnable):
+                extras = { Runnable.EXTRA_ID : extension_id, 
+                           Runnable.EXTRA_DATABASE : database }
+            else:
+                extras = {}
+            extension = extension_class(arguments, **extras)
+            # Write the extension to the database.
+            database.WriteExtension(extension_id, extension)
         else:
-            file = sys.stdout
-                                     
-        # Write out the file.
-        qm.extension.write_extension_file(extension_class, arguments, file)
+            # Figure out what file to use.
+            filename = self.GetCommandOption("output")
+            if filename is not None:
+                file = open(filename, "w")
+            else:
+                file = sys.stdout
+            # Write out the file.
+            qm.extension.write_extension_file(extension_class, arguments,
+                                              file)
 
         return 0
     
