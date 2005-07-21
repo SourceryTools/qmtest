@@ -2448,8 +2448,8 @@
   <para>A test database class is a Python class that is derived from
   &database_class;, which is itself derived from
   <classname>Extension</classname>.  To create a new database class,
-  you must define methods that read and write tests, resources, and
-  suites.</para>
+  you must define methods that read and write
+  <classname>Extension</classname> instances.</para>
 
   <para>The database is also responsible for determining how tests
   (and other entities stored in the database) are named.  Each item
@@ -2461,89 +2461,66 @@
   domain and the way in which the tests will actually be
   stored.</para>
   
-  <para>The database class must have a <function>GetTest</function>
-  function which retrieves a test from the database.  The
-  <parameter>test_id</parameter> parameter provide the name of the
-  test.  The <function>GetTest</function> function returns a
-  &test_descriptor_class;.
-  <footnote><para><function>GetTest</function> returns a
-  <classname>TestDescriptor</classname>, rather than a
-  <classname>Test</classname>, because that allows QMTest to avoid
-  loading in the test class.  If you are running many tests in
-  parallel, on many different machines, this indirection makes QMTest
-  more effficient; QMTest only needs to load a particular test class
-  on a particular machine if an instance of that class is being run
-  on that machine.</para></footnote> A
-  <classname>TestDescriptor</classname> indicates the test class, and
-  the arguments to that test class.  QMTest uses that information to
-  instantiate an instance of the test class itself as
-  appropriate.</para>
+  <para>The database class must have a
+  <function>GetExtension</function> method which retrieves an instance
+  of <classname>Extension</classname> given the name of the instance.
+  If your database is modifiable, you must also provide
+  <function>WriteExtension</function> and
+  <function>RemoveExtension</function> methods.  For historical
+  reasons, your database class must also set the class variable
+  <varname>_is_generic_database</varname> to true.</para> </section>
+ <!-- sec-ref-writing-database-classes -->
 
-  <para>The <function>Write</function> function is the inverse of
-  <function>GetTest</function>.  The test database is responsible for
-  storing the <classname>Test</classname> provided.  The name of test
-  can be obtained by calling <function>GetId</function> on the
-  <classname>Test</classname>.  When the <function>Remove</function>
-  function is called the database is responsible for removing the test
-  named by the <parameter>id</parameter> parameter.</para>
+ <section id="sec-registering-extension-class">
+  <title>Registering an Extension Class</title>
 
-  <para>The functions that handle resources are analogous to those
-  for tests.  For exmaple, <function>GetResource</function> plays the
-  same role for resources as <function>GetTest</function> does for
-  tests.</para>
-  
- </section> <!-- sec-ref-writing-database-classes -->
+  <para>To use your test or resource class, you must place the Python
+  module file containing it in a directory where &qmtest; can find
+  it.  &qmtest; looks in three places when loading
+  extension classes:</para>
 
-  <section id="sec-registering-extension-class">
-   <title>Registering an Extension Class</title>
+  <itemizedlist>
+   <listitem>
+    <para>If the environment variable <envar>QMTEST_CLASS_PATH</envar>
+    is defined, &qmtest first checks any directories listed in it.
+    This value of this environment variable should be a list of
+    directories to check for the module file, in the same format as
+    the standard <envar>PATH</envar> environment variable.</para>
+   </listitem>
 
-   <para>To use your test or resource class, you must place the Python
-   module file containing it in a directory where &qmtest; can find
-   it.  &qmtest; looks in three places when loading
-   extension classes:</para>
+   <listitem>
+    <para>A test database may specify additional locations to check.</para>
+   </listitem>
 
-   <itemizedlist>
-    <listitem>
-     <para>If the environment variable <envar>QMTEST_CLASS_PATH</envar>
-     is defined, &qmtest first checks any directories listed in it.
-     This value of this environment variable should be a list of
-     directories to check for the module file, in the same format as
-     the standard <envar>PATH</envar> environment variable.</para>
-    </listitem>
+   <listitem>
+    <para>QMTest checks the configuration directory (the subdirectory
+    named <filename>QMTest</filename> of a test database).</para>
+   </listitem>
 
-    <listitem>
-     <para>A test database may specify additional locations to check.</para>
-    </listitem>
+   <listitem>
+    <para>Finally, &qmtest; checks a standard directory.  This
+    directory, installed with &qmtest;, contains modules with the
+    standard test classes described in <xref
+    linkend="sec-ref-classes"/>.</para>
+   </listitem>
+  </itemizedlist>
 
-    <listitem>
-     <para>QMTest checks the configuration directory (the subdirectory
-     named <filename>QMTest</filename> of a test database).</para>
-    </listitem>
+  <para>You should generally place module files containing your test
+  classes in the test database's <filename>QMTest</filename>
+  directory, unless you plan to use the test classes in more than one
+  test database.</para>
 
-    <listitem>
-     <para>Finally, &qmtest; checks a standard directory.  This
-     directory, installed with &qmtest;, contains modules with the
-     standard test classes described in <xref
-     linkend="sec-ref-classes"/>.</para>
-    </listitem>
-   </itemizedlist>
+  <para>You must use the <command>&qmtest-cmd; register</command>
+  command to register your new extension class.  You must perform
+  this step no matter where you place the module containing your
+  extension class.</para>
 
-   <para>You should generally place module files containing your test
-   classes in the test database's <filename>QMTest</filename>
-   directory, unless you plan to use the test classes in more than one
-   test database.</para>
+  <para>You can refer to the new extension class using the syntax
+  <classname>module.Class</classname>, where
+  <classname>module</classname> is the name of the module and
+  <classname>Class</classname> is the name of the class.</para>
 
-   <para>You must use the <command>&qmtest-cmd; register</command>
-   command to register your new extension class.  You must perform
-   this step no matter where you place the module containing your
-   extension class.</para>
-
-   <para>You can refer to the new extension class using the syntax
-   <classname>module.Class</classname>, where
-   <classname>module</classname> is the name of the module and
-   <classname>Class</classname> is the name of the class.</para>
-
-  </section> <!-- sec-registering-extension-class -->
+ </section> <!-- sec-registering-extension-class -->
 
 </chapter> <!-- chap-test-extension -->
 

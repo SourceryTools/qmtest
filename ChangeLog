@@ -1,5 +1,16 @@
 2005-07-20  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/database.py (qm.test.resource.Resource): Import it.
+	(qm.test.suite.Suite): Likewise.
+	(Database._is_generic_database): New
+	variable.
+	(Database.GetExtension): New function.
+	(Database.GetTest): Use it.
+	(Database.GetResource): Likewise.
+	(Database.GetSuite): Likewise.
+	* qm/test/doc/reference.xml: Update information about writing
+	database classes.
+
 	* qm/executable.py (Executable.Spawn): Initialize self.__child.
 	(Executable._GetChildPID): Adjust documentation to reflect that
 	this function may return None.

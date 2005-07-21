@@ -26,6 +26,8 @@ from   qm.label import *
 from   qm.test.base import *
 from   qm.test.directory_suite import DirectorySuite
 from   qm.test.runnable import Runnable
+from   qm.test.resource import Resource
+from   qm.test.suite import Suite
 from   qm.test.test import Test
 
 ########################################################################
@@ -495,6 +497,15 @@ class Database(qm.extension.Extension):
 
     This map is indexed by the 'ITEM_KINDS'; the value indicates the
     exception class to be used when the indicated kind cannot be found."""
+
+    _is_generic_database = False
+    """True if this database implements 'GetExtension' as a primitive.
+
+    Databases should implement 'GetExtension' and then override
+    '_is_generic_database', setting it to 'True'.  However, legacy
+    databases implemented 'GetTest', 'GetResource', and 'GetSuite' as
+    primivites.  These legacy databases should not override
+    '_generic_database'."""
     
     kind = "database"
     """The 'Extension' kind."""
@@ -592,7 +603,65 @@ class Database(qm.extension.Extension):
 
         return components
     
-                
+
+    # Generic methods that deal with extensions.
+    
+    def GetExtension(self, id):
+        """Return the extension object named 'id'.
+
+        'id' -- The label for the extension.
+
+        returns -- The instance of 'Extension' with the indicated name,
+        or 'None' if there is no such entity.
+
+        Database classes should override this method, and then define
+        'GetTest', 'GetResource', and 'GetSuite' in terms of this
+        method.  However, for backwards compatibility, this base class
+        implements this generic method in terms of the special-purpose
+        methods."""
+
+        for kind in (Database.TEST, Database.RESOURCE):
+            try:
+                item = self.GetItem(kind, id).GetItem()
+            except NoSuchItemError:
+                pass
+            
+        try:
+            return self.GetSuite(id)
+        except NoSuchSuiteError:
+            pass
+
+        return None
+        
+            
+    def RemoveExtension(self, id, kind):
+        """Remove the extension 'id' from the database.
+
+        'id' -- A label for the 'Extension' instance stored in the
+        database.
+
+        'kind' -- The kind of 'Extension' stored with the given 'id'."""
+
+        raise NotImplementedError
+        
+        
+    def WriteExtension(self, id, extension):
+        """Store 'extension' in the database, using the name 'id'.
+
+        'id' -- A label for the 'extension'.
+        
+        'extension' -- An instance of 'Extension'.
+
+        The 'extension' is stored in the database.  If there is a
+        previous item in the database with the same id, it is removed
+        and replaced with 'extension'.  Some databases may not be able
+        to store all 'Extension' instances; those database must throw an
+        exception when an attempt is made to store such an
+        'extension'."""
+
+        raise NotImplementedError
+        
+        
     # Methods that deal with tests.
     
     def GetTest(self, test_id):
@@ -605,6 +674,14 @@ class Database(qm.extension.Extension):
         raises -- 'NoSuchTestError' if there is no test in the database
         named 'test_id'."""
 
+        if self._is_generic_database:
+            test = self.GetExtension(test_id)
+            if isinstance(test, Test):
+                return TestDescriptor(self,
+                                      test_id,
+                                      test.GetClassName(),
+                                      test.GetExplicitArguments())
+        
         raise NoSuchTestError(test_id)
 
 
@@ -667,6 +744,11 @@ class Database(qm.extension.Extension):
         if suite_id == "":
             return DirectorySuite(self, "")
 
+        if self._is_generic_database:
+            suite = GetExtension(suite_id)
+            if isinstance(suite, Suite):
+                return suite
+            
         raise NoSuchSuiteError(suite_id)
 
 
@@ -726,6 +808,14 @@ class Database(qm.extension.Extension):
         raises -- 'NoSuchResourceError' if there is no resource in the
         database named 'resource_id'."""
 
+        if self._is_generic_database:
+            resource = self.GetExtension(resource_id)
+            if isinstance(resource, Resource):
+                return ResourceDescriptor(self,
+                                          resource_id,
+                                          resource.GetClassName(),
+                                          resource.GetExplicitArguments())
+            
         raise NoSuchResourceError(resource_id)
 
 
@@ -953,37 +1043,6 @@ class Database(qm.extension.Extension):
         return test_ids.keys(), suite_ids.keys()
 
 
-    def RemoveExtension(self, id, kind):
-        """Remove the extension 'id' from the database.
-
-        'id' -- A label for the 'Extension' instance stored in the
-        database.
-
-        'kind' -- The kind of 'Extension' stored with the given 'id'.
-        Some databases store different kinds of 'Extension' in different
-        namespaces so that it is possible for there to be more than one
-        'Extension' with the same 'id' in a single database."""
-
-        raise NotImplementedError
-        
-        
-    def WriteExtension(self, id, extension):
-        """Store 'extension' in the database, using the name 'id'.
-
-        'id' -- A label for the 'extension'.
-        
-        'extension' -- An instance of 'Extension'.
-
-        The 'extension' is stored in the database.  If there is a
-        previous item in the database with the same id', it is removed
-        and replaced with 'extension'.  Some databases may not be able
-        to store all 'Extension' instances; those database must throw an
-        exception when an attempt is made to store such an
-        'extension'."""
-
-        raise NotImplementedError
-        
-        
     def IsModifiable(self):
         """Returns true iff this database is modifiable.
 
