@@ -214,7 +214,7 @@ class DGTest(DejaGNUTest):
         output = self._PruneOutput(output)
             
         # Remove leading blank lines.
-        output = re.sub(r"\n+", "", output)
+        output = re.sub(r"^\n+", "", output)
         # If there's any output left, the test fails.
         message = self._name + " (test for excess errors)"
         if self._excess_errors_expected:

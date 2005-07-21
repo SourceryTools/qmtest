@@ -1,5 +1,8 @@
 2005-07-21  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/dg_test.py (DGTest._RunDGToolPortion): Fix
+	typo.
+
 	* qm/extension.py (Extension.GetClassName): New method.
 	(Extension.GetExplicitArguments): Likewise.
 	(Extension.MakeDomEelement): Use GetExplicitArguments.
