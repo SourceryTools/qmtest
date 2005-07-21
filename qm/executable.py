@@ -128,6 +128,11 @@ class Executable(object):
         # Initialize the parent.
         startupinfo = self._InitializeParent()
 
+        # Initialize self.__child so that if "fork" or "CreateProcess"
+        # throws an exception our caller can tell that there is no
+        # child process to kill.
+        self.__child = None
+        
         if sys.platform == "win32":
             # Compute the command line.  The Windows API uses a single
             # string as the command line, rather than an array of
@@ -354,7 +359,10 @@ class Executable(object):
         """Return the process ID for the child process.
 
         returns -- The process ID for the child process.  (On Windows,
-        the value returned is the process handle.)"""
+        the value returned is the process handle.)  Returns 'None' if
+        the child has not yet been created, or if something went awry
+        when creating it.  For example, if 'os.fork' throws an
+        exception, this value will return 'None'."""
 
         return self.__child
     
@@ -549,7 +557,9 @@ class TimeoutExecutable(Executable):
         finally:
             if self.__UseSeparateProcessGroupForChild():
                 # Clean up the monitoring program; it is no longer needed.
-                os.kill(-self._GetChildPID(), signal.SIGKILL)
+                child_pid = self._GetChildPID()
+                if child_pid is not None:
+                    os.kill(-child_pid, signal.SIGKILL)
                 if self.__monitor_pid is not None:
                     os.waitpid(self.__monitor_pid, 0)
             elif self.__timeout >= 0 and sys.platform == "win32":

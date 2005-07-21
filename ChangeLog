@@ -1,5 +1,11 @@
 2005-07-20  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/executable.py (Executable.Spawn): Initialize self.__child.
+	(Executable._GetChildPID): Adjust documentation to reflect that
+	this function may return None.
+	(TimeoutExecutable.Run): If the child is None, do not try to kill
+	it.
+
 	* qm/test/doc/reference.xml: Add documentation about
 	prerequisites.
 
