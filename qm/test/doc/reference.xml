@@ -1171,6 +1171,72 @@
 
   </section> <!-- sec-testcmd-extensions -->
 
+  <section id="sec-testcmd-ls">
+   <title><command>&qmtest-cmd; ls</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>List the contents of the test database.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; ls</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <arg choice="opt" rep="repeat">
+      <replaceable>name</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+
+    <para>The <command>&qmtest-cmd; ls</command> lists the contents of
+    the database, just as the UNIX <command>ls</command> command lists the
+    contents of the filesystem.  If this command is used with no
+    options, QMTest will list the names of the entries in the root
+    directory of the test database.  If one or more names are
+    supplied, then QMTest will list those items, rather than the root
+    directory.  If a name refers to a directory, then the contents of
+    that directory will be displayed.</para>
+
+    <para>The <command>ls</command> command accepts these
+    options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term>
+       <option>-l</option>
+      </term>
+      <term>
+       <option>&dashdash;long</option> 
+      </term>
+      <listitem>
+       <para>Use a detailed output format that displays the kind and
+       extension class associated with each item.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>-R</option>
+      </term>
+      <term>
+       <option>&dashdash;recursive</option> 
+      </term>
+      <listitem>
+       <para>Recursively list the contents of directories.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </section>
+
+  </section> <!-- sec-testcmd-ls -->
+
   <section id="sec-testcmd-register">
    <title><command>&qmtest-cmd; register</command></title>
 

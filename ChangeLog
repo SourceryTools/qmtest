@@ -1,3 +1,13 @@
+2005-07-22  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.list_long_option_spec): New variable.
+	(QMTest.list_recursive_option_spec): Likewise.
+	(QMTest.commands_spec): Add "ls".
+	(QMTest.Execute): Support "ls".
+	(QMTest.__ExecuteList): New method.
+	* qm/test/datbase.py (Database.GetExtensions): New method.
+	* qm/test/doc/reference.xml: Describe "qmtest ls".
+
 2005-07-21  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* setup.py: Adjust contact info.

@@ -303,7 +303,20 @@ class QMTest:
         "Write test report to FILE (- for stdout)."
         )
 
+    list_long_option_spec = (
+        "l",
+        "long",
+        None,
+        "Use a detailed output format."
+        )
 
+    list_recursive_option_spec = (
+        "R",
+        "recursive",
+        None,
+        "Recursively list the contents of directories."
+        )
+    
     # Groups of options that should not be used together.
     conflicting_option_specs = (
         ( output_option_spec, no_output_option_spec ),
@@ -415,6 +428,25 @@ resource classes, etc.  The parameter to '--kind' can be one of """  + \
          ()
          ),
 
+        ("ls",
+         "List database contents.",
+         "[ NAME ...  ]",
+         """
+         List items stored in the database.
+
+         If no arguments are provided, the contents of the root
+         directory of the database are displayed.  Otherwise, each of
+         the database is searched for each of the NAMEs.  If the item
+         found is a directory then the contents of the directory are
+         displayed.
+         """,
+         (
+           help_option_spec,
+           list_long_option_spec,
+           list_recursive_option_spec,
+         ),
+         ),
+         
         ("register",
          "Register an extension class.",
          "KIND CLASS",
@@ -681,6 +713,7 @@ Valid formats are %s.
             "create-target" : self.__ExecuteCreateTarget,
             "extensions" : self.__ExecuteExtensions,
             "gui" : self.__ExecuteServer,
+            "ls" : self.__ExecuteList,
             "register" : self.__ExecuteRegister,
             "remote" : self.__ExecuteRemote,
             "run" : self.__ExecuteRun,
@@ -1111,6 +1144,71 @@ Valid formats are %s.
         return 0
             
 
+    def __ExecuteList(self):
+        """List the contents of the database."""
+
+        database = self.GetDatabase()
+
+        long_format = self.HasCommandOption("long")
+        recursive = self.HasCommandOption("recursive")
+
+        # If no arguments are specified, list the root directory.
+        args = self.__arguments or ("",)
+
+        # Get all the extensions to list.
+        extensions = {}
+        for arg in args:
+            extension = database.GetExtension(arg)
+            if not extension:
+                raise QMException, qm.error("no such ID", id = arg)
+            if isinstance(extension, qm.test.directory_suite.DirectorySuite):
+                extensions.update(database.GetExtensions(arg, recursive))
+            else:
+                extensions[arg] = extension
+
+        # Get the labels for the extensions, in alphabetical order.
+        ids = extensions.keys()
+        ids.sort()
+
+        # In the short format, just print the labels.
+        if not long_format:
+            for id in ids:
+                print >> sys.stdout, id
+            return 0
+
+        # In the long format, print three columns: the extension kind,
+        # class name, and the label.  We make two passes over the
+        # extensions so that the output will be tidy. In the first pass,
+        # calculate the width required for the first two columns in the
+        # output.  The actual output occurs in the second pass.
+        longest_kind = 0
+        longest_class = 0
+        for i in (0, 1):
+            for id in ids:
+                extension = extensions[id]
+                if isinstance(extension,
+                              qm.test.directory_suite.DirectorySuite):
+                    kind = "directory"
+                    class_name = ""
+                else:
+                    kind = extension.__class__.kind
+                    class_name = extension.GetClassName()
+                    
+                if i == 0:
+                    kind_len = len(kind) + 1
+                    if kind_len > longest_kind:
+                        longest_kind = kind_len
+                    class_len = len(class_name) + 1
+                    if class_len > longest_class:
+                        longest_class = class_len
+                else:
+                    print >> sys.stdout, \
+                          "%-*s%-*s%s" % (longest_kind, kind,
+                                          longest_class, class_name, id)
+
+        return 0
+        
+        
     def __ExecuteRegister(self):
         """Register a new extension class."""
 

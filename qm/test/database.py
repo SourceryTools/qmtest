@@ -633,7 +633,30 @@ class Database(qm.extension.Extension):
 
         return None
         
-            
+
+    def GetExtensions(self, directory, scan_subdirs):
+        """Return the extensions in 'directory'.
+
+        'directory' -- The name of a directory.
+
+        'scan_subdirs' -- True if (and only if) subdirectories of
+        'directory' should be scanned.
+
+        returns -- A dictionary mapping labels to 'Extension'
+        instances.  The dictionary contains all extensions in
+        'directory', and, if 'scan_subdirs' is true, its
+        subdirectories."""
+        
+        extensions = {}
+        
+        for kind in self.ITEM_KINDS:
+            ids = self.GetIds(kind, directory, scan_subdirs)
+            for id in ids:
+                extensions[id] = self.GetExtension(id)
+
+        return extensions
+                
+                      
     def RemoveExtension(self, id, kind):
         """Remove the extension 'id' from the database.
 
