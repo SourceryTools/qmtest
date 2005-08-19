@@ -1,3 +1,7 @@
+2005-08-19  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* MANIFEST.in: Add missing files.
+
 2005-07-22  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (QMTest.list_long_option_spec): New variable.
