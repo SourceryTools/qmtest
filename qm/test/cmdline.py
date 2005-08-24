@@ -725,11 +725,26 @@ Valid formats are %s.
 
 
     def GetDatabase(self):
-        """Return the test database to use."""
+        """Return the test database to use.
+
+        returns -- The 'Database' to use for this execution.  Raises an
+        exception if no 'Database' is available."""
 
         return database.get_database()
 
 
+    def GetDatabaseIfAvailable(self):
+        """Return the test database to use.
+
+        returns -- The 'Database' to use for this execution, or 'None'
+        if no 'Database' is available."""
+
+        try:
+            return self.GetDatabase()
+        except:
+            return None
+
+    
     def GetTargetFileName(self):
         """Return the path to the file containing target specifications.
 
@@ -883,7 +898,7 @@ Valid formats are %s.
 
         return get_extension_class(self.__file_result_stream_class_name,
                                    "result_stream",
-                                   self.GetDatabase())
+                                   self.GetDatabaseIfAvailable())
 
     def GetTextResultStreamClass(self):
         """Return the 'ResultStream' class used for textual feedback.
@@ -893,7 +908,7 @@ Valid formats are %s.
 
         return get_extension_class(self.__text_result_stream_class_name,
                                    "result_stream",
-                                   self.GetDatabase())
+                                   self.GetDatabaseIfAvailable())
         
 
     def __GetAttributeOptions(self):
@@ -924,10 +939,7 @@ Valid formats are %s.
             return 2
 
         # Figure out what database (if any) we are using.
-        try:
-            database = self.GetDatabase()
-        except:
-            database = None
+        database = self.GetDatabaseIfAvailable()
         
         # Get the extension kind.
         kind = self.__arguments[0]
@@ -1102,13 +1114,8 @@ Valid formats are %s.
         if len(self.__arguments) != 0:
             self.__WriteCommandHelp("extensions")
             return 2
-            
-        try:
-            database = self.GetDatabase()
-        except:
-            # If the database could not be opened that's OK; this
-            # command can be used without a database.
-            database = None
+
+        database = self.GetDatabaseIfAvailable()
 
         # Figure out what kinds of extensions we're going to list.
         kind = self.GetCommandOption("kind")
@@ -1231,10 +1238,7 @@ Valid formats are %s.
 
         # Try to load the database.  It may provide additional
         # directories to search.
-        try:
-            database = self.GetDatabase()
-        except:
-            database = None
+        database = self.GetDatabaseIfAvailable()
         # Hunt through all of the extension class directories looking
         # for an appropriately named module.
         found = None
@@ -1313,6 +1317,8 @@ Valid formats are %s.
         else:
             results_path = self.__arguments[0]
 
+        database = self.GetDatabaseIfAvailable()
+
         # The remaining arguments, if any, are test and suite IDs.
         id_arguments = self.__arguments[1:]
         # Are there any?
@@ -1320,8 +1326,10 @@ Valid formats are %s.
             filter = 1
             # Expand arguments into test IDs.
             try:
-                test_ids, suite_ids \
-                          = self.GetDatabase().ExpandIds(id_arguments)
+                if database:
+                    test_ids = database.ExpandIds(id_arguments)[0]
+                else:
+                    test_ids = id_arguments
             except (qm.test.database.NoSuchTestError,
                     qm.test.database.NoSuchSuiteError), exception:
                 raise qm.cmdline.CommandError, \
@@ -1333,12 +1341,11 @@ Valid formats are %s.
             # No IDs specified.  Show all test and resource results.
             # Don't show any results by test suite though.
             filter = 0
-            suite_ids = []
 
         # Get an iterator over the results.
         try:
             results = base.load_results(open(results_path, "rb"),
-                                        self.GetDatabase())
+                                        database)
         except (IOError, xml.sax.SAXException), exception:
             raise QMException, \
                   qm.error("invalid results file",
@@ -1350,7 +1357,7 @@ Valid formats are %s.
         # Compute the list of result streams to which output should be
         # written.
         streams = self.__GetResultStreams()
-        
+
         # Send the annotations through.
         for s in streams:
             s.WriteAllAnnotations(results.GetAnnotations())
@@ -1449,10 +1456,7 @@ Valid formats are %s.
 
         # If the database can be loaded, use it to find all
         # available tests.
-        try:
-            database = self.GetDatabase()
-        except:
-            database = None
+        database = self.GetDatabaseIfAvailable()
 
         report_generator = ReportGenerator(output, database)
         report_generator.GenerateReport(self.__arguments)
@@ -1673,7 +1677,7 @@ Valid formats are %s.
                 try:
                     self.__expected_outcomes \
                          = base.load_outcomes(open(outcomes_file_name, "rb"),
-                                              self.GetDatabase())
+                                              self.GetDatabaseIfAvailable())
                 except IOError, e:
                     raise qm.cmdline.CommandError, str(e)
 
@@ -1731,13 +1735,12 @@ Valid formats are %s.
         returns -- A list of 'ResultStream' objects, as indicated by the
         user."""
 
-        database = self.GetDatabase()
+        database = self.GetDatabaseIfAvailable()
 
         result_streams = []
 
         arguments = {
             "expected_outcomes" : self.__GetExpectedOutcomes(),
-            "database" : database,
             }
         
         # Look up the summary format.

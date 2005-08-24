@@ -23,6 +23,7 @@ import os
 import qm
 import qm.attachment
 from   qm.common import *
+from   qm.test.file_result_reader import FileResultReader
 import qm.platform
 import qm.structured_text
 from   qm.test.context import *
@@ -327,6 +328,29 @@ def load_outcomes(file, database):
     return outcomes
 
 
+def get_extension_classes(kind, database = None):
+    """Return the extension classes for the given 'kind'.
+
+    'kind' -- The kind of extensions being sought.  The value must be
+    one of the 'extension_kinds'.
+
+    'database' -- If not 'None', the test 'Database' in use.
+
+    returns -- A list of the available extension classes of the
+    indicated 'kind'."""
+
+    classes = []
+    directories = get_extension_directories(kind, database)
+    for d in directories:
+        names = get_extension_class_names_in_directory(d)[kind]
+        d_classes = [get_extension_class_from_directory(n, kind, d,
+                                                        directories)
+                     for n in names]
+        classes.extend(d_classes)
+
+    return classes
+    
+    
 def load_results(file, database):
     """Read test results from a file.
 
@@ -334,24 +358,20 @@ def load_results(file, database):
 
     'database' -- The current database.
 
-    returns -- A 'ResultReader' object."""
+    returns -- A 'ResultReader' object, or raises an exception if no
+    appropriate reader is available."""
 
-    # For backwards compatibility, look at the first few bytes of the
-    # file to see if it is an XML results file.
-    tag = file.read(5)
-    file.seek(0)
-    
-    if tag == "<?xml":
-        reader_cls = \
-         get_extension_class("xml_result_stream.XMLResultReader",
-                             "result_reader",
-                             database)
-    else:
-        reader_cls = \
-         get_extension_class("pickle_result_stream.PickleResultReader",
-                             "result_reader",
-                             database)
-    return reader_cls({"file": file})
+    # Find the first FileResultStream that will accept this file.
+    for c in get_extension_classes("result_reader", database):
+        if issubclass(c, FileResultReader):
+            try:
+                return c({"file" : file})
+            except FileResultReader.InvalidFile:
+                # Go back to the beginning of the file.
+                file.seek(0)
+        
+    raise FileResultReader.InvalidFile, \
+          "not a valid results file"
 
 
 def _result_from_dom(node):

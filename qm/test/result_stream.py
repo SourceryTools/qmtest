@@ -42,8 +42,6 @@ class ResultStream(qm.extension.Extension):
     arguments = [
         qm.fields.PythonField(
            name = "expected_outcomes"),
-        qm.fields.PythonField(
-           name = "database"),
         ]
     
     def WriteAnnotation(self, key, value):

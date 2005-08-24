@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <class-directory>
+ <class kind="result_reader" name="dejagnu_stream.DejaGNUReader"/>
  <class kind="result_reader" name="pickle_result_stream.PickleResultReader"/>
  <class kind="result_reader" name="sql_result_stream.SQLResultReader"/>
  <class kind="result_reader" name="xml_result_stream.XMLResultReader"/>

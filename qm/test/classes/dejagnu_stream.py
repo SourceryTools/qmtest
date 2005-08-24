@@ -20,6 +20,8 @@
 from   dejagnu_test import DejaGNUTest
 import qm.fields
 from   qm.test.file_result_stream import FileResultStream
+from   qm.test.result import Result
+from   qm.test.file_result_reader import FileResultReader
 
 ########################################################################
 # Classes
@@ -125,3 +127,64 @@ class DejaGNUStream(FileResultStream):
                 if len(desc) < 24:
                     self.file.write("\t")
                 self.file.write("\t%d\n" % self.__outcomes[o])
+
+
+
+class DejaGNUReader(FileResultReader):
+    """A 'DejaGNUReader' reads a DejaGNU log file.
+
+    The DejaGNU log file may then be processed by QMTest.  For
+    example, QMTest may generate results in an alternative format, or
+    display them in the QMTest GUI.  Therefore, this reader may be
+    used to obtain the benefits of QMTest's reporting characteristics,
+    when using a legacy DejaGNU testsuite.
+
+    Unfortunately, DejaGNU log files are relativley unstructured.
+    Therefore, this result reader uses heuristics that may not always
+    be 100% robust.  Therefore, for optimal behavior, DejaGNU
+    testsuites should be converted to QMTest testsuites."""
+
+    def __init__(self, arguments):
+
+        # Initialize the base class.
+        super(DejaGNUReader, self).__init__(arguments)
+        # DejaGNU files start with "Test Run".
+        if self.file.read(len("Test Run")) != "Test Run":
+            raise FileResultReader.InvalidFile, \
+                  "file is not a DejaGNU result stream"
+        self.file.seek(0)
+
+        
+    def GetResult(self):
+
+        # Assume that there are no more results in the file.
+        dejagnu_outcome = None
+        # Scan ahead until we find a line that gives data about the
+        # next result.
+        while self.file:
+            # Read the next line of the file.
+            line = self.file.next()
+            # Each test result is printed on a line by itself,
+            # beginning with the DejaGNU outcome.  For example:
+            #   PASS: g++.dg/compat/eh/template1 cp_compat_y_tst.o compile
+            dejagnu_outcome = None
+            for o in DejaGNUTest.dejagnu_outcomes:
+                # Ignore WARNING; those are not really test results.
+                if o != DejaGNUTest.WARNING and line.startswith(o):
+                    o_len = len(o)
+                    if line[o_len:o_len + 2] == ": ":
+                        dejagnu_outcome = o
+                    break
+            if dejagnu_outcome:
+                break
+        # If we could not find any more result lines, then we have
+        # read all of the results in the file.
+        if not dejagnu_outcome:
+            return None
+        # Translate the DejaGNU outcome into a QMTest outcome.
+        qmtest_outcome = DejaGNUTest.outcome_map[dejagnu_outcome]
+        # The "name" of the test is the portion of the line following
+        # the colon.
+        test_id = line[len(dejagnu_outcome) + 2:].strip()
+        # Construct the result.
+        return Result(Result.TEST, test_id, qmtest_outcome)

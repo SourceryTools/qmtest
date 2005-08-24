@@ -1,3 +1,28 @@
+2005-08-23  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/base.py (FileResultReader): Import it.
+	(get_extension_classes): New function.
+	(load_results): Let FileResultReaders decided if they understand
+	the file format, rather than hard-coding the decision here.
+	* qm/test/cmdline.py (QMTest.GetDatabaseIfAvailable): New method.
+	Use it throughout, where appropriate.
+	(QMTest.__ExecuteSummarize): Permit execution without a database.
+	(QMTest.__GetResultStreams): Likewise.
+	* qm/test/file_result_reader.py (FileResultReader.InvalidFile):
+	New class.
+	* qm/test/result_stream.py (ResultStream.arguments): Remove unused
+	"database" argument.
+	* qm/test/classes/classes.qmc: Add dejagnu_stream.DejaGNUReader.
+	* qm/test/classes/dejagnu_test.py (DejaGNUTest.ERROR): Fix typo.
+	(DejaGNUTest.__outcome_map): Rename to ...
+	(DejaGNUTest.outcome_map): ... this.  Fill in all entries.
+	(DejaGNUTest._RecordDejaGNUOutcome): Adjust.
+	* qm/test/classes/pickle_result_stream.py
+	(PickleResultReader.__init__): Raise InvalidFile if appropriate.
+	* qm/test/classes/xml_result_stream.py (XMLResultReader.__init__):
+	Likewise.
+	* qm/test/classes/dejagnu_stream.py (DejaGNUReader): New class.
+
 2005-08-19  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* MANIFEST.in: Add missing files.

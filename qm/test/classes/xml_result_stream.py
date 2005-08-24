@@ -88,6 +88,13 @@ class XMLResultReader(FileResultReader):
 
         super(XMLResultReader, self).__init__(arguments)
 
+        # Make sure that this file really is an XML result stream.
+        tag = self.file.read(5)
+        if tag != "<?xml":
+            raise FileResultReader.InvalidFile, \
+                  "file is not an XML result stream"
+        self.file.seek(0)
+
         document = qm.xmlutil.load_xml(self.file)
         node = document.documentElement
         results = node.getElementsByTagName("result")

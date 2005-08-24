@@ -17,7 +17,8 @@
 # Imports
 ########################################################################
 
-import qm.fields
+from qm.fields import TextField, PythonField
+from qm.common import QMException
 from qm.test.result_reader import ResultReader
 import sys
 
@@ -34,9 +35,18 @@ class FileResultReader(ResultReader):
     the 'filename' argument or the 'file' argument.  The latter is for
     use by QMTest internally."""
 
+    class InvalidFile(QMException):
+        """An 'InvalidFile' exception indicates an incorrect file format.
 
+        If the constructor for a 'FileResultStream' detects an invalid
+        file, it must raise an instance of this exception."""
+
+        pass
+
+        
+    
     arguments = [
-        qm.fields.TextField(
+        TextField(
             name = "filename",
             title = "File Name",
             description = """The name of the file.
@@ -46,16 +56,23 @@ class FileResultReader(ResultReader):
             the standard input will be used.""",
             verbatim = "true",
             default_value = ""),
-        qm.fields.PythonField(
+        PythonField(
             name = "file"),
     ]
 
     _is_binary_file = 0
-    """If true, the file written is a binary file.
+    """If true, results are stored in a binary format.
 
     This flag can be overridden by derived classes."""
     
     def __init__(self, arguments):
+        """Construct a new 'FileResultReader'.
+
+        'arguments' -- As for 'ResultReader'.
+
+        If the file provided is not in the input format expected by this
+        result reader, the derived class '__init__' function must raise
+        an 'InvalidStream' exception."""
 
         super(FileResultReader, self).__init__(arguments)
 

@@ -47,7 +47,7 @@ class DejaGNUTest(Test, DejaGNUBase):
     XPASS = "XPASS"
     XFAIL = "XFAIL"
     WARNING = "WARNING"
-    ERROR = "ERROR",
+    ERROR = "ERROR"
     UNTESTED = "UNTESTED"
     UNRESOLVED = "UNRESOLVED"
     UNSUPPORTED = "UNSUPPORTED"
@@ -58,12 +58,12 @@ class DejaGNUTest(Test, DejaGNUBase):
         )
     """The DejaGNU test outcomes."""
     
-    __outcome_map = {
-        PASS : None,
+    outcome_map = {
+        PASS : Result.PASS,
         FAIL : Result.FAIL,
-        XPASS : None,
+        XPASS : Result.PASS,
         XFAIL : Result.FAIL,
-        WARNING : None,
+        WARNING : Result.PASS,
         ERROR : Result.ERROR,
         UNTESTED : Result.UNTESTED,
         UNRESOLVED : Result.UNTESTED,
@@ -202,8 +202,10 @@ class DejaGNUTest(Test, DejaGNUBase):
         self.__next_result += 1
         result[key] = outcome + ": " + message
         # If the test was passing until now, give it a new outcome.
-        new_outcome = self.__outcome_map[outcome]
-        if (new_outcome and result.GetOutcome() == Result.PASS):
+        new_outcome = self.outcome_map[outcome]
+        if (new_outcome
+            and new_outcome != Result.PASS
+            and result.GetOutcome() == Result.PASS):
             result.SetOutcome(new_outcome)
             result[Result.CAUSE] = message
         

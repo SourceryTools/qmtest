@@ -187,8 +187,8 @@ class PickleResultReader(FileResultReader):
         try:
             version = self.__unpickler.load()
         except (EOFError, cPickle.UnpicklingError):
-            # This file is empty, no more handling needed.
-            return
+            raise FileResultReader.InvalidFile, \
+                  "file is not a pickled result stream"
         
         if not isinstance(version, int):
             # Version 0 file, no version number; in fact, we're
