@@ -19,9 +19,10 @@
 
 import qm
 import qm.test.runnable
+from   qm.test.test import Test
 
 ########################################################################
-# classes
+# Classes
 ########################################################################
 
 class Resource(qm.test.runnable.Runnable):
@@ -105,3 +106,42 @@ class Resource(qm.test.runnable.Runnable):
         Derived classes may override this method."""
 
         pass
+
+
+
+########################################################################
+# Functions
+########################################################################
+
+def resource_adapter(test_class):
+    """Return a resource class based on 'test_class'.
+
+    'test_class' -- A 'Test' class.  This argument is not the name of
+    a 'Test' class; it is the actuall class object itself.
+
+    returns -- A 'Resource' class.  The 'Resource' class 'SetUp'
+    method is equivalent to the 'Test' class 'Run' method.  The
+    'CleanUp' action is empty.
+
+    If this function is called more than once with the same
+    'test_class', it will return a new class each time."""
+
+    assert test_class.kind == Test.kind
+
+    # Construct a new class.  By listing 'Resource' first, we ensure
+    # that the 'kind' field for the new class is 'Resource.kind'.
+    class ResourceAdapter(Resource, test_class):
+        """A 'ResourceAdapter' is a resource based on a 'Test' class.
+
+        The 'SetUp' method for this class behaves just like the 'Run'
+        method for the test class on which this resource is based.""" 
+
+        def SetUp(self, context, result):
+
+            # To set up the resource, just run the underlying test class.
+            self.Run(context, result)
+
+
+
+    # Return the new class.        
+    return ResourceAdapter

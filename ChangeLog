@@ -1,3 +1,7 @@
+2005-09-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/resource.py (resource_adapter): New function.
+
 2005-08-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (FileResultReader): Import it.
