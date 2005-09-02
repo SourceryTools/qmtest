@@ -1,3 +1,8 @@
+2005-09-02  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/resource_adapter.py: New file.
+	* qm/test/resource.py (resource_adapter): Remove.
+
 2005-09-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/resource.py (resource_adapter): New function.
