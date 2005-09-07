@@ -21,6 +21,7 @@ from   dejagnu_test import DejaGNUTest
 import fnmatch
 import os
 from   qm.test.result import Result
+from   qm.fields import BooleanField
 import re
 
 ########################################################################
@@ -55,6 +56,10 @@ class DGTest(DejaGNUTest):
     KIND_LINK = "link"
     KIND_RUN = "run"
 
+    keep_output = BooleanField(default_value=False,
+        description="""True if the output file should be retained
+        after the test is complete.  Otherwise, it is removed.""")
+
     _default_kind = KIND_COMPILE
     """The default test kind.
 
@@ -84,7 +89,7 @@ class DGTest(DejaGNUTest):
     def _RunDGTest(self, tool_flags, default_options, context, result,
                    path = None,
                    default_kind = None,
-                   keep_output = 0):
+                   keep_output = None):
         """Run a 'dg' test.
 
         'tool_flags' -- A list of strings giving a set of options to be
@@ -156,13 +161,15 @@ class DGTest(DejaGNUTest):
         for c, a in self._final_commands:
             self._ExecuteFinalCommand(c, a, context, result)
 
+        # For backward compatibility the function parameter overrides
+        # the extension argument, if defined.
+        do_keep_output = keep_output is None and self.keep_output or keep_output
         # Remove the output file.
-        if not keep_output:
+        if not do_keep_output:
             try:
                 os.remove(file)
             except:
                 pass
-                
 
     def _RunDGToolPortion(self, path, tool_flags, context, result):
         """Perform the tool-running portions of a DG test.

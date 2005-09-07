@@ -234,7 +234,7 @@ class DejaGNUTest(Test, DejaGNUBase):
 
         
     def _GetSourcePath(self):
-        """Return the patch to the primary source file.
+        """Return the path to the primary source file.
 
         returns -- A string giving the path to the primary source
         file."""
