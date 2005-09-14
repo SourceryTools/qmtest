@@ -131,7 +131,7 @@ class Label:
 
 
     def IsValid(self, label, is_component):
-        """Returns true if 'label' is not valid.
+        """Returns true if 'label' is valid.
 
         'label' -- The string being tested for validity.
         

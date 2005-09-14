@@ -1169,7 +1169,7 @@ class WebRequest:
     or arguments encoded in a URL query string.  It has some other
     methods as well."""
 
-    def __init__(self, script_url, base=None, **fields):
+    def __init__(self, script_url, base=None, keep_fields=False, **fields):
         """Create a new request object.
 
         'script_url' -- The URL of the script that processes this
@@ -1181,7 +1181,10 @@ class WebRequest:
         'fields' -- The query arguments."""
 
         self.__url = script_url
-        self.__fields = fields
+        self.__fields = {}
+        if base and keep_fields:
+            self.__fields.update(base.__fields)
+        self.__fields.update(fields)
         # Copy the session ID from the base.
         if base is not None:
             session = base.GetSessionId()

@@ -52,9 +52,9 @@
      <tr><td><table class="data" width="100%">
       <caption>
        <dtml-if path>
-        Result Summary
-       <dtml-else>
         Result Summary for <span class="id"><dtml-var path></span> 
+       <dtml-else>
+        Result Summary
        </dtml-if>
       </caption>
       </tr>
@@ -204,7 +204,6 @@
       </dtml-if>
      </caption>
      <tbody>
-       </tr>
        <tr class="heading">
         <th align="left" width="60%"
          ><a href="<dtml-var expr="GetSortURL(SORT_NAME)">">Test</a>

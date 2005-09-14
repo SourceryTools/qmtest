@@ -412,6 +412,7 @@ import qm.host
 import qm.test.resource
 import qm.test.result_reader
 import qm.test.result_stream
+import qm.test.run_database
 import qm.test.suite
 import qm.test.target
 import qm.test.test
@@ -423,6 +424,7 @@ __extension_bases = {
     'resource' : qm.test.resource.Resource,
     'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
+    'run_database' : qm.test.run_database.RunDatabase,
     'suite' : qm.test.suite.Suite,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test

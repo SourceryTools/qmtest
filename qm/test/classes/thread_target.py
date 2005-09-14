@@ -169,7 +169,7 @@ class ThreadTarget(Target):
 
         Derived classes may override this method."""
 
-        self._Trace("About to dispatch test to thread " + descriptor.GetId())
+        self._Trace("About to dispatch test " + descriptor.GetId())
         
         self.__ready_threads_lock.acquire()
 
@@ -183,8 +183,7 @@ class ThreadTarget(Target):
 
         thread.RunTest(descriptor, context)
         
-        self._Trace("Finished dispatching test to thread "
-                    + descriptor.GetId())
+        self._Trace("Finished dispatching test " + descriptor.GetId())
 
 
     def _RunTest(self, descriptor, context):

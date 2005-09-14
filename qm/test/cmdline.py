@@ -31,8 +31,9 @@ from   qm.test.execution_engine import *
 from   qm.test.result_stream import ResultStream
 from   qm.test.runnable import Runnable
 from   qm.test.report import ReportGenerator
+from   qm.test.classes.dir_run_database import *
 from   qm.trace import *
-import qm.test.web.web
+from   qm.test.web.web import QMTestServer
 import qm.xmlutil
 import Queue
 import random
@@ -303,6 +304,13 @@ class QMTest:
         "Write test report to FILE (- for stdout)."
         )
 
+    results_option_spec = (
+        "R",
+        "results",
+        "DIRECTORY",
+        "Read in all results (*.qmr) files from DIRECTORY."
+        )
+
     list_long_option_spec = (
         "l",
         "long",
@@ -402,7 +410,8 @@ class QMTest:
            pid_file_option_spec,
            port_option_spec,
            outcomes_option_spec,           
-           targets_option_spec
+           targets_option_spec,
+           results_option_spec
            )
          ),
 
@@ -1589,15 +1598,23 @@ Valid formats are %s.
         else:
             pid_file = None
             
+        # Create a run database, if requested.
+        run_db = None
+        directory = self.GetCommandOption("results", default="")
+        if directory:
+            directory = os.path.normpath(directory)
+            run_db = DirRunDatabase(directory, database)
+
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
-
         # Set up the server.
-        server = qm.test.web.web.QMTestServer(database, port_number, address,
-                                              log_file, targets, context,
-                                              self.__GetExpectedOutcomes())
+        server = QMTestServer(database,
+                              port_number, address,
+                              log_file, targets, context,
+                              self.__GetExpectedOutcomes(),
+                              run_db)
         port_number = server.GetServerAddress()[1]
         
         # Construct the URL to the main page on the server.
@@ -1605,8 +1622,11 @@ Valid formats are %s.
             url_address = qm.platform.get_host_name()
         else:
             url_address = address
-        url = "http://%s:%d/test/dir" % (url_address, port_number)
-
+        if run_db:
+            url = "http://%s:%d/report/dir" % (url_address, port_number)
+        else:
+            url = "http://%s:%d/test/dir" % (url_address, port_number)
+            
         if not self.HasCommandOption("no-browser"):
             # Now that the server is bound to its address, start the
             # web browser.

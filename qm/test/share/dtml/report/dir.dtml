@@ -1,0 +1,207 @@
+<dtml-comment><!--
+
+  File:   dir.dtml
+  Author: Stefan Seefeld
+  Date:   2005-08-30
+
+  Contents:
+    Document template for displaying test database contents.
+
+  Copyright (C) 2005 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Test Database')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <table border="0" width="100%">
+  <tbody>
+   <tr>
+    <td width="100%">
+     <table border="0" width="100%">
+      <tr>
+       <td>
+        <h3>
+         Directory 
+         <dtml-var expr="FormatId(path, 'dir', 'navigation')">
+        </h3>
+      </td>
+      <td width="20%" align="right">
+       <a href="http://www.qmtest.com"><img border="0"
+                                            src="/images/logo.gif" /></a>
+      </td>
+     </tr>
+    </table>
+   </tr>
+
+   <tr>
+  <form action="<dtml-var expr="request.GetUrl()">" method="get">
+    <table>
+    <tr>
+      <th>Column key:</th>
+      <td><input type="text" name="col" size="20" 
+                 value="<dtml-var expr="request.get('col', 'qmtest.run.uname')">"/></td>
+    </tr>
+    <tr>
+      <th>Row key:</th>
+      <td><input type="text" name="row" size="20" 
+                 value="<dtml-var expr="request.get('row', 'qmtest.run.start_time')">"/></td>
+    </tr>
+    <tr>
+      <th>Number of rows:</th>
+      <td><input type="text" name="rows" size="3"
+                 value="<dtml-var expr="_.int(request.get('rows', 10))">"/></td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="submit"></td>
+    </tr>
+    </table>
+  </form>
+  <table>
+    <dtml-let col="request.get('col', 'qmtest.run.uname')"
+              row="request.get('row', 'qmtest.run.start_time')"
+              rows="_.int(request.get('rows', 10))"
+              columns="GetRunDatabase().GetAnnotations(col)"
+              timeframe="GetRunDatabase().GetTimeframe(row, 1)"
+              interval="(timeframe[1]-timeframe[0]) / rows">
+    <tr class="heading">
+      <th></th> 
+      <dtml-in expr="columns">
+        <dtml-let key=sequence-item>
+          <th><dtml-var expr="key"></th> 
+        </dtml-let>
+      </dtml-in>
+    </tr>
+    <dtml-in expr="_.range(_.int((timeframe[1] - timeframe[0]) / interval))">
+      <dtml-let index=sequence-item
+                timestamp="timeframe[0] + interval * index">
+        <tr>
+          <th><dtml-var expr="FormatTimeIso(timestamp)"></th>
+          <dtml-in expr="columns">
+            <dtml-let column=sequence-item
+                      run_id="GetRunDatabase().GetRunInTimeframe(col, column, row, timestamp, timestamp + interval)"
+                      results="run_id != _.None and GetRunDatabase().GetAllRuns()[run_id].GetAllResults(path) or []">
+              <td class="field">
+                <dtml-if expr="results">
+                <a href="<dtml-var expr="MakeTestRunUrl(run_id)">">
+                <dtml-let rps="GetOutcomePercentages(results)">
+                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                   <dtml-in expr="outcomes">
+                    <dtml-let o=sequence-item>
+                     <dtml-if expr="rps[o]">
+                      <td class="<dtml-var 
+                                   expr="server.GetHTMLClassForOutcome(o)">" 
+                          width="<dtml-var expr="_.int(100.0 * rps[o])">%"><img
+                            src="/images/clear.gif" height="12"
+                            hspace="0" vspace="0" border="0"></td>
+                     </dtml-if>
+                    </dtml-let>
+                   </dtml-in>
+                  </tr>
+                 </table>
+                </dtml-let>        
+                </a>
+                </dtml-if>
+              </td> 
+            </dtml-let>
+          </dtml-in>
+        </tr>
+      </dtml-let>
+    </dtml-in>
+    </dtml-let>
+  </table>
+   </tr>
+
+   <!-- Subdirectories -->
+
+   <dtml-if subdir_ids>
+     <tr><td><table class="data" width="100%">
+      <caption>
+       <dtml-if path>
+         Subdirectories of <span class="id"><dtml-var path></span>
+       <dtml-else>
+         Subdirectories
+       </dtml-if>
+      </caption> 
+      <tbody>
+       </tr>
+       <tr class="heading">
+        <th width="25%">Directory</th>
+        <th width="25%">Results</th>
+       </tr>
+       <dtml-in expr="subdir_ids">
+        <dtml-let item=sequence-item>
+         <tr>
+
+          <!-- The subdirectory. -->
+          <td width="25%" class="field">
+           <dtml-var expr="FormatId(item, 'dir', 'tree')">
+          </td>
+
+          <!-- The number of tests available. -->
+          <td width="25%" class="field">
+          </td>
+         </tr>
+        </dtml-let>
+       </dtml-in>
+      </tbody>
+     </table></td></tr>
+   </dtml-if>
+
+   <dtml-if test_ids>
+    <tr><td><table class="data" width="100%">
+     <caption>
+      <dtml-if path>
+       Tests in <span class="id"><dtml-var path></span>
+      <dtml-else>
+       Tests
+      </dtml-if>
+     </caption>
+     <tbody>
+       </tr>
+       <tr class="heading">
+        <th align="left" width="60%">Test</th>
+        <th align="left" width="40%">Outcomes</th>
+       </tr>
+       <dtml-in expr="GetItems('test')">
+         <dtml-let item=sequence-item
+                   id="item.id"
+                   outcome="item.outcome"
+                   outcome_class="item.outcome_class">
+          <tr>
+           <th><dtml-var expr="id"></th>
+           <td class="<dtml-var expr="outcome_class">">
+             <dtml-if expr="outcome != 'UNTESTED'">
+               <a href="<dtml-var expr="GetResultURL(id, 'test')">">
+                 <dtml-var expr="outcome">
+               </a>
+             <dtml-else>
+             <dtml-var expr="outcome">
+             </dtml-if>
+           </td>
+          </tr>
+         </dtml-let>
+       </dtml-in>
+     </tbody>
+    </table></td></tr>
+   </dtml-if>
+
+  </tbody>
+ </table>
+
+ <dtml-var expr="GenerateStartScript()">
+ <dtml-var expr="GenerateEndScript()">
+ <dtml-var expr="GenerateEndBody()">
+
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

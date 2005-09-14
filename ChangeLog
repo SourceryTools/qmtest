@@ -1,3 +1,27 @@
+2005-09-14  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/label.py: Fix documentation.
+	* qm/test/database.py: Fix typo.
+	* qm/test/classes/thread_target.py: Clarify trace messages.
+	* qm/test/share/dtml/dir.dtml: Fix typo.
+	* qm/test/share/dtml/navigation-bar.dtml: Enhance menu display.
+	* qm/test/share/dtml/show.dtml: Add missing logo.
+	* share/web/stylesheets/qm.css: Enhance menu display.
+	
+	Add support for inspecting 'run databases':
+	* qm/test/run_database.py: New RunDatabase extension.
+	* qm/test/base.py: Register it.
+	* qm/test/dir_run_database.py: Implement it.
+	* qm/test/classes/classes.qmc: Register implementation.
+	* qm/test/test_run.py: Define TestRun base class.
+	* qm/test/reader_test_run.py: Implement it.
+	* qm/web.py: Allow WebRequest to inherit all fields from its base.
+	* qm/test/cmdline.py: Add -R option to the 'gui' command.
+	* qm/test/web/web.py: Add support for new report pages.
+	* qm/test/share/dtml/report/dir.dtml: New page template.
+	* qm/test/share/dtml/report/show.dtml: New page template.
+	* setup.py: Add new share/dtml/report directory.
+
 2005-09-06  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/dejagnu_test.py: Fix typo.

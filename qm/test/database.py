@@ -768,7 +768,7 @@ class Database(qm.extension.Extension):
             return DirectorySuite(self, "")
 
         if self._is_generic_database:
-            suite = GetExtension(suite_id)
+            suite = self.GetExtension(suite_id)
             if isinstance(suite, Suite):
                 return suite
             

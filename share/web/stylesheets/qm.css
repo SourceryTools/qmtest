@@ -49,12 +49,13 @@ a:hover {
 
 table.menu_bar {
     width: 100%;
-    border-style: groove;
-    border-width: medium;
+    border-style: inset;
+    border-width: thin;
 }
 
 a.menu_bar, a.menu_item {
     text-decoration: none;
+    color: black;
     display: block;
 }
 
@@ -62,10 +63,19 @@ a.menu_item {
     display: block;
     padding-left: 3px;
     padding-right: 3px;
+    color: black;
 }
 
 a.menu_item:hover {
     background-color: #f0f8ff;
+}
+
+a.disabled_menu_item {
+    background-color: #e8e8e8;
+    display: block;
+    padding-left: 3px;
+    padding-right: 3px;
+    color: gray;
 }
 
 div.menu {
@@ -73,7 +83,7 @@ div.menu {
     left: 0px;
     top: 0px;
     visibility: hidden;
-    border-width: medium;
+    border-width: thin;
     border-style: inset;
 }
 
@@ -204,5 +214,9 @@ span.id {
 
 .qmtest_expected {
     background-color: #c0c0c0;
+}
+
+.qmtest_mixed {
+    background-color: #ffaaff;
 }
 

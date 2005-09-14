@@ -75,6 +75,7 @@ messages=['help.txt', 'diagnostics.txt']
 
 tutorial_files = files_with_ext("qm/test/share/tutorial/tdb", ".qmt")
 test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
+report_dtml_files = files_with_ext("qm/test/share/dtml/report", ".dtml")
 
 share_files = {}
 os.path.walk("share", select_share_files, share_files)
@@ -123,6 +124,7 @@ setup(name="qm",
                    [join('qm/test/share/messages', m) for m in messages]),
                   # DTML files for the GUI.
                   ("share/qm/dtml/test", test_dtml_files),
+                  ("share/qm/dtml/report", report_dtml_files),
                   # The documentation.
                   ('share/doc/qm', ('README', 'COPYING')),
                   ('share/doc/qm/test/html', ['qm/test/doc/html/*.html',

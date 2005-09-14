@@ -21,7 +21,11 @@
   <dtml-in sequence-item>
    <dtml-let desc=sequence-key
              url=sequence-item>
-    <a class="menu_item" href="<dtml-var url>"><dtml-var desc></a>
+    <dtml-if expr="url">
+     <a class="menu_item" href="<dtml-var url>"><dtml-var desc></a>
+    <dtml-else>
+     <a class="disabled_menu_item"><dtml-var desc></a>
+    </dtml-if>
    </dtml-let>
   </dtml-in>
  </div>
