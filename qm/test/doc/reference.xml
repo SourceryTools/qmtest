@@ -1163,13 +1163,88 @@
        <replaceable>kind</replaceable>.  The
        <replaceable>kind</replaceable> must be one of
        <literal>test</literal>, <literal>resource</literal>,
-       <literal>target</literal>, or <literal>database</literal>.</para>
+       <literal>target</literal>, <literal>database</literal>,
+       <literal>host</literal>, or <literal>run_database</literal>.</para>
       </listitem>
      </varlistentry>
     </variablelist>
    </section>
 
   </section> <!-- sec-testcmd-extensions -->
+
+  <section id="sec-testcmd-describe">
+   <title><command>&qmtest-cmd; describe</command></title>
+
+   <section>
+    <title>Summary</title>
+    <para>Describe an extension class.</para>
+   </section>
+
+   <section>
+    <title>Synopsis</title>
+    <cmdsynopsis>
+     <command>&qmtest-cmd; describe</command>
+     <arg choice="opt" rep="repeat">
+      <replaceable>option</replaceable>
+     </arg>
+     <arg choice="opt">
+      <replaceable>name</replaceable>
+     </arg>
+    </cmdsynopsis>
+   </section>
+
+   <section>
+    <title>Description</title>
+
+    <para>The <command>&qmtest-cmd; describe</command> displays a description
+    of the extension <replaceable>name</replaceable>.</para>
+
+    <para>The <command>describe</command> command accepts these
+    options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term>
+       <option>-k</option>
+       <replaceable>kind</replaceable>
+      </term>
+      <term>
+       <option>&dashdash;kind</option> 
+       <replaceable>kind</replaceable>
+      </term>
+      <listitem>
+       <para>Describe an extension class of the indicated
+       <replaceable>kind</replaceable>.  The
+       <replaceable>kind</replaceable> must be one of
+       <literal>test</literal>, <literal>resource</literal>,
+       <literal>target</literal>, <literal>database</literal>,
+       <literal>host</literal>, or <literal>run_database</literal>.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-l</option></term>
+      <term><option>&dashdash;long</option></term>
+      <listitem>
+       <para>Provide a long (i.e. more detailed detailed) description of the extension.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-a</option> <replaceable>name</replaceable></term>
+      <term>
+       <option>&dashdash;attribute</option> 
+       <replaceable>name</replaceable>
+      </term>
+      <listitem>
+       <para>Describe the given attribute.</para>
+      </listitem>
+     </varlistentry>
+
+    </variablelist>
+   </section>
+
+  </section> <!-- sec-testcmd-describe -->
 
   <section id="sec-testcmd-ls">
    <title><command>&qmtest-cmd; ls</command></title>
@@ -1218,6 +1293,18 @@
       <listitem>
        <para>Use a detailed output format that displays the kind and
        extension class associated with each item.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>-d</option>
+      </term>
+      <term>
+       <option>&dashdash;details</option> 
+      </term>
+      <listitem>
+       <para>Display details such as individual attributes for each item.</para>
       </listitem>
      </varlistentry>
 

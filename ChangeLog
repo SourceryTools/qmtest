@@ -1,5 +1,8 @@
 2005-09-14  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/test/cmdline.py: Add 'describe' and enhance 'ls' commands.
+	* qm/test/doc/reference.xml: Document the above.
+
 	* qm/label.py: Fix documentation.
 	* qm/test/database.py: Fix typo.
 	* qm/test/classes/thread_target.py: Clarify trace messages.

@@ -24,6 +24,7 @@ import qm
 import qm.attachment
 import qm.cmdline
 import qm.platform
+from   qm.extension import get_extension_class_name, get_class_description
 from   qm.test import test
 from   qm.test.result import Result
 from   qm.test.context import *
@@ -34,6 +35,7 @@ from   qm.test.report import ReportGenerator
 from   qm.test.classes.dir_run_database import *
 from   qm.trace import *
 from   qm.test.web.web import QMTestServer
+import qm.structured_text
 import qm.xmlutil
 import Queue
 import random
@@ -286,6 +288,13 @@ class QMTest:
     attribute_option_spec = (
         "a",
         "attribute",
+        "NAME",
+        "Get an attribute of the extension class."
+        )
+
+    set_attribute_option_spec = (
+        "a",
+        "attribute",
         "KEY=VALUE",
         "Set an attribute of the extension class."
         )
@@ -316,6 +325,13 @@ class QMTest:
         "long",
         None,
         "Use a detailed output format."
+        )
+
+    list_details_option_spec = (
+        "d",
+        "details",
+        None,
+        "Display details for individual items."
         )
 
     list_recursive_option_spec = (
@@ -368,7 +384,7 @@ class QMTest:
          extension is written as XML to the file indicated.  If neither
          option is given, the extension is written as XML to the
          standard output.""",
-         ( attribute_option_spec,
+         ( set_attribute_option_spec,
            help_option_spec,
            extension_id_option_spec,
            extension_output_option_spec
@@ -379,7 +395,7 @@ class QMTest:
          "Create (or update) a target specification.",
          "NAME CLASS [ GROUP ]",
          "Create (or update) a target specification.",
-         ( attribute_option_spec,
+         ( set_attribute_option_spec,
            help_option_spec,
            targets_option_spec
            )
@@ -391,7 +407,7 @@ class QMTest:
          "Create a new test database.",
          ( help_option_spec,
            tdb_class_option_spec,
-           attribute_option_spec)
+           set_attribute_option_spec)
          ),
 
         ("gui",
@@ -430,6 +446,18 @@ resource classes, etc.  The parameter to '--kind' can be one of """  + \
          )
         ),
 
+        ("describe",
+         "Describe an extension.",
+         "NAME",
+         """Display details for the specified extension.""",
+         (
+           extension_kind_option_spec,
+           attribute_option_spec,
+           list_long_option_spec,
+           help_option_spec,
+         )
+        ),
+
         ("help",
          "Display usage summary.",
          "",
@@ -452,6 +480,7 @@ resource classes, etc.  The parameter to '--kind' can be one of """  + \
          (
            help_option_spec,
            list_long_option_spec,
+           list_details_option_spec,
            list_recursive_option_spec,
          ),
          ),
@@ -720,6 +749,7 @@ Valid formats are %s.
         method = {
             "create" : self.__ExecuteCreate,
             "create-target" : self.__ExecuteCreateTarget,
+            "describe" : self.__ExecuteDescribe,
             "extensions" : self.__ExecuteExtensions,
             "gui" : self.__ExecuteServer,
             "ls" : self.__ExecuteList,
@@ -920,12 +950,17 @@ Valid formats are %s.
                                    self.GetDatabaseIfAvailable())
         
 
-    def __GetAttributeOptions(self):
+    def __GetAttributeOptions(self, expect_value = True):
         """Return the attributes specified on the command line.
 
-        returns -- A dictionary mapping attribute names (strings) to
-        values (strings).  There is an entry for each attribute
-        specified with '--attribute' on the command line."""
+        'expect_value' -- True if the attribute is to be parsed as
+        an assignment.
+
+        returns -- A dictionary. If expect_value is True, it
+        maps attribute names (strings) to values (strings).
+        Else it contains the raw attribute strings, mapping to None.
+        There is an entry for each attribute specified with
+        '--attribute' on the command line."""
 
         # There are no attributes yet.
         attributes = {}
@@ -933,9 +968,11 @@ Valid formats are %s.
         # Go through the command line looking for attribute options.
         for option, argument in self.__command_options:
             if option == "attribute":
-                name, value = qm.common.parse_assignment(argument)
-                attributes[name] = value
-
+                if expect_value:
+                    name, value = qm.common.parse_assignment(argument)
+                    attributes[name] = value
+                else:
+                    attributes[argument] = None
         return attributes
     
 
@@ -1160,12 +1197,48 @@ Valid formats are %s.
         return 0
             
 
+    def __ExecuteDescribe(self):
+        """Describe an extension."""
+
+        # Check that the right number of arguments are present.
+        kind = self.GetCommandOption("kind")
+        if not kind or len(self.__arguments) != 1:
+            self.__WriteCommandHelp("describe")
+            return 2
+
+        long_format = self.GetCommandOption("long") != None
+
+        database = self.GetDatabaseIfAvailable()
+        class_ = get_extension_class(self.__arguments[0], kind, database)
+
+        attributes = (self.__GetAttributeOptions(False)
+                      or class_._argument_dictionary)
+
+        print ""
+        print "class name:", get_extension_class_name(class_)
+        print "  ", get_class_description(class_, brief=not long_format)
+        print ""
+        print "class attributes:"
+        tab = max([len(name) for name in attributes])
+        for name in attributes:
+            field = class_._argument_dictionary.get(name)
+            if not field:
+                self._stderr.write("Unknown attribute '%s'.\n"%name)
+                return 2
+            value = field.GetDefaultValue()
+            description = field.GetDescription()
+            if not long_format:
+                description = qm.structured_text.get_first(description)
+            print "   %-*s     %s"%(tab, name, description)
+
+
     def __ExecuteList(self):
         """List the contents of the database."""
 
         database = self.GetDatabase()
 
         long_format = self.HasCommandOption("long")
+        details_format = self.HasCommandOption("details")
         recursive = self.HasCommandOption("recursive")
 
         # If no arguments are specified, list the root directory.
@@ -1221,6 +1294,12 @@ Valid formats are %s.
                     print >> sys.stdout, \
                           "%-*s%-*s%s" % (longest_kind, kind,
                                           longest_class, class_name, id)
+                    if details_format:
+                        tab = max([len(name)
+                                   for name in extension._argument_dictionary])
+                        for name in extension._argument_dictionary:
+                            value = str(getattr(extension, name))
+                            print "   %-*s     %s"%(tab, name, value)
 
         return 0
         
