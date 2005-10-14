@@ -1187,7 +1187,10 @@
      <arg choice="opt" rep="repeat">
       <replaceable>option</replaceable>
      </arg>
-     <arg choice="opt">
+     <arg choice="plain">
+      <replaceable>kind</replaceable>
+     </arg>
+     <arg choice="plain">
       <replaceable>name</replaceable>
      </arg>
     </cmdsynopsis>
@@ -1204,10 +1207,6 @@
 
     <variablelist>
      <varlistentry>
-      <term>
-       <option>-k</option>
-       <replaceable>kind</replaceable>
-      </term>
       <term>
        <option>&dashdash;kind</option> 
        <replaceable>kind</replaceable>
@@ -1406,6 +1405,22 @@
     options:</para>
 
     <variablelist>
+     <varlistentry id="opt-test-run-annotate">
+      <term>
+       <option>-a</option>
+       <replaceable>name</replaceable>=<replaceable>value</replaceable>
+      </term>
+      <term>
+       <option>&dashdash;annotate</option> 
+       <replaceable>name</replaceable>=<replaceable>value</replaceable>
+      </term>
+      <listitem>
+       <para>Annotate the test run by inserting the named annotation
+         <replaceable>name</replaceable> with the value 
+         <replaceable>value</replaceable> into all result streams.</para>
+       <para>This option may be specified multiple times.</para>
+      </listitem>
+     </varlistentry>
      <varlistentry id="opt-test-run-context">
       <term>
        <option>-c</option>

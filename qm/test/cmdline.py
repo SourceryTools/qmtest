@@ -278,6 +278,13 @@ class QMTest:
         "Specify the results file format."
         )
         
+    annotation_option_spec = (
+        "a",
+        "annotate",
+        "NAME=VALUE",
+        "Set an additional annotation to be written to the result stream(s)."
+        )
+
     tdb_class_option_spec = (
         "c",
         "class",
@@ -448,10 +455,9 @@ resource classes, etc.  The parameter to '--kind' can be one of """  + \
 
         ("describe",
          "Describe an extension.",
-         "NAME",
+         "EXTENSION-KIND NAME",
          """Display details for the specified extension.""",
          (
-           extension_kind_option_spec,
            attribute_option_spec,
            list_long_option_spec,
            help_option_spec,
@@ -542,6 +548,7 @@ Use the '--format' option to specify the output format for the summary.
 Valid formats are %s.
          """ % _make_comma_separated_string(summary_formats, "and"),
          (
+           annotation_option_spec,
            concurrent_option_spec,
            context_file_spec,
            context_option_spec,
@@ -976,6 +983,19 @@ Valid formats are %s.
         return attributes
     
 
+    def __GetAnnotateOptions(self):
+        """Return all annotate options.
+
+        returns -- A dictionary containing the annotation name / value pairs."""
+
+        annotations = {}
+        for option, argument in self.__command_options:
+            if option == "annotate":
+                name, value = qm.common.parse_assignment(argument)
+                annotations[name] = value
+        return annotations
+    
+
     def __ExecuteCreate(self):
         """Create a new extension file."""
 
@@ -1201,15 +1221,15 @@ Valid formats are %s.
         """Describe an extension."""
 
         # Check that the right number of arguments are present.
-        kind = self.GetCommandOption("kind")
-        if not kind or len(self.__arguments) != 1:
+        if len(self.__arguments) != 2:
             self.__WriteCommandHelp("describe")
             return 2
 
+        kind = self.__arguments[0]
         long_format = self.GetCommandOption("long") != None
 
         database = self.GetDatabaseIfAvailable()
-        class_ = get_extension_class(self.__arguments[0], kind, database)
+        class_ = get_extension_class(self.__arguments[1], kind, database)
 
         attributes = (self.__GetAttributeOptions(False)
                       or class_._argument_dictionary)
@@ -1614,7 +1634,12 @@ Valid formats are %s.
 
         # Handle the --result-stream options.
         result_streams.extend(self.__GetResultStreams())
-        
+
+        # Handle the --annotate options.
+        for name, value in self.__GetAnnotateOptions().iteritems():
+            for rs in result_streams:
+                rs.WriteAnnotation(name, value)
+
         if self.HasCommandOption("random"):
             # Randomize the order of the tests.
             random.shuffle(test_ids)
