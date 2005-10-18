@@ -1430,7 +1430,8 @@ Valid formats are %s.
         # The remaining arguments, if any, are test and suite IDs.
         id_arguments = self.__arguments[1:]
         # Are there any?
-        if len(id_arguments) > 0:
+        # '.' is an alias for <all>, and thus shadows other selectors.
+        if len(id_arguments) > 0 and not '.' in id_arguments:
             filter = 1
             # Expand arguments into test IDs.
             try:
@@ -1592,6 +1593,9 @@ Valid formats are %s.
         if len(self.__arguments) == 0:
             # No IDs specified; run the entire test database.
             self.__arguments.append("")
+        elif '.' in self.__arguments:
+            # '.' is an alias for <all>, and thus shadows other selectors.
+            self.__arguments = [""]
 
         # Expand arguments in test IDs.
         try:

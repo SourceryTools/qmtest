@@ -1,3 +1,8 @@
+2005-10-18  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/cmdline.py: Fix handling of '.' pseudo-id.
+	* qm/test/web/web.py: Likewise.
+
 2005-10-14  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/cmdline.py: Add 'annotate' option to 'run' command, refine

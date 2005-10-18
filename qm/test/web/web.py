@@ -2230,6 +2230,9 @@ class QMTestServer(qm.web.WebServer):
         # Extract and expand the IDs of tests to run.
         if request.has_key("ids"):
             ids = string.split(request["ids"], ",")
+            # '.' is an alias for <all>, and thus shadows other selectors.
+            if '.' in ids:
+                ids = [""]
         else:
             ids = [""]
         test_ids = self.GetDatabase().ExpandIds(ids)[0]
