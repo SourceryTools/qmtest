@@ -1,5 +1,8 @@
 2005-10-24  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/classes/dejagnu_stream.py
+	(DejaGNUStream.__UpdateResult): Fix typo.
+
 	* qm/test/classes/dejagnu_stream.py (cgi): Import it.
 	(re): Likewise.
 	(sets.Set): Likewise.

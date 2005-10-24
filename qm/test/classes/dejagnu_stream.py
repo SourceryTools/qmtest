@@ -339,7 +339,7 @@ class DejaGNUReader(FileResultReader):
         if qmtest_outcome != Result.PASS and cause:
             old_cause = result.GetCause()
             if old_cause:
-                old_cause = "  "
+                old_cause += "  "
             old_cause += cgi.escape(cause)
             result.SetCause(old_cause)
 
