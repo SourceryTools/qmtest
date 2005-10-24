@@ -299,7 +299,7 @@ class DejaGNUReader(FileResultReader):
     def __UpdateResult(self, result, dejagnu_outcome, cause):
         """Update 'result' as indicated.
 
-        'result' -  A 'Result', which may contain information from
+        'result' -- A 'Result', which may contain information from
         previous DejaGNU tests, in the combined mode.
 
         'dejagnu_outcome' -- The DejaGNU outcome (one of the
