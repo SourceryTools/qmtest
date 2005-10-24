@@ -20,6 +20,7 @@
 import qm
 import qm.extension
 import qm.fields
+from   qm.test.result import Result
 
 ########################################################################
 # classes
@@ -94,4 +95,16 @@ class ResultStream(qm.extension.Extension):
         however, invoke this version before returning."""
         
         pass
-        
+
+
+    def _GetExpectedOutcome(self, test_id):
+        """Return the outcome expected for 'test_id'.
+
+        returns -- The outcome (one of the elements of
+        'Result.outcomes') expected for 'test_id'.  The expected
+        outcome is taken from the 'expected_outcomes' provided when
+        constructing this result stream, if available.  If no expected
+        outcome is available the default value ('Result.PASS') will be
+        returned."""
+
+        return self.expected_outcomes.get(test_id, Result.PASS)

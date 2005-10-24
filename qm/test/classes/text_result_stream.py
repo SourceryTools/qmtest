@@ -170,8 +170,7 @@ class TextResultStream(FileResultStream):
             # Remember tests with unexpected results so that we can
             # display them at the end of the run.
             test_id = result.GetId()
-            expected_outcome \
-                = self.expected_outcomes.get(result.GetId(), Result.PASS)
+            expected_outcome = self._GetExpectedOutcome(result.GetId())
             if self.format != "stats" and outcome != expected_outcome:
                 self.__unexpected_outcome_counts[outcome] += 1
                 self.__unexpected_test_results.append(result)
@@ -384,8 +383,11 @@ class TextResultStream(FileResultStream):
             self._WriteOutcome(id_, kind, outcome)
 
         # Print the cause of the failure.
-        if result.has_key(Result.CAUSE):
-            self.file.write('    ' + result[Result.CAUSE] + '\n')
+        cause = result.GetCause()
+        if cause:
+            cause = qm.common.html_to_text(cause)
+            for l in cause.splitlines():
+                self.file.write("    " + l + "\n")
             
         self.file.write('\n')
 

@@ -1,5 +1,12 @@
 2005-10-23  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/result_stream.py (qm.test.result.Result): Import it.
+	(ResultStream._GetExpectedOutcome): New method.
+	* qm/test/classes/text_result_stream.py
+	(TextResultStream.WriteResult): Use it.
+	(TextResultStream.DisplayResult): Treat Result.CAUSE annotation as
+	HTML.
+
 	* qm/test/result.py (Result.SetOutcome): Use SetCause.
 	(Result.SetCause): New method.
 	(Result.NoteException): Use SetCause.
