@@ -1534,12 +1534,15 @@
        <option>&dashdash;output</option> <replaceable>file</replaceable> 
       </term>
       <listitem>
-       <para>Write full test results to <replaceable>file</replaceable>.
-       Specify "<literal>-</literal>" (a hyphen) to write results to
-       standard output.  If neither this option nor
-       <option>&dashdash;no-output</option> is specified, the results
-       are written to the file named <filename>results.qmr</filename>
-       in the current directory.</para>
+       <para>
+        Write full test results to <replaceable>file</replaceable>, in
+        QMTest's machine-readable file format.  Use a 
+        "<literal>-</literal>" (a hyphen) to write results to 
+        the standard output.  If neither this option nor
+        <option>&dashdash;no-output</option> is specified, the results
+        are written to the file named <filename>results.qmr</filename>
+        in the current directory.
+       </para>
       </listitem>
      </varlistentry>
 
@@ -1550,12 +1553,16 @@
       </term>
       <listitem>
        <para>Treat <replaceable>file</replaceable> as a set of
-       expected outcomes.  The <replaceable>file</replaceable> must
-       have be a results file created either by <command>&qmtest-cmd;
-       run</command>, or by saving results in the graphical user interface.
-       &qmtest; will expect the results of the current test run to
-       match those specified in the <replaceable>file</replaceable>
-       and will highlight differences from those results.</para>
+       expected outcomes.  The <replaceable>file</replaceable> is
+       usually a results file created either by using the 
+       <command>&qmtest-cmd; run</command> or by saving results in the
+       graphical user interface.  If <replaceable>file</replaceable>
+       does not appear to be such a file, it is interpreted as an
+       extension descriptor, as described in <xref
+       linkend="sec-testcmd-create"/>.  QMTest will expect the results
+       of the current test run to match those specified in the
+       <replaceable>file</replaceable> and will highlight differences
+       from those results.</para>
       </listitem>
      </varlistentry> 
 
@@ -1663,20 +1670,37 @@
      <arg choice="opt" rep="repeat">
       <replaceable>option</replaceable>
      </arg>
-     <group choice="opt" rep="repeat">
-      <arg choice="plain"><replaceable>test-name</replaceable></arg>
-      <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+     <group choice="opt">
+      <arg choice="req"><replaceable>results-file</replaceable></arg>
+      <group choice="opt" rep="repeat">
+       <arg choice="plain"><replaceable>test-name</replaceable></arg>
+       <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+      </group>
      </group>
     </cmdsynopsis>
    </section>
 
    <section>
     <title>Description</title>
-    <para>The <command>&qmtest-cmd; summarize</command> extracts
-    information stored in a results file and displays this information
-    on the console.  The information is formatted just as if the tests
-    had just been run, but &qmtest; does not actually run the
-    tests.</para>
+    <para>
+     The <command>&qmtest-cmd; summarize</command> extracts information
+     stored in the <replaceable>results-file</replaceable> (or
+     <filename>results.qmr</filename>, if no
+     <replaceable>results-file</replaceable> is specified) and displays
+     this information on the console.  The information is formatted
+     just as if the tests had been run with <command>qmtest
+     run</command>, but, instead of actually running the tests,
+     QMTest reads the results from the
+     <replaceable>results-file</replaceable>.
+    </para>
+
+    <para>
+     If the <replaceable>results-file</replaceable> is not a valid
+     results file, it is interpreted as an extension descriptor,
+     as described in <xref linkend="sec-testcmd-create"/>.  You can
+     use the descriptor syntax to read results stored in formats that
+     are not &quot;built-in&quot; to QMTest.
+    </para>
 
     <para>The <command>summarize</command> command accepts the
     following options:</para>
@@ -1694,6 +1718,21 @@
       </listitem>
      </varlistentry>
   
+     <varlistentry>
+      <term><option>-o</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;output</option> <replaceable>file</replaceable> 
+      </term>
+      <listitem>
+       <para>
+        Write full test results to <replaceable>file</replaceable>, in
+        QMTest's machine-readable file format.  Use a 
+        "<literal>-</literal>" (a hyphen) to write results to 
+        the standard output.
+       </para>
+      </listitem>
+     </varlistentry>
+
      <varlistentry>
       <term><option>-O</option> <replaceable>file</replaceable></term>
       <term>

@@ -1,5 +1,28 @@
 2005-10-23  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/base.py (load_outcomes): Adjust documentation.
+	(load_results): Permit file parameter to be an extension
+	descriptor.
+	* qm/test/cmdline.py (QMTest.commands_spec): Add --output
+	option to "qmtest summarize".
+	(QMTest.__ExecuteSummarize): Use self.results_file_name.  Adjust
+	call to load_results.  Pass result of --output option to
+	__GetResultStreams.
+	(QMTest.__ExecuteRun): Use self.results_file_name.  Pass results
+	file name to __GetResultStreams.
+	(QMTest.__GetExpectedOutcomes): Adjust call to load_outcomes.
+	(QMTest.__FilterTestsToRun): Likewise.
+	(QMTest.__GetResultStreams): Add output_file parameter.  Create a
+	file result stream appropriate.
+	* qm/test/report.py (ReportGenerator._CreateResultStreams): Adjust
+	call to load_results.
+	* qm/test/classes/dir_run_database.py (DirRunDatabase.__init__):
+	Likewise.
+	* qm/test/doc/manual.xml: Use DocBook 4.2.  Provide a URL for the
+	DocBook DTD.
+	* qm/test/doc/reference.xml: Document -o option to summarize and
+	extended descriptor syntax for input file.
+	
 	* qm/test/result_stream.py (qm.test.result.Result): Import it.
 	(ResultStream._GetExpectedOutcome): New method.
 	* qm/test/classes/text_result_stream.py

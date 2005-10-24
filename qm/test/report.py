@@ -94,7 +94,7 @@ class ReportGenerator:
         results = []
         for result_file, exp_file in input:
             try:
-                result = base.load_results(open(result_file, "rb"), self.database)
+                result = base.load_results(result_file, self.database)
             except IOError, e:
                 raise PythonException("Error reading '%s'"%result_file,
                                       IOError, e)
@@ -104,7 +104,7 @@ class ReportGenerator:
             exp = {}
             if exp_file:
                 try:
-                    exp_reader = base.load_results(open(exp_file, "rb"),
+                    exp_reader = base.load_results(exp_file,
                                                    self.database)
                     for e in exp_reader:
                         if e.GetKind() == Result.TEST:

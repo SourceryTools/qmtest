@@ -48,7 +48,7 @@ class DirRunDatabase(RunDatabase):
         for f in glob(os.path.join(directory, "*.qmr")):
             try:
                 # Create the ResultReader corresponding to f.
-                reader = base.load_results(open(f, 'rb'), database)
+                reader = base.load_results(f, database)
                 run = ReaderTestRun(reader)
             except:
                 # If anything goes wrong reading the file, just skip

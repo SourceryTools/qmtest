@@ -310,24 +310,6 @@ def get_resource_class(class_name, database):
     return get_extension_class(class_name, 'resource', database)
 
 
-def load_outcomes(file, database):
-    """Load test outcomes from a file.
-
-    'file' -- The file object from which to read the results.
-
-    'database' -- The current database.
-
-    returns -- A map from test IDs to outcomes."""
-
-    results = load_results(file, database)
-    outcomes = {}
-    for r in results:
-        # Keep test outcomes only.
-        if r.GetKind() == Result.TEST:
-            outcomes[r.GetId()] = r.GetOutcome()
-    return outcomes
-
-
 def get_extension_classes(kind, database = None):
     """Return the extension classes for the given 'kind'.
 
@@ -354,24 +336,65 @@ def get_extension_classes(kind, database = None):
 def load_results(file, database):
     """Read test results from a file.
 
-    'file' -- The file object from which to read the results.
+    'file' -- The filename or file object from which to read the
+    results.  If 'file' is not a string, then it is must be a seekable
+    file object, and this function will look for a 'FileResultReader'
+    that accepts the file.  If 'file' is a string, then it is treated as
+    either a filename or as an extension descriptor.
 
     'database' -- The current database.
 
     returns -- A 'ResultReader' object, or raises an exception if no
     appropriate reader is available."""
 
-    # Find the first FileResultStream that will accept this file.
-    for c in get_extension_classes("result_reader", database):
-        if issubclass(c, FileResultReader):
-            try:
-                return c({"file" : file})
-            except FileResultReader.InvalidFile:
-                # Go back to the beginning of the file.
-                file.seek(0)
+    f = None
+    if isinstance(file, types.StringTypes):
+        if os.path.exists(file):
+            f = open(file, "rb")
+    else:
+        f = file
+    if f:
+        # Find the first FileResultStream that will accept this file.
+        for c in get_extension_classes("result_reader", database):
+            if issubclass(c, FileResultReader):
+                try:
+                    return c({"file" : f})
+                except FileResultReader.InvalidFile:
+                    # Go back to the beginning of the file.
+                    f.seek(0)
+    if not isinstance(file, types.StringTypes):
+        raise FileResultReader.InvalidFile, \
+              "not a valid results file"
+    if database:
+        extension_loader = database.GetExtension
+    else:
+        extension_loader = None
+    class_loader = lambda n: get_extension_class(n,
+                                                 "result_reader",
+                                                 database)
+    cl, args = qm.extension.parse_descriptor(file,
+                                             class_loader,
+                                             extension_loader)
+    return cl(args)
         
-    raise FileResultReader.InvalidFile, \
-          "not a valid results file"
+
+def load_outcomes(file, database):
+    """Load test outcomes from a file.
+
+    'file' -- The file object from which to read the results.  See
+    'load_results' for details.
+
+    'database' -- The current database.
+
+    returns -- A map from test IDs to outcomes."""
+
+    results = load_results(file, database)
+    outcomes = {}
+    for r in results:
+        # Keep test outcomes only.
+        if r.GetKind() == Result.TEST:
+            outcomes[r.GetId()] = r.GetOutcome()
+    return outcomes
 
 
 def _result_from_dom(node):

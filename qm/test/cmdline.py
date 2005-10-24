@@ -580,6 +580,7 @@ Valid formats are %s.
          ( help_option_spec,
            format_option_spec,
            outcomes_option_spec,
+           output_option_spec,
            result_stream_spec)
          ),
 
@@ -1421,7 +1422,7 @@ Valid formats are %s.
 
         # If no results file is specified, use a default value.
         if len(self.__arguments) == 0:
-            results_path = "results.qmr"
+            results_path = self.results_file_name
         else:
             results_path = self.__arguments[0]
 
@@ -1453,8 +1454,7 @@ Valid formats are %s.
 
         # Get an iterator over the results.
         try:
-            results = base.load_results(open(results_path, "rb"),
-                                        database)
+            results = base.load_results(results_path, database)
         except (IOError, xml.sax.SAXException), exception:
             raise QMException, \
                   qm.error("invalid results file",
@@ -1465,7 +1465,7 @@ Valid formats are %s.
 
         # Compute the list of result streams to which output should be
         # written.
-        streams = self.__GetResultStreams()
+        streams = self.__GetResultStreams(self.GetCommandOption("output"))
 
         # Send the annotations through.
         for s in streams:
@@ -1629,15 +1629,10 @@ Valid formats are %s.
             result_file_name = self.GetCommandOption("output")
             if result_file_name is None:
                 # By default, write results to a default file.
-                result_file_name = "results.qmr"
-
-        if result_file_name is not None:
-            rs = (self.GetFileResultStreamClass()
-                  ({ "filename" : result_file_name}))
-            result_streams.append(rs)
+                result_file_name = self.results_file_name
 
         # Handle the --result-stream options.
-        result_streams.extend(self.__GetResultStreams())
+        result_streams.extend(self.__GetResultStreams(result_file_name))
 
         # Handle the --annotate options.
         for name, value in self.__GetAnnotateOptions().iteritems():
@@ -1804,7 +1799,7 @@ Valid formats are %s.
             else:
                 try:
                     self.__expected_outcomes \
-                         = base.load_outcomes(open(outcomes_file_name, "rb"),
+                         = base.load_outcomes(outcomes_file_name,
                                               self.GetDatabaseIfAvailable())
                 except IOError, e:
                     raise qm.cmdline.CommandError, str(e)
@@ -1827,7 +1822,7 @@ Valid formats are %s.
         rerun_file_name = self.GetCommandOption("rerun")
         if rerun_file_name:
             # Load the outcomes from the file specified.
-            outcomes = base.load_outcomes(open(rerun_file_name, "rb"),
+            outcomes = base.load_outcomes(rerun_file_name,
                                           self.GetDatabase())
             expectations = self.__GetExpectedOutcomes()
             # We can avoid treating the no-expectation case as special
@@ -1857,9 +1852,12 @@ Valid formats are %s.
                            kind = kind)
 
                        
-    def __GetResultStreams(self):
+    def __GetResultStreams(self, output_file):
         """Return the result streams to use.
 
+        'output_file' -- If not 'None', the name of a file to which
+        the standard results file format should be written.
+        
         returns -- A list of 'ResultStream' objects, as indicated by the
         user."""
 
@@ -1897,6 +1895,13 @@ Valid formats are %s.
                 ec, as = qm.extension.parse_descriptor(opt_arg, f)
                 as.update(arguments)
                 result_streams.append(ec(as))
+
+        # If there is an output file, create a standard results file on
+        # that file.
+        if output_file is not None:
+            rs = (self.GetFileResultStreamClass()
+                  ({ "filename" : output_file}))
+            result_streams.append(rs)
 
         return result_streams
     
