@@ -220,7 +220,7 @@ class Result:
         assert outcome in Result.outcomes
         self.__outcome = outcome
         if cause:
-            self[Result.CAUSE] = cause
+            self.SetCause(cause)
         self.Annotate(annotations)
 
 
@@ -261,7 +261,16 @@ class Result:
         else:
             return ""
     
-        
+
+    def SetCause(self, cause):
+        """Set the cause of failure.
+
+        'cause' -- A string indicating the cause of failure.  Like all
+        annotations, 'cause' will be interested as HTML."""
+
+        self[Result.CAUSE] = cause
+
+
     def Quote(self, string):
         """Return a version of string suitable for an annotation value.
 
@@ -312,8 +321,7 @@ class Result:
         if exception_type is ContextException:
             self["qmtest.context_variable"] = exc_info[1].key
             
-        self.SetOutcome(outcome)
-        self[Result.CAUSE] = cause
+        self.SetOutcome(outcome, cause)
         self[Result.EXCEPTION] \
             = self.Quote("%s: %s" % exc_info[:2])
         self[Result.TRACEBACK] \
