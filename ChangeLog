@@ -1,3 +1,11 @@
+2005-10-24  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/dejagnu_stream.py (cgi): Import it.
+	(re): Likewise.
+	(sets.Set): Likewise.
+	(DejaGNUReader): Add combined mode.  Add expectations-generation
+	mode.
+
 2005-10-23  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/base.py (load_outcomes): Adjust documentation.
