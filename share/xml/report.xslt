@@ -77,7 +77,9 @@
         </head>
         <body>
           <h1><xsl:value-of select="$title" /></h1>
-          <xsl:call-template name="detail" />
+          <xsl:call-template name="detail">
+            <xsl:with-param name="id" select="$id"/>
+          </xsl:call-template>
         </body>
       </html>
     </common:document>
@@ -150,7 +152,6 @@
           
           <xsl:variable name="exp.outcome"
                         select="normalize-space($result/annotation[@name='qmtest.expected_outcome'])"/>
-          <xsl:message><xsl:value-of select="$exp.outcome" /></xsl:message>
           <xsl:variable name="exp.cause"
                         select="$result/annotation[@name='qmtest.expected_cause']"/>
           <xsl:choose>
@@ -195,8 +196,9 @@
   </xsl:template>
     
   <xsl:template name="detail">
-    <xsl:for-each select="/report/results[annotation/@key=$key]/result">
-      <xsl:call-template name="result.detail" />
+    <xsl:param name="id" select="'dummy'"/>
+    <xsl:for-each select="/report/results[annotation[@key=$key]=$id]/result">
+      <xsl:call-template name="result.detail"/>
     </xsl:for-each>
   </xsl:template>
 

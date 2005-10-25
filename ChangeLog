@@ -1,3 +1,7 @@
+2005-10-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* share/xml/report.xslt: Fix handling of multiple test runs.
+
 2005-10-24  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_stream.py
