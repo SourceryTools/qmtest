@@ -1,3 +1,13 @@
+2005-10-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/result.py: Add refactored CheckExitStatus method.
+	* qm/test/classes/command.py: Use it.
+	* qm/test/classes/compiler_test.py: Prepare CompilerTest for reuse;
+	general cleanup.
+	* qm/test/classes/compilation_test.py: Add new SimpleCompilationTest
+	and SimpleCompiledResource extensions.
+	* qm/test/classes/classes.qmc: Register them.
+
 2005-10-25  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_stream.py (sets.Set): Don't import it.

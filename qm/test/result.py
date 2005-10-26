@@ -19,7 +19,7 @@
 
 import qm
 from   qm.test.context import ContextException
-import sys
+import sys, os
 import types
 import cgi
 
@@ -328,6 +328,51 @@ class Result:
             = self.Quote(qm.format_traceback(exc_info))
 
         
+    def CheckExitStatus(self, prefix, desc, status, non_zero_exit_ok = 0):
+        """Check the exit status from a command.
+
+        'result' -- The 'Result' object to update.
+
+        'prefix' -- The prefix that should be used when creating
+        result annotations.
+
+        'desc' -- A description of the executing program.
+        
+        'status' -- The exit status, as returned by 'waitpid'.
+
+        'non_zero_exit_ok' -- True if a non-zero exit code is not
+        considered failure.
+
+        returns -- False if the test failed, true otherwise."""
+
+        if sys.platform == "win32" or os.WIFEXITED(status):
+            # Obtain the exit code.
+            if sys.platform == "win32":
+                exit_code = status
+            else:
+                exit_code = os.WEXITSTATUS(status)
+            # If the exit code is non-zero, the test fails.
+            if exit_code != 0 and not non_zero_exit_ok:
+                result.Fail("%s failed with exit code %d." % (desc, exit_code))
+                # Record the exit code in the result.
+                result[prefix + "exit_code"] = str(exit_code)
+                return False
+        
+        elif os.WIFSIGNALED(status):
+            # Obtain the signal number.
+            signal = os.WTERMSIG(status)
+            # If the program gets a fatal signal, the test fails .
+            result.Fail("%s received fatal signal %d." % (desc, signal))
+            result[prefix + "signal"] = str(signal)
+            return False
+        else:
+            # A process should only be able to stop by exiting, or
+            # by being terminated with a signal.
+            assert None
+
+        return True
+
+
     def MakeDomNode(self, document):
         """Generate a DOM element node for this result.
 

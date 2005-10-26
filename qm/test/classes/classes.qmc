@@ -12,6 +12,7 @@
  <class kind="result_stream" name="tet_stream.TETStream"/>
  <class kind="resource" name="temporary.TempDirectoryResource"/>
  <class kind="resource" name="compiler_table.CompilerTable"/>
+ <class kind="resource" name="compilation_test.SimpleCompiledResource"/>
  <class kind="target" name="process_target.ProcessTarget"/>
  <class kind="target" name="rsh_target.RSHTarget"/>
  <class kind="target" name="serial_target.SerialTarget"/>
@@ -25,6 +26,7 @@
  <class kind="test" name="python.ExceptionTest"/>
  <class kind="test" name="python.ExecTest"/>
  <class kind="test" name="python.StringExceptionTest"/>
+ <class kind="test" name="compilation_test.SimpleCompilationTest"/>
  <class kind="label" name="file_label.FileLabel"/>
  <class kind="label" name="python_label.PythonLabel"/>
  <class kind="suite" name="explicit_suite.ExplicitSuite"/>

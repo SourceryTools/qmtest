@@ -14,10 +14,9 @@
 ########################################################################
 
 from   compiler import *
-import errno
 from   qm.test.result import *
 from   qm.test.test import *
-import string
+import os, string
 
 ########################################################################
 # Classes
@@ -52,51 +51,6 @@ class CompilationStep:
 class CompilerBase:
     """A 'CompilerBase' is used by compilation test and resource clases."""
 
-    def _CheckStatus(self, result, prefix, desc, status,
-                     non_zero_exit_ok = 0):
-        """Check the exit status from a command.
-
-        'result' -- The 'Result' object to update.
-
-        'prefix' -- The prefix that should be used when creating
-        result annotations.
-
-        'desc' -- A description of the executing program.
-        
-        'status' -- The exit status, as returned by 'waitpid'.
-
-        'non_zero_exit_ok' -- True if a non-zero exit code is not
-        considered failure.
-
-        returns -- False is the test failed, true otherwise."""
-
-        if sys.platform == "win32" or os.WIFEXITED(status):
-            # Obtain the exit code.
-            if sys.platform == "win32":
-                exit_code = status
-            else:
-                exit_code = os.WEXITSTATUS(status)
-            # If the exit code is non-zero, the test fails.
-            if exit_code != 0 and not non_zero_exit_ok:
-                result.Fail("%s failed with exit code %d." % (desc, exit_code))
-                # Record the exit code in the result.
-                result[prefix + "exit_code"] = str(exit_code)
-                return 0
-        elif os.WIFSIGNALED(status):
-            # Obtain the signal number.
-            signal = os.WTERMSIG(status)
-            # If the program gets a fatal signal, the test fails .
-            result.Fail("%s received fatal signal %d." % (desc, signal))
-            result[prefix + "signal"] = str(signal)
-            return 0
-        else:
-            # A process should only be able to stop by exiting, or
-            # by being terminated with a signal.
-            assert None
-
-        return 1
-    
-
     def _GetDirectory(self, context):
         """Get the name of the directory in which to run.
 
@@ -113,27 +67,6 @@ class CompilerBase:
             return os.path.join(".", "build", self.GetId())
     
         
-    def _MakeDirectoryRecursively(self, directory):
-        """Create 'directory' and its parents.
-
-        'directory' -- The name of the directory to create.  It must
-        be a relative path"""
-
-        (parent, base) = os.path.split(directory)
-        # Make sure the parent directory exists.
-        if parent and not os.path.isdir(parent):
-            self._MakeDirectoryRecursively(parent)
-        # Create the final directory.
-        try:
-            os.mkdir(directory)
-        except EnvironmentError, e:
-            # It's OK if the directory already exists.
-            if e.errno == errno.EEXIST:
-                pass
-            else:
-                raise
-            
-            
     def _MakeDirectory(self, context):
         """Create a directory in which to place generated files.
 
@@ -145,7 +78,7 @@ class CompilerBase:
         # Get the directory name.
         directory = self._GetDirectory(context)
         # Create it.
-        self._MakeDirectoryRecursively(directory)
+        os.makedirs(directory)
 
         return directory
 
@@ -161,7 +94,7 @@ class CompilerBase:
         if result.GetOutcome() == Result.PASS:
             try:
                 dir = self._GetDirectory(context)
-                qm.common.rmdir_recursively(dir)
+                os.removedirs(directory)
             except:
                 # If the directory cannot be removed, that is no
                 # reason for the test to fail.
@@ -245,8 +178,10 @@ class CompilerTest(Test, CompilerBase):
                 desc = "Link"
             else:
                 desc = "Compilation"
-            if not self._CheckStatus(result, prefix, desc, status,
-                                     step.diagnostics):
+            # If step.diagnostics is non-empty, a non-zero status
+            # is not considered a failure.
+            if not result.CheckExitStatus(prefix, desc, status,
+                                          step.diagnostics):
                 return
 
             # If this compilation generated an executable, remember
@@ -278,6 +213,16 @@ class CompilerTest(Test, CompilerBase):
         executed.
         
         returns -- A sequence of 'CompilationStep' objects."""
+
+        raise NotImplementedError
+
+
+    def _GetTarget(self, context):
+        """Returns a target for the executable to be run on.
+
+        'context' -- The Context in which this test is being executed.
+
+        returns -- A Host to run the executable on."""
 
         raise NotImplementedError
 
@@ -347,7 +292,7 @@ class CompilerTest(Test, CompilerBase):
             # Use the default values.
             environment = None
 
-        target = context["CompilerTable.target"]
+        target = self._GetTarget(context)
         timeout = context.get("CompilerTest.execution_timeout", -1)
         status, output = target.UploadAndRun(path,
                                              [],
@@ -357,7 +302,7 @@ class CompilerTest(Test, CompilerBase):
         # Record the output.
         result[prefix + "output"] = result.Quote(output)
         # Check the output status.
-        self._CheckStatus(result, prefix, "Executable", status)
+        result.CheckExitStatus(prefix, "Executable", status)
 
 
     def _CheckOutput(self, context, result, prefix, output, diagnostics):
