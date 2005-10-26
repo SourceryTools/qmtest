@@ -24,7 +24,6 @@ from   qm.test.file_result_stream import FileResultStream
 from   qm.test.result import Result
 from   qm.test.file_result_reader import FileResultReader
 import re
-from   sets import Set
 
 ########################################################################
 # Classes
@@ -204,7 +203,6 @@ class DejaGNUReader(FileResultReader):
             raise FileResultReader.InvalidFile, \
                   "file is not a DejaGNU result stream"
         self.file.seek(0)
-        self.test_ids = Set()
         if self.__UseCombinedMode():
             test_id, dejagnu_outcome, cause = self.__NextOutcome()
             if test_id:
