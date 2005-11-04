@@ -1,3 +1,10 @@
+2005-11-04  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/dejagnu_stream.py (DejaGNUReader.__NextOutcome):
+	Ignore ERROR results.
+	(DejaGNUReader.__UpdateResult): Don't repeat causes.  Don't use
+	causes at all for non-combined results.
+
 2005-10-25  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/result.py: Add refactored CheckExitStatus method.

@@ -261,8 +261,11 @@ class DejaGNUReader(FileResultReader):
             #   PASS: g++.dg/compat/eh/template1 cp_compat_y_tst.o compile
             dejagnu_outcome = None
             for o in DejaGNUTest.dejagnu_outcomes:
-                # Ignore WARNING; those are not really test results.
-                if o != DejaGNUTest.WARNING and line.startswith(o):
+                # Ignore WARNING and ERROR; those are not really test
+                # results. 
+                if (o not in (DejaGNUTest.WARNING,
+                              DejaGNUTest.ERROR)
+                    and line.startswith(o)):
                     o_len = len(o)
                     if line[o_len:o_len + 2] == ": ":
                         dejagnu_outcome = o
@@ -283,14 +286,16 @@ class DejaGNUReader(FileResultReader):
         cause = None
         if "execution test" in line:
             cause = "Compiled program behaved incorrectly."
-        else:
+        elif dejagnu_outcome == DejaGNUTest.UNSUPPORTED:
+            cause = "Test is not applicable on this platform."
+        elif self.__UseCombinedMode():
             match = self.__cause_regexp.search(line)
             if match:
                 cause = match.group("cause").capitalize()
                 if cause and cause[-1] != ".":
                     cause += "."
-            elif dejagnu_outcome == DejaGNUTest.UNSUPPORTED:
-                cause = "Test is not applicable on this platform."
+        else:
+            cause = ""
         return test_id, dejagnu_outcome, cause
         
     
@@ -336,10 +341,14 @@ class DejaGNUReader(FileResultReader):
             result.SetOutcome(Result.FAIL)
         if qmtest_outcome != Result.PASS and cause:
             old_cause = result.GetCause()
-            if old_cause:
-                old_cause += "  "
-            old_cause += cgi.escape(cause)
-            result.SetCause(old_cause)
+            if old_cause and cause in old_cause:
+                # Don't repeat the same cause multiple times.
+                pass
+            else:
+                if old_cause:
+                    old_cause += "  "
+                old_cause += cgi.escape(cause)
+                result.SetCause(old_cause)
 
 
     def __UseCombinedMode(self):
