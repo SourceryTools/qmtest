@@ -1770,8 +1770,9 @@
    <section>
     <title>Synopsis</title>
     <cmdsynopsis>
-     <command>&qmtest-cmd; report <option>-o</option></command>
-     <arg><replaceable>output</replaceable></arg>
+     <command>&qmtest-cmd; report </command>
+     <arg>-o <replaceable>output</replaceable></arg>
+     <arg choice="opt">-f</arg>
      <arg choice="opt" rep="repeat">
       <arg choice="plain"><replaceable>report-file</replaceable></arg>
       <arg choice="opt">-e <replaceable>expectation-file</replaceable></arg>
@@ -1791,6 +1792,14 @@
     following options:</para>
 
     <variablelist>
+     <varlistentry>
+      <term><option>-f</option></term>
+      <term><option>&dashdash;flat</option></term>
+      <listitem>
+       <para>Generate a flat listing of test results, instead of reproducing the
+        database directory tree in the report.</para>
+      </listitem>
+     </varlistentry>
      <varlistentry>
       <term><option>-o</option> <replaceable>output file</replaceable></term>
       <term>

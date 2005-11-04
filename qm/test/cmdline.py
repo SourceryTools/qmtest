@@ -320,6 +320,14 @@ class QMTest:
         "Write test report to FILE (- for stdout)."
         )
 
+    report_flat_option_spec = (
+        "f",
+        "flat",
+        None,
+        """Generate a flat listing of test results, instead of reproducing the
+        database directory tree in the report."""
+        )
+
     results_option_spec = (
         "R",
         "results",
@@ -528,9 +536,13 @@ should not directly invoke QMTest with this option.
          "[ result [-e expected] ]+",
          """
 Generates a test report. The arguments are result files each optionally
-followed by '-e' and an expectation file.
+followed by '-e' and an expectation file. This command attempts to reproduce
+the test database structure, and thus requires the '--tdb' option. To generate
+a flat test report specify the '--flat' option.
          """,
-         (help_option_spec, report_output_option_spec)
+         (help_option_spec,
+          report_output_option_spec,
+          report_flat_option_spec)
          ),
 
         ("run",
@@ -1557,6 +1569,7 @@ Valid formats are %s.
         """Execute a 'report' command."""
 
         output = self.GetCommandOption("output")
+        flat = self.GetCommandOption("flat") != None
 
         # Check that at least one result file is present.
         if not output or len(self.__arguments) < 1:
@@ -1564,11 +1577,14 @@ Valid formats are %s.
             return 2
 
         # If the database can be loaded, use it to find all
-        # available tests.
-        database = self.GetDatabaseIfAvailable()
+        # available tests. The default (non-flat) format requires a database.
+        if flat:
+            database = self.GetDatabaseIfAvailable()
+        else:
+            database = self.GetDatabase()
 
         report_generator = ReportGenerator(output, database)
-        report_generator.GenerateReport(self.__arguments)
+        report_generator.GenerateReport(flat, self.__arguments)
         
 
     def __ExecuteRun(self):

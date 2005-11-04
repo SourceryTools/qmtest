@@ -1,3 +1,12 @@
+2005-11-04  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/test_run.py: Add GetAnnotations() method.
+	* qm/test/reader_test_run.py: Implement it.
+	* qm/test/report.py: Rewrite report generation now supporting two formats.
+	* qm/test/cmdline.py: Add '--flat' option to the 'report' command.
+	* qm/test/doc/reference.xml: Document it.
+	* share/xml/report.xslt: Adjust html-report generation to new format.
+	
 2005-11-04  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_stream.py (DejaGNUReader.__NextOutcome):

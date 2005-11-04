@@ -59,6 +59,11 @@ class ReaderTestRun(TestRun):
         return self.__annotations.get(key)
         
 
+    def GetAnnotations(self):
+
+        return self.__annotations
+
+
     def GetAllResults(self, directory = "", kind = Result.TEST):
 
         if directory == "":

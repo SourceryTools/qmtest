@@ -22,6 +22,7 @@ import qm.xmlutil
 from qm.common import PythonException
 from qm.test import base
 from qm.test.result import Result
+from qm.test.reader_test_run import ReaderTestRun
 import xml.sax
 
 ########################################################################
@@ -32,14 +33,6 @@ class ReportGenerator:
     """A 'ReportGenerator' generates a test report from one or more
     result files."""
 
-    class Expectation:
-        """An internal helper class to facilitate access to expectations."""
-        
-        def __init__(self, outcome, cause):
-
-            self.outcome, self.cause = outcome, cause
-            
-
     def __init__(self, output, database=None):
 
         self.output = open(output, 'w+')
@@ -49,9 +42,12 @@ class ReportGenerator:
             document_element_tag="report")
 
 
-    def GenerateReport(self, arguments):
+    def GenerateReport(self, flat, arguments):
         """Generates a report file with results collected from a set of
         result files.
+
+        'flat' -- True to indicate a flat result listing, False if tests should be
+        reported according to the database directory structure.
 
         'arguments' -- command arguments of the form [result [-e expectation]]+
 
@@ -71,124 +67,190 @@ class ReportGenerator:
 
         # Write out the prologue.
         self.output.write("<?xml version='1.0' encoding='ISO-8859-1'?>\n")
-        self.output.write('<!DOCTYPE report PUBLIC "%s" "%s">\n'
-                        % (qm.xmlutil.make_public_id("QMTest/Report"),
-                           qm.xmlutil.make_system_id("qmtest/report.dtd")))
         self.output.write("<report>\n")
-        self._WriteTestIds(input)
 
-        results = self._CreateResultStreams(input)
-        for result in results:
-            self._Report(result)
+        test_runs = self._LoadTestRuns(input)
+
+        self.output.write("  <runs>\n")
+        for test_run, expectations in test_runs:
+            self.output.write("  <run>\n")
+        
+            annotations = test_run.GetAnnotations()
+            for key, value in annotations.iteritems():
+
+                element = self.__document.createElement("annotation")
+                element.setAttribute("key", key)
+                text = self.__document.createTextNode(value)
+                element.appendChild(text)
+                element.writexml(self.output, addindent = " ", newl = "\n")
+            self.output.write("  </run>\n")
+        self.output.write("  </runs>\n")
+
+        if flat:
+            self._ReportFlat(test_runs)
+        else:
+            self._Report(test_runs)
+            
         self.output.write("</report>\n")
 
 
-    def _CreateResultStreams(self, input):
-        """Create result streams for all result files.
+    def _LoadTestRuns(self, input):
+        """Load test runs from the provided input.
 
         'input' -- A list of pairs of file names referring to result files /
         expectation files. The expectation file member may be None.
 
-        returns -- A list of pairs of ResultStream / Expectation objects."""
+        returns -- A list of pairs of TestRun objects."""
 
-        results = []
+        runs = []
         for result_file, exp_file in input:
+            results = None
+            expectations = None
+
             try:
-                result = base.load_results(result_file, self.database)
+                file = result_file
+                reader = base.load_results(file, self.database)
+                results = ReaderTestRun(reader)
+                if exp_file:
+                    file = exp_file
+                    reader = base.load_results(file, self.database)
+                    expectations = ReaderTestRun(reader)
             except IOError, e:
-                raise PythonException("Error reading '%s'"%result_file,
-                                      IOError, e)
+                raise PythonException("Error reading '%s'"%file, IOError, e)
             except xml.sax.SAXException, e:
-                raise PythonException("Error loading '%s'"%result_file,
+                raise PythonException("Error loading '%s'"%file,
                                       xml.sax.SAXException, e)
-            exp = {}
-            if exp_file:
-                try:
-                    exp_reader = base.load_results(exp_file,
-                                                   self.database)
-                    for e in exp_reader:
-                        if e.GetKind() == Result.TEST:
-                            outcome = e.GetOutcome()
-                            cause = e.get('qmtest.cause')
-                            exp[e.GetId()] = ReportGenerator.Expectation(outcome,
-                                                                         cause)
-                except IOError, e:
-                    raise PythonException("Error reading '%s'"%exp_file,
-                                          IOError, e)
-                except xml.sax.SAXException, e:
-                    raise PythonException("Error loading '%s'"%exp_file,
-                                          xml.sax.SAXException, e)
-            results.append((result, exp))
-        return results
-    
+            runs.append((results, expectations))
+        return runs
 
-    def _WriteTestIds(self, input):
-        """Generate an entry in the output containing a list of all
-        available test ids. This list is obtained from the database
-        if it is present, or else by taking the union of all tests
-        reported in the result objects.
 
-        'input' -- A list of result / expectation file pairs.
+    def _GetIds(self, test_runs):
+        """Return a list of ids to report results from.
+        This list is obtained from the database if it is present,
+        or else by taking the union of all items reported in the
+        test runs.
 
-        returns -- None."""
+        'test_runs' -- A list of result / expectation table pairs.
 
-        self.output.write("<suite>\n")
+        returns -- The tuple of resource-setup-ids, test-ids,
+        and resource-cleanup-ids."""
+
         test_ids = []
-        suite_ids = []
+        resource_setup_ids = []
+        resource_cleanup_ids = []
         if self.database:
-            test_ids, suite_ids = self.database.ExpandIds([''])
+            test_ids = self.database.GetTestIds()
+            resource_setup_ids = self.database.GetResourceIds()
+            resource_cleanup_ids = resource_setup_ids
         else:
-            for r, e in self._CreateResultStreams(input):
-                for exp in e:
-                    if not exp in test_ids:
-                        test_ids.append(exp)
-                for result in r:
+            for results, e in test_runs:
+                for result in results.GetAllResults("", Result.TEST):
                     if not result.GetId() in test_ids:
                         test_ids.append(result.GetId())
-        for t in test_ids:
-            self.output.write("<test id=\"%s\" />\n"%t)
-        self.output.write("</suite>\n")
+                for result in results.GetAllResults("", Result.RESOURCE_SETUP):
+                    if not result.GetId() in resource_setup_ids:
+                        resource_setup_ids.append(result.GetId())
+                for result in results.GetAllResults("", Result.RESOURCE_CLEANUP):
+                    if not result.GetId() in resource_cleanup_ids:
+                        resource_cleanup_ids.append(result.GetId())
+        return test_ids, resource_setup_ids, resource_cleanup_ids
 
 
-    def _Report(self, results):
-        """Write one set of results into the report.
+    def _ReportFlat(self, test_runs):
+        """Generate test report with the given set of test runs.
+        The report will contain a flat list of item ids.
 
-        'results' -- ResultReader the results are to be read from.
+        'test_runs' -- List of pairs of TestRun objects."""
 
-        'expectations' -- ResultReader the expectations are to be read from.
-        This may be None.
+        ids = self._GetIds(test_runs)
+        kinds = [Result.TEST, Result.RESOURCE_SETUP, Result.RESOURCE_CLEANUP]
 
-        returns -- None."""
+        element = self.__document.createElement('results')
+        # Report all items, sorted by their kind.
+        for k in [0, 1, 2]:
+            for id in ids[k]:
+                self._ReportItem(kinds[k], id, id, test_runs, element)
 
-        self.output.write("<results>\n")
-        annotations = results[0].GetAnnotations()
-        for key, value in annotations.iteritems():
+        element.writexml(self.output, indent = " ", addindent = " ",
+                         newl = "\n")
 
-            element = self.__document.createElement("annotation")
-            element.setAttribute("key", key)
-            text = self.__document.createTextNode(value)
-            element.appendChild(text)
-            element.writexml(self.output, addindent = " ", newl = "\n")
-            
-        for result in results[0]:
+
+    def _Report(self, test_runs):
+        """Generate test report with the given set of test runs.
+        The report will contain a tree structure with items appearing in their
+        respective subdirectory.
+
+        'test_runs' -- List of pairs of TestRun objects."""
+
+        element = self.__document.createElement('results')
+        root = self._ReportSubdirectory('', test_runs, element)
+        root.writexml(self.output, indent=" ", addindent=" ", newl="\n")
+
+
+    def _ReportSubdirectory(self, directory, test_runs, element=None):
+        """Generate a DOM node for the given directory containing its results.
+
+        'directory' -- The directory for which to generate the report node.
+
+        'test_runs' -- The List of TestRuns.
+
+        'element' -- DOM element to store results into.
+        If this is None, an element will be created.
+        
+        returns -- DOM element node containing the xmlified results."""
+
+        if not element:
+            element = self.__document.createElement('subdirectory')
+            element.setAttribute('name', directory)
+
+        # Start with the subdirectories.
+        for dir in self.database.GetSubdirectories(directory):
+            child = self._ReportSubdirectory(dir, test_runs)
+            element.appendChild(child)
+
+        # Report all items, sorted by kind.
+        for kind in [Result.TEST, Result.RESOURCE_SETUP, Result.RESOURCE_CLEANUP]:
+            for id in self.database.GetIds(kind, directory, False):
+                self._ReportItem(kind, id, self.database.SplitLabel(id)[1],
+                                 test_runs, element)
+        return element
+
+
+    def _ReportItem(self, kind, item_id, name, test_runs, parent):
+        """Report a single item.
+
+        'kind' -- The kind of item to report.
+
+        'item_id' -- The item id to report.
+
+        'name' -- The item's name (usually either the absolute or relative id).
+
+        'test_runs' -- The list of test runs.
+
+        'parent' -- An XML element to insert new nodes into."""
+
+        # Create one item node per id...
+        item = self.__document.createElement('item')
+        item.setAttribute('id', name)
+        item.setAttribute('kind', kind)
+        parent.appendChild(item)
+
+        # ...and fill it with one result per test run.
+        for results, expectations in test_runs:
+            result = results.GetResult(item_id, kind)
+            if not result:
+                result = Result(kind, item_id, Result.UNTESTED)
             # Inject two new annotations containing the expectation values.
-            if results[1]:
-                exp = results[1].get(result.GetId())
+            if expectations:
+                exp = expectations.GetResult(item_id, kind)
                 if exp:
-                    result['qmtest.expected_outcome'] = exp.outcome
-                    if exp.cause:
-                        result['qmtest.expected_cause'] = exp.cause
-            element = result.MakeDomNode(self.__document)
-            element.writexml(self.output, indent = " ", addindent = " ",
-                             newl = "\n")
+                    result['qmtest.expected_outcome'] = exp.GetOutcome()
+                    cause = exp.get('qmtest.cause')
+                    if cause:
+                        result['qmtest.expected_cause'] = cause
 
-
-        self.output.write("</results>\n")
-
-
-########################################################################
-# Local Variables:
-# mode: python
-# indent-tabs-mode: nil
-# fill-column: 72
-# End:
+            child = result.MakeDomNode(self.__document)
+            # Remove redundant attributes
+            child.removeAttribute('id')
+            child.removeAttribute('kind')
+            item.appendChild(child)

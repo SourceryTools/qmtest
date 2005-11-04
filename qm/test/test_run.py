@@ -58,6 +58,15 @@ class TestRun(object):
         raise NotImplementedError
 
 
+    def GetAnnotations(self):
+        """Return this run's dictionary of annotations.
+
+        returns -- A dictionary mapping annotation names (strings) to values
+        (also strings)."""
+
+        raise NotImplementedError
+
+
     def GetAllResults(self, directory = "", kind = Result.TEST):
         """Return 'Result's from the given directory..
 
