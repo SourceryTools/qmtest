@@ -126,6 +126,6 @@ class CompilerTable(Resource):
                 f = lambda n: qm.test.base.get_extension_class(n, "host",
                                                                None)
                 host_class, arguments \
-                    = qm.extension.parse_descriptor(target_desc, f)
+                    = qm.extension.parse_descriptor(target_desc.strip(), f)
                 target = host_class(arguments)
         context["CompilerTable.target"] = target

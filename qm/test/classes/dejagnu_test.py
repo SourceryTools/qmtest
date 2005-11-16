@@ -82,18 +82,6 @@ class DejaGNUTest(Test, DejaGNUBase):
     prefix is followed by an 1-indexed integer; earlier results are
     inserted with lower numbers."""
 
-    class TargetExecutable(RedirectedExecutable):
-        """A 'TargetExecutable' runs on the target system.
-
-        Classes derived from 'DejaGNUTest' may provide derived
-        versions of this class."""
-
-        def _StderrPipe(self):
-
-            # Combine stdout/stderr into a single stream.
-            return None
-            
-
     class BuildExecutable(RedirectedExecutable):
         """A 'BuildExecutable' runs on the build machine.
 
@@ -147,7 +135,7 @@ class DejaGNUTest(Test, DejaGNUBase):
         return status, output
 
     
-    def _RunTargetExecutable(self, context, result, file, dir = None):
+    def _RunTargetExecutable(self, context, result, file):
         """Run 'file' on the target.
 
         'context' -- The 'Context' in which this test is running.
@@ -156,16 +144,12 @@ class DejaGNUTest(Test, DejaGNUBase):
         
         'file' -- The path to the executable file.
 
-        'dir' -- The directory in which the program should execute.
-        
         returns -- One of the 'dejagnu_outcomes'."""
 
-        executable = self.TargetExecutable(self.executable_timeout)
-        command = [file]
-        index = self._RecordCommand(result, command)
+        host = context['CompilerTable.target']
+        index = self._RecordCommand(result, [file])
         environment = self._GetTargetEnvironment(context)
-        status = executable.Run(command, environment, dir)
-        output = executable.stdout
+        status, output = host.Run(file, [], environment)
         self._RecordCommandOutput(result, index, status, output)
         # Figure out whether the execution was successful.
         if os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0:
