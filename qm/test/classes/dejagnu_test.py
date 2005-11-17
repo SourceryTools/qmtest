@@ -44,6 +44,8 @@ class DejaGNUTest(Test, DejaGNUBase):
 
     PASS = "PASS"
     FAIL = "FAIL"
+    KFAIL = "KFAIL"
+    KPASS = "KPASS"
     XPASS = "XPASS"
     XFAIL = "XFAIL"
     WARNING = "WARNING"
@@ -61,6 +63,8 @@ class DejaGNUTest(Test, DejaGNUBase):
     outcome_map = {
         PASS : Result.PASS,
         FAIL : Result.FAIL,
+        KFAIL : Result.FAIL,
+        KPASS : Result.PASS,
         XPASS : Result.PASS,
         XFAIL : Result.FAIL,
         WARNING : Result.PASS,

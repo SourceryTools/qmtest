@@ -47,6 +47,8 @@ class DejaGNUStream(FileResultStream):
     __summary_outcomes = [
         DejaGNUTest.PASS,
         DejaGNUTest.FAIL,
+        DejaGNUTest.KFAIL,
+        DejaGNUTest.KPASS,
         DejaGNUTest.XPASS,
         DejaGNUTest.XFAIL,
         DejaGNUTest.UNRESOLVED,
@@ -58,6 +60,8 @@ class DejaGNUStream(FileResultStream):
     __outcome_descs = {
         DejaGNUTest.PASS: "expected passes",
         DejaGNUTest.FAIL: "unexpected failures",
+        DejaGNUTest.KPASS: "unexpected successes",
+        DejaGNUTest.KFAIL: "expected failures",
         DejaGNUTest.XPASS: "unexpected successes",
         DejaGNUTest.XFAIL: "expected failures",
         DejaGNUTest.UNRESOLVED: "unresolved testcases",
@@ -71,6 +75,7 @@ class DejaGNUStream(FileResultStream):
 
     __expected_outcomes = (
         DejaGNUTest.PASS,
+        DejaGNUTest.KFAIL,
         DejaGNUTest.XFAIL,
         DejaGNUTest.UNRESOLVED,
         DejaGNUTest.UNSUPPORTED,
@@ -319,7 +324,9 @@ class DejaGNUReader(FileResultReader):
                        
         # Translate the DejaGNU outcome into a QMTest outcome.
         if self.__GenerateExpectations():
-            if dejagnu_outcome in (DejaGNUTest.XFAIL,
+            if dejagnu_outcome in (DejaGNUTest.KFAIL,
+                                   DejaGNUTest.KPASS,
+                                   DejaGNUTest.XFAIL,
                                    DejaGNUTest.XPASS):
                 qmtest_outcome = Result.FAIL
             elif dejagnu_outcome == DejaGNUTest.UNSUPPORTED:

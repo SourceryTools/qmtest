@@ -1,6 +1,19 @@
+2005-11-17  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/dejagnu_stream.py
+	(DejaGNUStream.__summary_outcomes): Add KFAIL, KPASS.
+	(DejaGNUStream.__outcome_descs): Likewise.
+	(DejaGNUStream.__expected_outcomes): Likewise.
+	(DejaGNUReader.__UpdateResult): Likewise.
+	* qm/test/classes/dejagnu_test.py (DejaGNUTest.KFAIL): New
+	variable.
+	(DejaGNUTest.KPASS): Likewise.
+	(DejaGNUTest.outcome_map): Add KFAIL, KPASS.
+
 2005-11-16  Stefan Seefeld  <stefan@codesourcery.com>
 
-	* qm/test/classes/compiler_table.py: Tolerate whitespace in context file.
+	* qm/test/classes/compiler_table.py: Tolerate whitespace in
+	context file. 
 	* qm/test/classes/dejagnu_test.py: Use CompilerTable.target as host.
 
 2005-11-04  Stefan Seefeld  <stefan@codesourcery.com>
