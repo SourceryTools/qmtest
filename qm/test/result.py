@@ -331,8 +331,6 @@ class Result:
     def CheckExitStatus(self, prefix, desc, status, non_zero_exit_ok = 0):
         """Check the exit status from a command.
 
-        'result' -- The 'Result' object to update.
-
         'prefix' -- The prefix that should be used when creating
         result annotations.
 
@@ -353,17 +351,17 @@ class Result:
                 exit_code = os.WEXITSTATUS(status)
             # If the exit code is non-zero, the test fails.
             if exit_code != 0 and not non_zero_exit_ok:
-                result.Fail("%s failed with exit code %d." % (desc, exit_code))
+                self.Fail("%s failed with exit code %d." % (desc, exit_code))
                 # Record the exit code in the result.
-                result[prefix + "exit_code"] = str(exit_code)
+                self[prefix + "exit_code"] = str(exit_code)
                 return False
         
         elif os.WIFSIGNALED(status):
             # Obtain the signal number.
             signal = os.WTERMSIG(status)
             # If the program gets a fatal signal, the test fails .
-            result.Fail("%s received fatal signal %d." % (desc, signal))
-            result[prefix + "signal"] = str(signal)
+            self.Fail("%s received fatal signal %d." % (desc, signal))
+            self[prefix + "signal"] = str(signal)
             return False
         else:
             # A process should only be able to stop by exiting, or

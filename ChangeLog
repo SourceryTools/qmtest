@@ -1,5 +1,7 @@
 2005-11-30  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/result.py (Result.CheckExitStatus): Fix typos.
+
 	* qm/host.py (Host.UploadAndRun): Delete the file after running
 	it.
 	* qm/test/classes/local_host.py (LocalHost.UploadAndRun): New
