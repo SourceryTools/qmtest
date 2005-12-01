@@ -1,7 +1,21 @@
 2005-11-30  Mark Mitchell  <mark@codesourcery.com>
 
-	* qm/test/compiler.py (Compiler.ParseOutput): Do not try to match
-	an error message against multiple severities.
+	* qm/test/classes/compiler_test.py (CompilationStep): Provide
+	default values.
+	(CompilerBase._MakeDirectory): Do not create the temporary build
+	directory if it already exists.
+	(CompilerTest.Run): Create the temporary build directory.  Record
+	the output from the compiler here.
+	(CompilerTest._GetExecutableArguments): New function.
+	(CompilerTest._MustExecutableExitSuccessfully): New function.
+	(CompilerTest._RunExecutable): Use new functions.
+	(CompilerTest._CheckOutput): Do not record the output here.
+	Adjust use of _DiagnosticsToString.
+	(CompilerTest._CheckExecutableOutput): New function.
+	(CompilerTest._DiagnosticsToString): Add annotation parameter.
+
+	* qm/test/classes/compiler.py (Compiler.ParseOutput): Do not try
+	to match an error message against multiple severities.
 
 	* qm/test/result.py (Result.CheckExitStatus): Fix typos.
 

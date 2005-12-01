@@ -25,7 +25,8 @@ import os, string
 class CompilationStep:
     """A single compilation step."""
 
-    def __init__(self, mode, files, options, output, diagnostics):
+    def __init__(self, mode, files, options = [],
+                 output = None , diagnostics = []):
         """Construct a new 'CompilationStep'.
 
         'mode' -- As for 'Compiler.Compile'.
@@ -78,8 +79,8 @@ class CompilerBase:
         # Get the directory name.
         directory = self._GetDirectory(context)
         # Create it.
-        os.makedirs(directory)
-
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         return directory
 
 
@@ -145,6 +146,8 @@ class CompilerTest(Test, CompilerBase):
         steps = self._GetCompilationSteps(context)
         # See if we need to run this test.
         is_execution_required = self._IsExecutionRequired()
+        # Create the temporary build directory.
+        self._MakeDirectory(context)
         
         # Keep track of which compilation step we are performing so
         # that we can annotate the result appropriately.
@@ -166,7 +169,9 @@ class CompilerTest(Test, CompilerBase):
             (status, output) \
                 = compiler.ExecuteCommand(self._GetDirectory(context),
                                           command, timeout)
-
+            # Annotate the result with the output.
+            if output:
+                result[prefix + "output"] = result.Quote(output)
              # Make sure that the output is OK.
             if not self._CheckOutput(context, result, prefix, output,
                                      step.diagnostics):
@@ -234,6 +239,26 @@ class CompilerTest(Test, CompilerBase):
 
         return 0
         
+
+    def _GetExecutableArguments(self):
+        """Returns the arguments to the generated executable.
+
+        returns -- A list of strings, to be passed as argumensts to
+        the generated executable.""" 
+
+        return []
+
+    
+    def _MustExecutableExitSuccessfully(self):
+        """Returns true if the executable must exit with code zero.
+
+        returns -- True if the generated executable (if any) must exit
+        with code zero.  Note that the executable will not be run at
+        all (and so the return value of this function will be ignored)
+        if '_IsExecutionRequired' does not return true."""
+
+        return True
+        
         
     def _GetAnnotationPrefix(self):
         """Return the prefix to use for result annotations.
@@ -272,7 +297,9 @@ class CompilerTest(Test, CompilerBase):
         prefix = self._GetAnnotationPrefix() + "execution_"
         # Record the command line.
         path = os.path.join(self._GetDirectory(context), path)
-        result[prefix + "command"] = "<tt>" + path + "</tt>"
+        arguments = self._GetExecutableArguments()
+        result[prefix + "command"] \
+           = "<tt>" + path + " " + " ".join(arguments) + "</tt>"
 
         # Compute the environment.
         library_dirs = self._GetLibraryDirectories(context)
@@ -295,13 +322,15 @@ class CompilerTest(Test, CompilerBase):
         target = self._GetTarget(context)
         timeout = context.get("CompilerTest.execution_timeout", -1)
         status, output = target.UploadAndRun(path,
-                                             [],
+                                             arguments,
                                              environment,
                                              timeout)
         # Record the output.
         result[prefix + "output"] = result.Quote(output)
+        self._CheckExecutableOutput(result, output)
         # Check the output status.
-        result.CheckExitStatus(prefix, "Executable", status)
+        result.CheckExitStatus(prefix, "Executable", status,
+                               not self._MustExecutableExitSuccessfully())
 
 
     def _CheckOutput(self, context, result, prefix, output, diagnostics):
@@ -322,11 +351,6 @@ class CompilerTest(Test, CompilerBase):
 
         returns -- True if there were no errors so severe as to
         prevent execution of the test."""
-
-        # Annotate the result with the output.
-        if output:
-            result[prefix + "output"] \
-                = result.Quote(output)
 
         # Get the compiler to use to parse the output.
         compiler = self._GetCompiler(context)
@@ -385,17 +409,32 @@ class CompilerTest(Test, CompilerBase):
 
             # Add annotations showing the problem.
             if spurious_diagnostics:
-                result[self._GetAnnotationPrefix() + "spurious_diagnostics"] \
-                  = self._DiagnosticsToString(spurious_diagnostics)
+                self._DiagnosticsToString(result, 
+                                          "spurious_diagnostics",
+                                          spurious_diagnostics)
             if missing_diagnostics:
-                result[self._GetAnnotationPrefix() + "missing_diagnostics"] \
-                  = self._DiagnosticsToString(missing_diagnostics)
+                self._DiagnosticsToString(result, 
+                                          "missing_diagnostics",
+                                          missing_diagnostics)
 
         # If errors occurred, there is no point in trying to run
         # the executable.
         return not errors_occurred
 
 
+    def _CheckExecutableOutput(self, result, output):
+        """Checks the output from the generated executable.
+
+        'result' -- The 'Result' object for this test.
+
+        'output' -- The output generated by the executable.
+
+        If the output is unsatisfactory, 'result' is modified
+        appropriately."""
+        
+        pass
+
+    
     def _IsDiagnosticExpected(self, emitted, expected):
         """Returns true if 'emitted' matches 'expected'.
 
@@ -432,7 +471,7 @@ class CompilerTest(Test, CompilerBase):
         return 1
 
 
-    def _DiagnosticsToString(self, diagnostics):
+    def _DiagnosticsToString(self, result, annotation, diagnostics):
         """Return a string representing the 'diagnostics'.
 
         'diagnostics' -- A sequence of 'Diagnostic' instances.
@@ -443,4 +482,5 @@ class CompilerTest(Test, CompilerBase):
         # Compute the string representation of each diagnostic.
         diagnostic_strings = map(str, diagnostics)
         # Insert a newline between each string.
-        return Result.Quote("\n".join(diagnostic_strings))
+        result[self._GetAnnotationPrefix() + annotation] \
+            = result.Quote("\n".join(diagnostic_strings))
