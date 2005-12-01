@@ -1,5 +1,10 @@
 2005-11-30  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/extension.py (get_extension_class_name): Use only the final
+	component of the module in forming the extension class name.  
+	* qm/test/database.py (Database.GetIds): Handle generic
+	databases. 
+
 	* qm/test/classes/compiler_test.py (CompilationStep): Provide
 	default values.
 	(CompilerBase._MakeDirectory): Do not create the temporary build

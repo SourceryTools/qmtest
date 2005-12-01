@@ -898,6 +898,12 @@ class Database(qm.extension.Extension):
 
         Derived classes may override this method."""
 
+        if self._is_generic_database:
+            extensions = self.GetExtensions(directory, scan_subdirs)
+            extensions = filter(lambda e: e.kind == kind,
+                                extensions.values())
+            return map(lambda e: e.GetId(), extensions)
+        
         return []
 
 

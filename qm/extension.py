@@ -303,7 +303,8 @@ def get_extension_class_name(extension_class):
 
     assert issubclass(extension_class, Extension)
 
-    return extension_class.__module__ + "." + extension_class.__name__
+    module = extension_class.__module__.split(".")[-1]
+    return module + "." + extension_class.__name__
     
     
 def validate_arguments(extension_class, arguments):
