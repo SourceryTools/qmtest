@@ -51,6 +51,14 @@ class LocalHost(Host):
             shutil.copy(local_file, remote_file)
 
 
+    def UploadAndRun(self, path, arguments, environment = None,
+                     timeout = -1):
+
+        # There is no need to actually upload the file, since it is
+        # running on the local machine.
+        return self.Run(path, arguments, environment, timeout)
+
+
     def DownloadFile(self, remote_file, local_file = None):
 
         return self.UploadFile(remote_file, local_file)

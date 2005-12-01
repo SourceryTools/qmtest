@@ -141,14 +141,17 @@ class Host(Extension):
         returns -- As for 'Run'.
 
         The program is uploaded to the default directory on the remote
-        host.""" 
+        host, run, and then deleted."""
         
         self.UploadFile(path)
-        return self.Run(os.path.join(os.path.curdir,
-                                     os.path.basename(path)),
-                        arguments,
-                        environment,
-                        timeout)
+        result = self.Run(os.path.join(os.path.curdir,
+                                       os.path.basename(path)),
+                          arguments,
+                          environment,
+                          timeout)
+        self.DeleteFile(path)
+        return result
+        
         
         
     def DeleteFile(self, remote_file):

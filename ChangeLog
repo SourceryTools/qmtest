@@ -1,3 +1,12 @@
+2005-11-30  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/host.py (Host.UploadAndRun): Delete the file after running
+	it.
+	* qm/test/classes/local_host.py (LocalHost.UploadAndRun): New
+	method.
+	* qm/test/classes/compiler_test.py (CompilerTest._RunExecutable):
+	Do not delete executables after running them.
+
 2005-11-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_stream.py

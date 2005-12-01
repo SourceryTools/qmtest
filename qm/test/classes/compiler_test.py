@@ -298,7 +298,6 @@ class CompilerTest(Test, CompilerBase):
                                              [],
                                              environment,
                                              timeout)
-        target.DeleteFile(path)
         # Record the output.
         result[prefix + "output"] = result.Quote(output)
         # Check the output status.
