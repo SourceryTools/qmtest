@@ -1,5 +1,8 @@
 2005-11-30  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/test/compiler.py (Compiler.ParseOutput): Do not try to match
+	an error message against multiple severities.
+
 	* qm/test/result.py (Result.CheckExitStatus): Fix typos.
 
 	* qm/host.py (Host.UploadAndRun): Delete the file after running

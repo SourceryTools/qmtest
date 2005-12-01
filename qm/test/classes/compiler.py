@@ -528,7 +528,7 @@ class GCC(Compiler):
                                         severity,
                                         message)
                 diagnostics.append(diagnostic)
-
+                break
 
         return diagnostics
 
