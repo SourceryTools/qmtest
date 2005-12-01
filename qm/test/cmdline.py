@@ -1467,7 +1467,7 @@ Valid formats are %s.
         # Get an iterator over the results.
         try:
             results = base.load_results(results_path, database)
-        except (IOError, xml.sax.SAXException), exception:
+        except Exception, exception:
             raise QMException, \
                   qm.error("invalid results file",
                            path=results_path,
@@ -1486,28 +1486,43 @@ Valid formats are %s.
         # Get the expected outcomes.
         outcomes = self.__GetExpectedOutcomes()
 
-        # Our filtering function.  Should use itertools.ifilter, once
-        # we can depend on having Python 2.3.
-        def good(r):
-            return r.GetKind() == Result.TEST \
-                   and r.GetId() in test_ids
-
-        # Simulate the events that would have occurred during an
-        # actual test run.
+        resource_results = {}
         for r in results:
-            if not filter or good(r):
-                for s in streams:
-                    s.WriteResult(r)
-                if (r.GetOutcome()
-                    != outcomes.get(r.GetId(), Result.PASS)):
+            if filter and r.GetKind() == Result.RESOURCE_SETUP:
+                resource_results[r.GetId()] = r
+            if r.GetKind() != Result.TEST:
+                if not filter:
+                    for s in streams:
+                        s.WriteResult(r)
+                continue
+            # We now known that r is test result.  If it's not one
+            # that interests us, we're done.
+            if filter and r.GetId() not in test_ids:
+                continue
+            # If we're filtering, and this test was not run because it
+            # depended on a resource that was not set up, emit the
+            # resource result here.
+            if (filter
+                and r.GetOutcome() == Result.UNTESTED
+                and r.has_key(Result.RESOURCE)):
+                rid = r[Result.RESOURCE]
+                rres = resource_results.get(rid)
+                if rres:
+                    del resource_results[rid]
+                    for s in streams:
+                        s.WriteResult(rres)
+            # Write out the test result.             
+            for s in streams:
+                s.WriteResult(r)
+                if (not any_unexpected_outcomes
+                    and r.GetOutcome() != outcomes.get(r.GetId(),
+                                                       Result.PASS)):
                     any_unexpected_outcomes = 1
+        # Shut down the streams.            
         for s in streams:
             s.Summarize()
 
-        if any_unexpected_outcomes:
-            return 1
-        
-        return 0
+        return any_unexpected_outcomes
         
 
     def __ExecuteRemote(self):

@@ -1,3 +1,11 @@
+2005-12-01  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Print resource
+	results for UNTESTED tests.
+	
+	* qm/test/classes/compiler_table.py: Provide standard names for
+	the C and C++ programming languages.
+
 2005-11-30  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/extension.py (get_extension_class_name): Use only the final
