@@ -40,7 +40,8 @@ class CompilerTable(Resource):
 
     The first context variable which is examined is
     'CompilerTable.languages'.  The value should be a
-    whitespace-separated list of programming language names.
+    whitespace-separated list of programming language names.  (See
+    below for standardized names for some languages.)
 
     Then, for each language 'l' in the list of languages, the
     following context variables are examined:
@@ -81,6 +82,12 @@ class CompilerTable(Resource):
        An instance of 'Host' that can be used to run compiler
        programs."""
 
+    LANG_C = "c"
+    """The name of the C programming language."""
+    
+    LANG_CPLUSPLUS = "cplusplus"
+    """The name of the C++ programming language."""
+    
     def SetUp(self, context, result):
 
         # There are no compilers yet.
