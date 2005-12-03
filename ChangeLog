@@ -1,3 +1,16 @@
+2005-12-02  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/__init__.py: Define new extension_path variable.
+	* qm/test/base.py: Use it to lookup QMTest extensions.
+	* qm/dist/__init__.py: Provide build infrastructure to install 
+	qmtest extensions.
+	* qm/dist/distribution.py: Likewise.
+	* qm/dist/command/__init__.py: Likewise.
+	* qm/dist/command/build_extensions.py: Likewise.
+	* qm/dist/command/install_extensions.py: Likewise.
+	* setup.py: Install it.
+	* qmdist/command/install_data.py: Likewise.
+
 2005-12-01  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Print resource

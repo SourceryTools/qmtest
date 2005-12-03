@@ -84,7 +84,9 @@ def get_extension_directories(kind, database, database_path = None):
     2. Those directories specified by the 'GetClassPaths' method on the
        test database -- unless 'kind' is 'database'.
 
-    3. The directories containing classes that come with QMTest.
+    3. The directory specified by config.extension_path.
+
+    4. The directories containing classes that come with QMTest.
 
     By placing the 'QMTEST_CLASS_PATH' directories first, users can
     override test classes with standard names."""
@@ -112,6 +114,9 @@ def get_extension_directories(kind, database, database_path = None):
     elif database_path:
         dirs.append(qm.test.database.get_configuration_directory
                     (database_path))
+
+    # Search qmtest's own site-extensions directory.
+    dirs.append(os.path.join(qm.prefix, qm.extension_path))
 
     dirs.append(qm.common.get_lib_directory('test', 'classes'))
 

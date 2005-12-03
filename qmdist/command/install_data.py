@@ -19,9 +19,8 @@
 
 from   distutils.command import install_data as base
 import glob
-import os
+import os, sys
 from   qmdist.command import get_relative_path
-from   types import StringType
 
 ########################################################################
 # Classes
@@ -39,7 +38,7 @@ class install_data(base.install_data):
         # Expand glob expressions in 'data_files'.
         new_data_files = []
         for f in self.data_files:
-            if type(f) == StringType:
+            if type(f) == str:
                 f = glob.glob(f)
             else:
                 dir, fs = f
@@ -59,7 +58,6 @@ class install_data(base.install_data):
         
         i = self.distribution.get_command_obj('install')
         il = self.distribution.get_command_obj('install_lib')
-
         config = os.path.join(il.install_dir, "qm", "config.py")
         self.announce("generating %s" %(config))
         outf = open(config, "w")
@@ -71,6 +69,12 @@ class install_data(base.install_data):
         data_dir = os.path.join(self.install_dir, "share", "qm")
         outf.write("data_dir='%s'\n"
                    % get_relative_path (prefix, data_dir))
+        extension_dir = os.path.join(self.install_dir,
+                                     "share",
+                                     "qm",
+                                     "site-extensions-%d.%d"%sys.version_info[:2])
+        outf.write("extension_path='%s'\n"
+                   % get_relative_path (prefix, extension_dir))
 
         outf.close()
         self.outfiles.append(config)

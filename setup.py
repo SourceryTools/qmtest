@@ -113,6 +113,8 @@ setup(name="qm",
                 'check': check},
 
       packages=('qm',
+                'qm/dist',
+                'qm/dist/command',
                 'qm/external',
                 'qm/external/DocumentTemplate',
                 'qm/test',

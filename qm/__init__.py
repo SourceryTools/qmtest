@@ -41,6 +41,7 @@ try:
         # On non-Windows platforms, the values written out at
         # installation time are accurate.
         from qm.config import data_dir
+        from qm.config import extension_path
     else:
         # On Windows, Distutils does a mock installation and then
         # creates a binary installer.  Unfortunately, at the time
@@ -49,11 +50,13 @@ try:
         # config.py are incorrect.  The value given below corresponds
         # to the behavior of the binary installer.
         data_dir = os.path.join("share", "qm")
+        extension_path = os.path.join("share", "qm", "site-extensions")
 except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0
     from qm.__version import version, version_info
     data_dir = "share"
+    extension_path = os.path.join("test", "classes")
     
 ########################################################################
 # Local Variables:
