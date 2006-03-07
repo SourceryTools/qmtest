@@ -23,6 +23,7 @@ based on context variables provided by the user."""
 
 import compiler
 import qm
+from   qm.test.database import get_database
 from   qm.test.resource import Resource
 from   local_host import LocalHost
 
@@ -131,7 +132,7 @@ class CompilerTable(Resource):
                 target = LocalHost({})
             else:
                 f = lambda n: qm.test.base.get_extension_class(n, "host",
-                                                               None)
+                                                               get_database())
                 host_class, arguments \
                     = qm.extension.parse_descriptor(target_desc.strip(), f)
                 target = host_class(arguments)
