@@ -96,18 +96,21 @@ class Compiler:
     modes = [ MODE_COMPILE, MODE_ASSEMBLE, MODE_LINK, MODE_PREPROCESS ]
     """The available compilation modes."""
 
-    def __init__(self, path, options=None):
+    def __init__(self, path, options=None, ldflags=None):
         """Construct a new 'Compiler'.
 
         'path' -- A string giving the location of the compiler
         executable.
 
         'options' -- A list of strings indicating options to the
-        compiler, or 'None' if there are no options."""
+        compiler, or 'None' if there are no options.
+
+        'ldflags' -- A list of strings indicating ld flags to the
+        compiler, or 'None' if there are no flags."""
 
         self._path = path
-        self._ldflags = []
         self.SetOptions(options or [])
+        self.SetLDFlags(ldflags or [])
             
 
     def Compile(self, mode, files, dir, options = [], output = None,

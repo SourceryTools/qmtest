@@ -16,7 +16,7 @@
 from   compiler import *
 from   qm.test.result import *
 from   qm.test.test import *
-import os, string
+import os, string, dircache
 
 ########################################################################
 # Classes
@@ -92,9 +92,19 @@ class CompilerBase:
         Otherwise, the directory is left behind to allow investigation
         of the reasons behind the test failure."""
 
+        def removedir(directory, dir = True):
+            for n in dircache.listdir(directory):
+                name = os.path.join(directory, n)
+                if os.path.isfile(name):
+                    os.remove(name)
+                elif os.path.isdir(name):
+                    removedir(name)
+            if dir: os.rmdir(directory)
+
         if result.GetOutcome() == Result.PASS:
             try:
-                dir = self._GetDirectory(context)
+                directory = self._GetDirectory(context)
+                removedir(directory, False)
                 os.removedirs(directory)
             except:
                 # If the directory cannot be removed, that is no

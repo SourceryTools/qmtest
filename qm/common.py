@@ -638,6 +638,51 @@ def parse_boolean(value):
         raise ValueError, value
 
     
+def parse_string_list(value):
+    """Parse a string list.
+
+    'value' -- A string.
+
+    returns -- A list of strings.
+
+    raises -- 'ValueError' if 'value' contains unbalanced quotes."""
+
+    # If the string doesn't contain quotes, simply split it.
+    if "'" not in value and '"' not in value:
+        return value.split()
+    # Else split it manually at non-quoted whitespace only.
+    breaks = []
+    esc = False
+    quoted_1 = False # in '' quotes
+    quoted_2 = False # in "" quotes
+    value.strip()
+    # Find all non-quoted space.
+    for i, c in enumerate(value):
+        if c == '\\':
+            esc = not esc
+            continue
+        elif c == "'":
+            if not esc and not quoted_2:
+                quoted_1 = not quoted_1
+        elif c == '"':
+            if not esc and not quoted_1:
+                quoted_2 = not quoted_2
+        elif c in [' ', '\t']:
+            # This is a breakpoint if it is neither quoted nor escaped.
+            if not (quoted_1 or quoted_2 or esc):
+                breaks.append(i)
+        esc = False
+    # Make sure quotes are matched.
+    if quoted_1 or quoted_2 or esc:
+        raise ValueError, value
+    string_list = []
+    start = 0
+    for end in breaks:
+        string_list.append(value[start:end])
+        start = end
+    string_list.append(value[start:])
+    return [s.strip() for s in string_list if s not in [' ', '\t']] 
+
     
 # No 'time.strptime' on non-UNIX systems, so use this instead.  This
 # version is more forgiving, anyway, and uses our standardized timestamp

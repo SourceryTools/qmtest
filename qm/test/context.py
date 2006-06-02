@@ -155,6 +155,36 @@ class Context(types.DictType):
             raise ContextException(key, "invalid boolean context var")
         
 
+    def GetStringList(self, key, default = None):
+        """Return the list of strings associated with 'key'.
+
+        'key' -- A string.
+
+        'default' -- A default list.
+
+        If there is no value associated with 'key' and default is not
+        'None', then the boolean value associated with default is
+        used.  If there is no value associated with 'key' and default
+        is 'None', an exception is raised.
+
+        The value associated with 'key' must be a string.  If not, an
+        exception is raised.  If the value is a string, but does not
+        correspond to a string list, an exception is raised.
+        """
+        
+        valstr = self.get(key)
+        if valstr is None:
+            if default is None:
+                raise ContextException(key)
+            else:
+                return default
+
+        try:
+            return qm.common.parse_string_list(valstr)
+        except ValueError:
+            raise ContextException(key, "invalid string list context var")
+
+
     def GetTemporaryDirectory(self):
         """Return the path to the a temporary directory.
 

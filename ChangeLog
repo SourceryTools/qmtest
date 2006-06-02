@@ -1,3 +1,15 @@
+2006-06-02  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/extension.py: Raise AttributeError instead of AssertionError when
+	wrong attributes are passed.
+	* qm/common.py: Add parse_string_list function.
+	* qm/test/context.py: Add Context.GetStringList method.
+	* qm/test/classes/compiler.py: Add optional ldflags argument to
+	Compiler constructor.
+	* qm/test/classes/compiler_test.py: Fix _RemoveDirectory()
+	* qm/test/classes/compilation_test.py: Add ExecutableTest.
+	* qm/test/classes/classes.qmc: Adjust compilation_test name changes.
+
 2006-03-07  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/compiler_table.py: Fix search for host

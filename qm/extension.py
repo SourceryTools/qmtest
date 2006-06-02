@@ -151,7 +151,8 @@ class Extension(object):
         if __debug__:
             dictionary = get_class_arguments_as_dictionary(self.__class__)
             for a, v in arguments.items():
-                assert dictionary.has_key(a)
+                if not dictionary.has_key(a):
+                    raise AttributeError, a
         
         # Remember the arguments provided.
         self.__dict__.update(arguments)
