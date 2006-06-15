@@ -59,7 +59,7 @@ class Host(Extension):
 
 
 
-    def Run(self, arguments, environment = None, timeout = -1):
+    def Run(self, path, arguments, environment = None, timeout = -1):
         """Run a program on the remote host.
 
         'path' -- The name of the program to run, on the remote host.
@@ -88,7 +88,14 @@ class Host(Extension):
         combined standard output and standard error output from the
         program.""" 
 
-        raise NotImplementedError
+        # Compute the full environment for the child.
+        if environment is not None:
+            new_environment = os.environ.copy()
+            new_environment.update(environment)
+            environment = new_environment
+        executable = self.Executable(timeout)
+        status = executable.Run([path] + arguments, environment)
+        return (status, executable.stdout)
 
 
     def UploadFile(self, local_file, remote_file = None):

@@ -30,18 +30,6 @@ class LocalHost(Host):
     The default directory for a 'LocalHost' is the current working
     directory for this Python process."""
 
-    def Run(self, path, arguments, environment = None, timeout = -1):
-
-        # Compute the full environment for the child.
-        if environment is not None:
-            new_environment = os.environ.copy()
-            new_environment.update(environment)
-            environment = new_environment
-        executable = self.Executable(timeout)
-        status = executable.Run([path] + arguments, environment)
-        return (status, executable.stdout)
-
-
     def UploadFile(self, local_file, remote_file = None):
 
         if remote_file is None:

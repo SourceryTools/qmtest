@@ -1,3 +1,10 @@
+2006-06-09  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/host.py: Fix signature of Host.Run(), and implement it
+	(using local_host.LocalHost.Run() code).
+	* qm/test/classes/local_host.py: Remove now obsolete Run() method.
+	* qm/test/classes/ssh_host.py: Derive from Host, not LocalHost.
+
 2006-06-02  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/extension.py: Raise AttributeError instead of AssertionError when

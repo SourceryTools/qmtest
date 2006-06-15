@@ -15,7 +15,7 @@
 # Imports
 #######################################################################
 
-from   local_host import LocalHost
+from   qm.host import Host
 import os
 import os.path
 from   qm.fields import TextField, SetField
@@ -26,7 +26,7 @@ import sys
 # Classes
 #######################################################################
 
-class SSHHost(LocalHost):
+class SSHHost(Host):
     """An 'SSHHost' is accessible via 'ssh' or a similar program."""
 
     # If not empty, the name of the remote host. 
