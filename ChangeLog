@@ -1,3 +1,7 @@
+2006-06-21  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/report.py: Add support for '-' special output file.
+
 2006-06-09  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/host.py: Fix signature of Host.Run(), and implement it

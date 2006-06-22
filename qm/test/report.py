@@ -24,6 +24,7 @@ from qm.test import base
 from qm.test.result import Result
 from qm.test.reader_test_run import ReaderTestRun
 import xml.sax
+import sys
 
 ########################################################################
 # Classes
@@ -35,7 +36,10 @@ class ReportGenerator:
 
     def __init__(self, output, database=None):
 
-        self.output = open(output, 'w+')
+        if output and output != '-':
+            self.output = open(output, 'w+')
+        else:
+            self.output = sys.stdout
         self.database = database
         self.__document = qm.xmlutil.create_dom_document(
             public_id="QMTest/Report",
@@ -209,10 +213,14 @@ class ReportGenerator:
             element.appendChild(child)
 
         # Report all items, sorted by kind.
-        for kind in [Result.TEST, Result.RESOURCE_SETUP, Result.RESOURCE_CLEANUP]:
-            for id in self.database.GetIds(kind, directory, False):
-                self._ReportItem(kind, id, self.database.SplitLabel(id)[1],
-                                 test_runs, element)
+        for id in self.database.GetIds('test', directory, False):
+            self._ReportItem('test', id, self.database.SplitLabel(id)[1],
+                             test_runs, element)
+        for id in self.database.GetIds('resource', directory, False):
+            self._ReportItem('resource_setup', id, self.database.SplitLabel(id)[1],
+                             test_runs, element)
+            self._ReportItem('resource_cleanup', id, self.database.SplitLabel(id)[1],
+                             test_runs, element)
         return element
 
 
