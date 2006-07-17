@@ -1,3 +1,9 @@
+2006-07-17  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/cmdline.py: Allow 'qmtest create' to create explicit suites,
+	and make their content visible through 'qmtest ls'.
+
+
 2006-06-21  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/report.py: Add support for '-' special output file.
