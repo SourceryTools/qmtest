@@ -2,6 +2,7 @@
 
 	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Display resource
 	results too.
+	* qm/test/doc/reference.xml: Document.
 
 2006-07-17  Stefan Seefeld  <stefan@codesourcery.com>
 

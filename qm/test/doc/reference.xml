@@ -1675,6 +1675,7 @@
       <group choice="opt" rep="repeat">
        <arg choice="plain"><replaceable>test-name</replaceable></arg>
        <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+       <arg choice="plain"><replaceable>resource-name</replaceable></arg>
       </group>
      </group>
     </cmdsynopsis>
