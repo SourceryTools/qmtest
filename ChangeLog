@@ -1,3 +1,17 @@
+2006-08-18  Stefan Seefeld  <stefan@codesourcery.com>
+
+	Reorganize and enhance Tutorial:
+	* qm/doc/tutorial.xml: New file.
+	* qm/doc/qmtest.ent: Likewise.
+	* qm/doc/introduction.xml: Likewise.
+	* qm/doc/cli_reference.xml: Likewise.
+	* qm/doc/concepts.xml: Likewise.
+	* qm/doc/cs.css: Likewise.
+	* qm/doc/html.xsl: Likewise.
+	* qm/doc/qm-opl.xml: XML-ified.
+	* qm/doc/manual/common-manual.xml: Removed.
+	* qmdist/command/build_doc.py: Adjust build procedure for html generation.
+	
 2006-08-17  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/host.py (Host.Run): Add 'relative' parameter.

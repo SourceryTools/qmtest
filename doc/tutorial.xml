@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   tutorial.xml
+  Author: Stefan Seefeld
+  Date:   2006-05-30
+
+  Contents:
+    Master file for QMTest tutorial.
+
+  Copyright (C) 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+  <!ENTITY % entities SYSTEM "qmtest.ent">
+  %entities;
+  <!ENTITY license SYSTEM "qm-opl.xml">
+]>
+<book xmlns:xi="http://www.w3.org/2003/XInclude">
+ <bookinfo>
+  <title>QMTest: User's Guide</title>
+  <corpauthor>CodeSourcery, Inc.</corpauthor>
+  <copyright>
+   <year>2002-2006</year>
+   <holder>CodeSourcery Inc</holder>
+  </copyright>
+  <legalnotice>&license;</legalnotice>
+  <releaseinfo>Version &version;</releaseinfo>
+ </bookinfo>
+
+ <xi:include href="introduction.xml"/>
+ <xi:include href="concepts.xml">
+   <xi:fallback>The concepts chapter</xi:fallback>
+ </xi:include>
+ <xi:include href="customizing.xml">
+   <xi:fallback>The customization chapter</xi:fallback>
+ </xi:include>
+ <xi:include href="extending.xml">
+   <xi:fallback>The extending chapter</xi:fallback>
+ </xi:include>
+ <xi:include href="cli_reference.xml"/>
+</book>

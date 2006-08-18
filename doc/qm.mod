@@ -18,7 +18,7 @@
 
 <!-- Version number. -->
 
-<!ENTITY qm_version SYSTEM "qm-version">
+<!--<!ENTITY qm_version SYSTEM "qm-version">-->
 
 <!-- Names of the project components.  -->
 

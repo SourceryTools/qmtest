@@ -184,10 +184,12 @@ class build_doc(build.build):
             return
         
         source_files = map(normpath,
-                           ['qm/test/doc/manual.xml',
-                            'qm/test/doc/introduction.xml',
-                            'qm/test/doc/tour.xml',
-                            'qm/test/doc/reference.xml'])
+                           ['doc/tutorial.xml',
+                            'doc/introduction.xml',
+                            'doc/concepts.xml',
+                            'doc/customizing.xml',
+                            'doc/extending.xml',
+                            'doc/cli_reference.xml'])
 
         # Look for programs and supporting libraries required to build
         # DocBook documentation.  Unfortunately, different
@@ -195,6 +197,8 @@ class build_doc(build.build):
         # components.  We allow the user to tell us where to look on
         # the command line.  If they do not provide a hint, then we
         # look in locations known to be in use on various systems.
+        xsltproc = find_executable('xsltproc')
+
         jade = find_executable('jade') or find_executable('openjade')
         if not jade:
             self.warn("could not find jade or openjade in PATH")
@@ -209,7 +213,7 @@ class build_doc(build.build):
         # than as program files (in "lib").
         
         # 
-        # Write the version to a file so the manual can refer to it.  This
+        # Write the version to a file so the tutorial can refer to it.  This
         # file contains exactly the version number -- there must be no
         # trailing newline, for example.
         #
@@ -222,62 +226,53 @@ class build_doc(build.build):
         # Build html output.
         #
         if self.html:
-            html_dir = os.path.join("qm", "test", "doc", "html")
-            if newer_group(source_files, html_dir):
-                self.announce("building html manual")
-                # Remove the html_dir first such that its new mtime reflects
-                # this build.
-                if os.path.isdir(html_dir): remove_tree(html_dir)
-                self.call_jade(jade, [], 'sgml',
-                               normpath('qm/test/doc/manual.xml'),
-                               normpath('qm/test/doc'))
-                tidy = find_executable('tidy')
-                if tidy:
-                    for f in glob.glob(normpath('/qm/test/doc/html/*.html')):
-                        spawn([tidy,
-                               '-wrap', '72', '-i',
-                               '--indent-spaces', '1',
-                               '-f', '/dev/null',
-                               '-asxml', '-modify', f])
-                # Copy the appropriate stylseheet into the HTML directory.
-                copy_file(join("doc", "qm.css"), join(html_dir, "qm.css"))
+            if newer_group(source_files, 'doc/html'):
+                self.announce("building html tutorial")
+                if os.path.isdir('doc/html'): remove_tree('doc/html')
+                self.mkpath('doc/html')
+                cmd = [xsltproc, '--novalid', '--xinclude',
+                       '-o', 'doc/html/',
+                       'doc/html.xsl', 'doc/tutorial.xml']
+                self.announce(' '.join(cmd))
+                spawn(cmd)
+                copy_file('doc/cs.css', 'doc/html/cs.css')
 
         #
         # Build pdf output.
         #
         if self.pdf:
-            target = normpath("qm/test/doc/print/manual.tex")
+            target = normpath("doc/print/tutorial.tex")
             if newer_group(source_files, target):
-                self.announce("building tex manual")
+                self.announce("building tex tutorial")
                 # Remove the target first such that its new mtime reflects
                 # this build.
                 if os.path.isfile(target): os.remove(target)
-                self.call_jade(jade, ['-o','manual.tex'], 'tex',
-                               normpath('qm/test/doc/manual.xml'),
-                               normpath('qm/test/doc'))
+                self.call_jade(jade, ['-o','tutorial.tex'], 'tex',
+                               normpath('doc/tutorial.xml'),
+                               normpath('doc'))
 
                 # Jade places the output TeX source file in the current
                 # directory, so move it where we want it afterwards.  We have
                 # to change -- into -{-} so that TeX does not generate long
                 # dashes.  This is a bug in Jade.
-                orig_tex_manual = normpath("qm/test/doc/manual.tex")
-                self.mkpath(normpath("qm/test/doc/print"))
+                orig_tex_tutorial = normpath("doc/tutorial.tex")
+                self.mkpath(normpath("doc/print"))
                 self.spawn(['sh', '-c',
                             ('sed -e "s|--|-{-}|g" < %s > %s'
-                             % (orig_tex_manual,
-                                normpath("qm/test/doc/print/manual.tex")))])
-                os.remove(orig_tex_manual)
+                             % (orig_tex_tutorial,
+                                normpath("doc/print/tutorial.tex")))])
+                os.remove(orig_tex_tutorial)
 
-            pdf_file = os.path.join("qm", "test", "doc", "print", "manual.pdf")
+            pdf_file = os.path.join("qm", "test", "doc", "print", "tutorial.pdf")
             if newer_group(source_files, pdf_file):
-                self.announce("building pdf manual")
+                self.announce("building pdf tutorial")
                 # Remove the pdf_file first such that its new mtime reflects
                 # this build.
                 if os.path.isfile(pdf_file): os.remove(pdf_file)
                 cwd = os.getcwd()
-                os.chdir("qm/test/doc/print")
+                os.chdir("doc/print")
                 for i in xrange(3):
-                    self.spawn(['pdfjadetex', "manual.tex"])
+                    self.spawn(['pdfjadetex', "tutorial.tex"])
                 os.chdir(cwd)
 
         #
