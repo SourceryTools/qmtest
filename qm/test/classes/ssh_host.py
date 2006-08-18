@@ -71,13 +71,18 @@ class SSHHost(Host):
         connecting to the remote host."""
         )
     
-    def Run(self, path, arguments, environment = None, timeout = -1):
+    def Run(self, path, arguments, environment = None, timeout = -1,
+            relative = False):
 
-        if self.default_dir and not os.path.isabs(path):
-            if (path.find(os.path.sep) != -1
-                or (os.path.altsep
-                    and path.find(os.path.altsep) != -1)):
-                path = os.path.join(self.default_dir, path)
+        default_dir = self.default_dir
+        if not default_dir:
+            default_dir = os.curdir
+        if (relative
+            or (not os.path.isabs(path)
+                and (path.find(os.path.sep) != -1
+                     or (os.path.altsep
+                         and path.find(os.path.altsep) != -1)))):
+            path = os.path.join(default_dir, path)
         path, arguments = self._FormSSHCommandLine(path, arguments,
                                                    environment)
         return super(SSHHost, self).Run(path, arguments, None, timeout)

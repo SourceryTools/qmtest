@@ -1,5 +1,10 @@
 2006-08-17  Mark Mitchell  <mark@codesourcery.com>
 
+	* qm/host.py (Host.Run): Add 'relative' parameter.
+	(Host.UploadAndRun): Use it.
+	* qm/test/classes/ssh_host.py (SSHHost.Run): Add 'relative'
+	parameter.
+
 	* qm/test/cmdline.py (QMTest.__ExecuteSummarize): Display resource
 	results too.
 	* qm/test/doc/reference.xml: Document.

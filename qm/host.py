@@ -27,7 +27,7 @@ class Host(Extension):
     """A 'Host' is a logical machine.
 
     Each logical machine has a default directory.  When a file is
-    uploaded to or downloaded from the machine, and a relative patch
+    uploaded to or downloaded from the machine, and a relative path
     is specified, the patch is relative to the default directory.
     Similarly, when a program is run on the remote machine, its
     initial working directory is the default directory.
@@ -59,14 +59,15 @@ class Host(Extension):
 
 
 
-    def Run(self, path, arguments, environment = None, timeout = -1):
+    def Run(self, path, arguments, environment = None, timeout = -1,
+            relative = False):
         """Run a program on the remote host.
 
         'path' -- The name of the program to run, on the remote host.
-        If 'path' is an absolute path or contains no directory
-        separators it is used unmodified; otherwise (i.e., if it is a
-        relative path containing at least one separator) it is
-        interpreted relative to the default directory.
+        If 'relative' is true, or if 'path' is not an absolute path
+        but does contain at least one directory separator, then 'path'
+        is interpreted relative to the default directory.  Otherwise,
+        'path' is used unmodified.
         
         'arguments' -- The sequence of arguments that should be passed
         to the program.
@@ -94,6 +95,8 @@ class Host(Extension):
             new_environment.update(environment)
             environment = new_environment
         executable = self.Executable(timeout)
+        if relative:
+            path = os.path.join(os.curdir, path)
         status = executable.Run([path] + arguments, environment)
         return (status, executable.stdout)
 
@@ -151,14 +154,13 @@ class Host(Extension):
         host, run, and then deleted."""
         
         self.UploadFile(path)
-        result = self.Run(os.path.join(os.path.curdir,
-                                       os.path.basename(path)),
+        result = self.Run(os.path.basename(path),
                           arguments,
                           environment,
-                          timeout)
+                          timeout,
+                          relative = True)
         self.DeleteFile(path)
         return result
-        
         
         
     def DeleteFile(self, remote_file):
