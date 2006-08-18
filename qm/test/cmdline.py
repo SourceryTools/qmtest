@@ -1453,24 +1453,24 @@ Valid formats are %s.
         # Are there any?
         # '.' is an alias for <all>, and thus shadows other selectors.
         if len(id_arguments) > 0 and not '.' in id_arguments:
-            filter = 1
-            # Expand arguments into test IDs.
-            try:
-                if database:
-                    test_ids = database.ExpandIds(id_arguments)[0]
-                else:
-                    test_ids = id_arguments
-            except (qm.test.database.NoSuchTestError,
-                    qm.test.database.NoSuchSuiteError), exception:
-                raise qm.cmdline.CommandError, \
-                      qm.error("no such ID", id=str(exception))
-            except ValueError, exception:
-                raise qm.cmdline.CommandError, \
-                      qm.error("no such ID", id=str(exception))
+            ids = set()
+            # Expand arguments into test/resource IDs.
+            if database:
+                for id in id_arguments:
+                    extension = database.GetExtension(id)
+                    if not extension:
+                        raise qm.cmdline.CommandError, \
+                              qm.error("no such ID", id = id)
+                    if extension.kind == database.SUITE:
+                        ids.update(extension.GetAllTestAndSuiteIds()[0])
+                    else:
+                        ids.add(id)
+            else:
+                ids = set(id_arguments)
         else:
             # No IDs specified.  Show all test and resource results.
             # Don't show any results by test suite though.
-            filter = 0
+            ids = None
 
         # Get an iterator over the results.
         try:
@@ -1496,21 +1496,21 @@ Valid formats are %s.
 
         resource_results = {}
         for r in results:
-            if filter and r.GetKind() == Result.RESOURCE_SETUP:
-                resource_results[r.GetId()] = r
             if r.GetKind() != Result.TEST:
-                if not filter:
+                if ids is None or r.GetId() in ids:
                     for s in streams:
                         s.WriteResult(r)
+                elif r.GetKind() == Result.RESOURCE_SETUP:
+                    resource_results[r.GetId()] = r
                 continue
             # We now known that r is test result.  If it's not one
             # that interests us, we're done.
-            if filter and r.GetId() not in test_ids:
+            if ids is not None and r.GetId() not in ids:
                 continue
             # If we're filtering, and this test was not run because it
             # depended on a resource that was not set up, emit the
             # resource result here.
-            if (filter
+            if (ids is not None
                 and r.GetOutcome() == Result.UNTESTED
                 and r.has_key(Result.RESOURCE)):
                 rid = r[Result.RESOURCE]
