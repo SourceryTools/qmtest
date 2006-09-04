@@ -154,12 +154,13 @@ class Host(Extension):
         host, run, and then deleted."""
         
         self.UploadFile(path)
-        result = self.Run(os.path.basename(path),
+        basename = os.path.basename(path)
+        result = self.Run(basename,
                           arguments,
                           environment,
                           timeout,
                           relative = True)
-        self.DeleteFile(path)
+        self.DeleteFile(basename)
         return result
         
         

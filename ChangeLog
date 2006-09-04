@@ -1,3 +1,7 @@
+2006-09-03  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/host.py (Host.UploadAndRun): Correct logic for deleting files.
+
 2006-08-18  Stefan Seefeld  <stefan@codesourcery.com>
 
 	Reorganize and enhance Tutorial:
