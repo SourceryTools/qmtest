@@ -107,7 +107,9 @@ class Executable(object):
         if not path:
             path = arguments[0]
 
-        # Normalize the path name.
+        # Normalize the path name.  At the conclusion of this
+        # processing, the path is either an absolute path, or contains
+        # no directory seperators.
         if os.path.isabs(path):
             # An absolute path.
             pass
@@ -139,6 +141,12 @@ class Executable(object):
             # arguments.
             command_line = self.__CreateCommandLine(arguments)
 
+            # If the path is not absolute, then we need to search the
+            # PATH.  Since CreateProcess only searches the PATH if its
+            # first argument is None, we clear path here.
+            if not os.path.isabs(path):
+                path = None
+            
             # Windows supports wide-characters in the environment, but
             # the Win32 extensions to Python require that all of the
             # entries in the environment be of the same type,

@@ -1,3 +1,8 @@
+2006-09-05  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/executable.py (Executable.Spawn): Search PATH on Windows if
+	appropriate.
+
 2006-09-03  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/host.py (Host.UploadAndRun): Correct logic for deleting files.
