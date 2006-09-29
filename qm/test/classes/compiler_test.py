@@ -16,7 +16,7 @@
 from   compiler import *
 from   qm.test.result import *
 from   qm.test.test import *
-import os, string, dircache
+import os, dircache
 
 ########################################################################
 # Classes
@@ -172,8 +172,7 @@ class CompilerTest(Test, CompilerBase):
             command = compiler.GetCompilationCommand(step.mode, step.files,
                                                      step.options,
                                                      step.output)
-            result[prefix + "command"] = \
-                "<tt>" + string.join(command) + "</tt>"
+            result[prefix + "command"] = result.Quote(' '.join(command))
             # Run the compiler.
             timeout = context.get("CompilerTest.compilation_timeout", -1)
             (status, output) \
@@ -321,7 +320,7 @@ class CompilerTest(Test, CompilerBase):
                              'LD_LIBRARYN32_PATH',
                              'LD_LIBRARYN64_PATH']:
                 old_path = environment.get(variable)
-                new_path = string.join(self._library_dirs, ":")
+                new_path = ':'.join(self._library_dirs)
                 if old_path and new_path:
                     new_path = new_path + ':' + old_path
             environment[variable] = new_path

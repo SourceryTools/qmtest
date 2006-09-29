@@ -1,5 +1,6 @@
 2006-09-29  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/test/classes/compiler_test.py: Fix quoting of command annotation.
 	* qm/fields.py: Add DictionaryField.
 	* qm/test/context.py: Add GetDerivedValue and as_string_list functions.
 	* qm/test/database.py: Prevent redundant instantiation of extension 
