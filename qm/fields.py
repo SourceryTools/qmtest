@@ -815,6 +815,187 @@ class TupleField(Field):
     
 
     
+class DictionaryField(Field):
+    """A 'DictionaryField' maps keys to values."""
+
+    def __init__(self, key_field, value_field, **properties):
+        """Construct a new 'DictionaryField'.
+
+        'key_field' -- The key field.
+
+        'value_field' -- The value field.
+        """
+
+        self.__key_field = key_field
+        self.__value_field = value_field
+        super(DictionaryField, self).__init__(**properties)
+
+
+    def GetHelp(self):
+
+        help = """
+        A dictionary field. A dictionary maps keys to values. The key type:
+        %s
+        The value type:
+        %s"""%(self.__key_field.GetHelp(), self.__value_field.GetHelp())
+        return help
+
+
+    ### Output methods.
+
+    def FormatValueAsHtml(self, server, content, style, name = None):
+
+        if content is None:
+            content = {}
+        # Use the default name if none is specified.
+        if name is None:
+            name = self.GetHtmlFormFieldName()
+            
+        if style == 'brief' or style == 'full':
+            if len(content) == 0:
+                # An empty set.
+                return 'None'
+            body = ['<th>%s</th><td>%s</td>\n'
+                    %(self.__key_field.FormatValueAsHtml(server, key, style),
+                      self.__value_field.FormatValueAsHtml(server, value, style))
+                    for (key, value) in content.iteritems()]
+            return '<table><tr>%s</tr>\n</table>\n'%'</tr>\n<tr>'.join(body)
+
+        elif style in ['new', 'edit', 'hidden']:
+            html = ''
+            if content:
+                # Create a table to represent the dictionary -- but only if it is
+                # non-empty.  A table with no body is invalid HTML.
+                html += ('<table border="0" cellpadding="0" cellspacing="0">'
+                         '\n <tbody>\n')
+                element_number = 0
+                for key, value in content.iteritems():
+                    html += '  <tr>\n   <td>'
+                    element_name = name + '_%d' % element_number
+                    checkbox_name = element_name + "_remove"
+                    if style == 'edit':
+                        html += ('<input type="checkbox" name="%s" /></td>\n'
+                                 '   <td>\n'
+                                 % checkbox_name)
+                    element_name = name + '_key_%d' % element_number
+                    html += ('   <th>%s</th>\n'
+                             %self.__key_field.FormatValueAsHtml(server, key,
+                                                                 style,
+                                                                 element_name))
+                    element_name = name + '_value_%d' % element_number
+                    html += ('   <td>%s</td>\n'
+                             %self.__value_field.FormatValueAsHtml(server, value,
+                                                                   style,
+                                                                   element_name))
+                    html += '  </tr>\n'
+                    element_number += 1
+                html += ' </tbody>\n</table>\n'
+            # The action field is used to keep track of whether the
+            # "Add" or "Remove" button has been pushed.  It would be
+            # much nice if we could use JavaScript to update the
+            # table, but Netscape 4, and even Mozilla 1.0, do not
+            # permit that.  Therefore, we have to go back to the server.
+            html += '<input type="hidden" name="%s" value="" />' % name
+            html += ('<input type="hidden" name="%s_count" value="%d" />'
+                     % (name, len(content)))
+            if style != 'hidden':
+                html += ('<table border="0" cellpadding="0" cellspacing="0">\n'
+                         ' <tbody>\n'
+                         '  <tr>\n'
+                         '   <td><input type="button" name="%s_add" '
+                         'value="Add Another" '
+                         '''onclick="%s.value = 'add'; submit();" />'''
+                         '</td>\n'
+                         '   <td><input type="button" name="%s_remove"'
+                         'value="Remove Selected" '
+                         '''onclick="%s.value = 'remove'; submit();" />'''
+                         '</td>\n'
+                         '  </tr>'
+                         ' </tbody>'
+                         '</table>'
+                         % (name, name, name, name))
+            return html
+
+
+    def MakeDomNodeForValue(self, value, document):
+
+        element = document.createElement('dictionary')
+        for k, v in value.iteritems():
+            item = element.appendChild(document.createElement('item'))
+            item.appendChild(self.__key_field.MakeDomNodeForValue(k, document))
+            item.appendChild(self.__value_field.MakeDomNodeForValue(v, document))
+        return element
+
+
+    ### Input methods.
+    
+    def Validate(self, value):
+
+        valid = {}
+        for k, v in value.items():
+            valid[self.__key_field.Validate(k)] = self.__value_field.Validate(v)
+
+        return valid
+
+
+    def ParseTextValue(self, value):
+
+        raise NotImplementedError
+
+
+    def ParseFormValue(self, request, name, attachment_stores):
+
+        content = {}
+        redisplay = 0
+
+        action = request[name]
+
+        for i in xrange(int(request[name + '_count'])):
+            if not (action == 'remove'
+                    and request.get(name + '_%d_remove'%i) == 'on'):
+                key, rk = self.__key_field.ParseFormValue(request,
+                                                          name + '_key_%d'%i,
+                                                          attachment_stores)
+                value, rv = self.__value_field.ParseFormValue(request,
+                                                              name + '_value_%d'%i,
+                                                              attachment_stores)
+                content[key] = value
+                if rk or rv:
+                    redisplay = 1
+
+        # Remove entries from the request that might cause confusion
+        # when the page is redisplayed.
+        names = []
+        for n, v in request.items():
+            if n[:len(name)] == name:
+                names.append(n)
+        for n in names:
+            del request[n]
+
+        content = self.Validate(content)
+        
+        if action == 'add':
+            redisplay = 1
+            content[self.__key_field.GetDefaultValue()] =\
+            self.__value_field.GetDefaultValue()
+        elif action == 'remove':
+            redisplay = 1
+
+        return (content, redisplay)
+            
+
+    def GetValueFromDomNode(self, node, attachment_store):
+
+        values = {}
+        for item in node.childNodes:
+            values[self.__key_field.GetValueFromDomNode(item.childNodes[0],
+                                                        attachment_store)] =\
+            self.__value_field.GetValueFromDomNode(item.childNodes[1],
+                                                   attachment_store)
+        return self.Validate(values)
+    
+
+    
 class SetField(Field):
     """A field containing zero or more instances of some other field.
 
@@ -823,7 +1004,8 @@ class SetField(Field):
 
     The default field value is set to an empty set."""
 
-    def __init__(self, contained, not_empty_set = "false"):
+    def __init__(self, contained, not_empty_set = "false", default_value = None,
+                 **properties):
         """Create a set field.
 
         The name of the contained field is taken as the name of this
@@ -841,9 +1023,10 @@ class SetField(Field):
 
         super(SetField, self).__init__(
             contained.GetName(),
-            [],
+            default_value or [],
             title = contained.GetTitle(),
-            description = contained.GetDescription())
+            description = contained.GetDescription(),
+            **properties)
 
         # A set field may not contain a set field.
         if isinstance(contained, SetField):

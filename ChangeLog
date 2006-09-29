@@ -1,3 +1,10 @@
+2006-09-29  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/fields.py: Add DictionaryField.
+	* qm/test/context.py: Add GetDerivedValue and as_string_list functions.
+	* qm/test/database.py: Prevent redundant instantiation of extension 
+	classes.
+	
 2006-09-05  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/executable.py (Executable.Spawn): Search PATH on Windows if
