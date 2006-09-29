@@ -123,6 +123,41 @@ class Context(types.DictType):
             self[option] = value
 
 
+    def GetDerivedValue(self, klass, variable, default = None):
+        """Return the value for 'variable' in scope 'klass'.
+        Scopes are nested with '.', and inner variables hide
+        outer variables of the same name. Thus, looking up the
+        value of 'a.b.c.var' will return 1 if the context
+        contains
+          a.b.c.var=1
+        but 2 if it contains
+          a.b.d.var=1
+          a.b.var=2
+          a.var=3.
+
+        'klass' -- The variable's scope.
+
+        'variable' -- The variable name.
+
+        'default' -- Default value."""
+
+
+        while True:
+
+            if klass:
+                k = klass + '.' + variable
+            else:
+                k = variable
+            if self.has_key(k):
+                return self[k]
+            if not klass:
+                return default
+            if '.' not in klass:
+                klass = ''
+            else:
+                klass = klass[0:klass.rfind('.')]
+
+
     def GetBoolean(self, key, default = None):
         """Return the boolean value associated with 'key'.
 
@@ -293,5 +328,4 @@ class Context(types.DictType):
         added = self.__context.GetAddedProperties()
         added.update(self)
         return added
-
 
