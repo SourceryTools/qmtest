@@ -57,8 +57,9 @@ class ItemDescriptor:
     def __init__(self,
                  database,
                  instance_id,
-                 class_name,
-                 arguments):
+                 class_name = None,
+                 arguments = None,
+                 item = None):
         """Construct an 'ItemDescriptor'.
 
         'database' -- The 'Database' object in which this entity is
@@ -68,18 +69,22 @@ class ItemDescriptor:
 
         'class_name' -- The name of the extension class for the entity.
         For example, for a 'TestDescriptor', the 'class_name' is the
-        name of the test class.
+        name of the test class. Omit this argument if 'item' is provided.
 
         'arguments' -- A dictionary mapping argument names to argument
         values.  These arguments will be provided to the extension class
-        when the entity is constructed."""
+        when the entity is constructed. Omit this argument if 'item' is
+        provided.
+
+        'item' -- The item class for this item instance."""
 
         self.__database = database
         self.__id = instance_id
+        assert(not item or not class_name)
         self.__class_name = class_name
         self.__arguments = arguments
-        self.__item = None
-        
+        self._item = item
+
 
     def GetDatabase(self):
         """Return the 'Database' containing this entity.
@@ -97,7 +102,10 @@ class ItemDescriptor:
         example, for a 'TestDescriptor', this method returns the name of
         the test class."""
 
-        return self.__class_name
+        if self._item:
+            return self._item.GetClassName()
+        else:
+            return self.__class_name
 
 
     def GetClass(self):
@@ -127,7 +135,10 @@ class ItemDescriptor:
         values.  These arguments will be provided to the extension class
         when the entity is constructed."""
 
-        return self.__arguments
+        if self._item:
+            return self._item.GetExplicitArguments()
+        else:
+            return self.__arguments
 
 
     def GetId(self):
@@ -143,12 +154,12 @@ class ItemDescriptor:
 
         returns -- An instance of the class returned by 'GetClass'."""
 
-        if not self.__item:
+        if not self._item:
             extras = { Runnable.EXTRA_ID : self.GetId(),
                        Runnable.EXTRA_DATABASE : self.GetDatabase() }
-            self.__item = self.GetClass()(self.GetArguments(), **extras)
+            self._item = self.GetClass()(self.GetArguments(), **extras)
             
-        return self.__item
+        return self._item
     
 
     def GetResources(self):
@@ -189,8 +200,9 @@ class TestDescriptor(ItemDescriptor):
     def __init__(self,
                  database,
                  test_id,
-                 test_class_name,
-                 arguments):
+                 test_class_name = None,
+                 arguments = None,
+                 test = None):
         """Create a new test instance.
 
         'database' -- The 'Database' containing this test.
@@ -198,21 +210,22 @@ class TestDescriptor(ItemDescriptor):
         'test_id' -- The test ID.
 
         'test_class_name' -- The name of the test class of which this is
-        an instance.
+        an instance. Omit this argument if 'test' is provided.
 
-        'arguments' -- This test's arguments to the test class."""
+        'arguments' -- This test's arguments to the test class.
+        Omit this argument if 'test' is provided.
+
+        'test' -- The test class of which this is an instance."""
 
         # Initialize the base class.
         ItemDescriptor.__init__(self, database,
-                                test_id, test_class_name, arguments)
+                                test_id, test_class_name, arguments,
+                                test)
 
         self.__prerequisites = {}
         for p, o in \
             self.GetArguments().get(Test.PREREQUISITES_FIELD_ID, []):
             self.__prerequisites[p] = o
-            
-        # Don't instantiate the test yet.
-        self.__test = None
 
 
     def GetClass(self):
@@ -221,6 +234,7 @@ class TestDescriptor(ItemDescriptor):
         returns -- The Python class object for the entity.  For example,
         for a 'TestDescriptor', this method returns the test class."""
 
+        if self._item: return type(self._item)
         return get_extension_class(self.GetClassName(), 'test',
                                    self.GetDatabase())
     
@@ -265,8 +279,9 @@ class ResourceDescriptor(ItemDescriptor):
     def __init__(self,
                  database,
                  resource_id,
-                 resource_class_name,
-                 arguments):
+                 resource_class_name = None,
+                 arguments = None,
+                 resource = None):
         """Create a new resource instance.
 
         'database' -- The 'Database' containing this resource.
@@ -274,13 +289,17 @@ class ResourceDescriptor(ItemDescriptor):
         'resource_id' -- The resource ID.
 
         'resource_class_name' -- The name of the resource class of which
-        this is an instance.
+        this is an instance. Omit this argument if 'resource' is provided.
 
-        'arguments' -- This resource's arguments to the resource class."""
+        'arguments' -- This resource's arguments to the resource class.
+        Omit this argument if 'resource' is provided.
+
+        'resource' -- The resource class of which this is an instance."""
 
         # Initialize the base class.
         ItemDescriptor.__init__(self, database, resource_id,
-                                resource_class_name, arguments)
+                                resource_class_name, arguments,
+                                resource)
 
 
     def GetClass(self):
@@ -289,6 +308,7 @@ class ResourceDescriptor(ItemDescriptor):
         returns -- The Python class object for the entity.  For example,
         for a 'TestDescriptor', this method returns the test class."""
 
+        if self._item: return type(self._item)
         return get_extension_class(self.GetClassName(), 'resource',
                                    self.GetDatabase())
 
@@ -614,11 +634,11 @@ class Database(qm.extension.Extension):
         returns -- The instance of 'Extension' with the indicated name,
         or 'None' if there is no such entity.
 
-        Database classes should override this method, and then define
-        'GetTest', 'GetResource', and 'GetSuite' in terms of this
-        method.  However, for backwards compatibility, this base class
-        implements this generic method in terms of the special-purpose
-        methods."""
+        Database classes should override this method.  For backwards
+        compatibility, this base class implements this generic method
+        in terms of the special-purpose methods 'GetTest()' and 'GetResource()'.
+        Only if _is_generic_database is True are these implemented in terms
+        of 'GetExtension()'."""
 
         for kind in (Database.TEST, Database.RESOURCE):
             try:
@@ -700,10 +720,7 @@ class Database(qm.extension.Extension):
         if self._is_generic_database:
             test = self.GetExtension(test_id)
             if isinstance(test, Test):
-                return TestDescriptor(self,
-                                      test_id,
-                                      test.GetClassName(),
-                                      test.GetExplicitArguments())
+                return TestDescriptor(self, test_id, test=test)
         
         raise NoSuchTestError(test_id)
 
@@ -834,10 +851,7 @@ class Database(qm.extension.Extension):
         if self._is_generic_database:
             resource = self.GetExtension(resource_id)
             if isinstance(resource, Resource):
-                return ResourceDescriptor(self,
-                                          resource_id,
-                                          resource.GetClassName(),
-                                          resource.GetExplicitArguments())
+                return ResourceDescriptor(self, resource_id, resource = resource)
             
         raise NoSuchResourceError(resource_id)
 
