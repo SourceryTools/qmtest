@@ -35,5 +35,6 @@
  <class kind="host" name="ssh_host.SSHHost"/>
  <class kind="host" name="ssh_host.RSHHost"/>
  <class kind="host" name="simulator.Simulator"/>
+ <class kind="host" name="command_host.CommandHost"/>
  <class kind="run_database" name="dir_run_database.DirRunDatabase"/>
 </class-directory>

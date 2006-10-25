@@ -1,3 +1,8 @@
+2006-10-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/command_host.py: New host extension.
+	* qm/test/classes/classes.qmc: Register it.
+
 2006-09-29  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/compiler_test.py: Fix quoting of command annotation.
