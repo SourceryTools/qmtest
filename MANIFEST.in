@@ -20,11 +20,9 @@ include MANIFEST.in setup.py
 recursive-include   qm *.py
 # This is the main executable.
 include             qm/test/qmtest
-# These are all docs, in (docbook) xml, html, tex, and pdf format.
-include             qm/test/doc/*.xml
-include             qm/test/doc/html/*.html
-include		    qm/test/doc/html/qm.css
-include             qm/test/doc/print/manual.pdf
+# These are all docs, html and pdf.
+recursive-include   share/doc/qmtest *
+# These are documentation sources (docbook) and compilation harness (xslt etc.)
 recursive-include   doc *
 # These are data files used by various parts of QMTest.
 include             qm/test/classes/classes.qmc
