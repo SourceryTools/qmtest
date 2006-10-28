@@ -6,9 +6,13 @@
   Date:   2006-05-01
 
   Contents:
-    Introduction to QMTest.
+    Concepts chapter for QMTest Tutorial.
 
-  Copyright (C) 2006 CodeSourcery Inc.
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
 
 -->
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
@@ -54,7 +58,7 @@
   <para>Throughout this chapter we will use the <application>qmtest</application>
     application with a variety of parameters and options. For a full description
     of the <application>qmtest</application> please refer to the
-    <link linkend="app-command-line">command-line reference</link>.</para>
+    <link linkend="cli">command-line reference</link>.</para>
 
   <para>The following commands create a simple <link linkend="concepts-test-database">test database</link>
   in the current working directory. This test database will be used throughout the
@@ -159,7 +163,7 @@ test python.ExecTest python_pass
       <para><application>QMTest</application> can run tests in multiple
       concurrent threads of execution or on multiple remote hosts. See the
       documentation for the <link
-      linkend="sec-testcmd-run"><command>run</command> command</link> for
+      linkend="command-run"><command>run</command> command</link> for
       details.</para>
 
       <para>How the output of the <command><command>qmtest</command> run</command>

@@ -2,28 +2,6 @@
 <!ENTITY version "2.3">
 <!ENTITY qm "<application>QM</application>">
 <!ENTITY qmtest "<application>QMTest</application>">
-<!ENTITY qmtest-cmd "<command>qmtest</command>">
-
-<!ENTITY api "<acronym>API</acronym>">
-<!ENTITY dtd "<acronym>DTD</acronym>">
-<!ENTITY dtml "<acronym>DTML</acronym>">
-<!ENTITY faq "<acronym>FAQ</acronym>">
-<!ENTITY gui "<acronym>GUI</acronym>">
-<!ENTITY html "<acronym>HTML</acronym>">
-<!ENTITY idb "<acronym>IDB</acronym>">
-<!ENTITY iid "<acronym>IID</acronym>">
-<!ENTITY mime "<acronym>MIME</acronym>">
-<!ENTITY rdbms "<acronym>RDBMS</acronym>">
-<!ENTITY sql "<acronym>SQL</acronym>">
-<!ENTITY url "<acronym>URL</acronym>">
-<!ENTITY xml "<acronym>XML</acronym>">
-
-<!ENTITY prompt "<prompt>> </prompt>">
-
-<!ENTITY PASS "<symbol>PASS</symbol>">
-<!ENTITY FAIL "<symbol>FAIL</symbol>">
-<!ENTITY ERROR "<symbol>ERROR</symbol>">
-<!ENTITY UNTESTED "<symbol>UNTESTED</symbol>">
 
 <!ENTITY dashdash "&#45;&#45;">
 <!ENTITY copy "&#169;">

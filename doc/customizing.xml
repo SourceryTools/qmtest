@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  File:   customizing.xml
+  Author: Stefan Seefeld
+  Date:   2006-08-18
+
+  Contents:
+    Customizing chapter for QMTest tutorial.
+
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+  <!ENTITY % entities SYSTEM "qmtest.ent">
+  %entities;
+]>
+<chapter id="customizing">
+ <title>Customizing <application>QMTest</application></title>
+ <para>The previous chapter introduced the concepts underlying 
+ <application>QMTest</application>'s design. These were demonstrated with particular
+ types of tests, resources, databases, etc. . These types are designed to be
+ extensible, i.e. <application>QMTest</application> can operate with arbitrary
+ instances of these types. In fact, <application>QMTest</application> provides
+ a large number of such extensions.</para>
+ <para>This chapter discusses how to use them, i.e. how to find out what
+ extensions are available, and how to use them to construct custom test databases.
+ </para>
+
+ <section id="customizing-extensions">
+   <title>Extensions</title>
+   <para>In the previous chapter we have created a test database containing 
+     a number of tests. These tests were instances of test types, such as 
+     <type>python.ExecTest</type>. When creating a test, a user chooses a 
+     test type, and assigns test-specific parameters to it.
+   </para>
+   <para>The same extension mechanism is used for other aspects of 
+     <application>QMTest</application>'s functionality. All these types are 
+     extensions, which provide a generic interface for <application>QMTest</application>
+     to query.
+   </para>
+   <para>To find out what extensions are available, use <command>qmtest extensions</command>. 
+     To list all available test types, use:</para>
+
+   <screen>
+<prompt>&gt; </prompt><userinput>qmtest extensions -k test</userinput>
+** Available test classes **
+
+- command.ExecTest
+
+  Check a program's output and exit code.
+
+- command.ShellCommandTest
+
+  Check a shell command's output and exit code.
+
+- python.ExecTest
+
+  Check that a Python expression evaluates to true.
+
+...
+   </screen>
+
+   <para>To find out more about a particular extension type, use the <command>describe</command> 
+     command:</para>
+
+   <screen>
+<prompt>&gt; </prompt><userinput>qmtest describe test command.ExecTest</userinput>
+
+class name: python.ExecTest
+   Check that a Python expression evaluates to true.
+
+class attributes:
+   prerequisites     The tests on which this test depends.
+   source            The source code.
+   target_group      The targets on which this test can run.
+   expression        The expression to evaluate.
+   resources         Resources on which this test or resource depends.
+   </screen>
+
+   <para>To create a test of that type, you can call:</para>
+
+   <screen>
+<prompt>&gt; </prompt>qmtest create --id=my_test -a expression='True' test python.ExecTest
+   </screen>
+   <para>where the extension parameters are specified with the <option>-a</option> option.</para>
+
+   <para>QMTest searches for extensions in particular places, in the following order:</para>
+   <orderedlist>
+     <listitem>
+       <para>in the paths contained in the <envar>QMTEST_CLASS_PATH</envar> 
+       environment variable.</para>
+     </listitem>
+     <listitem>
+       <para>in the class-path associated with a particular test database 
+       (typically the <filename>QMTest/</filename> subdirectory).</para>
+     </listitem>
+     <listitem>
+       <para>in the site-extension path associated with a particular QMTest 
+       installation.</para>
+     </listitem>
+     <listitem>
+       <para>in the set of built-in extensions that come with a particular 
+       <application>QMTest</application> installation.</para>
+     </listitem>
+   </orderedlist>
+   <para>This search allows users to provide their own extension types. See 
+   <xref linkend="extending"/> for a detailed discussion of how to create new
+   extensions.</para>
+   <para>The rest of this chapter will discuss the various extension kinds that 
+   can be used to customize <application>QMTest</application>.</para>
+ </section><!-- extensions -->
+ <section id="customizing-tests">
+   <title>Tests</title>
+   <section id="customizing-command-exectest">
+    <title><classname>command.ExecTest</classname></title>
+
+    <para>The <classname>command.ExecTest</classname> test class runs a
+    program from an ordinary executable file.  Each test specifies the
+    program executable to run, its full command line, and the data to
+    feed to its standard input stream.  <classname>ExecTest</classname>
+    collects the complete text of the program's standard output and
+    standard error streams and the program's exit code, and compares
+    these to expected values specified in the test.  If the standard
+    output and error text and the exit code match the expected values,
+    the test passes.</para>
+
+    <para>A <classname>command.ExecTest</classname> test supplies the
+    following arguments:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Program</property> (text field)</glossterm>
+      <glossdef>
+       <para>The name of the executable file to run.
+       <classname>command.ExecTest</classname> attempts to locate the
+       program executable in the path specified by the
+       <property>path</property> property of the test context.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Argument List</property> (set of strings)</glossterm>
+      <glossdef>
+       <para>The argument list for the program.  The elements of this
+       set are sequential items from which the program's argument list
+       is constructed.  <classname>command.ExecTest</classname>
+       automatically prepends an implicit zeroth element, the full path
+       of the program.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Standard Input</property> (text
+      field)</glossterm>
+      <glossdef>
+       <para>Text or data to pass to the program's standard input
+       stream.  This data is written to a temporary file, and the
+       contents of the file are directed to the program's standard
+       input stream.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Environment</property> (set of strings)</glossterm>
+      <glossdef>
+       <para>The environment (i.e. the set of environment variables)
+       available to the executing program.  Each element of this
+       argument is a string of the form
+       "<replaceable>VARIABLE</replaceable>=<replaceable>VALUE</replaceable>".</para>
+
+       <para><classname>command.ExecTest</classname> adds additional
+       environment variables automatically.</para>
+
+       <para>In addition, every context property whose value is a string
+       is accessible as an environment variable; the name of the
+       environment variable is the name of the context property,
+       prefixed with &quot;<envar>QMV_</envar>&quot; and with any dots
+       (&quot;.&quot;) replaced by a double underscore
+       (&quot;__&quot;).  For example, the value of the context property
+       &quot;CompilerTable.c_path&quot; is available as the value of the
+       environment variable
+       &quot;<envar>QMV_CompilerTable__c_path</envar>&quot;.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Exit Code</property> (integer
+      field)</glossterm>
+      <glossdef>
+       <para>The exit code value expected from the program.  If the
+       program produces an exit code value different from this one, the
+       test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Output</property>
+      (text field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard output stream.  The actual text or data written
+       to standard output is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+     <glossentry>
+      <glossterm><property>Expected Standard Error</property>
+      (text field)</glossterm>
+      <glossdef>
+       <para>The text or data which the program is expected to produce
+       on its standard error stream.  The actual text or data written to
+       standard error is captured, and
+       <classname>command.ExecTest</classname> performs a bytewise
+       comparison to the expected text or data.  If they do not match,
+       the test fails.</para>
+      </glossdef>
+     </glossentry>
+
+    </glosslist>
+
+   </section> <!-- customizing-command-exectest -->
+
+   <section id="customizing-command-commandtest">
+    <title><classname>command.ShellCommandTest</classname></title>
+
+    <para><classname>command.ShellCommandTest</classname> is very
+    similar to <classname>command.ExecTest</classname>, except that it
+    runs a program via the shell rather than directly.  Instead of
+    specifying an executable to run and the elements of its argument
+    list, a test provides a single command line.  The shell is
+    responsible for finding the executable and constructing its
+    argument list.</para>
+
+    <para>Standard input and the environment are specified in the test.
+    The test passes if the command produces the expected standard
+    output, standard error, and exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.ShellCommandTest</classname>, including the contents
+    of the test context, are directly accessible via shell variables.
+    The syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.ShellCommandTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> and <property>Argument List</property>
+    properties are replaced with these:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Command</property> (text field)</glossterm>
+      <glossdef>
+       <para>The command to run.  The command is delivered verbatim to
+       the shell.  The shell interprets the command according to its own
+       quoting rules and syntax.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- customizing-command-commandtest -->
+
+   <section id="customizing-command-scripttest">
+    <title><classname>command.ShellScriptTest</classname></title>
+
+    <para><classname>command.ShellScriptTest</classname> is an extension of
+    <classname>command.CommandTest</classname> that lets a test specify
+    an entire shell script instead of a single command.  The script
+    specified in the test is written to a temporary file, and this file
+    is interpreted by the specified shell or command interpreter
+    program.</para>
+
+    <para>Standard input, the environment, and the argument list to pass
+    to the script are specified in the test.  The test passes if the
+    script produces the expected standard output, standard error, and
+    exit code.</para>
+
+    <para>Note that most shells create local shell variables to mirror
+    the contents of the environment when the shell starts up.
+    Therefore, the environment set up by a
+    <classname>command.ShellScriptTest</classname>, including the contents of
+    the test context, are directly accessible via shell variables.  The
+    syntax to use depends on the particular shell.</para>
+
+    <para><classname>command.ShellScriptTest</classname> has the same fields
+    as <classname>command.ExecTest</classname>, except that the
+    <property>Program</property> property is replaced with:</para>
+
+    <glosslist>
+     <glossentry>
+      <glossterm><property>Script</property> (text field)</glossterm>
+      <glossdef>
+       <para>The text of the script to run.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- customizing-command-scripttest -->
+   <section id="customizing-compilation-test">
+    <title><classname>CompilationTest</classname></title>
+
+    <para><classname>compilation_test.CompilationTest</classname> compiles
+    a set of source files and optionally runs the compiled executable.
+    </para>
+    <para>The compiler executable's name, as well as global compilation
+    parameters are queried from these <link linkend="concepts-context">context</link> 
+    variables:</para>
+    <variablelist>
+     <varlistentry>
+      <term>CompilationTest.compiler_path</term>
+      <listitem><para>The name of the compiler executable.</para></listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>CompilationTest.compiler_options</term>
+      <listitem><para>Compiler options.</para></listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>CompilationTest.compiler_ldflags</term>
+      <listitem><para>Linker options.</para></listitem>
+     </varlistentry>
+    </variablelist>
+    <para>The <classname>CompilationTest</classname> takes the following parameters.</para>
+    <glosslist>
+     <glossentry>
+      <glossterm><property>options</property> (set field)</glossterm>
+      <glossdef>
+       <para>Test-specific options to pass to the compiler.</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
+      <glossterm><property>source_files</property> (set field)</glossterm>
+      <glossdef>
+       <para>Source files to be compiled..</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
+      <glossterm><property>executable</property> (text field)</glossterm>
+      <glossdef>
+       <para>The name of the executable to be compiled.</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
+      <glossterm><property>execute</property> (boolean field)</glossterm>
+      <glossdef>
+       <para>Whether or not to run the compiled executable.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+
+   </section> <!-- customizing-compilation-test -->
+ </section>
+ <section id="customizing-suites">
+   <title>Test Suites</title>
+ </section>
+ <section id="customizing-resources">
+   <title>Test Resources</title>
+   <section id="temporary-directory">
+     <title><classname>TempDirectoryResource</classname></title>
+     <para>An instance of this resource creates a temporary directory
+     during setup, and deletes it during cleanup. The full path to the
+     directory is available to tests via a context property.</para>
+    <glosslist>
+     <glossentry>
+      <glossterm><property>dir_path_property</property> (text field)</glossterm>
+      <glossdef>
+       <para>The name of the context property which is set to the path 
+       to the temporary directory.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+   </section>
+   <section id="compiler-table">
+     <title><classname>CompilerTable</classname></title>
+     <para>A <classname>CompilerTable</classname> resource creates a set of
+     compiler objects according to context variables. These compiler objects
+     are then made available to test instances through the <varname>compilers</varname>
+     context variable that maps language names to compiler objects.</para>
+     <para>The context variable <varname>CompilerTable.languages</varname> should
+     be a whitespace-separated list of programming language names. Then, for each
+     language &lt;lang&gt;, the following variables are looked up and used for
+     the creation of compiler objects:</para>
+    <glosslist>
+     <glossentry>
+      <glossterm><property>CompilerTable.&lt;lang&gt;_kind</property> (text field)</glossterm>
+      <glossdef>
+       <para>The kind of compiler (e.g., "GCC" or "EDG").</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
+      <glossterm><property>CompilerTable.&lt;lang&gt;_path</property> (text field)</glossterm>
+      <glossdef>
+       <para>The path to the compiler.</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
+      <glossterm><property>CompilerTable.&lt;lang&gt;_options</property> (text field)</glossterm>
+      <glossdef>
+       <para>A whitespace-separated list of command-line options to provide to the
+       compiler.</para>
+      </glossdef>
+     </glossentry>
+    </glosslist>
+   </section>
+ </section>
+ <section id="customizing-test-databases">
+   <title>Test Databases</title>
+   <section id="xml-database">
+     <title>XMLDatabase</title>
+     <para>The XMLDatabase stores its content as a directory hierarchy containing
+     XML files. It is the default test database used by <application>QMTest</application>.
+     Each QMTest subdirectory is represented by a subdirectory in the filesystem. 
+     A test, suite, or resource is represented by an XML file.  These files have file 
+     extensions <filename>.qmt</filename>, <filename>.qms</filename>, and <filename>.qma</filename>,
+     respectively.</para>
+
+     <para>Expert <application>QMTest</application> users may modify the contents 
+     of the test database directly by editing these files.  However, it is the 
+     user's responsibility to ensure the integrity and validity of the XML
+     contents of each file.  For example, file and directory names should
+     contain only characters allowed in identifiers (lower-case letters,
+     digits, hyphens, and underscores); a period should only be used
+     before a file extension, such as <filename>.qmt</filename>.  Also,
+     the files and directories in a test database should not be modified
+     directly while <application>QMTest</application> is running with that test 
+     database.</para>
+   </section> <!-- xml-database -->
+   <section id="customizing-compilation-test-database">
+     <title><classname>CompilationTestDatabase</classname></title>
+     <para>The <type>CompilationTestDatabase</type> associates source files with
+     <link linkend="customizing-compilation-test"><type>CompilationTest</type></link> instances.
+     The mapping uses file extensions to determine the programming language, and
+     thus, what compiler and compilation flags to use. To create a new test, simply
+     add a source file with an appropriate file extension to the test database.</para>
+
+     <para>All tests use the <link linkend="compiler-table">CompilerTable</link>
+     resource, and therefor require the appropriate context variables to be
+     provided.</para>
+     <para>Additionally, more compiler options can be added per test id or even
+     subdirectory id. Given the following context file:</para>
+     <screen>
+CompilerTable.languages=c
+CompilerTable.c_kind=GCC
+CompilerTable.c_path=gcc
+CompilerTable.c_options=-O2
+a.b.c_options=-I /a/b/common
+a.b.c.c_options=-I /a/b/c
+     </screen>
+     <para>a test <varname>a/b/c/test.c</varname> will be compiled with
+     <command>gcc -O2 -I /a/b/common -I /a/b/c</command> while a test 
+     <varname>a/b/d/test.c</varname> will be compiled with <command>
+     gcc -O2 -I /a/b/common</command>.</para>
+
+     <para>The <classname>CompilationTestDatabase</classname> takes the following parameters.</para>
+     <glosslist>
+       <glossentry>
+         <glossterm><property>srcdir</property> (text field)</glossterm>
+         <glossdef><para>The root of the test suite's source tree.</para></glossdef>
+       </glossentry>
+       <glossentry>
+         <glossterm><property>excluded_subdirs</property> (set field)</glossterm>
+         <glossdef>
+           <para>A set of directory names not to be parsed as subdirectories.</para>
+         </glossdef>
+       </glossentry>
+       <glossentry>
+         <glossterm><property>test_extensions</property> (dictionary field)</glossterm>
+         <glossdef>
+           <para>The mapping from file extensions to programming languages.</para>
+         </glossdef>
+       </glossentry>
+     </glosslist>
+   </section> <!-- compilation-test-database -->
+ </section>
+ <section id="customizing-test-targets">
+   <title>Test Targets</title>
+   <para>Test targets represent entities that <application>QMTest</application> 
+   uses to run tests.  See <xref linkend="concepts-targets"/> for an overview of how
+   <application>QMTest</application> uses targets.</para>
+
+   <section id="target-specification">
+     <title>Target Specification</title>
+
+     <para>Each target specification includes the following:</para>
+
+     <orderedlist>
+       <listitem>
+         <para>The name of the target.  This is a name identifying the
+         target, such as the host name of the computer which will run the
+         tests.  Target names should be unique in a single target
+         file.</para>
+       </listitem>
+
+       <listitem>
+         <para>The <firstterm id="def-target-class">target
+         class</firstterm>.  Similar to a test class, a target class is a
+         Python class which implements a type of target.  As with test
+         classes, a target class is identified by its name, which includes
+         the module name and the class name.</para>
+
+         <para>For example, <classname>thread_target.ThreadTarget</classname>
+         is the name of a target class, provided by <application>QMTest</application>,
+         which runs tests in multiple threads on the local computer.</para>
+
+         <para><application>QMTest</application> includes several target class 
+         implementations.  See <xref linkend="target-classes"/> for details.
+         </para>
+       </listitem>
+
+       <listitem>
+         <para>A <link linkend="def-target-group">target group</link> name.
+         The test implementor may choose the syntax of target group names in
+         a test implementation.  Target groups may be used to encode
+         information about target attributes, such as architecture and
+         operating system, and capabilities.</para>
+       </listitem>
+
+       <listitem>
+         <para>Optionally, a target specification may include additional
+         properties.  Properties are named and have string values.  Some
+         target classes may use property information to control their
+         configuration.  For instance, a target class which executes tests
+         on a remote computer would extract the network address of the
+         remote computer from a target property.</para>
+       </listitem>
+     </orderedlist>
+
+   </section> <!-- target-specifation -->
+
+   <section id="target-classes">
+     <title>Target Classes</title>
+
+     <para><application>QMTest</application> includes these target class 
+     implementations.</para>
+     <section id="serial-target">
+       <title><classname>SerialTarget</classname></title>
+
+       <para>The <classname>serial_target.SerialTarget</classname> target
+       class runs tests one after the other on the machine running
+       QMTest.  If you use a <classname>SerialTarget</classname>, you
+       should not also use any other targets, including another
+       <classname>SerialTarget</classname> at the same time.</para>
+     </section> <!-- serial-target -->
+
+     <section id="thread-target">
+       <title><classname>ThreadTarget</classname></title>
+
+       <para>The <classname>thread_target.ThreadTarget</classname> target
+       class runs tests in one or more threads on the machine running
+       QMTest.  The <classname>ThreadTarget</classname> can be used to
+       run multiple tests at once.</para>
+
+       <para><classname>ThreadTarget</classname> uses the following
+       properties:</para>
+
+       <itemizedlist>
+         <listitem>
+           <para>The <property>concurrency</property> specifies the number
+           of threads to use.  Larger numbers of threads will allow QMTest
+           to run more tests in parallel.  You can experiment with this
+           value to find the setting that allows QMTest to run tests most
+           quickly.</para>
+         </listitem>
+       </itemizedlist>
+     </section> <!-- thread-target -->
+
+     <section id="process-target">
+       <title><classname>ProcessTarget</classname></title>
+
+       <para>The <classname>process_target.ProcessTarget</classname>
+       target class run tests in one more processes on the machine running
+       QMTest.  This target class is not available on Windows.  Like
+       <classname>ThreadTarget</classname>,
+       <classname>ProcessTarget</classname> can be used to run multiple
+       tests simultaneously.</para>
+
+       <para>In general, you should use
+       <classname>ThreadTarget</classname> instead of
+       <classname>ProcessTarget</classname> to maximize QMTest
+       performance.  However, on machines that do not have threads,
+       <classname>ProcessTarget</classname> provides an alternative way
+       of running tests in parallel.</para>
+
+       <para><classname>ProcessTarget</classname> uses the following
+       properties:</para>
+
+       <itemizedlist>
+         <listitem>
+           <para>The <property>concurrency</property> specifies the number
+           of processes to use.  Larger numbers of processes will allow
+           QMTest to run more tests in parallel.  You can experiment with
+           this value to find the setting that allows QMTest to run tests
+           most quickly.</para>
+         </listitem>
+
+         <listitem>
+           <para><application>QMTest</application> uses the path given by the
+           <command>qmtest</command> property to create additional QMTest
+           instances.  By default, the path
+           <filename>/usr/local/bin/qmtest</filename> is used.</para>
+         </listitem>
+       </itemizedlist>
+     </section> <!-- process-target -->
+
+     <section id="remote-shell-target">
+       <title><classname>RemoteShellTarget</classname></title>
+
+       <para>The <classname>rsh_target.RSHTarget</classname>
+       target class runs tests on a remote computer via a remote shell
+       invocation (<command>rsh</command>, <command>ssh</command>, or
+       similar).  This target uses a remote shell to invoke a program
+       similar to the <command>qmtest</command> command on the remote computer.  This
+       remote program accepts test commands and responds with results from
+       running these tests.</para>
+
+       <para>To use <classname>RSHTarget</classname>, the remote
+       computer must have <application>QMTest</application> installed and must contain an identical
+       copy of the test database. <application>QMTest</application> does not transfer entire tests
+       over the remote shell connection; instead, it relies on the remote
+       test database for loading tests.</para>
+
+       <para>In addition, the remote shell program must be configured to
+       allow a remote login without additional intervention (such as typing
+       a password).  If you use <command>rsh</command>, you can use an
+       <filename>.rhosts</filename> file to set this up.  If you use
+       <command>ssh</command>, you can use an SSH public key and the
+       <command>ssh-agent</command> program for this.  See the
+       corresponding manual pages for details.</para>
+
+       <para><classname>RSHTarget</classname> uses all of the properties
+       given above for <classname>ProcessTarget</classname>.  In
+       addition, <classname>RSHTarget</classname> uses the following
+       properties:</para>
+
+       <itemizedlist>
+         <listitem>
+           <para>The <property>remote_shell</property> property specifies the
+           path to the remote shell program.  The default value is
+           <command>ssh</command>.  The remote shell program must
+           accept the same command-line syntax as
+           <command>rsh</command>.</para>
+         </listitem>
+
+         <listitem>
+           <para>The <property>host</property> property specifies the remote
+           host name.  If omitted, the target name is used.</para>
+         </listitem>
+
+         <listitem>
+           <para>The <property>database_path</property> property specifies
+           the path to the test database on the remote computer.  The test
+           database must be identical to the local test database.  If
+           omitted, the local test database path is used.</para>
+         </listitem>
+
+         <listitem>
+           <para>The <property>arguments</property> property specifies
+           additional command-line arguments for the remote shell program.
+           The value of this property is split at space characters, and the
+           arguments are added to the command line before the name of the
+           remote host.</para>
+
+           <para>For example, if you are using the <command>ssh</command>
+           remote shell program and wish to log in to the remote computer
+           using a different user account, specify the <literal>-l
+           username</literal> option using the <property>arguments</property>
+           property.</para>
+         </listitem>
+       </itemizedlist>
+     </section> <!-- remote-shell-target -->
+   </section> <!-- target-classes -->
+ </section> <!-- test-targets -->
+ <section id="customizing-hosts">
+   <title>Hosts</title>
+   <para>A number of test classes delegate the execution of executables to
+   a dedicated <classname>Host</classname> class, for example to allow parts 
+   of the test to be run on a different platform (such as when cross-compiling
+   and cross-testing). To achieve that, a number of <classname>Host</classname>
+   subclasses are provided that can be used to execute code in different ways.
+   Typically, a test class will query the <classname>Host</classname> instance
+   to use from a context variable.</para>
+   <section id="localhost">
+     <title><classname>local_host.LocalHost</classname></title>
+     <para>A <classname>LocalHost</classname> is the machine on which Python is 
+     running.</para>
+   </section>
+   <section id="ssh-host">
+     <title><classname>ssh_host.SSHHost</classname></title>
+     <para>An <classname>SSHHost</classname> is accessible via <command>ssh</command> 
+     or a similar program. The <classname>SSHHost</classname> host uses the following parameters.</para>
+     <glosslist>
+      <glossentry>
+       <glossterm><property>host_name</property> (text field)</glossterm>
+       <glossdef><para>The name of the remote host.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>ssh_program</property> (text field)</glossterm>
+       <glossdef><para>The path to the remote shell program.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>ssh_args</property> (set field)</glossterm>
+       <glossdef><para>The arguments to the remote shell program.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>scp_program</property> (text field)</glossterm>
+       <glossdef><para>The path to the remote copy program.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>scp_args</property> (set field)</glossterm>
+       <glossdef><para>The arguments to the remote copy program.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>default_dir</property> (text field)</glossterm>
+       <glossdef><para>The default directory on the remote system.</para></glossdef>
+      </glossentry>
+     </glosslist>
+   </section>
+   <section id="rsh-host">
+     <title><classname>ssh_host.RSHHost</classname></title>
+     <para>An <classname>RSHHost</classname> is a <classname>SSHHost</classname>
+     that uses <command>rsh</command> instead of <command>ssh</command>.</para>
+   </section>
+   <section id="simulator-host">
+     <title><classname>simulator.Simulator</classname></title>
+     <para>A <classname>Simulator</classname> is a semi-hosted simulation environment.
+     The <classname>Simulator</classname> host uses the following parameters.</para>
+     <glosslist>
+      <glossentry>
+       <glossterm><property>simulator</property> (text field)</glossterm>
+       <glossdef><para>The simulation program.</para></glossdef>
+      </glossentry>
+      <glossentry>
+       <glossterm><property>simulator_args</property> (set field)</glossterm>
+       <glossdef><para>Arguments to the simulation program.</para></glossdef>
+      </glossentry>
+     </glosslist>
+   </section>
+ </section>
+ <section id="customizing-result-streams">
+   <title>Result Streams and Result Readers</title>
+   <para>Result streams and result readers are the means that allow QMTest to 
+   externalize and internalize test results.</para>
+   <section id="text-result-stream">
+     <title><classname>text_result_stream.TextResultStream</classname></title>
+     <para>A <type>TextResultStream</type> displays information textually, in human
+     readable form.  It is used when <application>QMTest</application> is run without
+     a graphical user interface.</para>
+   </section>
+   <section id="xml-result-stream">
+     <title><classname>xml_result_stream.XMLResultStream</classname></title>
+     <para>An <type>XMLResultStream</type> writes out results as XML. The resulting
+     file can be read back in using an <type>XMLResultReader</type>.</para>
+   </section>
+   <section id="pickle-result-stream">
+     <title><classname>pickle_result_stream.PickleResultStream</classname></title>
+     <para>A <type>PickleResultStream</type> writes out results as Python pickles.
+     The resulting file can be read back in using a <type>PickleResultReader</type>.</para>
+   </section>
+   <section id="sql-result-stream">
+     <title><classname>sql_result_stream.SQLResultStream</classname></title>
+     <para>An <type>SQLResultStream</type> writes results out to an SQL database.
+     To read results from an SQL database use <type>SQLResultReader</type>.</para>
+   </section>
+ </section>
+
+
+<section id="customizing-config-file">
+ <title>The <application>QMTest</application> Configuration File</title>
+ 
+ <para><application>QMTest</application> allows you to set up a per-user 
+ configuration file that contains your personal preferences, defaults, and settings.</para>
+
+ <para>The configuration file is named
+ <filename>$HOME/.qmrc</filename>.  On Windows, you may have to set
+ the <envar>HOME</envar> environment variable manually.</para>
+
+ <para>The <application>QMTest</application> configuration file is a plain text 
+ file, with a format similar to that used in Microsoft Windows 
+ <filename>.INI</filename> files.  It is divided into sections by headings in 
+ square brackets. Three sections are supported: <literal>[common]</literal> contains
+ configuration variables common to all the &qm; tools, while
+ <literal>[test]</literal> contains
+ configuration variables specific to <application>QMTest</application>.  Within
+ each section, configuration variables are set using the syntax
+ <literal><replaceable>variable</replaceable>=<replaceable>value</replaceable></literal>.</para>
+
+ <para>Here is a sample &qm; configuration file:</para>
+
+ <screen>
+<prompt>&gt; </prompt><userinput>cat ~/.qmrc</userinput>
+<computeroutput>[common]
+browser=/usr/local/bin/mozilla
+</computeroutput></screen>
+
+ <section id="sec-rc-common">
+  <title>Configuration Variables</title>
+
+  <para>These configuration variables are used in all &qm; tools.  You
+  should define them in the <literal>[common]</literal> section of your
+  &qm; configuration file.</para>
+
+  <glosslist>
+   <glossentry>
+    <glossterm>
+     <property>browser</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The path to your preferred web browser.  If omitted, &qm;
+     attempts to run <filename>mozilla</filename>.  The &qm; GUI does
+     not correctly with Netscape 4 due to limitations in the support
+     for JavaScript and DOM in that browser.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>command_shell</property>
+    </glossterm>
+    <glossdef>
+     <para>The shell program to run a single shell command.  The value
+     of this property is the path to the shell executable, optionally
+     followed by command-line options to pass to the shell, separated
+     by spaces.  The shell command to run is appended to the
+     command.</para>
+
+     <para>On GNU/Linux systems, the default is
+     <command>/bin/bash -norc -noprofile -c</command>.
+     On other UNIX-like systems, the default is
+     <command>/bin/sh -c</command>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>click_menus</property>
+    </glossterm>
+    <glossdef>
+     <para>If this option is not present, or has the value
+     <literal>0</literal>, menus in the
+     GUI are activated by moving the mouse over the menu name.
+     </para>
+
+     <para>If this option has the value <literal>1</literal>, the
+     menus are activated by clicking on the menu name.
+     </para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>remote_shell</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The program used for running commands on remote computers.
+     The program must accept the same syntax as the standard
+     <filename>rsh</filename> command, and should be configured to run
+     the command remotely without any additional interaction (such as
+     requesting a password from the TTY).  The default value is
+     <filename>/usr/bin/ssh</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>script_shell</property>
+    </glossterm>
+    <glossdef>
+     <para>The shell program to run a shell script.  The value of this
+     property is the path to the shell executable, optionally followed
+     by command-line options to pass to the shell, separated by spaces.
+     The filename of the shell command is appended to the
+     command.</para>
+
+     <para>On GNU/Linux systems, the default is
+     <command>/bin/bash -norc -noprofile</command>.  On
+     other UNIX-like systems, the default is
+     <filename>/bin/sh</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+  </glosslist>
+
+ </section> <!-- sec-rc-common -->
+
+</section> <!-- sec-qm-config -->
+</chapter> <!-- customizing -->

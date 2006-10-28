@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  File:   extending.xml
+  Author: Alex Samuel, Stefan Seefeld
+  Date:   2000-11-01
+
+  Contents:
+    Extending chapter for QMTest Tutorial.
+
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+  <!ENTITY % entities SYSTEM "qmtest.ent">
+  %entities;
+]>
+<chapter id="extending">
+ <title>Extending QMTest</title>
+
+ <para>If the built-in functionality provided with QMTest does not
+ serve all of your needs, you can extend QMTest.  All extensions to
+ QMTest take the form of Python classes.  You can write new test
+ classes, resource classes, or database classes in this way.</para>
+
+ <para>The contents of the class differ depending on the kind of
+ extension you are creating.  For example, the methods that a new test
+ class must implement are different from those that must be provided
+ by a new database class.  In each case, however, you must create the
+ class and place it in a location where QMTest can find it.  The
+ following sections explain how to create extension classes.  The last
+ section in this chapter explains how to register your new extension
+ classes.</para>
+
+ <section id="extension-classes">
+  <title>Extension Classes</title>
+
+  <para>All extensions to QMTest are implemented by writing a new
+  Python class.  This new Python class will be derived from an
+  appropriate existing QMTest Python class.  For example, new test
+  classes are derived from <classname>Test</classname> while new test
+  database classes are derived from
+  <classname>Database</classname>.</para>
+
+  <para>The classes from which new extensions are derived (like
+  <classname>Test</classname>) are all themselves derived from
+  &extension_class;.  The <classname>Extension</classname> class
+  provides the basic framework used by all extension classes.  In
+  particular, every instance of <classname>Extension</classname> can
+  be represented in XML format in persistent storage.</para>
+
+  <para>Every <classname>Extension</classname> class has an associated
+  list of <firstterm>parameter</firstterm> attributes.  When an 
+  <classname>Extension</classname> instance is written out as XML, the 
+  value of each parameter is encoded in the output.  Similarly,
+  when an <classname>Extension</classname> instance is read back in,
+  the parameter values are decoded.  Conceptually, two 
+  <classname>Extension</classname> instances are the same if they are 
+  instances of the same derived class and their parameters have the same
+  values.</para>
+
+  <para>Each parameter has a type.  For example, every
+  <classname>Test</classname> has a parameter called
+  <varname>target_group</varname>.  The target group is a string
+  indicating on which targets a particular test should be
+  run.</para>
+
+  <para>Each parameter is represented by an instance of &field_class;.
+  A <classname>Field</classname> instance can read or write values in
+  XML format.  A <classname>Field</classname> can also produce an HTML
+  representation of a value, or an HTML form that allows a user to
+  update the value of the field.  It is the fact that all
+  <classname>Extension</classname> parameters are instances of
+  <classname>Field</classname> that makes it possible to represent
+  <classname>Extension</classname> instances as XML.  Smilarly, it is
+  the use of the <classname>Field</classname> class that allows
+  the user to edit tests in the QMTest GUI.</para>
+
+  <para>Each class derived from <classname>Extension</classname> may
+  contain attributes that are instances of <classname>Field</classname>.
+  </para>
+
+  <para>For example, after the following class definitions:
+  <programlisting>
+    class A(Extension):
+        x = TextField()
+
+    class B(A):
+        y = IntegerField(default_value = 42)
+        z = TextField(default_value = "a value")
+  </programlisting><classname>A</classname> has one parameter
+  (<varname>x</varname>) and <classname>B</classname> has three
+  parameters (<varname>x</varname>, <varname>y</varname>, and
+  <varname>z</varname>).</para>
+  <para>During construction of extensions you may provide arguments
+  to set the values of these parameters (and thus overriding default values):</para>
+  <programlisting>
+    a = A(x = "argument")
+    b = B(x = "another argument", z = "value")
+  </programlisting>
+  <para>The serialized form of A will be equivalent to</para>
+  <programlisting><![CDATA[
+<extension class="__main__.A">
+  <argument name="x"><text>argument</text></argument>
+</extension>
+  ]]></programlisting>
+  <para>and for B</para>
+  <programlisting><![CDATA[
+<extension class="__main__.B">
+  <argument name="x"><text>another argument</text></argument>
+  <argument name="y"><integer>42</integer></argument>
+  <argument name="z"><text>value</text></argument>
+</extension>
+  ]]></programlisting>
+  <para>Extension instances hold appropriately typed attributes for all
+  fields. A <classname>TextField</classname> translates to a 
+  <classname>str</classname> instance, while a <classname>IntegerField</classname>
+  translates to an <classname>int</classname>, etc.</para>
+  <screen>
+<prompt>&gt; </prompt>a = A(x = "argument")
+<prompt>&gt; </prompt>print type(a.x), a.x
+&lt;type 'str'&gt; argument
+  </screen>
+
+ </section><!-- extension-classes -->
+
+ <section id="extending-field-classes">
+  <title>Field Classes</title>
+  
+  <para>&field_class; instances are used to represent extension parameters.
+  A <classname>Field</classname> can read and write XML
+  representations of values, generate HTML representations of values,
+  or present HTML forms that permit the user to update the value of
+  the field.  There are several classes derived from
+  <classname>Field</classname> that you can use in extension classes.
+  If none of those classes satisfy your needs, you can create a new
+  class derived from <classname>Field</classname>.</para>
+
+  <para>A <classname>Field</classname> may have a title, which is used
+  when presenting the <classname>Field</classname> to the user.  The
+  title need not be a valid Python identifier.  For example, the
+  <classname>RSHTarget</classname> class has a <varname>host</varname>
+  parameter whose title is <literal>Remote Host Name</literal>.
+  When accessing an instance of this class, the
+  programmer refers to <literal>self.host</literal>.  In the GUI,
+  however, the user will see the value presented as <literal>Remote
+  Host Name</literal>.</para>
+
+  <para>A <classname>Field</classname> may have an associated
+  description, which is a longer explanation of the
+  <classname>Field</classname> and its purpose.  This information is
+  presented to the user by the GUI.</para>
+
+  <para>A <classname>Field</classname> may have a default value.  The
+  default value is used if no argument is provided for the
+  field when the extension is initialized.</para>
+
+  <para>This example code from <classname>RSHTarget</classname> shows
+  how a <classname>Field</classname> is constructed:
+  <programlisting>
+<![CDATA[ remote_shell = qm.fields.TextField(
+        title="Remote Shell Program",
+        description="""The path to the remote shell program.
+
+         The name of the program that can be used to create a
+         remote shell.  This program must accept the same command
+         line arguments as the 'rsh' program.""",
+         default_value="ssh")
+]]>
+  </programlisting>See the internal documentation for &field_class;
+   for complete interface documentation.</para>
+
+  <section id="field-classes-list">
+   <title>Built-In Field Classes</title>
+
+   <para>QMTest comes with several useful field classes:
+    <itemizedlist>
+     <listitem>
+      <para>&integer_field_class; stores integers.</para>
+     </listitem>
+
+     <listitem>
+      <para>&text_field_class; stores strings.</para>
+     </listitem>
+
+     <listitem>
+      <para>&enumeration_field_class; stores one of a
+      set of (statically determined) possible values.</para>
+     </listitem>
+
+     <listitem>
+      <para>&choice_field_class; stores one of a
+      set of (dynamically determined) possible values.</para>
+     </listitem>
+
+     <listitem>
+      <para>&boolean_field_class; stores a boolean value.</para>
+     </listitem>
+
+     <listitem>
+      <para>&time_field_class; stores a date and time.</para>
+     </listitem>
+
+     <listitem>
+      <para>&attachment_field_class; stores arbitrary
+      data.</para>
+     </listitem>
+
+     <listitem>
+      <para>&set_field_class; stores multiple values of the
+      same type.</para>
+     </listitem>
+
+     <listitem>
+      <para>&tuple_field_class; stores a fixed number of other fields.</para>
+     </listitem>
+    </itemizedlist>
+   </para>
+
+  </section>
+
+  <section id="field-classes-writing">
+   <title>Writing Field Classes</title>
+
+   <para>Before writing any code, you should decide what kind of data
+   your field class will store.  For example, will your field class
+   store arbitrary strings?  Or only strings that match a particular
+   regular expression?  Or will your field class store images?  Once
+   you have decided this question, you can write the
+   <function>Validate</function> function for your field class.  This
+   function checks an input value (a Python object) for validity.
+   <function>Validate</function> can return a modified version of the
+   value.  For example, if the field stores strings, you could choose
+   to accept an integer as an input to <function>Validate</function>
+   and convert the integer to a string before returning it.</para>
+
+   <para>The <function>FormatValueAsHtml</function> function produces
+   an HTML representation of the value.  You must define this function
+   so that the GUI can display the value of the field.  The
+   <parameter>style</parameter> parameter indicates how the value
+   should be displayed.  If the style is <literal>new</literal> or
+   <literal>edit</literal>, the HTML representation returned should be
+   a form that the user can use to set the value.  If the user does
+   not modify the form, <function>ParseFormValue</function> should
+   yield the value that was provided to
+   <function>FormatValueAsHtml</function>.</para>
+
+   <para>The <function>MakeDomNodeForValue</function> and
+   <function>GetValueFromDomNode</function> functions convert values
+   to and from XML format.  The <function>FormatValueAsText</function>
+   and <function>ParseTextValue</function> functions convert to and
+   from plain text.  As with <function>FormatValueAsHtml</function>
+   and <function>ParseFormValue</function>, these pairs of functions
+   should be inverses of one another.</para>
+
+   <para>The <function>ParseTextValue</function>,
+   <function>ParseFormValue</function>, and
+   <function>GetValueFromDomNode</function> functions should use
+   <function>Validate</function> to check that the values produced are
+   permitted by the <classname>Field</classname>.  In this way,
+   derived classes that want to restrict the set of valid values, but
+   are otherwise content to use the base class functionality, need
+   only provide a new implementation of
+   <function>Validate</function>.</para>
+
+   <para>All of the functions which read and write
+   <classname>Field</classname> values may raise exceptions if they
+   cannot complete their tasks.  The caller of the
+   <classname>Field</classname> is responsible for handling the
+   exception if it occurs.</para>
+
+  </section>
+
+ </section><!-- field-classes -->
+
+ <section id="extending-test-classes">
+  <title>Writing Test Classes</title>
+
+  <para>If the test classes that come with QMTest do not serve your
+  needs, you can write a new test class.  A test class is a Python
+  class derived from &test_class;, which itself is derived from Extension.
+  It may define parameters as discussed in <xref linkend="extension-classes"/>.
+  The test class must provide a <function>Run</function> method that
+  implements the way the test is performed and results are validated.</para>
+  <para>For example, if you want to test that a compiler correctly compiled 
+  a particular source file, the source file would be an argument to the test
+  while the <function>Run</function> method would be responsible for running the
+  compiler and the program generated by the compiler.  The path to the
+  compiler itself would be provided via the context (
+  <xref linkend="concepts-context"/>); that is an input to the testing system
+  that varies depending on the user's environment.</para>
+
+  <para>The <function>Run</function> method takes two arguments:
+  the context and the result.  The context object is an instance of
+  &context_class;.  The result object is an instance of
+  &result_class;.  The result is initialized with the <symbol>PASS</symbol>
+  outcome.  Therefore, if the <function>Run</function> method does
+  not modify the result, the test will pass.  If the test fails, the
+  <function>Result.Fail</function> method should be called to
+  indicate failure.</para>
+
+  <para>The <function>Result.Annotate</function> method can be used
+  to add information to the <classname>Result</classname>, whether or
+  not the test passes.  For example, annotations can be used to record
+  the time a test took to execute, or to log the output from a command
+  run as part of the test.  Every annotation is a key/value pair.
+  Both keys and values are strings.  The key created by a test class
+  <classname>C</classname> should have the form
+  <literal>C.key_name</literal>.  The value must be valid HTML.  When
+  results are displayed in the GUI, the HTML is presented directly to
+  the user.  When results are displayed as text, the HTML is converted
+  to plain text.  That conversion uses textual devices (such as single
+  quotes around verbatim text) to emulate the HTML markup where
+  possible.</para>
+
+  <para>As a convenience, you can use Python's dictionary notation to
+  access annotations.  For example:
+  <programlisting>
+<![CDATA[    result["C.key1"] = "value"
+    result["C.key2"] = result["C.key1"].upper()
+]]>
+  </programlisting>is equivalent to:<programlisting>
+<![CDATA[    result.Annotate({ "C.key1" : "value"
+                      "C.key2" : "VALUE" })
+]]>
+  </programlisting></para>
+
+  <para>The context (like the result) is a set of key/value pairs.
+  The keys used by a test class <classname>C</classname> should have
+  the form <literal>C.key_name</literal>.  The values are generally
+  strings, but if a test depends on a resource, the resource can
+  provide context values that are not strings.</para>
+
+  <para>If the <function>Run</function> raises an unhandled
+  exception, &qmtest; creates a result for the test with the outcome
+  <symbol>ERROR</symbol>.  Therefore, test classes should be designed so that they
+  do not raise unhandled exceptions when a test fails.  However,
+  QMTest handles the exception generated by the use of non-existant
+  context variables specially.  Because this situation generally
+  indicates incorrect usage of the test suite, QMTest uses a special
+  error message that instructs the user to supply a value for the
+  context variable.</para>
+
+ </section><!-- extending-test-classes -->
+
+ <section id="extending-resource-classes">
+  <title>Writing Resource Classes</title>
+
+  <para>Writing resource classes is similar to writing test classes.
+  The requirements are the same except that, instead of a
+  <function>Run</function> method, you must provide two methods named
+  <function>SetUp</function> and <function>CleanUp</function>. The
+  <function>SetUp</function> method must have the same signature as a
+  test classs <function>Run</function>.  The
+  <function>CleanUp</function> method is similar, but does not take a
+  <parameter>context</parameter> parameter.</para>
+
+  <para>The <function>SetUp</function> method may add additional
+  properties to the context by assigning to its
+  <parameter>context</parameter> parameter.  These additional
+  properties will be visible only to tests that require this
+  resource.</para>
+
+  <para>The example below shows the <function>SetUp</function> and
+  <function>CleanUp</function> from the standard QMTest
+  <classname>TempDirectoryResource</classname> class.  This resource
+  creates a temporary directory for use by the tests that depend on
+  the resource.  The <function>SetUp</function> method creates the
+  temporary directory and records the path to the temporary directory
+  in the context so that tests know where to find the directory.  The
+  <function>CleanUp</function> method removes the temporary directory.
+  <programlisting> 
+<![CDATA[ 
+    def SetUp(self, context, result):
+
+        # Create a temporary directory.
+        self.__dir = qm.temporary_directory.TemporaryDirectory()
+        # Provide dependent tests with the path to the new directory.
+        context["TemporaryDirectoryResource.temp_dir_path"] 
+          = self.__dir.GetPath()
+    
+
+    def CleanUp(self, result):
+
+        # Remove the temporary directory.
+        del self.__dir
+]]>
+  </programlisting>
+  </para>
+
+ </section> <!-- extending-resource-classes -->
+
+ <section id="extending-database-classes">
+  <title>Writing Database Classes</title>
+
+  <para>The test database class controls the format in which tests are
+  stored.  &qmtest;'s default database class stores each test as an XML
+  file, but you might want to use a format that is particularly well
+  suited to your application domain or to your organization's
+  arrangement of computing resources.</para>
+
+  <para>For example, if you were testing a compiler, you might want to
+  represent tests as source files with special embedded comments
+  indicating what errors are expected when compiling the test.  You
+  could write a test database class that can read and write tests
+  in that format.</para>
+
+  <para>Or, if you wanted to share a single test database with many
+  people in such a way that everyone automatically saw updates to the
+  database, you might want to put all of the tests on a central HTTP
+  server.  You could write a test database class that retrieves tests
+  from the server and creates new tests by uploading them to the
+  server.</para>
+
+  <para>A test database class is a Python class that is derived from
+  &database_class;, which is itself derived from
+  <classname>Extension</classname>.  To create a new database class,
+  you must define methods that read and write
+  <classname>Extension</classname> instances.</para>
+
+  <para>The database is also responsible for determining how tests
+  (and other entities stored in the database) are named.  Each item
+  stored in the database must have a unique name.  For a database that
+  stores files in the filesystem, the name of the file may be a good
+  name.  For a database of unit tests for Python module, the name of
+  the module might be a good name for the tests.  Choosing the naming
+  convention appropriate requires understanding both the application
+  domain and the way in which the tests will actually be
+  stored.</para>
+  
+  <para>The database class must have a
+  <function>GetExtension</function> method which retrieves an instance
+  of <classname>Extension</classname> given the name of the instance.
+  If your database is modifiable, you must also provide
+  <function>WriteExtension</function> and
+  <function>RemoveExtension</function> methods.  For historical
+  reasons, your database class must also set the class variable
+  <varname>_is_generic_database</varname> to true.</para> </section>
+ <!-- extending-database-classes -->
+
+ <section id="extending-registering">
+  <title>Registering and Distributing Extension Classes</title>
+
+  <para>To use your Extension class, you must place the Python
+  module file containing it in a directory where &qmtest; can find
+  it. QMTest searches for extensions in particular places, in the 
+  following order:</para>
+   <orderedlist>
+     <listitem>
+       <para>in the paths contained in the <envar>QMTEST_CLASS_PATH</envar> 
+       environment variable.</para>
+     </listitem>
+     <listitem>
+       <para>in the class-path associated with a particular test database 
+       (typically the <filename>QMTest/</filename> subdirectory).</para>
+     </listitem>
+     <listitem>
+       <para>in the site-extension path associated with a particular QMTest 
+       installation.</para>
+     </listitem>
+     <listitem>
+       <para>in the set of built-in extensions that come with a particular 
+       <application>QMTest</application> installation.</para>
+     </listitem>
+   </orderedlist>
+
+  <para>You should generally place module files containing extension classes
+  in the test database's <filename>QMTest</filename> directory, unless you 
+  plan to use the test classes in more than one test database.</para>
+
+  <para>You must use the <command>qmtest register</command>
+  command to register your new extension class.  You must perform
+  this step no matter where you place the module containing your
+  extension class.</para>
+
+  <para>You can refer to the new extension class using the syntax
+  <classname>module.Class</classname>, where
+  <classname>module</classname> is the name of the module and
+  <classname>Class</classname> is the name of the class.</para>
+
+  <para>To make your extension classes sharable by other test database
+  instances, you should install them into the site-extension path associated
+  with a qmtest installation.</para>
+  <para>To facilitate this installation, QMTest provides code that can be used
+  in conjunction with python's 
+  <ulink linkend="http://docs.python.org/lib/module-distutils.html">distutils</ulink>
+  to install, and even distribute them.
+  The following <filename>setup.py</filename> script will allow you to install 
+  (and even package !) all extension modules from the <filename>extensions</filename>
+  subdirectory:</para>
+  <programlisting>
+from qm.dist.distribution import Distribution
+from distutils.core import setup
+
+setup(distclass=Distribution,
+      qmtest_extensions="extensions")
+  </programlisting>
+  <para>Then, the following command installs extension modules from 
+  <filename>extensions</filename>:</para>
+  <screen>
+<prompt>&gt; </prompt><userinput>python setup.py install</userinput>
+  </screen>
+ </section> <!-- registering-extension-class -->
+
+</chapter> <!-- extending -->

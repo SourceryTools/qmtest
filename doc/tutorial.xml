@@ -32,17 +32,48 @@
   </copyright>
   <legalnotice>&license;</legalnotice>
   <releaseinfo>Version &version;</releaseinfo>
+  <abstract>
+  <para><application>QMTest</application> is a testing tool. You can use
+  <application>QMTest</application> to test a software application, such as a
+  database, compiler, or web browser. You can even
+  <application>QMTest</application> to test a physical system (like a valve or
+  thermometer) if you have a way of connecting it to your computer.</para>
+
+  <para>Code that has not been tested adequately generally does not work. Yet,
+  many applications are deployed without adequate testing, often with
+  catastrophic results. It is much more costly to find defects at the end of
+  the release cycle than at the beginning. By making it easy to develop tests,
+  and execute those tests to validate the application,
+  <application>QMTest</application> makes it easy to find problems easier,
+  rather than later.</para>
+
+  <para><application>QMTest</application> can be extended to handle any
+  application domain and any test format. <application>QMTest</application>
+  works with existing testsuites, no matter how they work or how they are
+  stored. <application>QMTest</application>'s open and pluggable architecture
+  supports a wide variety of applications.</para>
+
+  <para><application>QMTest</application> features both an intuitive graphical
+  user interface and a conventional command-line interface.
+  <application>QMTest</application> can run tests in serial, in parallel on a
+  single machine, or across a farm of possibly heterogeneous machines.</para>
+
+  <para>CodeSourcery provides support for <application>QMTest</application>.
+  CodeSourcery can help you install, integrate, and customize
+  <application>QMTest</application>. For more information, visit <ulink
+  url="http://www.qmtest.com">the QMTest web site</ulink>.</para>
+  </abstract>
  </bookinfo>
 
- <xi:include href="introduction.xml"/>
+<!-- <xi:include href="introduction.xml"/>-->
  <xi:include href="concepts.xml">
    <xi:fallback>The concepts chapter</xi:fallback>
  </xi:include>
+ <xi:include href="cli_reference.xml"/>
  <xi:include href="customizing.xml">
    <xi:fallback>The customization chapter</xi:fallback>
  </xi:include>
  <xi:include href="extending.xml">
    <xi:fallback>The extending chapter</xi:fallback>
  </xi:include>
- <xi:include href="cli_reference.xml"/>
 </book>

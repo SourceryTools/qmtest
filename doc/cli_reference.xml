@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  File:   cli_reference.xml
+  Author: Stefan Seefeld
+  Date:   2000-11-01
+
+  Contents:
+    Invoking QMTest chapter for QMTest Tutorial.
+
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
   <!ENTITY % entities SYSTEM "qmtest.ent">
   %entities;
 ]>
-<appendix id="app-command-line">
+<chapter id="cli">
  <title>Invoking &qmtest;</title>
 
- <para>All &qmtest; functionality is available using the &qmtest-cmd; 
+ <para>All &qmtest; functionality is available using the <command>qmtest</command>
  command.</para>
 
  <section>
-  <title>&qmtest-cmd;</title>
+  <title><command>qmtest</command></title>
 
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd;</command>
+    <command>qmtest</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -66,7 +82,7 @@
      <term><option>&dashdash;help</option></term>
      <listitem>
       <para>Display help information, listing commands and general
-      options for the &qmtest-cmd; command.</para>
+      options for the <command>qmtest</command> command.</para>
      </listitem>
     </varlistentry>
 
@@ -87,8 +103,8 @@
   </section>
  </section>
 
- <section id="sec-testcmd-create">
-  <title><command>&qmtest-cmd; create</command></title>
+ <section id="command-create">
+  <title><command>qmtest create</command></title>
 
   <section>
    <title>Summary</title>
@@ -98,7 +114,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; create</command>
+    <command>qmtest create</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -113,12 +129,12 @@
    
   <section>
    <title>Description</title>
-   <para>The <command>&qmtest-cmd; create</command> creates a new
+   <para>The <command>qmtest create</command> creates a new
    extension instance.  For example, this command can be used to
    create a new test or resource.  For a list of the kinds of
-   extensions supported by &qmtest;, run <command>&qmtest-cmd;
-   extensions</command>.  The <replaceable>kind</replaceable>
-   must be one of these extension kinds.</para>
+   extensions supported by &qmtest;, run <command>qmtest extensions</command>.
+   The <replaceable>kind</replaceable> must be one of these extension kinds.
+   </para>
 
    <para>If the <option>&dashdash;id</option> option is provided then
    the new instance is created in the test database.  The argument to
@@ -219,7 +235,7 @@
    <para>
     This command:
     <screen>
-     &prompt;<userinput>qmtest create --id=simple -a program=testprog test command.ExecTest</userinput>
+<prompt>&gt; </prompt><userinput>qmtest create --id=simple -a program=testprog test command.ExecTest</userinput>
     </screen>
     creates a test named &quot;simple&quot; that executes the program 
     <filename>testprog</filename>:
@@ -228,7 +244,7 @@
    <para>
     This command:
     <screen>
-     &prompt;<userinput>qmtest create --id=copy test simple</userinput>
+<prompt>&gt; </prompt><userinput>qmtest create --id=copy test simple</userinput>
     </screen>
     creates a copy of the &quot;simple&quot; test, naming the new version
     &quot;copy&quot;.
@@ -237,8 +253,8 @@
 
  </section>
 
- <section id="sec-testcmd-create-target">
-  <title><command>&qmtest-cmd; create-target</command></title>
+ <section id="command-create-target">
+  <title><command>qmtest create-target</command></title>
 
   <section>
    <title>Summary</title>
@@ -248,7 +264,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; create-target</command>
+    <command>qmtest create-target</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -266,7 +282,7 @@
 
   <section>
    <title>Description</title>
-   <para>The <command>&qmtest-cmd; create-target</command> command
+   <para>The <command>qmtest create-target</command> command
    creates a new target.  A target is an entity that runs tests;
    normally, a target corresponds to a particular machine.</para>
 
@@ -312,8 +328,8 @@
   </section>
  </section>
 
- <section id="sec-testcmd-create-tdb">
-  <title><command>&qmtest-cmd; create-tdb</command></title>
+ <section id="command-create-tdb">
+  <title><command>qmtest create-tdb</command></title>
 
   <section>
    <title>Summary</title>
@@ -323,7 +339,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; create-tdb</command>
+    <command>qmtest create-tdb</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -332,7 +348,7 @@
 
   <section>
    <title>Description</title>
-   <para>The <command>&qmtest-cmd; create-tdb</command> command
+   <para>The <command>qmtest create-tdb</command> command
    creates a new, empty test database.  A test database is a
    directory in which &qmtest; stores configuration files, tests, and
    other data.  Certain test database classes may also store data
@@ -346,7 +362,7 @@
 
    <para>By default, &qmtest; creates a new test database that uses the
    standard XML-based implementation.  (See <xref
-   linkend="sec-ref-writing-database-classes"></xref> for information
+   linkend="extending-database-classes"></xref> for information
    about writing a test database class.)</para>
 
    <para>The <command>create-tdb</command> command accepts these
@@ -377,7 +393,7 @@
       <para>Use the test database class given by
       <replaceable>class</replaceable>.  The
       <replaceable>class</replaceable> may have the general form
-      described in <xref linkend="sec-testcmd-create"/>.  Once you create a
+      described in <xref linkend="command-create"/>.  Once you create a
       test database, you cannot change the test database
       implementation it uses.  If you do not use this option,
       &qmtest; will use the default test database implementation,
@@ -386,10 +402,10 @@
     </varlistentry>
    </variablelist>
   </section>
- </section> <!-- sec-testcmd-create-tdb -->
+ </section> <!-- command-create-tdb -->
 
- <section id="sec-testcmd-gui">
-  <title><command>&qmtest-cmd; gui</command></title>
+ <section id="command-gui">
+  <title><command>qmtest gui</command></title>
 
   <section>
    <title>Summary</title>
@@ -399,7 +415,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; gui</command>
+    <command>qmtest gui</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -409,7 +425,7 @@
   <section>
    <title>Description</title>
 
-    <para>The <command>&qmtest-cmd; gui</command> starts the
+    <para>The <command>qmtest gui</command> starts the
     graphical user interface.  The graphical user interface is
     accessed through a web browser.  You must have a web browser that
     supports JavaScript to use the graphical interface.  &qmtest; has
@@ -546,10 +562,10 @@
      </varlistentry>
     </variablelist>
    </section>
-  </section> <!-- sec-testcmd-gui -->
+  </section> <!-- command-gui -->
 
- <section id="sec-testcmd-extensions">
-  <title><command>&qmtest-cmd; extensions</command></title>
+ <section id="command-extensions">
+  <title><command>qmtest extensions</command></title>
 
   <section>
    <title>Summary</title>
@@ -559,7 +575,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; extensions</command>
+    <command>qmtest extensions</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -569,7 +585,7 @@
   <section>
    <title>Description</title>
 
-   <para>The <command>&qmtest-cmd; extensions</command> lists
+   <para>The <command>qmtest extensions</command> lists
    available extension classes and provides a brief description of
    each class.  You can use this command to list all of the available
    extension classes, or to list all of the available extension
@@ -601,10 +617,10 @@
    </variablelist>
   </section>
 
- </section> <!-- sec-testcmd-extensions -->
+ </section> <!-- command-extensions -->
 
- <section id="sec-testcmd-describe">
-  <title><command>&qmtest-cmd; describe</command></title>
+ <section id="command-describe">
+  <title><command>qmtest describe</command></title>
 
   <section>
    <title>Summary</title>
@@ -614,7 +630,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; describe</command>
+    <command>qmtest describe</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -630,7 +646,7 @@
   <section>
    <title>Description</title>
 
-   <para>The <command>&qmtest-cmd; describe</command> displays a description
+   <para>The <command>qmtest describe</command> displays a description
    of the extension <replaceable>name</replaceable>.</para>
 
    <para>The <command>describe</command> command accepts these
@@ -674,10 +690,10 @@
    </variablelist>
   </section>
 
- </section> <!-- sec-testcmd-describe -->
+ </section> <!-- command-describe -->
 
- <section id="sec-testcmd-ls">
-  <title><command>&qmtest-cmd; ls</command></title>
+ <section id="command-ls">
+  <title><command>qmtest ls</command></title>
 
   <section>
    <title>Summary</title>
@@ -687,7 +703,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; ls</command>
+    <command>qmtest ls</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -700,7 +716,7 @@
   <section>
    <title>Description</title>
 
-   <para>The <command>&qmtest-cmd; ls</command> lists the contents of
+   <para>The <command>qmtest ls</command> lists the contents of
    the database, just as the UNIX <command>ls</command> command lists the
    contents of the filesystem.  If this command is used with no
    options, QMTest will list the names of the entries in the root
@@ -752,10 +768,10 @@
    </variablelist>
   </section>
 
- </section> <!-- sec-testcmd-ls -->
+ </section> <!-- command-ls -->
 
- <section id="sec-testcmd-register">
-  <title><command>&qmtest-cmd; register</command></title>
+ <section id="command-register">
+  <title><command>qmtest register</command></title>
 
   <section>
    <title>Summary</title>
@@ -765,7 +781,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; register</command>
+    <command>qmtest register</command>
     <arg choice="plain"><replaceable>kind</replaceable></arg>
     <arg choice="plain"><replaceable>class-name</replaceable></arg>
    </cmdsynopsis>
@@ -774,7 +790,7 @@
   <section>
    <title>Description</title>
 
-   <para>The <command>&qmtest-cmd; register</command> registers an
+   <para>The <command>qmtest register</command> registers an
    extension class with QMTest.  As part of this process, QMTest will 
    load your extension class.  If the extension class cannot be
    loaded, QMTest will tell you what went wrong.</para>
@@ -786,7 +802,7 @@
 
    <para>The <replaceable>kind</replaceable> argument tells QMTest
    what kind of extension class you are registering.  If you invoke 
-   <command>&qmtest-cmd; register</command> with no arguments it will
+   <command>qmtest register</command> with no arguments it will
    provide you with a list of the available extension kinds.</para>
 
    <para>The <replaceable>class-name</replaceable> argument gives the
@@ -798,10 +814,10 @@
 
   </section>
 
- </section> <!-- sec-testcmd-register -->
+ </section> <!-- command-register -->
 
- <section id="sec-testcmd-run">
-  <title><command>&qmtest-cmd; run</command></title>
+ <section id="command-run">
+  <title><command>qmtest run</command></title>
 
   <section>
    <title>Summary</title>
@@ -811,7 +827,7 @@
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; run</command>
+    <command>qmtest run</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -825,7 +841,7 @@
   <section>
    <title>Description</title>
 
-   <para>The <command>&qmtest-cmd; run</command> command runs tests
+   <para>The <command>qmtest run</command> command runs tests
    and displays the results.  If no test or suite names are
    specified, &qmtest; runs all of the tests in the test database.
    If test or suite names are specified, only those tests or suites
@@ -862,7 +878,7 @@
       <replaceable>name</replaceable>=<replaceable>value</replaceable>
      </term>
      <listitem>
-      <para>Add a property to the <link linkend="sec-the-context">test
+      <para>Add a property to the <link linkend="concepts-context">test
       execution context</link>.  The name of the property is
       <replaceable>name</replaceable>, and its value is set to the string
       <replaceable>value</replaceable>.</para>
@@ -877,7 +893,7 @@
       <option>&dashdash;load-context</option> <replaceable>file</replaceable>
      </term>
      <listitem>
-      <para>Read properties for the <link linkend="sec-the-context">test
+      <para>Read properties for the <link linkend="concepts-context">test
       execution context</link> from the file
       <replaceable>file</replaceable>.</para>
 
@@ -986,11 +1002,11 @@
       <para>Treat <replaceable>file</replaceable> as a set of
       expected outcomes.  The <replaceable>file</replaceable> is
       usually a results file created either by using the 
-      <command>&qmtest-cmd; run</command> or by saving results in the
+      <command>qmtest run</command> or by saving results in the
       graphical user interface.  If <replaceable>file</replaceable>
       does not appear to be such a file, it is interpreted as an
       extension descriptor, as described in <xref
-      linkend="sec-testcmd-create"/>.  QMTest will expect the results
+      linkend="command-create"/>.  QMTest will expect the results
       of the current test run to match those specified in the
       <replaceable>file</replaceable> and will highlight differences
       from those results.</para>
@@ -1041,7 +1057,7 @@
      <listitem>
       <para>Specify an additional output result stream.  The
       descriptor is in the format described in <xref
-      linkend="sec-testcmd-create"/>.</para>
+      linkend="command-create"/>.</para>
      </listitem>
     </varlistentry>
 
@@ -1083,21 +1099,21 @@
 
    </variablelist>
   </section>
- </section> <!-- sec-testcmd-run -->
+ </section> <!-- command-run -->
 
- <section id="sec-testcmd-summarize">
-  <title><command>&qmtest-cmd; summarize</command></title>
+ <section id="command-summarize">
+  <title><command>qmtest summarize</command></title>
 
   <section>
    <title>Summary</title>
-   <para>The <command>&qmtest-cmd; summarize</command> displays
+   <para>The <command>qmtest summarize</command> displays
    information stored in a results file.</para>
   </section>
 
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; summarize</command>
+    <command>qmtest summarize</command>
     <arg choice="opt" rep="repeat">
      <replaceable>option</replaceable>
     </arg>
@@ -1114,7 +1130,7 @@
   <section>
    <title>Description</title>
    <para>
-    The <command>&qmtest-cmd; summarize</command> extracts information
+    The <command>qmtest summarize</command> extracts information
     stored in the <replaceable>results-file</replaceable> (or
     <filename>results.qmr</filename>, if no
     <replaceable>results-file</replaceable> is specified) and displays
@@ -1128,7 +1144,7 @@
    <para>
     If the <replaceable>results-file</replaceable> is not a valid
     results file, it is interpreted as an extension descriptor,
-    as described in <xref linkend="sec-testcmd-create"/>.  You can
+    as described in <xref linkend="command-create"/>.  You can
     use the descriptor syntax to read results stored in formats that
     are not &quot;built-in&quot; to QMTest.
    </para>
@@ -1182,26 +1198,26 @@
      <listitem>
       <para>Specify an additional output result stream.  The
       descriptor is in the format described in <xref
-      linkend="sec-testcmd-create"/>.</para>
+      linkend="command-create"/>.</para>
      </listitem>
     </varlistentry>
    </variablelist>
   </section>
- </section> <!-- sec-testcmd-summarize -->
+ </section> <!-- command-summarize -->
 
- <section id="sec-testcmd-report">
-  <title><command>&qmtest-cmd; report</command></title>
+ <section id="command-report">
+  <title><command>qmtest report</command></title>
 
   <section>
    <title>Summary</title>
-   <para>The <command>&qmtest-cmd; report</command> generates
+   <para>The <command>qmtest report</command> generates
    an xml report from a set of test result files.</para>
   </section>
 
   <section>
    <title>Synopsis</title>
    <cmdsynopsis>
-    <command>&qmtest-cmd; report </command>
+    <command>qmtest report </command>
     <arg>-o <replaceable>output</replaceable></arg>
     <arg choice="opt">-f</arg>
     <arg choice="opt" rep="repeat">
@@ -1213,7 +1229,7 @@
 
   <section>
    <title>Description</title>
-   <para>The <command>&qmtest-cmd; report</command> extracts
+   <para>The <command>qmtest report</command> extracts
    information stored in one or more result files and generates
    an xml report file from it. This report file is then typically
    processed using xslt to generate html or pdf versions of the report.
@@ -1243,9 +1259,9 @@
     </varlistentry>
    </variablelist>
   </section>
- </section> <!-- sec-testcmd-report -->
+ </section> <!-- command-report -->
 
- <section id="sec-env-vars">
+ <section id="reference-env-vars">
  <title>Environment Variables</title>
 
  <para>&qmtest; recognizes the following environment variables:</para>
@@ -1280,9 +1296,9 @@
   </varlistentry>
  </variablelist>
    
- </section> <!-- sec-env-vars -->
+ </section> <!-- reference-env-vars -->
 
- <section id="sec-config-file">
+ <section id="reference-config-file">
   <title>Configuration Variables</title>
 
    <para>These configuration variables are used by QMTest.  You
@@ -1297,21 +1313,21 @@
      <glossdef>
       <para>The default path to use when creating a PID file with the
       <option>&dashdash;pid-file</option> option.  (See <xref
-      linkend="sec-testcmd-gui"/> for more information about this
+      linkend="command-gui"/> for more information about this
       option.) If this entry is not present, an appropriate
       platform-specific default value is used.</para>
      </glossdef>
     </glossentry>
    </glosslist>
 
- </section> <!-- sec-config-file -->
+ </section> <!-- reference-config-file -->
 
- <section id="sec-return-value">
+ <section id="reference-return-value">
   <title>Return Value</title>
 
   <para>If QMTest successfully performed the action requested,
-  &qmtest; returns 0.  For the <command>&qmtest-cmd; run</command> or
-  <command>&qmtest-cmd; summarize</command> commands, success implies
+  &qmtest; returns 0.  For the <command>qmtest run</command> or
+  <command>qmtest summarize</command> commands, success implies
   not only that the tests ran, but also that all of the tests passed
   (if the <option>&dashdash;outcomes</option> option was not used) or
   had their expected outcomes (if the
@@ -1321,13 +1337,13 @@
   <command>summarize</command> command was used, and at least one
   test failed (if the <option>&dashdash;outcomes</option> option was
   not used) or had an unexpected outcome (if the
-  <option>&dashdash;outcomes</option> option was used), &qmtest-cmd;
-  returns 1.</para>
+  <option>&dashdash;outcomes</option> option was used), 
+  <command>qmtest</command> returns 1.</para>
 
   <para>If QMTest could not perform the action requested,
-  &qmtest-cmd; returns 2.</para>
+  <command>qmtest</command> returns 2.</para>
 
- </section> <!-- sec-return-value -->
+ </section> <!-- reference-return-value -->
  
-</appendix>
+</chapter>
 
