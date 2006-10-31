@@ -7,7 +7,7 @@
 # Contents:
 #   Installation script for the qmtest package
 #
-# Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2003 by CodeSourcery.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -29,7 +29,7 @@ from   qmdist.command.build_scripts import build_scripts
 from   qmdist.command.build_doc import build_doc
 from   qmdist.command.install_data import install_data
 from   qmdist.command.install_lib import install_lib
-from   qmdist.command.install_scripts import install_scripts
+from   qmdist.command.bdist_wininst import bdist_wininst
 from   qmdist.command.check import check
 from   qm.__version import version
 import shutil
@@ -80,26 +80,21 @@ report_dtml_files = files_with_ext("qm/test/share/dtml/report", ".dtml")
 share_files = {}
 os.path.walk("share", select_share_files, share_files)
 
-# On UNIX, users invoke "qmtest".  On Windows, there is no way to make a
-# Python script directly executable, unless its suffix is ".py".  It is
-# difficult to get distutils to install just one script or the other, so
-# we install both on all platforms.
-qmtest_script = join("qm", "test", "qmtest")
-qmtest_py_script = qmtest_script + ".py"
-shutil.copyfile(qmtest_script, qmtest_py_script)
-     
-# We need the sigmask extension on POSIX systems, but don't want it on
-# Win32.
 if sys.platform != "win32":
+    # We need the sigmask extension on POSIX systems, but don't
+    # want it on Win32.
     ext_modules = [Extension("qm.sigmask", ["qm/sigmask.c"])]
+    scripts = ['scripts/qmtest']
 else:
     ext_modules = []
+    shutil.copyfile('scripts/qmtest', 'scripts/qmtest.py')
+    scripts = ['scripts/qmtest.py', 'scripts/qmtest-postinstall.py']
 
-setup(name="qm", 
+setup(name="qmtest", 
       version=version,
-      author="CodeSourcery, LLC",
+      author="CodeSourcery",
       author_email="info@codesourcery.com",
-      maintainer="CodeSourcery, LLC",
+      maintainer="CodeSourcery",
       maintainer_email="qmtest@codesourcery.com",
       url="http://www.codesourcery.com/qmtest",
       description="QMTest is an automated software test execution tool.",
@@ -109,7 +104,7 @@ setup(name="qm",
                 'build_doc': build_doc,
                 'install_data': install_data,
                 'install_lib': install_lib,
-                'install_scripts' : install_scripts,
+                'bdist_wininst' : bdist_wininst,
                 'check': check},
 
       packages=('qm',
@@ -121,7 +116,7 @@ setup(name="qm",
                 'qm/test/classes',
                 'qm/test/web'),
       ext_modules=ext_modules,
-      scripts=[qmtest_script, qmtest_py_script],
+      scripts=scripts,
       data_files=[('share/qm/messages/test',
                    [join('qm/test/share/messages', m) for m in messages]),
                   # DTML files for the GUI.

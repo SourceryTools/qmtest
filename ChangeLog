@@ -1,5 +1,16 @@
 2006-10-31  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qmdist/command/install_data.py: Set 'prefix' variable.
+	* scripts/qmtest-postinstall.py: Adjust it to actual installation.
+	* qmdist/command/bdist_wininst.py: Use postinstall script.
+	* qmdist/command/install_script.py: Removed (obsoleted).
+	* share/logo.bmp: Some eye-candy for windows installer.
+	* qm/test/qmtest: Move to...
+	* scripts/qmtest: ...here; removed obsolete logic to determine paths.
+	* setup.py: Incorporate all the above changes.
+	* MANIFEST.in: Reflect new script location.
+	* qm/__init__.py: Use correct variables unconditionally.
+
 	* qmdist/command/build_doc.py: Fix to at least build html even if no
 	fo processor is found.
 

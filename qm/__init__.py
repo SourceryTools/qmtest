@@ -37,20 +37,9 @@ try:
     # installed to the data directory (where documentation and such
     # is installed) and the library directory (where the Python
     # modules making up QMTest are installed).
-    if sys.platform != "win32":
-        # On non-Windows platforms, the values written out at
-        # installation time are accurate.
-        from qm.config import data_dir
-        from qm.config import extension_path
-    else:
-        # On Windows, Distutils does a mock installation and then
-        # creates a binary installer.  Unfortunately, at the time
-        # the mock installation is performed there is no way to know
-        # the eventual paths.  Therefore, the value indicated in
-        # config.py are incorrect.  The value given below corresponds
-        # to the behavior of the binary installer.
-        data_dir = os.path.join("share", "qm")
-        extension_path = os.path.join("share", "qm", "site-extensions")
+    from qm.config import prefix
+    from qm.config import data_dir
+    from qm.config import extension_path
 except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0
