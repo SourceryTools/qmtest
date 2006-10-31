@@ -72,23 +72,28 @@ class build_doc(build.build):
         # Look for programs and supporting libraries required to build
         # DocBook documentation.
         xsltproc = find_executable('xsltproc')
-
+        foproc = None
         xep = False
-        foproc = find_executable('xep')
-        if foproc:
-            xsltproc += ' --stringparam xep.extensions 1'
-            xep = True
-        if not foproc:
-            foproc = find_executable('fop')
-        if not foproc:
-            foproc = find_executable('xmlroff')
-            if foproc: foproc += ' --compat'
-        if not foproc:
-            self.warn("could not find either of xep, fop, or xmlroff in PATH")
-
-        if not xsltproc or not foproc:
-            self.warn("cannot build documentation")
-            return
+        
+        if not xsltproc:
+            self.warn("could not find xsltproc in PATH")
+            self.warn("cannot build tutorial")
+            self.html = False
+            self.pdf = False
+        else:
+            foproc = find_executable('xep')
+            if foproc:
+                xsltproc += ' --stringparam xep.extensions 1'
+                xep = True
+            if not foproc:
+                foproc = find_executable('fop')
+            if not foproc:
+                foproc = find_executable('xmlroff')
+                if foproc: foproc += ' --compat'
+            if not foproc:
+                self.warn("could not find either of xep, fop, or xmlroff in PATH")
+                self.warn("cannot build tutorial.pdf")
+                self.pdf = False
 
         self.mkpath(tempdir)
         os.chdir(tempdir)

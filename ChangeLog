@@ -1,3 +1,8 @@
+2006-10-31  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qmdist/command/build_doc.py: Fix to at least build html even if no
+	fo processor is found.
+
 2006-10-25  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/command_host.py: New host extension.
