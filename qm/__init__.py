@@ -44,8 +44,8 @@ except:
     # If qm.config was not available, we are running out of the source tree.
     common.is_installed = 0
     from qm.__version import version, version_info
-    data_dir = "share"
-    extension_path = os.path.join("test", "classes")
+    data_dir = os.path.join('share', 'qm')
+    extension_path = os.path.join('qm', 'test', 'classes')
     
 ########################################################################
 # Local Variables:

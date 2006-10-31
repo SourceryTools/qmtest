@@ -58,22 +58,20 @@ class install_data(base.install_data):
         
         i = self.distribution.get_command_obj('install')
         il = self.distribution.get_command_obj('install_lib')
-        config = os.path.join(il.install_dir, "qm", "config.py")
+        config = os.path.join(il.install_dir, 'qm', 'config.py')
         self.announce("generating %s" %(config))
         outf = open(config, "w")
-        outf.write("version='%s'\n" % (self.distribution.get_version()))
+        outf.write("version='%s'\n"%self.distribution.get_version())
         prefix = i.root or i.prefix
-        outf.write("prefix=%s\n"%repr(prefix))
+        outf.write('prefix=%s\n'%repr(prefix))
         # Record the relative path from the installation prefix to the
         # data directory.
-        data_dir = os.path.join(self.install_dir, "share", "qm")
-        outf.write("data_dir=%s\n"%repr(get_relative_path(prefix, data_dir)))
-        extension_dir = os.path.join(self.install_dir,
-                                     "share",
-                                     "qm",
-                                     "site-extensions-%d.%d"%sys.version_info[:2])
-        outf.write("extension_path=%s\n"
-                   %repr(get_relative_path(prefix, extension_dir)))
+        data_dir = os.path.join('share', 'qm')
+        outf.write('data_dir=%s\n'%repr(data_dir))
+        extension_dir = os.path.join('share',
+                                     'qm',
+                                     'site-extensions-%d.%d'%sys.version_info[:2])
+        outf.write('extension_path=%s\n'%repr(extension_dir))
 
         outf.close()
         self.outfiles.append(config)
