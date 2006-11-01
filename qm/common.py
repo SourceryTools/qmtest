@@ -208,10 +208,7 @@ def get_share_directory(*components):
 def get_doc_directory(*components):
     """Return a path to a file in the QM documentation file directory."""
 
-    if not is_installed:
-        return os.path.join(qm.prefix, "qm", *components)
-    else:
-        return os.path.join(get_share_directory("doc"), *components)
+    return os.path.join(qm.prefix, qm.doc_dir, *components)
 
 
 def format_exception(exc_info):
@@ -897,12 +894,6 @@ def html_to_text(html, width=72):
 ########################################################################
 # variables
 ########################################################################
-
-is_installed = 1
-"""True if this application has been installed.
-
-True if the application has been installed.  False if the application is
-running out of the source tree."""
 
 rc = RcConfiguration()
 """The configuration stored in system and user rc files."""

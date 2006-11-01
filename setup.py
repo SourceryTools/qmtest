@@ -18,12 +18,6 @@
 ########################################################################
 
 from   distutils.core import setup, Extension
-import sys
-import os
-import os.path
-from   os.path import join
-import string
-import glob
 from   qmdist.command.build import build
 from   qmdist.command.build_scripts import build_scripts
 from   qmdist.command.build_doc import build_doc
@@ -32,53 +26,7 @@ from   qmdist.command.install_lib import install_lib
 from   qmdist.command.bdist_wininst import bdist_wininst
 from   qmdist.command.check import check
 from   qm.__version import version
-import shutil
-
-########################################################################
-# Functions
-########################################################################
-
-def files_with_ext(dir, ext):
-    """Return all files in 'dir' with a particular extension.
-
-    'dir' -- The name of a directory.
-
-    'ext' -- The extension.
-
-    returns -- A sequence consisting of the filenames in 'dir' whose
-    extension is 'ext'."""
-
-    return [join(dir, file) for file in os.listdir(dir) if file.endswith(ext)]
-
-
-def select_share_files(share_files, dir, files):
-    """Find installable files in 'dir'.
-
-    'share_files' -- A dictionary mapping directories to lists of file
-    names.
-
-    'dir' -- The directory in which the 'files' are located.
-
-    'files' -- A list of the files contained in 'dir'."""
-    
-    exts = (".txt", ".dtml", ".css", ".js", ".gif", ".dtd", ".mod", ".xslt")
-    files = [join(dir, f)
-             for f in files
-             if f == "CATALOG" or os.path.splitext(f)[1] in exts]
-    if files:
-        dir = join("share", "qm", dir[len("share/"):])
-        share_files[dir] = files
-
-diagnostics=['common.txt','common-help.txt']
-
-messages=['help.txt', 'diagnostics.txt']
-
-tutorial_files = files_with_ext("qm/test/share/tutorial/tdb", ".qmt")
-test_dtml_files = files_with_ext("qm/test/share/dtml", ".dtml")
-report_dtml_files = files_with_ext("qm/test/share/dtml/report", ".dtml")
-
-share_files = {}
-os.path.walk("share", select_share_files, share_files)
+import sys, os, os.path, glob, shutil
 
 if sys.platform != "win32":
     # We need the sigmask extension on POSIX systems, but don't
@@ -89,6 +37,15 @@ else:
     ext_modules = []
     shutil.copyfile('scripts/qmtest', 'scripts/qmtest.py')
     scripts = ['scripts/qmtest.py', 'scripts/qmtest-postinstall.py']
+
+def include(d, e):
+    """Generate a pair of (directory, file-list) for installation.
+
+    'd' -- A directory
+
+    'e' -- A glob pattern"""
+    
+    return (d, [f for f in glob.glob('%s/%s'%(d, e)) if os.path.isfile(f)])
 
 setup(name="qmtest", 
       version=version,
@@ -117,24 +74,30 @@ setup(name="qmtest",
                 'qm/test/web'),
       ext_modules=ext_modules,
       scripts=scripts,
-      data_files=[('share/qm/messages/test',
-                   [join('qm/test/share/messages', m) for m in messages]),
+      data_files=[include('share/qmtest/messages', '*.txt'),
+                  include('share/qmtest/diagnostics', '*.txt'),
                   # DTML files for the GUI.
-                  ("share/qm/dtml/test", test_dtml_files),
-                  ("share/qm/dtml/report", report_dtml_files),
+                  include('share/qmtest/dtml', '*.dtml'),
+                  include('share/qmtest/dtml/test/dtml', '*.dtml'),
+                  include('share/qmtest/dtml/report/dtml', '*.dtml'),
                   # The documentation.
-                  ('share/doc/qm', ('README', 'COPYING')),
-                  ('share/doc/qm/test/html/tutorial',
-                   ['share/doc/qmtest/html/tutorial/*.html',
-                    'share/doc/qmtest/html/tutorial/cs.css']),
-                  ('share/doc/qm/test/print',
-                   ['share/doc/qmtest/print/*.pdf']),
-                  # The tutorial.
-                  ("share/qm/tutorial/test/tdb", tutorial_files),
-                  ("share/qm/tutorial/test/tdb/QMTest",
-                   ("qm/test/share/tutorial/tdb/QMTest/configuration",))]
-                 # The files from the top-level "share" directory.
-                 + share_files.items())
+                  ('share/doc/qmtest', ('README', 'COPYING')),
+                  include('share/doc/qmtest/html/tutorial', '*'),
+                  include('share/doc/qmtest/print', 'tutorial.pdf'),
+                  include('share/qmtest/tutorial/tdb', '*'),
+                  include('share/qmtest/tutorial/tdb/QMTest', 'configuration'),
+                  # The GUI.
+                  include('share/qmtest/dtml', '*.dtml'),
+                  include('share/qmtest/dtml/test', '*.dtml'),
+                  include('share/qmtest/dtml/report', '*.dtml'),
+                  include('share/qmtest/web', '*.js'),
+                  include('share/qmtest/web/images', '*.gif'),
+                  include('share/qmtest/web/stylesheets', '*.css'),
+
+                  include('share/qmtest/xml', '*'),
+                  include('share/qmtest/dtds',  '*.dtd')
+                  ],
+      )
 
 ########################################################################
 # Local Variables:

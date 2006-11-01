@@ -180,9 +180,9 @@ function swap_option(select, offset)
   select.selectedIndex = new_index;
 }
 
-function popup_manual()
+function popup_tutorial()
 {
-  window.open("/manual/index.html", "manual",
+  window.open("/tutorial/index.html", "tutorial",
           "resizable,toolbar,scrollbars");
 }
 

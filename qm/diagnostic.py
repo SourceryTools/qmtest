@@ -200,22 +200,10 @@ def load_messages(tool):
     'tool' -- A string giving the name of a QM tool."""
 
     # Load diagnostics.
-    if not qm.common.is_installed:
-        diagnostic_file \
-            = qm.get_share_directory("..", "qm", tool, "share",
-                                     "messages", "diagnostics.txt")
-    else:
-        diagnostic_file \
-          = qm.get_share_directory("messages", tool, "diagnostics.txt")
+    diagnostic_file = qm.get_share_directory('messages', 'diagnostics.txt')
     get_diagnostic_set().ReadFromFile(diagnostic_file)
     # Load help messages.
-    if not qm.common.is_installed:
-        diagnostic_file \
-            = qm.get_share_directory("..", "qm", tool, "share",
-                                     "messages", "help.txt")
-    else:
-        diagnostic_file \
-            = qm.get_share_directory("messages", tool, "help.txt")
+    diagnostic_file = qm.get_share_directory('messages', 'help.txt')
     get_help_set().ReadFromFile(diagnostic_file)
     
 ########################################################################

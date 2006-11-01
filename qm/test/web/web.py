@@ -152,19 +152,9 @@ class DefaultDtmlPage(qm.web.DtmlPage):
                 ]
 
         self.help_menu_items = [
-            ('Manual', "javascript:popup_manual();"),
+            ('Tutorial', "javascript:popup_tutorial();"),
             ('QMTest Web Site', "http://www.qmtest.com")
             ]
-
-
-
-        # In the build tree, tool-specific DTML pages are in a different
-        # location.
-        if (not qm.common.is_installed
-            and os.path.dirname(dtml_template) == "test"):
-            dtml_template \
-                = os.path.join("..", "..", "qm", "test", "share",
-                               "dtml", os.path.basename(dtml_template))
 
         qm.web.DtmlPage.__init__(self, dtml_template, **attributes)
 
@@ -1939,7 +1929,7 @@ class QMTestServer(qm.web.WebServer):
             "/static", qm.get_share_directory("web", "static"))
         # Register the QM manual.
         self.RegisterPathTranslation(
-            "/manual", qm.get_doc_directory("test", "html"))
+            "/tutorial", qm.get_doc_directory("html", "tutorial"))
 
         # The DB's attachment store processes download requests for
         # attachment data.

@@ -64,12 +64,10 @@ class install_data(base.install_data):
         outf.write("version='%s'\n"%self.distribution.get_version())
         prefix = i.root or i.prefix
         outf.write('prefix=%s\n'%repr(prefix))
-        # Record the relative path from the installation prefix to the
-        # data directory.
-        data_dir = os.path.join('share', 'qm')
-        outf.write('data_dir=%s\n'%repr(data_dir))
+        outf.write('data_dir=%s\n'%repr(os.path.join('share', 'qmtest')))
+        outf.write('doc_dir=%s\n'%repr(os.path.join('share', 'doc', 'qmtest')))
         extension_dir = os.path.join('share',
-                                     'qm',
+                                     'qmtest',
                                      'site-extensions-%d.%d'%sys.version_info[:2])
         outf.write('extension_path=%s\n'%repr(extension_dir))
 

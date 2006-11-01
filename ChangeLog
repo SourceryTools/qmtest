@@ -1,5 +1,17 @@
 2006-10-31  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* qm/test/share/*: Merged into...
+	* share/qmtest: ...here.
+	* share/*: Likewise.
+	* setup.py: Simplify.
+	* qmdist/command/install_data.py: Adjust data_path ('qm' -> 'qmtest').
+	* qm/__init__.py: Simplify.
+	* qm/common.py: Remove obsolete 'is_installed' variable.
+	* qm/diagnostic.py: Likewise.
+	* qm/test/web/web.py: Adjust menu to contain 'Tutorial' in new location.
+
+2006-10-31  Stefan Seefeld  <stefan@codesourcery.com>
+
 	* qmdist/command/install_data.py: Set 'prefix' variable.
 	* scripts/qmtest-postinstall.py: Adjust it to actual installation.
 	* qmdist/command/bdist_wininst.py: Use postinstall script.

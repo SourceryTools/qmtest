@@ -39,12 +39,13 @@ try:
     # modules making up QMTest are installed).
     from qm.config import prefix
     from qm.config import data_dir
+    from qm.config import doc_dir
     from qm.config import extension_path
 except:
     # If qm.config was not available, we are running out of the source tree.
-    common.is_installed = 0
     from qm.__version import version, version_info
-    data_dir = os.path.join('share', 'qm')
+    data_dir = os.path.join('share', 'qmtest')
+    doc_dir = os.path.join('share', 'doc', 'qmtest')
     extension_path = os.path.join('qm', 'test', 'classes')
     
 ########################################################################
