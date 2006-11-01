@@ -44,6 +44,7 @@ try:
 except:
     # If qm.config was not available, we are running out of the source tree.
     from qm.__version import version, version_info
+    prefix = os.path.join(os.path.dirname(__file__), os.path.pardir)
     data_dir = os.path.join('share', 'qmtest')
     doc_dir = os.path.join('share', 'doc', 'qmtest')
     extension_path = os.path.join('qm', 'test', 'classes')
