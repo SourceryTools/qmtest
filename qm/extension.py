@@ -54,36 +54,40 @@ class Extension(object):
 
             hierarchy = [base for base in bases if is_extension(base)]
 
-            arguments = {}
+            parameters = {}
             for c in hierarchy:
-                arguments.update(c._argument_dictionary)
-            # Now set arguments from class variables of type 'Field'.
+                parameters.update(c._argument_dictionary)
+            # Now set parameters from class variables of type 'Field'.
             for key, field in dict.iteritems():
                 if isinstance(field, Field):
                     field.SetName(key)
-                    arguments[key] = field
+                    parameters[key] = field
 
             # For backward compatibility, inject all members of the
-            # 'arguments' list into the dict.
-            for field in dict.get('arguments', []):
-                # Only allow name collisions between arguments and
-                # class variables if _allow_arg_names_matching_class_vars
-                # evaluates to True.
-                if (hasattr(cls, field.GetName())
-                    and not cls._argument_dictionary.has_key(field.GetName())
-                    and not cls._allow_arg_names_matching_class_vars):
-                    raise qm.common.QMException, \
-                          qm.error("ext arg name matches class var",
-                                   class_name = name,
-                                   argument_name = field.GetName())
-                arguments[field.GetName()] = field
+            # 'arguments' list into the dict, if it is indeed a list of fields.
+            arguments = dict.get('arguments', [])
+            if (type(arguments) is list and
+                len(arguments) > 0 and
+                isinstance(arguments[0], Field)):
+                for field in arguments:
+                    # Only allow name collisions between arguments and
+                    # class variables if _allow_arg_names_matching_class_vars
+                    # evaluates to True.
+                    if (hasattr(cls, field.GetName())
+                        and not cls._argument_dictionary.has_key(field.GetName())
+                        and not cls._allow_arg_names_matching_class_vars):
+                        raise qm.common.QMException, \
+                              qm.error("ext arg name matches class var",
+                                       class_name = name,
+                                       argument_name = field.GetName())
+                    parameters[field.GetName()] = field
 
-            setattr(cls, '_argument_dictionary', arguments)
-            setattr(cls, '_argument_list', arguments.values())
+            setattr(cls, '_argument_dictionary', parameters)
+            setattr(cls, '_argument_list', parameters.values())
 
             # Finally set default values.
-            for i in arguments:
-                setattr(cls, i, arguments[i].GetDefaultValue())
+            for i in parameters:
+                setattr(cls, i, parameters[i].GetDefaultValue())
 
     __metaclass__ = Type
 
@@ -131,14 +135,15 @@ class Extension(object):
     same mistake."""
 
     
-    def __init__(self, arguments):
+    def __init__(self, **args):
         """Construct a new 'Extension'.
 
-        'arguments' -- A dictionary mapping argument names (as
-        specified in the 'arguments' class variable) to values.  The
-        keys are strings; the values should be appropriate for the
-        corresponding fields.  The values are converted to values via
-        the 'Field.ParseFormValue' method.
+        'args': Keyword arguments providing values for Extension parameters.
+        The values should be appropriate for the corresponding fields.
+        Derived classes must pass along any unrecognized keyword
+        arguments to this method so that additional arguments
+        can be added in the future without necessitating changes to
+        derived classes.  
 
         This method will place all of the arguments into this objects
         instance dictionary.
@@ -150,12 +155,12 @@ class Extension(object):
         # 'Field's for this class.
         if __debug__:
             dictionary = get_class_arguments_as_dictionary(self.__class__)
-            for a, v in arguments.items():
+            for a, v in args.items():
                 if not dictionary.has_key(a):
                     raise AttributeError, a
         
         # Remember the arguments provided.
-        self.__dict__.update(arguments)
+        self.__dict__.update(args)
 
     def __getattr__(self, name):
 
@@ -377,7 +382,8 @@ def make_dom_element(extension_class, arguments, document, element = None):
     else:
         extension_element = document.createElement("extension")
     # Create an attribute describing the kind of extension.
-    extension_element.setAttribute("kind", extension_class.kind)
+    if extension_class.kind:
+        extension_element.setAttribute("kind", extension_class.kind)
     # Create an attribute naming the extension class.
     extension_element.setAttribute("class",
                                    get_extension_class_name(extension_class))

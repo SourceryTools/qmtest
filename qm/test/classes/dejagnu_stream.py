@@ -86,9 +86,9 @@ class DejaGNUStream(FileResultStream):
     DejaGNU results with these outcomes are not displayed unless
     'show_expected_outcomes' is true."""
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
-        super(DejaGNUStream, self).__init__(arguments)
+        super(DejaGNUStream, self).__init__(arguments, **args)
         self.__outcomes = {}
         for o in DejaGNUTest.dejagnu_outcomes:
             self.__outcomes[o] = 0
@@ -199,10 +199,10 @@ class DejaGNUReader(FileResultReader):
     When applied to an outcome line from DejaGNU, this regular
     expression's 'cause' field gives the cause of the failure."""
     
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
         # Initialize the base class.
-        super(DejaGNUReader, self).__init__(arguments)
+        super(DejaGNUReader, self).__init__(arguments, **args)
         # DejaGNU files start with "Test Run".
         if self.file.read(len("Test Run")) != "Test Run":
             raise FileResultReader.InvalidFile, \

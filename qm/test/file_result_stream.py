@@ -53,9 +53,9 @@ class FileResultStream(ResultStream):
 
     This flag can be overridden by derived classes."""
     
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
-        ResultStream.__init__(self, arguments)
+        ResultStream.__init__(self, arguments, **args)
 
         if not self.file:
             if self.filename and self.filename != "-":

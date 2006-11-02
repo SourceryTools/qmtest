@@ -1,3 +1,22 @@
+2006-11-02  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/extension.py: Enhance handling of parameters and constructor arguments.
+	* qm/test/database.py: Likewise.
+	* qm/test/file_database.py: Likewise.
+	* qm/test/file_result_reader.py: Likewise.
+	* qm/test/file_result_stream.py: Likewise.
+	* qm/test/result_stream.py: Likewise.
+	* qm/test/runnable.py: Likewise.
+	* qm/test/suite.py: Likewise.
+	* qm/test/target.py: Likewise.
+	* qm/test/classes/dejagnu_stream.py: Likewise.
+	* qm/test/classes/pickle_result_stream.py: Likewise.
+	* qm/test/classes/rsh_target.py: Likewise.
+	* qm/test/classes/sql_result_stream.py: Likewise.
+	* qm/test/classes/tet_stream.py: Likewise.
+	* qm/test/classes/text_result_stream.py: Likewise.
+	* qm/test/classes/xml_result_stream.py: Likewise.
+
 2006-10-31  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/share/*: Merged into...

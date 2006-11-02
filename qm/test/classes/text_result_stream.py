@@ -119,16 +119,13 @@ class TextResultStream(FileResultStream):
             point value."""),
         ]
     
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
         """Construct a 'TextResultStream'.
 
-        'arguments' -- The arguments to this result stream.
-
-        'suite_ids' -- The suites that will be executed during the
-        test run."""
+        'args' -- As for 'Extension.__init__'."""
 
         # Initialize the base class.
-        super(TextResultStream, self).__init__(arguments)
+        super(TextResultStream, self).__init__(arguments, **args)
 
         # Pick a default format.
         if not self.format:
@@ -350,6 +347,8 @@ class TextResultStream(FileResultStream):
         # Generate them.
         for result in results:
             self._DisplayResult(result, self.format)
+            if self.format == "batch":
+                self._DisplayAnnotations(result)
 
 
     def _DisplayResult(self, result, format):

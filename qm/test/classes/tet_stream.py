@@ -128,9 +128,9 @@ class TETStream(FileResultStream):
     UNREPORTED = (7, "UNREPORTED")
 
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
-        super(TETStream, self).__init__(arguments)
+        super(TETStream, self).__init__(arguments, **args)
         
         self._start_time = "<unknown_start_time>"
         self._finish_time = "<unknown_finish_time>"

@@ -40,11 +40,15 @@ class ResultStream(qm.extension.Extension):
 
     kind = "result_stream"
 
-    arguments = [
-        qm.fields.PythonField(
-           name = "expected_outcomes"),
-        ]
+    expected_outcomes = qm.fields.PythonField()
     
+    
+    def __init__(self, arguments = None, **args):
+
+        if arguments: args.update(arguments)
+        super(ResultStream, self).__init__(**args)
+
+
     def WriteAnnotation(self, key, value):
         """Output an annotation for this run.
 

@@ -35,10 +35,10 @@ class XMLResultStream(FileResultStream):
     individual result.  The closing tag for the results file will
     be missing."""
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
         # Initialize the base class.
-        super(XMLResultStream, self).__init__(arguments)
+        super(XMLResultStream, self).__init__(arguments, **args)
         
         # Create an XML document, since the DOM API requires you
         # to have a document when you create a node.
@@ -84,9 +84,9 @@ class XMLResultReader(FileResultReader):
 
     To write such a file, see 'XMLResultStream'."""
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
-        super(XMLResultReader, self).__init__(arguments)
+        super(XMLResultReader, self).__init__(arguments, **args)
 
         # Make sure that this file really is an XML result stream.
         tag = self.file.read(5)

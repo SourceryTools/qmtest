@@ -117,10 +117,10 @@ class PickleResultStream(FileResultStream):
 
     _is_binary_file = 1
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
         # Initialize the base class.
-        super(PickleResultStream, self).__init__(arguments)
+        super(PickleResultStream, self).__init__(arguments, **args)
         # Create initial pickler.
         self._ResetPickler()
         # We haven't processed any `Result's yet.
@@ -176,9 +176,9 @@ class PickleResultReader(FileResultReader):
 
     See also 'PickleResultStream', which does the reverse."""
 
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
 
-        super(PickleResultReader, self).__init__(arguments)
+        super(PickleResultReader, self).__init__(arguments, **args)
         self._ResetUnpickler()
 
         self._annotations = {}

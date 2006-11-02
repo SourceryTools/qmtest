@@ -45,24 +45,18 @@ class Suite(qm.extension.Extension):
     specifies the database containing the test or resource."""
 
 
-    def __init__(self, arguments, **extras):
+    def __init__(self, arguments = None, **args):
         """Construct a new 'Runnable'.
         
         'arguments' -- As for 'Extension.__init__'.
+
+        'args' -- As for 'Extension.__init__'."""
+
+        self.__id = args.pop(self.EXTRA_ID)
+        self.__database = args.pop(self.EXTRA_DATABASE)
+        if arguments: args.update(arguments)
+        super(Suite, self).__init__(**args)
         
-        'extras' -- Extra keyword arguments provided by QMTest.
-        Derived classes must pass along any unrecognized keyword
-        arguments to this method.  All extra keyword arguments
-        provided by QMTest will begin with 'qmtest_'.  These arguments
-        are provided as keyword arguments so that additional arguments
-        can be added in the future without necessitating changes to
-        test or resource classes.  Derived classes should not rely in
-        any way on the contents of 'extras'."""
-        
-        qm.extension.Extension.__init__(self, arguments)
-        
-        self.__id = extras[self.EXTRA_ID]
-        self.__database = extras[self.EXTRA_DATABASE]
         
         
     def GetDatabase(self):

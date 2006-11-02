@@ -530,13 +530,14 @@ class Database(qm.extension.Extension):
     kind = "database"
     """The 'Extension' kind."""
 
-    def __init__(self, path, arguments):
+    def __init__(self, path, arguments = None, **args):
         """Construct a 'Database'.
 
         'path' -- A string containing the absolute path to the directory
         containing the database.
 
         'arguments' -- A dictionary mapping attribute names to values.
+        The use of this parameter is deprecated. Use keyword arguments instead.
         
         Derived classes must call this method from their own '__init__'
         methods.  Every derived class must have an '__init__' method that
@@ -544,7 +545,8 @@ class Database(qm.extension.Extension):
         only argument.  The path provided to the derived class '__init__'
         function will always be an absolute path."""
 
-        qm.extension.Extension.__init__(self, arguments)
+        if arguments: args.update(arguments)
+        qm.extension.Extension.__init__(self, **args)
         
         # The path given must be an absolute path.
         assert os.path.isabs(path)

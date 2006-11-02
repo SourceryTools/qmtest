@@ -48,8 +48,10 @@ class _SQLConnected(Extension):
             name = "connection"),
     ]
 
-    def __init__(self, arguments):
-        super(_SQLConnected, self).__init__(arguments)
+    def __init__(self, arguments = None, **args):
+
+        if arguments: args.update(arguments)
+        super(_SQLConnected, self).__init__(**args)
 
         if not self.connection:
             self.connection = Connection(self.db_module,
@@ -63,8 +65,9 @@ class SQLResultStream(ResultStream, _SQLConnected):
     This class currently supports PostgreSQL only."""
 
 
-    def __init__(self, arguments):
-        super(SQLResultStream, self).__init__(arguments)
+    def __init__(self, arguments = None, **args):
+
+        super(SQLResultStream, self).__init__(arguments, **args)
 
         run_id_cursor = self.connection.execute("""
             SELECT nextval('run_id_seq');
@@ -179,8 +182,9 @@ class SQLResultReader(ResultReader, _SQLConnected):
         ),
     ]
 
-    def __init__(self, arguments):
-        super(SQLResultReader, self).__init__(arguments)
+    def __init__(self, arguments = None, **args):
+
+        super(SQLResultReader, self).__init__(arguments, **args)
 
         self._batch_size = 1000
 

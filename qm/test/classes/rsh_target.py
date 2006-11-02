@@ -33,35 +33,29 @@ class RSHTarget(ProcessTarget):
     which services commands sent via 'stdin', and replies via
     'stdout'."""
 
-    arguments = [
-        qm.fields.TextField(
-            name="host",
+    host = qm.fields.TextField(
             title="Remote Host Name",
             description="""The name of the host on which to run tests.
 
             The name (or IP address) of the host on which QMTest
             should execute tests.  If this value is the empty string,
-            the name of the target is used."""),
-        qm.fields.TextField(
-            name="remote_shell",
+            the name of the target is used.""")
+    remote_shell = qm.fields.TextField(
             title="Remote Shell Program",
             description="""The path to the remote shell program.
 
             The name of the program that can be used to create a
             remote shell.  This program must accept the same command
             line arguments as the 'rsh' program.""",
-            default_value="ssh"),
-        qm.fields.TextField(
-            name="arguments",
+            default_value="ssh")
+    arguments = qm.fields.TextField(
             title="Remote Shell Arguments",
             description="""The arguments to provide to the remote shell.
 
             A space-separated list of arguments to provide to the
             remote shell program.""",
             default_value="")
-        ]
     
-    _allow_arg_names_matching_class_vars = 1
 
     
     def __init__(self, database, properties):

@@ -89,16 +89,18 @@ class Target(qm.extension.Extension):
             
 
             
-    def __init__(self, database, properties):
+    def __init__(self, database, arguments = None, **args):
         """Construct a 'Target'.
 
         'database' -- The 'Database' containing the tests that will be
         run.
 
-        'properties'  -- A dictionary mapping strings (property names)
-        to values."""
+        'arguments' -- As for 'Extension.__init__'.
 
-        qm.extension.Extension.__init__(self, properties)
+        'args' -- As for 'Extension.__init__'."""
+
+        if arguments: args.update(arguments)
+        super(Target, self).__init__(**args)
         
         self.__database = database
 

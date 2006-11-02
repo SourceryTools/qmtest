@@ -6,7 +6,7 @@
 #
 # Contents:
 #   FileDatabase
-#   ExtensionFileDatabase
+#   ExtensionDatabase
 #
 # Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
 #
@@ -457,9 +457,9 @@ class ExtensionDatabase(FileDatabase):
             default_value=".qma"),
         ]
 
-    def __init__(self, path, arguments):
+    def __init__(self, path, arguments = None, **args):
 
-        FileDatabase.__init__(self, path, arguments)
+        super(ExtensionDatabase, self).__init__(path, arguments, **args)
         self._extensions = { Database.TEST : self.test_extension,
                              Database.RESOURCE : self.resource_extension,
                              Database.SUITE : self.suite_extension }

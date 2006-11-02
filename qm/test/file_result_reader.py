@@ -65,7 +65,7 @@ class FileResultReader(ResultReader):
 
     This flag can be overridden by derived classes."""
     
-    def __init__(self, arguments):
+    def __init__(self, arguments = None, **args):
         """Construct a new 'FileResultReader'.
 
         'arguments' -- As for 'ResultReader'.
@@ -74,7 +74,7 @@ class FileResultReader(ResultReader):
         result reader, the derived class '__init__' function must raise
         an 'InvalidStream' exception."""
 
-        super(FileResultReader, self).__init__(arguments)
+        super(FileResultReader, self).__init__(arguments, **args)
 
         if not self.file:
             if self.filename and self.filename != "-":
