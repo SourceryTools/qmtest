@@ -135,14 +135,14 @@ class check(Command):
 
         # Ensure that QMTest is already built.
         self.run_command("build")
-
-        qmtest = os.path.abspath(os.path.join(self.build_scripts,
-                                              "qmtest"))
+        b = self.distribution.get_command_obj('build')
+        python_path = b.build_lib + os.pathsep + os.environ['PYTHONPATH']
+        os.environ['PYTHONPATH'] = python_path
+        qmtest = os.path.abspath(os.path.join(self.build_scripts, 'qmtest'))
         if os.environ.has_key("QMTESTFLAGS"):
             options = os.environ["QMTESTFLAGS"].split()
         else:
             options = []
-
         if self.serial:
             self.check_serial(qmtest, options)
         if self.threads:

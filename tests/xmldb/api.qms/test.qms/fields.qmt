@@ -25,11 +25,7 @@ class FieldTester(Extension):
     enum = EnumerationField(default_value = "no", enumerals = ["yes", "no"])
     
 
-arguments = {}
-arguments['text'] = "Hello world !"
-arguments['boolean'] = False
-
-f = FieldTester(arguments)
+f = FieldTester(text = "Hello world !", boolean = False)
 
 assert f.text == "Hello world !"
 assert f.number == 42

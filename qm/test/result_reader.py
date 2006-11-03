@@ -35,6 +35,12 @@ class ResultReader(qm.extension.Extension):
 
     kind = "result_reader"
 
+    def __init__(self, arguments, **args):
+
+        if arguments: args.update(arguments)
+        super(ResultReader, self).__init__(**args)
+
+
     def GetAnnotations(self):
         """Return this run's dictionary of annotations."""
 

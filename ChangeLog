@@ -1,3 +1,21 @@
+2006-11-03  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/config.py: Provide initial values for config parameters.
+	* qm/__init__.py: Use it.
+	* qm/__version.py: Removed (since now obsolete).
+	* qmdist/command/__init__.py: Add reset_config_variables.
+	* scripts/qmtest-postinstall.py: Use it.
+	* qmdist/command/install_lib.py: Use it.
+	* qmdist/command/install_data.py: Removed (since now obsolete).
+	* qmdist/command/build_py.py: New command; adjusts qm.prefix so it
+	is usable in the build tree.
+	* qmdist/command/build_doc.py: Modularize.
+	* qmdist/command/check.py: Set PYTHONPATH so the right code gets tested.
+	* qmdist/command/__init__.py: Adjust to always use qm.config.
+	* setup.py: Adjust.
+	* qm/test/result_reader.py: Fix fallout from last patch.
+	* tests/xmldb/api.qms/test.qms/fields.qmt: Likewise.
+	
 2006-11-02  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/extension.py: Enhance handling of parameters and constructor arguments.

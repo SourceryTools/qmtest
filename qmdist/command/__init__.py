@@ -17,7 +17,7 @@
 # Imports
 ########################################################################
 
-import os.path
+import os.path, re
 
 ########################################################################
 # Functions
@@ -42,3 +42,19 @@ def get_relative_path(dir1, dir2):
             dir1 = ""
             break
     return os.path.join(rel_path, dir2[len(dir1) + 1:])
+
+
+def reset_config_variables(config_file, **vars):
+    """Reset specific variables in the given config file to new values.
+
+    'config_file' -- The config file to modify.
+
+    'vars' -- dict object containing variables to reset, with their new values.
+
+    """
+
+    script = open(config_file, 'r').read()
+    for v in vars:
+        script, found = re.subn('%s=.*'%v,'%s=%s'%(v, repr(vars[v])), script)
+        if not found: script += '%s=%s'%(v, repr(vars[v]))
+    open(config_file, 'w').write(script)

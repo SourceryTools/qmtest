@@ -17,38 +17,22 @@
 # Imports
 ########################################################################
 
-from   qm.common import *
-from   qm.diagnostic import error, warning, message
-import string
-import sys
-import os
-
-########################################################################
-# Variables
-########################################################################
-
+from qm.common import *
+from qm.diagnostic import error, warning, message
+from qm.config import version
+from qm.config import data_dir
+from qm.config import doc_dir
+from qm.config import extension_path
+# The prefix variable is only available after QMTest is built.
+# Compute it, if it isn't available.
 try:
-    # The config file is created during installation by distutils.
-    from qm.config import version
-    version_info = tuple(string.split(version, '.'))
-    """The version of QM as a tuple of '(major, minor, release)'."""
-
-    # Get the relative paths from the prefix where QMTest was
-    # installed to the data directory (where documentation and such
-    # is installed) and the library directory (where the Python
-    # modules making up QMTest are installed).
     from qm.config import prefix
-    from qm.config import data_dir
-    from qm.config import doc_dir
-    from qm.config import extension_path
-except:
-    # If qm.config was not available, we are running out of the source tree.
-    from qm.__version import version, version_info
+except ImportError:
+    import os
     prefix = os.path.join(os.path.dirname(__file__), os.path.pardir)
-    data_dir = os.path.join('share', 'qmtest')
-    doc_dir = os.path.join('share', 'doc', 'qmtest')
-    extension_path = os.path.join('qm', 'test', 'classes')
-    
+
+version_info = tuple(version.split('.'))
+
 ########################################################################
 # Local Variables:
 # mode: python

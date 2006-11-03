@@ -21,6 +21,168 @@ from distutils.file_util import copy_file, move_file
 import os, os.path
 from   shutil import *
 
+class build_html_tutorial(build.build):
+    """Defines the procedure to build the html tutorial."""
+
+    description = "build html tutorial"
+
+    def run(self):
+        """Run this command, i.e. do the actual document generation."""
+
+        tempdir = os.path.abspath(os.path.join(self.build_temp, 'doc'))
+        srcdir = os.getcwd()
+        source_files = [os.path.abspath(p)
+                        for p in ['doc/tutorial.xml',
+                                  'doc/concepts.xml',
+                                  'doc/cli_reference.xml',
+                                  'doc/customizing.xml',
+                                  'doc/extending.xml']]
+
+        # Look for programs and supporting libraries required to build
+        # DocBook documentation.
+        xsltproc = find_executable('xsltproc')
+        
+        if not xsltproc:
+            self.warn("could not find xsltproc in PATH")
+            self.warn("cannot build html tutorial")
+            return
+
+        self.mkpath(tempdir)
+        os.chdir(tempdir)
+
+        if newer_group(source_files, 'html/tutorial'):
+            self.announce("building html tutorial")
+            if os.path.isdir('html/tutorial'): remove_tree('html/tutorial')
+            self.mkpath('tutorial/html')
+            cmd = xsltproc.split() + ['--novalid', '--xinclude',
+                                      '-o', 'html/tutorial/',
+                                      srcdir + '/doc/html.xsl',
+                                      srcdir + '/doc/tutorial.xml']
+            self.announce(' '.join(cmd))
+            spawn(cmd)
+            copy_file(srcdir + '/doc/cs.css', 'html/tutorial/cs.css')
+        dest = srcdir + '/share/doc/qmtest/html/tutorial'
+        if newer('html/tutorial', dest):
+            rmtree(dest, True)
+            copy_tree('html/tutorial', dest)
+
+        os.chdir(srcdir)
+
+
+class build_pdf_tutorial(build.build):
+    """Defines the procedure to build the pdf tutorial."""
+
+    description = "build pdf tutorial"
+
+    def run(self):
+        """Run this command, i.e. do the actual document generation."""
+
+        tempdir = os.path.abspath(os.path.join(self.build_temp, 'doc'))
+        srcdir = os.getcwd()
+        source_files = [os.path.abspath(p)
+                        for p in ['doc/tutorial.xml',
+                                  'doc/concepts.xml',
+                                  'doc/cli_reference.xml',
+                                  'doc/customizing.xml',
+                                  'doc/extending.xml']]
+
+        # Look for programs and supporting libraries required to build
+        # DocBook documentation.
+        xsltproc = find_executable('xsltproc')
+        foproc = None
+        xep = False
+        
+        if not xsltproc:
+            self.warn("could not find xsltproc in PATH")
+            self.warn("cannot build tutorial")
+            return
+
+        foproc = find_executable('xep')
+        if foproc:
+            xsltproc += ' --stringparam xep.extensions 1'
+            xep = True
+        if not foproc:
+            foproc = find_executable('fop')
+        if not foproc:
+            foproc = find_executable('xmlroff')
+            if foproc: foproc += ' --compat'
+        if not foproc:
+            self.warn("could not find either of xep, fop, or xmlroff in PATH")
+            self.warn("cannot build tutorial.pdf")
+            return
+
+        self.mkpath(tempdir)
+        os.chdir(tempdir)
+        if newer_group(source_files, 'print/tutorial.pdf'):
+            self.announce("building pdf tutorial")
+            self.mkpath('print')
+            cmd = xsltproc.split() + ['--novalid', '--xinclude',
+                                      '-o', 'print/tutorial.fo',
+                                      srcdir + '/doc/fo.xsl',
+                                      srcdir + '/doc/tutorial.xml']
+            self.announce(' '.join(cmd))
+            spawn(cmd)
+            if xep:
+                cmd = foproc.split() + ['print/tutorial.fo']
+            else:
+                cmd = foproc.split() + ['-o', 'print/tutorial.pdf',
+                                        'print/tutorial.fo']
+            self.announce(' '.join(cmd))
+            spawn(cmd)
+            self.mkpath(srcdir + '/share/doc/qmtest/print')
+        dest = srcdir + '/share/doc/qmtest/print/tutorial.pdf'
+        if newer('print/tutorial.pdf', dest):
+            copy_file('print/tutorial.pdf', dest)
+
+        os.chdir(srcdir)
+
+
+
+class build_ref_manual(build.build):
+    """Defines the procedure to build API reference manual."""
+
+    description = "build API reference manual"
+
+    user_options = [
+        ("generator=", None, "name of the doc generator to use"),
+        ("args=", None, "options to pass to the generator")
+        ]
+
+    def initialize_options(self):
+
+        self.generator = None
+        self.args = None
+        build.build.initialize_options(self)
+
+        
+    def run(self):
+        """Run this command, i.e. do the actual document generation."""
+
+        tempdir = os.path.abspath(os.path.join(self.build_temp, 'doc'))
+        srcdir = os.getcwd()
+        self.mkpath(tempdir)
+
+        generator = self.generator
+        args = self.args
+
+        if not generator:
+            generator = find_executable('epydoc')
+            if generator:
+                args += ' --no-sourcecode -o share/doc/qmtest/html/manual'
+
+        if not generator:
+            generator = find_executable('happydoc')
+            if generator:
+                args += ' -d share/doc/qmtest/html/manual'
+
+        if not generator:
+            self.warn("could not find either of epydoc or happydoc in PATH")
+        else:
+            self.announce("building reference manual")
+            spawn([generator] + args.split() + ['qm'])
+
+
+
 class build_doc(build.build):
     """Defines the specific procedure to build QMTest's documentation.
 
@@ -50,54 +212,16 @@ class build_doc(build.build):
         self.pdf = True
         self.ref_manual = True
         build.build.initialize_options(self)
-        
 
+        
     def run(self):
         """Run this command, i.e. do the actual document generation."""
 
-        # If the user has not requested that we build any
-        # documentation, just skip it.
-        if not self.html and not self.pdf and not self.ref_manual:
-            return
-        
+
         tempdir = os.path.abspath(os.path.join(self.build_temp, 'doc'))
         srcdir = os.getcwd()
-        source_files = [os.path.abspath(p)
-                        for p in ['doc/tutorial.xml',
-                                  'doc/concepts.xml',
-                                  'doc/cli_reference.xml',
-                                  'doc/customizing.xml',
-                                  'doc/extending.xml']]
-
-        # Look for programs and supporting libraries required to build
-        # DocBook documentation.
-        xsltproc = find_executable('xsltproc')
-        foproc = None
-        xep = False
-        
-        if not xsltproc:
-            self.warn("could not find xsltproc in PATH")
-            self.warn("cannot build tutorial")
-            self.html = False
-            self.pdf = False
-        else:
-            foproc = find_executable('xep')
-            if foproc:
-                xsltproc += ' --stringparam xep.extensions 1'
-                xep = True
-            if not foproc:
-                foproc = find_executable('fop')
-            if not foproc:
-                foproc = find_executable('xmlroff')
-                if foproc: foproc += ' --compat'
-            if not foproc:
-                self.warn("could not find either of xep, fop, or xmlroff in PATH")
-                self.warn("cannot build tutorial.pdf")
-                self.pdf = False
 
         self.mkpath(tempdir)
-        os.chdir(tempdir)
-
 
         # 
         # Write the version to a file so the tutorial can refer to it.  This
@@ -105,70 +229,19 @@ class build_doc(build.build):
         # trailing newline, for example.
         #
         self.announce("writing version file")
-        f = open(os.path.join('qm-version'), 'w')
+        f = open(os.path.join(tempdir, 'qm-version'), 'w')
         f.write(self.distribution.get_version())
         f.close()
 
-        #
-        # Build html output.
-        #
-        if self.html:
-            if newer_group(source_files, 'html/tutorial'):
-                self.announce("building html tutorial")
-                if os.path.isdir('html/tutorial'): remove_tree('html/tutorial')
-                self.mkpath('tutorial/html')
-                cmd = xsltproc.split() + ['--novalid', '--xinclude',
-                                          '-o', 'html/tutorial/',
-                                          srcdir + '/doc/html.xsl',
-                                          srcdir + '/doc/tutorial.xml']
-                self.announce(' '.join(cmd))
-                spawn(cmd)
-                copy_file(srcdir + '/doc/cs.css', 'html/tutorial/cs.css')
-            dest = srcdir + '/share/doc/qmtest/html/tutorial'
-            if newer('html/tutorial', dest):
-                rmtree(dest, True)
-                copy_tree('html/tutorial', dest)
+        for c in self.get_sub_commands(): 
+            self.run_command(c)
 
-        #
-        # Build pdf output.
-        #
-        if self.pdf:
-            if newer_group(source_files, 'print/tutorial.pdf'):
-                self.announce("building pdf tutorial")
-                self.mkpath('print')
-                cmd = xsltproc.split() + ['--novalid', '--xinclude',
-                                          '-o', 'print/tutorial.fo',
-                                          srcdir + '/doc/fo.xsl',
-                                          srcdir + '/doc/tutorial.xml']
-                self.announce(' '.join(cmd))
-                spawn(cmd)
-                if xep:
-                    cmd = foproc.split() + ['print/tutorial.fo']
-                else:
-                    cmd = foproc.split() + ['-o', 'print/tutorial.pdf',
-                                            'print/tutorial.fo']
-                self.announce(' '.join(cmd))
-                spawn(cmd)
-                self.mkpath(srcdir + '/share/doc/qmtest/print')
-            dest = srcdir + '/share/doc/qmtest/print/tutorial.pdf'
-            if newer('print/tutorial.pdf', dest):
-                copy_file('print/tutorial.pdf', dest)
 
-        os.chdir(srcdir)
+    def build_html_tutorial(self) : return self.html
+    def build_pdf_tutorial(self) : return self.pdf
+    def build_ref_manual(self) : return self.ref_manual
 
-        #
-        # Build reference manual via 'epydoc' or 'happydoc'.
-        #
-        if self.ref_manual:
-            pydoc = find_executable('epydoc')
-            if pydoc: pydoc += ' --no-sourcecode -o share/doc/qmtest/html/manual'
+    sub_commands = [('build_html_tutorial', build_html_tutorial),
+                    ('build_pdf_tutorial', build_pdf_tutorial),
+                    ('build_ref_manual', build_ref_manual)]
 
-            if not pydoc:
-                pydoc = find_executable('happydoc')
-                if pydoc: pydoc += ' -d share/doc/qmtest/html/manual'
-
-            if not pydoc:
-                self.warn("could not find either of epydoc or happydoc in PATH")
-            else:
-                self.announce("building reference manual")
-                spawn(pydoc.split() + ['qm'])
