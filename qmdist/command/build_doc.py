@@ -168,12 +168,12 @@ class build_ref_manual(build.build):
         if not generator:
             generator = find_executable('epydoc')
             if generator:
-                args += ' --no-sourcecode -o share/doc/qmtest/html/manual'
+                args = '--no-sourcecode -o share/doc/qmtest/html/manual'
 
         if not generator:
             generator = find_executable('happydoc')
             if generator:
-                args += ' -d share/doc/qmtest/html/manual'
+                args = '-d share/doc/qmtest/html/manual'
 
         if not generator:
             self.warn("could not find either of epydoc or happydoc in PATH")
