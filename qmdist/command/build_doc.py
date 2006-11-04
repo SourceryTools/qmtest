@@ -163,12 +163,12 @@ class build_ref_manual(build.build):
         self.mkpath(tempdir)
 
         generator = self.generator
-        args = self.args
+        args = self.args or ''
 
         if not generator:
             generator = find_executable('epydoc')
             if generator:
-                args = '--no-sourcecode -o share/doc/qmtest/html/manual'
+                args = '-o share/doc/qmtest/html/manual'
 
         if not generator:
             generator = find_executable('happydoc')
