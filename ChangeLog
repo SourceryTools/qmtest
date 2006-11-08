@@ -1,3 +1,7 @@
+2006-11-08  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/host.py: Adjust constructor to expect keyword arguments.
+
 2006-11-03  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/config.py: Provide initial values for config parameters.

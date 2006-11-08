@@ -58,6 +58,11 @@ class Host(Extension):
             return None
 
 
+    def __init__(self, arguments = None, **args):
+
+        if arguments: args.update(arguments)
+        super(Host, self).__init__(**args)
+
 
     def Run(self, path, arguments, environment = None, timeout = -1,
             relative = False):
