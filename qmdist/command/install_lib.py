@@ -56,3 +56,19 @@ class install_lib(base):
         reset_config_variables(config_file,
                                prefix=prefix, extension_path=extension_path)
 
+        # Make sure the new config file gets recompiled, or else python may
+        # not notice it is in fact different from the original config file.
+        files = [config_file]
+
+        from distutils.util import byte_compile
+        install_root = self.get_finalized_command('install').root
+
+        if self.compile:
+            byte_compile(files, optimize=0,
+                         force=self.force, prefix=install_root,
+                         dry_run=self.dry_run)
+        if self.optimize > 0:
+            byte_compile(files, optimize=self.optimize,
+                         force=self.force, prefix=install_root,
+                         verbose=self.verbose, dry_run=self.dry_run)
+
