@@ -323,9 +323,6 @@ class Target(qm.extension.Extension):
         # guarantee that it will be the same in a test that depends on
         # this resource as it was in the resource itself.
         del properties[Context.TMPDIR_CONTEXT_PROPERTY]
-        # Similarly, the ID property should be the name of the dependent
-        # entity, not the name of the reosurce.
-        del properties[Context.ID_CONTEXT_PROPERTY]
         rop = (resource, result.GetOutcome(), properties)
         self.__resources[result.GetId()] = rop
         self.__order_of_resources.append(result.GetId())
@@ -388,7 +385,10 @@ class Target(qm.extension.Extension):
             # Make the ID of the resource available.
             wrapper[Context.ID_CONTEXT_PROPERTY] = resource_name
             # Set up the resource itself.
-            resource_desc.SetUp(wrapper, result)
+            try:
+                resource_desc.SetUp(wrapper, result)
+            finally:
+                del wrapper[Context.ID_CONTEXT_PROPERTY]
             # Obtain the resource within the try-block so that if it
             # cannot be obtained the exception is handled below.
             resource = resource_desc.GetItem()
