@@ -1,0 +1,39 @@
+<!--
+
+  File:   results.dtd
+  Author: Alex Samuel
+  Date:   2001-03-14
+
+  Contents:
+    DTD for test result sets.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTest Result V0.3 -->
+
+<!-- The results of a test run.  -->
+<!ELEMENT results (result*)>
+
+<!-- The result of executing a single test or resource function.  -->
+<!ELEMENT result (outcome, property*)>
+<!ATTLIST result id CDATA #REQUIRED
+                 kind (test | resource) #REQUIRED>
+
+<!-- The outcome of a test or resource function.  -->
+<!ELEMENT outcome (#PCDATA)>
+
+<!-- An additional annotation to the result.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

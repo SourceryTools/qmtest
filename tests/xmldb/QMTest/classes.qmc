@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<class-directory><class kind="test">test_interface.TestInterface</class><class kind="test">test_inheritance.Derived</class></class-directory>

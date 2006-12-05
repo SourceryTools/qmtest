@@ -1,0 +1,121 @@
+########################################################################
+#
+# File:   setup_path.py
+# Author: Alex Samuel
+# Date:   2001-02-08
+#
+# Contents:
+#   Python fragment to set up the Python lookup path to find QM modules.
+#
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+"""Execute this file with 'execfile' to set up the Python path for QM."""
+
+
+########################################################################
+# imports
+########################################################################
+
+import string
+import sys
+
+def __unsupported_python_version():
+    """Tell the user that their version of Python is unsupported."""
+
+    sys.exit(
+        "qm: error: Python 2.1 or higher is required.\n"
+        "           Set QM_PYTHON to an appropriate Python interpreter.\n")
+
+# Check to see that the version of Python being used is recent
+# enough.
+
+try:
+    # If the version of Python in use is lower than 2.1, it is too
+    # old.
+    if (sys.version_info[0] < 2
+        or (sys.version_info[0] == 2
+            and sys.version_info[1] < 1)):
+        __unsupported_python_version()
+except:
+    # If the sys.version_info variable does not exist, the version of
+    # Python in use is too old.
+    __unsupported_python_version()
+
+    
+# Some of the packages that are used with QM use modules (like regsub)
+# that are obsolete in Python 2.1.  Prevent Python from warning
+# about these modules.
+import warnings
+warnings.filterwarnings("ignore")
+
+import os.path
+
+########################################################################
+# functions
+########################################################################
+
+def add_to_python_path(*components):
+    """Add a QM path to the Python module lookup path.
+
+    Constructs the added path by appending the directory names in
+    'components' to the base QM Python directory."""
+
+    path = apply(os.path.join, (__lib_dir, ) + components)
+    path = os.path.normpath(path)
+    if path not in sys.path:
+        # Insert the path element at the front, so that QM can replace
+        # Python system libraries.  This also means that users cannot
+        # replace QM libraries by setting the 'PYTHONPATH' environment
+        # variable, since this is prepended to 'sys.path' before we get
+        # here.
+        sys.path.insert(0, path)
+
+########################################################################
+# script
+########################################################################
+
+# The root of the QM installation.
+__home_dir = os.environ['QM_HOME']
+
+if os.environ['QM_BUILD'] == '1':
+    __python_version = "@PYTHON_VERSION@"
+    __python_platform = "@PYTHON_PLATFORM@"
+    __lib_dir = __home_dir
+    __share_dir = os.path.join(__home_dir, 'share')
+    __doc_dir = os.path.join(__home_dir, 'qm')
+    add_to_python_path("PyXML/build/lib.%s-%s" %
+       (__python_platform, __python_version))
+    add_to_python_path(
+       "zope-dtml/ExtensionClass/build/lib.%s-%s/zope-dtml/ExtensionClass" %
+       (__python_platform, __python_version))
+else:
+    __lib_dir = os.path.join(__home_dir, 'lib/qm')
+    __share_dir = os.path.join(__home_dir, 'share/qm')
+    __doc_dir = os.path.join(__home_dir, 'share/doc/qm')
+
+# Add things to the Python search path that we'll need.
+add_to_python_path()
+add_to_python_path("sgmlop")
+add_to_python_path("zope-dtml", "ExtensionClass")
+add_to_python_path("zope-dtml")
+add_to_python_path("xmlrpc")
+    
+# Now store the QM directories in the environment, so that other modules
+# can access them.
+os.environ["QM_LIB_PATH"] = os.path.normpath(__lib_dir)
+os.environ["QM_SHARE_PATH"] = os.path.normpath(__share_dir)
+os.environ["QM_DOC_PATH"] = os.path.normpath(__doc_dir)
+
+major_version = @QM_MAJOR_VER@
+minor_version = @QM_MINOR_VER@
+release_version = @QM_RELEASE_VER@
+
+#######################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# End:

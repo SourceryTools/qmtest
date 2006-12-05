@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   xml-repr.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Section `XML Representation' of qmtrack design document.
+
+  This is part of the master document contained in qmtrack.xml.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+ <section id="sec-xml-repr">
+  <title id="sec-xml-repr-title">&xml; Representation</title>
+
+  <para>Issues may be represented in &xml;, both in the inner workings
+  of an &idb; implementation, and in user-visible output.  The latter
+  includes exported &xml; and use of &xml; in user interfaces, such as
+  in the <link linkend="sec-email">e-mail interface</link>.</para>
+
+  <section id="sec-issue-dtd">
+   <title id="sec-issue-dtd-title">Issue &dtd;</title>
+
+   <para><xref linkend="fig-issue-dtd"/> shows the &dtd; for the
+   canonical representation for &qmtrack; issues in &xml;.  While
+   &idb; implementations may choose a different &dtd; for their
+   internal storage mechanism, issues should be represented according
+   to this &dtd; for all user-visible &xml; output.</para>
+
+   <figure id="fig-issue-dtd">
+    <title>Issue &dtd;</title>
+
+    <programlisting><![CDATA[
+<!ELEMENT issue (class, iid, field-data*)>
+
+<!ELEMENT field-data (field*)>
+<!ATTLIST field-data revision CDATA #OPTIONAL>
+
+<!ELEMENT class (#PCDATA)>
+
+<!ELEMENT iid (#PCDATA)>
+
+<!ELEMENT field (#PCDATA | attachment | item*)>
+<!ATTLIST field name CDATA #REQUIRED>
+
+<!ELEMENT item (#PCDATA | attachment)>
+
+<!ELEMENT attachment (description mime-type external-name)>
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT mime-type (#PCDATA)>
+
+<!ELEMENT external-name (#PCDATA)>
+    ]]></programlisting>
+   </figure>
+
+   <para>The formal public identifier for this &dtd; is
+    <programlisting>
+     "-//Software Carpentry//DTD QMTrack V0.1//EN"
+    </programlisting>
+   </para>
+
+   <para>&xml; representations of an issue will normally present a
+   single revision only, namely the latest revision.  In this case,
+   the <sgmltag>&lt;issue&gt;</sgmltag> element will contain only a
+   single <sgmltag>&lt;field-data&gt;</sgmltag> element, and the the
+   <property>revision</property> attribute is suppressed.  For
+   &xml;-based &idb; implementations in which multiple revisions are
+   stored together, multiple <sgmltag>&lt;field-data&gt;</sgmltag>
+   elements will be included with different
+   <property>revision</property> values.  The &idb; implementation may
+   choose to store <link linkend="sec-diff-issue-records">difference
+   issue records</link> instead of the entire field data for past
+   revision, i.e. for the next-most-recent and previous revisions,
+   only fields that were changes are included in the
+   <sgmltag>&lt;field-data&gt;</sgmltag> element.</para>
+
+   <para>The <sgmltag>&lt;field&gt;</sgmltag> element is used for all
+   issue fields.  For set fields, the contents are zero or more
+   <sgmltag>&lt;item&gt;</sgmltag> elements, each corresponding to an
+   element of the set.  For attachment fields, the contents are an
+   <sgmltag>&lt;attachment&gt;</sgmltag> element.  Other field types
+   are represented with CDATA.</para>
+
+   <para>The first component of the
+   <sgmltag>&lt;attachment&gt;</sgmltag> element contains the
+   description of the attachment.  The second component is the
+   attachment's MIME type.  The third component,
+   <sgmltag>&lt;external-name&gt;</sgmltag>, is a file name or other
+   identifier for the location of the attachment data.  For disk-based
+   &idb; implementations, it will contain a relative path to a file.
+   For e-mail &xml; issue representations, it will contain the name of
+   a MIME attachment included in the e-mail message.</para>
+
+  </section>
+
+  <section>
+   <title>&xml; example</title>
+
+   <para><xref linkend="example-xml-issue"/> shows an example of an
+   issue for a compiler bug report.</para>
+
+   <example id="example-xml-issue">
+    <title>Canonical &xml; representation of sample bug report
+    issue</title>
+
+    <programlisting><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE issue PUBLIC "-//Software Carpentry//DTD QMTrack V0.1//EN">
+<issue>
+  <class>bug</class>
+  <iid>17</iid>
+  <field-data>
+    <field name="categories">
+      <item>front end</item>
+      <item>C++</item>
+    </field>
+    <field name="severity">severe</field>
+    <field name="description">"Internal Compiler Error" in parser.</field>
+    <field name="input">
+<![CDATA[
+int foo (char* p) {
+  return *p = *(++p);
+}
+]]>]]&gt;<![CDATA[
+    </field>
+    <field name="flags">-g -O2</field>
+    <field name="attachments">
+      <item>
+        <attachment>
+          <description>core file</description>
+          <mime-type>application/octet-stream</mime-type>
+          <external-name>attachment001</external-name>
+        </attachment>
+      </item>
+    </field>
+  </field-data>
+</issue>
+    ]]></programlisting>
+   </example>
+
+   <para>This example is an issue in the issue class "bug", which is
+   used for bug reports (as opposed to, for instance, feature requests
+   or reports of documentation errors).  The issue id is "17", and the
+   issue is included in two categories: "back end" and "C++".</para>
+
+   <para>In addition to the standard "severity" and "description"
+   fields, the "bug" issue class includes two other fields
+   specifically added for recording information about compiler bugs.
+   The "flags" field describes the command-line options that should be
+   specified when invoking the compiler to reproduce the problem.  The
+   "input" field contains the input source code.  Since the "input"
+   field contains program text that is likely to contain special
+   characters, the field contents are placed in a
+   <sgmltag>CDATA</sgmltag> element.</para>
+
+   <para>The "attachment" field in the "bug" issue class contains a
+   set of zero or more file attachments.  For this bug, one attachment
+   is included: a core file generated by the crashing compiler.  The
+   MIME type is "application/octet-stream", since core files are
+   usually treated as binary data.  The data itself is stored in an
+   object named "attachment001".  The location of this object is
+   context-dependent; if the &xml; issue record is in the &idb;, it is
+   stored in a file by that name, while if the issue record is
+   included in an e-mail message, it will be included as an attachment
+   with that name.</para>
+
+  </section>
+   
+ </section>
+
+<!--
+  Local Variables:
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtrack.xml" "chapter" "section")
+  End:
+-->

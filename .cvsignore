@@ -1,0 +1,5 @@
+GNUmakefile
+config.log
+config.cache
+config.status
+qm.spec

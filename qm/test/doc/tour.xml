@@ -1,0 +1,560 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   test-tour.xml
+  Author: Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Grand tour/tutorial of QMTest.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-test-tour">
+ <title>Getting Started with &qmtest;</title>
+ 
+  <para>QMTest is an general-purpose, cross-platform software testing
+  tool.  QMTest can be used to test compilers, databases, graphical
+  user interfaces, or embedded systems.  QMTest provides a convenient
+  graphical user interface for creating, managing, and executing
+  tests, provides support for parallel test execution, and can be
+  extended in a variety of ways.</para>
+
+  <para>This chapter will show you how to use &qmtest; by example.
+  You will learn how to use &qmtest; to create tests, run tests, and
+  examine the results.</para>
+
+  <section id="sec-testtut-setting-up">
+   <title>Setting Up</title>
+
+   <para>A test database is a directory that &qmtest; uses to store
+   tests.  If you want to create a new, empty test database from
+   scratch, you use the <command>&qmtest-cmd;
+   create-tdb</command> command, but for this tutorial, you should use
+   the sample test database provided with &qmtest;.  Since you'll
+   modify the test database later in the tutorial, start by making a
+   copy of it.  Copy the entire test database directory tree to
+   another location.  If you've installed &qmtest; in the default
+   location you can make a copy of the sample database by running this
+   command on a UNIX system:
+    <screen>
+     &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb tdb</userinput>
+    </screen>
+   On a Windows system, use this command at a DOS 
+     <footnote><para>Under Windows, you must use the standard Windows
+     command shell (DOS) to run &qmtest;; alternative shells (such as Cygwin)
+     will not work with &qmtest;.</para></footnote>
+   prompt:
+    <screen>
+     &prompt;<userinput>xcopy c:\progra~1\qm\share\qm\tutorial\test\tdb tdb\ /s</userinput>
+    </screen>
+   If you installed &qmtest; in another directory,
+   substitute that directory for <filename>/usr/local</filename> or
+   <filename>c:\progra~1\qm</filename> in the commands above.</para>
+
+   <para>Then, enter the new directory you have created.  On both UNIX
+   and Windows systems, you can do this with this command:
+    <screen>
+     &prompt;<userinput>cd tdb</userinput>
+    </screen>
+   </para>
+
+   <para>Make sure that &qmtest; is in your <envar>PATH</envar> so
+   that the operating system can find it.  On UNIX, you can use this
+   command:
+    <screen>
+     &prompt;<userinput>PATH=/usr/local/bin:${PATH}; export PATH</userinput>
+    </screen>
+   in the Bourne shell.  In the C shell, use:
+    <screen>
+     &prompt;<userinput>setenv PATH /usr/local/bin:${PATH}</userinput>
+    </screen>
+   On Windows, use:
+    <screen>
+     &prompt;<userinput>PATH C:\progra~1\qm\bin;%PATH%</userinput>
+    </screen>
+   In order to avoid having to retype these commands every time you
+   want to use &qmtest;, you can set up your system so that these
+   commands are executed automatically when you log in.  Consult your
+   system's manuals to find out how to do this.
+   </para>
+ 
+  </section> <!-- sec-testtut-setting-up -->
+
+  <section id="sec-testtut-gui">
+   <title>Starting the Graphical Interface</title>
+
+   <para>To examine the tests in the test database, you can use
+   &qmtest;'s graphical user interface.  To start the graphical user
+   interface, use the <command>qmtest gui</command> command, like
+   this: 
+
+   <screen>
+&prompt;<userinput>qmtest gui</userinput>
+   </screen>
+
+   You will see output similar to:
+
+   <screen><computeroutput><![CDATA[
+QMTest running at http://127.0.0.1:1158/test/dir
+]]></computeroutput></screen>
+   </para>
+
+   <para>After a moment, a new web browser window will open, and you
+   will see the &qmtest; graphical user interface (GUI).  If a web
+   browser window does not open, you will have to manually enter the
+   URL that &qmtest; printed out
+   (<literal>http://127.0.0.1:1158/test/dir</literal> in the example
+   above) into your browser.  Alterantively, you can edit your <link
+   linkend="chap-common-manual">QM configuration file</link> to tell
+   QM how to invoke your browser and then start the GUI again.</para>
+
+   <para>As you can see, &qmtest; creates a graphical user interface
+   using your web browser.</para>
+
+   <para>The page you see in your browser shows the contents of the
+   test database.  You can see that there are three tests in the
+   database, named <filename>exec0</filename>, <filename>exec1</filename>,
+   and <filename>exec2</filename>.  You can always click on 
+   <guilabel>Directory</guilabel> under &qmtest's
+   <guilabel>View</guilabel> menu to see this display.</para>
+     
+  </section><!-- sec-testtut-gui -->
+
+  <section id="sec-testtut-running-tests">
+   <title>Running Tests</title>
+
+   <para>To run all the tests, choose <guibutton>All Tests</guibutton>
+   from the <guilabel>Run</guilabel> menu.  &qmtest; will display the
+   test results page.  As the tests run, this page will be
+   automatically updated.  (If you do not want to wait for QMTest to
+   update the page, you can manually reload the page in your browser.)
+   After a few moments, &qmtest; will display the test results for the
+   three tests in the database.  The upper part of the screen gives a
+   statistical overview of the test results.  Of the three tests, two
+   passed.  However, one test failed.  You can use this statistical
+   information to get a quick overview of your application's
+   correctness.</para>
+
+   <para>In addition to showing you how many tests passed and how
+   many failed, &qmtest; shows you whether how many tests had
+   <emphasis>unexpected</emphasis> pass or fail outcomes.  If you 
+   know that certain tests will fail, you can tell &qmtest; that they 
+   are expected to fail.  Then, if you are testing a change to
+   your application, you can easily see whether your change made
+   things better or worse.  As long as there are no unexpected
+   failures, your change did not cause any problems.</para>
+
+   <para>If you have not explicitly set up an expectation for a test,
+   &qmtest; assumes that the test is expected to pass.  That is why 
+   &qmtest; indicated that there was one unexpected failure when you
+   ran the tests.</para>
+
+   <para>Below the statistics section, &qmtest; displays detailed
+   information about each test.  In this case, you can see that the
+   <filename>exec1</filename> test is the one that is failing.  You
+   can click on the <guilabel>Details</guilabel> link to get
+   additional information about why a particular test is
+   failing.</para>
+
+  </section> <!-- sec-testtut-running-tests -->
+
+  <section id="sec-testtut-expectations">
+   <title>Setting Expectations</title>
+
+   <para>The easiest way to create expectations is to tell &qmtest;
+   that you expect future results to be the same as the results you
+   just obtained.  Save the results of your test run by choosing
+   <guibutton>Save Results</guibutton> from the
+   <guilabel>File</guilabel> menu.  &qmtest; will prompt you for a
+   file to use to store the results of your test run.  If you exit
+   &qmtest;, you can reload this file to recover your test results
+   without rerunning the tests.</para>
+
+   <para>You can also use this file to set &qmtest;'s expectations.
+   Choose <guibutton>Load Expectations</guibutton> from the
+   <guilabel>File</guilabel> menu and provide the same file name that
+   you used when you told &qmtest; when you asked it to save your
+   results earlier.</para>
+   
+   <para>Then, &qmtest; will redisplay the test results, but now you
+   will see that there are no unexpected failures; the current results
+   match your expectations.</para>
+
+   <para>You can also manually edit expectations.  Click on the
+   <guilabel>Expectation</guilabel> link next to a particular test to
+   set the expectation.  To set the expectation for
+   <filename>exec1</filename> back to <literal>PASS</literal>, click
+   on the <guilabel>Expectation</guilabel> link next to
+   <filename>exec1</filename>, choose <literal>PASS</literal>, and
+   click the <guibutton>OK</guibutton> button.  You will see that now
+   the <filename>exec1</filename> failure is unexpected again.  You
+   can save your expectations by choosing <guibutton>Save
+   Expectations</guibutton> from the <guilabel>File</guilabel>
+   menu.</para>
+
+  </section>
+
+  <section id="sec-testtut-examining">
+   <title>Examining Tests</title>
+   
+   <para>Click on the <filename>exec1</filename> label to examine the
+   failing test.  &qmtest; will display information about the test.
+   The most important information about the test is its
+   <firstterm>test class</firstterm>.  This test is an instance of the
+   <classname>python.ExecTest</classname> class.  The test class
+   indicates what kind of test <filename>exec1</filename> is.
+   &qmtest; gives a brief description of the test class in the GUI; a
+   <classname>python.ExecTest</classname> checks that a Python
+   expression evaluates to true.</para>
+
+   <para>For more details about the test class, you can click on the
+   <guilabel>Help</guilabel> link to the right of the description.
+   &qmtest; will pop up a window that describes the test in more
+   detail.  In summary, a <classname>python.ExecTest</classname>
+   executes some setup code.  Then, a Python expression is evaluated.
+   If the expression evaluates to true, the test passes; otherwise, it
+   fails.</para>
+
+   <para>The setup code and the expression are the
+   <firstterm>arguments</firstterm> to the test class.  Every test
+   class takes arguments; the arguments are what differentiate one
+   instance of a test class from another.  &qmtest; displays the
+   arguments for the <filename>exec1</filename> test in the GUI.  In
+   this case, the sequence of statements is simply the single
+   statement <literal>x = 2</literal>, which assigns
+   <literal>2</literal> to the variable <varname>x</varname>.  The
+   expression is <literal>x + x == 5</literal>, which compares
+   <literal>x + x</literal> with <literal>5</literal>.  Since
+   <varname>x</varname> is <literal>2</literal> in this case, this
+   expression evaluates to false.  That is why the test fails.</para>
+
+   <para>You can click on the <guilabel>Help</guilabel> link next to
+   each argument to get more details about exactly what the argument
+   is for.</para>
+
+  </section> <!-- sec-testtut-examining -->
+
+  <section id="sec-testtut-modifying">
+   <title>Modifying and Creating Tests</title>
+
+   <para>To fix the test, you need to change the arguments to the
+   test.  Select <guibutton>Edit Test</guibutton> from the
+   <guilabel>Edit</guilabel> menu.  &qmtest; will display a form that
+   allows you to change the arguments to the test.</para>
+
+   <para>Change the second argument, labeled "Python Expression," to
+   <literal>x + x == 4</literal>.  Then click on the
+   <guibutton>OK</guibutton> button at the bottom of the page to save
+   your changes.  Choose <guibutton>This Test</guibutton> from the
+   <guibutton>Run</guibutton> menu and observe that the test now
+   passes.</para>
+
+   <para>Creating a new test works in a similar way.  Click on the
+   <guilabel>Home</guilabel> link to return to the main &qmtest; page.
+   Then, select <guibutton>New Test</guibutton> from the
+   <guilabel>File</guilabel> menu to create a new test.  &qmtest;
+   displays a form that contains two fields: the test name, and the
+   test class.  The test name identifies the test; the test class
+   indicates what kind of test will be created.</para>
+
+   <para>Test names must be composed entirely of lowercase letters,
+   numbers, the <quote>_</quote> character, and the <quote>.</quote>
+   character.  You can think of test names like file names.  The
+   <quote>.</quote> character takes the place of <quote>/</quote> on
+   UNIX or <quote>\</quote> on Windows; it allows you to place a test
+   in a particular <firstterm>directory</firstterm>.  For example, the
+   test name <filename>a.b.c</filename> names a test named
+   <filename>c</filename> in the directory <filename>a.b</filename>.
+   The directory <filename>a.b</filename> is a subdirectory of the
+   directory <filename>a</filename>.  By organizing your tests in
+   directories, you will make it easier to keep track of your tests.
+   In addition, &qmtest; can automatically run all the tests in a
+   particular directory, so by using directories you will make it easy
+   to run a group of related tests at once.</para>
+
+   <para>Enter <filename>command.test1</filename> for the test name.
+   This will create a new test named <filename>test1</filename> in the
+   <filename>command</filename> directory.  Choose
+   <classname>command.ExecTest</classname> as the test class.  This
+   kind of test runs a command and compares its actual output against
+   the expected output.  If they match, the test passes.  This test
+   class is useful for testing many programs.  Click on the
+   <guibutton>Next</guibutton> button to continue.</para>
+   
+   <para>Now, &qmtest; will present you with a form that looks just
+   like the form you used to edit <filename>exec1</filename>, except
+   that the arguments are different.  The arguments are different
+   because you're creating a different kind of test.  Enter
+   <literal>echo</literal> in the <guilabel>Program</guilabel> field.
+   Click on the <guibutton>Add Another</guibutton> button to add a program
+   argument and enter <literal>test</literal> in the box that appears.
+   At this point, you've told qmtest that you want to run the command
+   <command>echo test</command>.  This command will produce an output
+   (the word <literal>test</literal>) as output, so find the
+   <guilabel>Standard Output</guilabel> box and enter
+   <literal>test</literal> in this box.  Make sure to hit the
+   <keycap>Return</keycap> key after you type <literal>test</literal>;
+   the <command>echo</command> command will output a carriage return
+   after it prints the word <literal>test</literal>, so you must
+   indicate that you expect a carriage return.  When you are done,
+   click the <guibutton>OK</guibutton> button at the bottom of the
+   form.</para>
+
+   <para>Now you can select <guibutton>This Test</guibutton> from the
+   <guilabel>Run</guilabel> menu to run the test.</para>
+
+   <para>When you're done experimenting with &qmtest, choose
+   <guibutton>Exit</guibutton> from the <guilabel>File</guilabel>
+   menu.</para>
+
+  </section> <!-- sec-testtut-modifying -->
+
+  <section id="sec-testtut-cmdline">
+   <title>Using the Command-Line Interface</title>
+
+   <para>All of &qmtest;'s functionality is available from the
+   command-line, as well as in the graphical user interface.  When you
+   invoke &qmtest-cmd; on the command line, you specify a command
+   argument, which tells the program which action to perform.  Some
+   commands require additional options and arguments, which you place
+   after the command.  There are a few options that apply to all
+   commands; to use these options place them before the command name.
+   For example, in the command:
+
+   <screen>
+    &prompt;<userinput>qmtest -D . run -f full exec1</userinput>
+   </screen>
+
+   the <option>-D .</option> option is a general &qmtest-cmd;
+   option, <command>run</command> is the &qmtest; command, the
+   <option>-f full</option> applies to the <command>run</command>
+   command, and <filename>exec1</filename> is an argument to the run
+   command.  This command tests &qmtest; to run the
+   <filename>exec1</filename> test from the test database in
+   <filename>tdb</filename>, and to use the <option>full</option>
+   format when displaying the results.</para>
+                        
+   <para>To see a list of available commands, and general options to
+   &qmtest-cmd;, invoke it with the <option>&dashdash;help</option> (or
+   <option>-h</option>) option.  To see a description of each command,
+   and additional options specific to that command, invoke
+   <command>qmtest <replaceable>command</replaceable>
+   &dashdash;help</command>.</para>
+
+   <para>By this point, you have modified the test database using the
+   GUI and have fixed the failing test.  Recreate the original
+   database now by removing and recreating the <filename>tdb</filename>
+   directory.  On a UNIX system use these commands:
+    <screen>
+     &prompt;<userinput>cd ..</userinput>
+     &prompt;<userinput>rm -rf tdb</userinput>
+     &prompt;<userinput>cp -r /usr/local/share/qm/tutorial/test/tdb tdb</userinput>
+     &prompt;<userinput>cd tdb</userinput>
+    </screen>
+   On a Windows system, use these commands instead:
+    <screen>
+     &prompt;<userinput>cd ..</userinput>
+     &prompt;<userinput>rmdir /s tdb</userinput>
+     &prompt;<userinput>xcopy c:\progra~1\qm\share\qm\tutorial\test\tdb tdb\ /s</userinput>
+     &prompt;<userinput>cd tdb</userinput>
+    </screen>
+   </para>
+
+   <para>The command for running tests is <command>&qmtest-cmd;
+   run</command>.  Assuming you made a copy of the example test
+   database as described in the previous section, execute the
+   following command to run all the tests in the database:</para>
+
+   <screen>
+&prompt;<userinput>qmtest run</userinput>
+   </screen>
+
+   <para>&qmtest; runs the tests, and prints a summary of the test
+   run:</para>
+
+   <screen><computeroutput><![CDATA[
+--- TEST RESULTS -------------------------------------------------------------
+
+  exec0                                         : PASS    
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
+
+    ExecTest.expr:
+      x + x == 5
+
+    ExecTest.value:
+      0
+
+  exec2                                         : PASS    
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+       1 ( 33%) tests FAIL
+       2 ( 67%) tests PASS
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
+
+]]></computeroutput></screen>
+
+   <para>&qmtest; shows you the result of the tests as they execute.
+   Then, there is a summary description containing statistics similar
+   to those shown in the graphical user interface.  Finally, &qmtest;
+   lists the tests that did not pass, along with the cause of the
+   failure.</para>
+   
+  </section> <!-- sec-testtut-cmdline -->
+
+  <section id="sec-testtut-expected-outcomes">
+   <title>Expectations on the Command Line</title>
+
+   <para>When you run &qmtest; on the command line, it automatically
+   creates a results file called <filename>results.qmr</filename>.
+   You can specify a different filename with the <option>-o</option>
+   option.  Run this command:
+
+   <screen>
+&prompt;<userinput>qmtest run -o expected.qmr</userinput>
+   </screen>
+
+   to save the results to a file named
+   <filename>expected.qmr</filename> instead of the default
+   <filename>results.qmr</filename>.</para>
+
+   <para>Now, when you rerun the tests you can tell &qmtest; to use 
+   <filename>expected.qmr</filename> as the <firstterm>expected
+   results file</firstterm>, like this:
+
+   <screen>
+&prompt;<userinput>qmtest run -O expected.qmr</userinput>
+   </screen>
+
+   &qmtest; will rerun the tests, but this time it will not mention
+   the failure of <filename>exec1</filename>.  The output will look 
+   like:
+
+   <screen>
+<computeroutput><![CDATA[
+--- TEST RESULTS -------------------------------------------------------------
+
+  exec0                                         : PASS    
+
+  exec1                                         : XFAIL   
+    Expression evaluates to false.
+
+    ExecTest.expr:
+      x + x == 5
+
+    ExecTest.value:
+      0
+
+  exec2                                         : PASS    
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+       3 (100%) tests as expected
+
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  None.
+
+]]></computeroutput></screen>
+
+   Note that &qmtest; indicates that there were no tests with
+   unexpected outcomes, even though <filename>exec1</filename> still
+   fails.  The <literal>XFAIL</literal> notation indicates that the
+   test failed, but that failure was expected.  In contrast,
+   <literal>XPASS</literal> means that a test passed
+   unexpectedly.</para>
+
+  </section> <!-- sec-testtut-expected-outcomes -->
+
+  <section id="sec-testtut-results">
+   <title>Reviewing Results</title>
+
+   <para>You can use the results file generated by &qmtest; to get
+   additional information about the tests that failed.  The default
+   results file name is <filename>results.qmr</filename> and is placed
+   in the directory where you ran &qmtest;.</para>
+  
+   <para>To examine the results file, use the
+   <command>summarize</command> command, like this:
+ 
+   <screen>
+&prompt;<userinput>qmtest summarize -f full</userinput>
+   </screen>
+
+   The <option>-f full</option> option indicates that the output
+   should be displayed in more detail.  The output will look like:
+
+   <screen><computeroutput><![CDATA[
+--- TEST RESULTS -------------------------------------------------------------
+
+  exec0                                         : PASS    
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
+
+    ExecTest.expr:
+      x + x == 5
+
+    ExecTest.value:
+      0
+
+  exec2                                         : PASS    
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+       1 ( 33%) tests FAIL
+       2 ( 67%) tests PASS
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL    
+    Expression evaluates to false.
+
+]]></computeroutput></screen>
+
+   </para>
+
+   <para>The detailed information indicates what went wrong.  The test
+   value was <literal>0</literal> which is considered false by Python.
+   The information displayed by the <quote>full</quote> format is
+   domain-dependent; it depends on the kind of application you are
+   testing.  The tests in the sample database test basic functionality
+   of the Python interpreter, so the full report contains information
+   about Python concepts called exceptions and tracebacks.  If you
+   were testing a different application, the full report would contain
+   different information.  For example, if you were testing a
+   database, the detailed results might refer to queries and
+   records.</para>
+
+  </section> <!-- sec-testtut-results -->
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("manual.xml" "book" "chapter")
+  End:
+-->

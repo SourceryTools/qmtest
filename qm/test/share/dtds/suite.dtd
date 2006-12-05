@@ -1,0 +1,25 @@
+<!--
+
+  File:   suite.dtd
+  Author: Alex Samuel
+  Date:   2001-04-19
+
+  Contents:
+    DTD for a test suite.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTest Suite V0.1 -->
+
+<!-- A test suite.  -->
+<!ELEMENT suite ((test_id | suite_id)*)>
+
+<!-- A single test ID.  -->
+<!ELEMENT test_id (#PCDATA)>
+
+<!-- A single suite ID.  -->
+<!ELEMENT suite_id (#PCDATA)>

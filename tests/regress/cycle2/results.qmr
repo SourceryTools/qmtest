@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE results PUBLIC "-//Software Carpentry//QMTest Result V0.3//EN" "http://www.software-carpentry.com/qm/xml/result.dtd">
+<results>
+<result id="a" kind="test"><outcome>PASS</outcome><property name="qmtest.target">local</property></result>
+<result id="b" kind="test"><outcome>UNTESTED</outcome><property name="qmtest.cause">This test depends on itself, either directly or by way of other tests.</property></result>
+<result id="c" kind="test"><outcome>UNTESTED</outcome><property name="qmtest.cause">A prerequisite produced an incorrect outcome.</property><property name="qmtest.expected_outcome">PASS</property><property name="qmtest.outcome">UNTESTED</property><property name="qmtest.prequisite">b</property></result>
+
+</results>

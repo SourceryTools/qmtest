@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   common-manual.xml
+  Author: Alex Samuel
+  Date:   2001-05-17
+
+  Contents:
+    Manual for common QM components.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-common-manual">
+ <title>The &qm; Configuration File</title>
+ 
+ <para>&qm; allows you to set up a per-user configuration file that
+ contains your personal preferences, defaults, and settings.</para>
+
+ <para>The configuration file is named
+ <filename>$HOME/.qmrc</filename>.  On Windows, you may have to set
+ the <envar>HOME</envar> environment variable manually.</para>
+
+ <para>The &qm; configuration file is a plain text file, with a format
+ similar to that used in Microsoft Windows <filename>.INI</filename>
+ files.  It is divided into sections by headings in square brackets.
+ Three sections are supported: <literal>[common]</literal> contains
+ configuration variables common to all the &qm; tools, while
+ <literal>[test]</literal> contains
+ configuration variables specific to &qmtest;.  Within
+ each section, configuration variables are set using the syntax
+ <literal><replaceable>variable</replaceable>=<replaceable>value</replaceable></literal>.</para>
+
+ <para>Here is a sample &qm; configuration file:</para>
+
+ <screen>
+&prompt;<userinput>cat ~/.qmrc</userinput>
+<computeroutput>[common]
+browser=/usr/local/bin/mozilla
+</computeroutput></screen>
+
+ <section id="sec-rc-common">
+  <title>Configuration Variables</title>
+
+  <para>These configuration variables are used in all &qm; tools.  You
+  should define them in the <literal>[common]</literal> section of your
+  &qm; configuration file.</para>
+
+  <glosslist>
+
+   <glossentry>
+    <glossterm>
+     <property>browser</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The path to your preferred web browser.  If omitted, &qm;
+     attempts to run <filename>mozilla</filename>.  The &qm; GUI does
+     not correctly with Netscape 4 due to limitations in the support
+     for JavaScript and DOM in that browser.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>command_shell</property>
+    </glossterm>
+    <glossdef>
+     <para>The shell program to run a single shell command.  The value
+     of this property is the path to the shell executable, optionally
+     followed by command-line options to pass to the shell, separated
+     by spaces.  The shell command to run is appended to the
+     command.</para>
+
+     <para>On GNU/Linux systems, the default is
+     <filename>/bin/bash&nbsp;-norc&nbsp;-noprofile&nbsp;-c</filename>.
+     On other UNIX-like systems, the default is
+     <filename>/bin/sh&nbsp;-c</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>script_shell</property>
+    </glossterm>
+    <glossdef>
+     <para>The shell program to run a shell script.  The value of this
+     property is the path to the shell executable, optionally followed
+     by command-line options to pass to the shell, separated by spaces.
+     The filename of the shell command is appended to the
+     command.</para>
+
+     <para>On GNU/Linux systems, the default is
+     <filename>/bin/bash&nbsp;-norc&nbsp;-noprofile</filename>.  On
+     other UNIX-like systems, the default is
+     <filename>/bin/sh</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>sendmail</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The path to the <filename>sendmail</filename> program, or a
+     compatible replacement.  This program is used for sending email
+     messages.  The default value is
+     <filename>/usr/lib/sendmail</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+   <glossentry>
+    <glossterm>
+     <property>remote_shell</property> (UNIX-like platforms only)
+    </glossterm>
+    <glossdef>
+     <para>The program used for running commands on remote computers.
+     The program must accept the same syntax as the standard
+     <filename>rsh</filename> command, and should be configured to run
+     the command remotely without any additional interaction (such as
+     requesting a password from the TTY).  The default value is
+     <filename>/usr/bin/ssh</filename>.</para>
+    </glossdef>
+   </glossentry>
+
+  </glosslist>
+
+ </section> <!-- sec-rc-common -->
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("manual.xml" "book" "chapter")
+  End:
+-->

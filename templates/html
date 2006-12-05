@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+  File:   Fill me in!
+  Author: Fill me in!
+  Date:   YYYY-MM-DD
+
+  Contents:
+    Fill me in!
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="../../qm.css" />
+
+    <title>Fill me in!</title>
+  </head>
+
+  <body>
+    <p>Text goes here.</p>
+  </body>
+</html>
+
+<!-- 
+  Local Variables:
+  mode: html
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

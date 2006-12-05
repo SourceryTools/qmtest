@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<class-directory>
+<class kind="database">xml_database.XMLDatabase</class>
+<class kind="test">command.ExecTest</class>
+<class kind="test">command.ShellCommandTest</class>
+<class kind="test">command.ShellScriptTest</class>
+<class kind="test">file.FileContentsTest</class>
+<class kind="test">python.ExecTest</class>
+<class kind="test">python.ExceptionTest</class>
+<class kind="test">python.StringExceptionTest</class>
+<class kind="resource">temporary.TempDirectoryResource</class>
+<class kind="target">serial_target.SerialTarget</class>
+<class kind="target">thread_target.ThreadTarget</class>
+<class kind="target">process_target.ProcessTarget</class>
+<class kind="target">rsh_target.RSHTarget</class>
+<class kind="label">file_label.FileLabel</class>
+<class kind="label">python_label.PythonLabel</class>
+</class-directory>

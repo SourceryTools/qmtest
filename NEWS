@@ -1,0 +1,140 @@
+NEWS
+====
+
+This file describes user visible changes to QM.
+
+QM 2.0.4 (Not Yet Released)
+===========================
+
+A defect that could cause crashes in the RSHTarget class has been
+corrected.
+
+QM 2.0.3
+========
+
+A JavaScript issue that prevented the pop-up menus in the GUI from
+working correctly with Mozilla 1.0.1 was corrected.
+
+A bug that could cause QMTest to hang when running tests in parallel
+has been corrected.
+
+QM 2.0.2
+========
+
+When a test fails due to dependency on a resource that could not be
+set up, the GUI now displays a link to the resource result from the
+test result.  (Previously, there was no way to get information about
+resource failures in the GUI.)
+
+The GUI now offers a choice of available prerequisite tests and
+resources when editing a test.
+
+The substitutions field for the FileContentsTest now works correctly
+in the GUI.  This is an incompatible change; tests that use this test
+class will require hand-editing.
+
+An argument in a derived test or resource class which has the same
+name as an argument in a base class now overrides the base class
+argument.  Therefore, every test class will have only one argument
+with a given name.  (Previously, both the base and derived class
+arguments were present.)
+
+QM 2.0.1
+========
+
+A bug that prevented the "New Resource" entry on the "File" menu from
+working has been fixed.
+
+QM 2.0
+======
+
+Netscape 4 is no longer supported by the QMTest GUI.  Mozilla 1.x and
+Internet Explorer 6 are the recommended browsers for use with the
+QMTest GUI.  On UNIX-like systems, QMTest will now try to run
+"mozilla", rather than "netscape", by default.
+
+Tests are no longer run in a random order by default.  To run tests in
+a random order, you must now use the "--random" option to "qmtest run".
+
+QMTest now has a "ProcessTarget" target class that can be used to
+run tests in parallel on systems that do not support threads.
+
+QMTest now requires that all extension classes be listed in the
+classes.qmc file in the directory that contains the extension class.
+
+QMTest now uses a uniform XML file format for all extension classes,
+including tests, resources, databases, and targets.  This format will
+remain stable for the forseeable future.  While QMTest 2.0 can read
+the formats created by previous versions of QMTest, it will only write
+files in the new format.  Most users will be unaffected by these
+changes.
+
+New command-line options:
+-------------------------
+
+QMTest now has a "--version" option.
+
+The "qmtest run" command now has a "--rerun" option to rerun only
+those tests which had unexpected outcomes when the tests were last
+run.
+
+The "qmtest run" command now has a "--random" option to run the tests in 
+a random order.
+
+The "qmtest extensions" command can be used to list the available
+extension classes.
+
+The "qmtest register" command can be used to register new extension 
+classes and to try loading an extension class.
+
+The "qmtest help" command is a synonym for "qmtest --help".
+
+The "qmtest run" and "qmtest gui" commands now use a file named
+"context" in the current directory as a context file if no explict -C
+option is provided.
+
+QM 1.1.5
+========
+
+When loading a test, resource, or database class, the directory
+containing the extension class is placed at the front of the path used
+to search for modules.  In previous versions of QMTest, it was placed
+at the back.
+
+QM 1.1.4
+========
+
+The QMTest GUI no longer crashes when the "Cancel" button is hit when
+creating a new test suite.
+
+Commands like "qmtest create-tdb --attribute X=Y" where "Y" contains
+spaces are now handled correctly.
+
+QM 1.1.3
+========
+
+The "-c" option to "qmtest run" did not work correctly in QM 1.1.2.
+This problem has been corrected.
+
+QM 1.1.2
+========
+
+QM is now licensed under the GNU General Public License.
+
+The QMTest GUI has been substantially improved.
+
+It is now possible to load and save the context in the GUI.
+
+Numerous small bugs have been fixed.
+
+QM 1.1
+======
+
+QMTest now works on systems that do not have support for threads, or,
+more precisely, when using a Python interpreter for which "import
+thread" fails.
+
+The Makefiles and build tree have been reorganized so as to make
+installation from source simpler.
+
+QMTest should now build on Debian GNU/Linux without configure options.

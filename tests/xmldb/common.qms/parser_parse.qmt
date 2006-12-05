@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>import qm.cmdline
+
+name = 'qmtrack'
+option_a = ('a', 'a_option', None, 'Option A Description')
+option_b = ('b', 'b_option', 'foo', 'Option B Description')
+option_c = ('c', 'c_option', None, 'Option C Description')
+option_d = ('d', 'd_option', None, 'Option D Description')
+option_e = ('e', 'e_option', None, 'Option E Description')
+option_f = ('f', 'f_option', None, 'Option F Description')    
+command_1 = ('create', 'Create an issue', 'name',
+             "This command will create an issue. _name_ is the"
+             " name of the issue to be created.",
+             [option_d])
+command_2 = ('edit', 'Edit an issue', 'issue field1=foo field2+=bar',
+             "This command will edit an issue. _issue_ is the"
+             " name of the issue to be edited. field1, field2,..."
+             " are the fields to be edited.",
+             [option_e])
+command_3 = ('join', 'Join two issues', 'issue1 issue2',
+             "This command will join two issues. _issue1_ and"
+             " _issue2_ are the two issues to be joined.",
+             [option_f])
+
+options = [ option_a, option_b, option_c ]
+commands = [ command_1, command_2, command_3 ]
+
+parser = qm.cmdline.CommandParser(name, options, commands)
+
+command_line = [
+    '-b', 
+    'foo', 
+    '--a_option', 
+    'edit', 
+    '--e_option', 
+    'issue1', 
+    'issue2'
+    ]
+
+parsed_line = parser.ParseCommandLine(command_line)
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>parsed_line[0][0][0] == 'b_option' \
+  and parsed_line[0][0][1] == 'foo' \
+  and parsed_line[0][1][0] == 'a_option' \
+  and parsed_line[0][1][1] == '' \
+  and parsed_line[1] == 'edit' \
+  and parsed_line[2][0][0] == 'e_option' \
+  and parsed_line[2][0][1] == '' \
+  and parsed_line[3][0] == 'issue1' \
+  and parsed_line[3][1] == 'issue2'
+</text>
+ </argument>
+ <prerequisite outcome='PASS'>common.parser_create</prerequisite>
+</test>

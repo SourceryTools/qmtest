@@ -1,0 +1,642 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design-probe.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-15
+
+  Contents:
+    Design of the probe database.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<section id="sec-design-interfaces-probe">
+ <title>&M-PD;</title>
+
+ <para>From a study of &Qautoconf;, we believe that several basic
+ categories of probes are needed:</para>
+
+ <variablelist>
+  <varlistentry>
+   <term>Checking for a command</term>
+   <listitem>
+    <para>Frequently we need to determine whether or not a command
+    exists.  For example, if we are building a library on &Qunix;,
+    some systems require us to use <command>ranlib</command>.
+    However, some &Qunix; systems do not need or even have
+    <command>ranlib</command>.</para>
+
+    <para>Other times, we may need to test if one of several command
+    exists, perhaps choosing the <quote>best</quote>, based on some
+    metric.  For example, many systems have several C compilers.  It
+    may matter which one is used, so we need to be able to supply
+    tests.  The &D-tailor; may have an opinion to offer, too, in which
+    case we may still want to test the chosen compiler for
+    sanity.</para>
+
+    <para>An annoying reality is that our ability to test a program
+    may depend on the privileges of the &D-tailor;.</para></listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Checking for a file or database</term>
+   <listitem>
+    <para>We may need to see if certain files or databases are present.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for libraries and functions</term>
+   <listitem>
+    <para>The &Qautoconf; system does this by building test programs
+    and compiling them.  &Qmetaconfig; does this by using
+    <command>nm</command> to build a list of the entry points in an
+    archive, and parsing the output.  While this is faster, it is
+    sensitive to changes in the output of <command>nm</command>.
+    Given that even inexpensive computers are fast these days, it is
+    probably best to use the compilation approach.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for header files</term>
+   <listitem>
+    <para>The &Qautoconf; system does this by attempting to compile a
+    small program using the header file.  Since some systems use
+    precompiled header files, this is superior to simply searching
+    under, say, <filename class="directory">/usr/include</filename> on
+    &Qunix;.  Furthermore, different compilers or compiler switches
+    may alter where header files are found.  Compiling verifies that a
+    header file is actually available.</para>
+
+    <para>It would be good to test the usability of header files,
+    including compatibility with other header files.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Check for functions, types, structure members</term>
+   <listitem>
+    <para>In rare cases, permissions of the caller may affect probe
+    results.  For instance, can arbitrary users change ownership of
+    files with <function>chown</function> (as in AIX, for files in
+    &Qafs;), or is this restricted to the superuser?  These cases can
+    probably be handled by "guessing" based on platform, using a
+    default that won't cause major problems if wrong, and using site
+    conventions (which could perhaps be determined using a script,
+    verifiable by the system administrator or system integrator, that
+    actually performs probes under superuser privileges).</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>Determine compiler characteristics</term>
+   <listitem>
+    <para>Some of the characteristics that need checking have to do
+    with language dialects.  For instance, does the C compiler provide
+    some sort of useful <type>inline</type> keyword?  Most platforms
+    now provide ANSI C, but we want to test characteristics of
+    prototypes anyway.  C++ provides even more room for
+    variation.</para>
+
+    <para>Some compiler characteristics may seem, at first glance, to
+    be system characteristics.  For instance, in C or C++, how big are
+    <type>int</type>, <type>long</type>, and <type>float</type>?  How
+    many bits of precision does a <type>float</type> or a
+    <type>double</type> have?  Is there a usable Fortran
+    <type>REAL*16</type> type?  We might consider some of these to be
+    <quote>system</quote> characteristics, but in reality, different
+    compilers (perhaps the same compiler with different options) may
+    implement these features in different ways.</para>
+   </listitem>
+  </varlistentry>
+
+ </variablelist>
+
+ <figure id="fig-cl-probe" float="1">
+  <title>Probe Database</title>
+  <mediaobject>
+
+   <imageobject>
+    <imagedata align="center" scale="40" scalefit="1"
+               fileref="cl_probe.png" format="PNG"></imagedata>
+   </imageobject>
+
+   <textobject>
+    <phrase>Probe database</phrase>
+   </textobject>
+
+  </mediaobject>
+ </figure>
+
+ <para><xref linkend="fig-cl-probe"></xref> shows the &M-PD;.  The
+ &M-SCAN; module determines the tailoring symbols needed to tailor a
+ &D-kit;; from these, probes are selected by name.  It must be
+ possible to determine the probe name and the &D-disparms; for that
+ probe from the symbol name.  Once a probe has been located, it can be
+ qualified by the &D-probeplat; and parameters.  The probe contains a
+ test program to test for some feature.</para>
+
+ <para>The difficulty of designing the probe database is that we
+ cannot assume any particular scripting language is available to help
+ us to interpret probe results.  This difficulty arises from the need
+ to support bootstrap scripts.  We might be able to divide probes into
+ two categories: those that can be used by bootstrap scripts, and
+ those that cannot (but may use &Qpython; scripting).</para>
+
+ <para>We have not chosen an actual syntax for probes.  We expect each
+ probe to be a file residing in a directory on a search path; perhaps
+ each probe file will be described in &Q-XML;.  We should point out
+ that our &Q-LDAP; advocate believes that &Q-LDAP; would form a better
+ basis for the probe database, and this could lead to a distributed
+ system wherein the latest available versions of probes are always
+ used.</para>
+
+ <section>
+  <title><classname>QualifiedProbe</classname> class</title>
+
+  <para><programlisting>
+<![CDATA[
+class QualifiedProbe:
+
+    """Class representing a qualified probe.  Probes may depend on
+    symbols, like other scripts and programs.  They also accept
+    parameters, which tailor the probe for particular uses (for
+    instance, specify a function for which the have_function probe
+    should test.  A probe that has been passed parameters is a
+    "qualified probe"."""
+
+
+    def GetProbeSource(self):
+
+        """Get a "ProbeSource" object representing this qualified
+        probe.
+
+        returns -- A "ProbeSource" object."""
+
+
+    def GetDefinedSymbols(self):
+
+        """Get the list of symbols defined by this qualified probe.
+
+        returns -- List of Symbol objects These have already been
+        initialized with the appropriate "ProbeSource" objects."""
+
+
+    def GetRequiredSymbols(self):
+
+        """Get the list of symbols required by this qualified probe.
+        These symbols will need values before the probe script can be
+        executed.
+
+        returns -- List of Symbol objects."""
+
+
+    def GetScript(self):
+
+        """Get the script needed to execute this qualified probe.
+
+        returns -- The script."""
+        
+
+    def GetPatternSet(self, prog_lang, set_name=None):
+
+        """Get a pattern for identifying symbols relating to this
+        probe.
+
+        'prog_lang' -- Name of the programming language for which we
+        need a pattern.
+
+        'set_name' -- Name of the pattern set.  Some programming
+        languages may define several sorts of symbols, e.g., for
+        matching magic header files, for matching preprocessor
+        symbols, etc.  Other languages may have a single pattern set,
+        in which case this parameter may be omitted.
+
+        returns -- A PatternSet.
+
+        $$$ We need to spec out PatternSet objects.  They must allow a
+        Scanner to identify symbols, determine the distinguished
+        parameters, and determine the probe."""
+]]></programlisting></para>
+ </section>
+
+ <section>
+  <title><classname>Probe</classname> class</title>
+
+  <para>The <classname>Probe</classname> class represents an actual,
+  unqualified probe.  A <classname>Probe</classname>, when execute,
+  will supply values to one or more tailoring symbols.  A script tests
+  for a feature; this script may require additional features.  The
+  actual script, as well as the symbols defined and required, can
+  depend on the &D-probeplat;.</para>
+
+  <para>Probes can have documentation associated with them.  It may be
+  useful to associate additional information, such as the patterns to
+  match problematic code in programs that could be fixed by using this
+  probe.<footnote> <para>The <application>CONFBASE</application>
+  proposal associated "causes", or portability problems, with
+  "solutions", or portable code that depended on probe results.  This
+  information could be used to provide tools for the programmer to
+  make his or her code more portable.
+  <application>CONFBASE</application> separated this information from
+  the probes, since a probe might be associated with several
+  solution.</para> </footnote> </para>
+
+  <para><programlisting>
+<![CDATA[
+class Probe:
+
+    """Class representing a probe."""
+
+    def __init__(self, probe_name, version, source,
+                 probe_dp, short_doc, long_doc=None):
+
+        """Define a new probe.
+
+        'probe_name' -- The name of this probe.
+
+        'version' -- Version of this probe.
+
+        'source' -- URL for a source for this probe.
+
+        'probe_dp' -- A dictionary mapping distinguished parameter
+        names to their types.
+
+        'short_doc' -- Brief description of this probe.
+
+        'long_doc' -- Extended description of this probe.  If None,
+        then use 'short_doc' as the long description, too."""
+
+
+    def AddDescription(self, lang, short_doc, long_doc=None):
+
+        """Add a description for this probe in some natural language.
+
+        'lang' -- Designator for a natural language.
+
+        'short_doc' -- Short documentation string for this probe,
+        presumably written in the natural language indicated by
+        'lang'.  (The 'short_doc' string from when the probe was
+        created is a fallback description.)
+
+        'long_doc' -- Extended documentation string for the probe,
+        again presumably written in the natural language indicated by
+        'lang'.  If 'long_doc' is None, then there is no extended
+        documentation string."""
+
+
+    def AddPlatform(self, probe_platform, script, pattern_set, probe_ap):
+
+        """Add support for a probe platform.  The 'script' will be
+        scanned for required symbols.
+
+        'probe_platform' -- A string representing a probe platform.
+
+        'script' -- A string containing the probe script.
+
+        $$$ Need to specify substitutions, both of parameters and
+        required symbols!!!
+
+        'pattern_set' -- A PatternSet object for the symbols defined
+        by this probe.
+
+        'probe_ap' -- A dictionary mapping auxiliary parameter
+        names to their types.
+
+        raises $$$ -- Distinguished parameters cannot be determined
+        using 'pattern_set'.
+
+        raises $$$ -- 'probe_platform' is unknown."""
+
+
+    def GetName(self):
+
+        """Get the name of this probe.
+
+        returns -- The name of the probe."""
+
+
+    def GetVersion(self):
+
+        """Get the version of this probe.
+
+        returns -- A version string."""
+
+
+    def GetShortDescription(self, lang=None):
+
+        """Get the short documentation string for this probe for the
+        specified language.  If not found, return the the fallback
+        short documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The short documentation string."""
+
+
+    def GetLongDescription(self, lang=None):
+
+        """Get the long documentation string for this probe for the
+        specified language.  If not found, return the the fallback
+        long documentation string.
+
+        'lang' -- Indicate the natural language, or None to get the
+        fallback.
+
+        returns -- The long documentation string."""
+
+
+    def Qualify(self, probe_platform, probe_dp, probe_ap):
+
+        """Qualify this probe with the supplied parameters.
+
+        'probe_platform' -- A string representing a probe platform.
+
+        'probe_dp' -- The distinguished parameters to this probe.
+
+        'probe_ap' -- Auxiliary parameters for this probe, which may
+        come from a AuxProbeDB.
+
+        raise $$$ -- Incomplete set of parameters, or spurious
+        parameters.
+
+        raise $$$ -- No script for 'probe_platform'.
+
+        returns -- A qualified probe."""
+]]></programlisting></para>
+ </section>
+
+ <section>
+  <title><classname>AuxProbe</classname> class</title>
+
+  <para>An <classname>AuxProbe</classname> object provides values for
+  &D-auxparms; for a probe.  An instance of a
+  <classname>AuxProbe</classname> represents a probe, qualified only
+  by its &D-disparms;.  An <classname>AuxProbe</classname> associates
+  &D-auxparms; with &D-probeplats;.</para>
+
+ <para><programlisting>
+<![CDATA[
+class AuxProbe:
+
+    """Class for auxiliary probes.  These provide information for
+    auxiliary parameters."""
+
+    def __init__(self, probe_name, probe_dp):
+
+        """Create an AuxProbe object.
+
+        'probe_name' -- Name of the probe.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to types."""
+
+
+    def AddPlatform(self, probe_platform, probe_ap):
+
+        """Add information about auxiliary parameters associated with
+        a probe platform.
+
+        precondition -- There is not already a set of auxiliary
+        parameters for 'probe_platform'.
+
+        'probe_platform' -- A string representing a probe execution
+        platform.
+
+        'probe_ap' -- A dictionary mapping auxiliary parameter names
+        to tuples of (type, default value).
+
+        raise 'KeyError' -- Already a set of auxiliary parameters
+        associated with 'probe_platform'."""
+
+
+    def AddParameterSet(self, probe_platform, probe_dp, probe_ap):
+
+        """Add a set of auxiliary parameter values for a distinguished
+        probe.
+
+        precondition -- We already have defined auxiliary parameter
+        value types for this 'probe_platform'.
+
+        'probe platform' -- Name of the probe execution platform for
+        which we are defining auxiliary parameter values.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to values.
+
+        'probe_ap' -- Dictionary mapping auxiliary parameter names to
+        values.
+
+        raise 'IndexError' -- One or more parameters are missing.
+
+        raise 'TypeError' -- A parameter value does not match its
+        associated type."""
+
+
+    def GetName(self):
+
+        """Get the name of this probe.
+
+        returns -- Name of the probe."""
+
+
+    def GetProbeSource(self, probe_platform, probe_dp):
+
+        """Get a ProbeSource object associated with this probe, with
+        specified 'probe_platform' and distinguished parameters.
+
+        precondition -- Information for this 'probe_platform' has
+        already been added.
+
+        'probe_platform' -- Name of the probe execution platform.
+
+        'probe_dp' -- Dictionary mapping distinguished parameter names
+        to values.
+
+        raise 'KeyError' -- No information for 'probe_platform' has
+        been added.
+
+        raise $$$ -- Unable to determine auxiliary parameters.
+
+        returns -- A ProbeSource object with the auxiliary parameter
+        field filled in."""
+]]></programlisting></para>
+ </section>
+
+ <section>
+  <title><classname>AuxProbeDB</classname> class</title>
+
+  <para>An <classname>AuxProbeDB</classname> represents an auxiliary
+  probe database.  This database, separate from the general probe
+  database, is used to provide &D-auxparms; to probe invocations.  We
+  expect &qmconfig; to ship with a substantial auxiliary probe
+  database.  Additional entries can be added to an individual
+  package.</para>
+
+  <para><programlisting>
+<![CDATA[
+class AuxProbeDB:
+
+    """Database of auxiliary information for probes.  A probe is
+    selected by parsing symbol names, and may include certain
+    "distinguished" parameters to differentiate between similar uses
+    of the same probe.  (For instance, we probably want a single probe
+    to test for the existence of a function; we distinguish instances
+    with the function name.)  However, there may be additional
+    parameters needed to test for a function that should not be
+    overloaded into symbol names. (With the function test example, for
+    example, we may need to specify header files, link libraries, and
+    possibly a test program.)  These additional parameters can come
+    from the probe auxiliary database."""
+
+
+    def AddProbe(self, aux_probe):
+
+        """Add auxiliary information about a probe to the auxiliary
+        probe database.
+
+        precondition -- There is not already an AuxProbe object in
+        this database with the same name as 'aux_probe'.
+
+        'aux_probe' -- An AuxProbe object providing the auxiliary
+        information.
+
+        raises 'KeyError' -- Already an AuxProbe with the same name as
+        'aux_probe'."""
+
+
+    def GetProbeSource(self, probe_name, probe_platform, probe_dp):
+
+        """Get a ProbeSource object for the specified probe.
+
+        'probe_name' -- Name of the probe.
+
+        'probe_platform' -- Name of the probe execution platform.
+
+        'probe_dp' -- Distinguished parameters for the probe.
+
+        raises 'KeyError' -- Unable to locate a probe.
+
+        raises 'TypeError' -- A parameter value does not match the
+        type.
+
+        raises $$$ -- Unable to determine an auxiliary parameter
+        value.
+
+        returns -- A ProbeSource object with the auxiliary parameters
+        filled in."""
+]]></programlisting></para>
+ </section>
+
+ <section>
+  <title><classname>ProbeDB</classname> class</title>
+
+  <para>The <classname>ProbeDB</classname> class represents an actual
+  probe database.</para>
+
+  <para>The following class definition is not quite complete.  We will
+  need to add methods to iterate over probes.</para>
+
+  <para><programlisting>
+<![CDATA[
+class ProbeDB:
+
+    """Base class for probe databases."""
+
+
+    def DeriveFrom(self, pdb):
+
+        """Add a base probe database to this database.  This
+        relationship persists until 'self' is closed.
+
+        'pdb' -- Probe database from which to derive probe information.
+
+        returns -- None"""
+
+
+    def Update(self, pdb):
+
+        """Update probes from another probe database (perhaps a master
+        probe repository).  This may add new probes to 'self'.
+
+        'pdb' -- The probe database from which to add or update
+
+        objects.
+
+        returns -- None"""
+
+
+    def Commit(self):
+
+        """Commit all changes to the actual database representing
+        'self'.
+
+        raise 'IOError' -- The database cannot be written.
+
+        returns -- None"""
+
+
+    def AddAuxProbeDB(self, apdb):
+
+        """Add a AuxProbeDB object to the list of auxiliary databases
+        used by this probe database.  This relationship persists until
+        'self' is closed. These databases are searched in the order
+        given for additional parameters.
+
+        'apdb' -- The AuxProbeDB being added to the list.
+
+        returns -- None"""
+
+
+    def AddProbe(self, probe):
+
+        """Add a Probe object to this database.
+
+        precondition -- There is not already a probe with the same
+        name as 'probe'.
+
+        'probe' -- The new probe object.
+
+        raise $$$ --
+
+        postcondition -- There is now a probe in 'self' whose name is
+        taken from 'probe'.
+
+        returns -- None"""
+
+
+    def GetProbe(self, probe_name):
+
+        """Get a Probe object named 'probe_name'.
+
+        'probe_name' -- Name of the probe being sought.
+
+        raises 'KeyError' -- No probe named 'probe_name'.
+
+        returns -- The Probe object."""
+
+    # $$$ We also need methods related to PatternSet objects, and
+    # probably methods to iterate over the probes.
+]]></programlisting></para>
+ </section>
+
+</section>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter" "section")
+  End:
+-->

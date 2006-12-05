@@ -1,0 +1,31 @@
+<!--
+
+  File:   class-directory.dtd
+  Author: Mark Mitchell
+  Date:   2001-10-09
+
+  Contents:
+    DTD for class directory files.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTest Class Directory V0.1 -->
+
+<!-- A class directory. -->
+<!ELEMENT class-directory (class*)>
+
+<!-- A class. -->
+<!ELEMENT class (#PCDATA)>
+<!ATTLIST class kind (database | file | resource | target | test) #REQUIRED>
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->
