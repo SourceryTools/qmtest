@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   Fill me in!
+  Author: Fill me in!
+  Date:   YYYY-MM-DD
+
+  Contents:
+    Fill me in!
+
+  Copyright (C) 2003 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+[
+  <!-- Internal DTD subset.  Only entities should be defined here. -->
+]>
+<book>
+ <bookinfo>
+  <title>Fill me in!</title>
+  <author>
+   <firstname>Fill</firstname>
+   <surname>me in!</surname>
+  </author>
+ </bookinfo>
+
+</book>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  End:
+-->

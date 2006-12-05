@@ -1,0 +1,5 @@
+*.pyo
+*.pyc
+process_target
+rsh_target
+thread_target

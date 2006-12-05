@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<class-directory><class kind="database">results_file_database.ResultsFileDatabase</class><class kind="test">results_file_test.ResultsFileTest</class></class-directory>

@@ -1,0 +1,219 @@
+<dtml-comment><!--
+
+  File:   show.dtml
+  Author: Alex Samuel
+  Date:   2001-02-08
+
+  Contents:
+    Document template for web page to display or edit a test or resource.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader(GetTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+  <dtml-comment><!--
+
+    First the heading.  Display the item's ID, and if appropriate,
+    controls for manupulating the item.
+
+  --></dtml-comment>
+  <table border="0" width="100%">
+   <tbody>
+    <tr>
+     <td>
+      <h3>
+       <dtml-if expr="new">
+        New
+       </dtml-if>
+       <dtml-var expr="_.string.capwords(type)">
+       <dtml-if expr="edit">
+        <dtml-var expr="FormatId(item.GetId(), type, 'plain')">
+       <dtml-else>
+        <dtml-var expr="FormatId(item.GetId(), type, 'navigation')">
+       </dtml-if>
+      </h3>
+     </td>
+    </tr>
+
+    <dtml-if expr="field_errors != {}">
+     <tr>
+      <td colspan="2">
+       <p>Your issue submission contained errors.  Please correct them
+       and resubmit.</p>
+      </td>
+     </tr>
+    </dtml-if>
+   </tbody>
+  </table>
+  
+  <dtml-comment><!--
+
+    For editing operations, start the form.
+
+  --></dtml-comment>
+  <dtml-if expr="edit">
+   <form name="form"
+         method="post"
+         action="<dtml-var expr="MakeSubmitUrl()">"
+         enctype="multipart/form-data">
+
+   <input type="hidden" 
+          name="class"
+          value="<dtml-var expr="item.GetClassName()">" />
+   <input type="hidden" 
+          name="id"
+          value="<dtml-var expr="item.GetId()">" />
+   <input type="hidden"
+          name="is_new"
+          value="<dtml-var new>" />
+  </dtml-if>
+
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tbody>
+
+    <dtml-comment><!--
+
+      Display the test or resource class, and its summary and
+      description. 
+
+    --></dtml-comment>
+    <tr class="heading">
+     <td colspan="2">
+      Class: <b><dtml-var expr="item.GetClassName()"></b>
+     </td>
+    </tr>
+    <tr class="heading">
+      <td colspan="2">
+         <table border="0"
+                cellpadding="0"
+                cellspacing="0"
+                width="100%">
+           <tr class="heading">
+             <td width="100%">
+               <dtml-var expr="GetBriefClassDescription()">
+             </td><td>
+               <dtml-var expr="web.make_help_link_html(
+                               GetClassDescription())">
+             </td>
+           </tr>
+         </table>
+      </td>
+    </tr>
+
+    <dtml-comment><!--
+
+      Now the test or resource arguments (field values).
+
+    --></dtml-comment>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr class="heading">
+     <td colspan="2">
+      Arguments
+     </td>
+    </tr>
+
+    <dtml-in name="fields">
+    <dtml-let field=sequence-item
+              field_name="field.GetName()">
+     <dtml-if expr="not field.IsHidden()">
+      <dtml-comment><!--
+
+        Show a row with the field label and a rendering of its value.
+
+      --></dtml-comment>
+      <tr valign="top"
+         <dtml-if expr="field_errors.has_key(field_name)">
+          class="field-error"
+         <dtml-else>
+          class="field"
+         </dtml-if>
+          >
+       <td>
+        <span class="fieldname"><dtml-var expr="field.GetTitle()"></span>
+        <dtml-if expr="edit">
+         <dtml-var expr="web.format_structured_text(field.
+                                                    GetBriefDescription())">
+        </dtml-if>
+       </td>
+       <td width="25%">
+        <table border="0" cellpadding="0" cellspacing="4" width="100%">
+         <tr valign="top"><td width="100%">
+          <dtml-var expr="FormatFieldValue(field)">
+          <dtml-if expr="field_errors.has_key(field_name)">
+           <br />
+           <span class="error">
+            <dtml-var expr="field_errors[field_name]">
+           </span>
+          </dtml-if>
+         </td><td>
+          <dtml-var expr="web.make_help_link_html(
+                          field.GetHtmlHelp(edit=edit))">
+         </td></tr>
+        </table>  
+       </td>
+      </tr>
+     <dtml-else>
+      <dtml-if expr="edit">
+       <dtml-var expr="FormatFieldValue(field)">
+      </dtml-if> <!-- edit -->
+     </dtml-if> <!-- not field.IsHidden() -->
+    </dtml-let>
+    </dtml-in>
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+
+    <tr class="form-submit">
+     <td colspan="2">
+      <dtml-if expr="edit">
+       <dtml-var expr="web.make_submit_button()">
+       <input type="button" 
+              class="submit"
+              value=" Cancel "
+             <dtml-if expr="new">
+              onclick="location = '<dtml-var expr="MakeListingUrl()">'"
+             <dtml-else>
+              onclick="location = '<dtml-var expr="MakeShowUrl()">'"
+             </dtml-if>
+              />
+      </dtml-if>
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+  <dtml-if expr="edit">
+   </form>
+  </dtml-if>
+
+  <dtml-var expr="GenerateStartScript()">
+   function edit_item() {
+    location = '<dtml-var "MakeEditUrl()">';
+   }
+
+   function delete_item() {
+    <dtml-var "MakeDeleteScript()">
+   }
+
+   function run_test() {
+    location = '<dtml-var "MakeRunUrl()">';
+   }
+  <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

@@ -1,0 +1,98 @@
+#! /bin/sh
+
+########################################################################
+#
+# File:   qmtest
+# Author: Mark Mitchell, Mike Carifio
+# Date:   09/28/2002
+#
+# Contents:
+#   QMTest SVR4-style initialization script for Red Hat Linux.
+#
+# Copyright (c) 2002 by CodeSourcery, LLC.  All rights reserved.
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+# chkconfig: 345 99 99
+# description: QMTest is CodeSourcery's automated testing tool.
+
+########################################################################
+# Installation
+########################################################################
+
+# Execute the following commands, as root:
+#
+# > cp red_hat_linux /etc/rc.d/init.d/qmtest
+# > chkconfig qmtest on
+
+# Edit the file /etc/qmtest.conf to conform to the following format:
+#
+#   QMTEST_PORT=
+#   QMTEST=/path/to/qmtest
+#   QMTEST_ARGS=...
+#   QMTEST_GUI_ARGS=...
+# 
+# You may all omit all of the entries except QMTEST_PORT.
+
+########################################################################
+# Notes
+########################################################################
+
+# This script has been tested on Red Hat Linux 7.x.  It may require
+# modification for use on other Red Hat Linux systems.
+
+########################################################################
+# Main Program
+########################################################################
+
+# If the configuration file is not present, take no action.
+if [ ! -f /etc/qmtest.conf ]; then
+  exit 0
+fi
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Initialization
+QMTEST=/usr/local/bin/qmtest
+QMTEST_ARGS=
+QMTEST_GUI_ARGS=
+QMTEST_PORT=
+
+# Read the configuration file.
+. /etc/qmtest.conf
+
+# If QMTEST_PORT is not set, do not start the server.
+if [ "$QMTEST_PORT" = "" ]; then
+  echo "You must set QMTEST_PORT in /etc/qmtest.conf."
+  exit 1
+fi
+  
+# See how we were called.
+case "$1" in
+    start)
+	# Start QMTest.
+	echo -n "Starting QMTest: "
+	daemon $QMTEST $QMTEST_ARGS gui \
+	     --no-browser --pid-file= --daemon --port=$QMTEST_PORT \
+	     $QMTEST_GUI_ARGS
+	echo
+	;;
+    stop)
+	# Stop QMTest.
+	echo -n "Shutting down QMTest: "
+	killproc qmtest
+	echo
+	;;
+    restart)
+        $0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit 0

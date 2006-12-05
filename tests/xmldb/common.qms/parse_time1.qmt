@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>from qm.common import parse_time
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>parse_time("1970-01-01 00:00 UTC") == 0</text>
+ </argument>
+</test>

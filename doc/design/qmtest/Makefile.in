@@ -1,0 +1,21 @@
+######################################################### -*-Makefile-*-
+#
+# File:   Makefile
+# Author: Alex Samuel
+# Date:   2000-11-10
+#
+# Contents:
+#   Makefile for qmtest design document
+# 
+# Copyright (C) 2000 CodeSourcery LLC
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+TOPDIR	        = @top_srcdir@
+
+DOCBOOK		= $(wildcard *.xml)
+DOCBOOKMAIN	= qmtest.xml
+
+include $(TOPDIR)/standard.mk

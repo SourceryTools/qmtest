@@ -1,0 +1,152 @@
+<dtml-comment><!--
+
+  File:   navigation-bar.dtml
+  Author: Alex Samuel
+  Date:   2001-07-09
+
+  Contents:
+    Template for QMTest navigation bar.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-in expr="[('file_menu', file_menu_items),
+                ('edit_menu', edit_menu_items),
+                ('view_menu', view_menu_items),
+                ('run_menu', run_menu_items),
+                ('help_menu', help_menu_items)]">
+ <div class="menu" id="<dtml-var sequence-key>">
+  <dtml-in sequence-item>
+   <dtml-let desc=sequence-key
+             url=sequence-item>
+    <a class="menu_item" href="<dtml-var url>"><dtml-var desc></a>
+   </dtml-let>
+  </dtml-in>
+ </div>
+</dtml-in>
+
+<form action="get">
+<table class="menu_bar" cellspacing="0" cellpadding="0" border="0">
+ <tr>
+  <!-- Menus -->
+  <dtml-in expr="['file', 'edit', 'view', 'run', 'help']">
+   <dtml-let name=sequence-item
+             base="name + '_base'"
+             menu="name + '_menu'">
+    <td width="20%" class="menu_bar">
+     <dtml-if click_menus>
+      <a href="javascript: void(0)"
+         id="<dtml-var base>"
+         onclick="show_menu(event, '<dtml-var menu>'); return false;"
+         onmouseout="hide_active_menu(event);"
+         class="menu_bar"><dtml-var name capitalize></a>
+     <dtml-else>
+      <a href="javascript: void(0)"
+         id="<dtml-var base>"
+         onmouseover="show_menu(event, '<dtml-var menu>');"
+         onmouseout="hide_active_menu(event);"
+         onclick="return false;"
+         class="menu_bar"><dtml-var name capitalize></a>
+     </dtml-if>
+    </td>
+   </dtml-let>
+  </dtml-in>
+ </tr>
+</table>
+</form>
+
+<dtml-var expr="GenerateStartScript()">
+active_menu = null;
+
+function show_menu(event, id) {
+    var base, menu, x, y;
+    
+    if (window.event) {
+        base = window.event.toElement;
+    } else {
+        base = event.currentTarget;
+    }
+    x = get_left(base);
+    y = get_bottom(base);
+    menu = document.getElementById(id);
+    menu.style.left = (new Number(x)).toString() + "px";
+    menu.style.top = (new Number(y)).toString() + "px";
+    if (active_menu)
+        active_menu.style.visibility = "hidden";
+    menu.style.visibility = "visible";
+    active_menu = menu;
+}
+
+/* Called when the mouseout event is received by a menu.  */
+
+function hide_menu(event) {
+    var target;
+  
+    /* Figure out to which element the mouse is moving.  */
+    if (window.event) {
+        target = window.event.toElement;
+    } else {
+        target = event.relatedTarget;
+    }
+    /* If that element is not a child of the menu, hide the menu.  */
+    if (target && !is_parent_of(this, target))
+        this.style.visibility = "hidden";
+}
+
+/* Called when an item on the menu bar is activated.  The event is
+   either a mouseover or onclick event.  */
+
+function hide_active_menu(event) {
+    var target;
+
+    /* If there is no active menu, there's nothing to hide.  */
+    if (!active_menu)
+        return;
+  
+    if (window.event) {
+        target = window.event.toElement;
+    } else {
+        target = event.relatedTarget;
+    }
+    if (!is_parent_of(active_menu, target))
+        active_menu.style.visibility = "hidden";
+}
+
+
+function load_context()
+{
+   window.open("load-context", "load_context", 
+               "dependent,height=200,width=640");
+}
+
+
+function load_results()
+{
+   window.open("load-results", "load_results", 
+               "dependent,height=200,width=640");
+}
+
+
+function load_expected_results()
+{
+   window.open("load-expectations", "load_expectations", 
+
+               "dependent,height=200,width=640");
+}
+
+<dtml-in expr="['file_menu', 'edit_menu', 'view_menu', 'run_menu', 
+                'help_menu']">
+ document.getElementById("<dtml-var sequence-item>").onmouseout = hide_menu;
+</dtml-in>
+
+<dtml-var expr="GenerateEndScript()">
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

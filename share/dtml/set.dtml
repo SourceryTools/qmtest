@@ -1,0 +1,93 @@
+<dtml-comment><!--
+
+  File:   set.dtml
+  Author: Alex Samuel
+  Date:   2001-04-21
+
+  Contents:
+    Popup window for entering a new element for a set field value.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-comment><!--
+  No XML processing directives or doctype here.  This page will be
+  embedded in a JavaScript string and written to document dynamically.
+  The processing directive confuses JavaScript, so leave it out.  See
+  'qm.web.make_set_control'.
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader(MakeTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3><dtml-var expr="MakeTitle()"></h3>
+
+ <form name="form" onsubmit="add_item();">
+
+  <table border="0" 
+         cellpadding="4" 
+         cellspacing="4"
+         width="100%">
+   <tbody>
+    <tr class="field">
+     <td width="25%">
+      <p>
+       Add an element to the 
+       <b><dtml-var expr="field.GetTitle()"></b>.
+      </p>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="4" width="100%">
+       <tr valign="top"><td width="100%">
+        <dtml-var expr="MakeElementControl()">
+       </td><td>
+        <dtml-var expr="web.make_help_link_html(field.GetContainedField().GetHtmlHelp(edit=1))">
+       </td></tr>
+      </table>
+     </td>
+    </tr>
+
+    <tr>
+     <td align="right" colspan="2">
+      <input type="button" 
+             value="  OK  "
+             onclick="add_item();"/>
+      <input type="button"
+             value=" Cancel "
+             onclick="window.close();"/>
+     </td>
+    </tr>
+   </tbody>
+  </table>  
+
+ </form>
+
+ <dtml-var expr="GenerateStartScript()">
+ function add_item()
+ {
+   var item = document.form.item.value;
+   var select = 
+     window.opener.document.form.<dtml-var expr="select_name">;
+   var contents =
+     window.opener.document.form.<dtml-var expr="field_name">;
+   if(item != "") 
+     window.opener.add_to_set(select, contents, item, item);
+   window.close();
+   return false;
+ }
+ <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

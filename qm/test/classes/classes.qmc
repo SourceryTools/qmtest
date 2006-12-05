@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<class-directory>
+ <class kind="result_reader" name="pickle_result_stream.PickleResultReader"/>
+ <class kind="result_reader" name="sql_result_stream.SQLResultReader"/>
+ <class kind="result_reader" name="xml_result_stream.XMLResultReader"/>
+ <class kind="result_stream" name="dejagnu_stream.DejaGNUStream"/>
+ <class kind="result_stream" name="pickle_result_stream.PickleResultStream"/>
+ <class kind="result_stream" name="sql_result_stream.SQLResultStream"/>
+ <class kind="result_stream" name="text_result_stream.TextResultStream"/>
+ <class kind="result_stream" name="xml_result_stream.XMLResultStream"/>
+ <class kind="resource" name="temporary.TempDirectoryResource"/>
+ <class kind="target" name="process_target.ProcessTarget"/>
+ <class kind="target" name="rsh_target.RSHTarget"/>
+ <class kind="target" name="serial_target.SerialTarget"/>
+ <class kind="target" name="thread_target.ThreadTarget"/>
+ <class kind="database" name="mount_database.MountDatabase"/>
+ <class kind="database" name="xml_database.XMLDatabase"/>
+ <class kind="test" name="command.ExecTest"/>
+ <class kind="test" name="command.ShellCommandTest"/>
+ <class kind="test" name="command.ShellScriptTest"/>
+ <class kind="test" name="file.FileContentsTest"/>
+ <class kind="test" name="python.ExceptionTest"/>
+ <class kind="test" name="python.ExecTest"/>
+ <class kind="test" name="python.StringExceptionTest"/>
+ <class kind="label" name="file_label.FileLabel"/>
+ <class kind="label" name="python_label.PythonLabel"/>
+ <class kind="suite" name="explicit_suite.ExplicitSuite"/>
+</class-directory>

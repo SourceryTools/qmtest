@@ -1,0 +1,190 @@
+/***********************************************************************
+
+  File:   qm.css
+  Author: Alex Samuel
+  Date:   2000-10-20
+
+  Contents:
+    Main style sheet for qm documentation.
+
+  Copyright (C) 2000 CodeSourcery LLC
+
+  For license terms see the file COPYING.
+
+***********************************************************************/
+
+/* Document body.  */
+
+body {
+    margin-left: 10%;
+    margin-right: 10%;
+    color: black;
+    background: white;
+}
+
+
+/* Links.  */
+
+:link {
+    color: blue;
+    background-color: white;
+}
+
+:visited {
+    color: blue;
+    background-color: white;
+}
+
+:active {
+    color: blue;
+    background-color: white;
+    text-decoration: none;
+}
+
+:hover {
+    color: blue;
+    background-color: #ffccff;
+    text-decoration: none;
+}
+
+
+/* Headings.  Use
+     <h1>...</h1> for titles.
+     <h2>...</h2> for subtitles.
+     <h3>...</h3> for chapter headings.
+     <h4>...</h4> for section headings.
+     <h5>...</h5> for subsection headings.
+     <h6>...</h6> for subsubsection headings.  */
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    margin-left: -8%;
+}
+
+h3,h4,h5,h6 {
+    margin-left: -4%;
+}
+
+
+/* Table of contents.  Place table of contents inside
+     <div class="Contents">...</div> .  */
+
+div.Contents {
+    background-color: #ffffcc;
+    color: black;
+    border: none;
+    border-width: thin;
+    width: 100%;
+    padding: 1ex;
+}
+
+
+/* Definitions.  */
+
+/* Use <a class="TermDef">...</a> for the primary definition of a term
+   or concept.  Do not set the name attribute; this is done
+   automatically by XHTML processing.*/
+
+a.TermDef {
+   color: #000060;
+   background-color: white;
+   font-style: italic;
+}
+
+/* Use <a class="Term">...</a> for subsequent uses of a defined term
+   or concept.  Do not set the ref attribute; this is done
+   automatically by the XHTML processing.  But be sure to use exactly
+   the same spelling of the term.  */
+
+a.Term:link, a.Term:visited {
+    color: #000060;
+    background-color: white;
+    text-decoration: none;
+}
+
+a.Term:active, a.Term:hover {
+    color: #000060;
+    background-color: white;
+    text-decoration: underline;
+}
+
+
+/* Source code and such.  */
+
+/* Use <code>...</code> for other source code.  */
+
+code {
+}
+
+/* Use <div class="API"><pre>...</pre></div> when presenting official
+   public APIs.  */
+
+div.API {
+    background-color: #f0e0ff;
+    border: none;
+    padding: 1ex;
+}
+
+/* Use <div class="XML"><pre>...</pre></div> when presenting XML
+   samples.  */
+
+div.XML {
+    background-color: #e0f0ff;
+    border: none;
+    padding: 1 ex;
+}
+
+/* Use <span class="Identifier">...</span> for identifiers and other
+   names used in source code.  */
+
+span.Identifier {
+    font-family: courier, monospace;
+    font-weight: bold;
+}
+
+/* Use <span class="Class">...</span> for the name of a class.  */
+
+span.Class {
+    font-family: courier, monospace;
+    font-weight: bold;
+}
+
+/* Use <span class="Function">...</span> for function names.  */
+
+span.Function {
+    font-family: courier, monospace;
+    font-weight: bold;
+}
+
+
+/* Table formatting.  */
+
+/* General tables, containing primarily text.  */
+
+table {
+    border-style: none;
+    padding: 4pt;
+}
+
+/* A heading row in a table.  */
+
+tr.Heading {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}
+
+
+/* Miscellaneous editorial stuff.  */
+
+/* Use <span class="Fixme">...</span> as a marker for material that
+   needs to be revisited, revised, or completed.  */
+
+span.Fixme {
+    background-color: white;
+    color: red;
+}
+

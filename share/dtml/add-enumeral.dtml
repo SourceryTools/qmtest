@@ -1,0 +1,80 @@
+<dtml-comment><!--
+
+  File:   add-enumeral-dtml
+  Author: Alex Samuel
+  Date:   2001-08-03
+
+  Contents:
+    Popup window for entering a new enumeral name.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Add an Enumeral')">
+ <body>
+
+ <h3>Add an Enumeral</h3>
+
+ <form name="form" onsubmit="add_item();">
+
+  <table border="0" 
+         cellpadding="4" 
+         cellspacing="4"
+         width="100%">
+   <tbody>
+    <tr class="field">
+     <td width="25%">
+      <b>Enumeral Name</b>
+     </td>
+     <td>
+      <input type="text"
+             name="item"
+             size="40"/>
+     </td>
+    </tr>
+
+    <tr>
+     <td align="right" colspan="2">
+      <input type="button" 
+             value="  OK  "
+             onclick="add_item();"/>
+      <input type="button"
+             value=" Cancel "
+             onclick="window.close();"/>
+     </td>
+    </tr>
+   </tbody>
+  </table>  
+
+ </form>
+
+ <dtml-var expr="GenerateStartScript()">
+ function add_item()
+ {
+   var item = document.form.item.value;
+   var select = 
+     window.opener.document.form.<dtml-var expr="select_name">;
+   var contents =
+     window.opener.document.form.<dtml-var expr="field_name">;
+   if(item != "") 
+     window.opener.add_to_set(select, contents, item, item);
+   window.close();
+   return false;
+ }
+ <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
