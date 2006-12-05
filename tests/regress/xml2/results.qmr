@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE results PUBLIC "-//Software Carpentry//QMTest Result V0.3//EN" "http://www.software-carpentry.com/qm/xml/result.dtd">
+<results>
+<result id="asdfasdf" kind="test"><outcome>PASS</outcome><property name="qmtest.target">local</property></result>
+<result id="fnord" kind="test"><outcome>PASS</outcome><property name="qmtest.target">local</property></result>
+
+</results>

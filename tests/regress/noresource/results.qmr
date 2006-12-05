@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE results PUBLIC "-//Software Carpentry//QMTest Result V0.3//EN" "http://www.software-carpentry.com/qm/xml/result.dtd">
+<results>
+<result id="resource" kind="resource_setup"><outcome>ERROR</outcome><property name="qmtest.action">setup</property><property name="qmtest.cause">Resource does not exist.</property><property name="qmtest.exception">qm.test.database.NoSuchResourceError: There is no resource with the resource ID &quot;resource&quot;.</property><property name="qmtest.target">local</property><property name="qmtest.traceback">  File &quot;/home/zack/src/qm/qm/qm/test/target.py&quot;, line 310, in _SetUpResource
+    resource = self.GetDatabase().GetResource(resource_name)
+   File &quot;/home/zack/src/qm/qm/qm/test/file_database.py&quot;, line 237, in GetResource
+    raise NoSuchResourceError, resource_id
+</property></result>
+<result id="test" kind="test"><outcome>UNTESTED</outcome><property name="qmtest.cause">Setup of a required resource failed.</property><property name="qmtest.resource">resource</property><property name="qmtest.target">local</property></result>
+<result id="test2" kind="test"><outcome>UNTESTED</outcome><property name="qmtest.cause">Setup of a required resource failed.</property><property name="qmtest.resource">resource</property><property name="qmtest.target">local</property></result>
+
+</results>

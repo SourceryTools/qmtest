@@ -1,0 +1,123 @@
+<dtml-comment><!--
+
+  File:   results.dtml
+  Author: Alex Samuel
+  Date:   2001-09-08
+
+  Contents:
+    Document template for test run results.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var 
+  expr="GenerateHtmlHeader('%sTest Results' 
+                           % ((not IsFinished() and 'Incomplete ')
+                              or ''))">
+ <dtml-var expr="GenerateStartBody()">
+
+ <dtml-unless expr="IsFinished()">
+ <p><span class="warning">All tests have not yet been run.  These
+ results will be updated every few seconds.</span></p>
+ </dtml-unless>
+
+ <table class="data" width="100%">
+  <caption>Statistics</caption>
+  <dtml-let total="GetTotal()"
+            total_unexp="GetTotalUnexpected()">
+   <tr class="heading">
+    <th width="16%">Outcome</td>
+    <th width="21%"># of Tests</td>
+    <th width="21%">% of Total</td>
+    <th width="21%"># Unexpected</td>
+    <th width="21%">% of Total</td>
+   </tr>
+   <dtml-in expr="GetOutcomes()">
+    <dtml-let outcome=sequence-item
+              count="GetCount(outcome)"
+              unexp_count="GetUnexpectedCount(outcome)">
+     <dtml-if count>
+      <tr class="<dtml-var expr="server.GetHTMLClassForOutcome(outcome)">">
+       <td><span class="outcome"><dtml-var sequence-item></span></td>
+       <td align="right"><dtml-var expr="count"></td>
+       <td align="right"><dtml-var 
+                          expr="'%3.0f' % ((100. * count) / total)"></td>
+       <td align="right" 
+           <dtml-if expr="unexp_count">class="qmtest_unexpected"</dtml-if>
+           ><dtml-var expr="unexp_count"></td>
+       <td align="right"
+           <dtml-if expr="unexp_count">class="qmtest_unexpected"</dtml-if>
+           ><dtml-var expr="'%3.0f' % ((100. * unexp_count) / total)"></td>
+      </tr>
+     </dtml-if>
+    </dtml-let>
+   </dtml-in>
+   <tr class="field">
+    <td><span class="outcome">Total</span></td>
+    <td align="right"><dtml-var total></td>
+    <td align="right">100</td>
+    <td align="right"
+        <dtml-if expr="total_unexp">class="qmtest_unexpected"</dtml-if>
+        ><dtml-var expr="total_unexp"></td>
+    <td align="right"        
+        <dtml-if expr="total_unexp">class="qmtest_unexpected"</dtml-if> >
+     <dtml-if total>           
+       <dtml-var expr="'%3.0f' % ((100. * total_unexp) / total)"></td>
+     <dtml-else>
+      &nbsp;</td>
+     </dtml-if>
+   </tr>
+  </dtml-let>
+ </table>
+
+ <dtml-let start="request.get('start', 1)">
+  <table class="data" width="100%">
+   <caption>
+    <dtml-in test_results size=10 start=start previous>
+     <a href="show-results<dtml-var sequence-query>start=<dtml-var previous-sequence-start-number>"><img src="/images/left-arrow.gif" border="0" align="top"></a>
+    </dtml-in>
+    Test Results
+    <dtml-in test_results size=10 start=start next>
+     <a href="show-results<dtml-var sequence-query>start=<dtml-var next-sequence-start-number>"><img src="/images/right-arrow.gif" border="0" align="top"></a>
+    </dtml-in>
+   </caption>
+   <tr class="heading">
+    <th width="60%">Test</td>
+    <th width="10%">Outcome</td>
+    <th width="10%">Expectation</td>
+    <th width="10%">Details</td>
+   </tr>
+   <dtml-in test_results size=10 start=start>
+    <dtml-let result=sequence-item
+              test_id="result.GetId()"
+              outcome="result.GetOutcome()"
+              url="GetDetailUrl(test_id)">
+     <tr class="<dtml-var expr="server.GetHTMLClassForOutcome(outcome)">">
+      <td><dtml-var expr="FormatId(test_id, 'test', 'navigation')"></td>
+      <td><span class="outcome"><dtml-var name="outcome">
+       </span></td>
+      <dtml-if expr="expected_outcomes.has_key(test_id)">
+       <td><span class="outcome">
+           <dtml-var expr="expected_outcomes[test_id]"></span></td>
+      <dtml-else>
+       <td>&nbsp;</td>
+      </dtml-if>
+      <td><a href="<dtml-var url>">Details</a></td></tr>
+    </dtml-let>
+   </dtml-in>
+  </table>  
+ </dtml-let>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

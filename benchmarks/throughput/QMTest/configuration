@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<extension class="throughput.ThroughputDatabase" kind="database"><argument name="num_tests"><integer>1000</integer></argument></extension>

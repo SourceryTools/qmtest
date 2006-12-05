@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<extension class="tuple_test.TupleTest" kind="test"><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="resources"><set/></argument><argument name="tuple"><tuple><integer>3</integer></tuple></argument></extension>

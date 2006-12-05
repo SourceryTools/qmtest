@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//Software Carpentry//QMTest Extension V0.1//EN'
+  'http://www.software-carpentry.com/qm/xml/extension'>
+<extension class="python.ExecTest" kind="test"><argument name="prerequisites"><set><tuple><text>fail</text><enumeral>PASS</enumeral></tuple></set></argument><argument name="source"><text>pass</text></argument><argument name="target_group"><text>.*</text></argument><argument name="expression"><text>1</text></argument><argument name="resources"><set/></argument></extension>

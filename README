@@ -1,0 +1,105 @@
+
+				QM Tools
+
+------------------------------------------------------------------------
+
+1.  REQUIREMENTS
+
+    To run QM, you will need Python Python 2.2 (or greater).  Visit
+
+      http://www.python.org
+
+    to obtain source and binary distributions of Python.
+
+    If you are using Windows, you must also install the Python Win32
+    extensions.  Visit:
+
+      http://starship.python.net/crew/mhammond/win32/Downloads.html
+
+    You must use GNU Make to build QM.
+
+------------------------------------------------------------------------
+
+2.  LICENSE
+
+    QM is licensed under the GNU General Public License.  See the file
+    COPYING for the exact text of the license.
+
+    The DocumentTemplate module is Copyright Zope Corporation and
+    Contributors.  See:
+
+      qm/external/DocumentTemplate/LICENSE.txt
+
+    for the exact text of that license.
+
+------------------------------------------------------------------------
+
+3.  BUILDING QM
+
+    From the top of the source tree, first configure the sources:
+
+      ./configure
+
+    The configuration script looks for a Python interpreter executable
+    in your PATH.  To specify a different interpreter, specify the
+    option 
+
+      --with-python=INTERPRETER_PATH
+
+    To install QM in a location other than /usr/local specify the
+    --prefix option to configure:
+
+      --prefix=/path/to/install
+
+    If you are building from CVS sources and want to build the
+    documentation add:
+
+      --enable-maintainer-mode
+
+    If you are building from a released version, you do not need to use
+    this option.
+
+    After running configure, run:
+
+      make
+
+    to perform the build.  You must use GNU make, which is called
+    "gmake" on some systems.
+
+    If you are modifying QMTest, you may want to install HappyDoc 2.1
+    from:
+
+      http://sourceforge.net/projects/happydoc/
+
+    If you install HappyDoc before you run configure, you can use:
+
+      make doc-python
+ 
+     to build documentation about the internals of QM.
+
+
+  - TESTING QM
+
+    QM comes with a test suite to test itself.  Of course, this test
+    suite is implemented using QMTest.  To run it, invoke
+
+      make check
+
+    after performing building QM.
+
+
+  - INSTALLING QM
+
+    To install QM:
+
+      make install
+
+    By default, this command installs files under /usr/local; to use a
+    different prefix, specify the --prefix option to configure.
+
+
+------------------------------------------------------------------------
+Local Variables:
+mode: text
+fill-column: 72
+End:

@@ -1,0 +1,31 @@
+We have had several different result file formats, and we need to be able
+to load all of them.  Listed in the order QMTest was changed to output each
+format.
+  -- XML result file format.  The original format.
+     -> xml_results.qmr
+  -- Pickle format v0 (original format).
+       -- 'Result's still contain the context they were run in.
+       -- just a bunch of 'Result' pickles, no metadata.
+       -- 'Result's still use the standard pickling mechanism.
+     -> result_class_v0-file_format_v0-pickling_format_v0.qmr
+  -- Pickle format v0 with new 'Result' object.
+       -- 'Result's no longer contain the context object they were run in.
+       -- just a bunch of 'Result' pickles, no metadata.
+       -- 'Result's still use the standard pickling mechanism.
+     -> result_class_v1-file_format_v0-pickling_format_v0.qmr
+  -- Pickle format v1 with new 'Result' object.
+       -- 'Result's no longer contain the context object they were run in.
+       -- More complicated file layout containing metadata.
+       -- 'Result's still use the standard pickling mechanism.
+     -> result_class_v1-file_format_v1-pickling_format_v0.qmr
+  -- Pickle format v1 with new 'Result' object and new 'Result' pickling.
+       -- 'Result's no longer contain the context object they were run in.
+       -- More complicated file layout containing metadata.
+       -- 'Result's no longer use the standard pickling mechanism.
+     -> result_class_v1-file_format_v1-pickling_format_v1.qmr
+  -- XML result file format v2.
+     -> xml_results_v2.qmr
+  -- XML result file format v3.
+       -- The 'outcome' is now provided as an attribute of the
+          'result' element.
+     -> xml_results_v3.qmr

@@ -1,0 +1,74 @@
+<dtml-comment><!--
+
+  File:   result.dtml
+  Author: Mark Mitchell
+  Date:   2001-10-18
+
+  Contents:
+    Document template for test result detail.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Result Detail')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3><dtml-var expr="FormatId(result.GetId(), result.GetKind(), 
+                              'navigation')"></h3>
+
+ <table border="0" cellpadding="4" cellspacing="4" width="100%">
+  <tr class="heading">
+   <th width="30%">Outcome</th>
+   <th width="70%">Cause</th>
+  </tr>
+  <tr class ="field">
+   <td width="30%">
+    <span class="outcome"><dtml-var expr="result.GetOutcome()"></span>
+   </td>
+   <td width="70%">
+    <dtml-var expr="result.GetCause() or '&nbsp;'">
+   </td>
+  </tr>
+
+  <tr class="heading">
+   <th width="30%">Annotation</th>
+   <th width="70%">Value</th>
+  </tr>
+  <dtml-in expr="result.keys()" sort>
+   <dtml-let annotation=sequence-item>
+    <dtml-if expr="annotation != result.CAUSE">
+     <tr class="field">
+      <td width="30%"><dtml-var annotation></td>
+      <td width="70%">
+       <dtml-if expr="annotation == result.RESOURCE">
+        <a href='<dtml-var expr="GetResultURL(result[annotation])">'"
+         ><dtml-var expr="result[annotation]"></a>
+       <dtml-else>
+        <dtml-var expr="result[annotation]">
+       </dtml-if>
+      </td>
+     </tr>
+    </dtml-if>
+   </dtml-let>
+  </dtml-in>
+ </table>
+
+ <dtml-var expr="GenerateStartScript()">
+  function run_test() {
+   location = '<dtml-var "GetRunURL()">';
+  }
+ <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

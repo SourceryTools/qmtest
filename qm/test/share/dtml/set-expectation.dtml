@@ -1,0 +1,54 @@
+<dtml-comment><!--
+
+  File:   set-expectation.dtml
+  Author: Mark Mitchell
+  Date:   2002-03-04
+
+  Contents:
+    Document template for displaying test database contents.
+
+  Copyright (C) 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+
+<dtml-let id="request['id']">
+ <dtml-var expr="GenerateXMLHeader()">
+  <dtml-var expr="GenerateHtmlHeader('Set Expectation')">
+  <body>
+   <form name="form" method="post"
+	 action="submit-expectation" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="<dtml-var id>"/>
+    <input type="hidden" name="url" value="<dtml-var "request['url']">"/>
+    <h3>Set expectation for <span class="id"><dtml-var id></span></h3>
+    <table border="0" cellpadding="4" cellspacing="4" width="100%">
+     <tr class="field">
+      <td width="75%">The expected outcome for 
+        <span class="id"><dtml-var id></span>.</td>
+      <td>
+       <select name="outcome">
+	<dtml-in outcomes>
+	 <dtml-let outcome=sequence-item>
+	  <option value="<dtml-var outcome>"
+           <dtml-if "outcome == request['expectation']">selected="1"</dtml-if> 
+           ><span class="outcome"><dtml-var outcome></span></option>
+	 </dtml-let>
+	</dtml-in>
+       </select>
+      </td>
+     </tr>
+     <tr><td colspan="2">&nbsp;</td></tr>
+     <tr class="form-submit">
+      <td colspan="2">
+       <input type="submit" value="  OK  "/>
+       <input type="button"
+	      value=" Cancel "
+	      onclick="window.close();"/>
+      </td>
+     </tr>
+    </table>
+   </form>
+  <dtml-var expr="GenerateEndBody()">
+ </html>
+</dtml-let>

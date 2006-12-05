@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>
+def is_valid(l):
+   from python_label import PythonLabel
+   return PythonLabel("").IsValid(l, 1)
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>is_valid("abcde") \
+           and is_valid("ab_xz_efg_0912_bjd__f_") \
+           and is_valid("_foo_bar") \
+           and not is_valid("") \
+           and not is_valid("Hello") \
+           and not is_valid("hello world")</text>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->
