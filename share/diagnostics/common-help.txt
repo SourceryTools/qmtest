@@ -1,0 +1,59 @@
+########################################################################
+#
+# File:   common-help.txt
+# Author: Alex Samuel
+# Date:   2001-03-08
+#
+# Contents:
+#   Common QM help message templates.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+# Please keep diagnostics in alphabetical order by tag.
+
+@ attachment form
+Using this form, you can upload a file from your computer as a file
+attachment.  An attachment consists of the file's contents, plus the
+file name, the file's MIME type, and a short description.
+
+ 1. In the **File** field, enter the path of the file you wish to
+    upload, or click on "Browse" to browse the contents of your file
+    system.
+
+ 2. Specify the file's MIME type in the **Description** field.  Select
+    "Detect Automatically" to have %(program_name)s guess the MIME type
+    automatically based on the file's name, or enter a valid MIME type
+    in the edit control.
+
+ 3. In the **Description** field, enter a short description of the
+    file's contents.
+
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

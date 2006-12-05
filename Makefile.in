@@ -1,0 +1,170 @@
+######################################################### -*-Makefile-*-
+#
+# File:   Makefile
+# Author: Alex Samuel
+# Date:   2000-12-20
+#
+# Contents:
+#   Top-level qm makefile.
+# 
+# Copyright (C) 2001 CodeSourcery LLC
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+TOPDIR		= @top_srcdir@
+
+SUBDIRS		= doc
+
+PYTHONDOCDIRS	= qm
+
+# Python packages with installation scripts.
+PYTHON_PACKAGES = \
+	qm \
+	PyXML \
+	sgmlop \
+	zope-dtml/DocumentTemplate \
+	zope-dtml/ExtensionClass \
+	xmlrpc
+# The names of rules to install the PYTHON_PACKAGES.
+PYTHON_PACKAGES_INSTALL = $(PYTHON_PACKAGES:=-install)
+
+# The scripts that are run to start QM.
+SCRIPTS = qm/test/qmtest$(SCRIPT_EXT) \
+	  qm/test/qmtest-remote$(SCRIPT_EXT)
+
+include $(TOPDIR)/standard.mk
+
+########################################################################
+# additional rules
+########################################################################
+
+all:: $(PYTHON_PACKAGES) $(SCRIPTS)
+
+# Build the Python packages.
+.PHONY: $(PYTHON_PACKAGES)
+
+$(PYTHON_PACKAGES):
+	cd $@ && $(PYTHON) ./setup.py build
+
+# Generate executable scripts.
+ifneq ($(PYTHON_PLATFORM),win32)
+$(SCRIPTS): qm/qm.sh
+	rm -rf $@
+	cp qm/qm.sh $@
+	chmod a-w $@
+	chmod a+x $@
+else
+PYTHONEXE = `@PYTHON@ -c "import sys; print sys.prefix"`\\python
+$(SCRIPTS): 
+	rm -rf $@
+	echo -e "@echo off\r" > $@
+	echo -e "set QM_HOME=C:\\progra~1\qm\r" >> $@
+	echo -e "set QM_BUILD=0\r" >> $@
+	echo -n "$(PYTHONEXE)" \
+                 \"%QM_HOME%\\lib\\qm\\$(subst /,\\,$(basename $@)).py\" \
+          >> $@
+	echo -e " %1 %2 %3 %4 %5 %6 %7 %8 %9\r" >> $@
+endif
+
+clean::
+	for x in $(PYTHON_PACKAGES); do \
+		pushd $$x; $(PYTHON) ./setup.py clean; popd; \
+	done
+
+# Run tests.
+check: all
+	qm/test/qmtest -D tests run $(QMTESTFLAGS)
+
+########################################################################
+# installation
+########################################################################
+
+# Install everything.
+install: \
+	$(PYTHON_PACKAGES_INSTALL) \
+	doc-install \
+	scripts-install \
+	share-install
+	$(INSTALL_DIR) $(INSTALLLIBDIR)/qm/test/classes
+	$(INSTALL_DATA) qm/test/classes/classes.qmc \
+		"$(INSTALLLIBDIR)/qm/test/classes/classes.qmc"
+
+# Install Python packages that use distutils.
+.PHONY: $(PYTHON_PACKAGES_INSTALL)
+
+# Distutils requires relative paths on Windows.  For consistency,
+# we use the same technique everywhere.
+RELLIBDIR := $(shell expr "$(INSTALLLIBDIR)" : '$(prefix)/\(.*\)')
+RELSHAREDIR := $(shell expr "$(INSTALLSHAREDIR)" : '$(prefix)/\(.*\)')
+RELINCDIR := $(shell expr "$(INSTALLINCDIR)" : '$(prefix)/\(.*\)')
+
+# Unfortunately, Python's Distutils do not set permissons on on the
+# installed files appropriately.  There is little we can do.
+#
+# The "root" option is undocumented, but apparently necessary, when
+# using relative paths for --install-purelib and such.
+$(PYTHON_PACKAGES_INSTALL):
+	cd $(@:-install=) && \
+		$(PYTHON) ./setup.py install -O1 \
+	        --prefix="$(NATPREFIX)" --root="$(NATPREFIX)" \
+		--install-purelib="$(RELLIBDIR)" \
+                --install-platlib="$(RELLIBDIR)" \
+                --install-scripts="$(RELSHAREDIR)" \
+		--install-data="$(RELSHAREDIR)" \
+                --install-headers="$(RELINCDIR)"
+
+# Install documentation.
+.PHONY: doc-install
+
+doc-install:
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)"
+	$(INSTALL_DATA) README "$(INSTALLDOCDIR)"
+	$(INSTALL_DATA) COPYING "$(INSTALLDOCDIR)"
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/html"
+	for x in doc/manual/html/*.html; do \
+		$(INSTALL_DATA) $$x "$(INSTALLDOCDIR)/manual/html"; \
+	done
+	$(INSTALL_DIR) "$(INSTALLDOCDIR)/manual/print"
+	$(INSTALL_DATA) doc/manual/print/manual.pdf \
+		"$(INSTALLDOCDIR)/manual/print"
+
+# Install scripts.
+.PHONY: scripts-install
+
+scripts-install:
+	$(INSTALL_DIR) "$(INSTALLBINDIR)"
+	$(INSTALL_SCRIPT) $(SCRIPTS) "$(INSTALLBINDIR)"
+
+# Install the share directory by recursively copying its contents.
+.PHONY: share-install
+
+share-install:
+	for x in `find share \( -name '*.txt' -o -name '*.dtml' \
+		  -o -name '*.qmt' -o -name 'configuration' \
+		  -o -name '*.css' -o -name '*.js' \
+		  -o -name '*.gif' -o -name 'CATALOG' \
+		  -o -name '*.dtd' -o -name '*.mod' \)`; do \
+		y=`expr "$$x" : 'share/\(.*\)'`; \
+		$(INSTALL_DIR) "$(INSTALLSHAREDIR)/`dirname $$y`"; \
+		$(INSTALL_DATA) "$$x" "$(INSTALLSHAREDIR)/$$y"; \
+	done

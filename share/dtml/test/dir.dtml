@@ -1,0 +1,97 @@
+<dtml-comment><!--
+
+  File:   dir.dtml
+  Author: Alex Samuel
+  Date:   2001-04-18
+
+  Contents:
+    Document template for displaying test database contents.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Test Database')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <table border="0" width="100%">
+  <tbody>
+   <tr>
+    <td>
+     <h3>
+       Directory for <dtml-var expr="FormatId(path, 'dir', 'navigation')">
+     </h3>
+    </td>
+   </tr>
+  </tbody>
+ </table>
+
+ <table border="0"
+        cellspacing="0"
+        cellpadding="2"
+        width="100%">
+  <tbody>
+   <dtml-if subdir_ids>
+    <tr><th width="100%">Subdirectories</th></tr>
+    <dtml-in expr="subdir_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'dir', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if test_ids>
+    <tr><th width="100%">Tests</th></tr>
+    <dtml-in expr="test_ids">
+      <dtml-let item=sequence-item>
+       <tr><td width="100%">
+        <dtml-var expr="FormatId(item, 'test', 'tree')">
+       </td></tr>
+      </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if suite_ids>
+    <tr><th width="100%">Suites</th></tr>
+    <dtml-in expr="suite_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'suite', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
+   <dtml-if resource_ids>
+    <tr><th width="100%">Resources</th></tr>
+    <dtml-in expr="resource_ids">
+     <dtml-let item=sequence-item>
+      <tr><td width="100%">
+       <dtml-var expr="FormatId(item, 'resource', 'tree')">
+      </td></tr>
+     </dtml-let>
+    </dtml-in>
+   </dtml-if>
+  </tbody>
+ </table>
+
+ <dtml-var expr="GenerateStartScript()">
+   function run_dir() {
+    location = '<dtml-var "MakeRunUrl()">';
+   }
+ <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody()">
+
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

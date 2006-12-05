@@ -1,0 +1,59 @@
+<dtml-comment><!--
+
+  File:   problems.dtml
+  Author: Alex Samuel
+  Date:   2001-06-07
+
+  Contents:
+    Solutions to QM problems.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Solutions to Problems with QM Tools')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Experiencing problems with QM Tools?</h3>
+ 
+ <ul>
+  <li>
+   <p>Consult the <a href="javascript: popup_manual();">QM Tools
+   Manual</a> for information about installing, configuring, and using
+   QMTest and QMTrack.</p>
+  </li>
+
+  <li>
+   <p>Contact <a href="http://www.codesourcery.com">CodeSourcery,
+    LLC</a> to obtain support for QM Tools.</p>
+  </li>
+
+  <li>
+   <p>If you think you've found a bug, or would like to request a
+   change, enhancement, or new feature, visit the <a href="javascript:
+   popup_qm_bug_system();">QM Tools bug tracking system</a>.  You can
+   also browse the bug tracking system to check whether someone else has
+   reported the problem you are encountering.</p>
+   <dtml-var expr="GenerateStartScript()">
+   function popup_qm_bug_system()
+   {
+     window.open("<dtml-var name="qm_bug_system_url">", "qm_bug_system");
+   }
+   <dtml-var expr="GenerateEndScript()">
+  </li>
+ </ul>
+
+ <dtml-var expr="GenerateEndBody(decorations=0)">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

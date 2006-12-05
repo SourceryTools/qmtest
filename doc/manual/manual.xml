@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   main.xml
+  Author: Alex Samuel
+  Date:   2000-03-30
+
+  Contents:
+    Master file for QM manual.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+[
+  <!-- Internal DTD subset.  Only entities should be defined here. -->
+
+  <!-- Include the QM common DTD module.  -->
+
+  <!ENTITY % qm SYSTEM "../qm.mod">
+  %qm;
+
+  <!-- Abbreviations, phrases, and the like specific to this
+  document.  -->
+
+  <!ENTITY idb "<acronym>IDB</acronym>">
+  <!ENTITY iid "<acronym>IID</acronym>">
+  <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
+  <!ENTITY uid "<acronym>UID</acronym>">
+
+  <!-- Each chapter, and certain sections too, are contained in a
+  separate file, and included by entity reference.  -->
+
+  <!ENTITY introduction.xml SYSTEM "introduction.xml">
+  <!ENTITY common-manual.xml SYSTEM "common-manual.xml">
+  <!ENTITY test-tour.xml SYSTEM "test-tour.xml">
+  <!ENTITY test-manual.xml SYSTEM "test-manual.xml">
+  <!ENTITY test-reference.xml SYSTEM "test-reference.xml">
+]>
+<book>
+ <bookinfo>
+  <title>QMTest: User's Guide and Reference</title>
+  <corpauthor>CodeSourcery, LLC</corpauthor>
+  <copyright>
+   <year>2001</year>
+   <holder>CodeSourcery LLC</holder>
+  </copyright>
+  <legalnotice>&qmlicense;</legalnotice>
+  <releaseinfo>Version 1.0</releaseinfo>
+  <revhistory>
+   <revision>
+    <revnumber>1.0&nbsp;</revnumber>
+    <date></date>
+    <revremark>Initial revision.</revremark>
+   </revision>
+  </revhistory>
+ </bookinfo>
+
+ &introduction.xml;
+
+ &test-tour.xml;
+ &test-manual.xml;
+
+ &common-manual.xml;
+
+</book>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  End:
+-->

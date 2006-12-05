@@ -1,0 +1,4 @@
+*.pyc
+qmtest
+qmtest-remote
+*.pyo

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE suite PUBLIC "-//Software Carpentry//QMTest Suite V0.1//EN" "http://www.software-carpentry.com/qm/xml/suite.dtd">
+<suite>
+ <suite_id>unit.common</suite_id>
+</suite>

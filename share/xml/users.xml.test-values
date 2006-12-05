@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE users PUBLIC "-//Software Carpentry//User Database V0.1//EN" "">
+<users>
+ <user id="guest" role="default" disabled="no">
+  <authentication>
+   <property name="password"></property>
+  </authentication>
+ </user>
+
+ <user id="samuel" disabled="no">
+  <info>
+   <property name="name">Alex Samuel</property>
+   <property name="email">samuel@codesourcery.com</property>
+  </info>
+  <authentication>
+   <property name="password">foo</property>
+  </authentication>
+ </user>
+
+ <user id="test" disabled="no">
+  <info>
+   <property name="name">Test User</property>
+   <property name="email">samuel-test@codesourcery.com</property>
+  </info>
+  <authentication>
+   <property name="password">bar</property>
+  </authentication>
+ </user>
+
+</users>

@@ -1,0 +1,110 @@
+########################################################################
+#
+# File:   setup_path.py
+# Author: Alex Samuel
+# Date:   2001-02-08
+#
+# Contents:
+#   Python fragment to set up the Python lookup path to find QM modules.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+"""Execute this file with 'execfile' to set up the Python path for QM."""
+
+########################################################################
+# imports
+########################################################################
+
+# Some of the packages that are used with QM use modules (like regsub)
+# that are not obsolete in Python 2.1.  Prevent Python from warning
+# about these modules.
+try:
+    import warnings
+    warnings.filterwarnings("ignore")
+except:
+    pass
+
+import os.path
+import sys
+
+########################################################################
+# functions
+########################################################################
+
+def add_to_python_path(*components):
+    """Add a QM path to the Python module lookup path.
+
+    Constructs the added path by appending the directory names in
+    'components' to the base QM Python directory."""
+
+    path = apply(os.path.join, (__lib_dir, ) + components)
+    path = os.path.normpath(path)
+    if path not in sys.path:
+        # Insert the path element at the front, so that QM can replace
+        # Python system libraries.  This also means that users cannot
+        # replace QM libraries by setting the 'PYTHONPATH' environment
+        # variable, since this is prepended to 'sys.path' before we get
+        # here.
+        sys.path.insert(0, path)
+
+########################################################################
+# script
+########################################################################
+
+__python_version = "@PYTHON_VERSION@"
+__python_platform = "@PYTHON_PLATFORM@"
+
+# The root of the QM installation.
+__home_dir = os.environ['QM_HOME']
+
+if os.environ['QM_BUILD'] == '1':
+    __lib_dir = __home_dir
+    __share_dir = os.path.join(__home_dir, 'share')
+    __doc_dir = os.path.join(__home_dir, 'doc')
+    add_to_python_path("PyXML/build/lib.%s-%s" %
+       (__python_platform, __python_version))
+else:
+    __lib_dir = os.path.join(__home_dir, 'lib/qm')
+    __share_dir = os.path.join(__home_dir, 'share/qm')
+    __doc_dir = os.path.join(__home_dir, 'share/doc/qm')
+
+# Add things to the Python search path that we'll need.
+add_to_python_path()
+add_to_python_path("sgmlop")
+add_to_python_path("zope-dtml", "ExtensionClass")
+add_to_python_path("zope-dtml")
+add_to_python_path("xmlrpc")
+    
+# Now store the QM directories in the environment, so that other modules
+# can access them.
+os.environ["QM_LIB_PATH"] = os.path.normpath(__lib_dir)
+os.environ["QM_SHARE_PATH"] = os.path.normpath(__share_dir)
+os.environ["QM_DOC_PATH"] = os.path.normpath(__doc_dir)
+
+#######################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# End:

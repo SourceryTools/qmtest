@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   introduction.xml
+  Author: Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Introduction to QM manual.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-introduction">
+ <title>Introduction</title>
+
+  <para>&qmtest; is a testing tool.  You can use &qmtest; to test a
+  software application, such as a database, compiler, or web browser.
+  You can even &qmtest; to test a physical system (like a valve or
+  thermometer) if you have a way of connecting it to your
+  computer.</para>
+
+  <para>Code that has not been tested adequately generally does not
+  work.  Yet, many applications are deployed without adequate testing,
+  often with catastrophic results.  It is much more costly to find
+  defects at the end of the release cycle than at the beginning.  By
+  making it easy to develop tests, and execute those tests to validate
+  the application, &qmtest; makes it easy to find problems easier,
+  rather than later.</para>
+
+  <para>&qmtest; can be extended to handle any application domain and
+  any test format.  &qmtest; works with existing testsuites, no matter
+  how they work or how they are stored.  &qmtest;'s open and pluggable
+  architecture supports a wide variety of applications.</para>
+
+  <para>&qmtest; features both an intuitive graphical user interface
+  and a conventional command-line interface.  &qmtest; can run tests
+  in serial, in parallel on a single machine, or across a farm of
+  possibly heterogeneous machines.</para>
+
+  <para>CodeSourcery provides support for &qmtest;.  CodeSourcery can
+  help you install, integrate, and customize &qmtest;.  For more
+  information, visit <ulink
+  url="http://www.qmtest.com">the QMTest web site</ulink>.</para>
+
+</chapter>
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("main.xml" "book" "chapter")
+  End:
+-->

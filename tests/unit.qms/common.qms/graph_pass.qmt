@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>python.ExecTest</class>
+ <argument name='source'>
+  <text>
+import qm.graph
+nodes = [1, 2, 4, 5, 6, 7, 8]
+edges = {
+    1: [2], 
+    2: [3], 
+    3: [], 
+    4: [6, 7], 
+    5: [], 
+    6: [5, 3], 
+    7: [5], 
+    8: [1, 4]
+    }
+result = qm.graph.topological_sort(nodes, edges, 0)
+</text>
+ </argument>
+ <argument name='expression'>
+  <text>result == [3, 2, 1, 5, 6, 7, 4, 8]</text>
+ </argument>
+</test>
+<!--
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column: 72
+  sgml-indent-step: 1
+  End:
+-->

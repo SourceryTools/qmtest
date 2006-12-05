@@ -1,0 +1,171 @@
+########################################################################
+#
+# File:   track-help.txt
+# Author: Alex Samuel
+# Date:   2001-05-27
+#
+# Contents:
+#   Common QMTtack help message templates.
+#
+# Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. 
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+# Please keep diagnostics in alphabetical order by tag.
+
+@ query help
+**Python Queries**
+
+%(program_name)s allows you to query issues using a Python expression.
+The query returns all issues for which the query expression evaluates to
+a boolean true value.  In Python, these values are taken as a boolean
+false value: 'None', zero, an empty string, and an empty list, tuple, or
+map.  Other values are taken to be true.
+
+%(program_name)s evaluates the query expression for each issue.  The
+issue's value for each field is placed in a variable of the same name as
+the same field.  Normal Python arithmetic, logical, and miscellaneous
+operators are also available.  
+
+For example, this query:
+
+    'user == "jones" and "GUI" in categories'
+
+matches all issues for which the last modifying user is "jones" and
+which is in the category "GUI".
+
+
+@ state model help
+**State Model**
+
+%(program_name)s allows you to specify a state model for each issue
+class.  The state model helps you specify and control the procedure your
+organization follows for dealing with each issue.
+
+The state model consists of a set of *states*.  Each issue is in exactly
+one state at any given time.  In addition, the state model includes
+*transitions* connecting the states.  Each transition leads from one
+state to another state.  A user may change the state of an issue only if
+the state model includes a transition from the issue's current state to
+the new state.
+
+Each state is identified by its name, which must be unique in the state
+model, and can consist of lower-case letters, digits, and underscores.
+A state can also include a more complete description, which helps users
+understand what the state signifies.  Some states are also flagged as
+*open states*; an issue not in an open state is considered no longer to
+be under consideration.  The *initial state* is the state assigned to
+all new issues.
+
+Some typical states that might be included in a bug-tracking state model
+are,
+
+  *submitted* -- The bug has been reported, but not yet examined.
+
+  *active* -- The bug is currently being fixed.
+
+  *fixed* -- The bug has been fixed.
+
+  *tested* -- The system has been tested, and the bug no longer occurs.
+
+  *unreproducible* -- The system's developers were not able to reproduce
+   the reported bug.
+
+Each transition is identified by the names of its starting and ending
+states.  In addition, a transition may also include a *condition*.  The
+condition is a Python expression that is evaluated on each issue whose
+state is changed according to this transition.  The change of state is
+allowed only if the expression evaluates to true.
+
+For example, using the typical states listed above, you may wish to
+restrict your state model so that only testers, Mr. Smith and Ms. Jones,
+may change a bug's state from *fixed* to *tested*.  To implement this,
+you might specify the condition 
+
+  'user in ["smith", "jones"]'
+
+for that transition.  If you omit the condition, the transition is
+always allowed.
+
+**Editing the State Model**
+
+To add a new state, enter a name and description in the text inputs, 
+check or uncheck the **Open** checkbox to indicate whether this is an
+open state, and click on the **Add** button.  To remove a state, select
+it in the list of states and click on the **Remove** button.  Note that
+when you remove a state, all transitions leading either from or two that
+state are also removed.  
+
+To adjust a state's description or change whether it is an open state,
+select the state, make the changes, and click on the **Change** button.
+The name of an existing state cannot be changed.
+
+To add a new transition, select the starting and ending states from the
+combo box inputs.  Optionally, specify a Python expression for the
+transition condition, or leave that input empty.  Click **Add** to add
+the new transition.  To remove a transition, select it in the list of
+transitions and click on the **Remove** button.
+
+
+@ summary display options help
+**Summary Display Options**
+
+The "Summary Display Options" dialog box allows you to control the
+format of the "Issue Summary" page.  
+
+  * With the **Show Fields** control, you may choose which issue fields
+    you wish to display as columns in the "Issue Summary" page.  The
+    fields listed in the "Show Fields" box are the columns in the
+    summary table.  Fields that are not displayed are shown in the
+    "Don't Show Fields" box.
+
+    To add a column to the summary, select it in the "Don't Show Fields"
+    box and click on the "<< Add" button.  To remove a column from the
+    summary, select it in the "Show Fields" box and click on the "Remove
+    >>" button.  To rearrange the order of columns, select a field in
+    the "Show Fields" box and click on the "Move Up" or "Move Down"
+    button.
+
+  * If the **Open Issues** check box is selected, the issue summary
+    shows only open issues.  Issues which are in a "closed" state (as
+    determined in the issue class's state model) are always omitted from
+    the summary.
+
+  * The **Coloring** controls allow you to control how %(program_name)s
+    shades the background colors of rows in the issue summary.  This
+    coloring helps you visually to pick out important issues from the
+    issue summary.
+
+    You may choose an enumeration field for both the hue and the
+    lightness of the background color.  For instance, if you choose the
+    State field for the hue control, %(program_name)s chooses the
+    background color for each issue according to its state.  Choose
+    "None" in both controls to disable background coloring.
+
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

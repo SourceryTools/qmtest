@@ -1,0 +1,153 @@
+<dtml-comment><!--
+
+  File:   new.dtml
+  Author: Alex Samuel
+  Date:   2001-04-18
+
+  Contents:
+    Document template for new test or new resource page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader(GetTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3><dtml-var expr="GetTitle()"></h3>
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="MakeSubmitUrl()">"
+       enctype="multipart/form-data">
+
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tbody>
+    <tr>
+     <td colspan="2">
+      <dtml-if expr="field_errors != {}">
+       <p>Your <dtml-var name="type"> submission contained errors.
+       Please correct them and resubmit.</p>
+      <dtml-else>
+       <p>Specify the name and class for the new <dtml-var
+       name="type">.</p>
+      </dtml-if>
+     </td>
+    </tr>
+
+    <tr valign="top"
+       <dtml-if expr="field_errors.has_key('_id')">
+        class="field-error"
+       <dtml-else>
+        class="field"
+       </dtml-if>
+        >
+     <td width="100%">
+      <dtml-if expr="type == 'test'">
+       <b>Test Name</b>
+       <p>The test name identifies the test.</p>
+      <dtml-else>
+       <b>Resource Name</b>
+       <p>The resource name identifies the resource.</p>
+      </dtml-if>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+       <tr valign="top"><td>
+        <input name="id" 
+               type="text" 
+               size="40" 
+               value="<dtml-var name="item_id">"/>
+        <dtml-if expr="field_errors.has_key('_id')">
+         <br />
+         <span class="error">
+          <dtml-var expr="field_errors['_id']">
+         </span>
+        </dtml-if>
+       </td><td align="right">
+        <dtml-if expr="type == 'test'">
+         <dtml-var expr="web.make_help_link('test ID')">
+        <dtml-else>
+         <dtml-var expr="web.make_help_link('resource ID')">
+        </dtml-if>
+       </td></tr>
+      </table>
+     </td>
+    </tr>
+
+    <tr valign="top"
+       <dtml-if expr="field_errors.has_key('_class')">
+        class="field-error"
+       <dtml-else>
+        class="field"
+       </dtml-if>
+        >
+     <td>
+      <b><dtml-var type capitalize> Class</b>
+      <p>The kind of <dtml-var type> to create.</p>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+       <tr valign="top"><td>
+        Class:
+        <select name="class">
+         <option value="" 
+                 <dtml-unless class_name>selected="selected"</dtml-unless> >
+          Select A Class
+         </option>
+         <dtml-in name="class_names">
+         <dtml-let name=sequence-item>
+          <option value="<dtml-var name>"
+           <dtml-if expr="name == class_name">selected="selected"</dtml-if> >
+           <dtml-var name>
+          </option>
+         </dtml-let>
+         </dtml-in>
+        </select>
+        <dtml-if expr="field_errors.has_key('_class')">
+         <br />
+         <span class="error">
+          <dtml-var expr="field_errors['_class']">
+         </span>
+        </dtml-if>
+       </td><td align="right">
+        <dtml-if expr="type == 'test'">
+         <dtml-var expr="web.make_help_link('test class control',
+                                            classes=GetClassDescriptions())">
+        <dtml-else>
+         <dtml-var expr="web.make_help_link('resource class control',
+                                            classes=GetClassDescriptions())">
+        </dtml-if>
+       </td></tr>
+      </table>
+     </td>
+    </tr>
+
+    <tr class="heading">
+     <td colspan="2">
+      <input type="submit" value=" Next > " />
+      <dtml-var expr="MakeButton('Cancel', 'dir')">
+     </td>
+    </tr>
+   </tbody>
+  </table>
+
+ </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

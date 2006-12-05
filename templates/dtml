@@ -1,0 +1,33 @@
+<dtml-comment><!--
+
+  File:   Fill me in!
+  Author: Fill me in!
+  Date:   YYYY-MM-DD
+
+  Contents:
+    Fill me in!
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Page Title Here!')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
