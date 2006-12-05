@@ -1,0 +1,258 @@
+<dtml-comment><!--
+
+  File:   issue-class.dtml
+  Author: Alex Samuel
+  Date:   2001-05-02
+
+  Contents:
+    Document template for page for viewing and editing an issue class
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Issue Class %s' 
+                                    % issue_class.GetTitle())">
+ <dtml-var expr="GenerateStartBody()">
+
+  <form name="form">
+
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <h3>
+      Issue Class "<dtml-var expr="issue_class.GetTitle()">"
+     </h3>
+     <p>The internal name of this issue class is 
+     <tt><dtml-var expr="issue_class.GetName()"></tt>.</p>
+
+     <p>Mandatory fields are required by <dtml-var expr="GetName()">,
+     and may not be deleted.</p>
+
+     <p><i>No changes will be made to the issue database until you click
+     on the "Commit Changes" button at the bottom of the form.</i></p>
+    </td>
+   </tr>
+  </table>
+
+  <table border="0" 
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tr class="heading">
+    <td colspan="2">
+     <dtml-var expr="web.format_structured_text(issue_class.GetDescription())">     
+    </td>
+   </tr>
+
+   <tr class="heading">
+    <td colspan="2">
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+       <td colspan="2">
+        <b>Fields</b>
+
+        <p>Fields specify the information stored for each issue in this
+        issue class.</p>
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <p>You may add additional fields to the issue class, using
+        <dtml-var expr="GetName()">'s built-in field types or your own
+        custom types.</p>
+       </td>
+       <td align="right">
+        <dtml-var expr="web.make_button_for_url('Add a New Field...',
+                                  request.copy('add-issue-field').AsUrl())">
+       </td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+   
+   <tr class="heading">
+    <td colspan="2">
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+       <td colspan="2">
+        <b>Special Features</b>
+
+        <p><dtml-var expr="GetName()"> can help you configure features
+        for the issue class:</p>
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Notification: Email a notification message to a
+        predetermined list of recipients when an issue changes.
+       </td>
+       <td align="right">
+        <dtml-var expr="web.make_button_for_url('Configure...',
+                        request.copy('show-notification').AsUrl())">
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Subscription: Allow users to subscribe to email notification
+        messages for specific issues.
+       </td>
+       <td align="right">
+        <dtml-var expr="web.make_button_for_url('Configure...',
+                        request.copy('show-subscription').AsUrl())">
+       </td>
+      </tr>
+
+      <tr>
+       <td>
+        <li>Discussion: Add a field to each issue containing an ongoing
+        user discussion.
+       </td>
+       <td align="right">
+        <dtml-if expr="issue_class.HasField('discussion') and
+                       issue_class.GetTrigger('discussion')">
+         (already present)
+        <dtml-else>
+         <dtml-var expr="web.make_button_for_url('Add',
+                         request.copy('add-discussion').AsUrl())">
+        </dtml-if>
+       </td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+
+   <dtml-in expr="issue_class.GetFields()">
+   <dtml-let field=sequence-item>
+
+    <tr class="field" valign="top">
+     <td width="20%">
+      <b><dtml-var expr="field.GetTitle()"></b>
+      <dtml-if expr="field.GetName() in mandatory_field_names">
+      <br>
+      <i>(mandatory field)</i>
+      </dtml-if>
+     </td>     
+     <td>
+      <table border="0" cellpadding="0" cellspacing="4" width="100%">
+       <tr valign="top">
+        <td><b>Title:</b></td>
+        <td width="100%"><dtml-var expr="field.GetTitle()"></td>
+        <td rowspan="4">
+         <dtml-var expr="web.make_button_for_url('Edit...',
+                         web.WebRequest('show-issue-field', 
+                                        base=request,
+                                        field=field.GetName()).AsUrl())">
+         <dtml-if expr="field.GetName() not in mandatory_field_names">
+          <dtml-var expr="web.make_button_for_url('Delete',
+                          web.WebRequest('delete-issue-field', 
+                                         base=request,
+                                         field=field.GetName()).AsUrl())">
+         </dtml-if>
+        </td>
+       </tr>
+       <tr>
+        <td><b>Name:</b></td>
+        <td><dtml-var expr="field.GetName()"></td>
+       </tr>
+       <tr>
+        <td><b>Type:</b></td>
+        <td><dtml-var expr="GetFieldType(field)"></td>
+       </tr>
+       <tr valign="top">
+        <td><b>Description:&nbsp;&nbsp;&nbsp;</b></td>
+        <td>
+         <dtml-var expr="web.format_structured_text(field.GetDescription())">
+        </td>
+       </tr>
+      </table>
+     </td>
+
+<dtml-comment><!--
+     <td>
+      <b>Properties:</b>
+      <table border="0" cellpadding="0" cellspacing="0">
+       <dtml-in expr="field.GetPropertyNames()">
+       <dtml-let name=sequence-item>
+        <dtml-if expr="name not in ['name', 'title', 'description']">
+         <tr valign="top">
+          <td>&nbsp;&nbsp;</td>
+          <td><dtml-var expr="name"></td>
+          <td>&nbsp;=&nbsp;</td>
+          <td><dtml-var expr="field.GetProperty(name)"></td>
+         </tr>
+        </dtml-if>
+       </dtml-let>
+       </dtml-in>
+      </table>
+     </td>
+--></dtml-comment>
+
+    </tr> 
+
+   </dtml-let>
+   </dtml-in>
+
+<dtml-comment><!--
+   <tr class="heading">
+    <td colspan="2">
+     <b>Triggers</b>
+    </td>
+   </tr>
+
+   <dtml-in expr="issue_class.GetTriggers()">
+   <dtml-let trigger=sequence-item>
+
+    <tr class="field" valign="top">
+     <td colspan="2">
+      <b><dtml-var expr="trigger.GetName()"></b>
+     </td>
+    </tr>
+
+   </dtml-let>
+   </dtml-in>   
+--></dtml-comment>
+
+   <tr class="form-submit">
+    <td colspan="2">
+     <input type="button"
+            class="submit"
+            value=" Commit Changes "
+            onclick="<dtml-var expr="web.make_confirmation_dialog(
+                'Are you sure you want to commit these changes to the '
+                'issue database?',
+                request.copy('submit-issue-class').AsUrl())">"
+     />
+     <input type="button"
+            class="submit"
+            value=" Discard Changes "
+            onclick="<dtml-var expr="web.make_confirmation_dialog(
+                'Are you sure you want to discard your changes?',
+                request.copy('config-idb').AsUrl())">"
+     />
+
+    </td>
+   </tr>
+
+  </table>
+
+  </form>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

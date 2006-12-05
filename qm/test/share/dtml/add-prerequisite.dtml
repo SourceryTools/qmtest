@@ -1,0 +1,123 @@
+<dtml-comment><!--
+
+  File:   add-prerequisite.dtml
+  Author: Alex Samuel
+  Date:   2001-04-16
+
+  Contents:
+    Document template for web page to specify a prerequisite test.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Specify a Prerequisite Test')">
+ <dtml-var expr="GenerateStartBody(decorations=0)">
+
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr valign="top"><td width="100%">
+    <h3>Specify a Prerequisite Test</h3>
+   </td><td>
+    <dtml-var expr="web.make_help_link('prerequisite popup')">
+   </td></tr>
+  </table>
+
+  <form name="form"
+        onsubmit="add_prerequisite();">
+
+   <table border="0"
+          cellpadding="6"
+          cellspacing="4"
+          width="100%">
+    <tbody>
+     <tr class="field" valign="top">
+      <td>
+       <b>Test ID</b>
+       <p>The test ID of the prerequisite test.</p>
+      </td>
+      <td>
+       <select name="test_id_list" 
+               size="8" 
+               width="240"
+               onchange="set_test_id();">
+        <dtml-in expr="test_ids">
+        <dtml-let test_id=sequence-item>
+         <option value="<dtml-var name="test_id">">
+          <dtml-var name="test_id">
+         </option>
+        </dtml-let>
+        </dtml-in>
+       </select>
+       <br />
+       ID: <input type="text" size="32" name="test_id"/>
+      </td>
+     </tr>
+
+     <tr class="field" valign="top">
+      <td>
+       <b>Expected Outcome</b>
+       <p>The prerequisite test must produce this outcome.</p>
+      </td>
+      <td>
+       <select name="outcome">
+        <dtml-in expr="outcomes">
+        <dtml-let outcome=sequence-item>
+         <option value="<dtml-var name="outcome">">
+          <dtml-var name="outcome">
+         </option>
+        </dtml-let>
+        </dtml-in>
+       </select>
+      </td>
+     </tr>
+
+     <tr class="field">
+      <td colspan="2">
+       <input type="submit" value="  OK  "/>
+       <input type="button"
+              value=" Cancel "
+              onclick="window.close();"/>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+
+  </form>
+
+  <dtml-var expr="GenerateStartScript()">
+  function set_test_id()
+  {
+    var select = document.form.test_id_list;
+    var index = select.selectedIndex;
+    if(index != -1)
+      document.form.test_id.value = select[index].value;
+  }
+
+  function add_prerequisite()
+  {
+    var test_id = document.form.test_id.value;
+    var outcome = document.form.outcome;
+    outcome = outcome.options[outcome.selectedIndex].value;
+    var text = test_id + " (" + outcome + ")";
+    var value = test_id + ";" + outcome;
+    var select = window.opener.document.form._set_prerequisites;
+    var contents = window.opener.document.form.prerequisites;
+    if(test_id != "")
+      window.opener.add_to_set(select, contents, text, value);
+    window.close();
+    return false;
+  }
+  <dtml-var expr="GenerateEndScript()">
+
+ <dtml-var expr="GenerateEndBody(decorations=0)">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

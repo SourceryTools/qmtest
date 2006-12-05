@@ -1,0 +1,199 @@
+/* Document body.  */
+
+body {
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    color: black;
+    background: white;
+    font-family: arial,sans-serif;
+}
+
+body.help {
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    color: black;
+    background: #ffffd0;
+}
+
+body.popup {
+    background: #c0c0c0;
+}
+
+/* Links.  */
+
+a:link {
+    color: #500060;
+}
+
+a:visited {
+    color: #500060;
+}
+
+a:active {
+    color: #500060;
+}
+
+a:hover {
+    color: #500060;
+}
+
+/* Navigation bar.  */
+
+table.navbar {
+    background-color: black;
+    width: 100%;
+}
+
+td.navbar {
+    color: white;
+}
+
+a.navbar:link {
+    color: white;
+}
+
+a.navbar:visited {
+    color: white;
+}
+
+a.navbar:active {
+    color: white;
+}
+
+a.navbar:hover {
+    color: white;
+}
+
+/* Tables.  */
+
+/* Generic tables. */
+
+th {
+    text-align: left;
+}
+
+th.table_caption {
+    text-align: center;
+}
+
+caption {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Tables are used sometimes used simply to control presentation.  The
+   "data" class indicates that the table is being used to display 
+   tabular data.  */
+
+table.data {
+    margin: 4px;
+    padding: 4px;
+}
+
+th.issue-class {
+    background-color: #e0e0e0;
+    color: black;
+    text-align: left;
+    font-weight: bold;
+}
+
+span#colhead {
+    background-color: black;
+    color: white;
+}
+
+a#colhead {
+    color: white;
+    background-color: black;
+}
+
+a.reverse {
+    color: white;
+    background-color: black;
+}
+
+span.fieldname {
+    font-weight: bold;
+}
+
+span#button {
+    color: red;
+    background-color: black;
+}
+
+span.error, span.warning {
+    color: #c00000;
+}
+
+.field {
+    background-color: #f0f8ff;
+}
+
+tr.field-error {
+    background-color: #fff0f8;
+}
+
+tr.form-submit {
+    background-color: #f8ffe8;
+}
+
+tr.heading {
+    background-color: #e8e8e8;
+}
+
+span.userid {
+    color: #102050;
+}
+
+a.userid {
+    color: #a0a0cf;
+}
+
+a.help-link {
+    font-size: xx-small;
+    color: #402090;
+}
+
+input.submit {
+    background-color: #e0e0e0;
+}
+
+span.outcome {
+    font-weight: bold;
+}
+
+span.cause {
+    font-style: italic;
+}
+
+span.id {
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Test outcomes. */
+
+.qmtest_pass {
+    background-color: #a0f0a0;
+}
+
+.qmtest_fail, .qmtest_unexpected {
+    background-color: #ff9090;
+}
+
+.qmtest_error {
+    background-color: #ffffe0;
+}
+
+.qmtest_untested {
+    background-color: #d0d0d0;
+}
+
+.qmtest_expected {
+    background-color: #c0c0c0;
+}
+

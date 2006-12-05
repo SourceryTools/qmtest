@@ -1,0 +1,224 @@
+##################################################### -*-shell-script-*-
+#
+# File:   configure.in
+# Author: Alex Samuel
+# Date:   2001-01-09
+#
+# Contents:
+#   Autoconf configuration for QM.
+#
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+AC_INIT(configure.in)
+
+dnl ####################################################################
+dnl Enable maintainer mode.
+dnl ####################################################################
+
+AC_ARG_ENABLE(maintainer-mode, 
+              [  --enable-maintainer-mode configure for development],
+              if test x${enableval} = xno; then
+                MAINTAINER_MODE=0
+              else
+                MAINTAINER_MODE=1
+              fi,
+              MAINTAINER_MODE=0)
+AC_SUBST(MAINTAINER_MODE)
+	     
+dnl ####################################################################
+dnl Load the version numbers.
+dnl ####################################################################
+
+. ${srcdir}/version
+
+AC_SUBST(QM_MAJOR_VER)
+AC_SUBST(QM_MINOR_VER)
+AC_SUBST(QM_RELEASE_VER)
+AC_SUBST(QM_VERSION)
+
+dnl ####################################################################
+dnl Find the Python interpreter.  If the user specified the 
+dnl --with-python option, use its value, after checking that it exists.
+dnl Otherwise, look in the PATH.
+dnl ####################################################################
+
+AC_ARG_WITH(
+  python, 
+  [  --with-python=PATH      specify the Python interpreter],
+  PYTHON="$with_python",
+  PYTHON=""
+)
+
+if test -n "$PYTHON" -a "$PYTHON" != yes; then
+  AC_CHECK_FILE(
+    $PYTHON, 
+    , 
+    echo "Cannot find Python interpreter $PYTHON."; exit 1
+  )
+else
+  AC_PATH_PROG(PYTHON, python2 python, python)
+fi
+
+dnl ####################################################################
+dnl Determine the Python version, installation prefix, and and platform.
+dnl ####################################################################
+
+# The code used to check the version only reports the version accurately
+# with Python 2.0 or greater -- but the minimum acceptable version of
+# Python is already higher than that.
+AC_MSG_CHECKING(Python version)
+cat > python-ver.py <<EOF
+try:
+  import sys
+  print sys.version_info[[0]]
+except:
+  print 0
+EOF
+PYTHON_MAJOR=`$PYTHON python-ver.py`
+cat > python-ver.py <<EOF
+try:
+  import sys
+  print sys.version_info[[1]]
+except:
+  print 0
+EOF
+PYTHON_MINOR=`$PYTHON python-ver.py`
+rm python-ver.py
+PYTHON_VERSION="${PYTHON_MAJOR}.${PYTHON_MINOR}"
+AC_MSG_RESULT($PYTHON_VERSION)
+AC_SUBST(PYTHON_VERSION)
+
+# Some Python versions before 2.1 have serious bugs if threads and
+# fork are used together.  Therefore, Python 2.1 or higher is required.
+if test "$PYTHON_MAJOR" -lt 2 || \
+   (test "$PYTHON_MAJOR" -eq 2 && test "$PYTHON_MINOR" -lt 1); then
+  AC_MSG_ERROR(QM requires Python version 2.1 or greater)
+fi
+
+AC_MSG_CHECKING(Python prefix)
+PYTHON_PREFIX=`$PYTHON -c "import sys; print sys.prefix"`
+AC_MSG_RESULT($PYTHON_PREFIX)
+AC_SUBST(PYTHON_PREFIX)
+
+AC_MSG_CHECKING(Python platform)
+PYTHON_PLATFORM=`$PYTHON -c "import distutils.util; print distutils.util.get_platform()" 2>/dev/null`
+if test $? -ne 0; then
+  AC_MSG_RESULT(could not be determined)
+  AC_MSG_ERROR(Python distutils module is not installed)
+fi
+AC_MSG_RESULT($PYTHON_PLATFORM)
+AC_SUBST(PYTHON_PLATFORM)
+
+dnl ####################################################################
+dnl Look for HappyDoc, which we use to build source documentation.
+dnl ####################################################################
+
+AC_PATH_PROG(HAPPYDOC, happydoc, no)
+
+dnl ####################################################################
+dnl Jade and Tidy are used to generate documentation.  Without Jade,
+dnl documentation will not be built.
+dnl ####################################################################
+
+AC_PATH_PROG(JADE, jade, no)
+AC_PATH_PROG(TIDY, tidy, no)
+
+dnl ####################################################################
+dnl We need XML declarations for Jade, in xml.dcl.  This file should be 
+dnl included with Jade.  Look for it in some usual places.
+dnl ####################################################################
+
+if test "$JADE" != no; then
+  AC_MSG_CHECKING(xml.dcl)
+  XML_DCL=no
+  for file in \
+    /usr/share/doc/jade*/pubtext/xml.dcl \
+    /usr/share/doc/openjade*/pubtext/xml.dcl \
+    /usr/doc/jade*/pubtext/xml.dcl \
+    /usr/share/sgml/declaration/xml.dcl \
+  ; do
+    if test -r "$file"; then
+      XML_DCL=$file
+      break
+    fi
+  done
+  AC_MSG_RESULT($XML_DCL)
+  AC_SUBST(XML_DCL)
+fi
+
+dnl ####################################################################
+dnl To build documentation, we need DSSSL stylesheets for DocBook.  Look
+dnl for them in some usual places.
+dnl ####################################################################
+
+AC_MSG_CHECKING(DocBook stylesheets)
+DOCBOOK_STYLESHEETS=no
+for dir in \
+  /usr/lib/sgml/stylesheets/docbook \
+  /usr/lib/sgml/stylesheet/dsssl/docbook \
+; do
+  if test -d $dir; then
+    DOCBOOK_STYLESHEETS=$dir
+    break
+  fi
+done
+AC_MSG_RESULT($DOCBOOK_STYLESHEETS)
+AC_SUBST(DOCBOOK_STYLESHEETS)
+
+dnl #####################
+dnl Find the Docbook DTD.
+dnl #####################
+
+DOCBOOK_DTD=
+AC_MSG_CHECKING(for docbook DTD)
+AC_ARG_WITH(docbook-dtd, 
+            [  --with-docbook-dtd=PATH directory containing the docbook DTD.],
+            [case $withval in
+               yes) DOCBOOK_DTD=/usr/lib/sgml;;
+               no)  ;;
+               *)   DOCBOOK_DTD=$withval;;
+             esac],
+            DOCBOOK_DTD=/usr/lib/sgml)
+AC_MSG_RESULT($DOCBOOK_DTD)
+AC_SUBST(DOCBOOK_DTD)
+
+if test "$JADE" = no -o "$XML_DCL" = no -o "$DOCBOOK_DTD" = no; then
+  AC_MSG_WARN(Documentation will not be built.)
+  DOCUMENTATION=no
+else
+  DOCUMENTATION=yes
+fi
+
+# Do not try to build documentation unless --enable-maintainer-mode
+# was specified.  The documentation is pre-generated for releases.
+
+if test $DOCUMENTATION = yes && test $MAINTAINER_MODE = 0; then
+  AC_MSG_WARN(Documentation is only built in maintainer mode.)
+  DOCUMENTATION=no
+fi
+
+AC_SUBST(DOCUMENTATION)
+
+dnl ####################################################################
+dnl Generate results
+dnl ####################################################################
+
+AC_OUTPUT(
+  GNUmakefile
+  qm.spec
+  qm/setup_path.py
+)
+
+dnl ####################################################################
+dnl This follows the setup instructions in the Gadfly package.  The
+dnl target is a file generated in the setup procedure.  See
+dnl gadfly/index.html.
+dnl ####################################################################
+
+if test -d gadfly; then
+  cd gadfly && $PYTHON gfinstall.py
+fi

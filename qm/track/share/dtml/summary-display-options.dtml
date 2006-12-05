@@ -1,0 +1,133 @@
+<dtml-comment><!--
+
+  File:   summary-display-options.dtml
+  Author: Alex Samuel
+  Date:   2001-05-10
+
+  Contents:
+    Dialog box page for display options for the issue summary page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <dtml-var expr="GenerateHtmlHeader('Summary Display Options')">
+ <dtml-var expr="GenerateStartBody(decorations=0)">
+
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+   <tr>
+    <td>
+     <h3>Summary Display Options</h3>
+    </td>
+    <td align="right">
+     <dtml-var expr="web.make_help_link('summary display options help')">
+    </td>
+   </tr>
+  </table>
+
+  <form name="form"
+        action="void(0);">
+
+   <table border="0"
+          cellpadding="4"
+          cellspacing="4"
+          width="100%">
+
+    <tr class="field" valign="top">
+     <td>
+      <b>Show Fields</b>
+     </td>
+     <td>
+      <dtml-var expr="fields_controls">
+     </td>
+    </tr>
+
+    <tr class="field" valign="top">
+     <td>
+      <b>Open Issues</b>
+     </td>
+     <td>
+      <input type="checkbox" name="open_only" value="1"
+       <dtml-if name="open_only">checked</dtml-if>
+      />
+      Show only open issues.
+      <br>
+      <font size="-1">
+       An issue is open if it is in one of the following states:
+       <dtml-var expr="_.string.join(open_state_names, ',')">
+      </font>
+     </td>
+    </tr>
+     
+    <tr class="field" valign="top">
+     <td>
+      <b>Coloring</b>
+     </td>
+     <td>
+      <table border="0" cellpadding="0" cellspacing="0">
+       <tr>
+        <td>Hue:</td>
+        <td>
+         <dtml-var expr="MakeColorableFieldSelect('hue', hue_field_name)">
+        </td>
+       </tr>
+       <tr>
+        <td>Lightness:</td>
+        <td>
+         <dtml-var expr="MakeColorableFieldSelect('lightness', 
+                                                  lightness_field_name)">
+        </td>
+       </tr>
+      </table>
+     </td>
+    </tr>
+
+    <tr class="form-submit">
+     <td colspan="2" align="right">
+      <input type="button" 
+             class="submit"
+             value=" OK "
+             onclick="do_ok();"/>
+      <input type="button" 
+             class="submit"
+             value=" Cancel "
+             onclick="window.close();"/>
+     </td>
+    </tr>
+
+   </table>
+
+  </form>
+
+ <script language="JavaScript">
+ function do_ok()
+ {
+   // Construct the URL to redisplay the summary page with the new
+   // display options.
+   var url = "<dtml-var expr="MakeBaseUrl()">";
+   url += "&fields=" + document.form.fields.value;
+   url += "&open_only=" + (document.form.open_only.checked ? "1" : "0");
+   url += "&hue=" + document.form.hue.value;
+   url += "&lightness=" + document.form.lightness.value;
+   // Show it.
+   window.opener.document.location = url;
+   // Close this popup window.
+   window.close();
+ }
+ </script>
+
+ <dtml-var expr="GenerateEndBody(decorations=0)">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

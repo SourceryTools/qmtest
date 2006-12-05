@@ -1,0 +1,64 @@
+* Parser
+
+** Internal links
+
+We need a way to specify internal hyperlinks, like the label/ref of
+LaTeX.  We should be able to specify labels in headings.
+
+** Defined, definition
+
+Somehow make sure the "first" links are off after a definition.
+
+With abbreviations, it is convenient to have dfnref items.  But it is
+also convenient if that abbreviation can be used when the term is
+defined.  If we wrap a dfnref item in a dfn, we should turn off the
+referencing.
+
+Support forward referencing.
+
+Instead of dfnref, just use ref.  The wrapping we need to implement
+(above) can be generalized; don't generate a ref for a key that is
+being defined.
+
+** "First" links
+
+They are messed up in footnotes, since "firstness" is determined in
+the unit in which the footnote is created.  But it really needs to be
+relative to the footnote page!  (What about LaTeX, where they are at
+the bottom of the page?)
+
+
+
+** Footnotes with hyperlinks
+
+We might want to supply a footnote with the URL of a link, even if we
+can provide the link itself.  Probably we only want to do this the
+first time we encounter the link.  Ideally, when we print the
+document, we provide footnotes.
+
+** Changing header levels
+
+We need to be able to change the levels of headers when including
+documents.
+
+** Chapter, Section
+
+Give alternate ways to specify headers.  I think we need to be able to
+get the heading "name" as words, to be inserted in various places,
+where those words can change if the heading levels change.  Ideally
+this would be a "style".
+
+** Images
+
+We should provide image conversions, e.g., dia->png.
+
+We need to get the size of the image somehow, and insert that
+information into the generated HTML.
+
+
+
+* Prior Art
+
+Make sure we give a sense of usefulness to both the developer and the
+installer.
+

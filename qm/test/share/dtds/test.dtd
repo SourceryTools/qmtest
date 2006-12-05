@@ -1,0 +1,53 @@
+<!--
+
+  File:   test.dtd
+  Author: Alex Samuel
+  Date:   2001-03-14
+
+  Contents:
+    DTD for a test case.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTest Test V0.1 -->
+
+<!-- A single test.  -->
+<!ELEMENT test (class, (argument | category | prerequisite | resource)*)>
+
+<!-- The name of a test class.  -->
+<!ELEMENT class (#PCDATA)>
+
+<!-- An argument to a test class.  -->
+<!ELEMENT argument (integer | text | set | attachment | enumeral)>
+<!ATTLIST argument name CDATA #REQUIRED 
+                   eval ( yes | no ) "no">
+
+<!-- The name of a category to which the test belongs.  -->
+<!ELEMENT category (#PCDATA)>
+
+<!-- The test ID of another test that must be run before this one is. 
+     The outcome attribute is the outcome that the other test must produce
+     for this one to be run.  -->
+<!ELEMENT prerequisite (#PCDATA)>
+<!ATTLIST prerequisite outcome (PASS | FAIL | ERROR | UNTESTED) "PASS">
+
+<!-- The ID of an resource that must be invoked before and after this test
+     is run.  -->
+<!ELEMENT resource (#PCDATA)>
+
+<!ENTITY % fields PUBLIC 
+    "-//Software Carpentry//ELEMENTS Fields Hierarcy V0.1//EN" 
+    "fields.mod">
+%fields;
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

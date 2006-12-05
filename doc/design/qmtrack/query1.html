@@ -1,0 +1,61 @@
+<!--
+
+   File:   query1.html
+   Author: Benjamin Chelf
+   Date:   11/30/2000
+
+   Contents: Screenshots for qmtrack documentation forms.
+
+   Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+
+-->
+
+  <h2>Basic Query</h2><br>
+
+  <form method="post" 
+        action="/cgi-bin/bogus.py"
+  >
+  <table cellpadding="4" cellspacing="0" border="0" columns="3">
+    <tr><td>Summary:</td>
+	<td><select name="summary_type">
+      <option value="exact">Exact
+      <option value="contains">Contains
+    </select></td>
+        <td><input type="text" size="40" name="summary"></td>
+
+</tr>
+
+    <tr><td>Categories:</td>
+	<td><select name="summary_type">
+      <option value="exact">Contains
+    </select></td>
+<td>
+<select size=5 multiple name="Category">
+<option value="foo">foo
+<option value="bar">bar
+<option value="baz">baz
+<option value="zip">zip
+<option value="zap1">zap1
+<option value="zap2">zap2
+<option value="zap3">zap3
+<option value="zap4">zap4
+<option value="zap5">zap5
+<option value="zap6">zap6
+<option value="zoo">zoo
+</select>
+</td></tr>
+
+    <tr><td>Attachment Description:</td> <td><select name="summary_type">
+      <option value="exact">Exact <option value="contains">Contains
+      </select></td><td><input type="text" size="40" name="summary"></td>
+    </tr>
+    </table>
+
+    <input type="submit" value="Query"></center>
+    <input type="submit" value="Back to Main"></center>
+
+  </form>
+
+
+
+

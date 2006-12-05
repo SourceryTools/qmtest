@@ -1,0 +1,176 @@
+<dtml-comment><!--
+
+  File:   index.dtml
+  Author: Alex Samuel
+  Date:   2001-02-21
+
+  Contents:
+    Document template for main QMTrack page.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xhtmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ <dtml-var expr="GenerateHtmlHeader('Issue Summary')">
+ <dtml-var expr="GenerateStartBody()">
+
+  <h3>Welcome to <dtml-var expr="GetName()">!</h3>
+
+  <table border="0"
+         cellpadding="0"
+         cellspacing="12"
+         width="100%">
+
+   <tbody>
+    <tr valign="top">
+     <td valign="top" width="25%" bgcolor="#f0f0f0">
+      <table border="0" cellspacing="0" cellpadding="6" width="100%">
+       <tr><th>
+        Logged In As
+        <dtml-var expr="web.format_user_id(request.GetSession().GetUserId())">
+       </td></th>
+       <tr><td>
+        <dtml-if expr="request.GetSession().IsDefaultUser()">
+         <dtml-var expr="MakeLoginForm()">
+        <dtml-else>
+         <dtml-var expr="MakeLogoutForm()">
+          <input type="button" 
+                 value=" Log Out "
+                 onclick="document.logout_form.submit();"/>
+         </form>
+        </dtml-if>
+       </td></tr>
+      </table>
+     </td>
+     <td>
+
+  <!-- Main menu.  -->
+  <table border="0" 
+         cellpadding="6" 
+         cellspacing="0"
+         width="100%"
+         bgcolor="#f0f0f0">
+   <tbody>
+
+    <dtml-if expr="GetIssueClasses()">
+
+     <tr><th>Create a New Issue</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="request.copy('new').AsForm(name='new_form')">
+        <dtml-comment><!--
+          Show a select control to choose the issue class, if there is
+          more than one available.
+        --></dtml-comment>
+        <dtml-if expr="_.len(GetIssueClasses()) > 1">
+         <select name="class">
+          <dtml-in expr="GetIssueClasses()">
+          <dtml-let issue_class=sequence-item>
+           <option 
+                   value="<dtml-var expr="issue_class.GetName()">"
+            <dtml-if expr="issue_class == GetDefaultIssueClass()">
+                   selected
+            </dtml-if>
+           >
+            <dtml-var expr="issue_class.GetTitle()">
+           </option>
+          </dtml-let>
+          </dtml-in>
+         </select>
+        </dtml-if>
+        <input type="button" 
+               value=" New "
+               onclick="document.new_form.submit();"/>
+       </form>
+      </td>
+     </tr>
+
+     <tr><td></td></tr>
+
+     <tr><th>Show or Edit an Existing Issue</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="request.copy('show').AsForm(name='show_form')">
+        Issue ID: <input type="text" size="8" name="iid"/>
+        <input type="hidden" name="style" value="full">
+        <input type="button" 
+               value=" Show "
+               onclick="document.show_form.style.value = 'full';
+                        document.show_form.submit();"/>
+        <input type="button"
+               value=" Edit "
+               onclick="document.show_form.style.value = 'edit';
+                        document.show_form.submit();"/>
+       </form>
+      </td>
+     </tr>
+
+     <tr><td></td></tr>
+
+     <tr><th>Search and Browse Issues</th></tr>
+     <tr>
+      <td>
+       <dtml-var expr="request.copy('summary').AsForm(name='query_form')">
+        Query Expression: 
+        <input type="text" size="40" name="query"/>
+        <input type="button" 
+               onclick="document.query_form.submit();" 
+               value=" Search "/>
+       </form>
+       See the <a href="<dtml-var
+       expr="request.copy('query').AsUrl()">">search page</a> for
+       instructions and more options.
+      </td>
+     </tr>
+
+    <dtml-else>  <!-- _len(GetIssueClasses()) == 0 -->
+
+     <tr>
+      <td>
+       <p>There are no issue classes in this issue database (IDB).  An
+       administrator must configure the IDB to include at least one
+       issue class before new issues may be added.</p>
+      </td>
+     </tr>
+
+    </dtml-if> <!-- _len(GetIssueClasses()) > 0 -->
+
+    <dtml-if expr="UserIsInGroup('administrators')">
+
+     <tr><td></td></tr>
+
+     <tr><th>Administrative</th></tr>
+     <tr>
+      <td>
+       <form>
+        <dtml-var expr="MakeButton('Shut Down', 'shutdown')">
+       </form>
+      </td>
+     </tr>
+
+    </dtml-if> <!-- administrators -->
+
+   </tbody>
+  </table>
+
+    </td>
+   </tr>
+  </tbody>
+ </table>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

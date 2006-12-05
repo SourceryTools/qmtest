@@ -1,0 +1,128 @@
+########################################################################
+#
+# File:   diagnostics.txt
+# Author: Alex Samuel
+# Date:   2001-03-08
+#
+# Contents:
+#   Common QMTrack diagnostic message templates.
+#
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+# Please keep diagnostics in alphabetical order by tag.
+
+@ address in use
+The address %(address)s is already in use by another process.  Specify
+a different port for running the server.
+
+@ bad port number
+You must specify a numerical port number.
+
+@ browser error
+Could not start the web browser '%(browser_path)s'.
+
+@ conflicting options
+You may not specify both '--%(option1)s' and '--%(option2)s'.
+
+@ could not read file
+%(program_name)s could not read the file '%(path)s'.
+
+@ disabled account
+The account you specified is disabled.
+
+@ dom bad integer
+The value "%(value)s" is not an integer.  The contents of an '<integer>'
+node must be an integer.
+
+@ dom wrong tag for field
+A '<%(wrong_tag)s>' element is not allowed for field %(name)s.  Only a
+'<%(right_tag)s>' element may be used.
+
+@ empty set field value
+You must specify at least one value for the "%(field_title)s" field.
+
+@ empty text field value
+You must specify a value for the "%(field_title)s" field.
+
+@ invalid enum key
+The string "%(key)s" is not a valid enumeral.  Enumeral names must be
+composed of lower-case letters, digits, hyphens, and underscores.
+
+@ invalid enum value
+The value "%(value)s" is not allowed for field "%(field_title)s".  The
+field may take the values %(values)s.
+
+@ invalid integer field value
+The value of this field must be an integer.
+
+@ invalid login
+The user name or password you entered is invalid.  Please log in again.
+
+@ invalid property
+The property '%(error)s' is invalid.  Use the form 'NAME=VALUE' to
+specify properties.  
+
+@ missing command
+Specify a command.
+
+@ sendmail error
+Could not execute your mail transport agent, `%(sendmail_path)s'.
+
+@ server url
+%(program_name)s running at %(url)s
+
+@ session expired
+Your session has expired.  Please log in again to start a new session.
+
+@ session invalid
+Your login session is invalid.  Please log in again.
+
+@ session required
+To access the page you have requested, you must log in first.
+
+@ session wrong IP
+You have attempted to use a session from a network address different
+from that from which the session originated.  A session may only be used
+from a single network address.  
+
+Please log in again to start a new session.
+
+@ shutdown not allowed
+Only administrators may shut down the server.
+
+@ temp dir error
+An error occured while creating the temporary directory '%(dir_path)s'.
+Please check that your temporary directory is configured correctly.
+
+'%(exc_class)s: %(exc_arg)s'
+
+@ temp file error
+An error occured while creating the temporary file '%(file_name)s'.
+Please check that your temporary directory is configured correctly.
+
+'%(exc_class)s: %(exc_arg)s'
+
+@ unrecognized command
+%(program_name)s does not recognize the command "%(command)s".
+
+@ xmlrpc exception
+An XML/RPC invocation caused an exception.
+
+%(exception)s
+
+@ xml parse error
+The XML parser encountered an error at line %(line)d, character
+%(character)d of the file %(file_name)s:
+
+  '%(message)s'
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   qmtrack.xml
+  Author: Alex Samuel
+  Date:   2000-11-07
+
+  Contents:
+    Master file for qmtrack design document.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+[
+  <!-- Internal DTD subset.  Only entities should be defined here. -->
+
+  <!-- Include the QM common DTD module.  -->
+
+  <!ENTITY % qm SYSTEM "../../qm.mod">
+  %qm;
+
+  <!-- Abbreviations, phrases, and the like specific to this
+  document.  -->
+
+  <!ENTITY idb "<acronym>IDB</acronym>">
+  <!ENTITY iid "<acronym>IID</acronym>">
+  <!ENTITY qmtrack-cmd "<command>qmtrack</command>">
+  <!ENTITY uid "<acronym>UID</acronym>">
+
+  <!-- Each chapter, and certain sections too, are contained in a
+  separate file, and included by entity reference.  -->
+
+  <!ENTITY introduction.xml SYSTEM "introduction.xml">
+  <!ENTITY requirements.xml SYSTEM "requirements.xml">
+  <!ENTITY concepts.xml SYSTEM "concepts.xml">
+  <!ENTITY xml-repr.xml SYSTEM "xml-repr.xml">
+  <!ENTITY implementation.xml SYSTEM "implementation.xml">
+  <!ENTITY triggers.xml SYSTEM "triggers.xml">
+  <!ENTITY user-interface.xml SYSTEM "user-interface.xml">
+  <!ENTITY references.xml SYSTEM "references.xml">
+]>
+<book>
+ <bookinfo>
+  <title>&qmtrack; Design</title>
+  <authorgroup>
+   <author>
+    <firstname>Benjamin</firstname>
+    <surname>Chelf</surname>
+   </author>
+   <author>
+    <firstname>Mark</firstname>
+    <surname>Mitchell</surname>
+   </author>
+   <author>
+    <firstname>Alex</firstname>
+    <surname>Samuel</surname>
+   </author>
+   <author>
+    <firstname>Greg</firstname>
+    <surname>Wilson</surname>
+   </author>
+  </authorgroup>
+  <copyright>
+   <year>2000</year>
+   <holder>CodeSourcery LLC</holder>
+  </copyright>
+  <legalnotice>&qmlicense;</legalnotice>
+  <releaseinfo>version 0.2</releaseinfo>
+  <revhistory>
+   <revision>
+    <revnumber>0.2&nbsp;</revnumber>
+    <date>2000 December 7</date>
+    <revremark>Initial revision.</revremark>
+   </revision>
+  </revhistory>
+ </bookinfo>
+
+ &introduction.xml;
+ &requirements.xml;
+ &concepts.xml;
+ &implementation.xml;
+ &references.xml;
+
+</book>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  End:
+-->

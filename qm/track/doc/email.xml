@@ -1,0 +1,368 @@
+ <section id="sec-track-email">
+  <title>Accessing &qmtrack; Via Email</title>
+
+  <para>In addition to a command-line interface and a web-based GUI,
+  &qmtrack; provides an email interface.  You may use the interface for
+  creating, accessing, and modifying issues.  In certain configurations,
+  &qmtrack; will also send you notification about changes to issues via
+  email.  The email interface does not support creating or configuring
+  an issue database, though; use the web GUI for these
+  operations.</para>
+
+  <section id="sec-track-email-format">
+   <title>Email Format</title>
+
+   <para>&qmtrack;'s format for representing an issue is similar to the
+   format of ordinary Internet email headers (the lines labelled "From",
+   "To", "Subject", etc. that come before the body of the message).
+   While they are formatted similarly to mail headers, though, they are
+   <emphasis>not</emphasis> actually part of the mail headers -- as far
+   as your mail program is concerned, they are part of the message
+   body.</para>
+
+   <para>In the message body, all lines that start with
+   "<literal>#</literal>" are considered comments, and ignored.
+   Additionally, groups spaces and "<literal>&gt;</literal>"
+   (greater-than symbols) at the start of a line -- the syntax used by
+   many email programs to quote replies -- are removed before processing
+   the line.</para>
+
+   <para>Each field in the issue is represented by one or more entries
+   similar to a mail header line.  The entry begins with the field
+   title, followed by a colon and the field value.  &qmtrack;'s internal
+   field name may also be used instead of the title.  Field title is
+   case-insensitive.  There should be no whitespace before the field
+   title or between the title and the colon.</para>
+
+   <para>Different fields are represented slightly differently,
+   depending on their types:</para>
+
+   <orderedlist>
+    <listitem>
+     <para>For most field types, the value follows immediately after the
+     colon.  For example:</para>
+
+<programlisting>Issue ID: iss09
+Modification Time: 2001-10-19 21:53 PDT 
+Modifying User: guest
+Severity: high
+</programlisting>
+    </listitem>
+
+    <listitem>
+     <para>The value of a text field may include more than one line of
+     text.  The second and subsequent lines of text must be indented by
+     one or more spaces.  &qmtrack; automatically removes the largest
+     amount of leading blank space common to each line in a field value
+     after the first.  Blank lines may also be included in multi-line
+     text.  For example:</para>
+
+<programlisting>Description: 
+  Program crashes on save.  Select "File", "Save As...", enter a file
+  name, and click "OK".  The program generates a segfault.
+
+  The document contents are lost, since the saved document file has zero
+  length and the autosave file is not generated.
+</programlisting>
+    </listitem>
+
+    <listitem>
+     <para>Most set fields are represented as comma-separated lists of
+     values.  Whitespace following each comma is ignored.  For
+     instance,</para>
+
+<programlisting>Subscribers: bob, cynthia, earnest, kathleen
+</programlisting>
+    </listitem>
+
+    <listitem>
+     <para>Set fields containing text are represented differently.  For
+     these fields, &qmtrack; includes one field entry for each element
+     of the set.</para>
+
+     <para>For example, a "Discussion" field is composed of several
+     multi-line text items, each representing one element of the
+     discussion.  Here is an example of how &qmtrack; would represent a
+     discussion with three elements:</para>
+
+<programlisting>Discussion:
+  On 2001-10-19 22:59 PDT, Bob wrote:
+    I think this bug is fixed in version four.
+Discussion:
+  On 2001-10-19 23:17 PDT, Cynthia wrote:
+    No, I just tested it and it is still definitely there.  Did you
+    remember to set your environment variables correctly?
+Discussion:
+  On 2001-10-20 14:44 PDT, Bob wrote:
+    Good catch.  Yes, it's definitely still there.  I'll try to fix it
+    by Tuesday.
+</programlisting>
+    </listitem>
+
+    <listitem>
+     <para>An attachment field is represented in the email message body,
+     using a format similar to that used for other fields for the
+     attachment description.  The email message also includes a standard
+     email attachment on the email message for each &qmtrack;
+     attachment.</para>
+
+     <para>The attachment's description is used in the message body as
+     the field value.  The attachment's description, file name, MIME
+     type, and data are encoded as an email attachment using the
+     standard MIME attachment format for Internet email messages.  The
+     description stored in the message body and in the email attachment
+     must match.</para>
+
+     <para>If you wish to create or modify attachments, consult your
+     email software's documentation to learn how to set the MIME type,
+     file name, description, and data for an email attachment.  Most
+     email software will permit the modification of these data.  The
+     description, file name, and MIME type are encoded in the email
+     attachment's "Content-Description", "Content-Disposition", and
+     "Content-Type" headers, respectively.</para>
+    </listitem>
+
+    <listitem>
+     <para>Set fields of attachments are represented similarly to set
+     fields of text: each attachment appears as a separate item.</para>
+
+     <para>For example, suppose an issue class has a set field of
+     attachments named "Attachments", and a particular issue has two
+     attachment elements in this field.  The two elements might appear
+     like this in the email body:</para>
+
+<programlisting>Attachments: The input file that causes the problems.
+Attachments: The resulting core file.
+</programlisting>
+
+     <para>The description is shown for each attachment element.  The
+     email message would also include two email attachments, whose
+     "Content-Description" headers match the above two values.</para>
+    </listitem>
+
+    <listitem>
+     <para>&qmtrack; adds one more item to the message body, which looks
+     similar to those shown above but doesn't correspond to a field.
+     This is the "<literal>Class Name:</literal>" item, and specifies
+     the title of the issue class for the issue.  (&qmtrack;s internal
+     issue class name may also be used.)  For example:</para>
+
+<programlisting>Issue Class: Bug
+</programlisting>
+    </listitem>
+
+   </orderedlist>
+
+  </section> <!-- sec-track-email-format -->
+
+  <section id="sec-track-email-interaction">
+   <title>Using the Email Interface</title>
+
+   <para>You may interact with &qmtrack; by sending and receiving email
+   messages.  The address to which you send email messages depends on
+   the &qmtrack; installation you are using; it is displayed when you
+   start the &qmtrack; server and listed on the main page of the web
+   GUI.</para>
+
+   <para>&qmtrack; always responds to email operations, by sending back
+   an email message.  The message is sent to the address specified by
+   the <literal>Reply-To</literal> email header, or if that is not
+   present, the in <literal>Return-Path</literal> or
+   <literal>From</literal> header.  (Your email software should set
+   these headers correctly for you.)</para>
+
+   <para>If &qmtrack; cannot understand the message you send, if it
+   requires additional information from you, or if it cannot perform the
+   operation you specified, it sends your submission back to you,
+   annotated with comments describing the problem.  You may modify this
+   message to correct the problem, and resubmit the message to &qmtrack;
+   using the "reply" feature of your email software.</para>
+
+   <para>When you send an email message to &qmtrack;, you specify the
+   operation you wish to perform in the <literal>Subject</literal> email
+   header.  &qmtrack; ignores "<literal>Re:</literal>", square brackets,
+   and other decorations that email software typically adds to the
+   subject line.  &qmtrack supports these operations via email:</para>
+
+   <itemizedlist>
+    <listitem>
+     <para><link linkend="sec-track-email-new">Create a new
+     issue.</link></para>
+    </listitem>
+
+    <listitem>
+     <para><link linkend="sec-track-email-modify">Modify an existing
+      issue.</link></para>
+    </listitem>
+
+    <listitem>
+     <para><link linkend="sec-track-email-show">Display an
+     issue.</link></para>
+    </listitem>
+   </itemizedlist>
+
+   <section id="sec-track-email-new">
+    <title>Creating an Issue</title>
+
+    <para>To create a new issue, specify "<literal>new</literal>" as the
+    subject of your email message.  In the message body, specify field
+    values for the new issue, using the syntax described above.
+    &qmtrack; will create the new issue, and send a message back to you
+    displaying it.</para>
+
+    <para>When you create a new message, you need not specify every
+    field.  &qmtrack; will use default values for fields you do not
+    provide.  If you do not specify a value for which &qmtrack; cannot
+    provide a default, &qmtrack; responds by sending your request back
+    to you, filled in as much as possible, and asking you for additional
+    information.</para>
+
+    <para>Specify the issue class in which to create the new issue using
+    the "<literal>Issue Class</literal>" item.  If you do not specify
+    the issue class, &qmtrack; attempts to use the default issue class
+    for the issue database.  However, if the fields you did specify do
+    not appear in this issue class, &qmtrack; sends an error response
+    back to you.</para>
+
+    <para>For example, below is what a complete email message for
+    submitting a new bug might look like.  This listing includes the
+    email headers along with the message body.  As in all standard
+    Internet email messages, the email headers end at the first blank
+    line in the message.</para>
+
+<programlisting><![CDATA[From: John Doe <john@acme.com>
+To: qmtrack@acme.com
+Subject: new
+
+Issue Class: Bug
+Summary: Startup crash if $HOME not set.
+Description:
+  The program crashes on startup if the 'HOME' environment variable is
+  not set.
+Severity: high
+]]></programlisting>
+
+    <para>&qmtrack; might respond with the following message.  Observe
+    that &qmtrack; has assigned an issue ID automatically, and several
+    other fields not specified in the submission have been filled
+    in.</para>
+
+<programlisting><![CDATA[From: QMTrack <qmtrack@acme.com>
+To: John Doe <john@acme.com>
+Subject: change iss54
+In-Reply-To: <14598.30553.183877.79007@acme.com>
+References: <14598.30553.183877.79007@acme.com>
+
+# QMTrack has created a new issue, "iss54".
+# 
+# To view this issue in the web GUI: 
+#   http://qm.acme.com/track/show?id=iss54
+#
+########################################################################
+Issue Class: Bug
+Issue ID: iss54
+Modification Time: 2001-10-21 09:17 PDT 
+Modifying User: john
+State: open
+Summary: Startup crash if $HOME not set.
+Severity: high
+Description:
+  The program crashes on startup if the 'HOME' environment variable is
+  not set.
+Categories:
+########################################################################
+#
+# To browse the QMTrack manual:
+#   http://qm.acme.com/manual/index.html
+]]></programlisting>
+
+    <para>If you do not know the fields you are required to fill out,
+    specify only the issue class in the message body (or omit even this,
+    to use the default issue class).  &qmtrack;'s response will indicate
+    the fields in the issue class and specify which you are required to
+    fill in.</para>
+
+   </section> <!-- sec-track-email-new -->
+
+   <section id="sec-track-email-modify">
+    <title>Modifying an Issue</title>
+
+    <para>To modify an existing issue, specify
+    "<literal>change</literal>" or "<literal>change
+    <replaceable>issue-id</replaceable></literal>" on the subject line.
+    In the message body specify only the fields whose values you wish to
+    change.  If you do not specify the value of a particular field,
+    &qmtrack; leaves this field's value unmodified.  If you do not
+    specify the issue ID on the subject line, you must specify it as a
+    field in the message body, so that &qmtrack; knows which issue you
+    wish to modify.</para>
+
+    <para>The values of set fields containing text or attachments are
+    displayed using multiple items in the message body, as described
+    above.  If you specify a value for one of these field in your
+    message, that value is appended to the set (unless it is already
+    present).  If you wish to remove elements from the set, you must use
+    the web GUI.</para>
+
+    <para>If you wish to set an attachment field or add an attachment to
+    a set field of attachments, attach the file to your email message.
+    Specify the attachment description both with the email attachment
+    and in the message body, as described above.  Consult your email
+    software's documentation for instructions.</para>
+
+    <para>For example, the following email message might modify the
+    issue shown above, changing its state.</para>
+
+<programlisting><![CDATA[From: Jane Smith <jane@acme.com>
+To: qmtrack@acme.com
+Subject: change iss54
+
+State: active
+]]></programlisting>
+
+    <para>&qmtrack; might respond with this message:</para>
+
+<programlisting><![CDATA[From: QMTrack <qmtrack@acme.com>
+To: Jane Smith <jane@acme.com>
+Subject: change iss54
+In-Reply-To: <95093.10092.849029.66217@acme.com>
+References: <95093.10092.849029.66217@acme.com>
+
+# QMTrack has modified the issue "iss54".
+#
+# To view this issue in the web GUI:
+#   http://qm.acme.com/track/show?id=iss54
+#
+########################################################################
+Issue Class: Bug
+Modification Time: 2001-10-21 11:24 PDT 
+Modifying User: jane
+State: active
+Summary: Startup crash if $HOME not set.
+Severity: medium
+Description:
+  The program crashes on startup if the 'HOME' environment variable is
+  not set.
+Categories:
+########################################################################
+#
+# To browse the QMTrack manual:
+#   http://qm.acme.com/manual/index.html
+]]></programlisting>
+
+   </section> <!-- sec-track-email-modify -->
+
+   <section id="sec-track-email-show">
+    <title>Dispalying an Issue</title>
+
+    <para>To request an issue be sent to you, specify "<literal>show
+    <replaceable>issue-id</replaceable></literal>" on the subject line.
+    &qmtrack; responds by sending the issue you requested back to you.
+    If you decide to modify the issue, you may respond to this message,
+    making the required changes.</para>
+
+   </section> <!-- sec-track-email-show -->
+
+  </section> <!-- sec-track-email-interaction -->
+
+ </section> <!-- sec-track-email -->

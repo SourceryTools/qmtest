@@ -1,0 +1,380 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   design.xml
+  Author: R. Lindsay Todd
+  Date:   2000-11-14
+
+  Contents:
+    Design of qmconfig.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-design">
+ <title>Design</title>
+
+ <para>In this chapter, we present a design for the &qmconfig; system.
+ We start with a high-level overview of the different packages that
+ constitute &qmconfig;.  Then we will go into more detail about the
+ interfaces between packages, how the packages operate, etc.</para>
+
+ <section id="sec-design-components">
+  <title>Components</title>
+
+  <figure id="fig-pkg-qmconfig" float="1">
+   <title>&qmconfig; Package Diagram</title>
+   <mediaobject>
+
+    <imageobject>
+     <imagedata align="center" scale="20" scalefit="1"
+                fileref="pkg_qmconfig.png" format="PNG"></imagedata>
+    </imageobject>
+
+    <textobject>
+     <phrase>&qmconfig; package diagram</phrase>
+    </textobject>
+
+   </mediaobject>
+  </figure>
+  
+  <para>The &qmconfig; system is composed of several components, as
+  shown in <xref linkend="fig-pkg-qmconfig"></xref>.  The functions of
+  the main components are:</para>
+
+  <variablelist>
+
+   <varlistentry><term>&M-GUI;</term>
+    <listitem>
+     <para>The &M-GUI; module provides the &Qgui; for the &qmconfig;
+     system.  As <xref linkend="fig-pkg-qmconfig"></xref> shows, it
+     functions by interacting with the &M-MGR; module.</para>
+
+     <para>We expect the &M-GUI; to be implemented using &Qpython;'s
+     <application>Tkinter</application> module, although other &gui;s
+     are possible.  At this time, we have not specified a design for
+     the &M-GUI;; we think that it is important to gain experience
+     with the underlying &qmconfig; system, and make sure the
+     interface is consistent with the other QM tools.  (<xref
+     linkend="instwiz"></xref> describes how we would like the &M-GUI;
+     to behave.)</para>
+
+     <para>We do note that there are a couple alternatives for how
+     this component could be implemented.  One would be as a "front
+     end" to the &qmconfig; command line interface.  Another
+     possibility would be for the &M-GUI; to directly call the same
+     &api; as the &M-MGR;.</para>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-PDD;</term>
+    <listitem>
+     <para>The &M-PDD; module provides the interface from various
+     components to the actual package database.  We show this as a
+     single module, but expect that alternative implementations will
+     arise.  For instance, the actual database can be stored in
+     &Q-XML;, a &Qpython;-like language, or &Q-LDAP;.</para>
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-MGR;</term>
+    <listitem>
+     <para>The &M-MGR; component is the main component.  It interacts
+     with the various databases, probes the operating system, modifies
+     files, etc.</para>
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-TD;</term>
+    <listitem>
+     <para>The &M-MGR; accesses the &M-TD; to find cached results,
+     site conventions, etc.  Results of operating system probes and
+     options specified by the &D-tailor; are stored in the &M-TD;.
+     This module provides an interface to the actual database, which
+     can be distributed over several locations.</para>
+
+     <para>&D-Kits; are shipped with tailoring databases stored in
+     &Q-XML;.</para>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-BUILD;</term>
+    <listitem>
+     <para>The &M-BUILD; module is an interface to the actual build
+     systems.  It may be invoked by the &M-MGR;, but it may also run
+     independently.  We show it depending on the &M-PDD; and the
+     &M-TD;; from these two databases, the build dependencies can be
+     determined.  <xref linkend="fig-pkg-build"></xref> shows how
+     actual build systems are related to the generic &M-BUILD;
+     module.</para>
+
+     <figure id="fig-pkg-build" float="1">
+      <title>Package Diagram for Build System</title>
+      <mediaobject>
+
+       <imageobject>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_build.png" format="PNG"></imagedata>
+       </imageobject>
+
+       <textobject>
+        <phrase>Package diagram for build system</phrase>
+       </textobject>
+
+      </mediaobject>
+     </figure>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-PD;</term>
+    <listitem>
+     <para>The &M-PD; contains information about the various feature
+     probes that may be needed.</para>
+    </listitem></varlistentry>
+
+
+   <varlistentry><term>&M-DISTRIB;</term>
+    <listitem>
+     <para>The &M-DISTRIB; is used to create &D-srcdists;,
+     &D-tsrcdists;, and &D-bindists;.  It uses the &M-BUILD; to make
+     sure that everything to go into the distribution is first built.
+     It uses data from the &M-PDD; and the &M-TD; to create the actual
+     distributions.  It may be invoked by the &M-MGR;.  <xref
+     linkend="fig-pkg-bdist"></xref> shows how actual distribution
+     builders are related the the generic &M-DISTRIB; module.</para>
+
+     <figure id="fig-pkg-bdist" float="1">
+      <title>Package Diagram for Distribution Builder</title>
+      <mediaobject>
+
+       <imageobject>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_bdist.png" format="PNG"></imagedata>
+       </imageobject>
+
+       <textobject>
+	<phrase>Package diagram for distribution builder</phrase>
+       </textobject>
+
+      </mediaobject>
+     </figure>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-BOOT;</term>
+    <listitem>
+     <para>The &M-BOOT; creates bootstrap scripts.  This is a generic
+     module; <xref linkend="fig-pkg-boot"></xref> shows actual
+     bootstrap script builders relate.</para>
+
+     <figure id="fig-pkg-boot" float="1">
+      <title>Package Diagram for Bootstrap Script Builder</title>
+      <mediaobject>
+
+       <imageobject>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_boot.png" format="PNG"></imagedata>
+       </imageobject>
+
+       <textobject>
+	<phrase>Package diagram for bootstrap script builder</phrase>
+       </textobject>
+
+      </mediaobject>
+     </figure>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-SCAN;</term>
+    <listitem>
+     <para>The &M-SCAN; scans source files for symbols defined by
+     probes.  For C and other such languages, template header files
+     are created.  In other cases, &M-SCAN; reads existing template
+     files.</para>
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-ADAPT;</term>
+    <listitem>
+     <para>The &M-ADAPT; module transforms template files that need to
+     be adapted for the platform.  How this is done may depend on
+     language dependencies.</para>
+
+     <para>When a bootstrap script is used, the &M-ADAPT; may not be
+     available.  A simple adapter, written in C, will be available
+     that works with a few languages.  Bootstrap scripts cannot be
+     created for packages that cannot use this simple adapter.</para>
+
+    </listitem></varlistentry>
+
+   <varlistentry><term>&M-LANG;</term>
+    <listitem>
+
+     <figure id="fig-pkg-lang" float="1">
+      <title>The Language Module</title>
+      <mediaobject>
+
+       <imageobject>
+        <imagedata align="center" width="6in" scale="25" scalefit="1"
+                   fileref="pkg_lang.png" format="PNG"></imagedata>
+       </imageobject>
+
+       <textobject>
+	<phrase>The language module</phrase>
+       </textobject>
+
+      </mediaobject>
+     </figure>
+
+     <para>The &M-LANG; provides language-independent routines for the
+     &M-SCAN; and &M-ADAPT;.  This abstract module uses the actual
+     language-dependent modules.  <xref linkend="fig-pkg-lang"></xref>
+     shows how these modules relate.</para>
+    </listitem></varlistentry>
+  </variablelist>
+
+  <para>How do these modules actually interoperate?  The following
+  sections describes a number of operations.</para>
+
+  <section id="sec-design-tailoring">
+   <title>Creating &D-SrcDists-; and &D-BinDists-;</title>
+
+   <para>The &M-PDD;, the &M-PD;, and the &M-TD; form the heart of
+   &qmconfig;.  From the &M-PDD;, &qmconfig; determines the source
+   files.  The &M-SCAN;, in conjunction with the &M-PD; is used to
+   find what symbols or macros are defined are defined in these files.
+   Other symbols may be directly specified in the &M-PDD; as tailoring
+   options.  Data about these symbols, such as types, default values,
+   and descriptions, are stored in the &M-TD;.  An &Q-XML;
+   representation of this database is shipped with the &D-kit;.</para>
+
+   <para>From the &M-PDD;, &M-MGR; can also determine what needs to go
+   into a &D-srcdist;.  &qmconfig; is configured with information
+   about what local distribution builders (tar, zip, etc.) are
+   available.  The &M-MGR; calls upon the &M-DISTRIB; module to
+   actually create the distribution.</para>
+
+   <para>For a &D-bindist;, the &M-MGR; first calls upon the &M-BUILD;
+   module to make sure everything needed is up-to-date.  Then it uses
+   the &M-PDD; to determine what goes into the &D-bindist;.  Finally,
+   the &M-MGR; calls upon the &M-DISTRIB; module to create the
+   &D-bindist;.</para>
+
+   <para>Some &D-kits; may contain the components of multiple
+   distributions.  The &M-PDD; contains everything needed to determine
+   what files go into which distributions.  It also contains
+   information about any prerequisites packages.</para>
+
+   <para>The &M-DISTRIB; module can be extended using &Qpython;
+   modules to support additional distribution builders.</para>
+
+  </section>
+
+  <section><title>Tailoring</title>
+
+   <para>As stated in <xref linkend="sec-design-tailoring"></xref>, a
+   &D-kit; ships with information in an &Q-XML; representation of the
+   &M-TD;. The &M-MGR; module uses this information assembles a list
+   of probes and orders their execution.</para>
+
+   <para>The &M-MGR; examines command line switches and options files,
+   storing information into the &M-TD;.  Then probes are executed for
+   any undefined symbols.  When possible, probe results come from the
+   probe results cache, also stored in the &M-TD;; otherwise the probe
+   is executed, and the result stored in the &M-TD;.</para>
+
+   <para>When probing is completed, the &M-PDD; is scanned for files
+   that need to be adapted, and the &M-ADAPT; module actually creates
+   the modified files.  Then the &M-BUILD; module is used to create
+   configuration files for the actual build system.  At this point,
+   tailoring is complete.</para>
+
+  </section>
+
+  <section><title>Building Software</title>
+
+   <para>&qmconfig; is not directly responsible for building the
+   software in a &D-kit;.  However, it provides a uniform interface to
+   build systems.  This may involve creating
+   <filename>Makefile</filename>s at tailoring time.  The &M-MGR; will
+   use the &M-BUILD; module to configure and run the build
+   system.</para>
+
+  </section>
+
+  <section><title>Bootstrap Scripts</title>
+
+   <para>As with tailoring, the &M-MGR; determines what probes are
+   needed.  But this time, the &M-BOOT; module is given the list of
+   probes.  Inquiries to the &M-PDD; are made, and a script is
+   constructed to carry out these probes.  Inquiries are also made to
+   the &M-PDD; module to add commands to the script to build and use a
+   simple adapter, written in C, to adapt files when the script is
+   run.  The bootstrap script and the simple adapter must ship with
+   the &D-kit;.</para>
+
+   <para>When a bootstrap script is run, it checks for command line
+   switches or an option file for tailoring information.  Then it
+   executes the probes.  Finally, it runs the adapter.</para>
+
+   <para>We have not yet decided how the build system will
+   interoperate with bootstrap scripts.  We will probably have options
+   to configure either <filename>Makefile</filename>s or
+   scripts.</para>
+
+  </section>
+
+ </section>
+
+ <section id="sec-design-interfaces">
+  <title>Interfaces</title>
+
+  <para>This section describes the interfaces to the various modules
+  comprising &qmconfig;.</para>
+
+  &design-basic.xml;
+  &design-pdd.xml;
+  &design-td.xml;
+  &design-probe.xml;
+  &design-lm.xml;
+
+  <section><title>Remaining Modules</title>
+
+   <para>We have not completed our design of the remaining modules.
+   Most of them are fairly simple.  The most complex module is the
+   &M-MGR;.  However, the only module that depends on it is the
+   &M-GUI;, and that dependency will be through the command line
+   interface.</para>
+
+   <para>Some aspects of the design will require reconciliation with
+   other tools, in particular, &qmbuild;.  Other aspects may change as
+   requirements change.  In particular, if we were to decide that
+   <xref linkend="ucInstQMCPre" endterm="ucInstQMCPre-f"></xref> need
+   not be supported, we can dispose of all the complexity associated
+   with bootstrap scripts.</para>
+
+   <para>Other parts of the design require more prototyping and study.
+   We also believe that there is potential for refactoring even the
+   components we have already designed.  For instance, a number of
+   classes provide documentation; it would be sensible to create a
+   <classname>Documentation</classname> from which to derive
+   these.</para>
+
+  </section>
+
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmconfig.xml" "book" "chapter")
+  End:
+-->

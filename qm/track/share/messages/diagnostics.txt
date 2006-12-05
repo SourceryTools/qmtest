@@ -1,0 +1,288 @@
+########################################################################
+#
+# File:   diagnostics.txt
+# Author: Alex Samuel
+# Date:   2001-02-27
+#
+# Contents:
+#   Diagnostic message templates.
+#
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+########################################################################
+#
+# This file contains templates for diagnostic messages.  This file is
+# parsed by code in qm.diagnostic.
+#
+#   - Lines beginning with a hash mark are ignored.
+#
+#   - Each diagnostic begins with a line that contains an "at" sign (@)
+#     and a tag used to identify the diagnostic.
+#
+#   - Subsequent text until the start of the next diagnostic is
+#     the diagnostic template.
+#
+#   - Diagnostic templates may contain named-substition tokens as
+#     used by the Python % operator on a string.
+#
+#   - Diagnostics are interpreted as structured text.
+#
+# Please keep diagnostics in alphabetical order by tag.
+#
+########################################################################
+
+@ cannot invoke remotely
+The IDB is currently in use by a QMTrack server, but the command you
+specified, "%(command)s", can only be performed directly on the IDB.
+Please retry this command once the IDB is no longer in use by the
+server.
+
+@ create build error
+Internal error in creating issue.
+
+@ create class error syn
+You must specify an issue class when creating a new issue.
+
+@ create field error
+Missing mandatory field(s) "%(field)s". You must specify all mandatory
+fields when creating a new issue.
+
+@ create issue error
+An issue with the iid "%(iid)s" already exists. Try a different iid.
+
+@ create no equals
+Incorrect argument "%(arg)s". Must have an = in the argument passed to
+the create command.
+
+@ edit issue error sem
+The iid "%(iid)s" was not found in the database.
+
+@ edit issue error syn
+You must specify an iid to edit.
+
+@ empty enum
+An enumeration must have at least one enumeral value.
+
+@ field exist
+No field "%(field)s" in issue class "%(issue_class)s". You may specify
+only fields that are present in the issue class.
+
+@ field not in class
+There is no field "%(field_name)s" in issue class %(issue_class_name)s.
+
+@ field set use equal
+The operator = is not allowed for a set field "%(field)s". You must use
+the += and -= operators for fields of set types.
+
+@ field set use plus
+The operators += and -= are not allowed for a non-set field
+"%(field)s". You must use only the = operator for non-set types.
+
+@ format error
+Unknown format "%(format)s". You must specify a valid format to display the
+issues.
+
+@ idb directory missing
+The IDB path '%(path)s' does not exist.
+
+@ idb in use
+The issue database is currently in used by another QMTrack process.  The
+command you specified cannot be performed until the issue database is no
+longer in use.
+
+@ idb locked
+The issue database at %(idb_path)s is currently locked by another
+QMTrack process.  Please try this command again later.  If you believe
+the lock file is stale and has been left behind by a defuct QMTrack
+process, delete the directory %(lock_path)s and try again.
+
+@ idb parent directory inaccessible
+A parent directory, '%(parent_path)s', of the path you have specified
+for the new IDB, '%(idb_path)s', is not accessible.
+
+@ idb parent directory missing
+A parent directory, '%(parent_path)s', of the path you have specified for
+the new IDB, '%(idb_path)s', does not exist.
+
+@ idb path exists
+The path you have specified for the new IDB, '%(path)s', already exists.
+Please move this file or directory out of the way before initializing an
+IDB there.
+
+If there already is an IDB at this path, remove it first with the
+"destroy" command.
+
+@ idb path inaccessible
+The IDB path '%(path)s' is not accessible.
+
+@ idb path wrong
+The path '%(path)s' does not appear to point to an IDB.
+
+@ idb problem
+%(program_name)s encountered a problem accessing the IDB:
+
+  %(problem)s
+
+@ idb server path not accessible
+The IDB at '%(path)s' is being used by another %(program_name)s server,
+but that server is not accessible.
+
+@ iid already used
+There is already an issue in the IDB with the issue ID "%(iid)s".
+
+@ invalid class name
+"%(class_name)s" is not a valid name for an issue class.  An issue class
+name may be composed of lower-case letters, digits, hyphens, and
+underscores, and may not begin with an underscore.
+
+@ invalid enum key
+"%(key)s" is not a valid enumeral name.  The name may be composed of
+lower-case letters, digits, hyphens, and underscores, and may not begin
+with an underscore.
+
+@ invalid field name
+"%(field_name)s" is not a valid field name.  A field name may be
+composed of lower-case letters, digits, hyphens, and underscores, and
+may not begin with an underscore.
+
+@ invalid field type
+"'%(field_type)s'" is not a valid field type.  A field type must be a
+Python class that is a subclass of 'qm.fields.Field'.
+
+@ invalid iid
+"%(iid)s" is not a valid issue ID.  An issue ID may be composed of
+lower-case letters, digits, hyphens, and underscores, and may not begin
+with an underscore.
+
+@ issue store module error
+The issue store implementation module '%(name)s' could not be loaded.
+The following import error occurred:
+
+%(error)s
+
+@ join iid error sem
+The generated iid "%(iid)s" from the two issues to be joined is already 
+in the IDB.
+
+@ join issue error sem
+The iid "%(iid)s" was not found in the IDB.
+
+@ join issue error syn
+Fewer than two IIDs specified. You must specified two iids to be joined.
+
+@ missing class title
+You must specify a title for this issue class.
+
+@ missing idb
+You did not specify an issue database (IDB).  Either
+
+  * Specify the '--idb' command option to the IDB path.
+
+  * Or, set the '%(envvar)s' environment variable to the IDB path.
+
+@ missing import files
+You must specify one or more files from which to import issues.
+
+@ new idb message
+%(program_name)s has created a new issue database for you at %(path)s.
+Either set the '%(envvar)s' environment variable to this path, or use
+the '--idb' option when you invoke QMTrack.
+
+To configure the database run 'qmtrack configure-idb'.
+
+@ no changes
+You have specified no changes to the issue.  A new revision has not been
+created. 
+
+@ no idb at path
+There is no IDB at the path you specified, '%(idb_path)s'.
+
+@ no transition
+The transition from state "%(starting_state_name)s" to state
+"%(ending_state_name)s" is not allowed.
+
+@ not initial state
+A new issue must have the initial state "%(initial_state_name)s".
+
+@ privileged port
+You have attempted use port %(port)d.  This port is privileged; only the
+superuser may use this port.
+
+@ query error syn
+No query string specified. Specify a string to evaluate on all issues.
+
+@ query misc error
+%(program_name)s encountered an error while evaluating the Python query
+expression you specified.  
+
+The error was: *%(error)s*.
+
+Your query was "'%(query)s'".
+
+@ query name error
+%(program_name)s cannot understand the name "%(name)s" in the Python
+query expression you specified.
+
+Your query was "'%(query)s'".
+
+@ query syntax error
+%(program_name)s encountered a syntax error while processing the Python
+query you expression you specified.
+
+Your query was "'%(query)s'".
+
+@ show no iid
+The IID "%(iid)s" was not found in the database.
+
+@ show wrong args
+You must specify an IID to show.
+
+@ split issue error sem
+The IID "%(iid)s" was not found in the database.
+
+@ split issue error syn
+You must specify an IID to split.
+
+@ split iid error sem
+The IID "%(iid)s" already exists. There was a conflict in names in the
+database when splitting the specified issue.
+
+@ transition condition failed
+The transition from state "%(starting_state_name)s" to state
+"%(ending_state_name)s" is not permitted.  This condition %(name)s,
+required for the transition, was not satisfied:
+
+  '%(expression)s'
+
+@ using local idb
+Using local IDB at %(path)s .
+
+@ using remote idb
+Using remote IDB at %(url)s .
+
+@ xml file no revision number
+A revision difference in an issue history is missing its revision number.
+
+@ xml file nonconsecutive revisions
+The revision numbers in the issue history file are not consecutive.
+
+@ xml file unknown class
+The issue file contains issues of unknown issue class %(class_name)s.
+
+@ xml file unknown document element
+An issue XML file may not have a "%(element_tag)s" document element.
+
+@ xml file unknown field
+The issue file contains an unknown field "%(field_name)s" of issue class
+%(class_name)s.
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

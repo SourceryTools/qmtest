@@ -1,0 +1,44 @@
+<!--
+
+  File:   test.dtd
+  Author: Alex Samuel
+  Date:   2000-11-19
+
+  Contents:
+    Document type definition for qmtest test representation.
+
+  Copyright (c) 2000 by CodeSourcery, LLC.  All rights reserved. 
+
+  For license terms see the file COPYING.
+
+-->
+
+<!ELEMENT test
+    ( class, 
+      ( argument | category | prerequisite | preaction | postaction )* 
+    )
+>
+
+<!ELEMENT class (#PCDATA)>
+
+<!ELEMENT argument (#PCDATA)>
+<!ATTLIST argument
+    name CDATA #REQUIRED
+    type ( expression | text ) #IMPLIED
+>
+
+<!ELEMENT category (#PCDATA)>
+
+<!ELEMENT prerequisite (#PCDATA)>
+
+<!ELEMENT preaction (#PCDATA)>
+
+<!ELEMENT postaction (#PCDATA)>
+
+<!-- 
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

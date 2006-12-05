@@ -1,0 +1,31 @@
+<!--
+
+  File:   idb-configuration.dtd
+  Author: Alex Samuel
+  Date:   2001-09-19
+
+  Contents:
+    DTD for the configuration of an issue database.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTrack IDB Configuration V0.1 -->
+
+<!-- An issue database configuration.  -->
+<!ELEMENT idb-configuration (property*)>
+
+<!-- A configuration property of the issue database.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

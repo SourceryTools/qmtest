@@ -1,0 +1,136 @@
+<dtml-comment><!--
+
+  File:   navigation-bar.dtml
+  Author: Alex Samuel
+  Date:   2001-07-09
+
+  Contents:
+    Template for QMTest navigation bar.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<form action="get">
+<table class="navbar" cellspacing="0" cellpadding="0" border="0">
+ <tr>
+  <td width="14%" height="28">
+   &nbsp;&nbsp;
+   <b><font size="+1" color="#d0edef">QM</font><font size="+2"
+   color="white">Test</font></b>
+  </td>
+  
+  <!-- File Menu -->
+  <td width="15%" class="navbar">
+   <select onchange="handle_menu_select(this);">
+    <option value="file">File</option>
+    <dtml-in file_menu_items>
+     <dtml-let desc=sequence-key
+               url=sequence-item>
+      <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <!-- Edit Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="edit">Edit</option>
+    <dtml-in edit_menu_items>
+     <dtml-let desc=sequence-key
+               url=sequence-item>
+      <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <!-- View Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="view">View</option>
+    <dtml-in view_menu_items>
+     <dtml-let desc=sequence-key
+                 url=sequence-item>
+        <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <!-- Run Menu -->
+  <td width="15%">
+   <select onchange="handle_menu_select(this);">
+    <option value="view">Run</option>
+    <dtml-in run_menu_items>
+     <dtml-let desc=sequence-key
+                 url=sequence-item>
+        <dtml-var expr="MakeMenuItem(desc, url)">
+     </dtml-let>
+    </dtml-in>
+   </select>
+  </td>
+
+  <td class="navbar" width="13%" align="center">
+   <a class="navbar"
+      href="<dtml-var expr="web.WebRequest('/test/dir', 
+                            base=request).AsUrl()">"
+   >Home</a>
+  </td>
+
+  <td class="navbar" width="13%" align="center">
+   <a class="navbar"
+      href="javascript: void(0);"
+      onclick="popup_manual();">Help</a>
+  </td>
+ </tr>
+</table>
+</form>
+
+<dtml-var expr="GenerateStartScript()">
+function handle_menu_select(sel) 
+{
+  index = sel.selectedIndex;
+  value = sel.options[index].value;
+  if (value == "shutdown") {
+   <dtml-var expr="web.make_confirmation_dialog(
+                   'Are you sure you want to exit?', 'shutdown')">
+  } else if (index != 0) {
+    eval(value);
+  }
+  // Reset the selected item so that the menu title shows up, rather
+  // than the choice that was just selected.
+  sel.selectedIndex = 0
+}
+
+
+function load_context()
+{
+   window.open("load-context", "load_context", 
+               "dependent,height=200,width=640");
+}
+
+
+function load_results()
+{
+   window.open("load-results", "load_results", 
+               "dependent,height=200,width=640");
+}
+
+
+function load_expected_results()
+{
+   window.open("load-expectations", "load_expectations", 
+               "dependent,height=200,width=640");
+}
+<dtml-var expr="GenerateEndScript()">
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

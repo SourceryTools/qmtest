@@ -1,0 +1,46 @@
+<!--
+
+  File:   target.dtd
+  Author: Alex Samuel
+  Date:   2001-08-11
+
+  Contents:
+    DTD for test execution targets.
+
+  Copyright (C) 2001, 2002 CodeSourcery LLC.  All rights reserved.
+
+  For license terms see the file COPYING.
+
+-->
+
+<!-- NAME: QMTest Target V0.1 -->
+
+<!-- A collection of test execution targets.  -->
+<!ELEMENT targets (target*)>
+
+<!-- A target for executing tests.  -->
+<!ELEMENT target (name, class, group, concurrency, property*)>
+
+<!-- The name of a target.  -->
+<!ELEMENT name (#PCDATA)>
+
+<!-- The target group containing this target.  -->
+<!ELEMENT group (#PCDATA)>
+
+<!-- The name of the Python class representing this target.  -->
+<!ELEMENT class (#PCDATA)>
+
+<!-- The number of tests that may be run simulaneous on this target.  -->
+<!ELEMENT concurrency (#PCDATA)>
+
+<!-- A miscellaneous named property of the target.  -->
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
+
+<!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+-->

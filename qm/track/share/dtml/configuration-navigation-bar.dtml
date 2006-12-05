@@ -1,0 +1,47 @@
+<dtml-comment><!--
+
+  File:   navigation-bar.dtml
+  Author: Alex Samuel
+  Date:   2001-05-30
+
+  Contents:
+    Template for QMTrack navigation bar.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<table width="100%" 
+       class="navbar"
+       border="0"
+       cellspacing="0"
+       cellpadding="0">
+ <tr>
+  <td width="50%">
+   &nbsp;
+   <a href="http://www.software-carpentry.com/"><img border="0"
+   src="/images/sc-logo.png"></a>
+  </td>
+
+  <td class="navbar" width="12%" align="center">
+   <a class="navbar"
+      href="<dtml-var expr="web.WebRequest('/track/config-idb', 
+                            base=request).AsUrl()">"
+   >Main Page</a>
+  </td>
+
+  <td class="navbar" width="12%" align="center">
+   <a class="navbar"
+      href="javascript: void(0);"
+      onclick="popup_manual();">Manual</a>
+  </td>
+ </tr>
+</table>
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>
