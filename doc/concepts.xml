@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  File:   concepts.xml
+  Author: Stefan Seefeld
+  Date:   2006-05-01
+
+  Contents:
+    Concepts chapter for QMTest Tutorial.
+
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+  <!ENTITY % entities SYSTEM "qmtest.ent">
+  %entities;
+]>
+<chapter id="concepts">
+  <title><application>QMTest</application> Concepts</title>
+
+  <para>This section presents the concepts that underlie
+  <application>QMTest</application>'s design. By understanding these concepts,
+  you will be able to better understand how <application>QMTest</application>
+  works. In addition, you will find it easier to extend
+  <application>QMTest</application> to new application domains.</para>
+
+  <para>The central principle underlying the design of QMTest is that
+  the problem of testing can be divided into a domain-dependent problem
+  and a domain-independent problem.  The domain-dependent problem is
+  deciding what to test and how to test it.  For example, should a
+  database be tested by performing unit tests on the C code that makes
+  up the database, or by performing integration tests using SQL queries?
+  How should the output of a query asking for a set of records be
+  compared to expected output?  Does the order in which records are
+  presented matter?  These are questions that only someone who
+  understands the application domain can answer.</para>
+
+  <para>The domain-independent part of the problem is managing the
+  creation of tests, executing the tests, and displaying the results for
+  users.  For example, how does a user create a new test?  How are tests
+  stored?  Should failing tests be reported to the user, even if the
+  failure was expected?  These questions are independent of the
+  application domain; they are just as relevant for compiler tests as
+  they are for database tests.</para>
+
+  <para>QMTest is intended to solve the domain-independent part of the
+  problem and to offer a convenient, powerful, and flexible interface
+  for solving the domain-dependent problem.  QMTest is both a complete
+  application, in that it can be used <quote>out of the box</quote> to
+  handle many testing domains, and infrastructure, in that it can be
+  extended to handle other domains.</para>
+
+  <para>Throughout this chapter we will use the <application>qmtest</application>
+    application with a variety of parameters and options. For a full description
+    of the <application>qmtest</application> please refer to the
+    <link linkend="cli">command-line reference</link>.</para>
+
+  <para>The following commands create a simple <link linkend="concepts-test-database">test database</link>
+  in the current working directory. This test database will be used throughout the
+  following sections of this tutorial.</para>
+
+  <screen>
+<prompt>&gt; </prompt><userinput>mkdir tdb</userinput>
+<prompt>&gt; </prompt><userinput>cd tdb</userinput>
+<prompt>&gt; </prompt><userinput>qmtest create-tdb</userinput>
+  </screen>
+
+  <section id="concepts-tests">
+    <title>Tests</title>
+
+    <para>A <firstterm>test</firstterm> checks for the correct behavior of the
+    target application. What constitutes correct behavior will vary depending
+    on the application domain. For example, correct behavior for a database
+    might mean that it is able to retrieve records correctly while correct
+    behavior for a compiler might mean that it generates correct object code
+    from input source code.</para>
+
+    <para>Every test has a name that uniquely identifies the test, within a
+    given <link linkend="concepts-test-database">test database</link>. Test
+    names must be composed entirely of lowercase letters, numbers, the
+    <quote>_</quote> character, and the <quote>.</quote> character. You can
+    think of test names like file names. The <quote>.</quote> character takes
+    the place of <quote>/</quote>; it allows you to place a test in a
+    particular <firstterm>directory</firstterm>. For example, the test name
+    <filename>a.b.c</filename> names a test named <filename>c</filename> in
+    the directory <filename>a.b</filename>. The directory
+    <filename>a.b</filename> is a subdirectory of the directory
+    <filename>a</filename>.</para>
+
+    <para>Every test is an instance of some test class. The test class
+    dictates how the test is run, what constitutes success, and what
+    constitutes failure. For example, the
+    <classname>command.ExecTest</classname> class that comes with
+    <application>QMTest</application> executes the target application and
+    looks at its output. The test passes if the actual output exactly matches
+    the expected output.</para>
+
+    <para>The arguments to the test parameterize the test; they are what make
+    two instances of the same test class different from each other. For
+    example, the arguments to <classname>command.ExecTest</classname> indicate
+    which application to run, what command-line arguments to provide, and what
+    output is expected.</para>
+
+    <para>The <classname>python.ExecTest</classname> class is similar to 
+    <classname>command.ExecTest</classname>, but, instead of executing a 
+    command using the system shell, it evaluates an expression in the Python 
+    programming language.  The test passes if (and only if) the expression is true.
+    In Python, the expressions <code>True</code> and <code>False</code> are 
+    literals.</para>
+
+    <para>The following creates two trivial tests, <varname>python_pass</varname> 
+    and <varname>python_fail</varname>:</para>
+
+    <screen>
+<prompt>&gt; </prompt>qmtest create --id=python_pass -a expression='True' test python.ExecTest
+<prompt>&gt; </prompt>qmtest create --id=python_fail -a expression='False' test python.ExecTest
+    </screen>
+
+    <para>The first test will always pass while the second will always fail.</para>
+
+    <para>The <command>qmtest ls</command> command will show the content of the 
+    test database:</para>
+
+    <screen>
+<prompt>&gt; </prompt>qmtest ls
+python_fail
+python_pass
+    </screen>
+    <para>Similar to the Unix <command>ls</command> command, the <option>-l</option> option
+      can be used to provide a detailed listing, with kind ("test", "resource", or "suite"),
+      extension class, and id:</para>
+    <screen>
+<prompt>&gt; </prompt>qmtest ls -l
+test python.ExecTest python_fail
+test python.ExecTest python_pass
+    </screen>
+
+    <section id="sec-running-tests">
+      <title>Running Tests</title>
+
+      <para>To run one or more tests, use the
+      <command><command>qmtest</command> run</command> command:</para>
+      <screen>
+<prompt>&gt; </prompt><userinput>qmtest run</userinput>
+      </screen>
+      <para>Each invocation of the <command><command>qmtest</command> run</command>
+      command is a single test run, and produces a single set of test results
+      and statistics. Specify as arguments the names of tests and test suites
+      to run. Even if you specify a test more than once, either directly or by
+      incorporation in a test suite, <application>QMTest</application> runs it
+      only once.</para>
+
+      <para>If you wish to run all tests in the test database, use the
+      implicit test suite <literal>.</literal> (a single period; see <xref
+      linkend="concepts-implicit-test-suites" />), or omit all IDs from the
+      command line.</para>
+
+      <para><application>QMTest</application> can run tests in multiple
+      concurrent threads of execution or on multiple remote hosts. See the
+      documentation for the <link
+      linkend="command-run"><command>run</command> command</link> for
+      details.</para>
+
+      <para>How the output of the <command><command>qmtest</command> run</command>
+      command should be interpreted will be discussed in <xref linkend="concepts-test-results"/>.</para>
+    </section><!-- Running tests -->
+
+    <section id="concepts-tests-prereqs">
+      <title>Prerequisite Tests</title>
+
+      <para>QMTest can avoid running one test (a "dependent test") when some
+      other test (a "prerequisite test") has a particular outcome.</para>
+
+      <para>Suppose that you have a test database with a very simple test that
+      can be run very quickly, and a very complex test that takes hours to
+      run. You know that if the simple test fails, then there is no chance
+      that the complex test will pass. In that case, you could make the simple
+      test a prerequisite of the complex test. Then, when you run both tests,
+      QMTest will run the simple test first. If it fails, the complex test
+      will not be run at all.</para>
+
+      <para>Alternatively, suppose that you have a very comprehensive test
+      that tests ten features of your software. You also have ten separate
+      tests, one for each feature. The comprehensive test can be run in one
+      minute; runnning the separate tests takes two minutes each. So, you want
+      to run the comprehensive test first; if it passes, there is no need to
+      run the individual tests. However, if the comprehensive test fails, you
+      may want to run the single tests to isolate the problem. In this case,
+      each of the simple tests would have the comprehensive test as a
+      prerequisite, indicating that the simple test should be run only if the
+      comprehensive test fails.</para>
+
+      <para>If you explicitly run just the dependent test, QMTest will not run
+      the prerequisite test automatically. In other words, prerequisites are
+      an optimization; when running both the prerequisite and the dependent
+      test, QMTest will run them in the order you've implied, and can omit the
+      dependent test if it is not useful. But, QMTest will not automatically
+      force you to run the prerequisite tests when you only want to run the
+      dependent test.</para>
+
+      <para>Because prerequisite tests are not run unless you ask for them,
+      the dependent test should not depend in any way on the prerequisite
+      test. Otherwise, users will see different test outcomes when they run
+      the dependent test by itself. In other words, each test should stand
+      alone; the order in which tests are run should not affect their
+      outcomes.</para>
+    </section>
+
+    <section id="sec-ordering-and-dependencies">
+      <title>Ordering and Dependencies</title>
+
+      <para>Given one or more input test names and test suite names,
+      <application>QMTest</application> employs the following procedure to
+      determine which tests and resources to run and the order in which they
+      are run.</para>
+
+      <orderedlist>
+        <listitem>
+          <para><application>QMTest</application> resolves test names and
+          test suite names. Test suites are expanded into the tests they
+          contain. Since test suites may contain other test suites, this
+          process is repeated until all test suites have been expanded. The
+          result is a set of tests that are to be run.</para>
+        </listitem>
+
+        <listitem>
+          <para><application>QMTest</application> computes a schedule for
+          running the tests to be run such that a test's prerequisites are
+          run before the test itself is run. Prerequisites not included in
+          the test run are ignored. Outside of this condition, the order in
+          which tests are run is undefined.</para>
+
+          <para>If <application>QMTest</application> is invoked to run tests
+          in parallel or distributed across several <link
+          linkend="def-target">targets</link>, the tests are distributed
+          among them as well. <application>QMTest</application> does not
+          guarantee that a test's prerequisites are run on the same target,
+          though. On each target, tests are assigned to the next available
+          concurrent process or thread.</para>
+        </listitem>
+
+        <listitem>
+          <para><application>QMTest</application> determines the required
+          resources for the tests to be run. If several tests require the
+          same resource, <application>QMTest</application> attempts to run
+          all of the tests on the same target. In this case, the resource is
+          set up and cleaned up only once. In some cases,
+          <application>QMTest</application> may schedule the tests on
+          multiple targets; in that case, the resource is set up and cleaned
+          up once on each target.</para>
+        </listitem>
+      </orderedlist>
+
+      <para>In the following cases, a test or resource will not be executed,
+      even though it is included in the set of tests enumerated
+      above:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>A test specifies for each of its prerequisite tests an
+          expected outcome. If the prerequisite is included in the test run
+          and the actual outcome of the prerequisite test is different from
+          the expected outcome, the test is not run. Instead, it is given an
+          <symbol>UNTESTED</symbol> outcome.</para>
+
+          <para>If a test's prerequisite is not included in the test run,
+          that prerequisite is ignored.</para>
+        </listitem>
+
+        <listitem>
+          <para>If a setup function for one of the resources required by a
+          test fails, the test is given an <symbol>UNTESTED</symbol>
+          outcome.</para>
+        </listitem>
+
+        <listitem>
+          <para>The cleanup function of a resource is run after the last
+          test that requires that resource, whether or not that test was
+          run. The cleanup function is run even if the setup function
+          failed.</para>
+        </listitem>
+      </itemizedlist>
+    </section><!-- Ordering and Dependencies -->
+  </section><!-- concepts-tests -->
+
+  <section id="concepts-test-results">
+    <title>Test Results</title>
+
+    <para>A <firstterm id="def-result">result</firstterm> is an <firstterm
+    id="def-outcome">outcome</firstterm> together with some
+    <firstterm>annotations</firstterm>. The outcome indicates whether the test
+    passed or failed. The annotations give additional information about the
+    result, such as the manner in which the test failed, the output the test
+    produced, or the amount of time it took to run the test.</para>
+
+    <section id="concepts-outcomes">
+      <title>Outcomes</title>
+
+      <para>The outcome of a test indicates whether it passed or failed, or
+      whether some exceptional event occurred. There are four test outcomes:</para>
+      <itemizedlist>
+        <listitem>
+          <para><symbol>PASS</symbol>: The test succeeded.</para>
+        </listitem>
+
+        <listitem>
+          <para><symbol>FAIL</symbol>: The test failed.</para>
+        </listitem>
+
+        <listitem>
+          <para><symbol>ERROR</symbol>: A problem occurred in the test
+          execution environment, rather than in the tested system. For
+          example, this outcome is used when the test class attempted to run
+          an executable in order to test it, but could not because the
+          system call to create a new process failed.</para>
+
+          <para>This outcome may also indicate a defect in
+          <application>QMTest</application> or in the test class.</para>
+        </listitem>
+
+        <listitem>
+          <para><symbol>UNTESTED</symbol>: <application>QMTest</application>
+          did not attempt to execute the test. For example, this outcome is
+          used when <application>QMTest</application> determines that a
+          prerequisite test failed.</para>
+        </listitem>
+      </itemizedlist>
+      <para>Thus, running <application>QMTest</application> with the two
+      previously defined tests will result in the following output:</para>
+      <screen>
+<prompt>&gt; </prompt><userinput>qmtest run</userinput>
+...
+--- TEST RESULTS -------------------------------------------------------------
+
+  python_fail                                   : FAIL
+    Expression evaluates to false.
+
+  python_pass                                   : PASS
+
+...
+--- STATISTICS ---------------------------------------------------------------
+
+       2        tests total
+       1 ( 50%) tests FAIL
+       1 ( 50%) tests PASS
+      </screen>
+      <para> In addition, the results are stored in a results file 
+        (<filename>results.qmr</filename> by default).</para>
+    </section><!-- concepts-outcomes -->
+
+    <section id="concepts-annotations">
+      <title>Annotations</title>
+
+      <para>An annotation is a key/value pair. Both the keys and values are
+      strings. The value is HTML. When a test (or resource) runs it may add
+      annotations to the result. These annotations are displayed by
+      <application>QMTest</application> and preserved in the results file. If
+      you write your own test class, you can use annotations to store
+      information that will make your test class more informative.</para>
+    </section><!-- concepts-annotations -->
+
+    <section id="concepts-expectations">
+      <title>Expectations</title>
+
+      <para>The easiest way to create expectations is to tell
+      <application>QMTest</application> that you expect future results to be
+      the same as the results you just obtained. Thus, <application>QMTest</application>
+      accepts result files obtained from prior test runs as expectations.</para>
+
+      <para>Thus, rerunning <application>QMTest</application>, but using
+      <filename>results.qmr</filename> as expectations, the test results are 
+      displayed differently:</para>
+
+      <screen><prompt>&gt; </prompt><userinput>qmtest run -O results.qmr</userinput>
+...
+--- TEST RESULTS -------------------------------------------------------------
+
+  python_fail                                   : XFAIL
+    Expression evaluates to false.
+
+  python_pass                                   : PASS
+
+...
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  None.
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       2 (100%) tests as expected
+
+    </screen>
+    </section><!-- concepts-expectations -->
+  </section><!-- concepts-test-results -->
+
+  <section id="concepts-test-suite">
+    <title>Test Suites</title>
+
+    <para>A <firstterm>test suite</firstterm> is a collection of tests.
+    <application>QMTest</application> can run an entire test suite at once, so
+    by grouping tests together in a test suite, you make it easier to run a
+    number of tests at once. A single test can be a member of more than one
+    test suite. A test suite can contain other test suites; the total set of
+    tests in a test suite includes both those tests included directly and
+    those tests included as part of another test suite. Every test suite has a
+    name, following the same conventions given above for tests.</para>
+
+    <para>One use of test suites is to provide groups of tests that are run in
+    different situations. For example, the <literal>nightly</literal> test
+    suite might consist of those tests that should be run automatically every
+    night, while the <literal>checkin</literal> test suite might consist of
+    those tests that have to pass before any changes are made to the target
+    application.</para>
+
+    <section id="concepts-implicit-test-suites">
+      <title>Implicit Test Suites</title>
+
+      <para><xref linkend="concepts-tests" /> explains how you may arrange
+      tests in a tree hierarchy, using a period
+      (<quote><literal>.</literal></quote>) as the path separator in test
+      names. <application>QMTest</application> defines an <firstterm>implicit
+      test suite</firstterm> for each directory. The name of these implicit
+      test suites is the same as the name of the directory. The implicit test
+      suite corresponding to a directory contains all tests in that directory
+      or its subdirectories.</para>
+  
+      <para>Let us create some more tests, but this time within their respective
+        subdirectories:</para>
+
+      <screen>
+<prompt>&gt; </prompt>qmtest create --id=dir1.one -a expression='True' test python.ExecTest
+<prompt>&gt; </prompt>qmtest create --id=dir1.two -a expression='False' test python.ExecTest
+<prompt>&gt; </prompt>qmtest create --id=dir2.one -a expression='True' test python.ExecTest
+<prompt>&gt; </prompt>qmtest create --id=dir2.dir3.one -a expression='False' test python.ExecTest
+<prompt>&gt; </prompt>qmtest create --id=dir2.dir3.two -a expression='False' test python.ExecTest
+      </screen>
+
+      <para>This will create five new tests, together with three directories:</para>
+      <screen>
+<prompt>&gt; </prompt>qmtest ls -lR
+directory                 dir1
+test      python.ExecTest dir1.one
+test      python.ExecTest dir1.two
+directory                 dir2
+directory                 dir2.dir3
+test      python.ExecTest dir2.dir3.one
+test      python.ExecTest dir2.dir3.two
+test      python.ExecTest dir2.one
+      </screen>      
+ 
+      <para>These directories are implicit suites, i.e. it is possible to only address
+        tests within them:</para>
+      <screen>
+<prompt>&gt; </prompt>qmtest ls -lR dir2
+directory                 dir2
+directory                 dir2.dir3
+test      python.ExecTest dir2.dir3.one
+test      python.ExecTest dir2.dir3.two
+test      python.ExecTest dir2.one
+      </screen>      
+
+      <para>The suite named "<filename>.</filename>" (a single period) is the
+      implicit test suite corresponding to the root directory in the test
+      database. This suite therefore contains all tests in the database. For
+      example, the command <screen>
+<prompt>&gt; </prompt><userinput>qmtest run .</userinput>
+    </screen> is equivalent to: <screen>
+<prompt>&gt; </prompt><userinput>qmtest run</userinput>
+    </screen> Both commands run all tests in the database.</para>
+    </section>
+
+    <!-- concepts-implicit-test-suites -->
+    <section id="concepts-explicit-test-suites">
+      <title>Explicit Test Suites</title>
+  
+      <para>Explicit test suites are a means to refer to a set of tests for the purpose of executing them
+        together, no matter how they are organized in the test database. For example, you may want to
+        run a subset of all tests nightly. To do this, you create a suite, listing all tests (as well as
+        contained suites) explicitely:</para>
+
+      <screen>
+<prompt>&gt; </prompt>qmtest create --id=nightly suite explicit_suite.ExplicitSuite(test_ids="['dir1.one', 'dir2.one']",
+                                                                suite_ids="['dir2.dir3']")
+<prompt>&gt; </prompt>qmtest ls -l
+directory                              dir1
+directory                              dir2
+suite     explicit_suite.ExplicitSuite nightly
+<prompt>&gt; </prompt>qmtest ls -l nightly
+test      python.ExecTest dir1.one
+directory                 dir2.dir3
+test      python.ExecTest dir2.one
+      </screen>
+
+    </section><!-- concepts-explicit-test-suites -->
+  </section>
+
+
+  <!-- concepts-test-suite -->
+
+  <section id="concepts-test-database">
+    <title>Test Database</title>
+
+    <para>A <firstterm id="def-test-database">test database</firstterm> stores
+    tests, test suites, and other entities. When you ask
+    <application>QMTest</application> for a particular test by name, it
+    queries the test database to obtain the test itself.
+    <application>QMTest</application> stores a test database in a single
+    directory, which may include many files and subdirectories.</para>
+
+    <para>In general, <application>QMTest</application> can only use one test
+    database at a time. However, it is possible to create a test database
+    which contains other test databases. This mechanism allows you to store
+    the tests associated with different parts of a large application in
+    different test databases, and still combine them into a single large test
+    database when required.</para>
+
+    <para>A single test database can store many different kinds of tests. By
+    default, <application>QMTest</application> stores tests, test suites, and
+    all other entities in the test database using subdirectories containing XML
+    files. Generally, there should be no need to examine or modify these files
+    directly. However, the use of an XML format makes it easy for you to
+    automatically generate tests from another program, if required.</para>
+  </section><!-- concepts-test-database -->
+
+  <section id="concepts-context">
+    <title>Context</title>
+
+    <para>When you create a test, you choose arguments for the test. The test
+    class uses this information to run the test. However, the test class may
+    sometimes need information that is not available when the test is created.
+    For example, if you are writing compiler tests to verify conformance with
+    the C programming language specification, you do not know the location of
+    the C compiler itself. The C compiler may be installed in different
+    locations on different machines.</para>
+
+    <para>A <firstterm id="def-context">context</firstterm> gives users a way
+    of conveying this kind of information to tests. The context is a set of
+    key/value pairs. The keys are always strings. The values of all context
+    properties provided by the user are strings. In general, all tests in a
+    given use of <application>QMTest</application> will have the same context.
+    However, when a resource is set up, it may place additional information in
+    the context of those tests that depend upon it. The values inserted by the
+    resource may have any type, so long as they can be "pickled" by
+    Python.</para>
+
+    <para>All context properties whose names begin with
+    "<literal>qmtest.</literal>" are reserved for use by
+    <application>QMTest</application>. The values inserted by
+    <application>QMTest</application> may have any type. Test and resource
+    classes should not depend on the presence or absence of these
+    properites.</para>
+
+    <para>To understand how a context is used during the execution of a test let us
+      start by creating a somewhat less trivial test:</para>
+
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest create --id compile test 
+    compilation_test.CompilationTest(executable="compile", source_files="['/path/to/compile.cc']")"</userinput>
+    </screen>
+
+    <para>When run, this test will compile <filename>/path/to/compile.cc</filename> and run 
+      the resulting executable. The test passes if compilation succeeds, and the program
+      exit status indicates success.</para>
+
+    <para>The <classname>compilation_test.CompilationTest</classname> test class requires that the
+    compiler be available in the context with the key <varname>CompilationTest.compiler_path</varname>.
+    You can provide a context variable to QMTest either through a context file or on the
+    command-line using the -c option. For example:</para>
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest run -c CompilationTest.compiler_path=g++ compile</userinput>
+    </screen>
+    <para>will run the test using the <command>g++</command> compiler, while:</para>
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest run -c CompilationTest.compiler_path=/bin/CC compile</userinput>
+    </screen>
+    <para>will run the test with the <command>/bin/CC</command> compiler.</para>
+  </section> <!-- concepts-context -->
+
+  <section id="concepts-resources">
+    <title>Resources</title>
+
+    <para>Some tests take a lot of work to set up. For example, a database
+    test that checks the result of SQL queries may require that the database
+    first be populated with a substantial number of records. If there are many
+    tests that all use the same set of records, it would be wasteful to set up
+    the database for each test. It would be more efficient to set up the
+    database once, run all of the tests, and then remove the databases upon
+    completion.</para>
+
+    <para>You can use a <firstterm>resource</firstterm> to gain this
+    efficiency. If a test depends on a resource,
+    <application>QMTest</application> will ensure that the resource is
+    available before the test runs. Once all tests that depend on the resource
+    have been run <application>QMTest</application> will destroy the
+    resource.</para>
+
+    <para>Just as every test is an instance of a <firstterm>test
+    class</firstterm>, every resource is an instance of a <firstterm>resource
+    class</firstterm>. The resource class explains how to set up the resource
+    and how to clean up when it is no longer needed. The arguments to the
+    resource class are what make two instances of the same resource class
+    different from each other. For example, in the case of a resource that
+    sets up a database, the records to place in the database might be given as
+    arguments. Every resource has a name, using the same format that is used
+    for tests.</para>
+
+    <para>Under some circumstances (such as running tests on multiple 
+    <link linkend="concepts-targets">targets</link> at once),
+    <application>QMTest</application> may create more than one
+    instance of the same resource. Therefore, you should never depend on there
+    being only one instance of a resource. In addition, if you have asked
+    <application>QMTest</application> to run tests concurrently, two tests may
+    access the same resource at the same time. You can, however, be assured
+    that there will be only one instance of a particular resource on a
+    particular target at any one time.</para>
+
+    <para>Tests have limited access to the resources on which they depend. A
+    resource may place additional information into the context (<xref
+    linkend="concepts-context" />) that is visible to the test. However, the
+    actual resource object itself is not available to tests. (The reason for
+    this limitiation is that for a target consisting of multiple processes,
+    the resource object may not be located in the same process as the test that
+    depends upon it.)</para>
+
+    <para>Setting up or cleaning up a resource produces a result, just like
+    those produced for tests. <application>QMTest</application> will display
+    these results in its summary output and record them in the results
+    file.</para>
+
+    <para>Building on the previous example of a CompilationTest, let us
+      consider a situation where some test application should be run multiple
+      times with different arguments. The test application, however, needs to
+      be compiled first. In order to avoid recompiling the application for each
+      test, you can create a resource that compiles the application once.  Then,
+      tests that depend on this resource can assume that the application has 
+      already been built.  The following commands:</para>
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest create --id applet resource
+    compilation_test.CompiledResource(executable="applet", source_files="['/path/to/applet.cc']")</userinput>
+<prompt>&gt; </prompt><userinput>qmtest create --id run_applet_0 test
+    compilation_test.ExecutableTest(args="['0']", resources="['applet']")</userinput>
+<prompt>&gt; </prompt><userinput>qmtest create --id run_applet_1 test
+    compilation_test.ExecutableTest(args="['1']", resources="['applet']")</userinput>
+    </screen>
+    <para>create a resource (named "applet") for the application and two tests
+    ("run_applet_0" and "run_applet_1"), both of which make use of
+    "applet", but which pass it different command-line options.</para>
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest run -c CompilationTest.compiler_path=g++ run_applet_0 run_applet_1</userinput>
+--- TEST RESULTS -------------------------------------------------------------
+
+  Setup applet                                  : PASS
+
+  run_applet_0                                  : PASS
+
+  run_applet_1                                  : PASS
+
+  Cleanup applet                                : PASS
+    </screen>
+  </section> <!-- concepts-resources -->
+
+  <section id="concepts-targets">
+    <title>Targets</title>
+
+    <para>A <firstterm id="def-target">target</firstterm> is
+    <application>QMTest</application>'s abstraction of a machine. By using
+    multiple targets, you can run your tests on multiple machines at once. If
+    you have many tests, and many machines, you can greatly reduce the amount
+    of time it takes to run all of your tests by distributing the tests across
+    multiple targets.</para>
+
+    <para>By default, <application>QMTest</application> uses only one target:
+    the machine on which you are running <application>QMTest</application>.
+    You may specify other targets by creating a target file, which lists the
+    available targets and their attributes, and specifying the target file
+    when you invoke <command>qmtest</command>.</para>
+
+    <para>Each target is a member of a single <firstterm
+    id="def-target-group">target group</firstterm>. All targets in the same
+    target group are considered equivalent. A target group is specified by a
+    string. If you are testing software on multiple platforms at once, the
+    target group might correspond to machines running the same operating
+    system. For example, all Intel 80386 compatible machines running GNU/Linux
+    might be in the <quote><literal>i386-pc-linux-gnu</literal></quote> target
+    group.</para>
+
+    <para><application>QMTest</application> by default executes all tests
+    using a 'serial target', i.e. one after another. This behavior can be
+    changed by specifying a different concurrency strategy, such as one that
+    uses multiple threads, multiple processes, or even multiple physical
+    machines.</para>
+
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest create-target -a name=local -a group=local -a threads=2 a thread_target.ThreadTarget</userinput>
+   </screen>
+
+    <para>This creates a 'thread target' where two threads are used to run
+    the tests in parallel.</para>
+  </section> <!-- concepts-targets -->
+
+  <section id="concepts-hosts">
+    <title>Hosts</title>
+    <para>Sometime it is necessary to execute a test application on a different machine 
+    than the one running the <application>qmtest</application> application itself. For
+    example, if the test involves executing an application previously cross-compiled,
+    the binary needs to be uploaded to an appropriate host and run there.</para>
+    <para><application>QMTest</application> provides a <firstterm id="def-host">host</firstterm>
+    abstraction for this purpose. To use this mechanism, test classes need to provide explicit support for it.
+    A number of built-in test classes support cross-testing.</para>
+    <para>To run the <varname>compile</varname> test on a remote target
+    machine, specify a <varname>CompilationTest.target</varname> variable in
+    the context file to contain a host descriptor:</para>
+
+    <programlisting>
+CompilationTest.compiler=/path/to/cross_compiler
+CompilationTest.target=ssh_host.SSHHost(host_name="192.168.0.100")
+   </programlisting>
+   <para>This will run the compiled executable on the machine with the IP address
+     <code>192.168.0.100</code>, using ssh for communication.</para>
+  </section> <!-- concepts-hosts -->
+</chapter>

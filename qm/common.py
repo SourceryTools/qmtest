@@ -1,0 +1,909 @@
+########################################################################
+#
+# File:   common.py
+# Author: Alex Samuel
+# Date:   2000-12-20
+#
+# Contents:
+#   General-purpose classes and functions.
+#
+# Copyright (c) 2000, 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+########################################################################
+# imports
+########################################################################
+
+from   calendar import timegm
+import ConfigParser
+import imp
+import lock
+import os
+import os.path
+import qm
+import re
+import string
+import sys
+import tempfile
+import time
+import traceback
+import types
+import getpass
+import StringIO
+import htmllib
+import formatter
+if sys.platform != "win32":
+    import fcntl
+    
+########################################################################
+# program name
+########################################################################
+
+program_name = None
+"""The name of the application program."""
+
+########################################################################
+# exceptions
+########################################################################
+
+class QMException(Exception):
+    """An exception generated directly by QM.
+
+    All exceptions thrown by QM should be derived from this class."""
+
+    def __init__(self, message):
+        """Construct a new 'QMException'.
+
+        'message' -- A string describing the cause of the message as
+        structured text.  If this exception is not handled, the
+        'message' will be displayed as an error message."""
+
+        Exception.__init__(self, message)
+
+
+
+class UserError(QMException):
+
+    pass
+
+
+
+class PythonException(QMException):
+    """A 'PythonException' is a wrapper around a Python exception.
+
+    A 'PythonException' is a 'QMException' and, as such, can be
+    processed by the QM error-handling routines.  However, the raw
+    Python exception which triggered this exception can be obtained by
+    using the 'exc_type' and 'exc_value' attributes of this
+    exception."""
+
+    def __init__(self, message, exc_type, exc_value):
+        """Construct a new 'PythonException'.
+
+        'message' -- A string describing the cause of the message as
+        structured text.  If this exception is not handled, the
+        'message' will be displayed as an error message.
+
+        'exc_type' -- The type of the Python exception.
+
+        'exc_value' -- The value of the Python exception."""
+        
+        QMException.__init__(self, message)
+
+        self.exc_type = exc_type
+        self.exc_value = exc_value
+    
+########################################################################
+# classes
+########################################################################
+
+class RcConfiguration(ConfigParser.ConfigParser):
+    """Interface object to QM configuration files.
+
+    Configuration files are in the format parsed by the standard
+    'ConfigParser' module, namely 'win.ini'--style files."""
+
+    user_rc_file_name = ".qmrc"
+    """The name of the user configuration file."""
+
+
+    def __init__(self):
+        """Create a new configuration instance."""
+
+        ConfigParser.ConfigParser.__init__(self)
+        if os.environ.has_key("HOME"):
+            home_directory = os.environ["HOME"]
+            rc_file = os.path.join(home_directory, self.user_rc_file_name)
+            # Note that it's OK to call 'read' even if the file doesn't
+            # exist.  In that, case the parser simply will not
+            # accumulate any data.
+            self.read(rc_file)
+
+
+    def Load(self, section):
+        """Load configuration.
+
+        'section' -- The configuration section from which subsequent
+        variables are loaded."""
+
+        self.__section = section
+
+
+    def Get(self, option, default, section=None):
+        """Retrieve a configuration variable.
+
+        'option' -- The name of the option to retrieve.
+
+        'default' -- The default value to return if the option is not
+        found.
+
+        'section' -- The section from which to retrieve the option.
+        'None' indicates the section specified to the 'Load' method for
+        this instance.  
+
+        precondition -- The RC configuration must be loaded."""
+
+        # Use the previously-specified default section, if one wasn't
+        # specified explicitly.
+        if section is None:
+            section = self.__section
+
+        try:
+            # Try to get the requested option.
+            return self.get(section, option)
+        except ConfigParser.NoSectionError:
+            # Couldn't find the section.
+            return default
+        except ConfigParser.NoOptionError:
+            # Couldn't find the option.
+            return default
+
+
+    def GetOptions(self, section=None):
+        """Return a sequence of options.
+
+        'section' -- The section for which to list options, or 'None'
+        for the section specified to 'Load'.
+
+        precondition -- The RC configuration must be loaded."""
+
+        # Use the previously-specified default section, if one wasn't
+        # specified explicitly.
+        if section is None:
+            section = self.__section
+        try:
+            options = self.options(section)
+        except ConfigParser.NoSectionError:
+            # Couldn't find the section.
+            return []
+        else:
+            # 'ConfigParser' puts in a magic option '__name__', which is
+            # the name of the section.  Remove it.
+            if "__name__" in options:
+                options.remove("__name__")
+            return options
+
+    
+########################################################################
+# Functions
+########################################################################
+
+def get_lib_directory(*components):
+    """Return the path to a file in the QM library directory."""
+
+    # This is a file in the top-level QM library directory, so we can
+    # just return a path relative to ourselves.
+    return os.path.join(os.path.dirname(__file__), *components)
+
+
+def get_share_directory(*components):
+    """Return the path to a file in the QM data file directory."""
+
+    return os.path.join(qm.prefix, qm.data_dir, *components)
+
+
+def get_doc_directory(*components):
+    """Return a path to a file in the QM documentation file directory."""
+
+    return os.path.join(qm.prefix, qm.doc_dir, *components)
+
+
+def format_exception(exc_info):
+    """Format an exception as structured text.
+
+    'exc_info' -- A three-element tuple containing exception info, of
+    the form '(type, value, traceback)'.
+
+    returns -- A string containing a the formatted exception."""
+
+    # Break up the exection info tuple.
+    type, value, trace = exc_info
+    # Generate output.
+    traceback_listing = format_traceback(exc_info)
+    return "Exception '%s' : '%s'\n\n%s\n" % (type, value, traceback_listing)
+
+
+def format_traceback(exc_info):
+    """Format an exception traceback as structured text.
+    
+    'exc_info' -- A three-element tuple containing exception info, of
+    the form '(type, value, traceback)'.
+
+    returns -- A string containing a the formatted traceback."""
+
+    return string.join(traceback.format_tb(exc_info[2]), "\n")
+
+
+def convert_from_dos_text(text):
+    """Replace CRLF with LF in 'text'."""
+
+    return string.replace(text, "\r\n", "\n")
+
+
+__load_module_lock = lock.RLock()
+"""A lock used by load_module."""
+
+def load_module(name, search_path=sys.path, load_path=sys.path):
+    """Load a Python module.
+
+    'name' -- The fully-qualified name of the module to load, for
+    instance 'package.subpackage.module'.
+
+    'search_path' -- A sequence of directories.  These directories are
+    searched to find the module.
+
+    'load_path' -- The setting of 'sys.path' when the module is loaded.
+    
+    returns -- A module object.
+
+    raises -- 'ImportError' if the module cannot be found."""
+
+    # The implementation of this function follows the prescription in
+    # the documentation for the standard Python 'imp' module.  See also
+    # the 'knee' package included unofficially in the standard Python
+    # library. 
+
+    # In order to avoid getting incomplete modules, grab a lock here.
+    # Use a recursive lock so that deadlock does not occur if the loaded
+    # module loads more modules.
+    __load_module_lock.acquire()
+    try:
+        # Is the module already loaded?
+        module = sys.modules.get(name)
+        if module:
+            return module
+
+        # The module may be in a package.  Split the module path into
+        # components. 
+        components = string.split(name, ".")
+        if len(components) > 1:
+            # The module is in a package.  Construct the name of the
+            # containing package.
+            parent_package = string.join(components[:-1], ".")
+            # Load the containing package.
+            package = load_module(parent_package, search_path, load_path)
+            # Look for the module in the parent package.
+            search_path = package.__path__
+        else:
+            # No containing package.
+            package = None
+        # The name of the module itself is the last component of the module
+        # path.  
+        module_name = components[-1]
+        # Locate the module.
+        file, file_name, description = imp.find_module(module_name,
+                                                       search_path)
+        # Find the module.
+        try:
+            # While loading the module, add 'path' to Python's module path,
+            # so that if the module references other modules, e.g. in the
+            # same directory, Python can find them.  But remember the old
+            # path so we can restore it afterwards.
+            old_python_path = sys.path[:]
+            sys.path = load_path + sys.path
+            # Load the module.
+            try:
+                module = imp.load_module(name, file, file_name, description)
+            except:
+                # Don't leave a broken module object in sys.modules.
+                if sys.modules.has_key(name):
+                    del sys.modules[name]
+                raise
+            # Restore the old path.
+            sys.path = old_python_path
+            # Loaded successfully.  If it's contained in a package, put it
+            # into that package's name space.
+            if package is not None:
+                setattr(package, module_name, module)
+            return module
+        finally:
+            # Close the module file, if one was opened.
+            if file is not None:
+                file.close()
+    finally:
+        # Release the lock.
+        __load_module_lock.release()
+
+        
+def load_class(name, search_path = sys.path, load_path = sys.path):
+    """Load a Python class.
+
+    'name' -- The fully-qualified (including package and module names)
+    class name, for instance 'package.subpackage.module.MyClass'.  The
+    class must be at the top level of the module's namespace, i.e. not
+    nested in another class.
+
+    'search_path' -- A sequence of directories.  These directories are
+    searched to find the module.
+
+    'load_path' -- The setting of 'sys.path' when the module is loaded.
+
+    returns -- A class object.
+
+    raises -- 'ImportError' if the module containing the class can't be
+    imported, or if there is no class with the specified name in that
+    module, or if 'name' doesn't correspond to a class."""
+
+    # Make sure the class name is fully-qualified.  It must at least be
+    # in a top-level module, so there should be at least one module path
+    # separator. 
+    if not "." in name:
+        raise QMException, \
+              "%s is not a fully-qualified class name" % name
+    # Split the module path into components.
+    components = string.split(name, ".")
+    # Reconstruct the full path to the containing module.
+    module_name = string.join(components[:-1], ".")
+    # The last element is the name of the class.
+    class_name = components[-1]
+    # Load the containing module.
+    module = load_module(module_name, search_path, load_path)
+    # Extract the requested class.
+    try:
+        klass = module.__dict__[class_name]
+        # Check to see the KLASS really is a class.  Python 2.2's
+        # "new-style" classes are not instances of types.ClassType so we
+        # must check two conditions: one for old-style and one for
+        # new-style classes.
+        if (not isinstance(klass, types.ClassType)
+            and not issubclass(klass, object)):
+            # There's something by that name, but it's not a class
+            raise QMException, "%s is not a class" % name
+        return klass
+    except KeyError:
+        # There's no class with the requested name.
+        raise QMException, \
+              "no class named %s in module %s" % (class_name, module_name)
+    
+    
+def split_path_fully(path):
+    """Split 'path' into components.
+
+    Uses 'os.path.split' recursively on the directory components of
+    'path' to separate all path components.
+
+    'path' -- The path to split.
+
+    returns -- A list of path componets."""
+
+    dir, entry = os.path.split(path)
+    if dir == "" or dir == os.sep:
+        return [ entry ]
+    else:
+        return split_path_fully(dir) + [ entry ]
+
+
+def open_temporary_file_fd(suffix = ""):
+    """Create and open a temporary file.
+
+    'suffix' -- The last part of the temporary file name, as for
+    Python's 'mktemp' function.
+    
+    The file is open for reading and writing.  The caller is responsible
+    for deleting the file when finished with it.
+
+    returns -- A pair '(file_name, file_descriptor)' for the temporary
+    file."""
+
+    file_name = tempfile.mktemp(suffix)
+
+    try:
+        # Attempt to open the file.
+        fd = os.open(file_name,
+                     os.O_CREAT | os.O_EXCL | os.O_RDWR,
+                     0600)
+    except:
+        exc_info = sys.exc_info()
+        raise QMException, \
+              qm.error("temp file error",
+                       file_name=file_name,
+                       exc_class=str(exc_info[0]),
+                       exc_arg=str(exc_info[1]))
+    return (file_name, fd)
+
+
+def open_temporary_file(mode = "w+b", suffix = ""):
+    """Create and open a temporary file.
+
+    'mode' -- The mode argument to pass to 'fopen'.
+    
+    'suffix' -- The last part of the temporary file name, as for
+    Python's 'mktemp' function.
+    
+    Like 'open_temporary_file_fd', except that the second element of the
+    return value is a file object."""
+
+    # This function can just use NamedTemporaryFile when QMTest requires
+    # Python 2.3.
+    file_name, fd = open_temporary_file_fd(suffix)
+    return (file_name, os.fdopen(fd, mode))
+
+
+def close_file_on_exec(fd):
+    """Prevent 'fd' from being inherited across 'exec'.
+    
+    'fd' -- A file descriptor, or object providing a 'fileno()'
+    method.
+
+    This function has no effect on Windows."""
+
+    if sys.platform != "win32":
+        flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        try:
+            flags |= fcntl.FD_CLOEXEC
+        except AttributeError:
+            # The Python 2.2 RPM shipped with Red Hat Linux 7.3 does
+            # not define FD_CLOEXEC.  Fortunately, FD_CLOEXEC is 1 on
+            # every UNIX system.
+            flags |= 1
+        fcntl.fcntl(fd, fcntl.F_SETFD, flags)
+
+
+def copy(object):
+    """Make a best-effort attempt to copy 'object'.
+
+    returns -- A copy of 'object', if feasible, or otherwise
+    'object'."""
+
+    if type(object) is types.ListType:
+        # Copy lists.
+        return object[:]
+    elif type(object) is types.DictionaryType:
+        # Copy dictionaries.
+        return object.copy()
+    elif type(object) is types.InstanceType:
+        # For objects, look for a method named 'copy'.  If there is one,
+        # call it.  Otherwise, just return the object.
+        copy_function = getattr(object, "copy", None)
+        if callable(copy_function):
+            return object.copy()
+        else:
+            return object
+    else:
+        # Give up.
+        return object
+
+
+def wrap_lines(text, columns=72, break_delimiter="\\", indent=""):
+    """Wrap lines in 'text' to 'columns' columns.
+
+    'text' -- The text to wrap.
+
+    'columns' -- The maximum number of columns of text.
+
+    'break_delimiter' -- Text to place at the end of each broken line
+    (may be an empty string).
+
+    'indent' -- Text to place at the start of each line.  The length of
+    'indent' does not count towards 'columns'.
+
+    returns -- The wrapped text."""
+
+    # Break into lines.
+    lines = string.split(text, "\n")
+    # The length into which to break lines, leaving room for the
+    # delimiter. 
+    new_length = columns - len(break_delimiter)
+    # Loop over lines.
+    for index in range(0, len(lines)):
+        line = lines[index]
+        # Too long?
+        if len(line) > columns:
+            # Yes.  How many times will we have to break it?
+            breaks = len(line) / new_length
+            new_line = ""
+            # Construct the new line, disassembling the old as we go.
+            while breaks > 0:
+                new_line = new_line \
+                           + line[:new_length] \
+                           + break_delimiter \
+                           + "\n" + indent
+                line = line[new_length:]
+                breaks = breaks - 1
+            new_line = new_line + line
+            # Replace the old line with the new.
+            lines[index] = new_line
+    # Indent each line.
+    lines = map(lambda l, i=indent: i + l, lines)
+    # Rejoin lines.
+    return string.join(lines, "\n")
+
+
+def format_time(time_secs, local_time_zone=1):
+    """Generate a text format representing a date and time.
+
+    The output is in the format "YYYY-MM-DD HH:MM ZZZ".
+
+    'time_secs' -- The number of seconds since the start of the UNIX
+    epoch, UTC.
+
+    'local_time_zone' -- If true, format the time in the local time
+    zone.  Otherwise, format it as UTC."""
+
+    # Convert the time in seconds to a Python time 9-tuple.
+    if local_time_zone:
+        time_tuple = time.localtime(time_secs)
+        time_zone = time.tzname[time_tuple[8]]
+    else:
+        time_tuple = time.gmtime(time_secs)
+        time_zone = "UTC"
+    # Unpack the tuple.
+    year, month, day, hour, minute, second, weekday, julian_day, \
+          dst_flag = time_tuple
+    # Generate the format.
+    return "%(year)4d-%(month)02d-%(day)02d " \
+           "%(hour)02d:%(minute)02d %(time_zone)s" % locals()
+
+
+def format_time_iso(time_secs=None):
+    """Generate a ISO8601-compliant formatted date and time.
+
+    The output is in the format "YYYY-MM-DDThh:mm:ss+TZ", where TZ is
+    a timezone specifier.  We always normalize to UTC (and hence
+    always use the special timezone specifier "Z"), to get proper
+    sorting behaviour.
+
+    'time_secs' -- The time to be formatted, as returned by
+    e.g. 'time.time()'.  If 'None' (the default), uses the current
+    time.
+
+    returns -- The formatted time as a string."""
+
+    if time_secs is None:
+        time_secs = time.time()
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time_secs))
+
+
+def parse_time_iso(time_string):
+    """Parse a ISO8601-compliant formatted date and time.
+
+    See also 'format_time_iso'.
+
+    'time_string' -- The string to be parsed, as returned by
+    e.g. 'format_time_iso'.
+
+    returns -- The time as a float, like that returned by
+    'time.time'."""
+
+    return time.mktime(time.strptime(time_string, "%Y-%m-%dT%H:%M:%SZ"))
+
+
+def make_unique_tag():
+    """Return a unique tag string."""
+
+    global _unique_tag
+    
+    tag = "%d_%d" % (_unique_tag, os.getpid())
+    _unique_tag = _unique_tag + 1
+    return tag
+
+
+def split_argument_list(command):
+    """Split a command into an argument list.
+
+    'command' -- A string containing a shell or similar command.
+
+    returns -- An argument list obtained by splitting the command."""
+
+    # Strip leading and trailing whitespace.
+    command = string.strip(command)
+    # Split the command into argument list elements at spaces.
+    argument_list = re.split(" +", command)
+    return argument_list
+
+
+def parse_boolean(value):
+    """Parse a boolean string.
+
+    'value' -- A string.
+
+    returns -- True if 'value' is a true string, false if 'value' is a
+    false string.
+
+    raises -- 'ValueError' if 'value' is neither a true string, nor a
+    false string."""
+
+    value = value.lower()
+    if value in ("1", "true", "yes", "on"):
+        return 1
+    elif value in ("0", "false", "no", "off"):
+        return 0
+    else:
+        raise ValueError, value
+
+    
+def parse_string_list(value):
+    """Parse a string list.
+
+    'value' -- A string.
+
+    returns -- A list of strings.
+
+    raises -- 'ValueError' if 'value' contains unbalanced quotes."""
+
+    # If the string doesn't contain quotes, simply split it.
+    if "'" not in value and '"' not in value:
+        return value.split()
+    # Else split it manually at non-quoted whitespace only.
+    breaks = []
+    esc = False
+    quoted_1 = False # in '' quotes
+    quoted_2 = False # in "" quotes
+    value.strip()
+    # Find all non-quoted space.
+    for i, c in enumerate(value):
+        if c == '\\':
+            esc = not esc
+            continue
+        elif c == "'":
+            if not esc and not quoted_2:
+                quoted_1 = not quoted_1
+        elif c == '"':
+            if not esc and not quoted_1:
+                quoted_2 = not quoted_2
+        elif c in [' ', '\t']:
+            # This is a breakpoint if it is neither quoted nor escaped.
+            if not (quoted_1 or quoted_2 or esc):
+                breaks.append(i)
+        esc = False
+    # Make sure quotes are matched.
+    if quoted_1 or quoted_2 or esc:
+        raise ValueError, value
+    string_list = []
+    start = 0
+    for end in breaks:
+        string_list.append(value[start:end])
+        start = end
+    string_list.append(value[start:])
+    return [s.strip() for s in string_list if s not in [' ', '\t']] 
+
+    
+# No 'time.strptime' on non-UNIX systems, so use this instead.  This
+# version is more forgiving, anyway, and uses our standardized timestamp
+# format. 
+
+def parse_time(time_string, default_local_time_zone=1):
+    """Parse a date and/or time string.
+
+    'time_string' -- A string representing a date and time in the format
+    returned by 'format_time'.  This function makes a best-effort
+    attempt to parse incomplete strings as well.
+
+    'default_local_time_zone' -- If the time zone is not specified in
+    'time_string' and this parameter is true, assume the time is in the
+    local time zone.  If this parameter is false, assume the time is
+    UTC.
+
+    returns -- An integer number of seconds since the start of the UNIX
+    epoch, UTC.
+
+    Only UTC and the current local time zone may be specified explicitly
+    in 'time_string'."""
+
+    # Sanitize.
+    time_string = string.strip(time_string)
+    time_string = re.sub(" +", " ", time_string)
+    time_string = re.sub("/", "-", time_string)
+    # On Windows, "UTC" is spelled "GMT Standard Time".  Change that
+    # to "UTC" so that we can process it with the same code we use 
+    # for UNIX.
+    time_string = re.sub("GMT Standard Time", "UTC", time_string)
+    # Break it apart.
+    components = string.split(time_string, " ")
+
+    # Do we have a time zone at the end?
+    if components[-1] == "UTC":
+        # It's explicitly UTC. 
+        utc = 1
+        dst = 0
+        components.pop()
+    elif components[-1] == time.tzname[0]:
+        # It's explicitly our local non-DST time zone.
+        utc = 0
+        dst = 0
+        components.pop()
+    elif time.daylight and components[-1] == time.tzname[1]:
+        # It's explicitly our local DST time zone.
+        utc = 0
+        dst = 1
+        components.pop()
+    else:
+        # No explicit time zone.  Use the specified default.
+        if default_local_time_zone:
+            utc = 0
+            dst = -1
+        else:
+            utc = 1
+            dst = 0
+
+    # Start with the current time, in the appropriate format.
+    if utc:
+        time_tuple = time.gmtime(time.time())
+    else:
+        time_tuple = time.localtime(time.time())
+    # Unpack the date tuple.
+    year, month, day = time_tuple[:3]
+    # Assume midnight.
+    hour = 0
+    minute = 0
+
+    # Look at each part of the date/time.
+    for component in components:
+        if string.count(component, "-") == 2:
+            # Looks like a date.
+            year, month, day = map(int, string.split(component, "-"))
+        elif string.count(component, ":") in [1, 2]:
+            # Looks like a time.
+            hour, minute = map(int, string.split(component, ":")[:2])
+        else:
+            # Don't understand it.
+            raise ValueError
+        
+    # Construct a Python time tuple.
+    time_tuple = (year, month, day, hour, minute, 0, 0, 0, dst)
+    # Convert it to seconds.
+    if utc:
+        return int(timegm(time_tuple))
+    else:
+        return int(time.mktime(time_tuple))
+    
+
+def parse_assignment(assignment):
+    """Parse an 'assignment' of the form 'name=value'.
+
+    'aassignment' -- A string.  The string should have the form
+    'name=value'.
+
+    returns -- A pair '(name, value)'."""
+
+    # Parse the assignment.
+    try:
+        (name, value) = string.split(assignment, "=", 1)
+        return (name, value)
+    except:
+        raise QMException, \
+              qm.error("invalid keyword assignment",
+                       argument=assignment)
+
+
+def read_assignments(file):
+    """Read assignments from a 'file'.
+
+    'file' -- A file object containing the context.  When the file is
+    read, leading and trailing whitespace is discarded from each line
+    in the file.  Then, lines that begin with a '#' and lines that
+    contain no characters are discarded.  All other lines must be of
+    the form 'NAME=VALUE' and indicate an assignment to the context
+    variable 'NAME' of the indicated 'VALUE'.
+
+    returns -- A dictionary mapping each of the indicated 'NAME's to its
+    corresponding 'VALUE'.  If multiple assignments to the same 'NAME'
+    are present, only the 'VALUE' from the last assignment is stored."""
+
+    # Create an empty dictionary.
+    assignments = {}
+    
+    # Read all the lines in the file.
+    lines = file.readlines()
+    # Strip out leading and trailing whitespace.
+    lines = map(string.strip, lines)
+    # Drop any lines that are completely blank or lines that are
+    # comments.
+    lines = filter(lambda x: x != "" and not x.startswith("#"),
+                   lines)
+    # Go through each of the lines to process the context assignment.
+    for line in lines:
+        # Parse the assignment.
+        (name, value) = parse_assignment(line)
+        # Add it to the context.
+        assignments[name] = value
+
+    return assignments
+
+
+def get_username():
+    """Returns the current username as a string.
+
+    This is our best guess as to the username of the user who is
+    actually logged in, as opposed to the effective user id used for
+    running tests.
+
+    If the username cannot be found, raises a 'QMException'."""
+
+    # First try using the 'getpass' module.
+    try:
+        return getpass.getuser()
+    except:
+        pass
+
+    # 'getpass' doesn't necessarily work on Windows, so if that fails,
+    # try the win32 function.
+    try:
+        import win32api
+    except ImportError:
+        pass
+    else:
+        try:
+            return win32api.GetUserName()
+        except:
+            raise PythonException("Error accessing win32 user database",
+                                  *sys.exc_info()[:2])
+
+    # And if none of that worked, give up.
+    raise QMException, "Cannot determine user name."
+
+
+def get_userid():
+    """Returns the current user id as an integer.
+
+    This is the real user id, not the effective user id, to better track
+    who is actually running the tests.
+
+    If the user id cannot be found or is not defined, raises a
+    'QMException'."""
+
+    try:
+        uid = os.getuid()
+    except AttributeError:
+        raise QMException, "User ids not supported on this system."
+    return uid
+    
+
+def html_to_text(html, width=72):
+    """Renders HTML to text in a simple way.
+
+    'html' -- A string containing the HTML code to be rendered.
+
+    'width' -- Column at which to word-wrap.  Default 72.
+
+    returns -- A string containing a plain text rendering of the
+    HTML."""
+
+    s = StringIO.StringIO()
+    w = formatter.DumbWriter(s, width)
+    f = formatter.AbstractFormatter(w)
+    p = htmllib.HTMLParser(f)
+    p.feed(html)
+    p.close()
+    return s.getvalue()
+
+
+########################################################################
+# variables
+########################################################################
+
+rc = RcConfiguration()
+"""The configuration stored in system and user rc files."""
+
+# The next number to be used when handing out unqiue tag strings.
+_unique_tag = 0
+
+########################################################################
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<extension class="python.ExecTest" kind="test">
+  <argument name="resources"><set/></argument>
+  <argument name="target_group"><text>.*</text></argument>
+  <argument name="source">
+    <text>
+"""This test verifies that the 'Field' argument processing by means of
+Extension.Type works correctly."""
+
+from qm.fields import *
+from qm.extension import *
+
+dir(Extension)
+dir(TextField)
+
+class FieldTester(Extension):
+
+    text = TextField(name = 'foo', default_value = "argument")
+    number = IntegerField(default_value = 42)
+    boolean = BooleanField(default_value = True)
+    tuple_ = TupleField(fields = (TextField(default_value = "text"),
+                                  IntegerField(default_value = 42)))
+    set_ = SetField(TextField())
+    attachment = AttachmentField()
+    enum = EnumerationField(default_value = "no", enumerals = ["yes", "no"])
+    
+
+f = FieldTester(text = "Hello world !", boolean = False)
+
+assert f.text == "Hello world !"
+assert f.number == 42
+assert f.boolean == False
+assert f.tuple_ == ["text", 42]
+assert f.set_ == []
+assert f.enum == "no"
+    </text>
+  </argument>
+</extension>

@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<test><class>python.ExecTest</class><argument name="id"><text>test</text></argument><argument name="expression"><text>1</text></argument><argument name="target_group"><text>.*</text></argument><argument name="source"><text>pass</text></argument><resource>resource</resource></test>

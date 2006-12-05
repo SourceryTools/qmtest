@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<class-directory><class kind="test">throughput.ThroughputTest</class><class kind="database">throughput.ThroughputDatabase</class></class-directory>

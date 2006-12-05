@@ -1,0 +1,1349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  File:   cli_reference.xml
+  Author: Stefan Seefeld
+  Date:   2000-11-01
+
+  Contents:
+    Invoking QMTest chapter for QMTest Tutorial.
+
+  Copyright (C) 2001 - 2006 CodeSourcery Inc.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+  <!ENTITY % entities SYSTEM "qmtest.ent">
+  %entities;
+]>
+<chapter id="cli">
+ <title>Invoking &qmtest;</title>
+
+ <para>All &qmtest; functionality is available using the <command>qmtest</command>
+ command.</para>
+
+ <section>
+  <title><command>qmtest</command></title>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>command</replaceable>
+    </arg>
+    <arg choice="opt" rep="repeat">
+     <replaceable>command-option</replaceable>
+    </arg>
+    <arg choice="opt" rep="repeat">
+     <replaceable>argument</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Options</title>
+
+   <para>These options can be used with any &qmtest; command, and must
+   precede the command name on the command line.</para>
+
+   <para>All options are available in a "long form" prefixed with
+   "&dashdash;" (two hyphens).  Some options also may be specified in
+   a "short form" consisting of a single hyphen and a one-letter
+   abbreviation.  Short-form options may
+   be combined; for example, <command>-abc</command> is equivalent to
+   <command>-a -b -c</command>.</para>
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-D</option> <replaceable>path</replaceable></term>
+     <term>
+      <option>&dashdash;tdb</option> <replaceable>path</replaceable> 
+     </term>
+     <listitem>
+      <para>Use the test database located in the directory given by
+      <replaceable>path</replaceable>.  This flag overrides the value of
+      the environment variable <envar>QMTEST_DB_PATH</envar>.  If
+      neither this flag nor the environment variable is specified,
+      &qmtest; assumes that the current directory should be used as the
+      database.  See <xref linkend="concepts-test-database"/>.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-h</option></term>
+     <term><option>&dashdash;help</option></term>
+     <listitem>
+      <para>Display help information, listing commands and general
+      options for the <command>qmtest</command> command.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>&dashdash;version</option></term>
+     <listitem>
+      <para>Describe the version of &qmtest; in use.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+
+   <para>Additional options are available for specific commands; these
+   are presented with each command.  Options specific to a command must
+   follow the command on the command line.  Specify the
+   <option>&dashdash;help</option> (<option>-h</option>) option after the
+   command for a description of the command and a list of of available
+   options for that command.</para>
+  </section>
+ </section>
+
+ <section id="command-create">
+  <title><command>qmtest create</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Create a new extension instance.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest create</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>kind</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>descriptor</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+   
+  <section>
+   <title>Description</title>
+   <para>The <command>qmtest create</command> creates a new
+   extension instance.  For example, this command can be used to
+   create a new test or resource.  For a list of the kinds of
+   extensions supported by &qmtest;, run <command>qmtest extensions</command>.
+   The <replaceable>kind</replaceable> must be one of these extension kinds.
+   </para>
+
+   <para>If the <option>&dashdash;id</option> option is provided then
+   the new instance is created in the test database.  The argument to
+   the <option>&dashdash;id</option> option gives the name of the
+   instance.  Otherwise, the extension is written as XML to the
+   filename specified by <option>&dashdash;output</option> option, or
+   to the standard output if no <option>&dashdash;output</option> is
+   specified.</para>
+
+   <para>The descriptor specifies an extension class and (optionally)
+   attributes for that extension class.  The form of the descriptor is
+   <command><replaceable>class</replaceable>(<replaceable>attributes</replaceable>)</command>,
+   where the attributes are of the form
+   <command><replaceable>attr</replaceable> =
+   &quot;<replaceable>val</replaceable>&quot;</command>.  If there
+   are no attributes, the parentheses may be omitted.</para>
+
+   <para>The <replaceable>class</replaceable> may be either the path
+   to an extensing extension or a QMTest class name in the form
+   <replaceable>module.class</replaceable>.  If the
+   <option>&dashdash;id</option> option has been provided, QMTest
+   will look for an existing extension in the test database named
+   <replaceable>class</replaceable>.  If the
+   <option>&dashdash;id</option> option has not been provided, QMTest
+   will look for an XML file named <replaceable>class</replaceable>.
+   In either case, if an existing extension cannot be found, the
+   <replaceable>class</replaceable> is interepreted as the name of an
+   extension class.</para>
+
+   <para>The attributes used to construct the extension instance come
+   from three sources: the attributes in the extant extension (if the
+   <replaceable>class</replaceable> is the path to an extension
+   file), the <option>&dashdash;attribute</option> options provided
+   on the command line, and the explicit attributes provided in the
+   descriptor.  If multiple values for the the same attribute name
+   are provided, the value used is taken from the first source in the
+   following list for which there is a value: the rightmost attribute
+   provided in the descriptor, the extension file, or the rightmost
+   <option>&dashdash;attribute</option> present on the command
+   line.</para>
+
+   <para>The <command>create</command> command accepts these
+   options:</para>    
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-a</option> <replaceable>name=value</replaceable></term>
+     <term>
+      <option>&dashdash;attribute</option> 
+      <replaceable>name=value</replaceable>
+     </term>
+     <listitem>
+      <para>Set the target class argument
+      <replaceable>name</replaceable> to
+      <replaceable>value</replaceable>.  The set of valid argument names
+      and valid values is dependent on the extension class in use.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-i</option> <replaceable>id</replaceable></term>
+     <term>
+      <option>&dashdash;id</option> 
+      <replaceable>id</replaceable>
+     </term>
+     <listitem>
+      <para>Add the extension instance to the database, using 
+      <replaceable>id</replaceable> as the name of the instance.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-o</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;output</option> 
+      <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>Write the extension instance to
+      <replaceable>file</replaceable>.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+
+  <section>
+   <title>Example</title>
+
+   <para>
+     This command:
+     <screen><userinput><![CDATA[
+ qmtest create -a format=stats -o rs
+        result_stream text_result_stream.TextResultStream(filename="rs")]]></userinput></screen>
+    creates a file called <filename>rs</filename> containing an
+    instance of <classname>TextResultStream</classname>.
+   </para>
+
+   <para>
+    This command:
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest create --id=simple -a program=testprog test command.ExecTest</userinput>
+    </screen>
+    creates a test named &quot;simple&quot; that executes the program 
+    <filename>testprog</filename>:
+   </para>
+
+   <para>
+    This command:
+    <screen>
+<prompt>&gt; </prompt><userinput>qmtest create --id=copy test simple</userinput>
+    </screen>
+    creates a copy of the &quot;simple&quot; test, naming the new version
+    &quot;copy&quot;.
+   </para>
+  </section>
+
+ </section>
+
+ <section id="command-create-target">
+  <title><command>qmtest create-target</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Create a new target.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest create-target</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>name</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>class</replaceable>
+    </arg>
+    <arg choice="opt">
+     <replaceable>group</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+   <para>The <command>qmtest create-target</command> command
+   creates a new target.  A target is an entity that runs tests;
+   normally, a target corresponds to a particular machine.</para>
+
+   <para>The target's name and class must be specified.  An optional
+   group may also be specified.  When &qmtest; decides which target
+   to use to run a particular tests, it will select a target that
+   matches the test's requested target group.</para>
+
+   <para>The <command>create-target</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-a</option> <replaceable>name=value</replaceable></term>
+     <term>
+      <option>&dashdash;attribute</option> 
+      <replaceable>name=value</replaceable>
+     </term>
+     <listitem>
+      <para>Set the target class argument
+      <replaceable>name</replaceable> to
+      <replaceable>value</replaceable>.  The set of valid argument names
+      and valid values is dependent on the target class in use.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-T</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;targets</option> <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>Write the target description to the indicated
+      <replaceable>file</replaceable>.  If there are already targets
+      listed in <replaceable>file</replaceable>, they will be
+      preserved, except that any target with the same name as the new
+      target will be removed.  If this option is not present, the
+      file used will be the <filename>QMTest/targets</filename> file
+      in the test database directory.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+ </section>
+
+ <section id="command-create-tdb">
+  <title><command>qmtest create-tdb</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Create a new test database.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest create-tdb</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+   <para>The <command>qmtest create-tdb</command> command
+   creates a new, empty test database.  A test database is a
+   directory in which &qmtest; stores configuration files, tests, and
+   other data.  Certain test database classes may also store data
+   elsewhere, such as in an external relational database.</para>
+
+   <para>The test database is created in the directory specified by
+   <option>&dashdash;tdb</option> (<option>-D</option>) option or by
+   setting the <envar>QMTEST_DB_PATH</envar> environment variable.
+   If no database path is specified, &qmtest; assumes that the
+   current directory is the test database.</para>
+
+   <para>By default, &qmtest; creates a new test database that uses the
+   standard XML-based implementation.  (See <xref
+   linkend="extending-database-classes"></xref> for information
+   about writing a test database class.)</para>
+
+   <para>The <command>create-tdb</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-a</option> <replaceable>name=value</replaceable></term>
+     <term>
+      <option>&dashdash;attribute</option> 
+      <replaceable>name=value</replaceable>
+     </term>
+     <listitem>
+      <para>Set the database attribute
+      <replaceable>name</replaceable> to
+      <replaceable>value</replaceable>.  The set of attribute names
+      and valid values is dependent on the database class in use.
+      The default database class accepts no attributes.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry> 
+     <term><option>-c</option> <replaceable>class</replaceable></term>
+     <term>
+      <option>&dashdash;class</option> <replaceable>class</replaceable>
+     </term>
+     <listitem>
+      <para>Use the test database class given by
+      <replaceable>class</replaceable>.  The
+      <replaceable>class</replaceable> may have the general form
+      described in <xref linkend="command-create"/>.  Once you create a
+      test database, you cannot change the test database
+      implementation it uses.  If you do not use this option,
+      &qmtest; will use the default test database implementation,
+      which uses an XML file format to store tests.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+ </section> <!-- command-create-tdb -->
+
+ <section id="command-gui">
+  <title><command>qmtest gui</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Start the graphical user interface.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest gui</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+    <para>The <command>qmtest gui</command> starts the
+    graphical user interface.  The graphical user interface is
+    accessed through a web browser.  You must have a web browser that
+    supports JavaScript to use the graphical interface.  &qmtest; has
+    been tested with recent versions of Internet Explorer and
+    Netscape Navigator.  Other web browsers may or may nor work with
+    &qmtest;.</para>
+
+    <para>The <command>gui</command> command accepts these
+    options:</para>
+
+    <variablelist>
+     <varlistentry>
+      <term><option>-A</option> <replaceable>address</replaceable></term>
+      <term>
+       <option>&dashdash;address</option> <replaceable>address</replaceable>
+      </term>
+      <listitem>
+       <para>Bind the server to the indicated internet
+        <replaceable>address</replaceable>, which should be a dotted
+        quad.  By default, the server binds itself to the address
+        <literal>127.0.0.1</literal>, which is the address of the local
+        machine.  If you specify another address, the server will
+        be accessible to users on other machines.  QMTest does not
+        perform any authentication of remote users, so you should
+        not use this option unless you have a firewall in place that
+        blocks all untrusted users.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-c</option> <replaceable>name=value</replaceable></term>
+      <term>
+       <option>&dashdash;context</option> 
+       <replaceable>name=value</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-C</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;load-context</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>&dashdash;daemon</option></term>
+      <listitem>
+       <para>Run the QMTest GUI as a daemon.  In this mode, QMTest
+       will detach from the controlling terminal and run in the 
+       background until explicitly shutdown.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-j</option> <replaceable>count</replaceable></term>
+      <term>
+       <option>&dashdash;concurrency</option> <replaceable>count</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;no-browser</option>
+      </term>
+      <listitem>
+       <para>Do not attempt to start a web browser when starting the
+       GUI.  &qmtest; will still print out the URL at which the server
+       can be accessed.  You can then connect to this URL
+       manually using the browser of your choice.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-O</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry> 
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;pid-file <replaceable>path</replaceable></option>
+      </term>
+      <listitem>
+       <para>Specify the <replaceable>path</replaceable> to which
+       the QMTest GUI will write its process ID.  This option is
+       useful if you want to run QMTest as a daemon.  If this option
+       is not provided, no PID file is written.  If you specify this
+       option, but <replaceable>path</replaceable> is the empty
+       string, QMTest will check the <filename>.qmrc</filename>
+       configuration file for a <literal>pid-file</literal> entry.
+       If there is no such entry, QMTest will use an appropriate
+       platform-specific default value.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>
+       <option>&dashdash;port <replaceable>port</replaceable></option>
+      </term>
+      <listitem>
+       <para>Specify the <replaceable>port</replaceable> on which the
+       &qmtest; GUI will listen for connections.  If this option is not
+       provided, &qmtest; will select an available port
+       automatically.</para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>-T</option> <replaceable>file</replaceable></term>
+      <term>
+       <option>&dashdash;targets</option> <replaceable>file</replaceable>
+      </term>
+      <listitem>
+       <para>For details about this option, see the description of the 
+       <command>qmtest run</command> command.</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </section>
+  </section> <!-- command-gui -->
+
+ <section id="command-extensions">
+  <title><command>qmtest extensions</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>List available extension classes.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest extensions</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+   <para>The <command>qmtest extensions</command> lists
+   available extension classes and provides a brief description of
+   each class.  You can use this command to list all of the available
+   extension classes, or to list all of the available extension
+   classes of a particular type.  For example, you can use this
+   command to list all of the available test classes.</para>
+
+   <para>The <command>extensions</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term>
+      <option>-k</option>
+      <replaceable>kind</replaceable>
+     </term>
+     <term>
+      <option>&dashdash;kind</option> 
+      <replaceable>kind</replaceable>
+     </term>
+     <listitem>
+      <para>List the available extension classes of the indicated
+      <replaceable>kind</replaceable>.  The
+      <replaceable>kind</replaceable> must be one of
+      <literal>test</literal>, <literal>resource</literal>,
+      <literal>target</literal>, <literal>database</literal>,
+      <literal>host</literal>, or <literal>run_database</literal>.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+
+ </section> <!-- command-extensions -->
+
+ <section id="command-describe">
+  <title><command>qmtest describe</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Describe an extension class.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest describe</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>kind</replaceable>
+    </arg>
+    <arg choice="plain">
+     <replaceable>name</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+   <para>The <command>qmtest describe</command> displays a description
+   of the extension <replaceable>name</replaceable>.</para>
+
+   <para>The <command>describe</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term>
+      <option>&dashdash;kind</option> 
+      <replaceable>kind</replaceable>
+     </term>
+     <listitem>
+      <para>Describe an extension class of the indicated
+      <replaceable>kind</replaceable>.  The
+      <replaceable>kind</replaceable> must be one of
+      <literal>test</literal>, <literal>resource</literal>,
+      <literal>target</literal>, <literal>database</literal>,
+      <literal>host</literal>, or <literal>run_database</literal>.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-l</option></term>
+     <term><option>&dashdash;long</option></term>
+     <listitem>
+      <para>Provide a long (i.e. more detailed detailed) description of the extension.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-a</option> <replaceable>name</replaceable></term>
+     <term>
+      <option>&dashdash;attribute</option> 
+      <replaceable>name</replaceable>
+     </term>
+     <listitem>
+      <para>Describe the given attribute.</para>
+     </listitem>
+    </varlistentry>
+
+   </variablelist>
+  </section>
+
+ </section> <!-- command-describe -->
+
+ <section id="command-ls">
+  <title><command>qmtest ls</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>List the contents of the test database.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest ls</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <arg choice="opt" rep="repeat">
+     <replaceable>name</replaceable>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+   <para>The <command>qmtest ls</command> lists the contents of
+   the database, just as the UNIX <command>ls</command> command lists the
+   contents of the filesystem.  If this command is used with no
+   options, QMTest will list the names of the entries in the root
+   directory of the test database.  If one or more names are
+   supplied, then QMTest will list those items, rather than the root
+   directory.  If a name refers to a directory, then the contents of
+   that directory will be displayed.</para>
+
+   <para>The <command>ls</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term>
+      <option>-l</option>
+     </term>
+     <term>
+      <option>&dashdash;long</option> 
+     </term>
+     <listitem>
+      <para>Use a detailed output format that displays the kind and
+      extension class associated with each item.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>
+      <option>-d</option>
+     </term>
+     <term>
+      <option>&dashdash;details</option> 
+     </term>
+     <listitem>
+      <para>Display details such as individual attributes for each item.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>
+      <option>-R</option>
+     </term>
+     <term>
+      <option>&dashdash;recursive</option> 
+     </term>
+     <listitem>
+      <para>Recursively list the contents of directories.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+
+ </section> <!-- command-ls -->
+
+ <section id="command-register">
+  <title><command>qmtest register</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Register an extension class.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest register</command>
+    <arg choice="plain"><replaceable>kind</replaceable></arg>
+    <arg choice="plain"><replaceable>class-name</replaceable></arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+   <para>The <command>qmtest register</command> registers an
+   extension class with QMTest.  As part of this process, QMTest will 
+   load your extension class.  If the extension class cannot be
+   loaded, QMTest will tell you what went wrong.</para>
+
+   <para>QMTest will search for your extension class in the
+   directories it would search when running tests, including those
+   given by the environment variable
+   <envar>QMTEST_CLASS_PATH</envar>.</para>
+
+   <para>The <replaceable>kind</replaceable> argument tells QMTest
+   what kind of extension class you are registering.  If you invoke 
+   <command>qmtest register</command> with no arguments it will
+   provide you with a list of the available extension kinds.</para>
+
+   <para>The <replaceable>class-name</replaceable> argument gives the
+   name of the class in the form
+   <classname>module.Class</classname>.  QMTest will look for a file
+   whose basename is the module name and whose extension is either
+   <filename>py</filename>, <filename>pyc</filename>, or
+   <filename>pyo</filename>.</para>
+
+  </section>
+
+ </section> <!-- command-register -->
+
+ <section id="command-run">
+  <title><command>qmtest run</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>Run tests or test suites.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest run</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <group choice="opt" rep="repeat">
+     <arg choice="plain"><replaceable>test-name</replaceable></arg>
+     <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+    </group>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+
+   <para>The <command>qmtest run</command> command runs tests
+   and displays the results.  If no test or suite names are
+   specified, &qmtest; runs all of the tests in the test database.
+   If test or suite names are specified, only those tests or suites
+   are run.  Tests listed more than once (directly or by inclusion in
+   a test suite) are run only once.</para>
+
+   <para>The <command>run</command> command accepts these
+   options:</para>
+
+   <variablelist>
+    <varlistentry id="opt-test-run-annotate">
+     <term>
+      <option>-a</option>
+      <replaceable>name</replaceable>=<replaceable>value</replaceable>
+     </term>
+     <term>
+      <option>&dashdash;annotate</option> 
+      <replaceable>name</replaceable>=<replaceable>value</replaceable>
+     </term>
+     <listitem>
+      <para>Annotate the test run by inserting the named annotation
+        <replaceable>name</replaceable> with the value 
+        <replaceable>value</replaceable> into all result streams.</para>
+      <para>This option may be specified multiple times.</para>
+     </listitem>
+    </varlistentry>
+    <varlistentry id="opt-test-run-context">
+     <term>
+      <option>-c</option>
+      <replaceable>name</replaceable>=<replaceable>value</replaceable>
+     </term>
+     <term>
+      <option>&dashdash;context</option> 
+      <replaceable>name</replaceable>=<replaceable>value</replaceable>
+     </term>
+     <listitem>
+      <para>Add a property to the <link linkend="concepts-context">test
+      execution context</link>.  The name of the property is
+      <replaceable>name</replaceable>, and its value is set to the string
+      <replaceable>value</replaceable>.</para>
+
+      <para>This option may be specified multiple times.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="opt-test-run-context-file">
+     <term><option>-C</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;load-context</option> <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>Read properties for the <link linkend="concepts-context">test
+      execution context</link> from the file
+      <replaceable>file</replaceable>.</para>
+
+      <para>The file should be a text file with one context property on
+      each line, in the format <replaceable>name=value</replaceable>.
+      Leading and trailing whitespace on each line are ignored.  Also,
+      blank lines and lines that begin with "#" (a hash mark) are
+      ignored as comments.</para>
+
+      <para>This option may be specified more than once, and used in
+      conjunction with the <option>&dashdash;context</option>
+      option.  All of the context properties specified are added to
+      the eventual context.  If a property is set more than once,
+      the last value provided is the one used.</para>
+
+      <para>If this option is not specified, but a file named
+      <filename>context</filename> exists in the current directory,
+      that file is read.  The properties specified in this file are
+      processed first; the values in this file can be overridden by
+      subsequent uses of the <option>&dashdash;context</option>
+      option on the command line.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-f</option> <replaceable>format</replaceable></term>
+     <term>
+      <option>&dashdash;format</option> 
+      <replaceable>format</replaceable>
+     </term>
+     <listitem>
+      <para>Control the format used when displaying results.  The
+      format specified must be one of <literal>full</literal>,
+      <literal>brief</literal>, <literal>stats</literal>,
+      <literal>batch</literal>, or <literal>none</literal>.  The
+      <literal>brief</literal> format is the default if &qmtest; was
+      invoked interactively; the <literal>batch</literal> format is
+      the default otherwise.  In the <literal>full</literal> format,
+      &qmtest; displays any annotations provided in test results.  In
+      the <literal>brief</literal> mode only the causes of failures
+      are shown; detailed annotations are not shown.  In the
+      <literal>stats</literal> format, no details about failing tests
+      are displayed; only statistics showing the number of passing
+      and failing tests are displayed.  In the
+      <literal>batch</literal> mode, the summary is displayed first,
+      followed by detailed results for tests with unexpected
+      outcomes.  In the <literal>none</literal> mode, no results are
+      displayed, but a results file is still created, unless the
+      <option>&dashdash;no-output</option> option is also
+      provided.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-j</option> <replaceable>count</replaceable></term>
+     <term>
+      <option>&dashdash;concurrency</option> <replaceable>count</replaceable>
+     </term>
+     <listitem>
+      <para>Run tests in multiple <replaceable>count</replaceable>
+      concurrent processes on the local computer.  On multiprocessor
+      machines, the processes may be scheduled to run in parallel on
+      different processors.  &qmtest; automatically collects results
+      from the processes and presents combines test results and summary.
+      By default, one process is used.</para>
+
+      <para>This option may not be combined with the <link
+      linkend="opt-test-run-targets"><option>&dashdash;targets</option>
+      (<option>-T</option>) option</link>.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>
+      <option>&dashdash;no-output</option>
+     </term>
+     <listitem>
+      <para>Do not produce a test results file.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-o</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;output</option> <replaceable>file</replaceable> 
+     </term>
+     <listitem>
+      <para>
+       Write full test results to <replaceable>file</replaceable>, in
+       QMTest's machine-readable file format.  Use a 
+       "<literal>-</literal>" (a hyphen) to write results to 
+       the standard output.  If neither this option nor
+       <option>&dashdash;no-output</option> is specified, the results
+       are written to the file named <filename>results.qmr</filename>
+       in the current directory.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-O</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>Treat <replaceable>file</replaceable> as a set of
+      expected outcomes.  The <replaceable>file</replaceable> is
+      usually a results file created either by using the 
+      <command>qmtest run</command> or by saving results in the
+      graphical user interface.  If <replaceable>file</replaceable>
+      does not appear to be such a file, it is interpreted as an
+      extension descriptor, as described in <xref
+      linkend="command-create"/>.  QMTest will expect the results
+      of the current test run to match those specified in the
+      <replaceable>file</replaceable> and will highlight differences
+      from those results.</para>
+     </listitem>
+    </varlistentry> 
+
+    <varlistentry>
+     <term><option>&dashdash;random</option></term>
+     <listitem>
+      <para>Run the tests in a random order.</para>
+   
+      <para>This option can be used to find hidden dependencies
+      between tests in the testsuite.  (You may not notice the
+      dependencies if you always run the tests in the same order.)</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>&dashdash;rerun</option> 
+           <replaceable>file</replaceable></term>
+     <listitem>
+      <para>Rerun only those tests that had unexpected outcomes.</para>
+ 
+      <para>The tests run are determined as follows.  QMTest starts
+      with all of the tests specified on the command line, or, if no
+      tests are explicitly specified, all of the tests in the
+      database.  If no expectations file is specified (see the
+      description of the <option>&dashdash;outcomes</option> option),
+      then all tests that passed in the results file indicated by the
+      <option>&dashdash;rerun</option> option are removed form the
+      set of eligible tests.  If an expectations file is specified,
+      then the tests removed are tests whose outcome in the results
+      file indicated by the <option>&dashdash;rerun</option> option
+      is the same as in the expectations file.</para>
+
+      <para>The <option>&dashdash;rerun</option> provides a simple
+      way of rerunning failing tests.  If you run your tests and
+      notice failures, you might try to fix those failing tests.
+      Then, you can rerun the failing tests to see if you succeeded
+      by using the <option>&dashdash;rerun</option> option.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>
+      <option>&dashdash;result-stream <replaceable>descriptor</replaceable></option>
+     </term>
+     <listitem>
+      <para>Specify an additional output result stream.  The
+      descriptor is in the format described in <xref
+      linkend="command-create"/>.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>
+      <option>&dashdash;seed</option> <replaceable>integer</replaceable>
+     </term>
+     <listitem>
+      <para>If the <option>&dashdash;random</option> is used, &qmtest;
+      randomizes the order in which tests are run, subject to the
+      constraints described in <xref
+      linkend="sec-ordering-and-dependencies"/>.  By default, the
+      random number generator is seeded using the system time.</para>
+
+      <para>For debugging purposes, it is sometimes necessary to obtain
+      a reproducible sequence of tests.  Use the
+      <option>&dashdash;seed</option> option to specify the seed for the
+      random number generator.</para>
+
+      <para>Note that even with the same random number seed, if tests
+      are run in parallel, scheduling uncertainty may still produce
+      variation in the order in which tests are run.</para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="opt-test-run-targets">
+     <term><option>-T</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;targets</option> <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>Use targets specified in target specification file
+      <replaceable>file</replaceable>.  If this option is not
+      present, the <filename>QMTest/targets</filename> in the test
+      database directory will be used.  If that file is not present,
+      the tests will be run in serial on the local machine.</para>
+     </listitem>
+    </varlistentry>
+
+   </variablelist>
+  </section>
+ </section> <!-- command-run -->
+
+ <section id="command-summarize">
+  <title><command>qmtest summarize</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>The <command>qmtest summarize</command> displays
+   information stored in a results file.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest summarize</command>
+    <arg choice="opt" rep="repeat">
+     <replaceable>option</replaceable>
+    </arg>
+    <group choice="opt">
+     <arg choice="req"><replaceable>results-file</replaceable></arg>
+     <group choice="opt" rep="repeat">
+      <arg choice="plain"><replaceable>test-name</replaceable></arg>
+      <arg choice="plain"><replaceable>suite-name</replaceable></arg>
+     </group>
+    </group>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+   <para>
+    The <command>qmtest summarize</command> extracts information
+    stored in the <replaceable>results-file</replaceable> (or
+    <filename>results.qmr</filename>, if no
+    <replaceable>results-file</replaceable> is specified) and displays
+    this information on the console.  The information is formatted
+    just as if the tests had been run with <command>qmtest
+    run</command>, but, instead of actually running the tests,
+    QMTest reads the results from the
+    <replaceable>results-file</replaceable>.
+   </para>
+
+   <para>
+    If the <replaceable>results-file</replaceable> is not a valid
+    results file, it is interpreted as an extension descriptor,
+    as described in <xref linkend="command-create"/>.  You can
+    use the descriptor syntax to read results stored in formats that
+    are not &quot;built-in&quot; to QMTest.
+   </para>
+
+   <para>The <command>summarize</command> command accepts the
+   following options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-f</option> <replaceable>format</replaceable></term>
+     <term>
+      <option>&dashdash;format</option> 
+      <replaceable>format</replaceable>
+     </term>
+     <listitem>
+      <para>For details about this option, see the description of the 
+      <command>qmtest run</command> command.</para>
+     </listitem>
+    </varlistentry>
+ 
+    <varlistentry>
+     <term><option>-o</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;output</option> <replaceable>file</replaceable> 
+     </term>
+     <listitem>
+      <para>
+       Write full test results to <replaceable>file</replaceable>, in
+       QMTest's machine-readable file format.  Use a 
+       "<literal>-</literal>" (a hyphen) to write results to 
+       the standard output.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term><option>-O</option> <replaceable>file</replaceable></term>
+     <term>
+      <option>&dashdash;outcomes</option> <replaceable>file</replaceable>
+     </term>
+     <listitem>
+      <para>For details about this option, see the description of the 
+      <command>qmtest run</command> command.</para>
+     </listitem>
+    </varlistentry> 
+
+    <varlistentry>
+     <term>
+      <option>&dashdash;result-stream <replaceable>descriptor</replaceable></option>
+     </term>
+     <listitem>
+      <para>Specify an additional output result stream.  The
+      descriptor is in the format described in <xref
+      linkend="command-create"/>.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+ </section> <!-- command-summarize -->
+
+ <section id="command-report">
+  <title><command>qmtest report</command></title>
+
+  <section>
+   <title>Summary</title>
+   <para>The <command>qmtest report</command> generates
+   an xml report from a set of test result files.</para>
+  </section>
+
+  <section>
+   <title>Synopsis</title>
+   <cmdsynopsis>
+    <command>qmtest report </command>
+    <arg>-o <replaceable>output</replaceable></arg>
+    <arg choice="opt">-f</arg>
+    <arg choice="opt" rep="repeat">
+     <arg choice="plain"><replaceable>report-file</replaceable></arg>
+     <arg choice="opt">-e <replaceable>expectation-file</replaceable></arg>
+    </arg>
+   </cmdsynopsis>
+  </section>
+
+  <section>
+   <title>Description</title>
+   <para>The <command>qmtest report</command> extracts
+   information stored in one or more result files and generates
+   an xml report file from it. This report file is then typically
+   processed using xslt to generate html or pdf versions of the report.
+   </para>
+
+   <para>The <command>report</command> command accepts the
+   following options:</para>
+
+   <variablelist>
+    <varlistentry>
+     <term><option>-f</option></term>
+     <term><option>&dashdash;flat</option></term>
+     <listitem>
+      <para>Generate a flat listing of test results, instead of reproducing the
+       database directory tree in the report.</para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>-o</option> <replaceable>output file</replaceable></term>
+     <term>
+      <option>&dashdash;output</option> 
+      <replaceable>output-file</replaceable>
+     </term>
+     <listitem>
+      <para>The name of the file to write the report into.</para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </section>
+ </section> <!-- command-report -->
+
+ <section id="reference-env-vars">
+ <title>Environment Variables</title>
+
+ <para>&qmtest; recognizes the following environment variables:</para>
+
+ <variablelist>
+  <varlistentry>
+   <term>
+    <envar>QMTEST_CLASS_PATH</envar>
+   </term>
+   <listitem>
+    <para>If this environment variable is set, it should contain a
+    list of directories in the same format as used for the system's
+    <envar>PATH</envar> environment variable.  These directories
+    are searched (before the directories that &qmtest; searches by
+    default) when looking for extension classes such as test classes
+    and database classes.</para>
+   </listitem>
+  </varlistentry>
+
+  <varlistentry>
+   <term>
+    <envar>QMTEST_DB_PATH</envar>
+   </term>
+   <listitem>
+    <para>If this environment variable is set, its value is used as
+    the location of the test database, unless the
+    <option>&dashdash;tdb</option> (<option>-D</option>) option is
+    used.  If this environment variable is not set and the
+    <option>&dashdash;tdb</option> option is not used, the current
+    directory is used as the test database.</para>
+   </listitem>
+  </varlistentry>
+ </variablelist>
+   
+ </section> <!-- reference-env-vars -->
+
+ <section id="reference-config-file">
+  <title>Configuration Variables</title>
+
+   <para>These configuration variables are used by QMTest.  You
+   should define them in the <literal>[qmtest]</literal> section of
+   your &qm; configuration file.</para>
+
+   <glosslist>
+    <glossentry>
+     <glossterm>
+      <property>pid-file</property>
+     </glossterm>
+     <glossdef>
+      <para>The default path to use when creating a PID file with the
+      <option>&dashdash;pid-file</option> option.  (See <xref
+      linkend="command-gui"/> for more information about this
+      option.) If this entry is not present, an appropriate
+      platform-specific default value is used.</para>
+     </glossdef>
+    </glossentry>
+   </glosslist>
+
+ </section> <!-- reference-config-file -->
+
+ <section id="reference-return-value">
+  <title>Return Value</title>
+
+  <para>If QMTest successfully performed the action requested,
+  &qmtest; returns 0.  For the <command>qmtest run</command> or
+  <command>qmtest summarize</command> commands, success implies
+  not only that the tests ran, but also that all of the tests passed
+  (if the <option>&dashdash;outcomes</option> option was not used) or
+  had their expected outcomes (if the
+  <option>&dashdash;outcomes</option> option was used).</para>
+
+  <para>If either the <command>run</command> command or the
+  <command>summarize</command> command was used, and at least one
+  test failed (if the <option>&dashdash;outcomes</option> option was
+  not used) or had an unexpected outcome (if the
+  <option>&dashdash;outcomes</option> option was used), 
+  <command>qmtest</command> returns 1.</para>
+
+  <para>If QMTest could not perform the action requested,
+  <command>qmtest</command> returns 2.</para>
+
+ </section> <!-- reference-return-value -->
+ 
+</chapter>
+

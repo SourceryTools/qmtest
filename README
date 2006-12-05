@@ -1,0 +1,72 @@
+
+				QMTest
+
+------------------------------------------------------------------------
+
+1.  REQUIREMENTS
+
+    To run QMTest, you will need Python Python 2.2 (or greater).  Visit
+
+      http://www.python.org
+
+    to obtain source and binary distributions of Python.
+
+    If you are using Windows, you must also install the Python Win32
+    extensions.  Visit:
+
+      http://starship.python.net/crew/mhammond/win32/Downloads.html
+
+------------------------------------------------------------------------
+
+2.  LICENSE
+
+    QMTest is licensed under the GNU General Public License.  See the file
+    COPYING for the exact text of the license.
+
+    The DocumentTemplate module is Copyright Zope Corporation and
+    Contributors.  See:
+
+      qm/external/DocumentTemplate/LICENSE.txt
+
+    for the exact text of that license.
+
+------------------------------------------------------------------------
+
+3.  BUILDING QMTest
+
+    From the top of the source tree, run
+
+      python setup.py build
+
+    If you are building from CVS sources and want to build the
+    documentation run
+
+      python setup.py build_doc
+
+
+  - TESTING QMTest
+
+    QM comes with a test suite to test itself.  Of course, this test
+    suite is implemented using QMTest.  To run it, invoke
+
+      python setup.py check
+
+    after performing building QMTest.
+
+
+  - INSTALLING QMTest
+
+    To install QMTest:
+
+      python setup.py install
+
+    To install QMTest in a location other than /usr/local specify the
+    --prefix option:
+
+      --prefix=/path/to/install
+
+------------------------------------------------------------------------
+Local Variables:
+mode: text
+fill-column: 72
+End:

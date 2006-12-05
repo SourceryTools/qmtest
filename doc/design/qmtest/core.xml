@@ -1,0 +1,355 @@
+<?xml version="1.0"?>
+<!--
+
+  File:   core.xml
+  Author: Mark Mitchell, Greg Wilson, Alex Samuel
+  Date:   2000-11-01
+
+  Contents:
+    Core architecture of qmtest.
+
+  Copyright (C) 2000 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+-->
+<chapter id="chap-concepts">
+ <title>Concepts</title>
+
+ <para>This section described the core concepts and architecture of
+ &qmtest;.  Although this material is intended primarily for
+ implementors, these concepts described here are for the most part
+ exposed to users.  The entities that are described in this chapter
+ are precisely the entities that users will manipulate on a regular
+ basis.</para>
+
+ <section id="sec-terminology">
+  <title>Terminology</title>
+
+  <section>
+   <title>Roles</title>
+
+   <para>An <firstterm>author</firstterm> is someone who writes tests.
+   A <firstterm>tester</firstterm> is someone who runs tests.  Most
+   authors are also testers, but many testers will run tests they did
+   not write themselves (particularly when using third-party or open
+   source software).</para>
+
+  </section>
+
+  <section>
+   <title>Test Specifications</title>
+
+   <para>An individual <firstterm>test</firstterm> is an entity that,
+   when run, produces a single <link
+   linkend="concept-outcome">outcome</link> indicating success or
+   failure.  A test consists of:
+    <orderedlist>
+     <listitem>
+      <para>A <firstterm>test ID</firstterm> that uniquely identifies
+      the test in the test database.</para>
+     </listitem>
+
+     <listitem>
+      <para>A reference to a single <firstterm>test class</firstterm>,
+      which defines how the test is executed.</para>
+     </listitem>
+
+     <listitem>
+      <para>A list of <link
+      linkend="def-arguments">arguments</link> that are used to
+      construct particular tests.</para>
+     </listitem>
+
+     <listitem>
+      <para>A set of one or more <link
+      linkend="def-properties">properties</link>, which provide extra
+      information about the test.</para>
+     </listitem>
+
+     <listitem>
+      <para><firstterm>Prerequisite tests</firstterm>, whose outcomes
+      must be known before this test can be executed.</para>
+     </listitem>
+
+     <listitem>
+      <para>Optional <firstterm>setup</firstterm> and
+      <firstterm>cleanup</firstterm> steps.</para>
+     </listitem>
+
+    </orderedlist>
+   </para>
+
+   <section>
+    <title>Test Identifiers</title>
+
+    <para>A <firstterm>test ID</firstterm> is a string that identifies
+    a test.  Every test must have a unique ID within the database that
+    contains it.</para>
+
+    <para>A test's ID is constructed by concatenating its name with
+    the ID of the suite that contains it, using "." as a concatenator.
+    Suite IDs are constructed similarly.  Each field in the name is
+    composed of digits, lower-case letters, and underscores.  Thus,
+    test IDs are strings like
+    <literal>stream.output.unable_to_open_file_for_writing</literal>.
+    These restrictions allow safe, easy mapping of test IDs into the
+    file system.  Test IDs and suite IDs are in separate namespaces;
+    every test database implementation must allow users to create a
+    test and a test suite with the same ID.</para>
+
+   </section>
+
+   <section>
+    <title>Test Classes</title>
+
+    <para>A <firstterm>test class</firstterm> defines how a particular
+    type of test is created and run.  Each test class corresponds to a
+    Python class with the same name that contains code to execute the
+    test and to interpret the result of that execution.</para>
+
+   </section>
+
+   <section>
+    <title>Arguments</title>
+
+    <para>A test is instantiated by providing the <firstterm
+    id="def-arguments">arguments</firstterm> to the constructor for
+    the test class.  The resulting object is a test.  Each test
+    argument is a single Python expression, represented as a string,
+    and evaluated at the time of the test object's
+    instantiation.</para>
+
+   </section>
+
+   <section>
+    <title>Properties</title>
+
+    <para><firstterm id="def-properties">Properties</firstterm> are
+    name/value pairs used to provide extra information about tests,
+    such as their "weight", the operating system(s) on which it makes
+    sense to run the test, and so on.</para>
+
+   </section>
+
+   <section>
+    <title>Prerequisites</title>
+
+    <para>If a test A is a prerequisite of a test B, then B is only
+    run if A produces a particular result.  Normally, if A is a
+    prerequisite of B, then B will only be run if A succeeds.
+    &qmtest; also allows users to specify that B is to be run unless
+    there was an error in A.</para>
+
+   </section>
+
+   <section>
+    <title>Setup and Cleanup Actions</title>
+
+    <para>If an individual test requires setup or cleanup, then the
+    test class itself will handle the necessary actions.  However, on
+    occasion, setup or cleanup actions will be required for a large
+    group of tests.  A test can therefore specify any number of
+    <firstterm>actions</firstterm>, by providing a list of action IDs.
+    Each action ID identifies an instance of an action class.  Each
+    action class provides a method that performs necessary setups, and
+    another method that performs necessary cleanups.  The setups are
+    executed at some point before the test is run; the cleanups are
+    executed afterwards.  If any of the setups indicate failure, the
+    test is not run; it's <link
+    linkend="concept-outcome">outcome</link> will be
+    <literal>UNTESTED</literal>.</para>
+
+   </section>
+
+  </section>
+
+  <section>
+   <title>Test Execution</title>
+
+   <para>The result of executing a single test is an <link
+   linkend="def-outcome">outcome</link> and additional <link
+   linkend="def-result">results</link>.</para>
+
+   <section id="concept-outcome">
+    <title>Outcomes</title>
+
+    <para>The <firstterm id="def-outcome">outcome</firstterm> of a
+    test indicates whether it passed, failed, or whether some
+    exceptional situation occurred.  In particular, there are four
+    test outcomes:
+     <itemizedlist>
+      <listitem>
+       <para><literal>PASS</literal>: the test succeeded.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>FAIL</literal>: the test failed.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>ERROR</literal>: a problem occurred in the test
+       execution environment, rather than in the tested system.  For
+       example, this outcome is used when the test class attempted to
+       spawn a process containing an executable in order to test it,
+       but could not because the system call to create a new process
+       failed.</para>
+      </listitem>
+
+      <listitem>
+       <para><literal>UNTESTED</literal>: &qmtest; did not attempt to
+       execute the test.  For example, this outcome is used when
+       &qmtest; determines that one of the prerequisites
+       failed.</para>
+      </listitem>
+     </itemizedlist>
+    </para>
+
+   </section>
+
+   <section id="concept-result">
+    <title>Results</title>
+  
+    <para>A <firstterm id="def-result">result</firstterm> contains
+    information about the execution of a single test.  Each test
+    result contains the test's ID, a test outcome, the time at which
+    the test was executed, and zero or more properties.  These may
+    include such things as the reason why a particular test was
+    untested, or the values of environment variables when the test was
+    run.</para>
+
+   </section>
+
+  </section>
+
+  <section>
+   <title>Test Aggregation</title>
+
+   <section>
+    <title>Test Suite</title>
+
+    <para>A <firstterm>test suite</firstterm> is a collection of tests
+    and other test suites.  Test suites are used to aggregate
+    reporting of results, as in "17 out of 22 graph traversal tests
+    reported errors".  Test suites are also used to specify which
+    tests to re-run, as in "execute all I/O tests". </para>
+
+   </section>
+
+   <section id="concept-database">
+    <title>Test Database</title>
+
+    <para>A <firstterm id="def-test-database">test
+    database</firstterm> stores test and test suite specifications.
+    The test database is responsible for obtaining the test instance
+    associated with a particular test ID, or for obtaining the test
+    instances that make up a particular suite.  Although much of the
+    subsequent discussion refers to a particular implementation of the
+    test database (which places test specifications in the
+    file system), &qmtest; allows for the substitution of alternative
+    test database implementations.  Such implementations might generate
+    test specifications dynamically, or extract them from source
+    code.</para>
+
+   </section>
+   
+  </section>
+
+  <section>
+   <title>&qmtest; Components</title>
+
+   <para>The <firstterm id="def-execution-engine">execution
+   engine</firstterm> is responsible for executing tests, as well as
+   for collecting and recording the results.</para>
+
+   <para>The <firstterm id="def-user-interface">user
+   interface</firstterm> is responsible for taking commands from the
+   user regarding which tests to run and presenting this information
+   to the engine.  The user interface is also responsible for
+   presenting reports to the user containing summaries of the
+   results.</para>
+
+  </section>
+  
+ </section>
+ 
+ <section id="sec-supplied-test-classes">
+  <title>Supplied Test Classes</title>
+
+  <para>Although users may of course implement customized test
+  classes, &qmtest; provides several test classes that users can use
+  directly, without writing any Python code.  The first of these is
+  the <classname>ExitCode</classname> class.  This class accepts as
+  arguments the name of a program and arguments to provide the
+  program.  The test passes if the program exits with code zero, and
+  fails if a non-zero exit code is returned.  The exit code, as well
+  as any output produced by the program on the standard output or
+  standard error streams, is recorded in the <link
+  linkend="concept-result">result</link> for the indicated test.  This
+  basic test class can be used to test a wide variety of command-line
+  programs.</para>
+
+  <para>&qmtest; also provides a <classname>Difference</classname>
+  test class.  This test class accepts as arguments the name of a
+  program, arguments to provide the program, and the expected output
+  of the program.  The test passes if the tested program produces the
+  expected output when executed.  A variety of options are provided to
+  allow for cases in which some parts of the output are expected to
+  vary.  For example, the expected output can be provided as a regular
+  expression.</para>
+
+  <para>The set of supplied test classes will grow as additional
+  common testing paradigms are identified.</para>
+
+ </section>
+
+ <section id="sec-expected-outcomes">
+  <title>Expected Outcomes</title>
+
+  <para>One of the &qmtest; <link
+  linkend="sec-req-expected">requirements</link> section is that users
+  must be able to indicate that a particular test is presently
+  expected to fail.  Under most circumstances, that information is
+  best kept with the test specification itself.  On the other hand,
+  users may sometimes want to use an alternative set of expected
+  outcomes.  In particular, allowing the use of an alternative set of
+  expected outcomes allows users to use <link
+  linkend="sec-req-reference">reference results</link>.</para>
+
+  <para>Therefore, &qmtest; allows the specification of expected
+  outcomes both in the test specification itself, and in an external
+  file.  Because the comparison of a particular outcome is performed
+  in the <link linkend="def-user-interface">user interface</link>, the
+  details of the formats used has not yet been finalized.</para>
+ 
+ </section>
+
+ <section id="sec-results-management">
+  <title>Results Management</title>
+
+  <para>&qmtest; stores the results of test suite runs in &xml; data
+  files.  These files are not part of the test database and are not
+  automatically managed in any way by &qmtest;.  Users are free to use
+  whatever archiving or version control software they choose to store
+  these files over time.  Because the manipulation of these files is
+  part of the <link linkend="def-user-interface">user
+  interface</link>, the details of the format used has not yet been
+  finalized.</para>
+
+ </section>
+
+</chapter>
+
+<!--
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  sgml-indent-step: 1 
+  sgml-always-quote-attributes: t
+  sgml-general-insert-case: lower
+  sgml-minimize-attributes: nil
+  sgml-parent-document: ("qmtest.xml" "book" "chapter")
+  End:
+-->

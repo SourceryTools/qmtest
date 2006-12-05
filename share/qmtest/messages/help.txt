@@ -1,0 +1,254 @@
+########################################################################
+#
+# File:   test-help.txt
+# Author: Alex Samuel
+# Date:   2001-04-20
+#
+# Contents:
+#   Common QMTest help message templates.
+#
+# Copyright (c) 2001, 2002 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+# Please keep diagnostics in alphabetical order by tag.
+
+@ category popup
+**Specify a Category**
+
+Enter the name of the category to which add the test.  You may use any
+text string as the name of a category.
+
+
+@ categories control
+**Categories**
+
+The list displays the names of the categories of which this test is a
+member.  To add this test to another category, click on *Add...*.  To
+remove this test from a category, select the category's name in the list
+and click on *Remove.*.
+
+
+@ prerequisite popup
+**Specify a Prerequisite Test**
+
+Use this window to specify a test prerequisite.  The prerequisite is a
+test that is run first, and it must produce an expected outcome for the
+prerequisite to be satisfied.  
+
+To specify a prerequisite:
+
+ 1. In the **Test ID** field, select the test ID of the prerequisite
+    test from the list, or enter it in the text control.
+
+ 2. In the **Expected Outcome** field, select the outcome that the
+    prerequisite test must produce to satisfy the prerequisite.
+
+
+@ prerequisites control
+**Prerequisite Tests**
+
+The list displays the current prerequisites for this test, showing the
+test ID of each prerequisite test and its expected outcome.  To add
+another prerequisite, click on *Add...*.  To remove a prerequisite,
+select it in the list and click on *Remove*.
+
+
+@ resource class control
+**Resource Class**
+
+The "resource class" associated with a test indicates what kind of test
+it is.  Select one of the available resource classes.
+
+If %(program_name)s cannot find a resource class that you think you have
+installed, you may need to set the 'QMTEST_CLASS_PATH' environment
+variable.  This variable is like the 'PATH' environment variable, but
+contains a list of directories where %(program_name)s will look for
+resource classes.
+
+%(classes)s
+
+@ resource ID
+**Resource ID**
+
+An resource ID is a label that identifies an resource.  Resource IDs are
+unique within a single test database, but are distinct from test IDs and
+suite IDs.
+
+The resource ID may be composed of lower-case letters, digits, hyphens,
+and underscores.
+
+You may optionally organize resources in a hierarchy using a period as
+the path separator.
+
+Bear in mind that a test's resources are always specified relative to
+the the test's path.  For example, the test with ID "core.test1" would
+specify the resource "core.resource1" simply as "resource1".
+
+
+@ resource popup
+**Specify an Resource**
+
+Use this window to specify an resource for a test.  An resource
+specifies a setup behavior that must be executed before the test is run,
+and/or a cleanup behavior that must be executed after the test is run.
+
+Resources are objects distinct from tests, but they reside in the same
+test database.  Each resource has its own resource ID.
+
+Select an resource ID an existing resource from the list, or enter an
+resource ID in the edit control.
+
+
+@ resources control
+**Resources**
+
+The list displays the resource IDs of the resources specified for this
+test.  To add another resource, click on *Add...*.  To remove an
+resource, select it in the list and click on *Remove.*.
+
+
+@ suite ID
+**Test Suite ID**
+
+A test suite ID is a label that identifies a test suite.  Test suite IDs
+are unique within a single test database, but are distinct from test IDs
+and resource IDs.
+
+The test suite ID may be composed of lower-case letters, digits,
+hyphens, and underscores.
+
+The IDs of tests in a test suite are specified relative to the test
+suite's ID.  For instance, if your test database contains the tests
+
+    * core.front_end.test1
+
+    * core.back_end.test2
+
+and you create a test suite with ID "core.regression_tests" containing
+both tests, you specify the test IDs as "front_end.test1" and
+"back_end.test2".  
+
+
+@ suite suite IDs
+**Suite IDs**
+
+The list displays the IDs of other test suites that are *explicitly*
+included in this test suite.  When this test suite is run,
+%(program_name)s expands all included test suites recursively to
+determine the tests to run.
+
+A test suite displays included suite IDs relative to its own ID.  For
+example, if the test suite "core.suite1" contains the suites
+"core.suite2" , the suite ID in this suite is specified as "suite2" .
+
+
+@ suite suite IDs control
+**Suite IDs**
+
+**Suite IDs** allows you to change the test suites that are *explicitly*
+included in this test suite.  When this test suite is run,
+%(program_name)s expands all included test suites recursively to
+determine the tests to run.
+
+A test suite lists include suite IDs relative to its own ID.  For
+example, if the test suite "core.suite1" contains the suites
+"core.suite2" , the suite ID in this suite is specified as "suite2" .
+
+The *Included Suites* list displays the IDs of suites that are
+explicitly included in this test suite.  The *Available Suites* list
+displays the IDs of other test suites that may be included.
+
+To add a suite to this test suite, select it in the *Available Suites*
+list and click on *<< Add*.  To remove a test suite from this test
+suite, select it in the *Included Suites* list and click on *Remove >>*.
+
+
+@ suite test IDs
+**Test IDs**
+
+The list displays the IDs of tests that are *explicitly* included in the
+test suite.  Since the test suite may contain other tests suites, it may
+contain other tests as well.
+
+A test suite displays test IDs relative to its own ID.  For example, if
+the test suite "core.suite" contains the tests "core.test1" and
+"core.linux.test2" , the test IDs in the suite are specified as
+"test1" and "linux.test2".
+
+
+@ suite test IDs control
+**Test IDs**
+
+**Test IDs** allows you to change the tests that are *explicitly*
+included in the test suite.  Note that the suite may contain other
+tests, since it may include other test suites.
+
+A test suite lists test IDs relative to its own ID.  For example, if the
+test suite "core.suite" contains the tests "core.test1" and
+"core.linux.test2" , the test IDs in the suite are specified as "test1"
+and "linux.test2".  Only tests whose IDs begin with "core." may be
+included in the suite.
+
+The *Included Tests* list displays the IDs of tests that are explicitly
+included in the test suite.  The *Available Tests* list displays the IDs
+of other tests that may be included.
+
+To add a test to the test suite, select it in the *Available Tests* list
+and click on *<< Add*.  To remove a test from the test suite, select it
+in the *Included Tests* list and click on *Remove >>*.
+
+
+@ test class control
+**Test Class**
+
+The "test class" associated with a test indicates what kind of test it
+is.  Select one of the available test classes.
+
+If %(program_name)s cannot find a test class that you think you have
+installed, you may need to set the 'QMTEST_CLASS_PATH' environment
+variable.  This variable is like the 'PATH' environment variable, but
+contains a list of directories where %(program_name)s will look for test
+classes.
+
+%(classes)s
+
+@ test ID 
+**Test ID**
+
+A test ID is a label that identifies a test.  Test IDs are unique within
+a single test database, but are distinct from resource IDs and suite
+IDs.
+
+The test ID may be composed of lower-case letters, digits, hyphens, and
+underscores.
+
+You may optionally organize tests in a hierarchy using a period as the
+path separator.  Paths specified this way define implicit test suites.
+For example, if your test database contains tests with these three IDs
+
+  * core.test1
+
+  * core.test2
+
+  * test3
+
+%(program_name)s recognizes an implicit test suite named "core" which
+contains the two tests "test1" and "test2".
+
+In addition, a test's prerequisites and resources are always specified
+relative to the test's path.  So, for instance, "core.test2" would
+specify "test1" as a prerequisite, not "core.test1".  This implies that
+a test cannot specify an resource or prerequisite in a different path
+(except in subpaths).  For example, "core.test2" cannot specify "test3"
+as a prerequisite.
+
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

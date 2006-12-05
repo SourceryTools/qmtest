@@ -1,0 +1,63 @@
+<dtml-comment><!--
+
+  File:   context.dtml
+  Author: Mark Mitchell
+  Date:   2001-10-17
+
+  Contents:
+    Document template for editing the context.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Execution Context')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <form name="form"
+       method="post"
+       action="<dtml-var expr="WebRequest('submit-context').AsUrl()">"
+       enctype="multipart/form-data">
+  <table border="0"
+         cellpadding="4"
+         cellspacing="4"
+         width="100%">
+   <tbody>
+   <tr class="heading">
+    <td colspan="2">
+     <b>Context Variables</b>
+    </td>
+   </tr>
+   <tr class="field" valign="top">
+    <td>
+     <p>Context variables provided to test classes.</p>
+    </td>
+    <td>
+     <dtml-var expr="web.make_properties_control('form', 'context_vars',
+                                                 context)">
+    </td>
+   </tr>
+   <tr class="form-submit">
+    <td colspan="2">
+     <dtml-var expr="web.make_submit_button()">
+     <input type="button" 
+            class="submit"
+            value=" Cancel "
+            onclick="history.back()"/>
+    </td>
+   </tr> 
+   </tbody>
+  </table>
+ </form>
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

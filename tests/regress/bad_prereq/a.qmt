@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.3/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="python.ExecTest" kind="test">
+ <argument name="source"><text/></argument>
+ <argument name="expression"><text>True</text></argument>
+ <argument name="prerequisites"><set><tuple><text>bad_prereq</text><enumeral>PASS</enumeral></tuple></set></argument>
+</extension>

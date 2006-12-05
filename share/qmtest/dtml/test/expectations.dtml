@@ -1,0 +1,53 @@
+<dtml-comment><!--
+
+  File:   expectations.dtml
+  Author: Mark Mitchell
+  Date:   2001-10-20
+
+  Contents:
+    Document template for editing expected outcomes.
+
+  Copyright (C) 2001 CodeSourcery LLC.  
+
+  For license terms see the file COPYING.
+
+--></dtml-comment>
+
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Load Results')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Expectations</h3>
+
+ <form name="expectations" method="post" 
+       action="submit-expectations-form" enctype="multipart/form-data">
+  <table border="0" cellpadding="4" cellspacing="4" width="100%">
+    <dtml-in test_ids>
+     <dtml-let test_id=sequence-item>
+      <tr class="field">
+       <td width="75%"><dtml-var expr="FormatId(test_id, 'test')"></td>
+       <td width="25%"><select name="<dtml-var test_id>">
+        <option value="None">None</option>
+	<dtml-in outcomes>
+         <dtml-let outcome=sequence-item>
+	  <option value="<dtml-var sequence-item>"
+	   <dtml-if expr="expected_outcomes.has_key(test_id) and
+			  expected_outcomes[test_id] == outcome">
+            selected="1"
+           </dtml-if> >
+	   <dtml-var sequence-item>
+	  </option>
+         </dtml-let>
+	</dtml-in>
+       </select></td>
+      </tr>
+     </dtml-let>
+    </dtml-in>
+   <tr><td colspan="2">&nbsp;</td></tr>
+   <tr class="form-submit">
+    <td colspan="2"><dtml-var expr="web.make_submit_button()"></td>
+   </tr>
+  </table>
+ </form>
+ <dtml-var expr="GenerateEndBody()">
+</html>

@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<class-directory><class kind="database">regression_database.RegressionDatabase</class><class kind="test">selftest.RegTest</class></class-directory>

@@ -1,0 +1,34 @@
+<dtml-comment><!--
+
+  File:   error.dtml
+  Author: Alex Samuel
+  Date:   2001-02-22
+
+  Contents:
+    Document template for page indicating a user error.
+
+  Copyright (C) 2001 CodeSourcery LLC.  This material may
+  be distributed only subject to the terms and conditions set forth in
+  the Software Carpentry Open Publication License, which is available at:
+
+    http://www.software-carpentry.com/openpub-license.html
+
+--></dtml-comment>
+<dtml-var expr="GenerateXMLHeader()">
+ <dtml-var expr="GenerateHtmlHeader('Error')">
+ <dtml-var expr="GenerateStartBody()">
+
+ <h3>Error</h3>
+
+ <pre><dtml-var name="error_text"></pre>
+
+ <dtml-var expr="GenerateEndBody()">
+</html>
+
+<dtml-comment><!-- 
+  Local Variables:
+  mode: xml
+  indent-tabs-mode: nil
+  fill-column:72
+  End:
+--></dtml-comment>

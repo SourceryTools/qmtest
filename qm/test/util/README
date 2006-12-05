@@ -1,0 +1,38 @@
+
+			   QMTest Utilities
+
+------------------------------------------------------------------------
+
+1.  INTRODUCTION
+
+    The subdirectories of this directory are scripts, extensions, 
+    and other miscellany.
+
+    None of these items are officially considered part of QMTest, and,
+    as such are not documented in the QMTest manual.  None of these
+    items are installed automatically.  Each individual file contains
+    installation instructions.
+
+    Instead, they are placed here because they were useful to some
+    people, and, as such, may be useful to more.
+
+------------------------------------------------------------------------
+
+2.  CONTENTS
+
+    A.  svr4_init
+
+	SVR4-style initialization scripts.  These scripts can be used
+        to start QMTest as a daemon when the system boots.
+
+	Scripts for the following systems are provided:
+
+	- Red Hat Linux
+
+	  red_hat_linux
+
+	  This script has been tested on Red Hat Linux 7.2 and may 
+	  require modification for use on other systems.
+
+------------------------------------------------------------------------
+ 	

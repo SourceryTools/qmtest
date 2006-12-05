@@ -1,0 +1,266 @@
+########################################################################
+#
+# File:   diagnostics.txt
+# Author: Alex Samuel
+# Date:   2001-03-08
+#
+# Contents:
+#   QMTest diagnostic message templates.
+#
+# Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. 
+#
+# For license terms see the file COPYING.
+#
+########################################################################
+
+# Please keep diagnostics in alphabetical order by tag.
+
+@ action already exists
+There is already an action with ID "%(action_id)s".
+
+@ class not found
+QMTest could not find a class named "%(class_name)s".  
+
+@ concurrency not integer
+The target concurrency "%(value)s" is not a positive integer.
+
+@ context property cannot be deleted
+The property %(property)s cannot be deleted from this context.
+
+@ could not load extension class
+The "%(class_name)s" extension class could not be loaded.
+
+@ could not load target file
+The "%(file)s" target file could not be loaded.
+
+@ db path doesn't exist
+"%(path)s" does not exist. 
+
+@ db not modifiable
+The test database is not modifiable.
+
+@ dependency cycle
+This test depends on itself, either directly or by way of other tests.
+
+@ error loading xml resource
+A problem occurred while loading the XML resource file "%(resource_id)s":
+%(message)s
+
+@ error loading xml test
+A problem occurred while loading the XML test file "%(test_id)s":
+%(message)s
+
+@ execution terminated
+Termination was requested before this test was executed.
+
+@ extension class not found
+The extension class '%(klass)s' could not be found.  You may need
+to set the 'QMTEST_CLASS_PATH' environment variable.
+
+@ extension class not subclass
+The %(kind)s extension class "%(class_name)s" is not a subclass of
+"%(base_name)s".
+
+@ failed prerequisite
+A prerequisite produced an incorrect outcome.
+
+@ failed resource
+Setup of a required resource failed.
+
+@ file invalid pattern
+The substitution pattern "%(pattern)s" is invalid: %(msg)s.  The pattern
+should be a valid Python regular expression.
+
+@ file invalid substitution
+The substitution "%(substitution)s" is invalid.  A substitution should
+have the form "/*pattern*/*replacement*/".
+
+@ invalid boolean context var
+The value of "%(key)s" is not a valid boolean value.  
+
+@ invalid class
+There is no test class "%(class_name)s".
+
+@ invalid class name
+The class name "%(class_name)s" is invalid.  Specify the class name in
+the form 'module.class'.
+
+@ invalid concurrency
+Specify a positive integer with the '--parallel' option.
+
+@ invalid context key
+The context key "%(key)s" is not valid.  Context keys may contain
+letters, digits, hyphens, underscores, and periods.
+
+@ invalid environment assignment
+The string '%(assignment)s' is not a valid environment element.
+Environment elements must have the form 'variable=value'.
+
+@ invalid extension kind
+"%(kind)s" is not an extension class kind.  The extension class kind
+must be one of "test", "resource", "database", or "target".
+
+@ invalid result
+The test %(id)s of class %(test_class)s returned an invalid result,
+'%(result)s'. 
+
+@ invalid results file
+%(program_name)s could not open the test results file, %(path)s.  The
+problem was: %(problem)s.
+
+@ invalid id
+The name "%(id)s" is not valid.  Names may contain lower-case letters,
+digits, hyphens, underscores, and periods.
+
+@ invalid keyword assignment
+The option "%(argument)s" is not valid.  This option should have the
+form KEY=VALUE.
+
+@ invalid results format
+"%(format)s" is not a valid format for test results.  Possible formats are
+%(valid_formats)s.
+
+@ missing arg for template
+Specify the name of the test class and the test ID of the new test.
+
+@ missing argument
+A value for the "%(title)s" parameter is missing.
+
+@ missing context variable
+The context variable "%(key)s" was not defined.
+
+@ missing test id
+There is no test with ID "%(test_id)s".
+
+@ module does not exist
+There is no module named "%(module)s" in any of the extension
+directories.
+
+QMTest searched for files named '%(module)s.py', '%(module)s.pyc', and
+'%(module)s.pyo'.
+
+You may need to set the 'QMTEST_CLASS_PATH' environment variable.
+
+@ new db message
+QMTest has created a new test database at '%(path)s'.
+
+@ no db specified
+You must specify the location of the test database.  
+
+  * Specify the '--db-path' option with the path to the database.
+
+  * Or, set the 'QMTEST_DB_PATH' environment variable to the path 
+    to the database. 
+
+@ loading class
+QMTest will load '%(class_name)s' from '%(file_name)s'.
+
+@ no id for edit
+You must specify the ID of the item to edit.
+
+@ no id for show
+You must specify the ID of the item to show.
+
+@ no id for submit
+You must speicfy the ID of the item to submit.
+
+@ no results file specified
+You must specify a test run results file.
+
+@ no shell executable
+Cannot execute the shell interpreter.
+
+@ no such action
+There is no action with the action ID "%(action_id)s".
+
+@ no such ID
+There is no test or suite with ID "%(id)s".
+
+@ no such item
+There is no %(kind)s with the ID "%(item_id)s".
+
+@ no target for group
+No target which matches the group pattern specified for this test.
+
+@ not implemented
+An extension class failed to override the method "%(method_name)s".
+
+The following traceback may be helpful to the extension class implementor.
+
+@ not test database
+"%(path)s" is not a test database.
+
+@ prerequisite not in database
+The non-existant test "%(prerequisite)s" is listed as a prerequisite.
+ 
+@ seed not integer
+The random number generator seed you specified, "%(seed)s", is not an
+integer. 
+
+@ suite already exists
+There is already a test suite with ID "%(suite_id)s".
+
+@ test already exists
+There is already a test with ID "%(test_id)s".
+
+@ test did not raise
+The test code did not raise an exception.
+
+@ test class not fully specified
+You must specify the Python path to the test class, including the
+packages or modules containig the class.  
+
+For example, for test "MyTest" in module "mymod" of package "mypack",
+specify "mypack.mymod.MyTest".
+
+@ test raised non-object
+The test code raised an exception that isn't an exception object
+instance.  The type of the exception was '%(exc_type)s'.
+
+@ test raised non-string
+The test code raised an exception that isn't a string.  The type of the
+exception was '%(exc_type)s'.
+
+@ test raised wrong argument
+The test code raised an exception with an unexpected exception argument.
+
+@ test raised wrong class
+The test code raised an exception of the unexpected class type
+'%(class_name)s'.
+
+@ test raised wrong string
+The test code raised a string exception containing unexpected text
+"%(text)s".
+
+@ unexpected extension argument
+There is no "%(name)s" argument to the "%(class_name)s" extension class.
+
+@ unknown id in suite
+The ID "%(id)s" in suite "%(suite)s" does not exist.
+
+@ unknown test class
+The test class '%(test_class_name)s' of test "%(test_id)s" was not
+found. 
+
+@ unknown test id
+There is no test with ID "%(test_id)s" in the database.
+
+@ unknown test or suite id
+There is no test or suite with ID "%(id)s" in the database.
+
+@ value provided for computed field
+A value was provided for the automatically computed argument "%(name)s"
+to the "%(class_name)s" extension class.
+
+@ xml invalid arg name
+%(name)s is not the name of an argument of this test class.
+
+@ xml not int value
+The text "%(value)s" is not an integer value.
+
+########################################################################
+# Local Variables:
+# mode: text
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:

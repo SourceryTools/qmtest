@@ -1,0 +1,32 @@
+diff -ur DocumentTemplate-old/DT_String.py DocumentTemplate-new/DT_String.py
+--- DocumentTemplate-old/DT_String.py	2001-02-08 12:19:22.000000000 -0800
++++ DocumentTemplate-new/DT_String.py	2003-04-09 20:56:37.000000000 -0700
+@@ -170,10 +170,13 @@
+         if type(command) is tt:
+             cname, module, name = command
+             d={}
++            # subtlety: in these calls, globals() is not modified, but it
++            # provides module context for the import statement (so it knows
++            # to check the same directory as this file was found in).
+             try:
+-                exec 'from %s import %s' % (module, name) in d
++                exec 'from %s import %s' % (module, name) in globals(), d
+             except ImportError:
+-                exec 'from DocumentTemplate.%s import %s' % (module, name) in d
++                exec 'from DocumentTemplate.%s import %s' % (module, name) in globals(), d
+             command=d[name]
+             self.commands[cname]=command
+         return tag, args, command, coname
+diff -ur DocumentTemplate-old/__init__.py DocumentTemplate-new/__init__.py
+--- DocumentTemplate-old/__init__.py	2001-02-08 12:19:26.000000000 -0800
++++ DocumentTemplate-new/__init__.py	2003-04-09 20:57:15.000000000 -0700
+@@ -90,6 +90,8 @@
+ $Id$'''
+ __version__='$Revision$'[11:-2]
+ 
+-import ExtensionClass # work-around for import bug.
++try:
++    import ExtensionClass # work-around for import bug.
++except ImportError: pass
+ from DocumentTemplate import String, File, HTML, HTMLDefault, HTMLFile
+ from DocumentTemplate import html_quote
