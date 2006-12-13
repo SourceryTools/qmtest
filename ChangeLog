@@ -1,3 +1,10 @@
+2006-12-12  Mark Mitchell  <mark@codesourcery.com>
+
+	* qm/test/classes/dejagnu_stream.py
+	(DejaGNUReader.__UpdateResult): Treat DejaGNU UNTESTED results as
+	QMTEST UNTESTED results when generating outcomes from a DejaGNU log
+	file.
+
 2006-11-29  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/target.py: Only delete the 'qmtest.id' context variable if it

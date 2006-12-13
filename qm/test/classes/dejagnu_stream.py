@@ -329,7 +329,8 @@ class DejaGNUReader(FileResultReader):
                                    DejaGNUTest.XFAIL,
                                    DejaGNUTest.XPASS):
                 qmtest_outcome = Result.FAIL
-            elif dejagnu_outcome == DejaGNUTest.UNSUPPORTED:
+            elif dejagnu_outcome in (DejaGNUTest.UNSUPPORTED,
+                                     DejaGNUTest.UNRESOLVED):
                 qmtest_outcome = Result.UNTESTED
             else:
                 qmtest_outcome = Result.PASS
