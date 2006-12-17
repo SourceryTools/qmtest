@@ -1,0 +1,25 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <include package="zope.app.security" file="meta.zcml"/>
+
+  <principal
+      id="zope.p1"
+      title="Sir Tim Peters"
+      description="Tim Peters"
+      login="tim"
+      password_manager="SHA1"
+      password="40bd001563085fc35165329ea1ff5c5ecbdbbeef"
+      />
+
+  <principal
+      id="zope.p2"
+      title="Sir Jim Fulton"
+      description="Jim Fulton"
+      login="jim"
+      password="123"
+      />
+
+</configure>

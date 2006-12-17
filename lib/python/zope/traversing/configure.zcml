@@ -1,0 +1,122 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+<adapter
+    for="*"
+    factory="zope.traversing.adapters.Traverser"
+    provides="zope.traversing.interfaces.ITraverser" />
+
+<adapter
+    for="*"
+    factory="zope.traversing.adapters.DefaultTraversable"
+    provides="zope.traversing.interfaces.ITraversable" />
+
+<adapter factory="zope.traversing.adapters.RootPhysicallyLocatable" />
+
+<adapter
+    name="etc"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.etc"
+    />
+<view
+    name="etc"
+    type="zope.interface.Interface"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.etc"
+    />
+
+<adapter
+    name="attribute"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.attr"
+    />
+<view
+    name="attribute"
+    type="zope.interface.Interface"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.attr"
+    />
+
+<adapter
+    name="adapter"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.adapter"
+    />
+<view
+    name="adapter"
+    type="zope.interface.Interface"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.adapter"
+    />
+
+<adapter
+    name="item"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.item"
+    />
+<view
+    name="item" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.item"
+    />
+
+<adapter
+    name="acquire"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.acquire"
+    />
+<view
+    name="acquire" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.acquire"
+    />
+
+<view
+    name="view" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.view"
+    />
+
+<view
+    name="resource" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.resource"
+    />
+
+<adapter
+    name="lang"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.lang"
+    />
+<view
+    name="lang" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.lang"
+    />
+
+<view
+    name="skin" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.skin"
+    />
+
+<view
+    name="vh" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.vh"
+    />
+
+<!-- The debug namespace allows acess to things that should not normally be 
+ visible (e.g. file system read acces).
+
+ See issue 507 for the rationale of binding this to developer-mode only.
+ -->
+
+<view
+    zcml:condition="have devmode"
+    name="debug" type="*"
+    provides="zope.traversing.interfaces.ITraversable" for="*"
+    factory="zope.traversing.namespace.debug"
+    />
+
+</configure>

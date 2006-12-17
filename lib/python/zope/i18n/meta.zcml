@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    >
+
+  <meta:directives namespace="http://namespaces.zope.org/i18n">
+
+    <meta:directive
+        name="registerTranslations"
+        schema="zope.i18n.zcml.IRegisterTranslationsDirective"
+        handler="zope.i18n.zcml.registerTranslations"
+        />
+
+  </meta:directives>
+
+</configure>

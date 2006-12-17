@@ -1,0 +1,235 @@
+http://collector.zope.org/Zope3-dev/266
+
+Two functions in zope.tal.taldefs -- getProgramMode and getProgramVersion --
+fail to work if the 'program' argument is security proxied, because they
+use isinstance. This can happen when a page template comes from the ZODB
+instead of the file system (i.e. inherits AppPT rather than TrustedAppPT,
+and therefore ZopePathExpr adds security proxes during object traversal).
+The symptom is an obscure exception like the following one:
+
+  METALError: macro u'view/macros/page' has incompatible version None,
+  at line 2, column 1
+
+
+We create a page that defines some macros:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 835
+  ... Content-Type: multipart/form-data; boundary=---------------------------78336869011025200592044897763
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html>
+  ... <div metal:define-macro="hi">
+  ... Hi world
+  ... </div>
+  ... <div metal:define-macro="greet">
+  ... Hello <span metal:define-slot="name">world</span>
+  ... </div>
+  ... </html>
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... macros
+  ... -----------------------------78336869011025200592044897763--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+We create a page that uses the non-slotted macro from the macros template:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 771
+  ... Content-Type: multipart/form-data; boundary=---------------------------196751392613651805401540383426
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html>
+  ... <body>
+  ... <div metal:use-macro="container/macros/macros/hi" />
+  ... </body>
+  ... </html>
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... page
+  ... -----------------------------196751392613651805401540383426--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+And run it. 
+
+  >>> print http(r"""
+  ... GET /page HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... """, handle_errors=False)
+  HTTP/1.1 200 Ok
+  Content-Length: 52
+  Content-Type: text/html;charset=utf-8
+  <BLANKLINE>
+  <html>
+  <body>
+  <div>
+  Hi world
+  </div>
+  </body>
+  </html>
+  <BLANKLINE>
+
+Let's create another page that uses the slotted macro, but doesn't
+fill it:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 771
+  ... Content-Type: multipart/form-data; boundary=---------------------------196751392613651805401540383426
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html>
+  ... <body>
+  ... <div metal:use-macro="container/macros/macros/greet" />
+  ... </body>
+  ... </html>
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... page2
+  ... -----------------------------196751392613651805401540383426--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+And run it. 
+
+  >>> print http(r"""
+  ... GET /page2 HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... """, handle_errors=False)
+  HTTP/1.1 200 Ok
+  Content-Length: 68
+  Content-Type: text/html;charset=utf-8
+  <BLANKLINE>
+  <html>
+  <body>
+  <div>
+  Hello <span>world</span>
+  </div>
+  </body>
+  </html>
+  <BLANKLINE>
+
+Finally, lets create a page that fills the macro:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1771
+  ... Content-Type: multipart/form-data; boundary=---------------------------196751392613651805401540383426
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html>
+  ... <body>
+  ... <div metal:use-macro="container/macros/macros/greet">
+  ...   <span metal:fill-slot="name">bob</span>
+  ... </div>
+  ... </body>
+  ... </html>
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... page3
+  ... -----------------------------196751392613651805401540383426--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+And run it. 
+
+  >>> print http(r"""
+  ... GET /page3 HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... """, handle_errors=False)
+  HTTP/1.1 200 Ok
+  Content-Length: 66
+  Content-Type: text/html;charset=utf-8
+  <BLANKLINE>
+  <html>
+  <body>
+  <div>
+  Hello <span>bob</span>
+  </div>
+  </body>
+  </html>
+  <BLANKLINE>

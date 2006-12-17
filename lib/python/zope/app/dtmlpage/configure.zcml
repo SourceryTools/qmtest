@@ -1,0 +1,102 @@
+<configure
+    xmlns='http://namespaces.zope.org/zope'
+    xmlns:browser='http://namespaces.zope.org/browser'
+    i18n_domain='zope'
+    >
+
+  <interface 
+      interface=".interfaces.IDTMLPage" 
+      type="zope.app.content.interfaces.IContentType"
+      /> 
+
+  <class class=".dtmlpage.DTMLPage">
+    <factory
+        id="zope.app.DTMLPage"
+        title="DTML Page"
+        description="A simple, content-based DTML page"
+        />
+
+    <require
+        permission="zope.View"
+        attributes="__call__"
+        />
+
+    <require
+        permission="zope.ManageContent"
+        interface=".interfaces.IDTMLPage" 
+        set_attributes="source"
+        />
+
+    <require
+        permission="zope.View"
+        interface=".interfaces.IRenderDTMLPage"
+        />
+
+    <implements
+       interface="zope.annotation.interfaces.IAttributeAnnotatable"
+       />
+  </class>
+
+  <adapter 
+      for="zope.app.folder.interfaces.IFolder"
+      provides="zope.filerepresentation.interfaces.IFileFactory"
+      name=".dtml"
+      factory=".dtmlpage.DTMLFactory"
+      permission="zope.ManageContent"
+      />
+
+
+  <!-- browser directives -->
+
+  <browser:page
+      name="index.html"
+      for=".interfaces.IDTMLPage"
+      permission="zope.View"
+      class=".browser.DTMLPageEval"
+      attribute="index"
+      />
+
+  <browser:editform
+      schema=".interfaces.IDTMLPage"
+      name="edit.html"
+      menu="zmi_views"
+      label="Edit a DTML page"
+      permission="zope.ManageContent"
+      />
+
+  <browser:icon
+      name="zmi_icon"
+      for=".interfaces.IDTMLPage"
+      file="dtml.gif"
+      />
+
+  <browser:addform
+      schema=".interfaces.IDTMLPage"
+      label="Add a DTML Page"
+      content_factory=".dtmlpage.DTMLPage"
+      name="zope.app.dtmlpage.DTMLPage"
+      permission="zope.ManageContent"
+      />
+
+  <browser:addMenuItem
+      class=".dtmlpage.DTMLPage"
+      title="DTML Page"
+      description="A simple, content-based DTML page"
+      view="zope.app.dtmlpage.DTMLPage"
+      permission="zope.ManageContent"
+      />
+
+
+  <!-- Preview view - requires zope.app.preview -->
+
+  <configure package="zope.app.preview">
+    <browser:page
+        for="zope.app.dtmlpage.interfaces.IDTMLPage"
+        name="preview.html"
+        template="preview.pt"
+        permission="zope.ManageContent"
+        menu="zmi_views" title="Preview"
+        />
+  </configure>
+
+</configure>

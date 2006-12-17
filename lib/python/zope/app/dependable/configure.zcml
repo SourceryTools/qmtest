@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    >
+
+  <adapter
+      factory="zope.app.dependable.Dependable"
+      provides="zope.app.dependable.interfaces.IDependable"
+      for="zope.annotation.interfaces.IAnnotatable" />
+
+</configure>

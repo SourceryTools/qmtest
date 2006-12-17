@@ -1,0 +1,36 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+<body>
+
+<div metal:fill-slot="body">
+
+  <pre tal:content="view/getRenderedSQL" />
+
+  <table border="1" cellspacing="0" cellpadding="2"
+      tal:define="result view/getTestResults"
+      tal:condition="result">
+    <tbody>
+
+      <tr>
+        <th tal:repeat="field result/columns"
+            tal:content="field">Field Name</th>
+      </tr>
+
+      <tr tal:repeat="row result">
+        <td tal:repeat="field result/columns"
+            tal:content="python: getattr(row, field)">Value</td>
+      </tr>
+
+
+    </tbody>
+  </table>
+
+  <tal:block tal:condition="view/error">
+    <h3 i18n:translate="">An Error occurred</h3>
+    <pre tal:content="view/getFormattedError" />
+  </tal:block>
+
+</div>
+
+</body>
+</html>

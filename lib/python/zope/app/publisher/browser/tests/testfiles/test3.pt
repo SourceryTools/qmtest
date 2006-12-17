@@ -1,0 +1,1 @@
+<html><body><p tal:content="view/action">test</p></body></html>

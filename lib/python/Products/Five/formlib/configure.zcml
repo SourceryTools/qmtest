@@ -1,0 +1,20 @@
+<configure
+    package="zope.formlib"
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+  <adapter
+      factory=".form.render_submit_button"
+      name="render"
+      />
+
+  <!-- Error view for 'Invalid' -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.interface.exceptions.Invalid"
+      provides="zope.app.form.browser.interfaces.IWidgetInputErrorView"
+      factory=".errors.InvalidErrorView"
+      permission="zope.Public"
+      />
+
+</configure>

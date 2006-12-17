@@ -1,0 +1,75 @@
+/*
+** Customisations for the Site Management view 
+** Used when the URL contains ++etc++site
+*/
+a {
+	color: #963;
+}
+
+div#action {
+	height: 24px;
+	width: 100%;
+	background-color: #963;
+}
+
+div#action ul {
+	line-height: 24px;
+	color: #FFF;
+	white-space: nowrap;
+    float: right;
+	margin: 0px;
+    padding: 0px 5px 0px 0px;
+}
+
+div#action li {
+	list-style-type: none;
+	display: inline;
+}
+
+div#action li a {
+	color: #FFF;
+	text-decoration: none;
+    border-left: 1px dashed white;
+    padding: 0px 5px;
+}
+
+div#action li a:link {
+    color: #FFF;
+}
+
+div#action li a:hover {
+    color: black;
+    background-color: white;
+}
+
+.itemViews {
+    border-bottom: 1px solid #963;
+}
+
+.itemViews a {
+    border: 1px solid #963;
+}
+
+.itemViews a.selected {
+    background: #963;
+    border-bottom: #963 1px solid;
+}
+
+.itemViews a:hover {
+    background-color: #963;
+    color: White;
+}
+
+hr {
+    color: #963;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    border-bottom: 1px solid #963;
+}
+
+div.row div.label {
+    background: #963;
+    border: 1px solid #963; /* Same as .itemViews */
+}

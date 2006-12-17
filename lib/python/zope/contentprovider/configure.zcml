@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:tales="http://namespaces.zope.org/tales"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="zope">
+
+  <interface interface=".interfaces.ITALESProviderExpression" />
+  <tales:expressiontype
+      name="provider"
+      handler=".tales.TALESProviderExpression"
+      />
+
+  <apidoc:bookchapter
+      id="contentprovider"
+      title="Content Providers"
+      doc_path="README.txt"
+      zcml:condition="have apidoc"
+      />
+
+</configure>

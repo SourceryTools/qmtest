@@ -1,0 +1,96 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+    
+  <adapter
+      factory=".session.ClientId"
+      permission="zope.Public" 
+      />
+
+  <adapter
+      factory=".session.Session"
+      provides="zope.app.session.interfaces.ISession"
+      permission="zope.Public"
+      />
+
+  <adapter
+      factory=".session.Session"
+      provides="zope.traversing.interfaces.IPathAdapter"
+      name="session"
+      />
+
+  <class class=".session.Session">
+    <allow interface=".interfaces.ISession" />
+    <implements interface="zope.traversing.interfaces.IPathAdapter" />
+  </class>
+
+  <class class=".http.CookieClientIdManager">
+    <require
+        interface=".http.ICookieClientIdManager"
+        permission="zope.Public" />
+    <require
+        set_schema=".http.ICookieClientIdManager"
+        permission="zope.ManageServices" />
+  </class>
+
+  <class class=".session.PersistentSessionDataContainer">
+    <require
+        interface=".interfaces.ISessionDataContainer"
+        permission="zope.Public" />
+    <require
+        set_schema=".interfaces.ISessionDataContainer"
+        permission="zope.ManageServices" />
+  </class>
+
+  <class class=".session.RAMSessionDataContainer">
+    <require
+        interface=".interfaces.ISessionDataContainer"
+        permission="zope.Public" />
+    <require
+        set_schema=".interfaces.ISessionDataContainer"
+        permission="zope.ManageServices" />
+  </class>
+
+  <class class=".session.SessionData">
+    <allow interface=".interfaces.ISessionData" />
+  </class>
+
+  <class class=".session.SessionPkgData">
+    <allow interface=".interfaces.ISessionPkgData" />
+  </class>
+
+  <subscriber
+      for="zope.app.appsetup.IDatabaseOpenedEvent"
+      handler=".bootstrap.bootStrapSubscriber"
+      />
+      
+  <subscriber
+      for="zope.publisher.interfaces.http.IHTTPVirtualHostChangedEvent"
+      handler=".http.notifyVirtualHostChanged"
+      />
+
+  <include file="browser.zcml" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="session"
+        title="Sessions"
+        doc_path="design.txt"
+        />
+    <apidoc:bookchapter
+        id="api"
+        title="API"
+        doc_path="api.txt"
+        parent="session"
+        />
+
+  </configure>
+
+</configure>

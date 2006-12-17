@@ -1,0 +1,16 @@
+<html metal:use-macro="views/onlinehelp_macros/page" i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title"
+      tal:content="context/title"
+      i18n:translate="">Title</title>
+</head>
+<body>
+
+<div metal:fill-slot="body">
+
+  <p tal:content="structure view/topicContent">Content of Online Help.</p>
+
+</div>
+
+</body>
+</html>

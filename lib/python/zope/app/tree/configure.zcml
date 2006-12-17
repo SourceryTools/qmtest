@@ -1,0 +1,66 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <class class=".node.Node">
+    <allow interface=".interfaces.INode" />
+  </class>
+
+  <utility
+      provides=".interfaces.ITreeStateEncoder"
+      factory=".utils.TreeStateEncoder"
+      />
+
+  <!-- stub adapters -->
+
+  <adapter
+      provides=".interfaces.IUniqueId"
+      for="*"
+      factory=".adapters.StubUniqueId"
+      />
+
+  <adapter
+      provides=".interfaces.IChildObjects"
+      for="*"
+      factory=".adapters.StubChildObjects"
+      />
+
+  <!-- adapters for zope.app.container machinery -->
+
+  <adapter
+      provides=".interfaces.IUniqueId"
+      for="zope.location.interfaces.ILocation"
+      factory=".adapters.LocationUniqueId"
+      />
+
+  <adapter
+      provides=".interfaces.IChildObjects"
+      for="zope.app.container.interfaces.IReadContainer"
+      factory=".adapters.ContainerChildObjects"
+      />
+
+  <adapter
+      provides=".interfaces.IChildObjects"
+      for="zope.app.component.interfaces.ISite"
+      factory=".adapters.ContainerSiteChildObjects"
+      />
+
+  <include package=".browser" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="tree"
+        title="Zope Tree"
+        doc_path="README.txt"
+        />
+
+  </configure>
+
+</configure>
+

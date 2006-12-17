@@ -1,0 +1,70 @@
+<configure
+    xmlns='http://namespaces.zope.org/zope'
+    i18n_domain='zope'
+    >
+
+  <interface 
+      interface=".interfaces.IZPTPage" 
+      type="zope.app.content.interfaces.IContentType"
+      /> 
+
+  <class class=".zptpage.ZPTPage">
+    <factory
+        id="zope.app.content.ZPTPage"
+        title="ZPT Page"
+        description="A simple, content-based Page Template"
+        />
+    <require
+        permission="zope.View"
+        attributes="__call__ macros"
+        />
+    <require
+        permission="zope.ManageContent"
+        interface=".interfaces.IZPTPage"
+        set_attributes="source expand evaluateInlineCode"
+        />
+    <require
+        permission="zope.View"
+        interface=".interfaces.IRenderZPTPage"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+  </class>
+
+  <adapter 
+      for="zope.app.folder.interfaces.IFolder"
+      provides="zope.filerepresentation.interfaces.IFileFactory"
+      name=".pt"
+      factory=".zptpage.ZPTFactory"
+      permission="zope.ManageContent"
+      />
+
+  <adapter 
+      for=".interfaces.IZPTPage"
+      provides="zope.filerepresentation.interfaces.IReadFile"
+      factory=".zptpage.ZPTReadFile"
+      permission="zope.ManageContent"
+      />
+
+  <adapter 
+      for=".interfaces.IZPTPage"
+      provides="zope.filerepresentation.interfaces.IWriteFile"
+      factory=".zptpage.ZPTWriteFile"
+      permission="zope.ManageContent"
+      />
+
+  <adapter
+      for=".interfaces.IZPTPage"
+      provides="zope.size.interfaces.ISized"
+      factory=".zptpage.Sized"
+      trusted="y"
+      permission="zope.ManageContent"
+      />
+
+
+  <!-- include browser package -->
+
+  <include package=".browser" />
+
+</configure>

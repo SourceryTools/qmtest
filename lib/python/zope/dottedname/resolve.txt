@@ -1,0 +1,32 @@
+Resolution of dotted names
+==========================
+
+The zope.dottedname.resolve module provides a function for resolving
+dotted names.  Dotted names are resolved by importing modules and by
+getting attributes from imported modules.  Names with leading dots are
+relative.
+
+To illustrate, we'll use the dotted name resolver to access objects in
+the os module:
+
+    >>> from zope.dottedname.resolve import resolve
+    >>> resolve('os.path.split').__name__
+    'split'
+
+Here, we used an absolute name.  We can also using a relative name:
+
+    >>> resolve('.split').__name__
+    Traceback (most recent call last):
+    ...
+    ValueError: relative name without base module
+
+But we need to provide the module the name is relative to:
+
+    >>> resolve('.split', 'os.path').__name__
+    'split'
+
+    >>> resolve('..system', 'os.path').__name__
+    'system'
+
+    >>> resolve('...datetime', 'os.path').__name__
+    'datetime'

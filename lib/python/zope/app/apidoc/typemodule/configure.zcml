@@ -1,0 +1,40 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".type.TypeModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <class class=".type.TypeInterface">
+    <allow interface="zope.app.container.interfaces.IReadContainer"
+           attributes="interface" />
+  </class>
+
+  <!-- Register the module with the API Documentation System -->
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".type.TypeModule"
+      name="Type" />
+
+  <browser:page
+      for=".type.TypeModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".type.TypeModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+</configure>

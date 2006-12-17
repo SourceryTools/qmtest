@@ -1,0 +1,38 @@
+<zope:configure
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+  <page
+      for="zope.interface.common.interfaces.IException"
+      name="index.html"
+      template="systemerror.pt"
+      class="..systemerror.SystemErrorView"
+      permission="zope.Public"
+      />
+
+  <page
+      for="zope.security.interfaces.IUnauthorized"
+      name="index.html"
+      permission="zope.Public"
+      class=".unauthorized.Unauthorized"
+      />
+
+  <zope:adapter factory=".unauthorized.default_template" name="default" />
+
+  <page
+      for="zope.exceptions.interfaces.IUserError"
+      name="index.html"
+      permission="zope.Public"
+      template="user.pt"
+      class=".user.UserErrorView"
+      />
+
+  <page
+      for="zope.publisher.interfaces.INotFound"
+      name="index.html"
+      permission="zope.Public"
+      template="notfound.pt"
+      class=".notfound.NotFound"
+      />
+
+</zope:configure>

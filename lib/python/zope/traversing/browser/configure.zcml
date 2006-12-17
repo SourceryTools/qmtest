@@ -1,0 +1,55 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <view
+      for="*"
+      name="absolute_url"
+      factory=".AbsoluteURL"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      allowed_interface=".interfaces.IAbsoluteURL"
+      />
+      
+  <view
+      for="*"
+      factory=".AbsoluteURL"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      provides=".interfaces.IAbsoluteURL"
+      />
+
+  <view
+      for="zope.traversing.interfaces.IContainmentRoot"
+      name="absolute_url"
+      factory=".SiteAbsoluteURL"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      allowed_interface=".interfaces.IAbsoluteURL"
+      />
+      
+  <view
+      for="zope.traversing.interfaces.IContainmentRoot"
+      factory=".SiteAbsoluteURL"
+      type="zope.publisher.interfaces.http.IHTTPRequest"
+      permission="zope.Public"
+      provides=".interfaces.IAbsoluteURL"
+      />
+
+  <browser:page
+      for="*"
+      name="absolute_url"
+      class=".AbsoluteURL"
+      permission="zope.Public"
+      allowed_interface=".interfaces.IAbsoluteURL"
+      />
+
+  <browser:page
+      for="zope.traversing.interfaces.IContainmentRoot"
+      name="absolute_url"
+      class=".SiteAbsoluteURL"
+      permission="zope.Public"
+      allowed_interface=".interfaces.IAbsoluteURL"
+      />
+
+</configure>

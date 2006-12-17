@@ -1,0 +1,60 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header" i18n:translate="">Zope 3 Code Browser</h1>
+
+  <p class="breadcrumbs">
+    <span tal:repeat="entry view/getBreadCrumbs">
+      <a href=""
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="entry/name" i18n:translate=""/>
+      <tal:omit-tag condition="not: repeat/entry/end">/</tal:omit-tag>
+    </span>
+  </p>
+
+  <div class="highlight documentation"
+       tal:define="doc view/getDoc"
+       tal:condition="doc"
+       tal:content="structure doc"
+       i18n:translate="">
+    Module Documentation
+  </div>
+
+
+  <table width="100%"><tr valign="top">
+
+  <td tal:repeat="column view/getEntries"><ul>
+    <li tal:repeat="entry column">
+      <a href=""
+         tal:condition="entry/ismodule"
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="entry/name" />
+      <a href=""
+         tal:condition="entry/isinterface"
+         tal:attributes="
+             href string:${view/apidocRoot}/Interface/${entry/path}/index.html"
+         tal:content="structure string:<b><i>${entry/name}</i></b>" />
+      <a href=""
+         tal:condition="entry/isclass"
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="structure string:<b>${entry/name}</b>" />
+      <a href=""
+         tal:condition="entry/isfunction"
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="structure string:<i>${entry/name}</i>" />
+      <a href=""
+         tal:condition="entry/iszcmlfile"
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="structure string:<i>${entry/name}</i>" />
+      <a href=""
+         tal:condition="entry/istextfile"
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="structure string:<i>${entry/name}</i>" />
+    </li>
+  </ul></td>
+
+  </tr></table>
+
+</body>
+</html>

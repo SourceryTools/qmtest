@@ -1,0 +1,18 @@
+The containerViews directive lets us associate some standard forms
+for containers with an interface.  There's an "index.html" view that
+provides a listing of the contained objects without provinding any way
+to manage them (though it allows us to visit them by clicking on
+links).
+
+We can get this view from the root folder easily::
+
+  >>> response = http(r"""
+  ... GET / HTTP/1.1
+  ... """)
+
+And we can check that there isn't a form (where the management
+operations would have buttons)::
+
+  >>> body = response.getBody().lower()
+  >>> "<form" in body
+  False

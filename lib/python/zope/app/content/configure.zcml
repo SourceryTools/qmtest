@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <interface
+      interface="zope.app.content.interfaces.IContentType"
+      />
+
+  <utility
+      component=".ContentTypesVocabulary"
+      name="Content Types"
+      />
+
+</configure>

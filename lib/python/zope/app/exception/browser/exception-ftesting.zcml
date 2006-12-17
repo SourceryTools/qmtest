@@ -1,0 +1,11 @@
+<configure
+   xmlns="http://namespaces.zope.org/browser">
+
+  <page
+      for="zope.app.folder.interfaces.IFolder"
+      name="componentlookuperror.html"
+      class="zope.app.exception.browser.ftests.RaiseComponentLookupError"
+      permission="zope.Public"
+      />
+
+</configure>

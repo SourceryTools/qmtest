@@ -1,0 +1,20 @@
+<html metal:use-macro="views/apidoc_macros/menu"
+    i18n:domain="zope">
+<body>
+
+  <div class="menu" metal:fill-slot="menu-title" i18n:translate="">
+    Preferences
+  </div>
+
+  <div metal:fill-slot="menu" class="small">
+    <ul>
+      <li tal:repeat="group context/values">
+        <a href="" target="main"
+           tal:attributes="href string:./${group/name}/edit.html" 
+           tal:content="group/title" />
+      </li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<head>
+  <base href=""
+        metal:fill-slot="headers"
+        tal:attributes="href request/URL/-1" />
+</head>
+
+<body metal:fill-slot="contents">
+
+  <div class="documentation"
+       tal:content="structure view/renderedContent">
+    file content
+  </div>
+
+</body>
+</html>

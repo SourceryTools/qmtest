@@ -1,0 +1,551 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <!-- Form Macros -->
+
+  <browser:page
+      for="*"
+      name="form_macros"
+      permission="zope.Public"
+      class=".macros.FormMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      />
+
+  <browser:page
+      for="*"
+      name="widget_macros"
+      permission="zope.Public"
+      template="widget_macros.pt"
+      />
+
+  <browser:page
+      for="*"
+      name="addform_macros"
+      permission="zope.Public"
+      template="add.pt"
+      />
+
+  <!-- Views for Widget Errors -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.app.form.interfaces.IWidgetInputError"
+      provides="zope.app.form.browser.interfaces.IWidgetInputErrorView"
+      factory="zope.app.form.browser.exception.WidgetInputErrorView"
+      permission="zope.Public"
+      />
+
+  <!-- Core display widgets -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IField"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".DisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBool"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".boolwidgets.BooleanDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBytes"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".textwidgets.BytesDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBytesLine"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".DisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IASCII"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".textwidgets.ASCIIDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IASCIILine"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".DisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IURI"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".textwidgets.URIDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IDate"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".DateDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IDatetime"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".DatetimeDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Core edit widgets -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ITextLine"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".TextWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IText"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".TextAreaWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISourceText"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".TextAreaWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBytesLine"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".BytesWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBytes"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".FileWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IASCII"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ASCIIAreaWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IASCIILine"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ASCIIWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IInt"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".IntWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IInt"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".UnicodeDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IFloat"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".FloatWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IFloat"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".UnicodeDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IDatetime"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".DatetimeWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IDate"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".DateWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IBool"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".CheckBoxWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IPassword"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".PasswordWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Items-related widgets; they are proxies for the multiviews below. -->
+
+  <!-- Choices (dispatch to field + vocabulary lookup) -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".ChoiceDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ChoiceInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Generic collections (dispatch to field + value_type lookup) -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ICollection"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".CollectionDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ICollection"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".CollectionInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- 
+
+       Need to repeat the above for Sequence to avoid being overridden by a
+       DAV widget.  This suggests that we should be getting something
+       more specific than IInputWidget.
+
+       -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISequence"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".CollectionDisplayWidget"
+      permission="zope.Public"
+      />
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISequence"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".CollectionInputWidget"
+      permission="zope.Public"
+      />
+
+
+
+  <!-- non-choice collection fields should register for the field + value type
+       so as to allow specific field + value_type widgets such as the Choice
+       pattern -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ITuple
+           zope.schema.interfaces.IField"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".TupleSequenceWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IField"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ListSequenceWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISequence
+           zope.schema.interfaces.IField"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".SequenceDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Choice collections.  dispatch to field + vocabulary lookup.
+       We must register the collection + choice factories for all ICollection
+       subclasses because the field (the collection) has precedence: therefore
+       a registration for (IList plus IField) would trump a registration for
+       (ICollection plus IChoice), making choice lists not look up properly.
+       So all new collection types should always register for IChoice if
+       they want to follow in this configuration pattern. -->
+  <!-- List + Choice -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".ChoiceCollectionDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ChoiceCollectionInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Tuple + Choice -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ITuple
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".ChoiceCollectionDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ITuple
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ChoiceCollectionInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Set + Choice -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISet
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".ChoiceCollectionDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISet
+           zope.schema.interfaces.IChoice"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".ChoiceCollectionInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Default Multi-Views for fields and vocabularies -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.schema.interfaces.IBaseVocabulary"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".ItemDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.schema.interfaces.IVocabularyTokenized"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".DropdownWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Default Multi-Views for fields and iterable sources -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISet
+           zope.schema.interfaces.IIterableSource"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".source.SourceMultiSelectSetWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.schema.interfaces.IIterableSource"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".source.SourceDropdownWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IIterableSource"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".source.SourceOrderedMultiSelectWidget"
+      permission="zope.Public"
+      />
+
+  <!-- These widgets are minimal and only support lists with unique members,
+       without ordering capabilities -->
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISet
+           zope.schema.interfaces.IVocabularyTokenized"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".MultiSelectSetWidget"
+      permission="zope.Public"
+      />
+
+  <view
+        type="zope.publisher.interfaces.browser.IBrowserRequest"
+        for="zope.schema.interfaces.ISet
+        zope.schema.interfaces.IBaseVocabulary"
+        provides="zope.app.form.interfaces.IDisplayWidget"
+        factory=".SetDisplayWidget"
+        permission="zope.Public"
+        />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IVocabularyTokenized"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".OrderedMultiSelectWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.IBaseVocabulary"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".SetDisplayWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Source Views -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.schema.interfaces.ISource"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".source.SourceDisplayWidget"
+      permission="zope.Public"
+      />
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.schema.interfaces.ISource"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".source.SourceInputWidget"
+      permission="zope.Public"
+      />
+
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ISequence
+           zope.schema.interfaces.ISource"
+      provides="zope.app.form.interfaces.IDisplayWidget"
+      factory=".source.SourceSequenceDisplayWidget"
+      permission="zope.Public"
+      />
+
+
+  <!-- TODO We need a widget for tuples (and sets, for that matter). -->
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IList
+           zope.schema.interfaces.ISource"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".source.SourceListInputWidget"
+      permission="zope.Public"
+      />
+
+  <!-- Register the form documentation with the apidoc tool -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="form"
+        title="Widgets and Forms"
+        />
+    <apidoc:bookchapter
+        id="bwidget"
+        title="Basic Widgets"
+        doc_path="README.txt"
+        parent="form"
+        />
+    <apidoc:bookchapter
+        id="swidget"
+        title="Source Widgets"
+        doc_path="source.txt"
+        parent="form"
+        />
+    <apidoc:bookchapter
+        id="awidget"
+        title="Advanced Widgets"
+        doc_path="widgets.txt"
+        parent="form"
+        />
+    <apidoc:bookchapter
+        id="formdirective"
+        title="The browser:form Directive"
+        doc_path="form.txt"
+        parent="form"
+        />
+  </configure>
+
+</configure>

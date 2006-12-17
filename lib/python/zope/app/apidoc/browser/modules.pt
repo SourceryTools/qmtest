@@ -1,0 +1,30 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents" 
+      style="padding: 0; margin: 0">
+
+  <div class="apihead">
+      <a href="contents.html" target="main" i18n:translate="">Zope
+            3 API Docs</a>
+  </div>
+
+  <div style="margin-left: 0.5em">
+    <ul class="modules">
+      <li tal:repeat="module view/getModuleList">
+        <a href="" target="menu"
+             tal:attributes="href string:${module/name}/@@menu.html"
+             tal:content="module/title" i18n:translate="">
+          Interfaces
+        </a>
+      </li>
+    </ul>
+    <div id="preference_entry">
+      <a href="./++preferences++/apidoc/@@apidocMenu.html" target="menu"
+        i18n:translate="">
+        User Preferences
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

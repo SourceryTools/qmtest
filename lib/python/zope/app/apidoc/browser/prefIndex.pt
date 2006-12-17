@@ -1,0 +1,129 @@
+<html metal:use-macro="context/@@apidoc_macros/details">
+<head>
+  <style type="text/css" media="all"
+         metal:fill-slot="style_slot">
+
+table.prefs {
+  border: 0pt;
+  width: 80%;
+}
+
+tr {
+  margin: 0pt;
+  padding: 0pt;
+  border: 0pt;
+}
+
+tr.odd {
+  background: #fffbbe;
+}
+
+tr.first td {
+  border-top: 1pt solid #0000C0;
+}
+
+td {
+  padding: 3pt;
+  border-bottom: 1pt solid #0000C0;
+}
+
+td.input {
+  vertical-align: middle;
+  text-align: center;
+}
+
+td.description {
+
+}
+
+td.controls {
+  margin-top: 10pt;
+  border: 0pt;
+  padding: 4pt;
+  background: #ccf;
+  text-align: right;
+}
+
+td.spacer {
+  padding: 5pt;
+  border: 0pt;
+}
+
+div.documentation blockquote {
+  margin: 0pt;
+  padding: 0pt;
+}
+
+div.error {
+  font-weight: bold;
+  margin: 3pt 0pt;
+  color: #ffaa22;
+}
+  </style>
+</head>
+<body metal:fill-slot="contents" i18n:domain="zope">
+
+  <h1 tal:content="view/label" i18n:translate="">Edit something</h1>
+
+  <div class="documentation" tal:content="structure view/getIntroduction"
+    i18n:translate="">
+    Here is the doc string
+  </div>
+
+  <p tal:define="status view/update"
+     tal:condition="status"
+     tal:content="status" i18n:translate=""/>
+
+  <p tal:condition="view/errors" i18n:translate="">
+    There are <strong tal:content="python:len(view.errors)"
+                      i18n:name="num_errors">6</strong> input errors.
+  </p>
+  <br />
+
+  <form action="." tal:attributes="action request/URL" method="post"
+        enctype="multipart/form-data">
+
+  <table class="prefs" cellspacing="0" cellpadding="0">
+    <tal:block repeat="widget view/widgets" >
+    <tr class=""
+        tal:define="parity repeat/widget/parity;
+                    firstrow repeat/widget/start"
+        tal:attributes="class python: parity +
+                                      (firstrow and ' first' or '')">
+      <td class="description">
+        <b class="label">
+          <label for="field.name"
+            tal:attributes="for widget/name"
+            tal:content="widget/label" i18n:translate="">Option</label>
+        </b>
+        <div class="indent small">
+          <div tal:content="widget/hint" i18n:translate="">
+            Explanation
+          </div>
+          <div class="error" tal:define="error widget/error"
+            tal:condition="error" tal:content="structure error"
+            i18n:translate="">
+            The Error
+          </div>
+        </div>
+      </td>
+      <td class="input" tal:content="structure widget">
+        <input type="text" style="width:100%"/>
+      </td>
+    </tr>
+    </tal:block>
+    <tr><td class="spacer"></td></tr>
+    <tr>
+      <td colspan="2" class="controls">
+        <input type="submit" value="Refresh"
+            i18n:attributes="value refresh-button" />
+        <input type="submit" name="UPDATE_SUBMIT" value="Change"
+            i18n:attributes="value submit-button"/>
+      </td>
+    </tr>
+  </table>
+
+  </form>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+Key References for Persistent Objects
+=====================================
+
+`zope.keyreference.persistent.KeyReferenceToPersistent` provides an
+`zope.app.keyreference.interfaces.IReference` reference for persistent
+objects.  
+
+Let's look at an example. First, we'll create some persistent objects
+in a database:
+
+    >>> from ZODB.tests.util import DB
+    >>> import transaction
+    >>> from persistent.dict import PersistentDict
+
+    >>> db = DB()
+    >>> conn = db.open()
+    >>> root = conn.root()
+
+    >>> root['ob1'] = PersistentDict()
+    >>> root['ob2'] = PersistentDict()
+
+    >>> transaction.commit()
+
+Then we'll create some key references:
+
+    >>> from zope.app.keyreference.persistent import KeyReferenceToPersistent
+
+    >>> key1 = KeyReferenceToPersistent(root['ob1'])
+    >>> key2 = KeyReferenceToPersistent(root['ob2'])
+
+We can call the keys to get the objects:
+
+    >>> key1() is root['ob1'], key2() is root['ob2']
+    (True, True)
+    
+New keys to the same objects are equal to the old:
+
+    >>> KeyReferenceToPersistent(root['ob1']) == key1
+    True
+
+and have the same hashes:
+
+    >>> hash(KeyReferenceToPersistent(root['ob1'])) == hash(key1)
+    True
+
+Other key reference implementations are differed by their key type id.
+Key references should sort first on their key type and second on any
+type-specific information:
+
+    >>> from zope.interface import implements
+    >>> from zope.app.keyreference.interfaces import IKeyReference
+
+    >>> class DummyKeyReference(object):
+    ...     implements(IKeyReference)
+    ...     key_type_id = 'zope.app.keyreference.object'
+    ...     def __init__(self, obj):
+    ...         self.object = obj
+    ...     def __cmp__(self, other):
+    ...          if self.key_type_id == other.key_type_id:
+    ...              return cmp(self.object, other.object)
+    ...          return cmp(self.key_type_id, other.key_type_id)
+
+    >>> dummy_key1 = DummyKeyReference(object())
+    >>> dummy_key2 = DummyKeyReference(object())
+    >>> dummy_key3 = DummyKeyReference(object())
+
+    >>> keys = [key1, dummy_key1, dummy_key2, key2, dummy_key3]
+    >>> keys.sort()
+    >>> key_type_ids = [key.key_type_id for key in keys]
+    >>> key_type_ids[0:3].count('zope.app.keyreference.object') 
+    3
+    >>> key_type_ids[3:].count('zope.app.keyreference.persistent')
+    2
+
+We'll store the key references in the database:
+
+    >>> root['key1'] = key1
+    >>> root['key2'] = key2
+
+and use the keys to store the objects again:
+
+    >>> root[key1] = root['ob1']
+    >>> root[key2] = root['ob2']
+    
+    >>> transaction.commit()
+
+Now we'll open another connection:
+
+    >>> conn2 = db.open()
+
+And verify that we can use the keys to look up the objects:
+
+    >>> root2 = conn2.root()
+    >>> key1 = root2['key1']
+    >>> root2[key1] is root2['ob1']
+    True
+    >>> key2 = root2['key2']
+    >>> root2[key2] is root2['ob2']
+    True
+
+and that we can also call the keys to get the objects:
+
+    >>> key1() is root2['ob1']
+    True
+    >>> key2() is root2['ob2']
+    True
+
+We can't get the key reference for an object that hasn't been saved
+yet:
+
+    >>> KeyReferenceToPersistent(PersistentDict())
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    NotYet: <persistent.dict.PersistentDict object at ...>
+
+Note that we get a NotYet error. This indicates that we might be able
+to get a key reference later.
+
+We can get references to unsaved objects if they have an adapter to
+`ZODB.interfaces.IConnection`.  The `add` method on the connection
+will be used to give the object an object id, which is enough
+information to compute the reference.  To see this, we'll create an
+object that conforms to `IConnection` in a silly way:
+
+    >>> import persistent
+    >>> from ZODB.interfaces import IConnection
+    >>> class C(persistent.Persistent):
+    ...     def __conform__(self, iface):
+    ...         if iface is IConnection:
+    ...             return conn2
+
+    >>> ob3 = C()
+    >>> key3 = KeyReferenceToPersistent(ob3)
+    >>> transaction.abort()
+
+
+Location-based connection adapter
+---------------------------------
+
+The function `zope.app.keyreference.connectionOfPersistent` adapts
+objects to connections using a simple location-based heuristic. It
+checked to see if the object has a `__parent__` that has a connection:
+
+    >>> from zope.app.keyreference.persistent import connectionOfPersistent
+    >>> ob3 = PersistentDict()
+    >>> print connectionOfPersistent(ob3)
+    None
+
+    >>> ob3.__parent__ = root2['ob1']
+    >>> connectionOfPersistent(ob3) is conn2
+    True

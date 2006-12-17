@@ -1,0 +1,108 @@
+Publisher framework base collaboration
+
+  Participants:
+
+    publisher:IPublisher
+
+    request:IPublisherRequest
+
+    response:IPublicationResponse = request.getResponse()
+
+    publication:IPublication = request.getPublication()
+
+
+  Values:
+
+    root
+        "the top-level object"
+
+    foo
+        "an object obtaines by traversing the root with 'foo'"
+
+    bar
+        "an object obtaines by traversing the root with 'bar'"
+
+    result
+        "The result of calling bar"
+
+
+  Scenario: Normal, path = foo/bar
+     "Show normal publishing of a simple path without errors"
+
+    publisher.publish(request)
+
+        request.processInputs()
+
+        publication.beforeTraversal(request)
+
+        publication.getApplication(request)
+           "Get the root object to be traversed"
+
+        request.traverse(root)
+
+            publication.callTraversalHooks(request, root)
+                '''Call any "before traversal step" hooks. These hooks
+                should be called before traversing an object for the
+                first time. If the same object is traversed more than
+                once, the hook will still only be called the first
+                time.
+
+                The last constraint is probably important to get
+                virtual host semantics rigfht. :)
+                '''
+
+            publication.traverseName(request, root, 'foo')
+
+            publication.callTraversalHooks(request, foo)
+
+            publication.traverseName(request, foo, 'bar')
+
+            return bar
+
+        publication.afterTraversal(request, bar)
+
+        publication.callObject(request, bar)
+
+            return result
+
+        response.setBody(result)
+
+        publication.afterCall(request, bar)
+
+        response.outputBody()
+
+        request.close()
+
+
+  Scenario: Error during application call, path = foo
+      "Show what heppens when the main application code raises an error"
+
+    publisher.publish(request)
+
+        request.processInputs()
+
+        publication.beforeTraversal(request)
+
+        publication.getApplication(request)
+
+        request.traverse(root)
+
+            publication.callTraversalHooks(request, root)
+
+            publication.traverseName(request, root, 'foo')
+
+            return foo
+
+        publication.afterTraversal(request, foo)
+
+        publication.callObject(request, foo)
+
+            raise AttributeError, 'spam'
+
+
+        publication.handleException()
+
+        response.outputBody()
+
+        request.close()
+

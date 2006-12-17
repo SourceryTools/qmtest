@@ -1,0 +1,142 @@
+=========
+Issue 269
+=========
+
+http://collector.zope.org/Zope3-dev/269
+
+When you use TALES path expressions in a page template that is security
+proxied, you get ForbiddenAttribute errors for PathExpr methods. Other kinds
+of expressions are probably also affected.
+
+To see the error, apply the following diff to collector266.txt and run
+test.py zope.app.zptpage.browser (I'm too lazy to figure out how to
+demonstrate this problem manually in a web browser)::
+
+  Index: src/zope/app/zptpage/browser/collector266.txt
+  ===================================================================
+  --- src/zope/app/zptpage/browser/collector266.txt (revision 27388)
+  +++ src/zope/app/zptpage/browser/collector266.txt (working copy)
+  @@ -29,6 +29,7 @@
+     ... </div>
+     ... <div metal:define-macro="greet">
+     ... Hello <span metal:define-slot="name">world</span>
+  + ... <p tal:condition="nothing">Optional text</p>
+     ... </div>
+     ... </html>
+     ... -----------------------------78336869011025200592044897763
+
+
+We create a page that defines a macro:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 835
+  ... Content-Type: multipart/form-data; boundary=---------------------------78336869011025200592044897763
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ...
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.source"
+  ...
+  ... <html>
+  ... <div metal:define-macro="greet">
+  ... Hello <span metal:define-slot="name">world</span>
+  ... <p tal:condition="nothing">Optional text</p>
+  ... <div tal:define="data python:{'foo': 1, 'bar': {'x': 1, 'y': 0}};
+  ...                  later defer:container">
+  ...    <p tal:content="data/bar/x" />
+  ...    <p tal:condition="not: data/foo" />
+  ...    <p tal:content="string: string expr" />
+  ... </div>
+  ... </div>
+  ... </html>
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ...
+  ...
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ...
+  ...
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------78336869011025200592044897763
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... macros
+  ... -----------------------------78336869011025200592044897763--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+
+Lets create a page that uses the macro:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1771
+  ... Content-Type: multipart/form-data; boundary=---------------------------196751392613651805401540383426
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ...
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.source"
+  ...
+  ... <html>
+  ... <body>
+  ... <div metal:use-macro="container/macros/macros/greet">
+  ...   <span metal:fill-slot="name">bob</span>
+  ... </div>
+  ... </body>
+  ... </html>
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ...
+  ...
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ...
+  ...
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------196751392613651805401540383426
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... page
+  ... -----------------------------196751392613651805401540383426--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+And run it.
+
+  >>> print http(r"""
+  ... GET /page HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... """, handle_errors=False)
+  HTTP/1.1 200 Ok
+  Content-Length: 119
+  Content-Type: text/html;charset=utf-8
+  <BLANKLINE>
+  <html>
+  <body>
+  <div>
+  Hello <span>bob</span>
+  <BLANKLINE>
+  <div>
+     <p>1</p>
+  <BLANKLINE>
+     <p> string expr</p>
+  </div>
+  </div>
+  </body>
+  </html>
+  <BLANKLINE>

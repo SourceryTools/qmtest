@@ -1,0 +1,318 @@
+<configure
+    xmlns="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+  <!-- Interfaces -->
+  <bookchapter
+      id="ifaceschema"
+      title="Interfaces and Schemas"
+      />
+  <configure package="zope.interface">
+    <bookchapter
+        id="interface"
+        title="Interfaces"
+        doc_path="README.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter
+        id="adapter"
+        title="Adapter Registry"
+        doc_path="adapter.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter
+        id="human"
+        title="Adapters (light version)"
+        doc_path="human.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter
+        id="foodforthought"
+        title="Food For Thought"
+        doc_path="tests/foodforthought.txt"
+        parent="ifaceschema"
+        />
+  </configure>
+  <configure package="zope.schema">
+    <bookchapter
+        id="schemas"
+        title="Schemas"
+        doc_path="README.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter
+        id="fields"
+        title="Schema Fields"
+        doc_path="fields.txt"
+        parent="ifaceschema"
+        />
+  </configure>
+
+  <!-- Component Architecture -->
+  <bookchapter
+      id="ca"
+      title="Component Architecture"
+      />
+
+  <configure package="zope.component">
+    <bookchapter
+        id="global"
+        title="Global Component Architecture"
+        parent="ca"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="socket"
+        title="Global CA (Socket Example)"
+        parent="ca"
+        doc_path="socketexample.txt"
+        />
+    <bookchapter
+        id="factory"
+        title="Factories"
+        parent="ca"
+        doc_path="factory.txt"
+        />
+  </configure>
+
+  <configure package="zope.app.component">
+    <bookchapter
+        id="local"
+        title="Local Component Architecture"
+        parent="ca"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="site"
+        title="Local Sites &amp; Site Managers"
+        parent="ca/local"
+        doc_path="site.txt"
+        />
+  </configure>
+
+  <!-- Events -->
+  <configure package="zope.event">
+    <bookchapter
+        id="event"
+        title="Events"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Security -->
+ <configure package="zope.security">
+    <bookchapter
+        id="security"
+        title="Security"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="untrusted"
+        title="Untrusted Interpreters"
+        doc_path="untrustedinterpreter.txt"
+        parent="security"
+        />
+    <bookchapter
+        id="interpreter"
+        title="Untrusted Python Interpreter"
+        doc_path="untrustedpython/interpreter.txt"
+        parent="security/untrusted"
+        />
+    <bookchapter
+        id="rcompile"
+        title="Restricted Python Code"
+        doc_path="untrustedpython/rcompile.txt"
+        parent="security/untrusted"
+        />
+    <bookchapter
+        id="builtins"
+        title="Safe Builtins"
+        doc_path="untrustedpython/builtins.txt"
+        parent="security/untrusted"
+        />
+  </configure>
+  <configure package="zope.app.security">
+    <bookchapter
+        id="globalprincipals"
+        title="Global Principals"
+        doc_path="globalprincipals.txt"
+        parent="security"
+        />
+  </configure>
+
+  <!-- Testing -->
+  <bookchapter
+      id="test"
+      title="Testing"
+      />
+  <configure package="zope.testbrowser">
+    <bookchapter
+        id="testbrowser"
+        title="The Test Browser"
+        doc_path="README.txt"
+        parent="test"
+        />
+    <bookchapter
+        id="overthewire"
+        title="Using testbrowser On the Internet"
+        doc_path="over_the_wire.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.app.ftests">
+    <bookchapter
+        id="fdoctest"
+        title="Functional DocTest"
+        doc_path="doctest.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.app.testing">
+    <bookchapter
+        id="fdoctest-howto"
+        title="FDocTest (How to)"
+        doc_path="dochttp.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.testing">
+    <bookchapter
+        id="formparser"
+        title="Form Parser"
+        doc_path="formparser.txt"
+        parent="test"
+        />
+  </configure>
+
+  <!-- Cached Properties -->
+  <bookchapter
+      id="i18nl10n"
+      title="I18n and L10n"
+      />
+  <configure package="zope.i18nmessageid">
+    <bookchapter
+        id="messageid"
+        title="Messages"
+        doc_path="messages.txt"
+        parent="i18nl10n"
+        />
+  </configure>
+
+  <!-- Cached Properties -->
+  <configure package="zope.cachedescriptors">
+    <bookchapter
+        id="cachedprops"
+        title="Cached Properties"
+        doc_path="property.txt"
+        />
+  </configure>
+
+  <!-- BForest -->
+  <configure package="zope.bforest"
+             zcml:condition="installed zope.bforest">
+    <bookchapter
+        id="bforest"
+        title="BForest API"
+        doc_path="bforest.txt"
+        />
+  </configure>
+
+  <!-- Deprecation API -->
+  <configure package="zope.deprecation">
+    <bookchapter
+        id="deprecation"
+        title="Deprecation API"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Persistence -->
+  <configure package="persistent.tests">
+    <bookchapter
+        id="persistent"
+        title="Persistent Framework"
+        doc_path="persistent.txt"
+        />
+  </configure>
+
+  <!-- Transactions -->
+  <configure package="transaction">
+    <bookchapter
+        id="transaction"
+        title="Transactions"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="savepoints"
+        title="Savepoints"
+        parent="transaction"
+        doc_path="savepoint.txt"
+        />
+  </configure>
+
+  <!-- ZODB -->
+  <configure package="ZODB">
+    <bookchapter
+        id="zodb"
+        title="Zope Object Database (ZODB)"
+        />
+    <bookchapter
+        id="multidb"
+        title="Multiple Databases"
+        parent="zodb"
+        doc_path="tests/multidb.txt"
+        />
+    <bookchapter
+        id="crossref"
+        title="Cross-Database References"
+        parent="zodb"
+        doc_path="cross-database-references.txt"
+        />
+    <bookchapter
+        id="collaboration"
+        title="Collaboration Diagrams"
+        parent="zodb"
+        doc_path="collaborations.txt"
+        />
+    <bookchapter
+        id="dbopen"
+        title="Connection Management"
+        parent="zodb"
+        doc_path="tests/dbopen.txt"
+        />
+    <bookchapter
+        id="persistentclass"
+        title="Persistent Classes"
+        parent="zodb"
+        doc_path="persistentclass.txt"
+        />
+    <bookchapter
+        id="savepoints"
+        title="Savepoints"
+        parent="zodb"
+        doc_path="tests/testConnectionSavepoint.txt"
+        />
+    <bookchapter
+        id="subtransactions"
+        title="Sub-Transactions"
+        parent="zodb"
+        doc_path="subtransactions.txt"
+        />
+    <bookchapter
+        id="synchronizers"
+        title="Synchronizers"
+        parent="zodb"
+        doc_path="tests/synchronizers.txt"
+        />
+  </configure>
+
+  <!-- BTrees -->
+  <configure package="BTrees">
+    <bookchapter
+        id="btrees"
+        title="BTree Developer Information"
+        doc_path="Development.txt"
+        />
+  </configure>
+
+</configure>

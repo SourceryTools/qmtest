@@ -1,0 +1,44 @@
+<configure 
+  xmlns:zope="http://namespaces.zope.org/zope"
+  xmlns="http://namespaces.zope.org/browser"
+  i18n_domain="zope">
+
+  <!-- Cookie Browser Id Manager -->
+
+  <addMenuItem
+    title="Cookie Client Id Manager"
+    description="Uses a cookie to uniquely identify a client, allowing 
+      state to be maintained between requests"
+    class=".http.CookieClientIdManager"
+    permission="zope.ManageServices" />
+
+  <editform
+    schema=".http.ICookieClientIdManager"
+    label="Cookie Client Id Manager Properties"
+    name="edit.html" menu="zmi_views" title="Edit"
+    permission="zope.ManageServices" />
+
+  <!-- PersistentSessionDataContainer -->
+
+  <addMenuItem
+    title="Persistent Session Data Container"
+    description="Stores session data persistently in the ZODB"
+    class=".session.PersistentSessionDataContainer"
+    permission="zope.ManageServices" />
+
+  <!-- RAMSessionDataContainer -->
+
+  <addMenuItem
+    title="RAM Session Data Container"
+    description="Stores session data in RAM"
+    class=".session.RAMSessionDataContainer"
+    permission="zope.ManageServices" />
+
+  <!-- ISessionDataContainer -->
+  <editform
+    schema=".interfaces.ISessionDataContainer"
+    label="Session Data Container Properties"
+    name="edit.html" menu="zmi_views" title="Edit"
+    permission="zope.ManageServices" />
+
+</configure>

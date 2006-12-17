@@ -1,0 +1,15 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <class class=".broken.Broken">
+    <allow interface="zope.annotation.interfaces.IAnnotations" />
+    <allow attributes="__module__" />
+  </class>
+
+  <subscriber
+      handler=".broken.installBroken"
+      for="zope.app.appsetup.IDatabaseOpenedEvent" 
+      />
+
+  <include file="browser.zcml" /> 
+
+</configure>

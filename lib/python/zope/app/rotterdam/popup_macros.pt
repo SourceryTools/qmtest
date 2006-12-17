@@ -1,0 +1,83 @@
+<metal:block define-macro="page"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xml:lang="en"
+    lang="en"
+    i18n:domain="zope"
+    tal:define="sitemgmt python:'/++etc++site/' in str(request.URL)">
+
+  <head>
+    <title metal:define-slot="title"
+           tal:content="string:Z3: ${context/zope:title_or_name}">Z3 UI</title>
+
+    <style type="text/css" media="all"
+           tal:content="string:@import url(${context/++resource++zope3.css});">
+      @import url(zope3.css);
+    </style>
+
+    <style type="text/css" media="all" tal:condition="sitemgmt"
+           tal:content="string:@import url(${context/++resource++site_management.css});">
+      @import url(site_management.css);
+    </style>
+
+    <meta http-equiv="Content-Type"
+          content="text/html;charset=utf-8" />
+
+    <metal:block define-slot="headers" />
+    <metal:block define-slot="style_slot" />
+    <metal:block define-slot="ecmascript_slot" />
+
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png" />
+  </head>
+
+  <body>
+
+    <div id="navigators">
+
+      <!-- Tree of the help topics that appears on the help namespace -->
+      <metal:block define-slot="left_slot " />
+
+    </div>
+
+
+    <div id="workspace">
+
+      <div id="viewspace">
+
+        <div id="content">
+          <metal:block define-slot="body">
+            <table class="listing">
+              <thead>
+                <th>Test</th>
+                <th>Another</th>
+              </thead>
+              <tbody>
+                      <tr>
+                        <td>content</td>
+                        <td>thingy</td>
+                      </tr>
+                      <tr class="even">
+                        <td>more</td>
+                        <td>data</td>
+                      </tr>
+              </tbody>
+            </table>
+          </metal:block>
+        </div>
+
+        <div class="spacer">
+          &nbsp;
+        </div>
+
+      </div>
+    </div>
+
+    <div id="footer" metal:define-macro="footer" />
+
+  </body>
+
+</html>
+
+</metal:block>
+

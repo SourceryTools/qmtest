@@ -1,0 +1,49 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc">
+
+  <class class=".book.BookModule">
+    <allow interface=".book.IBookModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <!-- Register the module with the API Documentation System -->
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      component=".book.book"
+      name="Book" />
+
+  <!-- Book Documentation Module Menu -->
+
+  <browser:page
+      for=".book.IBookModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="menu.html"
+      template="menu.pt"
+      layer="..browser.skin.apidoc"
+      />
+
+    <browser:page
+      for=".book.IBookModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="..browser.skin.apidoc"
+      />
+
+  <browser:page
+      for="zope.app.onlinehelp.interfaces.IOnlineHelpTopic"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class="zope.app.onlinehelp.browser.OnlineHelpTopicView"
+      name="show.html"
+      template="chapter.pt"
+      layer="..browser.skin.apidoc"
+      />
+
+  <include file="book.zcml" />
+
+</configure>

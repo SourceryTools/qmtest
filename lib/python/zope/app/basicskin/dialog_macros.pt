@@ -1,0 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html metal:define-macro="dialog" i18n:domain="zope">
+<head metal:use-macro="context/@@standard_macros/head" />
+
+<body>
+  <span metal:use-macro="context/@@standard_macros/breadcrumbs" />
+
+  <div metal:define-slot="body">
+     <p>Body here</p>
+  </div>
+
+  <div metal:use-macro="context/@@standard_macros/footer" />
+</body>
+</html>
+

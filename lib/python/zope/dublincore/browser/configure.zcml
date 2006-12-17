@@ -1,0 +1,16 @@
+<zope:configure 
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+  <pages
+      for="zope.annotation.interfaces.IAnnotatable"
+      permission="zope.app.dublincore.change"
+      class=".metadataedit.MetaDataEdit">
+
+    <page name="EditMetaData.html" template="edit.pt"
+          menu="zmi_views" title="Metadata" />
+    <page name="MetaDataBox" template="box.pt" />
+
+  </pages>
+
+</zope:configure>

@@ -1,0 +1,67 @@
+Principal Terms
+===============
+
+Principal Terms are used to support browser interfaces for searching principal
+sources. They provide access to tokens and titles for values. The principal
+terms view uses an authentication utility to get principal titles. Let's
+create an authentication utility to demonstrate how this works:
+
+  >>> class Principal:
+  ...     def __init__(self, id, title):
+  ...         self.id, self.title = id, title
+
+  >>> from zope.interface import implements
+  >>> from zope.app.security.interfaces import IAuthentication
+  >>> from zope.app.security.interfaces import PrincipalLookupError
+  >>> class AuthUtility:
+  ...     implements(IAuthentication)
+  ...     data = {'jim': 'Jim Fulton', 'stephan': 'Stephan Richter'}
+  ...
+  ...     def getPrincipal(self, id):
+  ...         title = self.data.get(id)
+  ...         if title is not None:
+  ...             return Principal(id, title)
+  ...         raise PrincipalLookupError
+
+Now we need to install the authentication utility:
+
+  >>> from zope.app.testing import ztapi
+  >>> ztapi.provideUtility(IAuthentication, AuthUtility())
+
+We need a principal source so that we can create a view from it.
+
+  >>> from zope.app import zapi
+  >>> class PrincipalSource:
+  ...     def __contains__(self, id):
+  ...          auth = zapi.getUtility(IAuthentication)
+  ...          try:
+  ...              auth.getPrincipal(id)
+  ...          except PrincipalLookupError:
+  ...              return False
+  ...          else:
+  ...              return True
+
+Now we can create an terms view:
+
+  >>> from zope.app.security.browser.principalterms import PrincipalTerms
+  >>> terms = PrincipalTerms(PrincipalSource(), None)
+  
+Now we can ask the terms view for terms:
+
+  >>> term = terms.getTerm('stephan')
+  >>> term.title
+  'Stephan Richter'
+  >>> term.token
+  'c3RlcGhhbg__'
+
+If we ask for a term that does not exist, we get a lookup error:
+
+  >>> terms.getTerm('bob')
+  Traceback (most recent call last):
+  ...
+  LookupError: bob
+
+If we have a token, we can get the principal id for it.
+
+  >>> terms.getValue('c3RlcGhhbg__')
+  'stephan'

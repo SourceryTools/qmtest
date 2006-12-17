@@ -1,0 +1,37 @@
+Loading XPDL
+============
+
+XPDL can be loaded in zcml files with the ``xpdl`` tag::
+    
+    >>> import os
+    >>> file_name = os.path.join(this_directory, 'publication.xpdl')
+    >>> zcml("""
+    ...     <configure 
+    ...         xmlns="http://namespaces.zope.org/zope"
+    ...         xmlns:wfmc="http://namespaces.zope.org/wfmc"
+    ...         i18n_domain="test"
+    ...         >
+    ...
+    ...         <wfmc:xpdl 
+    ...             file="%(file_name)s" 
+    ...             process="Publication"
+    ...             id="example.publication"
+    ...             integration="zope.wfmc.adapter.integration"
+    ...             />
+    ...
+    ...     </configure>
+    ... """ % locals())
+
+Lets verify that they were configured::
+
+    >>> from zope.wfmc.interfaces import IProcessDefinition
+    >>> import zope.component
+    >>> pd = zope.component.getUtility(IProcessDefinition, 
+    ...                                'example.publication')
+    >>> pd
+    ProcessDefinition('example.publication')
+
+    >>> import zope.wfmc.adapter
+    >>> pd.integration is zope.wfmc.adapter.integration
+    True
+

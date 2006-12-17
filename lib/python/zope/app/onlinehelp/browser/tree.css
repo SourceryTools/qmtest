@@ -1,0 +1,41 @@
+ul.tree {
+    padding-right: 20px;
+}
+
+ul.tree li {
+    list-style: none;
+} 
+
+ul.tree {
+    margin-left: 0px;
+}
+ul.tree ul , ul.tree li {
+    margin-left: 10px;
+}
+
+ul.tree li .link {
+    padding-left: 15px;
+}
+
+ul.tree li.expand .link {
+    cursor: pointer;
+    background: url(/@@/minus.gif) center left no-repeat;
+}
+
+ul.tree li.collapse .link {
+    cursor: pointer;
+    background: url(/@@/plus.gif) center left no-repeat;
+}
+
+ul.tree li.item .link {
+    cursor: default;
+    background: url(/@@/item.gif) center left no-repeat;
+}
+
+ul.tree li.expand ul {
+    display: block;
+}
+
+ul.tree li.collapse ul {
+    display: none;
+}

@@ -1,0 +1,41 @@
+<tal:block define="addingInfo context/@@+/addingInfo|nothing"
+           condition="addingInfo" i18n:domain="zope">
+
+  <tal:block repeat="info addingInfo"
+    define="namesRequired context/@@+/nameAllowed">
+    <div tal:define="oddrow repeat/info/odd;
+        namesRequired context/@@+/nameAllowed;
+        has_custom_add_view python:'has_custom_add_view' in info"
+        tal:attributes="class python:oddrow and 'content even' or 'content odd'"
+        class="even">
+      <a href="#"
+        tal:define="baseurl python:request.getURL(1)"
+        tal:condition="python: not info['action'].startswith('../')
+                               and namesRequired and not has_custom_add_view"
+        tal:attributes="
+          href string:${baseurl}/@@contents.html?type_name=${info/action};
+          class info/selected"
+        tal:content="info/title" i18n:translate="">Folder
+      </a>
+
+      <a href="#"
+        tal:define="baseurl python:request.getURL(1)"
+        tal:condition="python: not info['action'].startswith('../')
+                   and (has_custom_add_view or not namesRequired)"
+        tal:attributes="
+          href string:${baseurl}/@@+/action.html?type_name=${info/action};
+          class info/selected"
+        tal:content="info/title" i18n:translate="">Folder
+      </a>
+
+      <a href="#"
+        tal:define="baseurl python:request.getURL(1)"
+        tal:condition="python: info['action'].startswith('../')"
+        tal:attributes="
+          href python: info['action'][3:];
+          class info/selected"
+        tal:content="info/title" i18n:translate="">Folder
+      </a>
+    </div>
+  </tal:block>
+</tal:block>

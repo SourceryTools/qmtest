@@ -1,0 +1,17 @@
+<configure
+    xmlns='http://namespaces.zope.org/zope'
+    xmlns:fssync='http://namespaces.zope.org/fssync'
+    i18n_domain='zope'
+    >
+
+  <fssync:adapter
+      class="zope.app.file.File"
+      factory=".adapter.FileAdapter"
+      />
+
+  <fssync:adapter
+      class="zope.app.file.Image"
+      factory=".adapter.FileAdapter"
+      />
+
+</configure>

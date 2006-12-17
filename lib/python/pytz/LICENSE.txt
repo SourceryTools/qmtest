@@ -1,0 +1,30 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+All files in this directory below are re-released under the Zope Public
+License 2.1 (ZPL). The pytz distribution, and the code that generates the
+distribitions, is also available under MIT license at
+http://pytz.sourceforge.net
+
+##############################################################################
+#
+# Copyright (c) 2004 Zope Corporation and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCExl7AfqZj7rGN0oRAlzdAJoCtW90UkQ29zg4NrCSbJUcQR6fggCeMwde
+mgIid15jfg2yyKPWTRkhkTk=
+=lb6L
+-----END PGP SIGNATURE-----

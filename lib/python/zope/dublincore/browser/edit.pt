@@ -1,0 +1,61 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <form action="request/URL"
+     tal:attributes="action request/URL"
+     tal:define="data view/edit"
+     method="post"
+     >
+
+    <p tal:condition="data/message"
+       tal:content="data/message"
+       i18n:translate="">Message here</p>
+
+    <div class="row">
+      <div class="label" i18n:translate="">Title</div>
+      <div class="field">
+        <input type="text" name="dctitle" size="50" value="Title"
+               tal:attributes="value data/dctitle" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label" i18n:translate="">Description</div>
+      <div class="field">
+        <textarea name="dcdescription" rows="12" cols="45"
+                  tal:content="data/dcdescription">Blah Blah</textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label" i18n:translate="">Created</div>
+      <div class="field" tal:content="data/created">2000-01-01 01:01:01</div>
+    </div>
+    <div class="row">
+      <div class="label" i18n:translate="">Content Last Modified</div>
+      <div class="field" tal:content="data/modified">2000-01-01 01:01:01</div>
+    </div>
+    <div class="row">
+      <div class="label" i18n:translate="">Creator</div>
+      <div class="field">
+        <span tal:repeat="creator data/creators"
+              tal:content="creator">Bart Simpson</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="controls">
+        <input type="reset" value="Refresh"
+            i18n:attributes="value refresh-button" />
+        <input type="submit" name="save" value="Save"
+            i18n:attributes="value save-changes-button"/>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+</body>
+</html>

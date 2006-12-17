@@ -1,0 +1,42 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:help="http://namespaces.zope.org/help"
+   i18n_domain="zope"
+   >
+
+  <!-- Register initial Help Topics -->
+  <help:register 
+      id="welcome"
+      title="Welcome"
+      doc_path="welcome.stx"
+      />
+
+  <help:register
+      id="dev"
+      title="Zope Developer Info"
+      doc_path="developer.txt"
+      class="zope.app.onlinehelp.onlinehelptopic.RESTOnlineHelpTopic"
+      />
+
+  <help:register
+      id="zope.app.onlinehelp"
+      parent="dev"
+      title="Online Help"
+      doc_path="README.stx"
+      />
+
+  <help:register
+      id="ui"
+      title="User interface ZMI"
+      doc_path="ui.stx"
+      resources="mgmt-main-1.png"
+      />
+
+  <help:register
+      id="samples"
+      title="Samples"
+      doc_path="samples.txt"
+      class="zope.app.onlinehelp.onlinehelptopic.RESTOnlineHelpTopic"
+      />
+
+</configure>

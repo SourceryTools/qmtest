@@ -1,0 +1,11 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directive 
+      namespace="http://namespaces.zope.org/apidoc"
+      name="bookchapter"
+      schema=".metadirectives.IBookChapterDirective"
+      handler=".metaconfigure.bookchapter" />
+
+</configure>

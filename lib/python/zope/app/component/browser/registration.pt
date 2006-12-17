@@ -1,0 +1,57 @@
+<html metal:use-macro="context/@@standard_macros/view"
+      i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <form action="@@addRegistration.html" method="get"
+        tal:condition="not:view/registrations">
+    <p i18n:translate="">This object isn't yet registered.</p>
+    <input type="submit" value="Register this object"
+           i18n:attributes="value register-button" />
+  </form>
+
+  <tal:block tal:condition="view/registrations">
+  <form action="" method="post" tal:attributes="action request/URL">
+    <p i18n:translate="">
+      This object is registered:
+    </p>
+    <table>
+      <tr tal:repeat="registration view/registrations">
+         <td>
+           <input type="checkbox"
+                  class="noborder" name="ids:list"
+                  tal:attributes="value registration/id;
+                                  id registration/id;"
+                  />
+         </td>
+         <td tal:define="info registration/render">
+           <tal:block content="info/info">
+             zope.app.fooIFoo utility named bob
+           </tal:block>
+           <tal:block condition="info/comment">
+             <br />
+             <tal:block content="info/comment">
+               comment: needed a bob
+             </tal:block>
+           </tal:block>
+         </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <input type="submit" value="Unregister" name="deactivate"
+                 i18n:attributes="value unregister-button" />
+        </td>
+      </tr>
+    </table>
+  </form>
+
+  <form action="@@addRegistration.html" method="get">
+    <input type="submit" value="Register this object again"
+           i18n:attributes="value register-again-button" />
+  </form>
+  </tal:block>
+
+</div>
+</body>
+</html>

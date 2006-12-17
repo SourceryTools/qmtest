@@ -1,0 +1,42 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <p><span tal:replace="context/zope:name"/>
+    <span i18n:translate="">RAMCache statistics</span></p>
+
+  <div tal:condition="python: options.has_key('errors') and
+                              options['errors']">
+    <span style="font-weight: bold" i18n:translate="">Errors</span>:
+    <div tal:repeat="error options/errors | nothing">
+      <span tal:replace="python: error[0].title" />:
+      <span tal:replace="python: error[1].error_name" />
+    </div>
+  </div>
+  <br />
+  <table  id="sortable" class="listing" summary="Content listing"
+         cellpadding="2" cellspacing="0" >
+    <thead> 
+      <th i18n:translate="">Path</th>
+      <th i18n:translate="">Hits</th>
+      <th i18n:translate="">Misses</th>
+      <th i18n:translate="">Size, bytes</th>
+      <th i18n:translate="">Entries</th>
+    </thead>
+    <tbody>
+      <tr tal:repeat="data context/getStatistics">
+        <td><span tal:content="data/path">&nbsp;</span></td>
+        <td><span tal:content="data/hits">&nbsp;</span></td>
+        <td><span tal:content="data/misses">&nbsp;</span></td>
+        <td><span tal:content="data/size">&nbsp;</span></td>
+        <td><span tal:content="data/entries">&nbsp;</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div tal:content="options/message|nothing" i18n:translate="" />
+</div>
+</body>
+
+</html>

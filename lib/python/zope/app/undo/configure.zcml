@@ -1,0 +1,133 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <permission
+      id="zope.UndoOwnTransactions"
+      title="[undo-own-transaction-permission] Undo one's one transactions"
+      description="With this permission a user may undo his/her own
+                   transactions."
+      />
+
+  <permission
+      id="zope.UndoAllTransactions"
+      title="[undo-all-transactions-permission] Undo all transactions"
+      description="With this permission a user may undo all transactions,
+                   regardless of who initiated them"
+      />
+
+
+  <subscriber
+      handler=".undoSetup"
+      for="zope.app.appsetup.IDatabaseOpenedEvent"
+      />
+
+
+  <class class="zope.app.undo.ZODBUndoManager">
+    <require
+        permission="zope.UndoOwnTransactions"
+        interface="zope.app.undo.interfaces.IPrincipalUndo"
+        />
+    <require
+        permission="zope.UndoAllTransactions"
+        interface="zope.app.undo.interfaces.IUndo"
+        />
+  </class>
+
+  <!-- Browser directives -->
+
+  <browser:pages
+      for="*"
+      permission="zope.UndoOwnTransactions"
+      class="zope.app.undo.browser.UndoView"
+      >
+
+    <browser:page
+        name="principalLastTransactionIsUndo"
+        attribute="principalLastTransactionIsUndo"
+        />
+
+    <browser:page
+        name="undo.html"
+        attribute="undoPrincipalLastTransaction"
+        />
+
+    <browser:page
+        name="undoPrincipalTransactions.html"
+        attribute="undoPrincipalTransactions"
+        />
+
+    <browser:page
+        name="undoMore.html"
+        template="undo_more.pt"
+        />
+
+  </browser:pages>
+
+  <browser:pages
+      for="*"
+      permission="zope.UndoAllTransactions"
+      class="zope.app.undo.browser.UndoView"
+      >
+
+    <browser:page
+        name="undoAllTransactions.html"
+        attribute="undoAllTransactions"
+        />
+
+    <browser:page
+        name="undoAll.html"
+        template="undo_all.pt"
+        />
+
+  </browser:pages>
+
+  <!-- We hereby imply that users having zope.UndoAllTransactions also
+       have zope.UndoOwnTransactions -->
+  <browser:page
+      for="*"
+      name="undo_macros"
+      permission="zope.UndoOwnTransactions"
+      template="undo_macros.pt"
+      />
+
+
+  <!-- menu items -->
+
+  <browser:menuItem
+      for="*"
+      menu="zmi_actions"
+      title="Undo!"
+      action="@@undo.html"
+      permission="zope.UndoOwnTransactions"
+      filter="not:context/@@principalLastTransactionIsUndo"
+      />
+
+  <browser:menuItem
+      for="*"
+      menu="zmi_actions"
+      title="Redo!"
+      action="@@undo.html"
+      permission="zope.UndoOwnTransactions"
+      filter="context/@@principalLastTransactionIsUndo"
+      />
+
+  <browser:menuItem
+      for="*"
+      menu="zmi_actions"
+      title="Undo more"
+      action="@@undoMore.html"
+      permission="zope.UndoOwnTransactions"
+      />
+
+  <browser:menuItem
+      for="*"
+      menu="zmi_actions"
+      title="Undo all"
+      action="@@undoAll.html"
+      permission="zope.UndoAllTransactions"
+      />
+
+</configure>

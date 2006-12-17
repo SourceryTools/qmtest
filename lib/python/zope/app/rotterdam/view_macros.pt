@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html metal:define-macro="page" i18n:domain="zope">
+<head metal:define-macro="head">
+  <title 
+    metal:define-slot="title"
+    tal:content="options/getTitle|view/getTitle|context/getTitle|default"
+    i18n:translate=""
+    >Zope</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link href="/@@/zopetopBasic.css" rel="stylesheet" type="text/css"
+        tal:attributes="href string:/@@/zopetopBasic.css" />
+  <link href="/@@/zopetopWidgets.css" rel="stylesheet" type="text/css"
+        tal:attributes="href string:/@@/zopetopWidgets.css" />
+  <link href="/@@/zopetopStructure.css" rel="stylesheet" type="text/css"
+        tal:attributes="href string:/@@/zopetopStructure.css" />
+  <div metal:define-slot="headers">
+  </div>
+</head>
+<body>
+
+  <table metal:define-macro="zmi_tabs"><tr>
+    <td tal:repeat="view context/@@view_get_menu/zmi_views">
+    <a href="" tal:attributes="href view/action" tal:content="view/title"
+       i18n:translate="">label</a>
+    <tal:block condition="not: repeat/view/end">'</tal:block>
+    </td>
+   </tr></table>
+
+  <div metal:define-slot="body">
+     <p>Body here</p>
+  </div>
+
+  <div metal:define-macro="logged_user">
+    <p i18n:translate="">User: 
+      <span i18n:name="user" tal:replace="request/principal/title">User</span>
+    </p>
+  </div>
+
+  <div metal:define-macro="footer">
+    <p i18n:translate="">Powered by Zope</p>
+  </div>
+
+</body>
+</html>
+

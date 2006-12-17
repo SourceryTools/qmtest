@@ -1,0 +1,3 @@
+<div class="directive">
+  &lt;/<span class="tagName" tal:content="context/tagName">tagName</span>&gt;
+</div>  

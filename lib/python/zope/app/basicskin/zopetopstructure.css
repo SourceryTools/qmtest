@@ -1,0 +1,255 @@
+/*****************************************************************************
+ *
+ * Copyright (c) 2001, 2002 Zope Corporation and Contributors.
+ * All Rights Reserved.
+ * 
+ * This software is subject to the provisions of the Zope Public License,
+ * Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+ * WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * 
+ *****************************************************************************
+ 
+ The Structure CSS contains elements that make up the structure of Plone,
+ generally stuff that is used once on a page - general layout, opposed to the
+ Widgets, that are used several times in a page.
+
+ KNOWN BUG: The selected tab cannot have image backdrop. FIXME
+
+ $Id: zopetopstructure.css 25177 2004-06-02 13:17:31Z jim $
+*/
+
+div.top {
+/* Top section */
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.logo {
+/* Logo properties */
+    margin: 1em 0em 1em 2em;
+    padding: 0;
+}
+
+div.searchBox {
+/*searchbox style and positioning */
+    background-color: transparent;
+    color: Black;
+    float: right;
+    margin: 3em 0em 0em 0em;
+    padding: 0em 2em 0em 0em;
+    text-align: right;
+}
+
+input.searchGadget {
+}
+
+div.tabs {
+/* Navigational Plone Tabs(tm), implemented by customizing the a tag - they
+   are surprisingly elegant. The power of CSS runs strong in these :) */
+    background: transparent;
+    border-collapse: collapse;
+    border-bottom-color: #8CACBB;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 0.5em 0em 0em 2em;
+    white-space: nowrap;
+}
+
+div.tabs a {
+/* The normal, unselected tabs. They are all links */
+    background: transparent;
+    border-color: #8CACBB;
+    border-width: 1px; 
+    border-style: solid solid none solid;
+    color: #436976;
+    font-weight: normal;
+    margin-right: 0.5em;
+    padding: 0em 2em;
+}
+
+div.tabs a.selected {
+/* The selected tab. There's only one of this */
+    background: #DEE7EC;
+    border: 1px solid #8CACBB;
+    border-bottom: #DEE7EC 1px solid;
+    color: #436976;
+    font-weight: normal;
+}
+
+div.tabs a:hover {
+    background: #DEE7EC;
+    border-color: #8CACBB;
+    border-bottom-color: #DEE7EC;
+    color: #436976;
+}
+
+div.personalBar {
+/* Bar with personalized menu (user preferences, favorites etc) */
+    background: #DEE7EC;
+    border-bottom-color: #8CACBB;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    color: Black;
+    padding-right: 3em;
+    text-align: right;
+}
+
+div.personalBar a{
+    background-color: transparent;
+    color: #436976;
+    font-weight: normal;
+}
+
+div.pathBar {
+/* The path bar, including breadcrumbs and add to favorites */
+    border-bottom-color: #8CACBB;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.breadcrumbs {
+    float: left;
+}
+
+.addFavorite {
+    vertical-align: bottom;
+}
+
+.clock {
+    /* The portal time indicator */
+    float: right;
+    white-space: nowrap;
+}
+
+table.columns {
+    width: 100%;
+}
+
+table.columns td.left {
+    vertical-align: top;
+    width: 15%;
+    padding: 2em 1em 1em 2em;
+}
+
+table.columns td.main {
+    vertical-align: top;
+    padding: 2em 2em 1em 1em;
+    margin: 0;
+}
+
+table.columns td.right {
+    vertical-align: top;
+    width: 15%;
+    padding: 2em 2em 1em 0em;
+}
+
+div.contentTabs {
+/* Local Tabs(tm), used in the content display */
+    background: transparent;
+    border-collapse: collapse;
+    border-bottom: 1px solid #74AE0B;
+    padding-left: 1em;
+    white-space: nowrap;
+}
+
+div.contentTabs a {
+/* The normal, unselected tabs. They are all links */
+    background: transparent;
+    border: 1px solid #74AE0B;
+    color: #578308;
+    font-weight: normal;
+    margin-right: 0.5em;
+    padding: 0em 2em;
+}
+
+div.contentTabs a.selected {
+/* The selected tab. There's only one of this */
+    background: #CDE2A7;
+    border-bottom: #CDE2A7 1px solid;
+    color: #578308;
+    font-weight: normal;
+}
+
+div.contentTabs a:hover {
+    background-color: #CDE2A7;
+    color: #578308;
+}
+
+div.contentBar {
+    background: #CDE2A7;
+    border-left: 1px solid #74AE0B;
+    border-right: 1px solid #74AE0B;
+    color: #578308;
+    text-align: right;
+}
+
+div.document {
+/* The document class encloses the object content when editing is not
+   permitted */
+    background: transparent;
+    padding: 0;
+    margin: 0em 0em 2em 0em;
+}
+
+div.editableDocument {
+/* The class surrounding content when editing is permitted */
+    background: transparent;
+    border: 1px solid #74AE0B;
+    margin: 0em 0em 2em 0em;
+    padding: 2em;
+}
+
+div.message {
+/* The portal messages for cut/paste operations etc */
+    background: #FFCE7B;
+    border: 1px solid #FFA500;
+    color: Black;
+    font: bold 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 0em 0em 1em 0em;
+    padding: 0.5em 1em;
+    vertical-align: middle;
+    
+}
+
+div.message a {
+    color: Black;
+    text-decoration: underline;
+}
+
+.darker {
+	background: #7B7AC6;
+}
+
+.hilite {
+    background: #DFDEFF;
+}
+
+.background {
+    background: #CCCCFF;
+}
+
+.description {
+/* The summary text describing the document */
+    font: bold 1em Tahoma, Helvetica, Arial, sans-serif;
+    display: block;
+    margin-bottom: 1em;
+}
+
+.footer {
+    background: #DEE7EC;
+    border-top: 1px solid #8CACBB;
+    border-bottom: 1px solid #8CACBB;
+    color: Black;
+    clear: both;
+    float: none;
+    margin: 2em 0em;
+    padding: 0.5em 0em 1em 0em;
+    text-align: center;
+}

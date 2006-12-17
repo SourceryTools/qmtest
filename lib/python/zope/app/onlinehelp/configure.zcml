@@ -1,0 +1,87 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   i18n_domain="zope"
+   >
+
+  <class class=".onlinehelp.OnlineHelp">
+    <require
+        permission="zope.View"
+        interface=".interfaces.ISourceTextOnlineHelpTopic"
+        />
+    <require
+        permission="zope.View"
+        attributes="context"
+        />
+  </class>
+
+  <!-- this is the generic help topic implementation -->
+  <class class=".onlinehelptopic.OnlineHelpTopic">
+    <require
+        permission="zope.View"
+        interface=".interfaces.ISourceTextOnlineHelpTopic"
+        />
+  </class>
+
+  <!-- explicit restructured help topic implementation -->
+  <class class=".onlinehelptopic.RESTOnlineHelpTopic">
+    <require
+        permission="zope.View"
+        interface=".interfaces.IRESTOnlineHelpTopic"
+        />
+  </class>
+
+  <!-- explicit structured help topic implementation -->
+  <class class=".onlinehelptopic.STXOnlineHelpTopic">
+    <require
+        permission="zope.View"
+        interface=".interfaces.ISTXOnlineHelpTopic"
+        />
+  </class>
+
+  <!-- explicit page template help topic implementation -->
+  <class class=".onlinehelptopic.ZPTOnlineHelpTopic">
+    <factory
+        id="onlinehelp.topic.zpt"
+        />
+    <require
+        permission="zope.View"
+        interface=".interfaces.IZPTOnlineHelpTopic"
+        />
+  </class>
+
+  <class class=".onlinehelptopic.OnlineHelpResource">
+    <require
+        permission="zope.View"
+        interface=".interfaces.IOnlineHelpResource"
+        />
+  </class>
+
+  <!-- Setup OnlineHelp Root as a Utility -->
+  <utility
+      provides=".interfaces.IOnlineHelp"
+      component="zope.app.onlinehelp.globalhelp"
+      name="OnlineHelp" />
+
+  <!-- Help Namespace Configuration -->
+  <view
+      name="help" 
+      type="*"
+      provides="zope.traversing.interfaces.ITraversable" 
+      for="*"
+      factory=".helpNamespace"
+      />
+
+  <adapter
+      name="help"
+      provides="zope.traversing.interfaces.ITraversable" 
+      for="*"
+      factory=".helpNamespace"
+      />
+
+  <!-- include browser package -->
+  <include package=".browser" />
+
+  <!-- register help topics -->
+  <include package=".help" />
+
+</configure>

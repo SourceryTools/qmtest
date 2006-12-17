@@ -1,0 +1,78 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser">
+
+
+  <adapter
+      for="zope.app.security.interfaces.IAuthentication
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.app.form.browser.interfaces.ISourceQueryView"
+      factory="zope.app.security.browser.auth.AuthUtilitySearchView"
+      />
+
+  <adapter
+      for="zope.app.security.interfaces.IPrincipalSource
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.app.form.browser.interfaces.ITerms"
+      factory="zope.app.security.browser.principalterms.PrincipalTerms"
+      />
+
+  <browser:page
+      name="failsafelogin.html"
+      for="*"
+      class=".auth.HTTPBasicAuthenticationLogin"
+      attribute="login"
+      permission="zope.Public"
+      allowed_interface="zope.app.publisher.interfaces.http.ILogin"
+      />
+
+  <browser:page
+      name="login.html"
+      for="*"
+      class=".auth.HTTPAuthenticationLogin"
+      attribute="login"
+      permission="zope.Public"
+      allowed_interface="zope.app.publisher.interfaces.http.ILogin"
+      />
+
+  <browser:page
+      name="logout.html"
+      for="*"
+      class=".auth.HTTPAuthenticationLogout"
+      attribute="logout"
+      permission="zope.Public"
+      allowed_interface="zope.app.publisher.interfaces.http.ILogout"
+      />
+
+  <browser:page
+      name="login_logout"
+      for="*"
+      class=".auth.LoginLogout"
+      permission="zope.Public"
+      />
+
+  <browser:addform
+     name="AddPermission.html"
+     schema="..interfaces.IPermission"
+     label="Add Permission"
+     content_factory="..permission.LocalPermission"
+     fields="title description"
+     permission="zope.Security"
+     />
+
+ <browser:addMenuItem
+     title="Permission"
+     description="A Security Permission"
+     class="..permission.LocalPermission"
+     permission="zope.ManageServices"
+     view="AddPermission.html"
+     />
+
+  <browser:editform
+      schema="..interfaces.IPermission"
+      label="Edit Permission"
+      name="edit.html"
+      permission="zope.ManageServices"
+      menu="zmi_views" title="Edit" />
+
+</configure>

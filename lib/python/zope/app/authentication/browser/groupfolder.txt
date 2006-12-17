@@ -1,0 +1,658 @@
+Using Group Folders
+===================
+
+Group folders are used to define groups.  Before you can define
+groups, you have to create a group folder and configure it in a
+pluggable authentication utility. The group folder has to be
+registered with a pluggable authentication utility before defining any
+groups.  This is because the groups folder needs to use the pluggable
+authentication utility to find all of the groups containing a given
+group so that it can check for group cycles. Not all of a group's
+groups need to be defined in it's group folder. Other groups folders
+or group-defining plugins could define groups for a group.
+
+Let's walk through an example.
+
+First, We need to create and register a pluggable authentication utility.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/@@contents.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 98
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html?type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication
+  ...
+  ... type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication&new_value=PAU""")
+  HTTP/1.1 303 See Other
+  ...
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/PAU/@@registration.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html?type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication
+  ... """)
+  HTTP/1.1 200 Ok
+  ...
+
+Register PAU.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/addRegistration.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 687
+  ... Content-Type: multipart/form-data; boundary=---------------------------5559795404609280911441883437
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/addRegistration.html
+  ...
+  ... -----------------------------5559795404609280911441883437
+  ... Content-Disposition: form-data; name="field.comment"
+  ...
+  ... 
+  ... -----------------------------5559795404609280911441883437
+  ... Content-Disposition: form-data; name="field.actions.register"
+  ...
+  ... Register
+  ... -----------------------------5559795404609280911441883437--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+Add a Principal folder plugin `users` to PAU.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/+/AddPrincipalFolder.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 429
+  ... Content-Type: multipart/form-data; boundary=---------------------------95449631112274213651507932125
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/+/AddPrincipalFolder.html=
+  ...
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="field.prefix"
+  ...
+  ... users
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... users
+  ... -----------------------------95449631112274213651507932125--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+Next we will add some users.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... bob
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Bob
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... bill
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Bill
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... betty
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Betty
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... sally
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Sally
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... george
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... George
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... mike
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Mike
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ...
+  ... mary
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ...
+  ... Plain Text
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ...
+  ... 123
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Mary
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ...
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+Next, We'll add out group folder plugin in PAU.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/+/AddGroupFolder.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 427
+  ... Content-Type: multipart/form-data; boundary=---------------------------4150524541658557772058105275
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/+/AddGroupFolder.html=
+  ...
+  ... -----------------------------4150524541658557772058105275
+  ... Content-Disposition: form-data; name="field.prefix"
+  ...
+  ... groups
+  ... -----------------------------4150524541658557772058105275
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------4150524541658557772058105275
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... groups
+  ... -----------------------------4150524541658557772058105275--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+Next we'll select the credentials and authenticators for the PAU:
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/@@configure.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1313
+  ... Content-Type: multipart/form-data; boundary=---------------------------2026736768606413562109112352
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/@@configure.html
+  ...
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.credentialsPlugins.to"
+  ...
+  ... U2Vzc2lvbiBDcmVkZW50aWFscw==
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.credentialsPlugins-empty-marker"
+  ...
+  ...
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins.to"
+  ...
+  ... dXNlcnM=
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins.to"
+  ...
+  ... Z3JvdXBz
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins-empty-marker"
+  ...
+  ...
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Change
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.credentialsPlugins"
+  ...
+  ... U2Vzc2lvbiBDcmVkZW50aWFscw==
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins"
+  ...
+  ... dXNlcnM=
+  ... -----------------------------2026736768606413562109112352
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins"
+  ...
+  ... Z3JvdXBz
+  ... -----------------------------2026736768606413562109112352--
+  ... """)
+  HTTP/1.1 200 Ok
+  ...
+
+
+
+Now, we can define some groups.  Let's start with a group named "Admin":
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/groups/+/AddGroupInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 550
+  ... Content-Type: multipart/form-data; boundary=---------------------------20619400354342370301249668954
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/groups/+/AddGroupInformation.html=
+  ...
+  ... -----------------------------20619400354342370301249668954
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Admin
+  ... -----------------------------20619400354342370301249668954
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------20619400354342370301249668954
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------20619400354342370301249668954
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... admin
+  ... -----------------------------20619400354342370301249668954--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+That includes Betty, Mary and Mike:
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/groups/admin/@@edit.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1509
+  ... Content-Type: multipart/form-data; boundary=---------------------------6981402699601872602121555350
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/groups/admin/@@edit.html
+  ...
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Admin
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals.displayed"
+  ...
+  ... y
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals.MC51c2Vycw__.query.field.search"
+  ...
+  ...
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals:list"
+  ...
+  ... dXNlcnMz
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals:list"
+  ...
+  ... dXNlcnM3
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals:list"
+  ...
+  ... dXNlcnM2
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals.MC51c2Vycw__.apply"
+  ...
+  ... Apply
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals.MC5ncm91cHM_.query.field.search"
+  ...
+  ...
+  ... -----------------------------6981402699601872602121555350
+  ... Content-Disposition: form-data; name="field.principals.MQ__.query.searchstring"
+  ...
+  ...
+  ... -----------------------------6981402699601872602121555350--
+  ... """)
+  HTTP/1.1 200 Ok
+  ...
+
+
+and a group "Power Users"
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/groups/+/AddGroupInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 561
+  ... Content-Type: multipart/form-data; boundary=---------------------------168380148515549442351132560943
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/groups/+/AddGroupInformation.html=
+  ...
+  ... -----------------------------168380148515549442351132560943
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Power Users
+  ... -----------------------------168380148515549442351132560943
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------168380148515549442351132560943
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Add
+  ... -----------------------------168380148515549442351132560943
+  ... Content-Disposition: form-data; name="add_input_name"
+  ...
+  ... power
+  ... -----------------------------168380148515549442351132560943--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+with Bill and Betty as members:
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/groups/power/@@edit.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1729
+  ... Content-Type: multipart/form-data; boundary=---------------------------181944013812647128322134918391
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/groups/power/@@edit.html
+  ...
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.title"
+  ...
+  ... Power Users
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.description"
+  ...
+  ...
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals:list"
+  ...
+  ... dXNlcnMz
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals:list"
+  ...
+  ... dXNlcnMy
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals.displayed"
+  ...
+  ... y
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals.MC51c2Vycw__.query.field.search"
+  ...
+  ...
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals.MC5ncm91cHM_.query.field.search"
+  ...
+  ...
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="field.principals.MQ__.query.searchstring"
+  ...
+  ...
+  ... -----------------------------181944013812647128322134918391
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ...
+  ... Change
+  ... -----------------------------181944013812647128322134918391--
+  ... """)
+  HTTP/1.1 200 Ok
+  ...
+
+Now, with these groups set up, we should see these groups on the
+affected principals.  First, we'll make the root folder the
+thread-local site:
+
+  >>> from zope.app.component.hooks import setSite
+  >>> setSite(getRootFolder())
+
+and we'll get the pluggable authentication utility:
+
+  >>> from zope.app import zapi
+  >>> principals = zapi.principals()
+
+Finally we'll get Betty and see that she is in the admin and
+power-user groups:
+
+  >>> betty = principals.getPrincipal(u'users3')
+  >>> betty.groups.sort()
+  >>> betty.groups
+  [u'groupspower', 'zope.Authenticated', 'zope.Everybody']
+
+
+And we'll get Bill, and see that he is only in the power-user group:
+
+  >>> bill = principals.getPrincipal(u'users2')
+  >>> bill.groups
+  ['zope.Everybody', 'zope.Authenticated', u'groupspower']

@@ -1,0 +1,33 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    i18n_domain="zope"
+    >
+
+  <include package="zope.app.security" file="meta.zcml" />
+
+  <meta:directive
+      name="dummy"
+      namespace="http://namespaces.zope.org/zope"
+      schema=".test_directives.IDummy"
+      handler=".test_directives.dummy" />
+
+  <permission
+      id="zope.View"
+      title="[view-permission] View"
+      />
+
+  <permission
+      id="zope.Security"
+      title="[change-security-settings-permission] Change security settings"
+      />
+
+  <meta:redefinePermission
+      from="zope.View"
+      to="zope.Security"
+      />
+
+  <dummy
+      perm="zope.View" />
+
+</configure>

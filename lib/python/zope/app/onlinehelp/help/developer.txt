@@ -1,0 +1,9 @@
+==============
+Developer info
+==============
+
+------------
+Introduction
+------------
+
+Here you can find developer informations found in the packges.

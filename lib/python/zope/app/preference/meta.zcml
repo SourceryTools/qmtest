@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    >
+
+  <meta:provides feature="preference" />
+
+  <meta:directives namespace="http://namespaces.zope.org/zope">
+
+    <meta:directive
+        name="preferenceGroup"
+        schema=".metadirectives.IPreferenceGroupDirective"
+        handler=".metaconfigure.preferenceGroup"
+        />
+
+  </meta:directives>
+
+</configure>

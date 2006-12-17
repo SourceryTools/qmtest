@@ -1,0 +1,12 @@
+<configure
+    xmlns='http://namespaces.zope.org/zope'
+    xmlns:fssync='http://namespaces.zope.org/fssync'
+    i18n_domain='zope'
+    >
+
+  <fssync:adapter
+      class="zope.app.zptpage.ZPTPage"
+      factory=".adapter.ZPTPageAdapter"
+      />
+
+</configure>

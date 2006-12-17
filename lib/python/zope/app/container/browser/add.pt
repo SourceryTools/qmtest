@@ -1,0 +1,58 @@
+<html metal:use-macro="context/@@standard_macros/addingdialog"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <form method="post" action="action.html">
+    <table class="TypeListing" cellpadding="3">
+
+      <tal:block define="title view/title | nothing">
+         <caption tal:condition="title" tal:content="title"
+             i18n:translate="">Inserted title</caption>
+         <caption tal:condition="not:title"
+             i18n:translate="">Add Content</caption>
+      </tal:block>
+
+      <tbody tal:define="infos view/addingInfo">
+
+        <tr tal:repeat="info infos">
+
+          <td class="Selector">
+            <input type="radio" name="type_name"
+                   tal:attributes="value   info/action;
+                                   id      info/action;
+                                   checked python:len(infos)==1" />
+          </td>
+
+          <td class="TypeName">
+            <label style="font-weight: bold;"
+                   tal:attributes="for info/action">
+              <span tal:replace="info/title" i18n:translate="">Folder</span>
+            </label>
+            <div class="TypeDescription" tal:content="info/description"
+                i18n:translate="">
+              Folders are generic containers for content, including other
+              folders.
+            </div>
+          </td>
+        </tr>
+
+      <tr>
+        <td><br /></td>
+        <td><input type="text" name="id"
+                   tal:condition="view/nameAllowed"
+                   tal:attributes="value request/id | nothing" />
+            <input type="submit" name="add" value=" Add "
+                   i18n:attributes="value add-button" />
+        </td>
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </form>
+
+</div>
+</body>
+</html>

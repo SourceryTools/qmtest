@@ -1,0 +1,357 @@
+XPDL Import
+===========
+
+We can import process definitions from files in the XML Process
+Definition Language (XPDL) format. An XPDL file contains multiple
+process definitions arranged in a package. When we load the file, we
+get a package containing some number of process definitions.
+
+Let's look at an example.  The file `publication.xpdl`
+contains a definition for the publication example developed in the
+"README.txt" file.  We can read it using the xpdl module:
+
+    >>> from zope.wfmc import xpdl
+    >>> import os
+    >>> package = xpdl.read(open(os.path.join(this_directory, 
+    ...                                       'publication.xpdl')))
+
+This package contains a single definition:
+
+    >>> package
+    {u'Publication': ProcessDefinition(u'Publication')}
+
+    >>> pd = package[u'Publication']
+    >>> from zope.wfmc.attributeintegration import AttributeIntegration
+    >>> integration = AttributeIntegration()
+    >>> pd.integration = integration
+
+Now, having read the process definition, we can use it as we did
+before (in "README.txt").  As before, we'll create an event subscriber
+so that we can see what's going on:
+
+    >>> def log_workflow(event):
+    ...     print event
+
+    >>> import zope.event
+    >>> zope.event.subscribers.append(log_workflow)
+
+and we'll register the process definition as a utility:
+
+    >>> import zope.component
+    >>> zope.component.provideUtility(pd, name=pd.id)
+
+and we'll define and register participant and application adapters:
+
+    >>> import zope.interface
+    >>> from zope.wfmc import interfaces
+
+    >>> class Participant(object):
+    ...     zope.component.adapts(interfaces.IActivity)
+    ...     zope.interface.implements(interfaces.IParticipant)
+    ...
+    ...     def __init__(self, activity):
+    ...         self.activity = activity
+
+    >>> class User:
+    ...     def __init__(self):
+    ...         self.work_list = []
+
+    >>> authors = {'bob': User(), 'ted': User(), 'sally': User()}
+
+    >>> reviewer = User()
+    >>> tech1 = User()
+    >>> tech2 = User()
+
+    >>> class Author(Participant):
+    ...     def __init__(self, activity):
+    ...         Participant.__init__(self, activity)
+    ...         author_name = activity.process.workflowRelevantData.author
+    ...         self.user = authors[author_name]
+
+    >>> integration.authorParticipant = Author
+
+    >>> class Reviewer(Participant):
+    ...     user = reviewer
+    >>> integration.reviewerParticipant = Reviewer
+
+    >>> class Tech1(Participant):
+    ...     user = tech1
+    >>> integration.tech1Participant = Tech1
+
+    >>> class Tech2(Participant):
+    ...     user = tech2
+    >>> integration.tech2Participant = Tech2
+
+    >>> integration.SystemParticipant = Participant
+
+    >>> class ApplicationBase(object):
+    ...     zope.component.adapts(interfaces.IParticipant)
+    ...     zope.interface.implements(interfaces.IWorkItem)
+    ...
+    ...     def __init__(self, participant):
+    ...         self.participant = participant
+    ...         self.activity = participant.activity
+    ...         participant.user.work_list.append(self)
+    ...
+    ...     def start(self):
+    ...         pass
+    ...
+    ...     def finish(self):
+    ...         self.participant.activity.workItemFinished(self)
+
+    >>> class Prepare(ApplicationBase):
+    ...
+    ...     def summary(self):
+    ...         process = self.activity.process
+    ...         doc = getattr(process.applicationRelevantData, 'doc', '')
+    ...         if doc:
+    ...             print 'Previous draft:'
+    ...             print doc
+    ...             print 'Changed we need to make:'
+    ...             for change in process.workflowRelevantData.tech_changes:
+    ...                 print change
+    ...         else:
+    ...             print 'Please write the initial draft'
+    ...
+    ...     def finish(self, doc):
+    ...         self.activity.process.applicationRelevantData.doc = doc
+    ...         super(Prepare, self).finish()
+
+    >>> integration.prepareWorkItem = Prepare
+
+    >>> class TechReview(ApplicationBase):
+    ...
+    ...     def getDoc(self):
+    ...         return self.activity.process.applicationRelevantData.doc
+    ...
+    ...     def finish(self, decision, changes):
+    ...         self.activity.workItemFinished(self, decision, changes)
+
+    >>> integration.tech_reviewWorkItem = TechReview
+
+    >>> class Review(TechReview):
+    ...
+    ...     def start(self, publish1, changes1, publish2, changes2):
+    ...         if not (publish1 and publish2):
+    ...             # Reject if either tech reviewer rejects
+    ...             self.activity.workItemFinished(
+    ...                 self, False, changes1 + changes2, ())
+    ...           
+    ...         if changes1 or changes2:
+    ...             # we won't do anyting if there are tech changes
+    ...             self.activity.workItemFinished(
+    ...                 self, True, changes1 + changes2, ())
+    ...
+    ...     def finish(self, ed_changes):
+    ...         self.activity.workItemFinished(self, True, (), ed_changes)
+
+    >>> integration.ed_reviewWorkItem = Review
+
+    >>> class Final(ApplicationBase):
+    ...
+    ...     def summary(self):
+    ...         process = self.activity.process
+    ...         doc = getattr(process.applicationRelevantData, 'doc', '')
+    ...         print 'Previous draft:'
+    ...         print self.activity.process.applicationRelevantData.doc
+    ...         print 'Changed we need to make:'
+    ...         for change in process.workflowRelevantData.ed_changes:
+    ...            print change
+    ...
+    ...     def finish(self, doc):
+    ...         self.activity.process.applicationRelevantData.doc = doc
+    ...         super(Final, self).finish()
+
+    >>> integration.finalWorkItem = Final
+
+    >>> class ReviewFinal(TechReview):
+    ...
+    ...     def finish(self, ed_changes):
+    ...         self.activity.workItemFinished(self, ed_changes)
+
+    >>> integration.rfinalWorkItem = ReviewFinal
+
+
+    >>> class Publish:
+    ...     zope.component.adapts(interfaces.IParticipant)
+    ...     zope.interface.implements(interfaces.IWorkItem)
+    ...
+    ...     def __init__(self, participant):
+    ...         self.participant = participant
+    ...
+    ...     def start(self):
+    ...         print "Published"
+    ...         self.finish()
+    ...
+    ...     def finish(self):
+    ...         self.participant.activity.workItemFinished(self)
+
+
+    >>> integration.publishWorkItem = Publish
+
+    >>> class Reject(Publish):
+    ...     def start(self):
+    ...         print "Rejected"
+    ...         self.finish()
+    
+    >>> integration.rejectWorkItem = Reject
+
+and a process context, so we can pass parameters:
+
+    >>> class PublicationContext:
+    ...     zope.interface.implements(interfaces.IProcessContext)
+    ...
+    ...     def processFinished(self, process, decision):
+    ...         self.decision = decision
+
+Now, let's try out our process.  We'll follow the same steps we did in
+"README.txt", getting the same results:
+
+    >>> context = PublicationContext()
+    >>> proc = pd(context)
+    >>> proc.start('bob')
+    ProcessStarted(Process(u'Publication'))
+    Transition(None, Activity(u'Publication.start'))
+    ActivityStarted(Activity(u'Publication.start'))
+    ActivityFinished(Activity(u'Publication.start'))
+    Transition(Activity(u'Publication.start'), 
+               Activity(u'Publication.prepare'))
+    ActivityStarted(Activity(u'Publication.prepare'))
+
+    >>> item = authors['bob'].work_list.pop()
+    >>> item.finish("I give my pledge, as an American\n"
+    ...             "to save, and faithfully to defend from waste\n"
+    ...             "the natural resources of my Country.")
+    WorkItemFinished(u'prepare')
+    ActivityFinished(Activity(u'Publication.prepare'))
+    Transition(Activity(u'Publication.prepare'), 
+               Activity(u'Publication.tech1'))
+    ActivityStarted(Activity(u'Publication.tech1'))
+    Transition(Activity(u'Publication.prepare'), 
+               Activity(u'Publication.tech2'))
+    ActivityStarted(Activity(u'Publication.tech2'))
+
+    >>> item = tech1.work_list.pop()
+    >>> print item.getDoc()   
+    I give my pledge, as an American
+    to save, and faithfully to defend from waste
+    the natural resources of my Country.
+
+    >>> item.finish(True, ['Change "American" to "human"'])
+    WorkItemFinished(u'tech_review')
+    ActivityFinished(Activity(u'Publication.tech1'))
+    Transition(Activity(u'Publication.tech1'), 
+               Activity(u'Publication.review'))
+
+    >>> item = tech2.work_list.pop()
+    >>> item.finish(True, ['Change "Country" to "planet"'])
+    WorkItemFinished(u'tech_review')
+    ActivityFinished(Activity(u'Publication.tech2'))
+    Transition(Activity(u'Publication.tech2'), 
+               Activity(u'Publication.review'))
+    ActivityStarted(Activity(u'Publication.review'))
+    WorkItemFinished(u'ed_review')
+    ActivityFinished(Activity(u'Publication.review'))
+    Transition(Activity(u'Publication.review'), 
+               Activity(u'Publication.prepare'))
+    ActivityStarted(Activity(u'Publication.prepare'))
+
+    >>> item = authors['bob'].work_list.pop()
+    >>> item.summary()
+    Previous draft:
+    I give my pledge, as an American
+    to save, and faithfully to defend from waste
+    the natural resources of my Country.
+    Changed we need to make:
+    Change "American" to "human"
+    Change "Country" to "planet"
+
+    >>> item.finish("I give my pledge, as an human\n"
+    ...             "to save, and faithfully to defend from waste\n"
+    ...             "the natural resources of my planet.")
+    WorkItemFinished(u'prepare')
+    ActivityFinished(Activity(u'Publication.prepare'))
+    Transition(Activity(u'Publication.prepare'), 
+               Activity(u'Publication.tech1'))
+    ActivityStarted(Activity(u'Publication.tech1'))
+    Transition(Activity(u'Publication.prepare'),
+               Activity(u'Publication.tech2'))
+    ActivityStarted(Activity(u'Publication.tech2'))
+
+    >>> item = tech1.work_list.pop()
+    >>> item.finish(True, [])
+    WorkItemFinished(u'tech_review')
+    ActivityFinished(Activity(u'Publication.tech1'))
+    Transition(Activity(u'Publication.tech1'),
+               Activity(u'Publication.review'))
+
+    >>> item = tech2.work_list.pop()
+    >>> item.finish(True, [])
+    WorkItemFinished(u'tech_review')
+    ActivityFinished(Activity(u'Publication.tech2'))
+    Transition(Activity(u'Publication.tech2'),
+               Activity(u'Publication.review'))
+    ActivityStarted(Activity(u'Publication.review'))
+
+    >>> item = reviewer.work_list.pop()
+    >>> print item.getDoc()
+    I give my pledge, as an human
+    to save, and faithfully to defend from waste
+    the natural resources of my planet.
+
+    >>> item.finish(['change "an" to "a"'])
+    WorkItemFinished(u'ed_review')
+    ActivityFinished(Activity(u'Publication.review'))
+    Transition(Activity(u'Publication.review'),
+               Activity(u'Publication.final'))
+    ActivityStarted(Activity(u'Publication.final'))
+
+    >>> item = authors['bob'].work_list.pop()
+    >>> item.summary()
+    Previous draft:
+    I give my pledge, as an human
+    to save, and faithfully to defend from waste
+    the natural resources of my planet.
+    Changed we need to make:
+    change "an" to "a"
+
+    >>> item.finish("I give my pledge, as a human\n"
+    ...             "to save, and faithfully to defend from waste\n"
+    ...             "the natural resources of my planet.")
+    WorkItemFinished(u'final')
+    ActivityFinished(Activity(u'Publication.final'))
+    Transition(Activity(u'Publication.final'),
+               Activity(u'Publication.rfinal'))
+    ActivityStarted(Activity(u'Publication.rfinal'))
+
+    >>> item = reviewer.work_list.pop()
+    >>> print item.getDoc()
+    I give my pledge, as a human
+    to save, and faithfully to defend from waste
+    the natural resources of my planet.
+
+    >>> item.finish([])
+    WorkItemFinished(u'rfinal')
+    ActivityFinished(Activity(u'Publication.rfinal'))
+    Transition(Activity(u'Publication.rfinal'),
+               Activity(u'Publication.publish'))
+    ActivityStarted(Activity(u'Publication.publish'))
+    Published
+    WorkItemFinished(u'publish')
+    ActivityFinished(Activity(u'Publication.publish'))
+    ProcessFinished(Process(u'Publication'))
+
+    >>> context.decision
+    True
+
+Descriptions
+============
+
+Most process elements can have names and descriptions.
+
+    >>> pd.applications['prepare'].__name__
+    u'Prepare'
+
+    >>> pd.applications['prepare'].description
+    u'Prepare the initial draft'
+

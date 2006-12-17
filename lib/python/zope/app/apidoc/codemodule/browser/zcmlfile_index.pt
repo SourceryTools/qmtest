@@ -1,0 +1,52 @@
+<html>
+<head>
+  <style type="text/css" media="all">
+
+.directive {
+  font-family: monospace;
+  padding: 1px;
+  margin: 2px 0px;
+}
+
+.tagName {
+  color: darkred;
+}
+
+.attributeName {
+  color: blue;
+}
+
+.attributeValue {
+  color: darkgreen;
+}
+
+.commentElement {
+  font-family: monospace;
+  font-style: italic;
+  padding: 1px;
+  margin: 2px 0px;
+  color: darkblue;
+}
+
+.editElement {
+  background-color: EEEEEE;
+}
+
+.required {
+  font-weight: bold;
+  font-style: italic;
+}
+
+div.highlight {
+  background: #fffbbe;
+  border: 1pt solid #0000c0;
+}
+
+  </style>
+</head>
+<body>
+
+  <div tal:replace="structure context/rootElement/@@display" />
+
+</body>
+</html>

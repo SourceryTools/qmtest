@@ -1,0 +1,46 @@
+<zope:configure
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns="http://namespaces.zope.org/browser">
+
+  <pages
+      for="*"
+      permission="zope.ManageContent"
+      class=".ErrorRedirect" >
+
+    <page name="errorRedirect.html" attribute="action" />
+  </pages>
+
+  <menuItem
+      for="*"
+      menu="zmi_actions"
+      title="Errors"
+      action="@@errorRedirect.html" />
+
+  <!--Error Logging Utility -->
+
+  <pages
+      for="zope.app.error.interfaces.IErrorReportingUtility"
+      permission="zope.ManageServices"
+      class=".EditErrorLog">
+
+    <page name="index.html" template="error.pt"
+          menu="zmi_views" title="Errors" />
+    <page name="configure.html" template="error_config.pt"
+          menu="zmi_views" title="Configure" />
+    <page name="edit.html" attribute="updateProperties" />
+    <page name="showEntry.html" template="errorentry.pt"/>
+    <page name="showTextTBEntry.html" template="texttbentry.pt"/>
+  </pages>
+
+  <addMenuItem
+     class="zope.app.error.error.ErrorReportingUtility"
+     title="Error Logging Utility"
+     description="Error Reporting Utility for Logging Errors"
+     permission="zope.ManageServices" />
+
+  <icon name="zmi_icon"
+      for="zope.app.error.interfaces.IErrorReportingUtility"
+      file="error.gif" />
+
+</zope:configure>
+

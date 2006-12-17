@@ -1,0 +1,11 @@
+<html metal:define-macro='main'>
+<head>
+<title>Example: outer</title>
+</head>
+<body>
+hello
+<div metal:define-slot="body">
+outer body slot
+</div>
+</body>
+</html>

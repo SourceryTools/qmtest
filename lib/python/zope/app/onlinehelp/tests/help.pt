@@ -1,0 +1,9 @@
+<html>
+  <head>
+    <title tal:content="context/title">Title</title>
+  </head>
+  <body>
+    <span>This is a ZPT help!</span>
+    <span>Russian (UTF-8): ZPT файл помощи!</span>
+  </body>
+</html>

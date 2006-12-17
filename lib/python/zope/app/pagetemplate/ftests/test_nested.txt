@@ -1,0 +1,33 @@
+===============
+Macro extension
+===============
+
+This test demonstrates how macro extension allows a macro to extend
+and re-offer a slot for a client template to fill.  This is likely not
+the best place for this test, but it demonstrates how to use the macro
+extension feature in context.
+
+Let's look at our test view using the root folder to make sure we're
+seeing the expected template expansion::
+
+  >>> print http("""
+  ... GET /@@inner HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... """, handle_errors=False)
+  HTTP/1.1 200 ...
+  <BLANKLINE>
+  <html>
+  <head>
+  <title>Example: outer</title>
+  </head>
+  <body>
+  hello
+  <div>
+  <div>
+  inner body slot content
+  </div>
+  intermediate body slot stuff
+  </div>
+  </body>
+  </html>
+  <BLANKLINE>

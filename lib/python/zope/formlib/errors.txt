@@ -1,0 +1,23 @@
+==============
+Error handling
+==============
+
+These are a couple of functional tests that were written on-the-go ... In the
+future this might become more extensive ...
+
+Displaying invalidation errors
+==============================
+
+Validation errors, e.g. cause by invariants, are converted into readable text
+by adapting them to IWidgetInputErrorView:
+
+    >>> from zope.publisher.browser import TestRequest
+    >>> from zope.interface.exceptions import Invalid
+    >>> from zope.component import getMultiAdapter
+    >>> from zope.app.form.browser.interfaces import IWidgetInputErrorView
+    >>> error = Invalid("You are wrong!")
+    >>> message = getMultiAdapter((error, TestRequest()),
+    ...         IWidgetInputErrorView).snippet()
+    >>> message
+    u'<span class="error">You are wrong!</span>'
+

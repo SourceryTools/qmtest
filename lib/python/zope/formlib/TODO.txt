@@ -1,0 +1,2 @@
+- test coverage
+- return error icon to templates

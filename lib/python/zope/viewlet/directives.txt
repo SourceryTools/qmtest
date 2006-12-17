@@ -1,0 +1,396 @@
+================================
+The ``viewletManager`` Directive
+================================
+
+The ``viewletManager`` directive allows you to quickly register a new viewlet
+manager without worrying about the details of the ``adapter``
+directive. Before we can use the directives, we have to register their
+handlers by executing the package's meta configuration:
+
+  >>> from zope.configuration import xmlconfig
+  >>> context = xmlconfig.string('''
+  ... <configure i18n_domain="zope">
+  ...   <include package="zope.viewlet" file="meta.zcml" />
+  ... </configure>
+  ... ''')
+
+Now we can register a viewlet manager:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewletManager
+  ...       name="defaultmanager"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+
+Let's make sure the directive has really issued a sensible adapter
+registration; to do that, we create some dummy content, request and view
+objects:
+
+  >>> import zope.interface
+  >>> class Content(object):
+  ...     zope.interface.implements(zope.interface.Interface)
+  >>> content = Content()
+
+  >>> from zope.publisher.browser import TestRequest
+  >>> request = TestRequest()
+
+  >>> from zope.publisher.browser import BrowserView
+  >>> view = BrowserView(content, request)
+
+Now let's lookup the manager. This particular registration is pretty boring:
+
+  >>> import zope.component
+  >>> from zope.viewlet import interfaces
+  >>> manager = zope.component.getMultiAdapter(
+  ...     (content, request, view),
+  ...     interfaces.IViewletManager, name='defaultmanager')
+
+  >>> manager
+  <zope.viewlet.manager.<ViewletManager providing IViewletManager> object ...>
+  >>> interfaces.IViewletManager.providedBy(manager)
+  True
+  >>> manager.template is None
+  True
+  >>> manager.update()
+  >>> manager.render()
+  u''
+
+However, this registration is not very useful, since we did specify a specific
+viewlet manager interface, a specific content interface, specific view or
+specific layer. This means that all viewlets registered will be found.
+
+The first step to effectively using the viewlet manager directive is to define
+a special viewlet manager interface:
+
+  >>> class ILeftColumn(interfaces.IViewletManager):
+  ...     """Left column of my page."""
+
+Now we can register register a manager providing this interface:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewletManager
+  ...       name="leftcolumn"
+  ...       permission="zope.Public"
+  ...       provides="zope.viewlet.directives.ILeftColumn"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+
+  >>> manager = zope.component.getMultiAdapter(
+  ...     (content, request, view), ILeftColumn, name='leftcolumn')
+
+  >>> manager
+  <zope.viewlet.manager.<ViewletManager providing ILeftColumn> object ...>
+  >>> ILeftColumn.providedBy(manager)
+  True
+  >>> manager.template is None
+  True
+  >>> manager.update()
+  >>> manager.render()
+  u''
+
+Next let's see what happens, if we specify a template for the viewlet manager:
+
+  >>> import os, tempfile
+  >>> temp_dir = tempfile.mkdtemp()
+
+  >>> leftColumnTemplate = os.path.join(temp_dir, 'leftcolumn.pt')
+  >>> open(leftColumnTemplate, 'w').write('''
+  ... <div class="column">
+  ...    <div class="entry"
+  ...         tal:repeat="viewlet options/viewlets"
+  ...         tal:content="structure viewlet" />
+  ... </div>
+  ... ''')
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewletManager
+  ...       name="leftcolumn"
+  ...       permission="zope.Public"
+  ...       provides="zope.viewlet.directives.ILeftColumn"
+  ...       template="%s"
+  ...       />
+  ... </configure>
+  ... ''' %leftColumnTemplate, context=context)
+
+  >>> manager = zope.component.getMultiAdapter(
+  ...     (content, request, view), ILeftColumn, name='leftcolumn')
+
+  >>> manager
+  <zope.viewlet.manager.<ViewletManager providing ILeftColumn> object ...>
+  >>> ILeftColumn.providedBy(manager)
+  True
+  >>> manager.template
+  <BoundPageTemplateFile of ...<ViewletManager providing ILeftColumn>  ...>>
+  >>> manager.update()
+  >>> print manager.render().strip()
+  <div class="column">
+  </div>
+
+Additionally you can specify a class that will serve as a base to the default
+viewlet manager or be a viewlet manager in its own right. In our case we will
+provide a custom implementation of the ``sort()`` method, which will sort by a
+weight attribute in the viewlet:
+
+  >>> class WeightBasedSorting(object):
+  ...     def sort(self, viewlets):
+  ...         return sorted(viewlets,
+  ...                       lambda x, y: cmp(x[1].weight, y[1].weight))
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewletManager
+  ...       name="leftcolumn"
+  ...       permission="zope.Public"
+  ...       provides="zope.viewlet.directives.ILeftColumn"
+  ...       template="%s"
+  ...       class="zope.viewlet.directives.WeightBasedSorting"
+  ...       />
+  ... </configure>
+  ... ''' %leftColumnTemplate, context=context)
+
+  >>> manager = zope.component.getMultiAdapter(
+  ...     (content, request, view), ILeftColumn, name='leftcolumn')
+
+  >>> manager
+  <zope.viewlet.manager.<ViewletManager providing ILeftColumn> object ...>
+  >>> manager.__class__.__bases__
+  (<class 'zope.viewlet.directives.WeightBasedSorting'>,
+   <class 'zope.viewlet.manager.ViewletManagerBase'>)
+  >>> ILeftColumn.providedBy(manager)
+  True
+  >>> manager.template
+  <BoundPageTemplateFile of ...<ViewletManager providing ILeftColumn>  ...>>
+  >>> manager.update()
+  >>> print manager.render().strip()
+  <div class="column">
+  </div>
+
+Finally, if a non-existent template is specified, an error is raised:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewletManager
+  ...       name="leftcolumn"
+  ...       permission="zope.Public"
+  ...       template="foo.pt"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+  Traceback (most recent call last):
+  ...
+  ZopeXMLConfigurationError: File "<string>", line 3.2-7.8
+      ConfigurationError: ('No such file', '...foo.pt')
+
+
+=========================
+The ``viewlet`` Directive
+=========================
+
+Now that we have a viewlet manager, we have to register some viewlets for
+it. The ``viewlet`` directive is similar to the ``viewletManager`` directive,
+except that the viewlet is also registered for a particular manager interface,
+as seen below:
+
+  >>> weatherTemplate = os.path.join(temp_dir, 'weather.pt')
+  >>> open(weatherTemplate, 'w').write('''
+  ... <div>sunny</div>
+  ... ''')
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="weather"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       template="%s"
+  ...       permission="zope.Public"
+  ...       extra_string_attributes="can be specified"
+  ...       />
+  ... </configure>
+  ... ''' % weatherTemplate, context=context)
+
+If we look into the adapter registry, we will find the viewlet:
+
+  >>> viewlet = zope.component.getMultiAdapter(
+  ...     (content, request, view, manager), interfaces.IViewlet,
+  ...     name='weather')
+  >>> viewlet.render().strip()
+  u'<div>sunny</div>'
+  >>> viewlet.extra_string_attributes
+  u'can be specified'
+
+The manager now also gives us the output of the one and only viewlet:
+
+  >>> manager.update()
+  >>> print manager.render().strip()
+  <div class="column">
+    <div class="entry">
+      <div>sunny</div>
+    </div>
+  </div>
+
+Let's now ensure that we can also specify a viewlet class:
+
+  >>> class Weather(object):
+  ...     weight = 0
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="weather2"
+  ...       for="*"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       template="%s"
+  ...       class="zope.viewlet.directives.Weather"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''' % weatherTemplate, context=context)
+
+  >>> viewlet = zope.component.getMultiAdapter(
+  ...     (content, request, view, manager), interfaces.IViewlet,
+  ...     name='weather2')
+  >>> viewlet().strip()
+  u'<div>sunny</div>'
+
+Okay, so the template-driven cases work. But just specifying a class should
+also work:
+
+  >>> class Sport(object):
+  ...     weight = 0
+  ...     def __call__(self):
+  ...         return u'Red Sox vs. White Sox'
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="sport"
+  ...       for="*"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       class="zope.viewlet.directives.Sport"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+
+  >>> viewlet = zope.component.getMultiAdapter(
+  ...     (content, request, view, manager), interfaces.IViewlet, name='sport')
+  >>> viewlet()
+  u'Red Sox vs. White Sox'
+
+It should also be possible to specify an alternative attribute of the class to
+be rendered upon calling the viewlet:
+
+  >>> class Stock(object):
+  ...     weight = 0
+  ...     def getStockTicker(self):
+  ...         return u'SRC $5.19'
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="stock"
+  ...       for="*"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       class="zope.viewlet.directives.Stock"
+  ...       attribute="getStockTicker"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+
+  >>> viewlet = zope.component.getMultiAdapter(
+  ...     (content, request, view, manager), interfaces.IViewlet,
+  ...     name='stock')
+  >>> viewlet.render()
+  u'SRC $5.19'
+
+A final feature the ``viewlet`` directive supports is the additional
+specification of any amount keyword arguments:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="stock2"
+  ...       permission="zope.Public"
+  ...       class="zope.viewlet.directives.Stock"
+  ...       weight="8"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+
+  >>> viewlet = zope.component.getMultiAdapter(
+  ...     (content, request, view, manager), interfaces.IViewlet,
+  ...     name='stock2')
+  >>> viewlet.weight
+  u'8'
+
+
+Error Scenarios
+---------------
+
+Neither the class or template have been specified:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="testviewlet"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+  Traceback (most recent call last):
+  ...
+  ZopeXMLConfigurationError: File "<string>", line 3.2-7.8
+      ConfigurationError: Must specify a class or template
+
+The specified attribute is not ``__call__``, but also a template has been
+specified:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="testviewlet"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       template="test_viewlet.pt"
+  ...       attribute="faux"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+  Traceback (most recent call last):
+  ...
+  ZopeXMLConfigurationError: File "<string>", line 3.2-9.8
+      ConfigurationError: Attribute and template cannot be used together.
+
+Now, we are not specifying a template, but a class that does not have the
+specified attribute:
+
+  >>> context = xmlconfig.string('''
+  ... <configure xmlns="http://namespaces.zope.org/browser" i18n_domain="zope">
+  ...   <viewlet
+  ...       name="testviewlet"
+  ...       manager="zope.viewlet.directives.ILeftColumn"
+  ...       class="zope.viewlet.directives.Sport"
+  ...       attribute="faux"
+  ...       permission="zope.Public"
+  ...       />
+  ... </configure>
+  ... ''', context=context)
+  Traceback (most recent call last):
+  ...
+  ZopeXMLConfigurationError: File "<string>", line 3.2-9.8
+    ConfigurationError: The provided class doesn't have the specified attribute
+
+
+Cleanup
+-------
+
+  >>> import shutil
+  >>> shutil.rmtree(temp_dir)

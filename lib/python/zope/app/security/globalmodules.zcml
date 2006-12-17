@@ -1,0 +1,423 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- 4. String Services -->
+
+  <module module="string">
+    <allow attributes="ascii_letters ascii_lowercase ascii_uppercase digits
+                       hexdigits letters lowercase octdigits punctuation
+                       printable uppercase whitespace atof atoi capitalize
+                       capwords expandtabs find rfind index rindex count lower
+                       maketrans split splitfields join joinfields lstrip
+                       rstrip strip swapcase translate upper ljust rjust
+                       center zfill replace" />
+  </module>
+
+  <module module="re">
+    <allow attributes="compile I IGNORECASE L LOCALE M MULTILINE S DOTALL U
+                       UNICODE X VERBOSE search match split findall finditer
+                       sub subn" />
+  </module>
+
+  <module module="struct">
+    <allow attributes="pack unpack calcsize" />
+  </module>
+
+  <module module="difflib">
+    <allow attributes="SequenceMatcher Differ context_diff get_close_matches
+                       ndiff restore unified_diff" />
+  </module>
+
+  <module module="fpformat">
+    <allow attributes="fix sci NotANumber" />
+  </module>
+
+  <module module="StringIO">
+    <allow attributes="StringIO" />
+  </module>
+
+  <module module="cStringIO">
+    <allow attributes="StringIO InputType OutputType" />
+  </module>
+
+  <module module="textwrap">
+    <allow attributes="wrap fill dedent TextWrapper" />
+  </module>
+
+  <module module="codecs">
+    <allow attributes="lookup getencoder getdecoder getreader
+                       getwriter lookup_error BOM BOM_BE BOM_LE BOM_UTF8
+                       BOM_UTF16 BOM_UTF16_BE BOM_UTF16_LE BOM_UTF32
+                       BOM_UTF32_BE BOM_UTF32_LE" />
+  </module>
+
+  <module module="unicodedata">
+    <allow attributes="lookup name decimal digit numeric category
+                       bidirectional combining mirrored decomposition
+                       normalize unidata_version" />
+  </module>
+
+  <module module="stringprep">
+    <allow attributes="in_table_a1 in_table_b1 map_table_b2 map_table_b3
+                       in_table_c11 in_table_c12 in_table_c11_c12 in_table_c21
+                       in_table_c22 in_table_c21_c22 in_table_c3 in_table_c4
+                       in_table_c5 in_table_c6 in_table_c7 in_table_c8
+                       in_table_c9 in_table_d1 in_table_d2" />
+  </module>
+
+  <!-- 5. Miscellaneous Services -->
+
+  <module module="unittest">
+    <allow attributes="TestCase FunctionTestCase TestSuite TestLoader
+                       defaultTestLoader TextTestRunner main" />
+  </module>
+
+  <module module="decimal">
+    <allow attributes="Decimal Context DefaultContext BasicContext
+                       ExtendedContext DecimalException Clamped
+                       InvalidOperation DivisionByZero Inexact Rounded
+                       Subnormal Overflow Underflow ROUND_DOWN ROUND_HALF_UP
+                       ROUND_HALF_EVEN ROUND_CEILING ROUND_FLOOR ROUND_UP
+                       ROUND_HALF_DOWN setcontext getcontext" />
+  </module>
+
+  <module module="math">
+    <allow attributes="acos asin atan atan2 ceil cos cosh degress exp fabs
+                       floor fmod frexp hypot ldexp log log10 modf pow radians
+                       sin sinh sqrt tan tanh pi e" />
+  </module>
+
+  <module module="cmath">
+    <allow attributes="acos acosh asin asinh atan atanh cos cosh exp log log10
+                       sin sinh sqrt tan tanh pi e" />
+  </module>
+
+  <module module="random">
+    <allow attributes="seed getstate setstate jumpahead randrange randint
+                       choice shuffle sample random uniform betavariate
+                       expovariate gammavariate gauss lognormvariate
+                       normalvariate vormisesvariate paretovariate
+                       weibullvariate WichmannHill whseed" />
+  </module>
+
+  <module module="bisect">
+    <allow attributes="bisect_left bisect_right bisect insort_left
+                       insort_right insort" />
+  </module>
+
+  <module module="heapq">
+    <allow attributes="heappush heappop heapify heapreplace" />
+  </module>
+
+  <module module="array">
+    <allow attributes="array ArrayType" />
+  </module>
+
+  <module module="sets">
+    <allow attributes="Set ImmutableSet" />
+  </module>
+
+  <module module="itertools">
+    <allow attributes="chain count cycle dropwhile iffilter iffilterfalse imap
+                       islice izip repeat starmap takewhile" />
+  </module>
+
+  <module module="ConfigParser">
+    <allow attributes="RawConfigParser ConfigParser SafeConfigParser
+                       NoSectionError DuplicateSectionError NoOptionError
+                       InterpolationError InterpolationDepthError
+                       InterpolationMissingOptionError
+                       InterpolationSyntaxError MissingSectionHeaderError
+                       ParsingError MAX_INTERPOLATION_DEPTH" />
+  </module>
+
+  <module module="calendar">
+    <allow attributes="MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY SATURDAY
+                       SUNDAY setfirstweekday firstweekday isleap leapdays
+                       weekday monthrange monthcalendar prmonth month prcal
+                       calendar timegm" />
+  </module>
+
+  <module module="cmd">
+    <allow attributes="Cmd" />
+  </module>
+
+  <module module="shlex">
+    <allow attributes="split shlex" />
+  </module>
+
+  <!-- 6. Generic Operating System Services -->
+
+  <module module="os.path">
+    <allow attributes="abspath basename commonprefix dirname isabs join
+                       normcase normpath split splitdrive splitext" />
+  </module>
+
+  <module module="datetime">
+    <allow attributes="MINYEAR MAXYEAR date time datetime timedelta tzinfo" />
+  </module>
+
+  <module module="time">
+    <allow attributes="acceot2dyear altzone asctime clock ctime daylight
+                       gmtime localtime mktime sleep strftime" />
+  </module>
+
+  <module module="sched">
+    <allow attributes="scheduler" />
+  </module>
+
+  <module module="getopt">
+    <allow attributes="getopt gnu_getopt GetoptError error" />
+  </module>
+
+  <module module="optparse">
+    <allow attributes="OptionParser" />
+  </module>
+
+  <module module="fnmatch">
+    <allow attributes="fnmatch fnmatchcase filter" />
+  </module>
+
+  <module module="gettext">
+    <allow attributes="bindtextdomain textdomain gettext dgettext ngettext
+                       dngettext " />
+  </module>
+
+
+  <!-- 11. Internet Protocols and Support -->
+
+  <module module="cgi">
+    <allow attributes="parse parse_qs parse_qsl parse_multipart parse_header
+                       escape" />
+  </module>
+
+  <module module="urllib">
+    <allow attributes="urlopen urlretrieve _urlopener urlcleanup quote
+                       quote_plus unquote unquote_plus urlencode pathname2url
+                       url2pathname URLopener FancyURLopener" />
+  </module>
+
+  <module module="urllib2">
+    <allow attributes="urlopen install_opener build_opener URLError HTTPError
+                       GopherError Request OpenerDirector BaseHandler
+                       HTTPDefaultErrorHandler HTTPRedirectHandler
+                       ProxyHandler HTTPPasswordMgr
+                       HTTPPasswordMgrWithDefaultRealm
+                       AbstractBasicAuthHandler HTTPBasicAuthHandler
+                       ProxyBasicAuthHandler AbstractDigestAuthHandler
+                       HTTPDigestAuthHandler ProxyDigestAuthHandler
+                       HTTPHandler HTTPSHandler FileHandler FTPHandler
+                       CacheFTPHandler GopherHAndler UnknownHandler" />
+  </module>
+
+  <module module="httplib">
+    <allow attributes="HTTP_PORT HTTPS_PORT HTTPConnection HTTPSConnection
+                       HTTPResponse HTTPException NotConnected InvalidURL
+                       UnknownProtocol UnknownTransferEncoding
+                       UnimplementedFileMode IncompleteRead
+                       ImproperConnectionState CannotSendRequest
+                       CannotSendHeader ResponseNotReady BadStatusLine" />
+  </module>
+
+  <module module="ftplib">
+    <allow attributes="FTP all_errors error_reply error_temp error_perm
+                       error_proto" />
+  </module>
+
+  <module module="gopherlib">
+    <allow attributes="send_selection send_query" />
+  </module>
+
+  <module module="poplib">
+    <allow attributes="POP3 error_proto" />
+  </module>
+
+  <module module="imaplib">
+    <allow attributes="IMAP4" />
+  </module>
+
+  <module module="nntplib">
+    <allow attributes="NNTP NNTPError NNTPReplyError NNTPTemporaryError
+                       NNTPPermanentError NNTPProtocolError NNTPDataError" />
+  </module>
+
+  <module module="smtplib">
+    <allow attributes="SMTP SMTPException SMTPServerDisconnected
+                       SMTPResponseException SMTPSenderRefused
+                       SMTPRecipientsRefused SMTPDataError SMTPConnectError
+                       SMTPHeloError" />
+  </module>
+
+  <module module="telnetlib">
+    <allow attributes="Telnet" />
+  </module>
+
+  <module module="urlparse">
+    <allow attributes="urlparse urlunparse urlsplit urlunsplit urljoin
+                       urldefrag" />
+  </module>
+
+  <module module="Cookie">
+    <allow attributes="CookieError BaseCookie SimpleCookie" />
+  </module>
+
+  <module module="xmlrpclib">
+    <allow attributes="ServerProxy boolean binary" />
+  </module>
+
+  <!-- 12. Internet Data Handling -->
+
+  <module module="formatter">
+    <allow attributes="AS_IS AbstractFormatter AbstractWriter DumbWriter
+                       NullFormatter NullWriter" />
+  </module>
+
+  <module module="email">
+    <allow attributes="message_from_file message_from_string" />
+  </module>
+
+  <module module="mailcap">
+    <allow attributes="findmatch getcaps" />
+  </module>
+
+  <module module="mailbox">
+    <allow attributes="UnixMailbox PortableUnixMailbox MmdfMailbox MHMailbox
+                       Maildir BabylMailbox" />
+  </module>
+
+  <module module="mhlib">
+    <allow attributes="MH Folder Message" />
+  </module>
+
+  <module module="mimetypes">
+    <allow attributes="guess_type guess_all_extensions guess_extension" />
+  </module>
+
+  <module module="multifile">
+    <allow attributes="MultiFile" />
+  </module>
+
+  <module module="rfc822">
+    <allow attributes="Message AddressList quote unquote parseaddr
+                       dump_address_pair parsedate parsedate_tz mktime_tz" />
+  </module>
+
+  <module module="base64">
+    <allow attributes="decode decodestring encode encodestring" />
+  </module>
+
+  <module module="binascii">
+    <allow attributes="a2b_uu b2a_uu a2b_base64 b2a_base64 a2b_qp b2a_qp
+                       a2b_hqx rledecode_hqx rlecode_hqx b2a_hqx crc_hqx
+                       crc32 b2a_hex hexlify a2b_hex unhexlify Error
+                       Incomplete" />
+  </module>
+
+  <module module="binhex">
+    <allow attributes="binhex hexbin Error" />
+  </module>
+
+  <module module="quopri">
+    <allow attributes="decode encode decodestring encodestring" />
+  </module>
+
+  <module module="uu">
+    <allow attributes="encode decode Error" />
+  </module>
+
+  <module module="xdrlib">
+    <allow attributes="Packer Unpacker" />
+  </module>
+
+  <module module="netrc">
+    <allow attributes="netrc NetrcParseError" />
+  </module>
+
+  <module module="robotparser">
+    <allow attributes="RobotFileParser" />
+  </module>
+
+  <module module="csv">
+    <allow attributes="reader writer register_dialect unregister_dialect
+                       list_dialects DictReader DictWriter Dialect Sniffer
+                       sniff has_header QUOTE_ALL QUOTE_MINIMAL
+                       QUOTE_NONNUMERIC QUOTE_NONE Error" />
+  </module>
+
+  <!-- 13. Structured Markup Processing Tools -->
+
+  <module module="HTMLParser">
+    <allow attributes="HTMLParser" />
+  </module>
+
+  <module module="sgmllib">
+    <allow attributes="SGMLParser" />
+  </module>
+
+  <module module="htmllib">
+    <allow attributes="HTMLParser" />
+  </module>
+
+  <module module="htmlentitydefs">
+    <allow attributes="entitydefs name2codepoint codepoint2name" />
+  </module>
+
+  <module module="xml.parsers.expat">
+    <allow attributes="ExpatError error XMLParserType ErrorString
+                       ParserCreate" />
+  </module>
+
+  <module module="xml.dom">
+    <allow attributes="registerDOMImplementation getDOMImplementation
+                       EMPTY_NAMESPACE XML_NAMESPACE XMLNS_NAMESPACE
+                       XHTML_NAMESPACE" />
+  </module>
+
+  <module module="xml.dom.minidom">
+    <allow attributes="parse parseString" />
+  </module>
+
+  <module module="xml.dom.pulldom">
+    <allow attributes="PullDOM DOMEventStrem SAX2DOM parse parseString
+                       default_bufsize" />
+  </module>
+
+  <module module="xml.sax">
+    <allow attributes="make_parser parse parseString SAXException
+                       SAXParseException SAXNotRecognizedException
+                       SAXNotSupprotedException" />
+  </module>
+
+  <module module="xml.sax.handler">
+    <allow attributes="ContentHandler DTDHandler EntityResolver ErrorHandler
+                       feature_namespaces feature_namespace_prefixes
+                       feature_string_interning feature_validation
+                       feature_external_ges feature_external_pes all_features
+                       property_lexical_handler property_declaration_handler
+                       property_dom_node property_xml_string all_properties" />
+  </module>
+
+  <module module="xml.sax.saxutils">
+    <allow attributes="escape unescape quoteattr XMLGenerator XMLFilterBase
+                       prepare_input_source" />
+  </module>
+
+  <module module="xml.sax.xmlreader">
+    <allow attributes="XMLReader IncrementalParser Locator InputSource
+                       AttributesImpl AttributesNSImpl" />
+  </module>
+
+  <!-- 15. Cryptographic Services -->
+
+  <module module="hmac">
+    <allow attributes="new" />
+  </module>
+
+  <module module="md5">
+    <allow attributes="new digest_size" />
+  </module>
+
+  <module module="sha">
+    <allow attributes="new blocksize digest_size" />
+  </module>
+
+</configure>

@@ -1,0 +1,12 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <subscriber handler="zope.component.event.objectEventNotify" />
+
+  <configure package="zope.component.registry">
+    <subscriber handler=".dispatchUtilityRegistrationEvent" />
+    <subscriber handler=".dispatchAdapterRegistrationEvent" />
+    <subscriber handler=".dispatchSubscriptionAdapterRegistrationEvent" />
+    <subscriber handler=".dispatchHandlerRegistrationEvent" />
+  </configure>
+
+</configure>

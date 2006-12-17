@@ -1,0 +1,44 @@
+Creating HTTP Results
+=====================
+
+This document describes the state of creating HTTP results for Zope
+3.2.  This is different than it was in the past and likely to be
+different from how it will be in the future. Please bear with us.
+
+Traditionally in Zope, HTTP results are created by simply returning
+strings.  Strings are inspected to deduce their content type, which is
+usually HTML.  Applications can override this by setting a response
+headers (calling request.response.setHeader).
+
+In Zope 2, applications could also call response.write.  This allows 
+both:
+
+- Effecient handling of large output
+
+- HTTP chucked output for streaming
+
+Before release 3.1, Zope 3 has a response write method that did
+neither of these things.  Developers coming from Zope 2 might use the
+write method, expecting it to have the same bahavior as it does in
+Zope 2.  At least until we can satisfy those expectations, we have
+disabled the response write method for now.  Maybe we'll reinstate it
+in the future.
+
+There is currently no support for streaming, but there is now support
+for returning large amounts of data.
+
+Returning large amounts of data without storing the data in memory
+------------------------------------------------------------------
+
+To return a large result, you should write the result to a temporary
+file (tempfile.TemporaryFile) and return the temporary file.
+Alternatively, if the data you want to return is already in a
+(non-temporary) file, just open and return that file.  The publisher
+(actually an adapter used by the publisher) will handle a returned
+file very efficiently.  
+
+The publisher will compute the response content length from the file
+automatically. It is up to applications to set the content type.
+It will also take care of positioning the file to it's beginning, 
+so applications don't need to do this beforehand.
+

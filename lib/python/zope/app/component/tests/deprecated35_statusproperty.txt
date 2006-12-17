@@ -1,0 +1,124 @@
+============================
+Registration Status Property
+============================
+
+The registratio status property is a descriptor used to implement the
+`IRegistration`' interface's `status` property.
+
+The property accepts two possible values: `ActiveStatus` and
+`InactiveStatus`. When the registration is active, then the registration is
+also activated in the registry.
+
+  >>> from zope.app.component.interfaces.registration import ActiveStatus
+  >>> from zope.app.component.interfaces.registration import InactiveStatus
+
+When setting the `status` property to `ActiveStatus`, then the registration
+should be added to the nearest matching registry. Here, the registration's
+`getRegistry()` method is used to determine the registry. On the same token,
+if the value is set to `InactiveStatus` the registration should be removed
+from the registry.
+
+To demonstrate this functionality, we first have to create a stub registry
+
+  >>> class Registry(object):
+  ...     registrations = []
+  ...     def register(self, registration):
+  ...         self.registrations.append(registration)
+  ...
+  ...     def unregister(self, registration):
+  ...         del self.registrations[self.registrations.index(registration)]
+  ...
+  ...     def registered(self, registration):
+  ...         return registration in self.registrations
+  
+  >>> registry = Registry()
+
+and a simple registration object
+
+  >>> from zope.app.component.registration import RegistrationStatusProperty
+  >>> class Registration(object):
+  ...     status = RegistrationStatusProperty()
+  ...
+  ...     def __init__(self, registry):
+  ...         self.registry = registry
+  ...
+  ...     def getRegistry(self):
+  ...         return self.registry
+
+Note that here only the `getRegistry()` is part of the registration API.
+
+Now that we have a registry and a registration class, let's create a
+registration:
+
+  >>> reg = Registration(registry)
+
+At the beginning the registration is inactive:
+
+  >>> reg.status
+  u'Inactive'
+  >>> reg.status is InactiveStatus
+  True
+  >>> reg in registry.registrations
+  False
+
+Once we activate the registration, it appears in the registry:
+
+  >>> reg.status = ActiveStatus
+  >>> reg.status
+  u'Active'
+  >>> reg.status is ActiveStatus
+  True
+  >>> reg in registry.registrations
+  True
+
+Now, once we deactivate the registration, it is not available in the registry
+anymore:
+
+  >>> reg.status = InactiveStatus
+  >>> reg.status
+  u'Inactive'
+  >>> reg.status is InactiveStatus
+  True
+  >>> reg in registry.registrations
+  False
+
+
+Registration Events
+-------------------
+
+When a registration is activated or deactivated, an
+`RegistrationActivatedEvent` or `RegistrationDeactivatedEvent` is created,
+respectively. Listening to these events can be useful for cases where you want
+to change the component based on registration status.
+
+To catch the events, we have to register a subscriber with the event
+framework:
+
+  >>> events = []
+  >>> def subscriber(event):
+  ...     global events
+  ...     events.append(event)
+
+  >>> import zope.event
+  >>> zope.event.subscribers.append(subscriber)
+
+Now we switch our registration to active:
+
+  >>> reg.status = ActiveStatus
+  >>> event = events.pop()
+  >>> event.__class__
+  <class 'zope.component.interfaces.Registered'>
+  >>> event.object is reg
+  True
+
+and deactivate it again:
+
+  >>> reg.status = InactiveStatus
+  >>> events.pop().__class__
+  <class 'zope.component.interfaces.Unregistered'>
+  >>> event.object is reg
+  True
+
+Now make sure that we remove the subscriber again:
+
+  >>> del zope.event.subscribers[zope.event.subscribers.index(subscriber)]

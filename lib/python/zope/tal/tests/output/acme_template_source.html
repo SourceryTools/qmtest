@@ -1,0 +1,27 @@
+<!-- This is ACME's generic look and feel, which is based on
+PNOME's look and feel. -->
+<html metal:define-macro="page"
+      metal:use-macro="pnome_macros_page">
+<head>
+<title metal:fill-slot="title">ACME Look and Feel</title>
+<metal:block>
+</metal:block>
+</head>
+<body>
+<div>
+  <div>
+  "The early bird gets the worm, but the second mouse gets the cheese."
+  </div>
+  <a href="#">Preferences...</a>
+</div>
+<div>
+  Content here
+</div>
+<div metal:fill-slot="page-footer">
+Copyright 2004 Acme Inc.
+<div metal:define-slot="disclaimer">
+Standard disclaimers apply.
+</div>
+</div>
+</body>
+</html>

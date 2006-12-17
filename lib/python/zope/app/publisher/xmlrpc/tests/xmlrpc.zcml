@@ -1,0 +1,55 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+           i18n_domain="zope">
+
+  <include package="zope.app.publisher.xmlrpc" file="meta.zcml"/>
+  <include package="zope.app.security" file="meta.zcml"/>
+
+  <xmlrpc:view
+      name="test"
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      permission="zope.Public"
+      />
+
+  <xmlrpc:view
+      name="test2"
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      permission="zope.Public"
+      interface="zope.app.component.tests.views.IV"
+      />
+
+  <xmlrpc:view
+      name="test3"
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      permission="zope.Public"
+      methods="action" />
+
+  <xmlrpc:view
+      name="test4"
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      permission="zope.Public"
+      methods="action"
+      interface="zope.app.component.tests.views.IV" />
+
+  <xmlrpc:view
+      name="test5"
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      permission="zope.Public"
+      methods="action index"
+      interface="zope.app.component.tests.views.IV" />
+
+
+  <xmlrpc:view
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      interface="zope.app.component.tests.views.IV"
+      methods="action"
+      permission="zope.Public"
+      />
+
+</configure>

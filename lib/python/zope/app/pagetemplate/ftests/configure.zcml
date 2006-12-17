@@ -1,0 +1,24 @@
+<configure xmlns="http://namespaces.zope.org/browser">
+
+  <page
+      for="zope.interface.Interface"
+      name="inner"
+      template="inner.pt"
+      permission="zope.Public"
+      />
+
+  <page
+      for="zope.interface.Interface"
+      name="intermediate"
+      template="intermediate.pt"
+      permission="zope.Public"
+      />
+
+  <page
+      for="zope.interface.Interface"
+      name="outer"
+      template="outer.pt"
+      permission="zope.Public"
+      />
+
+</configure>

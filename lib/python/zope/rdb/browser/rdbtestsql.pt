@@ -1,0 +1,37 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Database Adapter - Test Connection
+  </title>
+</head>
+
+<body>
+<div metal:fill-slot="body">
+
+  <form action="." method="post" enctype="multipart/form-data">
+
+    <p i18n:translate="">
+      Here you can enter an SQL statement, so you can test the
+      connection.</p>
+
+    <div class="row">
+      <div class="label" i18n:translate="">Query</div>
+      <div class="field">
+        <textarea name="sql" cols="60" rows="10"
+          >SELECT * FROM Table</textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="controls">
+        <input type="submit" name="test.html:method" value="Execute" 
+               i18n:attributes="value execute-button"/>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+</body>
+</html>

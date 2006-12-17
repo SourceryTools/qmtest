@@ -1,0 +1,24 @@
+<zope:configure
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser"
+   >
+
+  <addMenuItem
+      title="RAM Cache"
+      description="A RAM cache is a volatile (in memory) cache"
+      class="zope.app.cache.ram.RAMCache"
+      permission="zope.ManageServices"
+      />
+
+  <pages
+      for="zope.app.cache.interfaces.ram.IRAMCache"
+      class="zope.app.cache.browser.ram.RAMCacheView"
+      permission="zope.ManageServices">
+    <page name="editAction.html" attribute="action" />
+    <page name="index.html" template="ramedit.pt" 
+          menu="zmi_views" title="Edit"/>
+    <page name="stats.html" template="ramstats.pt" 
+          menu="zmi_views" title="Statistics"/>
+  </pages>
+
+</zope:configure>

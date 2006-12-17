@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    >
+
+  <!-- Default (empty) Translations -->
+  <utility
+      component="zope.i18n.testmessagecatalog.TestMessageFallbackDomain"
+      />
+
+</configure>

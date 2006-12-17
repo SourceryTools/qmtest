@@ -1,0 +1,13 @@
+<configure xmlns="http://namespaces.zope.org/browser">
+
+   <icon name="zmi_icon" for=".broken.IBroken" file="broken.gif" />
+
+   <page
+       name="index.html"
+       menu="zmi_views" title="Broken object"
+       for=".broken.IBroken"
+       template="broken.pt"
+       permission="zope.ManageContent"
+       />
+
+</configure>

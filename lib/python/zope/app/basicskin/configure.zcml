@@ -1,0 +1,44 @@
+<zope:configure
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+  <zope:interface
+      interface=".IBasicSkin"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="Basic"
+      />
+
+  <page
+      name="standard_macros"
+      for="*"
+      class=".standardmacros.StandardMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      permission="zope.Public" />
+
+  <page
+      name="view_macros"
+      for="*"
+      permission="zope.View"
+      template="view_macros.pt" />
+
+  <page
+      name="dialog_macros"
+      for="*"
+      permission="zope.View"
+      template="dialog_macros.pt" />
+
+  <resource
+      name="zopetopBasic.css"
+      file="zopetopbasic.css" />
+
+  <resource
+      name="zopetopWidgets.css"
+      file="zopetopwidgets.css" />
+
+  <resource
+      name="zopetopStructure.css"
+      file="zopetopstructure.css" />
+
+  <resource name="arrowUp.gif" file="arrowup.gif"/>
+
+</zope:configure>

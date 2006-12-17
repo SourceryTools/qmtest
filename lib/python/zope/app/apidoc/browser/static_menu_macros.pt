@@ -1,0 +1,109 @@
+<metal:block define-macro="static_menu"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  lang="en"
+  i18n:domain="zope">
+
+  <head>
+    <title metal:define-slot="title" i18n:translate="">Zope 3 apidoc</title>
+
+    <link type="text/css" rel="stylesheet" media="all" href=""
+          tal:attributes="href string:${context/++resource++apidoc.css}" />
+
+    <script type="text/javascript" src="utilities.js"
+            tal:attributes="src string:${context/++resource++utilities.js}" >
+    </script>
+    <metal:block define-slot="headers" />
+    <metal:block define-slot="style_slot" />
+    <metal:block define-slot="ecmascript_slot" />
+
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png|default" />
+  </head>
+
+<head>
+
+<body class="menu">
+
+  <metal:block define-slot="menu-title">
+    <div class="menu" i18n:translate="">Menu</div>
+  </metal:block>
+
+  <metal:block define-slot="pre_menu" />
+
+  <metal:block define-slot="menu">
+
+    <table cellspacing="0" cellpadding="0" class="menu" border="0" id="tree"
+           tal:define="root      context/@@cookie_tree;
+                       expandedTree python:root.expand(True);
+                       result    root/getFlatDicts;
+                       nodeDictList   python:result[0];
+                       maxDepth       python:result[1]">
+    <tr tal:repeat="nodeInfo nodeDictList"
+	tal:attributes="
+            id repeat/nodeInfo/index;
+            treedepth python:len(nodeInfo['row-state'])+1;
+            treehasChildren nodeInfo/node/hasChildren;"
+	style="display:block" treestate="block">
+    <tal:block tal:define="node nodeInfo/node">
+
+  <td style="width:16px" tal:repeat="state nodeInfo/row-state">
+    <img tal:attributes="src context/++resource++tree_images/vline.png"
+         tal:condition="state" alt="|" border="0" />
+  </td>
+
+  <td style="width:16px">
+    <tal:block
+        define="treeid repeat/nodeInfo/index"
+        condition="node/hasChildren">
+      <tal:block condition="not:nodeInfo/last-level-node">
+        <img tal:attributes="
+                 src context/++resource++tree_images/minus_vline.png;
+                 id string:i$treeid;
+                 onClick string:javascript:treeClick($treeid);"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+      <tal:block condition="nodeInfo/last-level-node">
+        <img tal:attributes="
+                 src context/++resource++tree_images/minus.png;
+                 id string:i$treeid;
+                 onClick string:javascript:treeClick($treeid);"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+    </tal:block>
+
+    <tal:block condition="not:node/hasChildren">
+      <img tal:attributes="src context/++resource++tree_images/tline.png;"
+           tal:condition="not:nodeInfo/last-level-node" alt="T" border="0" />
+      <img tal:attributes="src context/++resource++tree_images/lline.png;"
+           tal:condition="nodeInfo/last-level-node" alt="L" border="0" />
+    </tal:block>
+  </td>
+
+  <td colspan="1" class="list-item"
+      tal:attributes="colspan python:maxDepth-len(nodeInfo['row-state'])+1">
+    &nbsp;<a href="" target="main"
+        tal:attributes="href python: view.getMenuLink(node)"
+        tal:content="python: view.getMenuTitle(node)"
+        tal:condition="python: view.getMenuLink(node) is not None"
+        i18n:translate="">
+      node/id
+    </a><tal:block
+        replace="python: view.getMenuTitle(node)"
+        condition="python: view.getMenuLink(node) is None"
+        i18n:translate="" />
+  </td>
+
+    </tal:block>
+    </tr>
+    </table>
+
+  </metal:block>
+
+  <metal:block define-slot="post_menu" />
+
+</body>
+</html>
+</metal:block>

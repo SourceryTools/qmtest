@@ -1,0 +1,19 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+
+  <head>
+    <title>SQL Script</title>
+  </head>
+  <body>
+ 
+    <div metal:fill-slot="body">
+        
+       <div metal:use-macro="view/generated_form/macros/body">
+            <input type="submit" i18n:attributes="value change-and-test"
+                value="Change and Test" metal:fill-slot="extra_buttons"
+                name="change_test" />
+       </div>
+   </div>
+  </body>
+
+</html>

@@ -1,0 +1,139 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Translation Domain - Translate
+  </title>
+</head>
+
+<body>
+<div metal:fill-slot="body">
+  
+  <table cols="3" width="100%" border="0">
+    <tr>
+      <td width="35%">
+        <form action="./" method="post">
+          <div class="form-label" i18n:translate="">Select Languages:</div>
+          <div>
+            <select name="languages:list" size="3" style="width: 80%"
+                    multiple="multiple">
+              <tal:block repeat="language view/getAllLanguages">
+                <option value="" 
+                        tal:attributes="value language"
+                        tal:content="language"
+                        tal:condition="python: language not in
+                                       view.getEditLanguages()" ></option>
+                <option value="" selected="1"
+                        tal:attributes="value language"
+                        tal:content="language"
+                        tal:condition="python: language in
+                                       view.getEditLanguages()" ></option>
+              </tal:block>
+            </select>
+          </div>
+          <div>
+            <input class="form-element" type="submit" 
+                   name="@@changeEditLanguages.html:method" value="Edit"
+                   i18n:attributes="value edit-button" />
+            <input class="form-element" type="submit" 
+                   name="@@deleteLanguages.html:method" value="Delete"
+                   i18n:attributes="value delete-button" />
+          </div>
+        </form>
+      </td>
+      <td width="35%" align="right" valign="top">
+        <form action="." method="post">
+          <div class="form-label" i18n:translate="">New Language:</div>
+          <div>
+            <input type="text" name="language" size="20" value="" />
+            <input type="submit" name="@@addLanguage.html:method" value="Add" 
+                   i18n:attributes="value add-button" />
+          </div>
+        </form>
+      </td>
+      <td width="30%" align="right" valign="top">
+        <form action="./" method="post">
+          <div class="form-label" 
+               i18n:translate="">Filter (% - wildcard):</div>
+          <div>
+            <input type="text" name="filter" size="25" value=""
+                   tal:attributes="value request/filter|default" />
+          </div>
+          <div>
+            <input type="submit" name="@@changeFilter.html:method" 
+                   value="Filter" 
+                   i18n:attributes="value filter-button"/>
+          </div>
+        </form>
+      </td>
+    </tr>
+  </table>
+
+  <form action="./" method="post">
+    <table width="100%" cellspacing="0" cellpadding="3" border="0" 
+           class="listing">
+      <tr class="list-header" align="left">
+        <th width="16">&nbsp;</th>
+        <th i18n:translate="">Message Id</th>
+        <th tal:repeat="language python:view.getEditLanguages()"
+            tal:content="language">de</th>
+      </tr>    
+      <tal:block repeat="message python: view.getMessages()">
+      <tr tal:define="oddrow repeat/message/odd"
+          tal:attributes="class python: oddrow and 'odd' or 'even'">
+              <td>
+                <input type="hidden"
+                 tal:attributes="name python: 'edit-msg_id-%i' %message[1];
+                                 value python: message[0]" />
+          <input type="checkbox" name="message_ids:list"
+                 tal:attributes="value python: message[1]" />
+        </td>
+        <td tal:content="python: message[0]">
+          default
+        </td>
+        <td tal:repeat="language python:view.getEditLanguages()">
+          <textarea cols="20" rows="2"
+              tal:attributes="name python: 'edit-%s-%i' %(language, message[1])"
+              tal:content="python: view.getTranslation(message[0], 
+                                                       language)"></textarea>
+        </td>
+      </tr>
+      </tal:block>
+      <tr>
+        <th i18n:translate="" colspan="3"
+           tal:attributes="colspan python:len(view.getEditLanguages())+3">
+          Add new messages
+        </th>
+      </tr>
+    
+      <tal:block repeat="count python: range(5)">
+      <tr tal:define="oddrow repeat/count/odd"
+          tal:attributes="class python: oddrow and 'odd' or 'even'">
+              <td width="16">&nbsp;</td>
+              <td>
+                <textarea cols="20" rows="2" name=""
+                      tal:attributes="name string:new-msg_id-${count}"
+                ></textarea> 
+              </td>
+              <td tal:repeat="language python:view.getEditLanguages()">
+                <textarea cols="20" rows="2" name=""
+                  tal:attributes="name string:new-${language}-${count}"
+                ></textarea> 
+              </td>
+      </tr>
+      </tal:block>
+    </table>
+    
+    <div>
+      <input class="form-element" type="submit" 
+             name="@@editMessages.html:method" value="Edit Messages"
+             i18n:attributes="value" />&nbsp;
+      <input class="form-element" type="submit" 
+             name="@@deleteMessages.html:method" value="Delete Messages"
+             i18n:attributes="value" />
+    </div>
+  </form>
+
+</div>
+</body>
+</html>

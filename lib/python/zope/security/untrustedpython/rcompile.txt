@@ -1,0 +1,128 @@
+==================================
+Support for Restricted Python Code
+==================================
+
+This package provides a way to compile
+untrusted Python code so that it can be executed safely.
+
+This form of restricted Python assumes that security proxies will be
+used to protect assets.  Given this, the only thing that actually
+needs to be done differently by the generated code is to:
+
+- Ensure that all attribute lookups go through a safe version of the getattr()
+  function that's been provided in the built-in functions used in the
+  execution environment.  
+
+- Prevent exec statements. (Later, we could possibly make exec safe.)
+
+- Print statements always go to an output that is provided as a
+  global, rather than having an implicit sys.output.
+
+- Prevent try/except and raise statements. This is mainly because they
+  don't work properly in the presense of security proxies.  Try/except
+  statements will be made to work in the future.
+
+No other special treatment is needed to support safe expression
+evaluation.
+
+The implementation makes use of the `RestrictedPython` package,
+originally written for Zope 2.  There is a new AST re-writer in
+`zope.security.untrustedpython.rcompile` which performs the
+tree-transformation, and a top-level `compile()` function in
+`zope.security.untrustedpython.rcompile`; the later is what client
+applications are expected to use.
+
+The signature of the `compile()` function is very similar to that of
+Python's built-in `compile()` function::
+
+  compile(source, filename, mode)
+
+Using it is equally simple::
+
+  >>> from zope.security.untrustedpython.rcompile import compile
+
+  >>> code = compile("21 * 2", "<string>", "eval")
+  >>> eval(code)
+  42
+
+What's interesting about the restricted code is that all attribute
+lookups go through the `getattr()` function.  This is generally
+provided as a built-in function in the restricted environment::
+
+  >>> def mygetattr(object, name, default="Yahoo!"):
+  ...     marker = []
+  ...     print "Looking up", name
+  ...     if getattr(object, name, marker) is marker:
+  ...         return default
+  ...     else:
+  ...         return "Yeehaw!"
+
+  >>> import __builtin__
+  >>> builtins = __builtin__.__dict__.copy()
+  >>> builtins["getattr"] = mygetattr
+
+  >>> def reval(source):
+  ...     code = compile(source, "README.txt", "eval")
+  ...     globals = {"__builtins__": builtins}
+  ...     return eval(code, globals, {})
+
+  >>> reval("(42).__class__")
+  Looking up __class__
+  'Yeehaw!'
+  >>> reval("(42).not_really_there")
+  Looking up not_really_there
+  'Yahoo!'
+  >>> reval("(42).foo.not_really_there")
+  Looking up foo
+  Looking up not_really_there
+  'Yahoo!'
+
+This allows a `getattr()` to be used that ensures the result of
+evaluation is a security proxy.
+
+To compile code with statements, use exec or single:
+
+  >>> exec compile("x = 1", "<string>", "exec")
+  >>> x
+  1
+
+Trying to compile exec, raise or try/except sattements gives
+syntax errors:
+
+  >>> compile("exec 'x = 2'", "<string>", "exec")
+  Traceback (most recent call last):
+  ...
+  SyntaxError: Line 1: exec statements are not supported
+
+  >>> compile("raise KeyError('x')", "<string>", "exec")
+  Traceback (most recent call last):
+  ...
+  SyntaxError: Line 1: raise statements are not supported
+
+  >>> compile("try: pass\nexcept: pass", "<string>", "exec")
+  Traceback (most recent call last):
+  ...
+  SyntaxError: Line 1: try/except statements are not supported
+
+Printing to an explicit writable is allowed:
+
+  >>> import StringIO
+  >>> f = StringIO.StringIO()
+  >>> code = compile("print >> f, 'hi',\nprint >> f, 'world'", '', 'exec')
+  >>> exec code in {'f': f}
+  >>> f.getvalue()
+  'hi world\n'
+
+But if no output is specified, then output will be send to
+`untrusted_output`:
+
+  >>> code = compile("print 'hi',\nprint 'world'", '', 'exec')
+  >>> exec code in {}
+  Traceback (most recent call last):
+  ...
+  NameError: name 'untrusted_output' is not defined
+
+  >>> f = StringIO.StringIO()
+  >>> exec code in {'untrusted_output': f}
+
+

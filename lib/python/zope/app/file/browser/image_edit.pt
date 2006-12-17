@@ -1,0 +1,24 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <div metal:use-macro="view/generated_form/macros/body">
+
+  <form action=".">
+
+    <table metal:fill-slot="extra_top">
+      <tr>
+        <td i18n:translate="">Size</td>
+        <td tal:content="view/size"
+            i18n:translate="">103 x 45 pixels, 43KB</td>
+      </tr>
+    </table>
+
+  </form>
+
+  </div>
+</div>
+</body>
+
+</html>

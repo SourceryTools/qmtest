@@ -1,0 +1,7 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents">
+
+  <div tal:content="structure view/topicContent" />
+
+</body>
+</html>

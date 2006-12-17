@@ -1,0 +1,33 @@
+
+
+The UI offers powerful tools to build applications using Zope 3.
+The UI is aimed at Site Developers and not hard-core developers and content    managers.
+
+Zope Management Interface (ZMI)
+
+    This is what the management screen looks like
+
+    <img src="mgmt-main-1.png">
+
+    In the left side bar you can see two boxes.
+    The upper box has the title **Navigation**. This box contains 
+    a tree view of the contents of your site.
+    The lower box contains a list of content types that can
+    be added to the current location. Some locations have constraints
+    on the content types that can be added, so the contents of this box 
+    is dependent on where you are.
+
+    The upper right corner contains the name of the current user and 
+    links to the Login/Logout.
+
+    You see the path to your current location below.
+
+    Below the location you can see the **Tabs**. The Tabs display
+    the registered views for the object you are currently visiting.
+    The Tabs are also referenced as the 'zmi_views'.
+
+    Below the Tabs you see another menu called 'zmi_actions'.
+    This menu contains links that will allow you to perform some
+    managment activities on the object.
+    
+

@@ -1,0 +1,13 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <subscriber
+      handler=".bootstrap.bootStrapSubscriber"
+      for="zope.app.appsetup.IDatabaseOpenedEvent"
+      />
+
+  <subscriber
+      handler=".bootstrap.checkSecurityPolicy"
+      for="zope.app.appsetup.IDatabaseOpenedEvent"
+      />
+
+</configure>

@@ -1,0 +1,85 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope">
+
+  <!-- Setup language negotiation -->
+  <utility
+      provides="zope.i18n.interfaces.INegotiator"
+      component="zope.i18n.negotiator.negotiator"
+      />
+
+  <adapter factory="zope.app.publisher.browser.ModifiableBrowserLanguages"
+      for="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="zope.i18n.interfaces.IModifiableUserPreferredLanguages"
+      />
+
+  <class class="zope.publisher.http.HTTPRequest">
+      <implements interface="zope.annotation.IAttributeAnnotatable" />
+  </class>
+
+  <!-- Setup charset negotiation -->
+  <adapter factory="zope.publisher.http.HTTPCharsets"
+      for="zope.publisher.interfaces.http.IHTTPRequest"
+      provides="zope.i18n.interfaces.IUserPreferredCharsets"
+      />
+
+  <!-- Register the Translation Domain as a content object -->
+  <localUtility class=".translationdomain.TranslationDomain">
+    <factory
+         id="zope.app.i18n.TranslationDomain"
+         />
+    <allow interface="zope.i18n.interfaces.ITranslationDomain"
+        />
+    <require permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IContainer"
+        />
+    <require permission="zope.ManageSite"
+        interface=".interfaces.IWriteTranslationDomain"
+        />
+    <require permission="zope.ManageSite"
+        interface=".interfaces.ISyncTranslationDomain"
+        />
+  </localUtility>
+
+  <subscriber
+       for=".interfaces.ILocalTranslationDomain
+            zope.component.interfaces.IRegistered"
+       handler=".translationdomain.setDomainOnActivation"
+       />
+
+  <subscriber
+       for=".interfaces.ILocalTranslationDomain
+            zope.component.interfaces.IUnregistered"
+       handler=".translationdomain.unsetDomainOnDeactivation"
+       />
+
+  <!-- Setup Message Catalogs -->
+  <class class=".messagecatalog.MessageCatalog">
+    <factory id="zope.app.MessageCatalog" />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+
+    <require permission="zope.View"
+        interface="zope.i18n.interfaces.IMessageCatalog" />
+    <require permission="zope.ManageSite"
+        attributes="setMessage getMessageIds" />
+  </class>
+
+
+  <!-- Setup Export and Import Filters -->
+  <adapter
+      factory=".filters.GettextExportFilter"
+      for=".interfaces.ILocalTranslationDomain"
+      provides="zope.i18n.interfaces.IMessageExportFilter"
+      />
+
+  <adapter
+      factory=".filters.GettextImportFilter"
+      for=".interfaces.ILocalTranslationDomain"
+      provides="zope.i18n.interfaces.IMessageImportFilter"
+      />
+
+  <include package="zope.i18n.locales" />
+  <include package=".xmlrpc" />
+  <include package=".browser" />
+
+</configure>

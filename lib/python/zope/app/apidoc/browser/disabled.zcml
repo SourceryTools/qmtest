@@ -1,0 +1,14 @@
+<configure
+  xmlns="http://namespaces.zope.org/browser"
+  xmlns:zope="http://namespaces.zope.org/zope"
+  i18n_domain="zope">
+
+  <page
+      for="..disabled.APIDocStub"
+      name="index.html"
+      permission="zope.View"
+      template="disabled.pt"
+      />
+
+</configure>
+

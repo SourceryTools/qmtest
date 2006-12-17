@@ -1,0 +1,6 @@
+<html><body>
+Hello <span tal:replace="context/name" />
+The URL is <span tal:replace="request/URL" />
+The positional arguments were <span tal:replace="args" />
+The keyword argument x is <span tal:replace="options/x" />
+</body></html>

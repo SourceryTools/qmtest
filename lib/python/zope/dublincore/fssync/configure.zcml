@@ -1,0 +1,10 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:fssync="http://namespaces.zope.org/fssync">
+
+  <fssync:adapter
+      class="zope.dublincore.annotatableadapter.ZDCAnnotationData"
+      factory=".adapter.ZDCAnnotationDataAdapter"
+      />
+
+</configure>

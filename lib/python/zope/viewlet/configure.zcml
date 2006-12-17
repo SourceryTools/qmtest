@@ -1,0 +1,21 @@
+<configure
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="zope">
+
+  <apidoc:bookchapter
+      id="viewlet"
+      title="Viewlets and Viewlet Managers"
+      doc_path="README.txt"
+      zcml:condition="have apidoc"
+      />
+
+  <apidoc:bookchapter
+      id="directives"
+      title="Viewlet-related ZCML Directives"
+      parent="viewlet"
+      doc_path="directives.txt"
+      zcml:condition="have apidoc"
+      />
+
+</configure>

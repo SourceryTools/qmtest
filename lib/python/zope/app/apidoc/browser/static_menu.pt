@@ -1,0 +1,11 @@
+<html metal:use-macro="views/apidoc_macros/static_menu"
+    i18n:domain="zope">
+<body>
+
+  <div metal:fill-slot="menu">
+    <p class="small" i18n:translate="">Click on one of the Documentation
+      Modules above and a menu for this module will appear.</p>
+  </div>
+
+</body>
+</html>

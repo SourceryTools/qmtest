@@ -1,0 +1,209 @@
+﻿<metal:block define-macro="page"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xml:lang="en"
+    lang="en"
+    i18n:domain="zope"
+    tal:define="sitemgmt python:'/++etc++site/' in str(request.URL)">
+
+  <head>
+    <title metal:define-slot="title"
+           tal:content="string:Z3: ${context/zope:title_or_name}">Z3 UI</title>
+
+    <style type="text/css" media="all"
+           tal:content="string:@import url(${context/++resource++zope3_tablelayout.css});">
+      @import url(zope3_tablelayout.css);
+    </style>
+
+    <style type="text/css" media="all" tal:condition="sitemgmt"
+           tal:content="string:@import url(${context/++resource++site_management_tablelayout.css});">
+      @import url(site_management_tablelayout.css);
+    </style>
+
+    <meta http-equiv="Content-Type"
+          content="text/html;charset=utf-8" />
+
+    <metal:block define-slot="headers" />
+    <metal:block define-slot="style_slot" />
+    <metal:block define-slot="ecmascript_slot" />
+
+    <!-- Basic zope3 javascript's -->
+    <script type="text/javascript" src="zope3.js"
+            tal:attributes="src string:${context/++resource++zope3.js}" >
+    </script>
+
+    <metal:tree use-macro="context/@@standard_macros/navigation_tree_js" />
+
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png" />
+  </head>
+
+  <body tal:attributes="onload body_onload | nothing">
+        <table id="layout" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td colspan="2" id="top">
+                    <metal:slot define-slot="global">
+                        <div id="global" metal:define-macro="global">
+                            <div id="userDetails" metal:define-slot="user_details">
+                                <metal:block define-macro="logged_user">
+                                    <span tal:omit-tag="" i18n:translate="">User:</span>
+                                    <tal:block replace="request/principal/title">
+                                        User
+                                    </tal:block>
+                                </metal:block>
+                                <metal:block define-slot="login_logout">
+                                    <metal:macro define-macro="login_logout">
+                                    <tal:block content="structure context/@@login_logout" />
+                                    </metal:macro>
+                                </metal:block>
+                            </div>
+                            <metal:slot define-slot="logo">
+                                <a href="#" name="top"
+                                     tal:attributes="href string:${request/URL/0}/@@SelectedManagementView.html"><img tal:attributes="src context/++resource++zope3logo.gif" /></a>
+                            </metal:slot>
+                        </div>
+                        </metal:slot>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <metal:slot define-slot="breadcrumbs">
+                    <div id="breadcrumbs" metal:define-macro="breadcrumbs">
+                        <div tal:omit-tag="" i18n:translate="">Location:</div>&nbsp;<tal:block
+                             repeat="breadcrumb context/@@absolute_url/breadcrumbs"
+                            ><a href=""
+                                    tal:condition="repeat/breadcrumb/start"
+                                    tal:attributes="
+                                    href string:${breadcrumb/url}/@@SelectedManagementView.html"
+                                    i18n:translate="">[top]</a>
+                            <a href=""
+                                 tal:condition="not:repeat/breadcrumb/start"
+                                 tal:content="string:${breadcrumb/name}"
+                                 tal:attributes="
+                                 href string:${breadcrumb/url}/@@SelectedManagementView.html">
+                                breadcrumb item</a> / </tal:block>
+                    </div>
+                    </metal:slot>
+                </td>
+            </tr>
+            <tr>
+                <td id="navigation">
+                <metal:slot define-slot="navigators">
+                <div id="navigators" metal:define-macro="navigators">
+                    <!-- Navigation tree box -->
+                    <metal:tree use-macro="context/@@standard_macros/navigation_tree_box" />
+                    <tal:block condition="python: macroname == 'view'">
+                        <div class="box" id="commonTasks"
+                                 tal:define="view context/@@commonTasks|nothing"
+                                 tal:condition="view/strip|nothing">
+                            <h4 i18n:translate="">Add:</h4>
+                            <div class="body">
+                                <span tal:replace="structure view" />
+                            </div>
+                        </div>
+                    </tal:block>
+                </div>
+                </metal:slot>
+                </td>
+                <td id="content">
+                <div id="workspace" metal:define-macro="workspace">
+                    <metal:slot define-slot="tabs">
+                    <div tal:condition="python: macroname == 'view'" class="itemViews">
+                        <tal:block repeat="view context/@@view_get_menu/zmi_views">
+                            <a href=""
+                                tal:attributes="href view/action;
+                                    class view/selected;"
+                                tal:content="view/title" i18n:translate="">
+                                label
+                            </a>
+                        </tal:block>
+                    </div>
+                    <!-- OnlineHelp with popup support -->
+                    <!-- note, we reverse the actions list 'cos they're packed to the
+                             screen from the right -->
+                    <div tal:condition="python: macroname == 'view'" id="action">
+                        <ul tal:define="
+                              help_actions context/@@view_get_menu/help_actions|nothing;
+                              actions context/@@view_get_menu/zmi_actions"
+                              >
+                            <li tal:condition="actions" tal:repeat="info actions"
+                                ><a href="#"
+                                         tal:attributes="href info/action"
+                                         tal:content="info/title"
+                                         i18n:translate="">
+                                        Action name
+                                </a></li>
+                            <li tal:condition="help_actions" tal:repeat="help_info help_actions"
+                                ><a href="#"
+                                     tal:define="url string:'${view/__name__}/${help_info/action}';
+                                                             name string:'OnlineHelp';
+                                                             settings string:'height=500
+                                                                                             ,width=950
+                                                                                             ,resizable=1
+                                                                                             ,scrollbars=yes
+                                                                                             ,location=no
+                                                                                             ,status=no
+                                                                                             ,toolbar=no
+                                                                                             ,menubar=no'"
+                                     tal:attributes="href python:'javascript:popup('
+                                                                                             + url + ','
+                                                                                             + name + ','
+                                                                                             + settings +')'"
+                                     tal:content="help_info/title"
+                                     i18n:translate="">
+                                    Action name
+                                </a></li>
+                        </ul>
+                    </div>
+                    </metal:slot>
+                    <div id="viewspace" metal:define-slot="viewspace">
+                        <div metal:define-slot="message" id="message">
+                        </div>
+                        <div id="body">
+                            <metal:block define-slot="body">
+                                <table class="listing">
+                                    <thead>
+                                        <th>Test</th>
+                                        <th>Another</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>content</td>
+                                            <td>thingy</td>
+                                        </tr>
+                                        <tr class="even">
+                                            <td>more</td>
+                                            <td>data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </metal:block>
+                        </div>
+                        <div id="context_information" metal:define-slot="context_information">
+                            <div id="helpers" metal:define-slot="helpers">
+                                <div class="box" id="itemHelp" tal:condition="pagetip|nothing">
+                                    <h4 i18n:translate="">Tip</h4>
+                                    <div class="body">
+                                        <div class="content odd">
+                                            <metal:block define-slot="pagetip"
+                                                                     tal:replace="structure pagetip">
+                                                A short tip goes here
+                                            </metal:block>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="spacer">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+                <div id="footer" metal:define-macro="footer" />
+                <div id="logger" metal:define-slot="logger" />
+                </td>
+            </tr>
+        </table>
+  </body>
+</html>
+</metal:block>

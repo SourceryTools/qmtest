@@ -1,0 +1,52 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".ZCMLModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <class class=".Namespace">
+    <allow attributes="getShortName getFullName getQuotedName" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <class class=".Directive">
+    <allow attributes="name schema handler info subdirs" />
+  </class>
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".ZCMLModule"
+      name="ZCML" />
+
+  <browser:page
+      for=".ZCMLModule"
+      class=".browser.Menu"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".ZCMLModule"
+      class=".browser.Menu"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".Directive"
+      class=".browser.DirectiveDetails"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="index.html"
+      template="index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+</configure>
+

@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <!-- BBB 2006/02/24, to be removed after 12 months -->
+  <meta:directive
+     namespace="http://namespaces.zope.org/renderer"
+     name="renderer"
+     schema=".metaconfigure.IRendererDirective"
+     handler=".metaconfigure.renderer" />
+
+</configure>

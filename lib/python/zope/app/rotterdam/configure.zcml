@@ -1,0 +1,158 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <!-- BBB 2006/02/18, to be removed after 12 months -->
+  <browser:layer
+      name="rotterdam"
+      interface="zope.app.rotterdam.rotterdam"
+      bbb_aware="true"
+      />
+
+  <interface
+      interface="zope.app.rotterdam.Rotterdam"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="Rotterdam"
+      />
+
+  <browser:resource
+      name="zope3.css"
+      file="zope3.css"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="zope3_tablelayout.css"
+      file="zope3_tablelayout.css"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="site_management_tablelayout.css"
+      file="site_management_tablelayout.css"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="site_management.css"
+      file="site_management.css"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="zope3.js"
+      file="zope3.js"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="xmltree.js"
+      file="xmltree.js"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <!-- depricated file, methods moved to zope3.js -->
+  <browser:resource
+      name="onlinehelp.js"
+      file="onlinehelp.js"
+      layer="zope.app.rotterdam.rotterdam" />
+
+   <browser:resource
+      name="favicon.png"
+      file="favicon.png"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="zope3logo.gif"
+      file="zope3logo.gif"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="logo.gif"
+      file="logo.gif"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="pl.gif"
+      file="pl.gif"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <browser:resource
+      name="mi.gif"
+      file="mi.gif"
+      layer="zope.app.rotterdam.rotterdam" />
+
+  <!-- below overrides the standard_macros by Rotterdam Skin -->
+  <browser:page
+      for="*"
+      name="standard_macros"
+      permission="zope.View"
+      class=".standardmacros.StandardMacros"
+      layer="zope.app.rotterdam.rotterdam"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      />
+
+  <browser:page
+      for="*"
+      name="skin_macros"
+      permission="zope.View"
+      layer="zope.app.rotterdam.rotterdam"
+      template="template_tablelayout.pt"
+      />
+
+  <browser:page
+      for="*"
+      name="view_macros"
+      permission="zope.View"
+      layer="zope.app.rotterdam.rotterdam"
+      template="view_macros.pt" />
+
+  <browser:page
+      for="*"
+      name="dialog_macros"
+      permission="zope.View"
+      layer="zope.app.rotterdam.rotterdam"
+      template="dialog_macros.pt" />
+
+  <browser:page
+      for="*"
+      name="popup_macros"
+      permission="zope.View"
+      layer="zope.app.rotterdam.rotterdam"
+      template="popup_macros.pt"
+      />
+
+  <!-- xmltree navigation -->
+  <browser:page
+      for="*"
+      name="navigation_macros"
+      permission="zope.View"
+      layer="zope.app.rotterdam.rotterdam"
+      template="navigation_macros.pt"
+      />
+
+  <browser:pages
+      for="zope.app.container.interfaces.IReadContainer"
+      permission="zope.View"
+      class=".xmlobject.ReadContainerXmlObjectView">
+    <browser:page
+        name="children.xml"
+        attribute="children"
+        />
+    <browser:page
+        name="singleBranchTree.xml"
+        attribute="singleBranchTree"
+        />
+  </browser:pages>
+
+  <browser:page
+      name="singleBranchTree.xml"
+      for="zope.interface.interface.Interface"
+      permission="zope.View"
+      class=".xmlobject.XmlObjectView"
+      attribute="singleBranchTree"
+      />
+
+  <browser:view
+      for="zope.schema.interfaces.ISourceText"
+      provides="zope.app.form.interfaces.IInputWidget"
+      class=".editingwidgets.SimpleEditingWidget"
+      permission="zope.Public"
+      layer="zope.app.rotterdam.rotterdam"
+      />
+
+</configure>

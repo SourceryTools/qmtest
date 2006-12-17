@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <h1>API documentation is disabled</h1>
+
+    <p>The API documentation is only available in developer mode. To enable
+      developer mode, modify your zope.conf and restart the application
+      server.
+    </p>
+
+  </body>
+</html>

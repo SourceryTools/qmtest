@@ -1,0 +1,24 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <class class="zope.rdb.gadflyda.GadflyAdapter">
+    <factory
+        title="Gadfly Database Adapter" />
+    <require
+        permission="zope.rdb.Use"
+        interface="zope.rdb.interfaces.IZopeDatabaseAdapter" />
+    <require
+        permission="zope.ManageServices"
+        interface="zope.rdb.interfaces.IZopeDatabaseAdapterManagement" />
+  </class>
+
+  <class class="zope.rdb.gadflyda.GadflyAdapterCursor">
+    <allow
+        interface="zope.rdb.interfaces.IZopeCursor" />
+  </class>
+
+  <class class="zope.rdb.gadflyda.GadflyAdapterConnection">
+    <allow
+        interface="zope.rdb.interfaces.IZopeConnection" />
+  </class>
+
+</configure>

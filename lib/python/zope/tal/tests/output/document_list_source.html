@@ -1,0 +1,30 @@
+<!-- ACME's document_list uses the ACME look and feel -->
+<html metal:use-macro="acme_macros_page">
+<head>
+<title metal:fill-slot="title">Acme Document List</title>
+<style metal:fill-slot="local-styles" type="text/css">
+  body { background-color: white; }
+</style>
+</head>
+<body>
+<div>
+  <div>
+  "The early bird gets the worm, but the second mouse gets the cheese."
+  </div>
+  <a href="#">Preferences...</a>
+</div>
+<div metal:fill-slot="content">
+<h1>Documents</h1>
+<ul>
+<li>Rocket Science for Dummies</li>
+<li>Birds for the Gourmet Chef</li>
+</ul>
+</div>
+<div>
+Copyright 2004 Acme Inc.
+<div metal:fill-slot="disclaimer">
+This document list is classified.
+</div>
+</div>
+</body>
+</html>

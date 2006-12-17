@@ -1,0 +1,344 @@
+==========================
+The Registration Framework
+==========================
+
+The registration framework's task is to manage registrations and ensure that
+the correct registrations are inserted into the correct registries. Each
+registration knows to which registry it belongs. If a registration is set
+active, then the registration is added to the regstry; when inactive, it is
+removed from the registry. Please see `statusproperty.txt` for a demonstration
+on how the setting of the registration's status affects the registry.
+
+The true power of the registration framework, however, comes from the ability
+to provide registrations for registerable components. In the context of Zope
+3's component architecture, registerable components are adapters and
+utilities. Since the registration framework can be used for any kind of
+component registration, I am going to refer to registerable components
+(including adapters and interface) as components. 
+
+The first task is to create a simple component registry. It will implement all
+required `IRegistry` methods and a `getComponents()` method, which will return
+a list of all registered (active) components.
+
+  >>> import zope.interface
+  >>> from zope.app.component import interfaces
+  >>> class ComponentRegistry(object):
+  ...     zope.interface.implements(interfaces.registration.IRegistry)
+  ...
+  ...     def __init__(self):
+  ...         self._registrations = []
+  ...
+  ...     def registrations(self):
+  ...         """See zope.component.interfaces.IRegistry"""
+  ...         return self._registrations
+  ...
+  ...     registeredUtilities = registrations
+  ...
+  ...     def register(self, registration):
+  ...         """See interfaces.registration.IRegistry"""
+  ...         self._registrations.append(registration)
+  ...
+  ...     def unregister(self, registration):
+  ...         """See interfaces.registration.IRegistry"""
+  ...         del self._registrations[self._registrations.index(registration)]
+  ...
+  ...     def registered(self, registration):
+  ...         """See interfaces.registration.IRegistry"""
+  ...         return registration in self._registrations
+  ...
+  ...     def getComponents(self):
+  ...         return [reg.component for reg in self.registrations()]  
+
+  >>> registry = ComponentRegistry()
+
+Effectively, a registry manages a set of active registrations. A simple
+UML diagram would be::
+
+                          ---------------------------    
+    --------------- *   1 |  IRegistration          |
+    |  IRegistry  |-------| - - - - - - - - - - - - |
+    ---------------       |  status = ActiveStatus  |
+                          ---------------------------
+
+Next we need to create a registration object that can register components with
+our new registry. The framework already provides a base-class for
+component-based registrations, so that we only need to implement the
+`getRegistry()` method:
+
+  >>> from zope.app.component.registration import ComponentRegistration
+  >>> class Registration(ComponentRegistration):
+  ...
+  ...     def getRegistry(self):
+  ...         global registry
+  ...         return registry
+  ... 
+  ...     def __repr__(self):
+  ...         return "<Registration for '%s'>" %self.component
+
+In the implementation above, all `Registration` instances are simply going to
+use the global `registry` object. Now that we have a registry and a suitable
+registration class, let's test what we have so far. To do that we have to
+create a component that we would like to register:
+
+  >>> import zope.component.interfaces
+  >>> from zope.app.container.contained import Contained
+  >>> class Component(Contained):
+  ...     zope.interface.implements(interfaces.registration.IRegisterable)
+  ...     def __init__(self, title=u''):
+  ...         self.title = title
+  ...     def __repr__(self):
+  ...        return "<Component: '%s'>" %self.title
+  ...
+  ...     def __conform__(self, iface):
+  ...         if iface == zope.component.interfaces.IComponentLookup:
+  ...             return registry
+
+Note that `Contained` is used as a base class, since `IRegisterable` requires
+it to be. We will later see why this is the case. 
+
+Before we are registering any component, the registry is empty:
+
+  >>> registry.getComponents()
+  []
+
+Now we create a component and a registration:
+
+  >>> foo = Component('Foo')
+  >>> regFoo = Registration(foo)
+  >>> regFoo.component
+  <Component: 'Foo'>
+  >>> regFoo.status
+  u'Inactive'
+
+Finally, we activate the registration:
+
+ 
+  >>> regFoo.status = interfaces.registration.ActiveStatus
+  >>> regFoo.status
+  u'Active'
+  >>> registry.getComponents()
+  [<Component: 'Foo'>]
+
+Of course, we can add a second registered component:
+
+  >>> bar = Component('Bar')
+  >>> regBar = Registration(bar)
+  >>> regBar.component
+  <Component: 'Bar'>
+  >>> regBar.status
+  u'Inactive'
+  >>> regBar.status = interfaces.registration.ActiveStatus
+  >>> regBar.status
+  u'Active'
+  >>> registry.getComponents()
+  [<Component: 'Foo'>, <Component: 'Bar'>]
+
+Of course, when deactivating a registration, it will be gone from the registry
+as well:
+
+  >>> regFoo.status = interfaces.registration.InactiveStatus
+  >>> regFoo.status
+  u'Inactive'
+  >>> registry.getComponents()
+  [<Component: 'Bar'>]
+
+This is everything that there is about registrations and their interaction
+with a registry. However, the point of registrations and registerable
+components is that they should be persistent (otherwise we could use
+ZCML). Thus we need a way of managing local components and their
+registrations.
+
+
+Management of Local Components and Registrations
+------------------------------------------------
+
+The starting point here is the `IRegisterableContainer`, which can contain
+`IRegiserable` and other `IRegisterableContainer` components.
+
+  >>> from zope.app.container.btree import BTreeContainer
+  >>> from zope.app.component.registration import RegisterableContainer
+
+  >>> class RegisterableManager(RegisterableContainer, BTreeContainer):
+  ...     pass
+  >>> registerables = RegisterableManager()
+
+The `RegisterableContainer` class is merely a mixin and leaves it up to the
+developer to implement the `IContainer` interface. In our case, we simply used
+the default btree container implementation to provide the container
+interface. However, the `RegisterableContainer` class does implement the
+`IRegisterableContainer` interface, which means it ensures the existance of
+the `registrationManager` attribute, which always contains an
+`IRegistrationManager` instance:
+
+  >>> registerables.registrationManager is not None
+  True
+  >>> interfaces.registration.IRegistrationManager.providedBy(
+  ...     registerables.registrationManager)
+  True
+
+The registration manager is a simple container that can only contain
+components providing `IRegistration` and implements a method called
+`addRegistration(registration)` that lets you add a registration to the
+manager without specifying a name. The name will be automatically chosen for
+you and is returned. So let's add our two existing components and their
+registrations:
+
+  >>> regManager = registerables.registrationManager
+
+  >>> registerables['foo'] = foo
+  >>> regManager.addRegistration(regFoo)
+  'Registration'
+
+  >>> registerables['bar'] = bar
+  >>> regManager.addRegistration(regBar)
+  'Registration2'
+
+  >>> items = list(registerables.items())
+  >>> items.sort()
+  >>> items
+  [(u'bar', <Component: 'Bar'>), (u'foo', <Component: 'Foo'>)]
+  >>> regs = list(regManager.items())
+  >>> regs.sort()
+  >>> regs #doctest: +NORMALIZE_WHITESPACE
+  [(u'Registration', <Registration for '<Component: 'Foo'>'>), 
+   (u'Registration2', <Registration for '<Component: 'Bar'>'>)]
+
+Of course, adding a registration to the registration manager does not mean the
+registration is added to the registry, since it still may not be active:
+
+  >>> registry.getComponents()
+  [<Component: 'Bar'>]
+
+Also, there are no restrictions on how many registrations you can create for a
+single component. For example, we can register the `foo` one more time:
+
+  >>> regFoo2 = Registration(foo)
+  >>> regManager.addRegistration(regFoo2)
+  'Registration3'
+  >>> regs = list(regManager.items())
+  >>> regs.sort()
+  >>> regs #doctest: +NORMALIZE_WHITESPACE
+  [(u'Registration', <Registration for '<Component: 'Foo'>'>), 
+   (u'Registration2', <Registration for '<Component: 'Bar'>'>),
+   (u'Registration3', <Registration for '<Component: 'Foo'>'>)]
+
+This also means that our registry can provide a component multiple times:
+
+  >>> regFoo.status = interfaces.registration.ActiveStatus
+  >>> regFoo2.status = interfaces.registration.ActiveStatus
+  >>> registry.getComponents()
+  [<Component: 'Bar'>, <Component: 'Foo'>, <Component: 'Foo'>]
+
+Here is a UML diagram of the registerable container and registration manager
+and their relationships to the other registration-related components we
+discussed.  
+
+::
+
+    ----------------------------
+    |  IRegisterableContainer  |
+    | - - - - - - - - - - - - -|
+    |                       1  |    1 --------------------------
+    |  registrationManager ----+------|  IRegistrationManager  |
+    |                          |      --------------------------
+    ---------------------------+                  | *
+             | *        | *  | 1                  |
+             |          |    |                    | 1
+             | 1        +----+           -------------------
+    -------------------                  |  IRegistration  |
+    |  IRegisterable  |                  -------------------
+    -------------------                           | *
+                                                  |
+                             --------------- 1    |
+                             |  IRegistry  |------+ if status == Active
+                             ---------------
+
+
+The Component Registration
+--------------------------
+
+Until now we have only discussed the most primitive usage of the
+`ComponentRegistration`. Usually, a registry is not just interested in a
+component, but a set of methods which are specified by a particular
+interface. Thus the component registration supports the `interface`
+attribute. By default it is `None`:
+
+  >>> regFoo.interface is None
+  True
+
+We can now write another `IComponentRegistration` implementation that knows
+about the interface; in fact, it will pick the most specific one of the
+component:
+
+  >>> from zope.interface import providedBy
+  >>> class SomethingRegistration(Registration):
+  ...
+  ...     def interface(self):
+  ...         return list(providedBy(self._component))[0]
+  ...     interface = property(interface)
+  
+Next we create an interface and its implementation:
+
+  >>> class ISomething(zope.interface.Interface):
+  ...     pass
+
+  >>> class Something(Component):
+  ...     zope.interface.implements(ISomething)
+
+Creating a "something registration", we can see that the interface attribute
+is now available:
+
+  >>> something = Something('Something')
+  >>> reg = SomethingRegistration(something)
+  >>> reg.interface
+  <InterfaceClass __builtin__.ISomething>
+
+But hold on, we are not done yet! The component registration also supports a
+`permission` attribute. When set and an interface is available, the component
+will always be proxied using an interface checker for the specified
+permission. By default the permission is `None`:
+
+  >>> reg.permission is None
+  True
+
+Now we set a permission for the registration and the component should be
+proxies when returned:
+
+  >>> from zope.security.checker import CheckerPublic  
+  >>> reg.permission = CheckerPublic
+  >>> reg.component is something
+  False
+  >>> type(reg.component) 
+  <type 'zope.security._proxy._Proxy'>
+
+You can also, specify a permission in the constructor:
+
+  >>> regNone = SomethingRegistration(None, 'zope.Public')
+  >>> regNone.permission is CheckerPublic
+  True
+
+If the interface is not available, the permission is ignored and the bare
+component is returned:
+
+  >>> regSomething2 = Registration(something, 'zope.Public')
+  >>> regSomething2.permission is CheckerPublic
+  True
+  >>> regSomething2.component is something
+  True
+
+
+The `Registered` Adapter
+------------------------
+
+
+Registerable components are able to get a list of all their
+registrations. However, the adapter only works for components and
+registrations that are stored in the registerable container and registration
+manager, respectively. 
+
+  >>> from zope.app.component.registration import Registered
+  >>> registered = Registered(foo)
+  >>> registered.registrations() #doctest: +NORMALIZE_WHITESPACE
+  [<Registration for '<Component: 'Foo'>'>, 
+   <Registration for '<Component: 'Foo'>'>]
+  

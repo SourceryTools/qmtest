@@ -1,0 +1,24 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+  <body>
+  <div metal:fill-slot="body">
+  <div metal:define-macro="body">
+      <p i18n:translate=""><span i18n:name="count"
+         tal:replace="view/len" /> objects</p>
+
+      <table id="sortable" class="listing" summary="Content listing"
+             tal:condition="request/testing|nothing"
+             i18n:attributes="summary">
+        <tr><th i18n:translate="">ID</th><th
+                i18n:translate="">Object</th></tr>
+        <tr tal:repeat="row view/_items">
+          <td tal:content="python:row[0]" />
+          <td><a tal:content="python:row[1]"
+                 tal:attributes="href python:row[1]" /></td>
+        </tr>
+      </table>
+  </div>
+  </div>
+  </body>
+
+</html>

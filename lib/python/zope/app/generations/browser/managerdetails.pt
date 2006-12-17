@@ -1,0 +1,30 @@
+<html metal:use-macro="context/@@standard_macros/view" i18n:domain="zope">
+<head>
+<title metal:fill-slot="title">Manager Details</title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+<h1 i18n:translate="">
+ <b i18n:name="application_id" tal:content="view/id" />
+ Application Manager Details
+</h1>
+<br/>
+
+<tal:block repeat="evolver view/getEvolvers">
+
+<h2 i18n:translate="">
+  Evolver 
+  from Generation <b i18n:name="from" tal:content="evolver/from"/>
+  to Generation <b i18n:name="to" tal:content="evolver/to"/>
+</h2>
+<br />
+<div tal:content="structure evolver/info">
+  Evolution information.
+</div>
+
+</tal:block>
+
+</div>
+</body>
+</html>

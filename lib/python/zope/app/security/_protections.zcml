@@ -1,0 +1,126 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+<!-- ===================================================================== -->
+
+<class class="BTrees.IIBTree.IIBTree">
+   <allow attributes="__str__ __contains__ __getitem__ __iter__ __len__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKey minKey values" /> 
+</class>
+<class class="BTrees.IIBTree.IIBucket">
+   <allow attributes="__contains__ __getitem__ __iter__ __len__ __str__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKeyminKey values" /> 
+</class>
+<class class="BTrees.IIBTree.IISet">
+   <allow attributes="__contains__ __iter__ __len__ __str__ has_key insert
+                      keys maxKey minKey" /> 
+</class>
+<class class="BTrees.IIBTree.IITreeIterator">
+   <allow attributes="__iter__ __str__ __getitem__ __len__
+                      __contains__ next" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+<class class="BTrees.IOBTree.IOBTree">
+   <allow attributes="__str__ __contains__ __getitem__ __iter__ __len__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKey minKey values" /> 
+</class>
+<class class="BTrees.IOBTree.IOBucket">
+   <allow attributes="__contains__ __getitem__ __iter__ __len__ __str__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKeyminKey values" /> 
+</class>
+<class class="BTrees.IOBTree.IOSet">
+   <allow attributes="__contains__ __iter__ __len__ __str__ has_key insert
+                      keys maxKey minKey" /> 
+</class>
+<class class="BTrees.IOBTree.IOTreeIterator">
+   <allow attributes="__iter__ __str__ __getitem__ __len__
+                      __contains__ next" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+<class class="BTrees.OIBTree.OIBTree">
+   <allow attributes="__str__ __contains__ __getitem__ __iter__ __len__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKey minKey values" /> 
+</class>
+<class class="BTrees.OIBTree.OIBucket">
+   <allow attributes="__contains__ __getitem__ __iter__ __len__ __str__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKeyminKey values" /> 
+</class>
+<class class="BTrees.OIBTree.OISet">
+   <allow attributes="__contains__ __iter__ __len__ __str__ has_key insert
+                      keys maxKey minKey" /> 
+</class>
+<class class="BTrees.OIBTree.OITreeIterator">
+   <allow attributes="__iter__ __str__ __getitem__ __len__ 
+                      __contains__ next" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+<class class="BTrees.OOBTree.OOBTree">
+   <allow attributes="__str__ __contains__ __getitem__ __iter__ __len__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKey minKey values" /> 
+</class>
+<class class="BTrees.OOBTree.OOBucket">
+   <allow attributes="__contains__ __getitem__ __iter__ __len__ __str__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKeyminKey values" /> 
+</class>
+<class class="BTrees.OOBTree.OOSet">
+   <allow attributes="__contains__ __iter__ __len__ __str__ has_key insert
+                      keys maxKey minKey" /> 
+</class>
+<class class="BTrees.OOBTree.OOTreeIterator">
+   <allow attributes="__iter__ __str__ __getitem__ __len__
+                      __contains__ next" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+<class class="BTrees.IFBTree.IFBTree">
+   <allow attributes="__str__ __contains__ __getitem__ __iter__ __len__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKey minKey values" /> 
+</class>
+<class class="BTrees.IFBTree.IFBucket">
+   <allow attributes="__contains__ __getitem__ __iter__ __len__ __str__
+                      byValue get has_key items iteritems iterkeys
+                      itervalues keys maxKeyminKey values" /> 
+</class>
+<class class="BTrees.IFBTree.IFSet">
+   <allow attributes="__contains__ __iter__ __len__ __str__ has_key insert
+                      keys maxKey minKey" /> 
+</class>
+<class class="BTrees.IFBTree.IFTreeIterator">
+   <allow attributes="__iter__ __str__ __getitem__ __len__
+                      __contains__ next" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+<class class="persistent.list.PersistentList">
+   <allow attributes="__getitem__ __getslice__ __len__ __iter__
+                      __contains__ index count" /> 
+</class>
+<class class="persistent.dict.PersistentDict">
+   <allow attributes="__getitem__ __len__ __iter__ get has_key
+                      __copy__ keys values items iterkeys iteritems
+                      itervalues __contains__" /> 
+</class>
+
+<!-- ===================================================================== -->
+
+</configure>
+

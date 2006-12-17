@@ -1,0 +1,88 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+   i18n_domain="zope"
+   >
+
+  <adapter
+     provides=".interfaces.IFind"
+     for=".interfaces.IReadContainer"
+     permission="zope.ManageContent"
+     factory="zope.app.container.find.FindAdapter"
+     />
+
+  <adapter
+      for=".interfaces.IReadContainer"
+      provides="zope.filerepresentation.interfaces.IReadDirectory"
+      factory=".directory.noop"
+      />
+
+  <adapter
+      for=".interfaces.IWriteContainer"
+      provides="zope.filerepresentation.interfaces.IWriteDirectory"
+      factory=".directory.noop"
+      />
+
+  <adapter
+      factory="zope.app.container.traversal.ContainerTraversable"
+      provides="zope.traversing.interfaces.ITraversable"
+      for="zope.app.container.interfaces.IReadContainer"
+      />
+
+
+  <adapter
+      factory="zope.app.container.size.ContainerSized"
+      provides="zope.size.interfaces.ISized"
+      for="zope.app.container.interfaces.IReadContainer"
+      />
+
+  <adapter
+      provides=".interfaces.INameChooser"
+      for="zope.app.container.interfaces.IWriteContainer"
+      factory=".contained.NameChooser"
+      />
+
+  <subscriber
+      handler=".dependency.CheckDependency"
+      for="zope.app.container.interfaces.IObjectRemovedEvent"
+      trusted="y"
+      />
+
+  <subscriber
+      for="zope.location.interfaces.ILocation
+           zope.app.container.interfaces.IObjectMovedEvent"
+      handler=".contained.dispatchToSublocations"
+      >
+      Handler dispatches moved events to sublocations of the original object.
+  </subscriber>
+
+  <adapter
+      provides="zope.location.interfaces.ISublocations"
+      for="zope.app.container.interfaces.IReadContainer"
+      factory=".contained.ContainerSublocations"
+      />
+
+  <class class=".constraints.ItemTypePrecondition">
+    <allow interface=".constraints.IItemTypePrecondition" />
+  </class>
+
+  <view
+      for="zope.app.container.interfaces.IItemContainer"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="zope.app.container.traversal.ItemTraverser"
+      permission="zope.Public"
+      allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+      />
+
+  <view
+      for="zope.app.container.interfaces.ISimpleReadContainer"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="zope.app.container.traversal.ItemTraverser"
+      permission="zope.Public"
+      allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+      />
+
+</configure>

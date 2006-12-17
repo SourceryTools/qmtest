@@ -1,0 +1,63 @@
+NotFound errors and traversal errors
+====================================
+
+Not found errors should only be displayed when someone provides a URL
+to an object that doesn't exist, as in:
+
+  >>> print http(r"""
+  ... GET /eek HTTP/1.1
+  ... """)
+  HTTP/1.1 404 Not Found
+  ...
+    The page that you are trying to access is not available
+  ...
+
+On the other hand, if we create a template that refers to something
+that doesn't exist:
+
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 739
+  ... Content-Type: multipart/form-data; boundary=---------------------------125598457818223697821067764270
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------125598457818223697821067764270
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html><body tal:content="container/eek" /></html>
+  ... -----------------------------125598457818223697821067764270
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------125598457818223697821067764270
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------125598457818223697821067764270
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------125598457818223697821067764270
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... test.html
+  ... -----------------------------125598457818223697821067764270--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+  Location: http://localhost/@@contents.html
+  ...
+
+
+We get a system error, because the problem is in the template, not in
+the URL:
+
+  >>> print http(r"""
+  ... GET /test.html HTTP/1.1
+  ... """)
+  HTTP/1.1 500 Internal Server Error
+  ...
+    A system error occurred.
+  ...

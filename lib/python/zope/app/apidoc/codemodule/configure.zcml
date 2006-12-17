@@ -1,0 +1,53 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".module.Module">
+    <allow interface=".interfaces.IModuleDocumentation" />
+  </class>
+
+  <class class=".class_.Class">
+    <allow interface=".interfaces.IClassDocumentation" />
+  </class>
+
+  <class class=".function.Function">
+    <allow interface=".interfaces.IFunctionDocumentation" />
+  </class>
+
+  <class class=".zcml.Directive">
+    <allow interface=".interfaces.IDirective" />
+  </class>
+
+  <class class=".zcml.ZCMLFile">
+    <allow interface=".interfaces.IZCMLFile" />
+  </class>
+
+  <class class=".text.TextFile">
+    <allow attributes="getContent path" />
+  </class>
+
+  <class class=".codemodule.CodeModule">
+    <allow interface="..interfaces.IDocumentationModule" />
+    <allow interface=".interfaces.IModuleDocumentation" />
+    <allow attributes="rootModules" />
+  </class>
+
+  <apidoc:rootModule module="BTrees" />
+  <apidoc:rootModule module="RestrictedPython" />
+  <apidoc:rootModule module="ThreadedAsync" />
+  <apidoc:rootModule module="ZConfig" />
+  <apidoc:rootModule module="ZODB" />
+  <apidoc:rootModule module="persistent" />
+  <apidoc:rootModule module="transaction" />
+  <apidoc:rootModule module="zdaemon" />
+  <apidoc:rootModule module="zope" />
+
+  <utility
+    provides="..interfaces.IDocumentationModule"
+    factory=".codemodule.CodeModule"
+    name="Code" />
+
+  <include package=".browser" />
+
+</configure>

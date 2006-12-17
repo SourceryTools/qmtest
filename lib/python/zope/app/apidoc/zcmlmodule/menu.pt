@@ -1,0 +1,10 @@
+<html metal:use-macro="views/apidoc_macros/menu"
+    i18n:domain="zope">
+<body>
+
+  <p metal:fill-slot="pre_menu" class="small" i18n:translate="">
+    Namespaces that are not full URLs start with "http://namespaces.zope.org/".
+  </p>
+
+</body>
+</html>

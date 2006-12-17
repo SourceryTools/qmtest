@@ -1,0 +1,65 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <!-- Register icons -->
+
+  <browser:resourceDirectory
+      name="tree_images"
+      directory="images" />
+
+  <!-- Cookie tree -->
+
+  <browser:pages
+      for="*"
+      class=".cookie.CookieTreeView"
+      permission="zope.View"
+      >
+    <browser:page
+        name="cookie_tree"
+        attribute="cookieTree"
+        />
+    <browser:page
+        name="folder_cookie_tree"
+        attribute="folderTree"
+        />
+    <browser:page
+        name="site_cookie_tree"
+        attribute="siteTree"
+        />
+    <browser:page
+        name="root_cookie_tree"
+        attribute="rootTree"
+        />
+    <browser:page
+        name="virtualhost_cookie_tree"
+        attribute="virtualHostTree"
+        />
+  </browser:pages>
+
+  <!-- Set up the 'StaticTree' skin -->
+
+  <!-- BBB 2006/02/18, to be removed after 12 months -->
+  <browser:layer
+      interface=".IStaticTreeLayer"
+      name="statictree"
+      bbb_aware="true"
+      />
+
+  <interface
+      interface=".IStaticTreeSkin"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="StaticTree"
+      />
+
+  <browser:page
+      for="*"
+      name="navigation_macros"
+      permission="zope.View"
+      layer=".IStaticTreeLayer"
+      template="navigation_macros.pt"
+      />
+
+</configure>

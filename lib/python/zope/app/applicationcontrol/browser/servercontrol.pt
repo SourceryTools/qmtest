@@ -1,0 +1,42 @@
+<html metal:use-macro="context/@@standard_macros/view" i18n:domain="zope">
+<head>
+  <title i18n:translate="">Zope Stub Server Controller</title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+  <div class="message"
+    i18n:translate=""
+    tal:define="status view/action"
+    tal:condition="status"
+    tal:content="status">
+   </div>
+
+  <form name="servercontrol" action="servercontrol.html" method="post">
+    <div class="row">
+        <div class="label"
+            i18n:translate="">Countdown until restart or shutdown</div>
+        <div class="field">
+            <input type="text" name="time:int" size="5" value="0" />
+            &nbsp;<span i18n:translate="">seconds</span>
+            <p i18n:translate="">
+              If you specify a time of 0 seconds, then the server
+              will be shutdown or restarted immediately.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="controls">
+            <input type="submit" name="restart" value="Restart server"
+                i18n:attributes="value" />
+            &nbsp;
+            <input type="submit" name="shutdown" value="Shutdown server"
+                i18n:attributes="value" />
+        </div>
+    </div>
+  </form>
+
+</div>
+</body>
+</html>

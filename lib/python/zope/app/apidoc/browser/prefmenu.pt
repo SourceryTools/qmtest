@@ -1,0 +1,67 @@
+<html metal:use-macro="views/apidoc_macros/menu">
+<body>
+
+  <div class="menu" metal:fill-slot="menu-title" i18n:translate="">
+    Preferences
+  </div>
+
+  <div metal:fill-slot="menu" class="small">
+
+<table cellspacing="0" cellpadding="0"
+       tal:define="root           context/@@apidocTree;
+                   result         root/getFlatDicts;
+                   nodeDictList   python:result[0];
+                   maxDepth       python:result[1]">
+
+<tr tal:repeat="nodeInfo nodeDictList">
+<tal:block tal:define="node nodeInfo/node">
+
+  <td style="width:16px" tal:repeat="state nodeInfo/row-state">
+    <img tal:attributes="src context/++resource++tree_images/vline.png"
+         tal:condition="state" alt="|" border="0" />
+  </td>
+
+  <td style="width:16px">
+    <a href=""
+       tal:attributes="href string:?tree-state=${nodeInfo/tree-state}"
+       tal:condition="node/hasChildren">
+      <tal:block condition="not:nodeInfo/last-level-node">
+        <img tal:attributes="src context/++resource++tree_images/plus_vline.png"
+             tal:condition="not:node/expanded" alt="+" border="0" />
+        <img tal:attributes="src context/++resource++tree_images/minus_vline.png"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+      <tal:block condition="nodeInfo/last-level-node">
+        <img tal:attributes="src context/++resource++tree_images/plus.png"
+             tal:condition="not:node/expanded" alt="+" border="0" />
+        <img tal:attributes="src context/++resource++tree_images/minus.png"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+    </a>
+    <tal:block condition="not:node/hasChildren">
+      <img tal:attributes="src context/++resource++tree_images/tline.png"
+           tal:condition="not:nodeInfo/last-level-node" alt="" border="0" />
+      <img tal:attributes="src context/++resource++tree_images/lline.png"
+           tal:condition="nodeInfo/last-level-node" alt="" border="0" />
+    </tal:block>
+  </td>
+
+  <td class="list-item"
+      tal:attributes="colspan python:maxDepth-len(nodeInfo['row-state'])+1">
+    &nbsp;<a href="" target="main"
+       tal:attributes="href
+           string:${node/context/@@absolute_url}/@@apidocIndex.html"
+       tal:content="node/context/__title__" i18n:translate="">
+      node/id
+    </a>
+  </td>
+
+</tal:block>
+</tr>
+
+</table>
+
+  </div>
+
+</body>
+</html>

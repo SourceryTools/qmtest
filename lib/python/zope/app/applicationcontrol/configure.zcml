@@ -1,0 +1,27 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <class
+      class=".applicationcontrol.ApplicationControl">
+    <require
+        permission="zope.ManageApplication"
+        interface=".interfaces.IApplicationControl"/>
+  </class>
+
+  <adapter 
+      for=".interfaces.IApplicationControl"
+      provides=".interfaces.IRuntimeInfo"
+      factory=".runtimeinfo.RuntimeInfo"
+      permission="zope.ManageApplication" />
+
+  <utility 
+      component=".zopeversion.ZopeVersionUtility"
+      provides=".interfaces.IZopeVersion" />
+
+  <!-- Include browser package -->
+
+  <include package=".browser" />
+
+</configure>

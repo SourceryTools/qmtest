@@ -1,0 +1,204 @@
+<html metal:use-macro="context/@@standard_macros/view">
+<head>
+
+  <style type="text/css" metal:fill-slot="style_slot">
+    .preclass {
+      color : #000066;
+      font-family : monospace;
+      white-space : pre;
+    }
+    th.introspector {
+      vertical-align: top;
+      text-align: right;
+      padding-right: 1ex;
+    }
+  </style>
+</head>
+
+<body>
+<div metal:fill-slot="body">
+  <tal:block
+      tal:define="global introspector view/getIntrospector">
+
+    <div tal:condition="python:introspector.isInterface()">
+
+      <table tal:define="global interfacedata introspector/getInterfaceDetails">
+        <tr>
+          <th colspan="2" i18n:translate="">Interface Browser</th>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="interface-component">Interface></tal:span>:
+            </th>
+          <td tal:content="python:interfacedata[0]">Interface</td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="class-bases">Bases</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="interface python:interfacedata[1]">
+              <a href=""
+                 tal:attributes="href
+                                 string: ++module++${repeat/interface/item}"
+                 tal:content="repeat/interface/item">Interface</a>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="">Description</tal:span>:
+          </th>
+          <td>
+            <!-- the start of all of these preclass spans are carefully
+            spatially placed (in terms of whitespace), because they are
+            "pre" formatted (i.e., whitespace matters within the span) -->
+            <span class="preclass"
+                  tal:content="python:interfacedata[2]">
+                  Description</span>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="class-attributes">Attributes</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="attributes python:interfacedata[4]">
+              <tal:block tal:define="details repeat/attributes/item">
+                <strong tal:content="python:details[0]">
+                  Atttribute Name</strong>
+                <div class="preclass" tal:content="python:details[1]">
+                  Attribute Description
+                </div>
+              </tal:block>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="class-methods">Methods</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="methods python:interfacedata[3]">
+              <tal:block tal:define="details repeat/methods/item">
+                <strong tal:content="python:details[0]">
+                  Method Name</strong>
+                <strong tal:content="python:details[1]">
+                   Signature</strong>
+                <div class="preclass" tal:content="python:details[2]">
+                   Method Description
+                </div>
+              </tal:block>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+    <div tal:condition="python:not introspector.isInterface()">
+
+      <table>
+        <tr>
+          <th colspan="2" i18n:translate="">Class Browser</th>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="class-component">Class</tal:span>:
+          </th>
+          <td><a tal:define="path python: (introspector.getModule()
+                + '.' + introspector.getClass()).replace('.', '/')"
+                tal:attributes="href
+                string: /++apidoc++/Code/${path}/index.html"
+                href="">
+            <span tal:replace="introspector/getModule">Module</span
+            >.<span tal:replace="introspector/getClass">Name</span></a></td>
+
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="class-bases">Bases</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="base introspector/getBaseClassNames">
+              <a tal:define="path
+                python: path('repeat/base/item').replace('.', '/')"
+                tal:attributes="href
+                string: /++apidoc++/Code/${path}/index.html"
+                href=""><span tal:replace="repeat/base/item" /></a>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="">Description</tal:span>:
+          </th>
+          <td>
+            <span class="preclass"
+                    tal:content="introspector/getDocString">
+                    Description</span>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="">Interfaces from Class</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="interface introspector/getInterfaceNames">
+              <div tal:define="url
+                string: /++apidoc++/Interface/${interface}/apiindex.html">
+                <a href=""
+                    tal:attributes="href url"
+                    tal:content="interface"
+                    tal:condition="url">Interface</a>
+                  <span tal:condition="python: not url" 
+                        tal:content="interface" />
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th class="introspector">
+            <tal:span i18n:translate="">Interfaces from Object</tal:span>:
+          </th>
+          <td>
+            <div tal:repeat="interface introspector/getDirectlyProvidedNames"
+                  tal:condition="introspector/getDirectlyProvided">
+              <div tal:define="url
+                string: /++apidoc++/Interface/${interface}/apiindex.html">
+                <a href=""
+                    tal:attributes="href url"
+                    tal:content="interface"
+                    tal:condition="url">Interface</a>
+                  <span tal:condition="python: not url"
+                        tal:content="interface" />
+              </div>
+            </div>
+            <form tal:attributes=" 
+                      action string:${request/URL/-1}/@@objectMarker.html"
+                  method="post">
+              <input type="submit" value="Modify" 
+                     i18n:attributes="value modify-button"/>
+            </form>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+  </tal:block>
+
+</div>
+</body>
+</html>
+
