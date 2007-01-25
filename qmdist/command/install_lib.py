@@ -65,10 +65,10 @@ class install_lib(base):
 
         if self.compile:
             byte_compile(files, optimize=0,
-                         force=self.force, prefix=install_root,
+                         force=1, prefix=install_root,
                          dry_run=self.dry_run)
         if self.optimize > 0:
             byte_compile(files, optimize=self.optimize,
-                         force=self.force, prefix=install_root,
+                         force=1, prefix=install_root,
                          verbose=self.verbose, dry_run=self.dry_run)
 
