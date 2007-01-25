@@ -1,3 +1,8 @@
+2007-01-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qmdist/command/__init__.py: Explicitely close the modified file.
+	* qmdist/command/install_lib.py: Force recompilation.
+
 2006-12-12  Mark Mitchell  <mark@codesourcery.com>
 
 	* qm/test/classes/dejagnu_stream.py

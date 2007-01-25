@@ -57,4 +57,6 @@ def reset_config_variables(config_file, **vars):
     for v in vars:
         script, found = re.subn('%s=.*'%v,'%s=%s'%(v, repr(vars[v])), script)
         if not found: script += '%s=%s'%(v, repr(vars[v]))
-    open(config_file, 'w').write(script)
+    c = open(config_file, 'w')
+    c.write(script)
+    c.close()
