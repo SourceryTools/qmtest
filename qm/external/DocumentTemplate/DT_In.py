@@ -387,8 +387,7 @@ __version__='$Revision$'[11:-2]
 
 from DT_Util import ParseError, parse_params, name_param, str
 from DT_Util import render_blocks, InstanceDict, ValidationError, VSEval, expr_globals
-from string import find, atoi, join, split
-import ts_regex
+import re
 from DT_InSV import sequence_variables, opt
 TupleType=type(())
 
@@ -449,11 +448,11 @@ class InClass:
         if has_key('start'):
             v=args['start']
             if type(v)==type(''):
-                try: atoi(v)
+                try: int(v)
                 except:
-                    self.start_name_re=ts_regex.compile(
+                    self.start_name_re=re.compile(
                         '&+'+
-                        join(map(lambda c: "[%s]" % c, v),'')+
+                        ''.join(["[%s]" % c for c in v])+
                         '=[0-9]+&+')
                     
         name,expr=name_param(args,'in',1)
@@ -628,7 +627,7 @@ class InClass:
                     if index==first: kw['sequence-start']=0
 
 
-                result=join(result, '')
+                result=''.join(result)
 
         finally:
             if cache: pop()
@@ -712,7 +711,7 @@ class InClass:
                     finally: pop()
                     if index==0: kw['sequence-start']=0
 
-                result=join(result, '')
+                result=''.join(result)
 
         finally:
             if cache: pop()
@@ -727,7 +726,7 @@ class InClass:
         # eg <dtml in "foo" sort=akey,anotherkey>
         
         sort=self.sort
-        sortfields = split(sort,',')   # multi sort = key1,key2 
+        sortfields = sort.split(',')   # multi sort = key1,key2 
         multsort = len(sortfields) > 1 # flag: is multiple sort
         mapping=self.mapping
         isort=not sort
@@ -784,8 +783,8 @@ def int_param(params,md,name,default=0, st=type('')):
     try: v=params[name]
     except: v=default
     if v:
-        try: v=atoi(v)
+        try: v=int(v)
         except:
             v=md[v]
-            if type(v) is st: v=atoi(v)
+            if type(v) is st: v=int(v)
     return v
