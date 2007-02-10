@@ -1,91 +1,20 @@
 ##############################################################################
-# 
-# Zope Public License (ZPL) Version 1.0
-# -------------------------------------
-# 
-# Copyright (c) Digital Creations.  All rights reserved.
-# 
-# This license has been certified as Open Source(tm).
-# 
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-# 
-# 1. Redistributions in source code must retain the above copyright
-#    notice, this list of conditions, and the following disclaimer.
-# 
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions, and the following disclaimer in
-#    the documentation and/or other materials provided with the
-#    distribution.
-# 
-# 3. Digital Creations requests that attribution be given to Zope
-#    in any manner possible. Zope includes a "Powered by Zope"
-#    button that is installed by default. While it is not a license
-#    violation to remove this button, it is requested that the
-#    attribution remain. A significant investment has been put
-#    into Zope, and this effort will continue if the Zope community
-#    continues to grow. This is one way to assure that growth.
-# 
-# 4. All advertising materials and documentation mentioning
-#    features derived from or use of this software must display
-#    the following acknowledgement:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    In the event that the product being advertised includes an
-#    intact Zope distribution (with copyright and license included)
-#    then this clause is waived.
-# 
-# 5. Names associated with Zope or Digital Creations must not be used to
-#    endorse or promote products derived from this software without
-#    prior written permission from Digital Creations.
-# 
-# 6. Modified redistributions of any form whatsoever must retain
-#    the following acknowledgment:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    Intact (re-)distributions of any official Zope release do not
-#    require an external acknowledgement.
-# 
-# 7. Modifications are encouraged but must be packaged separately as
-#    patches to official Zope releases.  Distributions that do not
-#    clearly separate the patches from the original work must be clearly
-#    labeled as unofficial distributions.  Modifications which do not
-#    carry the name Zope may be packaged in any form, as long as they
-#    conform to all of the clauses above.
-# 
-# 
-# Disclaimer
-# 
-#   THIS SOFTWARE IS PROVIDED BY DIGITAL CREATIONS ``AS IS'' AND ANY
-#   EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-#   PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL DIGITAL CREATIONS OR ITS
-#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#   SUCH DAMAGE.
-# 
-# 
-# This software consists of contributions made by Digital Creations and
-# many individuals on behalf of Digital Creations.  Specific
-# attributions are listed in the accompanying credits file.
-# 
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE
+#
 ##############################################################################
 "$Id$"
 
-from string import split, strip
-import regex, ts_regex
+import os
+import thread
+import re
 
 from DT_Util import ParseError, InstanceDict, TemplateDict, render_blocks, str
 from DT_Var import Var, Call, Comment
@@ -109,7 +38,7 @@ class String:
         %(name)s
       %(in results)]
 
-    """ 
+    """
 
     isDocTemp=1
 
@@ -119,7 +48,7 @@ class String:
     func_code.co_varnames='self','REQUEST'
     func_code.co_argcount=2
     func_code.__roles__=()
-    
+
     func_defaults__roles__=()
     func_defaults=()
 
@@ -128,8 +57,8 @@ class String:
 
     parse_error__roles__=()
     def parse_error(self, mess, tag, text, start):
-        raise ParseError, "%s, for tag %s, on line %s of %s<p>" % (
-            mess, self.errQuote(tag), len(split(text[:start],'\n')),
+        raise ParseError, "%s, for tag %s, on line %s of %s" % (
+            mess, self.errQuote(tag), len(text[:start].split('\n')),
             self.errQuote(self.__name__))
 
     commands__roles__=()
@@ -154,35 +83,32 @@ class String:
 
     tagre__roles__=()
     def tagre(self):
-        return regex.symcomp(
-            '%('                                     # beginning
-            '\(<name>[a-zA-Z0-9_/.-]+\)'                       # tag name
-            '\('
-            '[\0- ]+'                                # space after tag name
-            '\(<args>\([^)"]+\("[^"]*"\)?\)*\)'      # arguments
-            '\)?'
-            ')\(<fmt>[0-9]*[.]?[0-9]*[a-z]\|[]![]\)' # end
-            , regex.casefold) 
+        return re.compile(
+            '%\\('                                  # beginning
+            '(?P<name>[a-zA-Z0-9_/.-]+)'              # tag name
+            '('
+            '[\000- ]+'                             # space after tag name
+            '(?P<args>([^\\)"]+("[^"]*")?)*)'         # arguments
+            ')?'
+            '\\)(?P<fmt>[0-9]*[.]?[0-9]*[a-z]|[]![])' # end
+            , re.I)
 
     _parseTag__roles__=()
-    def _parseTag(self, tagre, command=None, sargs='', tt=type(())):
-        tag, args, command, coname = self.parseTag(tagre,command,sargs)
+    def _parseTag(self, match_ob, command=None, sargs='', tt=type(())):
+        tag, args, command, coname = self.parseTag(match_ob,command,sargs)
         if type(command) is tt:
             cname, module, name = command
             d={}
-            # Subtlety: in these calls, globals() is not modified, but it
-            # provides module context for the import statement (so it knows
-            # to check the same directory as this file was found in).
             try:
-                exec 'from %s import %s' % (module, name) in globals(), d
+                exec 'from %s import %s' % (module, name) in d
             except ImportError:
-                exec 'from DocumentTemplate.%s import %s' % (module, name) in globals(), d
+                exec 'from DocumentTemplate.%s import %s' % (module, name) in d
             command=d[name]
             self.commands[cname]=command
         return tag, args, command, coname
 
     parseTag__roles__=()
-    def parseTag(self, tagre, command=None, sargs=''):
+    def parseTag(self, match_ob, command=None, sargs=''):
         """Parse a tag using an already matched re
 
         Return: tag, args, command, coname
@@ -194,8 +120,8 @@ class String:
                coname is the name of a continue tag (e.g. else)
                  or None otherwise
         """
-        tag, name, args, fmt =tagre.group(0, 'name', 'args', 'fmt')
-        args=args and strip(args) or ''
+        tag, name, args, fmt = match_ob.group(0, 'name', 'args', 'fmt')
+        args=args and args.strip() or ''
 
         if fmt==']':
             if not command or name != command.name:
@@ -223,17 +149,18 @@ class String:
             return tag, args, Var, None
 
     varExtra__roles__=()
-    def varExtra(self,tagre):
-        return tagre.group('fmt')
+    def varExtra(self, match_ob):
+        return match_ob.group('fmt')
 
     parse__roles__=()
     def parse(self,text,start=0,result=None,tagre=None):
         if result is None: result=[]
         if tagre is None: tagre=self.tagre()
-        l=tagre.search(text,start)
-        while l >= 0:
+        mo = tagre.search(text,start)
+        while mo :
+            l = mo.start(0)
 
-            try: tag, args, command, coname = self._parseTag(tagre)
+            try: tag, args, command, coname = self._parseTag(mo)
             except ParseError, m: self.parse_error(m[0],m[1],text,l)
 
             s=text[start:l]
@@ -245,23 +172,25 @@ class String:
                                        tag, l, args, command)
             else:
                 try:
-                    if command is Var: r=command(args, self.varExtra(tagre))
+                    if command is Var: r=command(args, self.varExtra(mo))
                     else: r=command(args)
                     if hasattr(r,'simple_form'): r=r.simple_form
                     result.append(r)
                 except ParseError, m: self.parse_error(m[0],tag,text,l)
 
-            l=tagre.search(text,start)
+            mo = tagre.search(text,start)
 
         text=text[start:]
         if text: result.append(text)
         return result
 
     skip_eol__roles__=()
-    def skip_eol(self, text, start, eol=regex.compile('[ \t]*\n')):
+    def skip_eol(self, text, start, eol=re.compile('[ \t]*\n')):
         # if block open is followed by newline, then skip past newline
-        l=eol.match(text,start)
-        if l > 0: start=start+l
+        mo =eol.match(text,start)
+        if mo is not None:
+            start = start + mo.end(0) - mo.start(0)
+
         return start
 
     parse_block__roles__=()
@@ -277,12 +206,13 @@ class String:
         sa=sargs
         while 1:
 
-            l=tagre.search(text,start)
-            if l < 0: self.parse_error('No closing tag', stag, text, sloc)
+            mo = tagre.search(text,start)
+            if mo is None: self.parse_error('No closing tag', stag, text, sloc)
+            l = mo.start(0)
 
-            try: tag, args, command, coname= self._parseTag(tagre,scommand,sa)
+            try: tag, args, command, coname= self._parseTag(mo,scommand,sa)
             except ParseError, m: self.parse_error(m[0],m[1], text, l)
-            
+
             if command:
                 start=l+len(tag)
                 if hasattr(command, 'blockContinuations'):
@@ -295,7 +225,7 @@ class String:
                 section._v_blocks=section.blocks=self.parse(text[:l],sstart)
                 section._v_cooked=None
                 blocks.append((tname,sargs,section))
-    
+
                 start=self.skip_eol(text,l+len(tag))
 
                 if coname:
@@ -315,10 +245,11 @@ class String:
     parse_close__roles__=()
     def parse_close(self, text, start, tagre, stag, sloc, scommand, sa):
         while 1:
-            l=tagre.search(text,start)
-            if l < 0: self.parse_error('No closing tag', stag, text, sloc)
+            mo = tagre.search(text,start)
+            if mo is None: self.parse_error('No closing tag', stag, text, sloc)
+            l = mo.start(0)
 
-            try: tag, args, command, coname= self._parseTag(tagre,scommand,sa)
+            try: tag, args, command, coname= self._parseTag(mo,scommand,sa)
             except ParseError, m: self.parse_error(m[0],m[1], text, l)
 
             start=l+len(tag)
@@ -386,7 +317,7 @@ class String:
         """
         if mapping is not None or vars:
             self.initvars(mapping, vars)
-        if source_string is not None: 
+        if source_string is not None:
             self.raw=source_string
         self.cook()
 
@@ -404,7 +335,7 @@ class String:
 
     cook__roles__=()
     def cook(self,
-             cooklock=ts_regex.allocate_lock(),
+             cooklock=thread.allocate_lock(),
              ):
         cooklock.acquire()
         try:
@@ -442,13 +373,13 @@ class String:
         containing values to be looked up.  Values will be looked up
         using getattr, so inheritence of values is supported.  Note
         that names beginning with '_' will not be looked up from the
-        client. 
+        client.
 
         The optional argument, 'mapping' is used to specify a mapping
         object containing values to be inserted.
 
         Values to be inserted may also be specified using keyword
-        arguments. 
+        arguments.
 
         Values will be inserted from one of several sources.  The
         sources, in the order in which they are consulted, are:
@@ -463,7 +394,7 @@ class String:
              created, and
 
           o  The 'mapping' argument provided when the template was
-             created. 
+             created.
 
         '''
         # print '============================================================'
@@ -526,8 +457,8 @@ class String:
                 # otherwise its just a normal client object.
                 push(InstanceDict(client, md)) # Circ. Ref. 8-|
                 pushed=pushed+1
-                
-        if self._vars: 
+
+        if self._vars:
             push(self._vars)
             pushed=pushed+1
 
@@ -565,7 +496,7 @@ class String:
 class FileMixin:
     # Mix-in class to abstract certain file-related attributes
     edited_source=''
-    
+
     def __init__(self, file_name='', mapping=None, __name__='', **vars):
         """\
         Create a document template based on a named file.

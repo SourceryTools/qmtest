@@ -1,92 +1,20 @@
 ##############################################################################
-# 
-# Zope Public License (ZPL) Version 1.0
-# -------------------------------------
-# 
-# Copyright (c) Digital Creations.  All rights reserved.
-# 
-# This license has been certified as Open Source(tm).
-# 
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-# 
-# 1. Redistributions in source code must retain the above copyright
-#    notice, this list of conditions, and the following disclaimer.
-# 
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions, and the following disclaimer in
-#    the documentation and/or other materials provided with the
-#    distribution.
-# 
-# 3. Digital Creations requests that attribution be given to Zope
-#    in any manner possible. Zope includes a "Powered by Zope"
-#    button that is installed by default. While it is not a license
-#    violation to remove this button, it is requested that the
-#    attribution remain. A significant investment has been put
-#    into Zope, and this effort will continue if the Zope community
-#    continues to grow. This is one way to assure that growth.
-# 
-# 4. All advertising materials and documentation mentioning
-#    features derived from or use of this software must display
-#    the following acknowledgement:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    In the event that the product being advertised includes an
-#    intact Zope distribution (with copyright and license included)
-#    then this clause is waived.
-# 
-# 5. Names associated with Zope or Digital Creations must not be used to
-#    endorse or promote products derived from this software without
-#    prior written permission from Digital Creations.
-# 
-# 6. Modified redistributions of any form whatsoever must retain
-#    the following acknowledgment:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    Intact (re-)distributions of any official Zope release do not
-#    require an external acknowledgement.
-# 
-# 7. Modifications are encouraged but must be packaged separately as
-#    patches to official Zope releases.  Distributions that do not
-#    clearly separate the patches from the original work must be clearly
-#    labeled as unofficial distributions.  Modifications which do not
-#    carry the name Zope may be packaged in any form, as long as they
-#    conform to all of the clauses above.
-# 
-# 
-# Disclaimer
-# 
-#   THIS SOFTWARE IS PROVIDED BY DIGITAL CREATIONS ``AS IS'' AND ANY
-#   EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-#   PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL DIGITAL CREATIONS OR ITS
-#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#   SUCH DAMAGE.
-# 
-# 
-# This software consists of contributions made by Digital Creations and
-# many individuals on behalf of Digital Creations.  Specific
-# attributions are listed in the accompanying credits file.
-# 
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE
+#
 ##############################################################################
-'''$Id$''' 
-__version__='$Revision$'[11:-2]
+"""DTML Utilities
 
-import regex, string, math, os
-from string import strip, join, atoi, lower, split, find
+$Id$"""
+
+import re
 import VSEval
 
 str=__builtins__['str'] # Waaaaa, waaaaaaaa needed for pickling waaaaa
@@ -103,17 +31,18 @@ def html_quote(v, name='(Unknown name)', md={},
                        (('"'),    '&quot;'))): #"
         text=str(v)
         for re,name in character_entities:
-            if find(text, re) >= 0: text=join(split(text,re),name)
+            if text.find(re) >= 0: text=text.split(re).join(name)
         return text
 
 def int_param(params,md,name,default=0, st=type('')):
-    try: v=params[name]
-    except: v=default
+    v = params.get(name, default)
     if v:
-        try: v=atoi(v)
+        try:
+            v = int(v)
         except:
-            v=md[v]
-            if type(v) is st: v=atoi(v)
+            v = md[v]
+            if isinstance(v, str):
+                v = int(v)
     return v or 0
 
 _marker=[]
@@ -449,14 +378,10 @@ ListType=type([])
 def parse_params(text,
                  result=None,
                  tag='',
-                 unparmre=regex.compile(
-                     '\([\0- ]*\([^\0- =\"]+\)\)'),
-                 qunparmre=regex.compile(
-                     '\([\0- ]*\("[^"]*"\)\)'),
-                 parmre=regex.compile(
-                     '\([\0- ]*\([^\0- =\"]+\)=\([^\0- =\"]+\)\)'),
-                 qparmre=regex.compile(
-                     '\([\0- ]*\([^\0- =\"]+\)="\([^"]*\)\"\)'),
+                 unparmre=re.compile('([\000- ]*([^\000- ="]+))'),
+                 qunparmre=re.compile('([\000- ]*("[^"]*"))'),
+                 parmre=re.compile('([\000- ]*([^\000- ="]+)=([^\000- ="]+))'),
+                 qparmre=re.compile('([\000- ]*([^\000- ="]+)="([^"]*)")'),
                  **parms):
 
     """Parse tag parameters
@@ -482,39 +407,47 @@ def parse_params(text,
 
     result=result or {}
 
-    if parmre.match(text) >= 0:
-        name=lower(parmre.group(2))
-        value=parmre.group(3)
-        l=len(parmre.group(1))
-    elif qparmre.match(text) >= 0:
-        name=lower(qparmre.group(2))
-        value=qparmre.group(3)
-        l=len(qparmre.group(1))
-    elif unparmre.match(text) >= 0:
-        name=unparmre.group(2)
-        l=len(unparmre.group(1))
+    # HACK - we precalculate all matches. Maybe we don't need them
+    # all. This should be fixed for performance issues
+
+    mo_p = parmre.match(text)
+    mo_q = qparmre.match(text)
+    mo_unp = unparmre.match(text)
+    mo_unq = qunparmre.match(text)
+
+    if mo_p:
+        name=mo_p.group(2).lower()
+        value=mo_p.group(3)
+        l=len(mo_p.group(1))
+    elif mo_q:
+        name=mo_q.group(2).lower()
+        value=mo_q.group(3)
+        l=len(mo_q.group(1))
+    elif mo_unp:
+        name=mo_unp.group(2)
+        l=len(mo_unp.group(1))
         if result:
             if parms.has_key(name):
                 if parms[name] is None: raise ParseError, (
                     'Attribute %s requires a value' % name, tag)
-                    
+
                 result[name]=parms[name]
             else: raise ParseError, (
                 'Invalid attribute name, "%s"' % name, tag)
         else:
             result['']=name
-        return apply(parse_params,(text[l:],result),parms)
-    elif qunparmre.match(text) >= 0:
-        name=qunparmre.group(2)
-        l=len(qunparmre.group(1))
+        return parse_params(text[l:],result,**parms)
+    elif mo_unq:
+        name=mo_unq.group(2)
+        l=len(mo_unq.group(1))
         if result: raise ParseError, (
             'Invalid attribute name, "%s"' % name, tag)
         else: result['']=name
-        return apply(parse_params,(text[l:],result),parms)
+        return parse_params(text[l:],result,**parms)
     else:
-        if not text or not strip(text): return result
+        if not text or not text.strip(): return result
         raise ParseError, ('invalid parameter: "%s"' % text, tag)
-    
+
     if not parms.has_key(name):
         raise ParseError, (
             'Invalid attribute name, "%s"' % name, tag)
@@ -524,9 +457,9 @@ def parse_params(text,
         if type(p) is not ListType or p:
             raise ParseError, (
                 'Duplicate values for attribute "%s"' % name, tag)
-            
+
     result[name]=value
 
-    text=strip(text[l:])
-    if text: return apply(parse_params,(text,result),parms)
+    text=text[l:].strip()
+    if text: return parse_params(text,result,**parms)
     else: return result

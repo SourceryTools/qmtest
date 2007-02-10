@@ -46,6 +46,7 @@ import user
 import random
 
 import qm.external.DocumentTemplate as DocumentTemplate
+sys.path.insert(1, os.path.dirname(os.path.dirname(DocumentTemplate.__file__)))
 
 ########################################################################
 # constants
