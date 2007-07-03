@@ -1,3 +1,8 @@
+2007-07-03  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/compilation_test_database.py: New test database class.
+	* qm/test/classes/classes.qmc: Register it.
+
 2007-02-09  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/external/DocumentTemplate/*: partially merge in bits from Zope 2.10.1
