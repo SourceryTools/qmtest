@@ -19,6 +19,7 @@
  <class kind="target" name="thread_target.ThreadTarget"/>
  <class kind="database" name="mount_database.MountDatabase"/>
  <class kind="database" name="xml_database.XMLDatabase"/>
+ <class kind="database" name="compilation_test_database.CompilationTestDatabase"/>
  <class kind="test" name="command.ExecTest"/>
  <class kind="test" name="command.ShellCommandTest"/>
  <class kind="test" name="command.ShellScriptTest"/>
