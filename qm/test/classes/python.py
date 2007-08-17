@@ -224,7 +224,7 @@ class ExceptionTest(BaseExceptionTest):
 
     def MakeResult(self, exc_info, result):
         # Make sure the exception is an object.
-        if not type(exc_info[0]) is types.ClassType:
+        if not type(exc_info[0]) in [types.ClassType, type]:
             result.Fail(qm.message("test raised non-object",
                                    exc_type=str(type(exc_info[0]))))
         # Make sure it's an instance of the right class.
