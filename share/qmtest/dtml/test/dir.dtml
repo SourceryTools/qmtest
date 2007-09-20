@@ -237,10 +237,14 @@
            </td>
            <td>
              <span class="outcome">
-              <a href="javascript: void(0);" 
-                 onclick="set_expectation('<dtml-var
-                 "GetExpectationUrl(id, expectation)">')"
-              ><dtml-var "expectation or 'None'"></a>
+              <dtml-if expr="HasModifiableExpectations()">
+                <a href="javascript: void(0);" 
+                   onclick="set_expectation('<dtml-var
+                   "GetExpectationUrl(id, expectation)">')"
+                ><dtml-var "expectation or 'None'"></a>
+              <dtml-else>
+                <dtml-var "expectation or 'None'">
+              </dtml-if>
              </span>
            </td>
            <td>

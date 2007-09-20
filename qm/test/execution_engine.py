@@ -23,6 +23,7 @@ import qm.queue
 from   qm.test.base import *
 import qm.test.cmdline
 import qm.test.database
+from   qm.test.expectation_database import ExpectationDatabase
 from   qm.test.context import *
 import qm.xmlutil
 from   result import *
@@ -202,8 +203,7 @@ class ExecutionEngine:
         'result_streams' -- A sequence of 'ResultStream' objects.  Each
         stream will be provided with results as they are available.
 
-        'expectations' -- If not 'None', a dictionary mapping test IDs
-        to expected outcomes."""
+        'expectations' -- If not 'None', an ExpectationDatabase object."""
 
         self.__database = database
         self.__test_ids = test_ids
@@ -216,8 +216,8 @@ class ExecutionEngine:
         if expectations is not None:
             self.__expectations = expectations
         else:
-            self.__expectations = {}
-            
+            self.__expectations = ExpectationDatabase(test_database = database)
+
         # There are no input handlers.
         self.__input_handlers = {}
         
@@ -704,7 +704,7 @@ class ExecutionEngine:
 
             # Check for unexpected outcomes.
             if result.GetKind() == Result.TEST:
-                if (self.__expectations.get(id, Result.PASS)
+                if (self.__expectations.Lookup(id).GetOutcome()
                     != result.GetOutcome()):
                     self.__any_unexpected_outcomes = 1
 

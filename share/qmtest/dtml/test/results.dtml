@@ -94,22 +94,35 @@
     <dtml-let result=sequence-item
               test_id="result.GetId()"
               outcome="result.GetOutcome()"
+              expectation="expected_outcomes.get(test_id)"
               url="GetDetailUrl(test_id)">
      <tr class="<dtml-var expr="server.GetHTMLClassForOutcome(outcome)">">
       <td><dtml-var expr="FormatId(test_id, 'test', 'navigation')"></td>
       <td><span class="outcome"><dtml-var name="outcome">
        </span></td>
-      <dtml-if expr="expected_outcomes.has_key(test_id)">
        <td><span class="outcome">
-           <dtml-var expr="expected_outcomes[test_id]"></span></td>
-      <dtml-else>
-       <td>&nbsp;</td>
-      </dtml-if>
+         <dtml-if expr="HasModifiableExpectations()">
+           <a href="javascript: void(0);" 
+              onclick="set_expectation('<dtml-var
+              "GetExpectationUrl(test_id, expectation)">')"
+           ><dtml-var "expectation or 'None'"></a>
+         <dtml-else>
+           <dtml-var "expectation or 'None'">
+         </dtml-if>
+       </span></td>
       <td><a href="<dtml-var url>">Details</a></td></tr>
     </dtml-let>
    </dtml-in>
   </table>  
  </dtml-let>
+
+ <dtml-var expr="GenerateStartScript()">
+   function set_expectation(url) {
+    window.open(url, "set_expectation",
+                "dependent,height=200,width=640");
+
+   }
+ <dtml-var expr="GenerateEndScript()">
 
  <dtml-var expr="GenerateEndBody()">
 </html>

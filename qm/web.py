@@ -46,7 +46,7 @@ import user
 import random
 
 import qm.external.DocumentTemplate as DocumentTemplate
-sys.path.insert(1, os.path.dirname(os.path.dirname(DocumentTemplate.__file__)))
+sys.path.insert(1, os.path.dirname(DocumentTemplate.__file__))
 
 ########################################################################
 # constants
@@ -432,8 +432,8 @@ class WebRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         request = apply(WebRequest, (script_url, ), fields)
         # Store the client's IP address with the request.
         request.client_address = self.client_address[0]
+        
         self.__HandleRequest(request)
-
 
     def do_POST(self):
         """Process HTTP POST requests."""
