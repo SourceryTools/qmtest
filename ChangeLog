@@ -1,3 +1,30 @@
+2007-09-20  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/mount_database.py: Add 'mounts' parameter,
+	  fix GetIds() method.
+	* tests/QMTest/configuration: Update MountDatabase configuration.
+	* qm/test/expectation_database.py: Define new extension type.
+	* qm/test/classes/previous_testrun.py: New extension.
+	* qm/test/classes/xml_expectation_database.py: New extension.
+	* qm/test/classes/classes.qmc: Register them.
+	* qm/test/cmdline.py: Support ExpectationDatabase
+	* qm/test/base.py: Likewise.
+	* qm/test/execution_engine.py: Adjust.
+	* qm/test/web/web.py: Adjust.
+	* share/qmtest/dtml/test/dir.dtml: Only make expectations editable 
+	  if they really are
+	* share/qmtest/dtml/test/results.dtml: Likewise.
+	* qm/fields.py: Various fixes to DictionaryField and SetField.
+	* qm/web.py: Insert correct module search path for local
+	  DocumentTemplate package.
+
+2007-09-19  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/mount_database.py: Add support for 'mounts' parameter,
+	  fix GetIds() method.
+	* tests/QMTest/configuration: Adjust.
+	* qm/fields.py: Fix various issues with DictionaryField and SetField.
+
 2007-08-17  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/python.py: Expect new-style exceptions (python 2.5).
