@@ -34,6 +34,8 @@ from   qm.test.runnable import Runnable
 from   qm.test.suite import Suite
 from   qm.test.report import ReportGenerator
 from   qm.test.classes.dir_run_database import *
+from   qm.test.expectation_database import ExpectationDatabase
+from   qm.test.classes.previous_testrun import PreviousTestRun
 from   qm.trace import *
 from   qm.test.web.web import QMTestServer
 import qm.structured_text
@@ -172,6 +174,13 @@ class QMTest:
         "outcomes",
         "FILE",
         "Use expected outcomes in FILE."
+        )
+
+    expectations_option_spec = (
+        "e",
+        "expectations",
+        "FILE",
+        "Use expectations in FILE."
         )
 
     context_option_spec = (
@@ -362,6 +371,7 @@ class QMTest:
         ( output_option_spec, no_output_option_spec ),
         ( concurrent_option_spec, targets_option_spec ),
         ( extension_output_option_spec, extension_id_option_spec ),
+        ( expectations_option_spec, outcomes_option_spec ),
         )
 
     global_options_spec = [
@@ -441,7 +451,7 @@ class QMTest:
            no_browser_option_spec,
            pid_file_option_spec,
            port_option_spec,
-           outcomes_option_spec,           
+           outcomes_option_spec,
            targets_option_spec,
            results_option_spec
            )
@@ -569,6 +579,7 @@ Valid formats are %s.
            help_option_spec,
            no_output_option_spec,
            outcomes_option_spec,
+           expectations_option_spec,
            output_option_spec,
            random_option_spec,
            rerun_option_spec,
@@ -593,6 +604,7 @@ Valid formats are %s.
          ( help_option_spec,
            format_option_spec,
            outcomes_option_spec,
+           expectations_option_spec,
            output_option_spec,
            result_stream_spec)
          ),
@@ -601,7 +613,7 @@ Valid formats are %s.
 
     __version_output = \
         ("QMTest %s\n" 
-         "Copyright (C) 2002, 2003, 2004, 2005 CodeSourcery, LLC\n"
+         "Copyright (C) 2002 - 2007 CodeSourcery, Inc.\n"
          "QMTest comes with ABSOLUTELY NO WARRANTY\n"
          "For more information about QMTest visit http://www.qmtest.com\n")
     """The string printed when the --version option is used.
@@ -886,9 +898,8 @@ Valid formats are %s.
                     arguments["threads"] = concurrency
                 else:
                     class_name = "serial_target.SerialTarget"
-                target_class \
-                    = get_extension_class(class_name,
-                                          'target', self.GetDatabase())
+                target_class = get_extension_class(class_name,
+                                                   'target', self.GetDatabase())
                 test.set_targets([target_class(self.GetDatabase(), arguments)])
             
         return test.get_targets()
@@ -1035,8 +1046,7 @@ Valid formats are %s.
         else:
             extension_loader = None
 
-        class_loader = lambda n: \
-            qm.test.base.get_extension_class(n, kind, database)
+        class_loader = lambda n: get_extension_class(n, kind, database)
         
         # Process the descriptor.
         (extension_class, more_arguments) \
@@ -1131,9 +1141,7 @@ Valid formats are %s.
         database = self.GetDatabase()
 
         # Load the target class.
-        target_class = qm.test.base.get_extension_class(class_name,
-                                                        "target",
-                                                        database)
+        target_class = get_extension_class(class_name, "target", database)
 
         # Get the dictionary of class arguments.
         field_dictionary \
@@ -1216,8 +1224,7 @@ Valid formats are %s.
                 description += "  * " + n + "\n\n    "
                 # Try to load the class to get more information.
                 try:
-                    extension_class \
-                        = qm.test.base.get_extension_class(n, kind, database)
+                    extension_class = get_extension_class(n, kind, database)
                     description \
                         += qm.extension.get_class_description(extension_class,
                                                               brief=1)
@@ -1412,8 +1419,7 @@ Valid formats are %s.
                      document_element_tag="class-directory"))
         
         # Copy entries from the old file to the new one.
-        extensions \
-            = qm.test.base.get_extension_class_names_in_directory(directory)
+        extensions = get_extension_class_names_in_directory(directory)
         for k, ns in extensions.iteritems():
             for n in ns:
                 # Remove previous entries for the class being added.
@@ -1483,16 +1489,17 @@ Valid formats are %s.
 
         any_unexpected_outcomes = 0
 
+        # Load expectations.
+        expectations = (self.GetCommandOption('expectations') or
+                        self.GetCommandOption('outcomes'))
+        expectations = base.load_expectations(expectations,
+                                              database,
+                                              results.GetAnnotations())
         # Compute the list of result streams to which output should be
         # written.
-        streams = self.__GetResultStreams(self.GetCommandOption("output"))
-
-        # Send the annotations through.
-        for s in streams:
-            s.WriteAllAnnotations(results.GetAnnotations())
-
-        # Get the expected outcomes.
-        outcomes = self.__GetExpectedOutcomes()
+        streams = self.__CreateResultStreams(self.GetCommandOption("output"),
+                                             results.GetAnnotations(),
+                                             expectations)
 
         resource_results = {}
         for r in results:
@@ -1523,8 +1530,7 @@ Valid formats are %s.
             for s in streams:
                 s.WriteResult(r)
                 if (not any_unexpected_outcomes
-                    and r.GetOutcome() != outcomes.get(r.GetId(),
-                                                       Result.PASS)):
+                    and r.GetOutcome() != expectations.Lookup(r.GetId())):
                     any_unexpected_outcomes = 1
         # Shut down the streams.            
         for s in streams:
@@ -1647,18 +1653,23 @@ Valid formats are %s.
             raise qm.cmdline.CommandError, \
                   qm.error("no such ID", id=str(exception))
 
+        # Handle the --annotate options.
+        annotations = self.__GetAnnotateOptions()
+
+        # Load expectations.
+        expectations = (self.GetCommandOption('expectations') or
+                        self.GetCommandOption('outcomes'))
+        expectations = base.load_expectations(expectations,
+                                              database,
+                                              annotations)
         # Filter the set of tests to be run, eliminating any that should
         # be skipped.
-        test_ids = self.__FilterTestsToRun(test_ids)
+        test_ids = self.__FilterTestsToRun(test_ids, expectations)
         
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
         context = self.MakeContext()
-
-        # Create ResultStreams for textual output and for generating
-        # a results file.
-        result_streams = []
 
         # Handle the --output option.
         if self.HasCommandOption("no-output"):
@@ -1670,13 +1681,11 @@ Valid formats are %s.
                 # By default, write results to a default file.
                 result_file_name = self.results_file_name
 
-        # Handle the --result-stream options.
-        result_streams.extend(self.__GetResultStreams(result_file_name))
-
-        # Handle the --annotate options.
-        for name, value in self.__GetAnnotateOptions().iteritems():
-            for rs in result_streams:
-                rs.WriteAnnotation(name, value)
+        # Compute the list of result streams to which output should be
+        # written.
+        result_streams = self.__CreateResultStreams(result_file_name,
+                                                    annotations,
+                                                    expectations)
 
         if self.HasCommandOption("random"):
             # Randomize the order of the tests.
@@ -1687,7 +1696,7 @@ Valid formats are %s.
         # Run the tests.
         engine = ExecutionEngine(database, test_ids, context, targets,
                                  result_streams,
-                                 self.__GetExpectedOutcomes())
+                                 expectations)
         if engine.Run():
             return 1
 
@@ -1747,6 +1756,14 @@ Valid formats are %s.
             directory = os.path.normpath(directory)
             run_db = DirRunDatabase(directory, database)
 
+        # Load expectations. Only support the 'outcome' option here,
+        # as 'expectations' in general are unsupported with this GUI.
+        expectations = self.GetCommandOption('outcomes')
+        expectations = base.load_expectations(expectations, database)
+        # Make sure this is either an ExpectationDatabase or a
+        # PreviousRun
+        if not type(expectations) in (ExpectationDatabase, PreviousTestRun):
+            raise qm.cmdline.CommandError, 'not a valid results file'
         # Figure out which targets to use.
         targets = self.GetTargets()
         # Compute the context in which the tests will be run.
@@ -1755,7 +1772,7 @@ Valid formats are %s.
         server = QMTestServer(database,
                               port_number, address,
                               log_file, targets, context,
-                              self.__GetExpectedOutcomes(),
+                              expectations,
                               run_db)
         port_number = server.GetServerAddress()[1]
         
@@ -1821,38 +1838,16 @@ Valid formats are %s.
         is required."""
 
         self._stderr.write(self.__parser.GetCommandHelp(command))
-        
 
-    def __GetExpectedOutcomes(self):
-        """Return the expected outcomes for this test run.
+    def __FilterTestsToRun(self, test_ids, expectations):
+        """Return those tests from 'test_ids' that should be run.
 
-        returns -- A map from test names to outcomes corresponding to
-        the expected outcome files provided on the command line.  If no
-        expected outcome files are provided, an empty map is
-        returned."""
+        'test_ids' -- A sequence of test ids.
 
-        if self.__expected_outcomes is None:
-            outcomes_file_name = self.GetCommandOption("outcomes")
-            if not outcomes_file_name:
-                self.__expected_outcomes = {}
-            else:
-                try:
-                    self.__expected_outcomes \
-                         = base.load_outcomes(outcomes_file_name,
-                                              self.GetDatabaseIfAvailable())
-                except IOError, e:
-                    raise qm.cmdline.CommandError, str(e)
-
-        return self.__expected_outcomes
-        
-        
-    def __FilterTestsToRun(self, test_names):
-        """Return those tests from 'test_names' that should be run.
-
-        'test_names' -- A sequence of test names.
+        'expectations' -- An ExpectationDatabase.
 
         returns -- Those elements of 'test_names' that are not to be
-        skipped.  If 'a' precedes 'b' in 'test_names', and both 'a' and
+        skipped.  If 'a' precedes 'b' in 'test_ids', and both 'a' and
         'b' are present in the result, 'a' will precede 'b' in the
         result."""
 
@@ -1863,19 +1858,12 @@ Valid formats are %s.
             # Load the outcomes from the file specified.
             outcomes = base.load_outcomes(rerun_file_name,
                                           self.GetDatabase())
-            expectations = self.__GetExpectedOutcomes()
-            # We can avoid treating the no-expectation case as special
-            # by creating an empty map.
-            if expectations is None:
-                expectations = {}
             # Filter out tests that have unexpected outcomes.
-            test_names \
-                = filter(lambda n: \
-                             (outcomes.get(n, Result.PASS) 
-                              != expectations.get(n, Result.PASS)),
-                         test_names)
+            test_ids = [t for t in test_ids
+                        if outcomes.get(t, Result.PASS)
+                        != expectations.Lookup(t).GetOutcome()]
         
-        return test_names
+        return test_ids
 
 
     def __CheckExtensionKind(self, kind):
@@ -1891,11 +1879,15 @@ Valid formats are %s.
                            kind = kind)
 
                        
-    def __GetResultStreams(self, output_file):
+    def __CreateResultStreams(self, output_file, annotations, expectations):
         """Return the result streams to use.
 
         'output_file' -- If not 'None', the name of a file to which
         the standard results file format should be written.
+
+        'annotations' -- A dictionary with annotations for this test run.
+
+        'expectations' -- An ExpectationDatabase.
         
         returns -- A list of 'ResultStream' objects, as indicated by the
         user."""
@@ -1904,10 +1896,9 @@ Valid formats are %s.
 
         result_streams = []
 
-        arguments = {
-            "expected_outcomes" : self.__GetExpectedOutcomes(),
-            }
-        
+        arguments = {}
+        arguments['expected_outcomes'] = expectations.GetExpectedOutcomes()
+
         # Look up the summary format.
         format = self.GetCommandOption("format", "")
         if format and format not in self.summary_formats:
@@ -1924,9 +1915,7 @@ Valid formats are %s.
             stream = self.GetTextResultStreamClass()(as)
             result_streams.append(stream)
 
-        f = lambda n: qm.test.base.get_extension_class(n,
-                                                       "result_stream",
-                                                       database)
+        f = lambda n: get_extension_class(n, "result_stream", database)
         
         # Look for all of the "--result-stream" options.
         for opt, opt_arg in self.__command_options:
@@ -1941,6 +1930,10 @@ Valid formats are %s.
             rs = (self.GetFileResultStreamClass()
                   ({ "filename" : output_file}))
             result_streams.append(rs)
+
+        for name, value in annotations.iteritems():
+            for rs in result_streams:
+                rs.WriteAnnotation(name, value)
 
         return result_streams
     

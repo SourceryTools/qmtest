@@ -38,4 +38,6 @@
  <class kind="host" name="simulator.Simulator"/>
  <class kind="host" name="command_host.CommandHost"/>
  <class kind="run_database" name="dir_run_database.DirRunDatabase"/>
+ <class kind="expectation_database" name="previous_testrun.PreviousTestRun"/>
+ <class kind="expectation_database" name="xml_expectation_database.XMLExpectationDatabase"/>
 </class-directory>

@@ -24,6 +24,7 @@ import qm
 import qm.attachment
 from   qm.common import *
 from   qm.test.file_result_reader import FileResultReader
+from   qm.test.expectation_database import ExpectationDatabase
 import qm.platform
 import qm.structured_text
 from   qm.test.context import *
@@ -383,6 +384,49 @@ def load_results(file, database):
     return cl(args)
         
 
+def load_expectations(file, database, annotations = None):
+    """Read expectations from a file.
+
+    'file' -- The filename or file object from which to read the
+    expectations.  If 'file' is not a string, then it is must be a seekable
+    file object, and this function will look for an 'ExpectationDatabase'
+    that accepts the file.  If 'file' is a string, then it is treated as
+    either a filename or as an extension descriptor.
+
+    'database' -- The current database.
+
+    'annotations' -- Annotations for the current test run.
+
+    returns -- An 'ExpectationDatabase' object, or raises an exception if no
+    appropriate reader is available."""
+
+    if not file:
+        return ExpectationDatabase()
+    f = None
+    if isinstance(file, (str, unicode)):
+        if os.path.exists(file):
+            f = open(file, "rb")
+    else:
+        f = file
+    if f:
+        return PreviousTestRun(test_database = database, results_file = f)
+    if not isinstance(file, (str, unicode)):
+        raise QMException, "not a valid expectation database"
+    if database:
+        extension_loader = database.GetExtension
+    else:
+        extension_loader = None
+    class_loader = lambda n: get_extension_class(n,
+                                                 "expectation_database",
+                                                 database)
+    cl, args = qm.extension.parse_descriptor(file,
+                                             class_loader,
+                                             extension_loader)
+    args['test_database'] = database
+    args['testrun_parameters'] = annotations or {}
+    return cl(**args)
+        
+
 def load_outcomes(file, database):
     """Load test outcomes from a file.
 
@@ -441,9 +485,11 @@ import qm.test.resource
 import qm.test.result_reader
 import qm.test.result_stream
 import qm.test.run_database
+import qm.test.expectation_database
 import qm.test.suite
 import qm.test.target
 import qm.test.test
+from   qm.test.classes.previous_testrun import PreviousTestRun
 
 __extension_bases = {
     'database' : qm.test.database.Database,
@@ -453,6 +499,7 @@ __extension_bases = {
     'result_reader' : qm.test.result_reader.ResultReader,
     'result_stream' : qm.test.result_stream.ResultStream,
     'run_database' : qm.test.run_database.RunDatabase,
+    'expectation_database' : qm.test.expectation_database.ExpectationDatabase,
     'suite' : qm.test.suite.Suite,
     'target' : qm.test.target.Target,
     'test' : qm.test.test.Test
