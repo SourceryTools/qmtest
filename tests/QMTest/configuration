@@ -1,2 +1,10 @@
 <?xml version="1.0" ?>
-<tdb-configuration><class-name>mount_database.MountDatabase</class-name></tdb-configuration>
+<extension class="mount_database.MountDatabase" kind="database">
+  <argument name="mounts">
+    <dictionary>
+      <item><text>xmldb</text><text>/home/stefan/work/qmtest/tests/xmldb</text></item>
+      <item><text>regress</text><text>regress</text></item>
+      <item><text>results_files</text><text>results_files</text></item>
+    </dictionary>
+  </argument>
+</extension>

@@ -840,6 +840,9 @@ class DictionaryField(Field):
         %s"""%(self.__key_field.GetHelp(), self.__value_field.GetHelp())
         return help
 
+    
+    def GetKeyField(self): return self.__key_field
+    def GetValueField(self): return self.__value_field
 
     ### Output methods.
 
@@ -988,10 +991,11 @@ class DictionaryField(Field):
 
         values = {}
         for item in node.childNodes:
-            values[self.__key_field.GetValueFromDomNode(item.childNodes[0],
-                                                        attachment_store)] =\
-            self.__value_field.GetValueFromDomNode(item.childNodes[1],
-                                                   attachment_store)
+            if item.nodeType == xml.dom.Node.ELEMENT_NODE:
+                values[self.__key_field.GetValueFromDomNode
+                       (item.childNodes[0], attachment_store)] =\
+                       self.__value_field.GetValueFromDomNode(item.childNodes[1],
+                                                              attachment_store)
         return self.Validate(values)
     
 
@@ -1021,11 +1025,13 @@ class SetField(Field):
 
         raises -- 'TypeError' if 'contained' is not a 'Field'."""
 
+        if not properties.has_key('description'):
+            properties['description'] = contained.GetDescription()
+
         super(SetField, self).__init__(
             contained.GetName(),
             default_value or [],
             title = contained.GetTitle(),
-            description = contained.GetDescription(),
             **properties)
 
         # A set field may not contain a set field.

@@ -19,6 +19,7 @@ import dircache
 import os.path
 from   qm.test.database import *
 from   qm.test.suite import Suite
+from   qm.fields import *
 import qm.test.database
 
 ########################################################################
@@ -66,6 +67,12 @@ class MountDatabase(Database):
             return map(self.__joiner, self.__suite.GetSuiteIds())
 
 
+    mounts = DictionaryField(key_field = TextField(),
+                             value_field = TextField(),
+                             description=\
+                """Dictionary mapping mount points to (sub-)database paths.
+                If empty, the database directory is scanned for subdirectories.""")
+
 
     def __init__(self, path, arguments):
 
@@ -73,19 +80,33 @@ class MountDatabase(Database):
         # used by the databases it contains.  They must all use the
         # same label class.
         label_class = None
-        
+        implicit = False
         # Find the contained databases.
+        self.mounts = arguments.pop('mounts', {})
         self._mounts = {}
-        for d in dircache.listdir(path):
-            mounted_db_path = os.path.join(path, d)
-            if is_database(mounted_db_path):
-                db = load_database(mounted_db_path)
-                self._mounts[d] = db
+        if not self.mounts:
+            # Scan local directory.
+            implicit = True
+            self.mounts = dict([(d, os.path.join(path, d))
+                                for d in dircache.listdir(path)])
+        else:
+            # Translate relative paths into absolute paths.
+            tmp = {}
+            for k,v in self.mounts.iteritems():
+                tmp[k] = os.path.join(path, v)
+            self.mounts = tmp
+        # Now translate the value from path to database
+        for k,v in self.mounts.iteritems():
+            if is_database(v):
+                db = load_database(v)
+                self._mounts[k] = db
                 if not label_class:
                     label_class = db.label_class
                 elif label_class != db.label_class:
                     raise QMException, \
                           "mounted databases use differing label classes"
+            elif not implicit:
+                raise QMException, "%s does not contain a test database"%v
                                    
         # Initialize the base class.
         arguments["modifiable"] = "false"
@@ -98,16 +119,15 @@ class MountDatabase(Database):
         
     def GetIds(self, kind, directory="", scan_subdirs=1):
 
-        if directory == "":
-            if kind == Database.SUITE:
-                return self._mounts.keys()
-            else:
-                return []
-        
-        database, joiner, directory = self._SelectDatabase(directory)
-        return map(joiner,
-                   database.GetIds(kind, directory, scan_subdirs))
-
+        ids = []
+        if directory == "" and kind == Database.SUITE:
+                ids.extend(self._mounts.keys())
+        if scan_subdirs:
+            dirs = directory and [directory] or self._mounts.keys()
+            for d in dirs:
+                database, joiner, subdir = self._SelectDatabase(d)
+                ids += [joiner(i) for i in database.GetIds(kind, subdir, 1)]
+        return ids
 
     def GetTest(self, test_id):
 
