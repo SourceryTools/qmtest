@@ -89,7 +89,8 @@ class CompilationTest(CompilerTest):
 
         # Compile the executable in a single step so we can apply all
         # options at once.
-        return [CompilationStep(Compiler.MODE_LINK, self.source_files,
+        return [CompilationStep(self._GetCompiler(context),
+                                Compiler.MODE_LINK, self.source_files,
                                 self.options, self.executable, [])]
 
 

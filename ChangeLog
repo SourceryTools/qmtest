@@ -7,6 +7,11 @@
 	* qm/test/classes/previous_testrun.py: Add file_name parameter.
 	* doc/concepts.xml: Document expectation databases.
 	* doc/customizing.xml: Likewise.
+
+	* qm/test/classes/compiler_test.py: Add 'compiler' parameter to
+	  CompilationStep.
+	* qm/test/classes/compilation_test.py: Adjust.
+	* qm/test/classes/compilation_test_database.py: Adjust.
 	
 2007-09-24  Stefan Seefeld  <stefan@codesourcery.com>
 
