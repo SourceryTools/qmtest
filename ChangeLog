@@ -4,7 +4,10 @@
 	* share/qmtest/examples/tdb: Rename to...
 	* share/qmtest/examples/xml_tdb: ...this.
 	* share/qmtest/examples/compilation_tdb: Add new example test database.
-
+	* qm/test/classes/previous_testrun.py: Add file_name parameter.
+	* doc/concepts.xml: Document expectation databases.
+	* doc/customizing.xml: Likewise.
+	
 2007-09-24  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* share/qmtest/tutorial: Rename to...
