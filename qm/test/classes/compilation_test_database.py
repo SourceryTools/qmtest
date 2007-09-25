@@ -47,17 +47,17 @@ class CompilationTest(compilation_test.CompilationTest):
     executable = TextField(computed="true")
     language = TextField()
 
-    def _GetCompiler(self, context):
-
-        return context['CompilerTable.compilers'][self.language]
-
 
     def _GetCompilationSteps(self, c):
 
+        lang = self.language
+        compiler = c['CompilerTable.compilers'][lang]
         label_components = self.GetDatabase().GetLabelComponents(self.GetId())
         label_components[-1] = os.path.splitext(label_components[-1])[0]
         selector = '.'.join(label_components)
-        lang = self.language
+        path = c.GetDerivedValue(selector, lang + '_path')
+        if path:
+            compiler = Compiler(path, compiler.GetOptions(), compiler.GetLDFlags())
         options = (parse_string_list(c.GetDerivedValue(
             selector, 'CPPFLAGS', '')) +
                    parse_string_list(c.GetDerivedValue(
@@ -65,7 +65,8 @@ class CompilationTest(compilation_test.CompilationTest):
                    parse_string_list(c.GetDerivedValue(
             selector, lang + '_ldflags', '')))
 
-        return [CompilationStep(Compiler.MODE_LINK, self.source_files,
+        return [CompilationStep(compiler,
+                                Compiler.MODE_LINK, self.source_files,
                                 self.options + options, self.executable, [])]
 
 

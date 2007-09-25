@@ -25,9 +25,11 @@ import os, dircache
 class CompilationStep:
     """A single compilation step."""
 
-    def __init__(self, mode, files, options = [],
+    def __init__(self, compiler, mode, files, options = [],
                  output = None , diagnostics = []):
         """Construct a new 'CompilationStep'.
+
+        'compiler' -- A Compiler object.
 
         'mode' -- As for 'Compiler.Compile'.
 
@@ -41,6 +43,7 @@ class CompilationStep:
         indicating diagnostic messages that are expected from this
         compilation step."""
 
+        self.compiler = compiler
         self.mode = mode
         self.files = files
         self.options = options
@@ -145,10 +148,6 @@ class CompilerTest(Test, CompilerBase):
         modified by this method to indicate outcomes other than
         'Result.PASS' or to add annotations."""
 
-        # Get the compiler to use for this test.
-        compiler = self._GetCompiler(context)
-        self._compiler = compiler
-        
         # If an executable is generated, executable_path will contain
         # the generated path.
         executable_path = None
@@ -165,6 +164,9 @@ class CompilerTest(Test, CompilerBase):
 
         # Perform each of the compilation steps.
         for step in steps:
+            # Get the compiler to use for this test.
+            compiler = step.compiler
+
             # Compute a prefix for the result annotations.
             prefix = self._GetAnnotationPrefix() + "step_%d_" % step_index
 
