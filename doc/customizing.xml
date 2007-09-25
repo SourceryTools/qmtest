@@ -480,6 +480,96 @@ a.b.c.c_options=-I /a/b/c
      </glosslist>
    </section> <!-- compilation-test-database -->
  </section>
+ <section id="customizing-expectation-databases">
+   <title>Expectation Databases</title>
+   <section id="previous-test-run">
+     <title>PreviousTestRun</title>
+     <para>The PreviousTestRun queries expectations from a results file. Thus, running
+     <application>QMTest</application> twice, the second time using the results of the
+     first test run as expectations, will result in no unexpected results:</para>
+     <screen>
+<prompt>&gt; </prompt><userinput>qmtest run -o my_results.qmr</userinput>
+--- TEST RESULTS -------------------------------------------------------------
+
+  exec0                                         : PASS
+
+  exec1                                         : FAIL
+    ...
+  exec2                                         : PASS
+
+--- TESTS THAT DID NOT PASS --------------------------------------------------
+
+  exec1                                         : FAIL
+    Expression evaluates to false.
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3        tests total
+       1 ( 33%) tests FAIL
+       2 ( 67%) tests PASS
+
+<prompt>&gt; </prompt><userinput>qmtest run -e previous_testrun.PreviousTestRun(file_name="my_results.qmr")</userinput>
+--- TEST RESULTS -------------------------------------------------------------
+
+  exec0                                         : PASS
+
+  exec1                                         : XFAIL
+    ...
+  exec2                                         : PASS
+
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  None.
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       3 (100%) tests as expected
+
+     </screen>
+     <para>Since taking previous test runs as expectations is a common use case, the 
+     second command above may be expressed in a more compact form as:</para>
+     <screen><userinput>qmtest run -O my_results.qmr</userinput></screen>
+     <para>The <classname>PreviousTestRun</classname> takes the following parameters.</para>
+     <glosslist>
+       <glossentry>
+         <glossterm><property>file_name</property> (text field)</glossterm>
+         <glossdef><para>The filename of the results file.</para></glossdef>
+       </glossentry>
+     </glosslist>
+
+   </section> <!-- previous-test-run -->
+   <section id="xml-expectation-database">
+     <title>XMLExpectationDatabase</title>
+     <para>The <type>XMLExpectationDatabase</type> stores expectations in an XML file.
+     Instead of containing expectations for all tests, individual expectations are 
+     computed from rules by matching test-ids as well as test-run annotations against
+     specific rules.</para>
+     <screen><![CDATA[
+<expectations>
+  <expectation outcome="fail" test_id=".*">
+    <annotation name="a" value="b"/>
+  </expectation>
+  <expectation outcome="fail" test_id="first*" />
+</expectations>
+     ]]></screen>
+     <para>The above little expectation database thus contains the following rules (subsequent matching 
+     rules override previous matching rules):</para>
+     <orderedlist>
+       <listitem><para>All tests are expected to fail if the annotation <varname>a</varname> has value 
+       <parameter>b</parameter>.</para></listitem>
+       <listitem><para>All tests whose test-ids start with <parameter>first</parameter> are expected to fail.</para></listitem>
+     </orderedlist>
+     <para>The <classname>XMLExpectationDatabase</classname> takes the following parameters.</para>
+     <glosslist>
+       <glossentry>
+         <glossterm><property>file_name</property> (text field)</glossterm>
+         <glossdef><para>The filename of the xml expectations file.</para></glossdef>
+       </glossentry>
+     </glosslist>
+   </section> <!-- xml-expectation-database -->
+ </section>
  <section id="customizing-test-targets">
    <title>Test Targets</title>
    <para>Test targets represent entities that <application>QMTest</application> 

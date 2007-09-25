@@ -17,7 +17,7 @@
 # Imports
 ########################################################################
 
-from qm.fields import PythonField
+from qm.fields import TextField, PythonField
 from qm.test.expectation_database import ExpectationDatabase
 from qm.test.result import Result
 from qm.test.base import load_results
@@ -33,12 +33,15 @@ class PreviousTestRun(ExpectationDatabase):
     'qmtest run' to determine the expected outcome for the current
     test run."""
 
-    results_file = PythonField()
+    file_name = TextField(description="The name of the results file.")
+    results_file = PythonField("The results file.")
 
 
     def __init__(self, **args):
 
         super(PreviousTestRun, self).__init__(**args)
+        if not self.results_file:
+            self.results_file = open(self.file_name, "rb")
         results = load_results(self.results_file, self.test_database)
         self._results = {}
         for r in results:

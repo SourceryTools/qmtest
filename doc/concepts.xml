@@ -364,8 +364,8 @@ test python.ExecTest python_pass
       information that will make your test class more informative.</para>
     </section><!-- concepts-annotations -->
 
-    <section id="concepts-expectations">
-      <title>Expectations</title>
+    <section id="concepts-expected-outcomes">
+      <title>Expected Outcomes</title>
 
       <para>The easiest way to create expectations is to tell
       <application>QMTest</application> that you expect future results to be
@@ -396,7 +396,7 @@ test python.ExecTest python_pass
        2 (100%) tests as expected
 
     </screen>
-    </section><!-- concepts-expectations -->
+    </section><!-- concepts-expected-outcomes -->
   </section><!-- concepts-test-results -->
 
   <section id="concepts-test-suite">
@@ -527,7 +527,21 @@ test      python.ExecTest dir2.one
     directly. However, the use of an XML format makes it easy for you to
     automatically generate tests from another program, if required.</para>
   </section><!-- concepts-test-database -->
-
+  <section id="concepts-expectation-database">
+    <title>Expectation Database</title>
+    <para>While typically tests are expected to pass, it sometimes is meaningful
+    to indicate a different expectation. <application>QMTest</application> 
+    represents expectations by <link linkend="concepts-test-results">results</link>.
+    Here, the <link linkend="concepts-outcomes">outcomes</link> represent the
+    expectated outcome, and the <link linkend="concepts-annotations">annotations</link>
+    may explain the expectation.</para>
+    <para>An <firstterm id="def-expectation-database">expectation database</firstterm>
+    stores expectations associated with a <link linkend="concepts-test-database">test database</link>.
+    It provides an interface to query expectations by test id.</para>
+    <para>In the simplest case all tests are expected to pass. In a slightly less
+    simple case, an existing set of results, obtained from a previous test run, may
+    be used as expectations for a subsequent test run.</para>
+  </section>
   <section id="concepts-context">
     <title>Context</title>
 
