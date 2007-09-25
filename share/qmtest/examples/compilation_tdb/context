@@ -1,0 +1,8 @@
+CompilerTable.languages=c cplusplus
+CompilerTable.c_kind=GCC
+CompilerTable.c_path=gcc
+CompilerTable.cplusplus_kind=GCC
+CompilerTable.cplusplus_path=g++
+
+c_options=-O3
+subdir.cplusplus_options=-O2 -Wall

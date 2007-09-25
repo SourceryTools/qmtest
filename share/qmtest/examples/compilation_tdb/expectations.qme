@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<expectations>
+  <expectation outcome="fail" test_id=".*">
+    <annotation name="a" value="b"/>
+  </expectation>
+  <expectation outcome="fail" test_id="first*" />
+</expectations>

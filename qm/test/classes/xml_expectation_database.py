@@ -61,7 +61,7 @@ class XMLExpectationDatabase(ExpectationDatabase):
             if re.match(rule_id, test_id):
                 match = True
                 for a in rule_annotations.iteritems():
-                    if (a[0] in self.testrun_parameters and
+                    if (a[0] not in self.testrun_parameters or
                         not re.match(a[1], self.testrun_parameters[a[0]])):
                         match = False
                 if match:
