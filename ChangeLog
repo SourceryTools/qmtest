@@ -1,3 +1,10 @@
+2007-09-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/xml_expectation_database.py: Refine.
+	* share/qmtest/examples/tdb: Rename to...
+	* share/qmtest/examples/xml_tdb: ...this.
+	* share/qmtest/examples/compilation_tdb: Add new example test database.
+
 2007-09-24  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* share/qmtest/tutorial: Rename to...

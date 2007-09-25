@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<extension class="compilation_test_database.CompilationTestDatabase" kind="database">
+  <argument name="srcdir"><text>.</text></argument>
+</extension>
