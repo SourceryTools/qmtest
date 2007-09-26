@@ -25,7 +25,7 @@ import os, dircache
 class CompilationStep:
     """A single compilation step."""
 
-    def __init__(self, compiler, mode, files, options = [],
+    def __init__(self, compiler, mode, files, options = [], ldflags = [],
                  output = None , diagnostics = []):
         """Construct a new 'CompilationStep'.
 
@@ -37,6 +37,8 @@ class CompilationStep:
 
         'options' -- As for 'Compiler.Compile'.
 
+        'ldflags' -- As for 'Compiler.Compile'.
+
         'output' -- As for 'Compiler.Compile'.
 
         'diagnostics' -- A sequence of 'Diagnostic' instances
@@ -47,6 +49,7 @@ class CompilationStep:
         self.mode = mode
         self.files = files
         self.options = options
+        self.ldflags = ldflags
         self.output = output
         self.diagnostics = diagnostics
 
@@ -173,6 +176,7 @@ class CompilerTest(Test, CompilerBase):
             # Get the compilation command.
             command = compiler.GetCompilationCommand(step.mode, step.files,
                                                      step.options,
+                                                     step.ldflags,
                                                      step.output)
             result[prefix + "command"] = result.Quote(' '.join(command))
             # Run the compiler.

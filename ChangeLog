@@ -1,5 +1,6 @@
 2007-09-25  Stefan Seefeld  <stefan@codesourcery.com>
 
+	* MANIFEST.in: Remove obsolete entries.
 	* qm/test/classes/xml_expectation_database.py: Refine.
 	* share/qmtest/examples/tdb: Rename to...
 	* share/qmtest/examples/xml_tdb: ...this.
@@ -8,10 +9,12 @@
 	* doc/concepts.xml: Document expectation databases.
 	* doc/customizing.xml: Likewise.
 
-	* qm/test/classes/compiler_test.py: Add 'compiler' parameter to
-	  CompilationStep.
+	* qm/test/classes/compiler.py: Add 'ldflags' parameters.
+	* qm/test/classes/compiler_test.py: Add 'compiler' and 'ldflags'
+	  parameters to CompilationStep.
 	* qm/test/classes/compilation_test.py: Adjust.
 	* qm/test/classes/compilation_test_database.py: Adjust.
+	* doc/customizing.xml: Adjust.
 	
 2007-09-24  Stefan Seefeld  <stefan@codesourcery.com>
 
