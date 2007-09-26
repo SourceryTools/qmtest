@@ -54,6 +54,7 @@ class install_lib(base):
                               'qmtest',
                               'site-extensions-%d.%d'%sys.version_info[:2])
         reset_config_variables(config_file,
+                               version=self.distribution.get_version(),
                                prefix=prefix, extension_path=extension_path)
 
         # Make sure the new config file gets recompiled, or else python may

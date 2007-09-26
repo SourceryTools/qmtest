@@ -1,4 +1,4 @@
-version='2.3'
+version='snapshot'
 data_dir='share/qmtest'
 doc_dir='share/doc/qmtest'
 # The following variables are set / adjusted during

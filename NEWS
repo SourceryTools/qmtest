@@ -3,6 +3,27 @@ NEWS
 
 This file describes user-visible changes to QM.
 
+QM 2.4
+======
+
+A new "expectation_database" extension kind has been added, with two
+built-in implementations, previous_testrun.PreviousTestRun, and
+xml_expectation_database.XMLExpectationDatabase. The command-line
+interface has been enhanced to support this.
+
+A new CompilationTestDatabase has been added, and various related
+test classes and utility functions have been improved to support it.
+
+The QMTest documentation has been much improved. The tutorial has been
+restructured to contain three chapters: 
+1) concepts, 2) customization, 3) extension. 
+
+Changes have been made to make QMTest work with Python 2.5.
+
+QMTest now installs its data into <prefix>/share/qmtest, and its 
+documentation into <prefix>/share/doc/qmtest.
+
+
 QM 2.3
 ======
 
