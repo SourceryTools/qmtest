@@ -7,7 +7,7 @@
 # Contents:
 #   qmtest - Distutils distribution files
 #
-# Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. 
+# Copyright (c) 2003-2007 by CodeSourcery, Inc.  All rights reserved. 
 #
 # For license terms see the file COPYING.
 #
@@ -20,13 +20,10 @@ include MANIFEST.in setup.py
 recursive-include   qm *.py
 # Scripts
 include             scripts/*
-# These are all docs, html and pdf.
-recursive-include   share/doc/qmtest *
 # These are documentation sources (docbook) and compilation harness (xslt etc.)
 recursive-include   doc *
 # These are data files used by various parts of QMTest.
 include             qm/test/classes/classes.qmc
-recursive-include   qm/test/share *
 recursive-include   share *
 recursive-include   templates *
 recursive-include   benchmarks *
@@ -35,7 +32,6 @@ recursive-include   scripts *
 # These are extension modules for the build system.
 recursive-include   qmdist *
 
-# Suppress cvs bookkeeping files.
-global-exclude */CVS/*
-global-exclude .cvsignore
+# Suppress svn bookkeeping files.
+global-exclude */.svn/*
 

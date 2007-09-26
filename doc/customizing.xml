@@ -337,6 +337,12 @@ class attributes:
       </glossdef>
      </glossentry>
      <glossentry>
+      <glossterm><property>ldflags</property> (set field)</glossterm>
+      <glossdef>
+       <para>Test-specific linker flags to pass to the compiler.</para>
+      </glossdef>
+     </glossentry>
+     <glossentry>
       <glossterm><property>source_files</property> (set field)</glossterm>
       <glossdef>
        <para>Source files to be compiled..</para>

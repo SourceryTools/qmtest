@@ -61,6 +61,7 @@ class CompilationTest(CompilerTest):
     context variable 'CompilationTest.target'."""
 
     options = SetField(TextField(description="""Test-specific options to pass to the compiler."""))
+    ldflags = SetField(TextField(description="""Test-specific link flags to pass to the compiler."""))
     source_files = SetField(TextField(description="Source files to be compiled."))
     executable = TextField(description="The name of the executable to be compiled.")
     execute = BooleanField(default_value = True,
@@ -91,7 +92,7 @@ class CompilationTest(CompilerTest):
         # options at once.
         return [CompilationStep(self._GetCompiler(context),
                                 Compiler.MODE_LINK, self.source_files,
-                                self.options, self.executable, [])]
+                                self.options, self.ldflags, self.executable, [])]
 
 
     def _IsExecutionRequired(self):

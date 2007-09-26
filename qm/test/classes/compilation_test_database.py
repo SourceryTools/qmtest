@@ -43,6 +43,7 @@ class CompilationTest(compilation_test.CompilationTest):
     to the CompilerTable-related parameters."""
 
     options = SetField(TextField(), computed="true")
+    ldflags = SetField(TextField(), computed="true")
     source_files = SetField(TextField(), computed="true")
     executable = TextField(computed="true")
     language = TextField()
@@ -61,13 +62,15 @@ class CompilationTest(compilation_test.CompilationTest):
         options = (parse_string_list(c.GetDerivedValue(
             selector, 'CPPFLAGS', '')) +
                    parse_string_list(c.GetDerivedValue(
-            selector, lang + '_options', '')) +
-                   parse_string_list(c.GetDerivedValue(
+            selector, lang + '_options', '')))
+        ldflags = (parse_string_list(c.GetDerivedValue(
             selector, lang + '_ldflags', '')))
 
         return [CompilationStep(compiler,
                                 Compiler.MODE_LINK, self.source_files,
-                                self.options + options, self.executable, [])]
+                                self.options + options,
+                                self.ldflags + ldflags,
+                                self.executable, [])]
 
 
 class CompilationTestDatabase(Database):
