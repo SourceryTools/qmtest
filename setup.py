@@ -28,8 +28,9 @@ from   qmdist.command.build_doc import build_ref_manual
 from   qmdist.command.install_lib import install_lib
 from   qmdist.command.bdist_wininst import bdist_wininst
 from   qmdist.command.check import check
-from   qm.config import version
 import sys, os, os.path, glob, shutil
+
+version='2.4'
 
 if sys.platform != "win32":
     # We need the sigmask extension on POSIX systems, but don't
@@ -82,16 +83,15 @@ setup(name="qmtest",
       scripts=scripts,
       data_files=[include('share/qmtest/messages', '*.txt'),
                   include('share/qmtest/diagnostics', '*.txt'),
-                  # DTML files for the GUI.
-                  include('share/qmtest/dtml', '*.dtml'),
-                  include('share/qmtest/dtml/test/dtml', '*.dtml'),
-                  include('share/qmtest/dtml/report/dtml', '*.dtml'),
                   # The documentation.
                   ('share/doc/qmtest', ('README', 'COPYING')),
                   include('share/doc/qmtest/html/tutorial', '*'),
                   include('share/doc/qmtest/print', 'tutorial.pdf'),
-                  include('share/qmtest/tutorial/tdb', '*'),
-                  include('share/qmtest/tutorial/tdb/QMTest', 'configuration'),
+                  include('share/doc/qmtest/examples/xml_tdb', '*'),
+                  include('share/doc/qmtest/examples/xml_tdb/QMTest', 'configuration'),
+                  include('share/doc/qmtest/examples/compilation_tdb', '*'),
+                  include('share/doc/qmtest/examples/compilation_tdb/subdir', '*'),
+                  include('share/doc/qmtest/examples/compilation_tdb/QMTest', 'configuration'),
                   # The GUI.
                   include('share/qmtest/dtml', '*.dtml'),
                   include('share/qmtest/dtml/test', '*.dtml'),
@@ -104,10 +104,3 @@ setup(name="qmtest",
                   include('share/qmtest/dtds',  '*.dtd')
                   ],
       )
-
-########################################################################
-# Local Variables:
-# mode: python
-# indent-tabs-mode: nil
-# fill-column: 72
-# End:

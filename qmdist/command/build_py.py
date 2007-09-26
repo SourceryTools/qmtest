@@ -37,6 +37,7 @@ class build_py(base):
         config_file = os.path.join(self.build_lib, 'qm', 'config.py')
         self.announce("adjusting config parameters")
         reset_config_variables(config_file,
+                               version=self.distribution.get_version(),
                                prefix=os.getcwd(),
                                extension_path=os.path.join('qm',
                                                            'test',

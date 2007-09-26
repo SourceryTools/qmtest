@@ -1,3 +1,13 @@
+2007-09-26  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* NEWS: Document new features in version 2.4.
+	* qm/config.py: Don't hard-code version number.
+	* qmdist/command/build_py.py: ...but compute it at build time.
+	* qmdist/command/install_lib.py: Likewise.
+	* setup.py: Cleanup.
+	* share/qmtest/examples: Move to...
+	* share/doc/qmtest/examples: ...here.
+
 2007-09-25  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* MANIFEST.in: Remove obsolete entries.
