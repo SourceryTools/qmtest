@@ -1,10 +1,10 @@
 NEWS
 ====
 
-This file describes user-visible changes to QM.
+This file describes user-visible changes to QMTest.
 
-QM 2.4
-======
+QMTest 2.4
+==========
 
 A new "expectation_database" extension kind has been added, with two
 built-in implementations, previous_testrun.PreviousTestRun, and
