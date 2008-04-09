@@ -49,7 +49,7 @@ class install_lib(base):
         config_file = join(self.install_dir, 'qm', 'config.py')
         self.announce("adjusting config parameters")
         i = self.distribution.get_command_obj('install')
-        prefix = i.root or i.prefix
+        prefix = i.prefix
         extension_path = join('share',
                               'qmtest',
                               'site-extensions-%d.%d'%sys.version_info[:2])
