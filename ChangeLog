@@ -1,3 +1,8 @@
+2008-10-21  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/structured_text.py: Remove python script header.
+	* qm/test/cmdline.py: Report help and version to stdout.
+
 2008-04-09  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qmdist/command/install_lib.py: Remove incorrect use of --root.

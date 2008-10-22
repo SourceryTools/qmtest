@@ -737,12 +737,12 @@ Valid formats are %s.
         # (The GNU coding standards require that the program take no
         # further action after seeing --version.)
         if self.HasGlobalOption("version"):
-            self._stderr.write(self.__version_output % qm.version)
+            self._stdout.write(self.__version_output % qm.version)
             return 0
         # If the global help option was specified, display it and stop.
         if (self.GetGlobalOption("help") is not None 
             or self.__command == "help"):
-            self._stderr.write(self.__parser.GetBasicHelp())
+            self._stdout.write(self.__parser.GetBasicHelp())
             return 0
         # If the command help option was specified, display it and stop.
         if self.GetCommandOption("help") is not None:
