@@ -1,86 +1,14 @@
 ##############################################################################
-# 
-# Zope Public License (ZPL) Version 1.0
-# -------------------------------------
-# 
-# Copyright (c) Digital Creations.  All rights reserved.
-# 
-# This license has been certified as Open Source(tm).
-# 
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-# 
-# 1. Redistributions in source code must retain the above copyright
-#    notice, this list of conditions, and the following disclaimer.
-# 
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions, and the following disclaimer in
-#    the documentation and/or other materials provided with the
-#    distribution.
-# 
-# 3. Digital Creations requests that attribution be given to Zope
-#    in any manner possible. Zope includes a "Powered by Zope"
-#    button that is installed by default. While it is not a license
-#    violation to remove this button, it is requested that the
-#    attribution remain. A significant investment has been put
-#    into Zope, and this effort will continue if the Zope community
-#    continues to grow. This is one way to assure that growth.
-# 
-# 4. All advertising materials and documentation mentioning
-#    features derived from or use of this software must display
-#    the following acknowledgement:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    In the event that the product being advertised includes an
-#    intact Zope distribution (with copyright and license included)
-#    then this clause is waived.
-# 
-# 5. Names associated with Zope or Digital Creations must not be used to
-#    endorse or promote products derived from this software without
-#    prior written permission from Digital Creations.
-# 
-# 6. Modified redistributions of any form whatsoever must retain
-#    the following acknowledgment:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    Intact (re-)distributions of any official Zope release do not
-#    require an external acknowledgement.
-# 
-# 7. Modifications are encouraged but must be packaged separately as
-#    patches to official Zope releases.  Distributions that do not
-#    clearly separate the patches from the original work must be clearly
-#    labeled as unofficial distributions.  Modifications which do not
-#    carry the name Zope may be packaged in any form, as long as they
-#    conform to all of the clauses above.
-# 
-# 
-# Disclaimer
-# 
-#   THIS SOFTWARE IS PROVIDED BY DIGITAL CREATIONS ``AS IS'' AND ANY
-#   EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-#   PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL DIGITAL CREATIONS OR ITS
-#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#   SUCH DAMAGE.
-# 
-# 
-# This software consists of contributions made by Digital Creations and
-# many individuals on behalf of Digital Creations.  Specific
-# attributions are listed in the accompanying credits file.
-# 
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE
+#
 ##############################################################################
 __doc__='''Variable insertion parameters
 
@@ -97,9 +25,9 @@ __doc__='''Variable insertion parameters
        objects.  The value of a custom format is a method name to
        be invoked on the object being inserted.  The method should
        return an object that, when converted to a string, yields
-       the desired text.  For example, the HTML source::
+       the desired text.  For example, the DTML code::
 
-          <!--#var date fmt=DayOfWeek-->
+          <dtml-var date fmt=DayOfWeek>
 
        Inserts the result of calling the method 'DayOfWeek' of the
        object bound to the variable 'date', with no arguments.
@@ -130,7 +58,7 @@ __doc__='''Variable insertion parameters
 
          - Cannot be formatted with the specified format, and
 
-         - Are either the special Python value 'None' or 
+         - Are either the special Python value 'None' or
            are false and yield an empty string when converted to
            a string.
 
@@ -161,12 +89,12 @@ __doc__='''Variable insertion parameters
        value after formatting has been applied.  These parameters
        are supplied without arguments.
 
-       'lower' --  cause all upper-case letters to be converted to lower case. 
+       'lower' --  cause all upper-case letters to be converted to lower case.
 
-       'upper' --  cause all upper-case letters to be converted to lower case. 
+       'upper' --  cause all upper-case letters to be converted to lower case.
 
        'capitalize' -- cause the first character of the inserted value
-       to be converted to upper case. 
+       to be converted to upper case.
 
        'spacify' -- cause underscores in the inserted value to be
        converted to spaces.
@@ -214,7 +142,7 @@ Evaluating expressions without rendering results
 
    A 'call' tag is provided for evaluating named objects or expressions
    without rendering the result.
-   
+
 
 ''' # '
 __rcs_id__='$Id$'
@@ -224,7 +152,7 @@ from DT_Util import parse_params, name_param, html_quote, str
 import string, re, sys
 from urllib import quote, quote_plus
 
-class Var: 
+class Var:
     name='var'
     expr=None
 
@@ -237,7 +165,7 @@ class Var:
                             url_quote_plus=1, missing='',
                             newline_to_br=1, url=1)
         self.args=args
-        
+
         self.modifiers=tuple(
             map(lambda t: t[1],
                 filter(lambda m, args=args, used=args.has_key:
@@ -252,7 +180,7 @@ class Var:
         if len(args)==1 and fmt=='s':
             if expr is None: expr=name
             else: expr=expr.eval
-            self.simple_form=expr,
+            self.simple_form=(expr,)
 
     def render(self, md):
         args=self.args
@@ -282,7 +210,7 @@ class Var:
         if have_arg('null') and not val and val != 0:
             # check for null (false but not zero, including None, [], '')
             return args['null']
-            
+
 
         # handle special formats defined using fmt= first
         if have_arg('fmt'):
@@ -338,7 +266,7 @@ class Var:
 
     __call__=render
 
-class Call: 
+class Call:
     name='call'
     expr=None
 
@@ -347,7 +275,7 @@ class Call:
         name, expr = name_param(args,'call',1)
         if expr is None: expr=name
         else: expr=expr.eval
-        self.simple_form=expr,None
+        self.simple_form=(expr, None)
 
 
 def url_quote(v, name='(Unknown name)', md={}):
@@ -356,6 +284,11 @@ def url_quote(v, name='(Unknown name)', md={}):
 def url_quote_plus(v, name='(Unknown name)', md={}):
     return quote_plus(str(v))
 
+def url_unquote(v, name='(Unknown name)', md={}):
+    return unquote(str(v))
+
+def url_unquote_plus(v, name='(Unknown name)', md={}):
+    return unquote_plus(str(v))
 
 def newline_to_br(v, name='(Unknown name)', md={}):
     v=str(v)
@@ -387,7 +320,7 @@ def thousands_commas(v, name='(Unknown name)', md={},
         v=v[:l+1]+','+v[l+1:]
         mo=thou(v)
     return v+s
-    
+
 def whole_dollars_with_commas(v, name='(Unknown name)', md={}):
     try: v= "$%d" % v
     except: v=''
@@ -425,11 +358,13 @@ special_formats={
     'collection-length': len_format,
     'structured-text': structured_text,
 
-    # The rest are depricated:
+    # The rest are deprecated:
     'sql-quote': sql_quote,
     'html-quote': html_quote,
     'url-quote': url_quote,
     'url-quote-plus': url_quote_plus,
+    'url-unquote': url_unquote,
+    'url-unquote-plus': url_unquote_plus,
     'multi-line': newline_to_br,
     'comma-numeric': thousands_commas,
     'dollars-with-commas': whole_dollars_with_commas,
@@ -440,9 +375,10 @@ def spacify(val):
     if val.find('_') >= 0: val=val.replace('_', ' ')
     return val
 
-modifiers=(html_quote, url_quote, url_quote_plus, newline_to_br,
+modifiers=(html_quote, url_quote, url_quote_plus, url_unquote,
+           url_unquote_plus, newline_to_br,
            string.lower, string.upper, string.capitalize, spacify,
-           thousands_commas, sql_quote)
+           thousands_commas, sql_quote, url_unquote, url_unquote_plus)
 modifiers=map(lambda f: (f.__name__, f), modifiers)
 
 class Comment:
@@ -450,15 +386,15 @@ class Comment:
 
     The 'comment' tag can be used to simply include comments
     in DTML source.
-    
+
     For example::
-    
+
       <!--#comment-->
-      
+
         This text is not rendered.
 
       <!--#/comment-->
-    ''' 
+    '''
     name='comment'
     blockContinuations=()
 

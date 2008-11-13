@@ -209,35 +209,6 @@ def render(self, v):
 
 d['render']=render
 
-def reorder(self, s, with=None, without=()):
-    if with is None: with=s
-    d={}
-    tt=type(())
-    for i in s:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        d[k]=v
-    r=[]
-    a=r.append
-    h=d.has_key
-
-    for i in without:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        if h(k): del d[k]
-        
-    for i in with:
-        if type(i) is tt and len(i)==2: k, v = i
-        else:                           k= v = i
-        if h(k):
-            a((k,d[k]))
-            del d[k]
-
-    return r
-
-d['reorder']=reorder
-
-
 expr_globals={
     '__builtins__':{},
     '__guarded_mul__':      VSEval.careful_mul,

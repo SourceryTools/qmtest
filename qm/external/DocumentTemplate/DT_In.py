@@ -1,92 +1,20 @@
 ##############################################################################
-# 
-# Zope Public License (ZPL) Version 1.0
-# -------------------------------------
-# 
-# Copyright (c) Digital Creations.  All rights reserved.
-# 
-# This license has been certified as Open Source(tm).
-# 
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-# 
-# 1. Redistributions in source code must retain the above copyright
-#    notice, this list of conditions, and the following disclaimer.
-# 
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions, and the following disclaimer in
-#    the documentation and/or other materials provided with the
-#    distribution.
-# 
-# 3. Digital Creations requests that attribution be given to Zope
-#    in any manner possible. Zope includes a "Powered by Zope"
-#    button that is installed by default. While it is not a license
-#    violation to remove this button, it is requested that the
-#    attribution remain. A significant investment has been put
-#    into Zope, and this effort will continue if the Zope community
-#    continues to grow. This is one way to assure that growth.
-# 
-# 4. All advertising materials and documentation mentioning
-#    features derived from or use of this software must display
-#    the following acknowledgement:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    In the event that the product being advertised includes an
-#    intact Zope distribution (with copyright and license included)
-#    then this clause is waived.
-# 
-# 5. Names associated with Zope or Digital Creations must not be used to
-#    endorse or promote products derived from this software without
-#    prior written permission from Digital Creations.
-# 
-# 6. Modified redistributions of any form whatsoever must retain
-#    the following acknowledgment:
-# 
-#      "This product includes software developed by Digital Creations
-#      for use in the Z Object Publishing Environment
-#      (http://www.zope.org/)."
-# 
-#    Intact (re-)distributions of any official Zope release do not
-#    require an external acknowledgement.
-# 
-# 7. Modifications are encouraged but must be packaged separately as
-#    patches to official Zope releases.  Distributions that do not
-#    clearly separate the patches from the original work must be clearly
-#    labeled as unofficial distributions.  Modifications which do not
-#    carry the name Zope may be packaged in any form, as long as they
-#    conform to all of the clauses above.
-# 
-# 
-# Disclaimer
-# 
-#   THIS SOFTWARE IS PROVIDED BY DIGITAL CREATIONS ``AS IS'' AND ANY
-#   EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-#   PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL DIGITAL CREATIONS OR ITS
-#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#   SUCH DAMAGE.
-# 
-# 
-# This software consists of contributions made by Digital Creations and
-# many individuals on behalf of Digital Creations.  Specific
-# attributions are listed in the accompanying credits file.
-# 
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE
+#
 ##############################################################################
 '''Sequence insertion
 
        A sequence may be inserted using an 'in' command.  The 'in'
        command specifies the name of a sequence object and text to
-       be inserted for each element in the sequence.  
+       be inserted for each element in the sequence.
 
        The EPFS syntax for the in command is::
 
@@ -97,7 +25,7 @@
        The HTML syntax for the in command is::
 
           <!--#in name-->
-               text 
+               text
           <!--#/in name-->
 
       See the example below that shows how 'if', 'else', and 'in' commands
@@ -121,15 +49,36 @@
 
     Attributes
 
-      sort -- Define the sort order for sequence items.  If an item in
-      the sequence does not define 
+      sort -- Define the sort order for sequence items.  Parameter to the
+      attribute is either a sort option, or list of sort options separated
+      by comma.  Every sort option consists of variable name, optional
+      comparison function name (default is cmp) and optional sort order
+      (default is asc).
+          Examples: sort="date" or sort="date,time" or
+      sort="title/locale,date/cmp/desc". If you want to specify sort order,
+      you cannot omit the function; use cmp for standard comparison.
+          Few predefined comparison functions available: standard cmp,
+      nocase (ignore string case), strcoll (alias "locale"),
+      strcoll_nocase (alias "locale_nocase"). Locale functions are
+      available only if module locale is already imported (you started Zope
+      with -L locale).
+
+      sort_expr -- The "sort" attribute accepts only static list of
+      sort options. This calculated parameter allows you to calculate the
+      list of sort options on the fly.
+
+      sort_expr -- This allows an expression to control sort order.
 
       reverse -- Reverse the sequence (may be combined with sort).  Note
-      that this can cause a huge memory use in lazy activation instances. 
+      that this can cause a huge memory use in lazy activation instances.
+
+      reverse_expr -- This calculated parameter allows you to calculate the
+      need of reversing on the fly.
 
       Within an 'in' block, variables are substituted from the
-      elements of the iteration.  The elements may be either
-      instance or mapping objects.  In addition, the variables:
+      elements of the iteration unless the 'no_push_item' optional
+      is specified.  The elements may be either instance or mapping
+      objects.  In addition, the variables:
 
          'sequence-item' -- The element.
 
@@ -186,7 +135,7 @@
     Batch sequence insertion
 
       When displaying a large number of objects, it is sometimes
-      desireable to display just a sub-sequence of the data.
+      desirable to display just a sub-sequence of the data.
       An 'in' command may have optional parameters,
       as in::
 
@@ -211,7 +160,7 @@
                        parameter is 3.
 
           'overlap' -- The desired overlap between batches. The
-                       default is no overlap.     
+                       default is no overlap.
 
       Typically, only 'start' and 'size' will be specified.
 
@@ -240,17 +189,17 @@
                  <!--#/in-->
 
              If the original URL is: 'foo/bar?x=1&y=2', then the
-             rendered text (after row data are displated) will be::
+             rendered text (after row data are displayed) will be::
 
-                      <a href="foo/bar?x=1&y=2&batch_start=20">
+                      <a href="foo/bar?x=1&amp;y=2&amp;batch_start=20">
                       (Next 20 results)
                       </a>
 
              If the original URL is: 'foo/bar?batch_start=10&x=1&y=2',
-             then the rendered text (after row data are displated)
+             then the rendered text (after row data are displayed)
              will be::
 
-                      <a href="foo/bar?x=1&y=2&batch_start=30">
+                      <a href="foo/bar?x=1&amp;y=2&amp;batch_start=30">
                       (Next 20 results)
                       </a>
 
@@ -353,16 +302,16 @@
         mean -- The mean of numeric values values.
 
         variance -- The variance of numeric values computed with a
-          degrees of freedom qeual to the count - 1.
+          degrees of freedom equal to the count - 1.
 
         variance-n -- The variance of numeric values computed with a
-          degrees of freedom qeual to the count.
+          degrees of freedom equal to the count.
 
         standard-deviation -- The standard deviation of numeric values
-          computed with a degrees of freedom qeual to the count - 1.
+          computed with a degrees of freedom equal to the count - 1.
 
         standard-deviation-n -- The standard deviation of numeric
-          values computed with a degrees of freedom qeual to the count.
+          values computed with a degrees of freedom equal to the count.
 
       Missing values are either 'None' or the attribute 'Value'
       of the module 'Missing', if present.
@@ -408,7 +357,7 @@ class InClass:
     start_name_re=None
     reverse=None
     sort_expr=reverse_expr=None
-    
+
     def __init__(self, blocks):
         tname, args, section = blocks[0]
         args=parse_params(args, name='', start='1',end='-1',size='10',
@@ -450,11 +399,12 @@ class InClass:
             if type(v)==type(''):
                 try: int(v)
                 except:
+
                     self.start_name_re=re.compile(
                         '&+'+
                         ''.join(["[%s]" % c for c in v])+
                         '=[0-9]+&+')
-                    
+
         name,expr=name_param(args,'in',1)
         if expr is not None: expr=expr.eval
         self.__name__, self.expr = name, expr
@@ -470,7 +420,7 @@ class InClass:
                     raise ParseError, (
                         'name in else does not match in', 'in')
             self.elses=section.blocks
-            
+
 
     def renderwb(self, md):
         expr=self.expr
@@ -493,7 +443,7 @@ class InClass:
 
         section=self.section
         params=self.args
-        
+
         mapping=self.mapping
 
         if self.sort_expr is not None:
@@ -506,7 +456,7 @@ class InClass:
             sequence=self.reverse_sequence(sequence)
         elif self.reverse is not None:
             sequence=self.reverse_sequence(sequence)
-            
+
         next=previous=0
         try: start=int_param(params,md,'start',0)
         except: start=1
@@ -730,6 +680,7 @@ class InClass:
         multsort = len(sortfields) > 1 # flag: is multiple sort
         mapping=self.mapping
         isort=not sort
+
         s=[]
         for client in sequence:
             k = None
