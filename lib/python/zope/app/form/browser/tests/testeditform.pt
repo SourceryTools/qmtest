@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>Simple Edit Form</title>
+  </head>
+
+  <body>
+
+    <h1>This is a Schema produced form</h1>
+
+    <div tal:condition="python: options.has_key('errors') and 
+                                options['errors']">
+      <span style="font-weight: bold">Errors:</span>
+      <div tal:repeat="error options/errors | nothing">
+        <span tal:replace="python: error[0].title" />: 
+        <span tal:replace="python: error[1].error_name" />
+      </div>
+    </div>
+    <br />
+    <form action="testSchemaFormAction.html" method="post">
+      <input type="hidden" name="nextURL" value=""
+          tal:attributes="value request/URL" />   
+      <table>
+
+        <tal:block repeat="field view/getFields">
+          <tr>
+            <th tal:content="field/title">Title:</th>
+            <td tal:content="structure python: view.renderField(field)">
+              <input size="20" />
+            </td>            
+          </tr>
+        </tal:block>
+
+      </table>
+ 
+      <input type="submit" name="save" value="Save" />
+
+    </form>
+  </body>
+
+</html>

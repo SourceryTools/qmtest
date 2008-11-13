@@ -1,0 +1,29 @@
+##############################################################################
+#
+# Copyright (c) 2004 Zope Corporation and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+"""Doctests for 'permission' module.
+
+$Id: test_role.py 80107 2007-09-26 14:58:39Z rogerineichen $
+"""
+import unittest
+from zope.testing.doctestunit import DocTestSuite
+
+
+def test_suite():
+    return unittest.TestSuite((
+        DocTestSuite('zope.securitypolicy.role'),
+        ))
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')
+

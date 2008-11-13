@@ -1,0 +1,45 @@
+======================
+Dublin Core Properties
+======================
+
+A dublin core property allows us to use properties from dublin core
+by simply defining a property as DCProperty.
+
+  >>> from zope.dublincore import property
+
+  >>> from zope import interface
+  >>> from zope.annotation.interfaces import IAttributeAnnotatable
+  >>> class DC(object):
+  ...     interface.implements(IAttributeAnnotatable)
+  ...     title   = property.DCProperty('title')
+  ...     author  = property.DCProperty('creators')
+  ...     authors = property.DCListProperty('creators')
+
+  >>> obj = DC()
+  >>> obj.title = u'My title'
+  >>> obj.title
+  u'My title'
+
+Let's see if the title is really stored in dublin core :
+
+  >>> from zope.dublincore.interfaces import IZopeDublinCore
+  >>> IZopeDublinCore(obj).title
+  u'My title'
+
+Even if a dublin core property is a list property we can set and get the
+property as scalar type :
+
+  >>> obj.author = u'me'
+  >>> obj.author
+  u'me'
+
+DCListProperty acts on the list :
+
+  >>> obj.authors
+  (u'me',)
+  >>> obj.authors = [u'I', u'others']
+  >>> obj.authors
+  (u'I', u'others')
+  >>> obj.author
+  u'I'
+

@@ -1,0 +1,5 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+   <adapter factory=".fileresult.FileResult" />
+   <adapter factory=".fileresult.TemporaryFileResult" />
+</configure>
+

@@ -1,0 +1,35 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Database Adapter - Test Connection
+  </title>
+</head>
+
+<body>
+<div metal:fill-slot="body">
+
+  <div i18n:translate="">Executed Query:</div>
+  <pre tal:content="request/form/sql" />
+
+  <table border="1"
+      tal:define="result view/getTestResults"
+      tal:condition="result">
+    <tbody>
+
+      <tr>
+        <th tal:repeat="field result/columns"
+            tal:content="field">Field Name</th>
+      </tr>
+
+      <tr tal:repeat="row result">
+        <td tal:repeat="field result/columns"
+            tal:content="python: getattr(row, field)">Value</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>

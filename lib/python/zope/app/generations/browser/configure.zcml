@@ -1,0 +1,23 @@
+<zope:configure 
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser"
+   >
+
+<page
+    name="generations.html"
+    menu="zmi_views" title="Database Schemas"
+    for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+    class=".managers.Managers"
+    template="managers.pt"
+    permission="zope.ManageApplication"
+    />
+
+<page
+    name="generations_managerdetails.html"
+    for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+    class=".managerdetails.ManagerDetails"
+    template="managerdetails.pt"
+    permission="zope.ManageApplication"
+    />
+
+</zope:configure>

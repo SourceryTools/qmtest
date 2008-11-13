@@ -1,0 +1,69 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <class class=".PluggableAuthentication">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface=".interfaces.IPluggableAuthentication"
+        set_schema=".interfaces.IPluggableAuthentication"
+        />
+    <require
+        permission="zope.ManageServices"
+        attributes="registrationManager"
+        />
+  </class>
+
+  <adapter
+      for=".interfaces.IQuerySchemaSearch
+           .interfaces.IPluggableAuthentication"
+      provides=".interfaces.IQueriableAuthenticator"
+      factory=".authentication.QuerySchemaSearchAdapter"
+      />
+
+  <utility
+      component=".vocabulary.credentialsPlugins"
+      name="CredentialsPlugins"
+      />
+
+  <utility
+      component=".vocabulary.authenticatorPlugins"
+      name="AuthenticatorPlugins"
+      />
+
+  <utility
+      name="No Challenge if Authenticated"
+      factory=".generic.NoChallengeCredentialsPlugin"
+      provides=".interfaces.ICredentialsPlugin"
+      />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="authentication"
+        title="Pluggable Authentication"
+        doc_path="README.txt"
+        parent="security"
+        />
+
+  </configure>
+
+  <include file="password.zcml" />
+  <include file="session.zcml" />
+  <include file="httpplugins.zcml" />
+  <include file="principalfolder.zcml" />
+  <include file="groupfolder.zcml" />
+  <include file="ftpplugins.zcml" />
+
+  <include package=".browser" />
+
+</configure>

@@ -1,0 +1,148 @@
+========
+Location
+========
+
+Location Base Class
+-------------------
+
+
+The `Location` base class is a stupid mix-in that defines `__parent__` and
+`__name__` attributes.
+
+Usage within an Object field:
+
+>>> from zope.interface import implements, Interface
+>>> from zope.schema import Object
+>>> from zope.schema.fieldproperty import FieldProperty
+>>> from zope.location.interfaces import ILocation
+>>> from zope.location.location import Location
+
+>>> class IA(Interface):
+...     location = Object(schema=ILocation, required=False, default=None)
+>>> class A(object):
+...     implements(IA)
+...     location = FieldProperty(IA['location'])
+
+>>> a = A()
+>>> a.location = Location()
+
+>>> loc = Location(); loc.__name__ = u'foo'
+>>> a.location = loc
+
+>>> loc = Location(); loc.__name__ = None
+>>> a.location = loc
+
+>>> loc = Location(); loc.__name__ = 'foo'
+>>> a.location = loc
+Traceback (most recent call last):
+...
+WrongContainedType: [foo <type 'unicode'>]
+
+
+The `insie` Function
+--------------------
+
+The `inside` function tells if l1 is inside l2.  L1 is inside l2 if l2 is an
+ancestor of l1.
+
+>>> o1 = Location()
+>>> o2 = Location(); o2.__parent__ = o1
+>>> o3 = Location(); o3.__parent__ = o2
+>>> o4 = Location(); o4.__parent__ = o3
+
+>>> from zope.location.location import inside
+>>> inside(o1, o1)
+1
+>>> inside(o2, o1)
+1
+>>> inside(o3, o1)
+1
+>>> inside(o4, o1)
+1
+
+>>> inside(o1, o4)
+0
+
+>>> inside(o1, None)
+0
+
+
+LocationProxy
+-------------
+
+The LocationProxy is a non-picklable proxy that can be put around objects that
+don't implement `ILocation`.
+
+>>> from zope.location.location import LocationProxy
+>>> l = [1, 2, 3]
+>>> ILocation.providedBy(l)
+False
+>>> p = LocationProxy(l, "Dad", "p")
+>>> p
+[1, 2, 3]
+>>> ILocation.providedBy(p)
+True
+>>> p.__parent__
+'Dad'
+>>> p.__name__
+'p'
+
+>>> import pickle
+>>> p2 = pickle.dumps(p)
+Traceback (most recent call last):
+...
+TypeError: Not picklable
+
+Proxies should get their doc strings from the object they proxy:
+
+>>> p.__doc__ == l.__doc__
+True
+
+
+The `located` function
+----------------------
+
+`located` locates an object in another and returns it:
+
+>>> from zope.location.location import located
+>>> a = Location()
+>>> parent = Location()
+>>> a_located = located(a, parent, 'a')
+>>> a_located is a
+True
+>>> a_located.__parent__ is parent
+True
+>>> a_located.__name__
+'a'
+
+If we locate the object again, nothing special happens:
+
+>>> a_located_2 = located(a_located, parent, 'a')
+>>> a_located_2 is a_located
+True
+
+
+If the object does not provide ILocation a LocationProxy is returned:
+
+>>> l = [1, 2, 3]
+>>> parent = Location()
+>>> l_located = located(l, parent, 'l')
+>>> l_located
+[1, 2, 3]
+>>> l_located.__parent__ is parent
+True
+>>> l_located.__name__
+'l'
+>>> l_located is l
+False
+>>> type(l_located)
+<class 'zope.location.location.LocationProxy'>
+>>> l_located_2 = located(l_located, parent, 'l')
+>>> l_located_2 is l_located
+True
+
+When chaning the name, we still do not get a different proxied object:
+
+>>> l_located_3 = located(l_located, parent, 'new-name')
+>>> l_located_3 is l_located_2
+True

@@ -1,0 +1,162 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="zope">
+
+  <!-- BBB 2006/02/18, to be removed after 12 months -->
+  <layer
+      zcml:condition="have deprecatedlayers"
+      name="apidoc"
+      interface=".skin.apidoc"
+      bbb_aware="true"
+      />
+
+  <zope:interface
+      interface=".skin.APIDOC"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="APIDOC"
+      />
+
+  <resource
+      name="apidoc.css"
+      file="apidoc.css"
+      />
+
+  <page
+      for="*"
+      name="apidoc_macros"
+      permission="zope.View"
+      class=".macros.APIDocumentationMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      layer=".skin.apidoc"
+      />
+
+  <page
+      for="*"
+      name="menu_macros"
+      permission="zope.View"
+      template="menu_macros.pt"
+      layer=".skin.apidoc"
+      />
+
+  <page
+      for="*"
+      name="static_menu_macros"
+      permission="zope.View"
+      template="static_menu_macros.pt"
+      layer=".skin.apidoc"
+      />
+
+  <page
+      for="*"
+      name="details_macros"
+      permission="zope.View"
+      template="details_macros.pt"
+      layer=".skin.apidoc"
+      />
+
+  <resource
+      name="utilities.js"
+      file="utilities.js"
+      />
+
+  <resource
+      name="harrow.png"
+      file="harrow.png"
+      />
+
+  <resource
+      name="varrow.png"
+      file="varrow.png"
+      />
+
+  <pages
+      for="zope.app.apidoc.apidoc.APIDocumentation"
+      class=".apidoc.APIDocumentationView"
+      permission="zope.app.apidoc.UseAPIDoc"
+      layer=".skin.apidoc">
+
+    <page
+        name="index.html"
+        template="index.pt" />
+
+    <page
+        name="modulelist.html"
+        template="modules.pt" />
+
+    <page
+        name="menu.html"
+        template="menu.pt" />
+
+    <page
+        name="contents.html"
+        template="contents.pt" />
+
+  </pages>
+
+  <!-- Static apidoc -->
+
+  <pages
+      for="zope.app.apidoc.apidoc.APIDocumentation"
+      class=".apidoc.APIDocumentationView"
+      permission="zope.app.apidoc.UseAPIDoc"
+      layer=".skin.apidoc">
+
+    <page
+        name="static.html"
+        template="static_index.pt" />
+
+    <page
+        name="staticmodulelist.html"
+        template="static_modules.pt" />
+
+    <page
+        name="staticmenu.html"
+        template="static_menu.pt" />
+
+    <page
+        name="staticcontents.html"
+        template="static_contents.pt" />
+
+  </pages>
+
+  <!-- Error Views -->
+
+  <page
+      for="zope.publisher.interfaces.INotFound"
+      name="index.html"
+      permission="zope.Public"
+      template="notfound.pt"
+      class="zope.app.exception.browser.notfound.NotFound"
+      layer=".skin.apidoc"
+      />
+
+  <!-- Preference Views -->
+
+  <page
+      name="apidocTree"
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      class=".preference.APIDocPreferencesTree"
+      permission="zope.View"
+      attribute="apidocTree"
+      layer=".skin.apidoc"
+      />
+
+  <page
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      permission="zope.Public"
+      name="apidocMenu.html"
+      template="prefmenu.pt"
+      layer=".skin.apidoc"
+      />
+
+  <page
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      permission="zope.Public"
+      name="apidocIndex.html"
+      template="prefIndex.pt"
+      class=".preference.ApidocEditPreferenceGroup"
+      />
+
+</configure>

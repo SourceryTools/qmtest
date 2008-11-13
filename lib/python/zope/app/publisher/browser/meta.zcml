@@ -1,0 +1,161 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+  <meta:directives namespace="http://namespaces.zope.org/browser">
+
+    <!-- browser menus -->
+
+    <meta:directive
+        name="menu"
+        schema=".metadirectives.IMenuDirective"
+        handler=".menumeta.menuDirective"
+        />
+
+    <meta:complexDirective
+        name="menuItems"
+        schema=".metadirectives.IMenuItemsDirective"
+        handler=".menumeta.menuItemsDirective"
+        >
+
+      <meta:subdirective
+          name="menuItem"
+          schema=".metadirectives.IMenuItemSubdirective"
+          />
+
+      <meta:subdirective
+          name="subMenuItem"
+          schema=".metadirectives.ISubMenuItemSubdirective"
+          />
+
+    </meta:complexDirective>
+
+    <meta:directive
+        name="menuItem"
+        schema=".metadirectives.IMenuItemDirective"
+        handler=".menumeta.menuItemDirective"
+        />
+
+    <meta:directive
+        name="subMenuItem"
+        schema=".metadirectives.ISubMenuItemDirective"
+        handler=".menumeta.subMenuItemDirective"
+        />
+
+    <meta:directive
+        name="addMenuItem"
+        schema=".metadirectives.IAddMenuItemDirective"
+        handler=".menumeta.addMenuItem"
+        />
+
+
+    <!-- browser views -->
+
+    <meta:complexDirective
+        name="view"
+        schema=".metadirectives.IViewDirective"
+        handler=".viewmeta.view"
+        >
+
+      <meta:subdirective
+          name="page"
+          schema=".metadirectives.IViewPageSubdirective"
+          />
+
+      <meta:subdirective
+          name="defaultPage"
+          schema=".metadirectives.IViewDefaultPageSubdirective"
+          />
+
+    </meta:complexDirective>
+
+    <meta:directive
+        name="defaultView"
+        schema=".metadirectives.IDefaultViewDirective"
+        handler=".metaconfigure.defaultView"
+        />
+
+
+    <!-- browser pages -->
+
+    <meta:directive
+        name="page"
+        schema=".metadirectives.IPageDirective"
+        handler=".viewmeta.page"
+        />
+
+    <meta:complexDirective
+        name="pages"
+        schema=".metadirectives.IPagesDirective"
+        handler=".viewmeta.pages"
+        >
+
+      <meta:subdirective
+          name="page"
+          schema=".metadirectives.IPagesPageSubdirective"
+          />
+
+    </meta:complexDirective>
+
+
+    <!-- browser resources -->
+
+    <meta:directive
+        name="resource"
+        schema=".metadirectives.IResourceDirective"
+        handler=".metaconfigure.resource"
+        />
+
+    <meta:directive
+        name="resourceDirectory"
+        schema=".metadirectives.IResourceDirectoryDirective"
+        handler=".metaconfigure.resourceDirectory"
+        />
+
+    <meta:complexDirective
+        name="i18n-resource"
+        schema=".metadirectives.II18nResourceDirective"
+        handler=".metaconfigure.I18nResource"
+        >
+
+      <meta:subdirective
+          name="translation"
+          schema=".metadirectives.II18nResourceTranslationSubdirective"
+          />
+
+    </meta:complexDirective>
+
+    <!-- misc. directives -->
+
+    <!-- BBB 2006/02/18, to be removed after 12 months -->
+    <meta:directive
+        zcml:condition="have deprecatedlayers"
+        name="layer"
+        schema=".metadirectives.ILayerDirective"
+        handler=".metaconfigure.layer"
+        />
+
+    <!-- BBB 2006/02/18, to be removed after 12 months -->
+    <meta:directive
+        zcml:condition="have deprecatedlayers"
+        name="skin"
+        schema=".metadirectives.ISkinDirective"
+        handler=".metaconfigure.skin"
+        />
+
+    <meta:directive
+        name="defaultSkin"
+        schema=".metadirectives.IDefaultSkinDirective"
+        handler=".metaconfigure.defaultSkin"
+        />
+
+    <meta:directive
+        name="icon"
+        schema=".metadirectives.IIconDirective"
+        handler=".icon.IconDirective"
+        />
+
+  </meta:directives>
+
+</configure>

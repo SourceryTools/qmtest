@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <include package="zope.app.security" file="meta.zcml"/>
+
+  <permission
+      id="Can.Do.It"
+      title="A Permissive Permission"
+      description="This permission lets you do anything" />
+ 
+</configure>

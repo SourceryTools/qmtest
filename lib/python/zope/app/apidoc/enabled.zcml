@@ -1,0 +1,99 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    i18n_domain="zope">
+
+  <permission
+      id="zope.app.apidoc.UseAPIDoc"
+      title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
+      />
+
+  <!-- BBB 2006/09/14, to be removed after 12 months -->
+  <permission
+      id="zope.app.introspector.Introspect"
+      title=
+  "[zope.app.introspector.Introspect] Introspect Object Classes and Interfaces"
+      />
+
+  <!-- BBB 2006/09/14, to be removed after 12 months -->
+  <meta:redefinePermission
+      from="zope.app.introspector.Introspect"
+      to="zope.app.apidoc.UseAPIDoc"
+      />
+
+  <class class=".apidoc.APIDocumentation">
+    <require
+        interface="zope.app.container.interfaces.IReadContainer"
+        permission="zope.ManageApplication"
+        />
+  </class>
+
+  <view
+      name="apidoc" type="*"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".apidoc.apidocNamespace"
+      />
+  <adapter
+      name="apidoc"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".apidoc.apidocNamespace"
+      />
+
+  <!-- Register Public API Dcoumentation -->
+
+  <apidoc:bookchapter
+      id="inspect"
+      title="Inspection API"
+      />
+  <apidoc:bookchapter
+      id="interface"
+      title="Interfaces"
+      doc_path="interface.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter
+      id="component"
+      title="Components"
+      doc_path="component.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter
+      id="presentation"
+      title="Presentation"
+      doc_path="presentation.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter
+      id="misc"
+      title="Miscellaneous"
+      doc_path="utilities.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter
+      id="classregistry"
+      title="Class Registry"
+      doc_path="classregistry.txt"
+      parent="inspect"
+      />
+
+  <include package=".browser" />
+
+  <preferenceGroup
+      id="apidoc"
+      title="API Doc Tool"
+      description="
+         These are all the preferences related to viewing the API
+         documentation."
+      category="True"
+      />
+
+  <!-- API Documentation Modules -->
+  <include package=".bookmodule" />
+  <include package=".codemodule" />
+  <include package=".ifacemodule" />
+  <include package=".typemodule" />
+  <include package=".utilitymodule" />
+  <include package=".zcmlmodule" />
+
+</configure>

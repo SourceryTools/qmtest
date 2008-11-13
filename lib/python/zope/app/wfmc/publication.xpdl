@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package Id="Publication" xmlns="http://www.wfmc.org/2002/XPDL1.0" xmlns:xpdl="http://www.wfmc.org/2002/XPDL1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wfmc.org/2002/XPDL1.0 http://wfmc.org/standards/docs/TC-1025_schema_10_xpdl.xsd">
+    <PackageHeader>
+        <XPDLVersion>1.0</XPDLVersion>
+        <Vendor>Together</Vendor>
+        <Created>2005-01-06 16:28:27</Created>
+    </PackageHeader>
+    <RedefinableHeader PublicationStatus="UNDER_TEST"/>
+    <ConformanceClass GraphConformance="NON_BLOCKED"/>
+    <Participants>
+        <Participant Id="System">
+            <ParticipantType Type="SYSTEM"/>
+        </Participant>
+    </Participants>
+    <Applications>
+        <Application Id="prepare">
+            <FormalParameters>
+                <FormalParameter Id="publish" Mode="OUT">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </FormalParameter>
+            </FormalParameters>
+        </Application>
+        <Application Id="publish"/>
+        <Application Id="reject"/>
+    </Applications>
+    <WorkflowProcesses>
+        <WorkflowProcess AccessLevel="PUBLIC" Id="Publication" Name="Publication">
+            <ProcessHeader DurationUnit="D">
+                <Created>2005-01-06 16:29:02</Created>
+            </ProcessHeader>
+            <RedefinableHeader PublicationStatus="UNDER_TEST"/>
+            <FormalParameters>
+                <FormalParameter Id="author" Mode="IN">
+                    <DataType>
+                        <BasicType Type="STRING"/>
+                    </DataType>
+                </FormalParameter>
+                <FormalParameter Id="publish" Mode="OUT">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </FormalParameter>
+            </FormalParameters>
+            <DataFields>
+                <DataField Id="publish" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="tech_changes" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="ed_changes" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="publish1" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="tech_changes1" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="publish2" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+                <DataField Id="tech_changes2" IsArray="FALSE">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                </DataField>
+            </DataFields>
+            <Participants>
+                <Participant Id="author" Name="Author">
+                    <ParticipantType Type="ROLE"/>
+                </Participant>
+                <Participant Id="tech1" Name="Technical Reviewer 1">
+                    <ParticipantType Type="HUMAN"/>
+                </Participant>
+                <Participant Id="tech2" Name="Technical Reviewer 2">
+                    <ParticipantType Type="HUMAN"/>
+                </Participant>
+                <Participant Id="reviewer" Name="Editorial Reviewer">
+                    <ParticipantType Type="HUMAN"/>
+                </Participant>
+            </Participants>
+            <Applications>
+                <Application Id="prepare"/>
+                <Application Id="tech_review">
+                    <FormalParameters>
+                        <FormalParameter Id="publish" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="tech_changes" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                    </FormalParameters>
+                </Application>
+                <Application Id="ed_review">
+                    <FormalParameters>
+                        <FormalParameter Id="publish1" Mode="IN">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="tech_changes1" Mode="IN">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="publish2" Mode="IN">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="tech_changes2" Mode="IN">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="publish" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="tech_changes" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                        <FormalParameter Id="ed_changes" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                    </FormalParameters>
+                </Application>
+                <Application Id="final"/>
+                <Application Id="rfinal">
+                    <FormalParameters>
+                        <FormalParameter Id="ed_changes" Mode="OUT">
+                            <DataType>
+                                <BasicType Type="BOOLEAN"/>
+                            </DataType>
+                        </FormalParameter>
+                    </FormalParameters>
+                </Application>
+            </Applications>
+            <Activities>
+                <Activity Id="prepare" Name="Prepare">
+                    <Implementation>
+                        <Tool Id="prepare" Type="APPLICATION"/>
+                    </Implementation>
+                    <Performer>author</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="XOR"/>
+                            <Split Type="AND">
+                                <TransitionRefs>
+                                    <TransitionRef Id="Publication_Tra3"/>
+                                    <TransitionRef Id="Publication_Tra2"/>
+                                </TransitionRefs>
+                            </Split>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="author"/>
+                        <ExtendedAttribute Name="XOffset" Value="110"/>
+                        <ExtendedAttribute Name="YOffset" Value="20"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="tech1" Name="Technical Review 1">
+                    <Implementation>
+                        <Tool Id="tech_review" Type="APPLICATION">
+                            <ActualParameters>
+                                <ActualParameter>publish1</ActualParameter>
+                                <ActualParameter>tech_changes1</ActualParameter>
+                            </ActualParameters>
+                        </Tool>
+                    </Implementation>
+                    <Performer>tech1</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="tech1"/>
+                        <ExtendedAttribute Name="XOffset" Value="210"/>
+                        <ExtendedAttribute Name="YOffset" Value="30"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="tech2" Name="Technical Review 2">
+                    <Implementation>
+                        <Tool Id="tech_review" Type="APPLICATION">
+                            <ActualParameters>
+                                <ActualParameter>publish2</ActualParameter>
+                                <ActualParameter>tech_changes2</ActualParameter>
+                            </ActualParameters>
+                        </Tool>
+                    </Implementation>
+                    <Performer>tech2</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="tech2"/>
+                        <ExtendedAttribute Name="XOffset" Value="190"/>
+                        <ExtendedAttribute Name="YOffset" Value="20"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="review" Name="Editorial Review">
+                    <Implementation>
+                        <Tool Id="ed_review" Type="APPLICATION">
+                            <ActualParameters>
+                                <ActualParameter>publish1</ActualParameter>
+                                <ActualParameter>tech_changes1</ActualParameter>
+                                <ActualParameter>publish2</ActualParameter>
+                                <ActualParameter>tech_changes2</ActualParameter>
+                                <ActualParameter>publish</ActualParameter>
+                                <ActualParameter>tech_changes</ActualParameter>
+                                <ActualParameter>ed_changes</ActualParameter>
+                            </ActualParameters>
+                        </Tool>
+                    </Implementation>
+                    <Performer>reviewer</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="AND"/>
+                            <Split Type="XOR">
+                                <TransitionRefs>
+                                    <TransitionRef Id="Publication_Tra9"/>
+                                    <TransitionRef Id="Publication_Tra10"/>
+                                    <TransitionRef Id="Publication_Tra8"/>
+                                    <TransitionRef Id="Publication_Tra7"/>
+                                </TransitionRefs>
+                            </Split>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="reviewer"/>
+                        <ExtendedAttribute Name="XOffset" Value="300"/>
+                        <ExtendedAttribute Name="YOffset" Value="20"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="final" Name="Final Preparation">
+                    <Implementation>
+                        <Tool Id="final" Type="APPLICATION"/>
+                    </Implementation>
+                    <Performer>author</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="XOR"/>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="author"/>
+                        <ExtendedAttribute Name="XOffset" Value="370"/>
+                        <ExtendedAttribute Name="YOffset" Value="30"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="rfinal" Name="Review Final">
+                    <Implementation>
+                        <Tool Id="rfinal" Type="APPLICATION">
+                            <ActualParameters>
+                                <ActualParameter>ed_changes</ActualParameter>
+                            </ActualParameters>
+                        </Tool>
+                    </Implementation>
+                    <Performer>reviewer</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Split Type="XOR">
+                                <TransitionRefs>
+                                    <TransitionRef Id="Publication_Tra13"/>
+                                    <TransitionRef Id="Publication_Tra12"/>
+                                </TransitionRefs>
+                            </Split>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="reviewer"/>
+                        <ExtendedAttribute Name="XOffset" Value="440"/>
+                        <ExtendedAttribute Name="YOffset" Value="20"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="start" Name="Start">
+                    <Implementation>
+                        <No/>
+                    </Implementation>
+                    <Performer>System</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="System"/>
+                        <ExtendedAttribute Name="XOffset" Value="60"/>
+                        <ExtendedAttribute Name="YOffset" Value="10"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="publish" Name="Publish">
+                    <Implementation>
+                        <Tool Id="publish" Type="APPLICATION"/>
+                    </Implementation>
+                    <Performer>System</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="XOR"/>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="System"/>
+                        <ExtendedAttribute Name="XOffset" Value="540"/>
+                        <ExtendedAttribute Name="YOffset" Value="20"/>
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="reject" Name="Reject">
+                    <Implementation>
+                        <Tool Id="reject" Type="APPLICATION"/>
+                    </Implementation>
+                    <Performer>System</Performer>
+                    <StartMode>
+                        <Automatic/>
+                    </StartMode>
+                    <FinishMode>
+                        <Automatic/>
+                    </FinishMode>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="ParticipantID" Value="System"/>
+                        <ExtendedAttribute Name="XOffset" Value="540"/>
+                        <ExtendedAttribute Name="YOffset" Value="80"/>
+                    </ExtendedAttributes>
+                </Activity>
+            </Activities>
+            <Transitions>
+                <Transition From="prepare" Id="Publication_Tra2" Name="Transition" To="tech1">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                        <ExtendedAttribute Name="BreakPoint" Value="160;160;1"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="prepare" Id="Publication_Tra3" Name="Transition" To="tech2">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                        <ExtendedAttribute Name="BreakPoint" Value="210;290;1"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="tech2" Id="Publication_Tra4" Name="Transition" To="review">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="tech1" Id="Publication_Tra5" Name="Transition" To="review">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="start" Id="Publication_Tra6" Name="Transition" To="prepare">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="review" Id="Publication_Tra7" Name="Transition" To="prepare">
+                    <Condition Type="CONDITION">tech_changes</Condition>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="review" Id="Publication_Tra8" Name="Transition" To="final">
+                    <Condition Type="CONDITION">ed_changes</Condition>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="review" Id="Publication_Tra9" Name="Transition" To="reject">
+                    <Condition Type="CONDITION">not publish</Condition>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="review" Id="Publication_Tra10" Name="Transition" To="publish">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="final" Id="Publication_Tra11" Name="Transition" To="rfinal">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                        <ExtendedAttribute Name="BreakPoint" Value="490;400;1"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="rfinal" Id="Publication_Tra12" Name="Transition" To="final">
+                    <Condition Type="CONDITION">ed_changes</Condition>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                        <ExtendedAttribute Name="BreakPoint" Value="440;430;1"/>
+                    </ExtendedAttributes>
+                </Transition>
+                <Transition From="rfinal" Id="Publication_Tra13" Name="Transition" To="publish">
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                    </ExtendedAttributes>
+                </Transition>
+            </Transitions>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="ParticipantVisualOrder" Value="tech1;tech2;author;reviewer;System;"/>
+            </ExtendedAttributes>
+        </WorkflowProcess>
+    </WorkflowProcesses>
+    <ExtendedAttributes>
+        <ExtendedAttribute Name="MadeBy" Value="JaWE"/>
+        <ExtendedAttribute Name="Version" Value="1.2"/>
+    </ExtendedAttributes>
+</Package>

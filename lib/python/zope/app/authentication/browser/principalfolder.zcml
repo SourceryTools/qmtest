@@ -1,0 +1,65 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    >
+
+  <addform
+      schema="..principalfolder.IInternalPrincipalContainer"
+      label="Add Principal Folder"
+      content_factory="..principalfolder.PrincipalFolder"
+      keyword_arguments="prefix"
+      name="AddPrincipalFolder.html"
+      permission="zope.ManageServices"
+      />
+
+  <addMenuItem
+      title="Principal Folder"
+      description="A Pluggable Persistent Authentication Plugin"
+      class="..principalfolder.PrincipalFolder"
+      permission="zope.ManageServices"
+      view="AddPrincipalFolder.html"
+      />
+
+  <addform
+      schema="..principalfolder.IInternalPrincipal"
+      label="Add Principal Information"
+      content_factory="..principalfolder.InternalPrincipal"
+      arguments="login password title"
+      keyword_arguments="passwordManagerName description"
+      fields="login passwordManagerName password title description"
+      name="AddPrincipalInformation.html"
+      permission="zope.ManageServices"
+      />
+
+  <addMenuItem
+      title="Principal Information"
+      class="..principalfolder.InternalPrincipal"
+      permission="zope.ManageServices"
+      view="AddPrincipalInformation.html"
+      />
+
+  <editform
+      schema="..principalfolder.IInternalPrincipal"
+      label="Change Internal Principal"
+      name="edit.html"
+      fields="login passwordManagerName password title description"
+      permission="zope.ManageServices"
+      menu="zmi_views" title="Edit"
+      />
+
+  <containerViews
+      for="..principalfolder.IInternalPrincipalContainer"
+      add="zope.ManageServices"
+      contents="zope.ManageServices"
+      index="zope.ManageServices"
+      />
+
+  <schemadisplay
+      schema="..principalfolder.IInternalPrincipalContainer"
+      label="Principal Folder Prefix"
+      name="prefix.html"
+      fields="prefix"
+      permission="zope.ManageServices"
+      menu="zmi_views" title="Prefix"
+      />
+
+</configure>

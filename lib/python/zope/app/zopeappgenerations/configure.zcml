@@ -1,0 +1,9 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+<utility
+    name="zope.app" 
+    provides="zope.app.generations.interfaces.ISchemaManager"
+    component=".ZopeAppSchemaManager"
+    />
+
+</configure>

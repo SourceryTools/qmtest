@@ -1,0 +1,87 @@
+===============================
+File representation for folders
+===============================
+
+Folders can be represented in file-system-like protocols (e.g. FTP). An
+adapter abstracts some internals away and adds support for accessing the
+'++etc++site' folder from those protocols.
+
+  >>> folder = getRootFolder()
+  >>> from zope.app.folder.filerepresentation import ReadDirectory
+  >>> fs_folder = ReadDirectory(folder)
+
+As the root folder is a site, the ++etc++site object appears:
+
+  >>> fs_folder.keys()
+  ['++etc++site']
+  >>> fs_folder.get('++etc++site')
+  <LocalSiteManager ++etc++site>
+  >>> fs_folder['++etc++site']
+  <LocalSiteManager ++etc++site>
+  >>> list(fs_folder.__iter__())
+  ['++etc++site']
+  >>> fs_folder.values()
+  [<LocalSiteManager ++etc++site>]
+  >>> len(fs_folder)
+  1
+  >>> fs_folder.items()
+  [('++etc++site', <LocalSiteManager ++etc++site>)]
+  >>> '++etc++site' in fs_folder
+  True
+
+Let's add another folder to see how a non-site folder behaves:
+
+  >>> from zope.app.folder.folder import Folder
+  >>> folder['test'] = Folder()
+
+The site folder now contains the new folder:
+
+  >>> fs_folder.keys()
+  [u'test', '++etc++site']
+  >>> fs_folder.get('test')
+  <zope.app.folder.folder.Folder object at 0x...>
+  >>> fs_folder['test']
+  <zope.app.folder.folder.Folder object at 0x...>
+  >>> list(fs_folder.__iter__())
+  [u'test', '++etc++site']
+  >>> fs_folder.values()
+  [<zope.app.folder.folder.Folder object at 0x...>, <LocalSiteManager ++etc++site>]
+  >>> len(fs_folder)
+  2
+  >>> fs_folder.items()
+  [(u'test', <zope.app.folder.folder.Folder object at 0x...>),
+   ('++etc++site', <LocalSiteManager ++etc++site>)]
+  >>> 'test' in fs_folder
+  True
+
+The new folder isn't a site manager and doesn't have any entries:
+
+  >>> fs_folder2 = ReadDirectory(folder['test'])
+  >>> list(fs_folder2.keys())
+  []
+  >>> fs_folder2.get('test', )
+  >>> fs_folder2['test']
+  Traceback (most recent call last):
+  KeyError: 'test'
+  >>> list(fs_folder2.__iter__())
+  []
+  >>> fs_folder2.values()
+  []
+  >>> len(fs_folder2)
+  0
+  >>> fs_folder2.items()
+  []
+  >>> 'test' in fs_folder2
+  False
+
+This is a short regression test for #728: we get a KeyError when trying to
+access non-existing entries:
+
+  >>> from zope.security.proxy import ProxyFactory
+  >>> from zope.security.checker import NamesChecker
+  >>> proxied_folder = ProxyFactory(fs_folder, NamesChecker(('get',)))
+  >>> proxied_fs_folder = ReadDirectory(proxied_folder)
+  >>> print proxied_fs_folder['i dont exist']
+  Traceback (most recent call last):
+  KeyError: 'i dont exist'
+

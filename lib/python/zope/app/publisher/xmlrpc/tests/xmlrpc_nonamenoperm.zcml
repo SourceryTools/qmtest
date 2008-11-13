@@ -1,0 +1,12 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+           i18n_domain="zope">
+
+  <include package="zope.app.publisher.xmlrpc" file="meta.zcml"/>
+
+  <xmlrpc:view
+      class="zope.app.component.tests.views.V1"
+      for="zope.app.component.tests.views.IC"
+      />
+
+</configure>

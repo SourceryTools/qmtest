@@ -1,0 +1,61 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <p i18n:translate="">You can configure the RAM Cache here.</p>
+
+  <div tal:condition="python: options.has_key('errors') and
+                              options['errors']">
+    <span style="font-weight: bold" i18n:translate="">Errors</span>:
+    <div tal:repeat="error options/errors | nothing">
+      <span tal:replace="python: error[0].title" />:
+      <span tal:replace="python: error[1].error_name" />
+    </div>
+  </div>
+  <br />
+
+  <form action="./" method="post" enctype="multipart/form-data">
+    <table class="EditTable">
+      <tr>
+        <th class="EditAttributeName" i18n:translate="">
+          Maximum cached entries
+        </th>
+        <td class="EditAttributeValue">
+          <input type="text" name="maxEntries:int"   
+                 tal:attributes="value context/maxEntries"/>
+
+        </td>
+      </tr>
+      <tr>
+        <th class="EditAttributeName" i18n:translate="">
+          Maximum age of cached entries
+        </th>
+        <td class="EditAttributeValue">
+          <input type="text" name="maxAge:int"   
+                 tal:attributes="value context/maxAge"/>
+
+        </td>
+      </tr>
+      <tr>
+        <th class="EditAttributeName" i18n:translate="">
+          Time between cache cleanups
+        </th>
+        <td class="EditAttributeValue">
+          <input type="text" name="cleanupInterval:int"   
+                 tal:attributes="value context/cleanupInterval"/>
+
+        </td>
+      </tr>
+    </table>
+
+    <input type="submit" name="editAction.html:method" value="Save Changes" 
+           i18n:attributes="value save-changes-button" />
+    <input type="reset" value="Reset" i18n:attributes="value reset-button" />
+  </form>
+  <div tal:content="options/message|nothing" i18n:translate="" />
+
+</div>
+</body>
+
+</html>

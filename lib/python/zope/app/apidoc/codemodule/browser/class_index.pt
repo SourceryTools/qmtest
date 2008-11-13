@@ -1,0 +1,189 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header">
+    <span class="pre-header" i18n:translate="">Class</span><br />
+    <span tal:replace="context/getPath">zope.app.Klass</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
+  <div class="indent">
+    <div class="documentation" i18n:translate=""
+        tal:content="structure view/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+
+  <h2 class="details-section" i18n:translate="">Base classes</h2>
+
+    <div class="indent"
+         tal:define="bases view/getBases">
+
+    <ul class="attr-list" tal:condition="bases">
+      <li tal:repeat="base bases">
+        <a href=""
+            tal:attributes="href string:${base/url}/index.html"
+            tal:content="base/path"
+            tal:condition="base/url" />
+        <span tal:replace="base/path"
+              tal:condition="not: base/url"/>
+      </li>
+    </ul>
+
+    <p tal:condition="not: bases">
+      <em i18n:translate="">There are no base classes.</em>
+    </p>
+
+    </div>
+
+  <h2 class="details-section" i18n:translate="">Implemented Interfaces</h2>
+
+    <div class="indent"
+         tal:define="ifaces view/getInterfaces">
+
+    <ul class="attr-list" tal:condition="ifaces">
+      <li tal:repeat="iface ifaces">
+        <a href=""
+           tal:attributes="href
+               string:${view/getBaseURL}/Interface/${iface/url}/index.html"
+           tal:content="iface/path"
+           tal:condition="iface/url"/>
+        <span tal:replace="iface/path"
+              tal:condition="not: iface/url"/>
+      </li>
+    </ul>
+
+    <p tal:condition="not: ifaces">
+      <em i18n:translate="">There are no implemented interfaces.</em>
+    </p>
+
+    </div>
+
+
+  <h2 class="details-section" i18n:translate="">Attributes/Properties</h2>
+
+  <div class="indent"
+      tal:define="attributes view/getAttributes">
+
+  <ul class="attr-list" tal:condition="attributes">
+
+    <li tal:repeat="attr attributes">
+      <b><code tal:content="attr/name">attr</code></b>
+      <tal:omit-tag condition="not: attr/type_link">
+        (type: <code tal:content="attr/type" />)
+      </tal:omit-tag>
+      <tal:omit-tag condition="attr/type_link">
+        (<span i18n:translate="">type:</span>
+        <a href=""
+           tal:attributes="href
+               string:${view/getBaseURL}/Code/${attr/type_link}/index.html">
+          <code tal:content="attr/type" /></a>)
+      </tal:omit-tag>
+      <br/>
+      <i i18n:translate="">Value:</i>
+      <code tal:content="attr/value">u''</code><br />
+
+      <span class="small" tal:condition="attr/interface">
+        <i i18n:translate="">Interface:</i>
+        <a href=""
+           tal:attributes="href
+      string:${view/getBaseURL}/Interface/${attr/interface/url}/index.html"
+           tal:content="attr/interface/path"
+           tal:condition="attr/interface/url" />
+        <span tal:replace="attr/interface/path"
+              tal:condition="not: attr/interface/url" />
+      <br />
+      </span>
+      <span class="small"
+          tal:condition="python: attr['read_perm'] and attr['write_perm']">
+        <i i18n:translate="">Permissions:</i>
+        <span tal:replace="attr/read_perm" i18n:translate="">zope.View</span>
+            <span i18n:translate="">(read)</span>,
+        <span tal:replace="attr/write_perm" i18n:translate="">zope.View</span>
+            <span i18n:translate="">(write)</span>
+      </span>
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: attributes">
+    <em i18n:translate="">There are no attributes in this class.</em>
+  </p>
+
+  </div>
+
+
+  <h2 class="details-section" i18n:translate="">Methods</h2>
+
+  <div class="indent"
+      tal:define="methods view/getMethods">
+
+  <ul class="attr-list" tal:condition="methods">
+
+    <li tal:repeat="method view/getMethods">
+      <b><code
+          tal:content="string:${method/name}${method/signature}" />
+      </b><br>
+      <div class="inline documentation" tal:content="structure method/doc">
+        method desc
+      </div>
+
+      <span class="small" tal:condition="method/interface">
+        <i i18n:translate="">Interface:</i>
+        <a href=""
+           tal:attributes="href
+      string:${view/getBaseURL}/Interface/${method/interface/url}/index.html"
+           tal:content="method/interface/path"
+           tal:condition="method/interface/url" />
+        <span tal:replace="method/interface/path"
+              tal:condition="not: method/interface/url" />
+      <br/>
+      </span>
+
+      <span class="small"
+          tal:condition="python: method['read_perm'] and method['write_perm']">
+        <i i18n:translate="">Permissions:</i>
+        <span tal:replace="method/read_perm" i18n:translate="">zope.View</span>
+            <span i18n:translate="">(read)</span>,
+        <span tal:replace="method/write_perm" i18n:translate="">zope.View</span>
+            <span i18n:translate="">(write)</span>
+      </span>
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: methods">
+    <em i18n:translate="">There are no methods in this class.</em>
+  </p>
+
+  </div>
+
+  <h2 class="details-section" i18n:translate="">Known Subclasses</h2>
+
+  <div class="indent"
+       tal:define="subclasses view/getKnownSubclasses">
+
+    <ul class="attr-list" tal:condition="subclasses">
+      <li tal:repeat="cls subclasses">
+        <a href=""
+            tal:attributes="href string:${cls/url}/index.html"
+            tal:content="cls/path"
+            tal:condition="cls/url" />
+        <div tal:condition="not: cls/url">
+          <span tal:replace="cls/path" />
+          <span i18n:translate="">(C-based class)</span>
+        </div>
+      </li>
+    </ul>
+
+    <p tal:condition="not: subclasses">
+      <em i18n:translate="">There are no known subclasses.</em>
+    </p>
+
+  </div>
+
+</body>
+</html>

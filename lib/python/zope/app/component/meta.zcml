@@ -1,0 +1,123 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <include package="zope.component" file="meta.zcml" />
+
+  <meta:directives namespace="http://namespaces.zope.org/zope">
+
+    <!-- BBB 2006/02/24, to be removed after 12 months -->
+    <meta:directive
+        name="factory"
+        schema=".metadirectives.IFactoryDirective"
+        handler="zope.app.component.metaconfigure.factory"
+        />
+
+    <meta:directive
+        name="view"
+        schema=".metadirectives.IViewDirective"
+        handler="zope.app.component.metaconfigure.view"
+        />
+
+    <!-- BBB: Deprecated. Will go away in 3.3 -->
+    <meta:directive
+        name="defaultView"
+        schema=".metadirectives.IDefaultViewDirective"
+        handler="zope.app.component.metaconfigure.defaultView"
+        />
+
+    <meta:directive
+        name="resource"
+        schema=".metadirectives.IResourceDirective"
+        handler="zope.app.component.metaconfigure.resource"
+        />
+
+    <meta:complexDirective
+        name="class"
+        schema=".metadirectives.IClassDirective"
+        handler=".contentdirective.ClassDirective"
+        >
+
+      <meta:subdirective
+          name="implements"
+          schema=".metadirectives.IImplementsSubdirective"
+          />
+
+      <meta:subdirective
+          name="require"
+          schema=".metadirectives.IRequireSubdirective"
+          />
+
+      <meta:subdirective
+          name="allow"
+          schema=".metadirectives.IAllowSubdirective"
+          />
+
+      <meta:subdirective
+          name="factory"
+          schema=".metadirectives.IFactorySubdirective"
+          />
+
+    </meta:complexDirective>
+
+    <!-- BBB 2006/02/24, to be removed after 12 months -->
+    <meta:complexDirective
+        name="content"
+        schema=".metadirectives.IBBBClassDirective"
+        handler=".contentdirective.ContentDirective"
+        >
+
+      <meta:subdirective
+          name="implements"
+          schema=".metadirectives.IImplementsSubdirective"
+          />
+
+      <meta:subdirective
+          name="require"
+          schema=".metadirectives.IRequireSubdirective"
+          />
+
+      <meta:subdirective
+          name="allow"
+          schema=".metadirectives.IAllowSubdirective"
+          />
+
+      <meta:subdirective
+          name="factory"
+          schema=".metadirectives.IFactorySubdirective"
+          />
+
+    </meta:complexDirective>
+
+    <!-- BBB 2006/09/17, to be removed after 12 months -->
+    <meta:complexDirective
+        name="localUtility"
+        schema=".metadirectives.IBBBClassDirective"
+        handler=".contentdirective.LocalUtilityDirective"
+        >
+
+      <meta:subdirective
+          name="implements"
+          schema=".metadirectives.IImplementsSubdirective"
+          />
+
+      <meta:subdirective
+          name="require"
+          schema=".metadirectives.IRequireSubdirective"
+          />
+
+      <meta:subdirective
+          name="allow"
+          schema=".metadirectives.IAllowSubdirective"
+          />
+
+      <meta:subdirective
+          name="factory"
+          schema=".metadirectives.IFactorySubdirective"
+          />
+
+    </meta:complexDirective>
+
+  </meta:directives>
+
+</configure>

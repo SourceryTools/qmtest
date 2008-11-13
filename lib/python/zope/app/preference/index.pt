@@ -1,0 +1,26 @@
+<html metal:use-macro="context/@@preferences_macros/pref_view">
+
+<div metal:fill-slot="body">
+
+  <form action="." tal:attributes="action request/URL" method="post"
+        enctype="multipart/form-data">
+
+  <div metal:use-macro="context/@@preferences_macros/edit_pref_group" />
+
+  <table class="prefs" cellspacing="0" cellpadding="0">
+    <tr><td class="spacer"></td></tr>
+    <tr>
+      <td colspan="2" class="controls">
+        <input type="submit" value="Refresh" 
+            i18n:attributes="value refresh-button" />
+        <input type="submit" name="UPDATE_SUBMIT" value="Change" 
+            i18n:attributes="value submit-button"/>
+      </td>
+    </tr>
+  </table>
+
+  </form>
+
+</div>
+
+</html>

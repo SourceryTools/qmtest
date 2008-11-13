@@ -1,0 +1,80 @@
+<metal:block define-macro="View" i18n:domain="zope">
+  <div>
+    <b tal:content="structure View/name" />
+  </div>
+
+  <span class="small">
+
+    <div tal:define="zcml View/zcml"
+         tal:condition="zcml">
+      <i i18n:translate="">registered:</i>
+      <metal:block use-macro="context/@@interface_macros/zcml" />
+    </div>
+
+    <div tal:define="iface View/type"
+         tal:condition="python: iface == View['required'][-1]">
+      <i i18n:translate="">presentation type:</i>
+      <a href=""
+         tal:attributes="
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
+          <metal:block use-macro="context/@@interface_macros/ifacename" />
+      </a>
+    </div>
+
+    <div tal:define="ifaces python:View['required']">
+      <i i18n:translate="">requires:</i>
+      <tal:block repeat="iface ifaces">
+        <tal:block condition="not:iface">*</tal:block><a href=""
+            tal:condition="iface"
+            tal:attributes="
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
+          <metal:block use-macro="context/@@interface_macros/ifacename"
+        /></a><tal:block condition="not:repeat/iface/end">, </tal:block>
+      </tal:block>
+      <span tal:condition="not: ifaces" i18n:translate="">
+        No interface required.
+      </span>
+    </div>
+
+    <div tal:define="iface View/provided"
+         tal:condition="iface">
+      <i i18n:translate="">provides:</i>
+      <a href=""
+         tal:attributes="
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
+        <metal:block use-macro="context/@@interface_macros/ifacename" />
+      </a>
+    </div>
+
+    <div condition="View/factory/path">
+      <i i18n:translate="">factory path:</i>
+      <a href=""
+         tal:condition="View/factory/referencable"
+         tal:attributes="
+             href string:$rootURL/Code/${View/factory/url}/index.html"
+         tal:content="View/factory/path" />
+      <span
+         tal:condition="not:View/factory/referencable"
+         tal:content="View/factory/path" />
+    </div>
+
+    <div tal:condition="View/factory/template">
+      <i i18n:translate="">template:</i>
+      <span tal:replace="View/factory/template" />
+    </div>
+
+    <div tal:condition="View/factory/resource">
+      <i i18n:translate="">resource:</i>
+      <a href=""
+         tal:attributes="href string: /@@/${View/factory/resource}"
+         tal:content="View/factory/resource" />
+    </div>
+
+    <div tal:condition="View/read_perm">
+      <i i18n:translate="">Permission:</i>
+      <span tal:replace="View/read_perm">zope.View</span>
+    </div>
+
+  </span>
+
+</metal:block>

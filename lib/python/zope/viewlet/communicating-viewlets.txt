@@ -1,0 +1,113 @@
+==============================================
+A technique for communication between viewlets
+==============================================
+
+
+Sometimes one wants viewlets to communicate with each other to supplement a
+more generic viewlet's behaviour with another viewlet. One example would be a
+viewlet that contains a search form created by a library such as z3c.form,
+plus a second viewlet that provides a list of search results.
+
+This is very simple to accomplish with zope.viewlet but has turned out not to
+be obvious, so here is an explicit example. It is not written as a doc test
+since it uses z3c.form which should not become a dependency of zope.viewlet.
+
+
+The viewlets
+============
+
+For the purpose of this example, we simulate a search form. Our search results
+are simply the characters of the search term and are stored on the viewlet as
+an attribute:
+
+
+    class ISearchForm(zope.interface.Interface):
+
+        searchterm = zope.schema.TextLine(title=u"Search term")
+
+
+    class SearchForm(z3c.form.form.Form):
+
+        ignoreContext = True
+
+        fields = z3c.form.field.Fields(ISearchForm)
+
+        results = ""
+
+        @z3c.form.button.buttonAndHandler(u"Search")
+        def search(self, action):
+            data, errors = self.extractData()
+            self.results = list(data["searchterm"])
+
+
+(Notice that this example is minimized to point out communication between
+viewlets, and no care is taken to handle the form itself in the best way
+possible. In particular, one will probably want to make sure that the actual
+search is not performed more than once, which may happen with the above code.)
+
+The result list viewlet needs to display the results stored on the search
+form. Therefore, the result list viewlet needs to access that viewlet, which
+is probably the only tricky part (if there is any at all) in this example:
+Since viewlets know their viewlet manager which lets viewlets be looked up by
+ID, it is all a matter of the result list viewlet knowing the ID of the search
+form.
+
+We'll store the search form viewlet's ID as an attribute of the result list
+viewlet. Let's hard-code the ID for a start, then the result list looks like
+this:
+
+
+    class ResultList(zope.viewlet.viewlet.ViewletBase):
+
+        searchform_id = "searchform"
+
+        def update(self):
+            super(ResultList, self).update()
+            searchform = self.manager[self.searchform_id]
+            searchform.update()
+            self.results = searchform.results
+
+        def render(self):
+            return "<ul>%s</ul>" % "\n".join(u"<li>%s</li>" % x
+                                             for x in self.results)
+
+
+Registering the viewlets
+========================
+
+As long as we treat the ID of the search form as hard-coded, we have to use
+the correct name when registering the two viewlets:
+
+
+    <viewlet
+       name="searchform"
+       class="...SearchForm"
+       permission="zope.Public"
+       />
+
+    <viewlet
+       name="resultlist"
+       class="...ResultList"
+       permission="zope.Public"
+       />
+
+
+Making the ID of the search form more flexible now doesn't even require
+changing any code: the viewlet directive may be passed arbitrary attributes
+which will be available as attributes of the ResultList objects. The attribute
+that holds our search form's ID is searchform_id, so we might register the
+viewlets like this:
+
+
+    <viewlet
+       name="sitesearch"
+       class="...SearchForm"
+       permission="zope.Public"
+       />
+
+    <viewlet
+       name="resultlist"
+       class="...ResultList"
+       permission="zope.Public"
+       searchform_id="sitesearch"
+       />

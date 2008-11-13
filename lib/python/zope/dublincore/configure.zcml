@@ -1,0 +1,58 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <permission 
+      id="zope.app.dublincore.view" 
+      title="[zope.app.dublincore.view-permission] 
+             View Dublin-Core Meta Data "
+      />
+
+  <permission 
+      id="zope.app.dublincore.change" 
+      title="[zope.app.dublincore.change-permission] 
+             Change Dublin-Core Meta Data "
+      />
+
+  <adapter
+      factory=".annotatableadapter.ZDCAnnotatableAdapter"
+      provides="zope.dublincore.interfaces.IWriteZopeDublinCore"
+      trusted="true"
+      />
+
+  <class class=".annotatableadapter.ZDCAnnotatableAdapter">
+    <require
+        permission="zope.app.dublincore.view"
+        interface=".interfaces.IZopeDublinCore"
+        />
+    <require
+        permission="zope.app.dublincore.change"
+        interface=".interfaces.IWritableGeneralDublinCore"
+        set_schema=".interfaces.IZopeDublinCore"
+        />
+  </class>
+
+  <subscriber
+      handler=".timeannotators.ModifiedAnnotator"
+      for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      />
+
+  <subscriber
+      handler=".timeannotators.CreatedAnnotator"
+      for="zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      />
+
+  <subscriber
+      handler=".creatorannotator.CreatorAnnotator"
+      for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      />
+
+  <subscriber
+      handler=".creatorannotator.CreatorAnnotator"
+      for="zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      />
+
+
+  <!-- Include browser package -->
+
+  <include package=".browser" />
+
+</configure>

@@ -1,0 +1,75 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <browser:page
+      name="index.html"
+      for="zope.app.zptpage.interfaces.IZPTPage"
+      class=".zptpage.ZPTPageEval"
+      attribute="index"
+      permission="zope.View"
+      />
+
+  <browser:page
+      name="source.html"
+      for="zope.app.zptpage.interfaces.IZPTPage"
+      class="zope.app.zptpage.zptpage.ZPTSourceView"
+      attribute="__call__"
+      permission="zope.ManageContent"
+      />
+
+  <browser:addMenuItem
+      class="zope.app.zptpage.ZPTPage"
+      title="ZPT Page"
+      description="A simple, content-based Page Template"
+      permission="zope.ManageContent"
+      view="zope.app.zptpage.ZPTPage"
+      />
+
+  <browser:addform
+      schema="zope.app.zptpage.interfaces.IZPTPage"
+      label="Add a ZPT Page"
+      content_factory="zope.app.zptpage.ZPTPage"
+      name="zope.app.zptpage.ZPTPage"
+      permission="zope.ManageContent"
+      />
+
+  <browser:page
+      for="zope.app.zptpage.interfaces.IZPTPage"
+      name="edit.html"
+      class=".zptpage.EditForm"
+      permission="zope.ManageContent" 
+      menu="zmi_views" title="Edit"
+      />
+
+  <browser:editform
+      for="zope.app.zptpage.interfaces.IZPTPage"
+      schema="zope.app.zptpage.interfaces.IZPTPage"
+      name="inlineCode.html"
+      label="Inline Code"
+      fields="evaluateInlineCode"
+      template="inlinecode.pt"
+      permission="zope.ManageContent" 
+      menu="zmi_views" title="Inline Code"
+      />
+
+  <browser:icon 
+      name="zmi_icon"
+      for="zope.app.zptpage.interfaces.IZPTPage" 
+      file="zpt.gif"
+      />
+
+
+  <!-- Preview view - requires zope.app.preview -->
+
+  <browser:page
+      for="zope.app.zptpage.interfaces.IZPTPage"
+      name="preview.html"
+      template="preview.pt"
+      permission="zope.ManageContent"
+      menu="zmi_views" title="Preview"
+      />
+
+</configure>

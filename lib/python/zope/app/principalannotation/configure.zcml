@@ -1,0 +1,40 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <class class=".PrincipalAnnotationUtility">
+    <factory
+        id="zope.app.PrincipalAnnotationUtility"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.View"
+        interface=".interfaces.IPrincipalAnnotationUtility"
+        />
+  </class>
+
+  <!-- Principal annotations (user data) utility -->
+
+  <browser:addMenuItem
+      class=".PrincipalAnnotationUtility"
+      permission="zope.ManageServices"
+      title="Principal Annotation Utility"
+      description="Stores Annotations for Principals"
+      />
+
+  <subscriber
+      for="zope.app.appsetup.IDatabaseOpenedEvent"
+      handler=".bootstrap.bootStrapSubscriber"
+      />
+
+  <adapter factory=".annotations" />
+
+  <adapter
+      for="zope.security.interfaces.IPrincipal *"
+      factory=".annotations"
+      />
+
+</configure>

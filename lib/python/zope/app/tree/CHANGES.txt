@@ -1,0 +1,54 @@
+=======
+CHANGES
+=======
+
+v1.2 (2004-02-19) -- 'Scruffy'
+------------------------------
+
+- Moved to `zope.app.tree`
+
+- It is now called 'ZopeTree' again.  Hoorray!
+
+- Refactored browser stuff into its own browser subpackage.
+
+- Separated the handling of tree state from the cookie functionality
+  to provide a base class for views based on other tree state sources.
+
+v1.1 (2004-02-16) -- 'Zapp'
+---------------------------
+
+- Added support for displaying lines in a tree (Stephan Richter)
+
+  - Changes in `Node.getFlatDict()` to provide more data.  Removed
+    'depth' from node info, but added 'row-state' and
+    'last-level-node'.  Changed interface and test accordingly.
+
+  - Updated templates for `StaticTree` skin and example.  Note that
+    third party templates from 1.0.x will not work anymore and must be
+    updated as well!
+
+v1.0.1 (2004-01-16) -- 'Nibbler'
+--------------------------------
+
+- Added last remaining pieces for unit tests
+
+- Updated documentation
+
+- Rounded some rough edges in the skin
+
+- Integrated it into the Zope3 distribution below the `zope.products`
+  package
+
+v1.0 (2003-11-24) -- 'Lur'
+--------------------------
+
+- Ported to Zope 3
+
+- Renamed it to 'statictree'
+
+- Much more unit tests
+
+- Added filter functionality
+
+- Provided sample implementations as well as an alternate
+  rotterdam-like skin using the static tree

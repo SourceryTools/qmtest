@@ -1,0 +1,6 @@
+<html i18n:domain="zope"><title i18n:translate="">System Error</title>
+<body tal:define="ignored python:request.response.setStatus(500)"
+    i18n:translate="">
+  A system error occurred.
+</body>
+</html>

@@ -1,0 +1,52 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   i18n_domain="zope"
+   package="zope.app.intid"
+   >
+
+  <!-- This file is the equivalent of site.zcml and it is -->
+  <!-- used for functional testing setup -->
+
+  <include package="zope.app.zcmlfiles" />
+
+  <include package="zope.app.securitypolicy" />
+  <include package="zope.app.securitypolicy" file="meta.zcml" />
+  <include package="zope.formlib" />
+  <include package="zope.app.authentication" />
+  <include package="zope.app.keyreference" />
+  <include package="zope.app.intid" />
+
+  <securityPolicy
+    component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+
+  <role id="zope.Anonymous" title="Everybody"
+                 description="All users have this role implicitly" />
+  <role id="zope.Manager" title="Site Manager" />
+
+  <grantAll role="zope.Manager" />
+  <include package="zope.app.securitypolicy.tests" file="functional.zcml" />
+
+  <!-- Principals -->
+
+  <unauthenticatedGroup
+    id="zope.Anybody"
+    title="Unauthenticated Users"
+    />
+
+  <!-- Principal that tests generally run as -->
+  <principal
+      id="zope.mgr"
+      title="Manager"
+      login="mgr"
+      password="mgrpw" />
+
+  <!-- Bootstrap principal used to make local grant to the principal above -->
+  <principal
+      id="zope.globalmgr"
+      title="Manager"
+      login="globalmgr"
+      password="globalmgrpw" />
+
+  <grant role="zope.Manager" principal="zope.globalmgr" />
+
+</configure>

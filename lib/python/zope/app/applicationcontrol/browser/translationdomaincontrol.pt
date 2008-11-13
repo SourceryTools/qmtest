@@ -1,0 +1,48 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+  <head>
+    <title i18n:translate="">Translation Domains</title>
+  </head>
+  <body>
+    <div metal:fill-slot="body">
+
+    <p tal:define="status view/reloadCatalogs"
+         tal:condition="status"
+         tal:content="status" i18n:translate=""/>
+
+    <div tal:repeat="domainInfo view/getCatalogsInfo">
+
+    <div class="row">
+        <div class="label" i18n:translate="">Domain</div>
+        <div class="field" tal:content="domainInfo/domain">domain</div>
+    </div>
+
+    <table class="listing">
+
+        <thead>
+        <tr>
+           <th i18n:translate="">Language</th>
+           <th i18n:translate="">Files</th>
+           <th>&nbsp;</th>
+        </tr>
+        </thead>
+
+        <tr tal:repeat="catalogInfo domainInfo/languagesInfo">
+            <td tal:content="catalogInfo/language"></td>
+            <td>
+                <div tal:repeat="fileName catalogInfo/fileNames"
+                     tal:content="fileName"></div>
+            </td>
+            <td>
+                <a tal:attributes="href string:?RELOAD=&domain=${domainInfo/domain}&language=${catalogInfo/language}"
+                   i18n:translate="reload-button">Reload</a>
+            </td>
+        </tr>
+
+    </table>
+
+    </div>
+
+    </div>
+  </body>
+</html>

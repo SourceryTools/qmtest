@@ -1,0 +1,120 @@
+<metal:block define-macro="ifacename"
+  ><span tal:replace="iface/module" />.<u tal:content="iface/name"
+/></metal:block>
+
+<metal:block define-macro="typename">
+  <span tal:replace="type/module" />.<span tal:replace="type/name" />
+</metal:block>
+
+<metal:block define-macro="zcml" i18n:domain="zope">
+  <a href=""
+      tal:attributes="href
+     string:$rootURL/Code/${zcml/url}/index.html?line=${zcml/line}#${zcml/line}"
+      tal:content="zcml/file">
+    zope/app/configure.zcml
+  </a>
+  <span class="small" i18n:translate="">
+    (line <tal:block replace="zcml/line" i18n:name="line"/>)</span>
+</metal:block>
+
+
+<metal:block define-macro="adapter" i18n:domain="zope">
+  <div>
+    <b><code>
+      <a href=""
+            tal:attributes="href
+                string:$rootURL/Code/${adapter/factory_url}/index.html"
+            tal:content="adapter/factory"
+            tal:condition="adapter/factory_url" />
+      <span tal:content="adapter/factory"
+            tal:condition="not: adapter/factory_url" />
+    </code></b>
+    <span tal:condition="adapter/name" i18n:translate="">
+      (name: <tal:block content="adapter/name" i18n:name="name"/>)
+    </span>
+  </div>
+
+  <div tal:condition="adapter/zcml"
+       tal:define="zcml adapter/zcml">
+    <i i18n:translate="">registered:</i>
+    <metal:block use-macro="context/@@interface_macros/zcml" />
+  </div>
+
+  <div>
+    <i i18n:translate="">requires:</i>
+    <tal:block repeat="spec adapter/required">
+      <a href=""
+         tal:condition="spec/isInterface"
+         tal:define="iface spec"
+         tal:attributes="href
+            string:$rootURL/Interface/${iface/module}.${spec/name}/index.html">
+          <metal:block use-macro="context/@@interface_macros/ifacename"
+        /></a>
+      <a href=""
+         tal:condition="spec/isType"
+         tal:define="type spec"
+         tal:attributes="href
+            string:$rootURL/Code/${type/url}/index.html">
+          <metal:block use-macro="context/@@interface_macros/typename"
+        /></a>
+        <tal:block condition="not:repeat/spec/end">, </tal:block>
+    </tal:block>
+    <span tal:condition="not:adapter/required" i18n:translate="">
+      No interface required.
+    </span>
+  </div>
+
+  <div tal:define="iface adapter/provided">
+    <i i18n:translate="">provides:</i>
+    <a href=""
+        tal:condition="iface"
+        tal:attributes="href
+          string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
+      <metal:block use-macro="context/@@interface_macros/ifacename" />
+    </a>
+    <span tal:condition="not:iface" i18n:translate="">
+      No interface provided.
+    </span>
+  </div>
+
+  <div tal:condition="adapter/doc">
+    <i i18n:translate="">registration info:</i>
+    <span tal:content="adapter/doc">reg info</span>
+  </div>
+
+</metal:block>
+
+
+<metal:block define-macro="factory">
+  <a href=""
+     tal:attributes="href string:$rootURL/Code/${factory/url}/"
+     tal:content="factory/name" />
+  <tal:block replace="string:(${factory/title})" condition="factory/title" />
+</metal:block>
+
+
+<metal:block define-macro="utility" i18n:domain="zope">
+  <a href=""
+     tal:attributes="href
+   string:${rootURL}/Utility/${utility/iface_id}/${utility/url_name}/index.html"
+     tal:content="structure utility/name" />
+  <br />
+  <div style="padding-bottom: 3pt;"><span class="small">
+    <span i18n:translate="">Component:</span>
+    <code style="font-size: 100%">
+      <a href=""
+         tal:attributes="href string:$rootURL/${utility/url}/index.html"
+         tal:content="utility/path"
+         tal:condition="utility/url" />
+      <span tal:condition="not: utility/url" tal:replace="utility/path" />
+  </code></span></div>
+</metal:block>
+
+
+<metal:block define-macro="class">
+  <b><code>
+    <a href=""
+       tal:attributes="href string:$rootURL/Code/${klass/url}/index.html"
+       tal:content="klass/path" />
+  </code></b>
+</metal:block>

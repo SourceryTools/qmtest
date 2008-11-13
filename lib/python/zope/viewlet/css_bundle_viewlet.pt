@@ -1,0 +1,6 @@
+<tal:block repeat="info view/getResources">
+<link type="text/css" rel="stylesheet" href="somestyle.css" media="all"
+      tal:attributes="rel info/rel;
+                      href info/url;
+                      media info/media" />
+</tal:block>

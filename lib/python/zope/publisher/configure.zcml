@@ -1,0 +1,29 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    >
+
+  <interface interface="zope.publisher.interfaces.browser.IBrowserSkinType" />
+  <interface interface="zope.publisher.interfaces.xmlrpc.IXMLRPCRequest" />
+  
+  <class class="xmlrpclib.Binary">
+    <allow attributes="data encode decode" />
+  </class>
+
+  <adapter factory=".xmlrpc.ListPreMarshaller" />
+  <adapter factory=".xmlrpc.TuplePreMarshaller" />
+  <adapter factory=".xmlrpc.BinaryPreMarshaller" />
+  <adapter factory=".xmlrpc.FaultPreMarshaller" />
+  <adapter factory=".xmlrpc.DateTimePreMarshaller" />
+  <adapter factory=".xmlrpc.PythonDateTimePreMarshaller" />
+  <adapter factory=".xmlrpc.DictPreMarshaller" />
+
+  <apidoc:bookchapter
+      zcml:condition="have apidoc"
+      id="zopepublisherhttpresults.txt"
+      title="Creating HTTP Results"
+      doc_path="httpresults.txt"
+      />
+
+</configure>

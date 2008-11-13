@@ -1,0 +1,16 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".test_contents_functional.ReadOnlyContainer">
+    <require
+        permission="zope.ManageContent"
+        interface="zope.app.container.interfaces.IReadContainer"
+        />
+  </class>
+
+  <browser:containerViews
+      for="zope.app.container.interfaces.IReadContainer"
+      contents="zope.ManageContent" />
+
+</configure>

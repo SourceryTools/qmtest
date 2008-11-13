@@ -1,0 +1,66 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <class class=".groupfolder.GroupInformation">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageServices"
+        interface=".groupfolder.IGroupInformation
+                   .groupfolder.IGroupContained"
+        set_schema=".groupfolder.IGroupInformation"
+        />
+  </class>
+
+  <class class=".groupfolder.GroupFolder">
+    <implements
+        interface=".groupfolder.IGroupFolder"
+        />
+    <require
+        permission="zope.ManageServices"
+        interface="zope.app.container.interfaces.IContainer
+                   zope.app.container.interfaces.INameChooser"
+        />
+  </class>
+
+  <adapter
+      provides="zope.app.container.interfaces.INameChooser"
+      for=".groupfolder.IGroupFolder"
+      factory=".idpicker.IdPicker"
+      />
+
+  <subscriber
+      for=".interfaces.IPrincipalCreated"
+      handler=".groupfolder.specialGroups"
+      />
+
+  <subscriber
+      for=".interfaces.IPrincipalCreated"
+      handler=".groupfolder.setGroupsForPrincipal"
+      />
+
+  <subscriber
+      handler=".groupfolder.setMemberSubscriber"
+      />
+
+  <include package=".browser" file="groupfolder.zcml" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="groupfolder"
+        title="Group Folders"
+        doc_path="groupfolder.txt"
+        parent="security/authentication"
+        />
+
+  </configure>
+
+</configure>

@@ -1,0 +1,47 @@
+<div class="directive"
+     tal:attributes="class string:directive ${view/highlight}">
+  <a name="" tal:attributes="name view/line" />
+  &lt;<a href="" tal:attributes="href view/url"
+    ><span class="tagName" tal:content="view/fullTagName">tagName</span></a>
+  <br />
+
+  <span tal:repeat="attr view/attributes">
+    &nbsp;&nbsp;&nbsp;
+    <span tal:condition="not: attr/values">
+      <span class="attributeName" tal:content="attr/name">
+        name
+      </span>="<a tal:attributes="href attr/url"><span
+           class="attributeValue"
+           tal:content="attr/value">value</span></a>"
+    </span>
+    <span tal:condition="attr/values">
+      <span class="attributeName" tal:content="attr/name">
+        name
+      </span>="
+      <div tal:repeat="entry attr/values">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a tal:attributes="href entry/url"><span
+           class="attributeValue"
+           tal:content="entry/value">value</span></a>
+     </div>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+    </span>
+    <br />
+  </span>
+  &nbsp;&nbsp;&nbsp;
+  <span tal:condition="view/hasSubDirectives">&gt;</span>
+  <span tal:condition="not:view/hasSubDirectives">/&gt;</span>
+</div>
+
+<div style="margin-left: 1.5em;">
+  <tal:block repeat="element view/getElements">
+    <tal:block replace="structure element/@@display" />
+  </tal:block>
+</div>
+
+<div class="directive"
+     tal:condition="view/hasSubDirectives">
+  &lt;/<span class="tagName"
+             tal:content="view/fullTagName" />&gt;
+
+</div>

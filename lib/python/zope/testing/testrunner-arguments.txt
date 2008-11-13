@@ -1,0 +1,27 @@
+Passing arguments explicitly
+============================
+
+In most of the examples here, we set up `sys.argv`.  In normal usage,
+the testrunner just uses `sys.argv`.  It is possible to pass arguments
+explicitly.
+
+    >>> import os.path
+    >>> directory_with_tests = os.path.join(this_directory, 'testrunner-ex')
+    >>> defaults = [
+    ...     '--path', directory_with_tests,
+    ...     '--tests-pattern', '^sampletestsf?$',
+    ...     ]
+    >>> from zope.testing import testrunner
+    >>> testrunner.run(defaults, 'test --layer 111'.split())
+    Running samplelayers.Layer111 tests:
+      Set up samplelayers.Layerx in N.NNN seconds.
+      Set up samplelayers.Layer1 in N.NNN seconds.
+      Set up samplelayers.Layer11 in N.NNN seconds.
+      Set up samplelayers.Layer111 in N.NNN seconds.
+      Ran 34 tests with 0 failures and 0 errors in N.NNN seconds.
+    Tearing down left over layers:
+      Tear down samplelayers.Layer111 in N.NNN seconds.
+      Tear down samplelayers.Layerx in N.NNN seconds.
+      Tear down samplelayers.Layer11 in N.NNN seconds.
+      Tear down samplelayers.Layer1 in N.NNN seconds.
+    False

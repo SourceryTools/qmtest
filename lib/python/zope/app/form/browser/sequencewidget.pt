@@ -1,0 +1,28 @@
+<table border="0" class="sequencewidget">
+  <tr tal:repeat="widget view/widgets">
+    <td>
+      <input class="editcheck" type="checkbox"
+             tal:attributes="
+                 name string:${view/name}.remove_${repeat/widget/index}"
+             tal:condition="view/need_delete" />
+    </td>
+    <td>
+      <span tal:define="error widget/error"
+            tal:replace="structure error" tal:condition="error" />
+      <input tal:replace="structure widget" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <input type="submit" value="Remove selected items"
+             tal:condition="view/need_delete"
+             tal:attributes="name string:${view/name}.remove"
+             i18n:attributes="value remove-selected-items" />
+      <input type="submit" value="Add foo"
+             tal:condition="view/need_add"
+             tal:attributes="name string:${view/name}.add;
+                             value view/addButtonLabel" />
+    </td>
+  </tr>
+</table>
+<input tal:replace="structure view/marker" />

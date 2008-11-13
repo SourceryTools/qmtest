@@ -1,0 +1,69 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title i18n:translate="">Zope Runtime Information</title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+  <tal:block tal:define="runtime_info view/runtimeInfo">
+     <div class="row">
+       <div class="label" i18n:translate="">Uptime</div>
+       <div class="field"
+            tal:content="runtime_info/Uptime"
+            i18n:translate="">Time</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">System platform</div>
+       <div class="field"
+            tal:content="runtime_info/SystemPlatform">Platform</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Zope version</div>
+       <div class="field"
+            tal:content="runtime_info/ZopeVersion">Version</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Python version</div>
+       <div class="field"
+            tal:content="runtime_info/PythonVersion">Version</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Command line</div>
+       <div class="field"
+            tal:content="runtime_info/CommandLine">Command line</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Preferred encoding</div>
+       <div class="field"
+            tal:content="runtime_info/PreferredEncoding">Encoding</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">FileSystem encoding</div>
+       <div class="field"
+            tal:content="runtime_info/FileSystemEncoding">Encoding</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Process id</div>
+       <div class="field"
+            tal:content="runtime_info/ProcessId">ID</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Developer mode</div>
+       <div class="field"
+            tal:content="runtime_info/DeveloperMode">ID</div>
+     </div>
+     <div class="row">
+       <div class="label" i18n:translate="">Python path</div>
+       <div class="field">
+        <ul>
+         <li tal:repeat="path runtime_info/PythonPath" 
+             tal:content="path">path</li>
+        </ul>
+       </div>
+     </div>
+  </tal:block>
+
+</div>
+</body>
+</html>

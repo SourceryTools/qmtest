@@ -1,0 +1,96 @@
+<zope:configure
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="zope">
+
+<!-- RadioWidget for build a matrix for granting permissions -->
+  <zope:view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.IChoice
+           zope.securitypolicy.interfaces.IGrantVocabulary"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory="zope.app.securitypolicy.browser.granting.GrantWidget"
+      permission="zope.Public"
+      />
+
+<!-- Role Utility -->
+
+  <addform
+      label="New Role"
+      name="addRole.html"
+      schema="zope.securitypolicy.interfaces.IRole"
+      permission="zope.Security"
+      content_factory="zope.securitypolicy.role.LocalRole"
+      arguments="title"
+      keyword_arguments="description"
+      fields="title description" />
+
+  <editform
+      schema="zope.securitypolicy.interfaces.IRole"
+      name="edit.html"
+      menu="zmi_views" title="Edit"
+      permission="zope.ManageContent"/>
+
+  <defaultView
+      for="zope.securitypolicy.interfaces.IRole"
+      name="edit.html" />
+
+  <!-- Menu entry for "Add Utility" menu -->
+  <addMenuItem
+      class="zope.securitypolicy.role.LocalRole"
+      title="Role"
+      description="A Security Role"
+      permission="zope.Security"
+      view="addRole.html"
+      />
+
+<!-- Role Permissions -->
+
+  <!-- Note that we've moved this to the site manager! -->
+  <!-- The role-permission mapping is really the domain of programmers -->
+
+  <pages
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      permission="zope.Security"
+      class=".rolepermissionview.RolePermissionView">
+    <page
+        name="AllRolePermissions.html"
+        template="manage_access.pt"
+        menu="zmi_actions" title="Role-Permissions"
+        />
+    <!-- menu="zmi_actions" title="Role Permissions" / -->
+    <page
+        name="RolePermissions.html"
+        template="manage_roleform.pt"
+        />
+    <page
+        name="RolesWithPermission.html"
+        template="manage_permissionform.pt"
+        />
+  </pages>
+
+  <zope:class class=".rolepermissionview.PermissionRoles">
+    <zope:require
+        permission="zope.Security"
+        attributes="roles rolesInfo id title description" />
+  </zope:class>
+
+  <zope:class class=".rolepermissionview.RolePermissions">
+    <zope:require
+        permission="zope.Security"
+        attributes="permissions permissionsInfo id title description" />
+  </zope:class>
+
+<!-- Granting Roles and Permissions to Principals -->
+
+  <page
+      for="zope.annotation.interfaces.IAnnotatable"
+      name="grant.html"
+      permission="zope.Security"
+      template="granting.pt"
+      class=".granting.Granting"
+      menu="zmi_actions" title="Grant"
+      />
+
+
+</zope:configure>

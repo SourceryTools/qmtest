@@ -1,0 +1,10 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      for="*"
+      factory="zope.size.DefaultSized"
+      provides="zope.size.interfaces.ISized"
+      permission="zope.View"
+      />
+
+</configure>

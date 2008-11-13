@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    >
+
+  <meta:directives namespace="http://namespaces.zope.org/apidoc">
+
+    <meta:directive
+        name="moduleImport"
+        schema=".metadirectives.IModuleImport"
+        handler=".metaconfigure.moduleImport"
+        />
+
+    <meta:directive
+        name="rootModule"
+        schema=".metadirectives.IRootModule"
+        handler=".metaconfigure.rootModule"
+        />
+
+  </meta:directives>
+
+</configure>

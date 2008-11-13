@@ -1,0 +1,66 @@
+Test Message Catalog
+====================
+
+The test message catalog "translates" test by simply outputing the
+domain and message id in square-bracket markers:
+
+    >>> import zope.i18n.testmessagecatalog
+    >>> cat = zope.i18n.testmessagecatalog.TestMessageCatalog('foo.bar')
+
+    >>> cat.language, cat.domain
+    ('test', 'foo.bar')
+
+    >>> cat.queryMessage('eek')
+    u'[[foo.bar][eek]]'
+
+    >>> cat.getMessage('eek')
+    u'[[foo.bar][eek]]'
+
+    >>> cat.getIdentifier()
+    'test'
+
+    >>> cat.reload()
+
+If a message id has a default, it will be included in the output:
+
+    >>> id = zope.i18nmessageid.MessageFactory('foo.bar')('eek', default='Eek')
+
+    >>> cat.queryMessage(id)
+    u'[[foo.bar][eek (Eek)]]'
+
+    >>> cat.getMessage(id)
+    u'[[foo.bar][eek (Eek)]]'
+
+If a message doesn't have a default, but a default is passed in to
+queryMessage, the default will be used used:
+
+    >>> cat.queryMessage('eek', default='Eek')
+    u'[[foo.bar][eek (Eek)]]'
+
+    >>> cat.getMessage(id, default='Waaa')
+    u'[[foo.bar][eek (Eek)]]'
+
+Fallback domains
+----------------
+
+The testmessagecatalog module also provide a fallback domain factory
+that has the test catalog as it's only catalog:
+
+    >>> factory = zope.i18n.testmessagecatalog.TestMessageFallbackDomain
+    >>> import zope.i18n.interfaces
+    >>> zope.i18n.interfaces.IFallbackTranslationDomainFactory.providedBy(
+    ...     factory)
+    True
+    
+    >>> domain = factory('foo.bar')
+    >>> domain.translate(u'eek')
+    u'eek'
+
+    >>> domain.translate(u'eek', target_language='test')
+    u'[[foo.bar][eek]]'
+
+Note that if a default is padded in, it will be included in test
+output:
+
+    >>> domain.translate(u'eek', target_language='test', default=u'Eek')
+    u'[[foo.bar][eek (Eek)]]'

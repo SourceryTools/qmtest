@@ -1,0 +1,36 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+
+  <adapter factory=".form.default_page_template" name="default" />
+  <adapter factory=".form.default_subpage_template" name="default" />
+  <adapter factory=".form.render_submit_button" name="render" />
+
+  <!-- TALES namespace allows view/template:default etc -->
+  <adapter
+      for="*"
+      factory=".namedtemplate.NamedTemplatePathAdapter"
+      name="template"
+      />
+
+  <!-- Error view for 'Invalid' -->
+  <adapter
+      factory=".errors.InvalidErrorView"
+      permission="zope.Public"
+      />
+
+  <!-- For security proxied views -->
+  <class class=".form.Widgets">
+    <allow interface=".interfaces.IWidgets" />
+  </class>
+
+  <class class=".form.Actions">
+    <allow interface=".interfaces.IActions" />
+  </class>
+
+  <class class=".form.Action">
+    <allow interface=".interfaces.IAction" />
+  </class>
+
+</configure>

@@ -1,0 +1,308 @@
+Using Principal Folders
+=======================
+
+Principal folders are Pluggable-Authentication plugins that manage
+principal information, especially authentication credentials.  To use
+a principal folder, you need add a principal folder plugin to the PAU
+and to configure the PAU to use plugin.
+
+Let's look at an example, in which we'll define a new manager named
+Bob.  Initially, attempts to log in as Bob fail:
+
+  >>> print http(r"""
+  ... GET /manage HTTP/1.1
+  ... Authorization: Basic Ym9iOjEyMw==
+  ... """)
+  HTTP/1.1 401 Unauthorized
+  ...
+
+To allow Bob to log in, we'll start by adding a principal folder to PAU:
+
+We need to create and register a pluggable authentication utility.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/@@contents.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 98
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html?type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication
+  ... 
+  ... type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication&new_value=PAU""",
+  ... handle_errors=False)
+  HTTP/1.1 303 See Other
+  ...
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/PAU/@@registration.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html?type_name=BrowserAdd__zope.app.authentication.authentication.PluggableAuthentication
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+
+Register PAU.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/addRegistration.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 687
+  ... Content-Type: multipart/form-data; boundary=---------------------------5559795404609280911441883437
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/addRegistration.html
+  ... 
+  ... -----------------------------5559795404609280911441883437
+  ... Content-Disposition: form-data; name="field.comment"
+  ... 
+  ... 
+  ... -----------------------------5559795404609280911441883437
+  ... Content-Disposition: form-data; name="field.actions.register"
+  ... 
+  ... Register
+  ... -----------------------------5559795404609280911441883437--
+  ... """, handle_errors=False)
+  HTTP/1.1 303 See Other
+  ...
+
+Add a Principal folder plugin to PAU.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/+/AddPrincipalFolder.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 429
+  ... Content-Type: multipart/form-data; boundary=---------------------------95449631112274213651507932125
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/+/AddPrincipalFolder.html=
+  ... 
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="field.prefix"
+  ... 
+  ... users
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------95449631112274213651507932125
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... users
+  ... -----------------------------95449631112274213651507932125--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+We specify a prefix, `users.`.  This is used to make sure that ids
+used by this plugin don't conflict with ids of other plugins.  We also
+name ths plugin `users`.  This is the name we'll use when we configure
+the pluggable authentiaction service.
+
+Next we'll view the contents page of the principal folder:
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/PAU/users/@@contents.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/addRegistration.html
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+
+
+And we'll add a principal, Bob:
+
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 780
+  ... Content-Type: multipart/form-data; boundary=---------------------------5110544421083023415453147877
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/users/+/AddPrincipalInformation.html%3D
+  ... 
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.login"
+  ... 
+  ... bob
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.passwordManagerName"
+  ... 
+  ... SHA1
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.password"
+  ... 
+  ... bob
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.title"
+  ... 
+  ... bob
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="field.description"
+  ... 
+  ... 
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------5110544421083023415453147877
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... bob
+  ... -----------------------------5110544421083023415453147877--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+Note that we didn't pick a name.  The name, together with the folder
+prefix. If we don't choose a name, a numeric id is chosen.
+
+
+Now we have a principal folder with a principal. 
+
+Configure PAU, with registered principal folder plugin and 
+select any one credentials.
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/PAU/@@configure.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 1038
+  ... Content-Type: multipart/form-data; boundary=---------------------------6519411471194050603270010787
+  ... Cookie: zope3_cs_6a553b3=-j7C3CdeW9sUK8BP5x97u2d9o242xMJDzJd8HCQ5AAi9xeFcGTFkAs
+  ... Referer: http://localhost:8081/++etc++site/default/PAU/@@configure.html
+  ... 
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.credentialsPlugins.to"
+  ... 
+  ... U2Vzc2lvbiBDcmVkZW50aWFscw==
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.credentialsPlugins-empty-marker"
+  ... 
+  ... 
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins.to"
+  ... 
+  ... dXNlcnM=
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins-empty-marker"
+  ... 
+  ... 
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Change
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.credentialsPlugins"
+  ... 
+  ... U2Vzc2lvbiBDcmVkZW50aWFscw==
+  ... -----------------------------6519411471194050603270010787
+  ... Content-Disposition: form-data; name="field.authenticatorPlugins"
+  ... 
+  ... dXNlcnM=
+  ... -----------------------------6519411471194050603270010787--
+  ... """, handle_errors=False)
+  HTTP/1.1 200 OK
+  ... 
+
+Now, with this in place, Bob can log in, but he isn't allowed to
+access the management interface. When he attempts to do so, the PAU 
+issues a challenge to let bob login as a different user
+
+  >>> print http(r"""
+  ... POST /@@loginForm.html?camefrom=http%3A%2F%2Flocalhost%3A8081%2F%40%40login.html HTTP/1.1
+  ... Content-Length: 94
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... Referer: http://localhost:8081/@@loginForm.html?camefrom=http%3A%2F%2Flocalhost%3A8081%2F%40%40login.html
+  ... 
+  ... login=bob&password=bob&SUBMIT=Log+in&camefrom=http%3A%2F%2Flocalhost%3A8081%2F%40%40login.html""")
+  HTTP/1.1 303 See Other
+  ...
+
+When he attempts to do so, the PAU issues a challenge to let bob login 
+as a different user
+
+  >>> print http(r"""
+  ... GET /+ HTTP/1.1
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+
+We go to the granting interface and search for and find a principal named Bob:
+  >>> print http(r"""
+  ... GET /@@grant.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... Referer: http://localhost:8081/@@contents.html
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 210
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... Referer: http://localhost:8081/@@grant.html
+  ... 
+  ... field.principal.displayed=y&field.principal.MC51c2Vycw__.query.field.search=&field.principal.MC51c2Vycw__.selection=dXNlcnNib2I_&field.principal.MC51c2Vycw__.apply=Apply&field.principal.MQ__.query.searchstring=""")
+  HTTP/1.1 200 OK
+  ...
+
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 210
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... Referer: http://localhost:8081/@@grant.html
+  ... 
+  ... field.principal.displayed=y&field.principal.MC51c2Vycw__.query.field.search=&field.principal.MC51c2Vycw__.selection=dXNlcnNib2I_&field.principal.MC51c2Vycw__.apply=Apply&field.principal.MQ__.query.searchstring=""")
+  HTTP/1.1 200 OK
+  ...
+
+
+We select Bob and grant him the Manager role:
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 5316
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@grant.html
+  ... 
+  ... field.principal=dXNlcnMuMQ__"""
+  ... """&field.principal.displayed=y"""
+  ... """&field.principal.MC51c2Vycw__.query.field.search=bob"""
+  ... """&field.principal.MA__.query.searchstring="""
+  ... """&GRANT_SUBMIT=Change"""
+  ... """&field.dXNlcnMuMQ__.role.zope.Manager=allow"""
+  ... """&field.dXNlcnMuMQ__.role.zope.Manager-empty-marker=1""")
+  HTTP/1.1 200 OK
+  ...
+
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic bWdyOm1ncnB3
+  ... Content-Length: 2598
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Cookie: zope3_cs_6a58ae0=zt1tvSi4JRxMD4bggPyUqMA70iE3bgAqvQB.y.ZeOhMmkfbens3-pU
+  ... Referer: http://localhost:8081/@@grant.html
+  ... 
+  ... field.principal=dXNlcnNib2I_&field.principal.displayed=y&field.principal.MC51c2Vycw__.query.field.search=&field.principal.MQ__.query.searchstring=&GRANT_SUBMIT=Change&field.dXNlcnNib2I_.role.bugtracker.Admin=unset&field.dXNlcnNib2I_.role.bugtracker.Editor=unset&field.dXNlcnNib2I_.role.bugtracker.User=unset&field.dXNlcnNib2I_.role.zope.Anonymous=unset&field.dXNlcnNib2I_.role.zope.Manager=allow&field.dXNlcnNib2I_.role.zope.Member=unset&field.dXNlcnNib2I_.role.zwiki.Admin=unset&field.dXNlcnNib2I_.role.zwiki.Editor=unset&field.dXNlcnNib2I_.role.zwiki.User=unset&field.dXNlcnNib2I_.permission.bugtracker.AddBug=unset&field.dXNlcnNib2I_.permission.bugtracker.AddAttachment=unset&field.dXNlcnNib2I_.permission.bugtracker.AddComment=unset&field.dXNlcnNib2I_.permission.zwiki.AddWikiPage=unset&field.dXNlcnNib2I_.permission.zwiki.CommentWikiPage=unset&field.dXNlcnNib2I_.permission.zwiki.DeleteWikiPage=unset&field.dXNlcnNib2I_.permission.bugtracker.EditBug=unset&field.dXNlcnNib2I_.permission.zwiki.EditWikiPage=unset&field.dXNlcnNib2I_.permission.bugtracker.ManageBugTracker=unset&field.dXNlcnNib2I_.permission.zwiki.ReparentWikiPage=unset&field.dXNlcnNib2I_.permission.bugtracker.ViewBug=unset&field.dXNlcnNib2I_.permission.bugtracker.ViewBugTracker=unset&field.dXNlcnNib2I_.permission.zwiki.ViewWikiPage=unset&field.dXNlcnNib2I_.permission.zope.AddImages=unset&field.dXNlcnNib2I_.permission.zope.AddSQLScripts=unset&field.dXNlcnNib2I_.permission.zope.Security=unset&field.dXNlcnNib2I_.permission.zope.workflow.CreateProcessInstances=unset&field.dXNlcnNib2I_.permission.zope.ManageApplication=unset&field.dXNlcnNib2I_.permission.zope.ManageCode=unset&field.dXNlcnNib2I_.permission.zope.ManageContent=unset&field.dXNlcnNib2I_.permission.zope.ManagePrincipals=unset&field.dXNlcnNib2I_.permission.zope.ManageBindings=unset&field.dXNlcnNib2I_.permission.zope.ManageServices=unset&field.dXNlcnNib2I_.permission.zope.ManageSite=unset&field.dXNlcnNib2I_.permission.zope.workflow.ManageProcessDefinitions=unset&field.dXNlcnNib2I_.permission.zope.SendMail=unset&field.dXNlcnNib2I_.permission.zope.UndoAllTransactions=unset&field.dXNlcnNib2I_.permission.zope.UndoOwnTransactions=unset&field.dXNlcnNib2I_.permission.zope.workflow.UseProcessInstances=unset&field.dXNlcnNib2I_.permission.zope.View=unset&field.dXNlcnNib2I_.permission.zope.app.apidoc.UseAPIDoc=unset&field.dXNlcnNib2I_.permission.zope.app.dublincore.change=unset&field.dXNlcnNib2I_.permission.zope.app.dublincore.view=unset&field.dXNlcnNib2I_.permission.zope.app.introspector.Introspect=unset&field.dXNlcnNib2I_.permission.zope.app.rdb.Use=unset""")
+  HTTP/1.1 200 OK
+  ...
+
+
+At which point, Bob can access the management interface:
+
+  >>> print http(r"""
+  ... GET /@@contents.html HTTP/1.1
+  ... Authorization: Basic Ym9iOjEyMw==
+  ... """)
+  HTTP/1.1 200 OK
+  ...

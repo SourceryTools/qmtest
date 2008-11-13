@@ -1,0 +1,186 @@
+Adapter-based workflow application integration
+==============================================
+
+This package provides an adapter-based workflow integration
+component. The component is implemented by the integration module:
+
+    >>> from zope.wfmc import process, adapter
+    >>> import zope.component
+
+To demonstrate how this works, we'll use the simple wfmc example
+process:
+
+    >>> pd = process.ProcessDefinition('sample', adapter.integration)
+    >>> zope.component.provideUtility(pd, name=pd.id)
+    >>> pd.defineActivities(
+    ...     author = process.ActivityDefinition(),
+    ...     review = process.ActivityDefinition(),
+    ...     publish = process.ActivityDefinition(),
+    ...     reject = process.ActivityDefinition(),
+    ...     )
+    >>> pd.defineTransitions(
+    ...     process.TransitionDefinition('author', 'review'),
+    ...     process.TransitionDefinition(
+    ...         'review', 'publish', condition=lambda data: data.publish),
+    ...     process.TransitionDefinition('review', 'reject'),
+    ...     )
+
+
+    >>> pd.defineApplications(
+    ...     author = process.Application(),
+    ...     review = process.Application(
+    ...         process.OutputParameter('publish')),
+    ...     publish = process.Application(),
+    ...     reject = process.Application(),
+    ...     )
+
+    >>> pd.activities['author'].addApplication('author')
+    >>> pd.activities['review'].addApplication('review', ['publish'])
+    >>> pd.activities['publish'].addApplication('publish')
+    >>> pd.activities['reject'].addApplication('reject')
+
+    >>> pd.defineParticipants(
+    ...     author   = process.Participant(),
+    ...     reviewer = process.Participant(),
+    ...     )
+
+    >>> pd.activities['author'].definePerformer('author')
+    >>> pd.activities['review'].definePerformer('reviewer')
+
+For each of the participants provided, we need to provide a named
+adapter from an activity instance
+(`zope.wfmc.interfaces.IActivity`) to
+`zope.wfmc.interfaces.IParticipant`.  When a process needs to get a
+participant, it adapts the activity instance to `IParticipant` using a
+qualified name, consisting of the process-definition identifier, a
+dot, and the performer's participant identifier. If an adapter can't
+be found with that name, it tries again using just a dot followed by
+the participant identifier.  This way, participant adapters can be
+shared across multiple process definitions, or provided for a
+specific definition.  If an activity doesn't have a performer, then
+procedure above is used with an empty participant id.  We first look
+for an adapter with a name consisting of the process id followed by a
+dot, and then we look for an adapter with a single dot as it's name.
+
+Application implementations are provided as named adapters from
+participants to `zope.wfmc.interfaces.IWorkItem`.  As when looking up
+applications, we first look for an adapter with a name consisting of
+the process-definition id, a dot, and the application id.  If that
+fails, we look for an adapter consisting of a dot followed by the
+application id.  Workflow items provide a `start` method, which is
+used to start the work and pass input arguments.  It is the
+responsibility of the work item, at some later time, to call the
+`workItemFinished` method on the activity, to notify the activity that
+the work item was completed. Output parameters are passed to the
+`workItemFinished` method.
+
+Let's implement participants for our process. We'll start with a
+generic participant:
+
+    >>> import zope.interface
+    >>> from zope.wfmc import interfaces
+
+    >>> class Participant(object):
+    ...     zope.component.adapts(interfaces.IActivity)
+    ...     zope.interface.implements(interfaces.IParticipant)
+    ...
+    ...     def __init__(self, activity):
+    ...         self.activity = activity
+
+    >>> zope.component.provideAdapter(Participant, name=".author")
+    >>> zope.component.provideAdapter(Participant, name=".reviewer")
+    >>> zope.component.provideAdapter(Participant, name=".")
+
+And finally, we can define adapters that implement our application:
+
+    >>> work_list = []
+
+    >>> class ApplicationBase:
+    ...     zope.component.adapts(interfaces.IParticipant)
+    ...     zope.interface.implements(interfaces.IWorkItem)
+    ...
+    ...     def __init__(self, participant):
+    ...         self.participant = participant
+    ...         work_list.append(self)
+    ...
+    ...     def start(self):
+    ...         pass
+    ...
+    ...     def finish(self):
+    ...         self.participant.activity.workItemFinished(self)
+
+    >>> class Author(ApplicationBase):
+    ...     pass
+
+    >>> zope.component.provideAdapter(Author, name=".author")
+
+    >>> class Review(ApplicationBase):
+    ...     def finish(self, publish):
+    ...         self.participant.activity.workItemFinished(self, publish)
+
+    >>> zope.component.provideAdapter(Review, name=".review")
+
+    >>> class Publish(ApplicationBase):
+    ...     def start(self):
+    ...         print "Published"
+    ...         self.finish()
+
+    >>> zope.component.provideAdapter(Publish, name=".publish")
+
+    >>> class Reject(ApplicationBase):
+    ...     def start(self):
+    ...         print "Rejected"
+    ...         self.finish()
+
+    >>> zope.component.provideAdapter(Reject, name=".reject")
+
+We'll see the workflow executing by registering a subscriber that logs
+workflow events:
+
+    >>> def log_workflow(event):
+    ...     print event
+
+    >>> import zope.event
+    >>> zope.event.subscribers.append(log_workflow)
+
+Now, when we instantiate and start our workflow:
+
+    >>> proc = pd()
+    >>> proc.start()
+    ... # doctest: +NORMALIZE_WHITESPACE
+    ProcessStarted(Process('sample'))
+    Transition(None, Activity('sample.author'))
+    ActivityStarted(Activity('sample.author'))
+
+We transition into the author activity and wait for work to get done.
+To move forward, we need to get at the authoring work item, so we can
+finish it.  Our work items add themselves to a work list, so we can
+get the item from the list.
+
+    >>> item = work_list.pop()
+
+Now we can finish the work item, by calling it's finish method:
+
+    >>> item.finish()
+    WorkItemFinished('author')
+    ActivityFinished(Activity('sample.author'))
+    Transition(Activity('sample.author'), Activity('sample.review'))
+    ActivityStarted(Activity('sample.review'))
+
+We see that we transitioned to the review activity.  Note that the
+`finish` method isn't a part of the workflow APIs.  It was defined by
+our sample classes. Other applications could use different mechanisms.
+
+Now, we'll finish the review process by calling the review work item's
+`finish`. We'll pass `False`, indicating that the content should not
+be published:
+
+    >>> work_list.pop().finish(False)
+    WorkItemFinished('review')
+    ActivityFinished(Activity('sample.review'))
+    Transition(Activity('sample.review'), Activity('sample.reject'))
+    ActivityStarted(Activity('sample.reject'))
+    Rejected
+    WorkItemFinished('reject')
+    ActivityFinished(Activity('sample.reject'))
+    ProcessFinished(Process('sample'))

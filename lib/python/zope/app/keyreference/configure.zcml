@@ -1,0 +1,32 @@
+<configure xmlns="http://namespaces.zope.org/zope" i18n_domain="zope">
+
+  <adapter
+      for="persistent.interfaces.IPersistent"
+      factory=".persistent.KeyReferenceToPersistent"
+      trusted="y"
+      />
+
+  <class class=".persistent.KeyReferenceToPersistent">
+    <require permission="zope.Public" interface=".interfaces.IKeyReference" />
+  </class>
+
+  <adapter
+      for="persistent.interfaces.IPersistent"
+      factory=".persistent.connectionOfPersistent"
+      />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="keyref"
+        title="Persistent Key References"
+        doc_path="persistent.txt"
+        />
+
+  </configure>
+
+</configure>

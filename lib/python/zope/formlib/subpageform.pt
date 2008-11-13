@@ -1,0 +1,149 @@
+
+<div metal:define-macro="form">
+
+<script type="text/javascript"><!--
+
+function toggleFormFieldHelp(ob,state) {
+  // ob is the label element
+  var field = findWidgetDiv(ob);
+  if (field) {
+    field.style.visibility = state && 'hidden' || 'visible';
+    var help = document.getElementById("field-help-for-" + ob.htmlFor);
+    if (help) {
+      help.style.visibility = state && 'visible' || 'hidden';
+    }
+  }
+}
+
+function findWidgetDiv(label) {
+  var element = findFormField(label);
+  while (element) {
+    element = element.parentNode;
+    if (element.tagName == 'DIV' && element.getAttribute('class') == 'widget')
+      return element;
+  }
+}
+
+function findFormField(label) {
+  var name = label.htmlFor;
+  var field = label.form[name];
+  // Multiple fields with the same name, such as radiobuttons
+  if (field) {
+    if (field.length)
+      field = field[0];
+    return field;
+  }
+  // No field with the exact name; find one that starts with the name
+  for (var i = 0; field = label.form[i++];) {
+    if (field.name.substr(0, name.length) == name)
+      return field;
+  }
+} 
+
+//-->
+</script>
+
+  <h1
+       i18n:translate=""
+       tal:condition="view/label"
+       tal:content="view/label"
+       metal:define-slot="heading"
+       >Do something</h1>
+
+  <div class="form-status"
+     tal:define="status view/status"
+     tal:condition="status">
+
+    <div class="summary" tal:content="view/status" i18n:translate="">
+      Form status summary
+    </div>
+
+    <ul class="errors" tal:condition="view/errors">
+       <li tal:repeat="error view/error_views">
+          <span tal:replace="structure error">Error Type</span>
+       </li>
+    </ul>
+  </div>
+
+  <div metal:define-slot="extra_info" tal:replace="nothing">
+  </div>
+
+<!--
+  <div class="form-controls" tal:condition="view/availableActions"
+       metal:define-slot="top_buttons">
+    <input tal:repeat="action view/actions"
+           tal:replace="structure action/render"
+           />
+  </div>
+-->
+
+  <table class="form-fields">
+    <tr class="row" metal:define-slot="extra_top" tal:replace="nothing">
+        <td class="label">Extra top</td>
+        <td class="label"><input type="text" /></td>
+    </tr>
+    <tbody metal:define-slot="formbody" tal:omit-tag="">
+      <tr tal:repeat="widget view/widgets">
+        <td class="label" tal:define="hint widget/hint"
+          metal:define-macro="labelcell">
+          <label tal:condition="python:hint"
+                 tal:attributes="for widget/name"
+                 onmousedown="toggleFormFieldHelp(this,1)"
+                 onmouseup="toggleFormFieldHelp(this,0)"
+                 onmouseout="toggleFormFieldHelp(this,0)"
+                 style="cursor: help">
+            <span class="required" tal:condition="widget/required"
+            >*</span><span i18n:translate=""
+                           tal:content="widget/label">label</span>
+          </label>
+          <label tal:condition="python:not hint"
+                 tal:attributes="for widget/name">
+            <span class="required" tal:condition="widget/required"
+            >*</span><span i18n:translate=""
+                           tal:content="widget/label">label</span>
+          </label>
+        </td>
+        <td class="field" tal:define="hint widget/hint"
+            metal:define-macro="widgetcell">
+          <div class="form-fields-help"
+               tal:content="hint"
+               tal:condition="hint"
+               tal:attributes="id string:field-help-for-${widget/name}"
+               onclick="this.style.visibility='hidden';"
+               i18n:translate=""
+               style="visibility: hidden; position: absolute;"
+               >Title of this content object.</div>
+          <div class="widget" tal:content="structure widget">
+          <input type="text" /></div>
+          <div class="error"
+               define="error widget/error"
+               tal:condition="widget/error"
+               >
+            <!-- TODO Put this back, the Zope3 way.
+            <img src="alert.gif" alt="Error"
+            tal:replace="structure context/alert.gif" />
+            -->
+            <span tal:replace="structure widget/error">error</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+    <tr class="row" metal:define-slot="extra_bottom" tal:replace="nothing">
+      <td class="label">Extra bottom</td>
+      <td class="label"><input type="text" /></td>
+    </tr>
+  </table>
+
+  <div class="form-controls" tal:condition="view/availableActions"
+       metal:define-slot="bottom_buttons">
+    <input tal:repeat="action view/actions"
+           tal:replace="structure action/render"
+           />
+  </div>
+
+<script type="text/javascript"
+    tal:define="extra_script view/extra_script | nothing"
+    tal:condition="extra_script"
+    tal:content="structure extra_script" />
+
+</div>

@@ -1,0 +1,23 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<head>
+  <base href=""
+        metal:fill-slot="headers"
+        tal:attributes="href request/URL/-1" />
+</head>
+
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header">
+    <span class="pre-header" i18n:translate="">Text File</span><br />
+    <span tal:replace="context/zope:name">README.txt</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
+  <div class="documentation"
+       tal:content="structure view/renderedContent">
+    file content
+  </div>
+
+</body>
+</html>

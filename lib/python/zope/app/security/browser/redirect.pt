@@ -1,0 +1,39 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+  <head>
+    <metal:block fill-slot="headers">
+      <meta http-equiv="refresh" content="0;url=./"
+        tal:attributes="content string:0;;url=${view/request/nextURL}" />
+      <script type="text/javascript"><!--
+        // clear HTTP Authentication
+        try {
+          if (window.XMLHttpRequest) {
+            var xmlhttp = new XMLHttpRequest();
+            // Send invalid credentials, then abort
+            xmlhttp.open("GET", "@@", true, "logout", "logout");
+            xmlhttp.send("");
+            xmlhttp.abort();
+          } else if (document.execCommand) {
+            // IE specific command
+            document.execCommand("ClearAuthenticationCache");
+          }
+        } catch(e) { }
+        //-->
+      </script>
+    </metal:block>
+  </head>
+  <body>
+  <div metal:fill-slot="body">
+  
+     <h1 i18n:translate="">You are being redirected!</h1>
+
+     <p style="font-size: 150%">
+       <a tal:attributes="href view/request/nextURL" i18n:translate="">
+         If you see this screen for more than 5 seconds, click here.
+       </a>
+     </p>
+
+  </div>
+  </body>
+
+</html>

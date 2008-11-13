@@ -1,0 +1,7 @@
+<metal:navigation define-macro="navigation">
+    <div class="box" tal:define="topicList views/getTopicTree"
+        i18n:domain="zope">
+        <div class="title" i18n:translate="">Topics</div>
+        <tal:block content="structure views/getTopicTree">tree</tal:block>
+    </div>
+</metal:navigation>

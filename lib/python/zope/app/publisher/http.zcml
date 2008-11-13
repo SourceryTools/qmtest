@@ -1,0 +1,20 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   package="zope.publisher.http">
+
+  <class class="zope.publisher.http.HTTPRequest">
+    <require
+        permission="zope.View"
+        interface="zope.publisher.interfaces.http.IHTTPApplicationRequest"/>
+  </class>
+
+  <class class="zope.publisher.http.URLGetter">
+    <allow
+        attributes="get __getitem__ __str__" />
+  </class>
+
+  <class class="zope.publisher.http.DirectResult">
+    <allow interface="zope.publisher.http.IResult" />
+  </class>
+
+</configure>

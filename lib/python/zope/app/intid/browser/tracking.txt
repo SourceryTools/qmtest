@@ -1,0 +1,154 @@
+Tracking Object Additions, Deletions, and Moves
+===============================================
+
+Unique ID utilities track object add moves.  Let's look at an
+example. First, we'll create a unique Id utility:
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html
+  ...
+  ... type_name=BrowserAdd__zope.app.intid.IntIds&new_value=""")
+  HTTP/1.1 303 ...
+  ...
+  Location: http://localhost/++etc++site/default/IntIds/@@registration.html
+  ...
+
+  >>> print http(r"""
+  ... POST /++etc++site/default/IntIds/addRegistration.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/++etc++site/default/IntIds/
+  ... Content-Type: multipart/form-data; boundary=----------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... 
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... Content-Disposition: form-data; name="field.name"
+  ... 
+  ... IntIds
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... Content-Disposition: form-data; name="field.provided"
+  ... 
+  ... zope.app.intid.interfaces.IIntIds
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... Content-Disposition: form-data; name="field.provided-empty-marker"
+  ... 
+  ... 1
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... Content-Disposition: form-data; name="field.comment"
+  ... 
+  ... 
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ
+  ... Content-Disposition: form-data; name="field.actions.register"
+  ... 
+  ... Register
+  ... ------------CedQTrEQIEPbgfYhvcITAhQi2aJdgu3tYfJ0WYQmkpLQTt6OTOpd5GJ--
+  ... """)
+  HTTP/1.1 303 ...
+  ...
+
+Now, we'll add a few folders:
+
+  >>> print http(r"""
+  ... POST /@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 64
+  ... Content-Type: application/x-www-form-urlencoded
+  ... 
+  ... type_name=BrowserAdd__zope.app.folder.folder.Folder&new_value=f1""")
+  HTTP/1.1 303 ...
+  ...
+
+  >>> print http(r"""
+  ... POST /f1/@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 64
+  ... Content-Type: application/x-www-form-urlencoded
+  ... 
+  ... type_name=BrowserAdd__zope.app.folder.folder.Folder&new_value=f1""")
+  HTTP/1.1 303 ...
+  ...
+
+  >>> print http(r"""
+  ... POST /f1/@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 64
+  ... Content-Type: application/x-www-form-urlencoded
+  ... 
+  ... type_name=BrowserAdd__zope.app.folder.folder.Folder&new_value=f2""")
+  HTTP/1.1 303 ...
+  ...
+
+  >>> print http(r"""
+  ... POST /f1/f1/@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 64
+  ... Content-Type: application/x-www-form-urlencoded
+  ... 
+  ... type_name=BrowserAdd__zope.app.folder.folder.Folder&new_value=f1""")
+  HTTP/1.1 303 ...
+  ...
+
+Now, if we look at the index page for the unique id utility, we'll see
+the objects we added:
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/IntIds/@@index.html?testing=1 HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html
+  ... """)
+  HTTP/1.1 200 ...
+  ...4 objects...
+  .../f1...
+  .../f1/f1...
+  .../f1/f2...
+  .../f1/f1/f1...
+
+If we move the top object:
+
+  >>> print http(r"""
+  ... POST /@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 40
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@contents.html
+  ... 
+  ... new_value%3Alist=f2&rename_ids%3Alist=f1""")
+  HTTP/1.1 303 ...
+  ...
+
+We'll see that reflected in the utility:
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/IntIds/@@index.html?testing=1 HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html
+  ... """)
+  HTTP/1.1 200 ...
+  ...4 objects...
+  .../f2...
+  .../f2/f1...
+  .../f2/f2...
+  .../f2/f1/f1...
+
+And if we delete the top object:
+
+  >>> print http(r"""
+  ... POST /@@contents.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 44
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@contents.html
+  ... 
+  ... ids%3Alist=f2&container_delete_button=Delete""")
+  HTTP/1.1 303 ...
+  ...
+
+all of the objects will go away:
+
+  >>> print http(r"""
+  ... GET /++etc++site/default/IntIds/@@index.html?testing=1 HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/++etc++site/default/@@contents.html
+  ... """)
+  HTTP/1.1 200 ...
+  ...0 objects...

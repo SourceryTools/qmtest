@@ -1,0 +1,351 @@
+/*****************************************************************************
+ *
+ * Copyright (c) 2001, 2002 Zope Corporation and Contributors.
+ * All Rights Reserved.
+ * 
+ * This software is subject to the provisions of the Zope Public License,
+ * Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+ * WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * 
+ *****************************************************************************
+ 
+ These are the Widget CSS declarations.
+
+ TODO: table.listing, 
+       table.box
+
+ $Id: zopetopwidgets.css 25177 2004-06-02 13:17:31Z jim $
+*/
+
+input.standalone {
+    background: #A1A1F1 url(linkOpaque.gif) left no-repeat;
+    color: Black;
+    cursor: pointer;
+    font-weight: normal;
+    padding: 1px 1px 1px 15px;
+}
+
+input.context {
+    background: White url(linkTransparent.gif) left no-repeat;
+    color: Black;
+    cursor: pointer;
+    font-weight: normal;
+    padding: 1px 1px 1px 15px;
+}
+
+input.noborder {
+/* radiobuttons and checkmarks, different behaviour in Moz and IE. 
+   Border necessary in Moz, not in IE */
+    border: none;
+    margin: 0;
+    background-color: transparent;
+}
+
+div.row {
+    clear: both;
+    min-height: 4em;
+    margin-top: 1em;
+}
+
+.group {
+    border: 1px solid #7B7AC6;
+    margin: 2em 0em 1em 0em;
+    width: 94%;
+    padding: 1em 0em;
+}
+
+.legend {
+    position : relative;
+    top: -1.8em;
+    left: 1em;
+    background: White;
+    padding: 0.5em;
+}
+
+span.label {
+    float: left;
+    font-weight: bold;
+    text-align: right;
+    width: 15%;
+    position : relative;
+    left: -1em;
+}
+
+span.field {
+    float: left;
+    text-align: left;
+    width: 55%;
+}
+
+span.info {
+    background-color: transparent;
+    float: right;
+    text-align: left;
+    width: 28%;
+}
+
+.error {
+    /* Class for error indication in forms */
+    background: #FFCE7B;
+    border: 1px solid #FFA500;
+    margin: 1em;
+}
+
+.required {
+/* Used in addition to class "label" on required elements */
+    background: url(required.gif) 2em no-repeat;
+}
+
+span.card {
+    background: #A1A1F1;
+    border-color: #7B7AC6;
+    border-width: 1px;
+    border-style: solid;
+    float: left;
+    margin: 1em;
+    padding: 1em;
+    text-align: center;
+    width: 15%;
+}
+
+table.listing {
+    /* The default table for document listings. Contains name, document types, modification times etc in a file-browser-like fashion */
+    border-collapse: collapse;
+    border-left: 1px solid #7B7AC6;
+    border-bottom: 1px solid #7B7AC6;
+    margin: 1em 0em 1em 0em;
+}
+
+table.listing th {
+    background: #A1A1F1;
+    border-top: 1px solid #7B7AC6;
+    border-bottom: 1px solid #7B7AC6;
+    border-right: 1px solid #7B7AC6;
+    color: #000000;
+    font-weight: normal;
+    padding: 0em 1em 0em 1em;
+}
+
+table.listing tr.odd {
+    /*every second line should be shaded */
+    background: transparent;
+}
+
+table.listing tr.even {
+    background: #ECFAFF;
+}
+
+table.listing td {
+    border-right: 1px solid #7B7AC6;
+    padding: 2px 1em 2px 1em;
+}
+
+table.listing a:hover {
+    text-decoration: underline;
+}
+
+table.listing img{
+    vertical-align: middle;
+}
+
+table.box {
+/* The Plone Box(tm) (Navigation, Related etc) */
+    background: transparent;
+    border-collapse: collapse;
+    border-bottom: 1px solid #7B7AC6;
+    border-left: 1px solid #7B7AC6;
+    margin: 0px;
+    margin-bottom: 1px;
+}
+
+table.box th {
+    background: #A1A1F1;
+    border-top: 1px solid #7B7AC6;
+    border-bottom: 1px solid #7B7AC6;
+    border-right: 1px solid #7B7AC6;
+    color: Black;
+    font-weight: normal;
+    padding: 0px 1px;
+    text-align: left;
+}
+
+table.box th.empty {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #7B7AC6;
+}
+
+table.box tr.odd {
+/*every second line should be shaded */
+    background: transparent;
+}
+
+table.box tr.even {
+    background-color: #99CCFF;
+}
+
+table.box td {
+    border-right: 1px solid #7B7AC6;
+    padding: 0px 4px 0px 2px;
+}
+
+table.box img{
+    vertical-align: middle;
+}
+
+div.boxDetails {
+/*the line that contains the date for news and other info */
+    text-align: right;
+}
+
+table.box a {
+}
+
+table.box a.comment {
+/* special link for comments - default behavior is to display the discussion
+   icon next to the link */
+    background-image: url(discussionitem_icon.gif); 
+    background-repeat: no-repeat;
+    background-position: 0px -2px;
+    padding: 0em 0em 0.5em 2em;
+    margin: 0;
+    display: block;
+}
+
+table.box a.marker {
+/* special format for links inside boxes - adds link image and displays the
+   link as a block (which in this case means the text will not float under 
+   the link image, plus the whole thing is clickable) */
+    background: url(linkTransparent.gif) -0.5em 0px no-repeat;
+    display: block;
+    padding: 0em 0em 0em 1.5em;
+    vertical-align: top;
+}
+
+span.folderName {
+/* The folder name in folder_contents */
+    font-size: 150%;
+    font-weight: bold;
+}
+
+div.category {
+   float: left;
+    margin-right: 1em;
+    margin-bottom: 2em;
+    width: 20em;
+}
+
+div.category a.heading {
+    display: block;
+    padding: 0em 0em 0.5em 0em;
+    font-size: 1.1em;
+    text-decoration: underline;
+}
+
+div.category a {
+    text-decoration: underline;
+}
+
+div.box {
+    float: left;
+    margin-right: 1em;
+    margin-bottom: 2em;
+    width: 20em;
+    background: transparent;
+    border-collapse: collapse;
+    border: 1px solid #7B7AC6;
+}
+
+div.box div.heading {
+    background: #A1A1F1;
+    border-bottom: 1px solid #7B7AC6;
+    color: Black;
+    font-weight: normal;
+    padding: 0em 0em 0em 1em;
+    text-align: left;
+}
+
+div.box a.close {
+    float: right;
+    text-transform: none;
+    border-left: 1px solid #7B7AC6;
+    padding: 0em 0.2em;
+}
+
+div.box div.odd {
+    background: transparent;
+    padding: 1em;
+}
+
+div.box div.even {
+    background-color: #99CCFF;
+    padding: 1em;
+}
+
+div.spacer {
+    margin: 3em;
+}
+
+.private {
+    color: Black;
+}
+
+.published {
+    color: #74AE0B;
+}
+
+.pending {
+    color: #FFA500;
+}
+
+.syndicated {
+    color: #008000;
+}
+
+.expired {
+    color: Red;
+}
+
+
+div.listingBar {
+    background: #A1A1F1;
+    border-color: #7B7AC6;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0em 1em;
+    text-align: right;
+    height: 1em;
+    clear: both;
+}
+
+div.listingBar span.previous {
+    text-align: left;
+    float: left;
+}
+
+div.listingBar span.next {
+    text-align: right;
+    float: right;
+}
+
+div.workspace {
+}
+
+div.workspace span.small {
+    float: left;
+    height: 30em;
+    width: 20em;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+
+div.workspace span.big {
+    float: left;
+    height: 40em;
+    width: 40em;        
+    margin-right: 1em;
+    margin-bottom: 1em;
+}

@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+  <include package="zope.securitypolicy" />
+
+  <securityPolicy
+    component="zope.app.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+
+  <role id="zope.Anonymous" title="Everybody"
+                 description="All users have this role implicitly" />
+  <role id="zope.Manager" title="Site Manager" />
+  <role id="zope.Member" title="Site Member" />
+
+  <!-- Replace the following directive if you don't want public access -->
+  <grant permission="zope.View"
+                  role="zope.Anonymous" />
+  <grant permission="zope.app.dublincore.view"
+                  role="zope.Anonymous" />
+
+  <grantAll role="zope.Manager" />
+
+</configure>

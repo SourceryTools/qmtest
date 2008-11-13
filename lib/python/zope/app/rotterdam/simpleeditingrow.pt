@@ -1,0 +1,36 @@
+<html>
+<head>
+  <title i18n:translate="">Extended Editor</title>
+</head>
+<body>
+<metal:define define-macro="widget">
+<script type="text/javascript">
+
+function getKeyPress(e) {
+
+        if(e.target) {
+            // Mozilla uses this
+            key=e.keyCode;
+                }
+        else {
+            // IE uses this
+            key=window.event.keyCode
+        }
+        prettydump("key is " + key, LG_INFO);
+        return false;
+
+}
+</script>
+<label for="source-text" tal:attributes="for view/name" 
+       tal:content="view/title"
+       i18n:translate="">Some Source</label>
+<div class="field">
+
+
+  <textarea style="width: 95%" rows="15" 
+            tal:attributes="id view/name; name view/name"
+            tal:content="view/contents">Some editing text here.</textarea>
+</div>
+</metal:define>
+</body>
+</html>

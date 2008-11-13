@@ -1,0 +1,76 @@
+==============
+Logout Support
+==============
+
+Logout support is defined by a simple interface ILogout:
+
+  >>> from zope.app.security.interfaces import ILogout
+
+that has a single 'logout' method.
+
+The current use of ILogout is to adapt an IAuthentication component to ILogout
+To illustrate, we'll create a simple logout implementation that adapts
+IAuthentication:
+
+  >>> class SimpleLogout(object):
+  ...
+  ...     adapts(IAuthentication)
+  ...     implements(ILogout)
+  ...
+  ...     def __init__(self, auth):
+  ...         pass
+  ...
+  ...     def logout(self, request):
+  ...         print 'User has logged out'
+
+  >>> provideAdapter(SimpleLogout)
+
+and something to represent an authentication utility:
+
+  >>> class Authentication(object):
+  ...
+  ...     implements(IAuthentication)
+
+  >>> auth = Authentication()
+
+To perform a logout, we adapt auth to ILogout and call 'logout':
+
+  >>> logout = ILogout(auth)
+  >>> logout.logout(TestRequest())
+  User has logged out
+
+
+The 'NoLogout' Adapter
+----------------------
+
+The class:
+
+  >>> from zope.app.security import NoLogout
+
+can be registered as a fallback provider of ILogout for IAuthentication
+components that are not otherwise adaptable to ILogout. NoLogout's logout
+method is a no-op:
+
+  >>> NoLogout(auth).logout(TestRequest())
+
+
+Logout User Interface
+---------------------
+
+Because some authentication protocols do not formally support logout, it may
+not be possible for a user to logout once he or she has logged in. In such
+cases, it would be inappropriate to present a user interface for logging out.
+
+Because logout support is site-configurable, Zope provides an adapter that,
+when registered, indicates that the site is configured for logout:
+
+  >>> from zope.app.security import LogoutSupported
+
+This class merely serves as a flag as it implements ILogoutSupported:
+
+  >>> from zope.app.security.interfaces import ILogoutSupported
+  >>> ILogoutSupported.implementedBy(LogoutSupported)
+  True
+
+For more information on login/logout UI, see
+zope/app/security/browser/loginlogout.txt.

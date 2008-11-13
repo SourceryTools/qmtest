@@ -1,0 +1,44 @@
+Managing a Site
+---------------
+
+Create the browser object we'll be using.
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> browser = Browser()
+    >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
+    >>> browser.open('http://localhost/manage')
+
+When we originally enter a Zope instance, there is only a root folder that is
+already a site:
+
+    >>> 'Manage Site' in browser.contents
+    True
+
+Let's now add a new folder called ``samplesite`` and make it a site:
+
+    >>> browser.getLink(url='folder.Folder').click()
+    >>> browser.getControl(name='new_value').value = 'samplesite'
+    >>> browser.getControl('Apply').click()
+
+    >>> browser.getLink('samplesite').click()
+    >>> browser.getLink('Make a site').click()
+
+We are automatically forwarded to the site manager of the site. The default
+site management folder is always available:
+
+    >>> 'default' in browser.contents
+    True
+
+Let's now delete the site again:
+
+    >>> browser.getLink('[top]').click()
+    >>> browser.getControl(name='ids:list').getControl(
+    ...     value='samplesite').selected = True
+
+    >>> browser.handleErrors = False
+    >>> browser.getControl('Delete').click()
+
+The site should be gone now.
+
+    >>> 'samplesite' in browser.contents
+    False

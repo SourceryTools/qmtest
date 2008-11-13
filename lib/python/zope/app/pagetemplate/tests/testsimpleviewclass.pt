@@ -1,0 +1,5 @@
+<html>
+  <body>
+    <p metal:define-macro="test">hello world</p>
+  </body>
+</html>

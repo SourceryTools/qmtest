@@ -1,0 +1,20 @@
+<configure 
+    xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <addMenuItem
+      title="HTTP Basic-Auth Plugin"
+      class="..httpplugins.HTTPBasicAuthCredentialsPlugin"
+      permission="zope.ManageServices"
+      />
+
+  <editform
+      schema="..httpplugins.IHTTPBasicAuthRealm"
+      label="Realm"
+      name="edit.html"
+      permission="zope.ManageServices"
+      menu="zmi_views" title="Edit"
+      />
+
+</configure>

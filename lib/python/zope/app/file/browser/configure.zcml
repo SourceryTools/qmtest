@@ -1,0 +1,126 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <!-- directives for File -->
+  
+  <browser:form
+      name="edit.html"
+      for="zope.app.file.interfaces.IFile"
+      schema="zope.app.file.browser.file.IFileEditForm"
+      label="Change a file"
+      permission="zope.ManageContent"
+      class="zope.app.file.browser.file.FileEdit"
+      >
+  </browser:form>
+
+  <browser:menuItem
+      menu="zmi_views" title="Edit"
+      for="zope.app.file.interfaces.IFile"
+      action="edit.html"
+      filter="python:context.contentType.startswith('text/')"
+      permission="zope.ManageContent" />
+
+  <browser:page
+      name="upload.html"
+      menu="zmi_views" title="Upload"
+      for="zope.app.file.interfaces.IFile"
+      template="file_upload.pt"
+      class=".file.FileUpload"
+      permission="zope.ManageContent"
+      />
+
+  <browser:page
+      for="zope.app.file.interfaces.IFile"
+      name="index.html"
+      permission="zope.View"
+      class=".file.FileView"
+      attribute="show" />
+
+
+  <browser:addMenuItem
+      class="zope.app.file.File"
+      title="File"
+      description="A File"
+      permission="zope.ManageContent"
+      view="zope.app.file.File"
+      />
+
+  <browser:page
+      name="zope.app.file.File"
+      for="zope.app.container.interfaces.IAdding"
+      template="file_add.pt"
+      class=".file.FileAdd"
+      permission="zope.ManageContent"
+      />
+
+  <browser:icon
+      name="zmi_icon"
+      for="zope.app.file.interfaces.IFile"
+      file="file_icon.gif"
+      />
+
+  <!-- Directives for Image -->
+
+  <browser:editform
+      schema="zope.app.file.interfaces.IImage"
+      name="upload.html"
+      menu="zmi_views" title="Upload"
+      label="Upload an image"
+      permission="zope.ManageContent"
+      class=".image.ImageUpload"
+      template="image_edit.pt"
+      />
+
+  <browser:page
+      name="index.html"
+      for="zope.app.file.interfaces.IImage"
+      permission="zope.View"
+      allowed_attributes="__call__ tag"
+      class=".image.ImageData"
+      />
+
+  <browser:icon
+      name="zmi_icon"
+      for="zope.app.file.interfaces.IImage"
+      file="image_icon.gif"
+      />
+
+  <browser:addMenuItem
+      class="zope.app.file.image.Image"
+      title="Image"
+      description="An Image"
+      permission="zope.ManageContent"
+      view="zope.app.file.Image"
+      />
+
+  <browser:addform
+      schema="zope.app.file.interfaces.IImage"
+      label="Add an Image"
+      content_factory="zope.app.file.image.Image"
+      class=".image.ImageAdd"
+      name="zope.app.file.Image"
+      permission="zope.ManageContent"
+      />
+
+    <browser:page
+        for="zope.app.file.interfaces.IFile"
+        name="preview.html"
+        template="preview.pt"
+        permission="zope.ManageContent"
+        menu="zmi_views" title="Preview"
+        />
+
+    <browser:page
+        for="zope.app.file.interfaces.IImage"
+        name="preview.html"
+        template="preview.pt"
+        permission="zope.ManageContent"
+        menu="zmi_views" title="Preview"
+        />
+
+
+
+</configure>

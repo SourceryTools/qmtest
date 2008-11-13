@@ -1,0 +1,19 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope">
+
+  <permission id="zope.View" title="Test permission"/>
+
+  <browser:menu 
+      id="test_id" 
+      title="test menu" />
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I2"
+      permission="zope.View">
+    <browser:menuItem action="b1" title="b1" />
+  </browser:menuItems>
+
+</configure>

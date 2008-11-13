@@ -1,0 +1,64 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header">
+    <span class="pre-header" i18n:translate="">Function</span><br />
+    <span tal:replace="context/getPath">zope.app.function</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
+  <h2 class="details-section" i18n:translate="">Signature</h2>
+
+  <div class="indent">
+    <b><code
+        tal:content="string:${context/zope:name}${context/getSignature}" />
+    </b>
+  </div>
+
+  <div tal:condition="context/getDocString">
+    <h2 class="details-section" i18n:translate="">Documentation String</h2>
+
+    <div class="indent">
+      <div class="documentation" tal:content="structure view/getDocString">
+        Here is the doc string
+      </div>
+    </div>
+  </div>
+
+  <div
+      tal:define="attributes view/getAttributes"
+      tal:condition="attributes">
+
+  <h2 class="details-section" i18n:translate="">Attributes</h2>
+
+  <div class="indent">
+
+    <ul class="attr-list">
+
+      <li tal:repeat="attr attributes">
+        <b><code tal:content="attr/name">attr</code></b>
+        <tal:omit-tag condition="not: attr/type_link">
+          (<span i18n:translate="">type:</span>
+            <code tal:content="attr/type" />)
+        </tal:omit-tag>
+        <tal:omit-tag condition="attr/type_link">
+          (<span i18n:translate="">type:</span>
+          <a href=""
+             tal:attributes="href
+                 string:${view/getBaseURL}/Code/${attr/type_link}/index.html">
+            <code tal:content="attr/type" /></a>)
+        </tal:omit-tag>
+        <br/>
+        <i i18n:translate="">Value:</i>
+        <code tal:content="attr/value">u''</code><br />
+      </li>
+
+    </ul>
+
+  </div>
+  </div>
+
+</body>
+</html>

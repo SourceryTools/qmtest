@@ -1,0 +1,46 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+    >
+
+  <class class="xmlrpclib.Fault">
+    <allow attributes="faultCode faultString" />
+  </class>
+
+  <class class="xmlrpclib.DateTime">
+    <allow attributes="value" />
+  </class>
+
+  <view 
+      for="zope.interface.Interface"
+      type="zope.publisher.interfaces.xmlrpc.IXMLRPCRequest"
+      provides="zope.publisher.interfaces.xmlrpc.IXMLRPCPublisher"
+      factory="zope.app.publication.traversers.SimpleComponentTraverser"
+      permission="zope.Public"
+      />
+
+  <view 
+      for="zope.app.container.interfaces.IItemContainer"
+      type="zope.publisher.interfaces.xmlrpc.IXMLRPCRequest"
+      provides="zope.publisher.interfaces.xmlrpc.IXMLRPCPublisher"
+      factory="zope.app.container.traversal.ItemTraverser"
+      permission="zope.Public"
+      />
+
+  <view 
+      for="zope.app.container.interfaces.IReadContainer"
+      type="zope.publisher.interfaces.xmlrpc.IXMLRPCRequest"
+      provides="zope.publisher.interfaces.xmlrpc.IXMLRPCPublisher"
+      factory="zope.app.container.traversal.ContainerTraverser"
+      permission="zope.Public"
+      />
+
+  <view 
+      for=".IMethodPublisher"
+      type="zope.publisher.interfaces.xmlrpc.IXMLRPCRequest"
+      provides="zope.publisher.interfaces.xmlrpc.IXMLRPCPublisher"
+      factory=".MethodTraverser"
+      permission="zope.Public"
+      />
+
+</configure>

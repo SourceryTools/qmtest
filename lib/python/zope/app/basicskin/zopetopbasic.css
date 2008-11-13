@@ -1,0 +1,183 @@
+/*****************************************************************************
+ *
+ * Copyright (c) 2001, 2002 Zope Corporation and Contributors.
+ * All Rights Reserved.
+ * 
+ * This software is subject to the provisions of the Zope Public License,
+ * Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+ * WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * 
+ *****************************************************************************
+ 
+ These are the basic CSS declarations.
+
+ $Id: zopetopbasic.css 25177 2004-06-02 13:17:31Z jim $
+*/
+
+
+body {
+    font: 0.8em Tahoma, Helvetica, Arial, sans-serif;
+    color: #000066;
+    margin: 5;
+    padding: 5;
+}
+
+table {
+    font: 1em Tahoma, Helvetica, Arial, sans-serif;
+}
+
+
+img {
+/* turn off image borders. */
+    border: none;
+}
+
+p {
+/* Default paragraph style*/
+    font: 1em Tahoma, Helvetica, Arial, sans-serif;
+    margin: 1em 0em;
+    text-align: justify;
+}
+
+p a {
+    text-decoration: underline;
+}
+
+p a:visited {
+    color: Purple;
+    background-color: transparent;
+}
+
+p a:active {
+    color: Red;
+    background-color: transparent;
+}
+
+p img {
+    border: 1px solid Black;
+    margin: 1em;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #8CACBB;
+    background-color: transparent;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	color: Black;
+	margin-top: 0;
+	font-family: Tahoma, Helvetica, Arial, sans-serif;
+
+
+}
+
+h1 {
+    font-size: 1.8em;
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+h3 {
+    font-size: 1.4em;
+}
+
+h4 {
+    font-size: 1.2em;
+}
+
+h5 {
+    font-size: 1.1em;
+}
+
+h6 {
+    font-size: 1.0em;
+}
+
+ul { 
+/*    list-style-image: url("bullet.gif"); */
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 2em;
+    padding:0;
+}
+
+/* we advise you to use the div.group and span.legend elements instead of
+these, as the only browser showing legends correctly is IE. They are just
+included here for completeness */
+
+fieldset {
+    border: 1px solid #8cacbb;
+    margin: 2em 0em 1em 0em;
+    padding: 1em 0em;
+}
+
+legend {
+    background: White;
+    padding: 0.5em;
+}
+
+
+form {
+    border: none;
+}
+
+textarea {
+/* Small cosmetic hack which makes textarea gadgets look nicer.*/
+    font: bold 1em Tahoma, Helvetica, Arial, sans-serif;
+    border: 1px solid #8cacbb;  
+    width: 100%;
+    color: Black;
+    background-color: white;
+}
+
+input {
+/* Small cosmetic fix which makes input gadgets look nicer.  */
+    font: 1em Tahoma, Helvetica, Arial, sans-serif;
+/*    border: 1px solid #8cacbb;   */
+    color: Black;
+/*    background-color: white; */
+    margin: 1px 1px 1px 1px;
+}
+
+select {
+    font: 1em Tahoma, Helvetica, Arial, sans-serif;
+/*    border: 1px solid #8cacbb;  */
+    margin: 1px 1px 1px 1px;
+}
+
+abbr, acronym, .explain {
+/* Help classes */
+    border-bottom: 1px dotted Black;
+    color: Black;
+    background-color: transparent;
+    cursor: help;
+}
+
+code {
+    font-size: 1.2em;
+    color: Black;
+    background-color: #dee7ec;
+}
+
+pre {
+    font-size: 1.2em;
+    padding: 1em;
+    border: 1px solid #8cacbb;
+    color: Black;
+    background-color: #dee7ec;
+}
+
+.netscape4 {
+/* This hides elements necessary for getting Netscape 4.x to look better.
+   Mostly strategically placed hr tags and &middot;'s */
+    display: none;
+}

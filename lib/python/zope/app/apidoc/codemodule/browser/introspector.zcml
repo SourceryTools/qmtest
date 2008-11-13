@@ -1,0 +1,58 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+  <!-- ++annotations++ Namespace -->
+  <zope:view
+      name="annotations" type="*"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".introspector.annotationsNamespace"
+      />
+
+  <zope:adapter
+      name="annotations"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".introspector.annotationsNamespace"
+      />
+
+  <!-- ISequence ++items++ Namespace -->
+  <zope:view
+      name="items" type="*"
+      provides="zope.traversing.interfaces.ITraversable"
+      for="zope.interface.common.sequence.IMinimalSequence"
+      factory=".introspector.sequenceItemsNamespace"
+      />
+
+  <zope:adapter
+      name="items"
+      provides="zope.traversing.interfaces.ITraversable"
+      for="zope.interface.common.sequence.IMinimalSequence"
+      factory=".introspector.sequenceItemsNamespace"
+      />
+
+  <!-- IMapping ++items++ Namespace -->
+  <zope:view
+      name="items" type="*"
+      provides="zope.traversing.interfaces.ITraversable"
+      for="zope.interface.common.mapping.IItemMapping"
+      factory=".introspector.mappingItemsNamespace"
+      />
+
+  <zope:adapter
+      name="items"
+      provides="zope.traversing.interfaces.ITraversable"
+      for="zope.interface.common.mapping.IItemMapping"
+      factory=".introspector.mappingItemsNamespace"
+      />
+
+  <page
+      name="introspector.html"
+      for="*"
+      class=".introspector.Introspector"
+      permission="zope.app.apidoc.UseAPIDoc"
+      menu="zmi_views" title="Introspector"
+      template="introspector.pt"
+      />
+
+</configure>

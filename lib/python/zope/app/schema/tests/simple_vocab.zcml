@@ -1,0 +1,11 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- BBB 2006/02/24, to be removed after 12 months -->
+
+  <include package="zope.app.schema" file="meta.zcml"/>
+
+  <vocabulary
+      name="my-vocab"
+      factory="zope.app.schema.tests.test_directives.MyFactory" />
+
+</configure>

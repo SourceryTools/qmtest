@@ -1,0 +1,4 @@
+<br />
+<div class="commentElement">
+    &lt;!-- <tal:block replace="view/value" /> --&gt;
+</div>

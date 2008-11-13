@@ -1,0 +1,36 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <browser:icon
+      name="zmi_icon"
+      for="zope.app.folder.interfaces.IFolder"
+      file="folder_icon.gif"
+      />
+
+  <browser:addMenuItem
+      class="zope.app.folder.Folder"
+      title="Folder"
+      description="Minimal folder"
+      permission="zope.ManageContent"
+      />
+
+  <browser:containerViews
+      for="zope.app.folder.interfaces.IFolder"
+      contents="zope.ManageContent"
+      index="zope.View"
+      add="zope.ManageContent"
+      />
+
+  <!-- Preview view - requires zope.app.preview -->
+  <browser:page
+      for="zope.app.folder.interfaces.IFolder"
+      name="preview.html"
+      template="preview.pt"
+      permission="zope.ManageContent"
+      menu="zmi_views" title="Preview"
+      />
+
+</configure>

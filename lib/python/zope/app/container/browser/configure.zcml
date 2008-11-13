@@ -1,0 +1,20 @@
+<zope:configure
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+  <page
+      for="zope.app.container.interfaces.IReadContainer"
+      name="find.html"
+      permission="zope.ManageContent"
+      class="zope.app.container.browser.find.Find"
+      template="find.pt"
+      menu="zmi_actions" title="Find" />
+
+  <page
+      for="zope.app.container.interfaces.IWriteContainer"
+      permission="zope.ManageContent"
+      name="commonTasks"
+      class="zope.app.container.browser.contents.Contents"
+      template="commontasks.pt" />
+
+</zope:configure>

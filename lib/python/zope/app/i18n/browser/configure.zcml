@@ -1,0 +1,66 @@
+<zope:configure 
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns="http://namespaces.zope.org/browser">
+
+  <pages 
+      permission="zope.ManageServices" 
+      for="zope.i18n.interfaces.ITranslationDomain"
+      class=".translate.Translate">
+
+    <page name="translate.html" template="translate.pt" 
+          menu="zmi_views" title="Translate" />
+    <page name="translateMessage.html" template="translatemessage.pt" />
+    <page name="editMessages.html" attribute="editMessages" />
+    <page name="deleteMessages.html" attribute="deleteMessages" />
+    <page name="addLanguage.html" attribute="addLanguage" />
+    <page name="changeEditLanguages.html" attribute="changeEditLanguages" />
+    <page name="deleteLanguages.html" attribute="deleteLanguages" />
+    <page name="changeFilter.html" attribute="changeFilter" />
+
+  </pages>
+
+
+  <pages 
+      permission="zope.ManageServices" 
+      for="zope.i18n.interfaces.ITranslationDomain"
+      class=".exportimport.ExportImport">
+    
+    <page name="exportImportForm.html" template="exportimport.pt"
+          menu="zmi_views" title="Import/Export" />
+    <page name="export.html" attribute="exportMessages" />
+    <page name="import.html" attribute="importMessages" />
+
+  </pages>
+
+
+  <pages
+      permission="zope.ManageServices" 
+      for="zope.i18n.interfaces.ITranslationDomain"
+      class=".synchronize.Synchronize">
+    
+    <page name="synchronizeForm.html" template="synchronize.pt"
+          menu="zmi_views" title="Synchronize" />
+    <page name="synchronize.html" attribute="synchronize" />
+    <page name="synchronizeMessages.html" attribute="synchronizeMessages" />
+    <page name="saveSettings.html" attribute="saveSettings" />
+
+  </pages>
+
+  <defaultView
+      for="zope.i18n.interfaces.ITranslationDomain"
+      name="translate.html"/>
+
+  <!-- Menu entry for "Add Utility" menu -->
+  <addMenuItem
+      class="zope.app.i18n.translationdomain.TranslationDomain"
+      title="Translation Domain"
+      description="A Persistent Translation Domain"
+      permission="zope.ManageServices"
+      />
+
+  <icon 
+      name="zmi_icon" 
+      for="zope.i18n.interfaces.ITranslationDomain"
+      file="./i18n_domain.gif" />
+
+</zope:configure>

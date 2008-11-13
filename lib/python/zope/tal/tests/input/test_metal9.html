@@ -1,0 +1,23 @@
+<div metal:define-macro="macro1" i18n:domain="zope">
+<span metal:define-slot="slot1">
+Default for macro1
+</span>
+</div>
+
+<div metal:define-macro="macro2" metal:extend-macro="macro1" i18n:domain="zope">
+<span metal:fill-slot="slot1">
+Macro 2's slot 1 decoration
+<span metal:define-slot="slot1">
+Default for macro2
+</span>
+</span>
+</div>
+
+<div metal:use-macro="macro2">
+</div>
+
+<div metal:use-macro="macro2">
+<span metal:fill-slot="slot1">
+Custom slot1
+</span>
+</div>

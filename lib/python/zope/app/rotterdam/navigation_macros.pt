@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      i18n:domain="zope">
+<body>
+
+  <!-- Java scripts for the navigation tree -->
+
+  <metal:tree define-macro="navigation_tree_js">
+    <!-- Ugly is better than lobotomized. -->
+    <script type="text/javascript" src="xmltree.js"
+            tal:attributes="src string:${context/++resource++xmltree.js}" >
+    </script>
+
+    <tal:var condition="not: body_onload | nothing" >
+    <tal:block define="global body_onload string:" />
+    </tal:var>
+      
+    <tal:var define="rooturl     request/getApplicationURL;
+                     thisbaseurl request/URL/-1;
+                     loadtreejs string:loadtree('${rooturl}/', '${thisbaseurl}/');
+              global body_onload python: loadtreejs + ';; ' + body_onload" />
+
+  </metal:tree>
+
+  <!-- Box containing the actual navigation tree-->
+
+  <metal:tree define-macro="navigation_tree_box">
+    <!-- Ugly is better than lobotomized. -->
+      <div class="box" id="navigationTree">
+        <h4 i18n:translate="">Navigation</h4>
+        <div xmlns="http://www.zope.org/zope3xmltree"
+             id="navtreecontents"
+             class="body"
+             onclick="treeclicked(event);"
+             i18n:translate="">Loading...</div>
+      </div>
+  </metal:tree>
+</body>
+</html>

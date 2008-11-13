@@ -1,0 +1,195 @@
+Granting Example
+================
+
+In this example, we look at granting (or denying) principals (or
+roles) to principals.
+
+To make grants, we visit grant.html.  This doesn't display any
+grant information until we select a principal.
+
+  >>> print http(r"""
+  ... GET /@@grant.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Referer: http://localhost:8081/@@contents.html
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+
+If we submit a search request, we'll get a list of principals, from
+which we can choose:
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 117
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@grant.html
+  ...
+  ... field.principal.displayed=y"""
+  ... "&field.principal.MA__.searchstring="
+  ... "&field.principal.MA__.search=Search")
+  HTTP/1.1 200 OK
+  ...
+  <option value="em9wZS5tZ3I_">Manager</option>
+  ...
+
+We can then choose one.  If we do so, we get output that includes form
+elements for inputing security settings:
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 62415
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@grant.html
+  ...
+  ... field.principal.displayed=y"""
+  ... """&field.principal.MA__.searchstring="""
+  ... """&field.principal.MA__.selection=em9wZS5tZ3I_"""
+  ... """&field.principal.MA__.apply=Apply""")
+  HTTP/1.1 200 OK
+  ...
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.0" title="Allow">
+  <input class="radioType" id="field.em9wZS5tZ3I_.role.zope.Member.0" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="allow" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="default">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.1" title="Unset">
+  <input class="radioType" checked="checked" id="field.em9wZS5tZ3I_.role.zope.Member.1" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="unset" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.2" title="Deny">
+  <input class="radioType" id="field.em9wZS5tZ3I_.role.zope.Member.2" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="deny" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  ...
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.0" title="Allow">
+  <input class="radioType" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.0" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="allow" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="default">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.1" title="Unset">
+  <input class="radioType" checked="checked" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.1" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="unset" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.2" title="Deny">
+  <input class="radioType" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.2" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="deny" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  ...
+
+Before we submit any data, there are no grants for the root object
+except for a one made by the testing framework that grants the manager
+role to the test manager:
+
+  >>> root = getRootFolder()
+  >>> import zope.securitypolicy.interfaces
+  >>> grants = zope.securitypolicy.interfaces.IGrantInfo(root)
+  >>> grants.principalPermissionGrant('zope.mgr', 'zope.ManageCode')
+  PermissionSetting: Unset
+  >>> list(grants.getRolesForPrincipal('zope.mgr'))
+  [('zope.Manager', PermissionSetting: Allow)]
+
+Now, we can submit changes. (I've actually reduced the form input
+to just the things we want to change to both limit the text here and
+to reduce dependencies on specific roles and permissions:
+
+
+  >>> print http(r"""
+  ... POST /@@grant.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 62437
+  ... Content-Type: application/x-www-form-urlencoded
+  ... Referer: http://localhost:8081/@@grant.html
+  ...
+  ... field.principal=em9wZS5tZ3I_"""
+  ... """&field.principal.displayed=y"""
+  ... """&field.principal.MA__.searchstring="""
+  ... """&field.em9wZS5tZ3I_.role.zope.Member=allow"""
+  ... """&field.em9wZS5tZ3I_.role.zope.Member-empty-marker=1"""
+  ... """&field.em9wZS5tZ3I_.permission.zope.ManageCode=deny"""
+  ... """&field.em9wZS5tZ3I_.permission.zope.ManageCode-empty-marker=1"""
+  ... """&GRANT_SUBMIT=Change""")
+  HTTP/1.1 200 OK
+  ...
+  <td class="default">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.0" title="Allow">
+  <input class="radioType" checked="checked" id="field.em9wZS5tZ3I_.role.zope.Member.0" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="allow" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.1" title="Unset">
+  <input class="radioType" id="field.em9wZS5tZ3I_.role.zope.Member.1" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="unset" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.role.zope.Member.2" title="Deny">
+  <input class="radioType" id="field.em9wZS5tZ3I_.role.zope.Member.2" name="field.em9wZS5tZ3I_.role.zope.Member" type="radio" value="deny" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  ...
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.0" title="Allow">
+  <input class="radioType" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.0" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="allow" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.1" title="Unset">
+  <input class="radioType" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.1" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="unset" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  </td>
+  <BLANKLINE>
+  <td class="default">
+  <center>
+  <label for="field.em9wZS5tZ3I_.permission.zope.ManageCode.2" title="Deny">
+  <input class="radioType" checked="checked" id="field.em9wZS5tZ3I_.permission.zope.ManageCode.2" name="field.em9wZS5tZ3I_.permission.zope.ManageCode" type="radio" value="deny" onclick="changeMatrix(this);" />
+  </label>
+  </center>
+  ...
+
+And, if we check the grants, we see the changes:
+
+  >>> grants = zope.securitypolicy.interfaces.IGrantInfo(root)
+
+  >>> grants.principalPermissionGrant('zope.mgr', 'zope.ManageCode')
+  PermissionSetting: Deny
+
+  >>> role_grants = list(grants.getRolesForPrincipal('zope.mgr'))
+  >>> role_grants.sort()
+  >>> role_grants
+  ... # doctest: +NORMALIZE_WHITESPACE
+  [('zope.Manager', PermissionSetting: Allow),
+   ('zope.Member', PermissionSetting: Allow)]
+

@@ -1,0 +1,58 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+  <body>
+  <div metal:fill-slot="body">
+
+    <p i18n:translate="">
+      This edit form allows you to associate a cache with this object.
+    </p>
+
+    <p tal:condition="not: view/current_cache_id" i18n:translate="">
+      Currently there is no cache associated with the object.
+    </p>
+    
+    <p tal:condition="view/current_cache_id" i18n:translate="">
+      Currently the object uses
+      <a tal:omit-tag="not:view/current_cache_url"
+         tal:attributes="href view/current_cache_url"
+         tal:content="view/current_cache_id"
+         i18n:name="cache_id_or_url"/>.
+    </p>
+
+    <div tal:condition="python: options.has_key('errors') and
+                                options['errors']">
+      <span style="font-weight: bold" i18n:translate="">Errors</span>:
+      <div tal:repeat="error options/errors | nothing">
+        <span tal:replace="python: error[0].title" />:
+        <span tal:replace="python: error[1].error_name" />
+      </div>
+    </div>
+    <br />
+
+    <form action="./" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="nextURL" value=""
+          tal:attributes="value request/URL" />
+
+      <table class="EditTable">
+        <tr>
+          <th class="EditAttributeName" i18n:translate="">Cache name</th>
+          <td class="EditAttributeValue"
+              tal:content="structure view/cacheId_widget">
+            <input size="20" />
+          </td>
+        </tr>
+      </table>
+
+      <input type="submit" name="ChangeCaching.html:method" value="Save Changes"
+             i18n:attributes="value save-changes-button" />
+      <input type="submit" name="InvalidateCache.html:method"
+             value="Invalidate Cached Value" 
+             i18n:attributes="value invalidate-cache-button" />
+
+    </form>
+    <div tal:content="options/message|nothing" i18n:translate="" />
+
+  </div>
+  </body>
+
+</html>

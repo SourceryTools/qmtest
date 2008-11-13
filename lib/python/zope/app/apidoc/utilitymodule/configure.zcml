@@ -1,0 +1,51 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".utilitymodule.UtilityModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <class class=".utilitymodule.Utility">
+    <allow attributes="name registration interface component doc" />
+  </class>
+
+  <class class=".utilitymodule.UtilityInterface">
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+    <allow attributes="interface" />
+  </class>
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".utilitymodule.UtilityModule"
+      name="Utility" />
+
+  <browser:page
+      for=".utilitymodule.UtilityModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".utilitymodule.UtilityModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".utilitymodule.Utility"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.UtilityDetails"
+      name="index.html"
+      template="index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+</configure>

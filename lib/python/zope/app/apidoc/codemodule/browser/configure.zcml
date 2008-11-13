@@ -1,0 +1,79 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="zope">
+
+  <view
+      for="*"
+      permission="zope.View"
+      name="code_breadcrumbs"
+      class=".utilities.CodeBreadCrumbs"
+      allowed_attributes="__call__"
+      />
+
+  <page
+      for="..codemodule.CodeModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      for="..codemodule.CodeModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      for="..interfaces.IModuleDocumentation"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".module.ModuleDetails"
+      name="index.html"
+      template="module_index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      for="..interfaces.IClassDocumentation"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".class_.ClassDetails"
+      name="index.html"
+      template="class_index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      for="..interfaces.IFunctionDocumentation"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".function.FunctionDetails"
+      name="index.html"
+      template="function_index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      for="..text.TextFile"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".text.TextFileDetails"
+      name="index.html"
+      template="textfile_index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <!-- ZCML File -->
+  <page
+      for="..interfaces.IZCMLFile"
+      name="index.html"
+      template="zcmlfile_index.pt"
+      permission="zope.View"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <page
+      name="display"
+      for="..interfaces.IDirective"
+      template="directive.pt"
+      class=".zcml.DirectiveDetails"
+      permission="zope.ManageContent"
+      layer="zope.app.apidoc.browser.skin.apidoc" />
+
+  <include file="introspector.zcml" />
+
+</configure>

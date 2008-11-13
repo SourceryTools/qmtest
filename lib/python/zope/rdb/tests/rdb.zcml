@@ -1,0 +1,12 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:rdb="http://namespaces.zope.org/rdb">
+
+  <include package="zope.rdb" file="meta.zcml"/>
+
+
+  <rdb:provideConnection
+      name="stub"
+      component="zope.rdb.tests.test_zopedatabaseadapter.DAStub"
+      dsn="dbi://dbname" />
+
+</configure>

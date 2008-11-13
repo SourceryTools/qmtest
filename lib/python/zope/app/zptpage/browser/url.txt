@@ -1,0 +1,73 @@
+Special URL handling for DTML pages
+===================================
+
+When a ZPT page containing a head tag is visited, without a trailing
+slash, the base href isn't set.  When visited with a slash, it is:
+
+  >>> print http(r"""
+  ... POST /+/zope.app.zptpage.ZPTPage%3D HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Length: 764
+  ... Content-Type: multipart/form-data; boundary=---------------------------178869070917677183891223841261
+  ... Referer: http://localhost:8081/+/zope.app.zptpage.ZPTPage=
+  ... 
+  ... -----------------------------178869070917677183891223841261
+  ... Content-Disposition: form-data; name="field.source"
+  ... 
+  ... <html>
+  ... <head></head>
+  ... <body>
+  ... <a href="eek.html">Eek</a>
+  ... </body>
+  ... </html>
+  ... -----------------------------178869070917677183891223841261
+  ... Content-Disposition: form-data; name="field.expand.used"
+  ... 
+  ... 
+  ... -----------------------------178869070917677183891223841261
+  ... Content-Disposition: form-data; name="field.evaluateInlineCode.used"
+  ... 
+  ... 
+  ... -----------------------------178869070917677183891223841261
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------178869070917677183891223841261
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... zpt.html
+  ... -----------------------------178869070917677183891223841261--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+  >>> print http(r"""
+  ... GET /zpt.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+  <html>
+  <head></head>
+  <body>
+  <a href="eek.html">Eek</a>
+  </body>
+  </html>
+  <BLANKLINE>
+
+
+  >>> print http(r"""
+  ... GET /zpt.html/ HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... """)
+  HTTP/1.1 200 OK
+  ...
+  <html>
+  <head>
+  <base href="http://localhost/zpt.html" />
+  </head>
+  <body>
+  <a href="eek.html">Eek</a>
+  </body>
+  </html>
+  <BLANKLINE>

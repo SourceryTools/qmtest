@@ -1,0 +1,39 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+
+<div metal:fill-slot="body">
+<form action="." method="post">
+
+  <pre tal:content="context/source" />
+
+  <table border="1"
+      tal:define="args context/getArguments"
+      tal:condition="args">
+    <tbody>
+      <tr>
+        <th i18n:translate="">Argument Name</th>
+        <th i18n:translate="">Type</th>
+        <th i18n:translate="">Value</th>
+      </tr>
+
+      <tr tal:repeat="arg python: args.keys()">
+        <td tal:content="arg"></td>
+        <td tal:content="python: args[arg].get('type')"> </td>
+        <td><input type="text" name="" size="10" value=""
+                tal:attributes="value python: args[arg].get('default');
+                                name arg"/></td>
+      </tr>
+
+
+    </tbody>
+  </table>
+
+  <input type="submit" name="testResults.html:method" value="Test"
+         i18n:attributes="value test-button"/>
+
+</form>
+</div>
+
+</body>
+</html>

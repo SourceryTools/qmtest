@@ -1,0 +1,371 @@
+<configure xmlns="http://namespaces.zope.org/zope" i18n_domain="zope">
+
+  <class class="zope.schema.Field">
+
+    <factory
+        id="zope.schema.Field"
+	title="Basic Field"
+	description="Basic Field" />
+
+    <implements interface="zope.interface.interfaces.IAttribute" />
+
+    <!--
+    <require
+	permission="zope.View"
+	interface="zope.schema.interfaces.IField"
+	/>
+
+    <require
+	permission="zope.ManageContent"
+	attributes="bind set"
+	/>
+    -->
+
+    <allow attributes="__name__" />
+
+    <!-- TODO: put the whole interface under one permission for now -->
+
+    <require
+	permission="zope.ManageContent"
+	interface="zope.schema.interfaces.IField"
+	set_schema="zope.schema.interfaces.IField"
+	/>
+
+  </class>
+
+  <class class="zope.schema.Container">
+
+    <factory
+        id="zope.schema.Container"
+	title="Container Field"
+	description="Container Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Iterable">
+
+    <factory
+        id="zope.schema.Iterable"
+	title="Iterable Field"
+	description="Iterable Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Orderable">
+
+    <factory
+        id="zope.schema.Orderable"
+	title="Orderable Field"
+	description="Orderable Field" />
+
+    <require
+	permission="zope.ManageContent"
+	interface="zope.schema.interfaces.IMinMax"
+	set_schema="zope.schema.interfaces.IMinMax"
+	/>
+
+  </class>
+
+  <class class="zope.schema.MinMaxLen">
+
+    <factory
+        id="zope.schema.MinMaxLen"
+	title="MinMaxLen Field"
+	description="MinMaxLen Field" />
+
+    <require
+	permission="zope.ManageContent"
+	interface="zope.schema.interfaces.IMinMaxLen"
+	set_schema="zope.schema.interfaces.IMinMaxLen"
+	/>
+
+  </class>
+
+  <class class="zope.schema.Bytes">
+
+    <factory
+	id="zope.schema.Bytes"
+	title="Bytes Field"
+	description="Bytes Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.BytesLine">
+
+    <factory
+	id="zope.schema.BytesLine"
+	title="BytesLine Field"
+	description="BytesLine Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Text">
+
+    <factory
+	id="zope.schema.Text"
+	title="Text Field"
+	description="Text Field" />
+
+    <implements interface="zope.schema.interfaces.IFromUnicode" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.TextLine">
+
+    <factory
+	id="zope.schema.TextLine"
+	title="Text Line Field"
+	description="Text Line Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Bool">
+
+    <factory
+	id="zope.schema.Bool"
+	title="Boolean Field"
+	description="Boolean Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Int">
+
+    <factory
+	id="zope.schema.Int"
+	title="Integer Field"
+	description="Integer Field" />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Float">
+
+    <factory
+	id="zope.schema.Float"
+	title="Float Field"
+	description="Float Field" />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Decimal">
+
+    <factory
+	id="zope.schema.Decimal"
+	title="Decimal Field"
+	description="Decimal Field" />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Tuple">
+
+    <factory
+	id="zope.schema.Tuple"
+	title="Tuple Field"
+	description="Tuple Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.List">
+
+    <factory
+	id="zope.schema.List"
+	title="List Field"
+	description="List Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Choice">
+    <factory
+        id="zope.schema.Choice"
+        title="Choice Field"
+        description="Choice Field" 
+        />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Set">
+
+    <factory
+	id="zope.schema.Set"
+	title="Set Field"
+	description="Set Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Password">
+
+    <factory
+	id="zope.schema.Password"
+	title="Password Field"
+	description="Password Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Dict">
+
+    <factory
+	id="zope.schema.Dict"
+	title="Dict Field"
+	description="Dict Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Datetime">
+
+    <factory
+	id="zope.schema.Datetime"
+	title="Datetime Field"
+	description="Datetime Field" />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Date">
+
+    <factory
+        id="zope.schema.Date"
+        title="Date Field"
+        description="Date Field" 
+        />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Timedelta">
+
+    <factory
+        id="zope.schema.Timedelta"
+        title="Timedelta Field"
+        description="Timedelta Field" 
+        />
+
+    <require like_class="zope.schema.Orderable" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.SourceText">
+
+    <factory
+	id="zope.schema.SourceText"
+	title="SourceText Field"
+	description="SourceText Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Object">
+
+    <factory
+	id="zope.schema.Object"
+	title="Object Field"
+	description="Object Field" />
+
+    <require
+       permission="zope.ManageContent"
+       interface="zope.schema.interfaces.IObject" />
+
+  </class>
+
+  <class class="zope.schema.URI">
+
+    <factory
+	id="zope.schema.URI"
+	title="URI Field"
+	description="URI Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.DottedName">
+    <factory
+        id="zope.schema.DottedName"
+        title="Dotted Name"
+        description="Dotted Name" 
+        />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.Id">
+
+    <factory
+	id="zope.schema.Id"
+	title="Id Field"
+	description="Id Field" />
+
+    <require like_class="zope.schema.MinMaxLen" />
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.InterfaceField">
+
+    <factory
+	id="zope.schema.InterfaceField"
+	title="Interface Field"
+	description="Interface Field" />
+
+    <require like_class="zope.schema.Field" />
+
+  </class>
+
+  <class class="zope.schema.vocabulary.SimpleTerm">
+    <allow interface="zope.schema.interfaces.ITitledTokenizedTerm" />
+  </class>
+
+  <class class="zope.schema.vocabulary.SimpleVocabulary">
+    <allow interface="zope.schema.interfaces.IVocabularyTokenized" />
+  </class>
+
+</configure>

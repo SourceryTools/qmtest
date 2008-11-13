@@ -1,0 +1,28 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <utility
+      name="Session Credentials"
+      provides=".interfaces.ICredentialsPlugin"
+      factory=".session.SessionCredentialsPlugin"
+      />
+
+  <class class=".session.SessionCredentialsPlugin">
+
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+
+    <require
+        permission="zope.ManageServices"
+        interface=".session.IBrowserFormChallenger"
+        set_schema=".session.IBrowserFormChallenger"
+        />
+
+  </class>
+
+  <include package=".browser" file="session.zcml" />
+
+</configure>

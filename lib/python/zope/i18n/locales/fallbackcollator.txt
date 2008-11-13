@@ -1,0 +1,63 @@
+Fallback Collator
+=================
+
+The zope.i18n.interfaces.locales.ICollator interface defines an API
+for collating text.  Why is this important?  Simply sorting unicode
+strings doesn't provide an ordering that users in a given locale will
+fine useful.  Various languages have text sorting conventions that
+don't agree with the ordering of unicode code points. (This is even
+true for English. :)
+
+Text collation is a fairly involved process.  Systems that need this,
+will likely use something like ICU
+(http://www-306.ibm.com/software/globalization/icu, 
+http://pyicu.osafoundation.org/).  We don't want to introduce a
+dependency on ICU and this time, so we are providing a fallback
+collator that:
+
+- Provides an implementation of the ICollator interface that can be
+  used for development, and
+
+- Provides a small amount of value, at least for English speakers. :)
+
+Application code should obtain a collator by adapting a locale to
+ICollator.  Here we just call the collator factory with None. The
+fallback collator doesn't actually use the locale, although
+application code should certainly *not* count on this.
+
+    >>> import zope.i18n.locales.fallbackcollator
+    >>> collator = zope.i18n.locales.fallbackcollator.FallbackCollator(None)
+
+Now, we can pass the collator's key method to sort functions to sort
+strings in a slightly friendly way:
+
+    >>> sorted([u'Sam', u'sally', u'Abe', u'alice', u'Terry', u'tim'],
+    ...        key=collator.key)
+    [u'Abe', u'alice', u'sally', u'Sam', u'Terry', u'tim']
+
+
+The collator has a very simple algorithm.  It normalizes strings and
+then returns a tuple with the result of lower-casing the normalized
+string and the normalized string.  We can see this by calling the key
+method, which converts unicode strings to collation keys:
+
+    >>> collator.key(u'Sam')
+    (u'sam', u'Sam')
+
+    >>> collator.key(u'\xc6\xf8a\u030a')
+    (u'\xe6\xf8\xe5', u'\xc6\xf8\xe5')
+
+There is also a cmp function for comparing strings:
+
+    >>> collator.cmp(u'Terry', u'sally')
+    1
+
+
+    >>> collator.cmp(u'sally', u'Terry')
+    -1
+
+    >>> collator.cmp(u'terry', u'Terry')
+    1
+
+    >>> collator.cmp(u'terry', u'terry')
+    0

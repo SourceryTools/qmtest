@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directives namespace="http://namespaces.zope.org/browser">
+
+  <!-- browser cotainer views -->
+  <meta:directive
+        name="containerViews"
+        schema=".metaconfigure.IContainerViews"
+        handler=".metaconfigure.containerViews"
+        />
+
+  </meta:directives>
+
+</configure>

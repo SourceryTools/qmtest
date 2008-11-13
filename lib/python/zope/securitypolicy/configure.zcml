@@ -1,0 +1,113 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+  <adapter
+      factory=".rolepermission.AnnotationRolePermissionManager"
+      provides=".interfaces.IRolePermissionManager"
+      for="zope.annotation.interfaces.IAnnotatable"
+      trusted="true"
+      />
+
+  <class class=".rolepermission.AnnotationRolePermissionManager">
+    <require
+        permission="zope.Security"
+        attributes="grantPermissionToRole denyPermissionToRole
+                    unsetPermissionFromRole"
+        />
+    <allow
+        interface=".interfaces.IRolePermissionMap"
+        />
+  </class>
+
+  <adapter
+      factory=".principalrole.AnnotationPrincipalRoleManager"
+      provides=".interfaces.IPrincipalRoleManager"
+      for="zope.annotation.interfaces.IAnnotatable"
+      trusted="true"
+      />
+
+  <class class=".principalrole.AnnotationPrincipalRoleManager">
+    <require
+        permission="zope.Security"
+        attributes="assignRoleToPrincipal removeRoleFromPrincipal
+                    unsetRoleForPrincipal"
+        />
+    <allow
+        interface=".interfaces.IPrincipalRoleMap"
+        />
+  </class>
+
+  <adapter
+      factory=".principalpermission.AnnotationPrincipalPermissionManager"
+      provides=".interfaces.IPrincipalPermissionManager"
+      for="zope.annotation.interfaces.IAnnotatable"
+      trusted="true"
+      />
+
+  <class class=".principalpermission.AnnotationPrincipalPermissionManager">
+    <require
+        permission="zope.Security"
+        attributes="grantPermissionToPrincipal denyPermissionToPrincipal
+                    unsetPermissionForPrincipal"
+        />
+    <allow
+        interface=".interfaces.IPrincipalPermissionMap"
+        />
+  </class>
+
+  <adapter
+      factory=".grantinfo.AnnotationGrantInfo"
+      provides=".interfaces.IGrantInfo"
+      for="zope.annotation.interfaces.IAnnotatable"
+      />
+
+  <!-- protect Roles and Permissions -->
+  <class class=".role.LocalRole">
+    <factory
+        id="zope.security.role.Role"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.Security"
+        interface=".interfaces.IRole"
+        set_schema=".interfaces.IRole"
+        />
+  </class>
+
+  <subscriber
+      for=".interfaces.IRole
+           zope.component.interfaces.IRegistered"
+      handler=".role.setIdOnActivation"
+      />
+
+  <subscriber
+      for=".interfaces.IRole
+           zope.component.interfaces.IUnregistered"
+      handler=".role.unsetIdOnDeactivation"
+      />
+
+  <!-- Vocabularies -->
+  <utility
+      component=".vocabulary.RoleIdsVocabulary"
+      name="Role Ids"
+      />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="zopepolicy"
+        title="Default Security Policy"
+        doc_path="zopepolicy.txt"
+        parent="security"
+        />
+
+  </configure>
+
+</configure>

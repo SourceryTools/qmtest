@@ -1,0 +1,138 @@
+====================================
+Dublin Core metadata as content data
+====================================
+
+Sometimes we want to include data in content objects which mirrors one
+or more Dublin Core fields.  In these cases, we want the Dublin Core
+structures to use the data in the content object rather than keeping a
+separate value in the annotations typically used.  What fields we want
+to do this with can vary, however, and we may not want the Dublin Core
+APIs to constrain our choices of field names for our content objects.
+
+To deal with this, we can use speciallized adapter implementations
+tailored to specific content objects.  To make this a bit easier,
+there is a factory for such adapters.
+
+Let's take a look at the simplest case of this to start with.  We have
+some content object with a `title` attribute that should mirror the
+Dublin Core `title` field::
+
+  >>> import zope.interface
+  >>> import zope.annotation.interfaces
+
+  >>> class Content(object):
+  ...
+  ...     zope.interface.implements(
+  ...         zope.annotation.interfaces.IAttributeAnnotatable)
+  ...
+  ...     title = u""
+  ...     description = u""
+
+To avoid having a discrepency between the `title` attribute of our
+content object and the equivalent Dublin Core field, we can provide a
+specific adapter for our object::
+
+  >>> from zope.dublincore import annotatableadapter
+
+  >>> factory = annotatableadapter.partialAnnotatableAdapterFactory(
+  ...     ["title"])
+
+This creates an adapter factory that maps the Dublin Core `title`
+field to the `title` attribute on instances of our `Content` class.
+Multiple mappings may be specified by naming the additional fields in
+the sequence passed to `partialAnnotatableAdapterFactory()`.  (We'll
+see later how to use different attribute names for Dublin Core
+fields.)
+
+Let's see what happens when we use the adapter.
+
+When using the adapter to retrieve a field set to use the content
+object, the value stored on the content object is used::
+
+  >>> content = Content()
+  >>> adapter = factory(content)
+
+  >>> adapter.title
+  u''
+
+  >>> content.title = u"New Title"
+  >>> adapter.title
+  u'New Title'
+
+If we set the relevant Dublin Core field using the adapter, the
+content object is updated::
+
+  >>> adapter.title = u"Adapted Title"
+  >>> content.title
+  u'Adapted Title'
+
+Dublin Core fields which are not specifically mapped to the content
+object do not affect the content object::
+
+  >>> adapter.description = u"Some long description."
+  >>> content.description
+  u''
+  >>> adapter.description
+  u'Some long description.'
+
+
+Using arbitrary field names
+---------------------------
+
+We've seen the simple approach, allowing a Dublin Core field to be
+stored on the content object using an attribute of the same name as
+the DC field.  However, we may want to use a different name for some
+reason.  The `partialAnnotatableAdapterFactory()` supports this as
+well.
+
+If we call `partialAnnotatableAdapterFactory()` with a mapping instead
+of a sequence, the mapping is used to map Dublin Core field names to
+attribute names on the content object.
+
+Let's look at an example where we want the `abstract` attribute on the
+content object to be used for the `description` Dublin Core field::
+
+  >>> class Content(object):
+  ...
+  ...     zope.interface.implements(
+  ...         zope.annotation.interfaces.IAttributeAnnotatable)
+  ...
+  ...     abstract = u""
+
+We can create the adapter factory by passing a mapping to
+`partialAnnotatableAdapterFactory()`::
+
+  >>> factory = annotatableadapter.partialAnnotatableAdapterFactory(
+  ...     {"description": "abstract"})
+
+We can check the effects of the adapter as before::
+
+  >>> content = Content()
+  >>> adapter = factory(content)
+
+  >>> adapter.description
+  u''
+
+  >>> content.abstract = u"What it's about."
+  >>> adapter.description
+  u"What it's about."
+
+  >>> adapter.description = u"Change of plans."
+  >>> content.abstract
+  u'Change of plans.'
+
+
+Limitations
+-----------
+
+The current implementation has a number of limitations to be aware of;
+hopefully these can be removed in the future.
+
+- Only simple string properties, like `title`, are supported.  This is
+  largely because other field types have not been given sufficient
+  thought.  Attempting to use this for other fields will cause a
+  `ValueError` to be raised by `partialAnnotatableAdapterFactory()`.
+
+- The CMF-like APIs are not supported in the generated adapters.  It
+  is not clear that these APIs are used, but content object
+  implementations should be aware of this limitation.

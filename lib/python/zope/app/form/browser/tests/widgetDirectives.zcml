@@ -1,0 +1,51 @@
+<configure xmlns="http://namespaces.zope.org/browser"
+           xmlns:zope="http://namespaces.zope.org/zope"
+           i18n_domain="zope">
+
+  <include package="zope.app.component" file="meta.zcml" />
+  <include package="zope.app.publisher" file="meta.zcml" />
+  <include package="zope.app.security" file="meta.zcml" />
+  <include package="zope.app.form.browser" file="meta.zcml" />
+
+  <zope:view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for="zope.schema.interfaces.ITextLine"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory="zope.app.form.browser.TextWidget"
+      permission="zope.Public"
+      />
+
+  <addform
+      schema=".test_widgetdirective.IContent"
+      label="Add Content"
+      name="add.html"
+      permission="zope.Public"
+      >
+    <widget field="field"
+            extraAttr="42"
+            />
+  </addform>
+
+  <editform
+      schema=".test_widgetdirective.IContent"
+      label="Edit Content"
+      name="edit.html"
+      permission="zope.Public"
+      >
+    <widget field="field"
+            extraAttr="84"
+            />
+  </editform>
+
+  <editform
+      schema=".test_widgetdirective.IContent"
+      label="Edit Content"
+      name="subedit.html"
+      permission="zope.Public"
+      >
+    <widget field="field"
+            extraAttr="168"
+            />
+  </editform>
+
+</configure>

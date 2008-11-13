@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+    >
+
+  <!-- Translation Domain View Directives -->
+
+  <xmlrpc:view
+      for="zope.i18n.interfaces.ITranslationDomain"
+      permission="zope.ManageContent" 
+      methods="getAllLanguages getMessagesFor"
+      class=".methods.Methods" 
+      />
+      
+
+</configure>

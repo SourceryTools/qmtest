@@ -1,0 +1,31 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:global_translation="http://namespaces.zope.org/gts"
+    i18n_domain="zope"
+    >
+
+  <adapter
+      factory=".ObjectMover"
+      permission="zope.ManageContent"
+      trusted="y"
+      />
+
+  <adapter
+      factory=".ObjectCopier"
+      permission="zope.ManageContent"
+      trusted="y"
+      />
+
+  <adapter factory=".ContainerItemRenamer" />
+
+  <adapter factory=".OrderedContainerItemRenamer" />
+
+  <adapter factory=".PrincipalClipboard" />
+
+  <subscriber
+      for="zope.location.interfaces.ILocation
+           zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      handler=".dispatchToSublocations"
+      />
+
+</configure>

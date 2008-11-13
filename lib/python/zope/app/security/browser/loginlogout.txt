@@ -1,0 +1,71 @@
+====================
+Login/Logout Snippet
+====================
+
+The class LoginLogout:
+
+  >>> from zope.app.security.browser.auth import LoginLogout
+
+is used as a view to generate an HTML snippet suitable for logging in or
+logging out based on whether or not the current principal is authenticated.
+
+When the current principal is unauthenticated, it provides
+IUnauthenticatedPrincipal:
+
+  >>> from zope.app.security.interfaces import IUnauthenticatedPrincipal
+  >>> from zope.app.security.principalregistry import UnauthenticatedPrincipal
+  >>> anonymous = UnauthenticatedPrincipal('anon', '', '')
+  >>> IUnauthenticatedPrincipal.providedBy(anonymous)
+  True
+
+When LoginLogout is used for a request that has an unauthenticated principal,
+it provides the user with a link to 'Login':
+
+  >>> from zope.publisher.browser import TestRequest
+  >>> request = TestRequest()
+  >>> request.setPrincipal(anonymous)
+  >>> LoginLogout(None, request)()
+  u'<a href="@@login.html?nextURL=http%3A//127.0.0.1">[Login]</a>'
+
+Logout, however, behaves differently. Not all authentication protocols (i.e.
+credentials extractors/challengers) support 'logout'. Furthermore, we don't
+know how an admin may have configured Zope's authentication. Our solution is
+to rely on the admin to tell us explicitly that the site supports logout.
+
+By default, the LoginLogout snippet will not provide a logout link for an
+unauthenticated principal. To illustrate, we'll first setup a request with an
+unauthenticated principal:
+
+  >>> from zope.security.interfaces import IPrincipal
+  >>> from zope.interface import implements
+  >>> class Bob:
+  ...     implements(IPrincipal)
+  ...     id = 'bob'
+  ...     title = description = ''
+  >>> bob = Bob()
+  >>> IUnauthenticatedPrincipal.providedBy(bob)
+  False
+  >>> request.setPrincipal(bob)
+
+In this case, the default behavior is to return None for the snippet:
+
+  >>> print LoginLogout(None, request)()
+  None
+
+To show a logout prompt, an admin must register a marker adapter that provides
+the interface:
+
+  >>> from zope.app.security.interfaces import ILogoutSupported
+
+This flags to LoginLogout that the site supports logout. There is a 'no-op'
+adapter that can be registered for this:
+
+  >>> from zope.app.security import LogoutSupported
+  >>> from zope.app.testing import ztapi
+  >>> ztapi.provideAdapter(None, ILogoutSupported, LogoutSupported)
+
+Now when we use LoginLogout with an unauthenticated principal, we get a logout
+prompt:
+
+  >>> LoginLogout(None, request)()
+  u'<a href="@@logout.html?nextURL=http%3A//127.0.0.1">[Logout]</a>'

@@ -1,0 +1,126 @@
+<html i18n:domain="zope">
+<body>
+
+<!-- This file contains macros common to undo views. -->
+
+<div metal:define-macro="global_vars">
+  <tal:var define="global batch_size python:10;
+                   global first      python:int(request.get('first', 0));
+                   global showall    python:bool(request.get('showall', False))"
+                   />
+</div>
+
+<div metal:define-macro="location_link">
+  <span tal:condition="showall">
+    <p>
+      <span i18n:translate="">You are looking at transactions
+      regardless of location.</span> <a href="?"
+      i18n:translate="">View only transactions in this location</a>.
+    </p>
+  </span>
+
+  <span tal:condition="not:showall">
+    <p>
+      <span i18n:translate="">You are looking only at transactions
+      from this location.</span> <a href="?showall=true"
+      i18n:translate="">View transactions regardless of location</a>.
+    </p>
+  </span>
+</div>
+
+<div metal:define-macro="undo_log">
+
+  <!-- We expect the list of undo information in the global
+      'undo_info' variable -->
+
+  <div metal:define-slot="define_info">
+    <tal:var define="global undo_info python:[]" />
+  </div>
+
+    <table style="width: 100%; border: none;">
+
+      <tr>
+        <th></th>
+        <th i18n:translate="heading-location">Location</th>
+        <th i18n:translate="heading-request-info">Request info</th>
+        <th i18n:translate="heading-principal">Principal</th>
+        <th i18n:translate="heading-date">Date</th>
+        <th i18n:translate="heading-description">Description</th>
+      </tr>
+
+      <tal:block repeat="item undo_info">
+      <tr tal:attributes="class python:repeat['item'].odd() and
+                                       'content odd' or 'content even'">
+
+        <td width="16">
+          <input type="checkbox" name="ids:list" value="-1"
+                 tal:attributes="value item/id" />
+        </td>
+
+    <td tal:define="location item/location | nothing">
+          <tal:location replace="location" />
+          <tal:if condition="not:location"
+                  i18n:translate="label-not-available">not available</tal:if>
+        </td>
+
+        <td>
+          <tal:request_info replace="item/request_type | nothing" /><br />
+          <tal:request_info replace="item/request_info | nothing" />
+          <tal:if condition="python:not item.get('request_type', '') and
+                                    not item.get('request_info', '')"
+                  i18n:translate="label-not-available">not available</tal:if>
+        </td>
+
+        <td>
+          <tal:principal replace="item/principal/id | nothing" />
+          <tal:if condition="not:exists:item/principal/id"
+                  i18n:translate="label-not-available">not available</tal:if>
+        </td>
+
+        <td tal:define="formatter python:request.locale.dates.getFormatter(
+                                         'dateTime', 'medium')"
+            tal:content="python:formatter.format(item['datetime'])">
+        </td>
+
+        <td>
+          <tal:description i18n:translate=""
+            replace="item/description | nothing" />
+          <tal:if condition="not:item/description"
+                  i18n:translate="label-not-available">not available</tal:if>
+        </td>
+      </tr>
+      </tal:block>
+
+    </table>
+</div>
+
+<p metal:define-macro="next_batch">
+  <a tal:define="showall python:showall and '&showall=true' or ''"
+     tal:attributes="href python:'?first=%s%s'%(first+batch_size, showall)">
+    &lt;&lt;&lt;
+    <tal:text i18n:translate="">
+      View <tal:num replace="batch_size" i18n:name="number" />
+      earlier transactions
+    </tal:text>
+  </a>
+</p>
+
+<p metal:define-macro="previous_batch">
+  <a tal:define="showall python:showall and '&showall=true' or ''"
+     tal:condition="python:first >= batch_size"
+     tal:attributes="href python:'?first=%s%s'%(first-batch_size, showall)">
+    <tal:text i18n:translate="">
+      View <tal:num tal:replace="batch_size" i18n:name="number" />
+      later transactions
+    </tal:text>
+    &gt;&gt;&gt;
+  </a>
+</p>
+
+<p metal:define-macro="submit_button">
+  <input type="submit" value="Undo"
+         i18n:attributes="value undo-button" />
+</p>
+
+</body>
+</html>

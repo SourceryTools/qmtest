@@ -1,0 +1,38 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <class class=".IntIds">
+    <factory
+        id="zope.app.intid.IntIds"
+        />
+
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+
+    <require
+        permission="zope.Public"
+        interface=".interfaces.IIntIdsQuery"
+        />
+
+    <require
+        permission="zope.ManageContent"
+        interface=".interfaces.IIntIdsSet"
+        />
+
+    <require
+        permission="zope.Public"
+        interface=".interfaces.IIntIdsManage"
+        />
+
+  </class>
+
+  <subscriber handler=".removeIntIdSubscriber" />
+  <subscriber handler=".addIntIdSubscriber" />
+
+  <!-- Views -->
+  <include package=".browser" />
+
+</configure>

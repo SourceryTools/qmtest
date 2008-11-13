@@ -1,0 +1,15 @@
+<html i18n:domain="zope">
+  <head>
+    <title i18n:translate="">Zope 3 API Documentation</title>
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png|default" />
+  </head>
+  <frameset cols="20%, *">
+    <frameset rows="140, *">
+      <frame name="modules" src="staticmodulelist.html">
+      <frame name="menu" src="staticmenu.html">
+    </frameset>
+    <frame name="main" src="staticcontents.html">
+  </frameset>
+
+</html>

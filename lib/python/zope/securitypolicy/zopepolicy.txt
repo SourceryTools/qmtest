@@ -1,0 +1,653 @@
+Classic Zope Security Policy
+============================
+
+This package implements a role-based security policy similar to the
+policy found in Zope 2.  The security policy is responsible for
+deciding whether an interaction has a permission on an object.  This
+security policy does this using grant and denial information.  Managers
+can grant or deny:
+
+  - roles to principals,
+
+  - permissions to principals, and
+
+  - permissions to roles
+
+Grants and denials are stored as annotations on objects.  To store
+grants and denials, objects must be annotatable:
+
+  >>> import zope.interface
+  >>> from zope.annotation.interfaces import IAttributeAnnotatable
+  >>> class Ob:
+  ...     zope.interface.implements(IAttributeAnnotatable)
+
+  >>> ob = Ob()
+
+We use objects to represent principals.  These objects implement an
+interface named `IPrincipal`, but the security policy only uses the `id`
+and `groups` attributes:
+
+  >>> class Principal:
+  ...     def __init__(self, id):
+  ...         self.id = id
+  ...         self.groups = []
+
+  >>> principal = Principal('bob')
+
+Roles and permissions are also represented by objects, however, for
+the purposes of the security policy, only string `ids` are used.
+
+The security policy provides a factory for creating interactions:
+
+  >>> import zope.securitypolicy.zopepolicy
+  >>> interaction = zope.securitypolicy.zopepolicy.ZopeSecurityPolicy()
+
+An interaction represents a specific interaction between some
+principals (normally users) and the system.  Normally, we are only
+concerned with the interaction of one principal with the system, although
+we can have interactions of multiple principals.  Multiple-principal
+interactions normally occur when untrusted users store code on a
+system for later execution.  When untrusted code is executing, the
+authors of the code participate in the interaction.  An
+interaction has a permission on an object only if all of the
+principals participating in the interaction have access to the object.
+
+The `checkPermission` method on interactions is used to test whether
+an interaction has a permission for an object.  An interaction without
+participants always has every permission:
+
+  >>> interaction.checkPermission('P1', ob)
+  True
+
+In this example, 'P1' is a permission id.
+
+Normally, interactions have participants:
+
+  >>> class Participation:
+  ...     interaction = None
+  >>> participation = Participation()
+  >>> participation.principal = principal
+  >>> interaction.add(participation)
+
+If we have participants, then we don't have a permission unless there
+are grants:
+
+  >>> interaction.checkPermission('P1', ob)
+  False
+
+Note, however, that we always have the CheckerPublic permission:
+
+  >>> from zope.security.checker import CheckerPublic
+  >>> interaction.checkPermission(CheckerPublic, ob)
+  True
+
+We make grants and denials on objects by adapting them to various
+granting interfaces.  The objects returned from the adaptation are 
+object-specific manager objects:
+
+  >>> from zope.securitypolicy import interfaces
+  >>> roleper  = interfaces.IRolePermissionManager(ob)
+  >>> prinrole = interfaces.IPrincipalRoleManager(ob)
+  >>> prinper  = interfaces.IPrincipalPermissionManager(ob)
+
+The computations involved in checking permissions can be
+significant. To reduce the computational cost, caching is used
+extensively. We could invalidate the cache as we make grants, but the
+adapters for making grants will automatically invalidate the cache of
+the current interaction.  They use the security-management apis to do
+this. To take advantage of the cache invalidation, we'll need to let
+the security-management system manage our interactions.  First, we'll
+set our security policy as the default:
+
+  >>> import zope.security.management
+  >>> oldpolicy = zope.security.management.setSecurityPolicy(
+  ...      zope.securitypolicy.zopepolicy.ZopeSecurityPolicy)
+
+and then we'll create a new interaction:
+
+  >>> participation = Participation()
+  >>> participation.principal = principal
+  >>> zope.security.management.newInteraction(participation)
+  >>> interaction = zope.security.management.getInteraction()
+
+We normally provide access by granting permissions to roles for an object:
+
+  >>> roleper.grantPermissionToRole('P1', 'R1')
+
+and then granting roles to principals for an object (local roles):
+
+  >>> prinrole.assignRoleToPrincipal('R1', 'bob')
+
+The combination of these grants, which we call a role-based grant,
+provides the permission:
+
+  >>> interaction.checkPermission('P1', ob)
+  True
+
+We can also provide a permission directly:
+
+  >>> prinper.grantPermissionToPrincipal('P2', 'bob')
+  >>> interaction.checkPermission('P2', ob)
+  True
+
+Permission grants or denials override role-based grant or denials.  So
+if we deny P1:
+
+  >>> prinper.denyPermissionToPrincipal('P1', 'bob')
+
+we cause the interaction to lack the permission, despite the role
+grants:
+
+  >>> interaction.checkPermission('P1', ob)
+  False
+
+Similarly, even if we have a role-based denial of P2:
+
+  >>> roleper.denyPermissionToRole('P2', 'R1')
+
+we still have access, because of the permission-based grant:
+
+  >>> interaction.checkPermission('P2', ob)
+  True
+
+A role-based denial doesn't actually deny a permission; rather it
+prevents the granting of a permission. So, if we have both grants and
+denials based on roles, we have access:
+
+  >>> roleper.grantPermissionToRole('P3', 'R1')
+  >>> roleper.grantPermissionToRole('P3', 'R2')
+  >>> roleper.denyPermissionToRole('P3', 'R3')
+  >>> prinrole.removeRoleFromPrincipal('R2', 'bob')
+  >>> prinrole.assignRoleToPrincipal('R3', 'bob')
+
+  >>> interaction.checkPermission('P3', ob)
+  True
+
+Global grants
+-------------
+
+Grants made to an object are said to be "local".  We can also make
+global grants:
+
+  >>> from zope.securitypolicy.rolepermission import \
+  ...     rolePermissionManager as roleperG
+  >>> from zope.securitypolicy.principalpermission import \
+  ...     principalPermissionManager as prinperG
+  >>> from zope.securitypolicy.principalrole import \
+  ...     principalRoleManager as prinroleG
+
+And the same rules apply to global grants and denials.
+
+  >>> roleperG.grantPermissionToRole('P1G', 'R1G', False)
+
+In these tests, we aren't bothering to define any roles, permissions,
+or principals, so we pass an extra argument that tells the granting
+routines not to check the validity of the values.
+
+  >>> prinroleG.assignRoleToPrincipal('R1G', 'bob', False)
+  >>> interaction.checkPermission('P1G', ob)
+  True
+
+  >>> prinperG.grantPermissionToPrincipal('P2G', 'bob', False)
+  >>> interaction.checkPermission('P2G', ob)
+  True
+
+  >>> prinperG.denyPermissionToPrincipal('P1G', 'bob', False)
+  >>> interaction.checkPermission('P1G', ob)
+  False
+
+  >>> roleperG.denyPermissionToRole('P2G', 'R1G', False)
+  >>> interaction.checkPermission('P2G', ob)
+  True
+
+  >>> roleperG.grantPermissionToRole('P3G', 'R1G', False)
+  >>> roleperG.grantPermissionToRole('P3G', 'R2G', False)
+  >>> roleperG.denyPermissionToRole('P3G', 'R3G', False)
+  >>> prinroleG.removeRoleFromPrincipal('R2G', 'bob', False)
+  >>> prinroleG.assignRoleToPrincipal('R3G', 'bob', False)
+  >>> interaction.checkPermission('P3G', ob)
+  True
+
+Local versus global grants
+--------------------------
+
+We, of course, acquire global grants by default:
+
+  >>> interaction.checkPermission('P1G', ob)
+  False
+  >>> interaction.checkPermission('P2G', ob)
+  True
+  >>> interaction.checkPermission('P3G', ob)
+  True
+
+Local role-based grants do not override global principal-specific denials:
+
+  >>> roleper.grantPermissionToRole('P1G', 'R1G')
+  >>> prinrole.assignRoleToPrincipal('R1G', 'bob')
+  >>> interaction.checkPermission('P1G', ob)
+  False
+
+And local role-based denials don't override global
+principal-grants:
+
+  >>> roleper.denyPermissionToRole('P2G', 'R1G')
+  >>> interaction.checkPermission('P2G', ob)
+  True
+
+A local role-based deny can cancel a global role-based grant:
+
+  >>> roleper.denyPermissionToRole('P3G', 'R1G')
+  >>> interaction.checkPermission('P3G', ob)
+  False
+
+and a local role-based grant can override a global role-based denial:
+
+  >>> roleperG.denyPermissionToRole('P4G', 'R1G', False)
+  >>> prinroleG.assignRoleToPrincipal('R1G', "bob", False)
+  >>> interaction.checkPermission('P4G', ob)
+  False
+  >>> roleper.grantPermissionToRole('P4G', 'R1G')
+  >>> interaction.checkPermission('P4G', ob)
+  True
+  >>> prinroleG.removeRoleFromPrincipal('R1G', "bob", False)
+  >>> interaction.checkPermission('P4G', ob)
+  True
+
+Of course, a local permission-based grant or denial overrides any
+global setting and overrides local role-based grants or denials:
+
+  >>> prinper.grantPermissionToPrincipal('P3G', 'bob')
+  >>> interaction.checkPermission('P3G', ob)
+  True
+
+  >>> prinper.denyPermissionToPrincipal('P2G', 'bob')
+  >>> interaction.checkPermission('P2G', ob)
+  False
+
+Sublocations
+------------
+
+We can have sub-locations. A sublocation of a location is an object
+whose `__parent__` attribute is the location:
+
+  >>> ob2 = Ob()
+  >>> ob2.__parent__ = ob
+
+By default, sublocations acquire grants from higher locations:
+
+  >>> interaction.checkPermission('P1', ob2)
+  False
+  >>> interaction.checkPermission('P2', ob2)
+  True
+  >>> interaction.checkPermission('P3', ob2)
+  True
+  >>> interaction.checkPermission('P1G', ob2)
+  False
+  >>> interaction.checkPermission('P2G', ob2)
+  False
+  >>> interaction.checkPermission('P3G', ob2)
+  True
+  >>> interaction.checkPermission('P4G', ob2)
+  True
+
+Sublocation role-based grants do not override their parent
+principal-specific denials:
+
+  >>> roleper2  = interfaces.IRolePermissionManager(ob2)
+  >>> prinrole2 = interfaces.IPrincipalRoleManager(ob2)
+  >>> prinper2  = interfaces.IPrincipalPermissionManager(ob2)
+
+  >>> roleper2.grantPermissionToRole('P1', 'R1')
+  >>> prinrole2.assignRoleToPrincipal('R1', 'bob')
+  >>> interaction.checkPermission('P1', ob2)
+  False
+
+And local role-based denials don't override their parents
+principal-grant:
+
+  >>> roleper2.denyPermissionToRole('P2', 'R1')
+  >>> interaction.checkPermission('P2', ob2)
+  True
+
+A local role-based deny can cancel a parent role-based grant:
+
+  >>> roleper2.denyPermissionToRole('P3', 'R1')
+  >>> interaction.checkPermission('P3', ob2)
+  False
+
+and a local role-based grant can override a parent role-based denial:
+
+  >>> roleper.denyPermissionToRole('P4', 'R1')
+  >>> prinrole.assignRoleToPrincipal('R1', 'bob')
+  >>> interaction.checkPermission('P4', ob2)
+  False
+  >>> roleper2.grantPermissionToRole('P4', 'R1')
+  >>> interaction.checkPermission('P4', ob2)
+  True
+  >>> prinrole.removeRoleFromPrincipal('R1', 'bob')
+  >>> interaction.checkPermission('P4', ob2)
+  True
+
+
+Of course, a local permission-based grant or denial overrides any
+global setting and overrides local role-based grants or denials:
+
+  >>> prinper.grantPermissionToPrincipal('P3', 'bob')
+  >>> interaction.checkPermission('P3', ob2)
+  True
+
+  >>> prinper.denyPermissionToPrincipal('P2', 'bob')
+  >>> interaction.checkPermission('P2', ob2)
+  False
+
+If an object is not annotatable, but does have a parent, it will get
+its grants from its parent:
+
+  >>> class C:
+  ...     pass
+
+  >>> ob3 = C()
+  >>> ob3.__parent__ = ob
+
+  >>> interaction.checkPermission('P1', ob3)
+  False
+  >>> interaction.checkPermission('P2', ob3)
+  False
+  >>> interaction.checkPermission('P3', ob3)
+  True
+  >>> interaction.checkPermission('P1G', ob3)
+  False
+  >>> interaction.checkPermission('P2G', ob3)
+  False
+  >>> interaction.checkPermission('P3G', ob3)
+  True
+  >>> interaction.checkPermission('P4G', ob3)
+  True
+
+The same results will be had if there are multiple non-annotatable
+objects:
+
+  >>> ob3.__parent__ = C()
+  >>> ob3.__parent__.__parent__ = ob
+
+  >>> interaction.checkPermission('P1', ob3)
+  False
+  >>> interaction.checkPermission('P2', ob3)
+  False
+  >>> interaction.checkPermission('P3', ob3)
+  True
+  >>> interaction.checkPermission('P1G', ob3)
+  False
+  >>> interaction.checkPermission('P2G', ob3)
+  False
+  >>> interaction.checkPermission('P3G', ob3)
+  True
+  >>> interaction.checkPermission('P4G', ob3)
+  True
+
+and if an object doesn't have a parent:
+
+  >>> ob4 = C()
+
+it will have whatever grants were made globally:
+
+  >>> interaction.checkPermission('P1', ob4)
+  False
+  >>> interaction.checkPermission('P2', ob4)
+  False
+  >>> interaction.checkPermission('P3', ob4)
+  False
+  >>> interaction.checkPermission('P1G', ob4)
+  False
+  >>> interaction.checkPermission('P2G', ob4)
+  True
+  >>> interaction.checkPermission('P3G', ob4)
+  False
+  >>> interaction.checkPermission('P4G', ob4)
+  False
+
+  >>> prinroleG.assignRoleToPrincipal('R1G', "bob", False)
+  >>> interaction.checkPermission('P3G', ob4)
+  True
+
+We'll get the same result if we have a non-annotatable parent without a
+parent:
+
+  >>> ob3.__parent__ = C()
+
+  >>> interaction.checkPermission('P1', ob3)
+  False
+  >>> interaction.checkPermission('P2', ob3)
+  False
+  >>> interaction.checkPermission('P3', ob3)
+  False
+  >>> interaction.checkPermission('P1G', ob3)
+  False
+  >>> interaction.checkPermission('P2G', ob3)
+  True
+  >>> interaction.checkPermission('P3G', ob3)
+  True
+  >>> interaction.checkPermission('P4G', ob3)
+  False
+
+The Anonymous role
+------------------
+
+The security policy defines a special role named "zope.Anonymous".  All
+principals have this role and the role cannot be taken away.
+
+  >>> roleperG.grantPermissionToRole('P5', 'zope.Anonymous', False)
+  >>> interaction.checkPermission('P5', ob2)
+  True
+
+Proxies
+-------
+
+Objects may be proxied:
+
+  >>> from zope.security.checker import ProxyFactory
+  >>> ob = ProxyFactory(ob)
+  >>> interaction.checkPermission('P1', ob)
+  False
+  >>> interaction.checkPermission('P2', ob)
+  False
+  >>> interaction.checkPermission('P3', ob)
+  True
+  >>> interaction.checkPermission('P1G', ob)
+  False
+  >>> interaction.checkPermission('P2G', ob)
+  False
+  >>> interaction.checkPermission('P3G', ob)
+  True
+  >>> interaction.checkPermission('P4G', ob)
+  True
+
+as may their parents:
+
+  >>> ob3 = C()
+  >>> ob3.__parent__ = ob
+
+  >>> interaction.checkPermission('P1', ob3)
+  False
+  >>> interaction.checkPermission('P2', ob3)
+  False
+  >>> interaction.checkPermission('P3', ob3)
+  True
+  >>> interaction.checkPermission('P1G', ob3)
+  False
+  >>> interaction.checkPermission('P2G', ob3)
+  False
+  >>> interaction.checkPermission('P3G', ob3)
+  True
+  >>> interaction.checkPermission('P4G', ob3)
+  True
+
+Groups
+------
+
+Principals may have groups.  Groups are also principals (and, thus,
+may have groups).
+
+If a principal has groups, the groups are available as group ids in
+the principal's `groups` attribute.  The interaction has to convert
+these group ids to group objects, so that it can tell whether the
+groups have groups.  It does this by calling the `getPrincipal` method
+on the principal authentication service, which is responsible for,
+among other things, converting a principal id to a principal.
+For our examples here, we'll create and register a stub principal
+authentication service:
+
+  >>> from zope.app.security.interfaces import IAuthentication
+  >>> class FauxPrincipals(dict):
+  ...     zope.interface.implements(IAuthentication)
+  ...     def getPrincipal(self, id):
+  ...         return self[id]
+
+  >>> auth = FauxPrincipals()
+
+  >>> from zope.app.testing import ztapi
+  >>> ztapi.provideUtility(IAuthentication, auth)
+  >>> from zope.app import zapi
+
+Let's define a group:
+
+  >>> auth['g1'] = Principal('g1')
+
+Let's put the principal in our group.  We do that by adding the group id
+to the new principals groups:
+
+  >>> principal.groups.append('g1')
+
+Of course, the principal doesn't have permissions not granted:
+
+  >>> interaction.checkPermission('gP1', ob)
+  False
+
+Now, if we grant a permission to the group:
+
+  >>> prinper.grantPermissionToPrincipal('gP1', 'g1')
+
+We see that our principal has the permission:
+
+  >>> interaction.checkPermission('gP1', ob)
+  True
+
+This works even if the group grant is global:
+
+  >>> interaction.checkPermission('gP1G', ob)
+  False
+
+  >>> prinperG.grantPermissionToPrincipal('gP1G', 'g1', True)
+
+  >>> interaction.checkPermission('gP1G', ob)
+  True
+
+Grants are, of course, acquired:
+
+  >>> interaction.checkPermission('gP1', ob2)
+  True
+
+  >>> interaction.checkPermission('gP1G', ob2)
+  True
+
+Inner grants can override outer grants:
+
+  >>> prinper2.denyPermissionToPrincipal('gP1', 'g1')
+  >>> interaction.checkPermission('gP1', ob2)
+  False
+
+But principal grants always trump group grants:
+
+  >>> prinper2.grantPermissionToPrincipal('gP1', 'bob')
+  >>> interaction.checkPermission('gP1', ob2)
+  True
+
+Groups can have groups too:
+
+  >>> auth['g2'] = Principal('g2')
+  >>> auth['g1'].groups.append('g2')
+
+If we grant to the new group:
+
+  >>> prinper.grantPermissionToPrincipal('gP2', 'g2')
+
+Then we, of course have that permission too:
+
+  >>> interaction.checkPermission('gP2', ob2)
+  True
+
+Just as principal grants override group grants, group grants can
+override other group grants:
+
+  >>> prinper.denyPermissionToPrincipal('gP2', 'g1')
+  >>> interaction.checkPermission('gP2', ob2)
+  False
+
+Principals can be in more than one group. Let's define a new group:
+
+  >>> auth['g3'] = Principal('g3')
+  >>> principal.groups.append('g3')
+  >>> prinper.grantPermissionToPrincipal('gP2', 'g3')
+
+Now, the principal has two groups. In one group, the permission 'gP2'
+is denied, but in the other, it is allowed.  In a case like this, the
+permission is allowed:
+
+  >>> interaction.checkPermission('gP2', ob2)
+  True
+
+In a case where a principal has two or more groups, the group denies
+prevent allows from their parents. They don't prevent the principal
+from getting an allow from another principal.
+
+Grants can be inherited from ancestor groups through multiple paths.
+Let's grant a permission to g2 and deny it to g1:
+
+  >>> prinper.grantPermissionToPrincipal('gP3', 'g2')
+  >>> prinper.denyPermissionToPrincipal('gP3', 'g1')
+
+Now, as before, the deny in g1 blocks the grant in g2:
+
+  >>> interaction.checkPermission('gP3', ob2)
+  False
+
+Let's make g2 a group of g3:
+
+  >>> auth['g3'].groups.append('g2')
+
+Now, we get g2's grant through g3, and access is allowed:
+
+  >>> interaction.invalidate_cache()
+  >>> interaction.checkPermission('gP3', ob2)
+  True
+
+We can assign roles to groups:
+
+  >>> prinrole.assignRoleToPrincipal('gR1', 'g2')
+
+and get permissions through the roles:
+
+  >>> roleper.grantPermissionToRole('gP4', 'gR1')
+  >>> interaction.checkPermission('gP4', ob2)
+  True
+
+we can override role assignments to groups through subgroups:
+
+  >>> prinrole.removeRoleFromPrincipal('gR1', 'g1')
+  >>> prinrole.removeRoleFromPrincipal('gR1', 'g3')
+  >>> interaction.checkPermission('gP4', ob2)
+  False
+
+and through principals:
+
+  >>> prinrole.assignRoleToPrincipal('gR1', 'bob')
+  >>> interaction.checkPermission('gP4', ob2)
+  True
+
+Cleanup
+-------
+
+We clean up the changes we made in these examples:
+
+  >>> zope.security.management.endInteraction()
+  >>> ignore = zope.security.management.setSecurityPolicy(oldpolicy)

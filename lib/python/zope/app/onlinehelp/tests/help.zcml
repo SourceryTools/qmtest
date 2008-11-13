@@ -1,0 +1,43 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:help="http://namespaces.zope.org/help"
+    i18n_domain="zope"
+    >
+
+  <help:register 
+      id = "help1"
+      title = "Help"
+      for = ".test_helpdirectives.I1"
+      view = "view.html"
+      doc_path = "help.txt" 
+      resources = "test1.png"
+      />
+
+  <help:register 
+      id = "help2"
+      title = "Help2"
+      doc_path = "help.txt"
+      />
+
+  <help:register 
+      id = "help3"
+      title = "Help3"
+      doc_path = "help.stx" 
+      class="zope.app.onlinehelp.onlinehelptopic.STXOnlineHelpTopic"
+      />
+
+  <help:register 
+      id = "help4"
+      title = "Help4"
+      doc_path = "help.rst"
+      class="zope.app.onlinehelp.onlinehelptopic.RESTOnlineHelpTopic"
+      />
+
+  <help:register 
+      id = "help5"
+      title = "Help5"
+      doc_path = "help.pt"
+      class="zope.app.onlinehelp.onlinehelptopic.ZPTOnlineHelpTopic"
+      />
+
+</configure>

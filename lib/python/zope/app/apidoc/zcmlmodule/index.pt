@@ -1,0 +1,141 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents"
+      tal:define="schema view/getSchema;
+                  rootURL string:../../..">
+
+  <h1 class="details-header">
+    <span tal:replace="context/zope:name" />
+    (<span tal:replace="structure view/getNamespaceName" />)
+  </h1>
+
+  <div class="details-subheader">
+    <div class="documentation" tal:content="structure schema/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+  <br />
+
+  <div tal:define="info view/getFileInfo"
+       tal:condition="info">
+    <i i18n:translate="">File:</i>
+    <tal:var replace="info/file" />
+    <tal:block i18n:translate="">from
+      (line <tal:var replace="info/line" i18n:name="beginline" />,
+      column <tal:var replace="info/column" i18n:name="begincolumn" />) to
+      (line <tal:var replace="info/eline" i18n:name="endline" />,
+      column <tal:var replace="info/ecolumn" i18n:name="endcolumn" />)
+    </tal:block>
+  </div>
+
+  <div tal:condition="view/getInfo">
+    <i i18n:translate="">Info:</i>
+    <tal:block replace="view/getInfo" />
+  </div>
+
+  <div tal:define="handler view/getHandler"
+       tal:condition="handler">
+    <i i18n:translate="">Handler:</i>
+    <a href=""
+       tal:attributes="href
+           string:../../../Code/${handler/url}/index.html"
+       tal:content="handler/path">
+    </a>
+  </div>
+
+  <h2 class="details-section" i18n:translate="">Schema</h2>
+
+  <div class="indent">
+    <a href="" tal:attributes="href
+           string:../../../Interface/${schema/getId}/index.html">
+      <h3 tal:content="schema/getId">zope.fields.Schema</h3>
+    </a>
+  </div>
+
+  <div class="indent"
+      tal:define="fields schema/getFields">
+
+  <ul class="attr-list"
+      tal:condition="fields">
+
+    <li tal:repeat="field fields">
+      <metal:block use-macro="context/@@interface_macros/field" />
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: fields">
+    <em i18n:translate="">There are no fields specified.</em>
+  </p>
+
+  </div>
+
+  <tal:block
+      define="dir view/getSubdirectives"
+      condition="dir">
+
+  <h2 class="details-section" i18n:translate="">Subdirectives</h2>
+
+  <div class="indent"
+       tal:repeat="dir view/getSubdirectives">
+  <a name="dirname"
+     tal:attributes="name dir/name" />
+
+  <h3 tal:content="dir/name">
+    directive
+  </h3>
+
+  <div class="documentation" tal:content="structure dir/schema/getDoc">
+    Here is the doc string
+  </div>
+
+  <br />
+
+  <div class="indent"
+       tal:condition="dir/handler">
+    <i i18n:translate="">Handler:</i>
+    <a href=""
+       tal:attributes="href
+           string:../../../Code/${dir/handler/url}/index.html"
+       tal:content="dir/handler/path">
+    </a>
+  </div>
+
+  <div class="indent">
+    <a href=""
+       tal:attributes="href
+           string:../../../Interface/${dir/schema/getId}/index.html">
+      <h3 tal:content="dir/schema/getId">zope.fields.Schema</h3>
+    </a>
+  </div>
+
+  <div class="indent"
+      tal:define="fields dir/schema/getFields">
+
+    <ul class="attr-list"
+        tal:condition="fields">
+
+      <li tal:repeat="field fields">
+        <metal:block use-macro="context/@@interface_macros/field" />
+      </li>
+
+    </ul>
+
+    <p tal:condition="not: fields">
+      <em i18n:translate="">There are no fields specified.</em>
+    </p>
+
+  </div>
+
+  </div>
+
+  </tal:block>
+
+  <p>
+    <em><b class="required">*</b> =
+    <span i18n:translate="">required</span></em>
+  </p>
+
+</body>
+</html>

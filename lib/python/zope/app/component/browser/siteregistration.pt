@@ -1,0 +1,63 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+<form tal:attributes="action request/URL"
+      method="POST"
+      >
+  <div tal:condition="not:view/registrations">
+    <p i18n:translate="">Nothing is registered for this site.</p>
+  </div>
+  <div tal:condition="view/registrations">
+    <p i18n:translate="">
+      Registrations for this site:
+    </p>
+    <table>
+      <tr tal:repeat="registration view/registrations">
+         <td>
+           <input type="checkbox"
+                  class="noborder" name="ids:list"
+                  tal:attributes="value registration/id;
+                                  id registration/id;
+                                  "
+                  />
+         </td>
+         <td tal:define="info registration/render">
+           <tal:block condition="info/url">
+             <a href="foo/bar" tal:attributes="href info/url"
+               tal:content="info/cname">foo/bar</a>
+           </tal:block>
+           <tal:block condition="not: info/url"
+             i18n:translate="">
+             <tal:block i18n:name="name" content="info/cname">
+               foo/bar
+             </tal:block>
+             (moved or deleted)
+           </tal:block>
+           <br />
+           <tal:block content="info/info">
+             zope.app.fooIFoo utility named bob
+           </tal:block>
+           <tal:block condition="info/comment">
+             <br />
+             <tal:block content="info/comment">
+               comment: needed a bob
+             </tal:block>
+           </tal:block>
+         </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <input type="submit" value="Unregister" name="deactivate"
+                 i18n:attributes="value unregister-button" />
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<html>
+<body>
+ <div tal:define="entry python:context.getLogEntryById(request.get('id'))">
+  <pre tal:content="entry/tb_text">
+        Traceback (text)
+  </pre>
+ </div>
+</body>
+</html>

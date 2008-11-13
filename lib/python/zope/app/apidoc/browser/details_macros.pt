@@ -1,0 +1,86 @@
+<metal:block define-macro="details"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  lang="en"
+  i18n:domain="zope">
+
+  <head>
+    <title metal:define-slot="title" i18n:translate="">Zope 3 apidoc</title>
+
+    <link type="text/css" rel="stylesheet" media="all" href=""
+          tal:attributes="href context/++resource++apidoc.css" />
+
+    <script type="text/javascript" src="utilities.js"
+            tal:attributes="src string:${context/++resource++utilities.js}" >
+    </script>
+
+    <metal:block define-slot="headers" />
+    <metal:block define-slot="style_slot" />
+    <metal:block define-slot="ecmascript_slot" />
+
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png|default" />
+  </head>
+
+<head>
+
+<body metal:define-slot="contents">
+
+</body>
+</html>
+</metal:block>
+
+
+<metal:block define-macro="displaySwitch">
+
+  <img src="/@@/harrow.png" border="0" id=".arrow" onClick=""
+       style="vertical-align: middle"
+       tal:condition="not:show"
+       tal:attributes="
+           id string:${elementId}.arrow;
+           src context/++resource++harrow.png;
+           onClick string:javascript:switchDisplay('${elementId}')">
+
+  <img src="/@@/varrow.png" border="0" id=".arrow" onClick=""
+       style="vertical-align: middle"
+       tal:condition="show"
+       tal:attributes="
+           id string:${elementId}.arrow;
+           src context/++resource++varrow.png;
+           onClick string:javascript:switchDisplay('${elementId}')">
+
+</metal:block>
+
+
+<metal:block define-macro="display">
+
+  <div id="" style="display: block;"
+       tal:condition="show"
+       tal:attributes="id elementId">
+    <metal:block define-slot="content" />
+  </div>
+
+  <div id="" style="display: none;"
+       tal:condition="not: show"
+       tal:attributes="id elementId">
+    <metal:block define-slot="content" />
+  </div>
+
+</metal:block>
+
+
+<metal:block define-macro="breadcrumbs">
+
+  <p class="breadcrumbs">
+    <tal:block repeat="entry context/@@code_breadcrumbs">
+      <a href=""
+        tal:attributes="href string:${entry/url}/index.html"
+        tal:content="entry/name"
+        tal:omit-tag="repeat/entry/end" />
+      <span tal:omit-tag="" tal:condition="not: repeat/entry/end">/</span>
+    </tal:block>
+  </p>
+
+</metal:block>

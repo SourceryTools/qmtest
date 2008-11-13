@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <interface
+      interface=".interfaces.IZAPI" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="zapi"
+        title="ZAPI"
+        doc_path="README.txt"
+        />
+
+  </configure>
+
+</configure>
+
+

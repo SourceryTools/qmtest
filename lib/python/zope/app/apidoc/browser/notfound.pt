@@ -1,0 +1,15 @@
+<html metal:use-macro="context/@@apidoc_macros/details" i18n:domain="zope">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header" i18n:translate="">
+    Page Not Found
+  </h1>
+
+  <p i18n:translate="">
+    While broken links occur occassionally, they are considered bugs. Please
+    report any broken link to
+    <a href="mailto:zope-dev@zope.org">zope-dev@zope.org</a>.
+ </p>
+
+</body>
+</html>

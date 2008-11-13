@@ -1,0 +1,117 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="zope"
+    >
+
+  <view
+      name="preferences"
+      for="*"
+      type="*"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".preference.preferencesNamespace"
+      />
+
+  <adapter
+      name="preferences"
+      for="*"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".preference.preferencesNamespace"
+      />
+
+  <adapter
+      for="zope.location.interfaces.ILocation"
+      provides=".interfaces.IUserPreferences"
+      factory=".preference.UserPreferences"
+      />
+
+  <!-- Root preference group -->
+  <preferenceGroup
+      id=""
+      title="User Preferences"
+      />
+
+
+  <!-- Preference Groups -->
+  <browser:page
+      name="index.html"
+      for=".interfaces.IPreferenceGroup"
+      class=".browser.EditPreferenceGroup"
+      template="index.pt"
+      permission="zope.Public"
+      />
+
+  <browser:page
+      name="editAsSubGroup"
+      for=".interfaces.IPreferenceGroup"
+      class=".browser.EditPreferenceGroup"
+      template="subgroup.pt"
+      permission="zope.Public"
+      />
+
+
+  <!-- Default Preference Provider -->
+  <class class=".default.DefaultPreferenceProvider">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface=".interfaces.IDefaultPreferenceProvider"
+        />
+  </class>
+
+  <view
+      name="preferences"
+      for=".interfaces.IDefaultPreferenceProvider"
+      type="*"
+      provides="zope.interface.Interface"
+      factory=".default.DefaultPreferences"
+      />
+
+  <browser:addMenuItem
+      class=".default.DefaultPreferenceProvider"
+      title="Default User Preferences Provider"
+      description="A Default User Preferences Provider"
+      permission="zope.ManageSite"
+      />
+
+  <!-- Preferences-specific macros -->
+  <browser:page
+      for="*"
+      name="preferences_macros"
+      permission="zope.View"
+      class=".browser.PreferencesMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      />
+
+  <browser:page
+      for="*"
+      name="preference_macro_definitions"
+      permission="zope.View"
+      template="macros.pt"
+      />
+
+
+  <!-- Preferences Tree -->
+
+  <browser:page
+      name="tree"
+      for=".interfaces.IPreferenceGroup"
+      class=".browser.PreferencesTree"
+      permission="zope.View"
+      attribute="tree"
+      />
+
+  <!-- Book Chapter -->
+
+  <apidoc:bookchapter
+      id="preferences"
+      title="User Preferences API"
+      doc_path="README.txt"
+      zcml:condition="have apidoc"
+      />
+
+</configure>

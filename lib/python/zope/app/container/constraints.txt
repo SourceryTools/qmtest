@@ -1,0 +1,97 @@
+Containment constraints
+=======================
+
+Containment constraints allow us to express restrictions on the types
+of items that can be placed in containers or on the types of
+containers an item can be placed in.  We express these constraints in
+interfaces.  Let's define some container and item interfaces:
+
+    >>> from zope.app.container.interfaces import IContainer, IContained
+    >>> from zope.app.container.constraints import containers, contains
+
+    >>> class IBuddyFolder(IContainer):
+    ...     contains('.IBuddy')
+
+
+In this example, we used the contains function to declare that objects
+that provide IBuddyFolder can only contain items that provide IBuddy.
+Note that we used a string containing a dotted name for the IBuddy
+interface. This is because IBuddy hasn't been defined yet.  When we
+define IBuddy, we can use IBuddyFolder directly:
+
+    >>> class IBuddy(IContained):
+    ...     containers(IBuddyFolder)
+
+
+Now, with these interfaces in place, we can define Buddy and
+BuddyFolder classes and verify that we can put buddies in buddy
+folders:
+
+    >>> from zope import interface
+
+    >>> class Buddy:
+    ...     interface.implements(IBuddy)
+
+    >>> class BuddyFolder:
+    ...     interface.implements(IBuddyFolder)
+
+    >>> from zope.app.container.constraints import checkObject, checkFactory
+    >>> from zope.component.factory import Factory
+
+    >>> checkObject(BuddyFolder(), 'x', Buddy())
+    >>> checkFactory(BuddyFolder(), 'x', Factory(Buddy))
+    True
+
+If we try to use other containers or folders, we'll get errors:
+
+    >>> class Container:
+    ...     interface.implements(IContainer)
+
+    >>> class Contained:
+    ...     interface.implements(IContained)
+
+    >>> checkObject(Container(), 'x', Buddy())
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    InvalidContainerType: ...
+
+    >>> checkFactory(Container(), 'x', Factory(Buddy))
+    False
+
+    >>> checkObject(BuddyFolder(), 'x', Contained())
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    InvalidItemType: ...
+
+    >>> checkFactory(BuddyFolder(), 'x', Factory(Contained))
+    False
+
+In the example, we defined the container first and then the items.  We
+could have defined these in the opposite order:
+
+    >>> class IContact(IContained):
+    ...     containers('.IContacts')
+
+    >>> class IContacts(IContainer):
+    ...     contains(IContact)
+
+    >>> class Contact:
+    ...     interface.implements(IContact)
+
+    >>> class Contacts:
+    ...     interface.implements(IContacts)
+
+    >>> checkObject(Contacts(), 'x', Contact())
+
+    >>> checkFactory(Contacts(), 'x', Factory(Contact))
+    True
+
+    >>> checkObject(Contacts(), 'x', Buddy())
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    InvalidItemType: ...
+
+    >>> checkFactory(Contacts(), 'x', Factory(Buddy))
+    False
+
+

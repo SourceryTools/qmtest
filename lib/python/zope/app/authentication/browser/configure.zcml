@@ -1,0 +1,91 @@
+<configure
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+  <addform
+      schema="..interfaces.IPluggableAuthentication"
+      label="Add Pluggable Authentication"
+      content_factory="..authentication.PluggableAuthentication"
+      fields="prefix"
+      keyword_arguments="prefix"
+      name="AddPluggableAuthentication.html"
+      permission="zope.ManageServices"
+      >
+
+    <widget
+        field="prefix"
+        class="zope.app.form.browser.TextWidget"
+        required="False"
+        convert_missing_value="False"
+        />
+
+  </addform>
+
+  <addMenuItem
+      class="..authentication.PluggableAuthentication"
+      view="AddPluggableAuthentication.html"
+      title="Pluggable Authentication Utility"
+      description="New-style pluggable authentication utility"
+      permission="zope.ManageServices"
+      />
+
+  <page
+      for="..interfaces.IPluggableAuthentication"
+      name="addRegistration.html"
+      permission="zope.ManageSite"
+      class=".register.AddAuthenticationRegistration" 
+      />
+
+  <editform
+      schema="..interfaces.IPluggableAuthentication"
+      label="Edit Pluggable Authentication Utility"
+      name="configure.html"
+      fields="prefix credentialsPlugins authenticatorPlugins"
+      menu="zmi_views" title="Configure"
+      permission="zope.ManageServices"
+      />
+
+  <page
+      name="contents.html"
+      for="..interfaces.IPluggableAuthentication"
+      menu="zmi_views" title="Plugins"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.contents.Contents"
+      attribute="contents"
+      />
+
+  <view
+      name="+"
+      menu="zmi_actions" title="Add"
+      for="..interfaces.IPluggableAuthentication"
+      permission="zope.ManageSite"
+      class=".adding.Adding"
+      >
+    <page
+        name="index.html"
+        attribute="index"
+        />
+    <page
+        name="action.html"
+        attribute="action"
+        />
+  </view>
+
+  <menuItem
+      menu="zmi_views"
+      for="..interfaces.IPluggableAuthentication"
+      title="Contents"
+      action=""
+      filter="python:False"
+      />
+
+  <zope:adapter
+      for="..interfaces.IQuerySchemaSearch
+           zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.app.form.browser.interfaces.ISourceQueryView"
+      factory=".schemasearch.QuerySchemaSearchView"
+      />
+
+</configure>

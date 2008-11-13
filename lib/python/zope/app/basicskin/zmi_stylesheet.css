@@ -1,0 +1,45 @@
+body {
+    font-family: sans-serif;
+    color: Black;
+    background-color: White;
+}
+
+h1 {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: large;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: large;
+    font-weight: bold;
+    font-style: italic;
+}
+
+h4 {
+    font-weight: bold;
+    font-style: italic;
+}
+
+h5 {
+    font-size: small;
+    font-weight: bold;
+}
+
+h6 {
+    font-size: small;
+    font-weight: bold;
+    font-style: italic;
+}
+
+img {
+    border: none;
+}
+
+caption {
+    font-weight: bold;
+}

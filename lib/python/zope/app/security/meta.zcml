@@ -1,0 +1,55 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <include package="zope.security" file="meta.zcml" />
+
+  <meta:directive 
+      namespace="http://namespaces.zope.org/zope"
+      name="principal" 
+      schema=".metadirectives.IDefinePrincipalDirective"
+      handler=".metaconfigure.principal" />
+
+  <meta:directive 
+      name="unauthenticatedPrincipal" 
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IDefineUnauthenticatedPrincipalDirective"
+      handler=".metaconfigure.unauthenticatedPrincipal" />
+
+  <meta:directive 
+      name="unauthenticatedGroup" 
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IDefineUnauthenticatedGroupDirective"
+      handler=".metaconfigure.unauthenticatedGroup" />
+
+  <meta:directive 
+      name="authenticatedGroup" 
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IDefineAuthenticatedGroupDirective"
+      handler=".metaconfigure.authenticatedGroup" />
+
+  <meta:directive 
+      name="everybodyGroup" 
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IDefineEverybodyGroupDirective"
+      handler=".metaconfigure.everybodyGroup" />
+
+  <meta:groupingDirective
+      name="module"
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IModule"
+      handler="zope.configuration.config.GroupingContextDecorator" />
+
+  <meta:directive
+      name="allow"
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IAllow"
+      handler=".metaconfigure.allow" />
+
+  <meta:directive
+      name="require"
+      namespace="http://namespaces.zope.org/zope"
+      schema=".metadirectives.IRequire"
+      handler=".metaconfigure.require" />
+
+</configure>

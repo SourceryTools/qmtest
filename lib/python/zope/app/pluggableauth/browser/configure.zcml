@@ -1,0 +1,64 @@
+<zope:configure 
+   xmlns="http://namespaces.zope.org/browser"
+   xmlns:zope="http://namespaces.zope.org/zope"
+   i18n_domain="zope">
+
+<!-- Pluggable Authentication -->
+
+  <!-- BBB: Deactivated as a deprecation measure. -->
+  <!--addMenuItem
+       class="zope.app.pluggableauth.PluggableAuthentication"
+       title="Authentication"
+       description="A Pluggable Authentication uses plug-in principal sources."
+       permission="zope.ManageSite"
+       /-->
+
+  <containerViews
+       for="zope.app.pluggableauth.interfaces.IPluggableAuthentication"
+       contents="zope.ManageSite"
+       add="zope.ManageSite"
+       />
+
+<!-- Principal Source -->
+
+  <addMenuItem
+      title="Add Principal Source" 
+      class="zope.app.pluggableauth.BTreePrincipalSource"	
+      permission="zope.ManageSite"
+      />
+
+  <containerViews
+       for="zope.app.pluggableauth.interfaces.IContainerPrincipalSource"
+       contents="zope.ManageSite"
+       add="zope.ManageSite"
+       />
+
+<!-- Principal -->
+
+  <addform
+      schema="zope.app.pluggableauth.interfaces.IUserSchemafied"
+      label="Add Simple User with details"
+      content_factory="zope.app.pluggableauth.SimplePrincipal"
+      arguments="login password"
+      keyword_arguments="title description"
+      fields="login password title description"
+      name="AddPrincipalForm.html"
+      permission="zope.ManageContent"
+      />
+
+  <addMenuItem
+      title="Principal" 
+      class="zope.app.pluggableauth.SimplePrincipal"
+      permission="zope.ManageSite"
+      view="AddPrincipalForm.html"
+      />
+
+  <editform
+      schema="zope.app.pluggableauth.interfaces.IUserSchemafied"
+      label="Edit User Information"
+      fields="login password title description"
+      name="edit.html"
+      menu="zmi_views" title="Edit"
+      permission="zope.ManageContent" />
+
+</zope:configure>

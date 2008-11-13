@@ -1,0 +1,222 @@
+========================
+Object Introspector View
+========================
+
+The "Introspector" view provides access to information about the current
+obejct, the context of the introspector view. When in `devmode`, the
+introspector is simply available as follows:
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> browser = Browser()
+    >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
+    >>> browser.handleErrors = False
+
+    >>> browser.open('http://localhost/manage')
+    >>> browser.getLink('Introspector').click()
+
+The page starts with telling you the class/type
+
+    >>> browser.getLink('zope.app.folder.folder.Folder').url
+    'http://localhost/++apidoc++/Code/zope/app/folder/folder/Folder/index.html'
+
+and the name of the object:
+
+    >>> '&lt;no name&gt;' in browser.contents
+    True
+
+Of course, the root folder does not have a name. As you can see the type links
+directly to the API documentation of the class.
+
+The next section lists all directly provided interfaces. The root folder
+directly provides the ``ISite`` and ``IRootFolder`` interface, so we should
+see those:
+
+    >>> browser.getLink('zope.location.interfaces.ISite').url
+    '.../++apidoc++/Interface/zope.location.interfaces.ISite/index.html'
+
+    >>> browser.getLink('zope.app.folder.interfaces.IRootFolder').url
+    '...apidoc++/Interface/zope.app.folder.interfaces.IRootFolder/index.html'
+
+The next two section, the implemented interfaces and the base classes, are not
+instance specific pieces of information, but they are still nice to see at
+this point. For example, a ``Folder`` instance provides the following
+interfaces:
+
+    >>> browser.getLink('zope.app.folder.interfaces.IFolder').url
+    '.../++apidoc++/Interface/zope.app.folder.interfaces.IFolder/index.html'
+
+    >>> browser.getLink('persistent.interfaces.IPersistent').url
+    '.../++apidoc++/Interface/persistent.interfaces.IPersistent/index.html'
+
+    >>> browser.getLink('zope.location.interfaces.IPossibleSite').url
+    '.../Interface/zope.location.interfaces.IPossibleSite/index.html'
+
+    >>> browser.getLink('zope.app.container.interfaces.IContained').url
+    '...doc++/Interface/zope.app.container.interfaces.IContained/index.html'
+
+The base classes of the ``Folder`` are as follows:
+
+    >>> browser.getLink('persistent.Persistent').url
+    'http://localhost/++apidoc++/Code/persistent/Persistent/index.html'
+
+    >>> browser.getLink('zope.app.component.site.SiteManagerContainer').url
+    '...apidoc++/Code/zope/app/component/site/SiteManagerContainer/index.html'
+
+    >>> browser.getLink('zope.app.container.contained.Contained').url
+    '.../++apidoc++/Code/zope/app/container/contained/Contained/index.html'
+
+Now that we described the component and class level of the object, the view
+dives into some details. First it lists the attributes/properties of the
+object, including the value of the attribute. This is information can be very
+useful when debugging an application. The only attribute of the folder is the
+data attribute:
+
+    >>> print browser.contents
+    <!DOCTYPE...
+    ...
+    <h2>Attributes/Properties</h2>
+    <div class="indent">
+    <ul class="attr-list">
+      <li>
+        <b><code>data</code></b>
+        ...
+        <br />
+        <i>Value:</i>
+        <code>&lt;BTrees.OOBTree.OOBTree object at ...&gt;</code>
+        <br />
+        <span class="small">
+          <i>Permissions:</i>
+          n/a
+              <span>(read)</span>,
+          n/a
+              <span>(write)</span>
+        </span>
+      </li>
+    </ul>
+    </div>
+    ...
+
+There are, however, several methods since the full mapping interface is
+implemented. Like for the class method documentation, the method's signature,
+doc string, permissions and the interface the method is declared in. Here an
+example:
+
+    >>> print browser.contents
+    <!DOCTYPE...
+    ...
+    <h2>Methods</h2>
+    <div class="indent">
+    <ul class="attr-list">
+      <li>
+        <b><code>get(name, default=None)</code>
+        </b><br>
+        <div class="inline documentation"><p>Return ... </div>
+        <span class="small">
+          <i>Interface:</i>
+          <a href="...">zope.interface.common.mapping.IReadMapping</a><br />
+        </span>
+        <span class="small">
+          <i>Permissions:</i>
+          zope.View
+              <span>(read)</span>,
+          n/a
+              <span>(write)</span>
+        </span>
+      </li>
+      ...
+    </ul>
+    </div>
+    ...
+
+Towards the bottom of the page, there are some optional sections. Some
+objects, for example our root folder, are inheritely mappings or
+sequences. Their data then is often hard to see in the attributes section, so
+they are provided in a aseparate section. To see anything useful, we have to
+add an object to the folder first:
+
+    >>> import re
+    >>> browser.getLink(re.compile('^File$')).click()
+    >>> import cStringIO
+    >>> browser.getControl('Data').value = cStringIO.StringIO('content')
+    >>> browser.getControl(name='add_input_name').value = 'file.txt'
+    >>> browser.getControl('Add').click()
+    >>> browser.getLink('Introspector').click()
+
+Now the introspector will show the file and allow you to click on it:
+
+    >>> print browser.contents
+    <!DOCTYPE...
+    ...
+    <h2>Mapping Items</h2>
+    <div class="indent">
+      <ul class="attr-list">
+        <li>
+          <b>
+            <code>u'file.txt'</code>
+          </b>
+          <br />
+          <a href="++items++file.txt/@@introspector.html">
+            <code>&lt;zope.app.file.file.File object at ...&gt;</code>
+          </a>
+          (<span>type:</span>
+           <a href="...zope/app/container/contained/ContainedProxy/index.html">
+            <code>ContainedProxy</code></a>)
+        </li>
+      </ul>
+    </div>
+    ...
+
+The final section of the introspector displays the annotations that are
+declared for the object. The standard annotation that almost every object
+provides is the Dublin Core:
+
+    >>> print browser.contents
+    <!DOCTYPE...
+    ...
+    <h2>Annotations</h2>
+    <div class="indent">
+      <ul class="attr-list">
+        <li>
+          <b>
+            <code>'zope.app.dublincore.ZopeDublinCore'</code>
+          </b>
+          <br />
+          <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@int...">
+            <code>&lt;...annotatableadapter.ZDCAnnotationData ...&gt;</code>
+          </a>
+          (<span>type:</span>
+           <a href="...lincore/annotatableadapter/ZDCAnnotationData/index.html">
+           <code>ZDCAnnotationData</code></a>)
+        </li>
+        ...
+      </ul>
+    </div>
+    ...
+
+As you can see you can click on the annotation to discover it further:
+
+    >>> browser.getLink('annotatableadapter.ZDCAnnotationData').click()
+    >>> print browser.contents
+    <!DOCTYPE...
+    ...
+    <h2>Attributes/Properties</h2>
+      <div class="indent">
+      <ul class="attr-list">
+        <li>
+          <b><code>data</code></b>
+            (<span>type:</span>
+            <a href=".../++apidoc++/Code/__builtin__/dict/index.html">
+              <code>dict</code></a>)
+          <br />
+          <i>Value:</i>
+          <code>{u'Date.Created': (u'...',),
+                 u'Date.Modified': (u'...',),
+                 u'Creator': (u'zope.mgr',)}</code>
+          <br />
+        </li>
+      </ul>
+    </div>
+    ...
+
+That's it! The introspector view has a lot more potential, but that's for
+someone else to do.

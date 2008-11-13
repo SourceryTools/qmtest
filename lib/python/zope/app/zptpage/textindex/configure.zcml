@@ -1,0 +1,9 @@
+<configure xmlns='http://namespaces.zope.org/zope'>
+
+  <adapter
+      for="..interfaces.IZPTPage"
+      provides="zope.index.text.interfaces.ISearchableText"
+      factory=".zptpage.SearchableText"
+      />
+
+</configure>

@@ -1,0 +1,17 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:apidoc="http://namespaces.zope.org/apidoc"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  i18n_domain="zope">
+
+  <include
+      zcml:condition="have devmode"
+      file="enabled.zcml"
+      />
+
+  <include
+      zcml:condition="not-have devmode"
+      file="disabled.zcml"
+      />
+
+</configure>

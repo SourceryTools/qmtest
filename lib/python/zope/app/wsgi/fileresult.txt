@@ -1,0 +1,100 @@
+File results
+============
+
+The file results adapters provide adapters from Python file objects to
+and from temporary file objects to zope.publisher.interfaces.http.IResult.
+They also have the property that they can handle security proxied files
+and unproxy them in the result. Finally, if the request has a
+wsgi.file_wrapper environment variable, then that is used to wrap the
+file in the result.
+
+Lets look at an example with a regular file object:
+
+    >>> from zope import component
+    >>> import zope.app.wsgi.fileresult
+    >>> component.provideAdapter(zope.app.wsgi.fileresult.FileResult)
+    >>> component.provideAdapter(zope.app.wsgi.fileresult.TemporaryFileResult)
+
+    >>> import tempfile
+    >>> dir = tempfile.mkdtemp()
+    >>> import os
+    >>> f = open(os.path.join(dir, 'f'), 'w+b')
+    >>> f.write('One\nTwo\nThree\nHa ha! I love to count!\n')
+    >>> from zope.security.checker import ProxyFactory
+    >>> from zope.publisher.interfaces.http import IResult
+    >>> from zope.publisher.browser import TestRequest
+    >>> request = TestRequest()
+    >>> result = component.getMultiAdapter((ProxyFactory(f), request), IResult)
+    >>> for line in result:
+    ...     print line
+    One
+    Two
+    Three
+    Ha ha! I love to count!
+
+    >>> request.response.getHeader('content-length')
+    '38'
+    
+
+We'll see something similar with a temporary file:
+
+    >>> t = tempfile.TemporaryFile()
+    >>> t.write('Three\nTwo\nOne\nHa ha! I love to count down!\n')
+    >>> request = TestRequest()
+    >>> result = component.getMultiAdapter((ProxyFactory(t), request), IResult)
+    >>> for line in result:
+    ...     print line
+    Three
+    Two
+    One
+    Ha ha! I love to count down!
+
+    >>> request.response.getHeader('content-length')
+    '43'
+
+        
+If we provide a custom file wrapper:
+
+    >>> class Wrapper:
+    ...     def __init__(self, file):
+    ...         self.file = file
+ 
+    >>> request = TestRequest(environ={'wsgi.file_wrapper': Wrapper})
+    >>> result = component.getMultiAdapter((ProxyFactory(f), request), IResult)
+    >>> result.__class__ is Wrapper
+    True
+    >>> result.file is f
+    True
+
+    >>> request.response.getHeader('content-length')
+    '38'
+
+    >>> request = TestRequest(environ={'wsgi.file_wrapper': Wrapper})
+    >>> result = component.getMultiAdapter((ProxyFactory(t), request), IResult)
+    >>> result.__class__ is Wrapper
+    True
+    >>> result.file is t
+    True
+
+    >>> request.response.getHeader('content-length')
+    '43'
+
+Normally, the file given to FileResult must be seekable and the entire
+file is used.  The adapters figure out the file size to determine a
+content length and seek to the beginning of the file.
+
+You can suppress this behavior by setting the content length yourself:
+
+    >>> request = TestRequest()
+    >>> request.response.setHeader('content-length', '10')
+    >>> f.seek(7)
+    >>> result = component.getMultiAdapter((ProxyFactory(t), request), IResult)
+    >>> print f.tell()
+    7
+
+    >>> request.response.getHeader('content-length')
+    '10'
+
+Note that you should really only use file returns for large results.
+Files use file descriptors which can be somewhat scarce resources on
+some systems.  Only use them when you need them.

@@ -1,0 +1,22 @@
+<html metal:use-macro="context/@@standard_macros/dialog"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body" >
+
+  <form action="@@find.html" method="get">
+    <input type="text" name="ids" value="" /><br />
+    <input type="submit" name="find_submit" value=" Find " 
+           i18n:attributes="value find-button"/>
+  </form>
+
+  <table tal:condition="request/ids|nothing">
+    <tr tal:repeat="item python:view.findByIds(request['ids'])">
+      <td>
+        <a href="" tal:attributes="href item/url" tal:content="item/id">id</a>
+      </td>
+    </tr>
+  </table>
+
+</div>
+</body>
+</html>

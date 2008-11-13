@@ -1,0 +1,69 @@
+================
+XMLRPC publisher
+================
+
+Pre-marshal / Proxy removal
+===========================
+
+  >>> sample = {'foo': (1, ['x', 'y', 1.2])}
+
+if we put the sample in a security proxy:
+
+  >>> from zope.security.checker import ProxyFactory
+  >>> proxied_sample = ProxyFactory(sample)
+
+We can still get to the data, but the non-rock data is proxied:
+
+  >>> from zope.security.proxy import Proxy
+  >>> proxied_sample['foo']
+  (1, ['x', 'y', 1.2])
+
+  >>> type(proxied_sample['foo']) is Proxy
+  True
+  >>> type(proxied_sample['foo'][1]) is Proxy
+  True
+
+But we can strip the proxies using premarshal:
+
+  >>> from zope.publisher.xmlrpc import premarshal
+
+  >>> stripped = premarshal(proxied_sample)
+  >>> stripped
+  {'foo': [1, ['x', 'y', 1.2]]}
+
+  >>> type(stripped['foo']) is Proxy
+  False
+  >>> type(stripped['foo'][1]) is Proxy
+  False
+
+So xmlrpclib will be happy. :)
+
+We can also use premarshal to strip proxies off of Fault objects.
+We have to make a security declaration first though:
+
+  >>> import xmlrpclib
+  >>> fault = xmlrpclib.Fault(1, 'waaa')
+  >>> proxied_fault = ProxyFactory(fault)
+  >>> stripped_fault = premarshal(proxied_fault)
+  >>> type(stripped_fault) is Proxy
+  False
+
+Standard python datetime objects are also handled:
+
+  >>> import datetime
+  >>> sample = datetime.datetime(2006,06,17,21,41,00)
+  >>> stripped_date = premarshal(sample)
+  >>> isinstance(stripped_date, datetime.datetime)
+  False
+  >>> isinstance(stripped_date, xmlrpclib.DateTime)
+  True
+
+We can also use premarshal to strip proxies off of Binary objects.
+We have to make a security declaration first though:
+
+  >>> import xmlrpclib
+  >>> binary = xmlrpclib.Binary('foobar')
+  >>> proxied_binary = ProxyFactory(binary)
+  >>> stripped_binary = premarshal(proxied_binary)
+  >>> type(stripped_binary) is Proxy
+  False

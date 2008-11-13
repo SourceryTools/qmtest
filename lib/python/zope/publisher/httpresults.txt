@@ -1,0 +1,138 @@
+Creating HTTP Results
+=====================
+
+This document describes the state of creating HTTP results for Zope
+3.4.  This is different than it was in the past.
+
+Traditionally in Zope, HTTP results are created by simply returning
+strings.  Strings are inspected to deduce their content type, which is
+usually HTML.  Applications can override this by setting a response
+headers (calling request.response.setHeader).
+
+In Zope 2, applications could also call response.write.  This allows 
+both:
+
+- Effecient handling of large output
+
+- HTTP chucked output for streaming
+
+Before release 3.1, Zope 3 has a response write method that did
+neither of these things.  Developers coming from Zope 2 might use the
+write method, expecting it to have the same bahavior as it does in
+Zope 2.  At least until we can satisfy those expectations, we have
+disabled the response write method for now.  Maybe we'll reinstate it
+in the future.
+
+There is currently no support for streaming (at least while holding on
+to a database connection and transaction), but there is now support for
+returning large amounts of data.
+
+Returning large amounts of data without storing the data in memory
+------------------------------------------------------------------
+
+To return a large result, you should write the result to a temporary
+file (tempfile.TemporaryFile) and return the temporary file.
+Alternatively, if the data you want to return is already in a
+(non-temporary) file, just open and return that file.  The publisher
+(actually an adapter used by the publisher) will handle a returned
+file very efficiently.  
+
+The publisher will compute the response content length from the file
+automatically. It is up to applications to set the content type.
+It will also take care of positioning the file to it's beginning, 
+so applications don't need to do this beforehand.
+
+This is actually accomplished via zope.app.wsgi.fileresult.FileResult,
+and happens if and only if that, or something like it, is registered as
+an adapter.  The FileResult, however, does what needs to happen thanks
+to a special hook associated with the IResult interface, used by the
+http module in this package.
+
+IResult
+-------
+
+The interface for IResult, found in zope/publisher/interfaces/http.py,
+describes the interface thoroughly.  The IHTTPResponse.setHeader method
+that uses it also documents how it is used.  Reading the IResult
+interface and the IHTTPResponse.setHeader description (in the same
+interface file) is highly recommended.
+
+In addition to supporting sending large amoounts of data, IResult
+supports postprocessing of output.  setResult tries to adapt everything
+to IResult. Postprocessing might include XSLT transforms, adding an
+O-wrap around the content, adding JavaScript and CSS header lines on the
+basis of elements added to a page, or pipelining somehow to do all of it
+sequentially.  May the best approach win! This merely makes the
+different options possible.
+
+To close, we'll build a quick example so you can see it working.
+
+    >>> import zope.interface
+    >>> import zope.component
+    >>> from zope.publisher.browser import TestRequest
+    >>> from zope.publisher.interfaces.http import IResult, IHTTPRequest
+    >>> import cgi
+    >>> @zope.interface.implementer(IResult)
+    ... @zope.component.adapter(unicode, IHTTPRequest)
+    ... def do_something_silly_to_unicode_results(val, request):
+    ...     request.response.setHeader('X-Silly', 'Yes')
+    ...     return (u'<html>\n<head>\n<title>raw</title>\n</head>\n<body>\n' +
+    ...             cgi.escape(val) + '\n</body>\n</html>')
+    ...
+    >>> zope.component.provideAdapter(do_something_silly_to_unicode_results)
+
+That's returning a unicode string, which is special cased to (1) make an
+iterable that is chunked, (2) encode, and (3) set content-length.  
+
+    >>> request = TestRequest()
+    >>> request.response.setHeader('content-type', 'text/html')
+    >>> request.response.setResult(u'<h1>Foo!</h1>')
+    >>> request.response.getHeader('x-silly')
+    'Yes'
+    >>> request.response.getHeader('content-type')
+    'text/html;charset=utf-8'
+    >>> res = tuple(request.response.consumeBodyIter())
+    >>> res
+    ('<html>\n<head>\n<title>raw</title>\n</head>\n<body>\n&lt;h1&gt;Foo!&lt;/h1&gt;\n</body>\n</html>',)
+    >>> len(res[0]) == int(request.response.getHeader('content-length'))
+    True
+
+You can also do everything yourself by returning any non-basestring iterable
+(for instance, a list or tuple).
+
+    >>> @zope.interface.implementer(IResult)
+    ... @zope.component.adapter(int, IHTTPRequest)
+    ... def do_something_silly_to_int_results(val, request):
+    ...     return ['This', ' is an int: %i' % (val,),]
+    ...
+    >>> zope.component.provideAdapter(do_something_silly_to_int_results)
+
+    >>> request = TestRequest()
+    >>> request.response.setHeader('content-type', 'text/plain')
+    >>> request.response.setResult(42)
+    >>> request.response.getHeader('content-type')
+    'text/plain'
+    >>> res = tuple(request.response.consumeBodyIter())
+    >>> res
+    ('This', ' is an int: 42')
+    >>> request.response.getHeader('content-length') is None
+    True
+
+Again, READ THE INTERFACES.  One important bit is that you can't hold on to
+a database connection in one of these iterables.
+
+You can bypass the adaptation by calling `setResult` with an object that
+provides IResult.  The ``DirectResult`` class in the http module is the
+simplest way to do this, but any other IResult should work.
+
+    >>> from zope.publisher.http import DirectResult
+    >>> @zope.interface.implementer(IResult)
+    ... @zope.component.adapter(DirectResult, IHTTPRequest)
+    ... def dont_touch_this(val, request):
+    ...     raise ValueError('boo!  hiss!') # we don't get here.
+    ...
+    >>> request = TestRequest()
+    >>> request.response.setResult(DirectResult(('hi',)))
+    >>> tuple(request.response.consumeBodyIter())
+    ('hi',)
+    

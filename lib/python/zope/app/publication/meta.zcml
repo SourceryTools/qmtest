@@ -1,0 +1,8 @@
+<configure xmlns:meta="http://namespaces.zope.org/meta">
+  <meta:directive
+        namespace="http://namespaces.zope.org/zope"
+        name="publisher"
+        schema=".metadirectives.IRequestPublicationDirective"
+        handler=".metaconfigure.publisher"
+        />
+</configure>

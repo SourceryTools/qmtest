@@ -1,0 +1,8 @@
+<configure
+   xmlns='http://namespaces.zope.org/zope'
+   >
+
+  <include package=".browser" file="meta.zcml" />
+  <include package=".xmlrpc" file="meta.zcml" />
+
+</configure>

@@ -1,0 +1,6 @@
+<fieldset>
+  <legend tal:content="context/__title__">Title</legend>
+
+  <div metal:use-macro="context/@@preferences_macros/edit_pref_group" />
+
+</fieldset>

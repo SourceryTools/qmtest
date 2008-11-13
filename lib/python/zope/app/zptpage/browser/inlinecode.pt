@@ -1,0 +1,78 @@
+<tal:tag condition="view/update"
+/><html metal:use-macro="context/@@standard_macros/view" i18n:domain="zope">
+  <body>
+  <div metal:fill-slot="body">
+
+  <div metal:define-macro="body">
+
+    <form action="." tal:attributes="action request/URL" method="post"
+          enctype="multipart/form-data">
+
+      <div metal:define-macro="formbody">
+
+        <h3 tal:condition="view/label"
+            tal:content="view/label"
+            metal:define-slot="heading"
+            i18n:translate=""
+            >Edit something</h3>
+
+        <div style="color:red; font-weight: bold">
+          <p i18n:translate="">
+            This screen allows you to activate Inline Code Evaluation. This
+            means that you can say
+            <span i18n:name="code-example-1"><pre>
+               &lt;script type="text/server-python"&gt;<br/>
+               &nbsp;&nbsp;print "Hello World!"<br/>
+               &lt;/script&gt;
+            </pre></span>
+            or
+            <span i18n:name="code-example-2"><pre>
+               &lt;p tal:script="text/server-python"&gt;<br/>
+               &nbsp;&nbsp;print "Hello World!"<br/>
+               &lt;/p&gt;
+            </pre></span>
+          </p>
+          <p i18n:translate="">
+            Many Zope 3 developers consider inline code blocks something
+            very bad, since it does not follow the design of Page Templates
+            or Zope 3 in general. However, application and application server
+            developers are not the only audience for Zope 3. Scripters are
+            used to inline code from other technologies like PHP and it fits
+            their brain, which is very important.
+          </p>
+        </div>
+
+        <p tal:define="status view/update"
+           tal:condition="status"
+           tal:content="status" i18n:translate=""/>
+
+         <p tal:condition="view/errors" i18n:translate="">
+           There are  <strong tal:content="python:len(view.errors)"
+                              i18n:name="num_errors">6</strong> input errors.
+        </p>
+
+        <tal:block repeat="error view/errors">
+          <div class="error" tal:content="error" i18n:translate="">error</div>
+        </tal:block>
+
+        <div metal:use-macro="context/@@form_macros/widget_rows" />
+
+      </div>
+
+      <div class="row">
+        <div class="controls">
+          <input type="submit" value="Refresh" 
+              i18n:attributes="value refresh-button" />
+          <input type="submit" name="UPDATE_SUBMIT" value="Submit" 
+              i18n:attributes="value submit-button"/>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  </div>
+  </body>
+
+</html>

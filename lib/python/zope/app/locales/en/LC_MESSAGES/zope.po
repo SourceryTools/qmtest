@@ -1,0 +1,15 @@
+# English translation
+# This file contains no message ids because Zope's default language
+# is English
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: zope\n"
+"POT-Creation-Date: Fri Feb 27 12:53:35 2004\n"
+"PO-Revision-Date: 2003-08-12 15:35-0400\n"
+"Last-Translator: Zope3 Dev Team <zope3-dev@zope.org>\n"
+"Language-Team: Zope3 Dev team <zope3-dev@zope.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+

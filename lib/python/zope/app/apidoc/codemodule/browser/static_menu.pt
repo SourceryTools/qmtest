@@ -1,0 +1,53 @@
+<html metal:use-macro="views/apidoc_macros/static_menu"
+    i18n:domain="zope">
+<body>
+
+  <div metal:fill-slot="menu" class="small">
+
+    <div>
+      <span i18n:translate="">Class Finder:</span>
+      <span><i i18n:translate="">(Enter partial Python path)</i></span>
+	</div>
+    <form action="#" method="post" name="searchform" >
+	  <br />
+      <input type="text" name="path"
+             style="font-size: 80%; width=95%" />
+
+	  <br />
+      <input type="button" name="Find" value="Find"
+	     onClick="
+               javascript:simplegetSearchResult(document.searchform.path.value)"
+             i18n:attributes="value find-button" style="font-size: 80%"/>
+
+<!--
+      <input type="submit" name="SUBMIT" value="Find"
+             i18n:attributes="value find-button" style="font-size: 80%"/>
+  -->
+  </form>
+
+    <p style="font-size: 120%">
+      <a href="./index.html" target="main" i18n:translate="">Browse
+        Zope Source</a>
+    </p>
+
+	<div>
+      <span i18n:translate="">Search results:</span><br /><br />
+    </div>
+
+    <div tal:define="pyclasses view/findAllClasses"
+         tal:condition="pyclasses" id="resultlist">
+
+      <div tal:repeat="info pyclasses" style="display:block"
+           tal:attributes="id info/counter">
+        <a href="" target="main"
+           tal:attributes="href info/url"
+           tal:content="info/path">
+         /zope/app/Application
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

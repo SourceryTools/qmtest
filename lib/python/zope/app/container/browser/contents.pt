@@ -1,0 +1,193 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+  <div metal:define-macro="contents">
+
+    <form name="containerContentsForm" method="post" action="."
+          tal:attributes="action request/URL"
+          tal:define="container_contents view/listContentInfo">
+
+      <input type="hidden" name="type_name" value=""
+             tal:attributes="value request/type_name"
+             tal:condition="request/type_name|nothing"
+             />
+      <input type="hidden" name="retitle_id" value=""
+             tal:attributes="value request/retitle_id"
+             tal:condition="request/retitle_id|nothing"
+             />
+
+      <div class="page_error"
+           tal:condition="view/error"
+           tal:content="view/error"
+           i18n:translate="">
+        Error message
+      </div>
+
+      <table id="sortable" class="listing" summary="Content listing"
+             i18n:attributes="summary">
+
+        <thead>
+          <tr>
+            <th><input type="checkbox" onchange="updateCheckboxes(this, 'slaveBox');" /></th>
+            <th i18n:translate="">Name</th>
+            <th i18n:translate="">Title</th>
+            <th i18n:translate="">Size</th>
+            <th i18n:translate="">Created</th>
+            <th i18n:translate="">Modified</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+        <metal:block tal:condition="view/hasAdding">
+        <tr tal:define="names_required context/@@+/nameAllowed"
+            tal:condition="python:names_required and request.has_key('type_name')">
+          <td></td>
+          <td><input name="new_value" id="focusid" value="" /></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        </metal:block>
+
+        <metal:block tal:define="supportsRename view/supportsRename"
+                     tal:repeat="item container_contents">
+          <tr tal:define="oddrow repeat/item/odd; url item/url;
+                          id_quoted item/id/url:quote"
+              tal:attributes="class python:oddrow and 'even' or 'odd'" >
+            <td>
+              <input type="checkbox" class="noborder slaveBox" name="ids:list" id="#"
+                     value="#"
+                     tal:attributes="value item/id;
+                                     id item/cb_id;
+                                     checked request/ids_checked|nothing;"/>
+            </td>
+            <td><a href="#"
+                 tal:attributes="href
+                                 string:${url}/@@SelectedManagementView.html"
+                 tal:content="structure item/icon|default">
+                </a
+                ><span tal:condition="item/rename"
+                   ><input name="new_value:list"
+                     tal:attributes="value item/id"
+                     /><input type="hidden" name="rename_ids:list" value=""
+                              tal:attributes="value item/rename"
+                     /></span
+                ><span tal:condition="not:item/rename">
+                  <a href="#"
+                     tal:attributes="href
+                                 string:${url}/@@SelectedManagementView.html"
+                     tal:content="item/id"
+                     >foo</a
+                  ><a href="#"
+                     tal:attributes="href
+                         string:${request/URL}?rename_ids:list=${id_quoted}"
+                     tal:condition="supportsRename"
+                     >&nbsp;&nbsp;</a
+                ></span
+               ></td>
+            <td>
+              <input name="new_value" id="focusid"
+                     tal:attributes="value item/title|nothing"
+                     tal:condition="item/retitle"
+                     />
+              <a href="#"
+                 tal:attributes="href
+                                 string:${request/URL}?retitle_id=${id_quoted}"
+                 tal:condition="item/retitleable"
+                 tal:content="item/title|default"
+                 i18n:translate=""
+                 >&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              <span
+                 tal:condition="item/plaintitle"
+                 tal:content="item/title|default"
+                 i18n:translate=""
+                 >&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </td>
+
+            <td><span tal:content="item/size/sizeForDisplay|nothing"
+                    i18n:translate="">
+                      &nbsp;</span></td>
+            <td><span tal:define="created item/created|default"
+                      tal:content="created"
+                      i18n:translate="">&nbsp;</span></td>
+            <td><span tal:define="modified item/modified|default"
+                      tal:content="modified"
+                      i18n:translate="">&nbsp;</span></td>
+          </tr>
+        </metal:block>
+
+        </tbody>
+      </table>
+
+      <tal:block tal:condition="view/normalButtons">
+
+        <input type="submit" name="container_rename_button" value="Rename"
+               i18n:attributes="value container-rename-button"
+               tal:condition="view/supportsRename"
+               />
+        <input type="submit" name="container_cut_button" value="Cut"
+               i18n:attributes="value container-cut-button"
+               tal:condition="view/supportsCut"
+               />
+        <input type="submit" name="container_copy_button" value="Copy"
+               i18n:attributes="value container-copy-button"
+               tal:condition="view/supportsCopy"
+               />
+        <input type="submit" name="container_paste_button" value="Paste"
+               tal:condition="view/hasClipboardContents"
+               i18n:attributes="value container-paste-button"
+               />
+        <input type="submit" name="container_delete_button" value="Delete"
+               i18n:attributes="value container-delete-button"
+               tal:condition="view/supportsDelete"
+               i18n:domain="zope"
+               />
+
+        <div tal:condition="view/hasAdding" tal:omit-tag="">
+        <div tal:omit-tag=""
+             tal:define="adding nocall:context/@@+;
+                         addingInfo adding/addingInfo;
+                         has_custom_add_view adding/hasCustomAddView;
+                         names_required adding/nameAllowed"
+             tal:condition="adding/isSingleMenuItem">
+          <input type="submit" name="container_add_button" value="Add"
+                 i18n:attributes="value add-button"
+                 i18n:domain="zope"
+               />
+          <input type="text" name="single_new_value" id="focusid"
+                 tal:condition="python:names_required and not has_custom_add_view"
+                 i18n:domain="zope"
+               />
+          <input type="hidden" name="single_type_name"
+               value=""
+               tal:attributes="value python:addingInfo[0]['action']"
+               />
+        </div>
+        </div>
+
+      </tal:block>
+
+      <div tal:condition="view/specialButtons">
+        <input type="submit" value="Apply"
+               i18n:attributes="value container-apply-button"
+               />
+        <input type="submit" name="container_cancel_button" value="Cancel"
+               i18n:attributes="value container-cancel-button"
+               />
+      </div>
+
+    </form>
+
+    <script type="text/javascript"><!--
+        if (document.containerContentsForm.new_value)
+            document.containerContentsForm.new_value.focus();
+        //-->
+    </script>
+
+  </div>
+
+</div>
+</body>
+</html>

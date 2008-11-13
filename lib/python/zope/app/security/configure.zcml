@@ -1,0 +1,153 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <permission
+      id="zope.Public"
+      title="[public-permission] Public"
+      description="Special permission indicating unconditional access.
+                   Public resources are always accessible."
+      />
+
+  <utility
+      component=".vocabulary.PermissionsVocabulary"
+      name="Permissions"
+      />
+
+  <utility
+      component=".vocabulary.PermissionIdsVocabulary"
+      name="Permission Ids"
+      />
+
+  <include file="globalmodules.zcml" />
+  <include file="_protections.zcml" />
+
+  <utility
+      provides=".interfaces.IAuthentication"
+      component=".principalregistry.principalRegistry"
+      />
+
+  <class class=".permission.LocalPermission">
+    <factory
+        id="zope.app.security.Permission"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <allow
+        interface="zope.security.interfaces.IPermission"
+        />
+    <require
+        permission="zope.Security"
+        set_schema="zope.security.interfaces.IPermission"
+        />
+  </class>
+
+  <subscriber
+      for="zope.security.interfaces.IPermission
+           zope.component.interfaces.IRegistered"
+      handler=".permission.setIdOnActivation"
+      />
+
+  <subscriber
+      for="zope.security.interfaces.IPermission
+           zope.component.interfaces.IUnregistered"
+      handler=".permission.unsetIdOnDeactivation"
+      />
+
+  <class class="zope.security.permission.Permission">
+    <allow
+        interface="zope.security.interfaces.IPermission"
+        />
+  </class>
+
+  <class class=".principalregistry.Principal">
+    <allow
+        interface=".interfaces.IPrincipal"
+        />
+  </class>
+
+  <class class=".settings.PermissionSetting">
+    <require
+        permission="zope.Public"
+        attributes="getName getDescription __str__"
+        />
+  </class>
+
+  <adapter factory=".NoLogout" />
+
+  <!-- Standard Permissions -->
+
+  <permission
+      id="zope.View"
+      title="[view-permission] View"
+      />
+
+  <permission
+      id="zope.Security"
+      title="[change-security-settings-permission] Change security settings"
+      />
+
+  <permission
+      id="zope.ManageContent"
+      title="[manage-content-permission] Manage Content"
+      />
+
+  <permission
+      id="zope.ManageBindings"
+      title="[manage-service-bindings-permission] Manage Service Bindings"
+      />
+
+  <permission
+      id="zope.ManageCode"
+      title="[manage-code-permission] Manage Code"
+      description="Manage executable code, including Python, SQL, ZPT, etc."
+      />
+
+  <permission
+      id="zope.ManageServices"
+      title="[manage-services-permission] Manage Services"
+      />
+
+  <permission
+      id="zope.ManageSite"
+      title="[manage-site-permission] Manage Site"
+      />
+
+  <permission
+      id="zope.ManagePrincipals"
+      title="[manage-principal-permission] Manage Principals"
+      />
+
+  <permission
+      id="zope.ManageApplication"
+      title="[manage-application-permission] Manage Application"
+      description="Manage the Zope Application, such as Restart/Shutdown or
+                   packing the ZODB."
+      />
+
+  <adapter
+      factory=".basicauthadapter.BasicAuthAdapter"
+      provides=".interfaces.ILoginPassword"
+      for="zope.publisher.interfaces.http.IHTTPCredentials"
+      />
+
+  <adapter
+      factory=".ftpauth.FTPAuth"
+      provides=".interfaces.ILoginPassword"
+      for="zope.publisher.interfaces.ftp.IFTPCredentials"
+      />
+
+  <adapter
+      factory=".principallogging.PrincipalLogging"
+      provides="zope.publisher.interfaces.logginginfo.ILoggingInfo"
+      for=".interfaces.IPrincipal"
+      />
+
+  <utility
+      component=".principalregistry.fallback_unauthenticated_principal"
+      provides=".interfaces.IFallbackUnauthenticatedPrincipal"
+      />
+
+</configure>

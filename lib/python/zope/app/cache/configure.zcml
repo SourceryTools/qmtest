@@ -1,0 +1,39 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <adapter 
+      for="zope.annotation.interfaces.IAnnotatable"
+      provides="zope.app.cache.interfaces.ICacheable"
+      factory="zope.app.cache.annotationcacheable.AnnotationCacheable"
+      />
+
+  <class class=".ram.RAMCache">
+
+    <factory
+        id="zope.caching.RAMCache"
+        />
+
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable
+                   zope.app.cache.interfaces.ICache"
+        />
+
+    <require 
+        permission="zope.ManageServices" 
+        interface="zope.app.cache.interfaces.ram.IRAMCache"
+        />
+
+  </class>
+
+  <utility
+      component=".caching.CacheNamesVocabulary"
+      name="Cache Names"
+      />
+
+  <!-- Include browser package -->
+
+  <include package=".browser" />
+
+</configure>

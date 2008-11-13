@@ -1,0 +1,59 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <class class=".principalfolder.InternalPrincipal">
+    <require
+        permission="zope.ManageServices"
+        interface=".principalfolder.IInternalPrincipal"
+        set_schema=".principalfolder.IInternalPrincipal"
+        />
+  </class>
+
+  <class class=".principalfolder.PrincipalFolder">
+
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+
+    <require
+        permission="zope.ManageServices"
+        interface="zope.app.container.interfaces.IContainer"
+        />
+
+    <require
+        permission="zope.ManageServices"
+        attributes="prefix"
+        />
+
+  </class>
+
+  <adapter
+      provides="zope.app.container.interfaces.INameChooser"
+      for=".principalfolder.IInternalPrincipalContainer"
+      factory=".idpicker.IdPicker"
+      />
+
+  <adapter factory=".principalfolder.FoundPrincipalFactory" />
+
+  <adapter factory=".principalfolder.AuthenticatedPrincipalFactory" />
+
+  <include package=".browser" file="principalfolder.zcml" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="principalfolder"
+        title="Principal Folder"
+        doc_path="principalfolder.txt"
+        parent="security/authentication"
+        />
+
+  </configure>
+
+</configure>

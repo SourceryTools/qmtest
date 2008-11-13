@@ -1,0 +1,208 @@
+=============
+Generic Forms
+=============
+
+The `browser:form` allows the developer to use the form and widget framework
+without relying on a particular context object. Instead, it is up to the
+developer to implement two simple methods that handle the retrieval and
+mutation of the data in form of a dictionary.
+
+But I am getting ahead of myself. We first need to define a schema that we
+would like to use for our form:
+
+  >>> import zope.interface
+  >>> import zope.schema
+  >>> class IName(zope.interface.Interface):
+  ...     """The name of a person."""
+  ...
+  ...     first = zope.schema.TextLine(
+  ...         title=u"First Name",
+  ...         required=False)
+  ...
+  ...     last = zope.schema.TextLine(
+  ...         title=u"Last Name",
+  ...         required=True)
+
+Now we are almost ready to create the form view. But first we have to create a
+class that knows how to get and set values for the fields described by the
+schema. The system calls for a class (that will be used as a mixin) that
+implements a method called `getData()` that returns a dictionary mapping field
+names to values and a second method called `setData(data)` that takes a data
+dictionary as argument and handles the data in any way fit. In our case, let's
+store the data in a global attribute called name:
+
+  >>> name = ['John', 'Doe']
+
+  >>> class DataHandler(object):
+  ...
+  ...     def getData(self):
+  ...         global name
+  ...         return {'first': name[0], 'last': name[1]}
+  ...
+  ...     def setData(self, data):
+  ...         global name
+  ...         name[0] = data['first']
+  ...         name[1] = data['last']
+  ...         return u"Saved changes."
+
+
+We now imitate the form-directive's behavior and create the view class:
+
+  >>> from zope.app.form.browser.formview import FormView
+  >>> View = type('View', bases=(DataHandler, FormView), 
+  ...             dict={'schema': IName})
+
+To initialize the view, you still need a context and a request. The context is
+useful because it gives you a location, so that you can look up local
+components to store the data, such as the principal annotations. In our case
+we do not care about the context, so it will be just `None`:
+
+  >>> from zope.publisher.browser import TestRequest
+  >>> request = TestRequest()
+  >>> view = View(None, request)
+
+We can now look at the widgets and see that the data was correctly loaded:
+
+  >>> view.first_widget()
+  u'<input class="textType" id="field.first" name="field.first"
+           size="20" type="text" value="John"  />'
+
+  >>> view.last_widget()
+  u'<input class="textType" id="field.last" name="field.last"
+           size="20" type="text" value="Doe"  />'
+
+Now when a request is sent in, the data is transmitted in the form
+
+  >>> request.form['field.first']   = u'Stephan'
+  >>> request.form['field.last']   = u'Richter'
+  >>> request.form['UPDATE_SUBMIT']   = u''
+
+and as soon as the `update()` method is called
+
+  >>> view.update()
+  u'Saved changes.'
+
+the global name variable is changed:
+
+  >>> name
+  [u'Stephan', u'Richter']
+
+And that's pretty much all that there is to it. The rest behaves exactly like
+an edit form, from which the form view was derived. 
+
+Of course you can also completely overwrite the `update()` method like for the
+edit view removing the requirement to implement the `getData()` and
+`setData()` methods.
+
+
+Using the `browser:form` directive
+----------------------------------
+
+Let's now see how the form directive works. The first task is to load the
+necessary meta-configuration:
+
+   >>> from zope.configuration import xmlconfig
+
+   >>> import zope.app.component
+   >>> context = xmlconfig.file('meta.zcml', zope.app.component)
+
+   >>> import zope.app.form.browser
+   >>> context = xmlconfig.file('meta.zcml', zope.app.form.browser, context)
+
+   >>> import zope.app.publisher.browser
+   >>> context = xmlconfig.file('meta.zcml', zope.app.publisher.browser, 
+   ...                          context)
+
+Before we run the directive, make sure that no view exists:
+
+  >>> class IAnything(zope.interface.Interface):
+  ...     pass
+
+  >>> class Anything(object):
+  ...     zope.interface.implements(IAnything)
+
+  >>> from zope.publisher.browser import TestRequest
+
+  >>> from zope.app import zapi
+  >>> zapi.queryMultiAdapter((Anything(), TestRequest()), name='name.html')
+
+Now that we know that the view did not exist before the registration, let's
+execute the form directive:
+
+  >>> import sys
+  >>> sys.modules['form'] = type(
+  ...     'Module', (), 
+  ...     {'DataHandler': DataHandler, 
+  ...      'IAnything': IAnything, 
+  ...      'IName': IName})()
+
+  >>> context = xmlconfig.string('''
+  ...     <configure 
+  ...         xmlns="http://namespaces.zope.org/zope"
+  ...         xmlns:browser="http://namespaces.zope.org/browser"
+  ...         i18n_domain="zope">
+  ...
+  ...       <view
+  ...           type="zope.publisher.interfaces.browser.IBrowserRequest"
+  ...           for="zope.schema.interfaces.ITextLine"
+  ...           provides="zope.app.form.interfaces.IInputWidget"
+  ...           factory="zope.app.form.browser.TextWidget"
+  ...           permission="zope.Public"
+  ...           />
+  ...       
+  ...       <browser:form
+  ...           for="form.IAnything"
+  ...           schema="form.IName"
+  ...           class="form.DataHandler"
+  ...           name="name.html"
+  ...           label="Edit the name"
+  ...           fields="first last"
+  ...           permission="zope.Public" />
+  ...
+  ...     </configure>
+  ...    ''', context)
+
+and try to look up the view again:
+
+  >>> zapi.queryMultiAdapter(
+  ...     (Anything(), TestRequest()), name='name.html') #doctest:+ELLIPSIS
+  <zope.app.pagetemplate.simpleviewclass.SimpleViewClass from edit.pt ...>
+
+
+Now, if I do not specify my own template, and my class does not overwrite the
+`update()` method, then the class *must* implement `getData()` and
+`setData(data)`, otherwise a configuration error is raised:
+
+  >>> class NewDataHandler(object):
+  ...
+  ...     def getData(self):
+  ...         return {}
+
+  >>> sys.modules['form'].NewDataHandler = NewDataHandler
+
+  >>> context = xmlconfig.string('''
+  ...     <configure 
+  ...         xmlns:browser="http://namespaces.zope.org/browser"
+  ...         i18n_domain="zope">
+  ...
+  ...       <browser:form
+  ...           for="form.IAnything"
+  ...           schema="form.IName"
+  ...           class="form.NewDataHandler"
+  ...           name="name.html"
+  ...           label="Edit the name"
+  ...           fields="first last"
+  ...           permission="zope.Public" />
+  ...
+  ...     </configure>
+  ...    ''', context)
+  Traceback (most recent call last):
+  ...
+  ZopeXMLConfigurationError: File "<string>", line 6.6
+        ConfigurationError: You must specify a class that implements 
+                            `getData()` and `setData()`, if you do not 
+                            overwrite `update()`.
+
+Now we need to clean up afterwards.
+
+  >>> del sys.modules['form']

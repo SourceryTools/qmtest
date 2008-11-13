@@ -1,0 +1,12 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   i18n_domain="zope"
+   package="zope.app.folder"
+   >
+
+  <!-- This file is the equivalent of site.zcml and it is -->
+  <!-- used for functional testing setup -->
+
+  <include package="zope.app.zcmlfiles" />
+
+</configure>

@@ -1,0 +1,60 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <view
+      for="zope.interface.Interface"
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="zope.app.publication.traversers.SimpleComponentTraverser"
+      permission="zope.Public"
+      allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+      />
+
+  <adapter
+      for="types.MethodType zope.publisher.interfaces.browser.IBrowserRequest"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      factory="zope.app.publication.traversers.NoTraverser"
+      />
+
+  <browser:view
+      for="zope.app.publication.interfaces.IFileContent"
+      provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+      class="zope.app.publication.traversers.FileContentTraverser"
+      permission="zope.Public"
+      />
+
+  <publisher
+      name="SOAP"
+      factory=".requestpublicationfactories.SOAPFactory"
+      methods="POST"
+      mimetypes="text/xml"
+      priority="30"
+      />
+
+  <publisher
+      name="XMLRPC"
+      factory=".requestpublicationfactories.XMLRPCFactory"
+      methods="POST"
+      mimetypes="text/xml"
+      priority="20"
+      />
+
+  <publisher
+      name="BROWSER"
+      factory=".requestpublicationfactories.BrowserFactory"
+      methods="GET POST HEAD"
+      mimetypes="*"
+      priority="10"
+      />
+
+  <publisher
+      name="HTTP"
+      factory=".requestpublicationfactories.HTTPFactory"
+      methods="*"
+      mimetypes="*"
+      priority="0"
+      />
+
+</configure>

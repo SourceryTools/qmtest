@@ -1,0 +1,56 @@
+<zope:configure 
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+   <page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="servercontrol.html"
+      template="servercontrol.pt"
+      class=".servercontrol.ServerControlView"
+      permission="zope.ManageApplication"/>
+
+   <page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="index.html"
+      template="runtimeinfo.pt"
+      class=".runtimeinfo.RuntimeInfoView"
+      permission="zope.ManageApplication"/>
+
+  <menuItems
+      menu="zmi_views"
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl">
+
+    <menuItem
+        order="-2"
+        title="Runtime Information"
+        action="index.html" />
+    <menuItem
+        order="-1"
+        title="Server Control"
+        action="servercontrol.html" />
+  </menuItems>
+
+  <page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="ZODBControl.html"
+      template="zodbcontrol.pt"
+      class=".zodbcontrol.ZODBControlView"
+      permission="zope.ManageApplication"
+      menu="zmi_views" title="ZODB Control"/>
+
+  <page
+      for="zope.app.applicationcontrol.interfaces.IApplicationControl"
+      name="TranslationDomain.html"
+      template="translationdomaincontrol.pt"
+      class=".translationdomaincontrol.TranslationDomainControlView"
+      permission="zope.ManageApplication"
+      menu="zmi_views" title="Translation Domains"/>
+
+  <!-- add a action tab to the root folder for navigation -->
+  <menuItem
+      menu="zmi_actions"
+      for="zope.traversing.interfaces.IContainmentRoot"
+      title="Manage Process"
+      action="++etc++process/index.html" />
+
+</zope:configure>

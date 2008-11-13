@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directive
+      namespace="http://namespaces.zope.org/zope"
+      name="permission"
+      schema=".zcml.IPermissionDirective"
+      handler=".zcml.permission" />
+
+  <meta:directive
+      name="securityPolicy"
+      namespace="http://namespaces.zope.org/zope"
+      schema=".zcml.ISecurityPolicyDirective"
+      handler=".zcml.securityPolicy" 
+      />
+
+  <meta:directive
+      name="redefinePermission"
+      namespace="http://namespaces.zope.org/meta"
+      schema=".zcml.IRedefinePermission"
+      handler=".zcml.redefinePermission" />
+
+</configure>

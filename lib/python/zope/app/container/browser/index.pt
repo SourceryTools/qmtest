@@ -1,0 +1,66 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+<head>
+  <style metal:fill-slot="headers" type="text/css">
+    <!--
+    .ContentIcon {
+      width: 20px;
+    }
+
+    .ContentTitle {
+      text-align: left;
+    }
+    -->
+  </style>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+  <table
+      id="sortable" class="listing" summary="Content listing"
+      cellpadding="2" cellspacing="0"
+      i18n:attributes="summary">
+
+    <thead> 
+      <tr>
+        <th>&nbsp;</th>
+        <th i18n:translate="">Name</th>
+        <th i18n:translate="">Title</th>
+        <th i18n:translate="">Created</th>
+        <th i18n:translate="">Modified</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr tal:repeat="info view/listContentInfo">
+        <td>
+          <a
+              href="#"
+              tal:attributes="href info/url"
+              tal:content="structure info/icon|default" />
+        </td>
+
+        <td class="ContentTitle">
+          <a href="subfolder_id"
+             tal:attributes="href info/url"
+             tal:content="info/id"
+             i18n:translate=""
+          >ID here</a>
+        </td>
+
+        <td><span tal:content="info/title|default"
+            i18n:translate="">&nbsp;</span></td>
+        <td><span tal:content="info/created|default"
+            i18n:translate="">&nbsp;</span></td>
+        <td><span tal:content="info/modified|default"
+            i18n:translate="">&nbsp;</span></td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>
+</body>
+</html>

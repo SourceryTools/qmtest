@@ -1,0 +1,12 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    >
+
+  <include package=".browser" />
+  <include package=".xmlrpc" />
+  <include file="http.zcml" />
+
+
+</configure>
+

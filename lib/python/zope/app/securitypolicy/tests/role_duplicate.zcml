@@ -1,0 +1,7 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+  <include package="zope.securitypolicy.tests" file="role_duplicate.zcml"/>
+ 
+</configure>

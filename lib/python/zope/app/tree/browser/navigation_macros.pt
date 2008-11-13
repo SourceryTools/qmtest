@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      i18n:domain="zope">
+<body>
+
+  <!-- Java scripts for the navigation tree - none! -->
+
+  <metal:tree define-macro="navigation_tree_js">
+  </metal:tree>
+
+  <!-- Box containing the actual navigation tree -->
+
+  <metal:tree define-macro="navigation_tree_box">
+      <div class="box" id="navigationTree">
+        <h4 i18n:translate="">Navigation</h4>
+        <div class="treebody">
+<tal:block define="root context/@@virtualhost_cookie_tree;
+                   result root/getFlatDicts;
+                   nodeDictList python:result[0];
+                   maxDepth python:result[1]">
+
+<table cellspacing="0" cellpadding="0">
+<tr>
+  <td width="16">
+    <img src="" tal:define="icon root/context/@@zmi_icon | nothing"
+         tal:replace="structure icon" />
+  </td>
+
+  <td class="list-item"
+      tal:attributes="colspan python:maxDepth+2">
+    <a href=""
+       tal:attributes="href 
+           string:${root/context/@@absolute_url}/@@SelectedManagementView.html"
+       tal:content="root/getId() | string:[top]"></a>
+  </td>
+</tr>
+</table>
+
+<table cellspacing="0" cellpadding="0" tal:repeat="nodeInfo nodeDictList">
+<tr tal:define="node nodeInfo/node">
+  <td style="width:16px" tal:repeat="state nodeInfo/row-state">
+    <img tal:attributes="src context/++resource++tree_images/vline.png"
+         tal:condition="state" alt="|" border="0" />
+    <img src="" width="16" height="16"
+		     tal:condition="not:state"
+         tal:attributes="src context/++resource++tree_images/shim.gif" />
+  </td>
+
+  <td style="width:16px">
+    <a href=""
+       tal:attributes="href string:?tree-state=${nodeInfo/tree-state}"
+       tal:condition="node/hasChildren">
+      <tal:block condition="not:nodeInfo/last-level-node">
+        <img tal:attributes="src context/++resource++tree_images/plus_vline.png"
+             tal:condition="not:node/expanded" alt="+" border="0" />
+        <img tal:attributes="src context/++resource++tree_images/minus_vline.png"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+      <tal:block condition="nodeInfo/last-level-node">
+        <img tal:attributes="src context/++resource++tree_images/plus.png"
+             tal:condition="not:node/expanded" alt="+" border="0" />
+        <img tal:attributes="src context/++resource++tree_images/minus.png"
+             tal:condition="node/expanded" alt="-" border="0" />
+      </tal:block>
+    </a>
+    <tal:block condition="not:node/hasChildren">
+      <img tal:attributes="src context/++resource++tree_images/tline.png"
+           tal:condition="not:nodeInfo/last-level-node" alt="" border="0" />
+      <img tal:attributes="src context/++resource++tree_images/lline.png"
+           tal:condition="nodeInfo/last-level-node" alt="" border="0" />
+    </tal:block>
+  </td>
+
+  <td align="left" style="width:16px"
+      tal:define="object nocall:node/context;
+                  icon   object/@@zmi_icon | nothing">
+    <img src="" tal:replace="structure icon" />
+    <img src="" width="16" height="16"
+		     tal:condition="not:icon"
+         tal:attributes="src context/++resource++tree_images/shim.gif" />
+  </td>
+
+  <td class="list-item"
+      tal:attributes="colspan python:maxDepth-len(nodeInfo['row-state'])+1">
+    &nbsp;<a href=""
+       tal:attributes="href 
+           string:${node/context/@@absolute_url}/@@SelectedManagementView.html"
+       tal:content="node/context/zope:name">
+      node/id
+    </a>
+  </td>
+</tr>
+</table>
+</tal:block>
+
+      </div>
+    </div>
+  </metal:tree>
+</body>
+</html>

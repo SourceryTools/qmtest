@@ -1,0 +1,258 @@
+======================
+Component registration
+======================
+
+Registration of objects as components is quite simple.  Currently, any
+object can be registered as a utility.  (In the future, registering
+objects as adapter factories probably will be supported, but only if
+those objects implement interfaces.)
+
+To see how this works, we'll create some objects and register
+them. We'll use the Sample class defined in
+zope.app.component.browser.tests to define 3 sample objects: 
+
+    >>> from zope.app.component.browser.tests import Sample
+    >>> folder = getRootFolder()
+    >>> folder['sample1'] = Sample()
+    >>> folder['sample2'] = Sample()
+    >>> folder['sample3'] = Sample()
+    >>> import transaction
+    >>> transaction.commit()
+
+All objects have a "Registration" tab that is accessable to people
+with the zope.ManageSite permission:
+
+    >>> from zope.testbrowser.testing import Browser
+    >>> browser = Browser()
+    >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
+    >>> browser.addHeader('Accept-Language', 'test')
+    >>> browser.open('http://localhost/sample1/@@SelectedManagementView.html')
+    >>> browser.getLink('[[zope][Registration]]').click()
+
+When we first visit the registration tab, we see that there are no
+registrations: 
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][This object isn't yet registered.]]...
+
+To add a registration, we'll click on the `Register this object`
+button:
+
+    >>> browser.getControl('Register this object').click()
+
+This will being up a form that provides for selection from the
+interfaces the object provides and provides and entries for name to
+provide the object as and a comment:
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][Provided interface]]...
+    ...[[zope][The interface provided by the utility]]...
+    <option value="...ISample">....ISample</option>
+    <option value="...ISampleBase">...ISampleBase</option>
+    <option value="...IContained">...IContained</option>
+    <option value="...ILocation">...ILocation</option>
+    <option value="...IPersistent">...IPersistent</option>
+    <option value="...Interface">...Interface</option>
+    ...[[zope][Register As]]...
+    ...[[zope][The name under which the utility will be known.]]...
+    ...[[zope][Comment]]...
+
+The most specific interface is selected, which is usually what we
+want.  If we just enter a comment and submit the form:
+
+    >>> browser.getControl('[[zope][Comment]]').value = 'unnamed sample'
+    >>> browser.getControl('[[zope][Register]]').click()
+
+We'll be redirected to the registrations page and the new registration
+will be shown:
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][zope.app.component.browser.tests.ISample utility]]
+    <br />
+    [[zope][comment: unnamed sample]]...
+
+We can create multiple registrations by clicking on *Register this
+object again*:
+
+    >>> browser.getControl('Register this object again').click()
+    >>> browser.getControl('[[zope][Register As]]').value = 'one'
+    >>> browser.getControl('[[zope][Register]]').click()
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][zope.app.component.browser.tests.ISample utility]]
+    <br />
+    [[zope][comment: unnamed sample]]...
+    ...[[zope][zope.app.component.browser.tests.ISample utility named 'one']]...
+
+Each entry has a checkbox for selecting it.  This can be used to
+unregister an object. We'll unregister the utility named "one":
+
+    >>> browser.getControl(name='ids:list').getControl(
+    ... value='Rem9wZS5hcHAuY29tcG9uZW50LmJyb3dzZXIudGVzdHMuSVNhbXBsZSBvbmU'
+    ... ).selected = True
+    >>> browser.getControl('[[zope][unregister-button (Unregister)]]').click()
+    >>> "utility named 'one'" not in browser.contents
+    True
+
+If there is already an object registered, new registrations will
+simply override the old. We can see this by creating a registration
+for sample2 and then overriding it's registration by registering
+sample3. First, we register sample2:
+
+    >>> browser.open('http://localhost/sample2/registration.html')
+    >>> browser.getControl('Register this object').click()
+    >>> browser.getControl('[[zope][Register As]]').value = 'two'
+    >>> browser.getControl('[[zope][Register]]').click()
+
+We can see all of the registrations for a site by visting the
+site-manager's registrations page:
+
+    >>> browser.open(
+    ...        'http://localhost/++etc++site/@@SelectedManagementView.html')
+    >>> browser.getLink('[[zope][Registrations]]').click()
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][Registrations for this site: (
+    Registrations for this site:
+    )]]...
+    ...sample1...[[zope][zope.app.component.browser.tests.ISample utility]]
+    <br />
+    [[zope][comment: unnamed sample]]...
+    ...sample2...[[zope][zope.app.component.browser.tests.ISample
+    utility named 'two']]...
+
+This shows all of the registrations for the site, including our sample
+registrations. The display includes a link to each component.  Now,
+we'll register sample 3:
+
+    >>> browser.open('http://localhost/sample3/registration.html')
+    >>> browser.getControl('Register this object').click()
+    >>> browser.getControl('[[zope][Register As]]').value = 'two'
+    >>> browser.getControl('[[zope][Register]]').click()
+
+and note that now sample 3, rather than sample 2 is shown in the
+listing of registered components for the site:
+
+    >>> browser.open('http://localhost/++etc++site/@@registrations.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][Registrations for this site: (
+    Registrations for this site:
+    )]]...
+    ...sample1...[[zope][zope.app.component.browser.tests.ISample utility]]
+    <br />
+    [[zope][comment: unnamed sample]]...
+    ...sample3...[[zope][zope.app.component.browser.tests.ISample
+    utility named 'two']]...
+
+    >>> 'sample2' not in browser.contents
+    True
+
+And if we look at sample2's registrations, we'll see it's not registered:
+
+    >>> browser.open('http://localhost/sample2/registration.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...This object isn't yet registered...
+
+Each entry in the site registrations view has a checkbox for selecting
+it.  This can be used to unregister an object. We'll unregister sample3:
+
+    >>> browser.open('http://localhost/++etc++site/@@registrations.html')
+    >>> browser.getControl(name='ids:list').getControl(
+    ... value='Rem9wZS5hcHAuY29tcG9uZW50LmJyb3dzZXIudGVzdHMuSVNhbXBsZSB0d28'
+    ... ).selected = True
+    >>> browser.getControl('[[zope][unregister-button (Unregister)]]').click()
+    >>> 'sample3' not in browser.contents
+    True
+
+    >>> browser.open('http://localhost/sample3/registration.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...This object isn't yet registered...
+
+If a registered object is deleted:
+
+    >>> del folder['sample1']
+    >>> transaction.commit()
+
+It remains registered, and can be unregistered:
+
+    >>> browser.open('http://localhost/++etc++site/@@registrations.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...[[zope][Registrations for this site: (
+    Registrations for this site:
+    )]]...
+    ...[[zope][[[zope][(unknown name)]] (moved or deleted) (
+    [[zope][(unknown name)]]
+    (moved or deleted)
+    )]]
+    <br />
+    [[zope][zope.app.component.browser.tests.ISample utility]]
+    <br />
+    [[zope][comment: unnamed sample]]...
+
+    >>> browser.getControl(name='ids:list').getControl(
+    ... value="Rem9wZS5hcHAuY29tcG9uZW50LmJyb3dzZXIudGVzdHMuSVNhbXBsZSA"
+    ... ).selected = True
+    >>> browser.getControl('[[zope][unregister-button (Unregister)]]').click()
+
+    >>> 'ISample' not in browser.contents
+    True
+
+The registration view for an object only shows the registrations in
+the immediately enclosing site.  To see this, we register sample2:
+
+    >>> browser.open('http://localhost/sample2/registration.html')
+    >>> browser.getControl('Register this object').click()
+    >>> browser.getControl('[[zope][Register]]').click()
+
+Now we'll create a subsite and move sample2 there:
+
+    >>> browser.open('http://localhost/@@SelectedManagementView.html')
+    >>> browser.getLink('[[zope][Folder]]').click()
+    >>> browser.getControl(name='new_value').value = 'subsite'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('subsite').click()
+    >>> browser.getLink('[[zope][Make a site]').click()
+    >>> browser.open('http://localhost/@@SelectedManagementView.html')
+    >>> browser.getControl(name='ids:list').getControl(value='sample2'
+    ...     ).selected = True
+    >>> browser.getControl('[[zope][container-cut-button (Cut)]]').click()
+    >>> browser.getLink('subsite').click()
+    >>> browser.getControl('[[zope][container-paste-button (Paste)]]').click()
+
+sample2's registration page now indicates that sample2 is
+unregistered:
+
+    >>> browser.open('http://localhost/subsite/registration.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...This object isn't yet registered...
+
+which it is in it's new site.
+
+If we go back to the old site though, we see that sample2 is still
+registered there and that it's link points to it's new location:
+
+    >>> browser.open('http://localhost/++etc++site/@@registrations.html')
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...subsite/sample2...zope.app.component.browser.tests.ISample utility...
+
+Of course, this could stand some improvement:
+
+- It would be nice if people were warned when overriding a component
+
+- It would be nice if people were warned when moving a registered
+  component out its site.  Perhaps people should be offered the option of
+  unregistering it, and perhaps registering it in the new location.
+
+- It would be nice if people were warned when deleting a registered
+  component.  Perhaps people should be offered the option of
+  unregistering it.

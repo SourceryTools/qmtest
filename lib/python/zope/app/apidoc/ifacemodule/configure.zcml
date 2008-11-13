@@ -1,0 +1,95 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".ifacemodule.InterfaceModule">
+    <allow interface=".ifacemodule.IInterfaceModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <!-- Register the module with the API Documentation System -->
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".ifacemodule.InterfaceModule"
+      name="Interface" />
+
+  <!-- Setup interface-related macros -->
+
+  <browser:view
+      for="zope.interface.interfaces.IInterface"
+      permission="zope.View"
+      name="code_breadcrumbs"
+      class=".browser.InterfaceBreadCrumbs"
+      allowed_attributes="__call__"
+      />
+
+  <browser:page
+      for="*"
+      name="interface_macros"
+      permission="zope.View"
+      class=".macros.InterfaceDetailsMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for="*"
+      name="iface_macros"
+      permission="zope.View"
+      template="iface_macros.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for="*"
+      name="component_macros"
+      permission="zope.View"
+      template="component_macros.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for="*"
+      name="presentation_macros"
+      permission="zope.View"
+      template="presentation_macros.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for="zope.interface.interfaces.IInterface"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.InterfaceDetails"
+      name="index.html"
+      template="index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <!-- Interface Documentation Module Menu -->
+
+  <browser:page
+      for=".ifacemodule.InterfaceModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <browser:page
+      for=".ifacemodule.InterfaceModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
+
+  <preferenceGroup
+      id="apidoc.InterfaceDetails"
+      schema=".interfaces.IInterfaceDetailsPreferences"
+      title="Interface Details"
+      />
+
+</configure>

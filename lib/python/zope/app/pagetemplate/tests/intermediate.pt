@@ -1,0 +1,12 @@
+<html metal:define-macro='intermediate'
+      metal:extend-macro='context/@@outer/main'>
+<body>
+hello
+<div metal:fill-slot="body">
+<div metal:define-slot="body">
+body slot
+</div>
+intermediate body slot stuff
+</div>
+</body>
+</html>

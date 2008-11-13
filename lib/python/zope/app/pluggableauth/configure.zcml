@@ -1,0 +1,64 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <class class=".PluggableAuthentication">
+    <factory
+        id="zope.app.services.PluggableAuthentication"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface=".interfaces.IPluggableAuthentication"
+        />
+  </class>
+
+  <subscriber
+      for=".interfaces.IPluggableAuthentication
+           zope.app.container.interfaces.IObjectAddedEvent"
+      handler=".PluggableAuthenticationAddSubscriber"
+      />
+
+  <class class=".BTreePrincipalSource">
+    <factory
+        id="zope.app.principalsources.BTreePrincipalSource"
+        />
+    <allow
+        interface="zope.app.container.interfaces.IReadContainer"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IWriteContainer
+                   zope.app.container.interfaces.INameChooser"
+        />
+    <allow
+        interface=".interfaces.IPrincipalSource"
+        />
+  </class>
+
+  <class class=".SimplePrincipal">
+    <factory
+        id="zope.app.principals.SimplePrincipal"
+        />
+    <allow
+        interface=".interfaces.IUserSchemafied"
+        />
+    <require
+        permission="zope.ManageSite"
+        set_schema=".interfaces.IUserSchemafied"
+        />
+  </class>
+
+  <browser:view
+      name="login"
+      for=".interfaces.ILoginPasswordPrincipalSource"
+      class="zope.app.pluggableauth.PrincipalAuthenticationView"
+      permission="zope.Public"
+      />
+
+  <include package=".browser" />
+
+</configure>

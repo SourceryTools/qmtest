@@ -1,0 +1,337 @@
+<html metal:use-macro="context/@@apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents"
+      tal:define="rootURL view/apidocRoot">
+
+  <h1 class="details-header">
+    <span class="pre-header" i18n:translate="">Interface</span><br />
+    <span tal:replace="view/getId">zope.app.interfaces.IInterface</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
+  <h3 tal:condition="view/getTypes">
+    Type:
+    <tal:omit-tag tal:repeat="type view/getTypes" >
+      <a href=""
+          tal:attributes="href
+              string:${rootURL}/Interface/${type/path}/index.html"
+          tal:content="type/name"/><tal:block
+          condition="not:repeat/type/end">, </tal:block>
+    </tal:omit-tag>
+  </h3>
+
+
+  <div class="indent">
+    <div class="documentation" tal:content="structure view/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+
+  <h2 class="details-section" i18n:translate="">Base interfaces</h2>
+
+  <div class="indent"
+         tal:define="bases view/getBases">
+
+    <ul class="attr-list" tal:condition="bases">
+      <li tal:repeat="base bases">
+        <a href=""
+           tal:attributes="href
+               string:${rootURL}/Interface/$base/index.html"
+           tal:content="base" />
+      </li>
+    </ul>
+
+    <p tal:condition="not: bases">
+      <em i18n:translate="">There are no base interfaces.</em>
+    </p>
+
+  </div>
+
+
+  <tal:block define="attributes view/getAttributes;
+                     fields view/getFields">
+    <metal:block use-macro="context/@@interface_macros/attributes_fields" />
+  </tal:block>
+
+  <tal:block define="methods view/getMethods">
+    <metal:block use-macro="context/@@interface_macros/methods" />
+  </tal:block>
+
+  <h2 class="details-section" i18n:translate="">Adapters</h2>
+
+  <div tal:define="specific_adapters view/getSpecificRequiredAdapters;
+                   extended_adapters view/getExtendedRequiredAdapters;
+                   generic_adapters view/getGenericRequiredAdapters;
+                   provided_adapters view/getProvidedAdapters">
+
+    <div class="indent"
+         tal:condition="python: specific_adapters or generic_adapters">
+
+      <h3 i18n:translate="">Adapters for objects providing this interface:</h3>
+
+      <div tal:define="
+  elementId string:adapters.required.specific;
+  show context/++preferences++apidoc/InterfaceDetails/showSpecificRequiredAdapters">
+
+        <h4>
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          <span i18n:translate="">Specific Adapters</span>
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list"
+              tal:condition="specific_adapters">
+            <li tal:repeat="adapter specific_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:specific_adapters">
+            <em i18n:translate="">There are no specific adapters registered
+                for this interface.</em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
+
+      <div tal:define="
+  elementId string:adapters.required.extended;
+  show context/++preferences++apidoc/InterfaceDetails/showExtendedRequiredAdapters">
+
+        <h4>
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          <span i18n:translate="">Extended Adapters</span>
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list"
+              tal:condition="extended_adapters">
+            <li tal:repeat="adapter extended_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:extended_adapters">
+            <em i18n:translate="">There are no extended adapters registered for
+                this interface.</em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
+
+      <div tal:define="
+  elementId string:adapters.required.generic;
+  show context/++preferences++apidoc/InterfaceDetails/showGenericRequiredAdapters">
+
+        <h4>
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          <span i18n:translate="">Generic Adapters</span>
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list"
+              tal:condition="generic_adapters">
+            <li tal:repeat="adapter generic_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:generic_adapters">
+            <em i18n:translate="">
+              There are no generic adapters registered.
+            </em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
+
+    </div>
+
+    <div class="indent"
+         tal:condition="provided_adapters">
+
+      <h3 i18n:translate="">Adapters that provide this interface:</h3>
+      <ul>
+        <li tal:repeat="adapter provided_adapters">
+          <metal:block use-macro="context/@@interface_macros/adapter" />
+        </li>
+      </ul>
+
+    </div>
+
+    <p tal:condition="
+       python: not (specific_adapters or extended_adapters or generic_adapters
+                    or provided_adapters)">
+      <em i18n:translate="">There are no adapters registered for
+          this interface.</em>
+    </p>
+  </div>
+
+  <div>
+
+    <h2 class="details-section" i18n:translate="">Views</h2>
+
+    <div class="indent"
+      tal:define="titles view/getViewTypeTitles">
+
+      <tal:block define="
+        type string:Browser;
+        title titles/browser;
+        specific_views view/specificBrowserViews;
+        extended_views view/extendedBrowserViews;
+        generic_views view/genericBrowserViews;
+        show
+        context/++preferences++apidoc/InterfaceDetails/showBrowserViews;
+        show_specific
+        context/++preferences++apidoc/InterfaceDetails/showSpecificBrowserViews;
+        show_extended
+        context/++preferences++apidoc/InterfaceDetails/showExtendedBrowserViews;
+        show_generic
+        context/++preferences++apidoc/InterfaceDetails/showGenericBrowserViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
+      </tal:block>
+
+      <tal:block define="
+        type string:XML-RPC;
+        title titles/xmlrpc;
+        specific_views view/specificXMLRPCViews;
+        extended_views view/extendedXMLRPCViews;
+        generic_views view/genericXMLRPCViews;
+        show
+        context/++preferences++apidoc/InterfaceDetails/showXMLRPCViews;
+        show_specific
+        context/++preferences++apidoc/InterfaceDetails/showSpecificXMLRPCViews;
+        show_extended
+        context/++preferences++apidoc/InterfaceDetails/showExtendedXMLRPCViews;
+        show_generic
+        context/++preferences++apidoc/InterfaceDetails/showGenericXMLRPCViews;
+        ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
+      </tal:block>
+
+      <tal:block define="
+          type string:HTTP;
+          title titles/http;
+          specific_views view/specificHTTPViews;
+          extended_views view/extendedHTTPViews;
+          generic_views view/genericHTTPViews;
+          show
+          context/++preferences++apidoc/InterfaceDetails/showHTTPViews;
+          show_specific
+          context/++preferences++apidoc/InterfaceDetails/showSpecificHTTPViews;
+          show_extended
+          context/++preferences++apidoc/InterfaceDetails/showExtendedHTTPViews;
+          show_generic
+          context/++preferences++apidoc/InterfaceDetails/showGenericHTTPViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
+      </tal:block>
+
+      <tal:block define="
+          type string:FTP;
+          title titles/ftp;
+          specific_views view/specificFTPViews;
+          extended_views view/extendedFTPViews;
+          generic_views view/genericFTPViews;
+          show
+          context/++preferences++apidoc/InterfaceDetails/showFTPViews;
+          show_specific
+          context/++preferences++apidoc/InterfaceDetails/showSpecificFTPViews;
+          show_extended
+          context/++preferences++apidoc/InterfaceDetails/showExtendedFTPViews;
+          show_generic
+          context/++preferences++apidoc/InterfaceDetails/showGenericFTPViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
+      </tal:block>
+
+      <tal:block define="
+          type string:Other;
+          title titles/other;
+          specific_views view/specificOtherViews;
+          extended_views view/extendedOtherViews;
+          generic_views view/genericOtherViews;
+          show
+          context/++preferences++apidoc/InterfaceDetails/showOtherViews;
+          show_specific
+          context/++preferences++apidoc/InterfaceDetails/showSpecificOtherViews;
+          show_extended
+          context/++preferences++apidoc/InterfaceDetails/showExtendedOtherViews;
+          show_generic
+          context/++preferences++apidoc/InterfaceDetails/showGenericOtherViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
+      </tal:block>
+
+    </div>
+  </div>
+
+  <div tal:define="factories view/getFactories;
+                   utilities view/getUtilities;
+                   classes view/getClasses"
+       tal:condition="python: factories or utilities or classes">
+
+    <h2 class="details-section" i18n:translate="">Other Information</h2>
+
+    <div class="indent">
+
+      <tal:block condition="factories">
+        <h3 class="details-section" i18n:translate="">Factories</h3>
+        <div class="indent">
+          <div class="small" i18n:translate="">
+            A list of factories that create objects implementing this
+            interface.
+          </div>
+          <ul>
+            <li tal:repeat="factory factories">
+              <metal:block use-macro="context/@@interface_macros/factory" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+
+      <tal:block condition="utilities">
+        <h3 class="details-section" i18n:translate="">Utilities</h3>
+        <div class="indent">
+          <div class="small" i18n:translate="">
+            A list of utilities that are registered to provide this
+            interface.
+          </div>
+          <ul>
+            <li tal:repeat="utility utilities">
+              <metal:block use-macro="context/@@interface_macros/utility" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+
+      <tal:block condition="classes">
+        <h3 class="details-section" i18n:translate="">Classes</h3>
+        <div class="indent">
+          <div class="small" i18n:translate="">
+            A list of classes that implement this interface. This might
+            duplicate the entries in Utilities.
+          </div>
+          <ul>
+            <li tal:repeat="klass classes">
+              <metal:block use-macro="context/@@interface_macros/class" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+
+    </div>
+  </div>
+
+</body>
+</html>

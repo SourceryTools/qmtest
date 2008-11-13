@@ -1,0 +1,50 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Translation Domain - Translate
+  </title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+  <h3 i18n:translate="">Import and Export Messages</h3>
+
+  <p i18n:translate="">
+    Here you can export and import messages from your Translation Domain.
+  </p>
+
+  <form action="./" method="post" enctype="multipart/form-data">
+    <table cols="2" width="100%" border="0">
+      <tr>
+        <td width="50%">
+          <div class="form-label" i18n:translate="">Select Languages:</div>
+          <div>
+            <select name="languages:list" size="3" style="width: 80%"
+                    multiple="multiple">
+              <option value="" 
+                      tal:attributes="value language"
+                      tal:content="language"
+                      tal:repeat="language view/getAllLanguages"></option>
+            </select>
+          </div>
+        </td>
+        <td width="50%" valign="top">
+          <div class="form-label" i18n:translate="">Import File Name:</div>
+          <div>
+            <input type="file" name="file" size="20" value="" />
+          </div>
+          <div>
+            <input type="submit" name="@@import.html:method" value="Import" 
+                   i18n:attributes="value import-button"/>
+            <input type="submit" name="@@export.html:method" value="Export" 
+                   i18n:attributes="value export-button"/>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
+
+</div>
+</body>
+</html>

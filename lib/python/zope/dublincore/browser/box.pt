@@ -1,0 +1,24 @@
+<tal:block define="data view/edit" condition="data"
+    i18n:domain="zope">
+
+   <div tal:condition="data/dctitle">
+     <span class="label" i18n:translate="">Title:</span> 
+     <span tal:replace="data/dctitle" />
+   </div>
+             
+   <div tal:condition="data/dcdescription">
+     <span class="label" i18n:translate="">Description:</span> 
+     <span tal:replace="data/dcdescription" />
+   </div>
+   <div tal:condition="data/created">
+     <span class="label" i18n:translate="">Created:</span>
+     <span tal:replace="data/created">2000-01-01 01:01:01</span>
+   </div>
+          
+   <div tal:condition="data/modified">
+     <span class="label" i18n:translate="">Modified:</span>
+     <span tal:replace="data/modified">2000-01-01 01:01:01</span>
+   </div>
+
+</tal:block>
+

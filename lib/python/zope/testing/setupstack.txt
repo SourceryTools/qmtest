@@ -1,0 +1,96 @@
+Stack-based test doctest setUp and tearDown
+============================================
+
+Writing doctest setUp and tearDown functions can be a bit tedious,
+especially when setUp/tearDown functions are combined.
+
+the zope.testing.setupstack module provides a small framework for
+automating test tear down.  It provides a generic setUp function that
+sets up a stack. Normal test setUp functions call this function to set
+up the stack and then use the register function to register tear-down
+functions. 
+
+To see how this works we'll create a faux test:
+
+    >>> class Test:
+    ...     def __init__(self):
+    ...         self.globs = {}
+    >>> test = Test()
+
+We'll register some tearDown functions that just print something:
+
+    >>> import sys
+    >>> import zope.testing.setupstack
+    >>> zope.testing.setupstack.register(
+    ...     test, lambda : sys.stdout.write('td 1\n'))
+    >>> zope.testing.setupstack.register(
+    ...     test, lambda : sys.stdout.write('td 2\n'))
+
+Now, when we call the tearDown function:
+
+    >>> zope.testing.setupstack.tearDown(test)
+    td 2
+    td 1
+
+The registered tearDown functions are run. Note that they are run in
+the reverse order that they were registered.
+
+
+Extra positional arguments can be passed to register:
+
+    >>> zope.testing.setupstack.register(
+    ...    test, lambda x, y, z: sys.stdout.write('%s %s %s\n' % (x, y, z)),
+    ...    1, 2, z=9)
+    >>> zope.testing.setupstack.tearDown(test)
+    1 2 9
+
+
+Temporary Test Directory
+------------------------
+
+Often, tests create files as they demonstrate functionality.  They
+need to arrange for the removeal of these files when the test is
+cleaned up.
+
+The setUpDirectory function automates this.  We'll get the current
+directory first:
+
+    >>> import os
+    >>> here = os.getcwd()
+
+We'll also create a new test:
+
+    >>> test = Test()
+
+Now we'll call the setUpDirectory function:
+
+    >>> zope.testing.setupstack.setUpDirectory(test)
+
+We don't have to call zope.testing.setupstack.setUp, because
+setUpDirectory calls it for us.
+
+Now the current working directory has changed:
+
+    >>> here == os.getcwd()
+    False
+
+We can create files to out heart's content:
+
+    >>> open('Data.fs', 'w').write('xxx')
+    >>> os.path.exists('Data.fs')
+    True
+
+When tearDown is called:
+
+    >>> zope.testing.setupstack.tearDown(test)
+
+We'll be back where we started:
+
+    >>> here == os.getcwd()
+    True
+
+and the files we created will be gone (along with the temporary
+directory that was created:
+
+    >>> os.path.exists('Data.fs')
+    False

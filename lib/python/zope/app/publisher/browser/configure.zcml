@@ -1,0 +1,102 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   xmlns:zcml="http://namespaces.zope.org/zcml">
+
+<interface
+  interface="zope.app.publisher.interfaces.browser.IMenuItemType" />
+
+<utility
+    name="Browser Skins"
+    component=".vocabulary.BrowserSkinsVocabulary"
+    />
+
+<!-- BBB 2006/02/18, to be removed after 12 months -->
+<browser:layer
+    zcml:condition="have deprecatedlayers"
+    name="default"
+    interface="zope.publisher.interfaces.browser.IDefaultBrowserLayer"
+    bbb_aware="true"
+    />
+
+<class class="zope.publisher.browser.BrowserRequest">
+  <allow
+    interface="zope.publisher.interfaces.browser.IBrowserApplicationRequest"
+    attributes="response locale __str__"
+    />
+  <allow
+    interface="zope.component.interfaces.IPresentationRequest" />
+</class>
+
+<class class="zope.publisher.browser.TestRequest">
+  <allow
+    interface="zope.publisher.interfaces.browser.IBrowserApplicationRequest"
+    attributes="response"
+    />
+  <allow
+    interface="zope.component.interfaces.IPresentationRequest" />
+</class>
+
+<class class="zope.publisher.browser.BrowserResponse">
+  <allow
+    interface="zope.publisher.interfaces.http.IHTTPResponse"
+    />
+</class>
+
+<class class="zope.app.publisher.browser.fileresource.FileResource">
+  <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  <allow attributes="GET HEAD __call__" />
+</class>
+
+<class class="zope.app.publisher.browser.i18nfileresource.I18nFileResource">
+  <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  <allow attributes="GET HEAD __call__" />
+</class>
+
+<class class=".pagetemplateresource.PageTemplateResource">
+  <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  <allow attributes="__call__" />
+</class>
+
+<class class=".directoryresource.DirectoryResource">
+  <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  <allow attributes="get __getitem__" />
+</class>
+
+<browser:page
+    name=""
+    for="zope.app.component.interfaces.ISite"
+    class="zope.app.publisher.browser.resources.Resources"
+    permission="zope.Public"
+    allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+    />
+
+<!-- Management view selector -->
+<!-- Get first accessible item from zmi_views menu -->
+<browser:page
+    for="*"
+    name="SelectedManagementView.html"
+    permission="zope.Public"
+    class=".managementviewselector.ManagementViewSelector"
+    allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+    />
+
+<!-- Make manage an alias for same -->
+<browser:page
+    for="*"
+    name="manage"
+    permission="zope.ManageContent"
+    class=".managementviewselector.ManagementViewSelector"
+    allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+    />
+
+<!-- Menu access -->
+<browser:page
+    for="*"
+    name="view_get_menu"
+    permission="zope.Public"
+    class=".menu.MenuAccessView"
+    allowed_interface="zope.app.publisher.interfaces.browser.IMenuAccessView"
+    />
+
+</configure>

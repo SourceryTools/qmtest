@@ -1,0 +1,61 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <permission
+      id="zope.rdb.Use"
+      title="[zope.rdb.Use] Use Database Connections"
+      />
+
+  <class class="zope.rdb.ZopeConnection">
+    <require
+        permission="zope.ManageContent"
+        interface="zope.rdb.interfaces.IZopeConnection"
+        />
+  </class>
+
+  <class class="zope.rdb.ZopeCursor">
+    <require
+        permission="zope.ManageContent"
+        interface="zope.rdb.interfaces.IZopeCursor"
+        />
+  </class>
+
+  <class class="zope.rdb.Row">
+    <require
+        permission="zope.ManageContent"
+        attributes="__getattr__"
+        />
+  </class>
+
+  <class class="zope.rdb.ZopeDatabaseAdapter">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.rdb.Use"
+        interface="zope.rdb.interfaces.IZopeDatabaseAdapter"
+        />
+  </class>
+
+  <class class="zope.rdb.ResultSet">
+    <!-- require zope.View for all list methods -->
+    <require
+        permission="zope.View"
+        attributes="__getitem__ __getslice__ __len__ __iter__ __contains__
+                    index count __str__ __add__ __radd__"
+        />
+    <!-- Also require zope.View on the columns attribute, which is
+         specified in IResultSet -->
+    <require
+        permission="zope.View"
+        attributes="columns"
+        />
+  </class>
+
+  <include file="gadflyda.zcml" />
+
+  <include package=".browser" />
+
+</configure>

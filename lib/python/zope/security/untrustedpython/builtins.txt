@@ -1,0 +1,114 @@
+Safe Builtins
+=============
+
+When executing untrusted Python code, we need to make sure that we
+only give the code access to safe, basic or proxied objects. This
+included the builtin objects provided to Python code through a special
+__builtins__ module in globals.  The `builtins` module provides a
+suitable module object:
+
+  >>> from zope.security.untrustedpython.builtins import SafeBuiltins
+  >>> d = {'__builtins__': SafeBuiltins}
+  >>> exec 'x = str(1)' in d
+  >>> d['x']
+  '1'
+
+The object is immutable:
+
+  >>> SafeBuiltins.foo = 1
+  Traceback (most recent call last):
+  ...
+  AttributeError: foo
+
+  >>> del SafeBuiltins['getattr']
+  Traceback (most recent call last):
+  ...
+  TypeError: object does not support item deletion
+
+
+
+  Exception raised:
+  ...
+  TypeError: object does not support item deletion
+
+(Note that you can mutate it through its `__dict__` attribute,
+ however, when combined with the untrusted code compiler, getting the
+ `__dict__` attribute will return a proxied object that will prevent
+ mutation.) 
+
+It contains items with keys that are all strings and values that are
+either proxied or are basic types:
+
+  >>> from zope.security.proxy import Proxy
+  >>> for key, value in SafeBuiltins.__dict__.items():
+  ...     if not isinstance(key, str):
+  ...         raise TypeError(key)
+  ...     if value is not None and not isinstance(value, (Proxy, int, str)):
+  ...         raise TypeError(value, key)
+
+It doesn't contain unsafe items, such as eval, globals, etc:
+
+  >>> SafeBuiltins.eval
+  Traceback (most recent call last):
+  ...
+  AttributeError: 'ImmutableModule' object has no attribute 'eval'
+  >>> SafeBuiltins.globals
+  Traceback (most recent call last):
+  ...
+  AttributeError: 'ImmutableModule' object has no attribute 'globals'
+
+The safe builtins also contains a custom __import__ function.
+
+  >>> imp = SafeBuiltins.__import__
+  
+As with regular import, it only returns the top-level package if no
+fromlist is specified:
+
+  >>> import zope.security
+  >>> imp('zope.security') == zope
+  True
+  >>> imp('zope.security', {}, {}, ['*']) == zope.security
+  True
+
+Note that the values returned are proxied:
+
+  >>> type(imp('zope.security')) is Proxy
+  True
+  
+This means that, having imported a module, you will only be able to
+access attributes for which you are authorized.
+
+Unlike regular __import__, you can nly import modules that have been
+previously imported.  This is to prevent unauthorized execution of
+module-initialization code:
+
+  >>> security = zope.security
+  >>> import sys
+  >>> del sys.modules['zope.security'] 
+  >>> imp('zope.security')
+  Traceback (most recent call last):
+  ...
+  ImportError: zope.security
+
+  >>> sys.modules['zope.security'] = security
+
+Package-relative imports are supported (for now):
+
+  >>> imp('security', {'__name__': 'zope', '__path__': []}) == security
+  True
+  >>> imp('security', {'__name__': 'zope.foo'}) == zope.security
+  True
+
+  >>> imp('security.untrustedpython', {'__name__': 'zope.foo'}) == security
+  True
+  >>> from zope.security import untrustedpython
+  >>> imp('security.untrustedpython', {'__name__': 'zope.foo'}, {}, ['*']
+  ...     ) == untrustedpython
+  True
+  
+
+
+
+
+
+

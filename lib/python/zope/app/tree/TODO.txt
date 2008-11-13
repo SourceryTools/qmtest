@@ -1,0 +1,18 @@
+====
+TODO
+====
+
+for v1.3
+
+- allow sorting: would work similar to filter
+
+- add XML representation so it's compatible with rotterdam's
+  xmltree.js, but stateful
+
+Done for z3 release 3.1
+-----------------------
+
+- Catch Unauthorized exception and don't add items we don't have permission
+  for accessing. This makes it possible to use the cookie tree without 
+  zope.ManageSite permission. Right now the cookie tree access the ++etc++site
+  as default and raise a Unauthorized exception.

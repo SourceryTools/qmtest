@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="zope"
+    >
+
+<include package="zope.app.container.browser.tests" />
+<include package="zope.app.pagetemplate.tests" />
+<include package="zope.app.form.browser.tests" file="i18n.zcml" />
+
+</configure>

@@ -1,0 +1,26 @@
+<html i18n:domain="want an empty string, but zpt would ignore it :(">
+  <body>
+    <metal:block define-macro="widget_rows">
+      <div class="row" tal:repeat="widget view/widgets">
+        <metal:block define-macro="widget_row">
+          <div class="label">
+            <label for="field.name" title="The widget's hint"
+              tal:attributes="for widget/name; title widget/hint"
+              tal:content="widget/label" i18n:attributes="title"
+              i18n:translate=""
+              >The Label</label>
+          </div>
+          <tal:block define="error widget/error"
+            condition="error" content="structure error"
+            i18n:translate=""
+            >
+            The Error
+          </tal:block>
+          <div class="field" tal:content="structure widget">
+            <input type="text" style="width:100%"/>
+          </div>
+        </metal:block>
+      </div>
+    </metal:block>
+  </body>
+</html>

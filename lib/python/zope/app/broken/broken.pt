@@ -1,0 +1,19 @@
+<html metal:use-macro="context/@@standard_macros/view"
+  i18n:domain="zope">
+
+<div metal:fill-slot="body">
+
+<p i18n:translate=""
+  >This object is broken because its class can not be found.</p>
+
+<p i18n:translate="">This is probably because the module of the class,
+<strong i18n:name="module"
+  tal:content="context/__class__/__module__">somemodule</strong>,
+can't be found or because the name, <strong
+  i18n:name="name"
+  tal:content="context/__class__/__name__">someclass</strong>, is no longer
+defined by the module.</p>
+
+</div>
+
+</html>

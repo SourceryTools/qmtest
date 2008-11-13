@@ -1,0 +1,58 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <utility
+      component=".sqlscript.ConnectionNamesVocabulary"
+      name="Connection Names"
+      />
+
+  <permission
+      id="zope.AddSQLScripts"
+      title="[add-sql-scripts-permission] Add SQL Scripts"
+      />
+
+  <interface 
+      interface=".interfaces.ISQLScript" 
+      type="zope.app.content.interfaces.IContentType"
+      /> 
+
+  <class class=".sqlscript.SQLScript">
+    <factory
+        id="zope.app.content.SQLScript"
+        title="SQL Script"
+        description="A content-based script to execute dynamic SQL."
+        />
+    <require
+        permission="zope.ManageContent"
+        interface=".interfaces.ISQLScript"
+        set_schema=".interfaces.ISQLScript"
+        />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+  </class>
+
+
+  <!-- Arguments Directives -->
+  <class class=".sqlscript.Arguments">
+    <require
+        permission="zope.ManageContent"
+        interface="zope.interface.common.mapping.IEnumerableMapping"
+        />
+  </class>
+
+  <!-- SQL DTML Directives -->
+  <class class=".dtml.SQLDTML">
+    <require
+        permission="zope.ManageContent"
+        attributes="__call__" />
+  </class>
+
+
+  <!-- include browser package -->
+
+  <include package=".browser" />
+
+</configure>

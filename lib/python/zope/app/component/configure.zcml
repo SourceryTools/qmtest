@@ -1,0 +1,120 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <interface interface="zope.interface.Interface" />
+
+
+  <!-- Registration Framework Goes away in 3.5-->  
+  <class class=".back35.RegistrationManager">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IWriteContainer
+                   zope.app.container.interfaces.IReadContainer
+                   zope.app.container.interfaces.INameChooser" 
+        attributes="addRegistration"
+        />
+  </class>
+
+  <!-- ++registrations++ namespace registrations -->
+  <view
+      name="registrations" type="*"
+      for=".back35.IRegisterableContainer"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".back35.RegistrationManagerNamespace"
+      />
+  <adapter
+      name="registrations"
+      for=".back35.IRegisterableContainer"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".back35.RegistrationManagerNamespace"
+      />
+
+
+  <!-- Site and Site Manager Framework -->
+
+  <module module=".interfaces">
+    <allow attributes="ISite" />
+  </module>
+
+  <class class=".site.LocalSiteManager">
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IReadContainer" />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.component.interfaces.IComponentLookup
+                   zope.app.container.interfaces.IWriteContainer" />
+  </class>
+
+  <class class="zope.component.registry.UtilityRegistration">    
+    <require
+        permission="zope.ManageSite"
+        interface="zope.component.interfaces.IUtilityRegistration"
+        />
+  </class>
+
+  <class class=".site.SiteManagementFolder">
+    <factory />
+    <implements
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IReadContainer" />
+    <require
+        permission="zope.ManageSite"
+        interface="zope.app.container.interfaces.IWriteContainer"
+        attributes="registrationManager" 
+        />
+  </class>
+  
+  <adapter 
+      for="zope.component.interfaces.IComponentLookup"
+      provides="zope.filerepresentation.interfaces.IDirectoryFactory"
+      factory=".site.SMFolderFactory"
+      permission="zope.ManageContent"
+      />
+
+  <adapter factory=".site.SiteManagerAdapter" />
+
+  <subscriber
+      for=".interfaces.ISite
+           zope.app.publication.interfaces.IBeforeTraverseEvent"
+      handler=".site.threadSiteSubscriber"
+      />
+
+  <subscriber
+      for="zope.app.publication.interfaces.IEndRequestEvent"
+      handler=".site.clearThreadSiteSubscriber"
+      />
+
+  <subscriber
+      for=".interfaces.ISite
+           zope.app.container.interfaces.IObjectMovedEvent"
+      handler=".site.changeSiteConfigurationAfterMove"
+      />
+
+
+  <!-- the 'Interfaces' vocabulary below requires a registred IInterface -->
+  <interface
+      interface="zope.interface.interfaces.IInterface"
+      />
+
+  <!-- Vocabularies -->
+
+  <utility
+      component=".vocabulary.InterfacesVocabulary"
+      name="Interfaces"
+      />
+
+  <utility
+      component=".vocabulary.UtilityComponentInterfacesVocabulary"
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      name="Utility Component Interfaces"
+      />
+
+</configure>

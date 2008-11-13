@@ -1,0 +1,140 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   >
+
+<!-- Registration Managemenet -->
+
+  <browser:page
+      for="*"
+      name="registration.html"
+      permission="zope.ManageSite"
+      class=".registration.RegistrationView"
+      />
+
+  <browser:menuItem
+      menu="zmi_views"
+      title="Registration"
+      for="*"
+      action="registration.html"
+      order="999"
+  />
+
+  <browser:page
+      for="*"
+      name="addRegistration.html"
+      permission="zope.ManageSite"
+      class=".registration.AddUtilityRegistration" 
+      />
+
+  <adapter factory=".registration.UtilityRegistrationDisplay" /> 
+  <adapter factory=".registration.UtilitySiteRegistrationDisplay" /> 
+
+<!-- Site Management Folder -->
+
+  <browser:addMenuItem
+      class="zope.app.component.site.SiteManagementFolder"
+      permission="zope.ManageSite"
+      title="Site-Management Folder"
+      />
+
+  <browser:page
+      for="zope.app.component.interfaces.ISiteManagementFolder"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.contents.JustContents"
+      name="index.html" attribute="index"
+      />
+
+  <browser:page
+      name="contents.html"
+      for="zope.app.component.interfaces.ISiteManagementFolder"
+      menu="zmi_views" title="Contents"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.contents.Contents"
+      attribute="contents"
+      />
+
+  <browser:view
+      name="+"
+      menu="zmi_actions" title="Add"
+      for="zope.app.component.interfaces.ISiteManagementFolder"
+      permission="zope.ManageSite"
+      class="zope.app.component.browser.ComponentAdding"
+      >
+    <browser:page name="index.html"  attribute="index"  />
+    <browser:page name="action.html" attribute="action" />
+  </browser:view>
+
+<!-- Site Manager navigation action -->
+
+  <browser:page
+      for="zope.app.component.interfaces.IPossibleSite"
+      name="addSiteManager.html"
+      permission="zope.ManageSite"
+      class=".MakeSite"
+      attribute="addSiteManager"
+      />
+
+  <browser:menuItem
+      menu="zmi_actions" title="Make a site"
+      for="zope.app.component.interfaces.IPossibleSite"
+      action="addSiteManager.html"
+      filter="python:
+        not modules['zope.app.component.interfaces'].ISite.providedBy(context)"
+      permission="zope.ManageSite"
+      />
+
+  <browser:menuItem
+      menu="zmi_actions"
+      title="Manage Site"
+      for="zope.app.component.interfaces.ISite"
+      action="++etc++site/@@SelectedManagementView.html"
+      permission="zope.ManageSite"
+      />
+
+<!-- SiteManager -->
+
+  <browser:page
+      name="contents.html"
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      menu="zmi_views" title="Contents"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.contents.Contents"
+      attribute="contents" />
+
+  <browser:view
+      name="+"
+      menu="zmi_actions" title="Add Site Management Folder"
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.adding.Adding"
+      >
+    <browser:page name="index.html" attribute="index"/>
+    <browser:page name="action.html" attribute="action"/>
+  </browser:view>
+
+  <browser:pages
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      permission="zope.ManageSite"
+      class="zope.app.container.browser.contents.JustContents"
+      >
+    <browser:page name="index.html" attribute="index" />
+  </browser:pages>
+
+  <browser:page
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      name="registrations.html"
+      menu="zmi_views" title="Registrations"
+      permission="zope.ManageSite"
+      class=".registration.SiteRegistrationView"
+      />
+
+  <browser:menuItem
+      menu="zmi_views" title="Registration"
+      for="zope.app.component.interfaces.ILocalSiteManager"
+      action="registration.html"
+      filter="python:False"
+      permission="zope.ManageSite"
+      />
+
+</configure>

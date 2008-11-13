@@ -1,0 +1,46 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+<view
+    for="zope.security.interfaces.IUnauthorized"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    name="index.html"
+    permission="zope.Public"
+    factory=".unauthorized.Unauthorized"
+    />
+
+<defaultView
+    for="zope.security.interfaces.IUnauthorized"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    name="index.html"
+    />
+
+<view
+    for="zope.publisher.interfaces.ITraversalException"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    name="index.html"
+    permission="zope.Public"
+    factory=".notfound.NotFound"
+    />
+
+<defaultView
+    for="zope.publisher.interfaces.ITraversalException"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    name="index.html"
+    />
+
+<view
+    for="zope.app.publication.http.IMethodNotAllowed"
+    factory="zope.app.http.exception.methodnotallowed.MethodNotAllowedView"
+    name="index.html"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    permission="zope.Public"
+    />
+
+<defaultView
+    for="zope.app.publication.http.IMethodNotAllowed"
+    type="zope.publisher.interfaces.http.IHTTPRequest"
+    name="index.html"
+    />
+
+</configure>

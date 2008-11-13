@@ -1,0 +1,61 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">View Error Log Report</title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+    <h3 i18n:translate="">Exception Log (most recent first)</h3>
+
+    <p i18n:translate="">This page lists the exceptions that have occurred
+    in this site recently.</p>
+
+    <div tal:define="entries context/getLogEntries">
+
+      <em tal:condition="not:entries" i18n:translate="">
+        No exceptions logged.
+      </em>
+
+      <table tal:condition="entries">
+        <tr>
+          <th align="left" i18n:translate="">Time</th>
+          <th align="left" i18n:translate="">User</th>
+          <th align="left" i18n:translate="">Exception</th>
+        </tr>
+
+        <tr tal:repeat="entry entries">
+          <td valign="top" nowrap="nowrap">
+            <span tal:content="entry/time">Time</span>
+          </td>
+          <td>
+            <span tal:content="entry/username">joe</span>
+          </td>
+          <td valign="top">
+            <a href="showEntry" 
+               tal:attributes="href string:showEntry.html?id=${entry/id}">
+              <span tal:content="entry/type">AttributeError</span>:
+              <span tal:define="value entry/value"
+                    tal:content="python: 
+                       len(value) < 70 and value or value[:70] + '...'">
+                Application object has no attribute "zzope"
+              </span>
+            </a>
+          </td>
+        </tr>
+      </table>
+ 
+    </div>
+
+  <form action="index.html" method="get">
+    <div class="row">
+      <div class="controls">
+        <input type="submit" name="submit" value="Refresh" 
+            i18n:attributes="value refresh-button" />
+      </div>
+    </div>
+  </form>
+
+</div>
+</body>
+</html>

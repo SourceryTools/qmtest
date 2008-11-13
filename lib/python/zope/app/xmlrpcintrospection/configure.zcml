@@ -1,0 +1,13 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:xmlrpc="http://namespaces.zope.org/xmlrpc"
+  i18n_domain="zope">
+
+  <xmlrpc:view
+      for="zope.interface.Interface"
+      methods="listMethods methodHelp methodSignature"
+      class=".xmlrpcintrospection.XMLRPCIntrospection"
+      permission="zope.Public"
+      />
+
+</configure>

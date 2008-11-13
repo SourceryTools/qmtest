@@ -1,0 +1,76 @@
+<html metal:use-macro="context/@@standard_macros/page"
+    i18n:domain="zope">
+<body>
+<div metal:fill-slot="body">
+
+  <p tal:define="status view/update"
+     tal:condition="status"
+     tal:content="status" i18n:translate=""/>
+
+
+  <div tal:define="role 
+          python:view.roleForID(request.get('role_to_manage'))" tal:omit-tag="">
+
+    <p class="form-help" i18n:translate="">
+      This page shows the permissions allowed and denied the role
+        <strong tal:content="role/title"
+                i18n:name="role_title"
+                i18n:translate="">Great Master Guru</strong>
+        (id: <strong tal:content="role/id"
+                i18n:name="role_id">Zope.Some.Role</strong>).
+      To change settings, simply select different permissions in the
+      Allow or Deny lists. Make sure you don't select the same
+        permission in both lists though.
+    </p>
+
+
+    <form action="AllRolePermissions.html" method="POST">
+      <input type="hidden" name="role_id" value="Role ID"
+             tal:attributes="value role/id" />
+
+      <table width="100%" cellspacing="0" cellpadding="2" border="0" 
+             nowrap="nowrap"
+             tal:define="availableSettings 
+                python:view.availableSettings(noacquire=True)">
+
+        <tr class="list-header">
+          <td align="left" valign="top"
+              tal:repeat="setting availableSettings">
+            <div class="form-label">
+              <strong tal:content="setting/title"
+                    i18n:translate="">Allow</strong>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td align="left" valign="top"
+              tal:repeat="settinginfo availableSettings">
+            <div class="form-element">
+              <select name="Unset:list" multiple="multiple" size="20"
+                      tal:define="setting settinginfo/id"
+                      tal:attributes="name string:${setting}:list">
+              <option tal:repeat="permissioninfo role/permissionsInfo"
+                      tal:content="permissioninfo/title"
+                      i18n:translate=""
+                      tal:attributes="selected
+                         python:path('permissioninfo/setting') == setting;
+                                      value permissioninfo/id"
+                      >Sample Permission</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <div class="form-element">
+        <input class="form-element" type="submit" name="SUBMIT_ROLE" 
+            value="Save Changes" i18n:attributes="value save-changes-button"/>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+<configure xmlns:meta="http://namespaces.zope.org/meta">
+  <meta:provides feature="deprecatedlayers" />
+</configure>

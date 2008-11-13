@@ -1,0 +1,49 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">
+    Edit Relational Database Adapter
+  </title>
+</head>
+
+<body>
+<div metal:fill-slot="body">
+
+  <form action="." method="post" enctype="multipart/form-data">
+
+    <div class="row">
+      <div class="label" i18n:translate="">Connection URI:</div>
+      <div class="field">
+        <span i18n:translate="">
+          Template:
+          dbi://username:password@host:port/dbname;param1=value...
+        </span>
+        <br />
+        <input type="text" name="dsn" size="40" value=""
+               tal:attributes="value context/dsn" />
+      </div>
+      <div class="label" i18n:translate="">Encoding</div>
+      <div class="field">
+        <input type="text" name="encoding" size="20" value=""
+               tal:attributes="value context/encoding" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="controls">
+        <input type="submit" name="edit.html:method" value="Save Changes"
+               i18n:attributes="value save-changes-button"/>
+        <input type="submit" name="connect.html:method" value="Connect"
+               tal:condition="python: not context.isConnected()"
+               i18n:attributes="value connect-button"/>
+        <input type="submit" name="disconnect.html:method" value="Disconnect"
+               tal:condition="python: context.isConnected()"
+               i18n:attributes="value disconnect-button"/>
+      </div>
+    </div>
+
+  </form> 
+
+</div>
+</body>
+</html>

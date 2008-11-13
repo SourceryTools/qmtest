@@ -1,0 +1,244 @@
+============================================================
+Simple example showing ObjectWidget and SequenceWidget usage
+============================================================
+
+The following implements a Poll product (add it as
+zope/app/demo/poll) which has poll options defined as:
+
+label
+  A `TextLine` holding the label of the option
+description
+  Another `TextLine` holding the description of the option
+
+Simple stuff.
+
+Our Poll product holds an editable list of the `PollOption` instances.
+This is shown in the ``poll.py`` source below::
+
+    from persistent import Persistent
+    from interfaces import IPoll, IPollOption
+    from zope.interface import implements, classImplements
+
+    class PollOption(Persistent, object):
+        implements(IPollOption)
+
+    class Poll(Persistent, object):
+        implements(IPoll)
+
+        def getResponse(self, option):
+            return self._responses[option]
+
+        def choose(self, option):
+            self._responses[option] += 1
+            self._p_changed = 1
+
+        def get_options(self):
+            return self._options
+
+        def set_options(self, options):
+            self._options = options
+            self._responses = {}
+            for option in self._options:
+                self._responses[option.label] = 0
+
+        options = property(get_options, set_options, None, 'fiddle options')
+
+And the Schemas are defined in the ``interfaces.py`` file below::
+
+    from zope.interface import Interface
+    from zope.schema import Object, Tuple, TextLine
+    from zope.schema.interfaces import ITextLine
+    from zope.i18nmessageid import MessageFactory
+
+    _ = MessageFactory("poll")
+
+    class IPollOption(Interface):
+        label = TextLine(title=u'Label', min_length=1)
+        description = TextLine(title=u'Description', min_length=1)
+
+    class IPoll(Interface):
+        options = Tuple(title=u'Options',
+            value_type=Object(IPollOption, title=u'Poll Option'))
+
+        def getResponse(option): "get the response for an option"
+
+        def choose(option): 'user chooses an option'
+
+Note the use of the `Tuple` and `Object` schema fields above.  The
+`Tuple` could optionally have restrictions on the min or max number of
+items - these will be enforced by the `SequenceWidget` form handling
+code. The `Object` must specify the schema that is used to generate its
+data.
+
+Now we have to specify the actual add and edit views. We use the existing
+AddView and EditView, but we pre-define the widget for the sequence because
+we need to pass in additional information. This is given in the
+``browser.py`` file::
+
+    from zope.app.form.browser.editview import EditView
+    from zope.app.form.browser.add import AddView
+    from zope.app.form import CustomWidgetFactory
+    from zope.app.form.browser import SequenceWidget, ObjectWidget
+
+    from interfaces import IPoll
+    from poll import Poll, PollOption
+
+    class PollVoteView:
+        __used_for__ = IPoll
+
+        def choose(self, option):
+            self.context.choose(option)
+            self.request.response.redirect('.')
+
+    ow = CustomWidgetFactory(ObjectWidget, PollOption)
+    sw = CustomWidgetFactory(SequenceWidget, subwidget=ow)
+
+    class PollEditView(EditView):
+        __used_for__ = IPoll
+
+        options_widget = sw
+
+    class PollAddView(AddView):
+        __used_for__ = IPoll
+
+        options_widget = sw
+
+Note the creation of the widget via a `CustomWidgetFactory`.  So,
+whenever the options_widget is used, a new
+``SequenceWidget(subwidget=CustomWidgetFactory(ObjectWidget,
+PollOption))`` is created. The subwidget argument indicates that each
+item in the sequence should be represented by the indicated widget
+instead of their default. If the contents of the sequence were just
+`Text` fields, then the default would be just fine - the only odd cases
+are Sequence and Object Widgets because they need additional arguments
+when they're created.
+
+Each item in the sequence will be represented by a
+``CustomWidgetFactory(ObjectWidget, PollOption)`` - thus a new
+``ObjectWidget(context, request, PollOption)`` is created for each
+one. The `PollOption` class ("factory") is used to create new instances
+when new data is created in add forms (or edit forms when we're adding
+new items to a Sequence).
+
+Tying all this together is the ``configure.zcml``::
+
+    <configure xmlns='http://namespaces.zope.org/zope'
+        xmlns:browser='http://namespaces.zope.org/browser'>
+
+    <content class=".poll.Poll">
+    <factory id="zope.app.demo.poll"
+             permission="zope.ManageContent" />
+
+    <implements 
+        interface="zope.annotation.interfaces.IAttributeAnnotatable"
+        />
+
+    <require
+        permission="zope.View"
+        interface=".interfaces.IPoll"
+        />
+
+    <require
+        permission="zope.ManageContent"
+        set_schema=".interfaces.IPoll"
+        />
+    </content>
+
+    <content class=".poll.PollOption">
+    <require
+        permission="zope.View"
+        interface=".interfaces.IPollOption"
+        />
+    </content>
+
+    <browser:page for=".interfaces.IPoll"
+        name="index.html"
+        template="results.zpt"
+        permission="zope.View"
+        menu="zmi_views" title="View"
+        />
+
+    <browser:pages
+        for=".interfaces.IPoll"
+        class=".browser.PollVoteView"
+        permission="zope.ManageContent">
+        <browser:page name="vote.html" template="vote.zpt"
+            menu="zmi_views" title="Vote" />
+        <browser:page name="choose" attribute="choose" />
+    </browser:pages>
+
+    <browser:addform
+        schema=".interfaces.IPoll"
+        label="Add a Poll"
+        content_factory=".poll.Poll"
+        name="AddPoll.html"
+        class=".browser.PollAddView"
+        permission="zope.ManageContent" />
+
+    <browser:addMenuItem
+        title="Poll Demo"
+        description="Poll Demo"
+        content_factory=".poll.Poll"
+        view="AddPoll.html"
+        permission="zope.ManageContent"
+        />
+
+
+    <browser:editform
+        schema=".interfaces.IPoll"
+        class=".browser.PollEditView"
+        label="Change a Poll"
+        name="edit.html"
+        menu="zmi_views" title="Edit"
+        permission="zope.ManageContent" />
+
+    </configure>
+
+Note the use of the ``class`` attribute on the ``addform`` and
+``editform`` elements.  Otherwise, nothing much exciting here.
+
+Finally, we have some additional views...
+
+``results.zpt``::
+
+    <html metal:use-macro="context/@@standard_macros/page">
+    <title metal:fill-slot="title">Poll results</title>
+    <div metal:fill-slot="body">
+    <table border="1">
+    <caption>Poll results</caption>
+    <thead>
+        <tr><th>Option</th><th>Results</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="option context/options">
+        <td tal:content="option/label">Option</td>
+        <td tal:content="python:context.getResponse(option.label)">Result</td>
+        <td tal:content="option/description">Option</td>
+        </tr>
+    </tbody>
+    </table>
+    </div>
+    </html>
+
+``vote.zpt``::
+
+    <html metal:use-macro="context/@@standard_macros/page">
+    <title metal:fill-slot="title">Poll voting</title>
+    <div metal:fill-slot="body">
+    <form action="choose">
+    <table border="1">
+    <caption>Poll voting</caption>
+    <tbody>
+        <tr tal:repeat="option context/options">
+        <td><input type="radio" name="option"
+                    tal:attributes="value option/label"></td>
+        <td tal:content="option/label">Option</td>
+        <td tal:content="option/description">Option</td>
+        </tr>
+    </tbody>
+    </table>
+    <input type="submit">
+    </form>
+    </div>
+    </html>
+

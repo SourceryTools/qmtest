@@ -1,0 +1,94 @@
+<html metal:use-macro="context/@@standard_macros/dialog" i18n:domain="zope">
+<head>
+  <tal:block
+      metal:fill-slot="headers"
+      tal:define="global pagetip view/pagetip"
+      />
+</head>
+<body>
+<div metal:fill-slot="body">
+
+   <p tal:define="status view/update"
+      tal:condition="status"
+      tal:content="status" i18n:translate=""/>
+
+  <form action="AllRolePermissions.html" method="POST">
+
+    <table width="100%" cellspacing="0" cellpadding="2" border="0"
+           nowrap="nowrap">
+
+      <tr class="list-header">
+        <td align="left" valign="top">
+          <div class="form-label">
+            <strong i18n:translate="">Permission</strong>
+          </div>
+        </td>
+        <td align="left">
+          <div class="form-label">
+            <strong i18n:translate="">Roles</strong>
+          </div>
+        </td>
+      </tr>
+
+      <tr class="row-normal">
+        <td></td>
+        <td align="center" tal:repeat="role view/roles">
+          <div class="list-item">
+            <a href="RolePermissions.html"
+              tal:attributes="
+              href string:RolePermissions.html?role_to_manage=${role/id}"
+              tal:content="role/title" i18n:translate="">Anonymous</a>
+            <input type="hidden" name="r0" value=""
+              tal:attributes="
+              name string:r${repeat/role/index};
+              value  string:${role/id}" />
+
+          </div>
+        </td>
+      </tr>
+
+      <tbody tal:repeat="perm view/permissionRoles">
+      <tr class="row-normal"
+          tal:attributes="class 
+             python:path('repeat/perm/even') and 'row-normal' or 'row-hilite'">
+        <td align="left" nowrap="nowrap">
+          <div class="list-item">
+             <a href="RolesWithPermission.html"
+                tal:attributes="href
+           string:RolesWithPermission.html?permission_to_manage=${perm/id}"
+                tal:content="perm/title"
+                i18n:translate="">Access Transient Objects</a>
+             <input type="hidden" name="r0" value=""
+                 tal:attributes="
+                 name string:p${repeat/perm/index};
+                 value  string:${perm/id}" />
+          </div>
+        </td>
+        <td align="center" tal:repeat="setting perm/roleSettings">
+          <select name="p0r0"
+              tal:attributes="name
+                  string:p${repeat/perm/index}r${repeat/setting/index}">
+            <option value="Unset"
+                tal:repeat="option view/availableSettings"
+                tal:attributes="value option/id;
+                                selected python:setting == option['id']"
+                tal:content="option/shorttitle">+</option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
+
+      <tr>
+        <td colspan="5" align="left">
+          <div class="form-element">
+            <input class="form-element" type="submit" name="SUBMIT"
+                   value="Save Changes" i18n:attributes="value" />
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
+
+</div>
+</body>
+</html>

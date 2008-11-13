@@ -1,0 +1,56 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+<head>
+  <title metal:fill-slot="title" i18n:translate="">Configure Error Log</title>
+</head>
+<body>
+<div metal:fill-slot="body">
+
+  <p class="form-help" i18n:translate="">
+    You can configure how many exceptions should be kept
+    and whether the exceptions should be copied to Zope's event log
+    file(s).
+  </p>
+
+  <form action="edit.html" method="post"
+        tal:define="props context/getProperties">
+    <br />
+    <div class="row">
+      <div class="label" i18n:translate="">Number of exceptions to keep</div>
+      <div class="field">
+        <input type="text" name="keep_entries" size="40"
+               tal:attributes="value props/keep_entries" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label" i18n:translate="">
+        Copy exceptions to the event log
+      </div>
+      <div class="field">
+        <input type="checkbox" name="copy_to_zlog"
+               tal:attributes="checked props/copy_to_zlog" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label" i18n:translate="">Ignored exception types</div>
+      <div class="field">
+        <textarea name="ignored_exceptions:lines" cols="40" rows="3"
+            tal:content="python: '\n'.join(props['ignored_exceptions'])" />
+      </div>
+    </div>
+    <div class="separator"></div>
+
+    <div class="row">
+      <div class="controls">
+        <input type="submit" name="submit" value="Save Changes"
+                i18n:attributes="value save-changes-button"/>
+      </div>
+    </div>
+  
+  </form>
+
+</div>
+</body>
+</html>

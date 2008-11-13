@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
+
+    <include package="zope.app.component" file="meta.zcml" />
+    <include package="zope.app.publisher.browser" file="meta.zcml" />
+    <include package="zope.app.form.browser" file="configure.zcml" />
+
+</configure>

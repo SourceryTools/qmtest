@@ -1,0 +1,20 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:apidoc="http://namespaces.zope.org/apidoc"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  i18n_domain="zope">
+
+  <view
+      name="apidoc" type="*"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".disabled.apidocNamespace"
+      />
+  <adapter
+      name="apidoc"
+      provides="zope.traversing.interfaces.ITraversable" for="*"
+      factory=".disabled.apidocNamespace"
+      />
+
+  <include package=".browser" file="disabled.zcml" />
+
+</configure>

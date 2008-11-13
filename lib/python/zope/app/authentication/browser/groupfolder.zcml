@@ -1,0 +1,55 @@
+<configure 
+    xmlns="http://namespaces.zope.org/browser"
+    i18n_domain="zope"
+    >
+
+<editform
+    schema="..groupfolder.IGroupInformation"
+    label="Change group information"
+    name="edit.html"
+    menu="zmi_views" title="Edit"
+    permission="zope.ManageServices"
+    />
+
+<addform
+    schema="..groupfolder.IGroupInformation"
+    content_factory="..groupfolder.GroupInformation"
+    label="Add group information"
+    name="AddGroupInformation.html"
+    permission="zope.ManageServices"
+    fields="title description"
+    />
+
+<addMenuItem
+    title="Group"
+    description="A principals group"
+    class="..groupfolder.GroupInformation"
+    permission="zope.ManageServices"
+    view="AddGroupInformation.html"
+    />
+
+<addform
+    schema="..groupfolder.IGroupFolder"
+    content_factory="..groupfolder.GroupFolder"
+    arguments="prefix"
+    label="Add group folder"
+    name="AddGroupFolder.html"
+    permission="zope.ManageServices"
+    />
+
+<addMenuItem
+    title="Group Folder"
+    description="A Group folder"
+    class="..groupfolder.GroupFolder"
+    permission="zope.ManageServices"
+    view="AddGroupFolder.html"
+    />
+
+<containerViews
+    for="..groupfolder.IGroupFolder"
+    contents="zope.ManageServices"
+    index="zope.ManageServices"
+    add="zope.ManageServices"
+    />
+
+</configure> 

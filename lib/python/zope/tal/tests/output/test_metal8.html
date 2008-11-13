@@ -1,0 +1,19 @@
+<html metal:define-macro="page" i18n:domain="zope">
+<body>
+<div metal:define-macro="workspace">
+<div metal:define-slot="body">
+Default body
+</div>
+</div>
+</body>
+</html>
+
+<html metal:use-macro="page" i18n:domain="zope">
+<body>
+<div>
+<div metal:fill-slot="body">
+Filled-in body
+</div>
+</div>
+</body>
+</html>

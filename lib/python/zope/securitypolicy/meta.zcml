@@ -1,0 +1,19 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directive namespace="http://namespaces.zope.org/zope"
+                  name="grant"
+                  schema=".metadirectives.IGrantDirective"
+                  handler=".metaconfigure.grant" />
+
+  <meta:directive namespace="http://namespaces.zope.org/zope"
+                  name="grantAll"
+                  schema=".metadirectives.IGrantAllDirective"
+                  handler=".metaconfigure.grantAll" />
+
+  <meta:directive namespace="http://namespaces.zope.org/zope"
+                  name="role"
+                  schema=".metadirectives.IDefineRoleDirective"
+                  handler=".metaconfigure.defineRole" />
+
+</configure>

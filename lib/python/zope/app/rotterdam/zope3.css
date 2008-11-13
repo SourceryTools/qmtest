@@ -1,0 +1,591 @@
+/*
+** Zope3 style sheet for CSS2-capable browsers.
+**
+*/
+
+/*
+* { border: 1px dotted red }
+*/
+
+
+/* Basic Elements */
+
+body {
+    font: 85% Helvetica, Arial, sans-serif;
+    background: White;
+    color: Black;
+    margin: 0;
+    padding: 0;
+/* These work in IE only, changes the look of the scrollbar + textareas */
+    scrollbar-base-color: White;
+    scrollbar-highlight-color: White;
+    scrollbar-track-color: #F8F8F8;
+    scrollbar-darkshadow-color: #F8F8F8;
+    scrollbar-3dlight-color: #369;
+    scrollbar-shadow-color: #369;
+    scrollbar-arrow-color: Black;
+}
+
+table {
+    font-size: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: #369;
+    background-color: transparent;
+}
+
+a[href]:active {
+    text-decoration: underline;
+}
+
+
+table {
+
+}
+
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+p {
+    margin: 0.5em 0em 1em 0em;
+    line-height: 1.5em;
+}
+
+p a:visited {
+    color: Purple;
+    background-color: transparent;
+}
+
+p a:active {
+    color: Red;
+    background-color: transparent;
+}
+
+p img {
+    border: 0;
+    margin: 0;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #369;
+    background-color: transparent;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: Black;
+    clear: left;
+    font: 100% bold Verdana, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #369;
+}
+
+h1 {
+    font-size: 160%;
+}
+
+h2 {
+    font-size: 150%;
+}
+
+h3 {
+    font-size: 140%;
+}
+
+h4 {
+    font-size: 120%;
+}
+
+h5 {
+    font-size: 100%;
+}
+
+h6 {
+    font-size: 80%;
+}
+
+ul {
+    line-height: 1.5em;
+    /* list-style-image: url("bullet.gif"); */
+    margin-left: 2em;
+    padding:0;
+}
+
+ol {
+    line-height: 1.5em;
+    margin-left: 2em;
+    padding:0;
+}
+
+dl {
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    line-height: 1.5em;
+    margin-bottom: 1em;
+}
+
+
+fieldset {
+    border: 1px solid #A0A0A0;
+    /*
+    margin: 2em 0em 1em 0em;
+    padding: 1em 0em;
+    */
+    margin: 0em 0em 2em 0em;
+    padding: 0 1em 1em 1em;
+}
+
+legend {
+    background: White;
+    padding: 0.5em;
+}
+
+
+form {
+    border: none;
+    margin: 0;
+}
+
+textarea {
+    color: Black;
+    width: 88%;
+    padding: 0.1em;
+}
+
+input {
+    font: normal 100% Verdana, Helvetica, Arial, sans-serif;
+    color: Black;
+    vertical-align: middle;
+    margin-bottom: 1px; /* IE bug fix */
+    padding: 0.1em;
+}
+
+select {
+    font: normal 100% Verdana, Helvetica, Arial, sans-serif;
+    vertical-align: top;
+}
+
+abbr, acronym, .explain {
+    border-bottom: 1px dotted Black;
+    color: Black;
+    background-color: transparent;
+    cursor: help;
+}
+
+q {
+    font-family: Times, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 120%;
+}
+
+blockquote {
+    font-family: Times, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 120%;
+}
+
+code {
+    font-size: 120%;
+    color: Black;
+    background-color: #CCCCCC;
+}
+
+pre {
+    font-size: 120%;
+    padding: 1em;
+    border: 1px solid #A0A0A0;
+    color: Black;
+    background-color: #CCCCCC;
+}
+
+.netscape4 {
+    display: none;
+}
+
+
+/* Styles for xmltree */
+
+#navtreecontents a {
+    cursor: pointer;
+    height: 20px;
+}
+
+#navtreecontents loading {
+    display: block;
+    padding-left: 31px;
+    height: 18px;
+}
+
+#navtreecontents expand {
+    background-repeat: no-repeat;
+    padding-left: 14px;
+    display: inline;
+    cursor: pointer;
+}
+
+#navtreecontents icon {
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    display: inline;
+    cursor: auto;
+}
+
+#navtreecontents icon.selected {
+    background-color: #ffa;
+}
+
+#navtreecontents collection {
+    display: block;
+    margin-left: 10px;
+/*  border: red solid 1pt; */
+    height: auto;
+}
+
+
+
+/* Structural elements */
+
+
+#global {
+    border-bottom: 0.1em solid black;
+}
+
+#global #userDetails {
+    float:right;
+    margin-top: 1.2em;
+    padding-right: 0.5em;
+}
+
+#actions {
+    background: #369;
+    border-left: 1px solid #369;
+    border-right: 1px solid #369;
+    padding: 0.3em;
+    color: Black;
+    height: 1.3em;
+    border-collapse: collapse;
+}
+
+#actions a {
+    color: White;
+    float: right;
+    border-left: 1px dashed white;
+    padding: 0 0.5em;
+}
+
+#actions a:hover {
+    color: black;
+    background-color: White;
+}
+
+#breadcrumbs {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    border: 1px solid #369;
+    border-style: none none solid none;
+    margin: 0;
+}
+
+
+#navigators {
+    float: left;
+    width: 15%;
+    padding: 1em;
+    overflow: hidden;
+}
+
+#workspace {
+    width: 79%;
+    float: left;
+}
+
+#content {
+    float: left;
+    /* width: 75%; */
+}
+
+#context_information {
+    padding-top: 1em;
+    width: 15%;
+    float: left;
+    padding-left: 0.5em;
+}
+
+#helpers {
+}
+
+#inspectors {
+}
+
+#footer {
+    border-bottom: 1px solid black;
+    float: left;
+    clear: both;
+}
+
+input.textType {
+    width: 88%; /* Same as textarea */
+}
+
+input.editcheck {
+    float:left;
+    position:relative;
+    top:1em;
+}
+
+div.row {
+    padding-top: 1em;
+}
+
+/*
+div.label {
+    #clear: both;
+    padding-top: 10px;
+}
+*/
+
+/* div.row div.field doesn't appear to be selecting. div.row div
+       is a workaround */
+/* This seems to work in Firefox 1.0 and IE6. */
+
+div.row div.field {
+    clear: left;
+    padding-top: 1px;
+}
+
+div.row div.label {
+    background: #369;
+    color: #fff;
+    padding: 0.1em 0.5em 0.1em 0.5em; /* Same as .itemViews */
+    border: 1px solid #369; /* Same as .itemViews */
+    margin: 0;
+    float: left;
+    clear: both;
+}
+
+div.row span.error {
+    background: red;
+    color: white;
+    padding: 0.1em 0.5em 0.1em 0.5em; /* Same as .itemViews */
+    border: 1px solid red; /* Same as .itemViews */
+    margin: 0;
+    float: left;
+    clear: both;
+}
+
+div.box {
+    margin: 0em 0em 2em 0em;
+    padding: 0em;
+}
+
+div.box h4 {
+    background: #CCCCCC;
+    border: 1px solid #CCCCCC;
+    border-style: solid solid none solid;
+    color: #808080;
+    padding: 0.3em 1em;
+    display: block;
+    font-size: 1em;
+    height: 1em;
+    text-align: center;
+}
+
+
+div.box div.body {
+    background: transparent;
+    border-collapse: collapse;
+    border: 1px solid #CCCCCC;
+}
+
+div.box .content {
+    padding: 0.5em;
+}
+
+div.box h1,
+div.box h2,
+div.box h3,
+div.box h4 {
+    margin: 0;
+}
+
+div.box .even {
+    background-color: #F8F8F8;
+}
+
+div.box .odd {
+    background-color: White;
+}
+
+
+#metadata .label {
+    font-size: 80%;
+}
+
+.itemViews {
+    background: transparent;
+    border-collapse: collapse;
+    border-bottom: 1px solid #369;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 1em;
+    margin-top: 0.8em;
+    white-space: nowrap;
+}
+
+.itemViews a {
+    background: transparent;
+    border: 1px solid #369;
+    color: Black;
+    font-weight: normal;
+    margin-right: 0.5em;
+    padding: 0.1em 0.5em 0.1em 0.5em;
+}
+
+.itemViews a.selected {
+    background: #369;
+    border-bottom: #369 1px solid;
+    color: White;
+    font-weight: normal;
+}
+
+
+.itemViews a:hover {
+    background-color: #369;
+    color: White;
+}
+
+#viewspace {
+    border-collapse: collapse;
+    padding: 10px;
+    margin: 0;
+}
+
+table.listingdescription, table.listing {
+    /* The default table for document listings. Contains name, document types, modification times etc in a file-browser-like fashion */
+    border-collapse: collapse;
+    border-left: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    margin: 1em 0em 1em 0em;
+/*  clear: both; */
+}
+
+table.listingdescription {
+    width: 100%
+}
+
+table.listingdescription th, table.listing th {
+    background: #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    color: #808080;
+    font-weight: normal;
+    padding: 0em 1em 0em 1em;
+    white-space: nowrap;
+}
+
+table.listingdescription td.top, table.listing td.top {
+    border-left: 1px solid White;
+    border-top: 1px solid White ! important;
+    border-right: 1px solid White ! important;
+    text-align: right ! important;
+    padding: 0em 0em 1em 0em;
+    /* insane IE row bug workaround */
+    position: relative;
+    left: -1px;
+    top: -1px;
+}
+
+table.listingdescription tr.odd, table.listing tr.odd {
+    /*every second line should be shaded */
+    background: White;
+}
+
+table.listingdescription tr.even, table.listing tr.even {
+    background: #F8F8F8;
+}
+
+
+table.listing td {
+    border-right: 1px solid #CCCCCC;
+    padding: 0em 1em;
+    text-align: left;
+}
+
+
+table.listingdescription img, table.listing img {
+    vertical-align: middle;
+}
+
+table.listingdescription td {
+    border-right: 1px solid #CCCCCC;
+    padding: 5px;
+    text-align: left;
+}
+
+
+/*colorize the matrix table used in grant.html*/
+table.matrix td.default {
+    background: green;
+}
+
+
+table.matrix td.changed {
+    background: red;
+}
+
+
+div.spacer {
+    clear: both;
+}
+
+
+.registrationSummary {
+    margin-left: 2em;
+    margin-bottom: 1em;
+}
+.registrationSummary .usageSummary {
+    font-weight: bold;
+}
+.registrationSummary .modificationLink {
+    display: block;
+}
+
+
+div.message {
+    background: #FFCE7B;
+    border: 1px solid #FFA500;
+    color: Black;
+    font: bold 80% Verdana, Helvetica, Arial, sans-serif;
+    margin: 2em 0em 1em 0em;
+    padding: 0.5em 1em;
+    vertical-align: middle;
+}
+
+div.message a {
+    color: Black;
+}
+
+/* Style for page error divs.  Use this for displaying errors for a
+   page as a whole.
+ */
+div.page_error {
+    background: #FFCE7B;
+    font: bold 80% Verdana, Helvetica, Arial, sans-serif;
+    padding: 0.5em 1em;
+    vertical-align: middle;
+}

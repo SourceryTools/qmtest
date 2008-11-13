@@ -1,0 +1,44 @@
+<zope:configure 
+   xmlns:zope="http://namespaces.zope.org/zope"
+   xmlns="http://namespaces.zope.org/browser">
+
+<!-- ZopeDatabaseAdapter default views -->
+
+  <!-- TODO: need an index.html that gives the source and is the def view -->
+
+  <view
+      name="+"
+      for="zope.rdb.interfaces.IZopeDatabaseAdapter"
+      class="zope.app.container.browser.adding.Adding"
+      permission="zope.ManageServices" />
+
+  <pages
+      for="zope.rdb.interfaces.IManageableZopeDatabaseAdapter"
+      permission="zope.ManageServices"
+      class=".rdb.Connection">
+
+    <page name="editForm.html" template="rdbconnection.pt"
+          menu="zmi_views" title="Edit"/>
+    <page name="edit.html" attribute="edit" />
+    <page name="connect.html" attribute="connect" />
+    <page name="disconnect.html" attribute="disconnect" />
+
+  </pages>
+
+  <pages
+      for="zope.rdb.interfaces.IManageableZopeDatabaseAdapter"
+      permission="zope.ManageServices"
+      class=".rdb.TestSQL">
+    <page name="testForm.html" template="rdbtestsql.pt"
+          menu="zmi_views" title="[test-page-title] Test"/>
+    <page name="test.html" template="rdbtestresults.pt" />
+
+  </pages>
+
+  <defaultView 
+      for="zope.rdb.interfaces.IManageableZopeDatabaseAdapter"
+      name="editForm.html" />
+
+  <zope:include file="gadflyda.zcml" />
+
+</zope:configure>

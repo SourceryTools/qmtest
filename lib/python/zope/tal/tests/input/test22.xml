@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<body xmlns:tal="http://xml.zope.org/namespaces/tal">
+    <span tal:content="default">content</span>
+    <span tal:omit-tag="" tal:content="default">omit</span>
+    <span tal:replace="default">replace</span>
+</body>

@@ -1,0 +1,36 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!--
+  <utility
+      name="zope.app" 
+      provides=".interfaces.ISchemaManager"
+      factory=".generations.SchemaManager"
+      >
+  
+      Provide an *initial* schema manager for zope.
+  
+      We can use a factory here, because the generation is 0.
+  
+      When we get to generation 1, we'll have to actually create
+      a manager instance with the necessary parameters and a package of
+      evolution scripts.
+  </utility>
+  -->
+  
+  <include package=".browser" />
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <apidoc:bookchapter
+        id="generations"
+        title="Generations"
+        doc_path="README.txt"
+        />
+
+  </configure>
+
+</configure>

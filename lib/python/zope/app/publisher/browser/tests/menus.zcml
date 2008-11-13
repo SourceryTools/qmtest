@@ -1,0 +1,63 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="zope">
+
+  <browser:menu 
+      id="test_id" 
+      title="test menu" />
+
+  <browser:menu 
+      id="test_sub_id" 
+      title="test sub menu 2" />
+
+  <browser:menuItems 
+      menu="test_id" 
+      for="zope.interface.Interface">
+    <browser:menuItem action="a1" title="t1" />
+    <browser:subMenuItem submenu="test_sub_id" title="s1" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I1">
+    <browser:menuItem action="a2" title="t2" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I11">
+    <browser:menuItem action="a3" title="t3" filter="context" />
+    <browser:menuItem action="a4" title="t4" filter="not:context" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I111">
+    <browser:menuItem action="a5" title="t5" />
+    <browser:menuItem action="a6" title="t6" />
+    <browser:menuItem action="f7" title="t7" />
+    <browser:menuItem action="u8" title="t8" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I12">
+    <browser:menuItem action="a9" title="t9" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_sub_id"
+      for=".tests.test_menudirectives.I111">
+    <browser:menuItem action="a10" title="t10" />
+  </browser:menuItems>
+
+  <browser:menuItems 
+      menu="test_id"
+      for=".tests.test_menudirectives.I111"
+      layer=".tests.test_menudirectives.IMyLayer">
+    <browser:menuItem action="a11" title="t11" />
+    <browser:subMenuItem submenu="test_sub_id" title="s2" />
+  </browser:menuItems>
+
+</configure>

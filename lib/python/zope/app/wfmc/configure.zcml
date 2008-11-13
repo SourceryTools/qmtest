@@ -1,0 +1,34 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="zope"
+    >
+
+  <!-- Registering documentation with API doc -->
+  <configure
+      xmlns:apidoc="http://namespaces.zope.org/apidoc"
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have apidoc">
+
+    <configure package="zope.wfmc">
+      <apidoc:bookchapter
+          id="wfmc"
+          title="WfMC Workflows"
+          />
+      <apidoc:bookchapter
+          id="xpdl"
+          title="Workflows using XPDL"
+          doc_path="README.txt"
+          parent="wfmc"
+          />
+    </configure>
+
+    <apidoc:bookchapter
+        id="zcml"
+        title="Registering XPDL using ZCML"
+        doc_path="zcml.txt"
+        parent="wfmc"
+        />
+
+  </configure>
+
+</configure>

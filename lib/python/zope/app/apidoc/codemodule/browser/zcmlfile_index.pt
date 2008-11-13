@@ -1,0 +1,65 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<head>
+  <base href=""
+        metal:fill-slot="headers"
+        tal:attributes="href request/URL/-1" />
+
+  <style metal:fill-slot="style_slot" type="text/css" media="all">
+
+.directive {
+  font-family: monospace;
+  padding: 1px;
+  margin: 2px 0px;
+}
+
+.tagName {
+  color: darkred;
+}
+
+.attributeName {
+  color: blue;
+}
+
+.attributeValue {
+  color: darkgreen;
+}
+
+.commentElement {
+  font-family: monospace;
+  font-style: italic;
+  padding: 1px;
+  margin: 2px 0px;
+  color: darkblue;
+}
+
+.editElement {
+  background-color: EEEEEE;
+}
+
+.required {
+  font-weight: bold;
+  font-style: italic;
+}
+
+div.highlight {
+  background: #fffbbe;
+  border: 1pt solid #0000c0;
+}
+
+  </style>
+
+</head>
+
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header">
+    <span class="pre-header" i18n:translate="">ZCML File</span><br />
+    <span tal:replace="context/zope:name">configure.zcml</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
+  <div tal:replace="structure context/rootElement/@@display" />
+
+</body>
+</html>

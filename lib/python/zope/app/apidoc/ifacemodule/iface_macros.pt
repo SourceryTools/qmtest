@@ -1,0 +1,155 @@
+<metal:block define-macro="attribute" i18n:domain="zope">
+  <b><code tal:content="attribute/name">attr</code></b>
+  <span i18n:translate="">(Attribute)</span>
+  <br />
+  <div class="inline-documentation" tal:content="structure attribute/doc">
+    attr desc
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="field" i18n:domain="zope">
+  <b tal:attributes="class field/required_string">
+    <code tal:content="field/name">field</code>
+    <span tal:condition="field/required">*</span>
+  </b>
+  -
+  <a href=""
+     tal:attributes="href string:$rootURL/Code/${field/class/path}/index.html">
+    <code tal:content="field/class/name">Field</code>
+  </a>
+
+  (<span i18n:translate="">default</span> =
+        <code tal:content="field/default" />)
+  <br />
+  <div tal:content="structure field/title" class="field-title">title</div>
+  <span tal:content="structure field/description">field desc</span>
+</metal:block>
+
+
+<metal:block define-macro="method">
+  <b><code
+      tal:content="string:${method/name}${method/signature}" />
+  </b><br>
+  <div class="inline-documentation" tal:content="structure method/doc">
+    method desc
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="methods" i18n:domain="zope">
+  <div metal:define-slot="header">
+    <h2 class="details-section" i18n:translate="">Methods</h2>
+  </div>
+  <div class="indent">
+
+    <ul class="attr-list" tal:condition="methods">
+      <li tal:repeat="method methods">
+        <metal:block use-macro="context/@@interface_macros/method" />
+      </li>
+    </ul>
+
+    <p tal:condition="not: methods">
+      <em i18n:translate="">There are no methods specified.</em>
+    </p>
+
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="attributes_fields" i18n:domain="zope">
+  <div metal:define-slot="header">
+    <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
+  </div>
+  <div class="indent">
+
+    <ul class="attr-list"
+        tal:condition="python: attributes or fields">
+      <li tal:repeat="attribute attributes">
+        <metal:block use-macro="context/@@interface_macros/attribute" />
+      </li>
+      <li tal:repeat="field fields">
+        <metal:block use-macro="context/@@interface_macros/field" />
+      </li>
+    </ul>
+
+    <p tal:condition="python: not (attributes or fields)">
+      <em i18n:translate="">There are no attributes or fields specified.</em>
+    </p>
+
+    <p tal:condition="python: attributes or fields">
+      <em><b class="required">*</b> =
+      <span i18n:translate="">required</span></em>
+    </p>
+
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="views" i18n:domain="zope">
+  <div class="indent">
+    <ul class="attr-list" tal:condition="Views">
+      <li tal:repeat="View Views">
+        <metal:block use-macro="context/@@interface_macros/View" />
+      </li>
+    </ul>
+    <p tal:condition="not:Views">
+      <em i18n:translate="">There are no views available.</em>
+    </p>
+  </div>
+</metal:block>
+
+
+<metal:block define-macro="viewcategory" i18n:domain="zope">
+<tal:block define="elementId string:views.${type}.${name}">
+
+  <h4>
+    <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+    <span i18n:translate="" tal:content="title">View title</span>
+  </h4>
+  <metal:block use-macro="context/@@apidoc_macros/display" >
+  <div metal:fill-slot="content">
+    <metal:block use-macro="context/@@interface_macros/views" />
+  </div>
+  </metal:block>
+
+</tal:block>
+</metal:block>
+
+
+<metal:block define-macro="viewtype" i18n:domain="zope">
+<tal:block define="elementId string:views.${type}">
+
+  <h3 class="details-section">
+    <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+    <span i18n:translate="" tal:content="title">Browser</span>
+  </h3>
+  <metal:block use-macro="context/@@apidoc_macros/display" >
+  <div class="indent" metal:fill-slot="content"
+    tal:define="titles view/getViewClassTitles">
+
+    <tal:block define="Views specific_views;
+                       name string:Specific;
+                       title titles/specific;
+                       show show_specific">
+      <metal:block use-macro="context/@@interface_macros/viewcategory" />
+    </tal:block>
+
+    <tal:block define="Views extended_views;
+                       name string:Extended;
+                       title titles/extended;
+                       show show_extended">
+      <metal:block use-macro="context/@@interface_macros/viewcategory" />
+    </tal:block>
+
+    <tal:block define="Views generic_views;
+                       name string:Generic;
+                       title titles/generic;
+                       show show_generic">
+      <metal:block use-macro="context/@@interface_macros/viewcategory" />
+    </tal:block>
+
+  </div>
+  </metal:block>
+</tal:block>
+</metal:block>

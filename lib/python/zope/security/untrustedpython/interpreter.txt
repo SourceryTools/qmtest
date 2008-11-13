@@ -1,0 +1,112 @@
+Untrusted Python interpreter
+============================
+
+The interpreter module provides very basic Python interpreter
+support.  It combined untrusted code compilation with safe builtins
+and an exec-like API.  The exec_src function can be used to execute
+Python source:
+
+  >>> from zope.security.untrustedpython.interpreter import exec_src
+  >>> d = {}
+  >>> exec_src("x=1", d)
+  >>> d['x']
+  1
+
+  >>> exec_src("x=getattr", d)
+
+
+Note that the safe builtins dictionary is inserted into the
+dictionary:
+
+  >>> from zope.security.untrustedpython.builtins import SafeBuiltins
+  >>> d['__builtins__'] == SafeBuiltins
+  True
+
+All of the non-basic items in the safe builtins are proxied:
+
+  >>> exec_src('str=str', d)
+  >>> from zope.security.proxy import Proxy
+  >>> type(d['str']) is Proxy
+  True
+
+Note that, while you can get to the safe `__builtins__`'s dictionary,
+you can't use the dictionary to mutate it:
+
+  >>> from zope.security.interfaces import ForbiddenAttribute
+
+  >>> try: exec_src('__builtins__.__dict__["x"] = 1', d)
+  ... except ForbiddenAttribute: print 'Forbidden!'
+  Forbidden!
+
+  >>> try: exec_src('del __builtins__.__dict__["str"]', d)
+  ... except ForbiddenAttribute: print 'Forbidden!'
+  Forbidden!
+
+  >>> try: exec_src('__builtins__.__dict__.update({"x": 1})', d)
+  ... except ForbiddenAttribute: print 'Forbidden!'
+  Forbidden!
+
+Because the untrusted code compiler is used, you can't use exec,
+raise, or try/except statements:
+
+  >>> exec_src("exec 'x=1'", d)
+  Traceback (most recent call last):
+  ...
+  SyntaxError: Line 1: exec statements are not supported
+  
+Any attribute-access results will be proxied:
+
+  >>> exec_src("data = {}\nupdate = data.update\nupdate({'x': 'y'})", d)
+  >>> type(d['update']) is Proxy
+  True
+
+In this case, we were able to get to and use the update method because
+the data dictionary itself was created by the untrusted code and was,
+thus, unproxied.
+
+You can compile code yourself and call exec_code instead:
+
+  >>> from zope.security.untrustedpython.rcompile import compile
+  >>> code = compile('x=2', '<mycode>', 'exec')
+  >>> d = {}
+  >>> from zope.security.untrustedpython.interpreter import exec_code
+  >>> exec_code(code, d)
+  >>> d['x']
+  2
+
+This is useful if you are going to be executing the same expression
+many times, as you can avoid the cost of repeated comilation.
+
+Compiled Programs
+-----------------
+
+A slightly higher-level interface is provided by compiled programs.
+These make it easier to safetly safe the results of compilation:
+
+  >>> from zope.security.untrustedpython.interpreter import CompiledProgram
+  >>> p = CompiledProgram('x=2')
+  >>> d = {}
+  >>> p.exec_(d)
+  >>> d['x']
+  2
+    
+When you execute a compiled program, you can supply an object with a
+write method to get print output:
+
+  >>> p = CompiledProgram('print "Hello world!"')
+  >>> import cStringIO
+  >>> f = cStringIO.StringIO()
+  >>> p.exec_({}, output=f)
+  >>> f.getvalue()
+  'Hello world!\n'
+
+
+Compiled Expressions
+--------------------
+
+You can also precompile expressions:
+
+  >>> from zope.security.untrustedpython.interpreter import CompiledExpression
+  >>> p = CompiledExpression('x*2')
+  >>> p.eval({'x': 2})
+  4

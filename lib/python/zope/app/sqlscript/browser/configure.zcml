@@ -1,0 +1,76 @@
+<configure
+    xmlns='http://namespaces.zope.org/zope'
+    xmlns:browser='http://namespaces.zope.org/browser'
+    i18n_domain='zope'
+    >
+
+  <browser:addMenuItem
+      title="SQL Script"
+      description="A content-based script to execute dynamic SQL."
+      class="zope.app.sqlscript.SQLScript"
+      permission="zope.ManageContent"
+      view="zope.app.sqlscript.SQLScript"
+      />
+
+  <browser:addform
+      schema="zope.app.sqlscript.interfaces.ISQLScript"
+      label="Add a SQL Script"
+      content_factory="..sqlscript.SQLScript"
+      keyword_arguments="connectionName source arguments"
+      name="zope.app.sqlscript.SQLScript"
+      permission="zope.ManageContent"
+      template="add.pt"
+      class=".sqlscript.SQLScriptAdd"
+      />
+
+  <browser:editform
+      schema="zope.app.sqlscript.interfaces.ISQLScript"
+      name="edit.html"
+      menu="zmi_views"
+      label="Edit an SQL script"
+      permission="zope.ManageContent"
+      template="edit.pt"
+      class=".sqlscript.SQLScriptEdit"
+      />
+
+  <browser:pages
+      for="zope.app.sqlscript.interfaces.ISQLScript"
+      permission="zope.View"
+      class=".sqlscript.SQLScriptTest" >
+
+    <browser:page
+        name="test.html"
+        template="test.pt" 
+        menu="zmi_views"
+        title="[test-page-title] Test"
+        />
+    <browser:page
+        name="testResults.html"
+        template="testresults.pt"
+        />
+
+  </browser:pages>
+
+  <browser:pages
+      for="zope.app.sqlscript.interfaces.ISQLScript"
+      permission="zope.ManageBindings"
+      class="zope.app.cache.browser.cacheable.CacheableView"
+      >
+
+    <browser:page
+        name="Caching.html"
+        attribute="form"
+        menu="zmi_views" title="Caching"
+        />
+    <browser:page
+        name="ChangeCaching.html"
+        attribute="action"
+        />
+    <browser:page
+        name="InvalidateCache.html"
+        attribute="invalidate"
+        />
+
+  </browser:pages>
+
+</configure>

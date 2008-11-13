@@ -1,0 +1,51 @@
+<html metal:use-macro="views/apidoc_macros/static_menu"
+    i18n:domain="zope">
+<body>
+
+  <div metal:fill-slot="menu" class="small">
+
+
+    <div>
+      <span i18n:translate="">Interface Finder:</span>
+    </div>
+    <form action="" method="post"
+          tal:attributes="action request/URL" name="searchform">
+	<!--
+      <input type="checkbox" name="name_only" value="on" checked="checked" />
+      <tal:block i18n:translate="">name only search</tal:block>
+		-->
+      <br />
+      <input type="text" name="search_str" 
+             style="font-size: 80%; width=95%"
+             tal:attributes="value request/search_str|nothing" 
+		     onKeyup="javascript:simplegetSearchResult(document.searchform.search_str.value)" />
+	  <!--	
+      <input type="button" name="Find" value="Find" 
+		  onClick="javascript:getSearchResult(document.searchform.search_str.value)"
+             i18n:attributes="value find-button" style="font-size: 80%"/>
+	  -->
+    </form>
+
+    <div>
+      <span i18n:translate="">Search results:</span><br /><br />
+    </div>	  
+    <div tal:define="ifaces view/findAllInterfaces"
+         tal:condition="ifaces" id="resultlist">
+
+      <div tal:repeat="info ifaces" style="display:block" tal:attributes="id info/counter ; doc info/doc">
+        <a href="" target="main"
+           tal:attributes="href info/url"
+           tal:content="info/name">
+          zope.app.component.interfaces.ILocalSiteManager
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <p metal:fill-slot="post_menu" class="small" i18n:translate="">
+    Note: These are only interfaces that are registered with the site manager.
+  </p>
+
+</body>
+</html>

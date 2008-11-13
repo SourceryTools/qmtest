@@ -1,0 +1,1804 @@
+=====
+Forms
+=====
+
+Forms are web components that use widgets to display and input data.
+Typically a template displays the widgets by accessing an attribute or
+method on an underlying class.
+
+This document describes some tools to assist in form development.  In
+the examples, we will show "forms" that are generated with simple
+print statements to keep the examples simpler.  Most forms will use
+templates in practice.
+
+This document starts with low-level APIs.  We eventually build up to
+higher-level APIs that allow forms to be defined with just a little bit
+of meta data.  Impatient readers may wish to skip to the later
+sections, especially the section on `Helpful base classes`_. :)
+
+A form class can define ordered collections of "form fields" using
+the `Fields` constructor. Form fields are distinct from and build on
+schema fields.  A schema field specified attribute values.  Form
+fields specify how a schema field should be used in a form.  The
+simplest way to define a collection of form fields is by passing a
+schema to the `Fields` constructor:
+
+    >>> from zope import interface, schema
+    >>> class IOrder(interface.Interface):
+    ...     identifier = schema.Int(title=u"Identifier", readonly=True)
+    ...     name = schema.TextLine(title=u"Name")
+    ...     min_size = schema.Float(title=u"Minimum size")
+    ...     max_size = schema.Float(title=u"Maximum size")
+    ...     color = schema.TextLine(title=u"Color", required=False)
+    ...     now = schema.Datetime(title=u"Now", readonly=True)
+
+    >>> from zope.formlib import form
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder)
+
+This sets up a set of form fields from the interface, IOrder.
+
+    >>> len(MyForm.form_fields)
+    6
+
+    >>> [w.__name__ for w in MyForm.form_fields]
+    ['identifier', 'name', 'min_size', 'max_size', 'color', 'now']
+
+We can access individual form fields by name:
+
+    >>> MyForm.form_fields['name'].__name__
+    'name'
+
+We can also select and order subsets using the select method of form fields:
+
+    >>> [w.__name__ for w in MyForm.form_fields.select('name', 'identifier')]
+    ['name', 'identifier']
+
+or by omitting fields:
+
+    >>> [w.__name__ for w in MyForm.form_fields.omit('now', 'identifier')]
+    ['name', 'min_size', 'max_size', 'color']
+
+We can omit read-only fields using the omit_readonly option when
+setting up the fields:
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, omit_readonly=True)
+    >>> [w.__name__ for w in MyForm.form_fields]
+    ['name', 'min_size', 'max_size', 'color']
+
+
+Getting HTML
+============
+
+Having defined form fields, we can use them to generate HTML
+forms. Typically, this is done at run time by form class
+instances. Let's look at an example that displays some input widgets:
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, omit_readonly=True)
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self, ignore_request=False):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request,
+    ...             ignore_request=ignore_request)
+    ...         return '\n'.join([w() for w in widgets])
+
+Here we used ``form.setUpWidgets`` to create widget instances from our
+form-field specifications.  The second argument to ``setUpWidgets`` is a
+form prefix.  All of the widgets on this form are given the same
+prefix.  This allows multiple forms to be used within a single form
+tag, assuming that each form uses a different form prefix.
+
+Now, we can display the form:
+
+    >>> from zope.publisher.browser import TestRequest
+    >>> request = TestRequest()
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value=""  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.color" name="form.color" size="20"
+           type="text" value=""  />
+
+
+If the request contains any form data, that will be reflected in the
+output:
+
+    >>> request.form['form.name'] = u'bob'
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.color" name="form.color"
+           size="20" type="text" value=""  />
+
+
+Sometimes we don't want this behavior: we want to ignore the request values,
+particularly after a form has been processed and before it is drawn again.
+This can be accomplished with the 'ignore_request' argument in
+setUpWidgets.
+
+    >>> print MyForm(None, request)(ignore_request=True)
+    ... # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value=""  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <input class="textType" id="form.color" name="form.color" size="20"
+           type="text" value=""  />
+
+
+Reading data
+============
+
+Of course, we don't just want to display inputs.  We want to get the
+input data.  We can use getWidgetsData for that:
+
+    >>> from zope.testing.doctestunit import pprint
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, omit_readonly=True)
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request)
+    ...
+    ...         if 'submit' in self.request:
+    ...             data = {}
+    ...             errors = form.getWidgetsData(widgets, 'form', data)
+    ...             if errors:
+    ...                 print 'There were errors:'
+    ...                 for error in errors:
+    ...                     print error
+    ...         else:
+    ...             data = None
+    ...
+    ...         for w in widgets:
+    ...             print w()
+    ...             error = w.error()
+    ...             if error:
+    ...                 print error
+    ...
+    ...         return data
+
+We check for a 'submit' variable in the form and, if we see it, we try
+to get the data, and errors.  We call `getWidgetsData`, passing:
+
+- Our widgets
+
+- The form prefix, and
+
+- A data dictionary to contain input values found
+
+The keys in the data dictionary have the form prefix stripped off.
+
+If there are errors, we print them.  When we display the widgets, we
+also check for errors and show them if present.  Let's add a submit
+variable:
+
+    >>> request.form['form.min_size'] = u''
+    >>> request.form['form.max_size'] = u''
+    >>> request.form['submit'] = u'Submit'
+    >>> MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    There were errors:
+    ('min_size', u'Minimum size', )
+    ('max_size', u'Maximum size', )
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    <input class="textType" id="form.color" name="form.color" size="20"
+           type="text" value=""  />
+    {'name': u'bob'}
+
+
+Note that we got an error because we omitted the values for min_size
+and max size.  If we provide an invalid value, we'll get an error too:
+
+    >>> request.form['form.min_size'] = u'bob'
+    >>> MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    There were errors:
+    (u'Invalid floating point data',
+     <exceptions.ValueError instance at ...>)
+    ('max_size', u'Maximum size', )
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="bob"  />
+    <span class="error">Invalid floating point data</span>
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    <input class="textType" id="form.color" name="form.color" size="20" 
+           type="text" value=""  />
+    {'name': u'bob'}
+
+If we provide valid data, we'll get the data back:
+
+    >>> request.form['form.min_size'] = u'42'
+    >>> request.form['form.max_size'] = u'142'
+    >>> pprint(MyForm(None, request)()) # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    <input class="textType" id="form.color" name="form.color" size="20"
+           type="text" value=""  />
+    {'max_size': 142.0,
+     'min_size': 42.0,
+     'name': u'bob'}
+
+It's up to the form to decide what to do with the information.
+
+Invariants
+==========
+
+The `getWidgetsData` function checks individual field constraints.
+Interfaces can also provide invariants that we may also want to check.
+The `checkInvariants` function can be used to do that.
+
+In our order example, it makes sense to require that the maximum is
+greater than or equal to the minimum:
+
+    >>> class IOrder(interface.Interface):
+    ...     identifier = schema.Int(title=u"Identifier", readonly=True)
+    ...     name = schema.TextLine(title=u"Name")
+    ...     min_size = schema.Float(title=u"Minimum size")
+    ...     max_size = schema.Float(title=u"Maximum size")
+    ...     now = schema.Datetime(title=u"Now", readonly=True)
+    ...
+    ...     @interface.invariant
+    ...     def maxGreaterThanMin(order):
+    ...         if order.max_size < order.min_size:
+    ...             raise interface.Invalid("Maximum is less than Minimum")
+
+We can update our form to check the invariant using 'checkInvariants':
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, omit_readonly=True)
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request)
+    ...
+    ...         if 'submit' in self.request:
+    ...             data = {}
+    ...             errors = form.getWidgetsData(widgets, 'form', data)
+    ...             invariant_errors = form.checkInvariants(self.form_fields,
+    ...                                                     data)
+    ...             if errors:
+    ...                 print 'There were field errors:'
+    ...                 for error in errors:
+    ...                     print error
+    ...
+    ...             if invariant_errors:
+    ...                 print 'There were invariant errors:'
+    ...                 for error in invariant_errors:
+    ...                     print error
+    ...         else:
+    ...             data = None
+    ...
+    ...         for w in widgets:
+    ...             print w()
+    ...             error = w.error()
+    ...             if error:
+    ...                 print error
+    ...
+    ...         return data
+
+If we display the form again, we'll get the same result:
+
+    >>> pprint(MyForm(None, request)()) # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    {'max_size': 142.0,
+     'min_size': 42.0,
+     'name': u'bob'}
+
+But if we reduce the maximum below the minimum, we'll get an invariant
+error:
+
+    >>> request.form['form.min_size'] = u'42'
+    >>> request.form['form.max_size'] = u'14'
+
+    >>> pprint(MyForm(None, request)()) # doctest: +NORMALIZE_WHITESPACE
+    There were invariant errors:
+    Maximum is less than Minimum
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="14.0"  />
+    {'max_size': 14.0,
+     'min_size': 42.0,
+     'name': u'bob'}
+
+We can have field errors and invariant errors:
+
+    >>> request.form['form.name'] = u''
+
+    >>> pprint(MyForm(None, request)()) # doctest: +NORMALIZE_WHITESPACE
+    There were field errors:
+    ('name', u'Name', )
+    There were invariant errors:
+    Maximum is less than Minimum
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="14.0"  />
+    {'max_size': 14.0,
+     'min_size': 42.0}
+
+If the inputs for some fields tested by invariants are missing, the
+invariants are ignored:
+
+    >>> request.form['form.max_size'] = u''
+
+    >>> pprint(MyForm(None, request)()) # doctest: +NORMALIZE_WHITESPACE
+    There were field errors:
+    ('name', u'Name', )
+    ('max_size', u'Maximum size', )
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value=""  />
+    <span class="error">Required input is missing.</span>
+    {'min_size': 42.0}
+
+
+Edit Forms
+==========
+
+A common application of forms is edit forms.  Edit forms are special
+in 2 ways:
+
+- We want to get the initial data for widgets from the object being
+  edited.
+
+- If there are no errors, we want to apply the changes back to the
+  object being edited.
+
+The form package provides some functions to assist with creating edit
+forms.  When we set up our form_fields, we use the `render_context`
+option, which uses data from the context passed to setUpWidgets.
+Let's create a content class that provides `IOrder` and a simple form
+that uses it:
+
+    >>> import datetime
+    >>> class Order:
+    ...     interface.implements(IOrder)
+    ...
+    ...     def __init__(self, identifier):
+    ...         self.identifier = identifier
+    ...         self.name = 'unknown'
+    ...         self.min_size = 0.0
+    ...         self.max_size = 0.0
+    ...
+    ...     now = property(lambda self: datetime.datetime.now())
+
+    >>> order = Order(1)
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(
+    ...                  IOrder, omit_readonly=True, render_context=True)
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self, ignore_request=False):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request,
+    ...             ignore_request=ignore_request)
+    ...
+    ...         return '\n'.join([w() for w in widgets])
+
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="" />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0" />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="" />
+
+Note that, in this case, we got the values from the request, because
+we used an old request.  If we want to redraw the form after processing a
+request, it is safest to pass ignore_request = True to setUpWidgets so that
+the form is redrawn with the values as found in the object, not on the request.
+
+    >>> print MyForm(order, request)(ignore_request=True)
+    ... # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="unknown"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="0.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="0.0"  />
+
+If we use a new request, we will of course get the same result:
+
+    >>> request = TestRequest()
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="unknown"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="0.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="0.0"  />
+
+If we include read-only fields in an edit form, they will get display widgets:
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, render_context=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request)
+    ...
+    ...         return '\n'.join([w() for w in widgets])
+
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="unknown"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="0.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="0.0"  />
+
+When the form is submitted, we need to apply the changes back to the
+object. We can use the `applyChanges` function for that:
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, render_context=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def __call__(self):
+    ...         widgets = form.setUpWidgets(
+    ...             self.form_fields, 'form', self.context, self.request)
+    ...
+    ...         if 'submit' in self.request:
+    ...             data = {}
+    ...             errors = form.getWidgetsData(widgets, 'form', data)
+    ...             invariant_errors = form.checkInvariants(self.form_fields,
+    ...                                                     data)
+    ...             if errors:
+    ...                 print 'There were field errors:'
+    ...                 for error in errors:
+    ...                     print error
+    ...
+    ...             if invariant_errors:
+    ...                 print 'There were invariant errors:'
+    ...                 for error in invariant_errors:
+    ...                     print error
+    ...
+    ...             if not errors and not invariant_errors:
+    ...                 changed = form.applyChanges(
+    ...                     self.context, self.form_fields, data)
+    ...
+    ...         else:
+    ...             data = changed = None
+    ...
+    ...         for w in widgets:
+    ...             print w()
+    ...             error = w.error()
+    ...             if error:
+    ...                 print error
+    ...
+    ...         if changed:
+    ...             print 'Object updated'
+    ...         else:
+    ...             print 'No changes'
+    ...
+    ...         return data
+
+Now, if we submit the form with some data:
+
+    >>> request.form['form.name'] = u'bob'
+    >>> request.form['form.min_size'] = u'42'
+    >>> request.form['form.max_size'] = u'142'
+    >>> request.form['submit'] = u''
+    >>> pprint(MyForm(order, request)()) # doctest: +NORMALIZE_WHITESPACE
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    Object updated
+    {'max_size': 142.0,
+     'min_size': 42.0,
+     'name': u'bob'}
+
+    >>> order.name
+    u'bob'
+
+    >>> order.max_size
+    142.0
+
+    >>> order.min_size
+    42.0
+
+Note, however, that if we submit the same request, we'll see that no
+changes were applied:
+
+    >>> pprint(MyForm(order, request)()) # doctest: +NORMALIZE_WHITESPACE
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    No changes
+    {'max_size': 142.0,
+     'min_size': 42.0,
+     'name': u'bob'}
+
+because the new and old values are the same.
+
+The code we included in `MyForm` above is generic: it applies to any
+edit form.
+
+Actions
+=======
+
+Our commit logic is a little complicated.  It would be far more
+complicated if there were multiple submit buttons.
+
+We can use action objects to provide some distribution of application logic.
+
+An action is an object that represents a handler for a submit button.
+
+In the most common case, an action accepts a label and zero or more options
+provided as keyword parameters:
+
+condition
+  A callable or name of a method to call to test whether the action is
+  applicable.  if the value is a method name, then the method will be
+  passed the action when called, otherwise, the callable will be
+  passed the form and the action.
+
+validator
+  A callable or name of a method to call to validate and collect
+  inputs.  This is called only if the action was submitted and if the
+  action either has no condition, or the condition evaluates to a true
+  value.  If the validator is provided as a method name, the method
+  will be called with the action and a dictionary in which to save data.
+  If the validator is provided as a callable, the callable will be
+  called with the form, the action, and a dictionary in which to save data.
+  The validator normally returns a (usually empty) list of widget
+  input errors.  It may also return None to behave as if the action
+  wasn't submitted.
+
+success
+  A handler, called when the the action was submitted and there are no
+  validation errors.  The handler may be provided as either a callable
+  or a method name.  If the handler is provided as a method name, the
+  method will be called with the action and a dictionary containing the
+  form data.  If the success handler is provided as a callable, the
+  callable will be called with the form, the action, and a dictionary
+  containing the data.  The handler may return a form result
+  (e.g. page), or may return None to indicate that the form should
+  generate it's own output.
+
+failure
+  A handler, called when the the action was submitted and there are
+  validation errors.  The handler may be provided as either a callable
+  or a method name.  If the handler is provided as a method name, the
+  method will be called with the action, a dictionary containing the form
+  data, and a list of errors.  If the failure handler is provided as a
+  callable, the callable will be called with the form, the action, a
+  dictionary containing the data, and a list of errors.  The handler
+  may return a form result (e.g. page), or may return None to indicate
+  that the form should generate it's own output.
+
+prefix
+  A form prefix for the action.  When generating submit actions, the
+  prefix should be combined with the action name, separating the two
+  with a dot. The default prefix is "actions"form.
+
+name
+  The action name, without a prefix.  If the label is a valid Python
+  identifier, then the lower-case label will be used, otherwise, a hex encoding
+  of the label will be used.  If for some strange reason the labels in
+  a set of actions with the same prefix is not unique, a name will
+  have to be given for some actions to get unique names.
+
+data
+  A bag of extra information that can be used by handlers, validators,
+  or conditions.
+
+Let's update our edit form to use an action. We are also going to
+rearrange our form quite a bit to make things more modular:
+
+- We've created a separate `validation` method to validate inputs and
+  compute errors.
+
+- We've created a `handle_edit_action` method for applying changes.
+
+- We've created a template method for displaying the form.
+  Normally, this would be a ZPT template, but we just provide a Python
+  version here.
+
+- We've created a call method that is described below
+
+- We've defined a number of instance attributes for passing
+  information between the various methods:
+
+  - `status` is a string that, if set, is displayed at the top of the
+    form.
+
+  - `errors` is the set of errors found when validating.
+
+  - `widgets` is a list of set-up widgets
+
+Here's the new version:
+
+    >>> class MyForm:
+    ...     form_fields = form.Fields(IOrder, render_context=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     status = errors = None
+    ...     prefix = 'form'
+    ...
+    ...     actions = form.Actions(
+    ...         form.Action('Edit', success='handle_edit_action'),
+    ...         )
+    ...
+    ...     def __init__(self, context, request):
+    ...         self.context, self.request = context, request
+    ...
+    ...     def validate(self, action, data):
+    ...         return (form.getWidgetsData(self.widgets, self.prefix, data) +
+    ...                 form.checkInvariants(self.form_fields, data))
+    ...
+    ...     def handle_edit_action(self, action, data):
+    ...         if form.applyChanges(self.context, self.form_fields, data):
+    ...             self.status = 'Object updated'
+    ...         else:
+    ...             self.status = 'No changes'
+    ...
+    ...     def template(self):
+    ...         if self.status:
+    ...             print self.status
+    ...
+    ...         result = []
+    ...
+    ...         if self.errors:
+    ...             result.append('There were errors:')
+    ...             for error in self.errors:
+    ...                 result.append(str(error))
+    ...
+    ...         for w in self.widgets:
+    ...             result.append(w())
+    ...             error = w.error()
+    ...             if error:
+    ...                 result.append(str(error))
+    ...
+    ...         for action in self.actions:
+    ...             result.append(action.render())
+    ...
+    ...         return '\n'.join(result)
+    ...
+    ...     def __call__(self):
+    ...         self.widgets = form.setUpWidgets(
+    ...             self.form_fields, self.prefix, self.context, self.request)
+    ...
+    ...         data = {}
+    ...         errors, action = form.handleSubmit(
+    ...                              self.actions, data, self.validate)
+    ...         self.errors = errors
+    ...
+    ...         if errors:
+    ...             result = action.failure(data, errors)
+    ...         elif errors is not None:
+    ...             result = action.success(data)
+    ...         else:
+    ...             result = None
+    ...
+    ...         if result is None:
+    ...             result = self.template()
+    ...
+    ...         return result
+
+Lets walk through the `__call__` method.
+
+- We set up our widgets as before.
+
+- We use `form.handleSubmit` to validate our data.  We pass the form,
+  actions, prefix, and `validate` method.  For each action,
+  `form.handleSubmit` checks to see if the action was submitted.  If the
+  action was submitted, it checks to see if it has a validator.  If
+  the action has a validator, the action's validator is called,
+  otherwise the validator passed is called.  The validator result (a
+  list of widget input errors) and the action are returned.  If no
+  action was submitted, then `None` is returned for the errors and the
+  action.
+
+- If a action was submitted and there were no errors, we call the
+  success method on the action.  If the action has a handler defined,
+  it will be called and the return value is returned, otherwise None
+  is returned.  A return value of None indicates that the form should
+  generate it's own result.
+
+- If a action was submitted but there were errors, we call the
+  action's failure method.  If the action has a failure handler
+  defined, it will be called and the return value is returned,
+  otherwise None is returned.  A return value of None indicates that
+  the form should generate it's own result.
+
+- No action was submitted, the result is set to None.
+
+- If we don't have a result, we generate one with our template.
+
+Let's try the new version of our form:
+
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+In this case, we didn't get any output about changes because the
+request form data didn't include a submit action that matched our
+action definition. Let's add one and try again:
+
+    >>> request.form['form.actions.edit'] = u''
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    No changes
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="142.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+This time, we got a status message indicating that there weren't any
+changes.
+
+Let's try changing some data:
+
+    >>> request.form['form.max_size'] = u'10,0'
+    >>> print MyForm(order, request)()
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    There were errors:
+    (u'Invalid floating point data', <exceptions.ValueError instance at ...>)
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="10,0"  />
+    <span class="error">Invalid floating point data</span>
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+Oops, we had a typo, let's fix it:
+
+    >>> request.form['form.max_size'] = u'10.0'
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    There were errors:
+    Maximum is less than Minimum
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="42.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="10.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+Oh yeah, we need to reduce the minimum too: :)
+
+    >>> request.form['form.min_size'] = u'1.0'
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    Object updated
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="1.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="10.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+Ah, much better.  And our order has been updated:
+
+    >>> order.max_size
+    10.0
+
+    >>> order.min_size
+    1.0
+
+Helpful base classes
+====================
+
+Our form has a lot of repetitive code. A number of helpful base
+classes provide standard form implementation.
+
+Form
+----
+
+The `Form` base class provides a number of common attribute definitions.
+It provides:
+
+`__init__`
+  A constructor
+
+`validate`
+  A default validation method
+
+`__call__`
+  To render the form
+
+`template`
+  A default template.  Note that this is a NamedTemplate named "default",
+  so the template may also be overridden by registering an alternate
+  default template.
+
+`prefix`
+  A string added to all widget and action names.
+
+`setPrefix`
+  method for changing the prefix
+
+`availableActions`
+  method for getting available actions
+
+`adapters`
+  Dictionary of objects implementing each given schema
+
+Subclasses need to:
+
+- Provide a form_fields variable containing a list of form fields
+
+- a actions attribute containing a list of action definitions
+
+Subclasses may:
+
+- Provide a label function or message id to produce
+  a form label.
+
+- Override the setUpWidgets method to control how widgets are
+  set up.  This is fairly rarely needed.
+
+- Override the template.  The form defines variables:
+
+  status
+     providing a short summary of the operation performed.
+
+  widgets
+     A collection of widgets, which can be accessed through iteration
+     or by name
+
+  errors
+     A (possibly empty) list of errors
+
+
+Let's update our example to use the base class:
+
+    >>> class MyForm(form.Form):
+    ...     form_fields = form.Fields(IOrder, render_context=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     @form.action("Edit", failure='handle_edit_action_failure')
+    ...     def handle_edit_action(self, action, data):
+    ...         if form.applyChanges(self.context, self.form_fields, data):
+    ...             self.status = 'Object updated'
+    ...         else:
+    ...             self.status = 'No changes'
+    ...
+    ...     def handle_edit_action_failure(self, action, data, errors):
+    ...         self.status = 'There were %d errors.' % len(errors)
+
+We inherited most of our behavior from the base class.
+
+We also used the `action` decorator.  The action decorator:
+
+- creates an `actions` variable if one isn't already created,
+
+- defines an action with the given label and any other arguments, and
+
+- appends the action to the `actions` list.
+
+The `action` decorator accepts the same arguments as the `Action`
+class with the exception of the `success` option.
+
+The creation of the `actions` is a bit magic, but provides
+simplification in common cases.
+
+Now we can try out our form:
+
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    No changes
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="1.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="10.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+    >>> request.form['form.min_size'] = u'20.0'
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    There were 1 errors.
+    Invalid: Maximum is less than Minimum
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="20.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="10.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+    >>> request.form['form.max_size'] = u'30.0'
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    Object updated
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="20.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="30.0"  />
+    <input type="submit" id="form.actions.edit" name="form.actions.edit"
+           value="Edit" class="button" />
+
+    >>> order.max_size
+    30.0
+
+    >>> order.min_size
+    20.0
+
+EditForm
+--------
+
+Our `handle_edit_action` action is common to edit forms.  An
+`EditForm` base class captures this commonality.  It also sets up
+widget widgets a bit differently.  The `EditForm` base class sets up
+widgets as if the form fields had been set up with the `render_context`
+option.
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = form.Fields(IOrder)
+    ...     form_fields = form_fields.omit('now')
+
+    >>> request.form['form.actions.apply'] = u''
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    No changes
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="20.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="30.0"  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+    >>> request.form['form.min_size'] = u'40.0'
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    There were errors
+    Invalid: Maximum is less than Minimum
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="40.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="30.0"  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+    >>> request.form['form.max_size'] = u'50.0'
+    >>> print MyForm(order, request)()
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    Updated on ... ... ...  ...:...:...
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="40.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="50.0"  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+    >>> order.max_size
+    50.0
+
+    >>> order.min_size
+    40.0
+
+Note that `EditForm` shows the date and time when content are
+modified.
+
+Multiple Schemas and Adapters
+=============================
+
+Forms can use fields from multiple schemas.  This can be done in a
+number of ways.  For example, multiple schemas can be passed to
+`form.Fields`:
+
+    >>> class IDescriptive(interface.Interface):
+    ...     title = schema.TextLine(title=u"Title")
+    ...     description = schema.TextLine(title=u"Description")
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = form.Fields(IOrder, IDescriptive)
+    ...     form_fields = form_fields.omit('now')
+
+In addition, if the the object being edited doesn't provide any of the
+schemas, it will be adapted to the schemas it doesn't provide.
+
+Suppose we have a generic adapter for storing descriptive information
+on objects:
+
+    >>> from zope import component
+    >>> class Descriptive(object):
+    ...     component.adapts(interface.Interface)
+    ...     interface.implements(IDescriptive)
+    ...     def __init__(self, context):
+    ...         self.context = context
+    ...         self.request = request
+    ...
+    ...     def title():
+    ...         def get(self):
+    ...             try:
+    ...                 return self.context.__title
+    ...             except AttributeError:
+    ...                 return ''
+    ...         def set(self, v):
+    ...             self.context.__title = v
+    ...         return property(get, set)
+    ...     title = title()
+    ...
+    ...     def description():
+    ...         def get(self):
+    ...             try:
+    ...                 return self.context.__description
+    ...             except AttributeError:
+    ...                 return ''
+    ...         def set(self, v):
+    ...             self.context.__description = v
+    ...         return property(get, set)
+    ...     description = description()
+
+    >>> component.provideAdapter(Descriptive)
+
+Now, we can use a single form to edit both the regular order data and
+the descriptive data:
+
+    >>> request = TestRequest()
+    >>> print MyForm(order, request)() # doctest: +NORMALIZE_WHITESPACE
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="40.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="50.0"  />
+    <input class="textType" id="form.title" name="form.title" size="20"
+           type="text" value=""  />
+    <input class="textType" id="form.description" name="form.description"
+           size="20"
+           type="text" value=""  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+    >>> request.form['form.name'] = u'bob'
+    >>> request.form['form.min_size'] = u'10.0'
+    >>> request.form['form.max_size'] = u'20.0'
+    >>> request.form['form.title'] = u'Widgets'
+    >>> request.form['form.description'] = u'Need more widgets'
+    >>> request.form['form.actions.apply'] = u''
+    >>> myform = MyForm(order, request)
+    >>> print myform()
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    Updated on ... ... ...  ...:...:...
+    1
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size" size="10"
+           type="text" value="10.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size" size="10"
+           type="text" value="20.0"  />
+    <input class="textType" id="form.title" name="form.title" size="20"
+           type="text" value="Widgets"  />
+    <input class="textType" id="form.description" name="form.description"
+           size="20"
+           type="text" value="Need more widgets"  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+    >>> order.min_size
+    10.0
+
+    >>> order.title
+    Traceback (most recent call last):
+    ...
+    AttributeError: Order instance has no attribute 'title'
+
+    >>> Descriptive(order).title
+    u'Widgets'
+
+Often, we'd like to get at the adapters used.  If `EditForm` is used,
+the adapters are available in the adapters attribute, which is a
+dictionary that allows adapters to be looked up by by schema or schema
+name:
+
+    >>> myform.adapters[IOrder].__class__.__name__
+    'Order'
+
+    >>> myform.adapters['IOrder'].__class__.__name__
+    'Order'
+
+    >>> myform.adapters[IDescriptive].__class__.__name__
+    'Descriptive'
+
+    >>> myform.adapters['IDescriptive'].__class__.__name__
+    'Descriptive'
+
+If you aren't using `EditForm`, you can get a dictionary populated in
+the same way by `setUpWidgets` by passing the dictionary as an
+`adapters` keyword argument.
+
+
+Named Widget Access
+===================
+
+The value returned from `setUpWidgets` supports named-based lookup as well as
+iteration:
+
+    >>> myform.widgets['name'].__class__.__name__
+    'TextWidget'
+
+    >>> myform.widgets['name'].name
+    'form.name'
+
+    >>> myform.widgets['title'].__class__.__name__
+    'TextWidget'
+
+    >>> myform.widgets['title'].name
+    'form.title'
+
+Form-field manipulations
+========================
+
+The form-field constructor is very flexible.  We've already seen that
+we can supply multiple schemas.  Here are some other things you can
+do.
+
+Specifying individual fields
+----------------------------
+
+You can specify individual fields for a form.  Here, we'll create a
+form that collects just the name from `IOrder` and the title from
+`IDescriptive`:
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = form.Fields(IOrder['name'],
+    ...                               IDescriptive['title'])
+    ...     actions = ()
+
+    >>> print MyForm(order, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.title" name="form.title" size="20"
+           type="text" value="Widgets"  />
+
+You can also use stand-alone fields:
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = form.Fields(
+    ...         schema.TextLine(__name__='name', title=u"Who?"),
+    ...         IDescriptive['title'],
+    ...         )
+    ...     actions = ()
+
+    >>> print MyForm(order, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name" size="20"
+           type="text" value="bob"  />
+    <input class="textType" id="form.title" name="form.title" size="20"
+           type="text" value="Widgets"  />
+
+But make sure the fields have a '__name__', as was done above.
+
+Concatenating field collections
+-------------------------------
+
+It is sometimes convenient to combine multiple field collections.
+Field collections support concatenation. For example, we may want to
+combine field definitions:
+
+    >>> class MyExpandedForm(form.Form):
+    ...     form_fields = (
+    ...         MyForm.form_fields
+    ...         +
+    ...         form.Fields(IDescriptive['description'])
+    ...         )
+    ...     actions = ()
+
+    >>> print MyExpandedForm(order, TestRequest())()
+    ... # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value=""  />
+    <input class="textType" id="form.title" name="form.title"
+           size="20" type="text" value=""  />
+    <input class="textType" id="form.description" name="form.description"
+           size="20" type="text" value=""  />
+
+Using fields for display
+------------------------
+
+Normally, any writable fields get input widgets.  We may want to
+indicate that some fields should be used for display only. We can do
+this using the `for_display` option when setting up form_fields:
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = (
+    ...         form.Fields(IOrder, for_display=True).select('name')
+    ...         +
+    ...         form.Fields(IOrder).select('min_size', 'max_size')
+    ...         )
+
+
+    >>> print MyForm(order, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    bob
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value="10.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value="20.0"  />
+    <input type="submit" id="form.actions.apply" name="form.actions.apply"
+           value="Apply" class="button" />
+
+Note that if all of the fields in an edit form are for display:
+
+    >>> class MyForm(form.EditForm):
+    ...     form_fields = form.Fields(IOrder, for_display=True
+    ...                               ).select('name', 'min_size', 'max_size')
+
+    >>> print MyForm(order, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    bob
+    10.0
+    20.0
+
+we don't get an edit action.  This is because the edit action defined
+by `EditForm` has a condition to prevent it's use when there are no
+input widgets. Check it out for an example of using action conditions.
+
+Using fields for input
+----------------------
+
+We may want to indicate that some fields should be used for input even
+if the underlying schema field is read-only. We can do this using the
+`for_input` option when setting up form_fields:
+
+    >>> class MyForm(form.Form):
+    ...     form_fields = form.Fields(IOrder, for_input=True,
+    ...                                   render_context=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     actions = ()
+
+
+    >>> print MyForm(order, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.identifier" name="form.identifier"
+           size="10" type="text" value="1"  />
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value="bob"  />
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value="10.0"  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value="20.0"  />
+
+Displaying or editing raw data
+==============================
+
+Sometimes, you want to display or edit data that doesn't come from an
+object.  One way to do this is to pass the data to setUpWidgets.
+
+Lets look at an example:
+
+    >>> class MyForm(form.Form):
+    ...
+    ...     form_fields = form.Fields(IOrder)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     actions = ()
+    ...
+    ...     def setUpWidgets(self, ignore_request=False):
+    ...         self.widgets = form.setUpWidgets(
+    ...             self.form_fields, self.prefix, self.context, self.request,
+    ...             data=dict(identifier=42, name=u'sally'),
+    ...             ignore_request=ignore_request
+    ...             )
+
+In this case, we supplied initial data for the identifier and the
+name.  Now if we display the form, we'll see our data and defaults for
+the fields we didn't supply data for:
+
+    >>> print MyForm(None, TestRequest())() # doctest: +NORMALIZE_WHITESPACE
+    42
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value="sally"  />
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value=""  />
+
+If data are passed in the request, they override initial data for
+input fields:
+
+    >>> request = TestRequest()
+    >>> request.form['form.name'] = u'fred'
+    >>> request.form['form.identifier'] = u'0'
+    >>> request.form['form.max_size'] = u'100'
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    42
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value="fred"  />
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value="100.0"  />
+
+We'll get display fields if we ask for display fields when setting up
+our form fields:
+
+    >>> class MyForm(form.Form):
+    ...
+    ...     form_fields = form.Fields(IOrder, for_display=True)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     actions = ()
+    ...
+    ...     def setUpWidgets(self, ignore_request=False):
+    ...         self.widgets = form.setUpWidgets(
+    ...             self.form_fields, self.prefix, self.context, self.request,
+    ...             data=dict(identifier=42, name=u'sally'),
+    ...             ignore_request=ignore_request
+    ...             )
+
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    42
+    sally
+    <BLANKLINE>
+    <BLANKLINE>
+
+
+Note that we didn't get data from the request because we are using all
+display widgets.
+
+Passing `ignore_request=True` to the `setUpWidgets` function ignores
+the request for all values passed in the data dictionary, in order to
+help with redrawing a form after a successful action handler.  We'll
+fake that quickly by forcing ignore_request to be `True`.
+
+    >>> class MyForm(form.Form):
+    ...
+    ...     form_fields = form.Fields(IOrder)
+    ...     form_fields = form_fields.omit('now')
+    ...
+    ...     actions = ()
+    ...
+    ...     def setUpWidgets(self, ignore_request=False):
+    ...         self.widgets = form.setUpWidgets(
+    ...             self.form_fields, self.prefix, self.context, self.request,
+    ...             data=dict(identifier=42, name=u'sally'),
+    ...             ignore_request=True # =ignore_request
+    ...             )
+
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    42
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value="sally"  />
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value=""  />
+
+
+Specifying Custom Widgets
+=========================
+
+It is possible to use custom widgets for specific fields.  This can be
+done for a variety of reasons, but the provided mechanism should work
+for any of them.
+
+Custom widgets are specified by providing a widget factory that should
+be used instead of the registered field view.  The factory will be
+called in the same way as any other field view factory, with the bound
+field and the request as arguments.
+
+Let's create a simple custom widget to use in our demonstration::
+
+    >>> import zope.app.form.browser.widget
+
+    >>> class ISODisplayWidget(zope.app.form.browser.widget.DisplayWidget):
+    ...
+    ...     def __call__(self):
+    ...         return '<span class="iso-datetime">2005-05-04</span>'
+
+To set the custom widget factory for a field, assign to the
+`custom_widget` attribute of the form field object::
+
+    >>> class MyForm(form.Form):
+    ...     actions = ()
+    ...
+    ...     form_fields = form.Fields(IOrder).select("now")
+    ...
+    ...     # Here we set the custom widget:
+    ...
+    ...     form_fields["now"].custom_widget = ISODisplayWidget
+
+    >>> print MyForm(None, request)()
+    <span class="iso-datetime">2005-05-04</span>
+
+Specifying Fields individually
+------------------------------
+
+All of the previous examples set up fields as collections.  We can
+also set up forms individually and pass them to the Fields
+constructor.  This is especially useful for passing options that
+really only apply to a single field.  The previous example can be
+written more simply as:
+
+    >>> class MyForm(form.Form):
+    ...     actions = ()
+    ...
+    ...     form_fields = form.Fields(
+    ...         form.Field(IOrder['now'], custom_widget=ISODisplayWidget),
+    ...         )
+
+    >>> print MyForm(None, request)()
+    <span class="iso-datetime">2005-05-04</span>
+
+Computing default values
+------------------------
+
+We saw earlier that we could provide initial widget data by passing a
+dictionary to setUpWidgets.  We can also supply a function or method
+name when we set up form fields.
+
+We might like to include the `now` field in our forms.  We can provide
+a function for getting the needed initial value:
+
+    >>> import datetime
+
+    >>> class MyForm(form.Form):
+    ...     actions = ()
+    ...
+    ...     def now(self):
+    ...         return datetime.datetime(2002, 12, 2, 12, 30)
+    ...
+    ...     form_fields = form.Fields(
+    ...         form.Fields(IOrder).omit('now'),
+    ...         form.Field(IOrder['now'], get_rendered=now),
+    ...         )
+
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    <BLANKLINE>
+    <input class="textType" id="form.name" name="form.name"
+           size="20" type="text" value="fred"  />
+    <input class="textType" id="form.min_size" name="form.min_size"
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size"
+           size="10" type="text" value="100.0"  />
+    <span class="dateTime">2002 12 2  12:30:00 </span>
+
+Now try the same with the AddFormBase which uses a setUpInputWidget:
+
+    >>> class MyAddForm(form.AddFormBase):
+    ...     actions = ()
+    ...
+    ...     def now(self):
+    ...         return datetime.datetime(2002, 12, 2, 12, 30)
+    ...
+    ...     form_fields = form.Fields(
+    ...         form.Fields(IOrder).omit('now'),
+    ...         form.Field(IOrder['now'], get_rendered=now),
+    ...         )
+    ...
+    ...     def setUpWidgets(self, ignore_request=True):
+    ...         super(MyAddForm, self).setUpWidgets(ignore_request)
+
+    >>> print MyAddForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="form.identifier" name="form.identifier" 
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.name" name="form.name" size="20" 
+           type="text" value=""  />
+    <input class="textType" id="form.min_size" name="form.min_size" 
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.max_size" name="form.max_size" 
+           size="10" type="text" value=""  />
+    <input class="textType" id="form.now" name="form.now" size="20" 
+           type="text" value="2002-12-02 12:30:00"  />
+
+Note that a EditForm can't make use of a get_rendered method. The get_rendered
+method does only set initial values.
+
+Note that the function passed must take a form as an argument.  The
+`setUpWidgets` function takes an optional 'form' argument, which
+**must** be passed if any fields use the get_rendered option.  The
+form base classes always pass the form to `setUpWidgets`.
+
+Advanced Usage Hints
+====================
+
+This section documents patterns for advanced usage of the formlib package.
+
+Multiple button groups
+----------------------
+
+Multiple button groups can be accomplished many ways, but the way we've found
+that reuses the most code is the following:
+
+    >>> import zope.cachedescriptors.property
+    >>> class MyForm(form.Form):
+    ...     form_fields = form.Fields(IOrder)
+    ...     primary_actions = form.Actions()
+    ...     secondary_actions = form.Actions()
+    ...     @zope.cachedescriptors.property.Lazy
+    ...     def actions(self):
+    ...         return list(self.primary_actions) + list(self.secondary_actions)
+    ...     @form.action(u'Edit', primary_actions)
+    ...     def handle_edit_action(self, action, data):
+    ...         if form.applyChanges(self.context, self.form_fields, data):
+    ...             self.status = 'Object updated'
+    ...         else:
+    ...             self.status = 'No changes'
+    ...     @form.action(u'Submit for review...', secondary_actions)
+    ...     def handle_review_action(self, action, data):
+    ...         print "do something here"
+    ...
+
+The template then can render the button groups separately--something like the
+following, for instance:
+
+    <input tal:repeat="action view/primary_actions"
+       tal:replace="structure action/render"
+       />
+
+and
+
+    <input tal:repeat="action view/secondary_actions"
+       tal:replace="structure action/render"
+       />
+
+But the form machinery can still find the correct button. # TODO: demo
+
+Dividing display of widget errors and invariant errors
+------------------------------------------------------
+
+Even though the form machinery only has a single errors attribute, if designers
+wish to render widget errors differently than invariant errors, they can be
+separated reasonably easily.  The separation takes advantage of the fact that
+all widget errors should implement zope.app.form.interfaces.IWidgetInputError,
+and invariant errors shouldn't, because they don't come from a widget.
+Therefore, a simple division such as the following should suffice.
+
+# TODO
+
+
+Omitting the form prefix
+------------------------
+
+For certain use cases (e.g. forms that post data to a different server whose
+software you do not control) it is important to be able to generate forms
+*without* a prefix. Using an empty string for the prefix omits it entirely.
+
+    >>> form_fields = form.Fields(IOrder).select('name')
+    >>> request = TestRequest()
+    >>> widgets = form.setUpWidgets(form_fields, '', None, request)
+    >>> print widgets['name']() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="name" name="name" size="20"
+           type="text" value=""  />
+
+Of course, getting the widget data still works.
+
+    >>> request.form['name'] = 'foo'
+    >>> widgets = form.setUpWidgets(form_fields, '', None, request)
+    >>> data = {}
+    >>> form.getWidgetsData(widgets, '', data)
+    []
+    >>> data
+    {'name': u'foo'}
+
+And the value from the request is also visible in the rendered form.
+
+    >>> print widgets['name']() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="name" name="name" size="20"
+           type="text" value="foo"  />
+
+The same is true when using the other setup*Widgets helpers.
+
+    >>> widgets = form.setUpInputWidgets(form_fields, '', None, request)
+    >>> print widgets['name']() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="name" name="name" size="20"
+           type="text" value="foo"  />
+
+    >>> order = Order(42)
+    >>> widgets = form.setUpEditWidgets(form_fields, '', order, request)
+    >>> print widgets['name']() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="name" name="name" size="20"
+           type="text" value="foo"  />
+
+    >>> widgets = form.setUpDataWidgets(form_fields, '', None, request)
+    >>> print widgets['name']() # doctest: +NORMALIZE_WHITESPACE
+    <input class="textType" id="name" name="name" size="20"
+           type="text" value="foo"  />
+
+Form actions have their own prefix in addition to the form prefix. This can be
+suppressed for each action by passing the empty string as the 'prefix'
+argument.
+
+    >>> class MyForm(form.Form):
+    ...
+    ...     prefix = ''
+    ...     form_fields = form.Fields()
+    ...
+    ...     @form.action('Button 1', name='button1')
+    ...     def handle_button1(self, action, data):
+    ...         self.status = 'Button 1 detected'
+    ...
+    ...     @form.action('Button 2', prefix='', name='button2')
+    ...     def handle_button2(self, action, data):
+    ...         self.status = 'Button 2 detected'
+    ...
+    >>> request = TestRequest()
+    >>> request.form['actions.button1'] = ''
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    Button 1 detected
+    <input type="submit" id="actions.button1" name="actions.button1"
+           value="Button 1" class="button" />
+    <input type="submit" id="button2" name="button2"
+           value="Button 2" class="button" />
+    >>> request = TestRequest()
+    >>> request.form['button2'] = ''
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    Button 2 detected
+    <input type="submit" id="actions.button1" name="actions.button1"
+           value="Button 1" class="button" />
+    <input type="submit" id="button2" name="button2"
+           value="Button 2" class="button" />
+
+It is also possible to keep the form prefix and just suppress the 'actions' prefix.
+
+    >>> class MyForm(form.Form):
+    ...
+    ...     form_fields = form.Fields()
+    ...
+    ...     @form.action('Button', prefix='', name='button')
+    ...     def handle_button(self, action, data):
+    ...         self.status = 'Button detected'
+    ...
+    >>> request = TestRequest()
+    >>> request.form['form.button'] = ''
+    >>> print MyForm(None, request)() # doctest: +NORMALIZE_WHITESPACE
+    Button detected
+    <input type="submit" id="form.button" name="form.button"
+           value="Button" class="button" />
+
+Additional Cases
+================
+
+
+Automatic Context Adaptation
+----------------------------
+
+As you may know already, the formlib will automatically adapt the context to
+find a widget and data for a particular field. In an early version of
+``zope.formlib``, it simply used ``field.interface`` to get the interface to
+adapt to. Unfortunately, this call returns the interface the field has been
+defined in and not the interface you got the field from. The following lines
+demonstrate the correct behavior:
+
+  >>> import zope.interface
+  >>> import zope.schema
+
+  >>> class IFoo(zope.interface.Interface):
+  ...     title = zope.schema.TextLine()
+
+  >>> class IFooBar(IFoo):
+  ...     pass
+
+Here is the unexpected behavior that caused formlib to do the wrong thing:
+
+  >>> IFooBar['title'].interface
+  <InterfaceClass __builtin__.IFoo>
+
+Note: If this behavior ever changes, the formlib can be simplified again.
+
+  >>> class FooBar(object):
+  ...     zope.interface.implements(IFooBar)
+  ...     title = u'initial'
+  >>> foobar = FooBar()
+
+  >>> class Blah(object):
+  ...     def __conform__(self, iface):
+  ...         if iface is IFooBar:
+  ...             return foobar
+  >>> blah = Blah()
+
+Let's now generate the form fields and instantiate the widgets:
+
+  >>> from zope.formlib import form
+
+  >>> form_fields = form.FormFields(IFooBar)
+
+  >>> request = TestRequest()
+  >>> widgets = form.setUpEditWidgets(form_fields, 'form', blah, request)
+  >>> print widgets.get('title')()
+  <input class="textType" id="form.title" name="form.title"
+         size="20" type="text" value="initial" />
+
+Here are some more places where the behavior was incorrect:
+
+  >>> widgets = form.setUpWidgets(form_fields, 'form', blah, request)
+  >>> print widgets.get('title')()
+  <input class="textType" id="form.title" name="form.title"
+         size="20" type="text" value="" />
+
+  >>> form.checkInvariants(form_fields, {'title': 'new'})
+  []
+
+  >>> form.applyChanges(blah, form_fields, {'title': 'new'})
+  True

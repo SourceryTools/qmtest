@@ -1,0 +1,36 @@
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
+<body metal:fill-slot="contents">
+
+  <h1 i18n:translate="">Zope 3 API Documentation</h1>
+
+  <p i18n:translate="">Welcome to the Zope 3 API documentation tool.
+    The documentation provided here is separated in several discrete
+    documentation modules. You can see the list of available modules
+    in the top-left box on your screen. When you click on a module,
+    the module's menu will appear below. In the menu you have then
+    navigational means to access the documentation content of the
+    module.</p>
+
+  <p i18n:translate="">Modules are usually depending on each other by
+    using links that create references across all modules. Each module
+    has a "theme" that it follows, which was designed to aid the developer
+    directly to the desired information. Below you see a short description
+    of every module.</p>
+
+  <tal:omit-tag repeat="module view/getModuleList">
+
+    <h2>
+      <a target="menu" href=""
+         tal:attributes="href string:./${module/name}/@@menu.html"
+         tal:content="module/title" i18n:translate="">Module Title</a>
+    </h2>
+
+    <p tal:replace="structure module/description" i18n:translate="">
+      Module Description
+    </p>
+
+  </tal:omit-tag>
+
+</body>
+</html>

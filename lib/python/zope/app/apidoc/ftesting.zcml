@@ -1,0 +1,13 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:meta="http://namespaces.zope.org/meta"
+   i18n_domain="zope"
+   package="zope.app.apidoc"
+   >
+
+  <!-- Turn on the devmode -->
+  <meta:provides feature="devmode" />
+
+  <include file="ftesting-base.zcml" />
+
+</configure>
