@@ -10,9 +10,7 @@
 
   Copyright (C) 2000, 2001 CodeSourcery LLC.  This material may
   be distributed only subject to the terms and conditions set forth in
-  the Software Carpentry Open Publication License, which is available at:
-
-    http://www.software-carpentry.com/openpub-license.html
+  the Open Publication License (see the file LICENSE.OPL).
 
 -->
 
@@ -21,8 +19,6 @@
 <!--<!ENTITY qm_version SYSTEM "qm-version">-->
 
 <!-- Names of the project components.  -->
-
-<!ENTITY sc "&#60;ulink url=&#34;http://www.software-carpentry.com&#34;&#62;Software Carpentry&#60;/ulink&#62;">
 
 <!ENTITY qm "<application>QM</application>">
 <!ENTITY qmbuild "<application>QMBuild</application>">
