@@ -1,3 +1,35 @@
+2008-11-16  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* LICENSE.OPL: New file.
+	* doc/qm.mod: Fix OPL license reference.
+	* doc/tutorial.xml: Likewise.
+	* doc/cli_reference.xml: Likewise.
+	* doc/concepts.xml: Likewise.
+	* doc/customizing.xml: Likewise.
+	* doc/extending.xml: Likewise.
+	* templates/docbook-chapter: Likewise.
+	* templates/docbook: Likewise.
+	* doc/design/qmtest/core.xml: Likewise.
+	* doc/design/qmtest/iface.xml: Likewise.
+	* doc/design/qmtest/impl.xml: Likewise.
+	* doc/design/qmtest/qmtest.xml: Likewise.
+	* doc/design/qmtest/refs.xml: Likewise.
+	* doc/design/qmtest/req.xml: Likewise.
+	* share/qmtest/dtml/add-enumeral.dtml: Likewise.
+	* share/qmtest/dtml/attachment.dtml: Likewise.
+	* share/qmtest/dtml/error.dtml: Likewise.
+	* share/qmtest/dtml/exception.dtml: Likewise.
+	* share/qmtest/dtml/field.dtml: Likewise.
+	* share/qmtest/dtml/help.dtml: Likewise.
+	* share/qmtest/dtml/login_form.dtml: Likewise.
+	* share/qmtest/dtml/problems.dtml: Likewise.
+	* share/qmtest/dtml/set.dtml: Likewise.
+	* share/qmtest/dtml/user.dtml: Likewise.
+
+2008-11-13  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/external/DocumentTemplate/*: Partially upgrade to Zope 2.11.
+
 2008-10-21  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/structured_text.py: Remove python script header.
