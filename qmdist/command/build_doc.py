@@ -91,6 +91,7 @@ class build_pdf_tutorial(build.build):
         xsltproc = find_executable('xsltproc')
         foproc = None
         xep = False
+        fop = False
         
         if not xsltproc:
             self.warn("could not find xsltproc in PATH")
@@ -103,6 +104,7 @@ class build_pdf_tutorial(build.build):
             xep = True
         if not foproc:
             foproc = find_executable('fop')
+            fop = True
         if not foproc:
             foproc = find_executable('xmlroff')
             if foproc: foproc += ' --compat'
@@ -124,6 +126,9 @@ class build_pdf_tutorial(build.build):
             spawn(cmd)
             if xep:
                 cmd = foproc.split() + ['print/tutorial.fo']
+            elif fop:
+                cmd = foproc.split() + ['print/tutorial.fo',
+                                        'print/tutorial.pdf']
             else:
                 cmd = foproc.split() + ['-o', 'print/tutorial.pdf',
                                         'print/tutorial.fo']
@@ -182,6 +187,34 @@ class build_ref_manual(build.build):
             spawn([generator] + args.split() + ['qm'])
 
 
+class build_man_page(build.build):
+    """Defines the procedure to build the man page."""
+
+    description = "build man page"
+
+    def run(self):
+        """Run this command, i.e. do the actual document generation."""
+
+        self.announce("building man page")
+
+        help2man = find_executable('help2man')
+        if not help2man:
+            self.warn("cannot build man page")
+            return
+        gzip = find_executable('gzip')
+
+        man_dir = 'share/man/man1'
+        self.mkpath(man_dir)
+
+        command = [help2man, '-N', '-n',
+                   'QMTest is an automated software test execution tool.']
+      
+        output = '%s/qmtest.1'%man_dir
+        command += ['-o', output, 'scripts/qmtest']
+        spawn(command)
+        if gzip:
+            spawn(['gzip', '-f', output])
+
 
 class build_doc(build.build):
     """Defines the specific procedure to build QMTest's documentation.
@@ -199,18 +232,22 @@ class build_doc(build.build):
         ("no-pdf", None, "do not generate PDF documentation"),
         ("ref-manual", None, "generate reference manual"),
         ("no-ref-manual", None, "do not generate reference manual"),
+        ("man-page", None, "generate man page"),
+        ("no-man-page", None, "do not generate man page"),
         ]
 
-    boolean_options = [ "html", "pdf", "ref-manual" ]
+    boolean_options = [ "html", "pdf", "ref-manual", "man-page"]
     negative_opt = { "no-html" : "html",
                      "no-pdf" : "pdf",
-                     "no-ref-manual" : "ref-manual" }
+                     "no-ref-manual" : "ref-manual",
+                     "no-man-page" : "man-page"}
     
     def initialize_options(self):
 
         self.html = True
         self.pdf = True
         self.ref_manual = True
+        self.man_page = True
         build.build.initialize_options(self)
 
         
@@ -240,8 +277,13 @@ class build_doc(build.build):
     def build_html_tutorial(self) : return self.html
     def build_pdf_tutorial(self) : return self.pdf
     def build_ref_manual(self) : return self.ref_manual
+    def build_man_page(self) : return self.man_page
 
     sub_commands = [('build_html_tutorial', build_html_tutorial),
                     ('build_pdf_tutorial', build_pdf_tutorial),
-                    ('build_ref_manual', build_ref_manual)]
+                    ('build_ref_manual', build_ref_manual),
+                    ('build_man_page', build_man_page)]
 
+
+__all__ = ['build_html_tutorial', 'build_pdf_tutorial',
+           'build_ref_manual', 'build_man_page', 'build_doc']

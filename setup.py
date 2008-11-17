@@ -21,10 +21,7 @@ from   distutils.core import setup, Extension
 from   qmdist.command.build import build
 from   qmdist.command.build_py import build_py
 from   qmdist.command.build_scripts import build_scripts
-from   qmdist.command.build_doc import build_doc
-from   qmdist.command.build_doc import build_html_tutorial
-from   qmdist.command.build_doc import build_pdf_tutorial
-from   qmdist.command.build_doc import build_ref_manual
+from   qmdist.command.build_doc import *
 from   qmdist.command.install_lib import install_lib
 from   qmdist.command.bdist_wininst import bdist_wininst
 from   qmdist.command.check import check
@@ -67,6 +64,7 @@ setup(name="qmtest",
                 'build_html_tutorial': build_html_tutorial,
                 'build_pdf_tutorial': build_pdf_tutorial,
                 'build_ref_manual': build_ref_manual,
+                'build_man_page': build_man_page,
                 'install_lib': install_lib,
                 'bdist_wininst' : bdist_wininst,
                 'check': check},
