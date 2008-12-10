@@ -141,7 +141,7 @@ class check(Command):
         else: python_path = b.build_lib
         os.environ['PYTHONPATH'] = python_path
         qmtest = os.path.abspath(os.path.join(self.build_scripts, 'qmtest'))
-        if os.environ.has_key("QMTESTFLAGS"):
+        if "QMTESTFLAGS" in os.environ:
             options = os.environ["QMTESTFLAGS"].split()
         else:
             options = []

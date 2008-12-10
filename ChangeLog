@@ -1,3 +1,14 @@
+2008-12-10  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* setup.py: Install LICENSE.OPL so it can be found by users.
+	* MAKEFILE.in: Likewise.
+	* doc/qmtest.ent: bump version number to 2.4.1
+	* qmdist/command/check.py: Fix Python 3k incompatibility.
+	* qmdist/command/build_scripts.py: Likewise.
+	* qm/test/cmdline.py: Likewise.
+	* qm/web.py: Likewise.
+	* qm/platform_unix.py: Likewise.
+
 2008-11-16  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* LICENSE.OPL: New file.

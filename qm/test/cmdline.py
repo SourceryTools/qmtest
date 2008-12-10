@@ -1910,9 +1910,9 @@ Valid formats are %s.
                            format=format,
                            valid_formats=valid_format_string)
         if format != "none":
-            as = { "format" : format }
-            as.update(arguments)
-            stream = self.GetTextResultStreamClass()(as)
+            args = { "format" : format }
+            args.update(arguments)
+            stream = self.GetTextResultStreamClass()(args)
             result_streams.append(stream)
 
         f = lambda n: get_extension_class(n, "result_stream", database)
@@ -1920,9 +1920,9 @@ Valid formats are %s.
         # Look for all of the "--result-stream" options.
         for opt, opt_arg in self.__command_options:
             if opt == "result-stream":
-                ec, as = qm.extension.parse_descriptor(opt_arg, f)
-                as.update(arguments)
-                result_streams.append(ec(as))
+                ec, args = qm.extension.parse_descriptor(opt_arg, f)
+                args.update(arguments)
+                result_streams.append(ec(args))
 
         # If there is an output file, create a standard results file on
         # that file.

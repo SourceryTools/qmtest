@@ -21,7 +21,6 @@ import base64
 import common
 import cPickle
 import cStringIO
-import MimeWriter
 import os
 import posix
 import qm
