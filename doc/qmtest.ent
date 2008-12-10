@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!ENTITY version "2.4">
+<!ENTITY version "2.4.1">
 <!ENTITY qm "<application>QM</application>">
 <!ENTITY qmtest "<application>QMTest</application>">
 
@@ -8,8 +8,8 @@
 <!ENTITY qmtest "<application>QMTest</application>">
 
 <!ENTITY qm "<application>QM</application>">
-<!ENTITY qm_version "2.4">
-<!ENTITY internal_doc_url "http://www.codesourcery.com/public/qmtest/qm-&qm_version;/internals/qm">
+<!ENTITY qm_version "2.4.1">
+<!ENTITY internal_doc_url "http://www.codesourcery.com/public/qmtest/qmtest-&qm_version;/internals/qm">
 
 <!ENTITY context_class "<ulink url=&#34;&internal_doc_url;/test/context/Context.html&#34;><classname>Context</classname></ulink>">
 <!ENTITY result_class "<ulink url=&#34;&internal_doc_url;/test/result/Result.html&#34;><classname>Result</classname></ulink>">

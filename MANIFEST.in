@@ -13,7 +13,7 @@
 #
 ########################################################################
 
-include ChangeLog COPYING README NEWS qm/external/DocumentTemplate/LICENSE.txt
+include ChangeLog COPYING LICENSE.OPL README NEWS qm/external/DocumentTemplate/LICENSE.txt
 include MANIFEST.in setup.py
 
 # These are the modules included in the 'qm' package.

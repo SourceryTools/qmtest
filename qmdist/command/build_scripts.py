@@ -52,8 +52,8 @@ else:
                 if self.dry_run:
                     self.announce("changing mode of %s"%script)
                 else:
-                    oldmode = os.stat(script)[ST_MODE] & 07777
-                    newmode = (oldmode | 0555) & 07777
+                    oldmode = os.stat(script)[ST_MODE] & int('7777', 8)
+                    newmode = (oldmode | int('555', 8)) & int('7777', 8)
                     if newmode != oldmode:
                         self.announce("changing mode of %s from %o to %o"%(script, oldmode, newmode)),
                         os.chmod(script, newmode)

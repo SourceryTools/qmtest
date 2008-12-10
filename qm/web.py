@@ -24,7 +24,6 @@ import cgi
 import diagnostic
 import errno
 import htmlentitydefs
-import md5
 import os
 import os.path
 import common
@@ -1398,6 +1397,26 @@ class CGIWebRequest:
         return apply(WebRequest, (self.GetUrl(), ), fields)
 
 
+def _create_session_id():
+
+    # Seed the random number generator with the system time.
+    random.seed()
+    try: # hashlib is available since Python 2.5
+        import hashlib
+        md5 = hashlib.md5()
+        md5.update("%f" % random.random())
+        digest = md5.digest()
+    except: # fall back to md5 on older Python versions
+        import md5
+        # FIXME: Security: Is this OK?
+        digest = md5.new("%f" % random.random()).digest()
+
+    # Convert the digest, which is a 16-character string,
+    # to a sequence hexadecimal bytes.
+    digest = [hex(ord(c))[2:] for c in digest]
+    # Convert it to a 32-character string.
+    return ''.join(digest)
+
 
 class Session:
     """A persistent user session.
@@ -1422,16 +1441,7 @@ class Session:
         # Extract the client's IP address from the request.
         self.__client_address = request.client_address
 
-        # Now create a session ID.
-        # Seed the random number generator with the system time.
-        random.seed()
-        # FIXME: Security: Is this OK?
-        digest = md5.new("%f" % random.random()).digest()
-        # Convert the digest, which is a 16-character string,
-        # to a sequence hexadecimal bytes.
-        digest = map(lambda ch: hex(ord(ch))[2:], digest)
-        # Convert it to a 32-character string.
-        self.__id = string.join(digest, "")
+        self.__id = _create_session_id()
         
         self.Touch()
 
