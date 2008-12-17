@@ -27,7 +27,7 @@ from   qmdist.command.bdist_wininst import bdist_wininst
 from   qmdist.command.check import check
 import sys, os, os.path, glob, shutil
 
-version='2.4'
+version='2.4.1'
 
 if sys.platform != "win32":
     # We need the sigmask extension on POSIX systems, but don't
