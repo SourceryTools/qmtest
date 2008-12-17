@@ -20,8 +20,8 @@
 
 2.  LICENSE
 
-    QMTest is licensed under the GNU General Public License.  See the file
-    COPYING for the exact text of the license.
+    QMTest is licensed under the GNU General Public License, version 2.  
+    See the file COPYING for the exact text of the license.
 
     The DocumentTemplate module is Copyright Zope Corporation and
     Contributors.  See:

@@ -1,3 +1,10 @@
+2008-12-16  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* setup.py: Bump version number to 2.4.1.
+	* qmtest.spec: New rpm spec-file.
+	* NEWS: Mention 2.4.1 release.
+	* README: Clarify license version.
+
 2008-12-10  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* setup.py: Install LICENSE.OPL so it can be found by users.

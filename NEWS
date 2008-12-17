@@ -3,6 +3,12 @@ NEWS
 
 This file describes user-visible changes to QMTest.
 
+QMTest 2.4.1
+============
+
+Address a couple of critical issues preventing QMTest from working
+with Python 2.6.
+
 QMTest 2.4
 ==========
 
