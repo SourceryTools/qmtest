@@ -1,3 +1,8 @@
+2009-04-23  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/classes/compiler_test.py: Add support for CompilerTest.cleanup_executable.
+	* qm/test/report.py: Fix subdirectory-handling bug.
+	
 2008-12-16  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* setup.py: Bump version number to 2.4.1.

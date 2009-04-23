@@ -107,7 +107,8 @@ class CompilerBase:
                     removedir(name)
             if dir: os.rmdir(directory)
 
-        if result.GetOutcome() == Result.PASS:
+        cleanup = context.GetBoolean("CompilerTest.cleanup_executable", True)
+        if result.GetOutcome() == Result.PASS and cleanup:
             try:
                 directory = self._GetDirectory(context)
                 removedir(directory, False)
