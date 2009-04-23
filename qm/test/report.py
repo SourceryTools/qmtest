@@ -209,7 +209,8 @@ class ReportGenerator:
 
         # Start with the subdirectories.
         for dir in self.database.GetSubdirectories(directory):
-            child = self._ReportSubdirectory(dir, test_runs)
+            child = self._ReportSubdirectory(self.database.JoinLabels(directory, dir),
+                                             test_runs)
             element.appendChild(child)
 
         # Report all items, sorted by kind.
