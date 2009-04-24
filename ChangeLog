@@ -1,3 +1,7 @@
+2009-04-24  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/report.py: Log qualified id as 'qid'.
+
 2009-04-23  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/compiler_test.py: Add support for CompilerTest.cleanup_executable.
