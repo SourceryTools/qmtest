@@ -205,7 +205,7 @@ class ReportGenerator:
 
         if not element:
             element = self.__document.createElement('subdirectory')
-            element.setAttribute('name', directory)
+            element.setAttribute('name', self.database.SplitLabel(directory)[1])
 
         # Start with the subdirectories.
         for dir in self.database.GetSubdirectories(directory):
@@ -241,6 +241,7 @@ class ReportGenerator:
         # Create one item node per id...
         item = self.__document.createElement('item')
         item.setAttribute('id', name)
+        item.setAttribute('qid', item_id)
         item.setAttribute('kind', kind)
         parent.appendChild(item)
 
