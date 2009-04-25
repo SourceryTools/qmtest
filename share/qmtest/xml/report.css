@@ -1,0 +1,94 @@
+th
+{
+  border: 1px solid #666666;
+  background-color: #a7b0d5;
+
+/*  background-color: #f2f5f7;*/
+  text-align: left;
+}
+
+td
+{
+  border: 1px solid #aaaaaa;
+  background-color: #eeeeee;
+  text-align: left;
+}
+
+table { width: 100%;}
+th.heading
+{  
+  text-align: center;
+  border: 1px solid #aaaaaa;
+  background-color: #a7b0d5;
+
+/*  background-color: #dbdee0;*/
+}
+td.pass 
+{
+/*  background-color: #eeffee;*/
+  border: 1px solid #2f8f0f;
+  background-color: #8fdf5f;
+}
+td.xpass { background-color: #ccffcc;}
+td.fail 
+{
+  border: 1px solid #f33636;
+  background-color: #e98080;
+
+/*  background-color: #ffeeee;
+  border: 1px solid #ff0000;*/  
+}
+td.xfail { background-color: #ffcccc;}
+td.error, td.untested { background-color: #eeeeee;}
+div { margin: 10px;}
+div.summary
+{
+  border: 1px solid #666666;
+  background-color: #a7b0d5;
+/*
+  border: 1px solid #aaaaaa;
+  background-color: #f2f5f7;*/
+  text-align: center;
+  margin: 20px;
+}
+div.directories 
+{
+  margin: auto;
+  width: 50%;
+  border: 1px solid #666666;
+}
+table.score { width: 200px; }
+div.summary p { margin: 0px;}
+div.summary p.heading { font-weight: bold;}
+div p.heading { margin: 0px;}
+div p.heading { font-weight: bold;}
+div.pass p.heading 
+{
+  border: 1px solid #009900;
+  background-color: #eeffee;
+}
+
+div.xpass p.heading 
+{
+  border: 1px solid #009900;
+  background-color: #ccffcc;
+}
+
+div.fail p.heading 
+{
+  border: 1px solid #990000;
+  background-color: #ffeeee;
+}
+
+div.xfail p.heading 
+{
+  border: 1px solid #990000;
+  background-color: #ffcccc;
+}
+
+div.error p.heading, div.untested p.heading 
+{
+  border: 1px solid #000000;
+  background-color: #eeeeee;
+}
+

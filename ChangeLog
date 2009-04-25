@@ -1,3 +1,8 @@
+2009-04-25  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* share/qmtest/xml/report.xslt: Refine HTML report generation.
+	* share/qmtest/xml/report.css: New file.
+	
 2009-04-24  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/report.py: Log qualified id as 'qid'.

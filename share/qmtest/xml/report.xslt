@@ -32,6 +32,12 @@
   <!-- Define the title of the main page -->
   <xsl:param name="title" select="''" />
 
+  <!-- use 'favicon' if defined -->
+  <xsl:param name="favicon" select="''" />
+
+  <!-- 'stylesheet' is used to identify results (result files) -->
+  <xsl:param name="stylesheet" select="'report.css'" />
+
   <!-- 'key' is used to identify results (result files) -->
   <xsl:param name="key" select="'qmtest.run.end_time'" />
 
@@ -43,20 +49,21 @@
     <html>
       <head>
         <title><xsl:value-of select="$title" /></title>
+        <xsl:if test="$favicon">
+          <link rel="shortcut icon" href="{$favicon}"/>
+        </xsl:if>
+        <link type="text/css" rel="stylesheet" href="{$stylesheet}"/>
       </head>
       <body>
         <h1><xsl:value-of select="$title" /></h1>
+        <p>(generated on <xsl:value-of select="date:date-time()"/>)</p>
         <!-- summary -->
         <div class="summary">
           <p class="heading">Summary</p>
           <xsl:call-template name="summary" />
         </div>
         <xsl:if test="subdirectory">
-          <h2>Subdirectories</h2>
-          <xsl:for-each select="subdirectory">
-            <p><a href="{@name}/report.html">Subdirectory <xsl:value-of select="@name"/></a></p>
-            <xsl:apply-templates select="."/>
-          </xsl:for-each>
+          <xsl:call-template name="subdirectory"/>
         </xsl:if>
         <!-- generate test matrix -->
         <xsl:if test="item[@kind='test']">
@@ -76,27 +83,59 @@
     </html>
   </xsl:template>
 
-  <!-- Generate a subdir report page -->
+  <xsl:template name="subdirectory">
+    <div class="directories">
+      <h2>Subdirectories</h2>
+      <table>
+        <xsl:for-each select="subdirectory">
+          <tr>
+            <th><a href="{@name}/index.html"><xsl:value-of select="@name"/></a></th>
+            <td>
+              <table class="score">
+                <tr>
+                  <xsl:variable name="passes" select="(100 * count(*/result[@outcome='PASS'])) div count(*/result)"/>
+                  <xsl:variable name="failures" select="(100 * count(*/result[@outcome='FAIL'])) div count(*/result)"/>
+                  <xsl:if test="$passes != '0'">
+                    <td class="pass" style="width:{}%">&#160;</td>
+                  </xsl:if>
+                  <xsl:if test="$failures != '0'">
+                    <td class="fail" style="width:{(100 * count(*/result[@outcome='FAIL'])) div count(*/result)}%">&#160;</td>
+                  </xsl:if>
+                </tr>
+              </table>
+            </td>
+            <td>
+              (<xsl:value-of select="count(*/result[@outcome='PASS'])"/> passes, <xsl:value-of select="count(*/result[@outcome='FAIL'])"/> failures)
+            </td>
+          </tr>
+          <xsl:apply-templates select="."/>
+        </xsl:for-each>
+      </table>
+    </div>  
+  </xsl:template>
+  
+  <!-- This is the template that generates the subdirectory report pages -->
   <xsl:template name="report.page">
-    <common:document href="{@name}/report.html" method="xml" indent="yes" encoding="ISO-8859-1">
+    <common:document href="{@name}/index.html" method="xml" indent="yes" encoding="ISO-8859-1">
+      <xsl:apply-templates select="subdirectory"/>
       <xsl:variable name="title">
         Results for subdirectory <xsl:value-of select="@name"/>
       </xsl:variable>
       <html>
         <head>
           <title><xsl:value-of select="$title" /></title>
-        <link href="http://www.codesourcery.com/codesourcerystyles.css" rel="stylesheet" type="text/css"/>
-        <link type="text/css" rel="stylesheet" href="test-report.css"/>
+          <xsl:variable name="path">
+            <xsl:for-each select="ancestor-or-self::subdirectory">
+              <xsl:copy-of select="'../'"/>
+            </xsl:for-each>
+          </xsl:variable>
+          <link type="text/css" rel="stylesheet" href="{$path}{$stylesheet}"/>
         </head>
         <body>
           <h1><xsl:value-of select="$title" /></h1>
           <h2>Directory <xsl:value-of select="@name"/></h2>
-          <xsl:if test="directory">
-            <h2>Subdirectories</h2>
-            <xsl:for-each select="subdirectory">
-              <p><a href="{@name}/report.html">Subdirectory <xsl:value-of select="@name"/></a></p>
-              <xsl:apply-templates select="."/>
-            </xsl:for-each>
+          <xsl:if test="subdirectory">
+            <xsl:call-template name="subdirectory"/>
           </xsl:if>
           <!-- generate test matrix -->
           <xsl:if test="item[@kind='test']">
@@ -136,6 +175,12 @@
       <html>
         <head>
           <title><xsl:value-of select="$title" /></title>
+          <xsl:variable name="path">
+            <xsl:for-each select="$directory/ancestor-or-self::subdirectory">
+              <xsl:copy-of select="'../'"/>
+            </xsl:for-each>
+          </xsl:variable>
+          <link type="text/css" rel="stylesheet" href="{$path}{$stylesheet}"/>
         </head>
         <body>
           <h1><xsl:value-of select="$title" /></h1>
@@ -281,7 +326,7 @@
         <xsl:for-each select="annotation[not(contains($excluded.annotations, @name))]">
           <tr>
             <th><xsl:value-of select="@name" /></th>
-            <td><pre><xsl:value-of select="." xsl:disable-output-escaping="yes"/></pre></td>
+            <td><xsl:value-of select="." xsl:disable-output-escaping="yes"/></td>
           </tr>
         </xsl:for-each>
       </tbody>
