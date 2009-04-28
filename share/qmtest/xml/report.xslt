@@ -88,24 +88,25 @@
       <h2>Subdirectories</h2>
       <table>
         <xsl:for-each select="subdirectory">
+          <xsl:variable name="results" select="count(.//result)"/>
+          <xsl:variable name="passes" select="count(.//result[@outcome='PASS'])"/>
+          <xsl:variable name="failures" select="count(.//result[@outcome='FAIL'])"/>
           <tr>
             <th><a href="{@name}/index.html"><xsl:value-of select="@name"/></a></th>
             <td>
               <table class="score">
                 <tr>
-                  <xsl:variable name="passes" select="(100 * count(*/result[@outcome='PASS'])) div count(*/result)"/>
-                  <xsl:variable name="failures" select="(100 * count(*/result[@outcome='FAIL'])) div count(*/result)"/>
                   <xsl:if test="$passes != '0'">
-                    <td class="pass" style="width:{}%">&#160;</td>
+                    <td class="pass" style="width:{100 * $passes div $results}%">&#160;</td>
                   </xsl:if>
                   <xsl:if test="$failures != '0'">
-                    <td class="fail" style="width:{(100 * count(*/result[@outcome='FAIL'])) div count(*/result)}%">&#160;</td>
+                    <td class="fail" style="width:{100 * $failures div $results}%">&#160;</td>
                   </xsl:if>
                 </tr>
               </table>
             </td>
             <td>
-              (<xsl:value-of select="count(*/result[@outcome='PASS'])"/> passes, <xsl:value-of select="count(*/result[@outcome='FAIL'])"/> failures)
+              (<xsl:value-of select="$passes"/> passes, <xsl:value-of select="$failures"/> failures)
             </td>
           </tr>
           <xsl:apply-templates select="."/>

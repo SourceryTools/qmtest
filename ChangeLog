@@ -1,3 +1,7 @@
+2009-04-27  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* share/qmtest/xml/report.xslt: Fix results calculation.
+
 2009-04-25  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* share/qmtest/xml/report.xslt: Refine HTML report generation.
