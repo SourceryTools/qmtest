@@ -581,7 +581,7 @@ class TimeoutExecutable(Executable):
                 if child_pid is not None:
                     os.kill(-child_pid, signal.SIGKILL)
                 if self.__monitor_pid is not None:
-                    monitor_status = os.waitpid(self.__monitor_pid, 0)
+                    monitor_status = os.waitpid(self.__monitor_pid, 0)[1]
                     if monitor_status != 0:
                         raise qm.common.Timeout(self._CreateCommandLine(arguments))
             elif self.__timeout >= 0 and sys.platform == "win32":
