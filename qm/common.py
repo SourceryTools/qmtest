@@ -63,6 +63,9 @@ class QMException(Exception):
 
         Exception.__init__(self, message)
 
+class Timeout(QMException):
+
+    pass
 
 
 class UserError(QMException):

@@ -225,6 +225,9 @@ class Target(qm.extension.Extension):
             # Run the test.
             try:
                 descriptor.Run(context, result)
+            except qm.common.Timeout, t:
+                result.SetOutcome(result.FAIL, 'Process timed out.')
+                result[Result.TIMEOUT_DETAIL] = str(t)
             finally:
                 # Note the end time.
                 result[Result.END_TIME] = qm.common.format_time_iso()
