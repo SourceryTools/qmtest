@@ -262,8 +262,9 @@
   <xsl:template name="result">
     <xsl:param name="id" select="''" />
     <xsl:param name="run" select="''" />
-    <!--<xsl:variable name="result"
-                  select="/report/results[annotation[@key=$key]=$column]/result[@id=$id]" />-->
+    <xsl:variable name="run.id">
+                <xsl:value-of select="/report/runs/run[$run]/annotation[@key=$key]"/>
+    </xsl:variable>
     <xsl:variable name="outcome">
       <xsl:choose>
         <!-- Is there an expectation for this test ? -->
@@ -301,12 +302,10 @@
         <xsl:when test="@outcome">
           <xsl:variable name="document">
             <xsl:call-template name="detail.document.name">
-              <xsl:with-param name="name">
-                <xsl:value-of select="/report/runs/run[$run]/annotation[@key=$key]"/>
-              </xsl:with-param>
+              <xsl:with-param name="name" select="$run.id"/>
             </xsl:call-template>
           </xsl:variable>
-          <a href="{$document}#{$id}">
+          <a href="{$document}#{$id}" title="{$id} ({$run.id})">
             <xsl:value-of select="$outcome" />
           </a>
         </xsl:when>
