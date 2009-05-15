@@ -109,6 +109,7 @@ class Result:
     TRACEBACK = "qmtest.traceback"
     START_TIME = "qmtest.start_time"
     END_TIME = "qmtest.end_time"
+    TIMEOUT_DETAIL = "qmtest.timeout_detail"
     
     # Other class variables.
 

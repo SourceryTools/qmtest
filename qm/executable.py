@@ -139,7 +139,7 @@ class Executable(object):
             # Compute the command line.  The Windows API uses a single
             # string as the command line, rather than an array of
             # arguments.
-            command_line = self.__CreateCommandLine(arguments)
+            command_line = self._CreateCommandLine(arguments)
 
             # If the path is not absolute, then we need to search the
             # PATH.  Since CreateProcess only searches the PATH if its
@@ -279,6 +279,8 @@ class Executable(object):
             return win32process.GetExitCodeProcess(child)
         else:
             status = os.waitpid(child, 0)[1]
+            self.__child = None
+
             # See if an exception was pushed back up the pipe.
             data = os.fdopen(exception_pipe[0]).read()
             # If any data was read, then it is data corresponding to
@@ -375,7 +377,7 @@ class Executable(object):
         return self.__child
     
         
-    def __CreateCommandLine(self, arguments):
+    def _CreateCommandLine(self, arguments):
         """Return a string giving the process command line.
 
         arguments -- A sequence of arguments (including argv[0])
@@ -513,6 +515,12 @@ class TimeoutExecutable(Executable):
                 # group, or (b) the parent has not yet called waitpid.
                 os.setpgid(0, child_pid)
 
+                # Allow the monitor to exit normally if woken up by SIGHUP.
+                def terminate(signum, frame):
+                    os.exit(0)
+                signal.signal(signal.SIGHUP, terminate)
+
+
                 # Close all open file descriptors.  They are not needed
                 # in the monitor process.  Furthermore, when the parent
                 # closes the write end of the stdin pipe to the child,
@@ -562,6 +570,10 @@ class TimeoutExecutable(Executable):
                                                         environment,
                                                         dir,
                                                         path)
+            # If the child has exited, and the monitor is still running,
+            # tell the monitor to hang up.
+            if not self._GetChildPID() and self.__UseSeparateProcessGroupForChild():
+                os.kill(self.__monitor_pid, signal.SIGHUP)
         finally:
             if self.__UseSeparateProcessGroupForChild():
                 # Clean up the monitoring program; it is no longer needed.
@@ -569,7 +581,9 @@ class TimeoutExecutable(Executable):
                 if child_pid is not None:
                     os.kill(-child_pid, signal.SIGKILL)
                 if self.__monitor_pid is not None:
-                    os.waitpid(self.__monitor_pid, 0)
+                    monitor_status = os.waitpid(self.__monitor_pid, 0)
+                    if monitor_status != 0:
+                        raise qm.common.Timeout(self._CreateCommandLine(arguments))
             elif self.__timeout >= 0 and sys.platform == "win32":
                 # Join the monitoring thread.
                 if self.__monitor_thread is not None:

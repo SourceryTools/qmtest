@@ -1,3 +1,11 @@
+2009-05-15  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/common.py: Add Timeout exception.
+	* qm/test/result.py: Define TIMEOUT_DETAIL.
+	* qm/test/target.py: Handle both.
+	* qm/executable.py: Report timeouts.
+	* share/qmtest/xml/report.xslt: Set cell titles for result matrix.
+
 2009-04-27  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* share/qmtest/xml/report.xslt: Fix results calculation.
