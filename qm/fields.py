@@ -992,9 +992,13 @@ class DictionaryField(Field):
         values = {}
         for item in node.childNodes:
             if item.nodeType == xml.dom.Node.ELEMENT_NODE:
+                # No mixed content !
+                # We are only interested into element child-nodes.
+                children = [c for c in item.childNodes
+                            if c.nodeType == xml.dom.Node.ELEMENT_NODE]
                 values[self.__key_field.GetValueFromDomNode
-                       (item.childNodes[0], attachment_store)] =\
-                       self.__value_field.GetValueFromDomNode(item.childNodes[1],
+                       (children[0], attachment_store)] =\
+                       self.__value_field.GetValueFromDomNode(children[1],
                                                               attachment_store)
         return self.Validate(values)
     
