@@ -417,8 +417,8 @@ class Executable(object):
 class TimeoutExecutable(Executable):
     """A 'TimeoutExecutable' runs for a limited time.
 
-    If the timer expires, the child process is killed and
-    self.timedout is set to 1.  Otherwise, self.timedout is set to 0.
+    If the timer expires, the child process is killed and a Timeout
+    exception is raised.
 
     In order to implement this functionality under UNIX, the child
     process is placed into its own process group.  An additional
@@ -514,10 +514,10 @@ class TimeoutExecutable(Executable):
                 # this point because either (a) we are in the process
                 # group, or (b) the parent has not yet called waitpid.
                 os.setpgid(0, child_pid)
-
+                
                 # Allow the monitor to exit normally if woken up by SIGHUP.
                 def terminate(signum, frame):
-                    os.exit(0)
+                    os._exit(0)
                 signal.signal(signal.SIGHUP, terminate)
 
 
@@ -570,9 +570,8 @@ class TimeoutExecutable(Executable):
                                                         environment,
                                                         dir,
                                                         path)
-            # If the child has exited, and the monitor is still running,
-            # tell the monitor to hang up.
-            if not self._GetChildPID() and self.__UseSeparateProcessGroupForChild():
+            # At this point we tell the monitor to hang up, as we no longer need it.
+            if self.__UseSeparateProcessGroupForChild():
                 os.kill(self.__monitor_pid, signal.SIGHUP)
         finally:
             if self.__UseSeparateProcessGroupForChild():
@@ -582,7 +581,7 @@ class TimeoutExecutable(Executable):
                     os.kill(-child_pid, signal.SIGKILL)
                 if self.__monitor_pid is not None:
                     monitor_status = os.waitpid(self.__monitor_pid, 0)[1]
-                    if monitor_status != 0:
+                    if monitor_status != 0 and self.__timeout != -2:
                         raise qm.common.Timeout(self._CreateCommandLine(arguments))
             elif self.__timeout >= 0 and sys.platform == "win32":
                 # Join the monitoring thread.
