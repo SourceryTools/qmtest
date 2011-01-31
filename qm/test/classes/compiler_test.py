@@ -284,6 +284,15 @@ class CompilerTest(Test, CompilerBase):
         return "CompilerTest."
 
 
+    def _GetEnvironment(self, context):
+        """Return the environment to use for test execution.
+
+        returns -- The environment dictionary to use for test execution."""
+
+
+        return None
+
+
     def _GetLibraryDirectories(self, context):
         """Returns the directories to search for libraries.
 
@@ -318,8 +327,12 @@ class CompilerTest(Test, CompilerBase):
            = "<tt>" + path + " " + " ".join(arguments) + "</tt>"
 
         # Compute the environment.
+        environment = self._GetEnvironment(context)
+
         library_dirs = self._GetLibraryDirectories(context)
         if library_dirs:
+            if not environment:
+                environment = dict()
             # Update LD_LIBRARY_PATH.  On IRIX 6, this variable
             # goes by other names, so we update them too.  It is
             # harmless to do this on other systems.
@@ -327,13 +340,10 @@ class CompilerTest(Test, CompilerBase):
                              'LD_LIBRARYN32_PATH',
                              'LD_LIBRARYN64_PATH']:
                 old_path = environment.get(variable)
-                new_path = ':'.join(self._library_dirs)
+                new_path = ':'.join(library_dirs)
                 if old_path and new_path:
                     new_path = new_path + ':' + old_path
-            environment[variable] = new_path
-        else:
-            # Use the default values.
-            environment = None
+                environment[variable] = new_path
 
         target = self._GetTarget(context)
         timeout = context.get("CompilerTest.execution_timeout", -1)
