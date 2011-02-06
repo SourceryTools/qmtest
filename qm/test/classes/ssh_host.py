@@ -152,7 +152,7 @@ class SSHHost(Host):
         if environment is not None:
             command.append("env")
             for (k, v) in environment.iteritems():
-                command.append("%s=%s" % (k, v))
+                command.append("%s='%s'" % (k, v))
         command.append(path)
         command += arguments
 
