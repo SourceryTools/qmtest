@@ -1,3 +1,7 @@
+2011-02-06  Stefan Seefeld  <stefan@odesourcery.com>
+
+	* qm/test/classes/compilation_test.py: Record output from ExecutableTest.
+
 2011-02-06  Stefan Seefeld  <stefan@codesourcery.com>
 
 	* qm/test/classes/ssh_host.py: Fix passing of environment (quoting).
