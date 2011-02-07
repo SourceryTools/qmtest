@@ -157,4 +157,6 @@ class ExecutableTest(Test):
         status, output = host.UploadAndRun(executable, self.args)
         if not result.CheckExitStatus('ExecutableTest.', 'Program', status):
             result.Fail('Unexpected exit_code')        
+        if output:
+            result['ExecutableTest.output'] = result.Quote(output)
 
