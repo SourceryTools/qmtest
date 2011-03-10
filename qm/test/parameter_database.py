@@ -313,9 +313,11 @@ class ParameterDatabase(Database):
     def GetIds(self, kind, directory="", scan_subdirs = 1):
 
         if kind == Database.TEST:
-            return GetTestIds(directory, scan_subdirs)
-        
-        return self.__db.GetIds(kind, directory, scan_subdirs)
+            return self.GetTestIds(directory, scan_subdirs)
+        elif kind == Database.RESOURCE:
+            return self.GetResourceIds(directory, scan_subdirs)
+        else:
+            return self.__db.GetIds(kind, directory, scan_subdirs)
 
 
     def GetSubdirectories(self, directory):
@@ -331,7 +333,7 @@ class ParameterDatabase(Database):
             return []
         
         subdirs = self.__db.GetSubdirectories(directory)
-        subdirs += [d[directory and len(directory) + 1:] # Remove common prefix.
+        subdirs += [d[directory and len(directory) + 1 or 0:] # Remove common prefix.
                     for d in self.__db.GetTestIds(directory, False)]
         return subdirs
 

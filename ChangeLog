@@ -1,3 +1,7 @@
+2011-03-10  Stefan Seefeld  <stefan@codesourcery.com>
+
+	* qm/test/parameter_database.py: Various fixes.
+
 2011-02-06  Stefan Seefeld  <stefan@odesourcery.com>
 
 	* qm/test/classes/compilation_test.py: Record output from ExecutableTest.
